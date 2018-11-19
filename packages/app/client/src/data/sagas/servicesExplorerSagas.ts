@@ -220,9 +220,11 @@ function* openContextMenuForService(action: ConnectedServiceAction<ConnectedServ
 function* openAddConnectedServiceContextMenu(action: ConnectedServiceAction<ConnectedServicePickerPayload>)
   : IterableIterator<any> {
   const menuItems = [
-    { label: 'Language Understanding (LUIS)', id: ServiceTypes.Luis },
-    { label: 'QnA Maker', id: ServiceTypes.QnA },
-    { label: 'Dispatch', id: ServiceTypes.Dispatch }
+    { label: 'Add Language Understanding (LUIS)', id: ServiceTypes.Luis },
+    { label: 'Add QnA Maker', id: ServiceTypes.QnA },
+    { label: 'Add Dispatch', id: ServiceTypes.Dispatch },
+    { type: 'separator' },
+    { label: 'Add Azure Application Insights', id: ServiceTypes.AppInsights}
   ];
 
   const response = yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.DisplayContextMenu, menuItems);
