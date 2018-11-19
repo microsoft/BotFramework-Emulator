@@ -6,6 +6,7 @@ import { azureAuth } from '../../../data/reducer/azureAuthReducer';
 import { ConnectServicePromptDialog } from './connectServicePromptDialog';
 import { ConnectServicePromptDialogContainer } from './connectServicePromptDialogContainer';
 import { DialogService } from '../service';
+import { ServiceTypes } from 'botframework-config';
 
 jest.mock('../service', () => ({
   DialogService: {
@@ -30,7 +31,7 @@ describe('The ConnectServicePromptDialog component should', () => {
 
   beforeEach(() => {
     parent = mount(<Provider store={ createStore(azureAuth) }>
-      <ConnectServicePromptDialogContainer />
+      <ConnectServicePromptDialogContainer serviceType={ ServiceTypes.Luis }/>
     </Provider>);
     node = parent.find(ConnectServicePromptDialog);
   });
@@ -62,7 +63,7 @@ describe('The ConnectServicePromptDialog component should', () => {
   it('should exit with code 2 when add luis apps manually is selected', () => {
     const spy = jest.spyOn(DialogService, 'hideDialog');
     const instance = node.instance();
-    instance.props.addLuisAppManually();
+    instance.props.addServiceManually();
     expect(spy).toHaveBeenCalledWith(2);
   });
 });
