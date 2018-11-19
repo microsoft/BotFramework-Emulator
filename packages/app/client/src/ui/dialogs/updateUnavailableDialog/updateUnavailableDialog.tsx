@@ -31,28 +31,28 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { setGlobal, deleteGlobal } from '../globals';
-import { Notification, SharedConstants } from '@bfemulator/app-shared';
-import { CommandService } from '@bfemulator/sdk-shared';
-import { mainWindow } from '../main';
+import * as React from 'react';
+import { Dialog, DialogFooter, PrimaryButton } from '@bfemulator/ui-react';
 
-/** Sends a notification to the client side using the Electron 'global' object
- *  (need to use global object because functions can't be sent over IPC)
- */
-export async function sendNotificationToClient(
-  notification: Notification,
-  commandService?: CommandService
-): Promise<void> {
-  if (!commandService) {
-    commandService = mainWindow.commandService;
+export interface UpdateUnavailableDialogProps {
+  onCloseClick?: () => any;
+}
+
+export class UpdateUnavailableDialog extends React.Component<UpdateUnavailableDialogProps, {}> {
+  constructor(props: UpdateUnavailableDialogProps) {
+    super(props);
   }
-  // attach the notification to the global object
-  setGlobal(SharedConstants.NOTIFICATION_FROM_MAIN, notification);
 
-  // invoke command on client side that grabs notification from the client side and adds
-  // it to the notification manager
-  await commandService.remoteCall(SharedConstants.Commands.Notifications.Add);
+  public render(): JSX.Element {
+    const { onCloseClick } = this.props;
 
-  // remove the notification from the global object
-  deleteGlobal(SharedConstants.NOTIFICATION_FROM_MAIN);
+    return (
+      <Dialog cancel={ onCloseClick } title="No update available">
+        <p>There are no updates available for download.</p>
+        <DialogFooter>
+          <PrimaryButton text="Close" onClick={ onCloseClick }/>
+        </DialogFooter>
+      </Dialog>
+    );
+  }
 }
