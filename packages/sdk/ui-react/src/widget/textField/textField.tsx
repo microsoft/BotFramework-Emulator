@@ -22,9 +22,13 @@ export class TextField extends Component<TextFieldProps, {}> {
   public render(): ReactNode {
     // Trim off what we don't want to send to the input tag
     const { inputContainerClassName = '', className = '', label, errorMessage, ...inputProps } = this.props;
+    let inputClassName = `${styles.input} ${className} `;
+    if (errorMessage) {
+      inputClassName += styles.invalid;
+    }
     return <div className={ `${styles.inputContainer} ${inputContainerClassName}` }>
       { this.labelNode }
-      <input { ...inputProps } id={ this.inputId } className={ `${styles.input} ${className}` }/>
+      <input { ...inputProps } id={ this.inputId } className={ inputClassName }/>
       { this.props.children }
       { this.errorNode }
     </div>;

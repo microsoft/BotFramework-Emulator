@@ -41,7 +41,8 @@ const titleMap = {
   [ServiceTypes.Luis]: 'Connect to your LUIS apps',
   [ServiceTypes.Dispatch]: 'Connect to a Dispatch model',
   [ServiceTypes.QnA]: 'Connect to your QnA Maker knowledge base',
-  [ServiceTypes.Bot]: 'Connect to an Azure Bot Service'
+  [ServiceTypes.Bot]: 'Connect to an Azure Bot Service',
+  [ServiceTypes.AppInsights]: 'Connect to an Azure Application Insights resource'
 };
 
 const connected = 'connected';

@@ -3,9 +3,10 @@ import { Provider } from 'react-redux';
 import { mount } from 'enzyme';
 import { createStore } from 'redux';
 import { azureAuth } from '../../../data/reducer/azureAuthReducer';
-import { ConnectLuisAppPromptDialog } from './connectLuisAppPromptDialog';
-import { ConnectLuisAppPromptDialogContainer } from './connectLuisAppPromptDialogContainer';
+import { ConnectServicePromptDialog } from './connectServicePromptDialog';
+import { ConnectServicePromptDialogContainer } from './connectServicePromptDialogContainer';
 import { DialogService } from '../service';
+import { ServiceTypes } from 'botframework-config';
 
 jest.mock('../service', () => ({
   DialogService: {
@@ -24,23 +25,23 @@ jest.mock('../../dialogs/', () => ({
   SecretPromptDialog: () => undefined
 }));
 
-describe('The ConnectLuisAppPromptDialog component should', () => {
+describe('The ConnectServicePromptDialog component should', () => {
   let parent;
   let node;
 
   beforeEach(() => {
     parent = mount(<Provider store={ createStore(azureAuth) }>
-      <ConnectLuisAppPromptDialogContainer />
+      <ConnectServicePromptDialogContainer serviceType={ ServiceTypes.Luis }/>
     </Provider>);
-    node = parent.find(ConnectLuisAppPromptDialog);
+    node = parent.find(ConnectServicePromptDialog);
   });
 
   it('should render deeply', () => {
-    expect(parent.find(ConnectLuisAppPromptDialogContainer)).not.toBe(null);
+    expect(parent.find(ConnectServicePromptDialogContainer)).not.toBe(null);
   });
 
   it('should contain both a cancel and confirm function in the props', () => {
-    const prompt = parent.find(ConnectLuisAppPromptDialog);
+    const prompt = parent.find(ConnectServicePromptDialog);
     expect(typeof (prompt.props() as any).cancel).toBe('function');
     expect(typeof (prompt.props() as any).confirm).toBe('function');
   });
@@ -62,7 +63,7 @@ describe('The ConnectLuisAppPromptDialog component should', () => {
   it('should exit with code 2 when add luis apps manually is selected', () => {
     const spy = jest.spyOn(DialogService, 'hideDialog');
     const instance = node.instance();
-    instance.props.addLuisAppManually();
+    instance.props.addServiceManually();
     expect(spy).toHaveBeenCalledWith(2);
   });
 });
