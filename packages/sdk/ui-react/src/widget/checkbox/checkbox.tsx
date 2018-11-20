@@ -10,7 +10,6 @@ export interface CheckboxProps extends HTMLAttributes<HTMLInputElement> {
 }
 
 export interface CheckboxState {
-  checked?: boolean;
   focused?: boolean;
 }
 
@@ -22,13 +21,24 @@ export class Checkbox extends Component<CheckboxProps, CheckboxState> {
 
   constructor(props: CheckboxProps) {
     super(props);
-    this.state = { checked: props.checked, focused: false };
+    const { checked } = props;
+    if (checked === undefined) {
+      console.error(
+        '<Checkbox> requires a "checked" property to be passed in and managed by the parent component.' +
+        '\n\nEx:\n<Checkbox checked={ true | false } ... />'
+      );
+    }
+    this.state = { focused: false };
   }
 
   public render(): ReactNode {
     // Trim off what we don't want to send to the input tag
-    const { checked: _, className, label = '', ...inputProps } = this.props;
-    const { checked, focused } = this.state;
+    const { checked, className, label = '', ...inputProps } = this.props;
+    const { focused } = this.state;
+    if (checked === undefined) {
+      return null;
+    }
+
     let checkMarkStyles = checked ? styles.checked : '';
     if (focused) {
       checkMarkStyles += ` ${styles.focused}`;
@@ -49,13 +59,11 @@ export class Checkbox extends Component<CheckboxProps, CheckboxState> {
   private checkboxRef = (ref: HTMLInputElement): void => {
     const { inputRef, checkboxEventHandler } = this;
     if (inputRef) {
-      inputRef.removeEventListener('change', checkboxEventHandler);
       inputRef.removeEventListener('focus', checkboxEventHandler);
       inputRef.removeEventListener('blur', checkboxEventHandler);
     }
     this.inputRef = ref;
     if (ref) {
-      ref.addEventListener('change', checkboxEventHandler);
       ref.addEventListener('focus', checkboxEventHandler);
       ref.addEventListener('blur', checkboxEventHandler);
     }
@@ -63,9 +71,6 @@ export class Checkbox extends Component<CheckboxProps, CheckboxState> {
 
   private checkboxEventHandler = (event: Event): void => {
     switch (event.type) {
-      case 'change':
-        return this.setState({ checked: (event.target as HTMLInputElement).checked });
-
       case 'focus':
         return this.setState({ focused: true });
 
