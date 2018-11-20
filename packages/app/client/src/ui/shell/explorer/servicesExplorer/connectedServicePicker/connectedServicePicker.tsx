@@ -37,6 +37,7 @@ import * as React from 'react';
 import { ChangeEventHandler, Component } from 'react';
 
 import * as styles from './connectedServicePicker.scss';
+
 const titleMap = {
   [ServiceTypes.Luis]: 'Connect to your LUIS apps',
   [ServiceTypes.Dispatch]: 'Connect to a Dispatch model',
@@ -89,7 +90,7 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
     return (
       <Dialog
         title={ titleMap[this.props.serviceType] }
-        className={styles.connectedServicePicker}
+        className={ styles.connectedServicePicker }
         cancel={ this.props.cancel }>
         <div className={ styles.listContainer }>
           { this.headerElements }
@@ -100,8 +101,8 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
           { this.contentElements }
         </div>
         <DialogFooter>
-          <DefaultButton text="Cancel" onClick={ this.props.cancel } />
-          <PrimaryButton text="Add" onClick={ this.onAddClick } disabled={ !this.addButtonEnabled } />
+          <DefaultButton text="Cancel" onClick={ this.props.cancel }/>
+          <PrimaryButton text="Add" onClick={ this.onAddClick } disabled={ !this.addButtonEnabled }/>
         </DialogFooter>
       </Dialog>
     );
@@ -121,7 +122,7 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
       };
       return (
         <li key={ id }>
-          <Checkbox { ...checkboxProps } className={ styles.checkboxOverride } />
+          <Checkbox { ...checkboxProps } className={ styles.checkboxOverride }/>
           { ('version' in service) ? <span>v{ (service as any).version }</span> : null }
         </li>
       );
@@ -195,7 +196,7 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
           onChange={ this.onSelectAllChange }
           checked={ this.state.checkAllChecked }
           id="select-all-services"
-          label="Select all" />
+          label="Select all"/>
       </div>
     );
   }
