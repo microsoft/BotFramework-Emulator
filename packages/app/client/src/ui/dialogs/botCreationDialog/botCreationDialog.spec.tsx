@@ -31,8 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { mount, shallow } from 'enzyme';
+import { mount } from 'enzyme';
 import * as React from 'react';
+import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
+import { ActiveBotHelper } from '../../helpers/activeBotHelper';
 import { BotCreationDialog, BotCreationDialogState } from './botCreationDialog';
 
 jest.mock('./botCreationDialog.scss', () => ({}));
@@ -43,14 +45,23 @@ jest.mock('../../../utils', () => ({
   }
 }));
 
+jest.mock('../../helpers/activeBotHelper', () => ({
+  ActiveBotHelper: {
+    confirmAndCreateBot: async () => true
+  }
+}));
+
 describe('BotCreationDialog tests', () => {
+  let testWrapper;
+  beforeEach(() => {
+    testWrapper = mount(<BotCreationDialog/>);
+  });
+
   it('should render without throwing an error', () => {
-    const testWrapper = mount(<BotCreationDialog/>);
     expect(testWrapper.find(BotCreationDialog)).not.toBe(null);
   });
 
   it('should generate a new bot secret when checkbox is toggled', () => {
-    const testWrapper = shallow(<BotCreationDialog/>);
     const initialState = testWrapper.state as Partial<BotCreationDialogState>;
     expect(initialState.secret).toBeFalsy();
     // toggle on encryption
@@ -79,7 +90,6 @@ describe('BotCreationDialog tests', () => {
   // });
 
   it('should execute a window copy command when copy is clicked', () => {
-    const testWrapper = mount(<BotCreationDialog/>);
     testWrapper.instance().setState({ encryptKey: true });
     // mock window functions
     const backupExec = window.document.execCommand;
@@ -102,7 +112,6 @@ describe('BotCreationDialog tests', () => {
   });
 
   it('should set state via input change handlers', () => {
-    const testWrapper = shallow(<BotCreationDialog/>);
     const mockEvent = { target: { value: 'someEndpoint', dataset: { prop: 'endpoint' } } };
     (testWrapper.instance() as any).onInputChange(mockEvent as any);
 
@@ -126,8 +135,6 @@ describe('BotCreationDialog tests', () => {
   });
 
   it('should validate channelService on toggle channelService checkbox', () => {
-    const testWrapper = shallow(<BotCreationDialog/>);
-
     let state = testWrapper.state() as Partial<BotCreationDialogState>;
 
     // initially undefined
@@ -136,22 +143,52 @@ describe('BotCreationDialog tests', () => {
     // checked
     const mockCheck = { target: { checked: true } };
     (testWrapper.instance() as any).onChannelServiceChange(mockCheck as any);
-    
+
     state = testWrapper.state() as Partial<BotCreationDialogState>;
     expect((state.endpoint as any).channelService).toBe('https://botframework.azure.us');
-    
+
     // unchecked
     mockCheck.target.checked = false;
     (testWrapper.instance() as any).onChannelServiceChange(mockCheck as any);
-    
+
     state = testWrapper.state() as Partial<BotCreationDialogState>;
     expect((state.endpoint as any).channelService).toBe('');
   });
 
   it('should validate the endpoint', () => {
-    const testWrapper = shallow(<BotCreationDialog/>);
     expect((testWrapper.instance() as any).validateEndpoint('http://localhost:3000/api/messages')).toBe('');
     expect((testWrapper.instance() as any).validateEndpoint('http://localhost:3000'))
       .toBe(`Please include route if necessary: "/api/messages"`);
+  });
+
+  it('should save and connect', async () => {
+    const instance = testWrapper.instance();
+    const remoteCallSpy = jest.spyOn(CommandServiceImpl, 'remoteCall').mockResolvedValue('some/path');
+    const confirmAndCreateSpy = jest.spyOn(ActiveBotHelper, 'confirmAndCreateBot').mockResolvedValue(true);
+    await instance.onSaveAndConnect();
+    expect(remoteCallSpy).toHaveBeenCalledWith('shell:showExplorer-save-dialog', {
+      buttonLabel: 'Save',
+      defaultPath: 'some/path',
+      filters: [{ 'extensions': ['bot'], 'name': 'Bot Files' }],
+      showsTagField: false,
+      title: 'Save as'
+    });
+    expect(confirmAndCreateSpy).toHaveBeenCalledWith({
+        'description': '',
+        'name': '',
+        'overrides': null,
+        'padlock': '',
+        'path': 'some/path',
+        'services': [{
+          'appId': '',
+          'appPassword': '',
+          'channelService': undefined,
+          'endpoint': '',
+          'id': jasmine.any(String),
+          'name': '',
+          'type': 'endpoint'
+        }],
+        'version': '2.0'
+      }, null );
   });
 });
