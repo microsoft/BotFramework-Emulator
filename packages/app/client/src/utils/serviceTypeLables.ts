@@ -37,4 +37,6 @@ export const serviceTypeLabels = {
   [ServiceTypes.Luis]: 'LUIS',
   [ServiceTypes.Dispatch]: 'Dispatch',
   [ServiceTypes.QnA]: 'QnA Maker',
+  [ServiceTypes.AppInsights]: 'App Insights',
+  [ServiceTypes.Bot]: 'Azure Bot Service'
 };

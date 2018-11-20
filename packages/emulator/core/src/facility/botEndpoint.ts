@@ -33,7 +33,7 @@
 
 import * as HttpStatus from 'http-status-codes';
 
-import { authentication as authenticationEndpoint, speech as speechEndpoint } from '../authEndpoints';
+import { authentication as authenticationEndpoint, usGovernmentAuthentication, speech as speechEndpoint, authentication } from '../authEndpoints';
 import { URL, URLSearchParams } from 'url';
 import BotEndpointOptions from '../types/botEndpointOptions';
 import SpeechTokenInfo from '../types/speechToken';
@@ -55,6 +55,7 @@ export default class BotEndpoint {
     public msaAppId: string,
     public msaPassword: string,
     public use10Tokens: boolean,
+    public channelService: string,
     private _options: BotEndpointOptions
   ) {
   }
@@ -114,7 +115,10 @@ export default class BotEndpoint {
     }
 
     // Refresh access token
-    const resp = await this._options.fetch(authenticationEndpoint.tokenEndpoint, {
+    const tokenEndpoint: string = this.channelService === usGovernmentAuthentication.channelService ?
+        usGovernmentAuthentication.tokenEndpoint :
+        authentication.tokenEndpoint;
+    const resp = await this._options.fetch(tokenEndpoint, {
       method: 'POST',
       body: new URLSearchParams({
         grant_type: 'client_credentials',

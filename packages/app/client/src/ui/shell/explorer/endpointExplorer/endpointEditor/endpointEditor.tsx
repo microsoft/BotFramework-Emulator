@@ -37,7 +37,8 @@ import {
   DialogFooter,
   PrimaryButton,
   Row,
-  TextField
+  TextField,
+  Checkbox
 } from '@bfemulator/ui-react';
 import { BotService, EndpointService } from 'botframework-config/lib/models';
 import { IBotService, IEndpointService } from 'botframework-config/lib/schema';
@@ -68,8 +69,9 @@ export interface EndpointEditorState {
   endpointWarning: string;
 }
 
-const title = 'Add a Endpoint for your bot';
-const detailedDescription = 'You can add a endpoint that you use to communicate to an instance of your bot';
+const title = 'Add an Endpoint for your bot';
+const detailedDescription = 'You can add an endpoint that you use to communicate to an instance of your bot';
+const usGovernmentAzureChannelService = 'https://botframework.azure.us';
 
 export class EndpointEditor extends Component<EndpointEditorProps, EndpointEditorState> {
   public state: EndpointEditorState = {} as EndpointEditorState;
@@ -106,6 +108,10 @@ export class EndpointEditor extends Component<EndpointEditorProps, EndpointEdito
     return controllerRegEx.test(endpoint) ? '' : `Please include route if necessary: "/api/messages"`;
   }
 
+  private static isUsGov(channelService: string): boolean {
+    return channelService === usGovernmentAzureChannelService;
+  }
+
   constructor(props: EndpointEditorProps, state: EndpointEditorState) {
     super(props, state);
     const { endpointService, botService } = props;
@@ -138,6 +144,7 @@ export class EndpointEditor extends Component<EndpointEditorProps, EndpointEdito
     const { tenantId = '', subscriptionId = '', resourceGroup = '', serviceName = '' } = botService;
     const hasBotService = tenantId || subscriptionId || resourceGroup || serviceName;
     const valid = !!endpoint && !!name;
+    const isUsGov = EndpointEditor.isUsGov((endpointService as any).channelService);
     return (
       <Dialog title={ title } detailedDescription={ detailedDescription }
               cancel={ this.onCancelClick }>
@@ -174,6 +181,11 @@ export class EndpointEditor extends Component<EndpointEditorProps, EndpointEdito
           data-prop="appPassword"
           onChange={ this.onEndpointInputChange }
           label="Application Password" required={ false }
+        />
+        <Checkbox
+          label="Azure for US Government"
+          checked={ isUsGov }
+          onChange={ this.onChannelServiceChange }
         />
         <a href="javascript:void(0)"
            className={ `${styles.arrow} ${hasBotService ? styles.arrowExpanded : ''}` }
@@ -257,10 +269,16 @@ export class EndpointEditor extends Component<EndpointEditorProps, EndpointEdito
     }
   }
 
+  private onChannelServiceChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { checked } = event.target;
+    const { endpointService } = this.state;
+    (endpointService as any).channelService = checked ? usGovernmentAzureChannelService : '';
+    this.setState({ endpointService } as any);
+  }
+
   private onBotInputChange = (event: ChangeEvent<HTMLInputElement>): void => {
     const { value } = event.target;
     const { prop } = event.target.dataset;
-
     const trimmedValue = value.trim();
     let { botService } = this.state;
     if (!botService) {

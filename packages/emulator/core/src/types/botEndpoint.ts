@@ -37,6 +37,7 @@ interface BotEndpoint {
   msaAppId: string;
   msaPassword: string;
   use10Tokens?: boolean;
+  channelService?: string;
 }
 
 export default BotEndpoint;

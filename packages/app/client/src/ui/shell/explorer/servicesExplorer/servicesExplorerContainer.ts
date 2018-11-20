@@ -31,6 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { SharedConstants } from '@bfemulator/app-shared';
 import { IConnectedService, ServiceTypes } from 'botframework-config/lib/schema';
 import { ComponentClass } from 'react';
 import { connect } from 'react-redux';
@@ -41,12 +42,11 @@ import {
   openServiceDeepLink,
   openSortContextMenu
 } from '../../../../data/action/connectedServiceActions';
+import { CONNECTED_SERVICES_PANEL_ID } from '../../../../data/action/explorerActions';
 import { RootState } from '../../../../data/store';
+import { CommandServiceImpl } from '../../../../platform/commands/commandServiceImpl';
 import { ConnectedServiceEditor } from './connectedServiceEditor/connectedServiceEditor';
 import { ServicesExplorer, ServicesExplorerProps } from './servicesExplorer';
-import { CONNECTED_SERVICES_PANEL_ID } from '../../../../data/action/explorerActions';
-import { CommandServiceImpl } from '../../../../platform/commands/commandServiceImpl';
-import { SharedConstants } from '@bfemulator/app-shared';
 
 const mapStateToProps = (state: RootState): Partial<ServicesExplorerProps> => {
   const { services = [] } = state.bot.activeBot;
@@ -54,6 +54,7 @@ const mapStateToProps = (state: RootState): Partial<ServicesExplorerProps> => {
   return {
     services: services.filter(service => service.type === ServiceTypes.QnA ||
       service.type === ServiceTypes.Dispatch ||
+      service.type === ServiceTypes.AppInsights ||
       service.type === ServiceTypes.Luis),
     sortCriteria,
     window
@@ -63,7 +64,7 @@ const mapStateToProps = (state: RootState): Partial<ServicesExplorerProps> => {
 const mapDispatchToProps = (dispatch): Partial<ServicesExplorerProps> => {
   return {
     onAnchorClick: (url) => {
-      CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.OpenExternal, url).catch();
+      return CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.OpenExternal, url);
     },
     openAddServiceContextMenu: (payload: ConnectedServicePickerPayload) =>
       dispatch(openAddServiceContextMenu(payload)),

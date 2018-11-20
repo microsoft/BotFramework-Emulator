@@ -32,7 +32,7 @@ describe('The botStateMiddleware', () => {
     emulator = { facilities: { logger: { logMessage: () => true } } } as any;
     emulator.facilities.conversations = new ConversationSet();
     user = { id: '321', name: 'a user' };
-    const endpoint = new BotEndpoint('12', '123', 'http://localhost:12345', '', '', false, {});
+    const endpoint = new BotEndpoint('12', '123', 'http://localhost:12345', '', '', false, '', {});
     conversation = emulator.facilities.conversations.newConversation(emulator, endpoint, user);
     botState = new BotState(emulator, 256);
     jest.spyOn(Date, 'now').mockReturnValue({ toString: () => '123456' });

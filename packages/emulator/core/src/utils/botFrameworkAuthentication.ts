@@ -34,11 +34,12 @@
 import * as jwt from 'jsonwebtoken';
 import * as Restify from 'restify';
 
-import { authentication, v31Authentication, v32Authentication } from '../authEndpoints';
+import { authentication, v31Authentication, v32Authentication, usGovernmentAuthentication } from '../authEndpoints';
 import OpenIdMetadata from './openIdMetadata';
 
 export default function createBotFrameworkAuthenticationMiddleware(fetch: any) {
   const openIdMetadata = new OpenIdMetadata(fetch, authentication.openIdMetadata);
+  const usGovOpenIdMetadata = new OpenIdMetadata(fetch, usGovernmentAuthentication.openIdMetadata);
 
   return async (req: Restify.Request, res: Restify.Response, next: Restify.Next) => {
     const authorization = req.header('Authorization');
@@ -62,51 +63,30 @@ export default function createBotFrameworkAuthenticationMiddleware(fetch: any) {
       return;
     }
 
-    const key = await openIdMetadata.getKey(decoded.header.kid);
+    if(decoded.payload.aud === usGovernmentAuthentication.botTokenAudience)
+    {
+      // We are talking to a US Gov hosted bot so do validation with that context
+      const key = await usGovOpenIdMetadata.getKey(decoded.header.kid);
 
-    if (!key) {
-      res.status(500);
-      res.end();
+      let issuer;
 
-      return;
-    }
+      if (decoded.payload.ver === '1.0') {
+        issuer = usGovernmentAuthentication.tokenIssuerV1;
+      } else if (decoded.payload.ver === '2.0') {
+        issuer = usGovernmentAuthentication.tokenIssuerV2;
+      } else {
+        // unknown token format
+        res.status(401);
+        res.end();
 
-    let issuer;
+        return;
+      }
 
-    if (decoded.payload.ver === '1.0') {
-      issuer = v32Authentication.tokenIssuerV1;
-    } else if (decoded.payload.ver === '2.0') {
-      issuer = v32Authentication.tokenIssuerV2;
-    } else {
-      // unknown token format
-      res.status(401);
-      res.end();
-
-      return;
-    }
-
-    try {
-      // TODO: Turn jwt.verify into async call for better performance
-      // first try 3.2 token characteristics
-      (req as any).jwt = jwt.verify(token, key, {
-        audience: authentication.botTokenAudience,
-        clockTolerance: 300,
-        issuer,
-
-        // TODO: "jwtId" is a typo, it should be "jwtid"
-        //       But when we enable "jwtid", it will fail the verification
-        //       because the payload does not specify "jti"
-        //       When we comment out "jwtId", it also works (because it is a typo)
-
-        // jwtId: botId
-      });
-    } catch (err) {
       try {
-        // then try v3.1 token characteristics
         (req as any).jwt = jwt.verify(token, key, {
-          audience: authentication.botTokenAudience,
+          audience: usGovernmentAuthentication.botTokenAudience,
           clockTolerance: 300,
-          issuer: v31Authentication.tokenIssuer,
+          issuer: issuer,
 
           // TODO: "jwtId" is a typo, it should be "jwtid"
           //       But when we enable "jwtid", it will fail the verification
@@ -120,6 +100,69 @@ export default function createBotFrameworkAuthenticationMiddleware(fetch: any) {
         res.end();
 
         return;
+      }
+    } else {
+      // We are talking to a Public Azure host bot so do public Azure verification steps
+
+      const key = await openIdMetadata.getKey(decoded.header.kid);
+
+      if (!key) {
+        res.status(500);
+        res.end();
+
+        return;
+      }
+
+      let issuer;
+
+      if (decoded.payload.ver === '1.0') {
+        issuer = v32Authentication.tokenIssuerV1;
+      } else if (decoded.payload.ver === '2.0') {
+        issuer = v32Authentication.tokenIssuerV2;
+      } else {
+        // unknown token format
+        res.status(401);
+        res.end();
+
+        return;
+      }
+
+      try {
+        // TODO: Turn jwt.verify into async call for better performance
+        // first try 3.2 token characteristics
+        (req as any).jwt = jwt.verify(token, key, {
+          audience: authentication.botTokenAudience,
+          clockTolerance: 300,
+          issuer,
+
+          // TODO: "jwtId" is a typo, it should be "jwtid"
+          //       But when we enable "jwtid", it will fail the verification
+          //       because the payload does not specify "jti"
+          //       When we comment out "jwtId", it also works (because it is a typo)
+
+          // jwtId: botId
+        });
+      } catch (err) {
+        try {
+          // then try v3.1 token characteristics
+          (req as any).jwt = jwt.verify(token, key, {
+            audience: authentication.botTokenAudience,
+            clockTolerance: 300,
+            issuer: v31Authentication.tokenIssuer,
+
+            // TODO: "jwtId" is a typo, it should be "jwtid"
+            //       But when we enable "jwtid", it will fail the verification
+            //       because the payload does not specify "jti"
+            //       When we comment out "jwtId", it also works (because it is a typo)
+
+            // jwtId: botId
+          });
+        } catch (err) {
+          res.status(401);
+          res.end();
+
+          return;
+        }
       }
     }
 
