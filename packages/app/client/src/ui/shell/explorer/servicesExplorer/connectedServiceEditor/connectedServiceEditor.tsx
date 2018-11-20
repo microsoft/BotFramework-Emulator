@@ -31,13 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ConnectedService } from 'botframework-config/lib/models';
-import { BotConfigurationBase } from 'botframework-config/lib/botConfigurationBase';
-import { IConnectedService, ServiceTypes } from 'botframework-config/lib/schema';
 import { DefaultButton, Dialog, DialogFooter, PrimaryButton, TextField } from '@bfemulator/ui-react';
+import { BotConfigurationBase } from 'botframework-config/lib/botConfigurationBase';
+import { ConnectedService } from 'botframework-config/lib/models';
+import { IConnectedService, ServiceTypes } from 'botframework-config/lib/schema';
 import * as React from 'react';
-import { Component } from 'react';
+import { ChangeEvent, Component } from 'react';
 import { serviceTypeLabels } from '../../../../../utils/serviceTypeLables';
+import * as styles from './connectedServiceEditor.scss';
 
 interface ConnectedServiceEditorProps {
   connectedService: IConnectedService;
@@ -54,16 +55,19 @@ interface ConnectedServiceEditorState extends Partial<any> {
 
 const labelMap = {
   authoringKey: 'Authoring key',
+  applicationId: 'App Insights Application ID',
+  instrumentationKey: 'App Insights Instrumentation Key',
+  serviceName: 'Azure Service Name',
   appId: 'LUIS app ID',
   id: 'App ID',
   endpointKey: 'Endpoint key',
   hostname: 'Host Name',
   kbId: 'Knowledge base ID',
   name: 'Name',
-  resourceGroup: 'Resource group',
-  subscriptionId: 'Subscription ID',
-  subscriptionKey: 'Subscription key',
-  tenantId: 'Tenant ID',
+  resourceGroup: 'Azure Resource group',
+  subscriptionId: 'Azure Subscription ID',
+  subscriptionKey: 'Azure Subscription key',
+  tenantId: 'Azure Tenant ID',
   version: 'Version',
   ...serviceTypeLabels
 };
@@ -72,7 +76,8 @@ const titleMap = {
   [ServiceTypes.Luis]: 'Connect to a LUIS app',
   [ServiceTypes.Dispatch]: 'Connect to a Dispatch model',
   [ServiceTypes.QnA]: 'Connect to a QnA Maker knowledge base',
-  [ServiceTypes.Bot]: 'Connect to Azure Bot Service'
+  [ServiceTypes.Bot]: 'Connect to Azure Bot Service',
+  [ServiceTypes.AppInsights]: 'Connect to Application Insights resource'
 };
 
 const portalMap = {
@@ -88,7 +93,18 @@ const getEditableFields = (service: IConnectedService): string[] => {
       return ['name', 'appId', 'authoringKey', 'version', 'subscriptionKey'];
 
     case ServiceTypes.QnA:
-      return ['name', 'kbId', 'endpointKey'];
+      return ['name', 'kbId', 'hostname', 'subscriptionKey', 'endpointKey'];
+
+    case ServiceTypes.AppInsights:
+      return [
+        'name',
+        'tenantId',
+        'subscriptionKey',
+        'resourceGroup',
+        'serviceName',
+        'instrumentationKey',
+        'applicationId'
+      ];
 
     default:
       throw new TypeError(`${ service.type } is not a valid service type`);
@@ -97,7 +113,6 @@ const getEditableFields = (service: IConnectedService): string[] => {
 
 export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProps, ConnectedServiceEditorState> {
   public state: ConnectedServiceEditorState = {} as ConnectedServiceEditorState;
-  private textFieldHandlers: { [key: string]: (x: string) => void } = {};
 
   constructor(props: ConnectedServiceEditorProps, state: ConnectedServiceEditorState) {
     super(props, state);
@@ -115,7 +130,7 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
   }
 
   public render(): JSX.Element {
-    const { state, textFieldHandlers, onInputChange, props, onSubmitClick } = this;
+    const { state, onInputChange, props, onSubmitClick } = this;
     const { isDirty, connectedServiceCopy } = state;
     const { type } = connectedServiceCopy;
     const fields = getEditableFields(connectedServiceCopy);
@@ -124,25 +139,26 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
     // Build the editable inputs from the enumerable properties
     // in the data model. This assumes all enumerable fields are editable
     // except the type
-    fields.forEach((key, index) => {
-      const isRequired = this.isRequired(key);
-      valid = valid && (!isRequired || !!connectedServiceCopy[key]);
+    fields.forEach((prop, index) => {
+      const isRequired = this.isRequired(prop);
+      valid = valid && (!isRequired || !!connectedServiceCopy[prop]);
       textInputs.push(
         <TextField
           key={ `input_${ index }` }
-          errorMessage={ state[`${ key }Error`] || '' }
-          value={ connectedServiceCopy[key] }
-          onChanged={ textFieldHandlers[key] || (textFieldHandlers[key] = onInputChange.bind(this, key)) }
-          label={ labelMap[key] } required={ isRequired }
+          errorMessage={ state[`${ prop }Error`] || '' }
+          value={ (connectedServiceCopy[prop] || '') }
+          data-prop={ prop }
+          onChange={ onInputChange }
+          label={ labelMap[prop] } required={ isRequired }
         />
       );
     });
 
     return (
-      <Dialog title={ titleMap[type] } cancel={ props.cancel }>
+      <Dialog title={ titleMap[type] } cancel={ props.cancel } className={ styles.connectedServiceEditor }>
         <p>
           You can find your knowledge base ID and subscription key in { portalMap[type] }&nbsp;
-          <a href="javascript:void(0);" onClick={ this.onLearnMoreKeys }>
+          <a href="javascript:void(0);" onClick={ this.onLearnMoreClick }>
             Learn more about keys in { labelMap[type] }
           </a>
         </p>
@@ -156,6 +172,10 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
   }
 
   private isRequired(key: string): boolean {
+    if (key === 'applicationId') {
+      return false;
+    }
+
     if (key !== 'subscriptionKey') {
       return true;
     }
@@ -170,31 +190,45 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
     }
   }
 
-  private onLearnMoreKeys = (): void => {
-    if (ServiceTypes.Luis) {
-      this.props.onAnchorClick('http://aka.ms/bot-framework-emulator-LUIS-docs-home');
-    } else if (ServiceTypes.QnA) {
-      this.props.onAnchorClick('http://aka.ms/bot-framework-emulator-qna-keys');
-    } else {
-      this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-create-dispatch');
+  private onLearnMoreClick = (): void => {
+    let url;
+    switch (this.props.serviceType) {
+      case ServiceTypes.Luis:
+        url = 'http://aka.ms/bot-framework-emulator-LUIS-docs-home';
+        break;
+
+      case ServiceTypes.QnA:
+        url = 'http://aka.ms/bot-framework-emulator-qna-keys';
+        break;
+
+      case ServiceTypes.Dispatch:
+        url = 'https://aka.ms/bot-framework-emulator-create-dispatch';
+        break;
+
+      default:
+        throw new Error(`${this.props.serviceType} is not a known service.`);
     }
+    this.props.onAnchorClick(url);
   }
 
   private onSubmitClick = (): void => {
     this.props.updateConnectedService(this.state.connectedServiceCopy);
   }
 
-  private onInputChange = (propName: string, value: string): void => {
+  private onInputChange = (event: ChangeEvent<HTMLInputElement>): void => {
+    const { value } = event.target;
+    const { prop } = event.target.dataset;
+
     const trimmedValue = value.trim();
 
     const { connectedService: originalLuisService = {} } = this.props;
-    const errorMessage = (this.isRequired(propName) && !trimmedValue) ? `The field cannot be empty` : '';
+    const errorMessage = (this.isRequired(prop) && !trimmedValue) ? `The field cannot be empty` : '';
 
     const { connectedServiceCopy } = this.state;
-    connectedServiceCopy[propName] = value;
+    connectedServiceCopy[prop] = value;
 
     const isDirty = Object.keys(connectedServiceCopy)
       .reduce((dirty, key) => (dirty || connectedServiceCopy[key] !== originalLuisService[key]), false);
-    this.setState({ connectedServiceCopy: connectedServiceCopy, [`${ propName }Error`]: errorMessage, isDirty } as any);
+    this.setState({ connectedServiceCopy, [`${ prop }Error`]: errorMessage, isDirty } as any);
   }
 }

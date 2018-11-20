@@ -43,7 +43,7 @@
   position: relative;
   padding-right: 20px;
   margin-top: 28px;
-  display: inline-block;
+  display: block;
   text-decoration: none;
   &::before {
     content: '';
@@ -87,13 +87,13 @@
 }
 
 .abs-text-field-row {
-  > div {
+  width: 100%;
+  > div:first-child {
     width: 100%;
-    > div:first-child {
-      margin-right: 5px;
-    }
-    > div:last-child {
-      margin-left: 5px;
-    }
+    margin-right: 5px;
+  }
+  > div:last-child {
+    width: 100%;
+    margin-left: 5px;
   }
 }

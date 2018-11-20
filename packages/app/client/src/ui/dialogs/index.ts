@@ -30,8 +30,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { initializeIcons } from 'office-ui-fabric-react/lib/Icons';
-initializeIcons();
 
 export * from './botCreationDialog/botCreationDialog';
 export * from './host/host';
@@ -41,9 +39,11 @@ export * from './service';
 export * from './azureLoginSuccessDialog/azureLoginSuccessDialogContainer';
 export * from './azureLoginPromptDialog/azureLoginPromptDialogContainer';
 export * from './azureLoginFailedDialog/azureLoginFailedDialogContainer';
-export * from './connectLuisAppPromptDialog/connectLuisAppPromptDialogContainer';
+export * from './connectServicePromptDialog/connectServicePromptDialogContainer';
 export * from './getStartedWithCSDialog/getStartedWithCSDialogContainer';
 export * from './postMigrationDialog/postMigrationDialogContainer';
 export * from './progressIndicator/progressIndicatorContainer';
 export * from './botSettingsEditor/botSettingsEditorContainer';
 export * from './resourcesSettings/resourcesSettingsContainer';
+export * from './updateAvailableDialog';
+export * from './updateUnavailableDialog';

@@ -38,14 +38,14 @@ describe('The AzureLoginSuccessDialogContainer component should', () => {
     const instance = node.instance();
     expect('rememberMeChecked' in instance.state);
     const currentCheckedValue = instance.state.rememberMeChecked;
-    instance.checkBoxChanged(new Event('click') as any, !currentCheckedValue);
+    instance.checkBoxChanged({ target: { checked: true } } as any);
     expect(instance.state.rememberMeChecked).toBe(!currentCheckedValue);
   });
 
-  it ('should call the cancel function with the checked state when the onDialogCancel function is called', () => {
+  it('should call the cancel function with the checked state when the onDialogCancel function is called', () => {
     const instance = node.instance();
     const currentCheckedValue = instance.state.rememberMeChecked;
-    const {cancel} = instance.props;
+    const { cancel } = instance.props;
     Object.defineProperty(instance, 'props', {
       value: {
         cancel

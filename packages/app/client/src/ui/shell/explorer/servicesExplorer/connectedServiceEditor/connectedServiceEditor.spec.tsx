@@ -1,13 +1,16 @@
+import { SharedConstants } from '@bfemulator/app-shared';
+import { PrimaryButton } from '@bfemulator/ui-react';
+import { ServiceTypes } from 'botframework-config';
+import { LuisService } from 'botframework-config/lib/models';
+import { mount } from 'enzyme';
 import * as React from 'react';
 import { Provider } from 'react-redux';
-import { mount } from 'enzyme';
 import { combineReducers, createStore } from 'redux';
 import { azureAuth } from '../../../../../data/reducer/azureAuthReducer';
-import { ConnectedServiceEditorContainer } from './connectedServiceEditorContainer';
-import { ConnectedServiceEditor } from './connectedServiceEditor';
+import { CommandServiceImpl } from '../../../../../platform/commands/commandServiceImpl';
 import { DialogService } from '../../../../dialogs/service';
-import { LuisService } from 'botframework-config/lib/models';
-import { PrimaryButton } from '@bfemulator/ui-react';
+import { ConnectedServiceEditor } from './connectedServiceEditor';
+import { ConnectedServiceEditorContainer } from './connectedServiceEditorContainer';
 
 jest.mock('../../../../dialogs/service', () => ({
   DialogService: {
@@ -23,6 +26,8 @@ jest.mock('../../../../dialogs/', () => ({
   DialogService: { showDialog: () => Promise.resolve(true) },
   SecretPromptDialog: () => undefined
 }));
+
+jest.mock('./connectedServiceEditor.scss', () => ({}));
 
 describe('The ConnectedServiceEditor component should', () => {
   let parent;
@@ -40,7 +45,7 @@ describe('The ConnectedServiceEditor component should', () => {
             "subscriptionKey": "emoji"
         }`);
     parent = mount(<Provider store={ createStore(combineReducers({ azureAuth })) }>
-      <ConnectedServiceEditorContainer connectedService={ mockService } />
+      <ConnectedServiceEditorContainer connectedService={ mockService }/>
     </Provider>);
     node = parent.find(ConnectedServiceEditor);
   });
@@ -70,7 +75,8 @@ describe('The ConnectedServiceEditor component should', () => {
 
   it('should produce an error when a required input field is null', () => {
     const instance = node.instance();
-    instance.onInputChange('name', '');
+    const mockEvent = { target: { value: '', dataset: { prop: 'name' } } };
+    instance.onInputChange(mockEvent as any);
     expect(instance.state.connectedServiceCopy.name).toBe('');
     expect(instance.state.nameError).not.toBeNull();
   });
@@ -78,7 +84,8 @@ describe('The ConnectedServiceEditor component should', () => {
   it('should exit with the newly edited model when clicking submit', () => {
     const spy = jest.spyOn(DialogService, 'hideDialog');
     const instance = node.instance();
-    instance.textFieldHandlers.name('renamed model');
+    const mockEvent = { target: { value: 'renamed model', dataset: { prop: 'name' } } };
+    instance.onInputChange(mockEvent as any);
     instance.onSubmitClick();
     const mockMock = { ...mockService };
     mockMock.name = 'renamed model';
@@ -87,10 +94,34 @@ describe('The ConnectedServiceEditor component should', () => {
 
   it('should enable the submit button when all required fields have non-null values', () => {
     const instance = node.instance();
-    instance.textFieldHandlers.name('renamed model');
-    instance.textFieldHandlers.subscriptionKey(''); // non-required field
+    const mockEvent = { target: { value: 'renamed model', dataset: { prop: 'name' } } };
+    instance.onInputChange(mockEvent as any);
+    mockEvent.target.dataset.prop = 'subscriptionKey';
+    mockEvent.target.value = '';
+    instance.onInputChange(mockEvent as any); // non-required field
     instance.render();
     const submitBtn = node.find(PrimaryButton);
     expect(submitBtn.props.disabled).toBeFalsy();
+  });
+
+  it('should request to open a url when the learn more anchor is clicked based on the service type', async () => {
+    const remoteCallSpy = jest.spyOn(CommandServiceImpl, 'remoteCall');
+    const instance = node.instance();
+    expect(() => instance.onLearnMoreClick()).toThrow();
+    instance.props = {...instance.props, serviceType: ServiceTypes.Luis};
+
+    instance.onLearnMoreClick();
+    expect(remoteCallSpy).toHaveBeenCalledWith(SharedConstants.Commands.Electron.OpenExternal,
+      'http://aka.ms/bot-framework-emulator-LUIS-docs-home');
+
+    instance.props = {...instance.props, serviceType: ServiceTypes.QnA};
+    instance.onLearnMoreClick();
+    expect(remoteCallSpy).toHaveBeenCalledWith(SharedConstants.Commands.Electron.OpenExternal,
+      'http://aka.ms/bot-framework-emulator-qna-keys');
+
+    instance.props = {...instance.props, serviceType: ServiceTypes.Dispatch};
+    instance.onLearnMoreClick();
+    expect(remoteCallSpy).toHaveBeenCalledWith(SharedConstants.Commands.Electron.OpenExternal,
+      'https://aka.ms/bot-framework-emulator-create-dispatch');
   });
 });

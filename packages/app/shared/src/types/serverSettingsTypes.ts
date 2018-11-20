@@ -49,6 +49,10 @@ export interface FrameworkSettings {
   localhost?: string;
   // locale to use across all endpoints
   locale?: string;
+  // enables auto update on startup
+  autoUpdate?: boolean;
+  // enables pre-release updates
+  usePrereleases?: boolean;
 }
 
 export interface WindowStateSettings {
@@ -116,7 +120,9 @@ export const frameworkDefault: FrameworkSettings = {
   use10Tokens: false,
   useCodeValidation: false,
   localhost: 'localhost',
-  locale: ''
+  locale: '',
+  usePrereleases: false,
+  autoUpdate: true
 };
 
 export const windowStateDefault: WindowStateSettings = {

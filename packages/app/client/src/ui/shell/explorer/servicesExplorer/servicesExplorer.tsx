@@ -33,14 +33,14 @@
 
 import { IConnectedService } from 'botframework-config/lib/schema';
 import * as React from 'react';
-import { MouseEventHandler, SyntheticEvent } from 'react';
+import { MouseEvent, MouseEventHandler, SyntheticEvent } from 'react';
 import { ServicePane, ServicePaneProps } from '../servicePane/servicePane';
 import { ConnectedServiceEditorContainer } from './connectedServiceEditor';
 import { ConnectedServicePickerPayload } from '../../../../data/action/connectedServiceActions';
 import {
   AzureLoginFailedDialogContainer,
   AzureLoginSuccessDialogContainer,
-  ConnectLuisAppPromptDialogContainer,
+  ConnectServicePromptDialogContainer,
   GetStartedWithCSDialogContainer,
   ProgressIndicatorContainer
 } from '../../../dialogs';
@@ -99,24 +99,28 @@ export class ServicesExplorer extends ServicePane<ServicesExplorerProps> {
           { 'You can connect your bot to services such as ' }
           <a
             href="javascript:void(0);"
-            onClick={ this.onLearnMoreLUISAnchor }>
+            data-href="https://aka.ms/bot-framework-emulator-LUIS-docs-home"
+            onClick={ this.onAnchorClick }>
             { 'Language Understanding (LUIS), ' }
           </a>
           <a
             href="javascript:void(0);"
-            onClick={ this.onLearnMoreQnAAnchor }>
+            data-href="https://aka.ms/bot-framework-emulator-qna-docs-home"
+            onClick={ this.onAnchorClick }>
             { 'QnA Maker, and ' }
           </a>
           <a
             href="javascript:void(0);"
-            onClick={ this.onLearnMoreDispatchAnchor }>
+            data-href="https://aka.ms/bot-framework-emulator-create-dispatch"
+            onClick={ this.onAnchorClick }>
             Dispatch.
           </a>
         </p>
         <p className={ styles.emptyContent }>
           <a
             href="javascript:void(0);"
-            onClick={ this.onLearnMoreServicesAnchor }>
+            data-href="https://aka.ms/bot-framework-emulator-services"
+            onClick={ this.onAnchorClick }>
             Learn more about using services.</a>
         </p>
       </div>
@@ -139,9 +143,11 @@ export class ServicesExplorer extends ServicePane<ServicesExplorerProps> {
           key={ index }
           className={ `${ styles.link } ${ toAnimate[service.id] ? styles.animateHighlight : '' } ` }
           onDoubleClick={ this.onLinkClick }
-          onKeyPress={ this.onHandleKeyPress }
+          onKeyPress={ this.onKeyPress }
           data-index={ index }
-          tabIndex={ 0 }>
+          tabIndex={ 0 }
+          title={ service.name }
+        >
           { label } <span>- { serviceTypeLabels[service.type] }</span>
         </li>
       );
@@ -155,7 +161,7 @@ export class ServicesExplorer extends ServicePane<ServicesExplorerProps> {
     this.props.openContextMenuForService(connectedService, ConnectedServiceEditorContainer);
   }
 
-  protected onHandleKeyPress = (e): void => {
+  protected onKeyPress = (e): void => {
     if (e.key === 'Enter') {
       this.onLinkClick(e);
     }
@@ -177,7 +183,7 @@ export class ServicesExplorer extends ServicePane<ServicesExplorerProps> {
       azureAuthWorkflowComponents: {
         loginFailedDialog: AzureLoginFailedDialogContainer,
         loginSuccessDialog: AzureLoginSuccessDialogContainer,
-        promptDialog: ConnectLuisAppPromptDialogContainer
+        promptDialog: ConnectServicePromptDialogContainer
       },
       getStartedDialog: GetStartedWithCSDialogContainer,
       editorComponent: ConnectedServiceEditorContainer,
@@ -186,19 +192,7 @@ export class ServicesExplorer extends ServicePane<ServicesExplorerProps> {
     });
   }
 
-  private onLearnMoreLUISAnchor = () => {
-    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-LUIS-docs-home');
-  }
-
-  private onLearnMoreQnAAnchor = () => {
-    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-qna-docs-home');
-  }
-
-  private onLearnMoreDispatchAnchor = () => {
-    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-create-dispatch');
-  }
-
-  private onLearnMoreServicesAnchor = () => {
-    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-services');
+  private onAnchorClick = (event: MouseEvent<HTMLAnchorElement>): void => {
+    this.props.onAnchorClick(event.currentTarget.dataset.href);
   }
 }

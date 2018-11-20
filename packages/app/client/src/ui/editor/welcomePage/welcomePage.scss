@@ -42,7 +42,7 @@
   border: var(--my-bots-well-border);
 
   &::-webkit-scrollbar-thumb {
-    background-color: transparent
+    background-color: transparent;
   }
 
   &:hover {
@@ -147,12 +147,6 @@
   margin-top: 24px;
   margin-bottom: 16px;
   width: 180px;
-
-  :global {
-    .ms-Button-label {
-      line-height: 26px;
-    }
-  }
 }
 
 .cta-link {

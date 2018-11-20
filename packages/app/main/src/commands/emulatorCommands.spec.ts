@@ -1,8 +1,7 @@
 import { combineReducers, createStore } from 'redux';
 import * as BotActions from '../botData/actions/botActions';
 import { bot } from '../botData/reducers/bot';
-import { BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
-import { CommandRegistryImpl } from '@bfemulator/sdk-shared/built';
+import { BotConfigWithPathImpl, CommandRegistryImpl } from '@bfemulator/sdk-shared';
 import { registerCommands } from './emulatorCommands';
 import * as store from '../botData/store';
 import { BotConfiguration } from 'botframework-config';

@@ -55,7 +55,7 @@ describe('The ResourcesSettings component should', () => {
             "name": "https://testbot.botframework.com/api/messagesv3",
             "id": "https://testbot.botframework.com/api/messagesv3",
             "appId": "51fc2648-1190-44fa-9559-87b11b1d0014",
-            "appPassword": "jxZjGcOpyfM4q75vp2paNQd",
+            "appPassword": "ter65rtgfgfdsgfsg",
             "endpoint": "https://testbot.botframework.com/api/messagesv3"
         }]
       }`);
@@ -82,14 +82,16 @@ describe('The ResourcesSettings component should', () => {
   it('should update the state when the chat input is changed', () => {
     const instance = node.instance();
     expect(instance.state.chatsPath).toBeUndefined();
-    instance.onChangeChatInput('hello');
+    const mockEvent = { target: {  value: 'hello', dataset: { prop: 'chatsPath' } } };
+    instance.onInputChange(mockEvent as any);
     expect(instance.state.chatsPath).toBe('hello');
   });
 
   it('should update the state when the transcript input is changed', () => {
     const instance = node.instance();
     expect(instance.state.transcriptsPath).toBeUndefined();
-    instance.onChangeTranscriptInput('hello');
+    const mockEvent = { target: {  value: 'hello', dataset: { prop: 'transcriptsPath' } } };
+    instance.onInputChange(mockEvent as any);
     expect(instance.state.transcriptsPath).toBe('hello');
   });
 

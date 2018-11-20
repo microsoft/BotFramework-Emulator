@@ -1,7 +1,7 @@
 .main {
   min-width: 464px;
   width: 464px;
-  max-height: 439px;
+  max-height: 454px;
 
   a {
     color: var(--link-color);
@@ -11,35 +11,18 @@
 }
 
 .multi-input-row {
-  width: 420px;
   justify-content: space-between;
 }
 
-.small-input input {
-  width: 200px;
+.input-container {
+  width: 100%;
+  & + div {
+    margin-left: 8px;
+  }
 }
 
 .bot-create-form {
   position: relative;
-}
-
-.checkbox-anchor-container {
-  display: flex;
-
-  > .link {
-    background-color: transparent;
-    border: 1px solid transparent;
-    color: var(--focused-selected-list-item-bg);
-    cursor: pointer;
-    font-weight: 600;
-    padding: 0;
-    text-decoration: none;
-    white-space: normal;
-
-    &:hover {
-      text-decoration: underline;
-    }
-  }
 }
 
 .endpoint-warning {
@@ -53,21 +36,20 @@
 .key {
   width: 175px;
   margin: 16px 145px 0 32px;
+  > label[aria-disabled] {
+    color: initial;
+  }
 }
 
 .encrypt-key-check-box {
   margin-top: 30px;
-
-  span {
-    width: auto;
-  }
 }
 
 .actions-list {
   list-style: none;
   position: absolute;
   right: 106px; // when re-enabling 'Generate new secret' link, original value: 0;
-  bottom: 3px;
+  bottom: 12.5px;
   padding: 0;
   margin: 0;
 

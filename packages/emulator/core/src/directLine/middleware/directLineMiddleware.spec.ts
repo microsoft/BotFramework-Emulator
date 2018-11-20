@@ -357,7 +357,7 @@ describe('The directLine middleware', () => {
     it('should create a new conversation if one does not already exist', async () => {
       const req = {
         header: () => 'bm90aGluZw.eyJjb252ZXJzYXRpb25JZCI6InRyYW5zY3JpcHQtMDA3In0=.7gjdshgfdsk98458205jfds9843fjds',
-        botEndpoint: new BotEndpoint('12', '123', 'http://localhost:12345', '', '', false, {
+        botEndpoint: new BotEndpoint('12', '123', 'http://localhost:12345', '', '', false, '', {
           fetch: async () => true
         }),
         conversation: null
@@ -378,7 +378,7 @@ describe('The directLine middleware', () => {
       const conversation = createConversationUtil(emulator);
       const req = {
         header: () => 'Bearer eyJjb252ZXJzYXRpb25JZCI6InRyYW5zY3JpcHQtMDA3In0=',
-        botEndpoint: new BotEndpoint('123', '1234', 'http://localhost:12345', '', '', false, {
+        botEndpoint: new BotEndpoint('123', '1234', 'http://localhost:12345', '', '', false, '', {
           fetch: async () => true
         }),
         conversation: null
@@ -432,7 +432,7 @@ function createConversationUtil(emulator: BotEmulator, conversationId: string = 
   // create the conversation with an activity
   const bot = { role: 'bot', name: 'thebot', id: '456' };
   let req: any = {
-    botEndpoint: new BotEndpoint('12', '123', 'http://localhost:12345', '', '', false, {
+    botEndpoint: new BotEndpoint('12', '123', 'http://localhost:12345', '', '', false, '', {
       fetch: async () => ({
         json: async () => ({}),
         text: async () => 'hello',

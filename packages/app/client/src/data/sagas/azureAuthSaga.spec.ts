@@ -3,6 +3,7 @@ jest.mock('../../ui/dialogs', () => ({
   AzureLoginSuccessDialogContainer: () => undefined,
   BotCreationDialog: () => undefined,
   DialogService: { showDialog: () => Promise.resolve(true) },
+  PostMigrationDialogContainer: () => undefined,
   SecretPromptDialog: () => undefined
 }));
 

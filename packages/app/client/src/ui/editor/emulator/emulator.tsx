@@ -74,7 +74,7 @@ interface EmulatorProps {
   newConversation?: (documentId: string, options: any) => void;
   presentationModeEnabled?: boolean;
   setInspectorObjects?: (documentId: string, objects: any) => void;
-  updateDocument?: (documentId: string, updatedValues: any) => void;
+  updateDocument?: (documentId: string, updatedValues: Partial<Document>) => void;
   url?: string;
 }
 
@@ -193,7 +193,7 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
               props.document.documentId
             );
 
-            this.props.updateDocument(this.props.documentId, { fileName: fileInfo.fileName });
+            this.props.updateDocument(this.props.documentId, fileInfo);
           } catch (err) {
             throw new Error(`Error while feeding transcript on disk to conversation: ${err}`);
           }

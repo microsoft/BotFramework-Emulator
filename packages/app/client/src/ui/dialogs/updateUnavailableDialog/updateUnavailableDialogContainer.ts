@@ -31,46 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from 'react';
 import { connect } from 'react-redux';
+import { DialogService } from '../service';
+import { UpdateUnavailableDialog, UpdateUnavailableDialogProps } from './updateUnavailableDialog';
 
-import * as EditorActions from '../../../data/action/editorActions';
-import { Tab } from './tab/tab';
-import { getTabGroupForDocument } from '../../../data/editorHelpers';
-import { RootState } from '../../../data/store';
-
-interface GenericTabProps {
-  active?: boolean;
-  dirty?: boolean;
-  documentId?: string;
-  title?: string;
-  closeTab?: () => void;
+function mapDispatchToProps(_dispatch: any): UpdateUnavailableDialogProps {
+  return {
+    onCloseClick: () => DialogService.hideDialog(null)
+  };
 }
 
-class GenericTabComponent extends React.Component<GenericTabProps> {
-  constructor(props: GenericTabProps) {
-    super(props);
-  }
-
-  render() {
-    return (
-      <Tab active={ this.props.active } title={ this.props.title } onCloseClick={ this.onCloseClick }
-           documentId={ this.props.documentId } dirty={ this.props.dirty }/>
-    );
-  }
-
-  private onCloseClick = (e) => {
-    e.stopPropagation();
-    this.props.closeTab();
-  }
-}
-
-const mapStateToProps = (state: RootState, ownProps: GenericTabProps): GenericTabProps => ({
-  active: state.editor.editors[state.editor.activeEditor].activeDocumentId === ownProps.documentId
-});
-
-const mapDispatchToProps = (dispatch, ownProps: GenericTabProps): GenericTabProps => ({
-  closeTab: () => dispatch(EditorActions.close(getTabGroupForDocument(ownProps.documentId), ownProps.documentId))
-});
-
-export const GenericTab = connect(mapStateToProps, mapDispatchToProps)(GenericTabComponent);
+export const UpdateUnavailableDialogContainer = connect(null, mapDispatchToProps)(UpdateUnavailableDialog);

@@ -77,6 +77,7 @@ export const SharedConstants = {
       ShowOpenDialog: 'shell:showExplorer-open-dialog',
       ShowSaveDialog: 'shell:showExplorer-save-dialog',
       UpdateFileMenu: 'menu:update-file-menu',
+      UpdateConversationMenu: 'menu:update-converation-menu',
       SetFullscreen: 'electron:set-fullscreen',
       SetTitleBar: 'electron:set-title-bar',
       DisplayContextMenu: 'electron:display-context-menu',
@@ -87,7 +88,7 @@ export const SharedConstants = {
       ShowAboutDialog: 'shell:about',
       OpenFileLocation: 'shell:open-file-location',
       UnlinkFile: 'shell:unlink-file',
-      RenameFile: 'shell:rename-file',
+      RenameFile: 'shell:rename-file'
     },
 
     Emulator: {
@@ -160,6 +161,12 @@ export const SharedConstants = {
       ShowPostMigrationDialog: 'post-migration-dialog:show',
       UpdateProgressIndicator: 'shell:updateProgressIndicator',
       InvalidateAzureArmToken: 'shell:invalidateAzureArmToken',
+      ShowUpdateAvailableDialog: 'update-available-dialog:show',
+      ShowUpdateUnavailableDialog: 'update-unavailable-dialog:show',
+      ShowProgressIndicator: 'progress-indicator:show'
     }
-  }
+  },
+    ContentTypes: {
+      CONTENT_TYPE_LIVE_CHAT: 'application/vnd.microsoft.bfemulator.document.livechat'
+    }
 };

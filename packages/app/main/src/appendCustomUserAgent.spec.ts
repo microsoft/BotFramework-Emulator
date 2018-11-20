@@ -31,27 +31,28 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { connect } from 'react-redux';
-import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
-import { ConnectLuisAppPromptDialog, ConnectLuisAppPromptDialogProps } from './connectLuisAppPromptDialog';
-import { DialogService } from '../service';
-import { SharedConstants } from '@bfemulator/app-shared';
+const mockVersion = 'v4.5.6';
+jest.mock('electron', () => ({
+  app: {
+    getVersion: () => mockVersion
+  }
+}));
 
-const mapDispatchToProps = (
-  _dispatch: () => void, ownProps: { [propName: string]: any }
-): ConnectLuisAppPromptDialogProps => {
-  return {
-    ...ownProps,
-    cancel: () => DialogService.hideDialog(0),
-    confirm: () => DialogService.hideDialog(1),
-    addLuisAppManually: () => DialogService.hideDialog(2),
-    onAnchorClick: (url) => {
-      CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.OpenExternal, url).catch();
+import { appendCustomUserAgent } from './appendCustomUserAgent';
+
+it('should append a custom user agent to outgoing requests', () => {
+  const mockDetails = {
+    requestHeaders: {
+      'User-Agent': 'some/user/agent'
     }
   };
-};
+  const callBack = jest.fn((...args: any[]) => null);
+  appendCustomUserAgent(mockDetails, callBack);
 
-export const ConnectLuisAppPromptDialogContainer = connect(
-  null,
-  mapDispatchToProps
-)(ConnectLuisAppPromptDialog);
+  expect(callBack).toHaveBeenCalledWith({
+    cancel: false,
+    requestHeaders: {
+      'User-Agent': `some/user/agent botbuilder/emulator/${mockVersion}`
+    }
+  });
+});

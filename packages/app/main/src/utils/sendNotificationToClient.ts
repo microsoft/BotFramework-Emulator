@@ -34,14 +34,18 @@
 import { setGlobal, deleteGlobal } from '../globals';
 import { Notification, SharedConstants } from '@bfemulator/app-shared';
 import { CommandService } from '@bfemulator/sdk-shared';
+import { mainWindow } from '../main';
 
 /** Sends a notification to the client side using the Electron 'global' object
  *  (need to use global object because functions can't be sent over IPC)
  */
 export async function sendNotificationToClient(
   notification: Notification,
-  commandService: CommandService
+  commandService?: CommandService
 ): Promise<void> {
+  if (!commandService) {
+    commandService = mainWindow.commandService;
+  }
   // attach the notification to the global object
   setGlobal(SharedConstants.NOTIFICATION_FROM_MAIN, notification);
 

@@ -31,38 +31,27 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from 'react';
+import { SharedConstants } from '@bfemulator/app-shared';
+import { connect } from 'react-redux';
+import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
+import { DialogService } from '../service';
+import { ConnectServicePromptDialog, ConnectServicePromptDialogProps } from './connectServicePromptDialog';
 
-import * as Constants from '../../../constants';
-import { EmulatorTab, GenericTab } from './index';
-import { Document } from '../../../data/reducer/editor';
-
-interface TabFactoryProps {
-  document?: Document;
-}
-
-export const TabFactory = (props: TabFactoryProps) => {
-  // TODO - localization
-  if (props && props.document) {
-    switch (props.document.contentType) {
-      case Constants.CONTENT_TYPE_LIVE_CHAT:
-        return (<EmulatorTab mode="livechat" documentId={ props.document.documentId } dirty={ props.document.dirty }/>);
-
-      case Constants.CONTENT_TYPE_TRANSCRIPT:
-        return (
-          <EmulatorTab mode="transcript" documentId={ props.document.documentId } dirty={ props.document.dirty }/>);
-
-      case Constants.CONTENT_TYPE_WELCOME_PAGE:
-        return (
-          <GenericTab documentId={ props.document.documentId } title={ 'Welcome' } dirty={ props.document.dirty }/>);
-
-      case Constants.CONTENT_TYPE_APP_SETTINGS:
-        return (<GenericTab documentId={ props.document.documentId } title={ 'Emulator Settings' }
-                            dirty={ props.document.dirty }/>);
-
-      default:
-        break;
+const mapDispatchToProps = (
+  _dispatch: () => void, ownProps: { [propName: string]: any }
+): ConnectServicePromptDialogProps => {
+  return {
+    ...ownProps,
+    cancel: () => DialogService.hideDialog(0),
+    confirm: () => DialogService.hideDialog(1),
+    addServiceManually: () => DialogService.hideDialog(2),
+    onAnchorClick: (url) => {
+      CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.OpenExternal, url).catch();
     }
-  }
-  return null;
+  };
 };
+
+export const ConnectServicePromptDialogContainer = connect(
+  null,
+  mapDispatchToProps
+)(ConnectServicePromptDialog);

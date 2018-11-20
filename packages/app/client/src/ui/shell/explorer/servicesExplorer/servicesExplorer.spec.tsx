@@ -1,26 +1,29 @@
+import { SharedConstants } from '@bfemulator/app-shared';
+import { LuisService } from 'botframework-config/lib/models';
+import { mount } from 'enzyme';
 import * as React from 'react';
 import { Provider } from 'react-redux';
-import { mount } from 'enzyme';
 import { combineReducers, createStore } from 'redux';
-import { bot } from '../../../../data/reducer/bot';
-import { explorer } from '../../../../data/reducer/explorer';
-import { LuisService } from 'botframework-config/lib/models';
-import { ServicesExplorerContainer } from './servicesExplorerContainer';
-import { ServicesExplorer } from './servicesExplorer';
 import { load, setActive } from '../../../../data/action/botActions';
 import {
   openAddServiceContextMenu,
   openContextMenuForConnectedService,
-  openServiceDeepLink
+  openServiceDeepLink,
+  openSortContextMenu
 } from '../../../../data/action/connectedServiceActions';
-import { ConnectedServiceEditorContainer } from './connectedServiceEditor';
+import { bot } from '../../../../data/reducer/bot';
+import { explorer } from '../../../../data/reducer/explorer';
+import { CommandServiceImpl } from '../../../../platform/commands/commandServiceImpl';
 import {
   AzureLoginFailedDialogContainer,
   AzureLoginSuccessDialogContainer,
-  ConnectLuisAppPromptDialogContainer,
+  ConnectServicePromptDialogContainer,
   GetStartedWithCSDialogContainer
 } from '../../../dialogs';
+import { ConnectedServiceEditorContainer } from './connectedServiceEditor';
 import { ConnectedServicePickerContainer } from './connectedServicePicker/connectedServicePickerContainer';
+import { ServicesExplorer } from './servicesExplorer';
+import { ServicesExplorerContainer } from './servicesExplorerContainer';
 
 jest.mock('../../../dialogs', () => ({
   DialogService: {
@@ -28,9 +31,10 @@ jest.mock('../../../dialogs', () => ({
     hideDialog: () => Promise.resolve(false),
   }
 }));
-
+jest.mock('./servicesExplorer.scss', () => ({}));
 jest.mock('../servicePane/servicePane.scss', () => ({}));
 jest.mock('./connectedServicePicker/connectedServicePicker.scss', () => ({}));
+jest.mock('./connectedServiceEditor/connectedServiceEditor.scss', () => ({}));
 jest.mock('./servicesExplorer.scss', () => ({}));
 
 describe('The ServicesExplorer component should', () => {
@@ -94,7 +98,7 @@ describe('The ServicesExplorer component should', () => {
       azureAuthWorkflowComponents: {
         loginFailedDialog: AzureLoginFailedDialogContainer,
         loginSuccessDialog: AzureLoginSuccessDialogContainer,
-        promptDialog: ConnectLuisAppPromptDialogContainer
+        promptDialog: ConnectServicePromptDialogContainer
       },
       getStartedDialog: GetStartedWithCSDialogContainer,
       editorComponent: ConnectedServiceEditorContainer,
@@ -102,17 +106,37 @@ describe('The ServicesExplorer component should', () => {
     }));
   });
 
+  it('should dispatch a request to open a link when an anchor is clicked', () => {
+    const instance = node.instance();
+    const remoteCallSpy = jest.spyOn(CommandServiceImpl, 'remoteCall');
+    instance.onAnchorClick({ currentTarget: { dataset: { href: 'http://someurl' } } });
+    expect(remoteCallSpy).toHaveBeenCalledWith(SharedConstants.Commands.Electron.OpenExternal, 'http://someurl');
+  });
+
+  it('should dispatch to the store when a request to open the sort context menu is made', () => {
+    const instance = node.instance();
+    instance.onSortClick();
+    expect(mockDispatch).toHaveBeenCalledWith(openSortContextMenu());
+  });
+
+  it('should open the service deep link when the enter key is pressed on a focused list item', () => {
+    const instance = node.instance();
+    const onLinkClickSpy = jest.spyOn(instance, 'onLinkClick');
+    instance.onKeyPress({ key: 'Enter', currentTarget: { dataset: { index: 0 } } });
+    expect(onLinkClickSpy).toHaveBeenCalledWith({ key: 'Enter', currentTarget: { dataset: { index: 0 } } });
+  });
+
   it('should flag newly added services for animation', () => {
     const instance = node.instance();
     const c = Object.getPrototypeOf(instance).constructor;
     const prevState = {
       sortCriteria: 'name',
-      services: [{id: 'existingService'}]
+      services: [{ id: 'existingService' }]
     };
 
     const nextProps = {
       sortCriteria: 'name',
-      services: [{id: 'existingService'}, {id: 'newService'}]
+      services: [{ id: 'existingService' }, { id: 'newService' }]
     };
 
     const state = c.getDerivedStateFromProps(nextProps, prevState);
