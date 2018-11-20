@@ -1,3 +1,36 @@
+//
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license.
+//
+// Microsoft Bot Framework: http://botframework.com
+//
+// Bot Framework Emulator Github:
+// https://github.com/Microsoft/BotFramwork-Emulator
+//
+// Copyright (c) Microsoft Corporation
+// All rights reserved.
+//
+// MIT License:
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+//
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED ""AS IS"", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
+
 import * as React from 'react';
 import { Component, FormEvent, HTMLAttributes, ReactNode } from 'react';
 import * as styles from './checkbox.scss';
@@ -6,12 +39,14 @@ export interface CheckboxProps extends HTMLAttributes<HTMLInputElement> {
   label?: string;
   checkboxContainerClassName?: string;
   checked?: boolean;
+  indeterminate?: boolean;
   onChange?: (event: FormEvent<HTMLInputElement>) => void;
 }
 
 export interface CheckboxState {
   checked?: boolean;
   focused?: boolean;
+  indeterminate?: boolean;
 }
 
 let id = 0;
@@ -20,15 +55,26 @@ export class Checkbox extends Component<CheckboxProps, CheckboxState> {
   private readonly checkboxId = 'emulator-checkbox-' + id++;
   private inputRef: HTMLInputElement;
 
+  public static getDerivedStateFromProps(newProps: CheckboxProps, prevState: CheckboxState = {}): CheckboxState {
+    const { checked = false, indeterminate = false } = newProps;
+    const { checked: prevChecked, indeterminate: prevIndeterminate } = prevState;
+    if (  prevChecked !== checked || prevIndeterminate !== indeterminate) {
+      return { checked, indeterminate };
+    }
+    return prevState;
+  }
+
   constructor(props: CheckboxProps) {
     super(props);
-    this.state = { checked: props.checked, focused: false };
+    const { checked } = props;
+    this.state = { focused: false, checked };
   }
 
   public render(): ReactNode {
     // Trim off what we don't want to send to the input tag
-    const { checked: _, className, label = '', ...inputProps } = this.props;
-    const { checked, focused } = this.state;
+    const { className, label = '', ...inputProps } = this.props;
+    const { checked = false, focused } = this.state;
+
     let checkMarkStyles = checked ? styles.checked : '';
     if (focused) {
       checkMarkStyles += ` ${styles.focused}`;
@@ -39,7 +85,7 @@ export class Checkbox extends Component<CheckboxProps, CheckboxState> {
         className={ `${styles.label} ${className}` }
         data-checked={ checked }>
         <span className={ `${styles.checkMark} ${checkMarkStyles}` }/>
-        <input type="checkbox" { ...inputProps } className={ styles.checkbox } ref={ this.checkboxRef }/>
+        <input type="checkbox" { ...inputProps } className={ styles.checkbox } ref={ this.checkboxRef } readOnly/>
         { label }
         { this.props.children }
       </label>
@@ -49,13 +95,11 @@ export class Checkbox extends Component<CheckboxProps, CheckboxState> {
   private checkboxRef = (ref: HTMLInputElement): void => {
     const { inputRef, checkboxEventHandler } = this;
     if (inputRef) {
-      inputRef.removeEventListener('change', checkboxEventHandler);
       inputRef.removeEventListener('focus', checkboxEventHandler);
       inputRef.removeEventListener('blur', checkboxEventHandler);
     }
     this.inputRef = ref;
     if (ref) {
-      ref.addEventListener('change', checkboxEventHandler);
       ref.addEventListener('focus', checkboxEventHandler);
       ref.addEventListener('blur', checkboxEventHandler);
     }
@@ -63,9 +107,6 @@ export class Checkbox extends Component<CheckboxProps, CheckboxState> {
 
   private checkboxEventHandler = (event: Event): void => {
     switch (event.type) {
-      case 'change':
-        return this.setState({ checked: (event.target as HTMLInputElement).checked });
-
       case 'focus':
         return this.setState({ focused: true });
 
