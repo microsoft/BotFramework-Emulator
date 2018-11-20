@@ -135,7 +135,10 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
               type="password"
               value={ endpoint.appPassword }/>
           </Row>
-
+          <Checkbox
+            label="Azure for US Government"
+            onChange={ this.onChannelServiceChange }
+          />
           <Row align={ RowAlignment.Bottom }>
             <Checkbox
               className={ styles.encryptKeyCheckBox }
@@ -211,6 +214,12 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
     }
   }
 
+  private onChannelServiceChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { checked } = event.target;
+    const channelService = checked ? 'https://botframework.azure.us' : '';
+    this.setState({ endpoint: { ...this.state.endpoint, ...{ channelService: channelService } } } as any);
+  }
+
   private onCancel = () => {
     DialogService.hideDialog();
   }
@@ -259,11 +268,11 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
     CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.OpenExternal, url).catch();
   }
 
-  private onSaveAndConnect = async (e) => {
+  private onSaveAndConnect = async () => {
     try {
       const path = await this.showBotSaveDialog();
       if (path) {
-        this.performCreate(path);
+        await this.performCreate(path);
       } else {
         // user cancelled out of the save dialog
         console.log('Bot creation save dialog was cancelled.');
@@ -273,7 +282,7 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
     }
   }
 
-  private performCreate = (botPath: string) => {
+  private performCreate = async (botPath: string) => {
     const endpoint: IEndpointService = {
       type: this.state.endpoint.type,
       name: this.state.endpoint.endpoint.trim(),
@@ -282,6 +291,7 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
       appPassword: this.state.endpoint.appPassword.trim(),
       endpoint: this.state.endpoint.endpoint.trim()
     };
+    (endpoint as any).channelService = (this.state.endpoint as any).channelService;
 
     const bot: BotConfigWithPath = BotConfigWithPathImpl.fromJSON({
       ...this.state.bot,
@@ -293,13 +303,15 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
 
     const secret = this.state.encryptKey && this.state.secret ? this.state.secret : null;
 
-    ActiveBotHelper.confirmAndCreateBot(bot, secret)
-      .then(() => DialogService.hideDialog())
-      .catch(err => {
-        const errMsg = `Error during confirm and create bot: ${err}`;
-        const notification = newNotification(errMsg);
-        store.dispatch(beginAdd(notification));
-      });
+    try {
+      await ActiveBotHelper.confirmAndCreateBot(bot, secret);
+    } catch (err) {
+      const errMsg = `Error during confirm and create bot: ${err}`;
+      const notification = newNotification(errMsg);
+      store.dispatch(beginAdd(notification));
+    } finally {
+      DialogService.hideDialog();
+    }
   }
 
   private showBotSaveDialog = async (): Promise<any> => {

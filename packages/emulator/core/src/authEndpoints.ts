@@ -37,6 +37,15 @@ export const authentication = {
   botTokenAudience: 'https://api.botframework.com',
 };
 
+export const usGovernmentAuthentication = {
+  channelService: 'https://botframework.azure.us',
+  tokenEndpoint: 'https://login.microsoftonline.us/cab8a31a-1906-4287-a0d8-4eef66b95f6e/oauth2/v2.0/token',
+  openIdMetadata: 'https://login.microsoftonline.us/cab8a31a-1906-4287-a0d8-4eef66b95f6e/v2.0/.well-known/openid-configuration',
+  botTokenAudience: 'https://api.botframework.us',
+  tokenIssuerV1: 'https://sts.windows.net/cab8a31a-1906-4287-a0d8-4eef66b95f6e/',
+  tokenIssuerV2: 'https://login.microsoftonline.us/cab8a31a-1906-4287-a0d8-4eef66b95f6e/v2.0'
+};
+
 export const v31Authentication = {
   tokenIssuer: 'https://sts.windows.net/d6d49420-f39b-4df7-a1dc-d59a935871db/',
 };

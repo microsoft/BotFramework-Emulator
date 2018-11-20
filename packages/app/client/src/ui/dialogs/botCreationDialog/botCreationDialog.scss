@@ -1,7 +1,7 @@
 .main {
   min-width: 464px;
   width: 464px;
-  max-height: 439px;
+  max-height: 454px;
 
   a {
     color: var(--link-color);
@@ -23,25 +23,6 @@
 
 .bot-create-form {
   position: relative;
-}
-
-.checkbox-anchor-container {
-  display: flex;
-
-  > .link {
-    background-color: transparent;
-    border: 1px solid transparent;
-    color: var(--focused-selected-list-item-bg);
-    cursor: pointer;
-    font-weight: 600;
-    padding: 0;
-    text-decoration: none;
-    white-space: normal;
-
-    &:hover {
-      text-decoration: underline;
-    }
-  }
 }
 
 .endpoint-warning {
