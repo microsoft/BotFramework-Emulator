@@ -128,9 +128,7 @@ export class AzureAuthWorkflowService {
       `state=${state}`,
       `client-request-id=${requestId}`,
       `nonce=${nonce}`,
-      'x-client-SKU=Js',
-      'x-client-Ver=1.0.17',
-      'resource=https://management.core.windows.net/'
+      'resource=https://microsoft.onmicrosoft.com/9e536215-caa4-4136-8af3-fd4c8963359b'
     ];
 
     if (renew) {
@@ -171,7 +169,7 @@ export class AzureAuthWorkflowService {
       `client_id=${clientId}`,
       `code=${code}`,
       `redirect_uri=${redirectUri}`,
-      `resource=https://management.core.windows.net/`
+      `resource=https://microsoft.onmicrosoft.com/9e536215-caa4-4136-8af3-fd4c8963359b`
     ];
     const data = bits.join('&');
     let armToken: { access_token: string, refresh_token: string, error?: string };
