@@ -39,11 +39,14 @@ export interface CheckboxProps extends HTMLAttributes<HTMLInputElement> {
   label?: string;
   checkboxContainerClassName?: string;
   checked?: boolean;
+  indeterminate?: boolean;
   onChange?: (event: FormEvent<HTMLInputElement>) => void;
 }
 
 export interface CheckboxState {
+  checked?: boolean;
   focused?: boolean;
+  indeterminate?: boolean;
 }
 
 let id = 0;
@@ -52,25 +55,25 @@ export class Checkbox extends Component<CheckboxProps, CheckboxState> {
   private readonly checkboxId = 'emulator-checkbox-' + id++;
   private inputRef: HTMLInputElement;
 
+  public static getDerivedStateFromProps(newProps: CheckboxProps, prevState: CheckboxState = {}): CheckboxState {
+    const { checked = false, indeterminate = false } = newProps;
+    const { checked: prevChecked, indeterminate: prevIndeterminate } = prevState;
+    if (  prevChecked !== checked || prevIndeterminate !== indeterminate) {
+      return { checked, indeterminate };
+    }
+    return prevState;
+  }
+
   constructor(props: CheckboxProps) {
     super(props);
     const { checked } = props;
-    if (checked === undefined) {
-      console.error(
-        '<Checkbox> requires a "checked" property to be passed in and managed by the parent component.' +
-        '\n\nEx:\n<Checkbox checked={ true | false } ... />'
-      );
-    }
-    this.state = { focused: false };
+    this.state = { focused: false, checked };
   }
 
   public render(): ReactNode {
     // Trim off what we don't want to send to the input tag
-    const { checked, className, label = '', ...inputProps } = this.props;
-    const { focused } = this.state;
-    if (checked === undefined) {
-      return null;
-    }
+    const { className, label = '', ...inputProps } = this.props;
+    const { checked = false, focused } = this.state;
 
     let checkMarkStyles = checked ? styles.checked : '';
     if (focused) {
@@ -82,7 +85,7 @@ export class Checkbox extends Component<CheckboxProps, CheckboxState> {
         className={ `${styles.label} ${className}` }
         data-checked={ checked }>
         <span className={ `${styles.checkMark} ${checkMarkStyles}` }/>
-        <input type="checkbox" { ...inputProps } className={ styles.checkbox } ref={ this.checkboxRef }/>
+        <input type="checkbox" { ...inputProps } className={ styles.checkbox } ref={ this.checkboxRef } readOnly/>
         { label }
         { this.props.children }
       </label>

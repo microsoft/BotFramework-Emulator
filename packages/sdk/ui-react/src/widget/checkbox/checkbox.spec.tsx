@@ -49,13 +49,27 @@ describe('Checkbox', () => {
     instance = wrapper.instance();
   });
 
-  it('should not render when no props.checked is present', () => {
-    const unRenderedWrapper = mount(<Checkbox />);
-    expect(unRenderedWrapper.find(Checkbox).html()).toBe(null);
-  });
-
   it('should render deeply', () => {
     expect(wrapper.find(Checkbox).html()).not.toBe(null);
+  });
+
+  it('should derive state from props', () => {
+    // checked differs
+    const newProps1 = { checked: false, indeterminate: false };
+    const prevState1 = { checked: true, indeterminate: false };
+    const state1 = Checkbox.getDerivedStateFromProps(newProps1, prevState1);
+    expect(state1).toEqual(newProps1);
+    
+    // indeterminate differs
+    const newProps2 = { checked: false, indeterminate: false };
+    const prevState2 = { checked: false, indeterminate: true };
+    const state2 = Checkbox.getDerivedStateFromProps(newProps2, prevState2);
+    expect(state2).toEqual(newProps2);
+
+    // neither differs (no-op)
+    const same = { checked: false, indeterminate: false };
+    const state3 = Checkbox.getDerivedStateFromProps(same, same);
+    expect(state3).toBe(same);
   });
 
   it('should assign a new checkbox ref with event listeners', () => {
