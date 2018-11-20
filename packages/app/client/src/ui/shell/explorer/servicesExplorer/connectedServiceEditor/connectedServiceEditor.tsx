@@ -56,7 +56,7 @@ interface ConnectedServiceEditorState extends Partial<any> {
 const labelMap = {
   authoringKey: 'Authoring key',
   applicationId: 'App Insights Application ID',
-  instrumentationKey: 'App Insight Instrumentation Key',
+  instrumentationKey: 'App Insights Instrumentation Key',
   serviceName: 'Azure Service Name',
   appId: 'LUIS app ID',
   id: 'App ID',
