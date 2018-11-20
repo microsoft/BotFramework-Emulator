@@ -31,27 +31,27 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { SharedConstants } from '@bfemulator/app-shared';
 import { connect } from 'react-redux';
 import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
-import { ConnectLuisAppPromptDialog, ConnectLuisAppPromptDialogProps } from './connectLuisAppPromptDialog';
 import { DialogService } from '../service';
-import { SharedConstants } from '@bfemulator/app-shared';
+import { ConnectServicePromptDialog, ConnectServicePromptDialogProps } from './connectServicePromptDialog';
 
 const mapDispatchToProps = (
   _dispatch: () => void, ownProps: { [propName: string]: any }
-): ConnectLuisAppPromptDialogProps => {
+): ConnectServicePromptDialogProps => {
   return {
     ...ownProps,
     cancel: () => DialogService.hideDialog(0),
     confirm: () => DialogService.hideDialog(1),
-    addLuisAppManually: () => DialogService.hideDialog(2),
+    addServiceManually: () => DialogService.hideDialog(2),
     onAnchorClick: (url) => {
       CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.OpenExternal, url).catch();
     }
   };
 };
 
-export const ConnectLuisAppPromptDialogContainer = connect(
+export const ConnectServicePromptDialogContainer = connect(
   null,
   mapDispatchToProps
-)(ConnectLuisAppPromptDialog);
+)(ConnectServicePromptDialog);
