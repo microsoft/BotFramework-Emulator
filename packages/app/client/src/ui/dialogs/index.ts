@@ -39,7 +39,7 @@ export * from './service';
 export * from './azureLoginSuccessDialog/azureLoginSuccessDialogContainer';
 export * from './azureLoginPromptDialog/azureLoginPromptDialogContainer';
 export * from './azureLoginFailedDialog/azureLoginFailedDialogContainer';
-export * from './connectLuisAppPromptDialog/connectLuisAppPromptDialogContainer';
+export * from './connectServicePromptDialog/connectServicePromptDialogContainer';
 export * from './getStartedWithCSDialog/getStartedWithCSDialogContainer';
 export * from './postMigrationDialog/postMigrationDialogContainer';
 export * from './progressIndicator/progressIndicatorContainer';

@@ -13,7 +13,7 @@
     color: var(--input-placeholder-color);
   }
 
-  &:invalid {
+  &.invalid {
     color: var(--error-text);
     border: var(--input-border-error);
   }
