@@ -52,7 +52,7 @@ export class ConnectServicePromptDialog extends Component<ConnectServicePromptDi
         return this.appInsightsContent;
 
       default:
-        throw new TypeError(`${serviceType} is not a know service type`);
+        throw new TypeError(`${serviceType} is not a known service type`);
     }
   }
 
