@@ -91,6 +91,7 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
     return (
       <Dialog
         title={ titleMap[this.props.serviceType] }
+        className={ styles.connectedServicePicker }
         cancel={ this.props.cancel }>
         <div className={ styles.listContainer }>
           { this.headerElements }

@@ -102,8 +102,8 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
         <SmallHeader className={ styles.marginFix }>Start by testing your bot</SmallHeader>
         <span>Start talking to your bot by connecting to an endpoint or by opening a
           bot saved locally.<br/>
-          <a className={ styles.ctaLink } href="https://aka.ms/bot-framework-emulator-create-bot-locally"
-          >More about working locally with a bot.
+          <a className={ styles.ctaLink } href="https://aka.ms/bot-framework-emulator-create-bot-locally">
+            More about working locally with a bot.
           </a>
         </span>
         <Row>
@@ -181,13 +181,9 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
               <dt>Plan:</dt>
               <dd>
                 Review the bot&nbsp;
-                <a
-                  className={ styles.ctaLink }
-                  href="https://aka.ms/bot-framework-emulator-design-guidelines"
-                >
+                <a className={ styles.ctaLink } href="https://aka.ms/bot-framework-emulator-design-guidelines">
                   design guidelines
-                </a>&nbsp;
-                for best practices&nbsp;
+                </a> for best practices&nbsp;
               </dd>
             </dl>
           </div>
@@ -198,43 +194,23 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
             <dl>
               <dt>Build:</dt>
               <dd>
-                <a
-                  className={ styles.ctaLink }
-                  href="https://aka.ms/bot-framework-emulator-tools"
-                >
+                <a className={ styles.ctaLink } href="https://aka.ms/bot-framework-emulator-tools">
                   Download Command Line tools
                 </a><br/>
                 Create a bot&nbsp;
-                <a
-                  className={ styles.ctaLink }
-                  href="https://aka.ms/bot-framework-emulator-create-bot-azure"
-                >
+                <a className={ styles.ctaLink } href="https://aka.ms/bot-framework-emulator-create-bot-azure">
                   from Azure
                 </a> or&nbsp;
-                <a
-                  className={ styles.ctaLink }
-                  href="https://aka.ms/bot-framework-emulator-create-bot-locally"
-                >
+                <a className={ styles.ctaLink } href="https://aka.ms/bot-framework-emulator-create-bot-locally">
                   locally
                 </a><br/>
                 Add services such as<br/>
-                <a
-                  className={ styles.ctaLink }
-                  href="https://aka.ms/bot-framework-emulator-LUIS-docs-home"
-                >
+                <a className={ styles.ctaLink } href="https://aka.ms/bot-framework-emulator-LUIS-docs-home">
                   Language Understanding (LUIS)
                 </a>,&nbsp;
-                <a
-                  className={ styles.ctaLink }
-                  href="https://aka.ms/bot-framework-emulator-qna-docs-home"
-                >
-                  QnAMaker
-                </a>&nbsp;
-                and&nbsp;
-                <a
-                  className={ styles.ctaLink }
-                  href="https://aka.ms/bot-framework-emulator-create-dispatch"
-                >
+                <a className={ styles.ctaLink } href="https://aka.ms/bot-framework-emulator-qna-docs-home">QnAMaker</a>
+                &nbsp;and&nbsp;
+                <a className={ styles.ctaLink } href="https://aka.ms/bot-framework-emulator-create-dispatch">
                   Dispatch
                 </a>
               </dd>
@@ -248,17 +224,11 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
               <dt className={ styles.testBullet }>Test:</dt>
               <dd>
                 Test with the&nbsp;
-                <a
-                  className={ styles.ctaLink }
-                  href="https://aka.ms/bot-framework-emulator-debug-with-emulator"
-                >
+                <a className={ styles.ctaLink } href="https://aka.ms/bot-framework-emulator-debug-with-emulator">
                   Emulator
                 </a> <br/>
                 Test online in&nbsp;
-                <a
-                  className={ styles.ctaLink }
-                  href="https://aka.ms/bot-framework-emulator-debug-with-web-chat"
-                >
+                <a className={ styles.ctaLink } href="https://aka.ms/bot-framework-emulator-debug-with-web-chat">
                   Web Chat
                 </a></dd>
             </dl>
@@ -271,10 +241,10 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
               <dt>Publish:</dt>
               <dd>
                 Publish directly to Azure or<br/>
-                Use <a
-                className={ styles.ctaLink }
+                Use 
+              <a className={ styles.ctaLink }
                 href="https://aka.ms/bot-framework-emulator-publish-continuous-deployment"
-              >
+              >&nbsp;
                 Continuous Deployment
               </a>
                 &nbsp;
@@ -289,10 +259,7 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
               <dt>Connect:</dt>
               <dd>
                 Connect to&nbsp;
-                <a
-                  className={ styles.ctaLink }
-                  href="https://aka.ms/bot-framework-emulator-connect-channels"
-                >
+                <a className={ styles.ctaLink } href="https://aka.ms/bot-framework-emulator-connect-channels">
                   channels
                 </a>
                 &nbsp;
@@ -306,10 +273,7 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
             <dl>
               <dt>Evaluate:</dt>
               <dd>
-                <a
-                  className={ styles.ctaLink }
-                  href="https://aka.ms/bot-framework-emulator-bot-analytics"
-                >
+                <a className={ styles.ctaLink } href="https://aka.ms/bot-framework-emulator-bot-analytics">
                   View analytics
                 </a>
               </dd>

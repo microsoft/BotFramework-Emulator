@@ -1,13 +1,10 @@
-// import { SharedConstants } from '@bfemulator/app-shared';
 import { PrimaryButton } from '@bfemulator/ui-react';
-// import { ServiceTypes } from 'botframework-config';
 import { LuisService } from 'botframework-config/lib/models';
 import { mount } from 'enzyme';
 import * as React from 'react';
 import { Provider } from 'react-redux';
 import { combineReducers, createStore } from 'redux';
 import { azureAuth } from '../../../../../data/reducer/azureAuthReducer';
-// import { CommandServiceImpl } from '../../../../../platform/commands/commandServiceImpl';
 import { DialogService } from '../../../../dialogs/service';
 import { ConnectedServiceEditor } from './connectedServiceEditor';
 import { ConnectedServiceEditorContainer } from './connectedServiceEditorContainer';

@@ -50,7 +50,7 @@ html {
 
   /* input[type="text"] */
   --input-color: var(--neutral-1);
-  --input-bg: var(--neutral-15);
+  --input-bg: transparent;
   --input-label-color: #C8C8C8;
   --input-label-color-disabled: var(--neutral-7);
   --input-border: 1px solid #C8C8C8;
