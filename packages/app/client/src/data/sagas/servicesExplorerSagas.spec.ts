@@ -219,13 +219,13 @@ describe('The ServiceExplorerSagas', () => {
       const result = await it.next().value;
       expect(result.id).toBe('open');
 
-      let link = '';
-      CommandServiceImpl.remoteCall = async (type: string, ...args: any[]) => {
-        link = args[0];
-      };
+      window.open = jest.fn();
+
       await it.next(result).value;
 
-      expect(link).toBe(`https://luis.ai/applications/${mockService.appId}/versions/${mockService.version}/build`);
+      expect(window.open).toHaveBeenCalledWith(
+        `https://luis.ai/applications/${mockService.appId}/versions/${mockService.version}/build`
+      );
     });
 
     it('should open the luis editor when the "edit" item is selected', async () => {
@@ -409,29 +409,29 @@ describe('The ServiceExplorerSagas', () => {
     });
 
     it('should open the correct domain for luis models in the "westeurope" region', () => {
-      const spy = jest.spyOn(CommandServiceImpl, 'remoteCall');
+      window.open = jest.fn();
       const link = `https://eu.luis.ai/applications/1234/versions/0.1/build`;
       const action = openServiceDeepLink(mockModel as any);
       openConnectedServiceGen(action).next();
-      expect(spy).toHaveBeenCalledWith('electron:open-external', link);
+      expect(window.open).toHaveBeenCalledWith(link);
     });
 
     it('should open the correct domain for luis models in the "australiaeast" region', () => {
+      window.open = jest.fn();
       mockModel.region = 'australiaeast';
-      const spy = jest.spyOn(CommandServiceImpl, 'remoteCall');
       const link = `https://au.luis.ai/applications/1234/versions/0.1/build`;
       const action = openServiceDeepLink(mockModel as any);
       openConnectedServiceGen(action).next();
-      expect(spy).toHaveBeenCalledWith('electron:open-external', link);
+      expect(window.open).toHaveBeenCalledWith(link);
     });
 
     it('should open the correct domain for luis models in the "westus" region', () => {
+      window.open = jest.fn();
       mockModel.region = 'westus';
-      const spy = jest.spyOn(CommandServiceImpl, 'remoteCall');
       const link = `https://luis.ai/applications/1234/versions/0.1/build`;
       const action = openServiceDeepLink(mockModel as any);
       openConnectedServiceGen(action).next();
-      expect(spy).toHaveBeenCalledWith('electron:open-external', link);
+      expect(window.open).toHaveBeenCalledWith(link);
     });
   });
 });

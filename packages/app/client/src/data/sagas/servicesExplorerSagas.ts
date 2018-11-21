@@ -278,7 +278,7 @@ function* launchConnectedServiceEditor(action: ConnectedServiceAction<ConnectedS
   return null;
 }
 
-function openLuisDeepLink(luisService: ILuisService): Promise<any> {
+function openLuisDeepLink(luisService: ILuisService) {
   const { appId, version, region } = luisService;
   let regionPrefix: string;
   switch (region) {
@@ -297,23 +297,23 @@ function openLuisDeepLink(luisService: ILuisService): Promise<any> {
   const linkArray = ['https://', `${ encodeURI(regionPrefix) }`, 'luis.ai/applications/'];
   linkArray.push(`${ encodeURI(appId) }`, '/versions/', `${ encodeURI(version) }`, '/build');
   const link = linkArray.join('');
-  return CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.OpenExternal, link);
+  window.open(link);
 }
 
-function openQnaMakerDeepLink(service: IQnAService): Promise<any> {
+function openQnaMakerDeepLink(service: IQnAService) {
   const { kbId } = service;
   const link = `https://qnamaker.ai/Edit/KnowledgeBase?kbid=${ encodeURIComponent(kbId) }`;
-  return CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.OpenExternal, link);
+  window.open(link);
 }
 
-function openAzureBotServiceDeepLink(service: IBotService): Promise<any> {
+function openAzureBotServiceDeepLink(service: IBotService) {
   const { tenantId, subscriptionId, resourceGroup, id } = service;
   const linkArray = [`https://ms.portal.azure.com/#@${ encodeURI(tenantId) }`];
   linkArray.push(`/resource/subscriptions/${ encodeURI(subscriptionId) }`);
   linkArray.push(`/resourceGroups/${ encodeURI(resourceGroup) }`);
   linkArray.push(`/providers/Microsoft.BotService/botServices/${ encodeURI(id) }`);
   const link = linkArray.join('');
-  return CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.OpenExternal, link + '/channels');
+  window.open(link + '/channels');
 }
 
 export function* servicesExplorerSagas(): IterableIterator<ForkEffect> {

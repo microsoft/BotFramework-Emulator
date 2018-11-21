@@ -57,17 +57,6 @@ describe('The AzureLoginFailedDialogContainer component should', () => {
     expect(parent.find(WelcomePage)).not.toBe(null);
   });
 
-  it('should call the appropriate command when a link is clicked', () => {
-    const mockEvent = {
-      currentTarget: {
-        dataset: { href: 'https://aka.ms/' },
-      },
-    };
-    const spy = jest.spyOn(CommandServiceImpl, 'remoteCall');
-    instance.onAnchorClick(mockEvent);
-    expect(spy).toHaveBeenCalledWith(SharedConstants.Commands.Electron.OpenExternal, 'https://aka.ms/');
-  });
-
   it('should call the appropriate command when a recent bot is clicked', () => {
     const spy = jest.spyOn(CommandServiceImpl, 'call');
     instance.onBotClick({

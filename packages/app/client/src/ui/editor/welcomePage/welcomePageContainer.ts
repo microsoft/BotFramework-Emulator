@@ -51,9 +51,6 @@ function mapStateToProps(state: RootState, ownProps: WelcomePageProps): WelcomeP
 function mapDispatchToProps(dispatch: (action: Action) => void): WelcomePageProps {
   const { Commands } = SharedConstants;
   return {
-    onAnchorClick: (url) => {
-      CommandServiceImpl.remoteCall(Commands.Electron.OpenExternal, url).catch();
-    },
     onNewBotClick: () => {
       CommandServiceImpl.call(Commands.UI.ShowBotCreationDialog).catch();
     },

@@ -33,7 +33,7 @@
 
 import { IConnectedService } from 'botframework-config/lib/schema';
 import * as React from 'react';
-import { MouseEvent, MouseEventHandler, SyntheticEvent } from 'react';
+import { MouseEventHandler, SyntheticEvent } from 'react';
 import { ServicePane, ServicePaneProps } from '../servicePane/servicePane';
 import { ConnectedServiceEditorContainer } from './connectedServiceEditor';
 import { ConnectedServicePickerPayload } from '../../../../data/action/connectedServiceActions';
@@ -51,7 +51,6 @@ import { serviceTypeLabels } from '../../../../utils/serviceTypeLables';
 export interface ServicesExplorerProps extends ServicePaneProps {
   services?: IConnectedService[];
   toAnimate?: { [serviceId: string]: boolean };
-  onAnchorClick: (url: string) => void;
   openAddServiceContextMenu: (payload: ConnectedServicePickerPayload) => void;
   openSortContextMenu: () => void;
   openServiceDeepLink: (service: IConnectedService) => void;
@@ -97,31 +96,12 @@ export class ServicesExplorer extends ServicePane<ServicesExplorerProps> {
       <div>
         <p className={ styles.emptyContent }>
           { 'You can connect your bot to services such as ' }
-          <a
-            href="javascript:void(0);"
-            data-href="https://aka.ms/bot-framework-emulator-LUIS-docs-home"
-            onClick={ this.onAnchorClick }>
-            { 'Language Understanding (LUIS), ' }
-          </a>
-          <a
-            href="javascript:void(0);"
-            data-href="https://aka.ms/bot-framework-emulator-qna-docs-home"
-            onClick={ this.onAnchorClick }>
-            { 'QnA Maker, and ' }
-          </a>
-          <a
-            href="javascript:void(0);"
-            data-href="https://aka.ms/bot-framework-emulator-create-dispatch"
-            onClick={ this.onAnchorClick }>
-            Dispatch.
-          </a>
+          <a href="https://aka.ms/bot-framework-emulator-LUIS-docs-home">{ 'Language Understanding (LUIS), ' }</a>
+          <a href="https://aka.ms/bot-framework-emulator-qna-docs-home">{ 'QnA Maker, ' }</a> { 'and ' }
+          <a href="https://aka.ms/bot-framework-emulator-create-dispatch">Dispatch.</a>
         </p>
         <p className={ styles.emptyContent }>
-          <a
-            href="javascript:void(0);"
-            data-href="https://aka.ms/bot-framework-emulator-services"
-            onClick={ this.onAnchorClick }>
-            Learn more about using services.</a>
+          <a href="https://aka.ms/bot-framework-emulator-services">Learn more about using services.</a>
         </p>
       </div>
     );
@@ -190,9 +170,5 @@ export class ServicesExplorer extends ServicePane<ServicesExplorerProps> {
       pickerComponent: ConnectedServicePickerContainer,
       progressIndicatorComponent: ProgressIndicatorContainer
     });
-  }
-
-  private onAnchorClick = (event: MouseEvent<HTMLAnchorElement>): void => {
-    this.props.onAnchorClick(event.currentTarget.dataset.href);
   }
 }

@@ -44,7 +44,6 @@ interface SecretPromptDialogState {
 }
 
 export interface SecretPromptDialogProps {
-  onAnchorClick: (url: string) => void;
   onCancelClick: () => void;
   onSaveClick: (newSecret: string) => void;
 }
@@ -69,7 +68,7 @@ export class SecretPromptDialog extends React.Component<SecretPromptDialogProps,
         <p>
           { 'If you encrypted your bot file with the MsBot command-line tool, your bot file secret was displayed ' +
           'when you ran MsBot. ' }
-          <a href="javascript:void(0)" onClick={ this.onLearnMoreClick }>Learn more about MsBot.</a>
+          <a href="https://github.com/Microsoft/botbuilder-tools/tree/master/packages/MSBot">Learn more about MsBot.</a>
         </p>
         <div className={ styles.keyContainer }>
           <TextField
@@ -98,10 +97,6 @@ export class SecretPromptDialog extends React.Component<SecretPromptDialogProps,
         </div>
       </Dialog>
     );
-  }
-
-  private onLearnMoreClick = () => {
-    this.props.onAnchorClick('https://github.com/Microsoft/botbuilder-tools/tree/master/packages/MSBot');
   }
 
   private onRevealSecretClick = () => {
