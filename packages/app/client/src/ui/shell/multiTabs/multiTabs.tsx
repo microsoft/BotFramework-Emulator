@@ -63,10 +63,13 @@ class MultiTabsComponent extends React.Component<MultiTabsProps> {
                   activeIndex={ this.props.value }>
             {
               React.Children.map(this.props.children, (tabbedDocument: any, index) =>
-                <button className={ styles.tab } onClick={ this.handleTabClick.bind(this, index) } ref={ this.setRef }>
+                <div
+                  className={ styles.tab } onClick={ _ev => this.handleTabClick(index) }
+                  onKeyDown={ ev => this.handleKeyDown(ev, index) }
+                  ref={ this.setRef } role="presentation">
                   { filterChildren(tabbedDocument.props.children, child =>
                     hmrSafeNameComparison(child.type, TabbedDocumentTab)) }
-                </button>
+                </div>
               )
             }
           </TabBar>
@@ -88,6 +91,14 @@ class MultiTabsComponent extends React.Component<MultiTabsProps> {
   private handleTabClick = (nextValue: any) => {
     if (this.props.onChange) {
       this.props.onChange(nextValue);
+    }
+  }
+
+  private handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>, nextValue: number): void => {
+    let { key = '' } = event;
+    key = key.toLowerCase();
+    if (key === ' ' || key === 'enter') {
+      this.handleTabClick(nextValue); 
     }
   }
 

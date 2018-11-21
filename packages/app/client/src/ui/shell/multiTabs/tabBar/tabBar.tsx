@@ -100,13 +100,9 @@ class TabBarComponent extends React.Component<TabBarProps, TabBarState> {
         onDragOver={ this.onDragOver }
         onDragLeave={ this.onDragLeave }
         onDrop={ this.onDrop }>
-        <ul ref={ this.saveScrollable }>
-          {
-            React.Children.map(this.props.children, (child, index) =>
-              <li key={ index }>{ child }</li>
-            )
-          }
-        </ul>
+        <div role="tablist" ref={ this.saveScrollable } style={{ display: 'flex' }}>
+          { this.props.children }
+        </div>
         <div className={ styles.tabBarWidgets }>
           { this.widgets }
         </div>

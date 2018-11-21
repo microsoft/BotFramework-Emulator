@@ -5,3 +5,4 @@ export const editorTabClose: string;
 export const truncatedTabText: string;
 export const draggedOverEditorTab: string;
 export const activeEditorTab: string;
+export const testTab: string;

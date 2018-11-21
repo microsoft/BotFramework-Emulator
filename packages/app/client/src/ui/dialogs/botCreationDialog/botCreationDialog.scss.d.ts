@@ -3,8 +3,6 @@ export const main: string;
 export const multiInputRow: string;
 export const inputContainer: string;
 export const botCreateForm: string;
-export const checkboxAnchorContainer: string;
-export const link: string;
 export const endpointWarning: string;
 export const key: string;
 export const encryptKeyCheckBox: string;

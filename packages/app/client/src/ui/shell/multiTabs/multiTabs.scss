@@ -21,6 +21,7 @@
       border: 0;
       outline: 0;
     }
+    
     &:focus::after {
       content: '';
       position: absolute;
