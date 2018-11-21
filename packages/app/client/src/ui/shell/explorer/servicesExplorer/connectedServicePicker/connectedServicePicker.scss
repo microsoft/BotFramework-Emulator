@@ -1,18 +1,22 @@
-.paddedLink {
+.connected-service-picker {
+  width: 400px;
+}
+
+.padded-link {
   padding: 16px 0;
   display: inline-block;
 }
 
-.checkboxOverride {
+.checkbox-override {
   display: inline-block;
 }
 
-.selectAll {
+.select-all {
   height: 24px;
   padding: 5px 10px;
 }
 
-.listContainer {
+.list-container {
   & > p {
     font-size: 13px;
     margin: 0;
