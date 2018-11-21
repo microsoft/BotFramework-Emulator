@@ -15,7 +15,9 @@ const titleMap = {
   [ServiceTypes.Luis]: 'Connect your bot to a LUIS application',
   [ServiceTypes.Dispatch]: 'Connect your bot to a Dispatch model',
   [ServiceTypes.QnA]: 'Connect your bot to a QnA Maker knowledge base',
-  [ServiceTypes.AppInsights]: 'Connect to an Azure Application Insights resource'
+  [ServiceTypes.AppInsights]: 'Connect to an Azure Application Insights resource',
+  [ServiceTypes.BlobStorage]: 'Connect your bot to an Azure Storage account',
+  [ServiceTypes.CosmosDB]: 'Connect your bot to an Azure Cosmos DB account'
 };
 
 export class ConnectServicePromptDialog extends Component<ConnectServicePromptDialogProps, {}> {
@@ -49,6 +51,12 @@ export class ConnectServicePromptDialog extends Component<ConnectServicePromptDi
 
       case ServiceTypes.AppInsights:
         return this.appInsightsContent;
+
+      case ServiceTypes.BlobStorage:
+        return this.blobStorageContent;
+
+      case ServiceTypes.CosmosDB:
+        return this.cosmosDbContent;
 
       default:
         throw new TypeError(`${serviceType} is not a known service type`);
@@ -123,9 +131,49 @@ export class ConnectServicePromptDialog extends Component<ConnectServicePromptDi
         <p>
           { `Alternatively, you can ` }
           <a href="javascript:void(0);" onClick={ this.props.addServiceManually }>
-            connect to a azure Application Insights manually
+            connect to a Azure Application Insights manually
           </a>
           { ` with the app ID, version, and authoring key.` }
+        </p>
+      </>
+    );
+  }
+
+  private get blobStorageContent(): ReactNode {
+    return (
+      <>
+        <p>
+          { 'Sign in to your Azure account to select the Azure Storage ' +
+          'accounts you\'d like to associate with this bot. ' }
+          <a href="https://aka.ms/bot-framework-emulator-storage-docs">
+            Learn more about Azure Storage.
+          </a>
+        </p>
+        <p>
+          { `Alternatively, you can ` }
+          <a href="javascript:void(0);" onClick={ this.props.addServiceManually }>
+            connect to a Azure Storage account manually.
+          </a>
+        </p>
+      </>
+    );
+  }
+
+  private get cosmosDbContent(): ReactNode {
+    return (
+      <>
+        <p>
+          { 'Sign in to your Azure account to select the Azure Cosmos DB ' +
+          'accounts you\'d like to associate with this bot. ' }
+          <a href="https://aka.ms/bot-framework-emulator-cosmosdb-docs">
+            Learn more about Azure Cosmos DB.
+          </a>
+        </p>
+        <p>
+          { `Alternatively, you can ` }
+          <a href="javascript:void(0);" onClick={ this.props.addServiceManually }>
+            connect to a Azure Cosmos DB account manually.
+          </a>
         </p>
       </>
     );

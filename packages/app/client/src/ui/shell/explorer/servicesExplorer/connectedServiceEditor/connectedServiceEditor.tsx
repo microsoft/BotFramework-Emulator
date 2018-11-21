@@ -36,7 +36,7 @@ import { BotConfigurationBase } from 'botframework-config/lib/botConfigurationBa
 import { ConnectedService } from 'botframework-config/lib/models';
 import { IConnectedService, ServiceTypes } from 'botframework-config/lib/schema';
 import * as React from 'react';
-import { ChangeEvent, Component } from 'react';
+import { ChangeEvent, Component, ReactNode } from 'react';
 import { serviceTypeLabels } from '../../../../../utils/serviceTypeLables';
 import * as styles from './connectedServiceEditor.scss';
 
@@ -56,12 +56,18 @@ interface ConnectedServiceEditorState extends Partial<any> {
 const labelMap = {
   authoringKey: 'Authoring key',
   applicationId: 'App Insights Application ID',
+  collection: 'Cosmos DB collection name',
+  connectionString: 'Blob storage connection string',
+  container: 'Blob container name',
+  database: 'Cosmos DB collection database',
   instrumentationKey: 'App Insights Instrumentation Key',
   serviceName: 'Azure Service Name',
   appId: 'LUIS app ID',
   id: 'App ID',
+  endpoint: 'Cosmos DB connection string',
   endpointKey: 'Endpoint key',
   hostname: 'Host Name',
+
   kbId: 'Knowledge base ID',
   name: 'Name',
   resourceGroup: 'Azure Resource group',
@@ -76,8 +82,9 @@ const titleMap = {
   [ServiceTypes.Luis]: 'Connect to a LUIS app',
   [ServiceTypes.Dispatch]: 'Connect to a Dispatch model',
   [ServiceTypes.QnA]: 'Connect to a QnA Maker knowledge base',
-  [ServiceTypes.Bot]: 'Connect to Azure Bot Service',
-  [ServiceTypes.AppInsights]: 'Connect to Application Insights resource'
+  [ServiceTypes.AppInsights]: 'Connect to Application Insights resource',
+  [ServiceTypes.BlobStorage]: 'Connect to an Azure Storage account',
+  [ServiceTypes.CosmosDB]: 'Connect to an Azure Cosmos DB account'
 };
 
 const portalMap = {
@@ -85,47 +92,6 @@ const portalMap = {
   [ServiceTypes.Dispatch]: 'LUIS.ai',
   [ServiceTypes.QnA]: 'QnaMaker.ai',
 };
-
-const getEditableFields = (service: IConnectedService): string[] => {
-  switch (service.type) {
-    case ServiceTypes.Luis:
-    case ServiceTypes.Dispatch:
-      return ['name', 'appId', 'authoringKey', 'version', 'subscriptionKey'];
-
-    case ServiceTypes.QnA:
-      return ['name', 'kbId', 'hostname', 'subscriptionKey', 'endpointKey'];
-
-    case ServiceTypes.AppInsights:
-      return [
-        'name',
-        'tenantId',
-        'subscriptionKey',
-        'resourceGroup',
-        'serviceName',
-        'instrumentationKey',
-        'applicationId'
-      ];
-
-    default:
-      throw new TypeError(`${ service.type } is not a valid service type`);
-  }
-};
-
-function getLearnMoreLink(serviceType?: ServiceTypes): (string | void) {
-  switch (serviceType) {
-    case ServiceTypes.Luis:
-      return 'http://aka.ms/bot-framework-emulator-LUIS-docs-home';
-
-    case ServiceTypes.QnA:
-      return 'http://aka.ms/bot-framework-emulator-qna-keys';
-
-    case ServiceTypes.Dispatch:
-      return 'https://aka.ms/bot-framework-emulator-create-dispatch';
-
-    default:
-      return;
-  }
-}
 
 export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProps, ConnectedServiceEditorState> {
   public state: ConnectedServiceEditorState = {} as ConnectedServiceEditorState;
@@ -149,7 +115,7 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
     const { state, onInputChange, props, onSubmitClick } = this;
     const { isDirty, connectedServiceCopy } = state;
     const { type } = connectedServiceCopy;
-    const fields = getEditableFields(connectedServiceCopy);
+    const fields = this.editableFields;
     const textInputs: JSX.Element[] = [];
     let valid = true;
     // Build the editable inputs from the enumerable properties
@@ -172,19 +138,165 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
 
     return (
       <Dialog title={ titleMap[type] } cancel={ props.cancel } className={ styles.connectedServiceEditor }>
-        <p>
-          You can find your knowledge base ID and subscription key in { portalMap[type] }&nbsp;
-          <a href={ getLearnMoreLink(this.props.serviceType) || '' }>
-          {/* <a href="javascript:void(0);" onClick={ this.onLearnMoreClick }> */}
-            Learn more about keys in { labelMap[type] }
-          </a>
-        </p>
+        { this.headerContent }
         { textInputs }
         <DialogFooter>
           <DefaultButton text="Cancel" onClick={ props.cancel }/>
           <PrimaryButton disabled={ !isDirty || !valid } text="Submit" onClick={ onSubmitClick }/>
         </DialogFooter>
       </Dialog>
+    );
+  }
+
+  private get editableFields(): string[] {
+    const { serviceType } = this.props;
+    switch (serviceType) {
+      case ServiceTypes.Luis:
+      case ServiceTypes.Dispatch:
+        return ['name', 'appId', 'authoringKey', 'version', 'subscriptionKey'];
+
+      case ServiceTypes.QnA:
+        return ['name', 'kbId', 'hostname', 'subscriptionKey', 'endpointKey'];
+
+      case ServiceTypes.AppInsights:
+        return [
+          'name',
+          'tenantId',
+          'subscriptionKey',
+          'resourceGroup',
+          'serviceName',
+          'instrumentationKey',
+          'applicationId'
+        ];
+
+      case ServiceTypes.BlobStorage:
+        return [
+          'name',
+          'tenantId',
+          'subscriptionKey',
+          'resourceGroup',
+          'serviceName',
+          'connectionString',
+          'container'
+        ];
+
+      case ServiceTypes.CosmosDB:
+        return [
+          'name',
+          'tenantId',
+          'subscriptionKey',
+          'resourceGroup',
+          'serviceName',
+          'endpoint',
+          'database',
+          'collection'
+        ];
+
+      default:
+        throw new TypeError(`${ serviceType } is not a valid service type`);
+    }
+  }
+
+  private get learnMoreLink(): string {
+    const { serviceType } = this.props;
+    switch (serviceType) {
+      case ServiceTypes.Luis:
+        return 'http://aka.ms/bot-framework-emulator-LUIS-docs-home';
+
+      case ServiceTypes.QnA:
+        return 'http://aka.ms/bot-framework-emulator-qna-keys';
+
+      case ServiceTypes.Dispatch:
+        return 'https://aka.ms/bot-framework-emulator-create-dispatch';
+
+      case ServiceTypes.AppInsights:
+        return 'https://aka.ms/bot-framework-emulator-appinsights-keys';
+
+      case ServiceTypes.BlobStorage:
+        return 'https://aka.ms/bot-framework-emulator-storage-keys';
+
+      case ServiceTypes.CosmosDB:
+        return 'https://aka.ms/bot-framework-emulator-cosmosdb-keys';
+
+      default:
+        return '';
+    }
+  }
+
+  private get headerContent(): ReactNode {
+    switch (this.props.serviceType) {
+      case ServiceTypes.Luis:
+      case ServiceTypes.Dispatch:
+        return this.luisAndDispatchHeader;
+
+      case ServiceTypes.QnA:
+        return this.qnaHeader;
+
+      case ServiceTypes.AppInsights:
+      case ServiceTypes.BlobStorage:
+        return this.appInsightsAndBlobStorageHeader;
+
+      case ServiceTypes.CosmosDB:
+        return this.cosmosDbHeader;
+
+      default:
+        return null;
+    }
+  }
+
+  private get luisAndDispatchHeader(): ReactNode {
+    const { serviceType } = this.props;
+    return (
+      <p>
+        { `You can find your LUIS app ID and subscription key in ${ portalMap[serviceType] }. ` }
+        <a href={ this.learnMoreLink }>
+          Learn more about keys in { labelMap[serviceType] }
+        </a>
+      </p>
+    );
+  }
+
+  private get qnaHeader(): ReactNode {
+    const { serviceType } = this.props;
+    return (
+      <p>
+        { `You can find your knowledge base ID and subscription key in ${ portalMap[serviceType] }. ` }
+        <a href={ this.learnMoreLink }>
+          Learn more about keys in { labelMap[serviceType] }
+        </a>
+      </p>
+    );
+  }
+
+  private get appInsightsAndBlobStorageHeader(): ReactNode {
+    const { serviceType } = this.props;
+    return (
+      <p>
+        { `You can find your knowledge base ID and subscription key in ` }
+        <a href="https://portal.azure.com">
+          the Azure Portal { labelMap[serviceType] }
+        </a>
+        <br/>
+        <a href={ this.learnMoreLink }>
+          Learn more about { labelMap[serviceType] } keys.
+        </a>
+      </p>
+    );
+  }
+
+  private get cosmosDbHeader(): ReactNode {
+    const { serviceType } = this.props;
+    return (
+      <p>
+        { `You can find the information below in ` }
+        <a href="https://portal.azure.com">
+          the Azure Portal { labelMap[serviceType] }.
+        </a>
+        <br/>
+        <a href={ this.learnMoreLink }>
+          Learn more about { labelMap[serviceType] } keys.
+        </a>
+      </p>
     );
   }
 
@@ -206,27 +318,6 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
         return true;
     }
   }
-
-  // private onLearnMoreClick = (): void => {
-  //   let url;
-  //   switch (this.props.serviceType) {
-  //     case ServiceTypes.Luis:
-  //       url = 'http://aka.ms/bot-framework-emulator-LUIS-docs-home';
-  //       break;
-
-  //     case ServiceTypes.QnA:
-  //       url = 'http://aka.ms/bot-framework-emulator-qna-keys';
-  //       break;
-
-  //     case ServiceTypes.Dispatch:
-  //       url = 'https://aka.ms/bot-framework-emulator-create-dispatch';
-  //       break;
-
-  //     default:
-  //       throw new Error(`${this.props.serviceType} is not a known service.`);
-  //   }
-  //   this.props.onAnchorClick(url);
-  // }
 
   private onSubmitClick = (): void => {
     this.props.updateConnectedService(this.state.connectedServiceCopy);

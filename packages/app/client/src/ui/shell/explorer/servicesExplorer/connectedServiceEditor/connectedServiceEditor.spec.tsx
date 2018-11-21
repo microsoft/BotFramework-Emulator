@@ -11,6 +11,7 @@ import { azureAuth } from '../../../../../data/reducer/azureAuthReducer';
 import { DialogService } from '../../../../dialogs/service';
 import { ConnectedServiceEditor } from './connectedServiceEditor';
 import { ConnectedServiceEditorContainer } from './connectedServiceEditorContainer';
+import { ServiceTypes } from 'botframework-config/lib/schema';
 
 jest.mock('../../../../dialogs/service', () => ({
   DialogService: {
@@ -45,7 +46,7 @@ describe('The ConnectedServiceEditor component ', () => {
             "subscriptionKey": "emoji"
         }`);
     parent = mount(<Provider store={ createStore(combineReducers({ azureAuth })) }>
-      <ConnectedServiceEditorContainer connectedService={ mockService }/>
+      <ConnectedServiceEditorContainer connectedService={ mockService } serviceType={ mockService.type }/>
     </Provider>);
     node = parent.find(ConnectedServiceEditor);
   });
@@ -102,5 +103,100 @@ describe('The ConnectedServiceEditor component ', () => {
     instance.render();
     const submitBtn = node.find(PrimaryButton);
     expect(submitBtn.props.disabled).toBeFalsy();
+  });
+});
+
+describe('The ConnectedServiceEditor component\'s should render the correct content when the service type is', () => {
+  let parent;
+  let node;
+  let mockService = JSON.parse(`{
+            "id": "b5af3f67-7ec8-444a-ae91-c4f02883c8f4",
+            "name": "It's mathmatical!",
+            "version": "0.1",
+            "appId": "121221",
+            "authoringKey": "poo",
+            "subscriptionKey": "emoji"
+        }`);
+  const services = [
+    ServiceTypes.Luis,
+    ServiceTypes.Dispatch,
+    ServiceTypes.QnA,
+    ServiceTypes.AppInsights,
+    ServiceTypes.BlobStorage,
+    ServiceTypes.CosmosDB];
+
+  beforeEach(() => {
+    mockService.type = services.shift();
+    parent = mount(<Provider store={ createStore(combineReducers({ azureAuth })) }>
+      <ConnectedServiceEditorContainer connectedService={ mockService } serviceType={ mockService.type }/>
+    </Provider>);
+    node = parent.find(ConnectedServiceEditor);
+  });
+
+  it('ServiceTypes.Luis', () => {
+    const instance = node.instance();
+    expect(instance.learnMoreLink).toBe('http://aka.ms/bot-framework-emulator-LUIS-docs-home');
+    expect(instance.editableFields).toEqual(['name', 'appId', 'authoringKey', 'version', 'subscriptionKey']);
+    expect(instance.headerContent).toEqual(instance.luisAndDispatchHeader);
+  });
+
+  it('ServiceTypes.Dispatch', () => {
+    const instance = node.instance();
+    expect(instance.learnMoreLink).toBe('https://aka.ms/bot-framework-emulator-create-dispatch');
+    expect(instance.editableFields).toEqual(['name', 'appId', 'authoringKey', 'version', 'subscriptionKey']);
+    expect(instance.headerContent).toEqual(instance.luisAndDispatchHeader);
+  });
+
+  it('ServiceTypes.QnA', () => {
+    const instance = node.instance();
+    expect(instance.learnMoreLink).toBe('http://aka.ms/bot-framework-emulator-qna-keys');
+    expect(instance.editableFields).toEqual(['name', 'kbId', 'hostname', 'subscriptionKey', 'endpointKey']);
+    expect(instance.headerContent).toEqual(instance.qnaHeader);
+  });
+
+  it('ServiceTypes.AppInsights', () => {
+    const instance = node.instance();
+    expect(instance.learnMoreLink).toBe('https://aka.ms/bot-framework-emulator-appinsights-keys');
+    expect(instance.editableFields).toEqual([
+      'name',
+      'tenantId',
+      'subscriptionKey',
+      'resourceGroup',
+      'serviceName',
+      'instrumentationKey',
+      'applicationId'
+    ]);
+    expect(instance.headerContent).toEqual(instance.appInsightsAndBlobStorageHeader);
+  });
+
+  it('ServiceTypes.Blob', () => {
+    const instance = node.instance();
+    expect(instance.learnMoreLink).toBe('https://aka.ms/bot-framework-emulator-storage-keys');
+    expect(instance.editableFields).toEqual([
+      'name',
+      'tenantId',
+      'subscriptionKey',
+      'resourceGroup',
+      'serviceName',
+      'connectionString',
+      'container'
+    ]);
+    expect(instance.headerContent).toEqual(instance.appInsightsAndBlobStorageHeader);
+  });
+
+  it('ServiceTypes.CosmosDB', () => {
+    const instance = node.instance();
+    expect(instance.learnMoreLink).toBe('https://aka.ms/bot-framework-emulator-cosmosdb-keys');
+    expect(instance.editableFields).toEqual([
+      'name',
+      'tenantId',
+      'subscriptionKey',
+      'resourceGroup',
+      'serviceName',
+      'endpoint',
+      'database',
+      'collection'
+    ]);
+    expect(instance.headerContent).toEqual(instance.cosmosDbHeader);
   });
 });

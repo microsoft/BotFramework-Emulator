@@ -224,7 +224,9 @@ function* openAddConnectedServiceContextMenu(action: ConnectedServiceAction<Conn
     { label: 'Add QnA Maker', id: ServiceTypes.QnA },
     { label: 'Add Dispatch', id: ServiceTypes.Dispatch },
     { type: 'separator' },
-    { label: 'Add Azure Application Insights', id: ServiceTypes.AppInsights}
+    { label: 'Add Azure Cosmos DB account', id: ServiceTypes.CosmosDB},
+    { label: 'Add Azure Storage account', id: ServiceTypes.BlobStorage},
+    { label: 'Add Azure Application Insights', id: ServiceTypes.AppInsights},
   ];
 
   const response = yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.DisplayContextMenu, menuItems);

@@ -32,15 +32,8 @@
 //
 
 import { connect } from 'react-redux';
-import { RootState } from '../../../../../data/store';
 import { DialogService } from '../../../../dialogs/service';
 import { ConnectedServiceEditor } from './connectedServiceEditor';
-
-const mapStateToProps = (_state: RootState, ownProps: { [propName: string]: any }) => {
-  return {
-    ...ownProps
-  };
-};
 
 const mapDispatchToProps = (_dispatch: () => void) => {
   return {
@@ -50,6 +43,6 @@ const mapDispatchToProps = (_dispatch: () => void) => {
 };
 
 export const ConnectedServiceEditorContainer = connect(
-  mapStateToProps,
+  null,
   mapDispatchToProps
 )(ConnectedServiceEditor) as any;
