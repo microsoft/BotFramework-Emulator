@@ -1,14 +1,13 @@
 import { DefaultButton, Dialog, DialogFooter, PrimaryButton } from '@bfemulator/ui-react';
 import { ServiceTypes } from 'botframework-config/lib/schema';
 import * as React from 'react';
-import { Component, MouseEvent, ReactNode } from 'react';
+import { Component, ReactNode } from 'react';
 import * as styles from '../dialogStyles.scss';
 
 export interface ConnectServicePromptDialogProps {
   cancel: () => void;
   confirm: () => void;
   addServiceManually: () => void;
-  onAnchorClick: (url: string) => void;
   serviceType?: ServiceTypes;
 }
 
@@ -61,9 +60,7 @@ export class ConnectServicePromptDialog extends Component<ConnectServicePromptDi
       <>
         <p>
           { `Sign in to your Azure account to select the LUIS applications you'd like to associate with this bot. ` }
-          <a href="javascript:void(0);"
-             data-href="http://aka.ms/bot-framework-emulator-LUIS-docs-home"
-             onClick={ this.onAnchorClick }>Learn more about LUIS.
+          <a href="http://aka.ms/bot-framework-emulator-LUIS-docs-home">
           </a>
         </p>
         <p>
@@ -81,9 +78,7 @@ export class ConnectServicePromptDialog extends Component<ConnectServicePromptDi
         <p>
           { 'Sign in to your Azure account to select the QnA ' +
           'Maker knowledge bases you\'d like to associate with this bot. ' }
-          <a href="javascript:void(0);"
-             data-href="http://aka.ms/bot-framework-emulator-qna-docs-home"
-             onClick={ this.onAnchorClick }>Learn more about QnA Maker.
+          <a href="http://aka.ms/bot-framework-emulator-qna-docs-home">
           </a>
         </p>
         <p>
@@ -101,9 +96,7 @@ export class ConnectServicePromptDialog extends Component<ConnectServicePromptDi
       <>
         <p>
           { `Sign in to your Azure account to select the Dispatch model you'd like to associate with this bot. ` }
-          <a href="javascript:void(0);"
-             data-href="https://aka.ms/bot-framework-emulator-create-dispatch"
-             onClick={ this.onAnchorClick }>Learn more about Dispatch models.
+          <a href="https://aka.ms/bot-framework-emulator-create-dispatch">Learn more about Dispatch models.
           </a>
         </p>
         <p>
@@ -123,7 +116,7 @@ export class ConnectServicePromptDialog extends Component<ConnectServicePromptDi
         <p>
           { 'Sign in to your Azure account to select the Azure Application ' +
           'Insights you\'d like to associate with this bot. ' }
-          <a href="javascript:void(0);" onClick={ this.onAnchorClick }>
+          <a href="https://aka.ms/bot-framework-emulator-appinsights-docs">
             Learn more about Azure Application Insights.
           </a>
         </p>
@@ -136,10 +129,5 @@ export class ConnectServicePromptDialog extends Component<ConnectServicePromptDi
         </p>
       </>
     );
-  }
-
-  private onAnchorClick = (event: MouseEvent<HTMLAnchorElement>) => {
-    const { href } = event.currentTarget.dataset;
-    this.props.onAnchorClick(href);
   }
 }

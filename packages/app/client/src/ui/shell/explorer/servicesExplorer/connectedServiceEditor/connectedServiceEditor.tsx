@@ -111,6 +111,22 @@ const getEditableFields = (service: IConnectedService): string[] => {
   }
 };
 
+export function getLearnMoreLink(serviceType?: ServiceTypes): (string | void) {
+  switch (serviceType) {
+    case ServiceTypes.Luis:
+      return 'http://aka.ms/bot-framework-emulator-LUIS-docs-home';
+
+    case ServiceTypes.QnA:
+      return 'http://aka.ms/bot-framework-emulator-qna-keys';
+
+    case ServiceTypes.Dispatch:
+      return 'https://aka.ms/bot-framework-emulator-create-dispatch';
+
+    default:
+      return;
+  }
+}
+
 export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProps, ConnectedServiceEditorState> {
   public state: ConnectedServiceEditorState = {} as ConnectedServiceEditorState;
 
@@ -158,7 +174,7 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
       <Dialog title={ titleMap[type] } cancel={ props.cancel } className={ styles.connectedServiceEditor }>
         <p>
           You can find your knowledge base ID and subscription key in { portalMap[type] }&nbsp;
-          <a href="javascript:void(0);" onClick={ this.onLearnMoreClick }>
+          <a href={ getLearnMoreLink(this.props.serviceType) || '' }>
             Learn more about keys in { labelMap[type] }
           </a>
         </p>
@@ -188,27 +204,6 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
       default:
         return true;
     }
-  }
-
-  private onLearnMoreClick = (): void => {
-    let url;
-    switch (this.props.serviceType) {
-      case ServiceTypes.Luis:
-        url = 'http://aka.ms/bot-framework-emulator-LUIS-docs-home';
-        break;
-
-      case ServiceTypes.QnA:
-        url = 'http://aka.ms/bot-framework-emulator-qna-keys';
-        break;
-
-      case ServiceTypes.Dispatch:
-        url = 'https://aka.ms/bot-framework-emulator-create-dispatch';
-        break;
-
-      default:
-        throw new Error(`${this.props.serviceType} is not a known service.`);
-    }
-    this.props.onAnchorClick(url);
   }
 
   private onSubmitClick = (): void => {

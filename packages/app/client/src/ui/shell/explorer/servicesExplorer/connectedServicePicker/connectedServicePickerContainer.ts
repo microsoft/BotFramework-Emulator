@@ -35,8 +35,6 @@ import { ServiceTypes } from 'botframework-config/lib/schema';
 import { RootState } from '../../../../../data/store';
 import { DialogService } from '../../../../dialogs/service';
 import { ConnectedServicePicker } from './connectedServicePicker';
-import { CommandServiceImpl } from '../../../../../platform/commands/commandServiceImpl';
-import { SharedConstants } from '@bfemulator/app-shared';
 
 const mapStateToProps = (state: RootState, ownProps: { [propName: string]: any }) => {
   const { services } = state.bot.activeBot;
@@ -51,9 +49,6 @@ const mapDispatchToProps = (_dispatch: () => void) => {
     launchServiceEditor: () => DialogService.hideDialog(1),
     connectServices: servicesToConnect => DialogService.hideDialog(servicesToConnect),
     cancel: () => DialogService.hideDialog(0),
-    onAnchorClick: (url) => {
-      CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.OpenExternal, url).catch();
-    }
   };
 };
 

@@ -36,7 +36,6 @@ import { Dialog, DialogFooter, PrimaryButton } from '@bfemulator/ui-react';
 
 export interface PostMigrationDialogProps {
   close: () => void;
-  onAnchorClick: (url: string) => void;
 }
 
 export class PostMigrationDialog extends React.Component<PostMigrationDialogProps> {
@@ -51,16 +50,12 @@ export class PostMigrationDialog extends React.Component<PostMigrationDialogProp
           { 'We’ve copied your bot endpoints from Emulator v3 and saved them as <strong>.bot files</strong>. ' +
           'A <strong>.bot file</strong> stores metadata about different services your bot consumes and enables you ' +
           'to edit these services directly from the Emulator v4. ' }
-          <a
-            href="javascript:void(0);"
-            onClick={ this.onLearnMoreConfigAnchor }>
-            Learn more about bot configuration files.
-          </a>
+          <a href="https://aka.ms/about-bot-file">Learn more about bot configuration files.</a>
         </p>
         <p>You can move a bot to any location by right-clicking the bot's name under My Bots.</p>
         <p>
-          <a href="javascript:void(0);" onClick={ this.onLearnMoreNewFeaturesAnchor }>
-            Learn more about new features in Bot Framework Emulator v4
+          <a href="https://aka.ms/bot-framework-emulator-v4-overview">
+          Learn more about new features in Bot Framework Emulator v4
           </a>
         </p>
         <DialogFooter>
@@ -72,13 +67,5 @@ export class PostMigrationDialog extends React.Component<PostMigrationDialogProp
 
   private onClose = () => {
     this.props.close();
-  }
-
-  private onLearnMoreConfigAnchor = () => {
-    this.props.onAnchorClick('https://aka.ms/about-bot-file');
-  }
-
-  private onLearnMoreNewFeaturesAnchor = () => {
-    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-v4-overview');
   }
 }

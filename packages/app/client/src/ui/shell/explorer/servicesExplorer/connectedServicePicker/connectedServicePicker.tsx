@@ -57,7 +57,6 @@ interface ConnectedServicesPickerProps {
   launchServiceEditor: () => void;
   connectServices: (models: IConnectedService[]) => void;
   cancel: () => void;
-  onAnchorClick: (url: string) => void;
 }
 
 interface ConnectedServicesPickerState {
@@ -170,22 +169,6 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
     this.props.connectServices(addedModels);
   }
 
-  private onCreateLUIS = () => {
-    this.props.onAnchorClick('http://aka.ms/bot-framework-emulator-create-luis-app');
-  }
-
-  private onCreateKB = () => {
-    this.props.onAnchorClick('http://aka.ms/bot-framework-emulator-create-qna-kb');
-  }
-
-  private onLearnMoreCollaboration = () => {
-    this.props.onAnchorClick('http://aka.ms/bot-framework-emulator-luis-collaboration');
-  }
-
-  private onLearnMoreDispatch = () => {
-    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-create-dispatch');
-  }
-
   private get selectAllCheckbox(): JSX.Element {
     if (this.props.availableServices.length < 2) {
       return null;
@@ -274,13 +257,13 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
   private get luisServiceContent(): JSX.Element {
     return (
       <>
-        <a href="javascript:void(0);" onClick={ this.onCreateLUIS } className={ styles.paddedLink }>
+        <a href="http://aka.ms/bot-framework-emulator-create-luis-app" className={ styles.paddedLink }>
           Create a new LUIS app
         </a>
         <p>
           Signed in as { this.props.authenticatedUser }. You can link apps from a different LUIS
           account to this Azure account by adding yourself as a collaborator.&nbsp;
-          <a href="javascript:void(0);" onClick={ this.onLearnMoreCollaboration }>Learn more about collaborating.</a>
+          <a href="http://aka.ms/bot-framework-emulator-luis-collaboration">Learn more about collaborating.</a>
         </p>
       </>
     );
@@ -289,7 +272,7 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
   private get qnaServiceContent(): JSX.Element {
     return (
       <>
-        <a href="javascript:void(0);" onClick={ this.onCreateKB } className={ styles.paddedLink }>
+        <a href="http://aka.ms/bot-framework-emulator-create-qna-kb" className={ styles.paddedLink }>
           Create a new knowledge base
         </a>
         <p>
@@ -302,13 +285,13 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
   private get dispatchServiceContent(): JSX.Element {
     return (
       <>
-        <a href="javascript:void(0);" onClick={ this.onLearnMoreDispatch } className={ styles.paddedLink }>
+        <a href="https://aka.ms/bot-framework-emulator-create-dispatch" className={ styles.paddedLink }>
           Learn more about using Dispatch apps
         </a>
         <p>
           Signed in as { this.props.authenticatedUser }. You can link apps from a different LUIS
           account to this Azure account by adding yourself as a collaborator.&nbsp;
-          <a href="javascript:void(0);" onClick={ this.onLearnMoreCollaboration }>Learn more about collaborating.</a>
+          <a href="http://aka.ms/bot-framework-emulator-luis-collaboration" >Learn more about collaborating.</a>
         </p>
       </>
     );
