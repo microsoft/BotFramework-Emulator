@@ -1,15 +1,13 @@
-// import { SharedConstants } from '@bfemulator/app-shared';
 import { PrimaryButton } from '@bfemulator/ui-react';
-// import { ServiceTypes } from 'botframework-config';
+import { ServiceTypes } from 'botframework-config';
 import { LuisService } from 'botframework-config/lib/models';
 import { mount } from 'enzyme';
 import * as React from 'react';
 import { Provider } from 'react-redux';
 import { combineReducers, createStore } from 'redux';
 import { azureAuth } from '../../../../../data/reducer/azureAuthReducer';
-// import { CommandServiceImpl } from '../../../../../platform/commands/commandServiceImpl';
 import { DialogService } from '../../../../dialogs/service';
-import { ConnectedServiceEditor } from './connectedServiceEditor';
+import { ConnectedServiceEditor, getLearnMoreLink } from './connectedServiceEditor';
 import { ConnectedServiceEditorContainer } from './connectedServiceEditorContainer';
 
 jest.mock('../../../../dialogs/service', () => ({
@@ -102,5 +100,19 @@ describe('The ConnectedServiceEditor component ', () => {
     instance.render();
     const submitBtn = node.find(PrimaryButton);
     expect(submitBtn.props.disabled).toBeFalsy();
+  });
+
+  it('should return the correct url according to service type.', () => {
+    let serviceType = ServiceTypes.QnA;
+    let returnedHref = getLearnMoreLink(serviceType);
+    expect(returnedHref).toBe('http://aka.ms/bot-framework-emulator-qna-keys');
+    
+    serviceType = ServiceTypes.Luis;
+    returnedHref = getLearnMoreLink(serviceType);
+    expect(returnedHref).toBe('http://aka.ms/bot-framework-emulator-LUIS-docs-home');
+    
+    serviceType = ServiceTypes.Dispatch;
+    returnedHref = getLearnMoreLink(serviceType);
+    expect(returnedHref).toBe('https://aka.ms/bot-framework-emulator-create-dispatch');
   });
 });
