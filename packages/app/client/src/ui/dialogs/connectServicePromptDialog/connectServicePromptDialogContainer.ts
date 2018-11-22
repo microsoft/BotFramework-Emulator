@@ -31,9 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { SharedConstants } from '@bfemulator/app-shared';
 import { connect } from 'react-redux';
-import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
 import { DialogService } from '../service';
 import { ConnectServicePromptDialog, ConnectServicePromptDialogProps } from './connectServicePromptDialog';
 
@@ -44,10 +42,7 @@ const mapDispatchToProps = (
     ...ownProps,
     cancel: () => DialogService.hideDialog(0),
     confirm: () => DialogService.hideDialog(1),
-    addServiceManually: () => DialogService.hideDialog(2),
-    onAnchorClick: (url) => {
-      CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.OpenExternal, url).catch();
-    }
+    addServiceManually: () => DialogService.hideDialog(2)
   };
 };
 

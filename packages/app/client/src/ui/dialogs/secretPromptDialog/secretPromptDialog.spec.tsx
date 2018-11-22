@@ -8,8 +8,6 @@ import { setActive } from '../../../data/action/botActions';
 import { SecretPromptDialogContainer } from './secretPromptDialogContainer';
 import { SecretPromptDialog } from './secretPromptDialog';
 import { DialogService } from '../service';
-import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
-import { SharedConstants } from '@bfemulator/app-shared';
 
 const mockStore = createStore(combineReducers({ bot }));
 const mockBot = BotConfigWithPathImpl.fromJSON({});
@@ -42,7 +40,7 @@ jest.mock('../../../utils', () => ({
   }
 }));
 
-describe('The Secret prompt dialog should', () => {
+describe('The Secret prompt dialog', () => {
   let parent;
   let node;
   beforeEach(() => {
@@ -59,7 +57,6 @@ describe('The Secret prompt dialog should', () => {
   });
 
   it('should contain the expected functions in the props', () => {
-    expect(typeof (node.props() as any).onAnchorClick).toBe('function');
     expect(typeof (node.props() as any).onCancelClick).toBe('function');
     expect(typeof (node.props() as any).onSaveClick).toBe('function');
   });
@@ -96,13 +93,5 @@ describe('The Secret prompt dialog should', () => {
     instance.onDismissClick();
 
     expect(spy).toHaveBeenCalledWith(null);
-  });
-
-  it('should make a remote command call when the learn more button is clicked', () => {
-    const spy = jest.spyOn(CommandServiceImpl, 'remoteCall');
-    const instance = node.instance();
-    instance.onLearnMoreClick();
-    const url = 'https://github.com/Microsoft/botbuilder-tools/tree/master/packages/MSBot';
-    expect(spy).toHaveBeenCalledWith(SharedConstants.Commands.Electron.OpenExternal, url);
   });
 });

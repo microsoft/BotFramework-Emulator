@@ -415,33 +415,25 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
         { type: 'separator' },
         {
           label: 'Privacy',
-          click: () => mainWindow.commandService.remoteCall(
-            SharedConstants.Commands.Electron.OpenExternal,
-            'https://go.microsoft.com/fwlink/?LinkId=512132'
-          )
+          click: () =>
+            Electron.shell.openExternal('https://go.microsoft.com/fwlink/?LinkId=512132', { activate: true })
         },
         {
           // TODO: Proper link for the license instead of third party credits
           label: 'License',
-          click: () => mainWindow.commandService.remoteCall(
-            SharedConstants.Commands.Electron.OpenExternal,
-            'https://aka.ms/O10ww2'
-          )
+          click: () => 
+            Electron.shell.openExternal('https://aka.ms/O10ww2', { activate: true })  
         },
         {
           label: 'Credits',
-          click: () => mainWindow.commandService.remoteCall(
-            SharedConstants.Commands.Electron.OpenExternal,
-            'https://aka.ms/Ud5ga6'
-          )
+          click: () => 
+            Electron.shell.openExternal('https://aka.ms/Ud5ga6', { activate: true })
         },
         { type: 'separator' },
         {
           label: 'Report an issue',
-          click: () => mainWindow.commandService.remoteCall(
-            SharedConstants.Commands.Electron.OpenExternal,
-            'https://aka.ms/cy106f'
-          )
+          click: () => 
+            Electron.shell.openExternal('https://aka.ms/cy106f', { activate: true })
         },
         { type: 'separator' },
         this.getUpdateMenuItem(),
