@@ -77,7 +77,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
     const settingsStore: Store<Settings> = getSettingsStore();
     const settingsState = settingsStore.getState();
     await mainWindow.commandService.remoteCall(Commands.Settings.ReceiveGlobalSettings, {
-      serverUrl: (emulator.framework.serverUrl || '').replace('[::]', '127.0.0.1'),
+      serverUrl: (emulator.framework.serverUrl || '').replace('[::]', 'localhost'),
       cwd: (__dirname || '').replace(/\\/g, '/'),
       users: settingsState.users,
       locale: settingsState.framework.locale

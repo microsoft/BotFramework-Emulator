@@ -41,7 +41,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
       url: string,
       cwd: string
     }): any => {
-      SettingsService.emulator.url = (settings.url || '').replace('[::]', '127.0.0.1');
+      SettingsService.emulator.url = (settings.url || '').replace('[::]', 'localhost');
       SettingsService.emulator.cwd = (settings.cwd || '').replace(/\\/g, '/');
     });
 }
