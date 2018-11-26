@@ -89,28 +89,9 @@ class TabComponent extends React.Component<TabProps, TabState> {
         </button>
       </div>
     );
-
-    // return (
-    //   <div className={ `${styles.tab} ${activeClassName} ${draggedOverClassName}` } draggable
-    //        onDragOver={ this.onDragOver } onDragEnter={ this.onDragEnter } onDragStart={ this.onDragStart }
-    //        onDrop={ this.onDrop } onDragLeave={ this.onDragLeave } onDragEnd={ this.onDragEnd }>
-    //     <span className={ styles.editorTabIcon }> </span>
-    //     <TruncateText className={ styles.truncatedTabText }>{ this.props.label }</TruncateText>
-    //     { this.props.dirty ? <span>*</span> : null }
-    //     <a
-    //       href="javascript:void(0)"
-    //       title="Close"
-    //       className={ styles.editorTabClose }
-    //       onKeyPress={ this.onCloseButtonKeyPress }
-    //       onClick={ this.onCloseClick }
-    //     >
-    //       <span></span>
-    //     </a>
-    //   </div>
-    // );
   }
 
-  private onCloseButtonKeyPress = (event: any, _meow?: KeyboardEvent<HTMLButtonElement>) => {
+  private onCloseButtonKeyPress = (event: KeyboardEvent<HTMLButtonElement>) => {
     if (event.key === ' ' || event.keyCode === 13) {
       this.props.onCloseClick(this.props.documentId);
     }
