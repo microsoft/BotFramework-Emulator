@@ -34,7 +34,7 @@
 import { Checkbox, DefaultButton, Dialog, DialogFooter, PrimaryButton } from '@bfemulator/ui-react';
 import { IConnectedService, ServiceTypes } from 'botframework-config/lib/schema';
 import * as React from 'react';
-import { ChangeEventHandler, Component } from 'react';
+import { ChangeEventHandler, Component, ReactNode } from 'react';
 
 import * as styles from './connectedServicePicker.scss';
 
@@ -43,7 +43,9 @@ const titleMap = {
   [ServiceTypes.Dispatch]: 'Connect to a Dispatch model',
   [ServiceTypes.QnA]: 'Connect to your QnA Maker knowledge base',
   [ServiceTypes.Bot]: 'Connect to an Azure Bot Service',
-  [ServiceTypes.AppInsights]: 'Connect to an Azure Application Insights resource'
+  [ServiceTypes.AppInsights]: 'Connect to an Azure Application Insights resource',
+  [ServiceTypes.BlobStorage]: 'Connect to an Azure Storage account',
+  [ServiceTypes.CosmosDB]: 'Connect to an Azure Cosmos DB account'
 };
 
 const connected = 'connected';
@@ -85,7 +87,7 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
     return state;
   }
 
-  public render(): JSX.Element {
+  public render(): ReactNode {
     return (
       <Dialog
         title={ titleMap[this.props.serviceType] }
@@ -107,7 +109,7 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
     );
   }
 
-  private get serviceListElements(): JSX.Element[] {
+  private get serviceListElements(): ReactNode[] {
     const { state, onChange } = this;
     const { availableServices } = this.props;
     return availableServices.map(service => {
@@ -169,7 +171,7 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
     this.props.connectServices(addedModels);
   }
 
-  private get selectAllCheckbox(): JSX.Element {
+  private get selectAllCheckbox(): ReactNode {
     if (this.props.availableServices.length < 2) {
       return null;
     }
@@ -186,7 +188,7 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
 
   // --------------------------------
   // Header specific to
-  private get headerElements(): JSX.Element {
+  private get headerElements(): ReactNode {
     switch (this.props.serviceType) {
       case ServiceTypes.Luis:
         return this.luisServiceHeader;
@@ -197,48 +199,92 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
       case ServiceTypes.Dispatch:
         return this.dispatchServiceHeader;
 
+      case ServiceTypes.AppInsights:
+        return this.appInsightsHeader;
+
+      case ServiceTypes.BlobStorage:
+        return this.blobStorageHeader;
+
+      case ServiceTypes.CosmosDB:
+        return this.cosmosDbHeader;
+
       default:
         return null;
     }
   }
 
-  private get luisServiceHeader(): JSX.Element {
+  private get luisServiceHeader(): ReactNode {
     return (
       <p>
-        Select a LUIS app below to store the app ID in your bot file or&nbsp;
+        { 'Select a LUIS app below to store the app ID in your bot file or ' }
         <a href="javascript:void(0);" onClick={ this.props.launchServiceEditor }>
           add a LUIS app manually
-        </a> by entering the app ID and key
+        </a>
+        { ' by entering the app ID and key' }
       </p>
     );
   }
 
-  private get qnaServiceHeader(): JSX.Element {
+  private get qnaServiceHeader(): ReactNode {
     return (
       <p>
-        Select a knowledge base below to store the knowledge base Id in your bot file or&nbsp;
+        { ' Select a knowledge base below to store the knowledge base Id in your bot file or ' }
         <a href="javascript:void(0);" onClick={ this.props.launchServiceEditor }>
           connect to a knowledge base manually
-        </a> by entering the knowledge base ID and key.
+        </a>
+        { ' by entering the knowledge base ID and key.' }
       </p>
     );
   }
 
-  private get dispatchServiceHeader(): JSX.Element {
+  private get dispatchServiceHeader(): ReactNode {
     return (
       <p>
-        Select a Dispatch app below to store the app ID in your bot file or&nbsp;
+        { 'Select a Dispatch app below to store the app ID in your bot file or ' }
         <a href="javascript:void(0);" onClick={ this.props.launchServiceEditor }>
           connect to a Dispatch app manually
-        </a> by entering the app ID and key.
+        </a>
+        { ' by entering the app ID and key.' }
+      </p>
+    );
+  }
 
+  private get appInsightsHeader(): ReactNode {
+    return (
+      <p>
+        { 'Select a resource below or ' }
+        <a href="javascript:void(0);" onClick={ this.props.launchServiceEditor }>
+          connect to an Applications Insights resource manually.
+        </a>
+      </p>
+    );
+  }
+
+  private get blobStorageHeader(): ReactNode {
+    return (
+      <p>
+        { 'Select a storage account below or ' }
+        <a href="javascript:void(0);" onClick={ this.props.launchServiceEditor }>
+          connect to an Azure storage account manually.
+        </a>
+      </p>
+    );
+  }
+
+  private get cosmosDbHeader(): ReactNode {
+    return (
+      <p>
+        { 'Select an account below or ' }
+        <a href="javascript:void(0);" onClick={ this.props.launchServiceEditor }>
+          connect to an Azure storage account manually.
+        </a>
       </p>
     );
   }
 
   // --------------------------------------
   // Content specific to the service
-  private get contentElements(): JSX.Element {
+  private get contentElements(): ReactNode {
     switch (this.props.serviceType) {
       case ServiceTypes.Luis:
         return this.luisServiceContent;
@@ -249,49 +295,97 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
       case ServiceTypes.Dispatch:
         return this.dispatchServiceContent;
 
+      case ServiceTypes.BlobStorage:
+        return this.blobStorageServiceContent;
+
+      case ServiceTypes.AppInsights:
+        return this.appInsightsServiceContent;
+
+      case ServiceTypes.CosmosDB:
+        return this.cosmosDbServiceContent;
+
       default:
         return null;
     }
   }
 
-  private get luisServiceContent(): JSX.Element {
+  private get luisServiceContent(): ReactNode {
     return (
       <>
         <a href="http://aka.ms/bot-framework-emulator-create-luis-app" className={ styles.paddedLink }>
           Create a new LUIS app
         </a>
         <p>
-          Signed in as { this.props.authenticatedUser }. You can link apps from a different LUIS
-          account to this Azure account by adding yourself as a collaborator.&nbsp;
+          { `Signed in as ${ this.props.authenticatedUser }. You can link apps from a different LUIS ` }
+          { 'account to this Azure account by adding yourself as a collaborator.' }
           <a href="http://aka.ms/bot-framework-emulator-luis-collaboration">Learn more about collaborating.</a>
         </p>
       </>
     );
   }
 
-  private get qnaServiceContent(): JSX.Element {
+  private get qnaServiceContent(): ReactNode {
     return (
       <>
         <a href="http://aka.ms/bot-framework-emulator-create-qna-kb" className={ styles.paddedLink }>
-          Create a new knowledge base
+          Create a new knowledge base.
         </a>
         <p>
-          Signed in as { this.props.authenticatedUser }.
+          { ` Signed in as ${ this.props.authenticatedUser }.` }
         </p>
       </>
     );
   }
 
-  private get dispatchServiceContent(): JSX.Element {
+  private get dispatchServiceContent(): ReactNode {
     return (
       <>
         <a href="https://aka.ms/bot-framework-emulator-create-dispatch" className={ styles.paddedLink }>
-          Learn more about using Dispatch apps
+          Learn more about using Dispatch apps.
         </a>
         <p>
-          Signed in as { this.props.authenticatedUser }. You can link apps from a different LUIS
-          account to this Azure account by adding yourself as a collaborator.&nbsp;
-          <a href="http://aka.ms/bot-framework-emulator-luis-collaboration" >Learn more about collaborating.</a>
+          { ` Signed in as ${ this.props.authenticatedUser }. You can link apps from a different LUIS ` }
+          { 'account to this Azure account by adding yourself as a collaborator. ' }
+          <a href="http://aka.ms/bot-framework-emulator-luis-collaboration">Learn more about collaborating.</a>
+        </p>
+      </>
+    );
+  }
+
+  private get blobStorageServiceContent(): ReactNode {
+    return (
+      <>
+        <a href="https://aka.ms/bot-framework-emulator-create-storage" className={ styles.paddedLink }>
+          Create a new Azure storage account
+        </a>
+        <p>
+          { ` Signed in as ${ this.props.authenticatedUser }.` }
+        </p>
+      </>
+    );
+  }
+
+  private get appInsightsServiceContent(): ReactNode {
+    return (
+      <>
+        <a href="https://aka.ms/bot-framework-emulator-create-appinsights" className={ styles.paddedLink }>
+          Create a new Azure storage account
+        </a>
+        <p>
+          { ` Signed in as ${ this.props.authenticatedUser }.` }
+        </p>
+      </>
+    );
+  }
+
+  private get cosmosDbServiceContent(): ReactNode {
+    return (
+      <>
+        <a href="https://aka.ms/bot-framework-emulator-create-storage" className={ styles.paddedLink }>
+          Create a new Azure Cosmos DB account.
+        </a>
+        <p>
+          { ` Signed in as ${ this.props.authenticatedUser }.` }
         </p>
       </>
     );

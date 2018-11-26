@@ -164,5 +164,38 @@ describe('The ConnectedServicePicker component', () => {
       expect(node.headerElements).toBe(node.qnaServiceHeader);
       expect(node.contentElements).toBe(node.qnaServiceContent);
     });
+
+    it('ServiceTypes.BlobStorage is passed into the props', () => {
+      parent = mount(<Provider store={ mockStore }>
+        <ConnectedServicePickerContainer availableServices={ [mockService] }
+                                         authenticatedUser="bot@bot.com" serviceType={ ServiceTypes.BlobStorage } />
+      </Provider>);
+      node = parent.find(ConnectedServicePicker);
+
+      expect(node.headerElements).toBe(node.blobStorageHeader);
+      expect(node.contentElements).toBe(node.blobStorageServiceContent);
+    });
+
+    it('ServiceTypes.AppInsights is passed into the props', () => {
+      parent = mount(<Provider store={ mockStore }>
+        <ConnectedServicePickerContainer availableServices={ [mockService] }
+                                         authenticatedUser="bot@bot.com" serviceType={ ServiceTypes.AppInsights } />
+      </Provider>);
+      node = parent.find(ConnectedServicePicker);
+
+      expect(node.headerElements).toBe(node.appInsightsHeader);
+      expect(node.contentElements).toBe(node.appInsightsServiceContent);
+    });
+
+    it('ServiceTypes.CosmosDB is passed into the props', () => {
+      parent = mount(<Provider store={ mockStore }>
+        <ConnectedServicePickerContainer availableServices={ [mockService] }
+                                         authenticatedUser="bot@bot.com" serviceType={ ServiceTypes.CosmosDB } />
+      </Provider>);
+      node = parent.find(ConnectedServicePicker);
+
+      expect(node.headerElements).toBe(node.cosmosDbHeader);
+      expect(node.contentElements).toBe(node.cosmosDbServiceContent);
+    });
   });
 });
