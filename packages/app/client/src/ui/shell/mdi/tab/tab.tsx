@@ -68,27 +68,6 @@ class TabComponent extends React.Component<TabProps, TabState> {
     const activeClassName = this.props.active ? styles.activeEditorTab : '';
     const draggedOverClassName = this.state.draggedOver ? styles.draggedOverEditorTab : '';
 
-    // return (
-    //   <div className={ `${styles.tab} ${activeClassName} ${draggedOverClassName}` } draggable
-    //        onDragOver={ this.onDragOver } onDragEnter={ this.onDragEnter } onDragStart={ this.onDragStart }
-    //        onDrop={ this.onDrop } onDragLeave={ this.onDragLeave } onDragEnd={ this.onDragEnd }>
-    //     <div className={ styles.testTab } 
-    //       role="button" tabIndex={ 0 } aria-label={ `${this.props.label}, tab` }>&nbsp;</div>
-    //     <span className={ styles.editorTabIcon }> </span>
-    //     <TruncateText className={ styles.truncatedTabText }>{ this.props.label }</TruncateText>
-    //     { this.props.dirty ? <span>*</span> : null }
-    //     <button
-    //       type="button"
-    //       title="Close tab"
-    //       className={ styles.editorTabClose }
-    //       onKeyPress={ this.onCloseButtonKeyPress }
-    //       onClick={ this.onCloseClick }
-    //     >
-    //       <span></span>
-    //     </button>
-    //   </div>
-    // );
-
     return (
       <div className={ `${styles.tab} ${activeClassName} ${draggedOverClassName}` } draggable
            onDragOver={ this.onDragOver } onDragEnter={ this.onDragEnter } onDragStart={ this.onDragStart }
@@ -96,26 +75,48 @@ class TabComponent extends React.Component<TabProps, TabState> {
         <span className={ styles.editorTabIcon }> </span>
         <TruncateText className={ styles.truncatedTabText }>{ this.props.label }</TruncateText>
         { this.props.dirty ? <span>*</span> : null }
-        <a
-          href="javascript:void(0)"
-          title="Close"
+        <div className={ styles.tabSeparator }></div>
+        <div className={ styles.tabFocusTarget } 
+          role="button" tabIndex={ 0 } aria-label={ `${this.props.label}, tab` }>&nbsp;</div>
+        <button
+          type="button"
+          title="Close tab"
           className={ styles.editorTabClose }
           onKeyPress={ this.onCloseButtonKeyPress }
           onClick={ this.onCloseClick }
         >
           <span></span>
-        </a>
+        </button>
       </div>
     );
+
+    // return (
+    //   <div className={ `${styles.tab} ${activeClassName} ${draggedOverClassName}` } draggable
+    //        onDragOver={ this.onDragOver } onDragEnter={ this.onDragEnter } onDragStart={ this.onDragStart }
+    //        onDrop={ this.onDrop } onDragLeave={ this.onDragLeave } onDragEnd={ this.onDragEnd }>
+    //     <span className={ styles.editorTabIcon }> </span>
+    //     <TruncateText className={ styles.truncatedTabText }>{ this.props.label }</TruncateText>
+    //     { this.props.dirty ? <span>*</span> : null }
+    //     <a
+    //       href="javascript:void(0)"
+    //       title="Close"
+    //       className={ styles.editorTabClose }
+    //       onKeyPress={ this.onCloseButtonKeyPress }
+    //       onClick={ this.onCloseClick }
+    //     >
+    //       <span></span>
+    //     </a>
+    //   </div>
+    // );
   }
 
-  private onCloseButtonKeyPress = (event: any, _meow?: KeyboardEvent<HTMLAnchorElement>) => {
+  private onCloseButtonKeyPress = (event: any, _meow?: KeyboardEvent<HTMLButtonElement>) => {
     if (event.key === ' ' || event.keyCode === 13) {
       this.props.onCloseClick(this.props.documentId);
     }
   }
 
-  private onCloseClick = (event: SyntheticEvent<HTMLAnchorElement>): void => {
+  private onCloseClick = (event: SyntheticEvent<HTMLButtonElement>): void => {
     event.stopPropagation();
     this.props.onCloseClick(this.props.documentId);
   }
