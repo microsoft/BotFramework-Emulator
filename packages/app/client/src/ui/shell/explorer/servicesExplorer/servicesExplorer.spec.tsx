@@ -1,4 +1,3 @@
-import { SharedConstants } from '@bfemulator/app-shared';
 import { LuisService } from 'botframework-config/lib/models';
 import { mount } from 'enzyme';
 import * as React from 'react';
@@ -13,7 +12,6 @@ import {
 } from '../../../../data/action/connectedServiceActions';
 import { bot } from '../../../../data/reducer/bot';
 import { explorer } from '../../../../data/reducer/explorer';
-import { CommandServiceImpl } from '../../../../platform/commands/commandServiceImpl';
 import {
   AzureLoginFailedDialogContainer,
   AzureLoginSuccessDialogContainer,
@@ -104,13 +102,6 @@ describe('The ServicesExplorer component should', () => {
       editorComponent: ConnectedServiceEditorContainer,
       pickerComponent: ConnectedServicePickerContainer,
     }));
-  });
-
-  it('should dispatch a request to open a link when an anchor is clicked', () => {
-    const instance = node.instance();
-    const remoteCallSpy = jest.spyOn(CommandServiceImpl, 'remoteCall');
-    instance.onAnchorClick({ currentTarget: { dataset: { href: 'http://someurl' } } });
-    expect(remoteCallSpy).toHaveBeenCalledWith(SharedConstants.Commands.Electron.OpenExternal, 'http://someurl');
   });
 
   it('should dispatch to the store when a request to open the sort context menu is made', () => {

@@ -145,9 +145,7 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
               label="Encrypt keys stored in your bot configuration."
               checked={ encryptKey }
               onChange={ this.onEncryptKeyChange }/>
-            <a
-              href="javascript:void(0);"
-              onClick={ this.onLearnMoreEncryptionClick }>
+            <a href="https://aka.ms/bot-framework-bot-file-encryption">
               &nbsp;Learn more.
             </a>
           </Row>
@@ -262,11 +260,6 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
   //   const generatedSecret = generateBotSecret();
   //   this.setState({ secret: generatedSecret });
   // }
-
-  private onLearnMoreEncryptionClick = (): void => {
-    const url = 'https://aka.ms/bot-framework-bot-file-encryption';
-    CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.OpenExternal, url).catch();
-  }
 
   private onSaveAndConnect = async () => {
     try {

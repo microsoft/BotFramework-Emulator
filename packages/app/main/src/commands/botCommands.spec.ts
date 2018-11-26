@@ -56,7 +56,7 @@ jest.mock('../emulator', () => ({
 }));
 const mockCommandRegistry = new CommandRegistryImpl();
 const mockBot = BotConfigWithPathImpl.fromJSON({
-  'path': 'some/path.bot',
+  'path': path.normalize('some/path.bot'),
   'name': 'AuthBot',
   'description': '',
   'padlock': '',
@@ -98,11 +98,11 @@ describe('The botCommands', () => {
     const saveBotSpy = jest.spyOn((helpers as any).default, 'saveBot');
 
     const mockBotInfo = {
-      path: botToSave.path,
+      path: path.normalize(botToSave.path),
       displayName: 'AuthBot',
       secret: 'secret',
-      chatsPath: 'some/dialogs',
-      transcriptsPath: 'some/transcripts'
+      chatsPath: path.normalize('some/dialogs'),
+      transcriptsPath: path.normalize('some/transcripts')
     };
     const command = mockCommandRegistry.getCommand(Bot.Create);
     const result = await command.handler(botToSave, 'secret');
@@ -234,7 +234,7 @@ describe('The botCommands', () => {
 
   it('should patch the bots list and watch for chat and transcript changes', async () => {
     const mockBotInfo = {
-      path: 'this/is/my.json',
+      path: path.normalize('this/is/my.json'),
       displayName: 'AuthBot',
       secret: 'secret'
     };
@@ -243,8 +243,8 @@ describe('The botCommands', () => {
 
     const { handler } = mockCommandRegistry.getCommand(SharedConstants.Commands.Bot.PatchBotList);
     await handler(mockBotInfo.path, mockBotInfo);
-    expect(transcriptWatchSpy).toHaveBeenCalledWith('this/is/transcripts');
-    expect(chatWatcherSpy).toHaveBeenCalledWith('this/is/dialogs');
+    expect(transcriptWatchSpy).toHaveBeenCalledWith(path.normalize('this/is/transcripts'));
+    expect(chatWatcherSpy).toHaveBeenCalledWith(path.normalize('this/is/dialogs'));
   });
 
   it('should remove a bot from the list', async () => {

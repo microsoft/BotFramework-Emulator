@@ -31,7 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { SharedConstants } from '@bfemulator/app-shared';
 import { IConnectedService, ServiceTypes } from 'botframework-config/lib/schema';
 import { ComponentClass } from 'react';
 import { connect } from 'react-redux';
@@ -44,7 +43,6 @@ import {
 } from '../../../../data/action/connectedServiceActions';
 import { CONNECTED_SERVICES_PANEL_ID } from '../../../../data/action/explorerActions';
 import { RootState } from '../../../../data/store';
-import { CommandServiceImpl } from '../../../../platform/commands/commandServiceImpl';
 import { ConnectedServiceEditor } from './connectedServiceEditor/connectedServiceEditor';
 import { ServicesExplorer, ServicesExplorerProps } from './servicesExplorer';
 
@@ -63,9 +61,6 @@ const mapStateToProps = (state: RootState): Partial<ServicesExplorerProps> => {
 
 const mapDispatchToProps = (dispatch): Partial<ServicesExplorerProps> => {
   return {
-    onAnchorClick: (url) => {
-      return CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.OpenExternal, url);
-    },
     openAddServiceContextMenu: (payload: ConnectedServicePickerPayload) =>
       dispatch(openAddServiceContextMenu(payload)),
 

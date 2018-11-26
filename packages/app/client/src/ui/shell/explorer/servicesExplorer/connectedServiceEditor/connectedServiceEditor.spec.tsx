@@ -1,4 +1,3 @@
-import { SharedConstants } from '@bfemulator/app-shared';
 import { PrimaryButton } from '@bfemulator/ui-react';
 import { ServiceTypes } from 'botframework-config';
 import { LuisService } from 'botframework-config/lib/models';
@@ -7,9 +6,8 @@ import * as React from 'react';
 import { Provider } from 'react-redux';
 import { combineReducers, createStore } from 'redux';
 import { azureAuth } from '../../../../../data/reducer/azureAuthReducer';
-import { CommandServiceImpl } from '../../../../../platform/commands/commandServiceImpl';
 import { DialogService } from '../../../../dialogs/service';
-import { ConnectedServiceEditor } from './connectedServiceEditor';
+import { ConnectedServiceEditor, getLearnMoreLink } from './connectedServiceEditor';
 import { ConnectedServiceEditorContainer } from './connectedServiceEditorContainer';
 
 jest.mock('../../../../dialogs/service', () => ({
@@ -29,7 +27,7 @@ jest.mock('../../../../dialogs/', () => ({
 
 jest.mock('./connectedServiceEditor.scss', () => ({}));
 
-describe('The ConnectedServiceEditor component should', () => {
+describe('The ConnectedServiceEditor component ', () => {
   let parent;
   let node;
   let mockService;
@@ -104,24 +102,17 @@ describe('The ConnectedServiceEditor component should', () => {
     expect(submitBtn.props.disabled).toBeFalsy();
   });
 
-  it('should request to open a url when the learn more anchor is clicked based on the service type', async () => {
-    const remoteCallSpy = jest.spyOn(CommandServiceImpl, 'remoteCall');
-    const instance = node.instance();
-    expect(() => instance.onLearnMoreClick()).toThrow();
-    instance.props = {...instance.props, serviceType: ServiceTypes.Luis};
-
-    instance.onLearnMoreClick();
-    expect(remoteCallSpy).toHaveBeenCalledWith(SharedConstants.Commands.Electron.OpenExternal,
-      'http://aka.ms/bot-framework-emulator-LUIS-docs-home');
-
-    instance.props = {...instance.props, serviceType: ServiceTypes.QnA};
-    instance.onLearnMoreClick();
-    expect(remoteCallSpy).toHaveBeenCalledWith(SharedConstants.Commands.Electron.OpenExternal,
-      'http://aka.ms/bot-framework-emulator-qna-keys');
-
-    instance.props = {...instance.props, serviceType: ServiceTypes.Dispatch};
-    instance.onLearnMoreClick();
-    expect(remoteCallSpy).toHaveBeenCalledWith(SharedConstants.Commands.Electron.OpenExternal,
-      'https://aka.ms/bot-framework-emulator-create-dispatch');
+  it('should return the correct url according to service type.', () => {
+    let serviceType = ServiceTypes.QnA;
+    let returnedHref = getLearnMoreLink(serviceType);
+    expect(returnedHref).toBe('http://aka.ms/bot-framework-emulator-qna-keys');
+    
+    serviceType = ServiceTypes.Luis;
+    returnedHref = getLearnMoreLink(serviceType);
+    expect(returnedHref).toBe('http://aka.ms/bot-framework-emulator-LUIS-docs-home');
+    
+    serviceType = ServiceTypes.Dispatch;
+    returnedHref = getLearnMoreLink(serviceType);
+    expect(returnedHref).toBe('https://aka.ms/bot-framework-emulator-create-dispatch');
   });
 });

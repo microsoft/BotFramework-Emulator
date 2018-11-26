@@ -58,12 +58,6 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   });
 
   // ---------------------------------------------------------------------------
-  // Open the link in the default browser
-  commandRegistry.registerCommand(Electron.OpenExternal, (url: string) => {
-    window.open(url);
-  });
-
-  // ---------------------------------------------------------------------------
   // Open About dialog
   commandRegistry.registerCommand(Electron.ShowAboutDialog, () => {
     // TODO: Show about dialog (native dialog box)
