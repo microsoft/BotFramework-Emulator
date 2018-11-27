@@ -30,7 +30,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
+import './fetchProxy';
 import * as Electron from 'electron';
 import { app, Menu, systemPreferences } from 'electron';
 
@@ -64,7 +64,6 @@ export let mainWindow: Window;
 export let windowManager: WindowManager;
 
 const store = getStore();
-
 // -----------------------------------------------------------------------------
 
 (process as NodeJS.EventEmitter).on('uncaughtException', (error: Error) => {

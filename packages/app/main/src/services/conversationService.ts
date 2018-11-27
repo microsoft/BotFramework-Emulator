@@ -1,8 +1,6 @@
-import fetch, { Headers } from 'node-fetch';
-
-export const headers = new Headers({
+export const headers = {
   'Content-Accept': 'application/json'
-});
+};
 
 export class ConversationService {
 

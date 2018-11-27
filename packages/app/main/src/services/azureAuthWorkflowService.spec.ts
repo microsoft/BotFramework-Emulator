@@ -1,3 +1,4 @@
+import '../fetchProxy';
 import { AzureAuthWorkflowService } from './azureAuthWorkflowService';
 import { BrowserWindow } from 'electron';
 

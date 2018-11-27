@@ -1,3 +1,4 @@
+import '../fetchProxy';
 import { SharedConstants } from '@bfemulator/app-shared';
 import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 import * as Electron from 'electron';
