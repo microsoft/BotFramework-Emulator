@@ -31,8 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export { MDI } from './mdiContainer';
-export * from './documents';
-export * from './tab';
-export * from './tabBar';
-export * from './tabbedDocument';
+import { connect } from 'react-redux';
+import { Tab, TabProps } from './tab';
+import { toggleDraggingTab, swapTabs } from '../../../../data/action/editorActions';
+
+const mapDispatchToProps = (dispatch, ownProps: TabProps): TabProps => ({
+  toggleDraggingTab: (toggle: boolean) => dispatch(toggleDraggingTab(toggle)),
+  swapTabs: (editorKey: string, owningEditor: string, tabId: string) =>
+    dispatch(swapTabs(editorKey, owningEditor, tabId, ownProps.documentId))
+});
+
+export const TabContainer = connect(null, mapDispatchToProps)(Tab);

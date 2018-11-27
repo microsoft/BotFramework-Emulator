@@ -31,8 +31,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export { MDI } from './mdiContainer';
-export * from './documents';
-export * from './tab';
-export * from './tabBar';
-export * from './tabbedDocument';
+import { connect } from 'react-redux';
+import { Documents, DocumentsProps } from './documents';
+import { RootState } from '../../../../data/store';
+
+function mapStateToProps(state: RootState, ownProps: DocumentsProps): DocumentsProps {
+  return {
+    activeDocumentId: state.editor.editors[ownProps.owningEditor].activeDocumentId,
+    documents: state.editor.editors[ownProps.owningEditor].documents,
+    tabOrder: state.editor.editors[ownProps.owningEditor].tabOrder,
+    ...ownProps
+  };
+}
+
+export const DocumentsContainer = connect(mapStateToProps, null)(Documents);

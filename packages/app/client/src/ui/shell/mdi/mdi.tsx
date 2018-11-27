@@ -35,7 +35,7 @@ import * as React from 'react';
 import { MDIProps } from './mdiContainer';
 import { TabBarContainer } from './tabBar/tabBarContainer';
 import * as styles from './mdi.scss';
-import { Documents } from './documents/documents';
+import { DocumentsContainer } from './documents/documentsContainer';
 
 export class MDIComponent extends React.Component<MDIProps> {
   constructor(props: MDIProps) {
@@ -43,11 +43,11 @@ export class MDIComponent extends React.Component<MDIProps> {
   }
 
   public render(): React.ReactNode {
-
+    const { presentationModeEnabled } = this.props;
     return (
       <div className={ styles.mdi }>
-        <TabBarContainer owningEditor={ this.props.owningEditor }/>
-        <Documents owningEditor={ this.props.owningEditor }/>
+        { !presentationModeEnabled && <TabBarContainer owningEditor={ this.props.owningEditor }/> }
+        <DocumentsContainer owningEditor={ this.props.owningEditor }/>
       </div>
     );
   }

@@ -33,13 +33,11 @@
 
 import * as React from 'react';
 import { DragEvent, KeyboardEvent, SyntheticEvent } from 'react';
-import { connect } from 'react-redux';
 import * as styles from './tab.scss';
-import * as EditorActions from '../../../../data/action/editorActions';
 import { getTabGroupForDocument } from '../../../../data/editorHelpers';
 import { TruncateText } from '@bfemulator/ui-react';
 
-interface TabProps {
+export interface TabProps {
   active?: boolean;
   dirty?: boolean;
   documentId?: string;
@@ -49,12 +47,12 @@ interface TabProps {
   swapTabs?: (editorKey: string, owningEditor: string, tabId: string) => any;
 }
 
-interface TabState {
+export interface TabState {
   draggedOver: boolean;
   owningEditor: string;
 }
 
-class TabComponent extends React.Component<TabProps, TabState> {
+export class Tab extends React.Component<TabProps, TabState> {
   constructor(props: TabProps) {
     super(props);
 
@@ -67,20 +65,21 @@ class TabComponent extends React.Component<TabProps, TabState> {
   render() {
     const activeClassName = this.props.active ? styles.activeEditorTab : '';
     const draggedOverClassName = this.state.draggedOver ? styles.draggedOverEditorTab : '';
+    const { label } = this.props;
 
     return (
       <div className={ `${styles.tab} ${activeClassName} ${draggedOverClassName}` } draggable
            onDragOver={ this.onDragOver } onDragEnter={ this.onDragEnter } onDragStart={ this.onDragStart }
            onDrop={ this.onDrop } onDragLeave={ this.onDragLeave } onDragEnd={ this.onDragEnd }>
         <span className={ styles.editorTabIcon }> </span>
-        <TruncateText className={ styles.truncatedTabText }>{ this.props.label }</TruncateText>
+        <TruncateText className={ styles.truncatedTabText }>{ label }</TruncateText>
         { this.props.dirty ? <span>*</span> : null }
         <div className={ styles.tabSeparator }></div>
         <div className={ styles.tabFocusTarget } 
-          role="button" tabIndex={ 0 } aria-label={ `${this.props.label}, tab` }>&nbsp;</div>
+          role="button" tabIndex={ 0 } aria-label={ `${label}, tab` }>&nbsp;</div>
         <button
           type="button"
-          title="Close tab"
+          title={ `Close ${label} tab` }
           className={ styles.editorTabClose }
           onKeyPress={ this.onCloseButtonKeyPress }
           onClick={ this.onCloseClick }
@@ -142,11 +141,3 @@ class TabComponent extends React.Component<TabProps, TabState> {
     e.stopPropagation();
   }
 }
-
-const mapDispatchToProps = (dispatch, ownProps: TabProps): TabProps => ({
-  toggleDraggingTab: (toggle: boolean) => dispatch(EditorActions.toggleDraggingTab(toggle)),
-  swapTabs: (editorKey: string, owningEditor: string, tabId: string) =>
-    dispatch(EditorActions.swapTabs(editorKey, owningEditor, tabId, ownProps.documentId))
-});
-
-export const Tab = connect(null, mapDispatchToProps)(TabComponent);

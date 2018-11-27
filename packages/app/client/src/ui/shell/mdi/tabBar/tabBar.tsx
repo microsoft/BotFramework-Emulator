@@ -34,13 +34,9 @@
 import * as React from 'react';
 import { DragEvent } from 'react';
 import * as styles from './tabBar.scss';
-// import { connect } from 'react-redux';
-// import * as EditorActions from '../../../../data/action/editorActions';
 import * as Constants from '../../../../constants';
 import { getOtherTabGroup } from '../../../../data/editorHelpers';
-// import * as PresentationActions from '../../../../data/action/presentationActions';
 import { Document, Editor } from '../../../../data/reducer/editor';
-// import { RootState } from '../../../../data/store';
 import {
   CONTENT_TYPE_APP_SETTINGS,
   CONTENT_TYPE_LIVE_CHAT,
@@ -51,15 +47,14 @@ import { BotConfigWithPath } from '@bfemulator/sdk-shared';
 import { Tab } from '../tab/tab';
 
 export interface TabBarProps {
+  activeBot?: BotConfigWithPath;
+  activeDocumentId?: string;
+  activeEditor?: string;
+  chats?: { [chatId: string]: any };
+  documents?: { [documentId: string]: Document };
   editors?: { [editorKey: string]: Editor };
   owningEditor?: string;
-  documents?: { [documentId: string]: Document };
-  activeDocumentId?: string;
-  childRefs?: HTMLElement[];
-  activeEditor?: string;
   tabOrder?: string[];
-  chats?: { [chatId: string]: any };
-  activeBot?: BotConfigWithPath;
   splitTab?: (contentType: string, documentId: string, srcEditorKey: string, destEditorKey: string) => void;
   appendTab?: (srcEditorKey: string, destEditorKey: string, tabId: string) => void;
   enablePresentationMode?: () => void;
@@ -173,7 +168,7 @@ export class TabBar extends React.Component<TabBarProps, TabBarState> {
       return (
         <div 
           key={ documentId }
-          className={ 'styles.tab' }
+          className="tab-container"
           onClick={ _ev => this.handleTabClick(index) }
           onKeyDown={ ev => this.handleKeyDown(ev, index) }
           ref={ this.setRef } role="presentation">
@@ -270,22 +265,3 @@ export class TabBar extends React.Component<TabBarProps, TabBarState> {
     }
   }
 }
-
-// const mapStateToProps = (state: RootState, ownProps: TabBarProps): TabBarProps => ({
-//   activeDocumentId: state.editor.editors[ownProps.owningEditor].activeDocumentId,
-//   activeEditor: state.editor.activeEditor,
-//   editors: state.editor.editors,
-//   documents: state.editor.editors[ownProps.owningEditor].documents
-// });
-
-// const mapDispatchToProps = (dispatch): TabBarProps => ({
-//   splitTab: (contentType: string, documentId: string, srcEditorKey: string, destEditorKey: string) =>
-//     dispatch(EditorActions.splitTab(contentType, documentId, srcEditorKey, destEditorKey)),
-
-//   appendTab: (srcEditorKey: string, destEditorKey: string, tabId: string) =>
-//     dispatch(EditorActions.appendTab(srcEditorKey, destEditorKey, tabId)),
-
-//   enablePresentationMode: () => dispatch(PresentationActions.enable())
-// });
-
-// export const TabBar = connect(mapStateToProps, mapDispatchToProps)(TabBarComponent);

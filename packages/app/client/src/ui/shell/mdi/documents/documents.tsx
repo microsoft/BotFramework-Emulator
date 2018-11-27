@@ -32,20 +32,18 @@
 //
 
 import * as React from 'react';
-import { connect } from 'react-redux';
-import { RootState } from '../../../../data/store';
 import { TabbedDocument } from '../tabbedDocument';
 import { EditorFactory } from '../../../editor';
+import { Document } from '../../../../data/reducer/editor';
 
 export interface DocumentsProps {
   activeDocumentId?: string;
-  documents?: any; // TODO: import document shape from reducer
+  documents?: { [documentId: string]: Document };
   owningEditor?: string;
   tabOrder?: string[];
 }
 
-// TODO: Factor into container  / dumb comp
-export class DocumentsComp extends React.Component<DocumentsProps> {
+export class Documents extends React.Component<DocumentsProps> {
   constructor(props: DocumentsProps) {
     super(props);
   }
@@ -65,14 +63,3 @@ export class DocumentsComp extends React.Component<DocumentsProps> {
     }); 
   }
 }
-
-function mapStateToProps(state: RootState, ownProps: DocumentsProps): DocumentsProps {
-  return {
-    activeDocumentId: state.editor.editors[ownProps.owningEditor].activeDocumentId,
-    documents: state.editor.editors[ownProps.owningEditor].documents,
-    tabOrder: state.editor.editors[ownProps.owningEditor].tabOrder,
-    ...ownProps
-  };
-}
-
-export const Documents = connect(mapStateToProps, null)(DocumentsComp);
