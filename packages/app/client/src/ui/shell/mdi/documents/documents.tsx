@@ -32,23 +32,47 @@
 //
 
 import * as React from 'react';
-import { MDIProps } from './mdiContainer';
-import { TabBarContainer } from './tabBar/tabBarContainer';
-import * as styles from './mdi.scss';
-import { Documents } from './documents/documents';
+import { connect } from 'react-redux';
+import { RootState } from '../../../../data/store';
+import { TabbedDocument } from '../tabbedDocument';
+import { EditorFactory } from '../../../editor';
 
-export class MDIComponent extends React.Component<MDIProps> {
-  constructor(props: MDIProps) {
+export interface DocumentsProps {
+  activeDocumentId?: string;
+  documents?: any; // TODO: import document shape from reducer
+  owningEditor?: string;
+  tabOrder?: string[];
+}
+
+// TODO: Factor into container  / dumb comp
+export class DocumentsComp extends React.Component<DocumentsProps> {
+  constructor(props: DocumentsProps) {
     super(props);
   }
 
-  public render(): React.ReactNode {
+  public render(): JSX.Element[] {
+    const { activeDocumentId = '', tabOrder = [], documents = {} } = this.props;
 
-    return (
-      <div className={ styles.mdi }>
-        <TabBarContainer owningEditor={ this.props.owningEditor }/>
-        <Documents owningEditor={ this.props.owningEditor }/>
-      </div>
-    );
+    return tabOrder.map(documentId => {
+      const isActive = activeDocumentId === documentId;
+      const document = documents[documentId];
+
+      return (
+        <TabbedDocument key={ documentId } documentId={ documentId } hidden={ !isActive }>
+          <EditorFactory document={ document }/>
+        </TabbedDocument>
+      );
+    }); 
   }
 }
+
+function mapStateToProps(state: RootState, ownProps: DocumentsProps): DocumentsProps {
+  return {
+    activeDocumentId: state.editor.editors[ownProps.owningEditor].activeDocumentId,
+    documents: state.editor.editors[ownProps.owningEditor].documents,
+    tabOrder: state.editor.editors[ownProps.owningEditor].tabOrder,
+    ...ownProps
+  };
+}
+
+export const Documents = connect(mapStateToProps, null)(DocumentsComp);

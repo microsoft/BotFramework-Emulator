@@ -18,7 +18,7 @@ import { chat } from '../../../data/reducer/chat';
 import { editor } from '../../../data/reducer/editor';
 import { presentation } from '../../../data/reducer/presentation';
 import { MDIComponent } from './mdi';
-import { MDI, MDIProps } from './mdiContainer';
+import { MDI } from './mdiContainer';
 
 jest.mock('../../dialogs', () => ({
   DialogService: {
@@ -93,12 +93,6 @@ describe('The ServicesExplorer component should', () => {
   it('should render deeply', () => {
     expect(parent.find(MDI)).not.toBe(null);
     expect(parent.find(MDIComponent)).not.toBe(null);
-  });
-
-  it('should contain the expected function in the props', () => {
-    const { props }: { props: MDIProps } = node.instance();
-    expect(typeof props.closeTab).toBe('function');
-    expect(typeof props.setActiveTab).toBe('function');
   });
 
   it('should get the expected tab label for each of the content types', () => {
