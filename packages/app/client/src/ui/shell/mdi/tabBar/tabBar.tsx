@@ -130,7 +130,7 @@ export class TabBar extends React.Component<TabBarProps, TabBarState> {
         activeDoc.contentType === Constants.CONTENT_TYPE_LIVE_CHAT);
     const splitEnabled = Object.keys(this.props.documents).length > 1;
 
-    let widgets: JSX.Element[] = [];
+    const widgets: JSX.Element[] = [];
 
     if (presentationEnabled) {
       widgets.push(
