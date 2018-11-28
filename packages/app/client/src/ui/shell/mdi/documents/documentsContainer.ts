@@ -37,10 +37,10 @@ import { RootState } from '../../../../data/store';
 
 function mapStateToProps(state: RootState, ownProps: DocumentsProps): DocumentsProps {
   return {
+    ...ownProps,
     activeDocumentId: state.editor.editors[ownProps.owningEditor].activeDocumentId,
     documents: state.editor.editors[ownProps.owningEditor].documents,
-    tabOrder: state.editor.editors[ownProps.owningEditor].tabOrder,
-    ...ownProps
+    tabOrder: state.editor.editors[ownProps.owningEditor].tabOrder
   };
 }
 

@@ -33,7 +33,7 @@
 
 import { connect } from 'react-redux';
 import { TabBarProps, TabBar } from './tabBar';
-import { RootState } from 'src/data/store';
+import { RootState } from '../../../../data/store';
 import { splitTab, appendTab, setActiveTab, close } from '../../../../data/action/editorActions';
 import { enable as enablePresentationMode } from '../../../../data/action/presentationActions';
 import { closeDocument } from '../../../../data/action/chatActions';
@@ -53,14 +53,10 @@ const mapStateToProps = (state: RootState, ownProps: TabBarProps): TabBarProps =
 const mapDispatchToProps = (dispatch): TabBarProps => ({
   splitTab: (contentType: string, documentId: string, srcEditorKey: string, destEditorKey: string) =>
     dispatch(splitTab(contentType, documentId, srcEditorKey, destEditorKey)),
-
   appendTab: (srcEditorKey: string, destEditorKey: string, tabId: string) =>
     dispatch(appendTab(srcEditorKey, destEditorKey, tabId)),
-
   enablePresentationMode: () => dispatch(enablePresentationMode()),
-
   setActiveTab: (documentId: string) => dispatch(setActiveTab(documentId)),
-
   closeTab: (documentId: string) => {
     dispatch(close(getTabGroupForDocument(documentId), documentId));
     dispatch(closeDocument(documentId));
