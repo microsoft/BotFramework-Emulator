@@ -36,7 +36,6 @@ import GenericActivity from '../types/activity/generic';
 import AttachmentContentTypes from '../types/attachment/contentTypes';
 import OAuthCard from '../types/card/oAuth';
 import uniqueId from '../utils/uniqueId';
-import fetch, { Headers, Response } from 'node-fetch';
 import Attachment from '../types/attachment';
 import BotEmulator from '../botEmulator';
 import { StringProvider } from './stringProvider';
@@ -112,9 +111,9 @@ export default class OAuthLinkEncoder {
 
     let serializedState = JSON.stringify(tokenExchangeState);
     let state = Buffer.from(serializedState).toString('base64');
-    const headers = new Headers({
+    const headers = {
       'Authorization': this.authorizationHeader
-    });
+    };
 
     const url = 'https://api.botframework.com/api/botsignin/GetSignInUrl?state=' +
       state + '&emulatorUrl=' + this.emulatorUrl + '&code_challenge=' + codeChallenge;

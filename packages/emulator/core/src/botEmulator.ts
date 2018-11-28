@@ -32,7 +32,6 @@
 //
 
 import * as Restify from 'restify';
-import fetch from 'node-fetch';
 import Attachments from './facility/attachments';
 import BotState from './facility/botState';
 import ConsoleLogService from './facility/consoleLogService';
@@ -64,13 +63,13 @@ export interface ServiceUrlProvider {
 }
 
 export interface Facilities {
-  attachments: Attachments,
-  botState: BotState,
-  conversations: ConversationSet,
-  endpoints: EndpointSet,
-  logger: Logger,
-  users: Users,
-  locale?: string
+  attachments: Attachments;
+  botState: BotState;
+  conversations: ConversationSet;
+  endpoints: EndpointSet;
+  logger: Logger;
+  users: Users;
+  locale?: string;
 }
 
 export default class BotEmulator {

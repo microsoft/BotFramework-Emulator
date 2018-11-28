@@ -32,7 +32,6 @@
 //
 
 import { BrowserWindow } from 'electron';
-import fetch from 'node-fetch';
 import uuidv4 from 'uuid/v4';
 import * as jwt from 'jsonwebtoken';
 

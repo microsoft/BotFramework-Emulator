@@ -33,7 +33,6 @@
 
 import { LuisModel, LuisRegion, ServiceCodes } from '@bfemulator/app-shared';
 import { ILuisService, ServiceTypes } from 'botframework-config/lib/schema';
-import fetch, { Headers, Response } from 'node-fetch';
 
 export class LuisApi {
   public static* getServices(armToken: string): IterableIterator<any> {
@@ -87,10 +86,10 @@ export class LuisApi {
 
   public static async getApplicationsForRegion(region: LuisRegion, key: string): Promise<LuisModel[] | { error: any }> {
     const url = `https://${region}.api.cognitive.microsoft.com/luis/api/v2.0/apps/`;
-    const headers = new Headers({
+    const headers = {
       'Content-Accept': 'application/json',
       'Ocp-Apim-Subscription-Key': key
-    });
+    };
 
     const response: Response = await fetch(url, { headers, method: 'get' } as any);
     if (!response.ok) {

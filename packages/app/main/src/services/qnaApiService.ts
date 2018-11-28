@@ -1,5 +1,4 @@
 import { QnaMakerService } from 'botframework-config/lib/models';
-import fetch, { Headers, Response } from 'node-fetch';
 import { ServiceCodes } from '@bfemulator/app-shared';
 
 export interface Subscription {

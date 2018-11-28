@@ -12,7 +12,7 @@ jest.mock('./globals', () => ({
   getGlobal: () => ({}),
   setGlobal: () => null
 }));
-
+import './fetchProxy';
 import {
   Protocol,
   ProtocolHandler,
