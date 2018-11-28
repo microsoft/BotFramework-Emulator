@@ -1,3 +1,4 @@
+import '../fetchProxy';
 import { combineReducers, createStore } from 'redux';
 import * as BotActions from '../botData/actions/botActions';
 import { bot } from '../botData/reducers/bot';

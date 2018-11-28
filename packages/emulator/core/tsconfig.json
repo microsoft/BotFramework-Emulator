@@ -5,7 +5,8 @@
     // Emit declaration only when we are building with Babel
     // "emitDeclarationOnly": true,
     "lib": [
-      "es2016"
+      "es2016",
+      "dom"
     ],
     "module": "commonjs",
     "moduleResolution": "node",
