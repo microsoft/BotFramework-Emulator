@@ -31,14 +31,39 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './largeHeader/largeHeader';
-export * from './mediumHeader/mediumHeader';
-export * from './smallHeader/smallHeader';
-export * from './dialog';
-export * from './button/primaryButton';
-export * from './button/defaultButton';
-export * from './textField/textField';
-export * from './checkbox/checkbox';
-export * from './insetShadow/insetShadow';
-export * from './spinner/spinner';
-export * from './splitButton';
+.container {
+  display: inline-flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  padding: 8px;
+  border: 1px solid #CCC;
+
+  button {
+    height: 18px;
+    background: none;
+    border: 0;
+    cursor: pointer;
+    
+    &:hover {
+      background-color: #DCDCDC;
+    }
+  }
+
+  * {
+    flex-shrink: 0;
+  }
+}
+
+.separator {
+  width: 1px;
+  height: 11px;
+  background-color: #C8C8C8;
+}
+
+.default-button {
+
+}
+
+.caret-button {
+
+}
