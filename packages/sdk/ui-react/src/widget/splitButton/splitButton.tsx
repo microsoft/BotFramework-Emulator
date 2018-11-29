@@ -43,6 +43,7 @@ export interface SplitButtonProps {
 
 export interface SplitButtonState {
   expanded: boolean;
+  focused: number;
   selected?: number;
 }
 
@@ -54,26 +55,30 @@ export class SplitButton extends React.Component<SplitButtonProps, SplitButtonSt
 
     this.state = {
       expanded: false,
+      focused: 0,
       selected: props.selected || 0
     };
   }
 
   public render(): JSX.Element {
     const { options } = this.props;
-    const { expanded, selected } = this.state;
+    const { expanded, focused, selected } = this.state;
 
     return (
       <>
         <div className={ styles.container }>
           <button className={ 'default' }>{ options[selected] }</button>
           <div className={ styles.separator }></div>
-          <button className={ 'caret' } ref={ this.setCaretRef } onClick={ this.onClickCaret }>V</button>
+          <button className={ 'caret' } ref={ this.setCaretRef } onClick={ this.onClickCaret }
+            aria-haspopup={ 'listbox' }>V</button>
         </div>
         <SplitButtonPanel
           expanded={ expanded }
           caretRef={ this.caretRef }
+          focused={ focused }
           hidePanel={ this.hidePanel }
           onChange={ this.onChangeOption }
+          onKeyDown={ this.onKeyDown }
           options={ options }
           selected={ selected }/>
       </>
@@ -87,7 +92,7 @@ export class SplitButton extends React.Component<SplitButtonProps, SplitButtonSt
   private onClickCaret = (e: React.SyntheticEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     const { expanded } = this.state;
-    this.setState({ expanded: !expanded });
+    this.setState({ expanded: !expanded, focused: 0 });
   }
 
   private onChangeOption = (index: number): void => {
@@ -96,10 +101,64 @@ export class SplitButton extends React.Component<SplitButtonProps, SplitButtonSt
       const newValue = options[index] || null;
       onChange(newValue);
     }
+    this.caretRef.focus();
     this.setState({ expanded: false, selected: index });
   }
 
   private hidePanel = (): void => {
+    this.caretRef.focus();
     this.setState({ expanded: false });
+  }
+
+  private moveFocusUp = (): void => {
+    const { options = [] } = this.props;
+    const { focused } = this.state;
+    if (options.length && focused > 0) {
+      this.setState({ focused: focused - 1 });
+    }
+  }
+
+  private moveFocusDown = (): void => {
+    const { options = [] } = this.props;
+    const { focused } = this.state;
+    if (options.length && focused < options.length - 1) {
+      this.setState({ focused: focused + 1 });
+    }
+  }
+
+  private onKeyDown = (e: React.KeyboardEvent<HTMLUListElement>): void => {
+    let { key = '' } = e;
+    key = key.toLowerCase();
+
+    switch (key) {
+      case 'arrowdown':
+        this.moveFocusDown();
+        break;
+
+      case 'arrowup':
+        this.moveFocusUp();
+        break;
+
+      case 'escape':
+        this.hidePanel();
+        break;
+
+      case 'enter':
+        this.onChangeOption(this.state.focused);
+        break;
+
+      case 'tab':
+        if (e.shiftKey) {
+          // hidePanel() already re-focuses the caret button,
+          // so we want to prevent the default behavior which
+          // would shift focus to whatever is before the caret button
+          e.preventDefault();
+        }
+        this.hidePanel();
+        break;
+
+      default:
+        break;
+    }
   }
 }

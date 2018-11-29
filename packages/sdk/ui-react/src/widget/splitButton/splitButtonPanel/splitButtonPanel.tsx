@@ -38,14 +38,16 @@ import * as styles from './splitButtonPanel.scss';
 export interface SplitButtonPanelProps {
   caretRef?: HTMLButtonElement;
   expanded?: boolean;
+  focused?: number;
   hidePanel?: () => void;
   onChange?: (index: number) => any;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLUListElement>) => any;
   options?: string[];
   selected?: number;
 }
 
 export class SplitButtonPanel extends React.Component<SplitButtonPanelProps> {
-  private _panelRef: HTMLDivElement;
+  private panelRef: HTMLUListElement;
 
   public componentWillMount(): void {
     document.addEventListener('wheel', this.onScroll);
@@ -64,53 +66,69 @@ export class SplitButtonPanel extends React.Component<SplitButtonPanelProps> {
     );
   }
 
-  private setPanelRef = (ref: HTMLDivElement) => {
-    this._panelRef = ref;
+  private setPanelRef = (ref: HTMLUListElement) => {
+    this.panelRef = ref;
+    if (this.panelRef) {
+      this.panelRef.focus();
+    }
   }
 
   private get panel(): JSX.Element {
-    const { caretRef, options = [], expanded = false } = this.props;
+    const { caretRef, options = [], expanded = false, onKeyDown = () => null, focused = 0 } = this.props;
     if (expanded) {
       const caretClientRect = caretRef.getBoundingClientRect();
       const inlineStyle = { top: `${caretClientRect.bottom}px`, left: `${caretClientRect.left}px` };
 
       return (
-        <div className={ styles.panel } style={ inlineStyle } ref={ this.setPanelRef }>
+        <ul 
+          className={ styles.panel } style={ inlineStyle } ref={ this.setPanelRef } role={ 'listbox' } tabIndex={ -1 }
+          aria-activedescendant={ this.getOptionId(focused) }
+          onKeyDown={ onKeyDown }>
           {
             options.map((option, index) => {
+              const isFocused = index === this.props.focused;
               const isActive = index === this.props.selected;
               const activeClass = isActive ? ` ${styles.selected}` : '';
-              return <button 
+              const focusedClass = isFocused ? ` ${styles.focused}` : '';
+              return <li
+                        id={ this.getOptionId(index) }
                         key={ option }
-                        className={ styles.option + activeClass }
+                        className={ styles.option + activeClass + focusedClass }
                         role={ 'option' }
                         aria-selected={ isActive }
                         onClick={ e => this.onSelectOption(e, index) }>
                         { option }
-                      </button>;
+                      </li>;
             })
           }
-        </div>
+        </ul>
       );
     }
     return null;
   }
 
-  private onSelectOption = (e: React.SyntheticEvent<HTMLButtonElement>, optionIndex: number): void => {
+  private getOptionId(index: number): string {
+    return `split_button_option_${index}`;
+  }
+
+  private onSelectOption = (_e: React.SyntheticEvent<HTMLLIElement>, optionIndex: number): void => {
     if (this.props.onChange) {
+      console.log('clicked option: ', optionIndex);
       this.props.onChange(optionIndex);
     }
   }
 
-  private onScroll = (e: WheelEvent): void => {
+  private onScroll = (_e: WheelEvent): void => {
     if (this.props.hidePanel) {
       this.props.hidePanel();
     }
   }
 
   private onOutsideClick = (e: MouseEvent): void => {
+    console.log('got click');
     const { target = null } = e as any;
-    if (!this._panelRef.contains(target) && this.props.hidePanel) {
+    if (!this.panelRef.contains(target) && this.props.hidePanel) {
+      console.log('got outside click');
       this.props.hidePanel();
     }
   }

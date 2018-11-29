@@ -2,3 +2,4 @@
 export const panel: string;
 export const option: string;
 export const selected: string;
+export const focused: string;
