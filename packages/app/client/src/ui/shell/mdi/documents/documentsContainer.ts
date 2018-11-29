@@ -31,20 +31,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from 'react';
-import { MDIProps } from './mdiContainer';
-import { TabBarContainer } from './tabBar/tabBarContainer';
-import * as styles from './mdi.scss';
-import { DocumentsContainer } from './documents/documentsContainer';
+import { connect } from 'react-redux';
+import { Documents, DocumentsProps } from './documents';
+import { RootState } from '../../../../data/store';
 
-export class MDIComponent extends React.Component<MDIProps> {
-  public render(): React.ReactNode {
-    const { presentationModeEnabled } = this.props;
-    return (
-      <div className={ styles.mdi }>
-        { !presentationModeEnabled && <TabBarContainer owningEditor={ this.props.owningEditor }/> }
-        <DocumentsContainer owningEditor={ this.props.owningEditor }/>
-      </div>
-    );
-  }
+function mapStateToProps(state: RootState, ownProps: DocumentsProps): DocumentsProps {
+  const { editors } = state.editor;
+  return {
+    ...ownProps,
+    activeDocumentId: editors[ownProps.owningEditor].activeDocumentId,
+    documents: editors[ownProps.owningEditor].documents,
+    tabOrder: editors[ownProps.owningEditor].tabOrder
+  };
 }
+
+export const DocumentsContainer = connect(mapStateToProps, null)(Documents);

@@ -31,45 +31,52 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { mount } from 'enzyme';
 import * as React from 'react';
-import { Provider } from 'react-redux';
+import { mount } from 'enzyme';
 import { createStore } from 'redux';
-import { MDI } from './mdiContainer';
+import { Provider } from 'react-redux';
+import { DocumentsContainer } from './documentsContainer';
 
-const mockTabBarContainer = class TabBar extends React.Component {
+const mockTabbedDocument = class Document extends React.Component {
   public render() {
     return <div></div>;
   }
 };
-const mockDocumentsContainer = class Documents extends React.Component {
+
+const mockEditorFactory = class Factory extends React.Component {
   public render() {
     return <div></div>;
   }
 };
 
-const mockStore = createStore((_state, _action) => ({ presentation: { enabled: false } }));
+jest.mock('../../../editor', () => ({ get EditorFactory() { return mockEditorFactory; }}));
+jest.mock('../../../../data/reducer/editor', () => ({}));
+jest.mock('../tabbedDocument', () => ({ get TabbedDocument() { return mockTabbedDocument; } }));
 
-jest.mock('../../../data/store', () => ({
-  get store() {
-    return mockStore;
-  }
-}));
-jest.mock('./tabBar/tabBarContainer', () => ({ get TabBarContainer() { return mockTabBarContainer; } }));
-jest.mock('./mdi.scss', () => ({}));
-jest.mock('./documents/documentsContainer', () => ({ get DocumentsContainer() { return mockDocumentsContainer; } }));
-
-describe('MDI', () => {
+describe('Documents', () => {
+  let mockStore;
   let wrapper;
 
   beforeEach(() => {
-    wrapper = mount(
-      <Provider store={ mockStore }>
-        <MDI owningEditor={ 'primary' }/>
-      </Provider>);
+    mockStore = createStore((_state, _action) => ({ editor: { editors: { primary: {} } } }));
   });
 
-  it('should render deeply', () => {
+  it('should not render anything if there are no documentss', () => {
+    wrapper = mount(
+      <Provider store={ mockStore }>
+        <DocumentsContainer owningEditor={ 'primary' }/>
+      </Provider>
+    );
+    expect(wrapper.html()).toBe(null);
+  });
+
+  it('should render a tabbedDocument if there are documents', () => {
+    mockStore = createStore((_state, _action) => ({ editor: { editors: { primary: { tabOrder: ['doc1'] } } } }));
+    wrapper = mount(
+      <Provider store={ mockStore }>
+        <DocumentsContainer owningEditor={ 'primary' }/>
+      </Provider>
+    );
     expect(wrapper.html()).not.toBe(null);
   });
 });
