@@ -42,11 +42,7 @@ export interface TabbedDocumentProps {
 }
 
 export class TabbedDocument extends React.Component<TabbedDocumentProps> {
-  constructor(props: TabbedDocumentProps) {
-    super(props);
-  }
-
-  render() {
+  public render() {
     const { children, documentId, hidden } = this.props;
     return (
       <TabbedDocumentContentWrapper

@@ -38,10 +38,6 @@ import * as styles from './mdi.scss';
 import { DocumentsContainer } from './documents/documentsContainer';
 
 export class MDIComponent extends React.Component<MDIProps> {
-  constructor(props: MDIProps) {
-    super(props);
-  }
-
   public render(): React.ReactNode {
     const { presentationModeEnabled } = this.props;
     return (

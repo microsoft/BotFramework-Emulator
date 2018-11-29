@@ -44,10 +44,6 @@ export interface DocumentsProps {
 }
 
 export class Documents extends React.Component<DocumentsProps> {
-  constructor(props: DocumentsProps) {
-    super(props);
-  }
-
   public render(): JSX.Element[] {
     const { activeDocumentId = '', tabOrder = [], documents = {} } = this.props;
 
