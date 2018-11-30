@@ -115,8 +115,9 @@ export class SplitButtonPanel extends React.Component<SplitButtonPanelProps> {
   }
 
   private onScroll = (_e: WheelEvent): void => {
-    if (this.props.hidePanel) {
-      this.props.hidePanel();
+    const { expanded, hidePanel } = this.props;
+    if (expanded && hidePanel) {
+      hidePanel();
     }
   }
 
