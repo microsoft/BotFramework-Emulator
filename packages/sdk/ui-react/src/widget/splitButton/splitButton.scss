@@ -86,11 +86,13 @@
 
   &:before {
     display: inline-block;
-    height: 9px;
+    height: 7px;
     width: 9px;
     -webkit-mask-size: 9px;
-    -webkit-mask: url('../../media/ic_chevron_down.svg');
+    -webkit-mask: url('../../media/ic_chevron_up.svg');
+    -webkit-mask-repeat: no-repeat;
     background-color: black;
+    transform: rotate(180deg);
     content: '';
   }
 }

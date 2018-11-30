@@ -43,7 +43,6 @@ export interface SplitButtonPanelProps {
   onChange?: (index: number) => any;
   onKeyDown?: (e: React.KeyboardEvent<HTMLUListElement>) => any;
   options?: string[];
-  selected?: number;
 }
 
 export class SplitButtonPanel extends React.Component<SplitButtonPanelProps> {
@@ -87,15 +86,13 @@ export class SplitButtonPanel extends React.Component<SplitButtonPanelProps> {
           {
             options.map((option, index) => {
               const isFocused = index === this.props.focused;
-              const isActive = index === this.props.selected;
-              const activeClass = isActive ? ` ${styles.selected}` : '';
               const focusedClass = isFocused ? ` ${styles.focused}` : '';
               return <li
                         id={ this.getOptionId(index) }
                         key={ option }
-                        className={ styles.option + activeClass + focusedClass }
+                        className={ styles.option + focusedClass }
                         role={ 'option' }
-                        aria-selected={ isActive }
+                        aria-selected={ isFocused }
                         onClick={ e => this.onSelectOption(e, index) }>
                         { option }
                       </li>;
@@ -113,7 +110,6 @@ export class SplitButtonPanel extends React.Component<SplitButtonPanelProps> {
 
   private onSelectOption = (_e: React.SyntheticEvent<HTMLLIElement>, optionIndex: number): void => {
     if (this.props.onChange) {
-      console.log('clicked option: ', optionIndex);
       this.props.onChange(optionIndex);
     }
   }
@@ -125,10 +121,8 @@ export class SplitButtonPanel extends React.Component<SplitButtonPanelProps> {
   }
 
   private onOutsideClick = (e: MouseEvent): void => {
-    console.log('got click');
     const { target = null } = e as any;
     if (!this.panelRef.contains(target) && this.props.hidePanel) {
-      console.log('got outside click');
       this.props.hidePanel();
     }
   }

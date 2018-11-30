@@ -52,7 +52,7 @@
   background: none;
   cursor: pointer;
 
-  &.selected, &:hover, &.focused {
+  &:hover, &.focused {
     background-color: #EAEAEA;
   }
 }

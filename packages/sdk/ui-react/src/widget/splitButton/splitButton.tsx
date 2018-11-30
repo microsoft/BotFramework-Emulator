@@ -56,7 +56,7 @@ export class SplitButton extends React.Component<SplitButtonProps, SplitButtonSt
 
     this.state = {
       expanded: false,
-      focused: 0,
+      focused: props.selected || 0,
       selected: props.selected || 0
     };
   }
@@ -80,8 +80,7 @@ export class SplitButton extends React.Component<SplitButtonProps, SplitButtonSt
           hidePanel={ this.hidePanel }
           onChange={ this.onChangeOption }
           onKeyDown={ this.onKeyDown }
-          options={ options }
-          selected={ selected }/>
+          options={ options }/>
       </>
     );
   }
@@ -92,8 +91,8 @@ export class SplitButton extends React.Component<SplitButtonProps, SplitButtonSt
 
   private onClickCaret = (e: React.SyntheticEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    const { expanded } = this.state;
-    this.setState({ expanded: !expanded, focused: 0 });
+    const { expanded, selected } = this.state;
+    this.setState({ expanded: !expanded, focused: selected });
   }
 
   private onChangeOption = (index: number): void => {
@@ -103,7 +102,7 @@ export class SplitButton extends React.Component<SplitButtonProps, SplitButtonSt
       onChange(newValue);
     }
     this.caretRef.focus();
-    this.setState({ expanded: false, selected: index });
+    this.setState({ expanded: false, selected: index, focused: index });
   }
 
   private hidePanel = (): void => {
