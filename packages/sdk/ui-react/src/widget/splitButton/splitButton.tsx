@@ -70,8 +70,8 @@ export class SplitButton extends React.Component<SplitButtonProps, SplitButtonSt
         <div className={ styles.container }>
           <button className={ `${styles.defaultButton} ${buttonClass}` }><span>{ options[selected] }</span></button>
           <div className={ styles.separator }></div>
-          <button className={ 'caret' } ref={ this.setCaretRef } onClick={ this.onClickCaret }
-            aria-haspopup={ 'listbox' }>V</button>
+          <button className={ styles.caretButton } ref={ this.setCaretRef } onClick={ this.onClickCaret }
+            aria-haspopup={ 'listbox' }></button>
         </div>
         <SplitButtonPanel
           expanded={ expanded }

@@ -81,5 +81,16 @@
 }
 
 .caret-button {
+  display: flex;
+  width: 21px;
 
+  &:before {
+    display: inline-block;
+    height: 9px;
+    width: 9px;
+    -webkit-mask-size: 9px;
+    -webkit-mask: url('../../media/ic_chevron_down.svg');
+    background-color: black;
+    content: '';
+  }
 }
