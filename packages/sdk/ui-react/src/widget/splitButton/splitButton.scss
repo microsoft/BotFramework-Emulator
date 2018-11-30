@@ -35,8 +35,7 @@
   display: inline-flex;
   flex-flow: row nowrap;
   align-items: center;
-  padding: 8px;
-  border: 1px solid #CCC;
+  height: 18px;
 
   button {
     height: 18px;
@@ -61,7 +60,24 @@
 }
 
 .default-button {
+  display: flex;
 
+  > span {
+    height: 11px;
+    font-size: 11px;
+    line-height: 11px;
+  }
+
+  &:before {
+    display: inline-block;
+    position: relative;
+    width: 12px;
+    height: 12px;
+    -webkit-mask-size: 12px;
+    margin-right: 3px;
+    background-color: var(--toolbar-icon-color);
+    content: '';
+  }
 }
 
 .caret-button {

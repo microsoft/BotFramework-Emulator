@@ -36,6 +36,7 @@ import * as styles from './splitButton.scss';
 import { SplitButtonPanel } from './splitButtonPanel/splitButtonPanel';
 
 export interface SplitButtonProps {
+  buttonClass?: string;
   onChange?: (newValue: string) => any;
   options?: string[];
   selected?: number;
@@ -61,13 +62,13 @@ export class SplitButton extends React.Component<SplitButtonProps, SplitButtonSt
   }
 
   public render(): JSX.Element {
-    const { options } = this.props;
+    const { buttonClass = '', options } = this.props;
     const { expanded, focused, selected } = this.state;
 
     return (
       <>
         <div className={ styles.container }>
-          <button className={ 'default' }>{ options[selected] }</button>
+          <button className={ `${styles.defaultButton} ${buttonClass}` }><span>{ options[selected] }</span></button>
           <div className={ styles.separator }></div>
           <button className={ 'caret' } ref={ this.setCaretRef } onClick={ this.onClickCaret }
             aria-haspopup={ 'listbox' }>V</button>
@@ -144,6 +145,7 @@ export class SplitButton extends React.Component<SplitButtonProps, SplitButtonSt
         break;
 
       case 'enter':
+        e.preventDefault();
         this.onChangeOption(this.state.focused);
         break;
 
