@@ -33,7 +33,7 @@
 
 .panel {
   position: absolute;
-	background-color: #FFFFFF;
+	background-color: var(--split-button-panel-bg-color);
   box-shadow: 1px 1px 3px 0 rgba(0,0,0,0.3);
   list-style: none;
   margin: 0;
@@ -50,9 +50,10 @@
   padding: 3px 26px;
   border: 0;
   background: none;
+  color: var(--split-button-panel-color);
   cursor: pointer;
 
   &:hover, &.focused {
-    background-color: #EAEAEA;
+    background-color: var(--split-button-selected-item-bg-color);
   }
 }

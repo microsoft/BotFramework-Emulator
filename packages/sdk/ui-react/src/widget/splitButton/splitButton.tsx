@@ -37,6 +37,7 @@ import { SplitButtonPanel } from './splitButtonPanel/splitButtonPanel';
 
 export interface SplitButtonProps {
   buttonClass?: string;
+  disabled?: boolean;
   onChange?: (newValue: string) => any;
   options?: string[];
   selected?: number;
@@ -62,16 +63,22 @@ export class SplitButton extends React.Component<SplitButtonProps, SplitButtonSt
   }
 
   public render(): JSX.Element {
-    const { buttonClass = '', options } = this.props;
+    const { buttonClass = '', disabled = false, options } = this.props;
     const { expanded, focused, selected } = this.state;
+    const expandedClass = expanded ? ` ${styles.expanded}` : '';
 
     return (
       <>
         <div className={ styles.container }>
-          <button className={ `${styles.defaultButton} ${buttonClass}` }><span>{ options[selected] }</span></button>
+          <button className={ `${styles.defaultButton} ${buttonClass}` } disabled={ disabled }>
+            <span>{ options[selected] }</span>
+          </button>
           <div className={ styles.separator }></div>
-          <button className={ styles.caretButton } ref={ this.setCaretRef } onClick={ this.onClickCaret }
-            aria-haspopup={ 'listbox' }></button>
+          <button className={ styles.caretButton + expandedClass }
+            ref={ this.setCaretRef }
+            onClick={ this.onClickCaret }
+            aria-haspopup={ 'listbox' }
+            disabled={ disabled }></button>
         </div>
         <SplitButtonPanel
           expanded={ expanded }

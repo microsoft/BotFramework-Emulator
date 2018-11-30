@@ -3,3 +3,4 @@ export const container: string;
 export const separator: string;
 export const defaultButton: string;
 export const caretButton: string;
+export const expanded: string;

@@ -39,12 +39,31 @@
 
   button {
     height: 18px;
+    background-color: transparent;
     background: none;
     border: 0;
     cursor: pointer;
     
     &:hover {
-      background-color: #DCDCDC;
+      background-color: var(--split-button-hover-bg-color);
+      outline: var(--split-button-hover-outline);
+    }
+
+    &:focus {
+      outline: var(--split-button-focus-outline);
+    }
+
+    &:active {
+      background-color: var(--split-button-selected-bg-color);
+      outline: var(--split-button-selected-outline);
+    }
+
+    &:disabled {
+      cursor: default;
+
+      &:before {
+        background-color: var(--split-button-disabled-color);
+      }
     }
   }
 
@@ -56,7 +75,7 @@
 .separator {
   width: 1px;
   height: 11px;
-  background-color: #C8C8C8;
+  background-color: var(--split-button-separator-bg-color);
 }
 
 .default-button {
@@ -66,6 +85,13 @@
     height: 11px;
     font-size: 11px;
     line-height: 11px;
+    color: var(--split-button-color);
+  }
+
+  &:active {
+    > span {
+      color: var(--split-button-pressed-color);
+    }
   }
 
   &:before {
@@ -75,7 +101,7 @@
     height: 12px;
     -webkit-mask-size: 12px;
     margin-right: 3px;
-    background-color: var(--toolbar-icon-color);
+    background-color: var(--split-button-icon-color);
     content: '';
   }
 }
@@ -84,6 +110,11 @@
   display: flex;
   width: 21px;
 
+  &.expanded {
+    background-color: var(--split-button-selected-bg-color);
+    outline: var(--split-button-expanded-outline);
+  }
+
   &:before {
     display: inline-block;
     height: 7px;
@@ -91,8 +122,14 @@
     -webkit-mask-size: 9px;
     -webkit-mask: url('../../media/ic_chevron_up.svg');
     -webkit-mask-repeat: no-repeat;
-    background-color: black;
+    background-color: var(--split-button-color);
     transform: rotate(180deg);
     content: '';
+  }
+
+  &:active, &.expanded {
+    &:before {
+      background-color: var(--split-button-pressed-color);
+    }
   }
 }
