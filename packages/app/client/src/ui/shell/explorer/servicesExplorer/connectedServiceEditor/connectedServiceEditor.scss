@@ -1,3 +1,68 @@
-.connectedServiceEditor {
+.connected-service-editor {
   width: 400px;
+}
+
+.header {
+  display: flex;
+  width: 100%;
+
+  > * {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 5px;
+    padding-left: 8px;
+  }
+}
+
+ul.kv-pair-container {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  max-height: 180px;
+  overflow: auto;
+
+  > li {
+    width: 100%;
+    display: flex;
+
+    > * {
+      width: 100%;
+    }
+  }
+
+  input[disabled] {
+    border: none;
+  }
+}
+
+.no-border {
+  border: none;
+}
+
+.add-kv-pair-button {
+  border: none;
+  padding: 0 0 0 18px;
+  background: transparent;
+  position: relative;
+  cursor: pointer;
+
+  &:hover {
+    color: var(-p-button-color);
+
+    &::before {
+      background: var(--p-button-bg-hover);
+    }
+  }
+
+  &::before {
+    position: absolute;
+    left: 0;
+    content: '';
+    width: 16px;
+    height: 16px;
+    -webkit-mask: url("../../../../media/ic_add_thin.svg");
+    -webkit-mask-size: 16px;
+    background: var(--p-button-bg);
+  }
 }
