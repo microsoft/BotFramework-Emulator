@@ -33,7 +33,7 @@ jest.mock('electron', () => ({
   BrowserWindow: class MockBrowserWindow {
     public static reporters = [];
     public listeners = [] as any;
-    public webContents = { history: ['http://someotherUrl', `http://localhost/#t=13&id_token=${mockArmToken}`] };
+    public webContents = { history: ['http://someotherUrl', `http://localhost/#t=13&access_token=${mockArmToken}`] };
 
     private static report(...args: any[]) {
       this.reporters.forEach(r => r(args));
@@ -53,7 +53,7 @@ jest.mock('electron', () => ({
       if (type === 'page-title-updated') {
         [['http://someotherUrl'], [`http://localhost/#t=13&id_token=${mockArmToken}`]].forEach((url, index) => {
           let evt = new mockEvent('page-title-updated');
-          (evt as any).sender = { history: [`http://localhost/#t=13&id_token=${mockArmToken}`] };
+          (evt as any).sender = { history: [`http://localhost/#t=13&access_token=${mockArmToken}`] };
           setTimeout(() => {
             this.listeners.forEach(l => l.type === evt.type && l.handler(evt));
           }, 25 * index);
@@ -103,7 +103,7 @@ describe('The azureAuthWorkflowService', () => {
     let reportedValues = [];
     let reporter = v => reportedValues.push(v);
     (BrowserWindow as any).reporters.push(reporter);
-    const it = AzureAuthWorkflowService.retrieveAuthToken(false, '');
+    const it = AzureAuthWorkflowService.retrieveAuthToken(false);
     let value = undefined;
     let ct = 0;
     while (true) {
@@ -131,7 +131,7 @@ describe('The azureAuthWorkflowService', () => {
       }
 
       if (ct === 1) {
-        expect(value.id_token).toBe(mockArmToken);
+        expect(value.access_token).toBe(mockArmToken);
         // Not sure if this is valuable or not.
         expect(reportedValues.length).toBe(3);
       }
