@@ -36,9 +36,14 @@ import uuidv4 from 'uuid/v4';
 import * as jwt from 'jsonwebtoken';
 
 let getPem = require('rsa-pem-from-mod-exp');
-const clientId = '4f28e5eb-6b7f-49e6-ac0e-f992b622da57';
+
+const clientId = 'f3723d34-6ff5-4ceb-a148-d99dcd2511fc';
+const replyUrl = 'https://dev.botframework.com/cb';
+const authorizationEndpoint = 'https://login.microsoftonline.com/common/oauth2/authorize';
+
 declare type Config = { authorization_endpoint: string, jwks_uri: string, token_endpoint: string };
-declare type AuthResponse = { code: string, id_token: string, state: string, session_state: string, error?: string };
+declare type AuthResponse = { 
+  code: string, access_token: string, state: string, session_state: string, error?: string };
 declare type Jwks = { keys: { x5t: string, n: string, e: string, x5c: string[] }[] };
 
 export class AzureAuthWorkflowService {
@@ -46,19 +51,22 @@ export class AzureAuthWorkflowService {
   private static config: Config;
   private static jwks: Jwks;
 
-  public static* retrieveAuthToken(renew: boolean = false, redirectUri: string): IterableIterator<any> {
-    const authWindow = yield this.launchAuthWindow(renew, redirectUri);
+  public static* retrieveAuthToken(renew: boolean = false): IterableIterator<any> {
+    const authWindow = yield this.launchAuthWindow(renew);
     authWindow.show();
-    const result = yield this.waitForAuthResult(authWindow, redirectUri);
+    const result = yield this.waitForAuthResult(authWindow, replyUrl);
     authWindow.close();
     if (result.error) {
       return false;
     }
-    const armToken = yield this.getArmTokenFromCode(result.code, redirectUri);
-    if (armToken.error) {
+    const valid = yield this.validateJWT(result.access_token);
+    if (!valid) {
+      result.error = 'Invalid Token';
+    }
+    if (result.error) {
       return false;
     }
-    yield armToken;
+    yield result;
   }
 
   private static async waitForAuthResult(browserWindow: BrowserWindow, redirectUri: string): Promise<AuthResponse> {
@@ -97,14 +105,14 @@ export class AzureAuthWorkflowService {
       return response;
     }
 
-    const isValid = await this.validateJWT(response.id_token);
+    const isValid = await this.validateJWT(response.access_token);
     if (!isValid) {
       response.error = 'Invalid token';
     }
     return response;
   }
 
-  private static async launchAuthWindow(renew: boolean, redirectUri: string): Promise<BrowserWindow> {
+  private static async launchAuthWindow(renew: boolean): Promise<BrowserWindow> {
     const browserWindow = new BrowserWindow({
       modal: true,
       show: false,
@@ -115,20 +123,20 @@ export class AzureAuthWorkflowService {
       height: 366,
       webPreferences: { contextIsolation: true, nativeWindowOpen: true }
     });
+
     browserWindow.setMenu(null);
-    const { authorization_endpoint: endpoint } = await this.getConfig();
+    
     const state = uuidv4();
     const requestId = uuidv4();
     const nonce = uuidv4();
     const bits = [
-      `${endpoint}?response_type=id_token+code`,
+      `${authorizationEndpoint}?response_type=token`,
       `client_id=${clientId}`,
-      `redirect_uri=${redirectUri}`,
+      `redirect_uri=${replyUrl}}`,
       `state=${state}`,
       `client-request-id=${requestId}`,
       `nonce=${nonce}`,
-      'x-client-SKU=Js',
-      'x-client-Ver=1.0.17',
+      'response_mode=fragment',
       'resource=https://management.core.windows.net/'
     ];
 
@@ -161,34 +169,6 @@ export class AzureAuthWorkflowService {
     const jwksResponse = await fetch(jwks_uri);
     this.jwks = await jwksResponse.json();
     return this.jwks;
-  }
-
-  private static async getArmTokenFromCode(code: string, redirectUri: string): Promise<any> {
-    const { token_endpoint: endpoint } = await this.getConfig();
-    const bits = [
-      `grant_type=authorization_code`,
-      `client_id=${clientId}`,
-      `code=${code}`,
-      `redirect_uri=${redirectUri}`,
-      `resource=https://management.core.windows.net/`
-    ];
-    const data = bits.join('&');
-    let armToken: { access_token: string, refresh_token: string, error?: string };
-    try {
-      const response = await fetch(endpoint, {
-        body: data,
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-      });
-      armToken = await response.json();
-      const valid = await this.validateJWT(armToken.access_token);
-      if (!valid) {
-        armToken.error = 'Invalid Token';
-      }
-    } catch (e) {
-      armToken.error = e.toString();
-    }
-    return armToken;
   }
 
   private static async validateJWT(token: string): Promise<boolean> {
