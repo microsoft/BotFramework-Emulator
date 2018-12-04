@@ -37,6 +37,7 @@ import { SplitButtonPanel } from './splitButtonPanel/splitButtonPanel';
 
 export interface SplitButtonProps {
   buttonClass?: string;
+  defaultLabel?: string;
   disabled?: boolean;
   onChange?: (newValue: string) => any;
   onClick?: (value: string) => any;
@@ -46,7 +47,6 @@ export interface SplitButtonProps {
 
 export interface SplitButtonState {
   expanded: boolean;
-  focused: number;
   selected?: number;
 }
 
@@ -58,15 +58,14 @@ export class SplitButton extends React.Component<SplitButtonProps, SplitButtonSt
 
     this.state = {
       expanded: false,
-      focused: props.selected || 0,
       selected: props.selected || 0
     };
   }
 
   public render(): JSX.Element {
-    const { buttonClass = '', disabled = false, options = [] } = this.props;
-    const { expanded, focused, selected } = this.state;
-    const { caretRef, hidePanel, onChangeOption, onClickDefault, onClickCaret, onKeyDown, setCaretRef } = this;
+    const { buttonClass = '', defaultLabel = '', disabled = false, options = [] } = this.props;
+    const { expanded, selected } = this.state;
+    const { caretRef, hidePanel, onClickOption, onClickDefault, onClickCaret, onKeyDown, setCaretRef } = this;
     const expandedClass = expanded ? ` ${styles.expanded}` : '';
     
     return (
@@ -76,7 +75,7 @@ export class SplitButton extends React.Component<SplitButtonProps, SplitButtonSt
             className={ `${styles.defaultButton} ${buttonClass}` }
             disabled={ disabled }
             onClick={ onClickDefault }>
-            <span>{ options[selected] }</span>
+            <span>{ defaultLabel }</span>
           </button>
           <div className={ styles.separator }></div>
           <button className={ styles.caretButton + expandedClass }
@@ -88,9 +87,9 @@ export class SplitButton extends React.Component<SplitButtonProps, SplitButtonSt
         <SplitButtonPanel
           expanded={ expanded }
           caretRef={ caretRef }
-          focused={ focused }
+          selected={ selected }
           hidePanel={ hidePanel }
-          onChange={ onChangeOption }
+          onClick={ onClickOption }
           onKeyDown={ onKeyDown }
           options={ options }/>
       </>
@@ -103,45 +102,44 @@ export class SplitButton extends React.Component<SplitButtonProps, SplitButtonSt
 
   private onClickCaret = (e: React.SyntheticEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    const { expanded, selected } = this.state;
-    this.setState({ expanded: !expanded, focused: selected });
+    const { expanded } = this.state;
+    this.setState({ expanded: !expanded, selected: 0 });
   }
 
   private onClickDefault = (e: React.SyntheticEvent<HTMLButtonElement>) => {
     const { onClick, options = [] } = this.props;
     if (onClick && options.length) {
-      onClick(options[this.state.selected]);
+      onClick(options[0]);
     }
   }
 
-  private onChangeOption = (index: number): void => {
-    const { onChange, options = [] } = this.props;
-    if (onChange) {
+  private onClickOption = (index: number): void => {
+    const { onClick, options = [] } = this.props;
+    if (onClick) {
       const newValue = options[index] || null;
-      onChange(newValue);
+      onClick(newValue);
     }
-    this.caretRef.focus();
-    this.setState({ expanded: false, selected: index, focused: index });
+    this.hidePanel();
   }
 
   private hidePanel = (): void => {
     this.caretRef.focus();
-    this.setState({ expanded: false });
+    this.setState({ expanded: false, selected: 0 });
   }
 
-  private moveFocusUp = (): void => {
+  private moveSelectionUp = (): void => {
     const { options = [] } = this.props;
-    const { focused } = this.state;
-    if (options.length && focused > 0) {
-      this.setState({ focused: focused - 1 });
+    const { selected } = this.state;
+    if (options.length && selected > 0) {
+      this.setState({ selected: selected - 1 });
     }
   }
 
-  private moveFocusDown = (): void => {
+  private moveSelectionDown = (): void => {
     const { options = [] } = this.props;
-    const { focused } = this.state;
-    if (options.length && focused < options.length - 1) {
-      this.setState({ focused: focused + 1 });
+    const { selected } = this.state;
+    if (options.length && selected < options.length - 1) {
+      this.setState({ selected: selected + 1 });
     }
   }
 
@@ -151,11 +149,11 @@ export class SplitButton extends React.Component<SplitButtonProps, SplitButtonSt
 
     switch (key) {
       case 'arrowdown':
-        this.moveFocusDown();
+        this.moveSelectionDown();
         break;
 
       case 'arrowup':
-        this.moveFocusUp();
+        this.moveSelectionUp();
         break;
 
       case 'escape':
@@ -164,7 +162,7 @@ export class SplitButton extends React.Component<SplitButtonProps, SplitButtonSt
 
       case 'enter':
         e.preventDefault();
-        this.onChangeOption(this.state.focused);
+        this.onClickOption(this.state.selected);
         break;
 
       case 'tab':

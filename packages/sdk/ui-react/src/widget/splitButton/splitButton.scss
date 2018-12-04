@@ -83,7 +83,7 @@
 
   > span {
     height: 16px;
-    font-size: 13px;
+    font-size: 14px;
     line-height: 16px;
     color: var(--split-button-color);
   }
@@ -97,9 +97,8 @@
   &:before {
     display: inline-block;
     position: relative;
-    width: 12px;
-    height: 12px;
-    -webkit-mask-size: 12px;
+    width: 15px;
+    height: 15px;
     margin-right: 3px;
     background-color: var(--split-button-icon-color);
     content: '';
@@ -108,7 +107,7 @@
 
 .caret-button {
   display: flex;
-  width: 21px;
+  width: auto;
 
   &.expanded {
     background-color: var(--split-button-selected-bg-color);
@@ -117,9 +116,9 @@
 
   &:before {
     display: inline-block;
-    height: 7px;
-    width: 9px;
-    -webkit-mask-size: 9px;
+    height: 9px;
+    width: 13px;
+    -webkit-mask-size: 13px;
     -webkit-mask: url('../../media/ic_chevron_up.svg');
     -webkit-mask-repeat: no-repeat;
     background-color: var(--split-button-color);

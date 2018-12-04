@@ -53,7 +53,7 @@
   color: var(--split-button-panel-color);
   cursor: pointer;
 
-  &:hover, &.focused {
+  &:hover, &.selected {
     background-color: var(--split-button-selected-item-bg-color);
   }
 }

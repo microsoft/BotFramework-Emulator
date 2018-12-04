@@ -38,9 +38,9 @@ import * as styles from './splitButtonPanel.scss';
 export interface SplitButtonPanelProps {
   caretRef?: HTMLButtonElement;
   expanded?: boolean;
-  focused?: number;
+  selected?: number;
   hidePanel?: () => void;
-  onChange?: (index: number) => any;
+  onClick?: (index: number) => any;
   onKeyDown?: (e: React.KeyboardEvent<HTMLUListElement>) => any;
   options?: string[];
 }
@@ -73,7 +73,7 @@ export class SplitButtonPanel extends React.Component<SplitButtonPanelProps> {
   }
 
   private get panel(): JSX.Element {
-    const { caretRef, options = [], expanded = false, onKeyDown = () => null, focused = 0 } = this.props;
+    const { caretRef, options = [], expanded = false, onKeyDown = () => null, selected = 0 } = this.props;
     if (expanded) {
       const caretClientRect = caretRef.getBoundingClientRect();
       const inlineStyle = { top: `${caretClientRect.bottom}px`, left: `${caretClientRect.left}px` };
@@ -81,18 +81,18 @@ export class SplitButtonPanel extends React.Component<SplitButtonPanelProps> {
       return (
         <ul 
           className={ styles.panel } style={ inlineStyle } ref={ this.setPanelRef } role={ 'listbox' } tabIndex={ -1 }
-          aria-activedescendant={ this.getOptionId(focused) }
+          aria-activedescendant={ this.getOptionId(selected) }
           onKeyDown={ onKeyDown }>
           {
             options.map((option, index) => {
-              const isFocused = index === this.props.focused;
-              const focusedClass = isFocused ? ` ${styles.focused}` : '';
+              const isSelected = index === selected;
+              const selectedClass = isSelected ? ` ${styles.selected}` : '';
               return <li
                         id={ this.getOptionId(index) }
                         key={ option }
-                        className={ styles.option + focusedClass }
+                        className={ styles.option + selectedClass }
                         role={ 'option' }
-                        aria-selected={ isFocused }
+                        aria-selected={ isSelected }
                         onClick={ e => this.onSelectOption(e, index) }>
                         { option }
                       </li>;
@@ -109,8 +109,8 @@ export class SplitButtonPanel extends React.Component<SplitButtonPanelProps> {
   }
 
   private onSelectOption = (_e: React.SyntheticEvent<HTMLLIElement>, optionIndex: number): void => {
-    if (this.props.onChange) {
-      this.props.onChange(optionIndex);
+    if (this.props.onClick) {
+      this.props.onClick(optionIndex);
     }
   }
 
