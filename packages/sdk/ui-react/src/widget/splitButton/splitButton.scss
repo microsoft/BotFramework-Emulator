@@ -35,10 +35,10 @@
   display: inline-flex;
   flex-flow: row nowrap;
   align-items: center;
-  height: 18px;
+  height: 30px;
 
   button {
-    height: 18px;
+    height: 30px;
     background-color: transparent;
     background: none;
     border: 0;
@@ -74,7 +74,7 @@
 
 .separator {
   width: 1px;
-  height: 11px;
+  height: 15px;
   background-color: var(--split-button-separator-bg-color);
 }
 
@@ -82,9 +82,9 @@
   display: flex;
 
   > span {
-    height: 11px;
-    font-size: 11px;
-    line-height: 11px;
+    height: 16px;
+    font-size: 13px;
+    line-height: 16px;
     color: var(--split-button-color);
   }
 

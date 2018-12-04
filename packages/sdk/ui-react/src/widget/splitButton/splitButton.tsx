@@ -39,6 +39,7 @@ export interface SplitButtonProps {
   buttonClass?: string;
   disabled?: boolean;
   onChange?: (newValue: string) => any;
+  onClick?: (value: string) => any;
   options?: string[];
   selected?: number;
 }
@@ -63,30 +64,34 @@ export class SplitButton extends React.Component<SplitButtonProps, SplitButtonSt
   }
 
   public render(): JSX.Element {
-    const { buttonClass = '', disabled = false, options } = this.props;
+    const { buttonClass = '', disabled = false, options = [] } = this.props;
     const { expanded, focused, selected } = this.state;
+    const { caretRef, hidePanel, onChangeOption, onClickDefault, onClickCaret, onKeyDown, setCaretRef } = this;
     const expandedClass = expanded ? ` ${styles.expanded}` : '';
-
+    
     return (
       <>
         <div className={ styles.container }>
-          <button className={ `${styles.defaultButton} ${buttonClass}` } disabled={ disabled }>
+          <button
+            className={ `${styles.defaultButton} ${buttonClass}` }
+            disabled={ disabled }
+            onClick={ onClickDefault }>
             <span>{ options[selected] }</span>
           </button>
           <div className={ styles.separator }></div>
           <button className={ styles.caretButton + expandedClass }
-            ref={ this.setCaretRef }
-            onClick={ this.onClickCaret }
+            ref={ setCaretRef }
+            onClick={ onClickCaret }
             aria-haspopup={ 'listbox' }
             disabled={ disabled }></button>
         </div>
         <SplitButtonPanel
           expanded={ expanded }
-          caretRef={ this.caretRef }
+          caretRef={ caretRef }
           focused={ focused }
-          hidePanel={ this.hidePanel }
-          onChange={ this.onChangeOption }
-          onKeyDown={ this.onKeyDown }
+          hidePanel={ hidePanel }
+          onChange={ onChangeOption }
+          onKeyDown={ onKeyDown }
           options={ options }/>
       </>
     );
@@ -102,9 +107,16 @@ export class SplitButton extends React.Component<SplitButtonProps, SplitButtonSt
     this.setState({ expanded: !expanded, focused: selected });
   }
 
+  private onClickDefault = (e: React.SyntheticEvent<HTMLButtonElement>) => {
+    const { onClick, options = [] } = this.props;
+    if (onClick && options.length) {
+      onClick(options[this.state.selected]);
+    }
+  }
+
   private onChangeOption = (index: number): void => {
     const { onChange, options = [] } = this.props;
-    if (onChange && typeof onChange === 'function') {
+    if (onChange) {
       const newValue = options[index] || null;
       onChange(newValue);
     }
