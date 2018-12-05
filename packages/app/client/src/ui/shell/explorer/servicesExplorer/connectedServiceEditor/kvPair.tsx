@@ -41,7 +41,7 @@ export class KvPair extends Component<KvPairProps, KvPairState> {
 
   public render(): ReactNode {
     const { length, kvPairs } = this.state;
-    let numEmptyRows = 1 + length - kvPairs.length;
+    const numEmptyRows = 1 + length - kvPairs.length;
     const rows = [];
 
     for (let i = 0; i < numEmptyRows; i++) {
