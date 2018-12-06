@@ -32,8 +32,8 @@
 //
 
 import * as BotChat from 'botframework-webchat';
-import { uniqueId } from '@bfemulator/sdk-shared';
-import { Splitter } from '@bfemulator/ui-react';
+import { uniqueId, uniqueIdv4 } from '@bfemulator/sdk-shared';
+import { Splitter, SplitButton } from '@bfemulator/ui-react';
 import base64Url from 'base64url';
 import { IEndpointService } from 'botframework-config/lib/schema';
 import * as React from 'react';
@@ -45,7 +45,6 @@ import * as PresentationActions from '../../../data/action/presentationActions';
 import { Document } from '../../../data/reducer/editor';
 import { RootState } from '../../../data/store';
 import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
-import ToolBar, { Button as ToolBarButton } from '../toolbar/toolbar';
 import ChatPanel from './chatPanel/chatPanel';
 import LogPanel from './logPanel/logPanel';
 import PlaybackBar from './playbackBar/playbackBar';
@@ -54,6 +53,7 @@ import { newNotification, Notification, SharedConstants } from '@bfemulator/app-
 import * as styles from './emulator.scss';
 import { beginAdd } from '../../../data/action/notificationActions';
 import { InspectorContainer } from './parts';
+import { ToolBar } from './toolbar/toolbar';
 
 const { encode } = base64Url;
 
@@ -74,6 +74,7 @@ interface EmulatorProps {
   newConversation?: (documentId: string, options: any) => void;
   presentationModeEnabled?: boolean;
   setInspectorObjects?: (documentId: string, objects: any) => void;
+  updateChat?: (documentId: string, updatedValues: any) => void;
   updateDocument?: (documentId: string, updatedValues: Partial<Document>) => void;
   url?: string;
 }
@@ -97,8 +98,7 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
     super(props);
   }
 
-  shouldStartNewConversation(props?: any) {
-    props = props || this.props;
+  shouldStartNewConversation(props: EmulatorProps = this.props): boolean {
     return !props.document.directLine ||
       (props.document.conversationId !== props.document.directLine.conversationId);
   }
@@ -114,10 +114,15 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
     window.removeEventListener('keydown', this.keyboardEventListener);
   }
 
-  componentWillReceiveProps(nextProps: any) {
+  componentWillReceiveProps(nextProps: EmulatorProps) {
     const { props, keyboardEventListener, startNewConversation } = this;
+    const { document = {} } = props;
+    const { document: nextDocument = {} } = nextProps;
 
-    if (!nextProps.document.directLine && props.document.documentId !== nextProps.document.documentId) {
+    const documentOrUserIdChanged = (!nextDocument.directLine && document.documentId !== nextDocument.documentId)
+      || (document.userId !== nextDocument.userId);
+
+    if (documentOrUserIdChanged) {
       startNewConversation(nextProps).catch();
     }
 
@@ -134,9 +139,7 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
     }
   }
 
-  async startNewConversation(props?: any) {
-    props = props || this.props;
-
+  startNewConversation = async (props: EmulatorProps = this.props): Promise<any> => {
     if (props.document.subscription) {
       props.document.subscription.unsubscribe();
     }
@@ -206,7 +209,7 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
     }
   }
 
-  initConversation(props: any, options: any, selectedActivity$: any, subscription: any) {
+  initConversation(props: EmulatorProps, options: any, selectedActivity$: any, subscription: any): void {
     const encodedOptions = encode(JSON.stringify(options));
 
     // TODO: We need to use encoded token because we need to pass both endpoint ID and conversation ID
@@ -254,24 +257,21 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
   renderDefaultView(): JSX.Element {
     return (
       <div className={ styles.emulator }>
-        { 
+        {
           this.props.mode === 'livechat' &&
           <div className={ styles.header }>
             <ToolBar>
-              <ToolBarButton 
-                iconClassName={ styles.toolbarIcon } 
-                icon={ styles.restartIcon } 
-                visible={ true } 
-                title="Restart conversation" 
-                onClick={ this.handleStartOverClick }
-              />
-              <ToolBarButton 
-                iconClassName={ styles.toolbarIcon } 
-                icon={ styles.saveTranscriptIcon } 
-                visible={ true } 
-                title="Save transcript" 
+              <SplitButton 
+                defaultLabel="Restart conversation"
+                buttonClass={ styles.restartIcon }
+                options={ ['Restart with new user ID', 'Restart with same user ID'] }
+                onClick={ this.handleStartOverClick }/>
+              <button 
+                className={ `${ styles.saveTranscriptIcon } ${ styles.toolbarIcon || '' }` } 
                 onClick={ this.handleExportClick }
-              />
+              >
+                Save transcript
+              </button>
             </ToolBar>
           </div>
         }
@@ -301,29 +301,43 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
     );
   }
 
-  private getVerticalSplitterSizes = () => {
+  private getVerticalSplitterSizes = (): any => {
     return {
       0: `${this.props.document.ui.verticalSplitter[0].percentage}`
     };
   }
 
-  private getHorizontalSplitterSizes = () => {
+  private getHorizontalSplitterSizes = (): any => {
     return {
       0: `${this.props.document.ui.horizontalSplitter[0].percentage}`
     };
   }
 
-  private handlePresentationClick = (enabled: boolean) => {
+  private handlePresentationClick = (enabled: boolean): void => {
     this.props.enablePresentationMode(enabled);
   }
 
-  private handleStartOverClick = () => {
+  private handleStartOverClick = async (option: string = 'Restart with new user ID'): Promise<void> => {
     this.props.clearLog(this.props.document.documentId);
     this.props.setInspectorObjects(this.props.document.documentId, []);
-    this.startNewConversation();
+    switch (option) {
+      case 'Restart with new user ID':
+        const newUserId = uniqueIdv4();
+        // set new user as current on emulator facilities side
+        await CommandServiceImpl.remoteCall(SharedConstants.Commands.Emulator.SetCurrentUser, newUserId);
+        this.props.updateChat(this.props.documentId, { userId: newUserId });
+        break;
+
+      case 'Restart with same user ID':
+        this.startNewConversation();
+        break;
+
+      default:
+        break;
+    }
   }
 
-  private handleExportClick = () => {
+  private handleExportClick = (): void => {
     if (this.props.document.directLine) {
       CommandServiceImpl.remoteCall(
         SharedConstants.Commands.Emulator.SaveTranscriptToFile,
@@ -357,6 +371,7 @@ const mapDispatchToProps = (dispatch): EmulatorProps => ({
   setInspectorObjects: (documentId, objects) => dispatch(ChatActions.setInspectorObjects(documentId, objects)),
   clearLog: documentId => dispatch(ChatActions.clearLog(documentId)),
   newConversation: (documentId, options) => dispatch(ChatActions.newConversation(documentId, options)),
+  updateChat: (documentId: string, updatedValues: any) => dispatch(ChatActions.updateChat(documentId, updatedValues)),
   updateDocument: (documentId, updatedValues: Partial<Document>) => dispatch(updateDocument(documentId, updatedValues)),
   createErrorNotification: (notification: Notification) => dispatch(beginAdd(notification))
 });

@@ -31,8 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './appSettingsEditor/appSettingsEditor';
-export * from './editor';
-export * from './panel/panel';
-export * from './emulator';
-export * from './welcomePage';
+import * as React from 'react';
+import * as styles from './toolbar.scss';
+
+export const ToolBar = props =>
+  <div className={ styles.toolbar }>
+    { props.children }
+  </div>;
