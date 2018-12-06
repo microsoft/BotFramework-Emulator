@@ -31,14 +31,23 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './largeHeader/largeHeader';
-export * from './mediumHeader/mediumHeader';
-export * from './smallHeader/smallHeader';
-export * from './dialog';
-export * from './button/primaryButton';
-export * from './button/defaultButton';
-export * from './textField/textField';
-export * from './checkbox/checkbox';
-export * from './insetShadow/insetShadow';
-export * from './spinner/spinner';
-export * from './splitButton';
+import * as React from 'react';
+import { ToolBar } from './toolbar';
+import { mount } from 'enzyme';
+
+jest.mock('./toolbar.scss', () => ({}));
+
+describe('<Toolbar/>', () => {
+  it('should render deeply', () => {
+    const wrapper = mount(
+      <ToolBar>
+        <div id="inside-toolbar"></div>
+      </ToolBar>
+    );
+    const node = wrapper.find(ToolBar);
+    expect(node.html()).not.toBe(null);
+    
+    const children = node.find('div#inside-toolbar');
+    expect(children).not.toBe(null);
+  });
+});

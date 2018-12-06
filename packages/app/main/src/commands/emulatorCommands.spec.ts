@@ -63,6 +63,7 @@ jest.mock('../utils/ensureStoragePath', () => ({
   ensureStoragePath: () => ''
 }));
 
+let mockUsers;
 jest.mock('../emulator', () => ({
   emulator: {
     framework: {
@@ -79,7 +80,9 @@ jest.mock('../emulator', () => ({
             endpoints: {
               reset: () => null,
               push: () => null
-            }
+            },
+            get users() { return mockUsers; },
+            set users(users: any) { mockUsers = users; }
           }
         }
       }
@@ -339,6 +342,9 @@ registerCommands(mockCommandRegistry);
 
 const { Emulator } = SharedConstants.Commands;
 describe('The emulatorCommands', () => {
+  beforeEach(() => {
+    mockUsers = { users: {} };
+  });
 
   it('should save a transcript to file based on the transcripts path in the botInfo', async () => {
     const getActiveBotSpy = jest.spyOn((botHelpers as any).default, 'getActiveBot').mockReturnValue(mockBot);
@@ -414,5 +420,12 @@ describe('The emulatorCommands', () => {
     expect(getActiveBotSpy).toHaveBeenCalled();
     expect(dispatchSpy).toHaveBeenCalledWith(BotActions.mockAndSetActive(newbot));
     expect(conversation).not.toBeNull();
+  });
+
+  it('should set current user', async () => {
+    await mockCommandRegistry.getCommand(SharedConstants.Commands.Emulator.SetCurrentUser)
+      .handler('userId123');
+    expect(mockUsers.currentUserId).toBe('userId123');
+    expect(mockUsers.users.userId123).toEqual({ id: 'userId123', name: 'User' });
   });
 });

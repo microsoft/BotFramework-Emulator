@@ -44,9 +44,6 @@ interface ChatPanelProps {
 }
 
 export default class ChatPanel extends React.Component<ChatPanelProps, {}> {
-  constructor(props: ChatPanelProps, context: {}) {
-    super(props, context);
-  }
 
   render() {
     const { endpointUrl } = this.props.document || { endpointUrl: '' };

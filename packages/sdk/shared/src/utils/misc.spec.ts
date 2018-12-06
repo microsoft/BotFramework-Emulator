@@ -31,10 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { uniqueId, isObject } from './misc';
+import { uniqueId, uniqueIdv4, isObject } from './misc';
 
 describe('Misc utility function tests', () => {
-  it('uniqueId() functionality', () => {
+  it('should generate a uniqueId', () => {
     const id1 = uniqueId();
     const id2 = uniqueId();
     const id3 = uniqueId();
@@ -44,7 +44,7 @@ describe('Misc utility function tests', () => {
     expect(id2).not.toEqual(id3);
   });
 
-  it('isObject() functionality', () => {
+  it('should determine if a variable is an object', () => {
     const nonObj1 = 1;
     const nonObj2 = 'notAnObject';
     const nonObj3 = true;
@@ -59,4 +59,14 @@ describe('Misc utility function tests', () => {
 
     expect(isObject(obj)).toBe(true);
   });
+
+  it('should generate a uniqueId using uuidv4', () => {
+    const id1 = uniqueIdv4();
+    const id2 = uniqueIdv4();
+    const id3 = uniqueIdv4();
+
+    expect(id1).not.toEqual(id2);
+    expect(id1).not.toEqual(id3);
+    expect(id2).not.toEqual(id3);
+  })
 });
