@@ -260,6 +260,8 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
   }
 
   renderDefaultView(): JSX.Element {
+    const { NewUserId, SameUserId } = RestartConversationOptions;
+
     return (
       <div className={ styles.emulator }>
         {
@@ -269,7 +271,7 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
               <SplitButton 
                 defaultLabel="Restart conversation"
                 buttonClass={ styles.restartIcon }
-                options={ [RestartConversationOptions.NewUserId, RestartConversationOptions.SameUserId] }
+                options={ [NewUserId, SameUserId] }
                 onClick={ this.handleStartOverClick }/>
               <button 
                 className={ `${ styles.saveTranscriptIcon } ${ styles.toolbarIcon || '' }` } 
@@ -323,17 +325,19 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
   }
 
   private handleStartOverClick = async (option: string = RestartConversationOptions.NewUserId): Promise<void> => {
+    const { NewUserId, SameUserId } = RestartConversationOptions;
     this.props.clearLog(this.props.document.documentId);
     this.props.setInspectorObjects(this.props.document.documentId, []);
+    
     switch (option) {
-      case RestartConversationOptions.NewUserId:
+      case NewUserId:
         const newUserId = uniqueIdv4();
         // set new user as current on emulator facilities side
         await CommandServiceImpl.remoteCall(SharedConstants.Commands.Emulator.SetCurrentUser, newUserId);
         this.props.updateChat(this.props.documentId, { userId: newUserId });
         break;
 
-      case RestartConversationOptions.SameUserId:
+      case SameUserId:
         this.startNewConversation();
         break;
 
