@@ -189,6 +189,28 @@ export function chat(state: ChatState = DEFAULT_STATE, action: ChatAction | Edit
       break;
     }
 
+    case ChatActions.updateChat: {
+      const { payload } = action;
+      const { documentId = '', updatedValues = {} } = payload;
+      let document = state.chats[documentId];
+      if (document) {
+        document = {
+          ...document,
+          ...updatedValues
+        };
+        state = {
+          ...state,
+          chats: {
+            ...state.chats,
+            [payload.documentId]: {
+              ...document
+            }
+          }
+        };
+      }
+      break;
+    }
+
     case EditorActions.closeAll: {
       // HACK. Need a better system.
       return DEFAULT_STATE;
