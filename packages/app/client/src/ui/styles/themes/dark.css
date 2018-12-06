@@ -165,6 +165,22 @@ html {
   /* Links */
   --link-color: #4080D0;
   --link-color-disabled: #C8C8C8;
+
+  /* Split Button */
+  --split-button-color: var(--neutral-5);
+  --split-button-pressed-color: var(--neutral-1);
+  --split-button-disabled-color: var(--neutral-7);
+  --split-button-icon-color: #00BCF2;
+  --split-button-hover-bg-color: var(--neutral-14);
+  --split-button-hover-outline: transparent;
+  --split-button-focus-outline: 1px solid #00BCF2;
+  --split-button-selected-bg-color: var(--neutral-12);
+  --split-button-selected-outline: transparent;
+  --split-button-expanded-outline: transparent;
+  --split-button-separator-bg-color: #C8C8C8;
+  --split-button-panel-color: var(--neutral-16);
+  --split-button-panel-bg-color: var(--neutral-1);
+  --split-button-selected-item-bg-color: var(--neutral-3);
 }
 
 .dialog {

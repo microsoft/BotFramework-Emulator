@@ -32,6 +32,11 @@
 //
 
 import uuidv1 from 'uuid/v1';
+import { v4 as uuidv4 } from 'uuid';
+
+export function uniqueIdv4(): string {
+  return uuidv4().toString();
+}
 
 export function uniqueId(): string {
   return uuidv1().toString();
