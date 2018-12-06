@@ -35,35 +35,35 @@ import { EventEmitter } from 'events';
 import * as HttpStatus from 'http-status-codes';
 import updateIn from 'simple-update-in';
 import BotEmulator from '../botEmulator';
-import BotEndpoint from './botEndpoint';
-import createAPIException from '../utils/createResponse/apiException';
-import createResourceResponse from '../utils/createResponse/resource';
-import ErrorCodes from '../types/errorCodes';
 import Activity from '../types/activity/activity';
 import ContactRelationUpdateActivity from '../types/activity/contactRelationUpdate';
 import ConversationUpdateActivity from '../types/activity/conversationUpdate';
+import EventActivity from '../types/activity/event';
 import GenericActivity from '../types/activity/generic';
 import InvokeActivity from '../types/activity/invoke';
-import EventActivity from '../types/activity/event';
-import ResourceResponse from '../types/response/resource';
-import isLocalhostUrl from '../utils/isLocalhostUrl';
-import TranscriptRecord from '../types/transcriptRecord';
-import User from '../types/user';
-import PaymentEncoder from '../utils/paymentEncoder';
-import OAuthClientEncoder from '../utils/oauthClientEncoder';
-import uniqueId from '../utils/uniqueId';
+import MessageActivity from '../types/activity/message';
+import Attachment from '../types/attachment';
+import ErrorCodes from '../types/errorCodes';
+import LogLevel from '../types/log/level';
+import { appSettingsItem, externalLinkItem, textItem } from '../types/log/util';
+import PaymentAddress from '../types/payment/address';
 
 import CheckoutConversationSession from '../types/payment/checkoutConversationSession';
-import PaymentAddress from '../types/payment/address';
+import PaymentOperations from '../types/payment/operations';
 import PaymentRequest from '../types/payment/request';
 import PaymentRequestComplete from '../types/payment/requestComplete';
 import PaymentRequestUpdate from '../types/payment/requestUpdate';
-import PaymentOperations from '../types/payment/operations';
+import ResourceResponse from '../types/response/resource';
+import TranscriptRecord from '../types/transcriptRecord';
+import User from '../types/user';
 import { TokenCache } from '../userToken/tokenCache';
-import MessageActivity from '../types/activity/message';
-import Attachment from '../types/attachment';
-import { appSettingsItem, externalLinkItem, textItem } from '../types/log/util';
-import LogLevel from '../types/log/level';
+import createAPIException from '../utils/createResponse/apiException';
+import createResourceResponse from '../utils/createResponse/resource';
+import isLocalhostUrl from '../utils/isLocalhostUrl';
+import OAuthClientEncoder from '../utils/oauthClientEncoder';
+import PaymentEncoder from '../utils/paymentEncoder';
+import uniqueId from '../utils/uniqueId';
+import BotEndpoint from './botEndpoint';
 
 // moment currently does not export callable function
 const moment = require('moment');
@@ -283,7 +283,7 @@ export default class Conversation extends EventEmitter {
   }
 
   public async addMember(id: string, name: string): Promise<User> {
-    name = name || `user-${uniqueId()}`;
+    name = name || `user-${ uniqueId() }`;
     id = id || uniqueId();
 
     const user = { name, id };
@@ -673,8 +673,10 @@ export default class Conversation extends EventEmitter {
   }
 
   private addActivityToQueue(activity: Activity) {
-    this.activities = [...this.activities, { activity, watermark: this.nextWatermark++ }];
-    this.emit('addactivity', { activity });
+    if (!(activity.channelData || {}).postback) {
+      this.activities = [...this.activities, { activity, watermark: this.nextWatermark++ }];
+      this.emit('addactivity', { activity });
+    }
 
     const genericActivity = activity as GenericActivity;
 
