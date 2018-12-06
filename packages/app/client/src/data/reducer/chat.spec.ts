@@ -42,7 +42,8 @@ import {
   newConversation,
   newDocument,
   removeTranscript,
-  setInspectorObjects
+  setInspectorObjects,
+  updateChat
 } from '../action/chatActions';
 import { closeNonGlobalTabs } from '../action/editorActions';
 import { chat, ChatState } from './chat';
@@ -218,5 +219,22 @@ describe('Chat reducer tests', () => {
     expect(state.changeKey).toBe(0);
     expect(state.transcripts.length).toBe(0);
     expect(state.chats[tempChat]).toBeFalsy();
+  });
+
+  it('should update a chat', () => {
+    const startingState = {
+      ...DEFAULT_STATE,
+      chats: {
+        ...DEFAULT_STATE.chats,
+        chat1: {
+          id: 'chat',
+          userId: 'userId'
+        }
+      }
+    };
+    const action = updateChat('chat1', { id: 'updatedChatId', userId: 'updatedUserId' });
+    const state = chat(startingState, action);
+    expect(state.chats.chat1.id).toBe('updatedChatId');
+    expect(state.chats.chat1.userId).toBe('updatedUserId');
   });
 });
