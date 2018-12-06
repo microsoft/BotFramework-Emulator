@@ -248,12 +248,12 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
       <div className={ styles.presentation }>
         <div className={ styles.presentationContent }>
           <ChatPanel mode={ this.props.mode } document={ this.props.document }
-                     onStartConversation={ this.handleStartOverClick }/>
+                     onStartConversation={ this.onStartOverClick }/>
           { chatPanelChild }
         </div>
         <span 
           className={ styles.closePresentationIcon } 
-          onClick={ () => this.handlePresentationClick(false) }
+          onClick={ () => this.onPresentationClick(false) }
         />
       </div>
     );
@@ -272,10 +272,10 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
                 defaultLabel="Restart conversation"
                 buttonClass={ styles.restartIcon }
                 options={ [NewUserId, SameUserId] }
-                onClick={ this.handleStartOverClick }/>
+                onClick={ this.onStartOverClick }/>
               <button 
                 className={ `${ styles.saveTranscriptIcon } ${ styles.toolbarIcon || '' }` } 
-                onClick={ this.handleExportClick }
+                onClick={ this.onExportClick }
               >
                 Save transcript
               </button>
@@ -291,7 +291,7 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
               <ChatPanel mode={ this.props.mode }
                          className={ styles.chatPanel }
                          document={ this.props.document }
-                         onStartConversation={ this.handleStartOverClick }/>
+                         onStartConversation={ this.onStartOverClick }/>
             </div>
             <div className={ styles.content }>
               <Splitter orientation="horizontal" primaryPaneIndex={ 0 }
@@ -308,23 +308,23 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
     );
   }
 
-  private getVerticalSplitterSizes = (): any => {
+  private getVerticalSplitterSizes = (): { [0]: string } => {
     return {
       0: `${this.props.document.ui.verticalSplitter[0].percentage}`
     };
   }
 
-  private getHorizontalSplitterSizes = (): any => {
+  private getHorizontalSplitterSizes = (): { [0]: string } => {
     return {
       0: `${this.props.document.ui.horizontalSplitter[0].percentage}`
     };
   }
 
-  private handlePresentationClick = (enabled: boolean): void => {
+  private onPresentationClick = (enabled: boolean): void => {
     this.props.enablePresentationMode(enabled);
   }
 
-  private handleStartOverClick = async (option: string = RestartConversationOptions.NewUserId): Promise<void> => {
+  private onStartOverClick = async (option: string = RestartConversationOptions.NewUserId): Promise<void> => {
     const { NewUserId, SameUserId } = RestartConversationOptions;
     this.props.clearLog(this.props.document.documentId);
     this.props.setInspectorObjects(this.props.document.documentId, []);
@@ -346,7 +346,7 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
     }
   }
 
-  private handleExportClick = (): void => {
+  private onExportClick = (): void => {
     if (this.props.document.directLine) {
       CommandServiceImpl.remoteCall(
         SharedConstants.Commands.Emulator.SaveTranscriptToFile,
@@ -361,7 +361,7 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
     const shiftPressed = ctrlOrCmdPressed && event.getModifierState('Shift');
     const key = event.key.toLowerCase();
     if (ctrlOrCmdPressed && shiftPressed && key === 'r') {
-      this.handleStartOverClick();
+      this.onStartOverClick();
     }
   }
 }
