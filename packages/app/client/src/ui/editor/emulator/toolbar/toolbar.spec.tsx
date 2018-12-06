@@ -31,42 +31,23 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { uniqueId, uniqueIdv4, isObject } from './misc';
+import * as React from 'react';
+import { ToolBar } from './toolbar';
+import { mount } from 'enzyme';
 
-describe('Misc utility function tests', () => {
-  it('should generate a uniqueId', () => {
-    const id1 = uniqueId();
-    const id2 = uniqueId();
-    const id3 = uniqueId();
+jest.mock('./toolbar.scss', () => ({}));
 
-    expect(id1).not.toEqual(id2);
-    expect(id1).not.toEqual(id3);
-    expect(id2).not.toEqual(id3);
+describe('<Toolbar/>', () => {
+  it('should render deeply', () => {
+    const wrapper = mount(
+      <ToolBar>
+        <div id="inside-toolbar"></div>
+      </ToolBar>
+    );
+    const node = wrapper.find(ToolBar);
+    expect(node.html()).not.toBe(null);
+    
+    const children = node.find('div#inside-toolbar');
+    expect(children).not.toBe(null);
   });
-
-  it('should determine if a variable is an object', () => {
-    const nonObj1 = 1;
-    const nonObj2 = 'notAnObject';
-    const nonObj3 = true;
-    const nonObj4 = [3, 'someString', false];
-
-    expect(isObject(nonObj1)).toBe(false);
-    expect(isObject(nonObj2)).toBe(false);
-    expect(isObject(nonObj3)).toBe(false);
-    expect(isObject(nonObj4)).toBe(false);
-
-    const obj = { someProp: 123 };
-
-    expect(isObject(obj)).toBe(true);
-  });
-
-  it('should generate a uniqueId using uuidv4', () => {
-    const id1 = uniqueIdv4();
-    const id2 = uniqueIdv4();
-    const id3 = uniqueIdv4();
-
-    expect(id1).not.toEqual(id2);
-    expect(id1).not.toEqual(id3);
-    expect(id2).not.toEqual(id3);
-  })
 });

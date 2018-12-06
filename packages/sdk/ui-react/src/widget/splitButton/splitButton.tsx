@@ -96,17 +96,17 @@ export class SplitButton extends React.Component<SplitButtonProps, SplitButtonSt
     );
   }
 
-  private setCaretRef = (ref: HTMLButtonElement) => {
+  private setCaretRef = (ref: HTMLButtonElement): void => {
     this.caretRef = ref;
   }
 
-  private onClickCaret = (e: React.SyntheticEvent<HTMLButtonElement>) => {
+  private onClickCaret = (e: React.SyntheticEvent<HTMLButtonElement>): void => {
     e.stopPropagation();
     const { expanded } = this.state;
     this.setState({ expanded: !expanded, selected: 0 });
   }
 
-  private onClickDefault = (e: React.SyntheticEvent<HTMLButtonElement>) => {
+  private onClickDefault = (e: React.SyntheticEvent<HTMLButtonElement>): void => {
     const { onClick, options = [] } = this.props;
     if (onClick && options.length) {
       onClick(options[0]);

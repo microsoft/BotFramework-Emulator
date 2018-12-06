@@ -108,9 +108,9 @@ export class SplitButtonPanel extends React.Component<SplitButtonPanelProps> {
     return `split_button_option_${index}`;
   }
 
-  private onSelectOption = (_e: React.SyntheticEvent<HTMLLIElement>, optionIndex: number): void => {
+  private onSelectOption = (_e: React.SyntheticEvent<HTMLLIElement>, index: number): void => {
     if (this.props.onClick) {
-      this.props.onClick(optionIndex);
+      this.props.onClick(index);
     }
   }
 
@@ -123,8 +123,10 @@ export class SplitButtonPanel extends React.Component<SplitButtonPanelProps> {
 
   private onOutsideClick = (e: MouseEvent): void => {
     const { target = null } = e as any;
-    if (!this.panelRef.contains(target) && this.props.hidePanel) {
-      this.props.hidePanel();
+    const { expanded, hidePanel } = this.props;
+    const { panelRef } = this;
+    if (expanded && hidePanel && !panelRef.contains(target)) {
+      hidePanel();
     }
   }
 }
