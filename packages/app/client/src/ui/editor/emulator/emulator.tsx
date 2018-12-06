@@ -57,6 +57,11 @@ import { ToolBar } from './toolbar/toolbar';
 
 const { encode } = base64Url;
 
+const RestartConversationOptions = {
+  NewUserId: 'Restart with new user ID',
+  SameUserId: 'Restart with same user ID'
+};
+
 export type EmulatorMode = 'transcript' | 'livechat';
 
 interface EmulatorProps {
@@ -264,7 +269,7 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
               <SplitButton 
                 defaultLabel="Restart conversation"
                 buttonClass={ styles.restartIcon }
-                options={ ['Restart with new user ID', 'Restart with same user ID'] }
+                options={ [RestartConversationOptions.NewUserId, RestartConversationOptions.SameUserId] }
                 onClick={ this.handleStartOverClick }/>
               <button 
                 className={ `${ styles.saveTranscriptIcon } ${ styles.toolbarIcon || '' }` } 
@@ -317,18 +322,18 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
     this.props.enablePresentationMode(enabled);
   }
 
-  private handleStartOverClick = async (option: string = 'Restart with new user ID'): Promise<void> => {
+  private handleStartOverClick = async (option: string = RestartConversationOptions.NewUserId): Promise<void> => {
     this.props.clearLog(this.props.document.documentId);
     this.props.setInspectorObjects(this.props.document.documentId, []);
     switch (option) {
-      case 'Restart with new user ID':
+      case RestartConversationOptions.NewUserId:
         const newUserId = uniqueIdv4();
         // set new user as current on emulator facilities side
         await CommandServiceImpl.remoteCall(SharedConstants.Commands.Emulator.SetCurrentUser, newUserId);
         this.props.updateChat(this.props.documentId, { userId: newUserId });
         break;
 
-      case 'Restart with same user ID':
+      case RestartConversationOptions.SameUserId:
         this.startNewConversation();
         break;
 
