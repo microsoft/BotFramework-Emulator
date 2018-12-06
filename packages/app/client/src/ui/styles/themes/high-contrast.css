@@ -117,9 +117,10 @@ html {
   --tab-bg: var(--neutral-16);
   --tab-border: 1px solid transparent;
   --tab-hover-border: var(--list-item-hover-border);
+  --tab-active-tab-inner-border: 1px solid #F38518;
   --tab-active-tab-bg: var(--neutral-16);
   --tab-focus-border: var(--p-button-border-focus);
-  --tab-seperator-bg: #72C3DF;
+  --tab-separator-bg: #72C3DF;
   --tab-icon-color: var(--explorer-panel-group-title-color);
   --tab-icon-hover-color: var(--neutral-4);
 

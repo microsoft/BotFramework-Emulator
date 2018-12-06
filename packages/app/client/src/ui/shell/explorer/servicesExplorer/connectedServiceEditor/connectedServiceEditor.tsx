@@ -34,11 +34,12 @@
 import { DefaultButton, Dialog, DialogFooter, PrimaryButton, TextField } from '@bfemulator/ui-react';
 import { BotConfigurationBase } from 'botframework-config/lib/botConfigurationBase';
 import { ConnectedService } from 'botframework-config/lib/models';
-import { IConnectedService, ServiceTypes } from 'botframework-config/lib/schema';
+import { IConnectedService, IGenericService, ServiceTypes } from 'botframework-config/lib/schema';
 import * as React from 'react';
 import { ChangeEvent, Component, ReactNode } from 'react';
 import { serviceTypeLabels } from '../../../../../utils/serviceTypeLables';
 import * as styles from './connectedServiceEditor.scss';
+import { KvPair } from './kvPair';
 
 interface ConnectedServiceEditorProps {
   connectedService: IConnectedService;
@@ -50,7 +51,6 @@ interface ConnectedServiceEditorProps {
 
 interface ConnectedServiceEditorState extends Partial<any> {
   connectedServiceCopy: ConnectedService;
-  isDirty: boolean;
 }
 
 const labelMap = {
@@ -74,6 +74,7 @@ const labelMap = {
   subscriptionId: 'Azure Subscription ID',
   subscriptionKey: 'Azure Subscription key',
   tenantId: 'Azure Tenant ID',
+  url: 'URL',
   version: 'Version',
   ...serviceTypeLabels
 };
@@ -84,7 +85,8 @@ const titleMap = {
   [ServiceTypes.QnA]: 'Connect to a QnA Maker knowledge base',
   [ServiceTypes.AppInsights]: 'Connect to Application Insights resource',
   [ServiceTypes.BlobStorage]: 'Connect to an Azure Storage account',
-  [ServiceTypes.CosmosDB]: 'Connect to an Azure Cosmos DB account'
+  [ServiceTypes.CosmosDB]: 'Connect to an Azure Cosmos DB account',
+  [ServiceTypes.Generic]: 'Connect to a generic service'
 };
 
 const portalMap = {
@@ -96,27 +98,31 @@ const portalMap = {
 export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProps, ConnectedServiceEditorState> {
   public state: ConnectedServiceEditorState = {} as ConnectedServiceEditorState;
 
-  constructor(props: ConnectedServiceEditorProps, state: ConnectedServiceEditorState) {
-    super(props, state);
-    const connectedServiceCopy = BotConfigurationBase
-      .serviceFromJSON((props.connectedService || { type: props.serviceType, name: '' }));
-    this.state = {
-      connectedServiceCopy,
-      isDirty: false
-    };
+  public static getDerivedStateFromProps(props: ConnectedServiceEditorProps, state: ConnectedServiceEditorState) {
+    const connectedServiceCopy = BotConfigurationBase.serviceFromJSON((props.connectedService || {
+      type: props.serviceType,
+      name: ''
+    }));
+
+    if (JSON.stringify(connectedServiceCopy) !== JSON.stringify(state.connectedServiceCopy)) {
+      return { connectedServiceCopy };
+    }
+
+    return state;
   }
 
-  public componentWillReceiveProps(nextProps: Readonly<ConnectedServiceEditorProps>): void {
-    const connectedServiceCopy = BotConfigurationBase.serviceFromJSON(this.props.connectedService);
-    this.setState({ connectedServiceCopy });
+  constructor(props: ConnectedServiceEditorProps, state: ConnectedServiceEditorState) {
+    super(props, state);
+    this.state = ConnectedServiceEditor.getDerivedStateFromProps(props, state || {} as ConnectedServiceEditorState);
   }
 
   public render(): JSX.Element {
     const { state, onInputChange, props, onSubmitClick } = this;
-    const { isDirty, connectedServiceCopy } = state;
+    const { connectedServiceCopy } = state;
     const { type } = connectedServiceCopy;
     const fields = this.editableFields;
     const textInputs: JSX.Element[] = [];
+    const isDirty = JSON.stringify(connectedServiceCopy) !== JSON.stringify(this.props.connectedService);
     let valid = true;
     // Build the editable inputs from the enumerable properties
     // in the data model. This assumes all enumerable fields are editable
@@ -140,6 +146,7 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
       <Dialog title={ titleMap[type] } cancel={ props.cancel } className={ styles.connectedServiceEditor }>
         { this.headerContent }
         { textInputs }
+        { this.supplementalContent }
         <DialogFooter>
           <DefaultButton text="Cancel" onClick={ props.cancel }/>
           <PrimaryButton disabled={ !isDirty || !valid } text="Submit" onClick={ onSubmitClick }/>
@@ -192,6 +199,12 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
           'collection'
         ];
 
+      case ServiceTypes.Generic:
+        return [
+          'name',
+          'url'
+        ];
+
       default:
         throw new TypeError(`${ serviceType } is not a valid service type`);
     }
@@ -239,9 +252,22 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
       case ServiceTypes.CosmosDB:
         return this.cosmosDbHeader;
 
+      case ServiceTypes.Generic:
+        return this.genericHeader;
+
       default:
         return null;
     }
+  }
+
+  private get supplementalContent(): ReactNode {
+    if (this.props.serviceType === ServiceTypes.Generic) {
+      const { connectedService = { configuration: {} } } = this.props;
+      const { configuration } = connectedService as IGenericService;
+      return (<KvPair kvPairs={ configuration } onChange={ this.onKvPairChange }/>);
+    }
+
+    return null;
   }
 
   private get luisAndDispatchHeader(): ReactNode {
@@ -300,6 +326,14 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
     );
   }
 
+  private get genericHeader(): ReactNode {
+    return (
+      <p>
+        You can connect your bot to a generic service with key-value pairs.
+      </p>
+    );
+  }
+
   private isRequired(key: string): boolean {
     if (key === 'applicationId') {
       return false;
@@ -328,15 +362,16 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
     const { prop } = event.target.dataset;
 
     const trimmedValue = value.trim();
-
-    const { connectedService: originalLuisService = {} } = this.props;
     const errorMessage = (this.isRequired(prop) && !trimmedValue) ? `The field cannot be empty` : '';
-
     const { connectedServiceCopy } = this.state;
     connectedServiceCopy[prop] = value;
 
-    const isDirty = Object.keys(connectedServiceCopy)
-      .reduce((dirty, key) => (dirty || connectedServiceCopy[key] !== originalLuisService[key]), false);
-    this.setState({ connectedServiceCopy, [`${ prop }Error`]: errorMessage, isDirty } as any);
+    this.setState({ connectedServiceCopy, [`${ prop }Error`]: errorMessage } as any);
+  }
+
+  private onKvPairChange = (configuration: { [propName: string]: string }): void => {
+    const { connectedServiceCopy } = this.state;
+    (connectedServiceCopy as Partial<IGenericService>).configuration = configuration;
+    this.setState({ connectedServiceCopy });
   }
 }

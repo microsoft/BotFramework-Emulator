@@ -9,6 +9,7 @@
   box-sizing: border-box;
   white-space: nowrap;
   position: relative;
+  max-width: 200px;
 
   &::after {
     content: '';
@@ -54,9 +55,10 @@
   & > .editor-tab-close {
     text-decoration: none;
     display: inline-block;
-    height: 16px;
-    width: 16px;
+    height: 17px;
+    width: 17px;
     margin-left: 8px;
+    background-color: transparent;
     border: 1px solid transparent;
     outline: none;
     opacity: 0;
@@ -93,4 +95,26 @@
   & > .editor-tab-close {
     opacity: 1;
   }
+
+  /** Should only be visible on high contrast */
+  &::after {
+    border: var(--tab-active-tab-inner-border);
+  }
+}
+
+.tab-focus-target {
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  right: 1px;
+  bottom: 1px;
+}
+
+.tab-separator {
+  position: absolute;
+  width: 1px;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  background-color: var(--tab-separator-bg);
 }

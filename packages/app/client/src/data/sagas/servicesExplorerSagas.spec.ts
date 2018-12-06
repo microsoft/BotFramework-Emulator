@@ -133,7 +133,7 @@ describe('The ServiceExplorerSagas', () => {
     });
 
     it('should launch the luis models picklist after the luis models are retrieved', async () => {
-      DialogService.showDialog = () => Promise.resolve([{ id: 'a new service to add' }]);
+      DialogService.showDialog = () => Promise.resolve([{ id: 'a new service to add' }]) as any;
       const action = launchConnectedServicePicker(payload);
       const it = launchConnectedServicePickerGen(action);
       let token = it.next().value.SELECT.selector(mockStore.getState());
@@ -164,7 +164,7 @@ describe('The ServiceExplorerSagas', () => {
       mockStore.dispatch(load([mockBot]));
       mockStore.dispatch(setActive(mockBot));
 
-      DialogService.showDialog = () => Promise.resolve([{ id: 'a new service to add' }]);
+      DialogService.showDialog = () => Promise.resolve([{ id: 'a new service to add' }]) as any;
       const action = launchConnectedServicePicker(payload);
       const it = launchConnectedServicePickerGen(action);
       let token = it.next().value.SELECT.selector(mockStore.getState());

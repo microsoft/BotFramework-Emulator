@@ -1,5 +1,6 @@
 import { PrimaryButton } from '@bfemulator/ui-react';
 import { LuisService } from 'botframework-config/lib/models';
+import { ServiceTypes } from 'botframework-config/lib/schema';
 import { mount } from 'enzyme';
 import * as React from 'react';
 import { Provider } from 'react-redux';
@@ -8,7 +9,6 @@ import { azureAuth } from '../../../../../data/reducer/azureAuthReducer';
 import { DialogService } from '../../../../dialogs/service';
 import { ConnectedServiceEditor } from './connectedServiceEditor';
 import { ConnectedServiceEditorContainer } from './connectedServiceEditorContainer';
-import { ServiceTypes } from 'botframework-config/lib/schema';
 
 jest.mock('../../../../dialogs/service', () => ({
   DialogService: {
@@ -101,9 +101,20 @@ describe('The ConnectedServiceEditor component ', () => {
     const submitBtn = node.find(PrimaryButton);
     expect(submitBtn.props.disabled).toBeFalsy();
   });
+
+  it('should update the connectedServiceCopy.configuration when the "onKvPairChange()" handler is called', () => {
+    const instance = node.instance();
+    const mockData = {
+      someKey: 'Some Value'
+    };
+
+    instance.onKvPairChange(mockData);
+
+    expect(instance.state.connectedServiceCopy.configuration).toEqual(mockData);
+  });
 });
 
-describe('The ConnectedServiceEditor component\'s should render the correct content when the service type is', () => {
+describe('The ConnectedServiceEditor component should render the correct content when the service type is', () => {
   let parent;
   let node;
   let mockService = JSON.parse(`{
@@ -120,7 +131,9 @@ describe('The ConnectedServiceEditor component\'s should render the correct cont
     ServiceTypes.QnA,
     ServiceTypes.AppInsights,
     ServiceTypes.BlobStorage,
-    ServiceTypes.CosmosDB];
+    ServiceTypes.CosmosDB,
+    ServiceTypes.Generic
+  ];
 
   beforeEach(() => {
     mockService.type = services.shift();
@@ -195,5 +208,15 @@ describe('The ConnectedServiceEditor component\'s should render the correct cont
       'collection'
     ]);
     expect(instance.headerContent).toEqual(instance.cosmosDbHeader);
+  });
+
+  it('ServiceTypes.Generic', () => {
+    const instance = node.instance();
+    expect(instance.editableFields).toEqual([
+      'name',
+      'url'
+    ]);
+
+    expect(instance.headerContent).toEqual(instance.genericHeader);
   });
 });

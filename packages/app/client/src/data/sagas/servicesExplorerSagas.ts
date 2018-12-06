@@ -31,17 +31,22 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { ServiceCodes, SharedConstants } from '@bfemulator/app-shared';
+import { BotConfigWithPath } from '@bfemulator/sdk-shared';
+import { BotConfigurationBase } from 'botframework-config/lib/botConfigurationBase';
 import {
   IBotService,
   IConnectedService,
+  IGenericService,
   ILuisService,
   IQnAService,
   ServiceTypes
 } from 'botframework-config/lib/schema';
-import { BotConfigurationBase } from 'botframework-config/lib/botConfigurationBase';
 import { ForkEffect, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { DialogService } from '../../ui/dialogs/service';
+import { serviceTypeLabels } from '../../utils/serviceTypeLables';
+import { ArmTokenData, beginAzureAuthWorkflow } from '../action/azureAuthActions';
 import {
   ConnectedServiceAction,
   ConnectedServicePayload,
@@ -53,14 +58,10 @@ import {
   OPEN_CONTEXT_MENU_FOR_CONNECTED_SERVICE,
   OPEN_SERVICE_DEEP_LINK
 } from '../action/connectedServiceActions';
-import { ServiceCodes, SharedConstants } from '@bfemulator/app-shared';
-import { RootState } from '../store';
-import { ArmTokenData, beginAzureAuthWorkflow } from '../action/azureAuthActions';
-import { getArmToken } from './azureAuthSaga';
-import { BotConfigWithPath } from '@bfemulator/sdk-shared';
-import { SortCriteria } from '../reducer/explorer';
 import { sortExplorerContents } from '../action/explorerActions';
-import { serviceTypeLabels } from '../../utils/serviceTypeLables';
+import { SortCriteria } from '../reducer/explorer';
+import { RootState } from '../store';
+import { getArmToken } from './azureAuthSaga';
 
 declare type ServicesPayload = { services: IConnectedService[], code: ServiceCodes };
 
@@ -185,8 +186,11 @@ function* openConnectedServiceDeepLink(action: ConnectedServiceAction<ConnectedS
     case ServiceTypes.QnA:
       return openQnaMakerDeepLink(connectedService as IQnAService);
 
+    case ServiceTypes.Generic:
+      return window.open((connectedService as IGenericService).url);
+
     default:
-      return Promise.reject('unknown service type');
+      throw new Error('Unknown service type');
   }
 }
 
@@ -199,6 +203,7 @@ function* openContextMenuForService(action: ConnectedServiceAction<ConnectedServ
   ];
   const response = yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.DisplayContextMenu, menuItems);
   const { connectedService } = action.payload;
+  action.payload.serviceType = connectedService.type;
   switch (response.id) {
     case 'open':
       yield* openConnectedServiceDeepLink(action);
@@ -224,15 +229,21 @@ function* openAddConnectedServiceContextMenu(action: ConnectedServiceAction<Conn
     { label: 'Add QnA Maker', id: ServiceTypes.QnA },
     { label: 'Add Dispatch', id: ServiceTypes.Dispatch },
     { type: 'separator' },
-    { label: 'Add Azure Cosmos DB account', id: ServiceTypes.CosmosDB},
-    { label: 'Add Azure Storage account', id: ServiceTypes.BlobStorage},
-    { label: 'Add Azure Application Insights', id: ServiceTypes.AppInsights},
+    { label: 'Add Azure Cosmos DB account', id: ServiceTypes.CosmosDB },
+    { label: 'Add Azure Storage account', id: ServiceTypes.BlobStorage },
+    { label: 'Add Azure Application Insights', id: ServiceTypes.AppInsights },
+    { type: 'separator' },
+    { label: 'Add other service …', id: ServiceTypes.Generic },
   ];
 
   const response = yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.DisplayContextMenu, menuItems);
   const { id: serviceType } = response;
   action.payload.serviceType = serviceType;
-  yield* launchConnectedServicePicker(action);
+  if (serviceType === ServiceTypes.Generic) {
+    yield* launchConnectedServiceEditor(action);
+  } else {
+    yield* launchConnectedServicePicker(action);
+  }
 }
 
 function* openSortContextMenu(action: ConnectedServiceAction<ConnectedServicePayload>): IterableIterator<any> {

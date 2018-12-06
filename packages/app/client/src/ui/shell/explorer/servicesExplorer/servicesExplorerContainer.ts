@@ -55,6 +55,7 @@ const mapStateToProps = (state: RootState): Partial<ServicesExplorerProps> => {
       service.type === ServiceTypes.AppInsights ||
       service.type === ServiceTypes.BlobStorage ||
       service.type === ServiceTypes.CosmosDB ||
+      service.type === ServiceTypes.Generic ||
       service.type === ServiceTypes.Luis),
     sortCriteria,
     window

@@ -34,53 +34,66 @@
 import * as React from 'react';
 import { DragEvent } from 'react';
 import * as styles from './tabBar.scss';
-import { connect } from 'react-redux';
-import * as EditorActions from '../../../../data/action/editorActions';
 import * as Constants from '../../../../constants';
 import { getOtherTabGroup } from '../../../../data/editorHelpers';
-import * as PresentationActions from '../../../../data/action/presentationActions';
 import { Document, Editor } from '../../../../data/reducer/editor';
-import { RootState } from '../../../../data/store';
+import {
+  CONTENT_TYPE_APP_SETTINGS,
+  CONTENT_TYPE_LIVE_CHAT,
+  CONTENT_TYPE_TRANSCRIPT,
+  CONTENT_TYPE_WELCOME_PAGE
+} from '../../../../constants';
+import { BotConfigWithPath } from '@bfemulator/sdk-shared';
+import { Tab } from '../tab/tab';
 
-interface TabBarProps {
+export interface TabBarProps {
+  activeBot?: BotConfigWithPath;
+  activeDocumentId?: string;
+  activeEditor?: string;
+  chats?: { [chatId: string]: any };
+  documents?: { [documentId: string]: Document };
   editors?: { [editorKey: string]: Editor };
   owningEditor?: string;
-  children?: any;
-  documents?: { [documentId: string]: Document };
-  activeIndex?: number;
-  activeDocumentId?: string;
-  childRefs?: HTMLElement[];
-  activeEditor?: string;
+  tabOrder?: string[];
   splitTab?: (contentType: string, documentId: string, srcEditorKey: string, destEditorKey: string) => void;
   appendTab?: (srcEditorKey: string, destEditorKey: string, tabId: string) => void;
   enablePresentationMode?: () => void;
+  setActiveTab?: (documentId: string) => void;
+  closeTab?: (documentId: string) => void;
 }
 
-interface TabBarState {
+export interface TabBarState {
   draggedOver: boolean;
 }
 
-class TabBarComponent extends React.Component<TabBarProps, TabBarState> {
+export class TabBar extends React.Component<TabBarProps, TabBarState> {
+  private readonly childRefs: HTMLElement[] = [];
   private _scrollable: HTMLElement;
+  private activeIndex: number;
 
   constructor(props: TabBarProps) {
     super(props);
+
+    const activeIndex = props.tabOrder.findIndex(docId => docId === props.activeDocumentId);
+    this.activeIndex = activeIndex === -1 ? 0 : activeIndex;
 
     this.state = {
       draggedOver: false
     };
   }
 
-  componentDidUpdate(prevProps: any) {
+  public componentDidUpdate(prevProps: TabBarProps) {
     let scrollable = this._scrollable;
+    const activeIndex = this.props.tabOrder.findIndex(docId => docId === this.props.activeDocumentId);
+    this.activeIndex = activeIndex === -1 ? 0 : activeIndex;
 
     if (scrollable) {
-      if (this.props.children.length > prevProps.children.length &&
+      if (this.props.tabOrder.length > prevProps.tabOrder.length &&
         scrollable.scrollWidth > scrollable.clientWidth) {
         let leftOffset = 0;
-        for (let i = 0; i <= this.props.activeIndex; i++) {
-          let ref = this.props.childRefs[i];
-          leftOffset += ref ? this.props.childRefs[i].offsetWidth : 0;
+        for (let i = 0; i <= this.activeIndex; i++) {
+          const ref = this.childRefs[i];
+          leftOffset += ref ? this.childRefs[i].offsetWidth : 0;
         }
         if (leftOffset >= scrollable.clientWidth) {
           scrollable.scrollLeft = leftOffset;
@@ -89,9 +102,7 @@ class TabBarComponent extends React.Component<TabBarProps, TabBarState> {
     }
   }
 
-  onPresentationModeClick = () => this.props.enablePresentationMode();
-
-  render() {
+  public render() {
     const tabBarClassName = this.state.draggedOver ? styles.draggedOver : '';
     return (
       <div
@@ -100,19 +111,17 @@ class TabBarComponent extends React.Component<TabBarProps, TabBarState> {
         onDragOver={ this.onDragOver }
         onDragLeave={ this.onDragLeave }
         onDrop={ this.onDrop }>
-        <ul ref={ this.saveScrollable }>
-          {
-            React.Children.map(this.props.children, (child, index) =>
-              <li key={ index }>{ child }</li>
-            )
-          }
-        </ul>
+        <div className={ styles.tabBarTabs } ref={ this.saveScrollable }>
+          { this.tabs }
+        </div>
         <div className={ styles.tabBarWidgets }>
           { this.widgets }
         </div>
       </div>
     );
   }
+
+  private onPresentationModeClick = () => this.props.enablePresentationMode();
 
   private get widgets(): JSX.Element[] {
     const activeDoc = this.props.documents[this.props.activeDocumentId];
@@ -121,7 +130,7 @@ class TabBarComponent extends React.Component<TabBarProps, TabBarState> {
         activeDoc.contentType === Constants.CONTENT_TYPE_LIVE_CHAT);
     const splitEnabled = Object.keys(this.props.documents).length > 1;
 
-    let widgets: JSX.Element[] = [];
+    const widgets: JSX.Element[] = [];
 
     if (presentationEnabled) {
       widgets.push(
@@ -149,6 +158,41 @@ class TabBarComponent extends React.Component<TabBarProps, TabBarState> {
       );
     }
     return widgets;
+  }
+
+  private get tabs(): JSX.Element[] {
+    return this.props.tabOrder.map((documentId, index) => {
+      const document = this.props.documents[documentId];
+      const isActive = documentId === this.props.activeDocumentId;
+
+      return (
+        <div 
+          key={ documentId }
+          className="tab-container"
+          onClick={ _ev => this.handleTabClick(index) }
+          onKeyDown={ ev => this.handleKeyDown(ev, index) }
+          ref={ this.setRef } role="presentation">
+          <Tab
+            active={ isActive }
+            dirty={ document.dirty }
+            documentId={ documentId }
+            label={ this.getTabLabel(document) }
+            onCloseClick={ this.props.closeTab }/>
+        </div>
+      );
+    });
+  }
+  
+  private handleTabClick = (tabIndex: number) => {
+    this.props.setActiveTab(this.props.tabOrder[tabIndex]);
+  }
+
+  private handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>, tabIndex: number): void => {
+    let { key = '' } = event;
+    key = key.toLowerCase();
+    if (key === ' ' || key === 'enter') {
+      this.handleTabClick(tabIndex); 
+    }
   }
 
   private onSplitClick = () => {
@@ -189,23 +233,35 @@ class TabBarComponent extends React.Component<TabBarProps, TabBarState> {
   private saveScrollable = (ref) => {
     this._scrollable = ref;
   }
+
+  private setRef = (tabRef: HTMLElement) => {
+    this.childRefs.push(tabRef);
+  }
+  
+  private getTabLabel(document: Document): string {
+    switch (document.contentType) {
+      case CONTENT_TYPE_APP_SETTINGS:
+        return 'Emulator Settings';
+
+      case CONTENT_TYPE_WELCOME_PAGE:
+        return 'Welcome';
+
+      case CONTENT_TYPE_TRANSCRIPT:
+        return document.fileName || 'Transcript';
+
+      case CONTENT_TYPE_LIVE_CHAT:
+        let label = 'Live Chat';
+        const { services = [] } = this.props.activeBot || {};
+        const { endpointId = null } = this.props.chats[document.documentId] || {};
+        const botEndpoint = services.find(s => s.id === endpointId);
+
+        if (botEndpoint) {
+          label += ` (${ botEndpoint.name })`;
+        }
+        return label;
+
+      default:
+        return '';
+    }
+  }
 }
-
-const mapStateToProps = (state: RootState, ownProps: TabBarProps): TabBarProps => ({
-  activeDocumentId: state.editor.editors[ownProps.owningEditor].activeDocumentId,
-  activeEditor: state.editor.activeEditor,
-  editors: state.editor.editors,
-  documents: state.editor.editors[ownProps.owningEditor].documents
-});
-
-const mapDispatchToProps = (dispatch): TabBarProps => ({
-  splitTab: (contentType: string, documentId: string, srcEditorKey: string, destEditorKey: string) =>
-    dispatch(EditorActions.splitTab(contentType, documentId, srcEditorKey, destEditorKey)),
-
-  appendTab: (srcEditorKey: string, destEditorKey: string, tabId: string) =>
-    dispatch(EditorActions.appendTab(srcEditorKey, destEditorKey, tabId)),
-
-  enablePresentationMode: () => dispatch(PresentationActions.enable())
-});
-
-export const TabBar = connect(mapStateToProps, mapDispatchToProps)(TabBarComponent);

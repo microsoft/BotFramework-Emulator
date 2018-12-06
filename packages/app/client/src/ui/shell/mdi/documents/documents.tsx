@@ -32,24 +32,30 @@
 //
 
 import * as React from 'react';
+import { TabbedDocument } from '../tabbedDocument';
+import { EditorFactory } from '../../../editor';
+import { Document } from '../../../../data/reducer/editor';
 
-import { TabbedDocumentContentWrapper } from './contentWrapper/contentWrapper';
-
-export class TabbedDocument extends React.Component<{}> {
-  constructor(props: {}) {
-    super(props);
-  }
-
-  render() {
-    return false;
-  }
+export interface DocumentsProps {
+  activeDocumentId?: string;
+  documents?: { [documentId: string]: Document };
+  owningEditor?: string;
+  tabOrder?: string[];
 }
 
-export const Tab = props => props.children;
-export const Content = props =>
-  <TabbedDocumentContentWrapper
-    documentId={ props.documentId }
-    hidden={ props.hidden }
-  >
-    { props.children }
-  </TabbedDocumentContentWrapper>;
+export class Documents extends React.Component<DocumentsProps> {
+  public render(): JSX.Element[] {
+    const { activeDocumentId = '', tabOrder = [], documents = {} } = this.props;
+
+    return tabOrder.map(documentId => {
+      const isActive = activeDocumentId === documentId;
+      const document = documents[documentId];
+
+      return (
+        <TabbedDocument key={ documentId } documentId={ documentId } hidden={ !isActive }>
+          <EditorFactory document={ document }/>
+        </TabbedDocument>
+      );
+    }); 
+  }
+}

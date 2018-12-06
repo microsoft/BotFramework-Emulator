@@ -50,7 +50,7 @@ export function registerCommands(commandRegistry: CommandRegistry) {
   commandRegistry.registerCommand(Azure.RetrieveArmToken, async (renew: boolean = false) => {
     const settingsStore = getSettingsStore();
     const serverUrl = (emulator.framework.serverUrl || '').replace('[::]', 'localhost');
-    const workflow = AzureAuthWorkflowService.retrieveAuthToken(renew, `${serverUrl}/v4/token`);
+    const workflow = AzureAuthWorkflowService.retrieveAuthToken(renew);
     let result = undefined;
     while (true) {
       const next = workflow.next(result);

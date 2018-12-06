@@ -1,6 +1,6 @@
+import { BrowserWindow } from 'electron';
 import '../fetchProxy';
 import { AzureAuthWorkflowService } from './azureAuthWorkflowService';
-import { BrowserWindow } from 'electron';
 
 const mockEvent = Event; // this is silly but required by jest
 const mockArmToken = 'eyJhbGciOiJSU0EyNTYiLCJraWQiOiJmZGtqc2FoamdmIiwieDV0IjoiZiJ9.' +
@@ -33,7 +33,12 @@ jest.mock('electron', () => ({
   BrowserWindow: class MockBrowserWindow {
     public static reporters = [];
     public listeners = [] as any;
-    public webContents = { history: ['http://someotherUrl', `http://localhost/#t=13&id_token=${mockArmToken}`] };
+    public webContents = {
+      history: [
+        'http://someotherUrl',
+        `https://dev.botframework.com/cb/#t=13&access_token=${ mockArmToken }`
+      ]
+    };
 
     private static report(...args: any[]) {
       this.reporters.forEach(r => r(args));
@@ -51,9 +56,9 @@ jest.mock('electron', () => ({
       this.listeners.push({ type, handler });
       MockBrowserWindow.report('addListener', type, handler);
       if (type === 'page-title-updated') {
-        [['http://someotherUrl'], [`http://localhost/#t=13&id_token=${mockArmToken}`]].forEach((url, index) => {
+        [['http://someotherUrl'], [`http://localhost/#t=13&id_token=${ mockArmToken }`]].forEach((url, index) => {
           let evt = new mockEvent('page-title-updated');
-          (evt as any).sender = { history: [`http://localhost/#t=13&id_token=${mockArmToken}`] };
+          (evt as any).sender = { history: [`http://localhost/#t=13&access_token=${ mockArmToken }`] };
           setTimeout(() => {
             this.listeners.forEach(l => l.type === evt.type && l.handler(evt));
           }, 25 * index);
@@ -103,7 +108,7 @@ describe('The azureAuthWorkflowService', () => {
     let reportedValues = [];
     let reporter = v => reportedValues.push(v);
     (BrowserWindow as any).reporters.push(reporter);
-    const it = AzureAuthWorkflowService.retrieveAuthToken(false, '');
+    const it = AzureAuthWorkflowService.retrieveAuthToken(false);
     let value = undefined;
     let ct = 0;
     while (true) {
@@ -123,7 +128,10 @@ describe('The azureAuthWorkflowService', () => {
           'client_id',
           'redirect_uri',
           'state',
-          'client-request-id'
+          'client-request-id',
+          'nonce',
+          'response_mode',
+          'resource'
         ].forEach((part, index) => {
           expect(parts[index].includes(part));
         });
@@ -131,13 +139,17 @@ describe('The azureAuthWorkflowService', () => {
       }
 
       if (ct === 1) {
-        expect(value.id_token).toBe(mockArmToken);
+        expect(value.access_token).toBe(mockArmToken);
         // Not sure if this is valuable or not.
         expect(reportedValues.length).toBe(3);
       }
-
+      // Token validation
       if (ct === 2) {
-        expect(value.access_token).toBe(mockArmToken);
+        expect(value).toBe(true);
+      }
+      // Token delivery
+      if (ct === 4) {
+        expect(value.arm_token).toBe(mockArmToken);
       }
       ct++;
     }

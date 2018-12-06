@@ -32,4 +32,7 @@
 //
 
 export { MDI } from './mdiContainer';
-export * from './tab/tab';
+export * from './documents';
+export * from './tab';
+export * from './tabBar';
+export * from './tabbedDocument';
