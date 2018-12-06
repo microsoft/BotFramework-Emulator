@@ -20,17 +20,30 @@ export function cleanupId(
 ) {
   const roleIdMap = { bot: botId, user: userId };
 
-  activities = activities.map(activity => ({
-    ...activity,
-    from: {
-      ...activity.from,
-      id: roleIdMap[activity.from.role] || activity.from.id
-    },
-    recipient: {
-      ...activity.recipient,
-      id: roleIdMap[activity.recipient.role] || activity.recipient.id
+  activities = activities.map((activity: any) => {
+    const { type } = activity;
+
+    if (
+      type === 'event' 
+      || type === 'message' 
+      || type === 'messageReaction' 
+      || type === 'typing'
+    ) {
+      activity = {
+        ...activity,
+        from: {
+          ...activity.from,
+          id: roleIdMap[activity.from.role] || activity.from.id
+        },
+        recipient: {
+          ...activity.recipient,
+          id: roleIdMap[activity.recipient.role] || activity.recipient.id
+        }
+      };
     }
-  }));
+  
+    return activity;
+  });
 
   return activities;
 }
