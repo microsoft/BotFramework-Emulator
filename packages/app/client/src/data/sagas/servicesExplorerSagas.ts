@@ -239,7 +239,10 @@ function* openAddConnectedServiceContextMenu(action: ConnectedServiceAction<Conn
   const response = yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.DisplayContextMenu, menuItems);
   const { id: serviceType } = response;
   action.payload.serviceType = serviceType;
-  if (serviceType === ServiceTypes.Generic) {
+  if (serviceType === ServiceTypes.Generic ||
+  serviceType === ServiceTypes.BlobStorage ||
+  serviceType === ServiceTypes.CosmosDB ||
+  serviceType === ServiceTypes.AppInsights) {
     yield* launchConnectedServiceEditor(action);
   } else {
     yield* launchConnectedServicePicker(action);
