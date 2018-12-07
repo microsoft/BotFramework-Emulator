@@ -162,7 +162,7 @@ export class TabBar extends React.Component<TabBarProps, TabBarState> {
 
   private get tabs(): JSX.Element[] {
     return this.props.tabOrder.map((documentId, index) => {
-      const document = this.props.documents[documentId];
+      const document = this.props.documents[documentId] || {};
       const isActive = documentId === this.props.activeDocumentId;
 
       return (

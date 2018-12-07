@@ -555,20 +555,32 @@ export default class Conversation extends EventEmitter {
     const { id: currUserId } = this.user;
     let origUserId = null;
     let origBotId = null;
+    
     // Get original botId and userId
     // Fixup conversationId
-    activities.forEach(activity => {
-      if (!origBotId && activity.recipient.role === 'bot') {
-        origBotId = activity.recipient.id;
-      }
-
-      if (!origUserId && activity.recipient.role === 'user') {
-        origUserId = activity.recipient.id;
-      }
-
+    activities.forEach( (activity) => {
       if (activity.conversation) {
         activity.conversation.id = this.conversationId;
       }
+      
+      const { type } = activity;
+
+      if (
+        activity.recipient && (
+          type === 'event' 
+          || type === 'message' 
+          || type === 'messageReaction' 
+          || type === 'typing'
+        )
+      ) {
+        if (!origBotId && activity.recipient.role === 'bot') {
+          origBotId = activity.recipient.id;
+        }
+        
+        if (!origUserId && activity.recipient.role === 'user') {
+          origUserId = activity.recipient.id;
+        }
+      } 
     });
 
     // Fixup recipient and from ids
@@ -594,10 +606,10 @@ export default class Conversation extends EventEmitter {
 
     // Add activities to the queue
     activities.forEach(activity => {
-      if (activity.recipient.role === 'user') {
+      if (activity.recipient && activity.recipient.role === 'user') {
         activity = this.processActivity(activity);
       }
-
+    
       this.addActivityToQueue(activity);
     });
   }
@@ -680,7 +692,7 @@ export default class Conversation extends EventEmitter {
 
     const genericActivity = activity as GenericActivity;
 
-    if (genericActivity) {
+    if (genericActivity && activity.recipient) {
       this.botEmulator.facilities.logger.logActivity(this.conversationId, genericActivity, activity.recipient.role);
     }
   }
