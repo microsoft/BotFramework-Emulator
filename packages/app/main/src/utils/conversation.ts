@@ -48,7 +48,7 @@ export function cleanupId(
   return activities;
 }
 
-function findIdWithRole(activities: CustomActivity[], role: string): string {
+export function findIdWithRole(activities: CustomActivity[], role: string): string {
   return activities.reduce(
     (id: string, { recipient }) => {
       if (id) {
