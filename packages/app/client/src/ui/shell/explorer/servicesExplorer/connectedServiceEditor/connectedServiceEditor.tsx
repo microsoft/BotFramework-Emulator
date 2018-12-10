@@ -262,8 +262,8 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
 
   private get supplementalContent(): ReactNode {
     if (this.props.serviceType === ServiceTypes.Generic) {
-      const { connectedService = { configuration: {} } } = this.props;
-      const { configuration } = connectedService as IGenericService;
+      const { connectedServiceCopy = { configuration: {} } } = this.state;
+      const { configuration } = connectedServiceCopy as IGenericService;
       return (<KvPair kvPairs={ configuration } onChange={ this.onKvPairChange }/>);
     }
 
