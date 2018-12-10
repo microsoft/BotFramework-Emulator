@@ -67,11 +67,6 @@ export class KvPair extends Component<KvPairProps, KvPairState> {
         <ul className={ styles.kvPairContainer }>
           { rows }
         </ul>
-        <button
-          className={ styles.addKvPairButton }
-          onClick={ this.onAddKvPairClick }>
-          Add a key-value pair
-        </button>
       </div>
     );
   }
@@ -94,10 +89,6 @@ export class KvPair extends Component<KvPairProps, KvPairState> {
           onChange={ this.onChange }/>
       </>
     );
-  }
-
-  private onAddKvPairClick = (): void => {
-    this.setState({ length: this.state.length + 1 });
   }
 
   private onChange = (event: ChangeEvent<HTMLInputElement>): void => {

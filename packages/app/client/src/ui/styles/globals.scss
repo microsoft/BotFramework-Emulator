@@ -60,9 +60,14 @@
     font-weight: 600;
   }
 
-  input, textarea, button, select, p, a {
+  input, textarea, button, select, p  {
     font-family: var(--default-font-family);
     font-weight: 400;
+  }
+
+  a {
+    font-family: var(--default-font-family);
+    font-weight: 600;
   }
 
   div {

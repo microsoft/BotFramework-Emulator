@@ -20,14 +20,7 @@ describe('The KvPair component', () => {
 
   it('should render at least one empty row when at least one non-empty row exist in the data', () => {
     const instance = node.instance();
-    expect(instance.render().props.children.length).toBe(3);
-  });
-
-  it('should increment state.length when "onAddKvPairClick()" is called', () => {
-    const instance = node.instance();
-    const { length } = node.state();
-    instance.onAddKvPairClick();
-    expect(node.state().length).toBe(length + 1);
+    expect(instance.render().props.children.length).toBe(2);
   });
 
   it('should call the given callback with the updated kv pairs when "onChange()" is called', () => {
