@@ -170,7 +170,7 @@ describe('The ConnectedServiceEditor component should render the correct content
     expect(instance.editableFields).toEqual([
       'name',
       'tenantId',
-      'subscriptionKey',
+      'subscriptionId',
       'resourceGroup',
       'serviceName',
       'instrumentationKey',
@@ -185,7 +185,7 @@ describe('The ConnectedServiceEditor component should render the correct content
     expect(instance.editableFields).toEqual([
       'name',
       'tenantId',
-      'subscriptionKey',
+      'subscriptionId',
       'resourceGroup',
       'serviceName',
       'connectionString',
@@ -200,7 +200,7 @@ describe('The ConnectedServiceEditor component should render the correct content
     expect(instance.editableFields).toEqual([
       'name',
       'tenantId',
-      'subscriptionKey',
+      'subscriptionId',
       'resourceGroup',
       'serviceName',
       'endpoint',
