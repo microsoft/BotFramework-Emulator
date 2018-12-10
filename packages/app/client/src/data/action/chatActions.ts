@@ -45,7 +45,8 @@ export enum ChatActions {
   setInspectorObjects = 'CHAT/INSPECTOR/OBJECTS/SET',
   addTranscript = 'CHAT/TRANSCRIPT/ADD',
   clearTranscripts = 'CHAT/TRANSCRIPT/CLEAR',
-  removeTranscript = 'CHAT/TRANSCRIPT/REMOVE'
+  removeTranscript = 'CHAT/TRANSCRIPT/REMOVE',
+  updateChat = 'CHAT/DOCUMENT/UPDATE'
 }
 
 export interface ActiveInspectorChangedPayload {
@@ -89,6 +90,11 @@ export interface AddTranscriptPayload extends RemoveTranscriptPayload {
 
 export interface RemoveTranscriptPayload {
   filename: string;
+}
+
+export interface UpdateChatPayload {
+  documentId: string;
+  updatedValues: any;
 }
 
 export interface ChatAction<T = any> extends Action {
@@ -213,6 +219,16 @@ export function setInspectorObjects(documentId: string, objs: any): ChatAction<S
     payload: {
       documentId,
       objs
+    }
+  };
+}
+
+export function updateChat(documentId: string, updatedValues: any): ChatAction<UpdateChatPayload> {
+  return {
+    type: ChatActions.updateChat,
+    payload: {
+      documentId,
+      updatedValues
     }
   };
 }

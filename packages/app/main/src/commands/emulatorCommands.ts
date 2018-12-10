@@ -200,4 +200,14 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
         throw new Error(`${Commands.OpenChatFile}: Error calling parseActivitiesFromChatFile(): ${err}`);
       }
     });
+
+  // ---------------------------------------------------------------------------
+  // Sets the current user id (in memory)
+  commandRegistry.registerCommand(Commands.SetCurrentUser, (userId: string) => {
+    const { facilities } = emulator.framework.server.botEmulator;
+    const { users } = facilities;
+    users.currentUserId = userId;
+    users.users[userId] = { id: userId, name: 'User' };
+    facilities.users = users;
+  });
 }

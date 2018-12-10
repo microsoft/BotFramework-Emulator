@@ -103,6 +103,7 @@ export const SharedConstants = {
       ReloadTranscript: 'transcript:reload',
       OpenChatFile: 'chat:open',
       AppendToLog: 'log:append',
+      SetCurrentUser: 'emulator:set-current-user'
     },
 
     Extension: {

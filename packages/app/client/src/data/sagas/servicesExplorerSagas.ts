@@ -35,7 +35,7 @@ import { ServiceCodes, SharedConstants } from '@bfemulator/app-shared';
 import { BotConfigWithPath } from '@bfemulator/sdk-shared';
 import { BotConfigurationBase } from 'botframework-config/lib/botConfigurationBase';
 import {
-  IBotService,
+  IAzureService,
   IConnectedService,
   IGenericService,
   ILuisService,
@@ -174,23 +174,29 @@ function* retrieveServicesByServiceType(serviceType: ServiceTypes): IterableIter
 function* openConnectedServiceDeepLink(action: ConnectedServiceAction<ConnectedServicePayload>): IterableIterator<any> {
   const { connectedService } = action.payload;
   switch (connectedService.type) {
-    case ServiceTypes.Luis:
-      return openLuisDeepLink(connectedService as ILuisService);
+    case ServiceTypes.AppInsights:
+      return openAzureProviderDeepLink('microsoft.insights/components', connectedService as IAzureService);
+
+    case ServiceTypes.BlobStorage:
+      return openAzureProviderDeepLink('Microsoft.DocumentDB/storageAccounts', connectedService as IAzureService);
 
     case ServiceTypes.Bot:
-      return openAzureBotServiceDeepLink(connectedService as IBotService);
+      return openAzureProviderDeepLink('Microsoft.BotService/botServices', connectedService as IAzureService);
 
-    case ServiceTypes.Dispatch:
-      return Promise.resolve(false); // TODO - Hook up proper link when available
-
-    case ServiceTypes.QnA:
-      return openQnaMakerDeepLink(connectedService as IQnAService);
+    case ServiceTypes.CosmosDB:
+      return openAzureProviderDeepLink('Microsoft.DocumentDb/databaseAccounts', connectedService as IAzureService);
 
     case ServiceTypes.Generic:
       return window.open((connectedService as IGenericService).url);
 
+    case ServiceTypes.Luis:
+      return openLuisDeepLink(connectedService as ILuisService);
+
+    case ServiceTypes.QnA:
+      return openQnaMakerDeepLink(connectedService as IQnAService);
+
     default:
-      throw new Error('Unknown service type');
+      return window.open('https://portal.azure.com');
   }
 }
 
@@ -239,7 +245,10 @@ function* openAddConnectedServiceContextMenu(action: ConnectedServiceAction<Conn
   const response = yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.DisplayContextMenu, menuItems);
   const { id: serviceType } = response;
   action.payload.serviceType = serviceType;
-  if (serviceType === ServiceTypes.Generic) {
+  if (serviceType === ServiceTypes.Generic ||
+    serviceType === ServiceTypes.BlobStorage ||
+    serviceType === ServiceTypes.CosmosDB ||
+    serviceType === ServiceTypes.AppInsights) {
     yield* launchConnectedServiceEditor(action);
   } else {
     yield* launchConnectedServicePicker(action);
@@ -291,6 +300,18 @@ function* launchConnectedServiceEditor(action: ConnectedServiceAction<ConnectedS
   return null;
 }
 
+function openAzureProviderDeepLink(provider: string, azureService: IAzureService): void {
+  const { tenantId, subscriptionId, resourceGroup, serviceName } = azureService;
+  const bits = [
+    `https://ms.portal.azure.com/#@${ tenantId }/resource/`,
+    `subscriptions/${ subscriptionId }/`,
+    `resourceGroups/${ encodeURI(resourceGroup) }/`,
+    `providers/${ provider }/${ encodeURI(serviceName) }/overview`
+  ];
+
+  window.open(bits.join(''));
+}
+
 function openLuisDeepLink(luisService: ILuisService) {
   const { appId, version, region } = luisService;
   let regionPrefix: string;
@@ -317,16 +338,6 @@ function openQnaMakerDeepLink(service: IQnAService) {
   const { kbId } = service;
   const link = `https://qnamaker.ai/Edit/KnowledgeBase?kbid=${ encodeURIComponent(kbId) }`;
   window.open(link);
-}
-
-function openAzureBotServiceDeepLink(service: IBotService) {
-  const { tenantId, subscriptionId, resourceGroup, id } = service;
-  const linkArray = [`https://ms.portal.azure.com/#@${ encodeURI(tenantId) }`];
-  linkArray.push(`/resource/subscriptions/${ encodeURI(subscriptionId) }`);
-  linkArray.push(`/resourceGroups/${ encodeURI(resourceGroup) }`);
-  linkArray.push(`/providers/Microsoft.BotService/botServices/${ encodeURI(id) }`);
-  const link = linkArray.join('');
-  window.open(link + '/channels');
 }
 
 export function* servicesExplorerSagas(): IterableIterator<ForkEffect> {

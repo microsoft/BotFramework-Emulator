@@ -169,7 +169,7 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
         return [
           'name',
           'tenantId',
-          'subscriptionKey',
+          'subscriptionId',
           'resourceGroup',
           'serviceName',
           'instrumentationKey',
@@ -180,7 +180,7 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
         return [
           'name',
           'tenantId',
-          'subscriptionKey',
+          'subscriptionId',
           'resourceGroup',
           'serviceName',
           'connectionString',
@@ -191,7 +191,7 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
         return [
           'name',
           'tenantId',
-          'subscriptionKey',
+          'subscriptionId',
           'resourceGroup',
           'serviceName',
           'endpoint',
