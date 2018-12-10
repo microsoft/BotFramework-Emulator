@@ -44,19 +44,19 @@ export class KvPair extends Component<KvPairProps, KvPairState> {
     const numEmptyRows = 1 + length - kvPairs.length;
     const rows = [];
 
-    for (let i = 0; i < numEmptyRows; i++) {
-      rows.push(
-        <li key={ kvPairs.length + i }>
-          { this.getTextFieldPair() }
-        </li>);
-    }
-
     kvPairs.forEach((kvPair, index) => {
       rows.push(
         <li key={ index }>
           { this.getTextFieldPair(kvPair.key, kvPair.value) }
         </li>);
     });
+
+    for (let i = 0; i < numEmptyRows; i++) {
+      rows.push(
+        <li key={ kvPairs.length + i }>
+          { this.getTextFieldPair() }
+        </li>);
+    }
 
     return (
       <div>
