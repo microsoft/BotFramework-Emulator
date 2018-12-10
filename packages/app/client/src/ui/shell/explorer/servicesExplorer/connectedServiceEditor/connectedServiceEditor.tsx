@@ -298,9 +298,9 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
     const { serviceType } = this.props;
     return (
       <p>
-        { `You can find your knowledge base ID and subscription key in ` }
+        { `You can find your knowledge base ID and subscription key in the ` }
         <a href="https://portal.azure.com">
-          the Azure Portal { labelMap[serviceType] }
+          Azure Portal.
         </a>
         <br/>
         <a href={ this.learnMoreLink }>
@@ -314,9 +314,9 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
     const { serviceType } = this.props;
     return (
       <p>
-        { `You can find the information below in ` }
+        { `You can find the information below in the ` }
         <a href="https://portal.azure.com">
-          the Azure Portal { labelMap[serviceType] }.
+          Azure Portal.
         </a>
         <br/>
         <a href={ this.learnMoreLink }>
