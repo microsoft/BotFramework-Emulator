@@ -97,13 +97,31 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
   // ---------------------------------------------------------------------------
   // Builds a new app menu to reflect the updated conversation send activity list
-  commandRegistry.registerCommand(Commands.UpdateConversationMenu, async (): Promise<void> => {
-    const menu = await AppMenuBuilder.getMenuTemplate();
-    const newConversationMenu = await AppMenuBuilder.getConversationMenu();
+  commandRegistry.registerCommand(
+    Commands.UpdateConversationMenu,
+    async (clientEditorState: any): Promise<void> => {
 
-    menu[3] = newConversationMenu;
-    AppMenuBuilder.setMenuTemplate(menu);
-    Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
+    // get the conversation menu items that we want to update
+    let sendActivityMenu;
+    const menu = Menu.getApplicationMenu();
+    if (menu) {
+      sendActivityMenu = (menu.getMenuItemById('send-activity') as any).submenu || { items: [] };
+    }
+
+    // enable / disable the send activity menu
+    let enabled = false;
+    const { editors = {}, activeEditor = '' } = clientEditorState;
+    const { activeDocumentId = '' } = editors[activeEditor] || {};
+
+    if (activeDocumentId && editors[activeEditor] && editors[activeEditor].documents) {
+      const activeDocument = editors[activeEditor].documents[activeDocumentId];
+      const { contentType = '' } = activeDocument;
+      enabled = contentType && contentType === SharedConstants.ContentTypes.CONTENT_TYPE_LIVE_CHAT;
+    }
+
+    sendActivityMenu.items.forEach(it => {
+      it.enabled = enabled;
+    });
   });
 
   // ---------------------------------------------------------------------------

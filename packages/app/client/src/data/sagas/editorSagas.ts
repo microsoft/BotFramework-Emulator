@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { call, ForkEffect, put, select, takeEvery } from 'redux-saga/effects';
+import { call, ForkEffect, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { EditorActions, removeDocPendingChange } from '../action/editorActions';
 import { isChatFile, isTranscriptFile, SharedConstants } from '@bfemulator/app-shared';
@@ -78,7 +78,8 @@ export function* checkActiveDocForPendingChanges(): IterableIterator<any> {
 }
 
 export function* refreshConversationMenu(): IterableIterator<any> {
-  yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.UpdateConversationMenu);
+  const stateData = yield select(editorSelector);
+  yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.UpdateConversationMenu, stateData);
 }
 
 export function* editorSagas(): IterableIterator<ForkEffect> {
@@ -94,7 +95,7 @@ export function* editorSagas(): IterableIterator<ForkEffect> {
     checkActiveDocForPendingChanges
   );
 
-  yield takeEvery(
+  yield takeLatest(
     [
       EditorActions.close,
       EditorActions.open,

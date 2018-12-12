@@ -31,11 +31,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { call, ForkEffect, put, takeEvery } from 'redux-saga/effects';
+import { call, ForkEffect, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { SharedConstants } from '@bfemulator/app-shared';
 import { BotActions, botHashGenerated, SetActiveBotAction } from '../action/botActions';
 import { generateBotHash } from '../botHelpers';
+import { RootState } from '../store';
+
+export function editorSelector(state: RootState) {
+  return state.editor;
+}
 
 /** Opens up native open file dialog to browse for a .bot file */
 export function* browseForBot(): IterableIterator<any> {
@@ -51,13 +56,14 @@ export function* generateHashForActiveBot(action: SetActiveBotAction): IterableI
 }
 
 export function* refreshConversationMenu(): IterableIterator<any> {
-  yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.UpdateConversationMenu);
+  const stateData = yield select(editorSelector);
+  yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.UpdateConversationMenu, stateData);
 }
 
 export function* botSagas(): IterableIterator<ForkEffect> {
   yield takeEvery(BotActions.browse, browseForBot);
   yield takeEvery(BotActions.setActive, generateHashForActiveBot);
-  yield takeEvery(
+  yield takeLatest(
     [
       BotActions.setActive, 
       BotActions.load, 

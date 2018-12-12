@@ -49,7 +49,7 @@ export interface AppMenuBuilder {
   setMenuTemplate: (template: MenuOpts[]) => void;
 
   getFileMenu: (recentBots?: BotInfo[]) => Promise<MenuOpts>;
-  getConversationMenu: () => Promise<MenuOpts>;
+  initConversationMenu: () => Promise<MenuOpts>;
 
   putFileMenu: (fileMenuTemplate: MenuOpts, appMenuTemplate: MenuOpts[]) => MenuOpts[];
 }
@@ -210,7 +210,7 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
     }
   }
 
-  async getConversationMenu(): Promise<MenuOpts> {
+  async initConversationMenu(): Promise<MenuOpts> {
     const getState = () => mainWindow.commandService.remoteCall(SharedConstants.Commands.Misc.GetStoreState);
 
     const getConversationId = async () => {
@@ -242,9 +242,11 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
     const enabled = await getActiveDocumentContentType() === SharedConstants.ContentTypes.CONTENT_TYPE_LIVE_CHAT;
     
     return {
+      id: 'conversation',
       label: 'Conversation',
       submenu: [
         {
+          id: 'send-activity',
           label: 'Send System Activity',
           submenu: [
             {
@@ -316,7 +318,7 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
       await this.getFileMenu(),
       await this.getEditMenu(),
       await this.getViewMenu(),
-      await this.getConversationMenu(),
+      await this.initConversationMenu(),
       await this.getHelpMenu()
     ];
 
