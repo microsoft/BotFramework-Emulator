@@ -80,19 +80,10 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // ---------------------------------------------------------------------------
   // Builds a new app menu to reflect the updated recent bots list
   commandRegistry.registerCommand(Commands.UpdateFileMenu, async (): Promise<void> => {
-    // get previous app menu template
-    let menu = await AppMenuBuilder.getMenuTemplate();
-
-    // get a file menu template with recent bots added
+    AppMenuBuilder.refreshFileMenu();
     const state = store.getState();
     const recentBots = state.bot && state.bot.botFiles ? state.bot.botFiles : [];
-    const newFileMenu = await AppMenuBuilder.getFileMenu(recentBots);
-
-    // update the app menu to use the new file menu and build the template into a menu
-    menu = AppMenuBuilder.putFileMenu(newFileMenu, menu);
-    // update stored menu state
-    AppMenuBuilder.setMenuTemplate(menu);
-    Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
+    AppMenuBuilder.updateRecentBotsList(recentBots);
   });
 
   // ---------------------------------------------------------------------------
@@ -102,11 +93,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
     async (clientEditorState: any): Promise<void> => {
 
     // get the conversation menu items that we want to update
-    let sendActivityMenu;
-    const menu = Menu.getApplicationMenu();
-    if (menu) {
-      sendActivityMenu = (menu.getMenuItemById('send-activity') as any).submenu || { items: [] };
-    }
+    const sendActivityMenuItems = AppMenuBuilder.sendActivityMenuItems;
 
     // enable / disable the send activity menu
     let enabled = false;
@@ -119,8 +106,8 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
       enabled = contentType && contentType === SharedConstants.ContentTypes.CONTENT_TYPE_LIVE_CHAT;
     }
 
-    sendActivityMenu.items.forEach(it => {
-      it.enabled = enabled;
+    sendActivityMenuItems.forEach(item => {
+      item.enabled = enabled;
     });
   });
 
@@ -131,7 +118,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
     if (fullscreen) {
       Menu.setApplicationMenu(null);
     } else {
-      Menu.setApplicationMenu(Menu.buildFromTemplate(await AppMenuBuilder.getMenuTemplate()));
+      await AppMenuBuilder.initAppMenu();
     }
   });
 
