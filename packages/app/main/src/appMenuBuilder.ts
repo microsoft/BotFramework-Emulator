@@ -44,21 +44,29 @@ import { getActiveBot } from './botHelpers';
 
 declare type MenuOpts = Electron.MenuItemConstructorOptions;
 
-export interface AppMenuBuilder {
-  getMenuTemplate: () => Promise<MenuOpts[]>;
-  setMenuTemplate: (template: MenuOpts[]) => void;
+export class AppMenuBuilder {
+  private static _menuTemplate: MenuOpts[];
 
-  getFileMenu: (recentBots?: BotInfo[]) => Promise<MenuOpts>;
-  initConversationMenu: () => Promise<MenuOpts>;
+  public static get conversationMenuItems(): Electron.MenuItem[] {
+    const menu = Electron.Menu.getApplicationMenu();
+    if (menu) {
+      const conversationMenu = (menu.getMenuItemById('conversation') as any).submenu || { items: [] };
+      return conversationMenu.items;
+    }
+    return [];
+  }
 
-  putFileMenu: (fileMenuTemplate: MenuOpts, appMenuTemplate: MenuOpts[]) => MenuOpts[];
-}
-
-export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBuilder {
-  private _menuTemplate: MenuOpts[];
+  public static get sendActivityMenuItems(): Electron.MenuItem[] {
+    const menu = Electron.Menu.getApplicationMenu();
+    if (menu) {
+      const sendActivityMenu: Electron.Menu = (menu.getMenuItemById('send-activity') as any).submenu || { items: [] };
+      return sendActivityMenu.items;
+    }
+    return [];
+  }
 
   /** Allows preservation of menu state without having to completely rebuild the menu template */
-  async getMenuTemplate(): Promise<MenuOpts[]> {
+  public static async getMenuTemplate(): Promise<MenuOpts[]> {
     if (!this._menuTemplate) {
       this._menuTemplate = await this.createMenuTemplate();
     }
@@ -66,12 +74,12 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
     return this._menuTemplate;
   }
 
-  setMenuTemplate(template: MenuOpts[]) {
+  public static set setMenuTemplate(template: MenuOpts[]) {
     this._menuTemplate = template;
   }
 
   /** Constructs a file menu template. If recentBots is passed in, will add recent bots list to menu */
-  async getFileMenu(recentBots?: BotInfo[]): Promise<MenuOpts> {
+  public static async getFileMenu(recentBots?: BotInfo[]): Promise<MenuOpts> {
     const { Azure, UI, Bot, Emulator } = SharedConstants.Commands;
 
     // TODO - localization
@@ -185,7 +193,7 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
     return template;
   }
 
-  getUpdateMenuItem(): MenuOpts {
+  public static getUpdateMenuItem(): MenuOpts {
     // TODO - localization
     if (AppUpdater.status === UpdateStatus.UpdateReadyToInstall) {
       return {
@@ -210,7 +218,7 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
     }
   }
 
-  async initConversationMenu(): Promise<MenuOpts> {
+  public static async initConversationMenu(): Promise<MenuOpts> {
     const getState = () => mainWindow.commandService.remoteCall(SharedConstants.Commands.Misc.GetStoreState);
 
     const getConversationId = async () => {
@@ -294,7 +302,7 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
    * Takes a file menu template and places it at the
    * right position in the app menu template according to platform
    */
-  putFileMenu(fileMenuTemplate: MenuOpts, appMenuTemplate: MenuOpts[]): MenuOpts[] {
+  public static putFileMenu(fileMenuTemplate: MenuOpts, appMenuTemplate: MenuOpts[]): MenuOpts[] {
     if (process.platform === 'darwin') {
       appMenuTemplate[1] = fileMenuTemplate;
     } else {
@@ -303,7 +311,7 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
     return appMenuTemplate;
   }
 
-  async refreshAppUpdateMenu() {
+  public static async refreshAppUpdateMenu() {
     const menu = await this.getMenuTemplate();
     const helpMenu = menu.find(menuItem => menuItem.role === 'help');
     const autoUpdateMenuItem = (helpMenu.submenu as Array<any>).find(menuItem => menuItem.id === 'auto-update');
@@ -313,7 +321,7 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
   }
 
   /** Constructs the initial app menu template */
-  private async createMenuTemplate(): Promise<MenuOpts[]> {
+  private static async createMenuTemplate(): Promise<MenuOpts[]> {
     const template: MenuOpts[] = [
       await this.getFileMenu(),
       await this.getEditMenu(),
@@ -335,7 +343,7 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
   }
 
   /** Creates a file menu item for each bot that will set the bot as active when clicked */
-  private async getRecentBotsList(bots: BotInfo[]): Promise<MenuOpts[]> {
+  private static async getRecentBotsList(bots: BotInfo[]): Promise<MenuOpts[]> {
     // only list 5 most-recent bots
     return bots.filter(bot => !!bot).map(bot => ({
       label: bot.displayName,
@@ -346,7 +354,7 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
     }));
   }
 
-  private async getAppMenuMac(): Promise<MenuOpts> {
+  private static async getAppMenuMac(): Promise<MenuOpts> {
     return {
       label: Electron.app.getName(),
       submenu: [
@@ -363,7 +371,7 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
     };
   }
 
-  private async getEditMenu(): Promise<MenuOpts> {
+  private static async getEditMenu(): Promise<MenuOpts> {
     return {
       label: 'Edit',
       submenu: [
@@ -378,7 +386,7 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
     };
   }
 
-  private async getViewMenu(): Promise<MenuOpts> {
+  private static async getViewMenu(): Promise<MenuOpts> {
     // TODO - localization
     return {
       label: 'View',
@@ -392,7 +400,7 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
     };
   }
 
-  private async getWindowMenuMac(): Promise<MenuOpts[]> {
+  private static async getWindowMenuMac(): Promise<MenuOpts[]> {
     return [
       { role: 'close' },
       { role: 'minimize' },
@@ -402,7 +410,7 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
     ];
   }
 
-  private async getHelpMenu(): Promise<MenuOpts> {
+  private static async getHelpMenu(): Promise<MenuOpts> {
     let appName = Electron.app.getName();
     let version = Electron.app.getVersion();
     
@@ -452,4 +460,4 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
       ]
     };
   }
-};
+}

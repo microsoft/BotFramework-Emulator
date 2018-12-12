@@ -102,11 +102,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
     async (clientEditorState: any): Promise<void> => {
 
     // get the conversation menu items that we want to update
-    let sendActivityMenu;
-    const menu = Menu.getApplicationMenu();
-    if (menu) {
-      sendActivityMenu = (menu.getMenuItemById('send-activity') as any).submenu || { items: [] };
-    }
+    const sendActivityMenuItems = AppMenuBuilder.sendActivityMenuItems;
 
     // enable / disable the send activity menu
     let enabled = false;
@@ -119,8 +115,8 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
       enabled = contentType && contentType === SharedConstants.ContentTypes.CONTENT_TYPE_LIVE_CHAT;
     }
 
-    sendActivityMenu.items.forEach(it => {
-      it.enabled = enabled;
+    sendActivityMenuItems.forEach(item => {
+      item.enabled = enabled;
     });
   });
 
