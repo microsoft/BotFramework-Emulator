@@ -44,38 +44,134 @@ import { getActiveBot } from './botHelpers';
 
 declare type MenuOpts = Electron.MenuItemConstructorOptions;
 
-export interface AppMenuBuilder {
-  getMenuTemplate: () => Promise<MenuOpts[]>;
-  setMenuTemplate: (template: MenuOpts[]) => void;
+export class AppMenuBuilder {
+  public static get conversationMenuItems(): Electron.MenuItem[] {
+    const menu = Electron.Menu.getApplicationMenu();
+    if (menu) {
+      const conversationMenu = (menu.getMenuItemById('conversation') as any);
+      const { submenu = { items: [] } } = conversationMenu;
+      return submenu.items;
+    }
+    return [];
+  }
 
-  getFileMenu: (recentBots?: BotInfo[]) => Promise<MenuOpts>;
-  initConversationMenu: () => Promise<MenuOpts>;
+  public static get sendActivityMenuItems(): Electron.MenuItem[] {
+    const menu = Electron.Menu.getApplicationMenu();
+    if (menu) {
+      const sendActivityMenu = (menu.getMenuItemById('send-activity') as any);
+      const { submenu = { items: [] } } = sendActivityMenu || {};
+      return submenu.items;
+    }
+    return [];
+  }
 
-  putFileMenu: (fileMenuTemplate: MenuOpts, appMenuTemplate: MenuOpts[]) => MenuOpts[];
-}
+  public static get recentBotsMenuItems(): Electron.MenuItem[] {
+    const menu = Electron.Menu.getApplicationMenu();
+    if (menu) {
+      const recentBotsMenu = (menu.getMenuItemById('recent-bots') as any);
+      const { submenu = { items: [] } } = recentBotsMenu || {};
+      return submenu.items;
+    }
+    return [];
+  }
 
-export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBuilder {
-  private _menuTemplate: MenuOpts[];
+  /** Called on app startup */
+  public static async initAppMenu(): Promise<void> {
+    const template: MenuOpts[] = [
+      await this.initFileMenu(),
+      await this.initEditMenu(),
+      await this.initViewMenu(),
+      await this.initConversationMenu(),
+      await this.initHelpMenu()
+    ];
 
-  /** Allows preservation of menu state without having to completely rebuild the menu template */
-  async getMenuTemplate(): Promise<MenuOpts[]> {
-    if (!this._menuTemplate) {
-      this._menuTemplate = await this.createMenuTemplate();
+    if (process.platform === 'darwin') {
+      template.unshift(await this.initAppMenuMac());
+      // Window menu
+      template.splice(4, 0, {
+        label: 'Window',
+        submenu: await this.initWindowMenuMac()
+      });
     }
 
-    return this._menuTemplate;
+    const menu = Electron.Menu.buildFromTemplate(template);
+    Electron.Menu.setApplicationMenu(menu);
   }
 
-  setMenuTemplate(template: MenuOpts[]) {
-    this._menuTemplate = template;
+  /** Refreshes the top-level of the File menu
+   *  Ex. Toggling "Close Tab" & "Sign in / out"
+   */
+  public static refreshFileMenu(): void {
+    const menu = Electron.Menu.getApplicationMenu();
+    if (menu) {
+      const fileMenu = menu.getMenuItemById('file') as any || {};
+      if (fileMenu.submenu) {
+        // redraw the menu, but preserve the recent bots list
+        const recentBotsMenuItems = this.recentBotsMenuItems;
+        const recentBotsMenu = new Electron.Menu();
+        // must append 1-by-1 due to Electron limitations
+        recentBotsMenuItems.forEach(item => { recentBotsMenu.append(item); });
+        const fileMenuContent = Electron.Menu.buildFromTemplate(this.getUpdatedFileMenuContent(recentBotsMenu));
+        fileMenu.submenu.clear();
+        fileMenuContent.items.forEach(item => { fileMenu.submenu.append(item); });
+      }
+    }
   }
 
-  /** Constructs a file menu template. If recentBots is passed in, will add recent bots list to menu */
-  async getFileMenu(recentBots?: BotInfo[]): Promise<MenuOpts> {
+  /** Updates the recent bots list in the File menu */
+  public static updateRecentBotsList(updatedBots: BotInfo[] = []): void {
+    const menu = Electron.Menu.getApplicationMenu();
+    if (menu) {
+      const recentBotsMenu = (menu.getMenuItemById('recent-bots') as any);
+      if (recentBotsMenu && recentBotsMenu.submenu && recentBotsMenu.submenu.items) {
+        const recentBots = this.getRecentBotsList(updatedBots);
+        // we have to reconstruct the menu due to Electron menu item limitations
+        recentBotsMenu.submenu.clear();
+        recentBots.forEach(bot => recentBotsMenu.submenu.append(bot));
+        recentBotsMenu.enabled = !!updatedBots.length;
+      }
+    }
+  }
+
+  /** Refreshes the app update menu item in the Help menu */
+  public static refreshAppUpdateMenu(): void {
+    const menu = Electron.Menu.getApplicationMenu();
+    if (menu) {
+      const { status } = AppUpdater;
+      const { Idle, UpdateAvailable, UpdateDownloading, UpdateReadyToInstall } = UpdateStatus;
+      const updateRestartItem = menu.getMenuItemById('auto-update-restart');
+      if (updateRestartItem) {
+        updateRestartItem.visible = status === UpdateReadyToInstall;
+      }
+      const updateCheckItem = menu.getMenuItemById('auto-update-check');
+      if (updateCheckItem) {
+        updateCheckItem.visible = status === Idle || status === UpdateAvailable;
+      }
+      const updateDownloadingItem = menu.getMenuItemById('auto-update-downloading');
+      if (updateDownloadingItem) {
+        updateDownloadingItem.visible = status === UpdateDownloading;
+      }
+    }
+  }
+
+  /** Creates a file menu item for each bot that will set the bot as active when clicked */
+  private static getRecentBotsList(bots: BotInfo[] = []): Electron.MenuItem[] {
+    // only list 9 most-recent bots
+    return bots.filter(bot => !!bot).slice(0, 9).map(bot => new Electron.MenuItem({
+      label: bot.displayName,
+      click: () => {
+        mainWindow.commandService.remoteCall(SharedConstants.Commands.Bot.Switch, bot.path)
+          .catch(err => console.error('Error while switching bots from file menu recent bots list: ', err));
+      }
+    }));
+  }
+
+  /** Returns the template to construct a file menu that reflects updated state */
+  private static getUpdatedFileMenuContent(recentBotsMenu: Electron.Menu = new Electron.Menu()): MenuOpts[] {
     const { Azure, UI, Bot, Emulator } = SharedConstants.Commands;
 
     // TODO - localization
-    let subMenu: MenuOpts[] = [
+    const subMenu: MenuOpts[] = [
       {
         label: 'New Bot Configuration...',
         click: () => {
@@ -88,25 +184,15 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
         click: () => {
           mainWindow.commandService.remoteCall(Bot.OpenBrowse);
         }
-      }];
-
-    if (recentBots && recentBots.length) {
-      const recentBotsList = await this.getRecentBotsList(recentBots);
-      
-      subMenu.push({
+      },
+      {
+        id: 'recent-bots',
         label: 'Open Recent...',
-        submenu: [...recentBotsList]
-      });
-    } else {
-      subMenu.push({
-        label: 'Open Recent...',
-        enabled: false
-      });
-    }
-
-    subMenu.push({ type: 'separator' });
-
-    subMenu.push({
+        enabled: !!recentBotsMenu.items.length,
+        submenu: recentBotsMenu
+      },
+      { type: 'separator' },
+      {
         label: 'Open Transcript...',
         click: async () => {
           try {
@@ -117,28 +203,21 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
         }
       },
       { type: 'separator' }
-    );
+    ];
 
     const activeBot = getActiveBot();
 
-    if (activeBot !== null) {
-      subMenu.push({
-        label: 'Close Tab',
-        click: async () => {
-          await mainWindow.commandService.remoteCall(Bot.Close);
-          await mainWindow.commandService.call(SharedConstants.Commands.Electron.UpdateFileMenu);
-        }
-      });
-    } else {
-      subMenu.push({
-        label: 'Close Tab',
-        enabled: false
-      });
-    }
+    subMenu.push({
+      label: 'Close Tab',
+      click: async () => {
+        await mainWindow.commandService.remoteCall(Bot.Close);
+        await mainWindow.commandService.call(SharedConstants.Commands.Electron.UpdateFileMenu);
+      },
+      enabled: activeBot !== null
+    });
 
     const settingsStore = getSettingsStore();
     const settingsState = settingsStore.getState();
-
     const { signedInUser } = settingsState.azure;
     const azureMenuItemLabel = signedInUser ? `Sign out (${signedInUser})` : 'Sign in with Azure';
 
@@ -173,44 +252,13 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
         }))
       }
     ]);
-
     subMenu.push({ type: 'separator' });
     subMenu.push({ role: 'quit' });
 
-    const template: MenuOpts = {
-      label: 'File',
-      submenu: subMenu
-    };
-
-    return template;
+    return subMenu;
   }
 
-  getUpdateMenuItem(): MenuOpts {
-    // TODO - localization
-    if (AppUpdater.status === UpdateStatus.UpdateReadyToInstall) {
-      return {
-        id: 'auto-update',
-        label: 'Restart to Update...',
-        click: () => AppUpdater.quitAndInstall(),
-        enabled: true,
-      };
-    } else if (AppUpdater.status === UpdateStatus.UpdateDownloading) {
-      return {
-        id: 'auto-update',
-        label: `Update downloading...`,
-        enabled: false,
-      };
-    } else {
-      return {
-        id: 'auto-update',
-        label: 'Check for Update...',
-        click: () => AppUpdater.checkForUpdates(true),
-        enabled: true,
-      };
-    }
-  }
-
-  async initConversationMenu(): Promise<MenuOpts> {
+  private static async initConversationMenu(): Promise<MenuOpts> {
     const getState = () => mainWindow.commandService.remoteCall(SharedConstants.Commands.Misc.GetStoreState);
 
     const getConversationId = async () => {
@@ -290,63 +338,7 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
     };
   }
 
-  /**
-   * Takes a file menu template and places it at the
-   * right position in the app menu template according to platform
-   */
-  putFileMenu(fileMenuTemplate: MenuOpts, appMenuTemplate: MenuOpts[]): MenuOpts[] {
-    if (process.platform === 'darwin') {
-      appMenuTemplate[1] = fileMenuTemplate;
-    } else {
-      appMenuTemplate[0] = fileMenuTemplate;
-    }
-    return appMenuTemplate;
-  }
-
-  async refreshAppUpdateMenu() {
-    const menu = await this.getMenuTemplate();
-    const helpMenu = menu.find(menuItem => menuItem.role === 'help');
-    const autoUpdateMenuItem = (helpMenu.submenu as Array<any>).find(menuItem => menuItem.id === 'auto-update');
-
-    Object.assign(autoUpdateMenuItem, this.getUpdateMenuItem());
-    Electron.Menu.setApplicationMenu(Electron.Menu.buildFromTemplate(menu));
-  }
-
-  /** Constructs the initial app menu template */
-  private async createMenuTemplate(): Promise<MenuOpts[]> {
-    const template: MenuOpts[] = [
-      await this.getFileMenu(),
-      await this.getEditMenu(),
-      await this.getViewMenu(),
-      await this.initConversationMenu(),
-      await this.getHelpMenu()
-    ];
-
-    if (process.platform === 'darwin') {
-      template.unshift(await this.getAppMenuMac());
-      // Window menu
-      template.splice(4, 0, {
-        label: 'Window',
-        submenu: await this.getWindowMenuMac()
-      });
-    }
-
-    return template;
-  }
-
-  /** Creates a file menu item for each bot that will set the bot as active when clicked */
-  private async getRecentBotsList(bots: BotInfo[]): Promise<MenuOpts[]> {
-    // only list 5 most-recent bots
-    return bots.filter(bot => !!bot).map(bot => ({
-      label: bot.displayName,
-      click: () => {
-        mainWindow.commandService.remoteCall(SharedConstants.Commands.Bot.Switch, bot.path)
-          .catch(err => console.error('Error while switching bots from file menu recent bots list: ', err));
-      }
-    }));
-  }
-
-  private async getAppMenuMac(): Promise<MenuOpts> {
+  private static async initAppMenuMac(): Promise<MenuOpts> {
     return {
       label: Electron.app.getName(),
       submenu: [
@@ -363,7 +355,7 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
     };
   }
 
-  private async getEditMenu(): Promise<MenuOpts> {
+  private static async initEditMenu(): Promise<MenuOpts> {
     return {
       label: 'Edit',
       submenu: [
@@ -378,7 +370,18 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
     };
   }
 
-  private async getViewMenu(): Promise<MenuOpts> {
+  /** Initializes the file menu */
+  private static initFileMenu(): MenuOpts {
+    const template: MenuOpts = {
+      id: 'file',
+      label: 'File',
+      submenu: this.getUpdatedFileMenuContent()
+    };
+
+    return template;
+  }
+
+  private static async initViewMenu(): Promise<MenuOpts> {
     // TODO - localization
     return {
       label: 'View',
@@ -387,12 +390,12 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
         { role: 'zoomin' },
         { role: 'zoomout' },
         { type: 'separator' },
-        { role: 'togglefullscreen' },
+        { role: 'togglefullscreen' }
       ]
     };
   }
 
-  private async getWindowMenuMac(): Promise<MenuOpts[]> {
+  private static async initWindowMenuMac(): Promise<MenuOpts[]> {
     return [
       { role: 'close' },
       { role: 'minimize' },
@@ -402,9 +405,9 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
     ];
   }
 
-  private async getHelpMenu(): Promise<MenuOpts> {
-    let appName = Electron.app.getName();
-    let version = Electron.app.getVersion();
+  private static async initHelpMenu(): Promise<MenuOpts> {
+    const appName = Electron.app.getName();
+    const version = Electron.app.getVersion();
     
     // TODO - localization
     return {
@@ -438,7 +441,28 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
             Electron.shell.openExternal('https://aka.ms/cy106f', { activate: true })
         },
         { type: 'separator' },
-        this.getUpdateMenuItem(),
+
+        // will toggle visibility of auto update menu item states as workaround to non-dynamic labels in Electron
+        {
+          id: 'auto-update-restart',
+          label: 'Restart to Update...',
+          click: () => AppUpdater.quitAndInstall(),
+          enabled: true,
+          visible: AppUpdater.status === UpdateStatus.UpdateReadyToInstall
+        },
+        {
+          id: 'auto-update-downloading',
+          label: `Update downloading...`,
+          enabled: false,
+          visible: AppUpdater.status === UpdateStatus.UpdateDownloading
+        },
+        {
+          id: 'auto-update-check',
+          label: 'Check for Update...',
+          click: () => AppUpdater.checkForUpdates(true),
+          enabled: true,
+          visible: AppUpdater.status === UpdateStatus.Idle || AppUpdater.status === UpdateStatus.UpdateAvailable
+        },
         { type: 'separator' },
         {
           label: 'About',
@@ -452,4 +476,4 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
       ]
     };
   }
-};
+}
