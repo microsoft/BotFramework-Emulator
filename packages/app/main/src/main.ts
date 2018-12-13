@@ -81,7 +81,7 @@ if (app) {
 
 AppUpdater.on('update-available', async (update: UpdateInfo) => {
   try {
-    await AppMenuBuilder.refreshAppUpdateMenu();
+    AppMenuBuilder.refreshAppUpdateMenu();
     
     if (AppUpdater.userInitiated) {
       const { ShowUpdateAvailableDialog, ShowProgressIndicator, UpdateProgressIndicator } = SharedConstants.Commands.UI;
@@ -101,7 +101,7 @@ AppUpdater.on('update-available', async (update: UpdateInfo) => {
 
 AppUpdater.on('update-downloaded', async (update: UpdateInfo) => {
   try {
-    await AppMenuBuilder.refreshAppUpdateMenu();
+    AppMenuBuilder.refreshAppUpdateMenu();
 
     // TODO - localization
     if (AppUpdater.userInitiated) {
@@ -135,7 +135,7 @@ AppUpdater.on('update-downloaded', async (update: UpdateInfo) => {
 AppUpdater.on('up-to-date', async () => {
   try {
     // TODO - localization
-    await AppMenuBuilder.refreshAppUpdateMenu();
+    AppMenuBuilder.refreshAppUpdateMenu();
     
     // only show the alert if the user explicity checked for update, and no update was downloaded
     const { userInitiated, updateDownloaded } = AppUpdater;
@@ -150,7 +150,7 @@ AppUpdater.on('up-to-date', async () => {
 
 AppUpdater.on('download-progress', async (info: ProgressInfo) => {
   try {
-    await AppMenuBuilder.refreshAppUpdateMenu();
+    AppMenuBuilder.refreshAppUpdateMenu();
     
     // update the progress bar component
     const { UpdateProgressIndicator } = SharedConstants.Commands.UI;
@@ -163,7 +163,7 @@ AppUpdater.on('download-progress', async (info: ProgressInfo) => {
 
 AppUpdater.on('error', async (err: Error, message: string) => {
   // TODO - localization
-  await AppMenuBuilder.refreshAppUpdateMenu();
+  AppMenuBuilder.refreshAppUpdateMenu();
   // TODO - Send to debug.txt / error dump file
   if (message.includes('.yml')) {
     AppUpdater.emit('up-to-date');
@@ -330,9 +330,7 @@ const createMainWindow = async () => {
   mainWindow.browserWindow.setTitle(app.getName());
   windowManager = new WindowManager();
 
-  AppMenuBuilder.getMenuTemplate().then((template: Electron.MenuItemConstructorOptions[]) => {
-    Menu.setApplicationMenu(Menu.buildFromTemplate(template));
-  });
+  AppMenuBuilder.initAppMenu().catch();
 
   const rememberCurrentBounds = () => {
     const currentBounds = mainWindow.browserWindow.getBounds();
