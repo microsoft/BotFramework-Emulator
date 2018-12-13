@@ -80,19 +80,10 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // ---------------------------------------------------------------------------
   // Builds a new app menu to reflect the updated recent bots list
   commandRegistry.registerCommand(Commands.UpdateFileMenu, async (): Promise<void> => {
-    // get previous app menu template
-    let menu = await AppMenuBuilder.getMenuTemplate();
-
-    // get a file menu template with recent bots added
+    AppMenuBuilder.refreshFileMenu();
     const state = store.getState();
     const recentBots = state.bot && state.bot.botFiles ? state.bot.botFiles : [];
-    const newFileMenu = await AppMenuBuilder.getFileMenu(recentBots);
-
-    // update the app menu to use the new file menu and build the template into a menu
-    menu = AppMenuBuilder.putFileMenu(newFileMenu, menu);
-    // update stored menu state
-    AppMenuBuilder.setMenuTemplate(menu);
-    Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
+    AppMenuBuilder.updateRecentBotsList(recentBots);
   });
 
   // ---------------------------------------------------------------------------
@@ -127,7 +118,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
     if (fullscreen) {
       Menu.setApplicationMenu(null);
     } else {
-      Menu.setApplicationMenu(Menu.buildFromTemplate(await AppMenuBuilder.getMenuTemplate()));
+      await AppMenuBuilder.initAppMenu();
     }
   });
 
