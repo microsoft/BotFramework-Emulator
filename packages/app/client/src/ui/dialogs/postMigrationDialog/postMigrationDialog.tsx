@@ -33,6 +33,7 @@
 
 import * as React from 'react';
 import { Dialog, DialogFooter, PrimaryButton } from '@bfemulator/ui-react';
+import * as styles from './postMigrationDialog.scss';
 
 export interface PostMigrationDialogProps {
   close: () => void;
@@ -47,8 +48,11 @@ export class PostMigrationDialog extends React.Component<PostMigrationDialogProp
     return (
       <Dialog cancel={ this.onClose } title="Migration complete!">
         <p>
-          { 'We’ve copied your bot endpoints from Emulator v3 and saved them as <strong>.bot files</strong>. ' +
-          'A <strong>.bot file</strong> stores metadata about different services your bot consumes and enables you ' +
+          { 'We’ve copied your bot endpoints from Emulator v3 and saved them as ' }
+          <strong className={ styles.boldText }>.bot files</strong> 
+          { '. A ' }
+          <strong className={ styles.boldText }>.bot file</strong>
+          { ' stores metadata about different services your bot consumes and enables you ' +
           'to edit these services directly from the Emulator v4. ' }
           <a href="https://aka.ms/about-bot-file">Learn more about bot configuration files.</a>
         </p>
