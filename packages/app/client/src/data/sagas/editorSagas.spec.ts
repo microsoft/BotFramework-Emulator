@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { call, put, select, takeEvery } from 'redux-saga/effects';
+import { call, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
 import {
     checkActiveDocForPendingChanges,
     editorSagas,
@@ -86,11 +86,17 @@ describe('The Editor Sagas', () => {
     
     it('should refresh the conversation menu', () => {
         const gen = refreshConversationMenu();
-        gen.next();
+        
+        const editorState = gen.next().value;
+        expect(editorState).toEqual(select(editorSelector));
+        const mockEditorState = { editor: {} };
+        gen.next(mockEditorState);
 
         const { UpdateConversationMenu } = SharedConstants.Commands.Electron;
         expect(mockRemoteCommandsCalled).toHaveLength(1);
         expect(mockRemoteCommandsCalled[0].commandName).toEqual(UpdateConversationMenu);
+        expect(mockRemoteCommandsCalled[0].args[0]).toBe(mockEditorState);
+        expect(gen.next().done).toBe(true);
     });
 
     it('should check the active doc for pending changes', () => {
@@ -190,7 +196,7 @@ describe('The Editor Sagas', () => {
         const refreshConversationMenuYield = gen.next().value;
 
         expect(refreshConversationMenuYield).toEqual(
-            takeEvery(
+            takeLatest(
                 [
                     EditorActions.close,
                     EditorActions.open,

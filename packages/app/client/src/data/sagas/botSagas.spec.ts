@@ -36,13 +36,16 @@ import { BotConfigWithPath } from '@bfemulator/sdk-shared';
 import {
   botSagas,
   browseForBot,
+  editorSelector,
   generateHashForActiveBot,
   refreshConversationMenu
   } from './botSagas';
 import {
   call,
   put,
-  takeEvery
+  select,
+  takeEvery,
+  takeLatest
   } from 'redux-saga/effects';
 import { generateBotHash } from '../botHelpers';
 import { SharedConstants } from '@bfemulator/app-shared';
@@ -110,7 +113,7 @@ describe('The botSagas', () => {
     const refreshConversationMenuYield = gen.next().value;
 
     expect(refreshConversationMenuYield).toEqual(
-      takeEvery(
+      takeLatest(
         [ 
           BotActions.setActive,
           BotActions.load,
@@ -126,11 +129,16 @@ describe('The botSagas', () => {
 
   it('should refresh the conversation menu', () => {
     const gen = refreshConversationMenu();
-    gen.next();
+    const editorState = gen.next().value;
+
+    expect(editorState).toEqual(select(editorSelector));
+    const mockEditorState = { editor: {} };
+    gen.next(mockEditorState);
     
     expect(mockRemoteCommandsCalled).toHaveLength(1);
     const { UpdateConversationMenu } = SharedConstants.Commands.Electron;
     expect(mockRemoteCommandsCalled[0].commandName).toEqual(UpdateConversationMenu);
+    expect(mockRemoteCommandsCalled[0].args[0]).toEqual(mockEditorState);
     expect(gen.next().done).toBe(true);
   });
 
