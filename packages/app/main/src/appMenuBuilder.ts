@@ -48,7 +48,7 @@ export class AppMenuBuilder {
     const menu = Electron.Menu.getApplicationMenu();
     if (menu) {
       const sendActivityMenu = (menu.getMenuItemById('send-activity') as any);
-      const { submenu = { items: [] } } = sendActivityMenu;
+      const { submenu = { items: [] } } = sendActivityMenu || {};
       return submenu.items;
     }
     return [];
@@ -58,7 +58,7 @@ export class AppMenuBuilder {
     const menu = Electron.Menu.getApplicationMenu();
     if (menu) {
       const recentBotsMenu = (menu.getMenuItemById('recent-bots') as any);
-      const { submenu = { items: [] } } = recentBotsMenu;
+      const { submenu = { items: [] } } = recentBotsMenu || {};
       return submenu.items;
     }
     return [];
