@@ -32,7 +32,7 @@
 //
 
 export * from './botCreationDialog/botCreationDialog';
-export * from './host/host';
+export * from './host/hostContainer';
 export * from './secretPromptDialog/secretPromptDialogContainer';
 export * from './tabManager/tabManagerContainer';
 export * from './service';
