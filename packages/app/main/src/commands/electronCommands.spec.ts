@@ -1,3 +1,36 @@
+//
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license.
+//
+// Microsoft Bot Framework: http://botframework.com
+//
+// Bot Framework Emulator Github:
+// https://github.com/Microsoft/BotFramwork-Emulator
+//
+// Copyright (c) Microsoft Corporation
+// All rights reserved.
+//
+// MIT License:
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+//
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED ""AS IS"", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
+
 import '../fetchProxy';
 import { SharedConstants } from '@bfemulator/app-shared';
 import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
@@ -13,7 +46,6 @@ jest.mock('fs-extra', () => ({
   statSync: () => ({ isFile: () => false }),
   pathExists: async (path: string = '') => !path.includes('error'),
   rename: async (...args: any[]) => renameArgs = args
-  // readFile: async () => JSON.stringify((mockConversation as any).transcript)
 }));
 
 jest.mock('electron', () => ({
@@ -80,6 +112,21 @@ jest.mock('../utils/ensureStoragePath', () => ({
   ensureStoragePath: () => ''
 }));
 
+let mockRefreshFileMenu;
+let mockUpdateRecentBotsList;
+let mockInitAppMenu;
+let mockSendActivityMenuItems;
+jest.mock('../appMenuBuilder', () => ({
+    get AppMenuBuilder() {
+      return class {
+        static sendActivityMenuItems = mockSendActivityMenuItems;
+        static get initAppMenu() { return mockInitAppMenu; }
+        static get refreshFileMenu() { return mockRefreshFileMenu; }
+        static get updateRecentBotsList() { return mockUpdateRecentBotsList; }
+      };
+    }
+}));
+
 const mockCommandRegistry = new CommandRegistryImpl();
 registerCommands(mockCommandRegistry);
 
@@ -120,34 +167,38 @@ describe('the electron commands', () => {
     const store = getStore();
     store.dispatch(load([mockBotInfo]));
 
-    const buildMenuFromTemplateSpy = jest.spyOn(Electron.Menu, 'buildFromTemplate');
-    const setApplicationMenuSpy = jest.spyOn(Electron.Menu, 'setApplicationMenu');
+    mockRefreshFileMenu = jest.fn(() => null);
+    mockUpdateRecentBotsList = jest.fn(() => null);
 
     await handler();
 
-    expect(buildMenuFromTemplateSpy).toHaveBeenCalled();
-    expect(setApplicationMenuSpy).toHaveBeenCalled();
+    expect(mockRefreshFileMenu).toHaveBeenCalled();
+    expect(mockUpdateRecentBotsList).toHaveBeenCalledWith([mockBotInfo]);
   });
 
   it('should update the conversation menu', async() => {
     const { handler } = mockCommandRegistry.getCommand(SharedConstants.Commands.Electron.UpdateConversationMenu);
-
-    const mockBotInfo = {
-      path: 'this/is/my.json',
-      displayName: 'AuthBot',
-      secret: 'secret'
+    const mockEditorState = {
+      activeEditor: 'primary',
+      editors: {
+        primary: {
+          activeDocumentId: 'someLiveChatDoc',
+          documents: {
+            someLiveChatDoc: { contentType: SharedConstants.ContentTypes.CONTENT_TYPE_LIVE_CHAT }
+          }
+        }
+      }
     };
-    const store = getStore();
-    store.dispatch(load([mockBotInfo]));
+    mockSendActivityMenuItems = [
+      { label: 'sendConversationUpdate', enabled: false },
+      { label: 'sendTyping', enabled: false },
+      { label: 'ping', enabled: false }
+    ];
 
-    const buildMenuFromTemplateSpy = jest.spyOn(Electron.Menu, 'buildFromTemplate');
-    const setApplicationMenuSpy = jest.spyOn(Electron.Menu, 'setApplicationMenu');
+    await handler(mockEditorState);
 
-    await handler();
-
-    expect(buildMenuFromTemplateSpy).toHaveBeenCalled();
-    expect(setApplicationMenuSpy).toHaveBeenCalled();
-
+    // should enable all send activity menu items
+    expect(mockSendActivityMenuItems.some(item => !item.enabled)).toBe(false);
   });
 
   it('should set full screen mode and set the application menu to null', async () => {
@@ -163,11 +214,11 @@ describe('the electron commands', () => {
   it('should remove full screen mode and set the application menu back to normal', async () => {
     const { handler } = mockCommandRegistry.getCommand(SharedConstants.Commands.Electron.SetFullscreen);
     const fullScreenSpy = jest.spyOn(mainWindow.browserWindow, 'setFullScreen');
-    const setApplicationMenuSpy = jest.spyOn(Electron.Menu, 'setApplicationMenu');
+    mockInitAppMenu = jest.fn(() => null);
 
     await handler(false);
     expect(fullScreenSpy).toHaveBeenCalledWith(false);
-    expect(setApplicationMenuSpy).toHaveBeenCalledWith(undefined);
+    expect(mockInitAppMenu).toHaveBeenCalled();
   });
 
   it('should set the title bar', async () => {
