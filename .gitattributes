@@ -9,3 +9,4 @@
 *.json text eol=lf
 *.html text eol=lf
 *.map text eol=lf
+.node-version eol=lf
