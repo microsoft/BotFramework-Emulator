@@ -35,7 +35,6 @@ import { BotInfo, SharedConstants } from '@bfemulator/app-shared';
 import * as Electron from 'electron';
 import { AppUpdater, UpdateStatus } from './appUpdater';
 import { emulator } from './emulator';
-
 import { mainWindow } from './main';
 import { ConversationService } from './services/conversationService';
 import { rememberTheme } from './settingsData/actions/windowStateActions';
@@ -45,16 +44,6 @@ import { getActiveBot } from './botHelpers';
 declare type MenuOpts = Electron.MenuItemConstructorOptions;
 
 export class AppMenuBuilder {
-  public static get conversationMenuItems(): Electron.MenuItem[] {
-    const menu = Electron.Menu.getApplicationMenu();
-    if (menu) {
-      const conversationMenu = (menu.getMenuItemById('conversation') as any);
-      const { submenu = { items: [] } } = conversationMenu;
-      return submenu.items;
-    }
-    return [];
-  }
-
   public static get sendActivityMenuItems(): Electron.MenuItem[] {
     const menu = Electron.Menu.getApplicationMenu();
     if (menu) {
