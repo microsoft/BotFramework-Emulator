@@ -31,35 +31,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { call, ForkEffect, put, takeEvery, takeLatest } from 'redux-saga/effects';
-import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
+import { select } from 'redux-saga/effects';
+import { RootState } from '../store';
 import { SharedConstants } from '@bfemulator/app-shared';
-import { BotActions, botHashGenerated, SetActiveBotAction } from '../action/botActions';
-import { generateBotHash } from '../botHelpers';
-import { refreshConversationMenu } from './sharedSagas';
+import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 
-/** Opens up native open file dialog to browse for a .bot file */
-export function* browseForBot(): IterableIterator<any> {
-  yield CommandServiceImpl.call(SharedConstants.Commands.Bot.OpenBrowse)
-    // dialog was closed
-    .catch(_err => null);
+export function editorSelector(state: RootState) {
+  return state.editor;
 }
 
-export function* generateHashForActiveBot(action: SetActiveBotAction): IterableIterator<any> {
-  const { bot } = action.payload;
-  const generatedHash = yield call(generateBotHash, bot);
-  yield put(botHashGenerated(generatedHash));
-}
-
-export function* botSagas(): IterableIterator<ForkEffect> {
-  yield takeEvery(BotActions.browse, browseForBot);
-  yield takeEvery(BotActions.setActive, generateHashForActiveBot);
-  yield takeLatest(
-    [
-      BotActions.setActive, 
-      BotActions.load, 
-      BotActions.close
-    ],
-    refreshConversationMenu
-  );
+export function* refreshConversationMenu(): IterableIterator<any> {
+  const stateData = yield select(editorSelector);
+  yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.UpdateConversationMenu, stateData);
 }
