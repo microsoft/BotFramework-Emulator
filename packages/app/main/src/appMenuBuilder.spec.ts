@@ -135,8 +135,10 @@ describe('AppMenuBuilder', () => {
     }
   };
   let mockGetMenuItemById;
+  let processPlatformBackup;
 
   beforeEach(() => {
+    processPlatformBackup = process.platform;
     mockAppendedBots = [];
     appendedFileMenuItems = [];
 
@@ -169,6 +171,10 @@ describe('AppMenuBuilder', () => {
       getMenuItemById: mockGetMenuItemById
     }));
     mockSetApplicationMenu = jest.fn(() => null);
+  });
+
+  afterEach(() => {
+    Object.defineProperty(process, 'platform', { value: processPlatformBackup });
   });
 
   it('should get the send activity menu items', () => {
@@ -332,5 +338,53 @@ describe('AppMenuBuilder', () => {
     expect(helpMenuTemplate).toHaveLength(13);
 
     expect(mockSetApplicationMenu).toHaveBeenCalledWith('I am a menu');
+  });
+
+  it('should initialize the app menu for Mac', async () => {
+    let appMenuTemplate;
+    mockBuildFromTemplate = jest.fn(template => {
+      // when trying to build from the template, pull the template out
+      // so that we can examine it and return some menu placeholder
+      appMenuTemplate = template;
+      return 'I am a menu';
+    });
+    const mockState = {
+      chat: {
+        chats: {
+          someDocId: {
+            conversationId: 'someConversationId'
+          }
+        }
+      },
+      editor: {
+        activeEditor: 'primary',
+        editors: {
+          primary: {
+            activeDocumentId: 'someDocId',
+            documents: {
+              someDocId: { contentType: SharedConstants.ContentTypes.CONTENT_TYPE_LIVE_CHAT }
+            }
+          }
+        }
+      }
+    };
+    mockRemoteCall = jest.fn(commandName => {
+      if (commandName = SharedConstants.Commands.Misc.GetStoreState) {
+        return Promise.resolve(mockState);
+      } else {
+        return Promise.resolve({});
+      }
+    });
+    Object.defineProperty(process, 'platform', { value: 'darwin' });
+    await AppMenuBuilder.initAppMenu();
+
+    // verify that each section of the menu is the expected length
+    expect(appMenuTemplate).toHaveLength(7); // app, file, edit, view, window, convo, help
+
+    const macAppMenuTemplate = appMenuTemplate[0].submenu;
+    expect(macAppMenuTemplate).toHaveLength(9);
+
+    const windowMenuTemplate = appMenuTemplate[4].submenu;
+    expect(windowMenuTemplate).toHaveLength(5);
   });
 });
