@@ -36,12 +36,7 @@ import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { SharedConstants } from '@bfemulator/app-shared';
 import { BotActions, botHashGenerated, SetActiveBotAction } from '../action/botActions';
 import { generateBotHash } from '../botHelpers';
-import { RootState } from '../store';
 import { refreshConversationMenu } from './sharedSagas';
-
-export function editorSelector(state: RootState) {
-  return state.editor;
-}
 
 /** Opens up native open file dialog to browse for a .bot file */
 export function* browseForBot(): IterableIterator<any> {
