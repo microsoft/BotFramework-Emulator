@@ -146,7 +146,7 @@ export class AppMenuBuilder {
   /** Creates a file menu item for each bot that will set the bot as active when clicked */
   private static getRecentBotsList(bots: BotInfo[] = []): Electron.MenuItem[] {
     // only list 9 most-recent bots
-    return bots.filter(bot => !!bot).slice(0, 9).map(bot => new Electron.MenuItem({
+    return bots.filter(Boolean).slice(0, 9).map(bot => new Electron.MenuItem({
       label: bot.displayName,
       click: () => {
         mainWindow.commandService.remoteCall(SharedConstants.Commands.Bot.Switch, bot.path)

@@ -32,15 +32,10 @@
 //
 
 import { call, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
-import {
-    checkActiveDocForPendingChanges,
-    editorSagas,
-    editorSelector,
-    promptUserToReloadDocument,
-    refreshConversationMenu
-    } from './editorSagas';
+import { checkActiveDocForPendingChanges, editorSagas, promptUserToReloadDocument } from './editorSagas';
 import { EditorActions, removeDocPendingChange } from '../action/editorActions';
 import { SharedConstants } from '@bfemulator/app-shared';
+import { refreshConversationMenu, editorSelector } from './sharedSagas';
 
 jest.mock('../store', () => ({
     get store() {
@@ -82,21 +77,6 @@ describe('The Editor Sagas', () => {
     beforeEach(() => {
         mockRemoteCommandsCalled = [];
         mockLocalCommandsCalled = [];
-    });
-    
-    it('should refresh the conversation menu', () => {
-        const gen = refreshConversationMenu();
-        
-        const editorState = gen.next().value;
-        expect(editorState).toEqual(select(editorSelector));
-        const mockEditorState = { editor: {} };
-        gen.next(mockEditorState);
-
-        const { UpdateConversationMenu } = SharedConstants.Commands.Electron;
-        expect(mockRemoteCommandsCalled).toHaveLength(1);
-        expect(mockRemoteCommandsCalled[0].commandName).toEqual(UpdateConversationMenu);
-        expect(mockRemoteCommandsCalled[0].args[0]).toBe(mockEditorState);
-        expect(gen.next().done).toBe(true);
     });
 
     it('should check the active doc for pending changes', () => {
