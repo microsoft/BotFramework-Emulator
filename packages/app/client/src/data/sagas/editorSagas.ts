@@ -35,7 +35,7 @@ import { call, ForkEffect, put, select, takeEvery, takeLatest } from 'redux-saga
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { EditorActions, removeDocPendingChange } from '../action/editorActions';
 import { isChatFile, isTranscriptFile, SharedConstants } from '@bfemulator/app-shared';
-import { RootState } from '../store';
+import { editorSelector, refreshConversationMenu } from './sharedSagas';
 
 export function* promptUserToReloadDocument(filename: string): IterableIterator<any> {
   const { Commands } = SharedConstants;
@@ -61,10 +61,6 @@ export function* promptUserToReloadDocument(filename: string): IterableIterator<
   }
 }
 
-export function editorSelector(state: RootState) {
-  return state.editor;
-}
-
 export function* checkActiveDocForPendingChanges(): IterableIterator<any> {
   const stateData = yield select(editorSelector);
 
@@ -75,11 +71,6 @@ export function* checkActiveDocForPendingChanges(): IterableIterator<any> {
     yield call(promptUserToReloadDocument, activeDocId);
   }
   return;
-}
-
-export function* refreshConversationMenu(): IterableIterator<any> {
-  const stateData = yield select(editorSelector);
-  yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.UpdateConversationMenu, stateData);
 }
 
 export function* editorSagas(): IterableIterator<ForkEffect> {

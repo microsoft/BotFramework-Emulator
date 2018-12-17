@@ -31,40 +31,44 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { call, ForkEffect, put, takeEvery, takeLatest } from 'redux-saga/effects';
-import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
-import { SharedConstants } from '@bfemulator/app-shared';
-import { BotActions, botHashGenerated, SetActiveBotAction } from '../action/botActions';
-import { generateBotHash } from '../botHelpers';
+import { editorSelector, refreshConversationMenu } from './sharedSagas';
 import { RootState } from '../store';
-import { refreshConversationMenu } from './sharedSagas';
+import { select } from 'redux-saga/effects';
+import { SharedConstants } from '@bfemulator/app-shared';
 
-export function editorSelector(state: RootState) {
-  return state.editor;
-}
+let mockRemoteCommandsCalled = [];
+jest.mock('../../platform/commands/commandServiceImpl', () => ({
+  CommandServiceImpl: {
+    remoteCall: async (commandName: string, ...args: any[]) => {
+      mockRemoteCommandsCalled.push({ commandName, args: args });
+    }
+  }
+}));
 
-/** Opens up native open file dialog to browse for a .bot file */
-export function* browseForBot(): IterableIterator<any> {
-  yield CommandServiceImpl.call(SharedConstants.Commands.Bot.OpenBrowse)
-    // dialog was closed
-    .catch(_err => null);
-}
+describe('The sharedSagas', () => {
+  const editorState = { activeEditor: 'primary' };
 
-export function* generateHashForActiveBot(action: SetActiveBotAction): IterableIterator<any> {
-  const { bot } = action.payload;
-  const generatedHash = yield call(generateBotHash, bot);
-  yield put(botHashGenerated(generatedHash));
-}
+  beforeEach(() => { mockRemoteCommandsCalled = []; });
 
-export function* botSagas(): IterableIterator<ForkEffect> {
-  yield takeEvery(BotActions.browse, browseForBot);
-  yield takeEvery(BotActions.setActive, generateHashForActiveBot);
-  yield takeLatest(
-    [
-      BotActions.setActive, 
-      BotActions.load, 
-      BotActions.close
-    ],
-    refreshConversationMenu
-  );
-}
+  it('should select the editor state from the store', () => {
+    const state: RootState = { editor: editorState };
+
+    expect(editorSelector(state)).toEqual(editorState);
+  });
+
+  it('should refresh the conversation menu', () => {
+    const gen = refreshConversationMenu();
+
+    const editorSelection = gen.next().value;
+    expect(editorSelection).toEqual(select(editorSelector));
+
+    gen.next(editorState);
+    expect(mockRemoteCommandsCalled).toHaveLength(1);
+    const refreshConversationCall = mockRemoteCommandsCalled[0];
+    expect(refreshConversationCall.commandName).toBe(SharedConstants.Commands.Electron.UpdateConversationMenu);
+    expect(refreshConversationCall.args).toHaveLength(1);
+    expect(refreshConversationCall.args[0]).toEqual(editorState);
+
+    expect(gen.next().done).toBe(true);
+  });
+});
