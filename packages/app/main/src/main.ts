@@ -330,7 +330,12 @@ const createMainWindow = async () => {
   mainWindow.browserWindow.setTitle(app.getName());
   windowManager = new WindowManager();
 
-  AppMenuBuilder.initAppMenu().catch();
+  AppMenuBuilder.initAppMenu().catch(err => {
+    Electron.dialog.showErrorBox(
+      'Bot Framework Emulator',
+      `An error occurred while initializing the application menu: ${err}`
+    );
+  });
 
   const rememberCurrentBounds = () => {
     const currentBounds = mainWindow.browserWindow.getBounds();

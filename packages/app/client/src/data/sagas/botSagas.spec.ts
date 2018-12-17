@@ -37,8 +37,7 @@ import {
   botSagas,
   browseForBot,
   editorSelector,
-  generateHashForActiveBot,
-  refreshConversationMenu
+  generateHashForActiveBot
   } from './botSagas';
 import {
   call,
@@ -49,6 +48,7 @@ import {
   } from 'redux-saga/effects';
 import { generateBotHash } from '../botHelpers';
 import { SharedConstants } from '@bfemulator/app-shared';
+import { refreshConversationMenu } from './sharedSagas';
 
 jest.mock('../../ui/dialogs', () => ({}));
 
@@ -125,21 +125,6 @@ describe('The botSagas', () => {
 
     expect(gen.next().done).toBe(true);
 
-  });
-
-  it('should refresh the conversation menu', () => {
-    const gen = refreshConversationMenu();
-    const editorState = gen.next().value;
-
-    expect(editorState).toEqual(select(editorSelector));
-    const mockEditorState = { editor: {} };
-    gen.next(mockEditorState);
-    
-    expect(mockRemoteCommandsCalled).toHaveLength(1);
-    const { UpdateConversationMenu } = SharedConstants.Commands.Electron;
-    expect(mockRemoteCommandsCalled[0].commandName).toEqual(UpdateConversationMenu);
-    expect(mockRemoteCommandsCalled[0].args[0]).toEqual(mockEditorState);
-    expect(gen.next().done).toBe(true);
   });
 
   it('should generate a hash for an active bot', () => {
