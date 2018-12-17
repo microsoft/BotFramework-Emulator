@@ -36,7 +36,7 @@ import * as React from 'react';
 import * as Constants from '../../constants';
 import { Editor } from '../../data/reducer/editor';
 import { StoreVisualizer } from '../debug/storeVisualizer';
-import { DialogHost, TabManagerContainer } from '../dialogs';
+import { DialogHostContainer, TabManagerContainer } from '../dialogs';
 import { ExplorerBar } from './explorer';
 import * as styles from './main.scss';
 import { MDI } from './mdi';
@@ -123,7 +123,7 @@ export class Main extends React.Component<MainProps, MainState> {
           <TabManagerContainer disabled={ false }/>
         </div>
         { !this.props.presentationModeEnabled && <StatusBar/> }
-        <DialogHost/>
+        <DialogHostContainer/>
         <StoreVisualizer enabled={ false }/>
       </div>
     );

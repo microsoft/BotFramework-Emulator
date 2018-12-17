@@ -34,23 +34,26 @@
 import * as styles from './host.scss';
 import * as React from 'react';
 import { EventHandler, SyntheticEvent } from 'react';
-import { connect } from 'react-redux';
 import { DialogService } from '../service';
 
-interface DialogHostComponentProps {
+export interface DialogHostProps {
   saveHostRef?: (elem: HTMLElement) => void;
   showing?: boolean;
 }
 
-class DialogHostComponent extends React.Component<DialogHostComponentProps, {}> {
+export class DialogHost extends React.Component<DialogHostProps, {}> {
   private _hostRef: HTMLElement;
 
-  constructor(props: DialogHostComponentProps) {
+  constructor(props: DialogHostProps) {
     super(props);
   }
 
   public componentDidMount() {
     this._hostRef.addEventListener('dialogRendered', this.initFocusTrap);
+  }
+
+  public componentWillUnmount() {
+    this._hostRef.removeEventListener('dialogRendered', this.initFocusTrap);
   }
 
   public render() {
@@ -106,7 +109,7 @@ class DialogHostComponent extends React.Component<DialogHostComponentProps, {}> 
     }
   }
 
-  // Reached begining of focusable items inside the modal host; re-focus the last item
+  // Reached beginning of focusable items inside the modal host; re-focus the last item
   private onFocusStartingSentinel = (e: SyntheticEvent<any>) => {
     e.preventDefault();
 
@@ -152,9 +155,3 @@ class DialogHostComponent extends React.Component<DialogHostComponentProps, {}> 
     }
   }
 }
-
-function mapStateToProps(state: any): any {
-  return ({ showing: state.dialog.showing });
-}
-
-export const DialogHost = connect(mapStateToProps)(DialogHostComponent);
