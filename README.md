@@ -7,7 +7,7 @@ You can use the Bot Framework Emulator to test bots running either locally on yo
 
 ## Download
 
-* Download the Bot Framework V4 Emulator for your platform from the [GitHub releases](https://github.com/Microsoft/BotFramework-Emulator/releases/tag/v4.1.0) page. 
+* Download the Bot Framework V4 Emulator for your platform from the [GitHub releases](https://github.com/Microsoft/BotFramework-Emulator/releases/latest) page.
 
 ### Supported platforms
 
@@ -33,7 +33,7 @@ Checkout the [Wiki](https://github.com/Microsoft/BotFramework-Emulator/wiki) for
 
 ## Nightly builds
 
-Nightly builds are generated using the latest code. Therefore, they may not be stable, and most likely lack up to date documentation. These builds are better suited for more experienced users, although everyone is welcome to use them and provide feedback. Nightly builds of the V4 Emulator are available [here](https://github.com/Microsoft/botframework-emulator-nightlies/releases). 
+Nightly builds are generated using the latest code. Therefore, they may not be stable, and most likely lack up to date documentation. These builds are better suited for more experienced users, although everyone is welcome to use them and provide feedback. Nightly builds of the V4 Emulator are available [here](https://github.com/Microsoft/botframework-emulator-nightlies/releases).
 
 ## Contributing
 
