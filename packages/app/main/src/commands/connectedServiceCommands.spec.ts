@@ -22,6 +22,15 @@ jest.mock('../services/qnaApiService', () => ({
   }
 }));
 
+jest.mock('../services/storageAccountApiService', () => ({
+  StorageAccountApiService: {
+    getBlobStorageServices: function* () {
+      yield { label: 'Retrieving Blob Containers', progress: 50 };
+      return { services: [{ type: mockServiceTypes.BlobStorage }] };
+    }
+  }
+}));
+
 jest.mock('../main', () => ({
   mainWindow: {
     commandService: {
@@ -53,15 +62,23 @@ describe('The connected service commands', () => {
     expect(result.services[0].type).toBe(mockServiceTypes.QnA);
   });
 
+  it('should retrieve Blob Containers when the ServiceTypes.BlobStorage is specified', async () => {
+    const { handler } = mockCommandRegistry
+      .getCommand(SharedConstants.Commands.ConnectedService.GetConnectedServicesByType);
+
+    const result = await handler('', mockServiceTypes.BlobStorage);
+    expect(result.services[0].type).toBe(mockServiceTypes.BlobStorage);
+  });
+
   it('should throw if an unexpected service type is specified', async () => {
     const { handler } = mockCommandRegistry
       .getCommand(SharedConstants.Commands.ConnectedService.GetConnectedServicesByType);
     let error;
     try {
-      await handler('', mockServiceTypes.BlobStorage);
+      await handler('', mockServiceTypes.File);
     } catch (e) {
       error = e;
     }
-    expect(error.message).toBe(`The ServiceTypes ${mockServiceTypes.BlobStorage} is not a know service type`);
+    expect(error.message).toBe(`The ServiceTypes ${ mockServiceTypes.File } is not a know service type`);
   });
 });

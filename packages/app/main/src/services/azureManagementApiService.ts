@@ -116,8 +116,8 @@ export class AzureManagementApiService {
     if (!subscriptionsResponse.ok) {
       return null;
     }
-    const subscriptionResponseJson: { value: Subscription[] } = await subscriptionsResponse.json();
-    return subscriptionResponseJson.value;
+    const { value = [] }: { value: Subscription[] } = await subscriptionsResponse.json();
+    return value.length ? value : null;
   }
 
   /**
@@ -180,7 +180,7 @@ export class AzureManagementApiService {
    */
   public static async getKeysForAccounts
   (armToken: string, accounts: AzureResource[], apiVersion: string): Promise<string[]> {
-    const keys: string[] = [];
+    const keys: any[] = [];
     const req = AzureManagementApiService.getRequestInit(armToken);
     const url = `${ baseUrl }{id}/listKeys?api-version=${ apiVersion }`;
     req.method = 'POST'; // Not sure why this is required by the endpoint...
@@ -191,7 +191,10 @@ export class AzureManagementApiService {
       const keyResponse: Response = keyResponses[i];
       if (keyResponse.ok) {
         const keyResponseJson = await keyResponse.json();
-        keys[i] = (keyResponseJson.keys || keyResponseJson.key1); // maintain index position - do not "push"
+        const key = (keyResponseJson.keys || keyResponseJson.key1);
+        if (key && '' + key) { // Excludes empty strings and empty arrays
+          keys[i] = key; // maintain index position - do not "push"
+        }
       }
     }
     return keys.length ? keys : null;
