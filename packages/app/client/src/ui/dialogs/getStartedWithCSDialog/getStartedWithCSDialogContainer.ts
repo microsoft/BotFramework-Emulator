@@ -44,7 +44,7 @@ const mapDispatchToProps = (_dispatch: () => void): GetStartedWithCSDialogProps 
   }
 });
 
-const mapStateToProps = (state: RootState, ...ownProps) => {
+const mapStateToProps = (state: RootState, ownProps) => {
   const { access_token: token = '' } = state.azureAuth;
   const [, payload] = token.split('.');
   const pJson = JSON.parse(atob(payload));
