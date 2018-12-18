@@ -2,8 +2,7 @@ import '../fetchProxy';
 import { QnaApiService } from './qnaApiService';
 
 const mockArmToken = 'bm90aGluZw.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds';
-const mockReq: RequestInit = { headers: { Authorization: `Bearer ${ mockArmToken }` } };
-const mockResponses = [
+const mockResponsesTemplate = [
   {
     value: [
       {
@@ -82,8 +81,8 @@ const mockResponses = [
       }
     ]
   },
-  { key1: 5555 },
   { key1: 4444 },
+  { key1: 5555 },
   {
     knowledgebases: [
       {
@@ -118,7 +117,8 @@ const mockResponses = [
   }
 ];
 
-let mockArgsPassedToFetch;
+let mockArgsPassedToFetch = [];
+let mockResponses;
 jest.mock('node-fetch', () => {
   const fetch = (url, headers) => {
     mockArgsPassedToFetch.push({ url, headers });
@@ -135,24 +135,12 @@ jest.mock('node-fetch', () => {
   return fetch;
 });
 
-describe('The QnaApiService', () => {
+describe('The QnaApiService happy path', () => {
   let result;
+  beforeAll(() => mockResponses = JSON.parse(JSON.stringify(mockResponsesTemplate)));
   beforeEach(async () => {
-    mockArgsPassedToFetch = [];
-    let it = QnaApiService.getKnowledgeBases(mockArmToken);
-    result = undefined;
-    while (true) {
-      const next = it.next(result);
-      if (next.done) {
-        result = next.value;
-        break;
-      }
-      try {
-        result = await next.value;
-      } catch (e) {
-        break;
-      }
-    }
+    mockArgsPassedToFetch.length = 0;
+    result = await getResult();
   });
 
   it('should retrieve the QnA Kbs when given an arm token', async () => {
@@ -233,3 +221,43 @@ describe('The QnaApiService', () => {
     });
   });
 });
+
+describe('The QnAMakerApi sad path', () => {
+  beforeEach(() => mockResponses = JSON.parse(JSON.stringify(mockResponsesTemplate)));
+
+  it('should return an empty payload with an error if no subscriptions are found', async () => {
+    mockResponses = [{ value: [] }, { value: [] }];
+    const result = await getResult();
+    expect(result).toEqual({ services: [], code: 1 });
+  });
+
+  it('should return an empty payload with an error if no accounts are found', async () => {
+    mockResponses[1] = mockResponses[2] = { value: [] };
+    const result = await getResult();
+    expect(result).toEqual({ services: [], code: 2 });
+  });
+
+  it('should return an empty payload with an error if no keys are found', async () => {
+    mockResponses[3] = mockResponses[4] = { value: [] };
+    const result = await getResult();
+    expect(result).toEqual({ services: [], code: 2 });
+  });
+});
+
+async function getResult() {
+  let it = QnaApiService.getKnowledgeBases(mockArmToken);
+  let result = undefined;
+  while (true) {
+    const next = it.next(result);
+    if (next.done) {
+      result = next.value;
+      break;
+    }
+    try {
+      result = await next.value;
+    } catch (e) {
+      break;
+    }
+  }
+  return result;
+}
