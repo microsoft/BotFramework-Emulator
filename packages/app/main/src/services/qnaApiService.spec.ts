@@ -1,6 +1,8 @@
 import '../fetchProxy';
+import { QnaApiService } from './qnaApiService';
+
 const mockArmToken = 'bm90aGluZw.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds';
-const mockReq: RequestInit = { headers: { Authorization: `Bearer ${mockArmToken}` } };
+const mockReq: RequestInit = { headers: { Authorization: `Bearer ${ mockArmToken }` } };
 const mockResponses = [
   {
     value: [
@@ -133,8 +135,6 @@ jest.mock('node-fetch', () => {
   return fetch;
 });
 
-import { QnaApiService } from './qnaApiService';
-
 describe('The QnaApiService', () => {
   let result;
   beforeEach(async () => {
@@ -154,42 +154,40 @@ describe('The QnaApiService', () => {
       }
     }
   });
+
   it('should retrieve the QnA Kbs when given an arm token', async () => {
     expect(result.services.length).toBe(2);
     expect(mockArgsPassedToFetch.length).toBe(7);
     expect(mockArgsPassedToFetch[0]).toEqual({
-      'url': 'https://management.azure.com/subscriptions?api-version=2018-07-01',
       'headers': {
         'headers': {
-          'Authorization': 'Bearer bm90aGluZw.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds',
-          'Accept': 'application/json, text/plain, */*'
-        },
-        'method': 'POST'
-      }
+          'Accept': 'application/json, text/plain, */*',
+          'Authorization': 'Bearer bm90aGluZw.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds'
+        }
+      },
+      'url': 'https://management.azure.com/subscriptions?api-version=2018-07-01'
     });
 
     expect(mockArgsPassedToFetch[1]).toEqual({
-      'url': 'https://management.azure.com//subscriptions/1234/' +
-        'providers/Microsoft.CognitiveServices/accounts?api-version=2017-04-18',
       'headers': {
         'headers': {
-          'Authorization': 'Bearer bm90aGluZw.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds',
-          'Accept': 'application/json, text/plain, */*'
-        },
-        'method': 'POST'
-      }
+          'Accept': 'application/json, text/plain, */*',
+          'Authorization': 'Bearer bm90aGluZw.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds'
+        }
+      },
+      'url': 'https://management.azure.com//subscriptions/1234/providers' +
+        '/Microsoft.CognitiveServices/accounts?api-version=2017-04-18'
     });
 
     expect(mockArgsPassedToFetch[2]).toEqual({
-      'url': 'https://management.azure.com//subscriptions/1234/providers/' +
-        'Microsoft.CognitiveServices/accounts?api-version=2017-04-18',
       'headers': {
         'headers': {
-          'Authorization': 'Bearer bm90aGluZw.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds',
-          'Accept': 'application/json, text/plain, */*'
-        },
-        'method': 'POST'
-      }
+          'Accept': 'application/json, text/plain, */*',
+          'Authorization': 'Bearer bm90aGluZw.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds'
+        }
+      },
+      'url': 'https://management.azure.com//subscriptions/1234/providers/Microsoft.CognitiveServices/accounts' +
+        '?api-version=2017-04-18'
     });
 
     expect(mockArgsPassedToFetch[3]).toEqual({
