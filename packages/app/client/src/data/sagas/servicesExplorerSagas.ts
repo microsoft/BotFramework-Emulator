@@ -72,8 +72,9 @@ const getSortSelection = (state: RootState): { [paneldId: string]: SortCriteria 
 
 function* launchConnectedServicePicker(action: ConnectedServiceAction<ConnectedServicePickerPayload>)
   : IterableIterator<any> {
-  // To retrieve the luis models, we must have the authoring key.
-  // To get the authoring key, we need the arm token
+  // To retrieve azure services, luis models and KBs,
+  // we must have the authoring key.
+  // To get the authoring key, we need the arm token.
   let armTokenData: ArmTokenData & number = yield select(getArmTokenFromState);
   if (!armTokenData || !armTokenData.access_token) {
     const { promptDialog, loginSuccessDialog, loginFailedDialog } = action.payload.azureAuthWorkflowComponents;
@@ -86,6 +87,7 @@ function* launchConnectedServicePicker(action: ConnectedServiceAction<ConnectedS
       ));
   }
 
+  // 2 means the user has chosen to manually enter the connected service
   if (armTokenData === 2) {
     yield* launchConnectedServiceEditor(action);
     return;
@@ -165,7 +167,7 @@ function* retrieveServicesByServiceType(serviceType: ServiceTypes): IterableIter
   let payload: ServicesPayload;
   try {
     payload = yield CommandServiceImpl.remoteCall(GetConnectedServicesByType, armTokenData.access_token, serviceType);
-  } catch {
+  } catch (e) {
     payload = { services: [], code: ServiceCodes.Error };
   }
   return payload;
@@ -245,10 +247,7 @@ function* openAddConnectedServiceContextMenu(action: ConnectedServiceAction<Conn
   const response = yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.DisplayContextMenu, menuItems);
   const { id: serviceType } = response;
   action.payload.serviceType = serviceType;
-  if (serviceType === ServiceTypes.Generic ||
-    serviceType === ServiceTypes.BlobStorage ||
-    serviceType === ServiceTypes.CosmosDB ||
-    serviceType === ServiceTypes.AppInsights) {
+  if (serviceType === ServiceTypes.Generic) {
     yield* launchConnectedServiceEditor(action);
   } else {
     yield* launchConnectedServicePicker(action);

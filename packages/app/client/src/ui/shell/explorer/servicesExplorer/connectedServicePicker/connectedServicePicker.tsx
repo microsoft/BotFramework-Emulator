@@ -34,7 +34,7 @@
 import { Checkbox, DefaultButton, Dialog, DialogFooter, PrimaryButton } from '@bfemulator/ui-react';
 import { IConnectedService, ServiceTypes } from 'botframework-config/lib/schema';
 import * as React from 'react';
-import { ChangeEventHandler, Component, ReactNode } from 'react';
+import { ChangeEvent, ChangeEventHandler, Component, ReactNode } from 'react';
 
 import * as styles from './connectedServicePicker.scss';
 
@@ -112,17 +112,18 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
   private get serviceListElements(): ReactNode[] {
     const { state, onChange } = this;
     const { availableServices } = this.props;
-    return availableServices.map(service => {
+    return availableServices.map((service, index) => {
       const { id, name: label } = service;
       const checkboxProps = {
         label,
         checked: !!state[id],
         id: `service_${ id }`,
-        onChange: onChange.bind(this, service),
-        disabled: state[id] === connected
+        onChange,
+        disabled: state[id] === connected,
+        'data-index': index
       };
       return (
-        <li key={ id }>
+        <li key={ index }>
           <Checkbox { ...checkboxProps } className={ styles.checkboxOverride }/>
           { ('version' in service) ? <span>v{ (service as any).version }</span> : null }
         </li>
@@ -136,9 +137,10 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
     return Object.keys(selectedModels).some(key => !!state[key] && state[key] !== connected);
   }
 
-  private onChange(service: IConnectedService) {
+  private onChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { checkAllChecked: _discarded, ...newState } = this.state;
-
+    const { index } = event.target.dataset;
+    const service = this.props.availableServices[index];
     newState[service.id] = !this.state[service.id] ? service : false;
     newState.checkAllChecked = Object.keys(newState).every(key => !!newState[key]);
     this.setState(newState);

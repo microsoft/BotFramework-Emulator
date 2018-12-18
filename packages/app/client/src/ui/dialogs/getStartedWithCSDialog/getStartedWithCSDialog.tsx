@@ -171,7 +171,7 @@ export class GetStartedWithCSDialog extends Component<GetStartedWithCSDialogProp
           { 'QnA Maker is a service that creates a question-and-answer knowledge base from FAQs and product manuals.' }
         </p>
         <p>
-          { 'You have not signed up for a QnA Maker account under ${this.props.authenticatedUser}. ' }
+          { `You have not signed up for a QnA Maker account under ${this.props.authenticatedUser}. ` }
           <a href="javascript:void(0)">Get started with QnA Maker</a>
         </p>
         <p>
