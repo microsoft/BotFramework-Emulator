@@ -33,7 +33,7 @@
 
 import * as HttpStatus from 'http-status-codes';
 
-import { authentication as authenticationEndpoint, usGovernmentAuthentication, speech as speechEndpoint, authentication } from '../authEndpoints';
+import { usGovernmentAuthentication, speech as speechEndpoint, authentication } from '../authEndpoints';
 import { URL, URLSearchParams } from 'url';
 import BotEndpointOptions from '../types/botEndpointOptions';
 import SpeechTokenInfo from '../types/speechToken';

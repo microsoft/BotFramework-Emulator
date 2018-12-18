@@ -1,6 +1,7 @@
 import { CommandRegistry } from '@bfemulator/sdk-shared';
 import { IConnectedService, ServiceTypes } from 'botframework-config/lib/schema';
 import { SharedConstants } from '@bfemulator/app-shared';
+import { StorageAccountApiService } from '../services/storageAccountApiService';
 import { LuisApi } from '../services/luisApiService';
 import { QnaApiService } from '../services/qnaApiService';
 import { mainWindow } from '../main';
@@ -20,6 +21,10 @@ export function registerCommands(commandRegistry: CommandRegistry) {
 
         case ServiceTypes.QnA:
           it = QnaApiService.getKnowledgeBases(armToken);
+          break;
+
+        case ServiceTypes.BlobStorage:
+          it = StorageAccountApiService.getBlobStorageServices(armToken);
           break;
 
         default:
