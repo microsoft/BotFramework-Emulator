@@ -161,7 +161,7 @@ AppUpdater.on('download-progress', async (info: ProgressInfo) => {
   }
 });
 
-AppUpdater.on('error', async (err: Error, message: string) => {
+AppUpdater.on('error', async (err: Error, message: string = '') => {
   // TODO - localization
   AppMenuBuilder.refreshAppUpdateMenu();
   // TODO - Send to debug.txt / error dump file

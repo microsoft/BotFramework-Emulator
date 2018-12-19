@@ -183,7 +183,7 @@ export class GetStartedWithCSDialog extends Component<GetStartedWithCSDialogProp
         </p>
         <p>
           { `You have not signed up for a QnA Maker account under ${ this.props.authenticatedUser }. ` }
-          <a href="javascript:void(0)">Get started with QnA Maker</a>
+          <a href="https://aka.ms/bot-framework-emulator-qna-docs-home">Get started with QnA Maker</a>
         </p>
         <p>
           { ' Alternatively, you can ' }

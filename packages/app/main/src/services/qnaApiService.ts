@@ -43,7 +43,8 @@ export class QnaApiService {
 
     // 3. Retrieve the keys for each account
     yield { label: 'Retrieving keys from Azure…', progress: 65 };
-    const keys: string[] = yield AzureManagementApiService.getKeysForAccounts(armToken, accounts, '2017-04-18');
+    const keys: string[] = yield AzureManagementApiService
+      .getKeysForAccounts(armToken, accounts, '2017-04-18', 'key1');
     if (!keys) {
       payload.code = ServiceCodes.Error;
       return payload;
