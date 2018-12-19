@@ -304,6 +304,7 @@ describe('AppMenuBuilder', () => {
         return Promise.resolve({});
       }
     });
+    Object.defineProperty(process, 'platform', { value: 'win32' });
     await AppMenuBuilder.initAppMenu();
 
     // verify that each section of the menu is the expected length
