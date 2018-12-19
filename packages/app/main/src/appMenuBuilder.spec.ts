@@ -163,7 +163,7 @@ describe('AppMenuBuilder', () => {
           return mockFileMenu;
 
         default:
-          return {};
+          return;
       }
     });
     mockBuildFromTemplate = jest.fn(() => null);
@@ -307,9 +307,9 @@ describe('AppMenuBuilder', () => {
     await AppMenuBuilder.initAppMenu();
 
     // verify that each section of the menu is the expected length
-    expect(appMenuTemplate).toHaveLength(7); // file, edit, view, convo, help
+    expect(appMenuTemplate).toHaveLength(5); // file, edit, view, convo, help
 
-    const fileMenuTemplate = appMenuTemplate[1].submenu;
+    const fileMenuTemplate = appMenuTemplate[0].submenu;
     expect(fileMenuTemplate).toHaveLength(14);
 
     // should show the currently signed in user
@@ -323,18 +323,18 @@ describe('AppMenuBuilder', () => {
     expect(themeMenu.submenu[2].label).toBe('midnight');
     expect(themeMenu.submenu[2].checked).toBe(true);
     
-    const editMenuTemplate = appMenuTemplate[2].submenu;
+    const editMenuTemplate = appMenuTemplate[1].submenu;
     expect(editMenuTemplate).toHaveLength(7);
     
-    const viewMenuTemplate = appMenuTemplate[3].submenu;
+    const viewMenuTemplate = appMenuTemplate[2].submenu;
     expect(viewMenuTemplate).toHaveLength(5);
     
-    const convoMenuTemplate = appMenuTemplate[5].submenu;
+    const convoMenuTemplate = appMenuTemplate[3].submenu;
     expect(convoMenuTemplate).toHaveLength(1);
     const sendActivityMenu = convoMenuTemplate[0].submenu;
     expect(sendActivityMenu).toHaveLength(7);
     
-    const helpMenuTemplate = appMenuTemplate[6].submenu;
+    const helpMenuTemplate = appMenuTemplate[4].submenu;
     expect(helpMenuTemplate).toHaveLength(13);
 
     expect(mockSetApplicationMenu).toHaveBeenCalledWith('I am a menu');
