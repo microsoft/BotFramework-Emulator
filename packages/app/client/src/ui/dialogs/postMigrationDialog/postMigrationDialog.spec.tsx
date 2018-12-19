@@ -38,8 +38,8 @@ import { navBar } from '../../../data/reducer/navBar';
 import { mount } from 'enzyme';
 import { PostMigrationDialogContainer } from './postMigrationDialogContainer';
 import { PostMigrationDialog } from './postMigrationDialog';
-
 jest.mock('../../dialogs', () => ({}));
+jest.mock('./postMigrationDialog.scss', () => ({}));
 
 describe('The PostMigrationDialogContainer component', () => {
     let wrapper;

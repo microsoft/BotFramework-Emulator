@@ -179,14 +179,14 @@ describe('The ConnectedServiceEditor component should render the correct content
   it('ServiceTypes.Luis', () => {
     const instance = node.instance();
     expect(instance.learnMoreLink).toBe('http://aka.ms/bot-framework-emulator-LUIS-docs-home');
-    expect(instance.editableFields).toEqual(['name', 'appId', 'authoringKey', 'version', 'subscriptionKey']);
+    expect(instance.editableFields).toEqual(['name', 'appId', 'authoringKey', 'version', 'region', 'subscriptionKey']);
     expect(instance.headerContent).toEqual(instance.luisAndDispatchHeader);
   });
 
   it('ServiceTypes.Dispatch', () => {
     const instance = node.instance();
     expect(instance.learnMoreLink).toBe('https://aka.ms/bot-framework-emulator-create-dispatch');
-    expect(instance.editableFields).toEqual(['name', 'appId', 'authoringKey', 'version', 'subscriptionKey']);
+    expect(instance.editableFields).toEqual(['name', 'appId', 'authoringKey', 'version', 'region', 'subscriptionKey']);
     expect(instance.headerContent).toEqual(instance.luisAndDispatchHeader);
   });
 
