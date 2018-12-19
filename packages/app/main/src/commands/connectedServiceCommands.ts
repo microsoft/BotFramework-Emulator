@@ -1,6 +1,7 @@
 import { CommandRegistry } from '@bfemulator/sdk-shared';
 import { IConnectedService, ServiceTypes } from 'botframework-config/lib/schema';
 import { SharedConstants } from '@bfemulator/app-shared';
+import { StorageAccountApiService } from '../services/storageAccountApiService';
 import { LuisApi } from '../services/luisApiService';
 import { QnaApiService } from '../services/qnaApiService';
 import { mainWindow } from '../main';
@@ -22,8 +23,12 @@ export function registerCommands(commandRegistry: CommandRegistry) {
           it = QnaApiService.getKnowledgeBases(armToken);
           break;
 
+        case ServiceTypes.BlobStorage:
+          it = StorageAccountApiService.getBlobStorageServices(armToken);
+          break;
+
         default:
-          throw new TypeError(`The ServiceTypes ${serviceType} is not a know service type`);
+          throw new TypeError(`The ServiceTypes ${serviceType} is not a known service type`);
       }
 
       let result: { services: IConnectedService[] } = undefined;
