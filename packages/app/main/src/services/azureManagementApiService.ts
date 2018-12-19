@@ -155,7 +155,7 @@ export class AzureManagementApiService {
         const filteredValues = kind ?
           accountResponseJson.value.filter(account => (account.kind || '').includes(kind)) :
           accountResponseJson.value;
-        // Amend the data with the tenant and subscription Ids since we loose
+        // Amend the data with the tenant and subscription Ids since we lose
         // this fidelity when the response comes back with multiple resources
         // per subscriptionId.
         filteredValues.forEach(resource => {

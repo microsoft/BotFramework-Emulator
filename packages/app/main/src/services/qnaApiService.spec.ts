@@ -245,7 +245,7 @@ describe('The QnAMakerApi sad path', () => {
 });
 
 async function getResult() {
-  let it = QnaApiService.getKnowledgeBases(mockArmToken);
+  const it = QnaApiService.getKnowledgeBases(mockArmToken);
   let result = undefined;
   while (true) {
     const next = it.next(result);

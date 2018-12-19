@@ -79,6 +79,6 @@ describe('The connected service commands', () => {
     } catch (e) {
       error = e;
     }
-    expect(error.message).toBe(`The ServiceTypes ${ mockServiceTypes.File } is not a know service type`);
+    expect(error.message).toBe(`The ServiceTypes ${ mockServiceTypes.File } is not a known service type`);
   });
 });

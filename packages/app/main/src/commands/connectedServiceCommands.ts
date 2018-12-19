@@ -28,7 +28,7 @@ export function registerCommands(commandRegistry: CommandRegistry) {
           break;
 
         default:
-          throw new TypeError(`The ServiceTypes ${serviceType} is not a know service type`);
+          throw new TypeError(`The ServiceTypes ${serviceType} is not a known service type`);
       }
 
       let result: { services: IConnectedService[] } = undefined;

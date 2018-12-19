@@ -166,7 +166,7 @@ describe('The StorageAccountApiService', () => {
 });
 
 async function getResult() {
-  let it = StorageAccountApiService.getBlobStorageServices(mockArmToken);
+  const it = StorageAccountApiService.getBlobStorageServices(mockArmToken);
   let result = undefined;
   while (true) {
     const next = it.next(result);

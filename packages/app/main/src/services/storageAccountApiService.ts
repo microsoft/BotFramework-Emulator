@@ -34,7 +34,6 @@ import { ServiceCodes } from '@bfemulator/app-shared';
 import { BlobStorageService } from 'botframework-config/lib/models';
 import { AccountIdentifier, AzureManagementApiService, AzureResource, Provider } from './azureManagementApiService';
 
-// import {insertParametersFromObject} from '../utils';
 interface KeyEntry {
   keyName: string;
   value: string;
