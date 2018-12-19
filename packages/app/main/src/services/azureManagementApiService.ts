@@ -73,7 +73,7 @@ export enum Provider {
   ApplicationInsights = 'microsoft.insights',
   BotService = 'microsoft.botservice',
   CognitiveServices = 'Microsoft.CognitiveServices',
-  CosmosDB = 'microsoft.documentdb',
+  CosmosDB = 'Microsoft.DocumentDB',
   Storage = 'Microsoft.Storage'
 }
 
@@ -99,7 +99,8 @@ export class AzureManagementApiService {
     return {
       headers: {
         Authorization: `Bearer ${ armToken }`,
-        Accept: 'application/json, text/plain, */*'
+        Accept: 'application/json, text/plain, */*',
+        'x-ms-date': new Date().toUTCString()
       }
     };
   }
@@ -177,9 +178,10 @@ export class AzureManagementApiService {
    * @param armToken
    * @param accounts
    * @param apiVersion
+   * @param responseProperty
    */
   public static async getKeysForAccounts
-  (armToken: string, accounts: AzureResource[], apiVersion: string): Promise<string[]> {
+  (armToken: string, accounts: AzureResource[], apiVersion: string, responseProperty: string): Promise<string[]> {
     const keys: any[] = [];
     const req = AzureManagementApiService.getRequestInit(armToken);
     const url = `${ baseUrl }{id}/listKeys?api-version=${ apiVersion }`;
@@ -191,7 +193,7 @@ export class AzureManagementApiService {
       const keyResponse: Response = keyResponses[i];
       if (keyResponse.ok) {
         const keyResponseJson = await keyResponse.json();
-        const key = (keyResponseJson.keys || keyResponseJson.key1);
+        const key = keyResponseJson[responseProperty];
         if (key && '' + key) { // Excludes empty strings and empty arrays
           keys[i] = key; // maintain index position - do not "push"
         }
