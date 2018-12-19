@@ -55,22 +55,22 @@ interface ConnectedServiceEditorState extends Partial<any> {
 
 const labelMap = {
   authoringKey: 'Authoring key',
+  appId: 'LUIS app ID',
   applicationId: 'App Insights Application ID',
   collection: 'Cosmos DB collection name',
   connectionString: 'Blob storage connection string',
   container: 'Blob container name',
   database: 'Cosmos DB collection database',
-  instrumentationKey: 'App Insights Instrumentation Key',
-  serviceName: 'Azure Service Name',
-  appId: 'LUIS app ID',
-  id: 'App ID',
   endpoint: 'Cosmos DB connection string',
   endpointKey: 'Endpoint key',
   hostname: 'Host Name',
-
+  id: 'App ID',
+  instrumentationKey: 'App Insights Instrumentation Key',
   kbId: 'Knowledge base ID',
   name: 'Name',
+  region: 'Region',
   resourceGroup: 'Azure Resource group',
+  serviceName: 'Azure Service Name',
   subscriptionId: 'Azure Subscription ID',
   subscriptionKey: 'Azure Subscription key',
   tenantId: 'Azure Tenant ID',
@@ -160,7 +160,7 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
     switch (serviceType) {
       case ServiceTypes.Luis:
       case ServiceTypes.Dispatch:
-        return ['name', 'appId', 'authoringKey', 'version', 'subscriptionKey'];
+        return ['name', 'appId', 'authoringKey', 'version', 'region', 'subscriptionKey'];
 
       case ServiceTypes.QnA:
         return ['name', 'kbId', 'hostname', 'subscriptionKey', 'endpointKey'];
