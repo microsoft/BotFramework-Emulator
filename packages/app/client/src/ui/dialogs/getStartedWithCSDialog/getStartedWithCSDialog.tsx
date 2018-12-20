@@ -64,6 +64,9 @@ export class GetStartedWithCSDialog extends Component<GetStartedWithCSDialogProp
       case ServiceTypes.CosmosDB:
         return this.cosmosDbContent;
 
+      case ServiceTypes.AppInsights:
+        return this.appInsightsContent;
+
       default:
         return null;
     }
@@ -209,7 +212,7 @@ export class GetStartedWithCSDialog extends Component<GetStartedWithCSDialogProp
         </p>
         <p>
           { `You have do not have a Blob container under ${ this.props.authenticatedUser }. ` }
-          <a href="https://azure.microsoft.com/en-us/services/storage/blobs/">Get started with Blob Storage</a>
+          <a href="https://aka.ms/bot-framework-emulator-create-storage">Get started with Blob Storage</a>
         </p>
         <p>
           { ' Alternatively, you can ' }
@@ -230,7 +233,7 @@ export class GetStartedWithCSDialog extends Component<GetStartedWithCSDialogProp
         </p>
         <p>
           { `You have do not have any CosmosDB collections under ${ this.props.authenticatedUser }. ` }
-          <a href="https://azure.microsoft.com/en-us/services/cosmos-db/">Get started with CosmosDB</a>
+          <a href="https://aka.ms/bot-framework-emulator-create-storage">Get started with CosmosDB</a>
         </p>
         <p>
           { ' Alternatively, you can ' }
@@ -238,6 +241,28 @@ export class GetStartedWithCSDialog extends Component<GetStartedWithCSDialogProp
             connect to a CosmosDB collection manually
           </a>
           { ' if you know the ID, subscription key, collection and database name.' }
+        </p>
+      </>
+    );
+  }
+
+  private get appInsightsContent(): ReactNode {
+    return (
+      <>
+        <p>
+          { 'Application Insights is an extensible Application Performance Management (APM) ' +
+          'service for web developers on multiple platforms. Use it to monitor your Azure Bot Service.' }
+        </p>
+        <p>
+          { `You have do not have any Application Insights Components under ${ this.props.authenticatedUser }. ` }
+          <a href="https://aka.ms/bot-framework-emulator-create-appinsights">Get started with Application Insights</a>
+        </p>
+        <p>
+          { ' Alternatively, you can ' }
+          <a href="javascript:void(0);" onClick={ this.props.launchConnectedServiceEditor }>
+            connect to an Application Insights Component manually
+          </a>
+          { ' if you know the ID, subscription key, instrumentation and api key.' }
         </p>
       </>
     );

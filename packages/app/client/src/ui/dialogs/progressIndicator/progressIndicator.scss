@@ -4,6 +4,7 @@
   position: relative;
   border: none;
   &::before {
+    transition: width .2s ease;
     content: '';
     position: absolute;
     height: 4px;

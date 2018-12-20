@@ -97,8 +97,9 @@ export class CosmosDbApiService {
 }
 
 function buildServiceModel
-(account: AzureResource, cosmosDb: AzureResource, collection: { id: string }): CosmosDbService {
+(account: AzureResource, cosmosDb: AzureResource, collection: { id: string, _rid: string }): CosmosDbService {
   const service = new CosmosDbService();
+  service.id = collection._rid;
   service.database = cosmosDb.id;
   service.collection = collection.id;
   service.endpoint = account.properties.documentEndpoint;

@@ -371,7 +371,7 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
     return (
       <>
         <a href="https://aka.ms/bot-framework-emulator-create-appinsights" className={ styles.paddedLink }>
-          Create a new Azure storage account
+          Create a new Application Insights Component
         </a>
         <p>
           { ` Signed in as ${ this.props.authenticatedUser }.` }

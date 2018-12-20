@@ -67,6 +67,11 @@ export class AppInsightsApiService {
       components.forEach(component => appInsightsComponents.push({ component, subscription }));
     }
 
+    if (!appInsightsComponents.length) {
+      payload.code = ServiceCodes.AccountNotFound;
+      return payload;
+    }
+
     // 3. Retrieve the api-keys for each component
     yield { label: 'Retrieving Api Keys from Azure…', progress: 75 };
     const apiKeysRequests = appInsightsComponents.map(info => {

@@ -134,6 +134,14 @@ describe('The GetStartedWithCSDialog component should', () => {
     expect(prompt.instance().content).toEqual(prompt.instance().cosmosDbContent);
   });
 
+  it('should display appInsightsContent when the ServiceTypes.AppInsights is provided in the props', () => {
+    const parent: any = mount(<Provider store={ mockStore }>
+      <GetStartedWithCSDialogContainer serviceType={ ServiceTypes.AppInsights }/>
+    </Provider>);
+    const prompt = parent.find(GetStartedWithCSDialog);
+    expect(prompt.instance().content).toEqual(prompt.instance().appInsightsContent);
+  });
+
   it('should display no when no service type provided in the props', () => {
     const parent: any = mount(<Provider store={ mockStore }>
       <GetStartedWithCSDialogContainer/>
