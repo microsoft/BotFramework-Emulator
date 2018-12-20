@@ -247,8 +247,7 @@ function* openAddConnectedServiceContextMenu(action: ConnectedServiceAction<Conn
   const response = yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.DisplayContextMenu, menuItems);
   const { id: serviceType } = response;
   action.payload.serviceType = serviceType;
-  if (serviceType === ServiceTypes.Generic ||
-    serviceType === ServiceTypes.AppInsights) {
+  if (serviceType === ServiceTypes.Generic) {
     yield* launchConnectedServiceEditor(action);
   } else {
     yield* launchConnectedServicePicker(action);

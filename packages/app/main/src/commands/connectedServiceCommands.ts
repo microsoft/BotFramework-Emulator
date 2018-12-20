@@ -1,6 +1,7 @@
 import { CommandRegistry } from '@bfemulator/sdk-shared';
 import { IConnectedService, ServiceTypes } from 'botframework-config/lib/schema';
 import { SharedConstants } from '@bfemulator/app-shared';
+import { AppInsightsApiService } from '../services/appInsightsApiService';
 import { CosmosDbApiService } from '../services/cosmosDbApiService';
 import { StorageAccountApiService } from '../services/storageAccountApiService';
 import { LuisApi } from '../services/luisApiService';
@@ -30,6 +31,10 @@ export function registerCommands(commandRegistry: CommandRegistry) {
 
         case ServiceTypes.CosmosDB:
           it = CosmosDbApiService.getCosmosDbServices(armToken);
+          break;
+
+        case ServiceTypes.AppInsights:
+          it = AppInsightsApiService.getAppInsightsServices(armToken);
           break;
 
         default:

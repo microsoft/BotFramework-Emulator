@@ -85,7 +85,7 @@ export enum AccountIdentifier {
   StorageAccounts = 'storageaccounts?api-version=2018-07-01'
 }
 
-const baseUrl = 'https://management.azure.com/';
+export const baseUrl = 'https://management.azure.com/';
 
 export class AzureManagementApiService {
 
@@ -152,10 +152,8 @@ export class AzureManagementApiService {
       const { [i]: accountResponse } = accountsResponses;
       const { [i]: subscription } = subs;
       if (accountResponse.ok) {
-        const accountResponseJson: { value: AzureResource[] } = await accountResponse.json();
-        const filteredValues = kind ?
-          accountResponseJson.value.filter(account => (account.kind || '').includes(kind)) :
-          accountResponseJson.value;
+        const { value: resources = [] }: { value: AzureResource[] } = await accountResponse.json();
+        const filteredValues = kind ? resources.filter(account => (account.kind || '').includes(kind)) : resources;
         // Amend the data with the tenant and subscription Ids since we lose
         // this fidelity when the response comes back with multiple resources
         // per subscriptionId.
