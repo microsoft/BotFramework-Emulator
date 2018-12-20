@@ -57,7 +57,7 @@ export class CosmosDbApiService {
     }
 
     // 5. Retrieve a list of collections - please note that this is
-    // an endpoint used in the azure portal for retrieving collections
+    // an endpoint used in the azure portal for retrieving collections.
     // It does not appear to be documented anywhere and was used because
     // the documented API was returning a 401 no matter what params and
     // auth headers where used.
