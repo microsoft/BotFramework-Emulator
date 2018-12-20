@@ -100,15 +100,20 @@ export class AppInsightsApiService {
 }
 
 function createAppInsightsService(component: AzureResource, sub: Subscription, keys: string[]): AppInsightsService {
-  const { id, name, properties } = component;
-  const { InstrumentationKey, ApplicationId, TenantId } = properties;
-  const service = new AppInsightsService();
-  service.id = id;
-  service.name = service.serviceName = name;
-  service.instrumentationKey = InstrumentationKey;
-  service.tenantId = TenantId;
-  service.resourceGroup = id.split('/')[4];
-  service.apiKeys = keys.reduce((map, key, index) => (map[`key${ index }`] = key, map), {});
-  service.applicationId = ApplicationId;
-  return service;
+  const { id, name, properties, subscriptionId } = component;
+  const {
+    InstrumentationKey: instrumentationKey,
+    ApplicationId: applicationId,
+    TenantId: tenantId
+  } = properties;
+  return new AppInsightsService({
+    applicationId,
+    id,
+    name,
+    instrumentationKey,
+    tenantId,
+    resourceGroup: id.split('/')[4],
+    subscriptionId,
+    serviceName: name
+  });
 }

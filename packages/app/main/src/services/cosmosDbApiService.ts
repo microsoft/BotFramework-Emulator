@@ -52,7 +52,7 @@ export class CosmosDbApiService {
       }
       const responseJson = yield response.json();
       if ((responseJson.Databases || [].length)) {
-        responseJson.Databases.forEach(db => cosmosDbs.push({ db, account: databaseAccounts[i] }));
+        responseJson.Databases.forEach(db => cosmosDbs.push({ db, account: databaseAccounts[i], key: keys[i] }));
       }
     }
 
@@ -86,29 +86,32 @@ export class CosmosDbApiService {
       if (!collectionResponse.ok) {
         continue;
       }
-      const { db, account } = cosmosDbs[i];
+      const { db, account, key } = cosmosDbs[i];
       const collectionResponseJson = yield collectionResponse.json();
       (collectionResponseJson.DocumentCollections || []).forEach(collection => {
-        payload.services.push(buildServiceModel(account, db, collection));
+        payload.services.push(buildServiceModel(account, db, key, collection));
       });
     }
     return payload;
   }
 }
 
-function buildServiceModel
-(account: AzureResource, cosmosDb: AzureResource, collection: { id: string, _rid: string }): CosmosDbService {
-  const service = new CosmosDbService();
-  service.id = collection._rid;
-  service.database = cosmosDb.id;
-  service.collection = collection.id;
-  service.endpoint = account.properties.documentEndpoint;
-  service.serviceName = service.name = collection.id;
-  service.resourceGroup = account.id.split('/')[4];
-  service.subscriptionId = account.subscriptionId;
-  service.tenantId = account.tenantId;
-
-  return service;
+function buildServiceModel(account: AzureResource,
+                           cosmosDb: AzureResource,
+                           key: string,
+                           collection: { id: string, _rid: string }): CosmosDbService {
+  return new CosmosDbService({
+    id: collection._rid,
+    database: cosmosDb.id,
+    collection: collection.id,
+    endpoint: account.properties.documentEndpoint,
+    name: collection.id,
+    serviceName: collection.id,
+    resourceGroup: account.id.split('/')[4],
+    subscriptionId: account.subscriptionId,
+    tenantId: account.tenantId,
+    key
+  });
 }
 
 function getAuthorizationTokenUsingMasterKey(masterKey: string = '', resourceId: string = ''): string {
