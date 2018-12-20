@@ -107,4 +107,12 @@ describe('The GetStartedWithCSDialog component should', () => {
     const prompt = parent.find(GetStartedWithCSDialog);
     expect(prompt.content).toBe(prompt.blobContent);
   });
+
+  it('should display cosmosContent when the ServiceTypes.CosmosDB is provided in the props', () => {
+    const parent: any = mount(<Provider store={ mockStore }>
+      <GetStartedWithCSDialogContainer serviceType={ ServiceTypes.CosmosDB }/>
+    </Provider>);
+    const prompt = parent.find(GetStartedWithCSDialog);
+    expect(prompt.content).toBe(prompt.cosmosContent);
+  });
 });
