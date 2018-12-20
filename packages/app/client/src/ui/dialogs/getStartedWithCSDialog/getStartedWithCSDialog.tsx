@@ -61,6 +61,9 @@ export class GetStartedWithCSDialog extends Component<GetStartedWithCSDialogProp
       case ServiceTypes.BlobStorage:
         return this.blobContent;
 
+      case ServiceTypes.CosmosDB:
+        return this.cosmosDbContent;
+
       default:
         return null;
     }
@@ -183,7 +186,7 @@ export class GetStartedWithCSDialog extends Component<GetStartedWithCSDialogProp
         </p>
         <p>
           { `You have not signed up for a QnA Maker account under ${ this.props.authenticatedUser }. ` }
-          <a href="javascript:void(0)">Get started with QnA Maker</a>
+          <a href="https://aka.ms/bot-framework-emulator-qna-docs-home">Get started with QnA Maker</a>
         </p>
         <p>
           { ' Alternatively, you can ' }
@@ -201,8 +204,8 @@ export class GetStartedWithCSDialog extends Component<GetStartedWithCSDialogProp
     return (
       <>
         <p>
-          { 'Blob Storage is a service that allows your to store unstructured ' +
-          'data and is used to store a Bot\'s transcripts.' }
+          { 'Blob Storage is a service that allows you to store unstructured ' +
+          'data and is commonly used to store a Bot\'s transcripts.' }
         </p>
         <p>
           { `You have do not have a Blob container under ${ this.props.authenticatedUser }. ` }
@@ -214,6 +217,27 @@ export class GetStartedWithCSDialog extends Component<GetStartedWithCSDialogProp
             connect to a Blob container manually
           </a>
           { ' if you know the ID, subscription key, container name and connection string.' }
+        </p>
+      </>
+    );
+  }
+
+  private get cosmosDbContent(): ReactNode {
+    return (
+      <>
+        <p>
+          { 'CosmosDB is a multi-model database service commonly used to store a bot\'s state.' }
+        </p>
+        <p>
+          { `You have do not have any CosmosDB collections under ${ this.props.authenticatedUser }. ` }
+          <a href="https://azure.microsoft.com/en-us/services/cosmos-db/">Get started with CosmosDB</a>
+        </p>
+        <p>
+          { ' Alternatively, you can ' }
+          <a href="javascript:void(0);" onClick={ this.props.launchConnectedServiceEditor }>
+            connect to a CosmosDB collection manually
+          </a>
+          { ' if you know the ID, subscription key, collection and database name.' }
         </p>
       </>
     );

@@ -86,7 +86,7 @@ export class StorageAccountApiService {
     yield { label: 'Retrieving Access Keys from Azure…', progress: 95 };
     // Do not retrieve keys for accounts without blob containers
     const keys: KeyEntry[][] = yield AzureManagementApiService
-      .getKeysForAccounts(armToken, blobContainerInfos.map(info => info.account), '2018-07-01');
+      .getKeysForAccounts(armToken, blobContainerInfos.map(info => info.account), '2018-07-01', 'keys');
     // Build the BlobStorageService objects
     i = keys.length;
     while (i--) {

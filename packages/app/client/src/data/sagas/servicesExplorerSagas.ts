@@ -248,7 +248,6 @@ function* openAddConnectedServiceContextMenu(action: ConnectedServiceAction<Conn
   const { id: serviceType } = response;
   action.payload.serviceType = serviceType;
   if (serviceType === ServiceTypes.Generic ||
-    serviceType === ServiceTypes.CosmosDB ||
     serviceType === ServiceTypes.AppInsights) {
     yield* launchConnectedServiceEditor(action);
   } else {
