@@ -221,7 +221,21 @@
     },
     "mac": {
       "artifactName": "BotFramework-Emulator-${version}-mac.${ext}",
-      "category": "public.app-category.developer-tools"
+      "category": "public.app-category.developer-tools",
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "zip",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
     },
     "dmg": {
       "background": "./scripts/config/resources/background.tiff",
