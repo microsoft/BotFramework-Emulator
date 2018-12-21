@@ -1,6 +1,8 @@
 ul > li.link::before {
-  -webkit-mask: url(../../../media/ic_link.svg);
-  -webkit-mask-size: 12px;
+  position: relative;
+  width: 16px;
+  height: 16px;
+  top: 4px;
 }
 
 @keyframes highlight {
@@ -18,15 +20,30 @@ ul > li.link::before {
   }
 }
 
-.animateHighlight {
+ul > li > svg {
+  position: relative;
+  width: 12px;
+  height: 12px;
+  padding-right: 5px;
+  top: 2px;
+}
+
+.animate-highlight {
   animation: highlight 1s;
 }
 
-.emptyContent {
+.cosmos-db-icon {
+  & g > path:nth-child(5) {
+    fill: var(--cosmos-db-contrast);
+  }
+}
+
+.empty-content {
   margin: 15px 13px;
   font-size: 13px;
   color: var(--explorer-panel-group-title-color);
   line-height: 18px;
+
   > a {
     background-color: transparent;
     border: 1px solid transparent;
@@ -37,11 +54,12 @@ ul > li.link::before {
     text-decoration: none;
     white-space: normal;
 
-      &:focus {
-        outline: var(--p-button-border-focus);
-      }
-      &:hover {
-        text-decoration: underline;
-      }
+    &:focus {
+      outline: var(--p-button-border-focus);
+    }
+
+    &:hover {
+      text-decoration: underline;
+    }
   }
 }

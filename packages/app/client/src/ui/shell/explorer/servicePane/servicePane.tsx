@@ -70,7 +70,12 @@ export abstract class ServicePane<T extends ServicePaneProps, S extends ServiceP
           onKeyPress={ this.onControlKeyPress }
           onClick={ this.onSortClick }
           className={ `${styles.sortIconButton } ${styles.serviceIcon }` }>
-          ⮁
+          <svg viewBox="0 0 34.761 26.892" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+            <g>
+              <path d="M15.359 9.478l-6.226-6.21v17.557H7.426V3.268L1.2 9.478 0 8.281 8.279 0l8.279 8.281z"/>
+              <path d="M34.761 18.612l-8.279 8.281-8.282-8.281 1.2-1.2 6.226 6.21V6.068h1.707v17.557l6.226-6.21z"/>
+            </g>
+          </svg>
         </button>
         <button aria-label="Add"
           onKeyPress={ this.onControlKeyPress }

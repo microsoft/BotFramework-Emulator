@@ -31,12 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IConnectedService } from 'botframework-config/lib/schema';
+import { IConnectedService, ServiceTypes } from 'botframework-config/lib/schema';
 import * as React from 'react';
 import { MouseEventHandler, SyntheticEvent } from 'react';
-import { ServicePane, ServicePaneProps } from '../servicePane/servicePane';
-import { ConnectedServiceEditorContainer } from './connectedServiceEditor';
 import { ConnectedServicePickerPayload } from '../../../../data/action/connectedServiceActions';
+
+import { serviceTypeLabels } from '../../../../utils/serviceTypeLables';
 import {
   AzureLoginFailedDialogContainer,
   AzureLoginSuccessDialogContainer,
@@ -44,9 +44,22 @@ import {
   GetStartedWithCSDialogContainer,
   ProgressIndicatorContainer
 } from '../../../dialogs';
+import { ServicePane, ServicePaneProps } from '../servicePane/servicePane';
+import { ConnectedServiceEditorContainer } from './connectedServiceEditor';
 import { ConnectedServicePickerContainer } from './connectedServicePicker/connectedServicePickerContainer';
 import * as styles from './servicesExplorer.scss';
-import { serviceTypeLabels } from '../../../../utils/serviceTypeLables';
+import * as icons from './serviceTypeIcons';
+
+const iconMap = {
+  [ServiceTypes.AppInsights]: icons.appInsightsIcon,
+  [ServiceTypes.BlobStorage]: icons.blobStorageIcon,
+  [ServiceTypes.Bot]: icons.azureBotServiceIcon,
+  [ServiceTypes.CosmosDB]: icons.cosmosDbIcon,
+  [ServiceTypes.Dispatch]: icons.cognitiveServicesIcon,
+  [ServiceTypes.Generic]: icons.genericService,
+  [ServiceTypes.Luis]: icons.cognitiveServicesIcon,
+  [ServiceTypes.QnA]: icons.cognitiveServicesIcon
+};
 
 export interface ServicesExplorerProps extends ServicePaneProps {
   services?: IConnectedService[];
@@ -128,6 +141,7 @@ export class ServicesExplorer extends ServicePane<ServicesExplorerProps> {
           tabIndex={ 0 }
           title={ service.name }
         >
+          { iconMap[service.type] }
           { label } <span>- { serviceTypeLabels[service.type] }</span>
         </li>
       );
@@ -137,7 +151,7 @@ export class ServicesExplorer extends ServicePane<ServicesExplorerProps> {
   protected onContextMenuOverLiElement(li: HTMLLIElement) {
     super.onContextMenuOverLiElement(li);
     const { index } = li.dataset;
-    const { [index]: connectedService } = this.props.services;
+    const { [+index]: connectedService } = this.props.services;
     this.props.openContextMenuForService(connectedService, ConnectedServiceEditorContainer);
   }
 
@@ -150,7 +164,7 @@ export class ServicesExplorer extends ServicePane<ServicesExplorerProps> {
   protected onLinkClick: MouseEventHandler<HTMLLIElement> = (event: SyntheticEvent<HTMLLIElement>): void => {
     const { currentTarget } = event;
     const { index } = currentTarget.dataset;
-    const { [index]: connectedService } = this.props.services;
+    const { [+index]: connectedService } = this.props.services;
     this.props.openServiceDeepLink(connectedService);
   }
 
