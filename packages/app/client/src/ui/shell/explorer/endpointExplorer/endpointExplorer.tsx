@@ -63,9 +63,9 @@ export class EndpointExplorer extends ServicePane<EndpointProps> {
             onClick={ this.onLinkClick }
             onKeyPress={ this.onHandleKeyPress }
             tabIndex={ 0 }
-            title={ model.endpoint } 
+            title={ model.endpoint }
           >
-            <svg className={styles.messageIcon}
+            <svg className={ styles.messageIcon }
                  xmlns="http://www.w3.org/2000/svg"
                  role="presentation"
                  viewBox="0 0 16 16"
