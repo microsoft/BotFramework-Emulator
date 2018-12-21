@@ -25,10 +25,12 @@
 .add-icon-button {
   right: 10px;
   top: calc(50% - 1px);
+
   & > svg {
     fill: var(--explorer-panel-group-title-color);
     height: 12px;
     width: 12px;
+
     &:hover {
       fill: var(--log-panel-link);
     }
@@ -39,10 +41,12 @@
   > svg {
     fill: var(--explorer-panel-group-title-color);
   }
+
   right: 50px;
   top: calc(50% - 2px);
   width: 14px;
   height: 14px;
+
   &:hover {
     color: var(--log-panel-link);
   }
@@ -76,6 +80,7 @@
       background-color: var(--list-item-hover-bg);
       border: var(--list-item-hover-border);
     }
+
     &:focus {
       background-color: var(--focused-list-item);
     }
