@@ -180,6 +180,9 @@ html {
   --split-button-panel-color: var(--neutral-16);
   --split-button-panel-bg-color: var(--neutral-1);
   --split-button-selected-item-bg-color: var(--neutral-3);
+
+  /* Icons */
+  --cosmos-db-contrast: var(--neutral-1);
 }
 
 .dialog {
