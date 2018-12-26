@@ -36,7 +36,6 @@
     ]
   },
   "dependencies": {
-    "gulp": "^4.0.0",
     "lerna": "3.4.0"
   }
 }
