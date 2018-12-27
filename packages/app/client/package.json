@@ -96,7 +96,7 @@
     "@uifabric/styling": "^5.20.0",
     "base64url": "2.0.0",
     "botframework-config": "4.0.0-preview1.3.4",
-    "botframework-webchat": "0.15.1-v3.4da20d6",
+    "botframework-webchat": "^4.2.0",
     "react": "~16.3.2",
     "react-dom": "~16.3.2",
     "react-redux": "^5.0.7",
