@@ -131,7 +131,7 @@ export class TabBar extends React.Component<TabBarProps, TabBarState> {
 
   private keyboardListener = (event: KeyboardEvent): void => {
     // Meta corresponds to 'Command' on Mac
-    const ctrlOrCmdPressed = event.getModifierState('Control') || event.getModifierState('Meta');
+    const ctrlOrCmdPressed = event.ctrlKey || event.metaKey;
     const key = event.key.toLowerCase();
 
     if (ctrlOrCmdPressed && key ===  'w') {

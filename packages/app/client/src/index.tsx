@@ -44,6 +44,7 @@ import { showWelcomePage } from './data/editorHelpers';
 import { CommandRegistry, registerAllCommands } from './commands';
 import { SharedConstants, newNotification } from '@bfemulator/app-shared';
 import { beginAdd } from './data/action/notificationActions';
+import { globalHandlers } from './utils/eventHandlers';
 import 'botframework-webchat/botchat.css';
 import './ui/styles/globals.scss';
 
@@ -68,31 +69,15 @@ CommandServiceImpl.remoteCall(SharedConstants.Commands.ClientInit.Loaded)
     // do actions on main side that might open a document, so that they will be active over the welcome screen
     CommandServiceImpl.remoteCall(SharedConstants.Commands.ClientInit.PostWelcomeScreen);
 
-    window.addEventListener('keydown', globalKeyboardEventListener);
+    window.addEventListener('keydown', globalHandlers);
   })
   .catch(err => {
     const errMsg = `Error occurred while client was loading: ${err}`;
     const notification = newNotification(errMsg);
-    window.removeEventListener('keydown', globalKeyboardEventListener);
+    window.removeEventListener('keydown', globalHandlers);
     store.dispatch(beginAdd(notification));
   });
 
 if (module.hasOwnProperty('hot')) {
   (module as any).hot.accept();
 }
-
-const globalKeyboardEventListener: EventListener = (event: KeyboardEvent): void => {
-  // Meta corresponds to 'Command' on Mac
-  const ctrlOrCmdPressed = event.getModifierState('Control') || event.getModifierState('Meta');
-  const key = event.key.toLowerCase();
-
-  if (ctrlOrCmdPressed && key ===  'o') {
-    const { Commands: { Bot: { OpenBrowse }} } = SharedConstants;
-    CommandServiceImpl.call(OpenBrowse).catch();
-  }
-
-  if (ctrlOrCmdPressed && key ===  'n') {
-    const { Commands: { UI: { ShowBotCreationDialog }} } = SharedConstants;
-    CommandServiceImpl.call(ShowBotCreationDialog).catch();
-  }
-};
