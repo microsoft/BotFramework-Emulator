@@ -37,7 +37,7 @@ import { SharedConstants } from '@bfemulator/app-shared';
 
 const { Commands: { Bot: { OpenBrowse }, UI: { ShowBotCreationDialog }} } = SharedConstants;
 
-describe.only('#globalHandlers', () => {
+describe('#globalHandlers', () => {
   let callSpy;
   beforeEach(() => {
     callSpy = jest.spyOn(CommandServiceImpl, 'call');
