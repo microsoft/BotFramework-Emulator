@@ -82,6 +82,14 @@ export class TabBar extends React.Component<TabBarProps, TabBarState> {
     };
   }
 
+  public componentDidMount() {
+    window.addEventListener('keydown', this.keyboardListener);
+  }
+
+  public componentDidUnmount() {
+    window.removeEventListener('keydown', this.keyboardListener);
+  }
+
   public componentDidUpdate(prevProps: TabBarProps) {
     let scrollable = this._scrollable;
     const activeIndex = this.props.tabOrder.findIndex(docId => docId === this.props.activeDocumentId);
@@ -119,6 +127,17 @@ export class TabBar extends React.Component<TabBarProps, TabBarState> {
         </div>
       </div>
     );
+  }
+
+  private keyboardListener = (event: KeyboardEvent): void => {
+    // Meta corresponds to 'Command' on Mac
+    const ctrlOrCmdPressed = event.getModifierState('Control') || event.getModifierState('Meta');
+    const key = event.key.toLowerCase();
+
+    if (ctrlOrCmdPressed && key ===  'w') {
+      this.props.closeTab(this.props.activeDocumentId);
+      event.preventDefault();
+    }
   }
 
   private onPresentationModeClick = () => this.props.enablePresentationMode();
