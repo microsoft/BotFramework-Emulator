@@ -86,7 +86,7 @@ export class TabBar extends React.Component<TabBarProps, TabBarState> {
     window.addEventListener('keydown', this.keyboardListener);
   }
 
-  public componentDidUnmount() {
+  public componentWillUnmount() {
     window.removeEventListener('keydown', this.keyboardListener);
   }
 

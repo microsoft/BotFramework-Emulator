@@ -189,7 +189,7 @@ export const ActiveBotHelper = new class {
       if (filename) {
         let activeBot = getActiveBot();
         if (activeBot && activeBot.path === filename) {
-          await this.botAlreadyOpen();
+          await CommandServiceImpl.call(SharedConstants.Commands.Bot.Switch, activeBot);
           return;
         }
 
