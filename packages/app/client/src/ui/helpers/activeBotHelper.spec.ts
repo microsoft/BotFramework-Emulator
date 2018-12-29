@@ -259,7 +259,8 @@ describe('ActiveBotHelper tests', () => {
     ActiveBotHelper.botAlreadyOpen = () => new Promise((resolve, reject) => resolve(null));
 
     await ActiveBotHelper.confirmAndSwitchBots(bot);
-    expect(mockDispatch).not.toHaveBeenCalled();
+    expect(mockDispatch).toHaveBeenCalled();
+    mockDispatch.mockClear();
 
     // switching to a bot that's not open with an endpoint
     (botHelpers.getActiveBot as any) = () => otherBot;

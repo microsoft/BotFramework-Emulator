@@ -257,4 +257,20 @@ describe('TabBar', () => {
     result = instance.getTabLabel({});
     expect(result).toBe('');
   });
+
+  it('should respond trigger keyboard listeners', () => {
+    const map: any = {};
+    window.addEventListener = jest.fn((event, cb) => {
+      map[event] = cb;
+    });
+    const closeTabSpy = jest.fn();
+
+    mount(
+      <TabBar tabOrder={ [] } documents={ {} } activeDocumentId={ '1234' } closeTab={closeTabSpy}/>
+    );
+
+    map.keydown({key: 'w', metaKey: true, preventDefault: () => { return; }});
+    expect(closeTabSpy).toHaveBeenCalledWith('1234');
+    jest.clearAllMocks();
+  });
 });

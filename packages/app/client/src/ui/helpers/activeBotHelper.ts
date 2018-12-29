@@ -189,7 +189,7 @@ export const ActiveBotHelper = new class {
       if (filename) {
         let activeBot = getActiveBot();
         if (activeBot && activeBot.path === filename) {
-          await this.botAlreadyOpen();
+          await CommandServiceImpl.call(SharedConstants.Commands.Bot.Switch, activeBot);
           return;
         }
 
@@ -229,14 +229,8 @@ export const ActiveBotHelper = new class {
    * @param bot The bot to be switched to. Can be a bot object with a path, or the bot path itself
    */
   async confirmAndSwitchBots(bot: BotConfigWithPath | string): Promise<any> {
-    let currentActiveBot = getActiveBot();
     let botPath: string;
     botPath = typeof bot === 'object' ? bot.path : bot;
-
-    if (currentActiveBot && currentActiveBot.path === botPath) {
-      await this.botAlreadyOpen();
-      return;
-    }
 
     // TODO: We need to think about merging this with confirmAndCreateBot
     console.log(`Switching to bot ${botPath}`);
