@@ -37,47 +37,60 @@ import { SharedConstants } from '@bfemulator/app-shared';
 
 const { Commands: { Bot: { OpenBrowse }, UI: { ShowBotCreationDialog }} } = SharedConstants;
 
-describe.only('#globalHandlers', () => {
-  let callSpy;
+let mockLocalCommandsCalled = [];
+
+jest.mock('../platform/commands/commandServiceImpl', () => ({
+  CommandServiceImpl: {
+    call: async (commandName: string, ...args: any[]) => {
+      mockLocalCommandsCalled.push({ commandName, args: args });
+    },
+  }
+}));
+
+describe('#globalHandlers', () => {
   beforeEach(() => {
-    callSpy = jest.spyOn(CommandServiceImpl, 'call');
+    mockLocalCommandsCalled = [];
   });
 
-  afterEach(() => {
+  afterAll(() => {
     jest.restoreAllMocks();
   });
 
   it('handles CMD+O', () => {
     const event = new KeyboardEvent('keydown', { metaKey: true, key: 'o' });
     globalHandlers(event);
-    expect(callSpy).toHaveBeenCalledWith(OpenBrowse);
+    expect(mockLocalCommandsCalled.length).toBe(1);
+    expect(mockLocalCommandsCalled[0].commandName).toBe(OpenBrowse);
   });
 
   it('handles CTRL+O', () => {
     const event = new KeyboardEvent('keydown', { ctrlKey: true, key: 'O' });
 
     globalHandlers(event);
-    expect(callSpy).toHaveBeenCalledWith(OpenBrowse);
+    expect(mockLocalCommandsCalled.length).toBe(1);
+    expect(mockLocalCommandsCalled[0].commandName).toBe(OpenBrowse);
   });
 
   it('handles CMD+N', () => {
     const event = new KeyboardEvent('keydown', { metaKey: true, key: 'n' });
 
     globalHandlers(event);
-    expect(callSpy).toHaveBeenCalledWith(ShowBotCreationDialog);
+    expect(mockLocalCommandsCalled.length).toBe(1);
+    expect(mockLocalCommandsCalled[0].commandName).toBe(ShowBotCreationDialog);
   });
 
   it('handles CTRL+N', () => {
     const event = new KeyboardEvent('keydown', { ctrlKey: true, key: 'N' });
 
     globalHandlers(event);
-    expect(callSpy).toHaveBeenCalledWith(ShowBotCreationDialog);
+    expect(mockLocalCommandsCalled.length).toBe(1);
+    expect(mockLocalCommandsCalled[0].commandName).toBe(ShowBotCreationDialog);
   });
 
   it('handles something it doesn\'t care about', () => {
     const event = new KeyboardEvent('keydown', { ctrlKey: true, key: 'y'});
 
     globalHandlers(event);
-    expect(callSpy).not.toHaveBeenCalled();
+    expect(mockLocalCommandsCalled.length).toBe(0);
   });
 });
