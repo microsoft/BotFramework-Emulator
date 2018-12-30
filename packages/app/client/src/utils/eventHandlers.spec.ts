@@ -55,14 +55,14 @@ describe('#globalHandlers', () => {
     jest.restoreAllMocks();
   });
 
-  it('handles CMD+O', () => {
+  it('calls OpenBrowse when CMD+O is pressed', () => {
     const event = new KeyboardEvent('keydown', { metaKey: true, key: 'o' });
     globalHandlers(event);
     expect(mockLocalCommandsCalled.length).toBe(1);
     expect(mockLocalCommandsCalled[0].commandName).toBe(OpenBrowse);
   });
 
-  it('handles CTRL+O', () => {
+  it('calls OpenBrowse when CTRL+O is pressed', () => {
     const event = new KeyboardEvent('keydown', { ctrlKey: true, key: 'O' });
 
     globalHandlers(event);
@@ -70,7 +70,7 @@ describe('#globalHandlers', () => {
     expect(mockLocalCommandsCalled[0].commandName).toBe(OpenBrowse);
   });
 
-  it('handles CMD+N', () => {
+  it('calls ShowBotCreationDialog when CMD+N is pressed', () => {
     const event = new KeyboardEvent('keydown', { metaKey: true, key: 'n' });
 
     globalHandlers(event);
@@ -78,7 +78,7 @@ describe('#globalHandlers', () => {
     expect(mockLocalCommandsCalled[0].commandName).toBe(ShowBotCreationDialog);
   });
 
-  it('handles CTRL+N', () => {
+  it('calls ShowBotCreationDialog when CTRL+N is pressed', () => {
     const event = new KeyboardEvent('keydown', { ctrlKey: true, key: 'N' });
 
     globalHandlers(event);
@@ -86,7 +86,7 @@ describe('#globalHandlers', () => {
     expect(mockLocalCommandsCalled[0].commandName).toBe(ShowBotCreationDialog);
   });
 
-  it('handles something it doesn\'t care about', () => {
+  it('calls nothing with a keydown it doesn\'t care about', () => {
     const event = new KeyboardEvent('keydown', { ctrlKey: true, key: 'y'});
 
     globalHandlers(event);

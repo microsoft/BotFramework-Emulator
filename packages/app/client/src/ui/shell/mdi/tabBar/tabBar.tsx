@@ -83,11 +83,11 @@ export class TabBar extends React.Component<TabBarProps, TabBarState> {
   }
 
   public componentDidMount() {
-    window.addEventListener('keydown', this.keyboardListener);
+    window.addEventListener('keydown', this.onKeyDown);
   }
 
   public componentWillUnmount() {
-    window.removeEventListener('keydown', this.keyboardListener);
+    window.removeEventListener('keydown', this.onKeyDown);
   }
 
   public componentDidUpdate(prevProps: TabBarProps) {
@@ -131,7 +131,7 @@ export class TabBar extends React.Component<TabBarProps, TabBarState> {
 
   private onPresentationModeClick = () => this.props.enablePresentationMode();
 
-  private keyboardListener = (event: KeyboardEvent): void => {
+  private onKeyDown = (event: KeyboardEvent): void => {
     // Meta corresponds to 'Command' on Mac
     const ctrlOrCmdPressed = event.ctrlKey || event.metaKey;
     const key = event.key.toLowerCase();
