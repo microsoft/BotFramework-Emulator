@@ -237,10 +237,9 @@ export const ActiveBotHelper = new class {
 
     try {
       // prompt the user to confirm the switch
-      const result = await this.confirmSwitchBot();
-
-      if (result) {
-        store.dispatch(EditorActions.closeNonGlobalTabs());
+      // const result = await this.confirmSwitchBot();
+      if (true) { // result
+        // store.dispatch(EditorActions.closeNonGlobalTabs());
 
         // if we only have the bot path, we first need to open the bot file
         let newActiveBot: BotConfigWithPath;
