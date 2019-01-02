@@ -20,10 +20,6 @@
   a {
     color: var(--focused-selected-list-item-bg);
     min-width: 0;
-    overflow: hidden;
-    text-decoration: none;
-    text-overflow: ellipsis;
-    white-space: nowrap;
   }
 
   ul {
@@ -189,6 +185,7 @@
         height: 38px;
         margin-right: 15px;
         width: 38px;
+        flex-shrink: 0;
 
         > div {
           background-repeat: no-repeat;
