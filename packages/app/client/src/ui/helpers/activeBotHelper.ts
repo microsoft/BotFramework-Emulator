@@ -228,7 +228,7 @@ export const ActiveBotHelper = new class {
    * a livechat session.
    * @param bot The bot to be switched to. Can be a bot object with a path, or the bot path itself
    */
-  async confirmAndSwitchBots(bot: BotConfigWithPath | string): Promise<any> {
+  async switchBots(bot: BotConfigWithPath | string): Promise<any> {
     let botPath: string;
     botPath = typeof bot === 'object' ? bot.path : bot;
 
@@ -236,55 +236,49 @@ export const ActiveBotHelper = new class {
     console.log(`Switching to bot ${botPath}`);
 
     try {
-      // prompt the user to confirm the switch
-      // const result = await this.confirmSwitchBot();
-      if (true) { // result
-        // store.dispatch(EditorActions.closeNonGlobalTabs());
-
-        // if we only have the bot path, we first need to open the bot file
-        let newActiveBot: BotConfigWithPath;
-        if (typeof bot === 'string') {
-          try {
-            newActiveBot = await CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.Open, bot);
-          } catch (e) {
-            throw new Error(`[confirmAndSwitchBots] Error while trying to open bot at ${botPath}: ${e}`);
-          }
-        } else {
-          newActiveBot = bot;
+      // if we only have the bot path, we first need to open the bot file
+      let newActiveBot: BotConfigWithPath;
+      if (typeof bot === 'string') {
+        try {
+          newActiveBot = await CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.Open, bot);
+        } catch (e) {
+          throw new Error(`[switchBots] Error while trying to open bot at ${botPath}: ${e}`);
         }
-
-        // set the bot as active
-        await this.setActiveBot(newActiveBot);
-
-        // find a suitable endpoint configuration
-        let endpoint: IEndpointService;
-        const overridesArePresent = newActiveBot.overrides && newActiveBot.overrides.endpoint;
-
-        // if an endpoint id was specified, use that endpoint, otherwise use the first endpoint found
-        if (overridesArePresent && newActiveBot.overrides.endpoint.id) {
-          endpoint = newActiveBot.services
-            .find(service =>
-              service.type === ServiceTypes.Endpoint
-              && service.id === newActiveBot.overrides.endpoint.id
-            ) as IEndpointService;
-        } else {
-          endpoint = newActiveBot.services
-            .find(service => service.type === ServiceTypes.Endpoint) as IEndpointService;
-        }
-
-        // apply endpoint overrides here
-        if (endpoint && overridesArePresent) {
-          endpoint = mergeEndpoints(endpoint, newActiveBot.overrides.endpoint);
-        }
-
-        // open a livechat with the configured endpoint
-        if (endpoint) {
-          await CommandServiceImpl.call(SharedConstants.Commands.Emulator.NewLiveChat, endpoint);
-        }
-
-        store.dispatch(NavBarActions.select(Constants.NAVBAR_BOT_EXPLORER));
-        store.dispatch(ExplorerActions.showExplorer(true));
+      } else {
+        newActiveBot = bot;
       }
+
+      // set the bot as active
+      await this.setActiveBot(newActiveBot);
+
+      // find a suitable endpoint configuration
+      let endpoint: IEndpointService;
+      const overridesArePresent = newActiveBot.overrides && newActiveBot.overrides.endpoint;
+
+      // if an endpoint id was specified, use that endpoint, otherwise use the first endpoint found
+      if (overridesArePresent && newActiveBot.overrides.endpoint.id) {
+        endpoint = newActiveBot.services
+          .find(service =>
+            service.type === ServiceTypes.Endpoint
+            && service.id === newActiveBot.overrides.endpoint.id
+          ) as IEndpointService;
+      } else {
+        endpoint = newActiveBot.services
+          .find(service => service.type === ServiceTypes.Endpoint) as IEndpointService;
+      }
+
+      // apply endpoint overrides here
+      if (endpoint && overridesArePresent) {
+        endpoint = mergeEndpoints(endpoint, newActiveBot.overrides.endpoint);
+      }
+
+      // open a livechat with the configured endpoint
+      if (endpoint) {
+        await CommandServiceImpl.call(SharedConstants.Commands.Emulator.NewLiveChat, endpoint);
+      }
+
+      store.dispatch(NavBarActions.select(Constants.NAVBAR_BOT_EXPLORER));
+      store.dispatch(ExplorerActions.showExplorer(true));
     } catch (e) {
       const errMsg = `Error while trying to switch to bot: ${botPath}`;
       const notification = newNotification(errMsg);

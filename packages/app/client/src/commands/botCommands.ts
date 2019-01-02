@@ -54,7 +54,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // ---------------------------------------------------------------------------
   // Switches the current active bot
   commandRegistry.registerCommand(Commands.Bot.Switch,
-    (bot: BotConfigWithPath | string) => ActiveBotHelper.confirmAndSwitchBots(bot));
+    (bot: BotConfigWithPath | string) => ActiveBotHelper.switchBots(bot));
 
   // ---------------------------------------------------------------------------
   // Closes the current active bot
@@ -71,7 +71,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
       // create and switch bots
       return ActiveBotHelper.confirmAndCreateBot(bot, '');
     }
-    return ActiveBotHelper.confirmAndSwitchBots(bot);
+    return ActiveBotHelper.switchBots(bot);
   });
 
   // ---------------------------------------------------------------------------

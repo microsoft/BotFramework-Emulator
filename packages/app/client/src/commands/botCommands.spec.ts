@@ -50,7 +50,7 @@ describe('The bot commands', () => {
   });
 
   it('should make the appropriate calls to switch bots', () => {
-    const spy = jest.spyOn(ActiveBotHelper, 'confirmAndSwitchBots');
+    const spy = jest.spyOn(ActiveBotHelper, 'switchBots');
     const { handler } = registry.getCommand(SharedConstants.Commands.Bot.Switch);
     handler({});
     expect(spy).toHaveBeenCalledWith({});
@@ -72,7 +72,7 @@ describe('The bot commands', () => {
   });
 
   it('should make the appropriate calls to load a bot when the bot exists', () => {
-    const switchSpy = jest.spyOn(ActiveBotHelper, 'confirmAndSwitchBots');
+    const switchSpy = jest.spyOn(ActiveBotHelper, 'switchBots');
     const { handler } = registry.getCommand(SharedConstants.Commands.Bot.Load);
     handler({ path: 'some/path.bot' });
 

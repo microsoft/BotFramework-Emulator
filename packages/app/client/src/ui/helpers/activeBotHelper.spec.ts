@@ -228,7 +228,7 @@ describe('ActiveBotHelper tests', () => {
     ActiveBotHelper.confirmSwitchBot = backupConfirmSwitchBot;
   });
 
-  it('confirmAndSwitchBots() functionality', async () => {
+  it('switchBots() functionality', async () => {
     const backupBotAlreadyOpen = ActiveBotHelper.botAlreadyOpen;
     const backupConfirmSwitchBot = ActiveBotHelper.confirmSwitchBot;
     const backupSetActiveBot = ActiveBotHelper.setActiveBot;
@@ -258,7 +258,7 @@ describe('ActiveBotHelper tests', () => {
     (botHelpers.getActiveBot as any) = () => bot;
     ActiveBotHelper.botAlreadyOpen = () => new Promise((resolve, reject) => resolve(null));
 
-    await ActiveBotHelper.confirmAndSwitchBots(bot);
+    await ActiveBotHelper.switchBots(bot);
     expect(mockDispatch).toHaveBeenCalled();
     mockDispatch.mockClear();
 
@@ -271,14 +271,14 @@ describe('ActiveBotHelper tests', () => {
     ActiveBotHelper.confirmSwitchBot = () => new Promise((resolve, reject) => resolve(true));
     ActiveBotHelper.setActiveBot = (arg: any) => new Promise((resolve, reject) => resolve(null));
 
-    await ActiveBotHelper.confirmAndSwitchBots(bot);
+    await ActiveBotHelper.switchBots(bot);
     expect(mockCall).toHaveBeenCalledWith(SharedConstants.Commands.Emulator.NewLiveChat, endpoint);
-    expect(mockDispatch).toHaveBeenCalledTimes(3);
+    expect(mockDispatch).toHaveBeenCalledTimes(2);
     mockDispatch.mockClear();
     mockCall.mockClear();
 
     // switching to a bot with only the bot path available
-    await ActiveBotHelper.confirmAndSwitchBots('someBotPath');
+    await ActiveBotHelper.switchBots('someBotPath');
     expect(mockRemoteCall).toHaveBeenCalledWith(SharedConstants.Commands.Bot.Open, 'someBotPath');
     mockCall.mockClear();
     mockDispatch.mockClear();
@@ -289,7 +289,7 @@ describe('ActiveBotHelper tests', () => {
         endpoint: 'someOverride'
       }
     };
-    await ActiveBotHelper.confirmAndSwitchBots(bot);
+    await ActiveBotHelper.switchBots(bot);
     expect(mockCall).toHaveBeenCalledWith(
       SharedConstants.Commands.Emulator.NewLiveChat,
       { ...endpoint, endpoint: 'someOverride' }
@@ -305,7 +305,7 @@ describe('ActiveBotHelper tests', () => {
         id: 'someOtherEndpoint'
       }
     };
-    await ActiveBotHelper.confirmAndSwitchBots(bot);
+    await ActiveBotHelper.switchBots(bot);
     expect(mockCall).toHaveBeenCalledWith(
       SharedConstants.Commands.Emulator.NewLiveChat,
       { ...secondEndpoint, endpoint: 'someOtherOverride', }
