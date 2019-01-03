@@ -32,35 +32,31 @@
 //
 
 import * as Restify from 'restify';
+import registerAttachmentRoutes from './attachments/registerRoutes';
+import registerBotStateRoutes from './botState/registerRoutes';
+import registerConversationRoutes from './conversations/registerRoutes';
+import registerDirectLineRoutes from './directLine/registerRoutes';
+import registerEmulatorRoutes from './emulator/registerRoutes';
 import Attachments from './facility/attachments';
 import BotState from './facility/botState';
 import ConsoleLogService from './facility/consoleLogService';
 import ConversationSet from './facility/conversationSet';
 import EndpointSet from './facility/endpointSet';
-import BotEmulatorOptions from './types/botEmulatorOptions';
-import Logger from './types/logger';
-import LogService from './types/log/service';
 import LoggerAdapter from './facility/loggerAdapter';
-import registerAttachmentRoutes from './attachments/registerRoutes';
-import registerBotStateRoutes from './botState/registerRoutes';
-import registerConversationRoutes from './conversations/registerRoutes';
-import registerDirectLineRoutes from './directLine/registerRoutes';
-import registerSessionRoutes from './session/registerRoutes';
-import registerUserTokenRoutes from './userToken/registerRoutes';
-import stripEmptyBearerToken from './utils/stripEmptyBearerToken';
-import registerEmulatorRoutes from './emulator/registerRoutes';
 
 import Users from './facility/users';
+import registerSessionRoutes from './session/registerRoutes';
+import BotEmulatorOptions from './types/botEmulatorOptions';
+import LogService from './types/log/service';
+import Logger from './types/logger';
+import registerUserTokenRoutes from './userToken/registerRoutes';
+import stripEmptyBearerToken from './utils/stripEmptyBearerToken';
 
 const DEFAULT_OPTIONS: BotEmulatorOptions = {
   fetch,
   loggerOrLogService: new ConsoleLogService(),
   stateSizeLimitKB: 64
 };
-
-export interface ServiceUrlProvider {
-  (botUrl: string): string;
-}
 
 export interface Facilities {
   attachments: Attachments;
@@ -75,19 +71,12 @@ export interface Facilities {
 export default class BotEmulator {
   // TODO: Instead of providing a getter for serviceUrl, we should let the upstream to set the serviceUrl
   // Currently, the upstreamer doesn't really know when the serviceUrl change (ngrok), they need to do their job
-  public getServiceUrl: ServiceUrlProvider;
+  public getServiceUrl: (botUrl: string) => Promise<string>;
   public options: BotEmulatorOptions;
   public facilities: Facilities;
 
-  constructor(
-    public serviceUrlOrProvider: string | ServiceUrlProvider,
-    options: BotEmulatorOptions = DEFAULT_OPTIONS
-  ) {
-    if (typeof serviceUrlOrProvider === 'string') {
-      this.getServiceUrl = () => serviceUrlOrProvider;
-    } else {
-      this.getServiceUrl = serviceUrlOrProvider;
-    }
+  constructor(getServiceUrl: (botUrl: string) => Promise<string>, options: BotEmulatorOptions = DEFAULT_OPTIONS) {
+    this.getServiceUrl = getServiceUrl;
 
     this.options = { ...DEFAULT_OPTIONS, ...options };
 

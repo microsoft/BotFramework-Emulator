@@ -97,9 +97,8 @@ async function main() {
 
   // Create a bot entry
   const bot = new BotEmulator(
-    program.serviceUrl || `http://localhost:${ port }`,
+    async () => program.serviceUrl || `http://localhost:${ port }`,
     {
-      tunnelingServiceUrl: '',
       loggerOrLogService: new NpmLogger()
     }
   );

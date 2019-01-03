@@ -155,8 +155,6 @@ describe('The ServiceExplorerSagas', () => {
             "type": "endpoint",
             "name": "https://testbot.botframework.com/api/messagesv3",
             "id": "https://testbot.botframework.com/api/messagesv3",
-            "appId": "51fc2648-1190-44fa-9559-87b11b1d0014",
-            "appPassword": "jxZjGcOpyfM4q75vp2paNQd",
             "endpoint": "https://testbot.botframework.com/api/messagesv3"
         }]
       }`);

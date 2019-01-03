@@ -32,13 +32,13 @@
 //
 
 import { BotEmulator, Conversation } from '@bfemulator/emulator-core';
-import CORS from 'restify-cors-middleware';
+import LogLevel from '@bfemulator/emulator-core/lib/types/log/level';
+import { networkRequestItem, networkResponseItem, textItem } from '@bfemulator/emulator-core/lib/types/log/util';
 import * as Restify from 'restify';
+import CORS from 'restify-cors-middleware';
+import { emulator } from './emulator';
 
 import { mainWindow } from './main';
-import { emulator } from './emulator';
-import { networkRequestItem, networkResponseItem, textItem } from '@bfemulator/emulator-core/lib/types/log/util';
-import LogLevel from '@bfemulator/emulator-core/lib/types/log/level';
 
 export class RestServer {
   private readonly _botEmulator: BotEmulator;
@@ -104,7 +104,7 @@ export class RestServer {
         ),
         textItem(
           level,
-          `${facility}.${routeName}`
+          `${ facility }.${ routeName }`
         ),
       );
     });
@@ -113,11 +113,10 @@ export class RestServer {
     this._router.use(cors.actual);
 
     this._botEmulator = new BotEmulator(
-      botUrl => emulator.ngrok.getServiceUrl(botUrl),
+      async (botUrl: string) => emulator.ngrok.getServiceUrl(botUrl),
       {
         fetch: fetch,
-        loggerOrLogService: mainWindow.logService,
-        tunnelingServiceUrl: () => emulator.ngrok.getNgrokServiceUrl()
+        loggerOrLogService: mainWindow.logService
       }
     );
 
