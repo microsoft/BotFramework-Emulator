@@ -36,17 +36,28 @@ import { BotEmulator, Conversation } from '@bfemulator/emulator-core';
 import LogLevel from '@bfemulator/emulator-core/lib/types/log/level';
 import { networkRequestItem, networkResponseItem, textItem } from '@bfemulator/emulator-core/lib/types/log/util';
 import { IEndpointService } from 'botframework-config';
-import * as Restify from 'restify';
+import { createServer, Request, Response, Route, Server } from 'restify';
 import CORS from 'restify-cors-middleware';
 import { emulator } from './emulator';
 
 import { mainWindow } from './main';
 
 export class RestServer {
-  private readonly _botEmulator: BotEmulator;
-  private readonly _router: Restify.Server;
+  private readonly router: Server;
 
+  // Late binding
+  private _botEmulator: BotEmulator;
   public get botEmulator(): BotEmulator {
+    if (!this._botEmulator) {
+      this._botEmulator = new BotEmulator(
+        botUrl => emulator.ngrok.getServiceUrl(botUrl),
+        {
+          fetch: fetch,
+          loggerOrLogService: mainWindow.logService,
+          tunnelingServiceUrl: () => emulator.ngrok.getNgrokServiceUrl()
+        });
+      this._botEmulator.facilities.conversations.on('new', this.onNewConversation);
+    }
     return this._botEmulator;
   }
 
@@ -57,112 +68,104 @@ export class RestServer {
       exposeHeaders: []
     });
 
-    this._router = Restify.createServer({
+    this.router = createServer({
       name: 'Emulator',
       handleUncaughtExceptions: true
     });
 
-    this._router.on('after', async (req: Restify.Request, res: Restify.Response,
-                                    route: Restify.Route, error: Error) => {
-      if (req.method === 'GET' && route.spec.path === '/v3/directline/conversations/:conversationId/activities') {
-        // Don't log WebChat's polling GET operations
-        return;
-      }
-
-      let conversationId;
-      if ((req as any).conversation) {
-        conversationId = (req as any).conversation.conversationId;
-      } else if (req.params.conversationId) {
-        conversationId = req.params.conversationId;
-      }
-
-      if (!conversationId || !conversationId.length || conversationId.includes('transcript')) {
-        return;
-      }
-
-      const facility = (req as any).facility || 'network';
-      const routeName = (req as any).routeName || '';
-
-      let level = LogLevel.Debug;
-      if (!/2\d\d/.test(res.statusCode.toString())) {
-        level = LogLevel.Error;
-      }
-
-      mainWindow.logService.logToChat(
-        conversationId,
-        networkRequestItem(
-          facility,
-          (req as any)._body,
-          req.headers,
-          req.method,
-          req.url
-        ),
-        networkResponseItem(
-          (res as any)._data,
-          res.headers,
-          res.statusCode,
-          res.statusMessage,
-          req.url
-        ),
-        textItem(
-          level,
-          `${ facility }.${ routeName }`
-        ),
-      );
-    });
-
-    this._router.pre(cors.preflight);
-    this._router.use(cors.actual);
-
-    this._botEmulator = new BotEmulator(
-      async (botUrl: string) => emulator.ngrok.getServiceUrl(botUrl),
-      {
-        fetch: fetch,
-        loggerOrLogService: mainWindow.logService
-      }
-    );
-
-    this._botEmulator.facilities.conversations.on('new', async (conversation: Conversation) => {
-      if (!conversation ||
-        !conversation.conversationId ||
-        !conversation.conversationId.length ||
-        conversation.conversationId.includes('transcript')) {
-        return;
-      }
-      // Check for an existing livechat window
-      // before creating a new one since "new"
-      // can also mean "restart".
-      let { conversationId } = conversation;
-      if (!conversationId.includes('livechat') &&
-        !this._botEmulator.facilities.conversations.conversationById(conversationId + '|livechat')) {
-        const { botEndpoint: { id, botUrl } } = conversation;
-        await mainWindow.commandService.remoteCall(SharedConstants.Commands.Emulator.NewLiveChat, {
-          id,
-          endpoint: botUrl
-        } as IEndpointService);
-      }
-      emulator.report(conversation.conversationId);
-    });
+    this.router.on('after', this.onRouterAfter);
+    this.router.pre(cors.preflight);
+    this.router.use(cors.actual);
   }
 
   public listen(port?: number): Promise<{ url: string, port: number }> {
     return new Promise((resolve, reject) => {
-      this._router.once('error', err => reject(err));
+      this.router.once('error', err => reject(err));
 
-      this._router.listen(port, () => {
-        this.botEmulator.mount(this._router as any);
-        resolve({ url: this._router.url, port: this._router.address().port });
+      this.router.listen(port, () => {
+        this.botEmulator.mount(this.router as any);
+        resolve({ url: this.router.url, port: this.router.address().port });
       });
     });
   }
 
   public close() {
     return new Promise(resolve => {
-      if (this._router) {
-        this._router.close(() => resolve());
+      if (this.router) {
+        this.router.close(() => resolve());
       } else {
         resolve();
       }
     });
+  }
+
+  private onRouterAfter = async (req: Request, res: Response, route: Route) => {
+    if (req.method === 'GET' && route.spec.path === '/v3/directline/conversations/:conversationId/activities') {
+      // Don't log WebChat's polling GET operations
+      return;
+    }
+
+    let conversationId;
+    if ((req as any).conversation) {
+      conversationId = (req as any).conversation.conversationId;
+    } else if (req.params.conversationId) {
+      conversationId = req.params.conversationId;
+    }
+
+    if (!conversationId || !conversationId.length || conversationId.includes('transcript')) {
+      return;
+    }
+
+    const facility = (req as any).facility || 'network';
+    const routeName = (req as any).routeName || '';
+
+    let level = LogLevel.Debug;
+    if (!/2\d\d/.test(res.statusCode.toString())) {
+      level = LogLevel.Error;
+    }
+
+    mainWindow.logService.logToChat(
+      conversationId,
+      networkRequestItem(
+        facility,
+        (req as any)._body,
+        req.headers,
+        req.method,
+        req.url
+      ),
+      networkResponseItem(
+        (res as any)._data,
+        res.headers,
+        res.statusCode,
+        res.statusMessage,
+        req.url
+      ),
+      textItem(
+        level,
+        `${ facility }.${ routeName }`
+      ),
+    );
+  }
+
+  private onNewConversation = async (conversation: Conversation) => {
+    if (!conversation ||
+      !conversation.conversationId ||
+      !conversation.conversationId.length ||
+      conversation.conversationId.includes('transcript')) {
+      return;
+    }
+    // Check for an existing livechat window
+    // before creating a new one since "new"
+    // can also mean "restart".
+    let { conversationId } = conversation;
+    if (!conversationId.includes('livechat') &&
+      !this.botEmulator.facilities.conversations.conversationById(conversationId + '|livechat')) {
+      const { botEndpoint: { id, botUrl } } = conversation;
+      await mainWindow.commandService.remoteCall(SharedConstants.Commands.Emulator.NewLiveChat, {
+        id,
+        endpoint: botUrl
+      } as IEndpointService);
+    }
+    emulator.report(conversationId);
   }
 }
