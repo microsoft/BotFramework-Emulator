@@ -172,7 +172,13 @@ function getConversationId(req: ConversationAwareRequest): string {
   return req.conversation ? req.conversation.conversationId : req.params.conversationId;
 }
 
-function hasLiveChat(conversationId: string, conversationSet: ConversationSet): boolean {
-  return conversationSet.conversationById(conversationId) ||
-    conversationSet.conversationById(conversationId + '|livechat');
+  public close() {
+    return new Promise(resolve => {
+      if (this._router) {
+        this._router.close(() => resolve());
+      } else {
+        resolve();
+      }
+    });
+  }
 }
