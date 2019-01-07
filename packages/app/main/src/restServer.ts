@@ -143,17 +143,14 @@ export class RestServer {
     );
   }
 
-  private onNewConversation = async (conversation: Conversation) => {
-    if (!conversation ||
-      !conversation.conversationId ||
-      !conversation.conversationId.length ||
-      conversation.conversationId.includes('transcript')) {
+  private onNewConversation = async (conversation: Conversation = {} as Conversation) => {
+    const { conversationId = '' } = conversation;
+    if (!conversationId || conversationId.includes('transcript')) {
       return;
     }
     // Check for an existing livechat window
     // before creating a new one since "new"
     // can also mean "restart".
-    let { conversationId } = conversation;
     if (!conversationId.includes('livechat') &&
       !this.botEmulator.facilities.conversations.conversationById(conversationId + '|livechat')) {
       const { botEndpoint: { id, botUrl } } = conversation;
