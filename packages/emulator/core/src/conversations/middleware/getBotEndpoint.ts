@@ -61,7 +61,7 @@ export default function getBotEndpoint(botEmulator: BotEmulator) {
     //           uti: 'ZPtC8TT5bk-41eVUsOAAAA',
     //           ver: '1.0' },
 
-    (req as any).botEndpoint = botEmulator.facilities.endpoints.getByAppId((req as any).jwt.payload.appid);
+    (req as any).botEndpoint = botEmulator.facilities.endpoints.getByAppId((req as any).jwt.appid);
     
     return next();
   };

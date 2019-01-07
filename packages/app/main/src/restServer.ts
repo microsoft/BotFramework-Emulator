@@ -31,9 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { SharedConstants } from '@bfemulator/app-shared';
 import { BotEmulator, Conversation } from '@bfemulator/emulator-core';
 import LogLevel from '@bfemulator/emulator-core/lib/types/log/level';
 import { networkRequestItem, networkResponseItem, textItem } from '@bfemulator/emulator-core/lib/types/log/util';
+import { IEndpointService } from 'botframework-config';
 import * as Restify from 'restify';
 import CORS from 'restify-cors-middleware';
 import { emulator } from './emulator';
@@ -120,12 +122,24 @@ export class RestServer {
       }
     );
 
-    this._botEmulator.facilities.conversations.on('new', (conversation: Conversation) => {
+    this._botEmulator.facilities.conversations.on('new', async (conversation: Conversation) => {
       if (!conversation ||
         !conversation.conversationId ||
         !conversation.conversationId.length ||
         conversation.conversationId.includes('transcript')) {
         return;
+      }
+      // Check for an existing livechat window
+      // before creating a new one since "new"
+      // can also mean "restart".
+      let { conversationId } = conversation;
+      if (!conversationId.includes('livechat') &&
+        !this._botEmulator.facilities.conversations.conversationById(conversationId + '|livechat')) {
+        const { botEndpoint: { id, botUrl } } = conversation;
+        await mainWindow.commandService.remoteCall(SharedConstants.Commands.Emulator.NewLiveChat, {
+          id,
+          endpoint: botUrl
+        } as IEndpointService);
       }
       emulator.report(conversation.conversationId);
     });
