@@ -8,20 +8,20 @@ import { IEndpointService, ServiceTypes } from 'botframework-config/lib/schema';
 import { SharedConstants } from '@bfemulator/app-shared';
 
 jest.mock('../../ui/dialogs', () => ({
-    AzureLoginPromptDialogContainer: function mock() {
-      return undefined;
-    },
-    AzureLoginSuccessDialogContainer: function mock() {
-      return undefined;
-    },
-    BotCreationDialog: function mock() {
-      return undefined;
-    },
-    DialogService: { showDialog: () => Promise.resolve(true) },
-    SecretPromptDialog: function mock() {
-      return undefined;
-    }
+  AzureLoginPromptDialogContainer: function mock() {
+    return undefined;
+  },
+  AzureLoginSuccessDialogContainer: function mock() {
+    return undefined;
+  },
+  BotCreationDialog: function mock() {
+    return undefined;
+  },
+  DialogService: { showDialog: () => Promise.resolve(true) },
+  SecretPromptDialog: function mock() {
+    return undefined;
   }
+}
 ));
 
 describe('ActiveBotHelper tests', () => {
@@ -228,7 +228,7 @@ describe('ActiveBotHelper tests', () => {
     ActiveBotHelper.confirmSwitchBot = backupConfirmSwitchBot;
   });
 
-  it('switchBots() functionality', async () => {
+  it('confirmAndSwitchBots() functionality', async () => {
     const backupBotAlreadyOpen = ActiveBotHelper.botAlreadyOpen;
     const backupConfirmSwitchBot = ActiveBotHelper.confirmSwitchBot;
     const backupSetActiveBot = ActiveBotHelper.setActiveBot;
@@ -258,9 +258,7 @@ describe('ActiveBotHelper tests', () => {
     (botHelpers.getActiveBot as any) = () => bot;
     ActiveBotHelper.botAlreadyOpen = () => new Promise((resolve, reject) => resolve(null));
 
-    await ActiveBotHelper.switchBots(bot);
-    expect(mockDispatch).toHaveBeenCalled();
-    mockDispatch.mockClear();
+    await ActiveBotHelper.confirmAndSwitchBots(bot);
 
     // switching to a bot that's not open with an endpoint
     (botHelpers.getActiveBot as any) = () => otherBot;
@@ -271,14 +269,14 @@ describe('ActiveBotHelper tests', () => {
     ActiveBotHelper.confirmSwitchBot = () => new Promise((resolve, reject) => resolve(true));
     ActiveBotHelper.setActiveBot = (arg: any) => new Promise((resolve, reject) => resolve(null));
 
-    await ActiveBotHelper.switchBots(bot);
+    await ActiveBotHelper.confirmAndSwitchBots(bot);
     expect(mockCall).toHaveBeenCalledWith(SharedConstants.Commands.Emulator.NewLiveChat, endpoint);
-    expect(mockDispatch).toHaveBeenCalledTimes(2);
+    expect(mockDispatch).toHaveBeenCalledTimes(3);
     mockDispatch.mockClear();
     mockCall.mockClear();
 
     // switching to a bot with only the bot path available
-    await ActiveBotHelper.switchBots('someBotPath');
+    await ActiveBotHelper.confirmAndSwitchBots('someBotPath');
     expect(mockRemoteCall).toHaveBeenCalledWith(SharedConstants.Commands.Bot.Open, 'someBotPath');
     mockCall.mockClear();
     mockDispatch.mockClear();
@@ -289,7 +287,7 @@ describe('ActiveBotHelper tests', () => {
         endpoint: 'someOverride'
       }
     };
-    await ActiveBotHelper.switchBots(bot);
+    await ActiveBotHelper.confirmAndSwitchBots(bot);
     expect(mockCall).toHaveBeenCalledWith(
       SharedConstants.Commands.Emulator.NewLiveChat,
       { ...endpoint, endpoint: 'someOverride' }
@@ -305,7 +303,7 @@ describe('ActiveBotHelper tests', () => {
         id: 'someOtherEndpoint'
       }
     };
-    await ActiveBotHelper.switchBots(bot);
+    await ActiveBotHelper.confirmAndSwitchBots(bot);
     expect(mockCall).toHaveBeenCalledWith(
       SharedConstants.Commands.Emulator.NewLiveChat,
       { ...secondEndpoint, endpoint: 'someOtherOverride', }
