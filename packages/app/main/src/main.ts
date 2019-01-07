@@ -43,7 +43,6 @@ import * as commandLine from './commandLine';
 import { setTimeout } from 'timers';
 import { Window } from './platform/window';
 import { botListsAreDifferent, ensureStoragePath, saveSettings, writeFile } from './utils';
-import * as squirrel from './squirrelEvents';
 import { CommandRegistry, registerAllCommands } from './commands';
 import { AppMenuBuilder } from './appMenuBuilder';
 import { AppUpdater } from './appUpdater';
@@ -254,10 +253,6 @@ const windowIsOffScreen = function (windowBounds: Electron.Rectangle): boolean {
 };
 
 const createMainWindow = async () => {
-  if (squirrel.handleStartupEvent()) {
-    return;
-  }
-
   /*
   // TODO: Read window size AFTER store is initialized (how did this ever work?)
   const settings = getSettings();
