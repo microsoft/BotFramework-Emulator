@@ -35,7 +35,7 @@ import * as HttpStatus from 'http-status-codes';
 
 import BotEmulator from '../../botEmulator';
 import createAPIException from '../../utils/createResponse/apiException';
-import ErrorCodes from '../../types/errorCodes';
+import { ErrorCodes } from '../../types/errorCodes';
 import Conversation from '../../facility/conversation';
 
 import { Request, Response, Next } from 'restify';

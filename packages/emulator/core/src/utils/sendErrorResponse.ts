@@ -36,7 +36,7 @@ import * as Restify from 'restify';
 
 import APIException from '../types/apiException';
 import createErrorResponse from './createResponse/error';
-import ErrorCodes from '../types/errorCodes';
+import { ErrorCodes } from '../types/errorCodes';
 import ErrorResponse from '../types/response/error';
 
 function exceptionToAPIException(exception: any): APIException {

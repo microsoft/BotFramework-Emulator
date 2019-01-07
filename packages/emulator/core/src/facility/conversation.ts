@@ -43,7 +43,7 @@ import GenericActivity from '../types/activity/generic';
 import InvokeActivity from '../types/activity/invoke';
 import MessageActivity from '../types/activity/message';
 import Attachment from '../types/attachment';
-import ErrorCodes from '../types/errorCodes';
+import { ErrorCodes } from '../types/errorCodes';
 import LogLevel from '../types/log/level';
 import { appSettingsItem, externalLinkItem, textItem } from '../types/log/util';
 import PaymentAddress from '../types/payment/address';

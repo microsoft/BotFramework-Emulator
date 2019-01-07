@@ -31,21 +31,19 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-class ErrorCodes {
+export enum ErrorCodes {
   /// unknown service error
-  public static ServiceError = 'ServiceError';
+  ServiceError = 'ServiceError',
 
   /// Bad argument
-  public static BadArgument = 'BadArgument';
+  BadArgument = 'BadArgument',
 
   /// Error parsing request
-  public static BadSyntax = 'BadSyntax';
+  BadSyntax = 'BadSyntax',
 
   /// Mandatory property was not specified
-  public static MissingProperty = 'MissingProperty';
+  MissingProperty = 'MissingProperty',
 
   /// Message exceeded size limits
-  public static MessageSizeTooBig = 'MessageSizeTooBig';
+  MessageSizeTooBig = 'MessageSizeTooBig'
 }
-
-export default ErrorCodes;

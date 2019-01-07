@@ -42,6 +42,11 @@ import { emulator } from './emulator';
 
 import { mainWindow } from './main';
 
+interface ConversationAwareRequest extends Request {
+  conversation?: { conversationId?: string };
+  params?: { conversationId?: string };
+}
+
 export class RestServer {
   private readonly router: Server;
 
@@ -68,14 +73,16 @@ export class RestServer {
       exposeHeaders: []
     });
 
-    this.router = createServer({
+    const router = createServer({
       name: 'Emulator',
       handleUncaughtExceptions: true
     });
 
-    this.router.on('after', this.onRouterAfter);
-    this.router.pre(cors.preflight);
-    this.router.use(cors.actual);
+    router.on('after', this.onRouterAfter);
+    router.pre(cors.preflight);
+    router.use(cors.actual);
+
+    this.router = router;
   }
 
   public listen(port?: number): Promise<{ url: string, port: number }> {
@@ -100,19 +107,8 @@ export class RestServer {
   }
 
   private onRouterAfter = async (req: Request, res: Response, route: Route) => {
-    if (req.method === 'GET' && route.spec.path === '/v3/directline/conversations/:conversationId/activities') {
-      // Don't log WebChat's polling GET operations
-      return;
-    }
-
-    let conversationId;
-    if ((req as any).conversation) {
-      conversationId = (req as any).conversation.conversationId;
-    } else if (req.params.conversationId) {
-      conversationId = req.params.conversationId;
-    }
-
-    if (!conversationId || !conversationId.length || conversationId.includes('transcript')) {
+    const conversationId = getConversationId(req as ConversationAwareRequest);
+    if (!shouldPostToChat(conversationId, req.method, route)) {
       return;
     }
 
@@ -168,4 +164,13 @@ export class RestServer {
     }
     emulator.report(conversationId);
   }
+}
+
+function shouldPostToChat(conversationId: string, method: string, route: Route): boolean {
+  const isDLine = method === 'GET' && route.spec.path === '/v3/directline/conversations/:conversationId/activities';
+  return !isDLine && !!conversationId && !conversationId.includes('transcript');
+}
+
+function getConversationId(req: ConversationAwareRequest): string {
+  return req.conversation ? req.conversation.conversationId : req.params.conversationId;
 }

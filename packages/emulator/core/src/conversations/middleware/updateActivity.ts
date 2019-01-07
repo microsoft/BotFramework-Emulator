@@ -36,7 +36,7 @@ import * as Restify from 'restify';
 
 import BotEmulator from '../../botEmulator';
 import createAPIException from '../../utils/createResponse/apiException';
-import ErrorCodes from '../../types/errorCodes';
+import { ErrorCodes } from '../../types/errorCodes';
 import ConversationAPIPathParameters from '../conversationAPIPathParameters';
 import GenericActivity from '../../types/activity/generic';
 import ResourceResponse from '../../types/response/resource';
