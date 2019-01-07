@@ -171,14 +171,3 @@ function shouldPostToChat(conversationId: string, method: string, route: Route):
 function getConversationId(req: ConversationAwareRequest): string {
   return req.conversation ? req.conversation.conversationId : req.params.conversationId;
 }
-
-  public close() {
-    return new Promise(resolve => {
-      if (this._router) {
-        this._router.close(() => resolve());
-      } else {
-        resolve();
-      }
-    });
-  }
-}
