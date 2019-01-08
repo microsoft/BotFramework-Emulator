@@ -58,6 +58,7 @@ export class NgrokService {
   private _spawnErr: any;
   private _localhost = 'localhost';
   private _triedToSpawn: boolean;
+  private _recycle: Promise<void>;
 
   constructor() {
     return ngrokInstance || (ngrokInstance = this); // Singleton
@@ -91,33 +92,41 @@ export class NgrokService {
     }
   }
 
-  public async recycle() {
-    try {
-      await killNgrok();
-    } catch (err) {
-      console.error('Failed to kill ngrok', err);
+  public recycle(): Promise<void> {
+    if (this._recycle) {
+      return this._recycle;
     }
-
-    const port = emulator.framework.serverPort;
-
-    this._ngrokPath = getStore().getState().framework.ngrokPath;
-    this._serviceUrl = `http://${ this._localhost }:${ port }`;
-    this._inspectUrl = null;
-    this._spawnErr = null;
-    this._triedToSpawn = false;
-
-    if (this._ngrokPath && this._ngrokPath.length) {
+    this._recycle = new Promise(async resolve => {
       try {
-        this._triedToSpawn = true;
-        const { inspectUrl, url } = await ngrokConnect({ port, path: this._ngrokPath });
-
-        this._serviceUrl = url;
-        this._inspectUrl = inspectUrl;
+        await killNgrok();
       } catch (err) {
-        this._spawnErr = err;
-        console.error('Failed to spawn ngrok', err);
+        console.error('Failed to kill ngrok', err);
       }
-    }
+
+      const port = emulator.framework.serverPort;
+
+      this._ngrokPath = getStore().getState().framework.ngrokPath;
+      this._serviceUrl = `http://${ this._localhost }:${ port }`;
+      this._inspectUrl = null;
+      this._spawnErr = null;
+      this._triedToSpawn = false;
+
+      if (this._ngrokPath && this._ngrokPath.length) {
+        try {
+          this._triedToSpawn = true;
+          const { inspectUrl, url } = await ngrokConnect({ port, path: this._ngrokPath });
+
+          this._serviceUrl = url;
+          this._inspectUrl = inspectUrl;
+        } catch (err) {
+          this._spawnErr = err;
+          console.error('Failed to spawn ngrok', err);
+        }
+      }
+      this._recycle = null;
+      resolve();
+    });
+    return this._recycle;
   }
 
   /** Logs a message in all active conversations that ngrok has expired */
