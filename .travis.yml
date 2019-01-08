@@ -10,8 +10,6 @@ notifications:
   email: false
 
 before_install:
-- npm cache verify
-- npm prune
 - npm i -g lerna
 - lerna clean --yes
 
