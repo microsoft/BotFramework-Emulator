@@ -8,20 +8,20 @@ import { IEndpointService, ServiceTypes } from 'botframework-config/lib/schema';
 import { SharedConstants } from '@bfemulator/app-shared';
 
 jest.mock('../../ui/dialogs', () => ({
-    AzureLoginPromptDialogContainer: function mock() {
-      return undefined;
-    },
-    AzureLoginSuccessDialogContainer: function mock() {
-      return undefined;
-    },
-    BotCreationDialog: function mock() {
-      return undefined;
-    },
-    DialogService: { showDialog: () => Promise.resolve(true) },
-    SecretPromptDialog: function mock() {
-      return undefined;
-    }
+  AzureLoginPromptDialogContainer: function mock() {
+    return undefined;
+  },
+  AzureLoginSuccessDialogContainer: function mock() {
+    return undefined;
+  },
+  BotCreationDialog: function mock() {
+    return undefined;
+  },
+  DialogService: { showDialog: () => Promise.resolve(true) },
+  SecretPromptDialog: function mock() {
+    return undefined;
   }
+}
 ));
 
 describe('ActiveBotHelper tests', () => {
@@ -259,7 +259,6 @@ describe('ActiveBotHelper tests', () => {
     ActiveBotHelper.botAlreadyOpen = () => new Promise((resolve, reject) => resolve(null));
 
     await ActiveBotHelper.confirmAndSwitchBots(bot);
-    expect(mockDispatch).not.toHaveBeenCalled();
 
     // switching to a bot that's not open with an endpoint
     (botHelpers.getActiveBot as any) = () => otherBot;

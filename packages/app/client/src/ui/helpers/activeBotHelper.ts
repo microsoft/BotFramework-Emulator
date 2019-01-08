@@ -189,7 +189,7 @@ export const ActiveBotHelper = new class {
       if (filename) {
         let activeBot = getActiveBot();
         if (activeBot && activeBot.path === filename) {
-          await this.botAlreadyOpen();
+          await CommandServiceImpl.call(SharedConstants.Commands.Bot.Switch, activeBot);
           return;
         }
 
@@ -234,7 +234,13 @@ export const ActiveBotHelper = new class {
     botPath = typeof bot === 'object' ? bot.path : bot;
 
     if (currentActiveBot && currentActiveBot.path === botPath) {
-      await this.botAlreadyOpen();
+      // the bot is already open, so open a new live chat tab
+      try {
+        await CommandServiceImpl.call(
+          SharedConstants.Commands.Emulator.NewLiveChat, currentActiveBot.services[0]);
+      } catch (e) {
+        throw new Error(`[confirmAndSwitchBots] Error while trying to open bot at ${botPath}: ${e}`);
+      }
       return;
     }
 
@@ -247,7 +253,6 @@ export const ActiveBotHelper = new class {
 
       if (result) {
         store.dispatch(EditorActions.closeNonGlobalTabs());
-
         // if we only have the bot path, we first need to open the bot file
         let newActiveBot: BotConfigWithPath;
         if (typeof bot === 'string') {
