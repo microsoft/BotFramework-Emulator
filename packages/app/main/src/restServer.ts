@@ -35,7 +35,7 @@ import { SharedConstants } from '@bfemulator/app-shared';
 import { BotEmulator, Conversation } from '@bfemulator/emulator-core';
 import LogLevel from '@bfemulator/emulator-core/lib/types/log/level';
 import { networkRequestItem, networkResponseItem, textItem } from '@bfemulator/emulator-core/lib/types/log/util';
-import { ConversationSet } from '@bfemulator/emulator-core/lib/facility/conversationSet';
+import ConversationSet from '@bfemulator/emulator-core/lib/facility/conversationSet';
 import { IEndpointService } from 'botframework-config';
 import { createServer, Request, Response, Route, Server } from 'restify';
 import CORS from 'restify-cors-middleware';
@@ -60,7 +60,6 @@ export class RestServer {
         {
           fetch: fetch,
           loggerOrLogService: mainWindow.logService,
-          tunnelingServiceUrl: () => emulator.ngrok.getNgrokServiceUrl()
         });
       this._botEmulator.facilities.conversations.on('new', this.onNewConversation);
     }
@@ -173,6 +172,6 @@ function getConversationId(req: ConversationAwareRequest): string {
 }
 
 function hasLiveChat(conversationId: string, conversationSet: ConversationSet): boolean {
-  return conversationSet.conversationById(conversationId) ||
-    conversationSet.conversationById(conversationId + '|livechat');
+  return !!conversationSet.conversationById(conversationId) ||
+    !!conversationSet.conversationById(conversationId + '|livechat');
 }

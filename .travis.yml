@@ -19,5 +19,3 @@ install:
 script:
 - npm run build
 - npm run test:coveralls
-
-cache: false
