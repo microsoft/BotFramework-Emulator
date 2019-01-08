@@ -42,8 +42,8 @@ describe('The directLine middleware', () => {
     emulator = { facilities: { logger: { logMessage: () => true, logActivity: () => true } } } as any;
     emulator.facilities.conversations = new ConversationSet();
     emulator.facilities.users = new Users();
-    emulator.facilities.users.currentUserId = '123';
-    emulator.facilities.users.users = { '123': { id: '123', name: 'emulator' } };
+    emulator.facilities.users.currentUserId = '456';
+    emulator.facilities.users.users = { '456': { id: '456', name: 'emulator' } };
     emulator.facilities.attachments = new Attachments();
     emulator.getServiceUrl = () => 'https://localhost:8888/api/message';
     emulator.options = {
@@ -323,7 +323,7 @@ describe('The directLine middleware', () => {
         serviceUrl: 'https://localhost:8888/api/message',
         channelId: 'emulator',
         recipient: {
-          'id': '123',
+          'id': '456',
           'name': 'Bot',
           'role': 'bot'
         },
@@ -357,7 +357,7 @@ describe('The directLine middleware', () => {
     it('should create a new conversation if one does not already exist', async () => {
       const req = {
         header: () => 'bm90aGluZw.eyJjb252ZXJzYXRpb25JZCI6InRyYW5zY3JpcHQtMDA3In0=.7gjdshgfdsk98458205jfds9843fjds',
-        botEndpoint: new BotEndpoint('12', '123', 'http://localhost:12345', '', '', false, '', {
+        botEndpoint: new BotEndpoint('12', '456', 'http://localhost:12345', '', '', false, '', {
           fetch: async () => true
         }),
         conversation: null
@@ -378,7 +378,7 @@ describe('The directLine middleware', () => {
       const conversation = createConversationUtil(emulator);
       const req = {
         header: () => 'Bearer eyJjb252ZXJzYXRpb25JZCI6InRyYW5zY3JpcHQtMDA3In0=',
-        botEndpoint: new BotEndpoint('123', '1234', 'http://localhost:12345', '', '', false, '', {
+        botEndpoint: new BotEndpoint('456', '1234', 'http://localhost:12345', '', '', false, '', {
           fetch: async () => true
         }),
         conversation: null
@@ -390,7 +390,7 @@ describe('The directLine middleware', () => {
         'conversationId': 'transcript-007',
         'expires_in': 2147483647,
         'streamUrl': '',
-        'token': '123'
+        'token': '456'
       });
       expect(req.conversation).toBeTruthy();
       expect(conversation.members.length).toBe(3);
@@ -432,7 +432,7 @@ function createConversationUtil(emulator: BotEmulator, conversationId: string = 
   // create the conversation with an activity
   const bot = { role: 'bot', name: 'thebot', id: '456' };
   let req: any = {
-    botEndpoint: new BotEndpoint('12', '123', 'http://localhost:12345', '', '', false, '', {
+    botEndpoint: new BotEndpoint('12', '456', 'http://localhost:12345', '', '', false, '', {
       fetch: async () => ({
         json: async () => ({}),
         text: async () => 'hello',
@@ -440,7 +440,7 @@ function createConversationUtil(emulator: BotEmulator, conversationId: string = 
       })
     }),
     body: {
-      members: [{ id: '123', name: 'emulator', role: 'user' }],
+      members: [{ id: '456', name: 'emulator', role: 'user' }],
       bot,
       conversationId
     } as ConversationParameters
