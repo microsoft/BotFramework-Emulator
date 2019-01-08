@@ -64,8 +64,10 @@ export default function replyToActivity(botEmulator: BotEmulator) {
         res.end();
       };
 
-      let visitor = new OAuthLinkEncoder(botEmulator, botEmulator.options.tunnelingServiceUrl,
-        req.headers.authorization as string, activity, conversationParameters.conversationId);
+      let visitor = new OAuthLinkEncoder(botEmulator,
+        req.headers.authorization as string,
+        activity,
+        conversationParameters.conversationId);
       visitor.resolveOAuthCards(activity).then((value?: any) => {
         continuation();
       }, (_reason: any) => {

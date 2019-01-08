@@ -59,7 +59,6 @@ export class Emulator {
 
   async startup() {
     await this.framework.startup();
-    await this.ngrok.startup();
   }
 
   public report(conversationId: string) {

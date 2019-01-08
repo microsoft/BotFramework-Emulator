@@ -31,13 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { promisify } from 'util';
-
-import { emulator } from './emulator';
-import { getStore } from './settingsData/store';
-import { isLocalhostUrl } from './utils';
-import * as ngrok from './ngrok';
-import { mainWindow } from './main';
+import { FrameworkSettings } from '@bfemulator/app-shared';
+import { ILogItem } from '@bfemulator/emulator-core/lib/types/log/item';
 import LogLevel from '@bfemulator/emulator-core/lib/types/log/level';
 import {
   appSettingsItem,
@@ -46,8 +41,14 @@ import {
   ngrokExpirationItem,
   textItem
 } from '@bfemulator/emulator-core/lib/types/log/util';
-import { ILogItem } from '@bfemulator/emulator-core/lib/types/log/item';
-import { FrameworkSettings } from '@bfemulator/app-shared';
+import { promisify } from 'util';
+
+import { emulator } from './emulator';
+import { mainWindow } from './main';
+import * as ngrok from './ngrok';
+import { getStore } from './settingsData/store';
+import { isLocalhostUrl } from './utils';
+
 let ngrokInstance: NgrokService;
 
 export class NgrokService {
@@ -55,21 +56,24 @@ export class NgrokService {
   private _serviceUrl: string;
   private _inspectUrl: string;
   private _spawnErr: any;
-  private _localhost: string;
-  private _bypass: boolean;
+  private _localhost = 'localhost';
   private _triedToSpawn: boolean;
 
   constructor() {
     return ngrokInstance || (ngrokInstance = this); // Singleton
   }
 
-  getServiceUrl(botUrl: string): string {
-    if (botUrl && isLocalhostUrl(botUrl) && this._bypass) {
+  public async getServiceUrl(botUrl: string): Promise<string> {
+    const bypassNgrokLocalhost = getStore().getState().framework.bypassNgrokLocalhost;
+    if (botUrl && isLocalhostUrl(botUrl) && bypassNgrokLocalhost) {
       // Do not use ngrok
       const port = emulator.framework.serverPort;
 
-      return `http://${this._localhost}:${port}`;
+      return `http://${ this._localhost }:${ port }`;
     } else {
+      if (!ngrok.running()) {
+        await this.startup();
+      }
       // Use ngrok if ngrok is up
       return this._serviceUrl;
     }
@@ -80,21 +84,10 @@ export class NgrokService {
     err: this._spawnErr
   })
 
-  public getNgrokServiceUrl(): string {
-    return this._serviceUrl;
-  }
-
-  public async startup() {
-    this.cacheSettings();
-    await this.recycle();
-  }
-
   public async updateNgrokFromSettings(framework: FrameworkSettings) {
     this.cacheSettings();
-    this._bypass = framework.bypassNgrokLocalhost;
-
-    if (this._ngrokPath !== framework.ngrokPath) {
-      await this.recycle();
+    if (this._ngrokPath !== framework.ngrokPath && ngrok.running()) {
+      return this.recycle();
     }
   }
 
@@ -108,7 +101,7 @@ export class NgrokService {
     const port = emulator.framework.serverPort;
 
     this._ngrokPath = getStore().getState().framework.ngrokPath;
-    this._serviceUrl = `http://${this._localhost}:${port}`;
+    this._serviceUrl = `http://${ this._localhost }:${ port }`;
     this._inspectUrl = null;
     this._spawnErr = null;
     this._triedToSpawn = false;
@@ -137,7 +130,7 @@ export class NgrokService {
     const bypassNgrokLocalhost = getStore().getState().framework.bypassNgrokLocalhost;
     const { broadcast } = this;
     broadcast(textItem(LogLevel.Debug, 'ngrok reconnected.'));
-    broadcast(textItem(LogLevel.Debug, `ngrok listening on ${this._serviceUrl}`));
+    broadcast(textItem(LogLevel.Debug, `ngrok listening on ${ this._serviceUrl }`));
     broadcast(
       textItem(LogLevel.Debug, 'ngrok traffic inspector:'),
       externalLinkItem(this._inspectUrl, this._inspectUrl)
@@ -174,6 +167,11 @@ export class NgrokService {
     }
   }
 
+  private async startup() {
+    this.cacheSettings();
+    await this.recycle();
+  }
+
   /** Logs messages that tell the user that ngrok isn't configured */
   private reportNotConfigured(conversationId: string): void {
     mainWindow.logService.logToChat(conversationId,
@@ -187,7 +185,7 @@ export class NgrokService {
   private reportRunning(conversationId: string): void {
     const bypassNgrokLocalhost = getStore().getState().framework.bypassNgrokLocalhost;
     mainWindow.logService.logToChat(conversationId,
-      textItem(LogLevel.Debug, `ngrok listening on ${this._serviceUrl}`));
+      textItem(LogLevel.Debug, `ngrok listening on ${ this._serviceUrl }`));
     mainWindow.logService.logToChat(conversationId,
       textItem(LogLevel.Debug, 'ngrok traffic inspector:'),
       externalLinkItem(this._inspectUrl, this._inspectUrl));
@@ -216,9 +214,6 @@ export class NgrokService {
       // port = +parts[1].trim();
     }
     this._localhost = hostname;
-
-    // Cache bypass ngrok for local bots
-    this._bypass = framework.bypassNgrokLocalhost || true;
   }
 }
 

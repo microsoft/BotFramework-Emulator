@@ -33,13 +33,11 @@
 
 import Logger from './logger';
 import LogService from './log/service';
-import { StringProvider } from '../utils/stringProvider';
 
 export interface BotEmulatorOptions {
   fetch?: (url: string, options: any) => Promise<any>;
   loggerOrLogService?: (Logger | LogService);
   stateSizeLimitKB?: number;
-  tunnelingServiceUrl?: string | StringProvider;
 }
 
 export default BotEmulatorOptions;

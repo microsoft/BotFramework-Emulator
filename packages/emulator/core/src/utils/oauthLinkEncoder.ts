@@ -31,14 +31,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import BotEmulator from '../botEmulator';
 import GenericActivity from '../types/activity/generic';
+import Attachment from '../types/attachment';
 
 import AttachmentContentTypes from '../types/attachment/contentTypes';
 import OAuthCard from '../types/card/oAuth';
 import uniqueId from '../utils/uniqueId';
-import Attachment from '../types/attachment';
-import BotEmulator from '../botEmulator';
-import { StringProvider } from './stringProvider';
 
 const shajs = require('sha.js');
 
@@ -46,15 +45,13 @@ export default class OAuthLinkEncoder {
   public static OAuthUrlProtocol: string = 'oauthlink:';
   public static EmulateOAuthCards: boolean = false;
 
-  private emulatorUrl: string;
-  private authorizationHeader: string;
-  private activity: GenericActivity;
-  private conversationId: string;
+  private readonly authorizationHeader: string;
+  private readonly conversationId: string;
   private botEmulator: BotEmulator;
+  private activity: GenericActivity;
 
-  constructor(botEmulator: BotEmulator, emulatorUrl: string | StringProvider, authorizationHeader: string,
+  constructor(botEmulator: BotEmulator, authorizationHeader: string,
               activity: GenericActivity, conversationId: string) {
-    this.emulatorUrl = emulatorUrl ? (typeof emulatorUrl === 'string') ? emulatorUrl : emulatorUrl() : null;
     this.authorizationHeader = authorizationHeader;
     this.activity = activity;
     this.conversationId = conversationId;
@@ -114,9 +111,10 @@ export default class OAuthLinkEncoder {
     const headers = {
       'Authorization': this.authorizationHeader
     };
-
+    const conversation = this.botEmulator.facilities.conversations.conversationById(this.conversationId);
+    const emulatorUrl = await this.botEmulator.getServiceUrl(conversation.botEndpoint.botUrl);
     const url = 'https://api.botframework.com/api/botsignin/GetSignInUrl?state=' +
-      state + '&emulatorUrl=' + this.emulatorUrl + '&code_challenge=' + codeChallenge;
+      state + '&emulatorUrl=' + emulatorUrl + '&code_challenge=' + codeChallenge;
 
     const response = await fetch(url, {
       headers,
