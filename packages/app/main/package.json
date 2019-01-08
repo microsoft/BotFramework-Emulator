@@ -15,7 +15,7 @@
     "pack": "electron-builder --dir",
     "start": "concurrently --kill-others --names \"electron,react-app\" --success first \"npm run start:electron:dev\" \"npm run start:react-app\"",
     "start:electron": "./node_modules/.bin/electron --inspect=7777 --remote-debugging-port=7778 .",
-    "start:electron:dev": "cross-env ELECTRON_TARGET_URL=http://localhost:3000/ npm run start:electron",
+    "start:electron:dev": "cross-env ELECTRON_TARGET_URL=http://localhost:3000/ NODE_ENV=development npm run start:electron",
     "start:react-app": "cd ../client && npm start",
     "test": "jest"
   },

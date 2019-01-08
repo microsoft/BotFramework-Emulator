@@ -33,6 +33,7 @@
 
 import { BotInfo, SharedConstants } from '@bfemulator/app-shared';
 import * as Electron from 'electron';
+import { BrowserWindow } from 'electron';
 import { AppUpdater, UpdateStatus } from './appUpdater';
 import { emulator } from './emulator';
 import { mainWindow } from './main';
@@ -40,6 +41,20 @@ import { ConversationService } from './services/conversationService';
 import { rememberTheme } from './settingsData/actions/windowStateActions';
 import { getStore as getSettingsStore } from './settingsData/store';
 import { getActiveBot } from './botHelpers';
+
+function toggleDevTools() {
+  const win = BrowserWindow.getFocusedWindow();
+
+  if (win) {
+    const { webContents } = win;
+
+    if (webContents.isDevToolsOpened()) {
+      webContents.closeDevTools();
+    } else {
+      webContents.openDevTools();
+    }
+  }
+}
 
 declare type MenuOpts = Electron.MenuItemConstructorOptions;
 
@@ -71,8 +86,9 @@ export class AppMenuBuilder {
       await this.initEditMenu(),
       await this.initViewMenu(),
       await this.initConversationMenu(),
-      await this.initHelpMenu()
-    ];
+      await this.initHelpMenu(),
+      await this.initDevMenu()
+    ].filter(Boolean);
 
     if (process.platform === 'darwin') {
       template.unshift(await this.initAppMenuMac());
@@ -277,7 +293,7 @@ export class AppMenuBuilder {
     };
 
     const enabled = await getActiveDocumentContentType() === SharedConstants.ContentTypes.CONTENT_TYPE_LIVE_CHAT;
-    
+
     return {
       id: 'conversation',
       label: 'Conversation',
@@ -397,7 +413,7 @@ export class AppMenuBuilder {
   private static async initHelpMenu(): Promise<MenuOpts> {
     const appName = Electron.app.getName();
     const version = Electron.app.getVersion();
-    
+
     // TODO - localization
     return {
       role: 'help',
@@ -415,18 +431,18 @@ export class AppMenuBuilder {
         {
           // TODO: Proper link for the license instead of third party credits
           label: 'License',
-          click: () => 
-            Electron.shell.openExternal('https://aka.ms/O10ww2', { activate: true })  
+          click: () =>
+            Electron.shell.openExternal('https://aka.ms/O10ww2', { activate: true })
         },
         {
           label: 'Credits',
-          click: () => 
+          click: () =>
             Electron.shell.openExternal('https://aka.ms/Ud5ga6', { activate: true })
         },
         { type: 'separator' },
         {
           label: 'Report an issue',
-          click: () => 
+          click: () =>
             Electron.shell.openExternal('https://aka.ms/cy106f', { activate: true })
         },
         { type: 'separator' },
@@ -464,5 +480,22 @@ export class AppMenuBuilder {
         }
       ]
     };
+  }
+
+  private static initDevMenu(): MenuOpts {
+    if (process.env.NODE_ENV === 'development') {
+      return {
+        label: 'Develop',
+        submenu: [
+          {
+            label: 'Toggle DevTools',
+            accelerator: process.platform === 'darwin' ? 'Cmd+Shift+I' : 'Ctrl+Shift+I',
+            click: () => toggleDevTools()
+          }
+        ]
+      };
+    }
+
+    return null;
   }
 }
