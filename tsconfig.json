@@ -22,6 +22,10 @@
     "declaration": true,
     "types": ["react", "react-dom", "node", "jest"]
   },
+  "extends": [
+    "tslint:latest",
+    "tslint-config-prettier"
+  ],
   "include": [
     "packages/**/src"
   ],

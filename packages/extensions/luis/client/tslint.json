@@ -1,4 +1,8 @@
 {
+  "extends": [
+    "tslint:latest",
+    "tslint-config-prettier"
+  ],
   "rules": {
     "align": [
       true,
