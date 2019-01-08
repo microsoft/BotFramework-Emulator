@@ -130,10 +130,11 @@ export default class Conversation extends EventEmitter {
       activity.recipient.role = 'bot';
     }
 
-    activity.serviceUrl = this.botEmulator.getServiceUrl(this.botEndpoint.botUrl);
+    activity.serviceUrl = await this.botEmulator.getServiceUrl(this.botEndpoint.botUrl);
 
-    if (!this.conversationIsTranscript && !isLocalhostUrl(this.botEndpoint.botUrl) &&
-      isLocalhostUrl(this.botEmulator.getServiceUrl(this.botEndpoint.botUrl))) {
+    if (!this.conversationIsTranscript &&
+      !isLocalhostUrl(this.botEndpoint.botUrl) &&
+      isLocalhostUrl(activity.serviceUrl)) {
       this.botEmulator.facilities.logger.logMessage(this.conversationId,
         textItem(LogLevel.Error,
           'Error: The bot is remote, but the service URL is localhost.' +
@@ -496,7 +497,7 @@ export default class Conversation extends EventEmitter {
         bot: { id: this.botEndpoint.botId },
         channelId: 'emulator',
         conversation: { id: this.conversationId },
-        serviceUrl: this.botEmulator.getServiceUrl(this.botEndpoint.botUrl),
+        serviceUrl: await this.botEmulator.getServiceUrl(this.botEndpoint.botUrl),
         user: this.botEmulator.facilities.users.usersById(this.botEmulator.facilities.users.currentUserId)
       },
       value: updateValue
@@ -654,7 +655,7 @@ export default class Conversation extends EventEmitter {
         bot: { id: this.botEndpoint.botId },
         channelId: 'emulator',
         conversation: { id: this.conversationId },
-        serviceUrl: this.botEmulator.getServiceUrl(this.botEndpoint.botUrl),
+        serviceUrl: await this.botEmulator.getServiceUrl(this.botEndpoint.botUrl),
         user: this.botEmulator.facilities.users.usersById(this.botEmulator.facilities.users.currentUserId)
       },
       value: updateValue
