@@ -152,12 +152,7 @@ export class RestServer {
     // Check for an existing livechat window
     // before creating a new one since "new"
     // can also mean "restart".
-<<<<<<< HEAD
     if (!hasLiveChat(conversationId, this.botEmulator.facilities.conversations)) {
-=======
-    if (!conversationId.includes('livechat') &&
-      !this.botEmulator.facilities.conversations.conversationById(conversationId + '|livechat')) {
->>>>>>> Simplified conditional
       const { botEndpoint: { id, botUrl } } = conversation;
       await mainWindow.commandService.remoteCall(SharedConstants.Commands.Emulator.NewLiveChat, {
         id,
@@ -175,4 +170,9 @@ function shouldPostToChat(conversationId: string, method: string, route: Route):
 
 function getConversationId(req: ConversationAwareRequest): string {
   return req.conversation ? req.conversation.conversationId : req.params.conversationId;
+}
+
+function hasLiveChat(conversationId: string, conversationSet: ConversationSet): boolean {
+  return conversationSet.conversationById(conversationId) ||
+    conversationSet.conversationById(conversationId + '|livechat');
 }
