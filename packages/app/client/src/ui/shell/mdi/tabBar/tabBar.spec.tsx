@@ -266,7 +266,7 @@ describe('TabBar', () => {
     const closeTabSpy = jest.fn();
 
     mount(
-      <TabBar tabOrder={ [] } documents={ {} } activeDocumentId={ '1234' } closeTab={closeTabSpy}/>
+      <TabBar tabOrder={ [] } documents={ {} } activeDocumentId={ '1234' } closeTab={ closeTabSpy }/>
     );
 
     map.keydown({key: 'w', metaKey: true, preventDefault: () => { return; }});
