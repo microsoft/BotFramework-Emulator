@@ -10,6 +10,8 @@ notifications:
   email: false
 
 before_install:
+- npm cache verify
+- npm prune
 - npm i -g lerna
 - lerna clean --yes
 
@@ -19,3 +21,5 @@ install:
 script:
 - npm run build
 - npm run test:coveralls
+
+cache: false
