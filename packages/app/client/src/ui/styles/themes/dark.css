@@ -22,6 +22,9 @@ html {
   --error-outline: #BE1100;
 
   /* webchat overridden colors */
+  /* TODO: update for dark theme */
+  --webchat-selected-activity-bg: #F6F5D2;
+  --webchat-selected-actvity-border: #00BCF2;
   --webchat-selected-text-bg: #F4E321;
 
   /* Log panel custom colors */

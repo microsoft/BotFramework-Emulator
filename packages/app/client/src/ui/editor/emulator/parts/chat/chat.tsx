@@ -38,6 +38,7 @@ import { CommandServiceImpl } from '../../../../../platform/commands/commandServ
 import memoize from '../../../../helpers/memoize';
 import * as styles from './chat.scss';
 import { EmulatorMode } from '../../emulator';
+import ActivityWrapper from './activityWrapper';
 
 // const CognitiveServices = require('botframework-webchat/CognitiveServices');
 
@@ -74,8 +75,10 @@ function createWebChatProps(
     //     speechSynthesizer: new Speech.BrowserSpeechSynthesizer()
     //   } : null,
   };
-    }
+}
 
+function isCardSelected(selectedActivity: any, activity: any) {
+  return selectedActivity && activity.id && selectedActivity.id === activity.id;
 }
 
 export async function getSpeechToken(endpoint: IEndpointService, refresh: boolean): Promise<string | void> {
@@ -108,7 +111,7 @@ export class Chat extends Component<ChatProps> {
   }
 
   render() {
-    const { document, endpoint } = this.props;
+    const { document, selectedActivity, endpoint, updateSelectedActivity } = this.props;
 
     if (document.directLine) {
       const webChatProps = this.createWebChatPropsMemoized(
@@ -132,6 +135,15 @@ export class Chat extends Component<ChatProps> {
             locale={ this.props.locale }
             key={ document.directLine.token }
             styleOptions={ styleOptions }
+            activityMiddleware={ () => next => card => children => (
+              <ActivityWrapper
+                activity={card.activity}
+                onClick={ updateSelectedActivity }
+                isSelected={ isCardSelected(selectedActivity, card.activity) }
+              >
+                { next(card)(children) }
+              </ActivityWrapper>
+            ) }
             { ...webChatProps }
           />
         </div>

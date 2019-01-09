@@ -1,12 +1,18 @@
 .chat {
   background-color: white;
   height: 100%;
+  width: 100%;
   display: flex;
+  & > * {
+    width: 100%;
+  }
+
   :global {
+
     .wc-chatview-panel {
       flex: 1;
       position: relative;
-      
+
       p {
         margin-bottom: 0;
         margin-top: 0;
@@ -73,6 +79,37 @@
       .clickable:hover {
         cursor: pointer;
       }
+    }
+  }
+}
+
+.chatActivity {
+  cursor: pointer;
+  border-top: 1px solid transparent;
+  border-bottom: 1px solid transparent;
+  transition: all .1s linear;
+
+  &:focus {
+    border-top: 1px solid var(--webchat-selected-actvity-border);
+    border-bottom: 1px solid var(--webchat-selected-actvity-border);
+    outline: none;
+  }
+
+  :global {
+    .bubble {
+      p {
+        font-family: var(--default-font-family);
+      }
+    }
+  }
+}
+
+
+.selectedActivity {
+  :global {
+    .bubble {
+      background: var(--webchat-selected-activity-bg);
+      color: var(--neutral-16);
     }
   }
 }
