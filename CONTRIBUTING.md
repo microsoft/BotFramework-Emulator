@@ -64,31 +64,20 @@ npm run build
 
 ## How to run & develop locally
 
-There are two, different work flows for local development depending on which part of the project you are working in. 
-Refer to the **"Client side development"** section if you are modifying files within the `packages/app/client` 
-directory. Refer to the **"Server side development"** section if you are modifying files within both the 
-`packages/app/main` & `packages/app/client` directories.
-
-### Run Emulator for local development
-
 Open 2 terminals:
 
- - One in `packages/app/client` (will be used to start the webpack dev server)
+ - One in `packages/app/client` (will be responsible for the renderer process)
    - run `npm run start`
    - that's all you have to do; you shouldn't have to worry about the client side again unless you modify code in 
    `packages/app/shared` and rebuild the `shared` package
- - Another in `packages/app/main` (will be used to start and restart the main side after changes have been recompiled)
+
+ - One in `packages/app/main` (will be responsible for the node process)
    - run `npm run start:electron:dev`
    - this starts a new instance of the electron app with the most recently compiled `packages/app/main` files
-   - **To see app/main file changes:** `Ctrl + C` to kill the electron app, then `npm start:electron:dev` to restart it with your reflected changes
-
-#### If developing locally
-In another terminal
- - Navigate to `packages/app/main` (will be used to watch for changes on the main side and auto-compile the TypeScript)
-   - run `npm run build:electron -- --watch`
-   - don't have to worry about this terminal anymore
+   - **To see app/main file changes:** `Ctrl + C` to kill the electron app, `npm run build` to rebuild the main side, and then `npm start:electron:dev` to restart it with your reflected changes
 
 ### Debugging
+
 #### The Main Process
 Running `npm run start:electron:dev` opens up port 7777 for debugging the main node process. Startup is non-blocking
 by default which means code could be executed before you have time to attach your debugger and set breakpoints. To prevent this,
@@ -100,7 +89,18 @@ Setting up a node debugger depends on your tooling. Please refer to the document
 for your flavor of tools. For more information on debugging NodeJS in general, refer to [this guide](https://nodejs.org/en/docs/guides/debugging-getting-started/)
 
 #### The Client
-For remote debugging, add `--remote-debugging-port=9222` to the `start:electron` script in the `package.json` located in `packages\app\main`.
+Debugging the client is done remotely and can be done via your browser. Instructions will be different depending on your browser. Follow these instructions to debug the client side within **Google Chrome**:
+
+1. Open Google Chrome
+
+2. Navigate to the Inspect page by typing `chrome://inspect` in the address bar and pressing `ENTER`
+
+3. Tell Chrome to listen to `localhost` ports `7777` & `7778` by clicking the `Configure` button in the **Devices** section, and then typing `localhost:7777` into the input and pressing enter. Do the same for `localhost:7778`. Now click `Done`.
+
+4. In the **Remote Target** section, you should now see an entry for `localhost:3000` which is the webpack dev server serving the client side of the Emulator. Click `Inspect` to bring up the Chrome DevTools for the client side. Now you can debug the client as you would any other web app. (If you are unfamiliar with the Chrome DevTools, please take a look at [their documentation.](https://developers.google.com/web/tools/chrome-devtools/javascript/))
+
+>**NOTE:** If you are using Chrome, you might want to turn off Device Emulation / Screencast mode if you want to be able to mouse over UI elements and highlight them in the DevTools inspector. You can disable Screencasting by clicking the `Toggle screencast` button in the top left corner of the DevTools window.
+
 ***
 
 ## Pull Requests
