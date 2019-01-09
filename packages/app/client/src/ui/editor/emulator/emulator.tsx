@@ -150,8 +150,9 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
     }
     const selectedActivity$ = new BehaviorSubject({});
     const subscription = selectedActivity$.subscribe((obj: any) => {
-      if (obj && obj.activity) {
-        this.props.setInspectorObjects(props.document.documentId, obj.activity);
+
+      if (obj && obj.showInInspector) {
+        this.props.setInspectorObjects(props.document.documentId, obj);
       }
     });
 
@@ -251,8 +252,8 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
                      onStartConversation={ this.onStartOverClick }/>
           { chatPanelChild }
         </div>
-        <span 
-          className={ styles.closePresentationIcon } 
+        <span
+          className={ styles.closePresentationIcon }
           onClick={ () => this.onPresentationClick(false) }
         />
       </div>
@@ -268,13 +269,13 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
           this.props.mode === 'livechat' &&
           <div className={ styles.header }>
             <ToolBar>
-              <SplitButton 
+              <SplitButton
                 defaultLabel="Restart conversation"
                 buttonClass={ styles.restartIcon }
                 options={ [NewUserId, SameUserId] }
                 onClick={ this.onStartOverClick }/>
-              <button 
-                className={ `${ styles.saveTranscriptIcon } ${ styles.toolbarIcon || '' }` } 
+              <button
+                className={ `${ styles.saveTranscriptIcon } ${ styles.toolbarIcon || '' }` }
                 onClick={ this.onExportClick }
               >
                 Save transcript
@@ -328,7 +329,7 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
     const { NewUserId, SameUserId } = RestartConversationOptions;
     this.props.clearLog(this.props.document.documentId);
     this.props.setInspectorObjects(this.props.document.documentId, []);
-    
+
     switch (option) {
       case NewUserId:
         const newUserId = uniqueIdv4();

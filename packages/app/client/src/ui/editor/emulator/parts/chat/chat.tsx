@@ -48,6 +48,8 @@ export interface ChatProps {
   onStartConversation: any;
   currentUserId: string;
   locale: string;
+  selectedActivity: any | null;
+  updateSelectedActivity: (activity: any) => void;
 }
 
 function createWebChatProps(

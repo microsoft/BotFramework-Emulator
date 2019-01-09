@@ -34,7 +34,6 @@
 import * as React from 'react';
 import * as styles from './log.scss';
 import { Subscription } from 'rxjs';
-import { ActivitySelectionFromLog } from './logEntry';
 import { LogEntry } from './logEntryContainer';
 
 export interface LogProps {
@@ -43,6 +42,8 @@ export interface LogProps {
 
 export interface LogState {
   count: number;
+  selectedActivity: any | null;
+  currentlyInspectedActivity: any | null;
 }
 
 export class Log extends React.Component<LogProps, LogState> {
@@ -54,7 +55,9 @@ export class Log extends React.Component<LogProps, LogState> {
   constructor(props: LogProps, context: LogState) {
     super(props, context);
     this.state = {
-      count: 0
+      count: 0,
+      selectedActivity: null,
+      currentlyInspectedActivity: null,
     };
   }
 
@@ -65,24 +68,25 @@ export class Log extends React.Component<LogProps, LogState> {
       selectedActivitySubscription =
         props.document.selectedActivity$.subscribe(obj => {
           if (obj) {
-            if (obj.activity) {
-              // this activity came from webchat (activities from webchat are wrapped)
-              // ex: { activity: { id: , from: , ... } }
-              const { activity } = obj;
-              this.selectedActivity = activity;
-              this.currentlyInspectedActivity = activity;
-            } else {
-              // this activity came from the log (activities from the log are raw)
-              // ex: { id: , from: , to: , ... }
-              const activity = obj;
-              this.selectedActivity = activity;
-              const { fromLog = {} as ActivitySelectionFromLog }: { fromLog: ActivitySelectionFromLog } = activity;
-              // check if it was clicked or hovered
-              const { clicked } = fromLog;
-              if (clicked) {
-                this.currentlyInspectedActivity = activity;
+            // this activity came from the log (activities from the log are raw)
+            // ex: { id: , from: , to: , ... }
+            const activity = obj;
+            const { showInInspector } = activity;
+            const currentlyInspectedActivity = showInInspector ? activity : null;
+
+            this.setState((prevState) => {
+              if (
+                prevState.selectedActivity !== activity ||
+                prevState.currentlyInspectedActivity !== currentlyInspectedActivity
+              ) {
+                return {
+                  selectedActivity: activity,
+                  currentlyInspectedActivity: showInInspector ? activity : null,
+                };
               }
-            }
+
+              return undefined;
+            });
           }
         });
     }
@@ -108,8 +112,8 @@ export class Log extends React.Component<LogProps, LogState> {
         {
           this.props.document.log.entries.map(entry =>
             <LogEntry key={ `entry-${key++}` } entry={ entry } document={ this.props.document }
-              selectedActivity={ this.selectedActivity }
-              currentlyInspectedActivity={ this.currentlyInspectedActivity } />
+              selectedActivity={ this.state.selectedActivity }
+              currentlyInspectedActivity={ this.state.currentlyInspectedActivity } />
           )
         }
       </div>
