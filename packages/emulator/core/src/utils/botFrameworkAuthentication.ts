@@ -63,8 +63,7 @@ export default function createBotFrameworkAuthenticationMiddleware(fetch: any) {
       return;
     }
 
-    if(decoded.payload.aud === usGovernmentAuthentication.botTokenAudience)
-    {
+    if (decoded.payload.aud === usGovernmentAuthentication.botTokenAudience) {
       // We are talking to a US Gov hosted bot so do validation with that context
       const key = await usGovOpenIdMetadata.getKey(decoded.header.kid);
 

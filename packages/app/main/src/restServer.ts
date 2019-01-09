@@ -88,7 +88,6 @@ export class RestServer {
   public listen(port?: number): Promise<{ url: string, port: number }> {
     return new Promise((resolve, reject) => {
       this.router.once('error', err => reject(err));
-
       this.router.listen(port, () => {
         this.botEmulator.mount(this.router as any);
         resolve({ url: this.router.url, port: this.router.address().port });
