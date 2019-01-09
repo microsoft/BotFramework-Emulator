@@ -33,14 +33,13 @@
 import * as React from 'react';
 import { Component } from 'react';
 import { IEndpointService } from 'botframework-config/lib/schema';
-import { Chat as WebChat, Speech } from 'botframework-webchat';
+import ReactWebChat from 'botframework-webchat';
 import { CommandServiceImpl } from '../../../../../platform/commands/commandServiceImpl';
 import memoize from '../../../../helpers/memoize';
 import * as styles from './chat.scss';
 import { EmulatorMode } from '../../emulator';
 
-const CognitiveServices = require('botframework-webchat/CognitiveServices');
-const AdaptiveCardsHostConfig = require('botframework-webchat/adaptivecards-hostconfig.json');
+// const CognitiveServices = require('botframework-webchat/CognitiveServices');
 
 export interface ChatProps {
   document: any;
@@ -55,33 +54,26 @@ function createWebChatProps(
   botId: string,
   userId: string,
   directLine: any,
-  selectedActivity$: any,
-  endpoint: IEndpointService,
-  mode: string
+  endpoint: IEndpointService
 ): any {
   return {
-    adaptiveCardsHostConfig: AdaptiveCardsHostConfig,
     bot: {
       id: botId || 'bot',
       name: 'Bot'
     },
-    botConnection: directLine,
-    chatTitle: false,
-    selectedActivity: selectedActivity$,
-    showShell: mode === 'livechat',
-    speechOptions:
-      (endpoint && endpoint.appId && endpoint.appPassword) ? {
-        speechRecognizer: new CognitiveServices.SpeechRecognizer({
-          fetchCallback: getSpeechToken.bind(null, endpoint, false),
-          fetchOnExpiryCallback: getSpeechToken.bind(null, endpoint, true)
-        }),
-        speechSynthesizer: new Speech.BrowserSpeechSynthesizer()
-      } : null,
-    user: {
-      id: userId,
-      name: 'User'
-    }
+    directLine,
+    userID: userId
+    // speechOptions:
+    //   (endpoint && endpoint.appId && endpoint.appPassword) ? {
+    //     speechRecognizer: new CognitiveServices.SpeechRecognizer({
+    //       fetchCallback: getSpeechToken.bind(null, endpoint, false),
+    //       fetchOnExpiryCallback: getSpeechToken.bind(null, endpoint, true)
+    //     }),
+    //     speechSynthesizer: new Speech.BrowserSpeechSynthesizer()
+    //   } : null,
   };
+    }
+
 }
 
 export async function getSpeechToken(endpoint: IEndpointService, refresh: boolean): Promise<string | void> {
@@ -104,9 +96,7 @@ export class Chat extends Component<ChatProps> {
     botId: string,
     userId: string,
     directLine: any,
-    selectedActivity$: any,
-    endpoint: IEndpointService,
-    mode: string
+    endpoint: IEndpointService
   ) => any;
 
   constructor(props: ChatProps, context: {}) {
@@ -123,16 +113,23 @@ export class Chat extends Component<ChatProps> {
         document.botId,
         document.userId || this.props.currentUserId,
         document.directLine,
-        document.selectedActivity$,
-        endpoint,
-        this.props.mode
+        endpoint
       );
+
+      // TODO: update for themes
+      const styleOptions = {
+        bubbleBackground: '#dcdcdc',
+        bubbleFromUserBackground: '#3062D6',
+        bubbleFromUserTextColor: '#ffffff',
+        backgroundColor: '#ffffff'
+      };
 
       return (
         <div id="webchat-container" className={ `${styles.chat} wc-app wc-wide` }>
-          <WebChat
+          <ReactWebChat
             locale={ this.props.locale }
             key={ document.directLine.token }
+            styleOptions={ styleOptions }
             { ...webChatProps }
           />
         </div>
