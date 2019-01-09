@@ -87,7 +87,7 @@
   cursor: pointer;
   border-top: 1px solid transparent;
   border-bottom: 1px solid transparent;
-  transition: all .1s linear;
+  transition: border .1s linear, color .1s linear, background .1s linear;
 
   &:focus {
     border-top: 1px solid var(--webchat-selected-actvity-border);

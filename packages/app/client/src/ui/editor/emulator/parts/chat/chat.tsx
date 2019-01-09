@@ -32,6 +32,7 @@
 //
 import * as React from 'react';
 import { Component } from 'react';
+import { Activity } from '@bfemulator/sdk-shared';
 import { IEndpointService } from 'botframework-config/lib/schema';
 import ReactWebChat from 'botframework-webchat';
 import { CommandServiceImpl } from '../../../../../platform/commands/commandServiceImpl';
@@ -49,8 +50,8 @@ export interface ChatProps {
   onStartConversation: any;
   currentUserId: string;
   locale: string;
-  selectedActivity: any | null;
-  updateSelectedActivity: (activity: any) => void;
+  selectedActivity: Activity | null;
+  updateSelectedActivity: (activity: Activity) => void;
 }
 
 function createWebChatProps(
@@ -77,7 +78,7 @@ function createWebChatProps(
   };
 }
 
-function isCardSelected(selectedActivity: any, activity: any) {
+function isCardSelected(selectedActivity: Activity | null, activity: Activity) {
   return selectedActivity && activity.id && selectedActivity.id === activity.id;
 }
 

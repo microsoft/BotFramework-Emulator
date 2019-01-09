@@ -38,7 +38,7 @@ import { ChatContainer } from '../parts/chat/chatContainer';
 import { EmulatorMode } from '../emulator';
 
 interface ChatPanelProps {
-  document: {
+  document?: {
     endpointUrl: string;
     selectedActivity$?: BehaviorSubject<any>;
   };
@@ -52,10 +52,6 @@ interface ChatPanelState {
 }
 
 export default class ChatPanel extends React.Component<ChatPanelProps, ChatPanelState> {
-  static defaultProps = {
-    document: { endpointUrl: '' }
-  };
-
   state = {
     selectedActivity: null
   };
@@ -66,9 +62,9 @@ export default class ChatPanel extends React.Component<ChatPanelProps, ChatPanel
     const { document } = this.props;
 
     if (document && document.selectedActivity$ && !this.selectedActivitySub) {
-      this.selectedActivitySub = document.selectedActivity$.subscribe(obj => {
-        this.setState({ selectedActivity: obj });
-      });
+      this.selectedActivitySub = document.selectedActivity$.subscribe(
+        selectedActivity => this.setState({ selectedActivity })
+      );
     }
   }
 
@@ -90,7 +86,7 @@ export default class ChatPanel extends React.Component<ChatPanelProps, ChatPanel
   }
 
   render() {
-    const { endpointUrl } = this.props.document;
+    const { endpointUrl } = this.props.document || { endpointUrl: '' };
 
     return (
       <div className={ `${styles.chatPanel} ${this.props.className || ''}` }>
