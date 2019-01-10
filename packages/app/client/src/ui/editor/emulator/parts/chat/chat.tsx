@@ -150,7 +150,7 @@ export class Chat extends Component<ChatProps> {
     }
   }
 
-  private createActivityMiddleware = () => card => next => children => (
+  private createActivityMiddleware = () => next => card => children => (
     <ActivityWrapper
       activity={ card.activity }
       onClick={ this.props.updateSelectedActivity }
