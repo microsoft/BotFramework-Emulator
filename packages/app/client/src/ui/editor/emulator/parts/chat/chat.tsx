@@ -112,7 +112,7 @@ export class Chat extends Component<ChatProps> {
   }
 
   render() {
-    const { document, selectedActivity, endpoint, updateSelectedActivity } = this.props;
+    const { document, endpoint } = this.props;
 
     if (document.directLine) {
       const webChatProps = this.createWebChatPropsMemoized(
@@ -124,27 +124,19 @@ export class Chat extends Component<ChatProps> {
 
       // TODO: update for themes
       const styleOptions = {
+        backgroundColor: '#ffffff',
         bubbleBackground: '#dcdcdc',
         bubbleFromUserBackground: '#3062D6',
         bubbleFromUserTextColor: '#ffffff',
-        backgroundColor: '#ffffff'
       };
 
       return (
         <div id="webchat-container" className={ `${styles.chat} wc-app wc-wide` }>
           <ReactWebChat
-            locale={ this.props.locale }
+            activityMiddleware={ this.createActivityMiddleware }
             key={ document.directLine.token }
+            locale={ this.props.locale }
             styleOptions={ styleOptions }
-            activityMiddleware={ () => next => card => children => (
-              <ActivityWrapper
-                activity={card.activity}
-                onClick={ updateSelectedActivity }
-                isSelected={ isCardSelected(selectedActivity, card.activity) }
-              >
-                { next(card)(children) }
-              </ActivityWrapper>
-            ) }
             { ...webChatProps }
           />
         </div>
@@ -157,4 +149,14 @@ export class Chat extends Component<ChatProps> {
       );
     }
   }
+
+  private createActivityMiddleware = () => card => next => children => (
+    <ActivityWrapper
+      activity={ card.activity }
+      onClick={ this.props.updateSelectedActivity }
+      isSelected={ isCardSelected(this.props.selectedActivity, card.activity) }
+    >
+      { next(card)(children) }
+    </ActivityWrapper>
+  )
 }

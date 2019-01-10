@@ -31,16 +31,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import * as React from 'react';
-import { Subscription, BehaviorSubject } from 'rxjs';
-import * as styles from './chatPanel.scss';
+import { BehaviorSubject, Subscription } from 'rxjs';
+import { Activity } from '@bfemulator/sdk-shared';
 
 import { ChatContainer } from '../parts/chat/chatContainer';
 import { EmulatorMode } from '../emulator';
+import * as styles from './chatPanel.scss';
 
 interface ChatPanelProps {
   document?: {
     endpointUrl: string;
-    selectedActivity$?: BehaviorSubject<any>;
+    selectedActivity$?: BehaviorSubject<Activity | null>;
   };
   mode?: EmulatorMode;
   onStartConversation?: () => any;
@@ -92,8 +93,8 @@ export default class ChatPanel extends React.Component<ChatPanelProps, ChatPanel
       <div className={ `${styles.chatPanel} ${this.props.className || ''}` }>
         <header>{ endpointUrl }</header>
         <ChatContainer
-          mode={ this.props.mode }
           document={ this.props.document }
+          mode={ this.props.mode }
           onStartConversation={ this.props.onStartConversation }
           selectedActivity={ this.state.selectedActivity }
           updateSelectedActivity={ this.updateSelectedActivity }

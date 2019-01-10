@@ -32,7 +32,7 @@
 //
 
 import { createDirectLine } from 'botframework-webchat';
-import { uniqueId, uniqueIdv4 } from '@bfemulator/sdk-shared';
+import { Activity, uniqueId, uniqueIdv4 } from '@bfemulator/sdk-shared';
 import { Splitter, SplitButton } from '@bfemulator/ui-react';
 import base64Url from 'base64url';
 import { IEndpointService } from 'botframework-config/lib/schema';
@@ -148,11 +148,11 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
     if (props.document.subscription) {
       props.document.subscription.unsubscribe();
     }
-    const selectedActivity$ = new BehaviorSubject({});
-    const subscription = selectedActivity$.subscribe((obj: any) => {
+    const selectedActivity$ = new BehaviorSubject<Activity | null>({});
+    const subscription = selectedActivity$.subscribe((activity) => {
 
-      if (obj && obj.showInInspector) {
-        this.props.setInspectorObjects(props.document.documentId, obj);
+      if (activity && activity.showInInspector) {
+        this.props.setInspectorObjects(props.document.documentId, activity);
       }
     });
 

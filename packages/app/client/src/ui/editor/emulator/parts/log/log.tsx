@@ -32,8 +32,10 @@
 //
 
 import * as React from 'react';
-import * as styles from './log.scss';
 import { Subscription } from 'rxjs';
+import { Activity } from '@bfemulator/sdk-shared';
+
+import * as styles from './log.scss';
 import { LogEntry } from './logEntryContainer';
 
 export interface LogProps {
@@ -42,8 +44,8 @@ export interface LogProps {
 
 export interface LogState {
   count: number;
-  selectedActivity: any | null;
-  currentlyInspectedActivity: any | null;
+  currentlyInspectedActivity: Activity | null;
+  selectedActivity: Activity | null;
 }
 
 export class Log extends React.Component<LogProps, LogState> {
@@ -56,8 +58,8 @@ export class Log extends React.Component<LogProps, LogState> {
     super(props, context);
     this.state = {
       count: 0,
-      selectedActivity: null,
       currentlyInspectedActivity: null,
+      selectedActivity: null,
     };
   }
 
@@ -66,23 +68,17 @@ export class Log extends React.Component<LogProps, LogState> {
     // set up selected activity subscription once it's available
     if (props.document && props.document.selectedActivity$ && !selectedActivitySubscription) {
       selectedActivitySubscription =
-        props.document.selectedActivity$.subscribe(obj => {
-          if (obj) {
-            // this activity came from the log (activities from the log are raw)
-            // ex: { id: , from: , to: , ... }
-            const activity = obj;
-            const { showInInspector } = activity;
-            const currentlyInspectedActivity = showInInspector ? activity : null;
+        props.document.selectedActivity$.subscribe((selectedActivity: Activity) => {
+          if (selectedActivity) {
+            const { showInInspector } = selectedActivity;
+            const currentlyInspectedActivity = showInInspector ? selectedActivity : null;
 
-            this.setState((prevState) => {
+            this.setState(prevState => {
               if (
-                prevState.selectedActivity !== activity ||
-                prevState.currentlyInspectedActivity !== currentlyInspectedActivity
+                prevState.selectedActivity !== selectedActivity
+                || prevState.currentlyInspectedActivity !== currentlyInspectedActivity
               ) {
-                return {
-                  selectedActivity: activity,
-                  currentlyInspectedActivity: showInInspector ? activity : null,
-                };
+                return { currentlyInspectedActivity, selectedActivity };
               }
 
               return undefined;
@@ -111,9 +107,13 @@ export class Log extends React.Component<LogProps, LogState> {
       <div className={ styles.log } ref={ ref => this.scrollMe = ref }>
         {
           this.props.document.log.entries.map(entry =>
-            <LogEntry key={ `entry-${key++}` } entry={ entry } document={ this.props.document }
+            <LogEntry
+              currentlyInspectedActivity={ this.state.currentlyInspectedActivity }
+              document={ this.props.document }
+              entry={ entry }
+              key={ `entry-${key++}` }
               selectedActivity={ this.state.selectedActivity }
-              currentlyInspectedActivity={ this.state.currentlyInspectedActivity } />
+            />
           )
         }
       </div>

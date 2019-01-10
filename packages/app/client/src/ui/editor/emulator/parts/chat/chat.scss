@@ -1,14 +1,14 @@
 .chat {
   background-color: white;
+  display: flex;
   height: 100%;
   width: 100%;
-  display: flex;
+
   & > * {
     width: 100%;
   }
 
   :global {
-
     .wc-chatview-panel {
       flex: 1;
       position: relative;
@@ -84,34 +84,26 @@
 }
 
 .chat-activity {
-  cursor: pointer;
-  border-top: 1px solid transparent;
   border-bottom: 1px solid transparent;
+  border-top: 1px solid transparent;
+  cursor: pointer;
   transition: border .1s linear, color .1s linear, background .1s linear;
 
   &:focus {
-    border-top: 1px solid var(--webchat-selected-actvity-border);
     border-bottom: 1px solid var(--webchat-selected-actvity-border);
+    border-top: 1px solid var(--webchat-selected-actvity-border);
     outline: none;
   }
 
-  :global {
-    .bubble {
-      p {
-        font-family: var(--default-font-family);
-      }
-    }
+  :global .bubble p {
+    font-family: var(--default-font-family);
   }
 }
 
 
-.selected-activity {
-  :global {
-    .bubble {
-      background: var(--webchat-selected-activity-bg);
-      color: var(--neutral-16);
-    }
-  }
+.selected-activity :global .bubble {
+  background: var(--webchat-selected-activity-bg);
+  color: var(--neutral-16);
 }
 
 .disconnected {

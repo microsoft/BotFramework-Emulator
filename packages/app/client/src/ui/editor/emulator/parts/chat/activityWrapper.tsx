@@ -5,8 +5,8 @@ import { Activity } from '@bfemulator/sdk-shared';
 import * as styles from './chat.scss';
 
 interface ActivityWrapperProps {
-  children: ReactNode;
   activity: any;
+  children: ReactNode;
   isSelected: boolean;
   onClick: (activity: Activity) => void;
 }
@@ -17,16 +17,16 @@ class ActivityWrapper extends Component<ActivityWrapperProps> {
     let classes = styles.chatActivity;
 
     if (isSelected) {
-      classes = `${classes} ${styles.selectedActivity}`;
+      classes = `${ classes } ${ styles.selectedActivity }`;
     }
 
-    // TODO: aria-label?
+    // TODO: more a11y (role, selected, etc)
     return (
       <div
-      className={ classes }
-      onClick={this.setSelectedActivity(activity)}
-      tabIndex={0}
-      onKeyDown={this.onKeyDown(activity)}
+        className={ classes }
+        onClick={ this.setSelectedActivity(activity) }
+        onKeyDown={ this.onKeyDown(activity) }
+        tabIndex={ 0 }
       >
         { children }
       </div>
@@ -38,13 +38,8 @@ class ActivityWrapper extends Component<ActivityWrapperProps> {
   }
 
   private onKeyDown = (activity: Activity) => (e: React.KeyboardEvent) => {
-    switch (e.key) {
-      case ' ':
-      case 'Enter':
-        this.props.onClick(activity);
-        return;
-      default:
-        return;
+    if ([' ', 'Enter'].includes(e.key)) {
+      this.props.onClick(activity);
     }
   }
 }
