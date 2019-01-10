@@ -83,7 +83,7 @@
   }
 }
 
-.chatActivity {
+.chat-activity {
   cursor: pointer;
   border-top: 1px solid transparent;
   border-bottom: 1px solid transparent;
@@ -105,7 +105,7 @@
 }
 
 
-.selectedActivity {
+.selected-activity {
   :global {
     .bubble {
       background: var(--webchat-selected-activity-bg);
