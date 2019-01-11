@@ -4,6 +4,12 @@
   height: 100%;
   width: 100%;
 
+  // Webchat does not use box-sizing and 'border-box' results in
+  // UI issues. (noticed with the sendbox buttons)
+  div {
+    box-sizing: unset;
+  }
+
   & > * {
     width: 100%;
   }
