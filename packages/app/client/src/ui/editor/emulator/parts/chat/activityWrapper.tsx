@@ -20,12 +20,12 @@ class ActivityWrapper extends Component<ActivityWrapperProps> {
       classes = `${ classes } ${ styles.selectedActivity }`;
     }
 
-    // TODO: more a11y (role, selected, etc)
     return (
       <div
         className={ classes }
         onClick={ this.setSelectedActivity(activity) }
         onKeyDown={ this.onKeyDown(activity) }
+        role="button"
         tabIndex={ 0 }
       >
         { children }
