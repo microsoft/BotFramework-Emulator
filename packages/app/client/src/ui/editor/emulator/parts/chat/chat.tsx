@@ -43,6 +43,20 @@ import ActivityWrapper from './activityWrapper';
 
 // const CognitiveServices = require('botframework-webchat/CognitiveServices');
 
+const webChatStyleOptions = {
+  backgroundColor: 'var(--webchat-bg)',
+
+  bubbleBackground: 'var(--webchat-bubble-bg)',
+  bubbleFromUserBackground: 'var(--webchat-user-bubble-bg)',
+  bubbleFromUserTextColor: 'var(--webchat-user-bubble-text)',
+  bubbleTextColor: 'var(--webchat-bubble-text)',
+
+  microphoneButtonColorOnDictate: 'var(--webchat-buttons-dictate)',
+  sendBoxButtonColor: 'var(--webchat-buttons-color)',
+  sendBoxButtonColorOnFocus: 'var(--webchat-buttons-color-focus)',
+  sendBoxButtonColorOnHover: 'var(--webchat-buttons-color-focus)',
+};
+
 export interface ChatProps {
   document: any;
   endpoint: IEndpointService;
@@ -122,21 +136,13 @@ export class Chat extends Component<ChatProps> {
         endpoint
       );
 
-      // TODO: update for themes
-      const styleOptions = {
-        backgroundColor: '#ffffff',
-        bubbleBackground: '#dcdcdc',
-        bubbleFromUserBackground: '#3062D6',
-        bubbleFromUserTextColor: '#ffffff',
-      };
-
       return (
         <div id="webchat-container" className={ `${styles.chat} wc-app wc-wide` }>
           <ReactWebChat
             activityMiddleware={ this.createActivityMiddleware }
             key={ document.directLine.token }
             locale={ this.props.locale }
-            styleOptions={ styleOptions }
+            styleOptions={ webChatStyleOptions }
             { ...webChatProps }
           />
         </div>

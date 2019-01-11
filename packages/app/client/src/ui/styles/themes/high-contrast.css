@@ -22,9 +22,20 @@ html {
   --error-outline: #BE1100;
 
   /* webchat overridden colors */
-  --webchat-selected-activity-bg: #F6F5D2;
-  --webchat-selected-actvity-border: #00BCF2;
-  --webchat-selected-text-bg: #F4E321;
+  --webchat-bg: var(--tab-active-tab-bg);
+  --webchat-sendbox-bg: var(--tab-active-tab-bg);
+  --webchat-sendbox-text: var(--neutral-1);
+  --webchat-bubble-bg: var(--neutral-15);
+  --webchat-bubble-text: var(--neutral-1);
+  --webchat-bubble-text-weight: 600;
+  --webchat-user-bubble-bg: var(--neutral-1);
+  --webchat-user-bubble-text: var(--neutral-15);
+  --webchat-selected-activity-bg: #B89500;
+  --webchat-selected-actvity-border: #72C3DF;
+  --webchat-selected-activity-text: var(--neutral-1);
+  --webchat-buttons-color: var(--neutral-1);
+  --webchat-buttons-color-focus: var(--neutral-4);
+  --webchat-buttons-dictate: #BE1100;
 
   /* Log panel custom colors */
   --log-panel-timestamp: #47B07F;

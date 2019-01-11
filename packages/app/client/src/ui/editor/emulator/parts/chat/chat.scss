@@ -97,13 +97,14 @@
 
   :global .bubble p {
     font-family: var(--default-font-family);
+    font-weight: var(--webchat-bubble-text-weight);
   }
 }
 
 
 .selected-activity :global .bubble {
   background: var(--webchat-selected-activity-bg);
-  color: var(--neutral-16);
+  color: var(--webchat-selected-activity-text);
 }
 
 .disconnected {
