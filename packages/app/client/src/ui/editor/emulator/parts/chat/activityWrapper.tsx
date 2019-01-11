@@ -11,6 +11,23 @@ interface ActivityWrapperProps {
   onClick: (activity: Activity) => void;
 }
 
+// Returns false if the event target is normally an interactive element.
+export function shouldSelectActivity(e: React.SyntheticEvent): boolean {
+  // recurse on currentNode.parentElement until chatActivity is reached
+  let currentNode = e.target as HTMLElement;
+  const interactiveElements = ['button', 'a'];
+
+  while (!currentNode.classList.contains(styles.chatActivity)) {
+    if (interactiveElements.includes(currentNode.tagName.toLowerCase())) {
+      return false;
+    }
+
+    currentNode = currentNode.parentElement;
+  }
+
+  return true;
+}
+
 class ActivityWrapper extends Component<ActivityWrapperProps> {
   render() {
     const { activity, children, isSelected } = this.props;
@@ -33,12 +50,14 @@ class ActivityWrapper extends Component<ActivityWrapperProps> {
     );
   }
 
-  private setSelectedActivity = (activity: Activity) => () => {
-    this.props.onClick(activity);
+  private setSelectedActivity = (activity: Activity) => (e: React.SyntheticEvent) => {
+    if (shouldSelectActivity(e)) {
+      this.props.onClick(activity);
+    }
   }
 
   private onKeyDown = (activity: Activity) => (e: React.KeyboardEvent) => {
-    if ([' ', 'Enter'].includes(e.key)) {
+    if (shouldSelectActivity(e) && [' ', 'Enter'].includes(e.key)) {
       this.props.onClick(activity);
     }
   }
