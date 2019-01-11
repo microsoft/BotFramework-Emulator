@@ -5,14 +5,14 @@ import { Activity } from '@bfemulator/sdk-shared';
 import * as styles from './chat.scss';
 
 interface ActivityWrapperProps {
-  activity: any;
+  activity: Activity;
   children: ReactNode;
   isSelected: boolean;
   onClick: (activity: Activity) => void;
 }
 
 // Returns false if the event target is normally an interactive element.
-export function shouldSelectActivity(e: React.SyntheticEvent): boolean {
+function shouldSelectActivity(e: React.SyntheticEvent): boolean {
   // recurse on currentNode.parentElement until chatActivity is reached
   let currentNode = e.target as HTMLElement;
   const interactiveElements = ['button', 'a'];
