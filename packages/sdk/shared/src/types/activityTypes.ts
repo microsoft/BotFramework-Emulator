@@ -53,6 +53,9 @@ export interface Activity extends ETagObject {
   recipient?: ChannelAccount;
   replyToId?: string;
   channelData?: any;
+
+  // Added when clicking on activity in web chat or log
+  showInInspector?: boolean;
 }
 
 export interface TypingActivity extends Activity {
