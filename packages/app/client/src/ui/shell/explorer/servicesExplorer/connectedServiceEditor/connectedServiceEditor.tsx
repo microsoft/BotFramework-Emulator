@@ -31,15 +31,27 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { DefaultButton, Dialog, DialogFooter, PrimaryButton, TextField } from '@bfemulator/ui-react';
-import { BotConfigurationBase } from 'botframework-config/lib/botConfigurationBase';
-import { ConnectedService } from 'botframework-config/lib/models';
-import { IConnectedService, IGenericService, ServiceTypes } from 'botframework-config/lib/schema';
-import * as React from 'react';
-import { ChangeEvent, Component, ReactNode } from 'react';
-import { serviceTypeLabels } from '../../../../../utils/serviceTypeLables';
-import * as styles from './connectedServiceEditor.scss';
-import { KvPair } from './kvPair';
+import {
+  DefaultButton,
+  Dialog,
+  DialogFooter,
+  PrimaryButton,
+  TextField
+} from "@bfemulator/ui-react";
+import { BotConfigurationBase } from "botframework-config/lib/botConfigurationBase";
+import { ConnectedService } from "botframework-config/lib/models";
+import {
+  IConnectedService,
+  IGenericService,
+  ServiceTypes
+} from "botframework-config/lib/schema";
+import * as React from "react";
+import { ChangeEvent, Component, ReactNode } from "react";
+
+import { serviceTypeLabels } from "../../../../../utils/serviceTypeLables";
+
+import * as styles from "./connectedServiceEditor.scss";
+import { KvPair } from "./kvPair";
 
 interface ConnectedServiceEditorProps {
   connectedService: IConnectedService;
@@ -54,66 +66,83 @@ interface ConnectedServiceEditorState extends Partial<any> {
 }
 
 const labelMap = {
-  authoringKey: 'Authoring key',
-  appId: 'LUIS app ID',
-  applicationId: 'App Insights Application ID',
-  collection: 'Cosmos DB collection name',
-  connectionString: 'Blob storage connection string',
-  container: 'Blob container name',
-  database: 'Cosmos DB collection database',
-  endpoint: 'Cosmos DB connection string',
-  endpointKey: 'Endpoint key',
-  hostname: 'Host Name',
-  id: 'App ID',
-  instrumentationKey: 'App Insights Instrumentation Key',
-  kbId: 'Knowledge base ID',
-  name: 'Name',
-  region: 'Region',
-  resourceGroup: 'Azure Resource group',
-  serviceName: 'Azure Service Name',
-  subscriptionId: 'Azure Subscription ID',
-  subscriptionKey: 'Azure Subscription key',
-  tenantId: 'Azure Tenant ID',
-  url: 'URL',
-  version: 'Version',
+  authoringKey: "Authoring key",
+  appId: "LUIS app ID",
+  applicationId: "App Insights Application ID",
+  collection: "Cosmos DB collection name",
+  connectionString: "Blob storage connection string",
+  container: "Blob container name",
+  database: "Cosmos DB collection database",
+  endpoint: "Cosmos DB connection string",
+  endpointKey: "Endpoint key",
+  hostname: "Host Name",
+  id: "App ID",
+  instrumentationKey: "App Insights Instrumentation Key",
+  kbId: "Knowledge base ID",
+  name: "Name",
+  region: "Region",
+  resourceGroup: "Azure Resource group",
+  serviceName: "Azure Service Name",
+  subscriptionId: "Azure Subscription ID",
+  subscriptionKey: "Azure Subscription key",
+  tenantId: "Azure Tenant ID",
+  url: "URL",
+  version: "Version",
   ...serviceTypeLabels
 };
 
 const titleMap = {
-  [ServiceTypes.Luis]: 'Connect to a LUIS app',
-  [ServiceTypes.Dispatch]: 'Connect to a Dispatch model',
-  [ServiceTypes.QnA]: 'Connect to a QnA Maker knowledge base',
-  [ServiceTypes.AppInsights]: 'Connect to Application Insights resource',
-  [ServiceTypes.BlobStorage]: 'Connect to an Azure Storage account',
-  [ServiceTypes.CosmosDB]: 'Connect to an Azure Cosmos DB account',
-  [ServiceTypes.Generic]: 'Connect to a generic service'
+  [ServiceTypes.Luis]: "Connect to a LUIS app",
+  [ServiceTypes.Dispatch]: "Connect to a Dispatch model",
+  [ServiceTypes.QnA]: "Connect to a QnA Maker knowledge base",
+  [ServiceTypes.AppInsights]: "Connect to Application Insights resource",
+  [ServiceTypes.BlobStorage]: "Connect to an Azure Storage account",
+  [ServiceTypes.CosmosDB]: "Connect to an Azure Cosmos DB account",
+  [ServiceTypes.Generic]: "Connect to a generic service"
 };
 
 const portalMap = {
-  [ServiceTypes.Luis]: 'LUIS.ai',
-  [ServiceTypes.Dispatch]: 'LUIS.ai',
-  [ServiceTypes.QnA]: 'QnaMaker.ai',
+  [ServiceTypes.Luis]: "LUIS.ai",
+  [ServiceTypes.Dispatch]: "LUIS.ai",
+  [ServiceTypes.QnA]: "QnaMaker.ai"
 };
 
-export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProps, ConnectedServiceEditorState> {
+export class ConnectedServiceEditor extends Component<
+  ConnectedServiceEditorProps,
+  ConnectedServiceEditorState
+> {
   public state: ConnectedServiceEditorState = {} as ConnectedServiceEditorState;
 
-  public static getDerivedStateFromProps(props: ConnectedServiceEditorProps, state: ConnectedServiceEditorState) {
-    const connectedServiceCopy = BotConfigurationBase.serviceFromJSON((props.connectedService || {
-      type: props.serviceType,
-      name: ''
-    }));
+  public static getDerivedStateFromProps(
+    props: ConnectedServiceEditorProps,
+    state: ConnectedServiceEditorState
+  ) {
+    const connectedServiceCopy = BotConfigurationBase.serviceFromJSON(
+      props.connectedService || {
+        type: props.serviceType,
+        name: ""
+      }
+    );
 
-    if (JSON.stringify(connectedServiceCopy) !== JSON.stringify(state.connectedServiceCopy)) {
+    if (
+      JSON.stringify(connectedServiceCopy) !==
+      JSON.stringify(state.connectedServiceCopy)
+    ) {
       return { connectedServiceCopy };
     }
 
     return state;
   }
 
-  constructor(props: ConnectedServiceEditorProps, state: ConnectedServiceEditorState) {
+  constructor(
+    props: ConnectedServiceEditorProps,
+    state: ConnectedServiceEditorState
+  ) {
     super(props, state);
-    this.state = ConnectedServiceEditor.getDerivedStateFromProps(props, state || {} as ConnectedServiceEditorState);
+    this.state = ConnectedServiceEditor.getDerivedStateFromProps(
+      props,
+      state || ({} as ConnectedServiceEditorState)
+    );
   }
 
   public render(): JSX.Element {
@@ -122,7 +151,9 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
     const { type } = connectedServiceCopy;
     const fields = this.editableFields;
     const textInputs: JSX.Element[] = [];
-    const isDirty = JSON.stringify(connectedServiceCopy) !== JSON.stringify(this.props.connectedService);
+    const isDirty =
+      JSON.stringify(connectedServiceCopy) !==
+      JSON.stringify(this.props.connectedService);
     let valid = true;
     // Build the editable inputs from the enumerable properties
     // in the data model. This assumes all enumerable fields are editable
@@ -132,24 +163,33 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
       valid = valid && (!isRequired || !!connectedServiceCopy[prop]);
       textInputs.push(
         <TextField
-          key={ `input_${ index }` }
-          errorMessage={ state[`${ prop }Error`] || '' }
-          value={ (connectedServiceCopy[prop] || '') }
-          data-prop={ prop }
-          onChange={ onInputChange }
-          label={ labelMap[prop] } required={ isRequired }
+          key={`input_${index}`}
+          errorMessage={state[`${prop}Error`] || ""}
+          value={connectedServiceCopy[prop] || ""}
+          data-prop={prop}
+          onChange={onInputChange}
+          label={labelMap[prop]}
+          required={isRequired}
         />
       );
     });
 
     return (
-      <Dialog title={ titleMap[type] } cancel={ props.cancel } className={ styles.connectedServiceEditor }>
-        { this.headerContent }
-        { textInputs }
-        { this.supplementalContent }
+      <Dialog
+        title={titleMap[type]}
+        cancel={props.cancel}
+        className={styles.connectedServiceEditor}
+      >
+        {this.headerContent}
+        {textInputs}
+        {this.supplementalContent}
         <DialogFooter>
-          <DefaultButton text="Cancel" onClick={ props.cancel }/>
-          <PrimaryButton disabled={ !isDirty || !valid } text="Submit" onClick={ onSubmitClick }/>
+          <DefaultButton text="Cancel" onClick={props.cancel} />
+          <PrimaryButton
+            disabled={!isDirty || !valid}
+            text="Submit"
+            onClick={onSubmitClick}
+          />
         </DialogFooter>
       </Dialog>
     );
@@ -160,53 +200,57 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
     switch (serviceType) {
       case ServiceTypes.Luis:
       case ServiceTypes.Dispatch:
-        return ['name', 'appId', 'authoringKey', 'version', 'region', 'subscriptionKey'];
+        return [
+          "name",
+          "appId",
+          "authoringKey",
+          "version",
+          "region",
+          "subscriptionKey"
+        ];
 
       case ServiceTypes.QnA:
-        return ['name', 'kbId', 'hostname', 'subscriptionKey', 'endpointKey'];
+        return ["name", "kbId", "hostname", "subscriptionKey", "endpointKey"];
 
       case ServiceTypes.AppInsights:
         return [
-          'name',
-          'tenantId',
-          'subscriptionId',
-          'resourceGroup',
-          'serviceName',
-          'instrumentationKey',
-          'applicationId'
+          "name",
+          "tenantId",
+          "subscriptionId",
+          "resourceGroup",
+          "serviceName",
+          "instrumentationKey",
+          "applicationId"
         ];
 
       case ServiceTypes.BlobStorage:
         return [
-          'name',
-          'tenantId',
-          'subscriptionId',
-          'resourceGroup',
-          'serviceName',
-          'connectionString',
-          'container'
+          "name",
+          "tenantId",
+          "subscriptionId",
+          "resourceGroup",
+          "serviceName",
+          "connectionString",
+          "container"
         ];
 
       case ServiceTypes.CosmosDB:
         return [
-          'name',
-          'tenantId',
-          'subscriptionId',
-          'resourceGroup',
-          'serviceName',
-          'endpoint',
-          'database',
-          'collection'
+          "name",
+          "tenantId",
+          "subscriptionId",
+          "resourceGroup",
+          "serviceName",
+          "endpoint",
+          "database",
+          "collection"
         ];
 
       case ServiceTypes.Generic:
-        return [
-          'name',
-          'url'
-        ];
+        return ["name", "url"];
 
       default:
-        throw new TypeError(`${ serviceType } is not a valid service type`);
+        throw new TypeError(`${serviceType} is not a valid service type`);
     }
   }
 
@@ -214,25 +258,25 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
     const { serviceType } = this.props;
     switch (serviceType) {
       case ServiceTypes.Luis:
-        return 'http://aka.ms/bot-framework-emulator-LUIS-docs-home';
+        return "http://aka.ms/bot-framework-emulator-LUIS-docs-home";
 
       case ServiceTypes.QnA:
-        return 'http://aka.ms/bot-framework-emulator-qna-keys';
+        return "http://aka.ms/bot-framework-emulator-qna-keys";
 
       case ServiceTypes.Dispatch:
-        return 'https://aka.ms/bot-framework-emulator-create-dispatch';
+        return "https://aka.ms/bot-framework-emulator-create-dispatch";
 
       case ServiceTypes.AppInsights:
-        return 'https://aka.ms/bot-framework-emulator-appinsights-keys';
+        return "https://aka.ms/bot-framework-emulator-appinsights-keys";
 
       case ServiceTypes.BlobStorage:
-        return 'https://aka.ms/bot-framework-emulator-storage-keys';
+        return "https://aka.ms/bot-framework-emulator-storage-keys";
 
       case ServiceTypes.CosmosDB:
-        return 'https://aka.ms/bot-framework-emulator-cosmosdb-keys';
+        return "https://aka.ms/bot-framework-emulator-cosmosdb-keys";
 
       default:
-        return '';
+        return "";
     }
   }
 
@@ -264,7 +308,7 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
     if (this.props.serviceType === ServiceTypes.Generic) {
       const { connectedServiceCopy = { configuration: {} } } = this.state;
       const { configuration } = connectedServiceCopy as IGenericService;
-      return (<KvPair kvPairs={ configuration } onChange={ this.onKvPairChange }/>);
+      return <KvPair kvPairs={configuration} onChange={this.onKvPairChange} />;
     }
 
     return null;
@@ -274,9 +318,11 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
     const { serviceType } = this.props;
     return (
       <p>
-        { `You can find your LUIS app ID and subscription key in ${ portalMap[serviceType] }. ` }
-        <a href={ this.learnMoreLink }>
-          Learn more about keys in { labelMap[serviceType] }
+        {`You can find your LUIS app ID and subscription key in ${
+          portalMap[serviceType]
+        }. `}
+        <a href={this.learnMoreLink}>
+          Learn more about keys in {labelMap[serviceType]}
         </a>
       </p>
     );
@@ -286,9 +332,11 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
     const { serviceType } = this.props;
     return (
       <p>
-        { `You can find your knowledge base ID and subscription key in ${ portalMap[serviceType] }. ` }
-        <a href={ this.learnMoreLink }>
-          Learn more about keys in { labelMap[serviceType] }
+        {`You can find your knowledge base ID and subscription key in ${
+          portalMap[serviceType]
+        }. `}
+        <a href={this.learnMoreLink}>
+          Learn more about keys in {labelMap[serviceType]}
         </a>
       </p>
     );
@@ -298,13 +346,11 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
     const { serviceType } = this.props;
     return (
       <p>
-        { `You can find your knowledge base ID and subscription key in the ` }
-        <a href="https://portal.azure.com">
-          Azure Portal.
-        </a>
-        <br/>
-        <a href={ this.learnMoreLink }>
-          Learn more about { labelMap[serviceType] } keys.
+        {`You can find your knowledge base ID and subscription key in the `}
+        <a href="https://portal.azure.com">Azure Portal.</a>
+        <br />
+        <a href={this.learnMoreLink}>
+          Learn more about {labelMap[serviceType]} keys.
         </a>
       </p>
     );
@@ -314,13 +360,11 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
     const { serviceType } = this.props;
     return (
       <p>
-        { `You can find the information below in the ` }
-        <a href="https://portal.azure.com">
-          Azure Portal.
-        </a>
-        <br/>
-        <a href={ this.learnMoreLink }>
-          Learn more about { labelMap[serviceType] } keys.
+        {`You can find the information below in the `}
+        <a href="https://portal.azure.com">Azure Portal.</a>
+        <br />
+        <a href={this.learnMoreLink}>
+          Learn more about {labelMap[serviceType]} keys.
         </a>
       </p>
     );
@@ -328,18 +372,16 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
 
   private get genericHeader(): ReactNode {
     return (
-      <p>
-        You can connect your bot to a generic service with key-value pairs.
-      </p>
+      <p>You can connect your bot to a generic service with key-value pairs.</p>
     );
   }
 
   private isRequired(key: string): boolean {
-    if (key === 'applicationId') {
+    if (key === "applicationId") {
       return false;
     }
 
-    if (key !== 'subscriptionKey') {
+    if (key !== "subscriptionKey") {
       return true;
     }
 
@@ -355,23 +397,31 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
 
   private onSubmitClick = (): void => {
     this.props.updateConnectedService(this.state.connectedServiceCopy);
-  }
+  };
 
   private onInputChange = (event: ChangeEvent<HTMLInputElement>): void => {
     const { value } = event.target;
     const { prop } = event.target.dataset;
 
     const trimmedValue = value.trim();
-    const errorMessage = (this.isRequired(prop) && !trimmedValue) ? `The field cannot be empty` : '';
+    const errorMessage =
+      this.isRequired(prop) && !trimmedValue ? `The field cannot be empty` : "";
     const { connectedServiceCopy } = this.state;
     connectedServiceCopy[prop] = value;
 
-    this.setState({ connectedServiceCopy, [`${ prop }Error`]: errorMessage } as any);
-  }
+    this.setState({
+      connectedServiceCopy,
+      [`${prop}Error`]: errorMessage
+    } as any);
+  };
 
-  private onKvPairChange = (configuration: { [propName: string]: string }): void => {
+  private onKvPairChange = (configuration: {
+    [propName: string]: string;
+  }): void => {
     const { connectedServiceCopy } = this.state;
-    (connectedServiceCopy as Partial<IGenericService>).configuration = configuration;
+    (connectedServiceCopy as Partial<
+      IGenericService
+    >).configuration = configuration;
     this.setState({ connectedServiceCopy });
-  }
+  };
 }

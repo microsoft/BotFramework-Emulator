@@ -1,35 +1,6 @@
 {
+  "extends": "../../../tsconfig.json",
   "compilerOptions": {
-    "importHelpers": true,
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "preserveConstEnums": true,
-    "target": "es2017",
-    "lib": ["es6"],
-    "rootDir": "src",
-    "sourceMap": true,
-    "noImplicitAny": false,
-    "noImplicitThis": false,
-    "noEmitOnError": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-    "noUnusedLocals": true,
-    "outDir": "built",
-    "removeComments": true,
-    "declaration": true,
-    "skipLibCheck": true
-  },
-  "include": [
-    "./src"
-  ],
-  "exclude": [
-    "./built",
-    "./node_modules",
-    "./dist",
-    "./scripts",
-    "./__tests__/**/*",
-    "./**/*.spec.ts",
-    "./**/*.test.ts"
-  ],
-  "compileOnSave": false
+    "outDir": "build/dist"
+  }
 }

@@ -31,18 +31,26 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as HttpStatus from 'http-status-codes';
-import * as Restify from 'restify';
+import * as HttpStatus from "http-status-codes";
+import * as Restify from "restify";
 
-import BotEmulator from '../../botEmulator';
-import BotData from '../../types/botData';
-import sendErrorResponse from '../../utils/sendErrorResponse';
+import BotEmulator from "../../botEmulator";
+import BotData from "../../types/botData";
+import sendErrorResponse from "../../utils/sendErrorResponse";
 
 export default function setUserData(botEmulator: BotEmulator) {
-  return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+  return (
+    req: Restify.Request,
+    res: Restify.Response,
+    next: Restify.Next
+  ): any => {
     try {
-      const botData = botEmulator.facilities.botState.setBotData(req.params.channelId, req.params.conversationId,
-        req.params.userId, req.body as BotData);
+      const botData = botEmulator.facilities.botState.setBotData(
+        req.params.channelId,
+        req.params.conversationId,
+        req.params.userId,
+        req.body as BotData
+      );
 
       res.send(HttpStatus.OK, botData);
       res.end();

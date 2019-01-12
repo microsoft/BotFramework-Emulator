@@ -36,7 +36,7 @@ export interface Disposable {
 }
 
 export function isDisposable(obj: any): boolean {
-  return obj && typeof obj.dispose === 'function';
+  return obj && typeof obj.dispose === "function";
 }
 
 export function dispose<T extends Disposable>(obj: T): T;

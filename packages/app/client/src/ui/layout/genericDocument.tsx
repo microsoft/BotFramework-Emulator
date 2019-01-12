@@ -31,22 +31,20 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from 'react';
-import * as styles from './genericDocument.scss';
+import * as React from "react";
+
+import * as styles from "./genericDocument.scss";
 
 interface GenericDocumentProps {
   className?: string; // overrides
 }
 
 export class GenericDocument extends React.Component<GenericDocumentProps, {}> {
-
-  render(): JSX.Element {
-    const { className = '' } = this.props;
+  public render(): JSX.Element {
+    const { className = "" } = this.props;
     return (
-      <div className={ `${styles.genericDocument} ${className}` }>
-        <div className={ styles.genericDocContent }>
-          { this.props.children }
-        </div>
+      <div className={`${styles.genericDocument} ${className}`}>
+        <div className={styles.genericDocContent}>{this.props.children}</div>
       </div>
     );
   }

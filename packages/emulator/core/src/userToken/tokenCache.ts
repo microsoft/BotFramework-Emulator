@@ -31,27 +31,44 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { TokenResponse } from './TokenResponse';
+import { TokenResponse } from "./TokenResponse";
 
 export class TokenCache {
-    private static tokenStore: { [key: string]: TokenResponse } = {};
+  private static tokenStore: { [key: string]: TokenResponse } = {};
 
-    public static addTokenToCache(botId: string, userId: string, connectionName: string, token: string) {
-        this.tokenStore[this.tokenKey(botId, userId, connectionName)] = {
-            connectionName: connectionName,
-            token: token
-        };
-    }
+  public static addTokenToCache(
+    botId: string,
+    userId: string,
+    connectionName: string,
+    token: string
+  ) {
+    this.tokenStore[this.tokenKey(botId, userId, connectionName)] = {
+      connectionName,
+      token
+    };
+  }
 
-    public static getTokenFromCache(botId: string, userId: string, connectionName: string): TokenResponse {
-        return this.tokenStore[this.tokenKey(botId, userId, connectionName)];
-    }
+  public static getTokenFromCache(
+    botId: string,
+    userId: string,
+    connectionName: string
+  ): TokenResponse {
+    return this.tokenStore[this.tokenKey(botId, userId, connectionName)];
+  }
 
-    public static deleteTokenFromCache(botId: string, userId: string, connectionName: string) {
-        delete this.tokenStore[this.tokenKey(botId, userId, connectionName)];
-    }
+  public static deleteTokenFromCache(
+    botId: string,
+    userId: string,
+    connectionName: string
+  ) {
+    delete this.tokenStore[this.tokenKey(botId, userId, connectionName)];
+  }
 
-    private static tokenKey(botId: string, userId: string, connectionName: string): string {
-        return `${botId}_${userId}_${connectionName}`;
-    }
+  private static tokenKey(
+    botId: string,
+    userId: string,
+    connectionName: string
+  ): string {
+    return `${botId}_${userId}_${connectionName}`;
+  }
 }

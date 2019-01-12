@@ -1,14 +1,14 @@
-import { DialogService } from './dialogService';
-import * as React from 'react';
-import { Component } from 'react';
-import { resources } from '../../../data/reducer/resourcesReducer';
-import { bot } from '../../../data/reducer/bot';
-import { combineReducers, createStore } from 'redux';
-import * as DialogActions from '../../../data/action/dialogActions';
+import { DialogService } from "./dialogService";
+import * as React from "react";
+import { Component } from "react";
+import { resources } from "../../../data/reducer/resourcesReducer";
+import { bot } from "../../../data/reducer/bot";
+import { combineReducers, createStore } from "redux";
+import * as DialogActions from "../../../data/action/dialogActions";
 
 const mockComponent = class extends Component<{}, {}> {
   public render() {
-    return <div></div>;
+    return <div />;
   }
 
   componentDidMount() {
@@ -16,22 +16,22 @@ const mockComponent = class extends Component<{}, {}> {
   }
 };
 const mockStore = createStore(combineReducers({ resources, bot }));
-jest.mock('../../../data/store', () => ({
+jest.mock("../../../data/store", () => ({
   get store() {
     return mockStore;
   }
 }));
-describe('The DialogService', () => {
-  it('should resolve to null if no dialogHost element is set', async () => {
+describe("The DialogService", () => {
+  it("should resolve to null if no dialogHost element is set", async () => {
     const result = await DialogService.showDialog(mockComponent);
     expect(result).toBeNull();
   });
 
   it('should render the component to the host element and notify the store when "showDialog" is called', async () => {
-    const hostElement = document.createElement('div');
-    const dispatchSpy = jest.spyOn(mockStore, 'dispatch');
+    const hostElement = document.createElement("div");
+    const dispatchSpy = jest.spyOn(mockStore, "dispatch");
     let renderedToElementEvent = undefined;
-    hostElement.addEventListener('dialogRendered', event => {
+    hostElement.addEventListener("dialogRendered", event => {
       renderedToElementEvent = event;
     });
     DialogService.setHost(hostElement);

@@ -1,4 +1,4 @@
-import { SwitchThemePayload, ThemeAction } from '../action/themeActions';
+import { SwitchThemePayload, ThemeAction } from "../action/themeActions";
 
 export interface ThemeState {
   themeName: string;
@@ -6,12 +6,18 @@ export interface ThemeState {
   themeComponents: string[];
 }
 
-export const initialState: ThemeState = { themeName: null, themeHref: null, themeComponents: [] };
+export const initialState: ThemeState = {
+  themeName: null,
+  themeHref: null,
+  themeComponents: []
+};
 
-export function theme(state: ThemeState = initialState, action: ThemeAction<SwitchThemePayload>): ThemeState {
+export function theme(
+  state: ThemeState = initialState,
+  action: ThemeAction<SwitchThemePayload>
+): ThemeState {
   switch (action.type) {
-
-    case 'switchTheme':
+    case "switchTheme":
       return { ...state, ...action.payload };
 
     default:

@@ -1,5 +1,5 @@
-export const SWITCH_THEME = 'switchTheme';
-export declare type ThemeType = 'switchTheme';
+export const SWITCH_THEME = "switchTheme";
+export declare type ThemeType = "switchTheme";
 
 export interface ThemeAction<T> {
   type: ThemeType;
@@ -11,7 +11,10 @@ export interface SwitchThemePayload {
   themeComponents: string[];
 }
 
-export function switchTheme(themeName: string, themeComponents: string[]): ThemeAction<SwitchThemePayload> {
+export function switchTheme(
+  themeName: string,
+  themeComponents: string[]
+): ThemeAction<SwitchThemePayload> {
   return {
     type: SWITCH_THEME,
     payload: { themeName, themeComponents }

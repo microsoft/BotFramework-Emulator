@@ -31,19 +31,20 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { DisposableImpl, CommandRegistryImpl } from '@bfemulator/sdk-shared';
-import { SharedConstants } from '@bfemulator/app-shared';
+import { SharedConstants } from "@bfemulator/app-shared";
+import { CommandRegistryImpl, DisposableImpl } from "@bfemulator/sdk-shared";
 
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
   commandRegistry.registerCommand(
     SharedConstants.Commands.Settings.ReceiveGlobalSettings,
-    (settings: {
-      url: string,
-      cwd: string
-    }): any => {
-      SettingsService.emulator.url = (settings.url || '').replace('[::]', 'localhost');
-      SettingsService.emulator.cwd = (settings.cwd || '').replace(/\\/g, '/');
-    });
+    (settings: { url: string; cwd: string }): any => {
+      SettingsService.emulator.url = (settings.url || "").replace(
+        "[::]",
+        "localhost"
+      );
+      SettingsService.emulator.cwd = (settings.cwd || "").replace(/\\/g, "/");
+    }
+  );
 }
 
 export interface EmulatorSettings {
@@ -58,7 +59,7 @@ class EmulatorSettingsImpl implements EmulatorSettings {
 
   get url(): string {
     if (!this._url || !this._url.length) {
-      throw new Error('Emulator url not set');
+      throw new Error("Emulator url not set");
     }
     return this._url;
   }
@@ -68,7 +69,7 @@ class EmulatorSettingsImpl implements EmulatorSettings {
 
   get cwd(): string {
     if (!this._cwd || !this._cwd.length) {
-      throw new Error('Emulator cwd not set');
+      throw new Error("Emulator cwd not set");
     }
     return this._cwd;
   }
@@ -78,8 +79,8 @@ class EmulatorSettingsImpl implements EmulatorSettings {
   }
 
   get cwdAsBase(): string {
-    let base = this.cwd || '';
-    if (!base.startsWith('/')) {
+    let base = this.cwd || "";
+    if (!base.startsWith("/")) {
       base = `/${base}`;
     }
 
@@ -88,15 +89,18 @@ class EmulatorSettingsImpl implements EmulatorSettings {
 }
 
 export const SettingsService = new class extends DisposableImpl {
-
   private _emulator: EmulatorSettingsImpl;
 
-  get emulator(): EmulatorSettingsImpl { return this._emulator; }
+  get emulator(): EmulatorSettingsImpl {
+    return this._emulator;
+  }
 
-  init() { return null; }
+  public init() {
+    return null;
+  }
 
   constructor() {
     super();
     this._emulator = new EmulatorSettingsImpl();
   }
-};
+}();

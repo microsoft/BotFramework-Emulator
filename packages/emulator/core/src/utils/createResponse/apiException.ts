@@ -31,23 +31,27 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import ErrorResponse from '../../types/response/error';
-import APIException from '../../types/apiException';
+import APIException from "../../types/apiException";
+import ErrorResponse from "../../types/response/error";
 
 // Create ErrorResponse object
 function createErrorResponse(code: string, message: string): ErrorResponse {
   return {
     error: {
-      code: code,
-      message: message
+      code,
+      message
     }
   };
 }
 
 // Create Exception
-export default function createAPIException(statusCode: number, code: string, message: string): APIException {
+export default function createAPIException(
+  statusCode: number,
+  code: string,
+  message: string
+): APIException {
   return {
-    statusCode: statusCode,
+    statusCode,
     error: createErrorResponse(code, message)
   };
 }

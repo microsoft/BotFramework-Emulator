@@ -31,43 +31,46 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { disable, enable, PresentationAction } from '../action/presentationActions';
-import { presentation, PresentationState } from './presentation';
-jest.mock('../../ui/dialogs', () => ({
-    AzureLoginPromptDialogContainer: function mock() {
-      return undefined;
-    },
-    AzureLoginSuccessDialogContainer: function mock() {
-      return undefined;
-    },
-    BotCreationDialog: function mock() {
-      return undefined;
-    },
-    DialogService: { showDialog: () => Promise.resolve(true) },
-    SecretPromptDialog: function mock() {
-      return undefined;
-    }
+import {
+  disable,
+  enable,
+  PresentationAction
+} from "../action/presentationActions";
+import { presentation, PresentationState } from "./presentation";
+jest.mock("../../ui/dialogs", () => ({
+  AzureLoginPromptDialogContainer: function mock() {
+    return undefined;
+  },
+  AzureLoginSuccessDialogContainer: function mock() {
+    return undefined;
+  },
+  BotCreationDialog: function mock() {
+    return undefined;
+  },
+  DialogService: { showDialog: () => Promise.resolve(true) },
+  SecretPromptDialog: function mock() {
+    return undefined;
   }
-));
-describe('Presentation reducer tests', () => {
+}));
+describe("Presentation reducer tests", () => {
   const DEFAULT_STATE: PresentationState = {
     enabled: null
   };
 
-  it('should return unaltered state for non-matching action type', () => {
+  it("should return unaltered state for non-matching action type", () => {
     const emptyAction: PresentationAction = { type: null, payload: null };
     const startingState = { ...DEFAULT_STATE };
     const endingState = presentation(DEFAULT_STATE, emptyAction);
     expect(endingState).toEqual(startingState);
   });
 
-  it('should disable presentation mode', () => {
+  it("should disable presentation mode", () => {
     const action: PresentationAction = disable();
     const state = presentation(DEFAULT_STATE, action);
     expect(state.enabled).toBe(false);
   });
 
-  it('should enable presentation mode', () => {
+  it("should enable presentation mode", () => {
     const action: PresentationAction = enable();
     const state = presentation(DEFAULT_STATE, action);
     expect(state.enabled).toBe(true);

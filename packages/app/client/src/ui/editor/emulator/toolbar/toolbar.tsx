@@ -31,10 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from 'react';
-import * as styles from './toolbar.scss';
+import * as React from "react";
 
-export const ToolBar = props =>
-  <div className={ styles.toolbar }>
-    { props.children }
-  </div>;
+import * as styles from "./toolbar.scss";
+
+export const ToolBar = props => (
+  <div className={styles.toolbar}>{props.children}</div>
+);

@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import LogEntry from '@bfemulator/emulator-core/lib/types/log/entry';
+import LogEntry from "@bfemulator/emulator-core/lib/types/log/entry";
 import {
   addTranscript,
   appendToLog,
@@ -44,12 +44,12 @@ import {
   removeTranscript,
   setInspectorObjects,
   updateChat
-} from '../action/chatActions';
-import { closeNonGlobalTabs } from '../action/editorActions';
-import { chat, ChatState } from './chat';
+} from "../action/chatActions";
+import { closeNonGlobalTabs } from "../action/editorActions";
+import { chat, ChatState } from "./chat";
 
-describe('Chat reducer tests', () => {
-  const testChatId = 'testChat1';
+describe("Chat reducer tests", () => {
+  const testChatId = "testChat1";
   const DEFAULT_STATE: ChatState = {
     changeKey: 0,
     chats: {
@@ -59,58 +59,58 @@ describe('Chat reducer tests', () => {
         }
       }
     },
-    transcripts: [],
+    transcripts: []
   };
 
-  it('should return unaltered state for non-matching action type', () => {
+  it("should return unaltered state for non-matching action type", () => {
     const emptyAction: ChatAction = { type: null, payload: null };
     const startingState = { ...DEFAULT_STATE };
     const endingState = chat(DEFAULT_STATE, emptyAction);
     expect(endingState).toEqual(startingState);
   });
 
-  it('should add a transcript', () => {
-    const action = addTranscript('testTranscript');
+  it("should add a transcript", () => {
+    const action = addTranscript("testTranscript");
     const state = chat(DEFAULT_STATE, action);
     expect(state.transcripts.length).toBe(1);
-    expect(state.transcripts[0]).toBe('testTranscript');
+    expect(state.transcripts[0]).toBe("testTranscript");
   });
 
-  it('should remove a transcript', () => {
-    let state = chat(DEFAULT_STATE, addTranscript('xs1'));
-    state = chat(state, addTranscript('xs2'));
+  it("should remove a transcript", () => {
+    let state = chat(DEFAULT_STATE, addTranscript("xs1"));
+    state = chat(state, addTranscript("xs2"));
     expect(state.transcripts.length).toBe(2);
-    const action = removeTranscript('xs1');
+    const action = removeTranscript("xs1");
     state = chat(state, action);
     expect(state.transcripts.length).toBe(1);
-    expect(state.transcripts).not.toContain('xs1');
+    expect(state.transcripts).not.toContain("xs1");
   });
 
-  it('should clear all transcripts', () => {
-    let state = chat(DEFAULT_STATE, addTranscript('xs1'));
-    state = chat(state, addTranscript('xs2'));
+  it("should clear all transcripts", () => {
+    let state = chat(DEFAULT_STATE, addTranscript("xs1"));
+    state = chat(state, addTranscript("xs2"));
     expect(state.transcripts.length).toBe(2);
     const action = clearTranscripts();
     state = chat(state, action);
     expect(state.transcripts.length).toBe(0);
   });
 
-  it('should create a new chat', () => {
-    const newChatName = 'newChat';
-    const action = newDocument(newChatName, 'livechat');
+  it("should create a new chat", () => {
+    const newChatName = "newChat";
+    const action = newDocument(newChatName, "livechat");
     const state = chat(DEFAULT_STATE, action);
     expect(state.changeKey).toBe(1);
     expect(state.chats[newChatName]).toBeTruthy();
   });
 
-  it('should close a chat', () => {
-    let state = chat(DEFAULT_STATE, newDocument(testChatId, 'livechat'));
+  it("should close a chat", () => {
+    let state = chat(DEFAULT_STATE, newDocument(testChatId, "livechat"));
     const action = closeDocument(testChatId);
     state = chat(DEFAULT_STATE, action);
     expect(state.chats[testChatId]).toBeFalsy();
   });
 
-  it('should create a new conversation', () => {
+  it("should create a new conversation", () => {
     const action = newConversation(testChatId, { testing: true });
     const startingState = {
       ...DEFAULT_STATE,
@@ -127,15 +127,15 @@ describe('Chat reducer tests', () => {
     expect(endingState.chats[testChatId]).toEqual(expectedDoc);
   });
 
-  it('should append to the log', () => {
+  it("should append to the log", () => {
     const logEntry: LogEntry = {
       timestamp: 123,
       items: [
         {
-          type: 'text',
+          type: "text",
           payload: {
             level: 0,
-            text: 'testing'
+            text: "testing"
           }
         }
       ]
@@ -157,15 +157,15 @@ describe('Chat reducer tests', () => {
     expect(endingState.chats[testChatId].log.entries[0]).toEqual(logEntry);
   });
 
-  it('should clear the log', () => {
+  it("should clear the log", () => {
     const logEntry: LogEntry = {
       timestamp: 1234,
       items: [
         {
-          type: 'text',
+          type: "text",
           payload: {
             level: 0,
-            text: 'testing'
+            text: "testing"
           }
         }
       ]
@@ -189,7 +189,7 @@ describe('Chat reducer tests', () => {
     expect(state.chats[testChatId].log.entries.length).toBe(0);
   });
 
-  it('should set inspector objects', () => {
+  it("should set inspector objects", () => {
     const action = setInspectorObjects(testChatId, { testing: true });
     const startingState = {
       ...DEFAULT_STATE,
@@ -199,12 +199,16 @@ describe('Chat reducer tests', () => {
       }
     };
     const endingState = chat(startingState, action);
-    expect(endingState.chats[testChatId].inspectorObjects.length).toBeGreaterThan(0);
-    expect(endingState.chats[testChatId].inspectorObjects[0]).toEqual({ testing: true });
+    expect(
+      endingState.chats[testChatId].inspectorObjects.length
+    ).toBeGreaterThan(0);
+    expect(endingState.chats[testChatId].inspectorObjects[0]).toEqual({
+      testing: true
+    });
   });
 
   it('should reset state on a "close all" editor action', () => {
-    const tempChat = 'tempChat';
+    const tempChat = "tempChat";
     const alteredState: ChatState = {
       changeKey: 999,
       chats: {
@@ -212,7 +216,7 @@ describe('Chat reducer tests', () => {
           testing: true
         }
       },
-      transcripts: ['xs1', 'xs2', 'xs3']
+      transcripts: ["xs1", "xs2", "xs3"]
     };
     const action = closeNonGlobalTabs();
     const state = chat(alteredState, action);
@@ -221,20 +225,23 @@ describe('Chat reducer tests', () => {
     expect(state.chats[tempChat]).toBeFalsy();
   });
 
-  it('should update a chat', () => {
+  it("should update a chat", () => {
     const startingState = {
       ...DEFAULT_STATE,
       chats: {
         ...DEFAULT_STATE.chats,
         chat1: {
-          id: 'chat',
-          userId: 'userId'
+          id: "chat",
+          userId: "userId"
         }
       }
     };
-    const action = updateChat('chat1', { id: 'updatedChatId', userId: 'updatedUserId' });
+    const action = updateChat("chat1", {
+      id: "updatedChatId",
+      userId: "updatedUserId"
+    });
     const state = chat(startingState, action);
-    expect(state.chats.chat1.id).toBe('updatedChatId');
-    expect(state.chats.chat1.userId).toBe('updatedUserId');
+    expect(state.chats.chat1.id).toBe("updatedChatId");
+    expect(state.chats.chat1.userId).toBe("updatedUserId");
   });
 });

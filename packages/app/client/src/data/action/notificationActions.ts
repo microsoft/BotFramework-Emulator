@@ -31,53 +31,53 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Notification } from '@bfemulator/app-shared';
+import { Notification } from "@bfemulator/app-shared";
 
 export enum NotificationActions {
-  beginAdd = 'NOTIFICATION/BEGIN_ADD',
-  finishAdd = 'NOTIFICATION/FINISH_ADD',
-  beginRemove = 'NOTIFICATION/BEGIN_REMOVE',
-  finishRemove = 'NOTIFICATION/FINISH_REMOVE',
-  markAllAsRead = 'NOTIFICATION/MARK_ALL_AS_READ',
-  beginClear = 'NOTIFICATION/BEGIN_CLEAR',
-  finishClear = 'NOTIFICATION/FINISH_CLEAR'
+  beginAdd = "NOTIFICATION/BEGIN_ADD",
+  finishAdd = "NOTIFICATION/FINISH_ADD",
+  beginRemove = "NOTIFICATION/BEGIN_REMOVE",
+  finishRemove = "NOTIFICATION/FINISH_REMOVE",
+  markAllAsRead = "NOTIFICATION/MARK_ALL_AS_READ",
+  beginClear = "NOTIFICATION/BEGIN_CLEAR",
+  finishClear = "NOTIFICATION/FINISH_CLEAR"
 }
 
 export type NotificationAction =
-  BeginAddNotificationAction |
-  FinishAddNotificationAction |
-  BeginRemoveNotificationAction |
-  FinishRemoveNotificationAction |
-  MarkAllAsReadNotificationAction |
-  BeginClearNotificationAction |
-  FinishClearNotificationAction;
+  | BeginAddNotificationAction
+  | FinishAddNotificationAction
+  | BeginRemoveNotificationAction
+  | FinishRemoveNotificationAction
+  | MarkAllAsReadNotificationAction
+  | BeginClearNotificationAction
+  | FinishClearNotificationAction;
 
 export interface BeginAddNotificationAction {
   type: NotificationActions.beginAdd;
   payload: {
-    notification: Notification,
-    read: boolean
+    notification: Notification;
+    read: boolean;
   };
 }
 
 export interface FinishAddNotificationAction {
   type: NotificationActions.finishAdd;
   payload: {
-    notification: Notification
+    notification: Notification;
   };
 }
 
 export interface BeginRemoveNotificationAction {
   type: NotificationActions.beginRemove;
   payload: {
-    id: string
+    id: string;
   };
 }
 
 export interface FinishRemoveNotificationAction {
   type: NotificationActions.finishRemove;
   payload: {
-    id: string
+    id: string;
   };
 }
 
@@ -96,7 +96,10 @@ export interface FinishClearNotificationAction {
   payload: {};
 }
 
-export function beginAdd(notification: Notification, read: boolean = false): BeginAddNotificationAction {
+export function beginAdd(
+  notification: Notification,
+  read: boolean = false
+): BeginAddNotificationAction {
   return {
     type: NotificationActions.beginAdd,
     payload: {
@@ -106,7 +109,9 @@ export function beginAdd(notification: Notification, read: boolean = false): Beg
   };
 }
 
-export function finishAdd(notification: Notification): FinishAddNotificationAction {
+export function finishAdd(
+  notification: Notification
+): FinishAddNotificationAction {
   return {
     type: NotificationActions.finishAdd,
     payload: {

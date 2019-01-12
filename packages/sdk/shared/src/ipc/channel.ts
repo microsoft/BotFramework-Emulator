@@ -31,27 +31,28 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Sender } from './sender';
-import { Disposable } from '../lifecycle';
+import { Disposable } from "../lifecycle";
+
+import { Sender } from "./sender";
 
 export interface Listener {
   (...args: any[]);
 }
 
 export class Channel {
-
   private _listeners: { [id: string]: Listener } = {};
 
-  get name(): string { return this._name; }
-
-  constructor(private _name: string, private _sender: Sender) {
+  get name(): string {
+    return this._name;
   }
 
-  send(messageName: string, ...args: any[]): any {
+  constructor(private _name: string, private _sender: Sender) {}
+
+  public send(messageName: string, ...args: any[]): any {
     return this._sender.send(this._name, messageName, ...args);
   }
 
-  setListener(messageName: string, listener: Listener): Disposable {
+  public setListener(messageName: string, listener: Listener): Disposable {
     this.clearListener(messageName);
     this._listeners[messageName] = listener;
     return {
@@ -61,11 +62,11 @@ export class Channel {
     };
   }
 
-  clearListener(messageName: string) {
+  public clearListener(messageName: string) {
     delete this._listeners[messageName];
   }
 
-  onMessage(...args: any[]): any {
+  public onMessage(...args: any[]): any {
     const messageName = args.shift();
     const listener = this._listeners[messageName];
     if (listener) {

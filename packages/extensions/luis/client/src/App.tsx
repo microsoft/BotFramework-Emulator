@@ -31,38 +31,39 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Splitter } from '@bfemulator/ui-react';
-import { InspectorHost } from '@bfemulator/sdk-client';
+import { InspectorHost } from "@bfemulator/sdk-client";
+import { json2HTML } from "@bfemulator/sdk-shared/built/utils/json2HTML";
+import { Splitter } from "@bfemulator/ui-react";
 import {
   IBotConfiguration,
   IConnectedService,
   IDispatchService,
   ILuisService,
   ServiceTypes
-} from 'botframework-config/lib/schema';
-import * as React from 'react';
-import { Component } from 'react';
-import AppStateAdapter from './Adapters/AppStateAdapter';
-import { ButtonSelected, ControlBar } from './Controls/ControlBar/ControlBar';
-import Editor from './Controls/Editor/Editor';
-import Header from './Controls/Header/Header';
-import { AppInfo } from './Luis/AppInfo';
-import LuisClient from './Luis/Client';
-import { IntentInfo } from './Luis/IntentInfo';
-import { LuisAppInfo } from './Models/LuisAppInfo';
-import { LuisTraceInfo } from './Models/LuisTraceInfo';
+} from "botframework-config/lib/schema";
+import * as React from "react";
+import { Component } from "react";
 
-import * as styles from './App.scss';
-import { json2HTML } from '@bfemulator/sdk-shared/built/utils/json2HTML';
+import AppStateAdapter from "./Adapters/AppStateAdapter";
+import * as styles from "./App.scss";
+import { ButtonSelected, ControlBar } from "./Controls/ControlBar/ControlBar";
+import Editor from "./Controls/Editor/Editor";
+import Header from "./Controls/Header/Header";
+import { AppInfo } from "./Luis/AppInfo";
+import LuisClient from "./Luis/Client";
+import { IntentInfo } from "./Luis/IntentInfo";
+import { LuisAppInfo } from "./Models/LuisAppInfo";
+import { LuisTraceInfo } from "./Models/LuisTraceInfo";
 
-let $host: InspectorHost = (window as any).host;
-const LuisApiBasePath = 'https://westus.api.cognitive.microsoft.com/luis/api/v2.0';
-const TrainAccessoryId = 'train';
-const PublichAccessoryId = 'publish';
-const AccessoryDefaultState = 'default';
-const AccessoryWorkingState = 'working';
+const $host: InspectorHost = (window as any).host;
+const LuisApiBasePath =
+  "https://westus.api.cognitive.microsoft.com/luis/api/v2.0";
+const TrainAccessoryId = "train";
+const PublichAccessoryId = "publish";
+const AccessoryDefaultState = "default";
+const AccessoryWorkingState = "working";
 
-let persistentStateKey = Symbol('persistentState').toString();
+const persistentStateKey = Symbol("persistentState").toString();
 
 interface AppState {
   traceInfo: LuisTraceInfo;
@@ -80,24 +81,30 @@ interface PersistentAppState {
 }
 
 class App extends Component<any, AppState> {
+  public luisclient: LuisClient;
 
-  luisclient: LuisClient;
-
-  static getLuisAuthoringKey(bot: IBotConfiguration, appId: string): string {
+  public static getLuisAuthoringKey(bot: IBotConfiguration, appId: string): string {
     if (!bot || !bot.services || !appId) {
-      return '';
+      return "";
     }
 
-    let lcAppId = appId.toLowerCase();
-    let dispatchServices = bot.services.filter((s: IConnectedService) =>
-      s.type === ServiceTypes.Dispatch) as IDispatchService[];
-    let dispatchService = dispatchServices.find(ds => ds.appId.toLowerCase() === lcAppId);
+    const lcAppId = appId.toLowerCase();
+    const dispatchServices = bot.services.filter(
+      (s: IConnectedService) => s.type === ServiceTypes.Dispatch
+    ) as IDispatchService[];
+    const dispatchService = dispatchServices.find(
+      ds => ds.appId.toLowerCase() === lcAppId
+    );
     if (dispatchService) {
       return dispatchService.authoringKey;
     }
 
-    let luisServices = bot.services.filter((s: IConnectedService) => s.type === ServiceTypes.Luis) as ILuisService[];
-    let luisService = luisServices.find(ls => ls.appId.toLowerCase() === lcAppId);
+    const luisServices = bot.services.filter(
+      (s: IConnectedService) => s.type === ServiceTypes.Luis
+    ) as ILuisService[];
+    const luisService = luisServices.find(
+      ls => ls.appId.toLowerCase() === lcAppId
+    );
     if (luisService) {
       return luisService.authoringKey;
     }
@@ -105,21 +112,21 @@ class App extends Component<any, AppState> {
     if (luisServices.length > 0) {
       return luisServices[0].authoringKey;
     }
-    return '';
+    return "";
   }
 
-  setControlButtonSelected = (buttonSelected: ButtonSelected): void => {
+  public setControlButtonSelected = (buttonSelected: ButtonSelected): void => {
     this.setState({
       controlBarButtonSelected: buttonSelected
     });
-  }
+  };
 
   constructor(props: any, context: any) {
     super(props, context);
     this.state = {
       traceInfo: {
         luisModel: {
-          ModelID: ''
+          ModelID: ""
         },
         recognizerResult: {},
         luisOptions: {}
@@ -128,34 +135,44 @@ class App extends Component<any, AppState> {
       intentInfo: [] as IntentInfo[],
       persistentState: this.loadAppPersistentState(),
       controlBarButtonSelected: ButtonSelected.RawResponse,
-      id: '',
-      authoringKey: ''
+      id: "",
+      authoringKey: ""
     };
   }
 
-  componentWillMount() {
+  public componentWillMount() {
     // Attach a handler to listen on inspect events
     if (!$host) {
       return;
     }
-    $host.on('inspect', async (obj: any) => {
-      let appState = new AppStateAdapter(obj);
+    $host.on("inspect", async (obj: any) => {
+      const appState = new AppStateAdapter(obj);
       appState.persistentState = this.loadAppPersistentState();
-      appState.authoringKey = App.getLuisAuthoringKey($host.bot, appState.traceInfo.luisModel.ModelID);
+      appState.authoringKey = App.getLuisAuthoringKey(
+        $host.bot,
+        appState.traceInfo.luisModel.ModelID
+      );
       this.setState(appState);
       await this.populateLuisInfo();
-      $host.setInspectorTitle(this.state.appInfo.isDispatchApp ? 'Dispatch' : 'LUIS');
+      $host.setInspectorTitle(
+        this.state.appInfo.isDispatchApp ? "Dispatch" : "LUIS"
+      );
       $host.setAccessoryState(TrainAccessoryId, AccessoryDefaultState);
       $host.setAccessoryState(PublichAccessoryId, AccessoryDefaultState);
-      $host.enableAccessory(TrainAccessoryId, this.state.persistentState[this.state.id] &&
-        this.state.persistentState[this.state.id].pendingTrain);
-      $host.enableAccessory(PublichAccessoryId, this.state.persistentState[this.state.id] &&
-        this.state.persistentState[this.state.id].pendingPublish);
+      $host.enableAccessory(
+        TrainAccessoryId,
+        this.state.persistentState[this.state.id] &&
+          this.state.persistentState[this.state.id].pendingTrain
+      );
+      $host.enableAccessory(
+        PublichAccessoryId,
+        this.state.persistentState[this.state.id] &&
+          this.state.persistentState[this.state.id].pendingPublish
+      );
     });
 
-    $host.on('accessory-click', async (id: string) => {
+    $host.on("accessory-click", async (id: string) => {
       switch (id) {
-
         case TrainAccessoryId:
           await this.train();
           break;
@@ -169,77 +186,103 @@ class App extends Component<any, AppState> {
       }
     });
 
-    $host.on('bot-updated', (bot: IBotConfiguration) => {
+    $host.on("bot-updated", (bot: IBotConfiguration) => {
       this.setState({
         authoringKey: App.getLuisAuthoringKey(bot, this.state.appInfo.appId)
       });
     });
 
-    $host.on('theme', async (themeInfo: { themeName: string, themeComponents: string[] }) => {
-      const oldThemeComponents = document.querySelectorAll<HTMLLinkElement>('[data-theme-component="true"]');
-      const head = document.querySelector<HTMLHeadElement>('head') as HTMLHeadElement;
-      const fragment = document.createDocumentFragment();
-      const promises: Promise<any>[] = [];
-      // Create the new links for each theme component
-      themeInfo.themeComponents.forEach(themeComponent => {
-        const link = document.createElement<'link'>('link');
-        promises.push(new Promise(resolve => {
-          link.addEventListener('load', resolve);
-        }));
-        link.href = themeComponent;
-        link.rel = 'stylesheet';
-        link.setAttribute('data-theme-component', 'true');
-        fragment.appendChild(link);
-      });
-      head.insertBefore(fragment, head.firstElementChild);
-      // Wait for all the links to load their css
-      await Promise.all(promises);
-      // Remove the old links
-      Array.prototype.forEach.call(oldThemeComponents,
-        (themeComponent: HTMLLinkElement) => {
-          if (themeComponent.parentElement) {
-            themeComponent.parentElement.removeChild(themeComponent);
-          }
+    $host.on(
+      "theme",
+      async (themeInfo: { themeName: string; themeComponents: string[] }) => {
+        const oldThemeComponents = document.querySelectorAll<HTMLLinkElement>(
+          '[data-theme-component="true"]'
+        );
+        const head = document.querySelector<HTMLHeadElement>(
+          "head"
+        ) as HTMLHeadElement;
+        const fragment = document.createDocumentFragment();
+        const promises: Array<Promise<any>> = [];
+        // Create the new links for each theme component
+        themeInfo.themeComponents.forEach(themeComponent => {
+          const link = document.createElement<"link">("link");
+          promises.push(
+            new Promise(resolve => {
+              link.addEventListener("load", resolve);
+            })
+          );
+          link.href = themeComponent;
+          link.rel = "stylesheet";
+          link.setAttribute("data-theme-component", "true");
+          fragment.appendChild(link);
         });
-    });
+        head.insertBefore(fragment, head.firstElementChild);
+        // Wait for all the links to load their css
+        await Promise.all(promises);
+        // Remove the old links
+        Array.prototype.forEach.call(
+          oldThemeComponents,
+          (themeComponent: HTMLLinkElement) => {
+            if (themeComponent.parentElement) {
+              themeComponent.parentElement.removeChild(themeComponent);
+            }
+          }
+        );
+      }
+    );
   }
 
-  render() {
-    const { traceInfo = {} as any, appInfo = {} as AppInfo, controlBarButtonSelected } = this.state;
+  public render() {
+    const {
+      traceInfo = {} as any,
+      appInfo = {} as AppInfo,
+      controlBarButtonSelected
+    } = this.state;
     const { recognizerResult = {}, luisResult = {} } = traceInfo;
-    const name = controlBarButtonSelected === ButtonSelected.RecognizerResult ? 'recognizerResult' : 'luisResponse';
-    const result = controlBarButtonSelected === ButtonSelected.RecognizerResult ? recognizerResult : luisResult;
+    const name =
+      controlBarButtonSelected === ButtonSelected.RecognizerResult
+        ? "recognizerResult"
+        : "luisResponse";
+    const result =
+      controlBarButtonSelected === ButtonSelected.RecognizerResult
+        ? recognizerResult
+        : luisResult;
     const data = { [name]: result };
     return (
-      <div className={ styles.app }>
+      <div className={styles.app}>
         <Header
-          appId={ traceInfo.luisModel.ModelID }
-          appName={ appInfo.name }
-          slot={ traceInfo.luisOptions.Staging ? 'Staging' : 'Production' }
-          version={ appInfo.activeVersion }
+          appId={traceInfo.luisModel.ModelID}
+          appName={appInfo.name}
+          slot={traceInfo.luisOptions.Staging ? "Staging" : "Production"}
+          version={appInfo.activeVersion}
         />
         <ControlBar
-          setButtonSelected={ this.setControlButtonSelected }
-          buttonSelected={ controlBarButtonSelected }
+          setButtonSelected={this.setControlButtonSelected}
+          buttonSelected={controlBarButtonSelected}
         />
-        <Splitter orientation={ 'vertical' }
-                  primaryPaneIndex={ 0 }
-                  minSizes={ { 0: 306, 1: 306 } }
-                  initialSizes={ { 0: 306 } }>
-          <div className={ styles.json } dangerouslySetInnerHTML={ { __html: json2HTML(data) } }/>
+        <Splitter
+          orientation={"vertical"}
+          primaryPaneIndex={0}
+          minSizes={{ 0: 306, 1: 306 }}
+          initialSizes={{ 0: 306 }}
+        >
+          <div
+            className={styles.json}
+            dangerouslySetInnerHTML={{ __html: json2HTML(data) }}
+          />
           <Editor
-            recognizerResult={ this.state.traceInfo.recognizerResult }
-            intentInfo={ this.state.intentInfo }
-            intentReassigner={ this.reassignIntent }
-            appInfo={ this.state.appInfo }
-            traceId={ this.state.id }
+            recognizerResult={this.state.traceInfo.recognizerResult}
+            intentInfo={this.state.intentInfo}
+            intentReassigner={this.reassignIntent}
+            appInfo={this.state.appInfo}
+            traceId={this.state.id}
           />
         </Splitter>
       </div>
     );
   }
 
-  async populateLuisInfo() {
+  public async populateLuisInfo() {
     if (this.state.traceInfo != null) {
       this.luisclient = new LuisClient({
         appId: this.state.traceInfo.luisModel.ModelID,
@@ -248,9 +291,9 @@ class App extends Component<any, AppState> {
       } as LuisAppInfo);
 
       try {
-        let appInfo = await this.luisclient.getApplicationInfo();
+        const appInfo = await this.luisclient.getApplicationInfo();
         this.setState({ appInfo });
-        let intentInfo = await this.luisclient.getApplicationIntents(appInfo);
+        const intentInfo = await this.luisclient.getApplicationIntents(appInfo);
         this.setState({ intentInfo });
       } catch (err) {
         $host.logger.error(err.message);
@@ -258,13 +301,17 @@ class App extends Component<any, AppState> {
     }
   }
 
-  private reassignIntent = async (newIntent: string, needsRetrain: boolean): Promise<void> => {
+  private reassignIntent = async (
+    newIntent: string,
+    needsRetrain: boolean
+  ): Promise<void> => {
     try {
       await this.luisclient.reassignIntent(
         this.state.appInfo,
         this.state.traceInfo.luisResult,
-        newIntent);
-      $host.logger.log('Intent reassigned successfully');
+        newIntent
+      );
+      $host.logger.log("Intent reassigned successfully");
       this.setAppPersistentState({
         pendingTrain: needsRetrain,
         pendingPublish: false
@@ -272,13 +319,13 @@ class App extends Component<any, AppState> {
     } catch (err) {
       $host.logger.error(err.message);
     }
-  }
+  };
 
   private train = async (): Promise<void> => {
     $host.setAccessoryState(TrainAccessoryId, AccessoryWorkingState);
     try {
       await this.luisclient.train(this.state.appInfo);
-      $host.logger.log('Application trained successfully');
+      $host.logger.log("Application trained successfully");
       this.setAppPersistentState({
         pendingTrain: false,
         pendingPublish: true
@@ -288,13 +335,16 @@ class App extends Component<any, AppState> {
     } finally {
       $host.setAccessoryState(TrainAccessoryId, AccessoryDefaultState);
     }
-  }
+  };
 
   private publish = async (): Promise<void> => {
     $host.setAccessoryState(PublichAccessoryId, AccessoryWorkingState);
     try {
-      await this.luisclient.publish(this.state.appInfo, this.state.traceInfo.luisOptions.Staging || false);
-      $host.logger.log('Application published successfully');
+      await this.luisclient.publish(
+        this.state.appInfo,
+        this.state.traceInfo.luisOptions.Staging || false
+      );
+      $host.logger.log("Application published successfully");
       this.setAppPersistentState({
         pendingPublish: false,
         pendingTrain: false
@@ -304,23 +354,26 @@ class App extends Component<any, AppState> {
     } finally {
       $host.setAccessoryState(TrainAccessoryId, AccessoryDefaultState);
     }
-  }
+  };
 
   private setAppPersistentState(persistentState: PersistentAppState) {
     this.state.persistentState[this.state.id] = persistentState;
     this.setState({ persistentState: this.state.persistentState });
-    localStorage.setItem(persistentStateKey, JSON.stringify(this.state.persistentState));
+    localStorage.setItem(
+      persistentStateKey,
+      JSON.stringify(this.state.persistentState)
+    );
     $host.enableAccessory(TrainAccessoryId, persistentState.pendingTrain);
     $host.enableAccessory(PublichAccessoryId, persistentState.pendingPublish);
   }
 
   private loadAppPersistentState(): { [key: string]: PersistentAppState } {
-    let persisted = localStorage.getItem(persistentStateKey);
+    const persisted = localStorage.getItem(persistentStateKey);
     if (persisted !== null) {
       return JSON.parse(persisted);
     }
     return {
-      '': {
+      "": {
         pendingTrain: false,
         pendingPublish: false
       }

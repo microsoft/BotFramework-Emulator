@@ -31,33 +31,36 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { SharedConstants } from '@bfemulator/app-shared';
-import LogEntry from '@bfemulator/emulator-core/lib/types/log/entry';
-import { DisposableImpl, CommandRegistryImpl } from '@bfemulator/sdk-shared';
-import * as ChatActions from '../../data/action/chatActions';
-import { store } from '../../data/store';
-import * as chatHelpers from '../../data/chatHelpers';
+import { SharedConstants } from "@bfemulator/app-shared";
+import LogEntry from "@bfemulator/emulator-core/lib/types/log/entry";
+import { CommandRegistryImpl, DisposableImpl } from "@bfemulator/sdk-shared";
+
+import * as ChatActions from "../../data/action/chatActions";
+import * as chatHelpers from "../../data/chatHelpers";
+import { store } from "../../data/store";
 
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
   commandRegistry.registerCommand(
     SharedConstants.Commands.Emulator.AppendToLog,
     (conversationId: string, entry: LogEntry): any => {
       LogService.logToChat(conversationId, entry);
-    });
+    }
+  );
 }
 
 export const LogService = new class extends DisposableImpl {
+  public init() {
+    return null;
+  }
 
-  init() { return null; }
-
-  logToChat(conversationId: string, entry: LogEntry): void {
+  public logToChat(conversationId: string, entry: LogEntry): void {
     const documentId = chatHelpers.documentIdForConversation(conversationId);
     if (documentId) {
       LogService.logToDocument(documentId, entry);
     }
   }
 
-  logToDocument(documentId: string, entry: LogEntry): void {
+  public logToDocument(documentId: string, entry: LogEntry): void {
     store.dispatch(ChatActions.appendToLog(documentId, entry));
   }
-};
+}();

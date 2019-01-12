@@ -31,10 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import User from '../types/user';
+import User from "../types/user";
 
 export default class Users {
-  public currentUserId: string = 'default-user';
+  public currentUserId: string = "default-user";
   public users: { [userId: string]: User };
 
   public usersById(userId: string): User {

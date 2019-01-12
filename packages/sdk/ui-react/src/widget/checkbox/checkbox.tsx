@@ -31,16 +31,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from 'react';
-import { Component, FormEvent, HTMLAttributes, ReactNode } from 'react';
-import * as styles from './checkbox.scss';
+import * as React from "react";
 
-export interface CheckboxProps extends HTMLAttributes<HTMLInputElement> {
+import * as styles from "./checkbox.scss";
+
+export interface CheckboxProps extends React.HTMLAttributes<HTMLInputElement> {
   label?: string;
   checkboxContainerClassName?: string;
   checked?: boolean;
   indeterminate?: boolean;
-  onChange?: (event: FormEvent<HTMLInputElement>) => void;
+  onChange?: (event: React.FormEvent<HTMLInputElement>) => void;
 }
 
 export interface CheckboxState {
@@ -51,14 +51,20 @@ export interface CheckboxState {
 
 let id = 0;
 
-export class Checkbox extends Component<CheckboxProps, CheckboxState> {
-  private readonly checkboxId = 'emulator-checkbox-' + id++;
+export class Checkbox extends React.Component<CheckboxProps, CheckboxState> {
+  private readonly checkboxId = "emulator-checkbox-" + id++;
   private inputRef: HTMLInputElement;
 
-  public static getDerivedStateFromProps(newProps: CheckboxProps, prevState: CheckboxState = {}): CheckboxState {
+  public static getDerivedStateFromProps(
+    newProps: CheckboxProps,
+    prevState: CheckboxState = {}
+  ): CheckboxState {
     const { checked = false, indeterminate = false } = newProps;
-    const { checked: prevChecked, indeterminate: prevIndeterminate } = prevState;
-    if (  prevChecked !== checked || prevIndeterminate !== indeterminate) {
+    const {
+      checked: prevChecked,
+      indeterminate: prevIndeterminate
+    } = prevState;
+    if (prevChecked !== checked || prevIndeterminate !== indeterminate) {
       return { checked, indeterminate };
     }
     return prevState;
@@ -70,11 +76,11 @@ export class Checkbox extends Component<CheckboxProps, CheckboxState> {
     this.state = { focused: false, checked };
   }
 
-  public render(): ReactNode {
+  public render(): React.ReactNode {
     // Trim off what we don't want to send to the input tag
-    const { className, label = '', ...inputProps } = this.props;
+    const { className, label = "", ...inputProps } = this.props;
     const { checked = false, indeterminate = false, focused } = this.state;
-    let checkMarkStyles = '';
+    let checkMarkStyles = "";
     if (indeterminate) {
       checkMarkStyles = styles.indeterminate;
     } else if (checked) {
@@ -85,13 +91,20 @@ export class Checkbox extends Component<CheckboxProps, CheckboxState> {
     }
     return (
       <label
-        id={ this.checkboxId }
-        className={ `${styles.label} ${className}` }
-        data-checked={ checked }>
-        <span className={ `${styles.checkMark} ${checkMarkStyles}` }/>
-        <input type="checkbox" { ...inputProps } className={ styles.checkbox } ref={ this.checkboxRef } readOnly/>
-        { label }
-        { this.props.children }
+        id={this.checkboxId}
+        className={`${styles.label} ${className}`}
+        data-checked={checked}
+      >
+        <span className={`${styles.checkMark} ${checkMarkStyles}`} />
+        <input
+          type="checkbox"
+          {...inputProps}
+          className={styles.checkbox}
+          ref={this.checkboxRef}
+          readOnly={true}
+        />
+        {label}
+        {this.props.children}
       </label>
     );
   }
@@ -99,27 +112,26 @@ export class Checkbox extends Component<CheckboxProps, CheckboxState> {
   private checkboxRef = (ref: HTMLInputElement): void => {
     const { inputRef, checkboxEventHandler } = this;
     if (inputRef) {
-      inputRef.removeEventListener('focus', checkboxEventHandler);
-      inputRef.removeEventListener('blur', checkboxEventHandler);
+      inputRef.removeEventListener("focus", checkboxEventHandler);
+      inputRef.removeEventListener("blur", checkboxEventHandler);
     }
     this.inputRef = ref;
     if (ref) {
-      ref.addEventListener('focus', checkboxEventHandler);
-      ref.addEventListener('blur', checkboxEventHandler);
+      ref.addEventListener("focus", checkboxEventHandler);
+      ref.addEventListener("blur", checkboxEventHandler);
     }
-  }
+  };
 
   private checkboxEventHandler = (event: Event): void => {
     switch (event.type) {
-      case 'focus':
+      case "focus":
         return this.setState({ focused: true });
 
-      case 'blur':
+      case "blur":
         return this.setState({ focused: false });
 
       default:
         return null;
     }
-
-  }
+  };
 }

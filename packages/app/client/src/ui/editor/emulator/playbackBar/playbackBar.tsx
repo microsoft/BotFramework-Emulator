@@ -31,8 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from 'react';
-import * as styles from './playbackBar.scss';
+import * as React from "react";
+
+import * as styles from "./playbackBar.scss";
 
 interface PlaybackBarState {
   playing?: boolean;
@@ -61,43 +62,42 @@ export default class PlaybackBar extends React.Component<{}, PlaybackBarState> {
     this.state = { playing: false };
   }
 
-  onClickStartOver(): void {
+  public onClickStartOver(): void {
     return null;
   }
 
-  onClickStepBack(): void {
+  public onClickStepBack(): void {
     return null;
   }
 
-  onClickStepForward(): void {
+  public onClickStepForward(): void {
     return null;
   }
 
-  onClickJumpToEnd(): void {
+  public onClickJumpToEnd(): void {
     return null;
   }
 
-  onClickPlay(): void {
+  public onClickPlay(): void {
     this.setState({ playing: true });
   }
 
-  onClickPause(): void {
+  public onClickPause(): void {
     this.setState({ playing: false });
   }
 
-  render(): JSX.Element {
+  public render(): JSX.Element {
     return (
-      <div className={ styles.playbackBar }>
-        <span onClick={ this.onClickStartOver }>|&lt;&lt;</span>
-        <span onClick={ this.onClickStepBack }>|&lt;</span>
-        {
-          this.state.playing ?
-            <span onClick={ this.onClickPause }>||</span>
-            :
-            <span className={ styles.playIcon } onClick={ this.onClickPlay }></span>
-        }
-        <span onClick={ this.onClickStepForward }>&gt;|</span>
-        <span onClick={ this.onClickJumpToEnd }>&gt;&gt;|</span>
+      <div className={styles.playbackBar}>
+        <span onClick={this.onClickStartOver}>|&lt;&lt;</span>
+        <span onClick={this.onClickStepBack}>|&lt;</span>
+        {this.state.playing ? (
+          <span onClick={this.onClickPause}>||</span>
+        ) : (
+          <span className={styles.playIcon} onClick={this.onClickPlay} />
+        )}
+        <span onClick={this.onClickStepForward}>&gt;|</span>
+        <span onClick={this.onClickJumpToEnd}>&gt;&gt;|</span>
       </div>
     );
   }

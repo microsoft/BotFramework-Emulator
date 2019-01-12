@@ -31,8 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import GenericActivity from '../types/activity/generic';
-import ILogItem from '../types/log/item';
+import GenericActivity from "../types/activity/generic";
+import ILogItem from "../types/log/item";
 
 interface Logger {
   logActivity(conversationId: string, activity: GenericActivity, role: string);

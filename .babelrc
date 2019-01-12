@@ -10,9 +10,7 @@
     ],
     "@babel/preset-typescript"
   ],
-  "ignore": [
-    "**/*.d.ts"
-  ],
+  "ignore": ["**/*.d.ts"],
   "sourceMaps": "inline",
   "plugins": [
     "@babel/plugin-proposal-class-properties",

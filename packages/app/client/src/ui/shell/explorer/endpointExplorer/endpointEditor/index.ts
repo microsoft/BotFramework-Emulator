@@ -31,4 +31,4 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export { EndpointEditorContainer } from './endpointEditorContainer';
+export { EndpointEditorContainer } from "./endpointEditorContainer";

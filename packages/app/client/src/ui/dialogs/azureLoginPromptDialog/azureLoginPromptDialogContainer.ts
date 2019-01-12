@@ -31,11 +31,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { connect } from 'react-redux';
-import { DialogService } from '../service';
-import { AzureLoginPromptDialog, AzureLoginPromptDialogProps } from './azureLoginPromptDialog';
+import { connect } from "react-redux";
 
-const mapDispatchToProps = (_dispatch: () => void): AzureLoginPromptDialogProps => {
+import { DialogService } from "../service";
+
+import {
+  AzureLoginPromptDialog,
+  AzureLoginPromptDialogProps
+} from "./azureLoginPromptDialog";
+
+const mapDispatchToProps = (
+  _dispatch: () => void
+): AzureLoginPromptDialogProps => {
   return {
     cancel: () => DialogService.hideDialog(0),
     confirm: () => DialogService.hideDialog(1)

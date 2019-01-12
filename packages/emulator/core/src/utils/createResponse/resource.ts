@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import ResourceResponse from '../../types/response/resource';
+import ResourceResponse from "../../types/response/resource";
 
 //
 // Create ResourceResponse object

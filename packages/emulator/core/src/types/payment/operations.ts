@@ -32,7 +32,7 @@
 //
 
 export default {
-  PaymentCompleteOperationName: 'payments/complete',
-  UpdateShippingAddressOperationName: 'payments/update/shippingAddress',
-  UpdateShippingOptionOperationName: 'payments/update/shippingOption'
+  PaymentCompleteOperationName: "payments/complete",
+  UpdateShippingAddressOperationName: "payments/update/shippingAddress",
+  UpdateShippingOptionOperationName: "payments/update/shippingOption"
 };

@@ -30,16 +30,23 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { connect } from 'react-redux';
-import { ServiceTypes } from 'botframework-config/lib/schema';
-import { RootState } from '../../../../../data/store';
-import { DialogService } from '../../../../dialogs/service';
-import { ConnectedServicePicker } from './connectedServicePicker';
+import { ServiceTypes } from "botframework-config/lib/schema";
+import { connect } from "react-redux";
 
-const mapStateToProps = (state: RootState, ownProps: { [propName: string]: any }) => {
+import { RootState } from "../../../../../data/store";
+import { DialogService } from "../../../../dialogs/service";
+
+import { ConnectedServicePicker } from "./connectedServicePicker";
+
+const mapStateToProps = (
+  state: RootState,
+  ownProps: { [propName: string]: any }
+) => {
   const { services } = state.bot.activeBot;
   return {
-    connectedServices: services.filter(service => service.type !== ServiceTypes.Endpoint),
+    connectedServices: services.filter(
+      service => service.type !== ServiceTypes.Endpoint
+    ),
     ...ownProps
   };
 };
@@ -47,8 +54,9 @@ const mapStateToProps = (state: RootState, ownProps: { [propName: string]: any }
 const mapDispatchToProps = (_dispatch: () => void) => {
   return {
     launchServiceEditor: () => DialogService.hideDialog(1),
-    connectServices: servicesToConnect => DialogService.hideDialog(servicesToConnect),
-    cancel: () => DialogService.hideDialog(0),
+    connectServices: servicesToConnect =>
+      DialogService.hideDialog(servicesToConnect),
+    cancel: () => DialogService.hideDialog(0)
   };
 };
 

@@ -1,9 +1,9 @@
-import { Action } from 'redux';
-import { User } from '@bfemulator/sdk-shared';
+import { User } from "@bfemulator/sdk-shared";
+import { Action } from "redux";
 
-export const SET_CURRENT_USER = 'SET_CURRENT_USER';
-export const ADD_USERS = 'ADD_USERS';
-export const REMOVE_USERS = 'REMOVE_USERS';
+export const SET_CURRENT_USER = "SET_CURRENT_USER";
+export const ADD_USERS = "ADD_USERS";
+export const REMOVE_USERS = "REMOVE_USERS";
 
 export interface UserAction<P> extends Action {
   type: UserActionType;
@@ -15,7 +15,10 @@ export interface UserPayload {
   users?: User[];
 }
 
-export declare type UserActionType = 'SET_CURRENT_USER' | 'ADD_USERS' | 'REMOVE_USERS';
+export declare type UserActionType =
+  | "SET_CURRENT_USER"
+  | "ADD_USERS"
+  | "REMOVE_USERS";
 
 export function addUsers(users: User[]): UserAction<UserPayload> {
   return {

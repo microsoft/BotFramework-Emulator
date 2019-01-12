@@ -1,11 +1,9 @@
-import 'react';
-import 'redux';
-import 'redux-saga';
-import 'react-dom';
-import 'redux-promise-middleware';
-
-import 'base64url';
-
-import 'botframework-config/lib/schema';
-import 'botframework-config/lib/models';
-import 'botframework-webchat';
+import "base64url";
+import "botframework-config/lib/models";
+import "botframework-config/lib/schema";
+import "botframework-webchat";
+import "react";
+import "react-dom";
+import "redux";
+import "redux-promise-middleware";
+import "redux-saga";

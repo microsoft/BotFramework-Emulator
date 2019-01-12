@@ -31,39 +31,47 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from 'react';
-import { Dialog, DialogFooter, PrimaryButton } from '@bfemulator/ui-react';
-import * as styles from './postMigrationDialog.scss';
+import { Dialog, DialogFooter, PrimaryButton } from "@bfemulator/ui-react";
+import * as React from "react";
+
+import * as styles from "./postMigrationDialog.scss";
 
 export interface PostMigrationDialogProps {
   close: () => void;
 }
 
-export class PostMigrationDialog extends React.Component<PostMigrationDialogProps> {
+export class PostMigrationDialog extends React.Component<
+  PostMigrationDialogProps
+> {
   constructor(props: PostMigrationDialogProps) {
     super(props);
   }
 
   public render(): JSX.Element {
     return (
-      <Dialog cancel={ this.onClose } title="Migration complete!">
-        <p className={ styles.dialogText }>
+      <Dialog cancel={this.onClose} title="Migration complete!">
+        <p className={styles.dialogText}>
           We’ve copied your bot endpoints from Emulator v3 and saved them as
-          <strong className={ styles.boldText }> .bot files</strong>. 
-          A
-          <strong className={ styles.boldText }> .bot file </strong>
-          stores metadata about different services your bot consumes and enables you 
-          to edit these services directly from the Emulator v4. 
-          <a href="https://aka.ms/about-bot-file"> Learn more about bot configuration files.</a>
+          <strong className={styles.boldText}> .bot files</strong>. A
+          <strong className={styles.boldText}> .bot file </strong>
+          stores metadata about different services your bot consumes and enables
+          you to edit these services directly from the Emulator v4.
+          <a href="https://aka.ms/about-bot-file">
+            {" "}
+            Learn more about bot configuration files.
+          </a>
         </p>
-        <p>You can move a bot to any location by right-clicking the bot's name under My Bots.</p>
+        <p>
+          You can move a bot to any location by right-clicking the bot's name
+          under My Bots.
+        </p>
         <p>
           <a href="https://aka.ms/bot-framework-emulator-v4-overview">
-          Learn more about new features in Bot Framework Emulator v4
+            Learn more about new features in Bot Framework Emulator v4
           </a>
         </p>
         <DialogFooter>
-          <PrimaryButton text="Close" onClick={ this.onClose }/>
+          <PrimaryButton text="Close" onClick={this.onClose} />
         </DialogFooter>
       </Dialog>
     );
@@ -71,5 +79,5 @@ export class PostMigrationDialog extends React.Component<PostMigrationDialogProp
 
   private onClose = () => {
     this.props.close();
-  }
+  };
 }

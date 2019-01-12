@@ -31,37 +31,40 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from 'react';
-import * as styles from './insetShadow.scss';
+import * as React from "react";
 
-export type InsetShadowOrientation = 'top' | 'bottom' | 'left' | 'right';
+import * as styles from "./insetShadow.scss";
+
+export type InsetShadowOrientation = "top" | "bottom" | "left" | "right";
 
 export interface Props {
   orientation: InsetShadowOrientation;
 }
 
 export class InsetShadow extends React.Component<Props> {
-  render() {
+  public render() {
     const { orientation } = this.props;
     if (!orientation) {
-      throw new Error('<InsetShadow /> requires an "orientation" prop to be passed in!');
+      throw new Error(
+        '<InsetShadow /> requires an "orientation" prop to be passed in!'
+      );
     }
 
-    let shadowClassName = '';
+    let shadowClassName = "";
     switch (orientation) {
-      case 'top':
+      case "top":
         shadowClassName = styles.top;
         break;
 
-      case 'bottom':
+      case "bottom":
         shadowClassName = styles.bottom;
         break;
 
-      case 'left':
+      case "left":
         shadowClassName = styles.left;
         break;
 
-      case 'right':
+      case "right":
         shadowClassName = styles.right;
         break;
 
@@ -70,7 +73,10 @@ export class InsetShadow extends React.Component<Props> {
     }
 
     return (
-      <div className={ [styles.insetShadow, shadowClassName].join(' ') } aria-hidden="true"/>
+      <div
+        className={[styles.insetShadow, shadowClassName].join(" ")}
+        aria-hidden="true"
+      />
     );
   }
 }

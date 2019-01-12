@@ -31,13 +31,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './botTypes';
-export * from './commandLineArgsTypes';
-export * from './conversationTypes';
-export * from './fileTypes';
-export * from './notificationTypes';
-export * from './responseTypes';
-export * from './serverSettingsTypes';
-export * from './speechTypes';
-export * from './luisTypes';
-export * from './clientAwareSettings';
+export * from "./botTypes";
+export * from "./commandLineArgsTypes";
+export * from "./conversationTypes";
+export * from "./fileTypes";
+export * from "./notificationTypes";
+export * from "./responseTypes";
+export * from "./serverSettingsTypes";
+export * from "./speechTypes";
+export * from "./luisTypes";
+export * from "./clientAwareSettings";

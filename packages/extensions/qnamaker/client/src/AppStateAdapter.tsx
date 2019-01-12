@@ -31,13 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { AppState, PersistentAppState } from './App';
-import { QnAMakerTraceInfo, QueryResult } from './Models/QnAMakerTraceInfo';
-import { Answer } from './Models/QnAMakerModels';
-import { TraceActivity } from '@bfemulator/sdk-shared';
-import { IQnAService } from 'botframework-config/lib/schema' ;
+import { TraceActivity } from "@bfemulator/sdk-shared";
+import { IQnAService } from "botframework-config/lib/schema";
 
-const QnaMakerTracerType = 'https://www.qnamaker.ai/schemas/trace';
+import { AppState, PersistentAppState } from "./App";
+import { Answer } from "./Models/QnAMakerModels";
+import { QnAMakerTraceInfo, QueryResult } from "./Models/QnAMakerTraceInfo";
+
+const QnaMakerTracerType = "https://www.qnamaker.ai/schemas/trace";
 
 interface QnaMakerModel {
   ModelID: string;
@@ -45,20 +46,20 @@ interface QnaMakerModel {
 }
 
 export default class AppStateAdapter implements AppState {
-  id: string;
-  qnaService: IQnAService | null;
-  traceInfo: QnAMakerTraceInfo;
-  persistentState: { [key: string]: PersistentAppState; };
-  phrasings: string[];
-  answers: Answer[];
-  selectedAnswer: Answer | null;
+  public id: string;
+  public qnaService: IQnAService | null;
+  public traceInfo: QnAMakerTraceInfo;
+  public persistentState: { [key: string]: PersistentAppState };
+  public phrasings: string[];
+  public answers: Answer[];
+  public selectedAnswer: Answer | null;
 
   private static validate(obj: any): boolean {
     if (!obj) {
       return false;
     }
     const trace = obj as TraceActivity;
-    if (trace.type !== 'trace' || trace.valueType !== QnaMakerTracerType) {
+    if (trace.type !== "trace" || trace.valueType !== QnaMakerTracerType) {
       return false;
     }
     if (!trace.value) {
@@ -78,11 +79,11 @@ export default class AppStateAdapter implements AppState {
     if (!AppStateAdapter.validate(obj)) {
       return;
     }
-    let traceActivity = (obj as TraceActivity);
+    const traceActivity = obj as TraceActivity;
     this.traceInfo = traceActivity.value as QnAMakerTraceInfo;
-    this.id = traceActivity.id || '';
+    this.id = traceActivity.id || "";
 
-    this.phrasings = [this.traceInfo.message.text || ''];
+    this.phrasings = [this.traceInfo.message.text || ""];
 
     this.answers = this.traceInfo.queryResults.map((result: QueryResult) => ({
       id: result.id,

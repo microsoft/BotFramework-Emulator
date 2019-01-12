@@ -31,17 +31,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as Path from 'path';
-import { SharedConstants } from '@bfemulator/app-shared';
-import { Migrator } from './migrator';
+import * as Path from "path";
+import { SharedConstants } from "@bfemulator/app-shared";
+import { Migrator } from "./migrator";
 
 interface MockCall {
   name: string;
   args?: any[];
 }
 
-let mockAppDataPath = Path.join('%appdata%', '@bfemulator', 'main');
-jest.mock('electron', () => ({
+let mockAppDataPath = Path.join("%appdata%", "@bfemulator", "main");
+jest.mock("electron", () => ({
   app: {
     getPath: () => mockAppDataPath
   }
@@ -50,39 +50,37 @@ jest.mock('electron', () => ({
 let mockWillCallMkdirp;
 let mockCalls: MockCall[] = [];
 let mockFailExists;
-jest.mock('fs-extra', () => ({
+jest.mock("fs-extra", () => ({
   pathExists: (path: string) => {
-    mockCalls.push({ name: 'pathExists', args: [path] });
-    if (path.startsWith('v4') && !mockWillCallMkdirp) {
+    mockCalls.push({ name: "pathExists", args: [path] });
+    if (path.startsWith("v4") && !mockWillCallMkdirp) {
       // this will mock the scenario in which the v4
       // /migration/ dir does not exist and is created for the first time
       mockWillCallMkdirp = true;
       return Promise.resolve(false);
     }
-    if (path.startsWith('nonexistent') || mockFailExists) {
+    if (path.startsWith("nonexistent") || mockFailExists) {
       return Promise.resolve(false);
     }
     return Promise.resolve(true);
   }
 }));
 
-jest.mock('./utils/getFilesInDir', () => ({
-  getFilesInDir: () => [
-    'bot1.bot', 'bot2.bot', 'bot3.bot'
-  ]
+jest.mock("./utils/getFilesInDir", () => ({
+  getFilesInDir: () => ["bot1.bot", "bot2.bot", "bot3.bot"]
 }));
 
-jest.mock('./utils/writeFile', () => ({
+jest.mock("./utils/writeFile", () => ({
   writeFile: (path: string) => {
-    mockCalls.push({ name: 'writeFile', args: [path] });
+    mockCalls.push({ name: "writeFile", args: [path] });
   }
 }));
 
 let mockBotCounter;
-jest.mock('botframework-config', () => ({
+jest.mock("botframework-config", () => ({
   BotConfiguration: {
     load: (path: string) => {
-      mockCalls.push({ name: 'load', args: [path] });
+      mockCalls.push({ name: "load", args: [path] });
       // return bot1, bot2, bot3
       const bot = {
         name: `bot${mockBotCounter}`
@@ -93,36 +91,36 @@ jest.mock('botframework-config', () => ({
   }
 }));
 
-jest.mock('./botHelpers', () => ({
-  cloneBot: (bot) => bot,
-  saveBot: (bot) => {
-    mockCalls.push({ name: 'saveBot', args: [bot] });
+jest.mock("./botHelpers", () => ({
+  cloneBot: bot => bot,
+  saveBot: bot => {
+    mockCalls.push({ name: "saveBot", args: [bot] });
     return Promise.resolve(true);
   }
 }));
 
-jest.mock('./main', () => ({
+jest.mock("./main", () => ({
   mainWindow: {
     commandService: {
       remoteCall: (...args: any[]) => {
-        mockCalls.push({ name: 'remoteCall', args });
+        mockCalls.push({ name: "remoteCall", args });
         return Promise.resolve(true);
       }
     }
   }
 }));
 
-jest.mock('./utils/ensureStoragePath', () => ({
-  ensureStoragePath: () => 'v4path'
+jest.mock("./utils/ensureStoragePath", () => ({
+  ensureStoragePath: () => "v4path"
 }));
 
-jest.mock('mkdirp', () => ({
-  sync: (path) => {
-    mockCalls.push({ name: 'mkdirp', args: [path] });
+jest.mock("mkdirp", () => ({
+  sync: path => {
+    mockCalls.push({ name: "mkdirp", args: [path] });
   }
 }));
 
-describe('Migrator tests', () => {
+describe("Migrator tests", () => {
   let tempLeaveMigrationMarker;
   let tempMigrateBots;
 
@@ -130,7 +128,7 @@ describe('Migrator tests', () => {
     tempLeaveMigrationMarker = (Migrator as any).leaveMigrationMarker;
     tempMigrateBots = Migrator.migrateBots;
     mockCalls = [];
-    mockAppDataPath = Path.join('%appdata%', '@bfemulator', 'main');
+    mockAppDataPath = Path.join("%appdata%", "@bfemulator", "main");
     mockWillCallMkdirp = false;
     mockBotCounter = 1;
     mockFailExists = false;
@@ -141,93 +139,135 @@ describe('Migrator tests', () => {
     Migrator.migrateBots = tempMigrateBots;
   });
 
-  test('startup', async () => {
+  test("startup", async () => {
     // migration won't happen the first time, but will the second time
-    const mockMigrateBots = jest.fn()
-                              .mockResolvedValueOnce(false)
-                              .mockResolvedValueOnce(true);
+    const mockMigrateBots = jest
+      .fn()
+      .mockResolvedValueOnce(false)
+      .mockResolvedValueOnce(true);
     Migrator.migrateBots = mockMigrateBots;
 
     // marker should only be placed when migration succeeds
     mockFailExists = true;
     await Migrator.startup();
-    expect(mockCalls.some(_call =>
-      _call.name === 'writeFile' &&
-      _call.args[0] === Path.join('v4path', 'migration_marker.txt')
-    )).not.toBe(true);
+    expect(
+      mockCalls.some(
+        _call =>
+          _call.name === "writeFile" &&
+          _call.args[0] === Path.join("v4path", "migration_marker.txt")
+      )
+    ).not.toBe(true);
 
     await Migrator.startup();
-    expect(mockCalls.some(_call =>
-      _call.name === 'writeFile' &&
-      _call.args[0] === Path.join('v4path', 'migration_marker.txt')
-    )).toBe(true);
+    expect(
+      mockCalls.some(
+        _call =>
+          _call.name === "writeFile" &&
+          _call.args[0] === Path.join("v4path", "migration_marker.txt")
+      )
+    ).toBe(true);
   });
 
-  test('migrating bots with no v3 /migration/ dir', async () => {
+  test("migrating bots with no v3 /migration/ dir", async () => {
     // the first exists call will fail and return false
-    mockAppDataPath = Path.join('nonexistent', '@bfemulator', 'main');
+    mockAppDataPath = Path.join("nonexistent", "@bfemulator", "main");
     const result = await Migrator.migrateBots();
     expect(result).toBe(false);
-    expect(mockCalls.some(_call => 
-      _call.name === 'pathExists' &&
-      _call.args[0] === Path.join('nonexistent', 'botframework-emulator', 'botframework-emulator', 'migration')
-    )).toBe(true);
+    expect(
+      mockCalls.some(
+        _call =>
+          _call.name === "pathExists" &&
+          _call.args[0] ===
+            Path.join(
+              "nonexistent",
+              "botframework-emulator",
+              "botframework-emulator",
+              "migration"
+            )
+      )
+    ).toBe(true);
   });
 
-  test('migrating bots with no v4 /migration/ dir', async () => {
+  test("migrating bots with no v4 /migration/ dir", async () => {
     const result = await Migrator.migrateBots();
 
     // mkdirp should be called to create the v4 migration dir
-    expect(mockCalls.some(_call => 
-      _call.name === 'mkdirp' &&
-      _call.args[0] === Path.join('v4path', 'migration')
-    )).toBe(true);
+    expect(
+      mockCalls.some(
+        _call =>
+          _call.name === "mkdirp" &&
+          _call.args[0] === Path.join("v4path", "migration")
+      )
+    ).toBe(true);
 
     // load should have been called once (3 times total) for each bot in v3 migration dir
-    const v3MigrationDir = Path.join('%appdata%', 'botframework-emulator', 'botframework-emulator', 'migration');
-    const mockLoadCalls = mockCalls.filter(_call => _call.name === 'load');
+    const v3MigrationDir = Path.join(
+      "%appdata%",
+      "botframework-emulator",
+      "botframework-emulator",
+      "migration"
+    );
+    const mockLoadCalls = mockCalls.filter(_call => _call.name === "load");
     expect(mockLoadCalls).toHaveLength(3);
-    expect(mockLoadCalls.some(_call =>
-      _call.name === 'load' &&
-      _call.args[0] === Path.join(v3MigrationDir, 'bot1.bot')
-    )).toBe(true);
+    expect(
+      mockLoadCalls.some(
+        _call =>
+          _call.name === "load" &&
+          _call.args[0] === Path.join(v3MigrationDir, "bot1.bot")
+      )
+    ).toBe(true);
 
     // save should have been called once (3 times total) for each bot to save to v4 migration dir
-    const v4MigrationDir = Path.join('v4path', 'migration');
-    const mockSaveCalls = mockCalls.filter(_call => _call.name === 'saveBot');
+    const v4MigrationDir = Path.join("v4path", "migration");
+    const mockSaveCalls = mockCalls.filter(_call => _call.name === "saveBot");
     expect(mockSaveCalls).toHaveLength(3);
-    expect(mockSaveCalls.some(_call =>
-      _call.name === 'saveBot' &&
-      _call.args[0].path === Path.join(v4MigrationDir, 'bot1.bot')
-    )).toBe(true);
+    expect(
+      mockSaveCalls.some(
+        _call =>
+          _call.name === "saveBot" &&
+          _call.args[0].path === Path.join(v4MigrationDir, "bot1.bot")
+      )
+    ).toBe(true);
 
     // SyncBotList should be called with 3 newly migrated bots
     const { SyncBotList } = SharedConstants.Commands.Bot;
-    expect(mockCalls.some(_call => 
-      _call.name === 'remoteCall' &&
-      _call.args[0] === SyncBotList &&
-      _call.args[1].length === 3 &&
-      _call.args[1].some(bot =>
-        bot.displayName === 'bot1' &&
-        bot.path === Path.join('v4path', 'migration', `${bot.displayName}.bot`)
-      ) &&
-      _call.args[1].some(bot =>
-        bot.displayName === 'bot2' &&
-        bot.path === Path.join('v4path', 'migration', `${bot.displayName}.bot`)
-      ) &&
-      _call.args[1].some(bot =>
-        bot.displayName === 'bot3' &&
-        bot.path === Path.join('v4path', 'migration', `${bot.displayName}.bot`)
+    expect(
+      mockCalls.some(
+        _call =>
+          _call.name === "remoteCall" &&
+          _call.args[0] === SyncBotList &&
+          _call.args[1].length === 3 &&
+          _call.args[1].some(
+            bot =>
+              bot.displayName === "bot1" &&
+              bot.path ===
+                Path.join("v4path", "migration", `${bot.displayName}.bot`)
+          ) &&
+          _call.args[1].some(
+            bot =>
+              bot.displayName === "bot2" &&
+              bot.path ===
+                Path.join("v4path", "migration", `${bot.displayName}.bot`)
+          ) &&
+          _call.args[1].some(
+            bot =>
+              bot.displayName === "bot3" &&
+              bot.path ===
+                Path.join("v4path", "migration", `${bot.displayName}.bot`)
+          )
       )
-    )).toBe(true);
+    ).toBe(true);
 
     // ShowPostMigrationDialog should be called
     const { ShowPostMigrationDialog } = SharedConstants.Commands.UI;
-    expect(mockCalls.some(_call =>
-      _call.name === 'remoteCall' &&
-      _call.args[0] === ShowPostMigrationDialog
-    )).toBe(true);
-    
+    expect(
+      mockCalls.some(
+        _call =>
+          _call.name === "remoteCall" &&
+          _call.args[0] === ShowPostMigrationDialog
+      )
+    ).toBe(true);
+
     // success
     expect(result).toBe(true);
   });

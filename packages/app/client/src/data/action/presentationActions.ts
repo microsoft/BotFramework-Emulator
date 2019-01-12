@@ -32,8 +32,8 @@
 //
 
 export enum PresentationActions {
-  disable = 'PRESENTATION/DISABLE',
-  enable = 'PRESENTATION/ENABLE'
+  disable = "PRESENTATION/DISABLE",
+  enable = "PRESENTATION/ENABLE"
 }
 
 export interface EnablePresentationAction {
@@ -47,8 +47,8 @@ export interface DisablePresentationAction {
 }
 
 export type PresentationAction =
-  EnablePresentationAction |
-  DisablePresentationAction;
+  | EnablePresentationAction
+  | DisablePresentationAction;
 
 export function enable(): EnablePresentationAction {
   return {

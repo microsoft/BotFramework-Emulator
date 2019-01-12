@@ -31,16 +31,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { RestServer } from './restServer';
-import { mainWindow } from './main';
-import { textItem } from '@bfemulator/emulator-core/lib/types/log/util';
-import LogLevel from '@bfemulator/emulator-core/lib/types/log/level';
+import LogLevel from "@bfemulator/emulator-core/lib/types/log/level";
+import { textItem } from "@bfemulator/emulator-core/lib/types/log/util";
+
+import { mainWindow } from "./main";
+import { RestServer } from "./restServer";
 
 /**
  * Communicates with the bot.
  */
 export class BotFrameworkService {
-  server: RestServer;
+  public server: RestServer;
   private _serverUrl: string;
   private _serverPort: number;
 
@@ -52,7 +53,7 @@ export class BotFrameworkService {
     return this._serverPort;
   }
 
-  async startup() {
+  public async startup() {
     await this.recycle();
   }
 
@@ -73,7 +74,10 @@ export class BotFrameworkService {
   }
 
   public report(conversationId: string) {
-    const serverUrl = this.serverUrl.replace('[::]', 'localhost');
-    mainWindow.logService.logToChat(conversationId, textItem(LogLevel.Debug, `Emulator listening on ${serverUrl}`));
+    const serverUrl = this.serverUrl.replace("[::]", "localhost");
+    mainWindow.logService.logToChat(
+      conversationId,
+      textItem(LogLevel.Debug, `Emulator listening on ${serverUrl}`)
+    );
   }
 }

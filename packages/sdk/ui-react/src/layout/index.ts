@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './column/column';
-export * from './expandCollapse/expandCollapse';
-export * from './row/row';
-export * from './truncateText/truncateText';
+export * from "./column/column";
+export * from "./expandCollapse/expandCollapse";
+export * from "./row/row";
+export * from "./truncateText/truncateText";

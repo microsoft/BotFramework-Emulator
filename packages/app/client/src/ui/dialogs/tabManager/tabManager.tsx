@@ -31,8 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from 'react';
-import * as styles from './tabManager.scss';
+import * as React from "react";
+
+import * as styles from "./tabManager.scss";
 
 export interface TabManagerProps {
   disabled?: boolean;
@@ -48,7 +49,10 @@ export interface TabManagerState {
   showing: boolean;
 }
 
-export class TabManager extends React.Component<TabManagerProps, TabManagerState> {
+export class TabManager extends React.Component<
+  TabManagerProps,
+  TabManagerState
+> {
   private tabRefs: HTMLLIElement[] = [];
 
   constructor(props: TabManagerProps) {
@@ -60,49 +64,48 @@ export class TabManager extends React.Component<TabManagerProps, TabManagerState
       shiftIsPressed: false,
       showing: false
     };
-
   }
 
-  componentWillMount() {
+  public componentWillMount() {
     const { window } = this.props;
-    window.addEventListener('keydown', this.onKeyDown);
-    window.addEventListener('keyup', this.onKeyUp);
+    window.addEventListener("keydown", this.onKeyDown);
+    window.addEventListener("keyup", this.onKeyUp);
   }
 
-  componentWillUnmount() {
+  public componentWillUnmount() {
     const { window } = this.props;
-    window.removeEventListener('keydown', this.onKeyDown);
-    window.removeEventListener('keyup', this.onKeyUp);
+    window.removeEventListener("keydown", this.onKeyDown);
+    window.removeEventListener("keyup", this.onKeyUp);
   }
 
-  render() {
-    return (this.state.showing && !this.props.disabled) ?
-      (
-        <div className={ styles.tabManager }>
-          <ul>
-            {
-              this.props.recentTabs.map((tabId, index) => {
-                // TODO: Come up with a simple way to retrieve document
-                // name from store using documentId
-                const tabClassName = index === this.state.selectedIndex ? styles.selectedTab : '';
-                return (
-                  <li
-                    className={ tabClassName }
-                    ref={ x => this.saveTabRef(x, index) }
-                    key={ tabId }
-                    tabIndex={ 0 }>{ tabId }
-                  </li>
-                );
-              })
-            }
-          </ul>
-        </div>
-      ) : null;
+  public render() {
+    return this.state.showing && !this.props.disabled ? (
+      <div className={styles.tabManager}>
+        <ul>
+          {this.props.recentTabs.map((tabId, index) => {
+            // TODO: Come up with a simple way to retrieve document
+            // name from store using documentId
+            const tabClassName =
+              index === this.state.selectedIndex ? styles.selectedTab : "";
+            return (
+              <li
+                className={tabClassName}
+                ref={x => this.saveTabRef(x, index)}
+                key={tabId}
+                tabIndex={0}
+              >
+                {tabId}
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    ) : null;
   }
 
   private saveTabRef = (element: HTMLLIElement, index: number) => {
     this.tabRefs[index] = element;
-  }
+  };
 
   private onKeyDown = (e: KeyboardEvent) => {
     if (!this.props.recentTabs.length) {
@@ -110,36 +113,36 @@ export class TabManager extends React.Component<TabManagerProps, TabManagerState
     }
 
     switch (e.key) {
-      case 'ArrowUp':
+      case "ArrowUp":
         if (this.state.showing) {
-          this.setState(({ selectedIndex: this.moveIndexUp() }));
+          this.setState({ selectedIndex: this.moveIndexUp() });
         }
         break;
 
-      case 'ArrowDown':
+      case "ArrowDown":
         if (this.state.showing) {
-          this.setState(({ selectedIndex: this.moveIndexDown() }));
+          this.setState({ selectedIndex: this.moveIndexDown() });
         }
         break;
 
-      case 'Control':
-        this.setState(({ controlIsPressed: true }));
+      case "Control":
+        this.setState({ controlIsPressed: true });
         break;
 
-      case 'Tab':
+      case "Tab":
         if (this.state.controlIsPressed) {
           if (this.state.showing && !this.state.shiftIsPressed) {
-            this.setState(({ selectedIndex: this.moveIndexDown() }));
+            this.setState({ selectedIndex: this.moveIndexDown() });
           } else if (this.state.showing && this.state.shiftIsPressed) {
-            this.setState(({ selectedIndex: this.moveIndexUp() }));
+            this.setState({ selectedIndex: this.moveIndexUp() });
           } else {
-            this.setState(({ showing: true, selectedIndex: 0 }));
+            this.setState({ showing: true, selectedIndex: 0 });
           }
         }
         break;
 
-      case 'Shift':
-        this.setState(({ shiftIsPressed: true }));
+      case "Shift":
+        this.setState({ shiftIsPressed: true });
         break;
 
       default:
@@ -149,33 +152,39 @@ export class TabManager extends React.Component<TabManagerProps, TabManagerState
     if (this.tabRefs[this.state.selectedIndex]) {
       this.tabRefs[this.state.selectedIndex].focus();
     }
-  }
+  };
 
   private onKeyUp = (e: KeyboardEvent) => {
     switch (e.key) {
-      case 'Control':
+      case "Control":
         if (this.state.showing) {
-          this.setState(({ controlIsPressed: false, showing: false }));
-          this.props.setActiveTab(this.props.recentTabs[this.state.selectedIndex]);
+          this.setState({ controlIsPressed: false, showing: false });
+          this.props.setActiveTab(
+            this.props.recentTabs[this.state.selectedIndex]
+          );
         } else {
-          this.setState(({ controlIsPressed: false }));
+          this.setState({ controlIsPressed: false });
         }
         break;
 
-      case 'Shift':
-        this.setState(({ shiftIsPressed: false }));
+      case "Shift":
+        this.setState({ shiftIsPressed: false });
         break;
 
       default:
         break;
     }
-  }
+  };
 
   private moveIndexDown() {
-    return this.state.selectedIndex === this.props.recentTabs.length - 1 ? 0 : this.state.selectedIndex + 1;
+    return this.state.selectedIndex === this.props.recentTabs.length - 1
+      ? 0
+      : this.state.selectedIndex + 1;
   }
 
   private moveIndexUp() {
-    return this.state.selectedIndex === 0 ? this.props.recentTabs.length - 1 : this.state.selectedIndex - 1;
+    return this.state.selectedIndex === 0
+      ? this.props.recentTabs.length - 1
+      : this.state.selectedIndex - 1;
   }
 }

@@ -31,22 +31,25 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export function expandFlatTree(flattened: any[], delimiter: string = '/') {
-    if (Array.isArray(flattened)) {
-        flattened = flattened.reduce((map, path) => {
-            map[path] = path;
+export function expandFlatTree(flattened: any[], delimiter: string = "/") {
+  if (Array.isArray(flattened)) {
+    flattened = flattened.reduce((map, path) => {
+      map[path] = path;
 
-            return map;
-        }, {});
-    }
-
-    return Object.keys(flattened).reduce((expanded, path) => {
-        const segments = path.split(delimiter);
-        const filename = segments.pop();
-        const parent = segments.reduce((p, segment) => p[segment] || (p[segment] = {}), expanded);
-
-        parent[filename] = flattened[path];
-
-        return expanded;
+      return map;
     }, {});
+  }
+
+  return Object.keys(flattened).reduce((expanded, path) => {
+    const segments = path.split(delimiter);
+    const filename = segments.pop();
+    const parent = segments.reduce(
+      (p, segment) => p[segment] || (p[segment] = {}),
+      expanded
+    );
+
+    parent[filename] = flattened[path];
+
+    return expanded;
+  }, {});
 }

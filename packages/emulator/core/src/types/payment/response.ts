@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import PaymentAddress from './address';
+import PaymentAddress from "./address";
 
 interface PaymentResponse {
   details: any;

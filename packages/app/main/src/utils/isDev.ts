@@ -32,5 +32,8 @@
 //
 
 export const isDev = (): boolean => {
-  return ( process.defaultApp || /node_modules[\\/]electron[\\/]/.test(process.execPath) );
+  return (
+    process.defaultApp ||
+    /node_modules[\\/]electron[\\/]/.test(process.execPath)
+  );
 };

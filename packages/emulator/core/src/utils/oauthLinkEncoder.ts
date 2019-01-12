@@ -31,18 +31,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import BotEmulator from '../botEmulator';
-import GenericActivity from '../types/activity/generic';
-import Attachment from '../types/attachment';
+import BotEmulator from "../botEmulator";
+import GenericActivity from "../types/activity/generic";
+import Attachment from "../types/attachment";
+import AttachmentContentTypes from "../types/attachment/contentTypes";
+import OAuthCard from "../types/card/oAuth";
+import uniqueId from "../utils/uniqueId";
 
-import AttachmentContentTypes from '../types/attachment/contentTypes';
-import OAuthCard from '../types/card/oAuth';
-import uniqueId from '../utils/uniqueId';
-
-const shajs = require('sha.js');
+const shajs = require("sha.js");
 
 export default class OAuthLinkEncoder {
-  public static OAuthUrlProtocol: string = 'oauthlink:';
+  public static OAuthUrlProtocol: string = "oauthlink:";
   public static EmulateOAuthCards: boolean = false;
 
   private readonly authorizationHeader: string;
@@ -50,8 +49,12 @@ export default class OAuthLinkEncoder {
   private botEmulator: BotEmulator;
   private activity: GenericActivity;
 
-  constructor(botEmulator: BotEmulator, authorizationHeader: string,
-              activity: GenericActivity, conversationId: string) {
+  constructor(
+    botEmulator: BotEmulator,
+    authorizationHeader: string,
+    activity: GenericActivity,
+    conversationId: string
+  ) {
     this.authorizationHeader = authorizationHeader;
     this.activity = activity;
     this.conversationId = conversationId;
@@ -59,20 +62,29 @@ export default class OAuthLinkEncoder {
   }
 
   public async resolveOAuthCards(activity: GenericActivity): Promise<boolean> {
-    if (this.conversationId &&
+    if (
+      this.conversationId &&
       activity &&
       activity.attachments &&
-      activity.attachments.length === 1
-      && activity.attachments[0].contentType === AttachmentContentTypes.oAuthCard) {
-      let codeChallenge = this.generateCodeVerifier(this.conversationId);
-      let attachment: Attachment = activity.attachments[0] as Attachment;
-      let oauthCard: OAuthCard = attachment.content as OAuthCard;
+      activity.attachments.length === 1 &&
+      activity.attachments[0].contentType === AttachmentContentTypes.oAuthCard
+    ) {
+      const codeChallenge = this.generateCodeVerifier(this.conversationId);
+      const attachment: Attachment = activity.attachments[0] as Attachment;
+      const oauthCard: OAuthCard = attachment.content as OAuthCard;
       if (oauthCard.buttons && oauthCard.buttons.length === 1) {
-        let cardAction = oauthCard.buttons[0];
-        if (cardAction.type === 'signin' && !cardAction.value && !OAuthLinkEncoder.EmulateOAuthCards) {
-          const link = await this.getSignInLink(oauthCard.connectionName, codeChallenge);
+        const cardAction = oauthCard.buttons[0];
+        if (
+          cardAction.type === "signin" &&
+          !cardAction.value &&
+          !OAuthLinkEncoder.EmulateOAuthCards
+        ) {
+          const link = await this.getSignInLink(
+            oauthCard.connectionName,
+            codeChallenge
+          );
           cardAction.value = link;
-          cardAction.type = 'openUrl';
+          cardAction.type = "openUrl";
         }
       }
     }
@@ -82,45 +94,70 @@ export default class OAuthLinkEncoder {
   // Generates a new codeVerifier and returns the codeChallenge hash
   // This is for the PKCE validation flow with OAuth
   public generateCodeVerifier(conversationId: string): string {
-    let codeVerifier = uniqueId();
+    const codeVerifier = uniqueId();
 
-    const conversation = this.botEmulator.facilities.conversations.conversationById(conversationId);
+    const conversation = this.botEmulator.facilities.conversations.conversationById(
+      conversationId
+    );
     conversation.codeVerifier = codeVerifier;
 
-    let codeChallenge: string = shajs('sha256').update(codeVerifier).digest('hex');
+    const codeChallenge: string = shajs("sha256")
+      .update(codeVerifier)
+      .digest("hex");
 
     return codeChallenge;
   }
 
-  private async getSignInLink(connectionName: string, codeChallenge: string): Promise<string> {
-    let tokenExchangeState = {
+  private async getSignInLink(
+    connectionName: string,
+    codeChallenge: string
+  ): Promise<string> {
+    const tokenExchangeState = {
       ConnectionName: connectionName,
-      Conversation:
-        {
-          ActivityId: this.activity.id,
-          Bot: this.activity.from,       // Activity is from the bot to the user
-          ChannelId: this.activity.channelId ? this.activity.channelId : 'emulator',
-          Conversation: this.activity.conversation ? this.activity.conversation : { id: this.conversationId },
-          ServiceUrl: this.activity.serviceUrl,
-          User: this.activity.recipient
-        }
+      Conversation: {
+        ActivityId: this.activity.id,
+        Bot: this.activity.from, // Activity is from the bot to the user
+        ChannelId: this.activity.channelId
+          ? this.activity.channelId
+          : "emulator",
+        Conversation: this.activity.conversation
+          ? this.activity.conversation
+          : { id: this.conversationId },
+        ServiceUrl: this.activity.serviceUrl,
+        User: this.activity.recipient
+      }
     };
 
-    let serializedState = JSON.stringify(tokenExchangeState);
-    let state = Buffer.from(serializedState).toString('base64');
+    const serializedState = JSON.stringify(tokenExchangeState);
+    const state = Buffer.from(serializedState).toString("base64");
     const headers = {
-      'Authorization': this.authorizationHeader
+      Authorization: this.authorizationHeader
     };
-    const conversation = this.botEmulator.facilities.conversations.conversationById(this.conversationId);
-    const emulatorUrl = await this.botEmulator.getServiceUrl(conversation.botEndpoint.botUrl);
-    const url = 'https://api.botframework.com/api/botsignin/GetSignInUrl?state=' +
-      state + '&emulatorUrl=' + emulatorUrl + '&code_challenge=' + codeChallenge;
+    const conversation = this.botEmulator.facilities.conversations.conversationById(
+      this.conversationId
+    );
+    const emulatorUrl = await this.botEmulator.getServiceUrl(
+      conversation.botEndpoint.botUrl
+    );
+    const url =
+      "https://api.botframework.com/api/botsignin/GetSignInUrl?state=" +
+      state +
+      "&emulatorUrl=" +
+      emulatorUrl +
+      "&code_challenge=" +
+      codeChallenge;
 
     const response = await fetch(url, {
       headers,
-      method: 'GET'
+      method: "GET"
     });
     const link = await response.text();
-    return OAuthLinkEncoder.OAuthUrlProtocol + '//' + link + '&&&' + this.conversationId;
+    return (
+      OAuthLinkEncoder.OAuthUrlProtocol +
+      "//" +
+      link +
+      "&&&" +
+      this.conversationId
+    );
   }
 }

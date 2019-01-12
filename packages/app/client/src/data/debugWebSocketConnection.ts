@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { EventEmitter } from 'events';
+import { EventEmitter } from "events";
 
 class DebugConnection extends EventEmitter {
   private _connection: any;
@@ -45,8 +45,8 @@ class DebugConnection extends EventEmitter {
     this._connection = connection;
 
     this._connection.onmessage = event => {
-      console.info(`WS.recv: ${ event.data }`);
-      this.emit('message', event);
+      console.info(`WS.recv: ${event.data}`);
+      this.emit("message", event);
       if (this.onmessage) {
         this.onmessage(event);
       }
@@ -54,7 +54,7 @@ class DebugConnection extends EventEmitter {
 
     this._connection.onopen = () => {
       console.info(`WS.open`);
-      this.emit('open');
+      this.emit("open");
       if (this.onopen) {
         this.onopen();
       }
@@ -62,23 +62,23 @@ class DebugConnection extends EventEmitter {
 
     this._connection.onclose = () => {
       console.info(`WS.close`);
-      this.emit('close');
+      this.emit("close");
       if (this.onclose) {
         this.onclose();
       }
     };
   }
 
-  close() {
+  public close() {
     this._connection.close();
   }
 
-  end() {
+  public end() {
     this._connection.end();
   }
 
-  send(data: any) {
-    console.info(`WS.send: ${ data }`);
+  public send(data: any) {
+    console.info(`WS.send: ${data}`);
     this._connection.send(data);
   }
 }

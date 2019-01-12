@@ -31,8 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { APIException, createErrorResponse, ErrorCodes } from '@bfemulator/app-shared';
-import * as HttpStatus from 'http-status-codes';
+import {
+  APIException,
+  createErrorResponse,
+  ErrorCodes
+} from "@bfemulator/app-shared";
+import * as HttpStatus from "http-status-codes";
 
 export const exceptionToAPIException = (exception: any): APIException => {
   if (exception.error && exception.statusCode) {

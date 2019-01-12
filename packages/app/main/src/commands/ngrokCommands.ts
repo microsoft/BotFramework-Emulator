@@ -31,9 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { SharedConstants } from '@bfemulator/app-shared';
-import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
-import { emulator } from '../emulator';
+import { SharedConstants } from "@bfemulator/app-shared";
+import { CommandRegistryImpl } from "@bfemulator/sdk-shared";
+
+import { emulator } from "../emulator";
 
 /** Registers ngrok commands */
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
@@ -41,12 +42,17 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
   // ---------------------------------------------------------------------------
   // Attempts to reconnect to a new ngrok tunnel
-  commandRegistry.registerCommand(Commands.Reconnect, async (): Promise<any> => {
-    try {
-      await emulator.ngrok.recycle();
-      emulator.ngrok.broadcastNgrokReconnected();
-    } catch (e) {
-      throw new Error(`There was an error while trying to reconnect ngrok: ${e}`);
+  commandRegistry.registerCommand(
+    Commands.Reconnect,
+    async (): Promise<any> => {
+      try {
+        await emulator.ngrok.recycle();
+        emulator.ngrok.broadcastNgrokReconnected();
+      } catch (e) {
+        throw new Error(
+          `There was an error while trying to reconnect ngrok: ${e}`
+        );
+      }
     }
-  });
+  );
 }

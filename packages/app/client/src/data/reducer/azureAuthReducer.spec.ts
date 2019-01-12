@@ -31,10 +31,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { azureArmTokenDataChanged, invalidateArmToken, } from '../action/azureAuthActions';
-import { azureAuth, AzureAuthState } from './azureAuthReducer';
+import {
+  azureArmTokenDataChanged,
+  invalidateArmToken
+} from "../action/azureAuthActions";
+import { azureAuth, AzureAuthState } from "./azureAuthReducer";
 
-describe('Azure auth reducer tests', () => {
+describe("Azure auth reducer tests", () => {
   let startingState: AzureAuthState;
 
   beforeEach(() => {
@@ -44,21 +47,21 @@ describe('Azure auth reducer tests', () => {
     };
   });
 
-  it('should return unaltered state for non-matching action type', () => {
+  it("should return unaltered state for non-matching action type", () => {
     const emptyAction = { type: null, payload: undefined };
     const endingState = azureAuth(startingState, emptyAction);
     expect(endingState).toEqual(startingState);
   });
 
-  it('should change auth data', () => {
-    const action = azureArmTokenDataChanged('someKey');
+  it("should change auth data", () => {
+    const action = azureArmTokenDataChanged("someKey");
     const state = azureAuth(startingState, action);
-    expect(state.access_token).toEqual('someKey');
+    expect(state.access_token).toEqual("someKey");
   });
 
-  it('should remove access_token on invalidate', () => {
+  it("should remove access_token on invalidate", () => {
     const action = invalidateArmToken();
     const state = azureAuth(startingState, action);
-    expect(state.access_token).toBe('');
+    expect(state.access_token).toBe("");
   });
 });

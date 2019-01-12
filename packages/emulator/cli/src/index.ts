@@ -33,39 +33,58 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { BotEmulator } from '@bfemulator/emulator-core';
-import { config } from 'dotenv';
-import { readFile } from 'fs';
-import * as Restify from 'restify';
-import CORS from 'restify-cors-middleware';
-import getPort from 'get-port';
-import NpmLogger from './npmLogger';
+import { BotEmulator } from "@bfemulator/emulator-core";
+import { config } from "dotenv";
+import { readFile } from "fs";
+import getPort from "get-port";
+import * as Restify from "restify";
+import CORS from "restify-cors-middleware";
 
-const packageJSON = require('../package.json');
-const program = require('commander');
+import NpmLogger from "./npmLogger";
+
+const packageJSON = require("../package.json");
+const program = require("commander");
 
 config();
 
 program
-// .command('bfemulator')
+  // .command('bfemulator')
   .version(packageJSON.version)
-  .option('-p, --port <port>', 'port number for Direct Line service', 5000)
-  .option('-I, --app-id <id>', 'Microsoft Application ID, will override environment "MICROSOFT_APP_ID"')
-  .option('-P, --app-password <password>', 'Microsoft Application Password, will override environment ' +
-    '"MICROSOFT_APP_PASSWORD"')
-  .option('-s, --service-url <url>', 'URL for the bot to callback', 'http://localhost:5000')
-  .option('-u, --bot-url <url>', 'URL to connect to bot', 'http://localhost:3978/api/messages/')
-  .option('--bot-id <id>', 'bot ID', 'bot-1')
-  .option('--use-10-tokens', 'use version 1.0 authentication tokens', false)
-  .option('-f, --file <bots.json>', 'read endpoints from file')
-  .on('--help', () => {
+  .option("-p, --port <port>", "port number for Direct Line service", 5000)
+  .option(
+    "-I, --app-id <id>",
+    'Microsoft Application ID, will override environment "MICROSOFT_APP_ID"'
+  )
+  .option(
+    "-P, --app-password <password>",
+    "Microsoft Application Password, will override environment " +
+      '"MICROSOFT_APP_PASSWORD"'
+  )
+  .option(
+    "-s, --service-url <url>",
+    "URL for the bot to callback",
+    "http://localhost:5000"
+  )
+  .option(
+    "-u, --bot-url <url>",
+    "URL to connect to bot",
+    "http://localhost:3978/api/messages/"
+  )
+  .option("--bot-id <id>", "bot ID", "bot-1")
+  .option("--use-10-tokens", "use version 1.0 authentication tokens", false)
+  .option("-f, --file <bots.json>", "read endpoints from file")
+  .on("--help", () => {
     console.log();
-    console.log('  Notes:');
+    console.log("  Notes:");
     console.log();
-    console.log('    Use bots.json file to host multiple bots. Put MSA App ID as Direct Line secret to' +
-      ' point to different bots.');
+    console.log(
+      "    Use bots.json file to host multiple bots. Put MSA App ID as Direct Line secret to" +
+        " point to different bots."
+    );
     console.log();
-    console.log('    Using bots.json file will override endpoint defined thru --port and --bot-url.');
+    console.log(
+      "    Using bots.json file will override endpoint defined thru --port and --bot-url."
+    );
     console.log();
   })
   .parse(process.argv);
@@ -78,14 +97,14 @@ program.appPassword = program.appPassword || process.env.MICROSOFT_APP_PASSWORD;
 async function main() {
   // Create a Restify server
   const server = Restify.createServer({
-    name: 'localmode',
+    name: "localmode",
     handleUncaughtExceptions: true
   });
 
   // Setup CORS middleware for the whole server
   const cors = CORS({
-    origins: ['*'],
-    allowHeaders: ['authorization', 'x-requested-with'],
+    origins: ["*"],
+    allowHeaders: ["authorization", "x-requested-with"],
     exposeHeaders: []
   });
 
@@ -93,11 +112,11 @@ async function main() {
   server.use(cors.actual);
 
   // Get a port number, we need this to construct `serviceUrl`
-  const port = program.port || await getPort(5000);
+  const port = program.port || (await getPort(5000));
 
   // Create a bot entry
   const bot = new BotEmulator(
-    async () => program.serviceUrl || `http://localhost:${ port }`,
+    async () => program.serviceUrl || `http://localhost:${port}`,
     {
       loggerOrLogService: new NpmLogger()
     }
@@ -105,12 +124,16 @@ async function main() {
 
   if (program.file) {
     const botsJSON = await new Promise<string>((resolve, reject) => {
-      readFile(program.file, { encoding: 'utf8' }, (err, result) => err ? reject(err) : resolve(result));
+      readFile(program.file, { encoding: "utf8" }, (err, result) =>
+        err ? reject(err) : resolve(result)
+      );
     });
 
     const botEndpoints = JSON.parse(botsJSON);
 
-    botEndpoints.forEach(endpoint => bot.facilities.endpoints.push(endpoint.botUrl, endpoint));
+    botEndpoints.forEach(endpoint =>
+      bot.facilities.endpoints.push(endpoint.botUrl, endpoint)
+    );
   } else {
     bot.facilities.endpoints.push(program.botUrl, {
       botId: program.botId,
@@ -125,15 +148,16 @@ async function main() {
   bot.mount(server);
 
   const endpoints = bot.facilities.endpoints.getAll();
-  const urls = Object.keys(endpoints).reduce((endpoint, key) => [
-    ...endpoint,
-    endpoints[key].botUrl
-  ], []).sort();
+  const urls = Object.keys(endpoints)
+    .reduce((endpoint, key) => [...endpoint, endpoints[key].botUrl], [])
+    .sort();
 
   // Start listening
   server.listen(port, () => {
-    console.log(`${ server.name } listening on ${ server.url } with bot on ${ urls.join(', ') }`);
-    console.log(`The bot will callback on ${ program.serviceUrl }`);
+    console.log(
+      `${server.name} listening on ${server.url} with bot on ${urls.join(", ")}`
+    );
+    console.log(`The bot will callback on ${program.serviceUrl}`);
   });
 }
 

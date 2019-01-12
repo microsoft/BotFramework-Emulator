@@ -31,8 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from 'react';
-import { Dialog, DialogFooter, PrimaryButton, DefaultButton, Checkbox } from '@bfemulator/ui-react';
+import {
+  Checkbox,
+  DefaultButton,
+  Dialog,
+  DialogFooter,
+  PrimaryButton
+} from "@bfemulator/ui-react";
+import * as React from "react";
 
 export interface UpdateAvailableDialogProps {
   onCloseClick?: () => any;
@@ -44,7 +50,10 @@ export interface UpdateAvailableDialogState {
   installAfterDownload: boolean;
 }
 
-export class UpdateAvailableDialog extends React.Component<UpdateAvailableDialogProps, UpdateAvailableDialogState> {
+export class UpdateAvailableDialog extends React.Component<
+  UpdateAvailableDialogProps,
+  UpdateAvailableDialogState
+> {
   constructor(props: UpdateAvailableDialogProps) {
     super(props);
 
@@ -57,14 +66,22 @@ export class UpdateAvailableDialog extends React.Component<UpdateAvailableDialog
     const { onChangeInstallAfterDownload } = this;
 
     return (
-      <Dialog cancel={ onCloseClick } title="Update available">
-        <p>Bot Framework Emulator { version } is available. Would you like to download the new version?</p>
-        <Checkbox label="Restart the emulator and install update after download"
-          checked={ installAfterDownload }
-          onChange={ onChangeInstallAfterDownload }/>
+      <Dialog cancel={onCloseClick} title="Update available">
+        <p>
+          Bot Framework Emulator {version} is available. Would you like to
+          download the new version?
+        </p>
+        <Checkbox
+          label="Restart the emulator and install update after download"
+          checked={installAfterDownload}
+          onChange={onChangeInstallAfterDownload}
+        />
         <DialogFooter>
-          <DefaultButton text="Cancel"  onClick={ onCloseClick }/>
-          <PrimaryButton text="Download" onClick={ () => onDownloadClick(this.state.installAfterDownload) }/>
+          <DefaultButton text="Cancel" onClick={onCloseClick} />
+          <PrimaryButton
+            text="Download"
+            onClick={() => onDownloadClick(this.state.installAfterDownload)}
+          />
         </DialogFooter>
       </Dialog>
     );
@@ -72,5 +89,5 @@ export class UpdateAvailableDialog extends React.Component<UpdateAvailableDialog
 
   private onChangeInstallAfterDownload = (): void => {
     this.setState({ installAfterDownload: !this.state.installAfterDownload });
-  }
+  };
 }

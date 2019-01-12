@@ -31,12 +31,20 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { BotConfiguration } from 'botframework-config';
-import { BotInfo, getBotDisplayName, SharedConstants } from '@bfemulator/app-shared';
-import { BotConfigWithPath, BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
-import { mainWindow } from './main';
-import * as BotActions from './botData/actions/botActions';
-import { getStore } from './botData/store';
+import {
+  BotInfo,
+  getBotDisplayName,
+  SharedConstants
+} from "@bfemulator/app-shared";
+import {
+  BotConfigWithPath,
+  BotConfigWithPathImpl
+} from "@bfemulator/sdk-shared";
+import { BotConfiguration } from "botframework-config";
+
+import * as BotActions from "./botData/actions/botActions";
+import { getStore } from "./botData/store";
+import { mainWindow } from "./main";
 
 const store = getStore();
 
@@ -59,7 +67,10 @@ export function pathExistsInRecentBots(path: string): boolean {
  *  to keep retrying until the correct secret is entered or the popup
  *  is dismissed.
  */
-export async function loadBotWithRetry(botPath: string, secret?: string): Promise<BotConfigWithPath> {
+export async function loadBotWithRetry(
+  botPath: string,
+  secret?: string
+): Promise<BotConfigWithPath> {
   try {
     // load the bot and transform it into internal BotConfig implementation
     let bot: BotConfigWithPath = await BotConfiguration.load(botPath, secret);
@@ -77,7 +88,7 @@ export async function loadBotWithRetry(botPath: string, secret?: string): Promis
       // entered via the secret prompt dialog. In the latter case, we should
       // update the secret for the bot that we have on record with the correct secret.
       const botInfo = getBotInfoByPath(botPath);
-      if (secret && (botInfo.secret !== secret)) {
+      if (secret && botInfo.secret !== secret) {
         // update the secret in bots.json with the valid secret
         const updatedBot = { ...botInfo, secret };
         await patchBotsJson(botPath, updatedBot);
@@ -97,8 +108,8 @@ export async function loadBotWithRetry(botPath: string, secret?: string): Promis
     // TODO: Only prompt for password if we know for a fact we need it.
     // Lots of different errors can arrive here, like ENOENT, if the file wasn't found.
     // Add easily discernable errors / error codes to msbot package
-    if (e instanceof Error && e.message.includes('secret')) {
-      return await promptForSecretAndRetry(botPath);
+    if (e instanceof Error && e.message.includes("secret")) {
+      return promptForSecretAndRetry(botPath);
     } else {
       throw e;
     }
@@ -106,22 +117,29 @@ export async function loadBotWithRetry(botPath: string, secret?: string): Promis
 }
 
 /** Prompts the user for a secret and retries the bot load flow */
-export async function promptForSecretAndRetry(botPath: string): Promise<BotConfigWithPath> {
+export async function promptForSecretAndRetry(
+  botPath: string
+): Promise<BotConfigWithPath> {
   // bot requires a secret to decrypt properties
   const { Commands } = SharedConstants;
-  const newSecret = await mainWindow.commandService.remoteCall(Commands.UI.ShowSecretPromptDialog);
+  const newSecret = await mainWindow.commandService.remoteCall(
+    Commands.UI.ShowSecretPromptDialog
+  );
   if (newSecret === null) {
     // pop-up was dismissed; stop trying to prompt for secret
     return null;
   }
   // try again with new secret
-  return await loadBotWithRetry(botPath, newSecret);
+  return loadBotWithRetry(botPath, newSecret);
 }
 
 /** Converts a BotConfigWithPath to a BotConfig */
-export function toSavableBot(bot: BotConfigWithPath, secret?: string): BotConfiguration {
+export function toSavableBot(
+  bot: BotConfigWithPath,
+  secret?: string
+): BotConfiguration {
   if (!bot) {
-    throw new Error(`Cannot convert ${'' + bot} bot to savable bot.`);
+    throw new Error(`Cannot convert ${"" + bot} bot to savable bot.`);
   }
   const newBot = BotConfiguration.fromJSON(bot);
   (newBot as any).internal.location = bot.path; // Workaround until defect is fixed
@@ -144,7 +162,10 @@ export function cloneBot(bot: BotConfigWithPath): BotConfigWithPath {
 /** Patches a bot record in bots.json, and updates the list
  *  in the store and on disk.
  */
-export async function patchBotsJson(botPath: string, bot: BotInfo): Promise<BotInfo[]> {
+export async function patchBotsJson(
+  botPath: string,
+  bot: BotInfo
+): Promise<BotInfo[]> {
   const state = store.getState();
   const bots = [...state.bot.botFiles];
   const botIndex = bots.findIndex(bot1 => bot1.path === botPath);
@@ -155,21 +176,23 @@ export async function patchBotsJson(botPath: string, bot: BotInfo): Promise<BotI
   }
   store.dispatch(BotActions.load(bots));
   const { Commands } = SharedConstants;
-  await mainWindow.commandService.remoteCall(Commands.Bot.SyncBotList, bots).catch();
+  await mainWindow.commandService
+    .remoteCall(Commands.Bot.SyncBotList, bots)
+    .catch();
 
   return bots;
 }
 
 /** Saves a bot to disk */
 export async function saveBot(bot: BotConfigWithPath): Promise<void> {
-  const botInfo = await getBotInfoByPath(bot.path) || {};
+  const botInfo = (await getBotInfoByPath(bot.path)) || {};
 
   const savableBot = toSavableBot(bot, botInfo.secret);
 
   if (botInfo.secret) {
     savableBot.validateSecret(botInfo.secret);
   }
-  return await savableBot.save(botInfo.secret).catch();
+  return savableBot.save(botInfo.secret).catch();
 }
 
 /** Removes a bot from bots.json (doesn't delete the bot file) */
@@ -178,5 +201,7 @@ export async function removeBotFromList(botPath: string): Promise<void> {
   const bots = [...state.bot.botFiles].filter(bot => bot.path !== botPath);
   store.dispatch(BotActions.load(bots));
   const { Commands } = SharedConstants;
-  await mainWindow.commandService.remoteCall(Commands.Bot.SyncBotList, bots).catch();
+  await mainWindow.commandService
+    .remoteCall(Commands.Bot.SyncBotList, bots)
+    .catch();
 }

@@ -31,22 +31,22 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import CardAction from './cardAction';
-import CardImage from './cardImage';
-import CardMediaUrl from './cardMediaUrl';
-import Keyboard from './keyboard';
+import CardAction from "./cardAction";
+import CardImage from "./cardImage";
+import CardMediaUrl from "./cardMediaUrl";
+import Keyboard from "./keyboard";
 
 interface MediaCard extends Keyboard {
-  title: string;                  // Title of the Card
-  subtitle: string;               // Subtitle appears just below Title field, differs from Title in font styling only
-  text: string;                   // Text field appears just below subtitle, differs from Subtitle in font styling only
-  image: CardImage;              // Messaging supports all media formats: audio, video, images and thumbnails as well
-                                  // to optimize content download.
-  media: CardMediaUrl[];         // Media source for video, audio or animations
-  autoloop: boolean;              // Should the media source reproduction run in a lool
-  autostart: boolean;             // Should the media start automatically
-  shareable: boolean;             // Should media be shareable
-  buttons: CardAction[];         // Set of actions applicable to the current card.
+  title: string; // Title of the Card
+  subtitle: string; // Subtitle appears just below Title field, differs from Title in font styling only
+  text: string; // Text field appears just below subtitle, differs from Subtitle in font styling only
+  image: CardImage; // Messaging supports all media formats: audio, video, images and thumbnails as well
+  // to optimize content download.
+  media: CardMediaUrl[]; // Media source for video, audio or animations
+  autoloop: boolean; // Should the media source reproduction run in a lool
+  autostart: boolean; // Should the media start automatically
+  shareable: boolean; // Should media be shareable
+  buttons: CardAction[]; // Set of actions applicable to the current card.
 }
 
 export default MediaCard;

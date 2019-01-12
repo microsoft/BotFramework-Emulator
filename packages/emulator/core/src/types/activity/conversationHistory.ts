@@ -31,8 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import Activity from './activity';
-import ETagObject from './etagObject';
+import Activity from "./activity";
+import ETagObject from "./etagObject";
 
 interface ConversationHistory extends ETagObject {
   activities: Activity[];

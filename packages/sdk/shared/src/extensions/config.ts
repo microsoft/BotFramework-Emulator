@@ -81,7 +81,7 @@ export interface ExtensionConfigClient {
     webpack?: {
       port?: number;
       host?: string;
-    }
+    };
   };
 }
 
@@ -89,11 +89,11 @@ export interface ExtensionConfigClient {
 export interface ExtensionConfigNode {
   main?: string;
   debug?: {
-    enabled?: boolean,
+    enabled?: boolean;
     websocket?: {
       port?: number;
       host?: string;
-    }
+    };
   };
 }
 

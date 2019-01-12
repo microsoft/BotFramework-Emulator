@@ -31,20 +31,24 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import ActivityVisitor from './activityVisitor';
-import CardAction from '../types/card/cardAction';
-import PaymentRequest from '../types/payment/request';
+import CardAction from "../types/card/cardAction";
+import PaymentRequest from "../types/payment/request";
+
+import ActivityVisitor from "./activityVisitor";
 
 export default class PaymentEncoder extends ActivityVisitor {
-  public static PaymentEmulatorUrlProtocol: string = 'payment:';
+  public static PaymentEmulatorUrlProtocol: string = "payment:";
 
   protected visitCardAction(cardAction: CardAction) {
-    if (cardAction && cardAction.type === 'payment') {
+    if (cardAction && cardAction.type === "payment") {
       const paymentRequest = cardAction.value as PaymentRequest;
-      const url = PaymentEncoder.PaymentEmulatorUrlProtocol + '//' + JSON.stringify(paymentRequest);
+      const url =
+        PaymentEncoder.PaymentEmulatorUrlProtocol +
+        "//" +
+        JSON.stringify(paymentRequest);
 
       // change the card action to a special URL for the emulator
-      cardAction.type = 'openUrl';
+      cardAction.type = "openUrl";
       cardAction.value = url;
     }
   }

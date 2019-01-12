@@ -31,15 +31,20 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as HttpStatus from 'http-status-codes';
-import * as Restify from 'restify';
+import * as HttpStatus from "http-status-codes";
+import * as Restify from "restify";
 
-import BotEmulator from '../../botEmulator';
-import sendErrorResponse from '../../utils/sendErrorResponse';
-import { ConversationAware } from './fetchConversation';
+import BotEmulator from "../../botEmulator";
+import sendErrorResponse from "../../utils/sendErrorResponse";
+
+import { ConversationAware } from "./fetchConversation";
 
 export default function contactRemoved(_botEmulator: BotEmulator) {
-  return async (req: ConversationAware, res: Restify.Response, next: Restify.Next): Promise<any> => {
+  return async (
+    req: ConversationAware,
+    res: Restify.Response,
+    next: Restify.Next
+  ): Promise<any> => {
     try {
       await req.conversation.sendContactRemoved();
       res.send(HttpStatus.OK);

@@ -31,24 +31,29 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { store } from '../data/store';
-import * as FileActions from '../data/action/fileActions';
-import * as EditorActions from '../data/action/editorActions';
-import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
-import { SharedConstants, isChatFile, isTranscriptFile } from '@bfemulator/app-shared';
+import {
+  isChatFile,
+  isTranscriptFile,
+  SharedConstants
+} from "@bfemulator/app-shared";
+import { CommandRegistryImpl } from "@bfemulator/sdk-shared";
+
+import * as EditorActions from "../data/action/editorActions";
+import * as FileActions from "../data/action/fileActions";
+import { store } from "../data/store";
 
 /** Registers file commands */
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
-  const {File} = SharedConstants.Commands;
+  const { File } = SharedConstants.Commands;
   // ---------------------------------------------------------------------------
   // Adds a file to the file store
-  commandRegistry.registerCommand(File.Add, (payload) => {
+  commandRegistry.registerCommand(File.Add, payload => {
     store.dispatch(FileActions.addFile(payload));
   });
 
   // ---------------------------------------------------------------------------
   // Removes a file from the file store
-  commandRegistry.registerCommand(File.Remove, (path) => {
+  commandRegistry.registerCommand(File.Remove, path => {
     store.dispatch(FileActions.removeFile(path));
   });
 

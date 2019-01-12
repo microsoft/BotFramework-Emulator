@@ -31,19 +31,19 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-const mockVersion = 'v4.5.6';
-jest.mock('electron', () => ({
+const mockVersion = "v4.5.6";
+jest.mock("electron", () => ({
   app: {
     getVersion: () => mockVersion
   }
 }));
 
-import { appendCustomUserAgent } from './appendCustomUserAgent';
+import { appendCustomUserAgent } from "./appendCustomUserAgent";
 
-it('should append a custom user agent to outgoing requests', () => {
+it("should append a custom user agent to outgoing requests", () => {
   const mockDetails = {
     requestHeaders: {
-      'User-Agent': 'some/user/agent'
+      "User-Agent": "some/user/agent"
     }
   };
   const callBack = jest.fn((...args: any[]) => null);
@@ -52,7 +52,7 @@ it('should append a custom user agent to outgoing requests', () => {
   expect(callBack).toHaveBeenCalledWith({
     cancel: false,
     requestHeaders: {
-      'User-Agent': `some/user/agent botbuilder/emulator/${mockVersion}`
+      "User-Agent": `some/user/agent botbuilder/emulator/${mockVersion}`
     }
   });
 });

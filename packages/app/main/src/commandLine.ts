@@ -31,15 +31,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import commandLineArgs from 'command-line-args';
-import { CommandLineArgs } from '@bfemulator/app-shared';
-import * as globals from './globals';
+import { CommandLineArgs } from "@bfemulator/app-shared";
+import commandLineArgs from "command-line-args";
 
-const optionDefinitions = [
-    { name: 'storagepath', alias: 'p', type: String },
-];
+import * as globals from "./globals";
+
+const optionDefinitions = [{ name: "storagepath", alias: "p", type: String }];
 
 export function parseArgs(): void {
-    const parsedCommandLineArgs: CommandLineArgs = commandLineArgs(optionDefinitions, { partial: true });
-    globals.setGlobal('commandlineargs', parsedCommandLineArgs);
+  const parsedCommandLineArgs: CommandLineArgs = commandLineArgs(
+    optionDefinitions,
+    { partial: true }
+  );
+  globals.setGlobal("commandlineargs", parsedCommandLineArgs);
 }

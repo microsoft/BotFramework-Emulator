@@ -31,12 +31,19 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { connect } from 'react-redux';
-import { DialogService } from '../service';
-import { GetStartedWithCSDialog, GetStartedWithCSDialogProps } from './getStartedWithCSDialog';
-import { RootState } from '../../../data/store';
+import { connect } from "react-redux";
 
-const mapDispatchToProps = (_dispatch: () => void): GetStartedWithCSDialogProps => ({
+import { RootState } from "../../../data/store";
+import { DialogService } from "../service";
+
+import {
+  GetStartedWithCSDialog,
+  GetStartedWithCSDialogProps
+} from "./getStartedWithCSDialog";
+
+const mapDispatchToProps = (
+  _dispatch: () => void
+): GetStartedWithCSDialogProps => ({
   cancel: () => DialogService.hideDialog(0),
   confirm: () => DialogService.hideDialog(1),
   launchConnectedServiceEditor: () => {
@@ -45,11 +52,14 @@ const mapDispatchToProps = (_dispatch: () => void): GetStartedWithCSDialogProps 
 });
 
 const mapStateToProps = (state: RootState, ownProps) => {
-  const { access_token: token = '' } = state.azureAuth;
-  const [, payload] = token.split('.');
+  const { access_token: token = "" } = state.azureAuth;
+  const [, payload] = token.split(".");
   const pJson = JSON.parse(atob(payload));
 
-  return { ...ownProps, user: pJson.upn || pJson.unique_name || pJson.name || pJson.email };
+  return {
+    ...ownProps,
+    user: pJson.upn || pJson.unique_name || pJson.name || pJson.email
+  };
 };
 
 export const GetStartedWithCSDialogContainer = connect(

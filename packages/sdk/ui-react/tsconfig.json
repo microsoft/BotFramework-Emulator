@@ -1,32 +1,6 @@
 {
+  "extends": "../../../tsconfig.json",
   "compilerOptions": {
-    "outDir": "built",
-    "module": "esnext",
-    "target": "es2017",
-    "lib": ["es6", "dom", "es2015"],
-    "sourceMap": true,
-    "jsx": "react",
-    "rootDir": "src",
-    "moduleResolution": "node",
-    "forceConsistentCasingInFileNames": true,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noImplicitAny": false,
-    "suppressImplicitAnyIndexErrors": true,
-    "noUnusedLocals": false,
-    "declaration": true,
-    "skipLibCheck": true,
-    "types": ["jest", "react", "react-dom"]
-  },
-  "include": [
-    "./src/**/*.ts",
-    "./src/**/*.tsx"
-  ],
-  "exclude": [
-    "./built",
-    "./node_modules",
-    "./__tests__/**/*",
-    "./**/*.spec.ts",
-    "./**/*.test.ts"
-  ]
+    "outDir": "build/dist"
+  }
 }

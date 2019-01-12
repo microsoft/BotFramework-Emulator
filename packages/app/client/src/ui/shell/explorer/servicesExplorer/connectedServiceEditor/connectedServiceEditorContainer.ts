@@ -31,14 +31,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { connect } from 'react-redux';
-import { DialogService } from '../../../../dialogs/service';
-import { ConnectedServiceEditor } from './connectedServiceEditor';
+import { connect } from "react-redux";
+
+import { DialogService } from "../../../../dialogs/service";
+
+import { ConnectedServiceEditor } from "./connectedServiceEditor";
 
 const mapDispatchToProps = (_dispatch: () => void) => {
   return {
-    updateConnectedService: updatedLuisService => DialogService.hideDialog([updatedLuisService]),
-    cancel: () => DialogService.hideDialog(0),
+    updateConnectedService: updatedLuisService =>
+      DialogService.hideDialog([updatedLuisService]),
+    cancel: () => DialogService.hideDialog(0)
   };
 };
 

@@ -31,14 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './largeHeader/largeHeader';
-export * from './mediumHeader/mediumHeader';
-export * from './smallHeader/smallHeader';
-export * from './dialog';
-export * from './button/primaryButton';
-export * from './button/defaultButton';
-export * from './textField/textField';
-export * from './checkbox/checkbox';
-export * from './insetShadow/insetShadow';
-export * from './spinner/spinner';
-export * from './splitButton';
+export * from "./largeHeader/largeHeader";
+export * from "./mediumHeader/mediumHeader";
+export * from "./smallHeader/smallHeader";
+export * from "./dialog";
+export * from "./button/primaryButton";
+export * from "./button/defaultButton";
+export * from "./textField/textField";
+export * from "./checkbox/checkbox";
+export * from "./insetShadow/insetShadow";
+export * from "./spinner/spinner";
+export * from "./splitButton";

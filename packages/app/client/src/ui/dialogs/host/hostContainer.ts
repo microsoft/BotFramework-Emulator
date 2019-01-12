@@ -31,12 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { connect } from 'react-redux';
-import { DialogHost, DialogHostProps } from './host';
-import { RootState } from '../../../data/store';
+import { connect } from "react-redux";
+
+import { RootState } from "../../../data/store";
+
+import { DialogHost, DialogHostProps } from "./host";
 
 function mapStateToProps(state: RootState): DialogHostProps {
-  return ({ showing: state.dialog.showing });
+  return { showing: state.dialog.showing };
 }
 
 export const DialogHostContainer = connect(mapStateToProps)(DialogHost);

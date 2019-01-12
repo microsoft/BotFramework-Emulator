@@ -31,34 +31,33 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { markNotificationsAsRead } from './navBarSagas';
-import { select } from '../action/navBarActions';
-import * as Constants from '../../constants';
-import { markAllAsRead } from '../action/notificationActions';
-import { put } from 'redux-saga/effects';
-jest.mock('../../ui/dialogs', () => ({
-    AzureLoginPromptDialogContainer: function mock() {
-      return undefined;
-    },
-    AzureLoginSuccessDialogContainer: function mock() {
-      return undefined;
-    },
-    BotCreationDialog: function mock() {
-      return undefined;
-    },
-    DialogService: { showDialog: () => Promise.resolve(true) },
-    SecretPromptDialog: function mock() {
-      return undefined;
-    }
+import { markNotificationsAsRead } from "./navBarSagas";
+import { select } from "../action/navBarActions";
+import * as Constants from "../../constants";
+import { markAllAsRead } from "../action/notificationActions";
+import { put } from "redux-saga/effects";
+jest.mock("../../ui/dialogs", () => ({
+  AzureLoginPromptDialogContainer: function mock() {
+    return undefined;
+  },
+  AzureLoginSuccessDialogContainer: function mock() {
+    return undefined;
+  },
+  BotCreationDialog: function mock() {
+    return undefined;
+  },
+  DialogService: { showDialog: () => Promise.resolve(true) },
+  SecretPromptDialog: function mock() {
+    return undefined;
   }
-));
-jest.mock('../../platform/commands/commandServiceImpl', () => ({
+}));
+jest.mock("../../platform/commands/commandServiceImpl", () => ({
   CommandServiceImpl: {
     remoteCall: () => Promise.resolve(true)
   }
 }));
-describe('Nav bar sagas', () => {
-  test('markNotificationsAsRead()', () => {
+describe("Nav bar sagas", () => {
+  test("markNotificationsAsRead()", () => {
     const gen = markNotificationsAsRead(select(Constants.NAVBAR_NOTIFICATIONS));
     expect(gen.next().value).toEqual(put(markAllAsRead()));
   });

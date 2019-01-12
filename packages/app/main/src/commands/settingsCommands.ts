@@ -31,10 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { dispatch, getSettings } from '../settingsData/store';
-import { FrameworkSettings, SharedConstants } from '@bfemulator/app-shared';
-import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
-import { setFramework } from '../settingsData/actions/frameworkActions';
+import { FrameworkSettings, SharedConstants } from "@bfemulator/app-shared";
+import { CommandRegistryImpl } from "@bfemulator/sdk-shared";
+
+import { setFramework } from "../settingsData/actions/frameworkActions";
+import { dispatch, getSettings } from "../settingsData/store";
 
 /** Registers settings commands */
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
@@ -42,13 +43,19 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
   // ---------------------------------------------------------------------------
   // Saves global app settings
-  commandRegistry.registerCommand(Commands.SaveAppSettings, (settings: FrameworkSettings): any => {
-    dispatch(setFramework(settings));
-  });
+  commandRegistry.registerCommand(
+    Commands.SaveAppSettings,
+    (settings: FrameworkSettings): any => {
+      dispatch(setFramework(settings));
+    }
+  );
 
   // ---------------------------------------------------------------------------
   // Get and return app settings from store
-  commandRegistry.registerCommand(Commands.LoadAppSettings, (...args: any[]): FrameworkSettings => {
-    return getSettings().framework;
-  });
+  commandRegistry.registerCommand(
+    Commands.LoadAppSettings,
+    (...args: any[]): FrameworkSettings => {
+      return getSettings().framework;
+    }
+  );
 }

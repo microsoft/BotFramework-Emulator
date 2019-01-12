@@ -43,90 +43,96 @@ import {
   logEntry,
   ngrokExpirationItem,
   makeEnumerableObject
-} from './util';
-import { ILogItem } from './item';
-import LogLevel from './level';
+} from "./util";
+import { ILogItem } from "./item";
+import LogLevel from "./level";
 
-describe('utils tests', () => {
-  test('makeEnumerableObject', () => {
+describe("utils tests", () => {
+  test("makeEnumerableObject", () => {
     //
   });
 
-  test('textItem', () => {
-    const item = textItem(LogLevel.Error, 'someErrorItem');
-    expect(item.type).toBe('text');
-    expect(item.payload).toEqual({ level: LogLevel.Error, text: 'someErrorItem' });
+  test("textItem", () => {
+    const item = textItem(LogLevel.Error, "someErrorItem");
+    expect(item.type).toBe("text");
+    expect(item.payload).toEqual({
+      level: LogLevel.Error,
+      text: "someErrorItem"
+    });
   });
 
-  test('externalLinkItem', () => {
-    const item = externalLinkItem('someText', 'someLink');
-    expect(item.type).toBe('external-link');
-    expect(item.payload).toEqual({ text: 'someText', hyperlink: 'someLink' });
+  test("externalLinkItem", () => {
+    const item = externalLinkItem("someText", "someLink");
+    expect(item.type).toBe("external-link");
+    expect(item.payload).toEqual({ text: "someText", hyperlink: "someLink" });
   });
 
-  test('inspectableObjectItem', () => {
-    const item = inspectableObjectItem('someText', { a: 1, b: 'someValue' });
-    expect(item.type).toBe('inspectable-object');
-    expect(item.payload).toEqual({ text: 'someText', obj: { a: 1, b: 'someValue' } });
+  test("inspectableObjectItem", () => {
+    const item = inspectableObjectItem("someText", { a: 1, b: "someValue" });
+    expect(item.type).toBe("inspectable-object");
+    expect(item.payload).toEqual({
+      text: "someText",
+      obj: { a: 1, b: "someValue" }
+    });
   });
 
-  test('summaryTextItem', () => {
-    const item = summaryTextItem({ a: 1, b: true, c: 'someValue' });
-    expect(item.type).toBe('summary-text');
-    expect(item.payload).toEqual({ obj: { a: 1, b: true, c: 'someValue' } });
+  test("summaryTextItem", () => {
+    const item = summaryTextItem({ a: 1, b: true, c: "someValue" });
+    expect(item.type).toBe("summary-text");
+    expect(item.payload).toEqual({ obj: { a: 1, b: true, c: "someValue" } });
   });
 
-  test('appSettingsItem', () => {
-    const item = appSettingsItem('someText');
-    expect(item.type).toBe('open-app-settings');
-    expect(item.payload).toEqual({ text: 'someText' });
+  test("appSettingsItem", () => {
+    const item = appSettingsItem("someText");
+    expect(item.type).toBe("open-app-settings");
+    expect(item.payload).toEqual({ text: "someText" });
   });
 
-  test('exceptionItem', () => {
-    const item = exceptionItem('someError');
-    expect(item.type).toBe('exception');
-    expect(item.payload).toEqual({ err: makeEnumerableObject('someError') });
+  test("exceptionItem", () => {
+    const item = exceptionItem("someError");
+    expect(item.type).toBe("exception");
+    expect(item.payload).toEqual({ err: makeEnumerableObject("someError") });
   });
 
-  test('networkRequestItem', () => {
+  test("networkRequestItem", () => {
     const item = networkRequestItem(
-      'someFacility',
-      'someBody',
-      'someHeaders',
-      'someMethod',
-      'someUrl'
+      "someFacility",
+      "someBody",
+      "someHeaders",
+      "someMethod",
+      "someUrl"
     );
-    expect(item.type).toBe('network-request');
+    expect(item.type).toBe("network-request");
     expect(item.payload).toEqual({
-      facility: 'someFacility',
-      body: 'someBody',
-      headers: 'someHeaders',
-      method: 'someMethod',
-      url: 'someUrl'
+      facility: "someFacility",
+      body: "someBody",
+      headers: "someHeaders",
+      method: "someMethod",
+      url: "someUrl"
     });
   });
 
-  test('networkResponseItem', () => {
+  test("networkResponseItem", () => {
     const item = networkResponseItem(
-      'someBody',
-      'someHeaders',
-      'someStatusCode',
-      'someStatusMessage',
-      'someSrcUrl'
+      "someBody",
+      "someHeaders",
+      "someStatusCode",
+      "someStatusMessage",
+      "someSrcUrl"
     );
-    expect(item.type).toBe('network-response');
+    expect(item.type).toBe("network-response");
     expect(item.payload).toEqual({
-      body: 'someBody',
-      headers: 'someHeaders',
-      statusCode: 'someStatusCode',
-      statusMessage: 'someStatusMessage',
-      srcUrl: 'someSrcUrl'
+      body: "someBody",
+      headers: "someHeaders",
+      statusCode: "someStatusCode",
+      statusMessage: "someStatusMessage",
+      srcUrl: "someSrcUrl"
     });
   });
 
-  test('logEntry', () => {
-    const item1 = textItem(LogLevel.Debug, 'item1');
-    const item2 = textItem(LogLevel.Warn, 'item2');
+  test("logEntry", () => {
+    const item1 = textItem(LogLevel.Debug, "item1");
+    const item2 = textItem(LogLevel.Warn, "item2");
     const entry = logEntry(item1, item2);
     expect(entry.timestamp).toBeGreaterThan(0);
     expect(entry.items).toHaveLength(2);
@@ -134,9 +140,9 @@ describe('utils tests', () => {
     expect(entry.items[1]).toBe(item2);
   });
 
-  test('ngrokExpirationItem', () => {
-    const item = ngrokExpirationItem('someText');
-    expect(item.type).toBe('ngrok-expiration');
-    expect(item.payload).toEqual({ text: 'someText' });
+  test("ngrokExpirationItem", () => {
+    const item = ngrokExpirationItem("someText");
+    expect(item.type).toBe("ngrok-expiration");
+    expect(item.payload).toEqual({ text: "someText" });
   });
 });

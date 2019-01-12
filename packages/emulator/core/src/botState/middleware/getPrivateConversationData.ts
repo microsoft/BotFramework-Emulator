@@ -31,14 +31,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as HttpStatus from 'http-status-codes';
-import * as Restify from 'restify';
+import * as HttpStatus from "http-status-codes";
+import * as Restify from "restify";
 
-import BotEmulator from '../../botEmulator';
-import sendErrorResponse from '../../utils/sendErrorResponse';
+import BotEmulator from "../../botEmulator";
+import sendErrorResponse from "../../utils/sendErrorResponse";
 
 export default function getPrivateConversationData(_botEmulator: BotEmulator) {
-  return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+  return (
+    req: Restify.Request,
+    res: Restify.Response,
+    next: Restify.Next
+  ): any => {
     try {
       res.send(HttpStatus.OK, (req as any).botData);
       res.end();

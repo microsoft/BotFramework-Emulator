@@ -31,21 +31,24 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as path from 'path';
-import { CustomActivity } from './conversation';
+import * as path from "path";
 
-const { fork } = require('child_process');
-const chatdown = require.resolve('chatdown/bin/chatdown');
+import { CustomActivity } from "./conversation";
+
+const { fork } = require("child_process");
+const chatdown = require.resolve("chatdown/bin/chatdown");
 
 /**
  * Uses the chatdown library to convert a .chat file into a list of conversation activities
  * @param file The .chat file to parse
  */
-export const parseActivitiesFromChatFile = async (file: string): Promise<CustomActivity[]> => {
+export const parseActivitiesFromChatFile = async (
+  file: string
+): Promise<CustomActivity[]> => {
   let activities: CustomActivity[] = [];
 
-  if (path.extname(file) !== '.chat') {
-    throw new Error('Can only use chatdown on .chat files.');
+  if (path.extname(file) !== ".chat") {
+    throw new Error("Can only use chatdown on .chat files.");
   }
 
   // convert conversation to list of activities using chatdown
@@ -54,28 +57,29 @@ export const parseActivitiesFromChatFile = async (file: string): Promise<CustomA
     // in the case of activities that include attachments.
     // This takes a bit longer to process but achieves
     // the equivalent result as if the chatdown cli was used directly.
-    activities = await new Promise((resolve, reject) => {
+    activities = (await new Promise((resolve, reject) => {
       const childProcess = fork(chatdown, [file], {
         cwd: path.dirname(file),
         silent: true
       });
 
-      let str = '';
-      childProcess.stdout.on('data', (data: Uint8Array) => {
+      let str = "";
+      childProcess.stdout.on("data", (data: Uint8Array) => {
         str += data.toString();
       });
 
-      childProcess.stdout.on('end', () => {
+      childProcess.stdout.on("end", () => {
         resolve(JSON.parse(str));
       });
 
-      childProcess.stdout.on('error', (err) => {
+      childProcess.stdout.on("error", err => {
         reject(err);
       });
-    }) as CustomActivity[];
-
+    })) as CustomActivity[];
   } catch (err) {
-    throw new Error(`Error while converting .chat file to list of activites: ${err}`);
+    throw new Error(
+      `Error while converting .chat file to list of activites: ${err}`
+    );
   }
 
   return activities;

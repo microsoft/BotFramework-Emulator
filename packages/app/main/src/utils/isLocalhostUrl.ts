@@ -31,9 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as url from 'url';
+import * as url from "url";
 
 export const isLocalhostUrl = (urlStr: string): boolean => {
   const parsedUrl = url.parse(urlStr);
-  return ( parsedUrl.hostname === 'localhost' || parsedUrl.hostname === '127.0.0.1' );
+  return (
+    parsedUrl.hostname === "localhost" || parsedUrl.hostname === "127.0.0.1"
+  );
 };

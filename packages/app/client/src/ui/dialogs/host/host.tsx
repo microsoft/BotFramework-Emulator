@@ -31,10 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as styles from './host.scss';
-import * as React from 'react';
-import { EventHandler, SyntheticEvent } from 'react';
-import { DialogService } from '../service';
+import * as React from "react";
+import { EventHandler, SyntheticEvent } from "react";
+
+import { DialogService } from "../service";
+
+import * as styles from "./host.scss";
 
 export interface DialogHostProps {
   saveHostRef?: (elem: HTMLElement) => void;
@@ -49,32 +51,38 @@ export class DialogHost extends React.Component<DialogHostProps, {}> {
   }
 
   public componentDidMount() {
-    this._hostRef.addEventListener('dialogRendered', this.initFocusTrap);
+    this._hostRef.addEventListener("dialogRendered", this.initFocusTrap);
   }
 
   public componentWillUnmount() {
-    this._hostRef.removeEventListener('dialogRendered', this.initFocusTrap);
+    this._hostRef.removeEventListener("dialogRendered", this.initFocusTrap);
   }
 
   public render() {
-    const visibilityClass = this.props.showing ? styles.dialogHostVisible : '';
+    const visibilityClass = this.props.showing ? styles.dialogHostVisible : "";
     // sentinels shouldn't be tab-able when dialog is hidden
     const sentinelTabIndex = this.props.showing ? 0 : -1;
 
     return (
-      <div className={ `${styles.host} ${visibilityClass}` } onClick={ this.handleOverlayClick }>
+      <div
+        className={`${styles.host} ${visibilityClass}`}
+        onClick={this.handleOverlayClick}
+      >
         <span
-          tabIndex={ sentinelTabIndex }
-          onFocus={ this.onFocusStartingSentinel }
-          className={ styles.focusSentinel }>
-        </span>
-        <div className={ styles.dialogHostContent } onClick={ this.handleContentClick } ref={ this.saveHostRef }>
-        </div>
+          tabIndex={sentinelTabIndex}
+          onFocus={this.onFocusStartingSentinel}
+          className={styles.focusSentinel}
+        />
+        <div
+          className={styles.dialogHostContent}
+          onClick={this.handleContentClick}
+          ref={this.saveHostRef}
+        />
         <span
-          tabIndex={ sentinelTabIndex }
-          onFocus={ this.onFocusEndingSentinel }
-          className={ styles.focusSentinel }>
-        </span>
+          tabIndex={sentinelTabIndex}
+          onFocus={this.onFocusEndingSentinel}
+          className={styles.focusSentinel}
+        />
       </div>
     );
   }
@@ -82,24 +90,24 @@ export class DialogHost extends React.Component<DialogHostProps, {}> {
   private handleOverlayClick: EventHandler<any> = (event: MouseEvent) => {
     event.stopPropagation();
     DialogService.hideDialog();
-  }
+  };
 
   private handleContentClick: EventHandler<any> = (event: MouseEvent) => {
     // need to stop clicks inside the dialog from bubbling up to the overlay
     event.stopPropagation();
-  }
+  };
 
   private saveHostRef = (elem: HTMLElement) => {
     DialogService.setHost(elem);
     this._hostRef = elem;
-  }
+  };
 
   private getFocusableElementsInModal = (): NodeList => {
     if (this._hostRef) {
       return this._hostRef.querySelectorAll('[tabIndex]:not([tabIndex="-1"])');
     }
     return new NodeList();
-  }
+  };
 
   private initFocusTrap = () => {
     const allFocusableElements = this.getFocusableElementsInModal();
@@ -107,7 +115,7 @@ export class DialogHost extends React.Component<DialogHostProps, {}> {
       const firstChild: HTMLElement = allFocusableElements[0] as HTMLElement;
       firstChild.focus();
     }
-  }
+  };
 
   // Reached beginning of focusable items inside the modal host; re-focus the last item
   private onFocusStartingSentinel = (e: SyntheticEvent<any>) => {
@@ -115,13 +123,15 @@ export class DialogHost extends React.Component<DialogHostProps, {}> {
 
     const allFocusableElements = this.getFocusableElementsInModal();
     if (allFocusableElements.length) {
-      let lastChild: HTMLElement = allFocusableElements[allFocusableElements.length - 1] as HTMLElement;
+      let lastChild: HTMLElement = allFocusableElements[
+        allFocusableElements.length - 1
+      ] as HTMLElement;
 
-      if (lastChild.hasAttribute('disabled')) {
+      if (lastChild.hasAttribute("disabled")) {
         // focus the last element in the list that isn't disabled
         for (let i = allFocusableElements.length - 2; i >= 0; i--) {
           lastChild = allFocusableElements[i] as HTMLElement;
-          if (!lastChild.hasAttribute('disabled')) {
+          if (!lastChild.hasAttribute("disabled")) {
             lastChild.focus();
             break;
           }
@@ -130,7 +140,7 @@ export class DialogHost extends React.Component<DialogHostProps, {}> {
         lastChild.focus();
       }
     }
-  }
+  };
 
   // Reached end of focusable items inside the modal host; re-focus the first item
   private onFocusEndingSentinel = (e: SyntheticEvent<any>) => {
@@ -140,11 +150,11 @@ export class DialogHost extends React.Component<DialogHostProps, {}> {
     if (allFocusableElements.length) {
       let firstChild: HTMLElement = allFocusableElements[0] as HTMLElement;
 
-      if (firstChild.hasAttribute('disabled')) {
+      if (firstChild.hasAttribute("disabled")) {
         // focus the first element in the list that isn't disabled
         for (let i = 1; i <= allFocusableElements.length - 1; i++) {
           firstChild = allFocusableElements[i] as HTMLElement;
-          if (!firstChild.hasAttribute('disabled')) {
+          if (!firstChild.hasAttribute("disabled")) {
             firstChild.focus();
             break;
           }
@@ -153,5 +163,5 @@ export class DialogHost extends React.Component<DialogHostProps, {}> {
         firstChild.focus();
       }
     }
-  }
+  };
 }

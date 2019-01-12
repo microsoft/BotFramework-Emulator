@@ -18,6 +18,7 @@
   "scripts": {
     "start": "webpack-dev-server --hot --inline --mode development --content-base ./public",
     "build": "webpack --mode production",
+    "lint": "tslint --project tsconfig.json",
     "test": ""
   },
   "devDependencies": {

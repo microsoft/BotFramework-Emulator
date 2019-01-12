@@ -1,2 +1,2 @@
-export * from './dialog';
-export * from './dialogFooter';
+export * from "./dialog";
+export * from "./dialogFooter";

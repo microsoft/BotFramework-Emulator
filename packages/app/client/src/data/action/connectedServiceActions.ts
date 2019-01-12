@@ -31,17 +31,26 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IConnectedService, ServiceTypes } from 'botframework-config/lib/schema';
-import { ComponentClass } from 'react';
-import { Action } from 'redux';
-import { CONNECTED_SERVICES_PANEL_ID } from './explorerActions';
+import {
+  IConnectedService,
+  ServiceTypes
+} from "botframework-config/lib/schema";
+import { ComponentClass } from "react";
+import { Action } from "redux";
 
-export const OPEN_SERVICE_DEEP_LINK = 'OPEN_SERVICE_DEEP_LINK';
-export const OPEN_CONTEXT_MENU_FOR_CONNECTED_SERVICE = 'OPEN_CONTEXT_MENU_FOR_CONNECTED_SERVICE';
-export const OPEN_ADD_CONNECTED_SERVICE_CONTEXT_MENU = 'OPEN_ADD_CONNECTED_SERVICE_CONTEXT_MENU';
-export const OPEN_CONNECTED_SERVICE_SORT_CONTEXT_MENU = 'OPEN_CONNECTED_SERVICE_SORT_CONTEXT_MENU';
-export const LAUNCH_CONNECTED_SERVICE_EDITOR = 'LAUNCH_CONNECTED_SERVICE_EDITOR';
-export const LAUNCH_CONNECTED_SERVICE_PICKER = 'LAUNCH_CONNECTED_SERVICE_PICKER';
+import { CONNECTED_SERVICES_PANEL_ID } from "./explorerActions";
+
+export const OPEN_SERVICE_DEEP_LINK = "OPEN_SERVICE_DEEP_LINK";
+export const OPEN_CONTEXT_MENU_FOR_CONNECTED_SERVICE =
+  "OPEN_CONTEXT_MENU_FOR_CONNECTED_SERVICE";
+export const OPEN_ADD_CONNECTED_SERVICE_CONTEXT_MENU =
+  "OPEN_ADD_CONNECTED_SERVICE_CONTEXT_MENU";
+export const OPEN_CONNECTED_SERVICE_SORT_CONTEXT_MENU =
+  "OPEN_CONNECTED_SERVICE_SORT_CONTEXT_MENU";
+export const LAUNCH_CONNECTED_SERVICE_EDITOR =
+  "LAUNCH_CONNECTED_SERVICE_EDITOR";
+export const LAUNCH_CONNECTED_SERVICE_PICKER =
+  "LAUNCH_CONNECTED_SERVICE_PICKER";
 
 export interface ConnectedServiceAction<T> extends Action {
   payload: T;
@@ -57,7 +66,8 @@ export interface ConnectedServicePayload {
 
 export function launchConnectedServiceEditor<T>(
   editorComponent: ComponentClass<T>,
-  connectedService?: IConnectedService): ConnectedServiceAction<ConnectedServicePayload> {
+  connectedService?: IConnectedService
+): ConnectedServiceAction<ConnectedServicePayload> {
   return {
     type: LAUNCH_CONNECTED_SERVICE_EDITOR,
     payload: { editorComponent, connectedService }
@@ -66,9 +76,9 @@ export function launchConnectedServiceEditor<T>(
 
 export interface ConnectedServicePickerPayload extends ConnectedServicePayload {
   azureAuthWorkflowComponents: {
-    promptDialog: ComponentClass<any>,
-    loginSuccessDialog: ComponentClass<any>,
-    loginFailedDialog: ComponentClass<any>
+    promptDialog: ComponentClass<any>;
+    loginSuccessDialog: ComponentClass<any>;
+    loginFailedDialog: ComponentClass<any>;
   };
   pickerComponent: ComponentClass<any>;
   getStartedDialog: ComponentClass<any>;
@@ -76,16 +86,18 @@ export interface ConnectedServicePickerPayload extends ConnectedServicePayload {
   progressIndicatorComponent?: ComponentClass<any>;
 }
 
-export function launchConnectedServicePicker(payload: ConnectedServicePickerPayload)
-  : ConnectedServiceAction<ConnectedServicePickerPayload> {
+export function launchConnectedServicePicker(
+  payload: ConnectedServicePickerPayload
+): ConnectedServiceAction<ConnectedServicePickerPayload> {
   return {
     type: LAUNCH_CONNECTED_SERVICE_PICKER,
     payload
   };
 }
 
-export function openServiceDeepLink(connectedService: IConnectedService)
-  : ConnectedServiceAction<ConnectedServicePayload> {
+export function openServiceDeepLink(
+  connectedService: IConnectedService
+): ConnectedServiceAction<ConnectedServicePayload> {
   return {
     type: OPEN_SERVICE_DEEP_LINK,
     payload: { connectedService }
@@ -94,22 +106,26 @@ export function openServiceDeepLink(connectedService: IConnectedService)
 
 export function openContextMenuForConnectedService<T>(
   editorComponent: ComponentClass<T>,
-  connectedService?: IConnectedService): ConnectedServiceAction<ConnectedServicePayload> {
+  connectedService?: IConnectedService
+): ConnectedServiceAction<ConnectedServicePayload> {
   return {
     type: OPEN_CONTEXT_MENU_FOR_CONNECTED_SERVICE,
     payload: { editorComponent, connectedService }
   };
 }
 
-export function openAddServiceContextMenu(payload: ConnectedServicePickerPayload)
-  : ConnectedServiceAction<ConnectedServicePickerPayload> {
+export function openAddServiceContextMenu(
+  payload: ConnectedServicePickerPayload
+): ConnectedServiceAction<ConnectedServicePickerPayload> {
   return {
     type: OPEN_ADD_CONNECTED_SERVICE_CONTEXT_MENU,
     payload
   };
 }
 
-export function openSortContextMenu(): ConnectedServiceAction<ConnectedServicePayload> {
+export function openSortContextMenu(): ConnectedServiceAction<
+  ConnectedServicePayload
+> {
   return {
     type: OPEN_CONNECTED_SERVICE_SORT_CONTEXT_MENU,
     payload: { panelId: CONNECTED_SERVICES_PANEL_ID }

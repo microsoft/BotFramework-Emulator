@@ -31,24 +31,28 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as HttpStatus from 'http-status-codes';
-import * as Restify from 'restify';
+import * as HttpStatus from "http-status-codes";
+import * as Restify from "restify";
 
-import BotEmulator from '../../botEmulator';
-import OAuthLinkEncoder from '../../utils/oauthLinkEncoder';
-import sendErrorResponse from '../../utils/sendErrorResponse';
+import BotEmulator from "../../botEmulator";
+import OAuthLinkEncoder from "../../utils/oauthLinkEncoder";
+import sendErrorResponse from "../../utils/sendErrorResponse";
 
 export default function emulateOAuthCards(botEmulator: BotEmulator) {
-  return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+  return (
+    req: Restify.Request,
+    res: Restify.Response,
+    next: Restify.Next
+  ): any => {
     try {
-      let emulate: string = req.params.emulate;
+      const emulate: string = req.params.emulate;
       if (emulate) {
-          OAuthLinkEncoder.EmulateOAuthCards = (emulate.toLowerCase() === 'true');
+        OAuthLinkEncoder.EmulateOAuthCards = emulate.toLowerCase() === "true";
       } else {
-          OAuthLinkEncoder.EmulateOAuthCards = false;
+        OAuthLinkEncoder.EmulateOAuthCards = false;
       }
       res.send(HttpStatus.OK);
-      
+
       res.end();
     } catch (err) {
       sendErrorResponse(req, res, next, err);

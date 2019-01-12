@@ -31,10 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { select } from 'redux-saga/effects';
-import { RootState } from '../store';
-import { SharedConstants } from '@bfemulator/app-shared';
-import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
+import { SharedConstants } from "@bfemulator/app-shared";
+import { select } from "redux-saga/effects";
+
+import { CommandServiceImpl } from "../../platform/commands/commandServiceImpl";
+import { RootState } from "../store";
 
 export function editorSelector(state: RootState) {
   return state.editor;
@@ -42,5 +43,8 @@ export function editorSelector(state: RootState) {
 
 export function* refreshConversationMenu(): IterableIterator<any> {
   const stateData = yield select(editorSelector);
-  yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.UpdateConversationMenu, stateData);
+  yield CommandServiceImpl.remoteCall(
+    SharedConstants.Commands.Electron.UpdateConversationMenu,
+    stateData
+  );
 }

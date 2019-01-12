@@ -31,21 +31,22 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './channel';
-export * from './sender';
+export * from "./channel";
+export * from "./sender";
 
-import { Disposable, DisposableImpl } from '../lifecycle';
-import { Channel } from './channel';
-import { Sender } from './sender';
+import { Disposable, DisposableImpl } from "../lifecycle";
+
+import { Channel } from "./channel";
+import { Sender } from "./sender";
 
 export abstract class IPC extends DisposableImpl implements Sender {
   protected _channels: { [id: string]: Channel } = {};
 
   public id: number;
 
-  registerChannel(channel: Channel): Disposable {
+  public registerChannel(channel: Channel): Disposable {
     if (!channel) {
-      throw new Error('channel cannot be null');
+      throw new Error("channel cannot be null");
     }
     if (this._channels[channel.name]) {
       throw new Error(`channel ${channel.name} already exists`);
@@ -58,11 +59,11 @@ export abstract class IPC extends DisposableImpl implements Sender {
     };
   }
 
-  getChannel(name: string): Channel {
+  public getChannel(name: string): Channel {
     return this._channels[name];
   }
 
-  abstract send(...args: any[]): void;
+  public abstract send(...args: any[]): void;
 }
 
 export class NoopIPC extends IPC {
@@ -74,7 +75,7 @@ export class NoopIPC extends IPC {
     return this._id;
   }
 
-  send(...args: any[]): void {
+  public send(...args: any[]): void {
     return null;
   }
 }

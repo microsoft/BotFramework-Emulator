@@ -31,7 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { NotificationAction, NotificationActions } from '../action/notificationActions';
+import {
+  NotificationAction,
+  NotificationActions
+} from "../action/notificationActions";
 
 export interface NotificationState {
   allIds: string[];
@@ -41,7 +44,10 @@ const DEFAULT_STATE: NotificationState = {
   allIds: []
 };
 
-export function notification(state: NotificationState = DEFAULT_STATE, action: NotificationAction): NotificationState {
+export function notification(
+  state: NotificationState = DEFAULT_STATE,
+  action: NotificationAction
+): NotificationState {
   switch (action.type) {
     case NotificationActions.finishAdd: {
       const { id: idToAdd } = action.payload.notification;

@@ -31,8 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Command, CommandHandler, CommandMap } from './';
-import { Disposable } from '../lifecycle';
+import { Disposable } from "../lifecycle";
+
+import { Command, CommandHandler, CommandMap } from "./";
 
 export interface CommandRegistry {
   registerCommand(id: string, command: CommandHandler): Disposable;
@@ -45,18 +46,19 @@ export interface CommandRegistry {
 }
 
 export class CommandRegistryImpl implements CommandRegistry {
-
   private _commands: CommandMap = {};
 
-  registerCommand(idOrCommand: string | Command, handler?: CommandHandler): Disposable {
-
+  public registerCommand(
+    idOrCommand: string | Command,
+    handler?: CommandHandler
+  ): Disposable {
     if (!idOrCommand) {
-      throw new Error('invalid command');
+      throw new Error("invalid command");
     }
 
-    if (typeof idOrCommand === 'string') {
+    if (typeof idOrCommand === "string") {
       if (!handler) {
-        throw new Error('invalid command');
+        throw new Error("invalid command");
       }
       return this.registerCommand({ id: idOrCommand, handler });
     }
@@ -70,11 +72,11 @@ export class CommandRegistryImpl implements CommandRegistry {
     };
   }
 
-  getCommand(id: string): Command {
+  public getCommand(id: string): Command {
     return this._commands[id];
   }
 
-  getCommands(): CommandMap {
+  public getCommands(): CommandMap {
     return this._commands;
   }
 }

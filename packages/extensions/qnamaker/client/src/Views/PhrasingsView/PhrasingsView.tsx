@@ -31,9 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from 'react';
-import { Component } from 'react';
-import * as styles from './PhrasingsView.scss';
+import * as React from "react";
+import { Component } from "react";
+
+import * as styles from "./PhrasingsView.scss";
 
 interface PhrasingsViewProps {
   phrasings: string[];
@@ -46,44 +47,56 @@ export default class PhrasingsView extends Component<PhrasingsViewProps, {}> {
     super(props, context);
   }
 
-  render(): JSX.Element {
-    let phrasingsElems: JSX.Element[] = this.props.phrasings.map(
+  public render(): JSX.Element {
+    const phrasingsElems: JSX.Element[] = this.props.phrasings.map(
       (phrasing, index) => this.renderPhrasing(phrasing, index !== 0)
     );
     return (
-      <div className={ styles.questionColumn }>
+      <div className={styles.questionColumn}>
         <h3>Alternative phrasing</h3>
-        { phrasingsElems }
+        {phrasingsElems}
         <input
           id="phrasing-input"
           placeholder="Add alternative here"
-          onKeyPress={ (e) => this.phraseInputKeyPress(e) }
+          onKeyPress={e => this.phraseInputKeyPress(e)}
         />
-        <button id="add-phrase-btn" className={ styles.plusBtn } onClick={ () => this.handleAddPhraseClick() }/>
+        <button
+          id="add-phrase-btn"
+          className={styles.plusBtn}
+          onClick={() => this.handleAddPhraseClick()}
+        />
       </div>
     );
   }
 
   private renderPhrasing(phrasing: string, allowRemove: boolean): JSX.Element {
     return (
-      <div className={ styles.phrasingBlock } key={ phrasing }>
-        { phrasing }
-        { allowRemove ? <button className={ styles.closeBtn } onClick={ () => this.removePhrasing(phrasing) }/> : null }
+      <div className={styles.phrasingBlock} key={phrasing}>
+        {phrasing}
+        {allowRemove ? (
+          <button
+            className={styles.closeBtn}
+            onClick={() => this.removePhrasing(phrasing)}
+          />
+        ) : null}
       </div>
     );
   }
 
   private phraseInputKeyPress(e: any) {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       this.handleAddPhraseClick();
     }
   }
 
   private handleAddPhraseClick() {
-    let newPhrase = (document.getElementById('phrasing-input') as HTMLInputElement).value;
+    const newPhrase = (document.getElementById(
+      "phrasing-input"
+    ) as HTMLInputElement).value;
     if (newPhrase) {
       this.props.addPhrasing(newPhrase);
-      (document.getElementById('phrasing-input') as HTMLInputElement).value = '';
+      (document.getElementById("phrasing-input") as HTMLInputElement).value =
+        "";
     }
   }
 

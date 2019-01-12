@@ -30,35 +30,55 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { call, ForkEffect, put, select, takeEvery } from 'redux-saga/effects';
+import { SharedConstants } from "@bfemulator/app-shared";
+import { call, ForkEffect, put, select, takeEvery } from "redux-saga/effects";
+
+import { CommandServiceImpl } from "../../platform/commands/commandServiceImpl";
+import { DialogService } from "../../ui/dialogs";
 import {
   AZURE_BEGIN_AUTH_WORKFLOW,
   azureArmTokenDataChanged,
   AzureAuthAction,
   AzureAuthWorkflow
-} from '../action/azureAuthActions';
-import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
-import { SharedConstants } from '@bfemulator/app-shared';
-import { RootState } from '../store';
-import { DialogService } from '../../ui/dialogs';
-import { AzureAuthState } from '../reducer/azureAuthReducer';
+} from "../action/azureAuthActions";
+import { AzureAuthState } from "../reducer/azureAuthReducer";
+import { RootState } from "../store";
 
 const getArmTokenFromState = (state: RootState) => state.azureAuth;
 
-export function* getArmToken(action: AzureAuthAction<AzureAuthWorkflow>): IterableIterator<any> {
+export function* getArmToken(
+  action: AzureAuthAction<AzureAuthWorkflow>
+): IterableIterator<any> {
   let azureAuth: AzureAuthState = yield select(getArmTokenFromState);
   if (azureAuth.access_token) {
     return azureAuth;
   }
-  const result = yield DialogService.showDialog(action.payload.promptDialog, action.payload.promptDialogProps);
-  if (result !== 1) { // Result must be 1 which is a confirmation to sign in to Azure
+  const result = yield DialogService.showDialog(
+    action.payload.promptDialog,
+    action.payload.promptDialogProps
+  );
+  if (result !== 1) {
+    // Result must be 1 which is a confirmation to sign in to Azure
     return result;
   }
-  const { RetrieveArmToken, PersistAzureLoginChanged } = SharedConstants.Commands.Azure;
-  azureAuth = yield call(CommandServiceImpl.remoteCall.bind(CommandServiceImpl), RetrieveArmToken);
-  if (azureAuth && !('error' in azureAuth)) {
-    const persistLogin = yield DialogService.showDialog(action.payload.loginSuccessDialog, azureAuth);
-    yield call(CommandServiceImpl.remoteCall.bind(CommandServiceImpl), PersistAzureLoginChanged, persistLogin);
+  const {
+    RetrieveArmToken,
+    PersistAzureLoginChanged
+  } = SharedConstants.Commands.Azure;
+  azureAuth = yield call(
+    CommandServiceImpl.remoteCall.bind(CommandServiceImpl),
+    RetrieveArmToken
+  );
+  if (azureAuth && !("error" in azureAuth)) {
+    const persistLogin = yield DialogService.showDialog(
+      action.payload.loginSuccessDialog,
+      azureAuth
+    );
+    yield call(
+      CommandServiceImpl.remoteCall.bind(CommandServiceImpl),
+      PersistAzureLoginChanged,
+      persistLogin
+    );
   } else {
     yield DialogService.showDialog(action.payload.loginFailedDialog);
   }

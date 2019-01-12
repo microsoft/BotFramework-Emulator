@@ -31,12 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { mount } from 'enzyme';
-import * as React from 'react';
-import { KvPair } from './kvPair';
+import { mount } from "enzyme";
+import * as React from "react";
+import { KvPair } from "./kvPair";
 
-jest.mock('./connectedServiceEditor.scss', () => ({}));
-describe('The KvPair component', () => {
+jest.mock("./connectedServiceEditor.scss", () => ({}));
+describe("The KvPair component", () => {
   let node;
   let mockKvs;
   const mockOnChange = {
@@ -45,13 +45,15 @@ describe('The KvPair component', () => {
 
   beforeEach(() => {
     mockKvs = {
-      someKey: 'someValue'
+      someKey: "someValue"
     };
 
-    node = mount(<KvPair onChange={ mockOnChange.onKvPairChanged } kvPairs={ mockKvs }/>);
+    node = mount(
+      <KvPair onChange={mockOnChange.onKvPairChanged} kvPairs={mockKvs} />
+    );
   });
 
-  it('should render at least one empty row when at least one non-empty row exist in the data', () => {
+  it("should render at least one empty row when at least one non-empty row exist in the data", () => {
     const instance = node.instance();
     expect(instance.render().props.children.length).toBe(2);
   });
@@ -59,20 +61,21 @@ describe('The KvPair component', () => {
   it('should call the given callback with the updated kv pairs when "onChange()" is called', () => {
     const input = node.find('ul li:last-child input[data-prop="key"]');
     const instance = input.instance();
-    instance.value = 'someKey2';
+    instance.value = "someKey2";
 
     node.instance().onChange({ target: instance });
     expect(node.state()).toEqual({
-      'kvPairs': [
+      kvPairs: [
         {
-          key: 'someKey',
+          key: "someKey",
           value: undefined
         },
         {
-          key: 'someKey2',
-          value: ''
+          key: "someKey2",
+          value: ""
         }
-      ], length: 2
+      ],
+      length: 2
     });
   });
 });

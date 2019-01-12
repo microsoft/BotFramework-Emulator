@@ -31,12 +31,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ChangeEvent } from 'react';
-import * as React from 'react';
-import * as styles from './secretPromptDialog.scss';
-import * as dialogStyles from '../dialogStyles.scss';
+import {
+  DefaultButton,
+  Dialog,
+  PrimaryButton,
+  TextField
+} from "@bfemulator/ui-react";
+import { ChangeEvent } from "react";
+import * as React from "react";
 
-import { DefaultButton, Dialog, PrimaryButton, TextField, } from '@bfemulator/ui-react';
+import * as dialogStyles from "../dialogStyles.scss";
+
+import * as styles from "./secretPromptDialog.scss";
 
 interface SecretPromptDialogState {
   secret: string;
@@ -48,52 +54,66 @@ export interface SecretPromptDialogProps {
   onSaveClick: (newSecret: string) => void;
 }
 
-export class SecretPromptDialog extends React.Component<SecretPromptDialogProps, SecretPromptDialogState> {
-  constructor(props: SecretPromptDialogProps, context: SecretPromptDialogState) {
+export class SecretPromptDialog extends React.Component<
+  SecretPromptDialogProps,
+  SecretPromptDialogState
+> {
+  constructor(
+    props: SecretPromptDialogProps,
+    context: SecretPromptDialogState
+  ) {
     super(props, context);
 
-    this.state = { secret: '', revealSecret: false };
+    this.state = { secret: "", revealSecret: false };
   }
 
-  render(): JSX.Element {
+  public render(): JSX.Element {
     return (
       <Dialog
         title="Your bot file is encrypted"
-        className={ dialogStyles.dialogMedium }
-        modalStyle={ styles.secretPromptDialogModal } cancel={ this.onDismissClick }>
+        className={dialogStyles.dialogMedium}
+        modalStyle={styles.secretPromptDialogModal}
+        cancel={this.onDismissClick}
+      >
         <p>
-          { ' If you created your bot through the Azure Bot Service, you can find your bot file secret in the Azure ' +
-          'portal under Application settings.' }
+          {" If you created your bot through the Azure Bot Service, you can find your bot file secret in the Azure " +
+            "portal under Application settings."}
         </p>
         <p>
-          { 'If you encrypted your bot file with the MsBot command-line tool, your bot file secret was displayed ' +
-          'when you ran MsBot. ' }
-          <a href="https://github.com/Microsoft/botbuilder-tools/tree/master/packages/MSBot">Learn more about MsBot.</a>
+          {"If you encrypted your bot file with the MsBot command-line tool, your bot file secret was displayed " +
+            "when you ran MsBot. "}
+          <a href="https://github.com/Microsoft/botbuilder-tools/tree/master/packages/MSBot">
+            Learn more about MsBot.
+          </a>
         </p>
-        <div className={ styles.keyContainer }>
+        <div className={styles.keyContainer}>
           <TextField
-            required={ true }
-            inputContainerClassName={ styles.key }
-            value={ this.state.secret }
+            required={true}
+            inputContainerClassName={styles.key}
+            value={this.state.secret}
             placeholder="Enter your bot file's secret"
-            onChange={ this.onChangeSecret }
-            label={ 'Bot file secret' }
-            type={ this.state.revealSecret ? 'text' : 'password' }/>
-          <a href="javascript:void(0);"
-             className={ styles.show }
-             aria-disabled={ !this.state.secret }
-             onClick={ this.onRevealSecretClick }>
-            { this.state.revealSecret ? 'Hide' : 'Show' }
+            onChange={this.onChangeSecret}
+            label={"Bot file secret"}
+            type={this.state.revealSecret ? "text" : "password"}
+          />
+          <a
+            href="javascript:void(0);"
+            className={styles.show}
+            aria-disabled={!this.state.secret}
+            onClick={this.onRevealSecretClick}
+          >
+            {this.state.revealSecret ? "Hide" : "Show"}
           </a>
         </div>
 
-        <div className={ styles.buttonRow }>
-          <DefaultButton text={ 'Cancel' } onClick={ this.onDismissClick }/>
+        <div className={styles.buttonRow}>
+          <DefaultButton text={"Cancel"} onClick={this.onDismissClick} />
           <PrimaryButton
-            disabled={ !this.state.secret }
-            className={ styles.saveButton }
-            text={ 'Submit' }
-            onClick={ this.onSaveClick }/>
+            disabled={!this.state.secret}
+            className={styles.saveButton}
+            text={"Submit"}
+            onClick={this.onSaveClick}
+          />
         </div>
       </Dialog>
     );
@@ -101,18 +121,18 @@ export class SecretPromptDialog extends React.Component<SecretPromptDialogProps,
 
   private onRevealSecretClick = () => {
     this.setState({ revealSecret: !this.state.revealSecret });
-  }
+  };
 
   private onDismissClick = () => {
     this.props.onCancelClick();
-  }
+  };
 
   private onSaveClick = () => {
     this.props.onSaveClick(this.state.secret);
-  }
+  };
 
   private onChangeSecret = (event: ChangeEvent<HTMLInputElement>) => {
     const { value: secret } = event.target;
     this.setState({ secret });
-  }
+  };
 }

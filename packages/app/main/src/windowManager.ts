@@ -31,11 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as Electron from 'electron';
-import * as URL from 'url';
-import * as path from 'path';
-import { dispatch, getSettings } from './settingsData/store';
-import { rememberZoomLevel } from './settingsData/actions/windowStateActions';
+import * as Electron from "electron";
+import * as path from "path";
+import * as URL from "url";
+
+import { rememberZoomLevel } from "./settingsData/actions/windowStateActions";
+import { dispatch, getSettings } from "./settingsData/store";
 
 export class WindowManager {
   private mainWindow: Electron.BrowserWindow;
@@ -44,11 +45,11 @@ export class WindowManager {
   constructor() {
     this.windows = [];
 
-    Electron.ipcMain.on('createCheckoutWindow', (event, args) => {
+    Electron.ipcMain.on("createCheckoutWindow", (event, args) => {
       this.createCheckoutWindow(args.payload, args.settings, args.serviceUrl);
     });
-    Electron.ipcMain.on('getCheckoutState', (event, args) => {
-      let state = event.sender.checkoutState;
+    Electron.ipcMain.on("getCheckoutState", (event, args) => {
+      const state = event.sender.checkoutState;
       event.returnValue = state;
     });
   }
@@ -70,7 +71,7 @@ export class WindowManager {
   }
 
   public remove(window: Electron.BrowserWindow) {
-    let idx = this.windows.indexOf(window);
+    const idx = this.windows.indexOf(window);
     if (idx !== -1) {
       this.windows.splice(idx, 1);
     }
@@ -91,30 +92,33 @@ export class WindowManager {
   public zoomTo(zoomLevel: number) {
     this.mainWindow.webContents.setZoomLevel(zoomLevel);
     this.windows.forEach(win => win.webContents.setZoomLevel(zoomLevel));
-    dispatch(rememberZoomLevel({zoomLevel}));
+    dispatch(rememberZoomLevel({ zoomLevel }));
   }
 
-  public createCheckoutWindow(payload: string, settings: any, serviceUrl: string) {
+  public createCheckoutWindow(
+    payload: string,
+    settings: any,
+    serviceUrl: string
+  ) {
     let page = URL.format({
-      protocol: 'file',
+      protocol: "file",
       slashes: true,
-      pathname: path.join(__dirname, '../client/payments/index.html')
+      pathname: path.join(__dirname, "../client/payments/index.html")
     });
-    page += '?' + payload;
+    page += "?" + payload;
 
-    let checkoutWindow = new Electron.BrowserWindow({
+    const checkoutWindow = new Electron.BrowserWindow({
       width: 1000,
       height: 620,
-      title: 'Checkout with Microsoft Emulator'
+      title: "Checkout with Microsoft Emulator"
     });
     this.add(checkoutWindow);
-
     (checkoutWindow.webContents as any).checkoutState = {
-      settings: settings,
-      serviceUrl: serviceUrl
+      settings,
+      serviceUrl
     };
 
-    checkoutWindow.on('closed', () => {
+    checkoutWindow.on("closed", () => {
       this.remove(checkoutWindow);
     });
 
@@ -123,34 +127,39 @@ export class WindowManager {
     // Load a remote URL
     checkoutWindow.loadURL(page);
 
-    checkoutWindow.webContents.setZoomLevel(getSettings().windowState.zoomLevel);
+    checkoutWindow.webContents.setZoomLevel(
+      getSettings().windowState.zoomLevel
+    );
   }
 
   public createOAuthWindow(url: string, codeVerifier: string) {
-    let win = new Electron.BrowserWindow({
+    const win = new Electron.BrowserWindow({
       width: 800,
       height: 600,
-      title: 'Sign In'
+      title: "Sign In"
     });
     this.add(win);
-    let webContents = win.webContents;
+    const webContents = win.webContents;
 
     // webContents.openDevTools();
     webContents.setZoomLevel(getSettings().windowState.zoomLevel);
 
-    win.on('closed', () => {
+    win.on("closed", () => {
       this.remove(win);
     });
 
     const ses = webContents.session;
     ses.webRequest.onBeforeRequest((details, callback) => {
-      let url1 = details.url.toLowerCase();
-      if (url1.indexOf('/postsignincallback?') !== -1 && url1.indexOf('&code_verifier=') === -1) {
+      const url1 = details.url.toLowerCase();
+      if (
+        url1.indexOf("/postsignincallback?") !== -1 &&
+        url1.indexOf("&code_verifier=") === -1
+      ) {
         if (getSettings().framework.useCodeValidation) {
-          codeVerifier = 'emulated';
+          codeVerifier = "emulated";
         }
         // final OAuth redirect so augment the call with the code_verifier
-        const newUrl = details.url + '&code_verifier=' + codeVerifier;
+        const newUrl = details.url + "&code_verifier=" + codeVerifier;
         callback({ redirectURL: newUrl });
       } else {
         // let the request happen
@@ -162,7 +171,7 @@ export class WindowManager {
   }
 
   public closeAll() {
-    let openWindows = [];
+    const openWindows = [];
     this.windows.forEach(win => openWindows.push(win));
     openWindows.forEach(win => win.close());
     this.windows = [];

@@ -31,18 +31,34 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as jwt from 'jsonwebtoken';
-import * as Restify from 'restify';
+import * as jwt from "jsonwebtoken";
+import * as Restify from "restify";
 
-import { authentication, v31Authentication, v32Authentication, usGovernmentAuthentication } from '../authEndpoints';
-import OpenIdMetadata from './openIdMetadata';
+import {
+  authentication,
+  usGovernmentAuthentication,
+  v31Authentication,
+  v32Authentication
+} from "../authEndpoints";
+
+import OpenIdMetadata from "./openIdMetadata";
 
 export default function createBotFrameworkAuthenticationMiddleware(fetch: any) {
-  const openIdMetadata = new OpenIdMetadata(fetch, authentication.openIdMetadata);
-  const usGovOpenIdMetadata = new OpenIdMetadata(fetch, usGovernmentAuthentication.openIdMetadata);
+  const openIdMetadata = new OpenIdMetadata(
+    fetch,
+    authentication.openIdMetadata
+  );
+  const usGovOpenIdMetadata = new OpenIdMetadata(
+    fetch,
+    usGovernmentAuthentication.openIdMetadata
+  );
 
-  return async (req: Restify.Request, res: Restify.Response, next: Restify.Next) => {
-    const authorization = req.header('Authorization');
+  return async (
+    req: Restify.Request,
+    res: Restify.Response,
+    next: Restify.Next
+  ) => {
+    const authorization = req.header("Authorization");
 
     if (!authorization) {
       next();
@@ -50,10 +66,13 @@ export default function createBotFrameworkAuthenticationMiddleware(fetch: any) {
       return;
     }
 
-    const [authMethod, token] = authorization.trim().split(' ');
+    const [authMethod, token] = authorization.trim().split(" ");
 
     // Verify token
-    const decoded: any = /^bearer$/i.test(authMethod) && token && jwt.decode(token, { complete: true });
+    const decoded: any =
+      /^bearer$/i.test(authMethod) &&
+      token &&
+      jwt.decode(token, { complete: true });
 
     if (!decoded) {
       // Token not provided so
@@ -69,9 +88,9 @@ export default function createBotFrameworkAuthenticationMiddleware(fetch: any) {
 
       let issuer;
 
-      if (decoded.payload.ver === '1.0') {
+      if (decoded.payload.ver === "1.0") {
         issuer = usGovernmentAuthentication.tokenIssuerV1;
-      } else if (decoded.payload.ver === '2.0') {
+      } else if (decoded.payload.ver === "2.0") {
         issuer = usGovernmentAuthentication.tokenIssuerV2;
       } else {
         // unknown token format
@@ -85,7 +104,7 @@ export default function createBotFrameworkAuthenticationMiddleware(fetch: any) {
         (req as any).jwt = jwt.verify(token, key, {
           audience: usGovernmentAuthentication.botTokenAudience,
           clockTolerance: 300,
-          issuer: issuer,
+          issuer
 
           // TODO: "jwtId" is a typo, it should be "jwtid"
           //       But when we enable "jwtid", it will fail the verification
@@ -114,9 +133,9 @@ export default function createBotFrameworkAuthenticationMiddleware(fetch: any) {
 
       let issuer;
 
-      if (decoded.payload.ver === '1.0') {
+      if (decoded.payload.ver === "1.0") {
         issuer = v32Authentication.tokenIssuerV1;
-      } else if (decoded.payload.ver === '2.0') {
+      } else if (decoded.payload.ver === "2.0") {
         issuer = v32Authentication.tokenIssuerV2;
       } else {
         // unknown token format
@@ -132,7 +151,7 @@ export default function createBotFrameworkAuthenticationMiddleware(fetch: any) {
         (req as any).jwt = jwt.verify(token, key, {
           audience: authentication.botTokenAudience,
           clockTolerance: 300,
-          issuer,
+          issuer
 
           // TODO: "jwtId" is a typo, it should be "jwtid"
           //       But when we enable "jwtid", it will fail the verification
@@ -147,7 +166,7 @@ export default function createBotFrameworkAuthenticationMiddleware(fetch: any) {
           (req as any).jwt = jwt.verify(token, key, {
             audience: authentication.botTokenAudience,
             clockTolerance: 300,
-            issuer: v31Authentication.tokenIssuer,
+            issuer: v31Authentication.tokenIssuer
 
             // TODO: "jwtId" is a typo, it should be "jwtid"
             //       But when we enable "jwtid", it will fail the verification

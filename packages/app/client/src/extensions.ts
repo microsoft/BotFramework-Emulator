@@ -31,15 +31,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { SharedConstants } from "@bfemulator/app-shared";
 import {
   CommandRegistryImpl,
   CommandService,
   CommandServiceImpl,
   ExtensionConfig,
   ExtensionInspector
-} from '@bfemulator/sdk-shared';
-import { ElectronIPC } from './ipc';
-import { SharedConstants } from '@bfemulator/app-shared';
+} from "@bfemulator/sdk-shared";
+
+import { ElectronIPC } from "./ipc";
 
 // =============================================================================
 export class Extension {
@@ -64,11 +65,15 @@ export class Extension {
 
   public inspectorForObject(obj: any): GetInspectorResult | null {
     const inspectors = this.config.client.inspectors || [];
-    const inspector = inspectors.find(inspectorArg => InspectorAPI.canInspect(inspectorArg, obj));
-    return inspector ? {
-      extension: this,
-      inspector
-    } : null;
+    const inspector = inspectors.find(inspectorArg =>
+      InspectorAPI.canInspect(inspectorArg, obj)
+    );
+    return inspector
+      ? {
+          extension: this,
+          inspector
+        }
+      : null;
   }
 
   public call(commandName: string, ...args: any[]): Promise<any> {
@@ -82,7 +87,7 @@ export class InspectorAPI {
     if (!obj) {
       return false;
     }
-    if (typeof obj !== 'object') {
+    if (typeof obj !== "object") {
       return false;
     }
     // Check the activity against the inspector's set of criteria
@@ -94,11 +99,11 @@ export class InspectorAPI {
     criterias.forEach(criteria => {
       // Path is a json-path
       const value = getValueFromPath(obj, criteria.path);
-      if (typeof value === 'undefined') {
+      if (typeof value === "undefined") {
         canInspect = false;
       } else {
         // Value can be a regex or a string literal
-        if ((criteria.value || '').startsWith('/')) {
+        if ((criteria.value || "").startsWith("/")) {
           const regex = new RegExp(criteria.value);
           canInspect = canInspect && regex.test(value);
         } else {
@@ -114,7 +119,7 @@ export class InspectorAPI {
     if (!Array.isArray(summaryTexts)) {
       summaryTexts = [summaryTexts];
     }
-    let text = '';
+    let text = "";
     for (let i = 0; i < summaryTexts.length; ++i) {
       const value = getValueFromPath(obj, summaryTexts[i]);
       if (value) {
@@ -123,14 +128,17 @@ export class InspectorAPI {
     }
 
     if (text.length > 50) {
-      text = text.substring(0, 50) + '...';
+      text = text.substring(0, 50) + "...";
     }
     return text;
   }
 }
 
-export function getValueFromPath(source: { [prop: string]: any }, path: string): any {
-  const parts = path.split('.');
+export function getValueFromPath(
+  source: { [prop: string]: any },
+  path: string
+): any {
+  const parts = path.split(".");
   let val = source;
   for (let i = 0; i < parts.length; i++) {
     const part = parts[i];
@@ -158,7 +166,10 @@ export interface ExtensionManager {
 
   getExtensions(): Extension[];
 
-  inspectorForObject(obj: any, defaultToJson: boolean): GetInspectorResult | null;
+  inspectorForObject(
+    obj: any,
+    defaultToJson: boolean
+  ): GetInspectorResult | null;
 }
 
 // =============================================================================
@@ -180,24 +191,32 @@ export const ExtensionManager = new class implements ExtensionManager {
   }
 
   public findExtension(name: string): Extension {
-    return this.getExtensions().find(extension => extension.config.name === name);
+    return this.getExtensions().find(
+      extension => extension.config.name === name
+    );
   }
 
   public getExtensions(): Extension[] {
     return Object.keys(this.extensions).map(key => this.extensions[key]) || [];
   }
 
-  public inspectorForObject(obj: any, defaultToJson: boolean): GetInspectorResult | null {
+  public inspectorForObject(
+    obj: any,
+    defaultToJson: boolean
+  ): GetInspectorResult | null {
     let result = this.getExtensions()
       .map(extension => extension.inspectorForObject(obj))
-      .filter(resultArg => !!resultArg).shift();
+      .filter(resultArg => !!resultArg)
+      .shift();
     if (!result && defaultToJson) {
       // Default to the JSON inspector
-      const jsonExtension = ExtensionManager.findExtension('JSON');
+      const jsonExtension = ExtensionManager.findExtension("JSON");
       if (jsonExtension) {
         result = {
           extension: jsonExtension,
-          inspector: jsonExtension.config.client.inspectors ? jsonExtension.config.client.inspectors[0] : null
+          inspector: jsonExtension.config.client.inspectors
+            ? jsonExtension.config.client.inspectors[0]
+            : null
         };
       }
     }
@@ -214,4 +233,4 @@ export const ExtensionManager = new class implements ExtensionManager {
       ExtensionManager.removeExtension(location);
     });
   }
-};
+}();

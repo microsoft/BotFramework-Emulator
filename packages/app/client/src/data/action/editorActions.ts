@@ -31,54 +31,54 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Document } from '../reducer/editor';
+import { Document } from "../reducer/editor";
 
 export enum EditorActions {
-  appendTab = 'EDITOR/APPEND_TAB',
-  addDocPendingChange = 'EDITOR/ADD_DOC_PENDING_CHANGE',
-  removeDocPendingChange = 'EDITOR/REMOVE_DOC_PENDING_CHANGE',
-  close = 'EDITOR/CLOSE',
-  closeAll = 'EDITOR/CLOSE_ALL',
-  dropTabOnLeftOverlay = 'EDITOR/DROP_TAB_ON_LEFT_OVERLAY',
-  setDirtyFlag = 'EDITOR/SET_DIRTY_FLAG',
-  open = 'EDITOR/OPEN',
-  setActiveTab = 'EDITOR/SET_ACTIVE_TAB',
-  setActiveEditor = 'EDITOR/SET_ACTIVE_EDITOR',
-  splitTab = 'EDITOR/SPLIT_TAB',
-  swapTabs = 'EDITOR/SWAP_TABS',
-  toggleDraggingTab = 'EDITOR/TOGGLE_DRAGGING_TAB',
-  updateDocument = 'EDITOR/UPDATE_DOCUMENT'
+  appendTab = "EDITOR/APPEND_TAB",
+  addDocPendingChange = "EDITOR/ADD_DOC_PENDING_CHANGE",
+  removeDocPendingChange = "EDITOR/REMOVE_DOC_PENDING_CHANGE",
+  close = "EDITOR/CLOSE",
+  closeAll = "EDITOR/CLOSE_ALL",
+  dropTabOnLeftOverlay = "EDITOR/DROP_TAB_ON_LEFT_OVERLAY",
+  setDirtyFlag = "EDITOR/SET_DIRTY_FLAG",
+  open = "EDITOR/OPEN",
+  setActiveTab = "EDITOR/SET_ACTIVE_TAB",
+  setActiveEditor = "EDITOR/SET_ACTIVE_EDITOR",
+  splitTab = "EDITOR/SPLIT_TAB",
+  swapTabs = "EDITOR/SWAP_TABS",
+  toggleDraggingTab = "EDITOR/TOGGLE_DRAGGING_TAB",
+  updateDocument = "EDITOR/UPDATE_DOCUMENT"
 }
 
 export interface AppendTabAction {
   type: EditorActions.appendTab;
   payload: {
-    srcEditorKey: string,
-    destEditorKey: string,
-    documentId: string
+    srcEditorKey: string;
+    destEditorKey: string;
+    documentId: string;
   };
 }
 
 export interface CloseEditorAction {
   type: EditorActions.close;
   payload: {
-    editorKey: string,
-    documentId: string
+    editorKey: string;
+    documentId: string;
   };
 }
 
 export interface CloseAllEditorAction {
   type: EditorActions.closeAll;
   payload: {
-    includeGlobal: boolean
+    includeGlobal: boolean;
   };
 }
 
 export interface SetDirtyFlagAction {
   type: EditorActions.setDirtyFlag;
   payload: {
-    documentId: string
-    dirty: boolean
+    documentId: string;
+    dirty: boolean;
   };
 }
 
@@ -95,41 +95,41 @@ export interface UpdateDocumentAction {
 export interface SetActiveTabAction {
   type: EditorActions.setActiveTab;
   payload: {
-    documentId: string
+    documentId: string;
   };
 }
 
 export interface SetActiveEditorAction {
   type: EditorActions.setActiveEditor;
   payload: {
-    editorKey: string
+    editorKey: string;
   };
 }
 
 export interface SplitTabAction {
   type: EditorActions.splitTab;
   payload: {
-    contentType: string,
-    documentId: string,
-    srcEditorKey: string,
-    destEditorKey: string
+    contentType: string;
+    documentId: string;
+    srcEditorKey: string;
+    destEditorKey: string;
   };
 }
 
 export interface SwapTabsAction {
   type: EditorActions.swapTabs;
   payload: {
-    srcEditorKey: string,
-    destEditorKey: string,
-    srcTabId: string,
-    destTabId: string
+    srcEditorKey: string;
+    destEditorKey: string;
+    srcTabId: string;
+    destTabId: string;
   };
 }
 
 export interface ToggleDraggingTabAction {
   type: EditorActions.toggleDraggingTab;
   payload: {
-    draggingTab: boolean
+    draggingTab: boolean;
   };
 }
 
@@ -150,27 +150,31 @@ export interface RemoveDocPendingChangeAction {
 export interface DropTabOnLeftOverlayAction {
   type: EditorActions.dropTabOnLeftOverlay;
   payload: {
-    tabId: string
+    tabId: string;
   };
 }
 
 export type EditorAction =
-  AppendTabAction |
-  CloseEditorAction |
-  CloseAllEditorAction |
-  SetDirtyFlagAction |
-  OpenEditorAction |
-  UpdateDocumentAction |
-  SetActiveTabAction |
-  SetActiveEditorAction |
-  SplitTabAction |
-  SwapTabsAction |
-  ToggleDraggingTabAction |
-  AddDocPendingChangeAction |
-  RemoveDocPendingChangeAction |
-  DropTabOnLeftOverlayAction;
+  | AppendTabAction
+  | CloseEditorAction
+  | CloseAllEditorAction
+  | SetDirtyFlagAction
+  | OpenEditorAction
+  | UpdateDocumentAction
+  | SetActiveTabAction
+  | SetActiveEditorAction
+  | SplitTabAction
+  | SwapTabsAction
+  | ToggleDraggingTabAction
+  | AddDocPendingChangeAction
+  | RemoveDocPendingChangeAction
+  | DropTabOnLeftOverlayAction;
 
-export function appendTab(srcEditorKey: string, destEditorKey: string, documentId: string): AppendTabAction {
+export function appendTab(
+  srcEditorKey: string,
+  destEditorKey: string,
+  documentId: string
+): AppendTabAction {
   return {
     type: EditorActions.appendTab,
     payload: {
@@ -181,7 +185,9 @@ export function appendTab(srcEditorKey: string, destEditorKey: string, documentI
   };
 }
 
-export function addDocPendingChange(documentId: string): AddDocPendingChangeAction {
+export function addDocPendingChange(
+  documentId: string
+): AddDocPendingChangeAction {
   return {
     type: EditorActions.addDocPendingChange,
     payload: {
@@ -190,7 +196,9 @@ export function addDocPendingChange(documentId: string): AddDocPendingChangeActi
   };
 }
 
-export function removeDocPendingChange(documentId: string): RemoveDocPendingChangeAction {
+export function removeDocPendingChange(
+  documentId: string
+): RemoveDocPendingChangeAction {
   return {
     type: EditorActions.removeDocPendingChange,
     payload: {
@@ -199,7 +207,10 @@ export function removeDocPendingChange(documentId: string): RemoveDocPendingChan
   };
 }
 
-export function close(editorKey: string, documentId: string): CloseEditorAction {
+export function close(
+  editorKey: string,
+  documentId: string
+): CloseEditorAction {
   return {
     type: EditorActions.close,
     payload: {
@@ -218,7 +229,10 @@ export function closeNonGlobalTabs(): CloseAllEditorAction {
   };
 }
 
-export function setDirtyFlag(documentId: string, dirty: boolean): SetDirtyFlagAction {
+export function setDirtyFlag(
+  documentId: string,
+  dirty: boolean
+): SetDirtyFlagAction {
   return {
     type: EditorActions.setDirtyFlag,
     payload: {
@@ -235,7 +249,10 @@ export function open(document: Document): OpenEditorAction {
   };
 }
 
-export function updateDocument(documentId: string, updatedDocument: Partial<Document>): UpdateDocumentAction {
+export function updateDocument(
+  documentId: string,
+  updatedDocument: Partial<Document>
+): UpdateDocumentAction {
   return {
     type: EditorActions.updateDocument,
     payload: { documentId, ...updatedDocument }
@@ -260,8 +277,12 @@ export function setActiveEditor(editorKey: string): SetActiveEditorAction {
   };
 }
 
-export function splitTab(contentType: string, documentId: string, srcEditorKey: string, destEditorKey: string)
-  : SplitTabAction {
+export function splitTab(
+  contentType: string,
+  documentId: string,
+  srcEditorKey: string,
+  destEditorKey: string
+): SplitTabAction {
   return {
     type: EditorActions.splitTab,
     payload: {
@@ -273,8 +294,12 @@ export function splitTab(contentType: string, documentId: string, srcEditorKey: 
   };
 }
 
-export function swapTabs(srcEditorKey: string, destEditorKey: string, srcTabId: string, destTabId: string)
-  : SwapTabsAction {
+export function swapTabs(
+  srcEditorKey: string,
+  destEditorKey: string,
+  srcTabId: string,
+  destTabId: string
+): SwapTabsAction {
   return {
     type: EditorActions.swapTabs,
     payload: {
@@ -286,7 +311,9 @@ export function swapTabs(srcEditorKey: string, destEditorKey: string, srcTabId: 
   };
 }
 
-export function toggleDraggingTab(draggingTab: boolean): ToggleDraggingTabAction {
+export function toggleDraggingTab(
+  draggingTab: boolean
+): ToggleDraggingTabAction {
   return {
     type: EditorActions.toggleDraggingTab,
     payload: {
@@ -295,7 +322,9 @@ export function toggleDraggingTab(draggingTab: boolean): ToggleDraggingTabAction
   };
 }
 
-export function dropTabOnLeftOverlay(tabId: string): DropTabOnLeftOverlayAction {
+export function dropTabOnLeftOverlay(
+  tabId: string
+): DropTabOnLeftOverlayAction {
   return {
     type: EditorActions.dropTabOnLeftOverlay,
     payload: {

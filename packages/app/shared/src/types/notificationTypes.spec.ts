@@ -31,10 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { NotificationImpl } from './notificationTypes';
+import { NotificationImpl } from "./notificationTypes";
 
-describe('NotificationImpl class', () => {
-  test('initialization', () => {
+describe("NotificationImpl class", () => {
+  test("initialization", () => {
     const notif1 = new NotificationImpl();
     const notif2 = new NotificationImpl();
 
@@ -47,15 +47,15 @@ describe('NotificationImpl class', () => {
     expect(notif1.id).not.toBe(notif2.id);
   });
 
-  test('addButton()', () => {
+  test("addButton()", () => {
     const notif = new NotificationImpl();
-    notif.addButton('button1');
-    notif.addButton('button2', (a: number, b: number) => a + b);
+    notif.addButton("button1");
+    notif.addButton("button2", (a: number, b: number) => a + b);
 
     expect(notif.buttons).toHaveLength(2);
-    expect(notif.buttons[0].text).toBe('button1');
+    expect(notif.buttons[0].text).toBe("button1");
     expect(notif.buttons[0].onClick).toBeFalsy();
-    expect(notif.buttons[1].text).toBe('button2');
+    expect(notif.buttons[1].text).toBe("button2");
     expect(notif.buttons[1].onClick(1, 2)).toBe(3);
   });
 });

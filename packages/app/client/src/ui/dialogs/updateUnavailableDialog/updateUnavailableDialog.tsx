@@ -31,14 +31,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from 'react';
-import { Dialog, DialogFooter, PrimaryButton } from '@bfemulator/ui-react';
+import { Dialog, DialogFooter, PrimaryButton } from "@bfemulator/ui-react";
+import * as React from "react";
 
 export interface UpdateUnavailableDialogProps {
   onCloseClick?: () => any;
 }
 
-export class UpdateUnavailableDialog extends React.Component<UpdateUnavailableDialogProps, {}> {
+export class UpdateUnavailableDialog extends React.Component<
+  UpdateUnavailableDialogProps,
+  {}
+> {
   constructor(props: UpdateUnavailableDialogProps) {
     super(props);
   }
@@ -47,10 +50,10 @@ export class UpdateUnavailableDialog extends React.Component<UpdateUnavailableDi
     const { onCloseClick } = this.props;
 
     return (
-      <Dialog cancel={ onCloseClick } title="No update available">
+      <Dialog cancel={onCloseClick} title="No update available">
         <p>There are no updates available for download.</p>
         <DialogFooter>
-          <PrimaryButton text="Close" onClick={ onCloseClick }/>
+          <PrimaryButton text="Close" onClick={onCloseClick} />
         </DialogFooter>
       </Dialog>
     );

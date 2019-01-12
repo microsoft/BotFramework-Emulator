@@ -31,5 +31,5 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './main';
-export * from './statusBar/statusBar';
+export * from "./main";
+export * from "./statusBar/statusBar";

@@ -31,20 +31,20 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from 'react';
-import { Provider } from 'react-redux';
-import { createStore } from 'redux';
-import { mount, ReactWrapper } from 'enzyme';
-import { Log, LogProps } from './log';
-import { LogEntry } from './logEntry';
+import * as React from "react";
+import { Provider } from "react-redux";
+import { createStore } from "redux";
+import { mount, ReactWrapper } from "enzyme";
+import { Log, LogProps } from "./log";
+import { LogEntry } from "./logEntry";
 
-jest.mock('./log.scss', () => ({}));
-jest.mock('../../../../../platform/commands/commandServiceImpl', () => ({
+jest.mock("./log.scss", () => ({}));
+jest.mock("../../../../../platform/commands/commandServiceImpl", () => ({
   call: (...args: any[]) => null,
   remoteCall: (...args: any[]) => null
 }));
 
-describe('log component', () => {
+describe("log component", () => {
   let parent: ReactWrapper;
   let wrapper: ReactWrapper;
 
@@ -52,23 +52,19 @@ describe('log component', () => {
     const props: LogProps = {
       document: {
         log: {
-          entries: [
-            { items: [] },
-            { items: [] },
-            { items: [] }
-          ]
+          entries: [{ items: [] }, { items: [] }, { items: [] }]
         }
       }
     };
     parent = mount(
-      <Provider store={ createStore((_action, state) => state, {}) } >
-        <Log { ...props } />
+      <Provider store={createStore((_action, state) => state, {})}>
+        <Log {...props} />
       </Provider>
     );
     wrapper = parent.find(Log);
   });
 
-  it('should render entry component(s) based on props', () => {
+  it("should render entry component(s) based on props", () => {
     expect(wrapper.find(LogEntry)).toHaveLength(3);
   });
 });

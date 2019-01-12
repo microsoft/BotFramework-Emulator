@@ -31,23 +31,29 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as HttpStatus from 'http-status-codes';
-import * as Restify from 'restify';
+import * as HttpStatus from "http-status-codes";
+import * as Restify from "restify";
 
-import BotEmulator from '../../botEmulator';
-import GenericActivity from '../../types/activity/generic';
-import ResourceResponse from '../../types/response/resource';
-import sendErrorResponse from '../../utils/sendErrorResponse';
+import BotEmulator from "../../botEmulator";
+import GenericActivity from "../../types/activity/generic";
+import ResourceResponse from "../../types/response/resource";
+import sendErrorResponse from "../../utils/sendErrorResponse";
 
 export default function sendActivityToConversation(botEmulator: BotEmulator) {
-  return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-    const activity = <GenericActivity> req.body;
+  return (
+    req: Restify.Request,
+    res: Restify.Response,
+    next: Restify.Next
+  ): any => {
+    const activity = req.body as GenericActivity;
     try {
       activity.id = null;
       activity.replyToId = req.params.activityId;
 
       // post activity
-      const response: ResourceResponse = (req as any).conversation.postActivityToUser(activity);
+      const response: ResourceResponse = (req as any).conversation.postActivityToUser(
+        activity
+      );
 
       res.send(HttpStatus.OK, response);
       res.end();

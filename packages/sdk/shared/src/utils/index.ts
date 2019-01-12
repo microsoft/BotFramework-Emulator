@@ -31,6 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './misc';
-export * from './bot';
-export * from './json2HTML';
+export * from "./misc";
+export * from "./bot";
+export * from "./json2HTML";

@@ -1,41 +1,41 @@
-import { LuisService } from 'botframework-config/lib/models';
-import { mount } from 'enzyme';
-import * as React from 'react';
-import { Provider } from 'react-redux';
-import { combineReducers, createStore } from 'redux';
-import { load, setActive } from '../../../../data/action/botActions';
+import { LuisService } from "botframework-config/lib/models";
+import { mount } from "enzyme";
+import * as React from "react";
+import { Provider } from "react-redux";
+import { combineReducers, createStore } from "redux";
+import { load, setActive } from "../../../../data/action/botActions";
 import {
   openAddServiceContextMenu,
   openContextMenuForConnectedService,
   openServiceDeepLink,
   openSortContextMenu
-} from '../../../../data/action/connectedServiceActions';
-import { bot } from '../../../../data/reducer/bot';
-import { explorer } from '../../../../data/reducer/explorer';
+} from "../../../../data/action/connectedServiceActions";
+import { bot } from "../../../../data/reducer/bot";
+import { explorer } from "../../../../data/reducer/explorer";
 import {
   AzureLoginFailedDialogContainer,
   AzureLoginSuccessDialogContainer,
   ConnectServicePromptDialogContainer,
   GetStartedWithCSDialogContainer
-} from '../../../dialogs';
-import { ConnectedServiceEditorContainer } from './connectedServiceEditor';
-import { ConnectedServicePickerContainer } from './connectedServicePicker/connectedServicePickerContainer';
-import { ServicesExplorer } from './servicesExplorer';
-import { ServicesExplorerContainer } from './servicesExplorerContainer';
+} from "../../../dialogs";
+import { ConnectedServiceEditorContainer } from "./connectedServiceEditor";
+import { ConnectedServicePickerContainer } from "./connectedServicePicker/connectedServicePickerContainer";
+import { ServicesExplorer } from "./servicesExplorer";
+import { ServicesExplorerContainer } from "./servicesExplorerContainer";
 
-jest.mock('../../../dialogs', () => ({
+jest.mock("../../../dialogs", () => ({
   DialogService: {
     showDialog: () => Promise.resolve(true),
-    hideDialog: () => Promise.resolve(false),
+    hideDialog: () => Promise.resolve(false)
   }
 }));
-jest.mock('./servicesExplorer.scss', () => ({}));
-jest.mock('../servicePane/servicePane.scss', () => ({}));
-jest.mock('./connectedServicePicker/connectedServicePicker.scss', () => ({}));
-jest.mock('./connectedServiceEditor/connectedServiceEditor.scss', () => ({}));
-jest.mock('./servicesExplorer.scss', () => ({}));
+jest.mock("./servicesExplorer.scss", () => ({}));
+jest.mock("../servicePane/servicePane.scss", () => ({}));
+jest.mock("./connectedServicePicker/connectedServicePicker.scss", () => ({}));
+jest.mock("./connectedServiceEditor/connectedServiceEditor.scss", () => ({}));
+jest.mock("./servicesExplorer.scss", () => ({}));
 
-describe('The ServicesExplorer component should', () => {
+describe("The ServicesExplorer component should", () => {
   let parent;
   let node;
   let mockStore;
@@ -59,75 +59,90 @@ describe('The ServicesExplorer component should', () => {
     mockBot.services[0] = new LuisService(mockBot.services[0]);
     mockStore.dispatch(load([mockBot]));
     mockStore.dispatch(setActive(mockBot));
-    mockDispatch = jest.spyOn(mockStore, 'dispatch');
-    parent = mount(<Provider store={ mockStore }>
-      <ServicesExplorerContainer/>
-    </Provider>);
+    mockDispatch = jest.spyOn(mockStore, "dispatch");
+    parent = mount(
+      <Provider store={mockStore}>
+        <ServicesExplorerContainer />
+      </Provider>
+    );
     node = parent.find(ServicesExplorer);
   });
 
-  it('should render deeply', () => {
+  it("should render deeply", () => {
     expect(parent.find(ServicesExplorerContainer)).not.toBe(null);
     expect(parent.find(ServicesExplorer)).not.toBe(null);
   });
 
-  it('should dispatch a request to open a luis deep link when a service is clicked', () => {
+  it("should dispatch a request to open a luis deep link when a service is clicked", () => {
     const instance = node.instance();
     instance.onLinkClick({ currentTarget: { dataset: { index: 0 } } });
-    expect(mockDispatch).toHaveBeenCalledWith(openServiceDeepLink(mockBot.services[0]));
+    expect(mockDispatch).toHaveBeenCalledWith(
+      openServiceDeepLink(mockBot.services[0])
+    );
   });
 
-  it('should dispatch a request to open the context menu when right clicking on a luis service', () => {
+  it("should dispatch a request to open the context menu when right clicking on a luis service", () => {
     const instance = node.instance();
-    const mockLi = document.createElement('li');
-    mockLi.setAttribute('data-index', '0');
+    const mockLi = document.createElement("li");
+    mockLi.setAttribute("data-index", "0");
 
     instance.onContextMenuOverLiElement(mockLi);
-    expect(mockDispatch)
-      .toHaveBeenCalledWith(openContextMenuForConnectedService(
-        ConnectedServiceEditorContainer, mockBot.services[0]));
+    expect(mockDispatch).toHaveBeenCalledWith(
+      openContextMenuForConnectedService(
+        ConnectedServiceEditorContainer,
+        mockBot.services[0]
+      )
+    );
   });
 
-  it('should dispatch a request to open the connected service picker when the add icon is clicked', () => {
+  it("should dispatch a request to open the connected service picker when the add icon is clicked", () => {
     const instance = node.instance();
     instance.onAddIconClick(null);
 
-    expect(mockDispatch).toHaveBeenCalledWith(openAddServiceContextMenu({
-      azureAuthWorkflowComponents: {
-        loginFailedDialog: AzureLoginFailedDialogContainer,
-        loginSuccessDialog: AzureLoginSuccessDialogContainer,
-        promptDialog: ConnectServicePromptDialogContainer
-      },
-      getStartedDialog: GetStartedWithCSDialogContainer,
-      editorComponent: ConnectedServiceEditorContainer,
-      pickerComponent: ConnectedServicePickerContainer,
-    }));
+    expect(mockDispatch).toHaveBeenCalledWith(
+      openAddServiceContextMenu({
+        azureAuthWorkflowComponents: {
+          loginFailedDialog: AzureLoginFailedDialogContainer,
+          loginSuccessDialog: AzureLoginSuccessDialogContainer,
+          promptDialog: ConnectServicePromptDialogContainer
+        },
+        getStartedDialog: GetStartedWithCSDialogContainer,
+        editorComponent: ConnectedServiceEditorContainer,
+        pickerComponent: ConnectedServicePickerContainer
+      })
+    );
   });
 
-  it('should dispatch to the store when a request to open the sort context menu is made', () => {
+  it("should dispatch to the store when a request to open the sort context menu is made", () => {
     const instance = node.instance();
     instance.onSortClick();
     expect(mockDispatch).toHaveBeenCalledWith(openSortContextMenu());
   });
 
-  it('should open the service deep link when the enter key is pressed on a focused list item', () => {
+  it("should open the service deep link when the enter key is pressed on a focused list item", () => {
     const instance = node.instance();
-    const onLinkClickSpy = jest.spyOn(instance, 'onLinkClick');
-    instance.onKeyPress({ key: 'Enter', currentTarget: { dataset: { index: 0 } } });
-    expect(onLinkClickSpy).toHaveBeenCalledWith({ key: 'Enter', currentTarget: { dataset: { index: 0 } } });
+    const onLinkClickSpy = jest.spyOn(instance, "onLinkClick");
+    instance.onKeyPress({
+      key: "Enter",
+      currentTarget: { dataset: { index: 0 } }
+    });
+    expect(onLinkClickSpy).toHaveBeenCalledWith({
+      key: "Enter",
+      currentTarget: { dataset: { index: 0 } }
+    });
   });
 
-  it('should flag newly added services for animation', () => {
+  it("should flag newly added services for animation", () => {
     const instance = node.instance();
     const c = Object.getPrototypeOf(instance).constructor;
     const prevState = {
-      sortCriteria: 'name',
-      services: [{ id: 'existingService' }]
+      sortCriteria: "name",
+      services: [{ id: "existingService" }]
     };
 
     const nextProps = {
-      sortCriteria: 'name',
-      services: [{ id: 'existingService' }, { id: 'newService' }]
+      sortCriteria: "name",
+      services: [{ id: "existingService" }, { id: "newService" }]
     };
 
     const state = c.getDerivedStateFromProps(nextProps, prevState);

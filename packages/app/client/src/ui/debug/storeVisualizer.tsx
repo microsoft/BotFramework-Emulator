@@ -31,15 +31,24 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from 'react';
-import { connect } from 'react-redux';
-import * as styles from './storeVisualizer.scss';
+import { PrimaryButton } from "@bfemulator/ui-react";
+import * as React from "react";
+import { connect } from "react-redux";
 
-import { RootState } from '../../data/store';
-import { PrimaryButton } from '@bfemulator/ui-react';
+import { RootState } from "../../data/store";
 
-type StateSlice = 'assetExplorer' | 'bot' | 'chat' | 'dialog' | 'editor'
-  | 'explorer' | 'navBar' | 'presentation' | 'server';
+import * as styles from "./storeVisualizer.scss";
+
+type StateSlice =
+  | "assetExplorer"
+  | "bot"
+  | "chat"
+  | "dialog"
+  | "editor"
+  | "explorer"
+  | "navBar"
+  | "presentation"
+  | "server";
 
 interface StoreVisualizerProps {
   enabled?: boolean;
@@ -52,7 +61,10 @@ interface StoreVisualizerState {
 }
 
 /** Transparent overlay that helps visualize a selected slice of the state */
-class StoreVisualizerComponent extends React.Component<StoreVisualizerProps, StoreVisualizerState> {
+class StoreVisualizerComponent extends React.Component<
+  StoreVisualizerProps,
+  StoreVisualizerState
+> {
   constructor(props: StoreVisualizerProps) {
     super(props);
 
@@ -61,15 +73,15 @@ class StoreVisualizerComponent extends React.Component<StoreVisualizerProps, Sto
 
     this.state = {
       showing: true,
-      selectedSlice: 'editor'
+      selectedSlice: "editor"
     };
   }
 
-  toggleShowing(): void {
+  public toggleShowing(): void {
     this.setState({ showing: !this.state.showing });
   }
 
-  onSelectSlice(e: any): void {
+  public onSelectSlice(e: any): void {
     this.setState({ selectedSlice: e.target.value });
   }
 
@@ -81,7 +93,7 @@ class StoreVisualizerComponent extends React.Component<StoreVisualizerProps, Sto
       const prettyState = JSON.stringify(rootState[selectedSlice], null, 2);
       return (
         <>
-          <select value={ selectedSlice } onChange={ this.onSelectSlice }>
+          <select value={selectedSlice} onChange={this.onSelectSlice}>
             <option value="assetExplorer">Asset Explorer</option>
             <option value="bot">Bot</option>
             <option value="chat">Chat</option>
@@ -92,29 +104,36 @@ class StoreVisualizerComponent extends React.Component<StoreVisualizerProps, Sto
             <option value="presentation">Presentation</option>
             <option value="server">Server</option>
           </select>
-          <pre>{ prettyState }</pre>
+          <pre>{prettyState}</pre>
           <PrimaryButton
             text="Hide Visualizer"
-            className={ styles.visualizerButton }
-            onClick={ this.toggleShowing }/>
+            className={styles.visualizerButton}
+            onClick={this.toggleShowing}
+          />
         </>
       );
     } else {
       return (
         <PrimaryButton
           text="Show visualizer"
-          className={ styles.visualizerButton }
-          onClick={ this.toggleShowing }
+          className={styles.visualizerButton}
+          onClick={this.toggleShowing}
         />
       );
     }
   }
 
-  render(): JSX.Element {
-    return this.props.enabled ? (<div className={ styles.storeVisualizer }> { this.content }</div>) : null;
+  public render(): JSX.Element {
+    return this.props.enabled ? (
+      <div className={styles.storeVisualizer}> {this.content}</div>
+    ) : null;
   }
 }
 
-const mapStateToProps = (state: RootState): StoreVisualizerProps => ({ rootState: state });
+const mapStateToProps = (state: RootState): StoreVisualizerProps => ({
+  rootState: state
+});
 
-export const StoreVisualizer = connect(mapStateToProps)(StoreVisualizerComponent) as any;
+export const StoreVisualizer = connect(mapStateToProps)(
+  StoreVisualizerComponent
+) as any;

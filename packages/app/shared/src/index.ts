@@ -31,9 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './paymentEncoder';
-export * from './activityVisitor';
-export * from './utils';
-export * from './types';
-export * from './constants';
-export * from './enums';
+export * from "./paymentEncoder";
+export * from "./activityVisitor";
+export * from "./utils";
+export * from "./types";
+export * from "./constants";
+export * from "./enums";

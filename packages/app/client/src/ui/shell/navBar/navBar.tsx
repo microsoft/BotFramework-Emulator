@@ -31,11 +31,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from 'react';
-import { SyntheticEvent } from 'react';
-import * as Constants from '../../../constants';
-import { NotificationManager } from '../../../notificationManager';
-import * as styles from './navBar.scss';
+import * as React from "react";
+import { SyntheticEvent } from "react";
+
+import * as Constants from "../../../constants";
+import { NotificationManager } from "../../../notificationManager";
+
+import * as styles from "./navBar.scss";
 
 export interface NavBarProps {
   selection?: string;
@@ -59,25 +61,24 @@ const selectionMap = [
 ];
 
 export class NavBarComponent extends React.Component<NavBarProps, NavBarState> {
-  state: NavBarState = {};
+  public state: NavBarState = {};
 
   constructor(props: NavBarProps, context: NavBarState) {
     super(props, context);
     this.state.selection = props.selection;
   }
 
-  render() {
-    return (
-      <nav className={ styles.navBar }>
-        { this.links }
-      </nav>
-    );
+  public render() {
+    return <nav className={styles.navBar}>{this.links}</nav>;
   }
 
   public onLinkClick = (event: SyntheticEvent<HTMLButtonElement>): void => {
     const { selection: currentSelection } = this.props;
     const { currentTarget: anchor } = event;
-    const index = Array.prototype.indexOf.call(anchor.parentElement.children, anchor);
+    const index = Array.prototype.indexOf.call(
+      anchor.parentElement.children,
+      anchor
+    );
     switch (index) {
       // Bot Explorer
       case 0:
@@ -106,44 +107,45 @@ export class NavBarComponent extends React.Component<NavBarProps, NavBarState> {
         this.props.openEmulatorSettings();
         break;
     }
-  }
+  };
 
   private get links(): JSX.Element[] {
     const { selection } = this.state;
     const { explorerIsVisible, botIsOpen = false } = this.props;
 
-    return [
-      'Bot Explorer',
-      'Resources',
-      'Notifications',
-      'Settings'
-    ].map((title, index) => {
-      return (
-        <button
-          aria-selected={ explorerIsVisible && selection === selectionMap[index] }
-          title={ title }
-          className={ styles.navLink }
-          key={ index }
-          disabled={ !botIsOpen && index === 1 }
-          onClick={ this.onLinkClick }>
-          <div/>
-          { this.renderNotificationBadge(title) }
-        </button>
-      );
-    });
+    return ["Bot Explorer", "Resources", "Notifications", "Settings"].map(
+      (title, index) => {
+        return (
+          <button
+            aria-selected={
+              explorerIsVisible && selection === selectionMap[index]
+            }
+            title={title}
+            className={styles.navLink}
+            key={index}
+            disabled={!botIsOpen && index === 1}
+            onClick={this.onLinkClick}
+          >
+            <div />
+            {this.renderNotificationBadge(title)}
+          </button>
+        );
+      }
+    );
   }
 
   /** Renders a circular counter badge in the corner of the notification icon */
   private renderNotificationBadge(navSelection: string): JSX.Element {
-    if (navSelection === 'Notifications') {
+    if (navSelection === "Notifications") {
       const { notifications } = this.props;
       const numUnreadNotifications = notifications
         .map(notificationId => NotificationManager.get(notificationId))
         .map(notification => notification.read)
-        .filter(notificationHasBeenRead => !notificationHasBeenRead)
-        .length;
+        .filter(notificationHasBeenRead => !notificationHasBeenRead).length;
 
-      return numUnreadNotifications ? <span className={ styles.badge }>{ numUnreadNotifications }</span> : null;
+      return numUnreadNotifications ? (
+        <span className={styles.badge}>{numUnreadNotifications}</span>
+      ) : null;
     }
     return null;
   }

@@ -37,34 +37,46 @@ import {
   CommandServiceImpl as InternalSharedService,
   Disposable,
   DisposableImpl
-} from '@bfemulator/sdk-shared';
-import { CommandRegistry } from '../../commands';
-import { ElectronIPC } from '../../ipc';
+} from "@bfemulator/sdk-shared";
 
-export const CommandServiceImpl = new class extends DisposableImpl implements CommandService {
+import { CommandRegistry } from "../../commands";
+import { ElectronIPC } from "../../ipc";
 
+export const CommandServiceImpl = new class extends DisposableImpl
+  implements CommandService {
   private readonly _service: InternalSharedService;
 
-  init() { return null; }
+  public init() {
+    return null;
+  }
 
-  public get registry() { return this._service.registry; }
+  public get registry() {
+    return this._service.registry;
+  }
 
   constructor() {
     super();
-    this._service = new InternalSharedService(ElectronIPC, 'command-service', CommandRegistry);
+    this._service = new InternalSharedService(
+      ElectronIPC,
+      "command-service",
+      CommandRegistry
+    );
     super.toDispose(this._service);
   }
 
-  call(commandName: string, ...args: any[]): Promise<any> {
+  public call(commandName: string, ...args: any[]): Promise<any> {
     return this._service.call(commandName, ...args);
   }
 
-  remoteCall(commandName: string, ...args: any[]): Promise<any> {
+  public remoteCall(commandName: string, ...args: any[]): Promise<any> {
     return this._service.remoteCall(commandName, ...args);
   }
 
-  on(event: string, handler?: CommandHandler): Disposable;
-  on(event: 'command-not-found', handler?: (commandName: string, ...args: any[]) => any) {
+  public on(event: string, handler?: CommandHandler): Disposable;
+  public on(
+    event: "command-not-found",
+    handler?: (commandName: string, ...args: any[]) => any
+  ) {
     return this._service.on(event, handler);
   }
-};
+}();

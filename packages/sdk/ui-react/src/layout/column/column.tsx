@@ -31,8 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from 'react';
-import * as styles from './column.scss';
+import * as React from "react";
+
+import * as styles from "./column.scss";
 
 export enum ColumnAlignment {
   Left,
@@ -53,12 +54,15 @@ export interface ColumnProps {
 }
 
 export class Column extends React.Component<ColumnProps, {}> {
-
-  render(): JSX.Element {
-    const { className = '' } = this.props;
+  public render(): JSX.Element {
+    const { className = "" } = this.props;
     return (
-      <div className={ `${styles.column} ${this.getColumnAlignment()} ${this.getColumnJustification()} ${className}` }>
-        { this.props.children }
+      <div
+        className={`${
+          styles.column
+        } ${this.getColumnAlignment()} ${this.getColumnJustification()} ${className}`}
+      >
+        {this.props.children}
       </div>
     );
   }

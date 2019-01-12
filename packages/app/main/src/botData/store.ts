@@ -31,12 +31,19 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { applyMiddleware, createStore, Store } from 'redux';
-import createPromiseMiddleware from 'redux-promise-middleware';
-import reducers from './reducers';
-import { DEFAULT_STATE as state, State } from './state';
+import { applyMiddleware, createStore, Store } from "redux";
+import createPromiseMiddleware from "redux-promise-middleware";
+
+import reducers from "./reducers";
+import { DEFAULT_STATE as state, State } from "./state";
 
 let store;
 export const getStore = (): Store<State> => {
-  return store || (store = applyMiddleware(createPromiseMiddleware())(createStore)(reducers, state));
+  return (
+    store ||
+    (store = applyMiddleware(createPromiseMiddleware())(createStore)(
+      reducers,
+      state
+    ))
+  );
 };

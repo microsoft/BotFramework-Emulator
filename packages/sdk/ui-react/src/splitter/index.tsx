@@ -1,2 +1,2 @@
-export * from './splitter';
-export * from './pane';
+export * from "./splitter";
+export * from "./pane";

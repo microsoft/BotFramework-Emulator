@@ -31,28 +31,35 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import base64Url from 'base64url';
-import onErrorResumeNext from 'on-error-resume-next';
+import base64Url from "base64url";
+import onErrorResumeNext from "on-error-resume-next";
 
-import BotEmulatorOptions from '../types/botEmulatorOptions';
-import BotEndpoint from './botEndpoint';
-import BotEndpointType from '../types/botEndpoint';
-import uniqueId from '../utils/uniqueId';
+import BotEmulatorOptions from "../types/botEmulatorOptions";
+import BotEndpointType from "../types/botEndpoint";
+import uniqueId from "../utils/uniqueId";
+
+import BotEndpoint from "./botEndpoint";
 
 const { decode } = base64Url;
 
-function mapMap<T, U>(map: { [key: string]: T }, mapper: (arg: T, val: string) => U ): { [key: string]: U } {
-  return Object.keys(map).reduce((nextMap, key) => ({
-    ...nextMap,
-    [key]: mapper.call(map, map[key], key)
-  }), {});
+function mapMap<T, U>(
+  map: { [key: string]: T },
+  mapper: (arg: T, val: string) => U
+): { [key: string]: U } {
+  return Object.keys(map).reduce(
+    (nextMap, key) => ({
+      ...nextMap,
+      [key]: mapper.call(map, map[key], key)
+    }),
+    {}
+  );
 }
 
 export default class Endpoints {
   private _endpoints: { [key: string]: BotEndpoint } = {};
   constructor(private _options: BotEmulatorOptions) {}
 
-  push(id: string, botEndpoint: BotEndpointType): BotEndpoint {
+  public push(id: string, botEndpoint: BotEndpointType): BotEndpoint {
     id = id || botEndpoint.botUrl || uniqueId();
 
     const botEndpointInstance = new BotEndpoint(
@@ -73,16 +80,16 @@ export default class Endpoints {
     return botEndpointInstance;
   }
 
-  reset() {
+  public reset() {
     this._endpoints = {};
   }
 
   // TODO: Deprecate this
-  getDefault(): BotEndpoint {
+  public getDefault(): BotEndpoint {
     return this._endpoints[Object.keys(this._endpoints)[0]];
   }
 
-  get(id: string): BotEndpoint {
+  public get(id: string): BotEndpoint {
     // TODO: We need to remove parsing from BASE64, find a better way
     const savedEndpoint = this._endpoints[id];
 
@@ -99,11 +106,15 @@ export default class Endpoints {
   }
 
   // TODO: Check if this can be deprecated, try to deprecate this
-  getByAppId(msaAppId: string): BotEndpoint {
-    return this._endpoints[Object.keys(this._endpoints).find(id => this._endpoints[id].msaAppId === msaAppId)];
+  public getByAppId(msaAppId: string): BotEndpoint {
+    return this._endpoints[
+      Object.keys(this._endpoints).find(
+        id => this._endpoints[id].msaAppId === msaAppId
+      )
+    ];
   }
 
-  getAll(): { [key: string]: BotEndpointType } {
+  public getAll(): { [key: string]: BotEndpointType } {
     return mapMap<BotEndpoint, BotEndpointType>(this._endpoints, value => ({
       botId: value.botId,
       botUrl: value.botUrl,

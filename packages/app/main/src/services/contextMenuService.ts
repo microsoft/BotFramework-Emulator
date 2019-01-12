@@ -31,17 +31,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Menu, MenuItemConstructorOptions } from 'electron';
+import { Menu, MenuItemConstructorOptions } from "electron";
 
 export class ContextMenuService {
   private static currentMenu: Menu;
 
-  public static showMenuAndWaitForInput(options: Partial<MenuItemConstructorOptions>[] = []): Promise<any> {
+  public static showMenuAndWaitForInput(
+    options: Array<Partial<MenuItemConstructorOptions>> = []
+  ): Promise<any> {
     if (ContextMenuService.currentMenu) {
       ContextMenuService.currentMenu.closePopup();
     }
     return new Promise(resolve => {
-
       const clickHandler = menuItem => {
         ContextMenuService.currentMenu = null;
         resolve(menuItem);
@@ -51,7 +52,9 @@ export class ContextMenuService {
         option.click = clickHandler;
         return option;
       });
-      const menu = ContextMenuService.currentMenu = Menu.buildFromTemplate(template);
+      const menu = (ContextMenuService.currentMenu = Menu.buildFromTemplate(
+        template
+      ));
 
       menu.popup({});
     });

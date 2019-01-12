@@ -31,24 +31,24 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { BotInfo } from '@bfemulator/app-shared';
-import { botListsAreDifferent } from './botListsAreDifferent';
+import { BotInfo } from "@bfemulator/app-shared";
+import { botListsAreDifferent } from "./botListsAreDifferent";
 
-test('botListsAreDifferent() tests', () => {
+test("botListsAreDifferent() tests", () => {
   let list1: BotInfo[] = [
     {
-      path: 'path1',
-      displayName: 'bot1',
+      path: "path1",
+      displayName: "bot1",
       secret: null
     },
     {
-      path: 'path2',
-      displayName: 'bot2',
+      path: "path2",
+      displayName: "bot2",
       secret: null
     },
     {
-      path: 'path3',
-      displayName: 'bot3',
+      path: "path3",
+      displayName: "bot3",
       secret: null
     }
   ];
@@ -57,13 +57,13 @@ test('botListsAreDifferent() tests', () => {
 
   expect(botListsAreDifferent(list1, list2)).toBe(true);
 
-  list2[0] = { path: 'path1', displayName: 'bot1', secret: null };
-  list2[1] = { path: 'path2', displayName: 'bot2', secret: null };
-  list2[2] = { path: 'path3', displayName: 'bot3', secret: null };
+  list2[0] = { path: "path1", displayName: "bot1", secret: null };
+  list2[1] = { path: "path2", displayName: "bot2", secret: null };
+  list2[2] = { path: "path3", displayName: "bot3", secret: null };
 
   expect(botListsAreDifferent(list1, list2)).toBe(false);
 
-  list2[1] = { path: 'path2', displayName: 'bot2', secret: 'someSecret' };
+  list2[1] = { path: "path2", displayName: "bot2", secret: "someSecret" };
 
   expect(botListsAreDifferent(list1, list2)).toBe(true);
 });

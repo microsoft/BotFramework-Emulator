@@ -1,4 +1,18 @@
-import { ForkEffect, put, takeEvery } from 'redux-saga/effects';
+import {
+  BotInfo,
+  isChatFile,
+  isTranscriptFile,
+  NotificationType,
+  SharedConstants
+} from "@bfemulator/app-shared";
+import { newNotification } from "@bfemulator/app-shared/built";
+import { IFileService } from "botframework-config/lib/schema";
+import { ComponentClass } from "react";
+import { ForkEffect, put, takeEvery } from "redux-saga/effects";
+
+import { CommandServiceImpl } from "../../platform/commands/commandServiceImpl";
+import { DialogService } from "../../ui/dialogs/service";
+import { beginAdd } from "../action/notificationActions";
 import {
   editResource,
   OPEN_CONTEXT_MENU_FOR_RESOURCE,
@@ -6,26 +20,27 @@ import {
   OPEN_RESOURCE_SETTINGS,
   RENAME_RESOURCE,
   ResourcesAction
-} from '../action/resourcesAction';
-import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
-import { BotInfo, isChatFile, isTranscriptFile, NotificationType, SharedConstants } from '@bfemulator/app-shared';
-import { IFileService } from 'botframework-config/lib/schema';
-import { ComponentClass } from 'react';
-import { DialogService } from '../../ui/dialogs/service';
-import { beginAdd } from '../action/notificationActions';
-import { newNotification } from '@bfemulator/app-shared/built';
+} from "../action/resourcesAction";
 
-function* openContextMenuForResource(action: ResourcesAction<IFileService>): IterableIterator<any> {
+function* openContextMenuForResource(
+  action: ResourcesAction<IFileService>
+): IterableIterator<any> {
   const menuItems = [
-    { label: 'Open file location', id: 0 },
-    { label: 'Rename', id: 1 },
-    { label: 'Delete', id: 2 }
+    { label: "Open file location", id: 0 },
+    { label: "Rename", id: 1 },
+    { label: "Delete", id: 2 }
   ];
 
-  const result = yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.DisplayContextMenu, menuItems);
+  const result = yield CommandServiceImpl.remoteCall(
+    SharedConstants.Commands.Electron.DisplayContextMenu,
+    menuItems
+  );
   switch (result.id) {
     case 0:
-      yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.OpenFileLocation, action.payload.path);
+      yield CommandServiceImpl.remoteCall(
+        SharedConstants.Commands.Electron.OpenFileLocation,
+        action.payload.path
+      );
       break;
 
     case 1:
@@ -42,16 +57,18 @@ function* openContextMenuForResource(action: ResourcesAction<IFileService>): Ite
   }
 }
 
-function* deleteFile(action: ResourcesAction<IFileService>): IterableIterator<any> {
+function* deleteFile(
+  action: ResourcesAction<IFileService>
+): IterableIterator<any> {
   const { name, path } = action.payload;
   const { ShowMessageBox, UnlinkFile } = SharedConstants.Commands.Electron;
   const result = yield CommandServiceImpl.remoteCall(ShowMessageBox, true, {
-    type: 'info',
-    title: 'Delete this file',
-    buttons: ['Cancel', 'Delete'],
+    type: "info",
+    title: "Delete this file",
+    buttons: ["Cancel", "Delete"],
     defaultId: 1,
     message: `This action cannot be undone. Are you sure you want to delete ${name}?`,
-    cancelId: 0,
+    cancelId: 0
   });
   if (result) {
     yield CommandServiceImpl.remoteCall(UnlinkFile, path);
@@ -63,19 +80,21 @@ function* doRename(action: ResourcesAction<IFileService>) {
   const { ShowMessageBox, RenameFile } = SharedConstants.Commands.Electron;
   if (!payload.name) {
     return CommandServiceImpl.remoteCall(ShowMessageBox, true, {
-      type: 'error',
-      title: 'Invalid file name',
-      buttons: ['Ok'],
+      type: "error",
+      title: "Invalid file name",
+      buttons: ["Ok"],
       defaultId: 1,
       message: `A valid file name must be used`,
-      cancelId: 0,
+      cancelId: 0
     });
   }
   yield CommandServiceImpl.remoteCall(RenameFile, payload);
   yield put(editResource(null));
 }
 
-function* doOpenResource(action: ResourcesAction<IFileService>): IterableIterator<any> {
+function* doOpenResource(
+  action: ResourcesAction<IFileService>
+): IterableIterator<any> {
   const { OpenChatFile, OpenTranscript } = SharedConstants.Commands.Emulator;
   const { path } = action.payload;
   if (isChatFile(path)) {
@@ -86,13 +105,24 @@ function* doOpenResource(action: ResourcesAction<IFileService>): IterableIterato
   // unknown types just fall into the abyss
 }
 
-function* launchResourcesSettingsModal(action: ResourcesAction<{ dialog: ComponentClass<any> }>) {
-  const result: Partial<BotInfo> = yield DialogService.showDialog(action.payload.dialog);
+function* launchResourcesSettingsModal(
+  action: ResourcesAction<{ dialog: ComponentClass<any> }>
+) {
+  const result: Partial<BotInfo> = yield DialogService.showDialog(
+    action.payload.dialog
+  );
   if (result) {
     try {
-      yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.PatchBotList, result.path, result);
+      yield CommandServiceImpl.remoteCall(
+        SharedConstants.Commands.Bot.PatchBotList,
+        result.path,
+        result
+      );
     } catch (e) {
-      const notification = newNotification('Unable to save resource settings', NotificationType.Error);
+      const notification = newNotification(
+        "Unable to save resource settings",
+        NotificationType.Error
+      );
       yield put(beginAdd(notification));
     }
   }

@@ -31,22 +31,25 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from 'react';
-import { Component } from 'react';
-import IntentViewer from '../IntentViewer/IntentViewer';
-import { IntentEditor, IntentEditorMode } from '../IntentEditor/IntentEditor';
-import { Intent } from '../../Models/Intent';
-import { RecognizerResult, RecognizerResultIntent } from '../../Models/RecognizerResults';
-import { IntentInfo } from '../../Luis/IntentInfo';
-import EntitiesViewer from '../EntitiesViewer/EntitiesViewer';
-import { AppInfo } from '../../Luis/AppInfo';
-import * as styles from './Editor.scss';
+import * as React from "react";
+import { Component } from "react";
 
-const NoneIntent: string = 'None';
+import { AppInfo } from "../../Luis/AppInfo";
+import { IntentInfo } from "../../Luis/IntentInfo";
+import { Intent } from "../../Models/Intent";
+import {
+  RecognizerResult,
+  RecognizerResultIntent
+} from "../../Models/RecognizerResults";
+import EntitiesViewer from "../EntitiesViewer/EntitiesViewer";
+import { IntentEditor, IntentEditorMode } from "../IntentEditor/IntentEditor";
+import IntentViewer from "../IntentViewer/IntentViewer";
 
-interface EditorState {
+import * as styles from "./Editor.scss";
 
-}
+const NoneIntent: string = "None";
+
+interface EditorState {}
 
 interface EditorProps {
   recognizerResult: RecognizerResult;
@@ -57,26 +60,28 @@ interface EditorProps {
 }
 
 class Editor extends Component<EditorProps, EditorState> {
-
   constructor(props: any, context: any) {
     super(props, context);
   }
 
-  getTopScoringIntent(): Intent {
+  public getTopScoringIntent(): Intent {
     if (!this.props.recognizerResult || !this.props.recognizerResult.intents) {
       return { intent: NoneIntent, score: 0.0 };
     }
-    let intents: { [ key: string ]: RecognizerResultIntent } = this.props.recognizerResult.intents;
-    let topIntent = Object.keys(intents).reduce((a, b) => {
-      return intents[ a ].score > intents[ b ].score ? a : b;
+    const intents: { [key: string]: RecognizerResultIntent } = this.props
+      .recognizerResult.intents;
+    const topIntent = Object.keys(intents).reduce((a, b) => {
+      return intents[a].score > intents[b].score ? a : b;
     });
-    return { intent: topIntent, score: intents[ topIntent ].score };
+    return { intent: topIntent, score: intents[topIntent].score };
   }
 
-  render() {
-    let topScoringIntent = this.getTopScoringIntent();
+  public render() {
+    const topScoringIntent = this.getTopScoringIntent();
     let mode: IntentEditorMode;
-    const { appInfo = { authorized: false, isDispatchApp: false } } = this.props;
+    const {
+      appInfo = { authorized: false, isDispatchApp: false }
+    } = this.props;
     if (appInfo.authorized) {
       mode = IntentEditorMode.Enabled;
     } else if (appInfo.isDispatchApp) {
@@ -85,16 +90,16 @@ class Editor extends Component<EditorProps, EditorState> {
       mode = IntentEditorMode.Disabled;
     }
     return (
-      <div className={ styles.editor }>
-        < IntentViewer topScoringIntent={ topScoringIntent }/>
+      <div className={styles.editor}>
+        <IntentViewer topScoringIntent={topScoringIntent} />
         <IntentEditor
-          currentIntent={ topScoringIntent }
-          intentInfo={ this.props.intentInfo }
-          intentReassigner={ this.props.intentReassigner }
-          mode={ mode }
-          traceId={ this.props.traceId }
+          currentIntent={topScoringIntent}
+          intentInfo={this.props.intentInfo}
+          intentReassigner={this.props.intentReassigner}
+          mode={mode}
+          traceId={this.props.traceId}
         />
-        <EntitiesViewer entities={ this.props.recognizerResult.entities }/>
+        <EntitiesViewer entities={this.props.recognizerResult.entities} />
       </div>
     );
   }

@@ -31,27 +31,28 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { app } from 'electron';
-import * as Fs from 'fs-extra';
-import * as Path from 'path';
-import { sync as mkdirp } from 'mkdirp';
-import * as BotActions from './botData/actions/botActions';
-import { ensureStoragePath } from './utils/ensureStoragePath';
-import { writeFile } from './utils/writeFile';
-import { getFilesInDir } from './utils/getFilesInDir';
-import { BotConfiguration } from 'botframework-config';
-import { BotInfo, SharedConstants } from '@bfemulator/app-shared';
-import { getStore } from './botData/store';
-import { mainWindow } from './main';
-import { cloneBot, saveBot } from './botHelpers';
+import { BotInfo, SharedConstants } from "@bfemulator/app-shared";
+import { BotConfiguration } from "botframework-config";
+import { app } from "electron";
+import * as Fs from "fs-extra";
+import { sync as mkdirp } from "mkdirp";
+import * as Path from "path";
+
+import * as BotActions from "./botData/actions/botActions";
+import { getStore } from "./botData/store";
+import { cloneBot, saveBot } from "./botHelpers";
+import { mainWindow } from "./main";
+import { ensureStoragePath } from "./utils/ensureStoragePath";
+import { getFilesInDir } from "./utils/getFilesInDir";
+import { writeFile } from "./utils/writeFile";
 
 /** Performs the V4 side of migration from V3 -> V4 bots */
 export class Migrator {
-  private static readonly _migrationMarkerName = 'migration_marker.txt';
+  private static readonly _migrationMarkerName = "migration_marker.txt";
 
   /** Runs the V4 side of migration if necessary */
   public static async startup(): Promise<void> {
-    if (!await this.migrationHasBeenPerformed()) {
+    if (!(await this.migrationHasBeenPerformed())) {
       const migrationResult = await this.migrateBots();
       if (migrationResult) {
         this.leaveMigrationMarker();
@@ -67,17 +68,18 @@ export class Migrator {
     // - v4 path will be %appdata%/@bfemulator/main/botframework-emulator
     let botFilesDirectory =
       // %appdata%/@bfemulator/main
-      app.getPath('userData')
-      // %appdata%/botframework-emulator/botframework-emulator
-      .replace(
-        Path.join('@bfemulator', 'main'),
-        Path.join('botframework-emulator', 'botframework-emulator')
-      );
+      app
+        .getPath("userData")
+        // %appdata%/botframework-emulator/botframework-emulator
+        .replace(
+          Path.join("@bfemulator", "main"),
+          Path.join("botframework-emulator", "botframework-emulator")
+        );
     // %appdata%/botframework-emulator/botframework-emulator/migration
-    botFilesDirectory = Path.join(botFilesDirectory, 'migration');
+    botFilesDirectory = Path.join(botFilesDirectory, "migration");
 
     // if the /migration/ directory does not exist then abort migration
-    if (!await Fs.pathExists(botFilesDirectory)) {
+    if (!(await Fs.pathExists(botFilesDirectory))) {
       return false;
     }
     // read bots to be migrated from directory
@@ -91,8 +93,8 @@ export class Migrator {
           // v3 path
           const oldPath = Path.join(botFilesDirectory, botFile);
           // v4 path
-          const newPathBase = Path.join(ensureStoragePath(), 'migration');
-          if (!await Fs.pathExists(newPathBase)) {
+          const newPathBase = Path.join(ensureStoragePath(), "migration");
+          if (!(await Fs.pathExists(newPathBase))) {
             mkdirp(newPathBase);
           }
           const newPath = Path.join(newPathBase, botFile);
@@ -110,7 +112,9 @@ export class Migrator {
           };
           recentBotsList.unshift(botInfo);
         } catch (err) {
-          throw new Error(`Error while trying to populate bots list with migrated V3 bots: ${err}`);
+          throw new Error(
+            `Error while trying to populate bots list with migrated V3 bots: ${err}`
+          );
         }
       }
 
@@ -118,11 +122,15 @@ export class Migrator {
       const { SyncBotList } = SharedConstants.Commands.Bot;
       const store = getStore();
       store.dispatch(BotActions.load(recentBotsList));
-      await mainWindow.commandService.remoteCall(SyncBotList, recentBotsList).catch();
+      await mainWindow.commandService
+        .remoteCall(SyncBotList, recentBotsList)
+        .catch();
 
       // show post-migration page
       const { ShowPostMigrationDialog } = SharedConstants.Commands.UI;
-      await mainWindow.commandService.remoteCall(ShowPostMigrationDialog).catch();
+      await mainWindow.commandService
+        .remoteCall(ShowPostMigrationDialog)
+        .catch();
       return true;
     }
     return false;
@@ -130,11 +138,13 @@ export class Migrator {
 
   /** Writes a file to app data that prevents migration from being performed again */
   private static leaveMigrationMarker(): void {
-    writeFile(Path.join(ensureStoragePath(), this._migrationMarkerName), '');
+    writeFile(Path.join(ensureStoragePath(), this._migrationMarkerName), "");
   }
 
   /** Checks for the migration marker to determine if it has already been performed */
   private static async migrationHasBeenPerformed(): Promise<boolean> {
-    return await Fs.pathExists(Path.join(ensureStoragePath(), this._migrationMarkerName));
+    return Fs.pathExists(
+      Path.join(ensureStoragePath(), this._migrationMarkerName)
+    );
   }
 }

@@ -31,24 +31,28 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IConnectedService, ServiceTypes } from 'botframework-config/lib/schema';
-import * as React from 'react';
-import { MouseEventHandler, SyntheticEvent } from 'react';
-import { ConnectedServicePickerPayload } from '../../../../data/action/connectedServiceActions';
+import {
+  IConnectedService,
+  ServiceTypes
+} from "botframework-config/lib/schema";
+import * as React from "react";
+import { MouseEventHandler, SyntheticEvent } from "react";
 
-import { serviceTypeLabels } from '../../../../utils/serviceTypeLables';
+import { ConnectedServicePickerPayload } from "../../../../data/action/connectedServiceActions";
+import { serviceTypeLabels } from "../../../../utils/serviceTypeLables";
 import {
   AzureLoginFailedDialogContainer,
   AzureLoginSuccessDialogContainer,
   ConnectServicePromptDialogContainer,
   GetStartedWithCSDialogContainer,
   ProgressIndicatorContainer
-} from '../../../dialogs';
-import { ServicePane, ServicePaneProps } from '../servicePane/servicePane';
-import { ConnectedServiceEditorContainer } from './connectedServiceEditor';
-import { ConnectedServicePickerContainer } from './connectedServicePicker/connectedServicePickerContainer';
-import * as styles from './servicesExplorer.scss';
-import * as icons from './serviceTypeIcons';
+} from "../../../dialogs";
+import { ServicePane, ServicePaneProps } from "../servicePane/servicePane";
+
+import { ConnectedServiceEditorContainer } from "./connectedServiceEditor";
+import { ConnectedServicePickerContainer } from "./connectedServicePicker/connectedServicePickerContainer";
+import * as styles from "./servicesExplorer.scss";
+import * as icons from "./serviceTypeIcons";
 
 const iconMap = {
   [ServiceTypes.AppInsights]: icons.appInsightsIcon,
@@ -72,18 +76,23 @@ export interface ServicesExplorerProps extends ServicePaneProps {
 export class ServicesExplorer extends ServicePane<ServicesExplorerProps> {
   public state = {} as ServicesExplorerProps;
 
-  public static getDerivedStateFromProps
-  (newProps: ServicesExplorerProps, existingProps: ServicesExplorerProps): ServicesExplorerProps {
+  public static getDerivedStateFromProps(
+    newProps: ServicesExplorerProps,
+    existingProps: ServicesExplorerProps
+  ): ServicesExplorerProps {
     if (!Object.keys(existingProps).length) {
       return newProps;
     }
-    const { services: newServices, sortCriteria = 'name' } = newProps;
+    const { services: newServices, sortCriteria = "name" } = newProps;
     const { services = [] } = existingProps;
     const state = { ...newProps };
     if (newServices.length > services.length) {
       state.expanded = true;
       state.toAnimate = {};
-      const servicesMap = services.reduce((map, service) => (map[service.id] = true, map), {});
+      const servicesMap = services.reduce(
+        (map, service) => ((map[service.id] = true), map),
+        {}
+      );
       newServices.forEach(service => {
         if (!servicesMap[service.id]) {
           state.toAnimate[service.id] = true;
@@ -107,14 +116,23 @@ export class ServicesExplorer extends ServicePane<ServicesExplorerProps> {
   protected get emptyContent(): JSX.Element {
     return (
       <div>
-        <p className={ styles.emptyContent }>
-          { 'You can connect your bot to services such as ' }
-          <a href="https://aka.ms/bot-framework-emulator-LUIS-docs-home">{ 'Language Understanding (LUIS), ' }</a>
-          <a href="https://aka.ms/bot-framework-emulator-qna-docs-home">{ 'QnA Maker, ' }</a> { 'and ' }
-          <a href="https://aka.ms/bot-framework-emulator-create-dispatch">Dispatch.</a>
+        <p className={styles.emptyContent}>
+          {"You can connect your bot to services such as "}
+          <a href="https://aka.ms/bot-framework-emulator-LUIS-docs-home">
+            {"Language Understanding (LUIS), "}
+          </a>
+          <a href="https://aka.ms/bot-framework-emulator-qna-docs-home">
+            {"QnA Maker, "}
+          </a>{" "}
+          {"and "}
+          <a href="https://aka.ms/bot-framework-emulator-create-dispatch">
+            Dispatch.
+          </a>
         </p>
-        <p className={ styles.emptyContent }>
-          <a href="https://aka.ms/bot-framework-emulator-services">Learn more about using services.</a>
+        <p className={styles.emptyContent}>
+          <a href="https://aka.ms/bot-framework-emulator-services">
+            Learn more about using services.
+          </a>
         </p>
       </div>
     );
@@ -128,21 +146,23 @@ export class ServicesExplorer extends ServicePane<ServicesExplorerProps> {
     const { services = [], toAnimate = {} } = this.state;
     return services.map((service, index) => {
       let label = service.name;
-      if ('version' in service) {
-        label += `, v${ (service as any).version }`;
+      if ("version" in service) {
+        label += `, v${(service as any).version}`;
       }
       return (
         <li
-          key={ index }
-          className={ `${ styles.link } ${ toAnimate[service.id] ? styles.animateHighlight : '' } ` }
-          onDoubleClick={ this.onLinkClick }
-          onKeyPress={ this.onKeyPress }
-          data-index={ index }
-          tabIndex={ 0 }
-          title={ service.name }
+          key={index}
+          className={`${styles.link} ${
+            toAnimate[service.id] ? styles.animateHighlight : ""
+          } `}
+          onDoubleClick={this.onLinkClick}
+          onKeyPress={this.onKeyPress}
+          data-index={index}
+          tabIndex={0}
+          title={service.name}
         >
-          { iconMap[service.type] }
-          { label } <span>- { serviceTypeLabels[service.type] }</span>
+          {iconMap[service.type]}
+          {label} <span>- {serviceTypeLabels[service.type]}</span>
         </li>
       );
     });
@@ -152,27 +172,34 @@ export class ServicesExplorer extends ServicePane<ServicesExplorerProps> {
     super.onContextMenuOverLiElement(li);
     const { index } = li.dataset;
     const { [+index]: connectedService } = this.props.services;
-    this.props.openContextMenuForService(connectedService, ConnectedServiceEditorContainer);
+    this.props.openContextMenuForService(
+      connectedService,
+      ConnectedServiceEditorContainer
+    );
   }
 
   protected onKeyPress = (e): void => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       this.onLinkClick(e);
     }
-  }
+  };
 
-  protected onLinkClick: MouseEventHandler<HTMLLIElement> = (event: SyntheticEvent<HTMLLIElement>): void => {
+  protected onLinkClick: MouseEventHandler<HTMLLIElement> = (
+    event: SyntheticEvent<HTMLLIElement>
+  ): void => {
     const { currentTarget } = event;
     const { index } = currentTarget.dataset;
     const { [+index]: connectedService } = this.props.services;
     this.props.openServiceDeepLink(connectedService);
-  }
+  };
 
   protected onSortClick = (_event: SyntheticEvent<HTMLButtonElement>) => {
     this.props.openSortContextMenu();
-  }
+  };
 
-  protected onAddIconClick = (_event: SyntheticEvent<HTMLButtonElement>): void => {
+  protected onAddIconClick = (
+    _event: SyntheticEvent<HTMLButtonElement>
+  ): void => {
     this.props.openAddServiceContextMenu({
       azureAuthWorkflowComponents: {
         loginFailedDialog: AzureLoginFailedDialogContainer,
@@ -184,5 +211,5 @@ export class ServicesExplorer extends ServicePane<ServicesExplorerProps> {
       pickerComponent: ConnectedServicePickerContainer,
       progressIndicatorComponent: ProgressIndicatorContainer
     });
-  }
+  };
 }

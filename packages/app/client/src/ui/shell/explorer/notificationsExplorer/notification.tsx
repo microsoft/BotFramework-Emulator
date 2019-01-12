@@ -31,12 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from 'react';
-import { Notification as NotificationType } from '@bfemulator/app-shared';
-import { connect } from 'react-redux';
-import * as NotificationActions from '../../../../data/action/notificationActions';
-import * as styles from './notification.scss';
-import { PrimaryButton } from '@bfemulator/ui-react';
+import { Notification as NotificationType } from "@bfemulator/app-shared";
+import { PrimaryButton } from "@bfemulator/ui-react";
+import * as React from "react";
+import { connect } from "react-redux";
+
+import * as NotificationActions from "../../../../data/action/notificationActions";
+
+import * as styles from "./notification.scss";
 
 export interface NotificationProps {
   notification?: NotificationType;
@@ -48,17 +50,20 @@ class NotificationComp extends React.Component<NotificationProps, {}> {
     super(props);
   }
 
-  render(): JSX.Element {
-    const { message = '', id = '' } = this.props.notification;
+  public render(): JSX.Element {
+    const { message = "", id = "" } = this.props.notification;
     const { removeNotification } = this.props;
 
     return (
-      <li className={ styles.notification }>
-        <div className={ styles.closeIcon } onClick={ () => removeNotification(id) }></div>
-        <p className={ styles.notificationMessage }>{ message }</p>
-        { this.timestamp }
-        { this.buttonRow }
-        <div className={ styles.innerBorder } ></div>
+      <li className={styles.notification}>
+        <div
+          className={styles.closeIcon}
+          onClick={() => removeNotification(id)}
+        />
+        <p className={styles.notificationMessage}>{message}</p>
+        {this.timestamp}
+        {this.buttonRow}
+        <div className={styles.innerBorder} />
       </li>
     );
   }
@@ -67,13 +72,15 @@ class NotificationComp extends React.Component<NotificationProps, {}> {
   private get buttonRow(): JSX.Element {
     const { buttons = [] } = this.props.notification;
     if (buttons.length) {
-      let renderedButtons = buttons.map((btn, i) =>
-        <PrimaryButton key={ `button${i}` } onClick={ () => btn.onClick() } text={ btn.text }/>
-      );
+      const renderedButtons = buttons.map((btn, i) => (
+        <PrimaryButton
+          key={`button${i}`}
+          onClick={() => btn.onClick()}
+          text={btn.text}
+        />
+      ));
       return (
-        <div className={ styles.notificationButtonRow }>
-          { renderedButtons }
-        </div>
+        <div className={styles.notificationButtonRow}>{renderedButtons}</div>
       );
     }
     return null;
@@ -84,16 +91,16 @@ class NotificationComp extends React.Component<NotificationProps, {}> {
     const { timestamp = null } = this.props.notification;
     if (timestamp) {
       const dateOptions = {
-        weekday: 'short',
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric'
+        weekday: "short",
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+        hour: "numeric",
+        minute: "numeric"
       };
       return (
-        <span className={ styles.notificationTimestamp }>
-          { new Date(timestamp).toLocaleString('en-US', dateOptions) }
+        <span className={styles.notificationTimestamp}>
+          {new Date(timestamp).toLocaleString("en-US", dateOptions)}
         </span>
       );
     }
@@ -102,9 +109,14 @@ class NotificationComp extends React.Component<NotificationProps, {}> {
 }
 
 const mapDispatchToProps = (dispatch): NotificationProps => ({
-  removeNotification: (id: string) => { dispatch(NotificationActions.beginRemove(id)); }
+  removeNotification: (id: string) => {
+    dispatch(NotificationActions.beginRemove(id));
+  }
 });
 
 const mapStateToProps = (): NotificationProps => ({});
 
-export const Notification = connect(mapStateToProps, mapDispatchToProps)(NotificationComp);
+export const Notification = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(NotificationComp);

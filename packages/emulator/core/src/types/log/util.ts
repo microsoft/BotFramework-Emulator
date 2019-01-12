@@ -31,18 +31,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import LogLevel from './level';
-import ILogItem from './item';
-import LogEntry from './entry';
+import LogEntry from "./entry";
+import ILogItem from "./item";
+import LogLevel from "./level";
 
 // TODO: Move this to a generally available location and export
 export function makeEnumerableObject(src: any) {
-  if (typeof src !== 'object') {
+  if (typeof src !== "object") {
     return src;
   }
   const dst = {};
   const keys = Object.getOwnPropertyNames(src);
-  keys.forEach(key => dst[key] = src[key]);
+  keys.forEach(key => (dst[key] = src[key]));
   return dst;
 }
 
@@ -50,7 +50,7 @@ export function makeEnumerableObject(src: any) {
 
 export function textItem(level: LogLevel, text: string): ILogItem {
   return {
-    type: 'text',
+    type: "text",
     payload: {
       level,
       text
@@ -60,7 +60,7 @@ export function textItem(level: LogLevel, text: string): ILogItem {
 
 export function externalLinkItem(text: string, hyperlink: string): ILogItem {
   return {
-    type: 'external-link',
+    type: "external-link",
     payload: {
       text,
       hyperlink
@@ -70,7 +70,7 @@ export function externalLinkItem(text: string, hyperlink: string): ILogItem {
 
 export function inspectableObjectItem(text: string, obj: any): ILogItem {
   return {
-    type: 'inspectable-object',
+    type: "inspectable-object",
     payload: {
       text,
       obj
@@ -80,7 +80,7 @@ export function inspectableObjectItem(text: string, obj: any): ILogItem {
 
 export function summaryTextItem(obj: any): ILogItem {
   return {
-    type: 'summary-text',
+    type: "summary-text",
     payload: {
       obj
     }
@@ -89,7 +89,7 @@ export function summaryTextItem(obj: any): ILogItem {
 
 export function appSettingsItem(text: string): ILogItem {
   return {
-    type: 'open-app-settings',
+    type: "open-app-settings",
     payload: {
       text
     }
@@ -98,16 +98,22 @@ export function appSettingsItem(text: string): ILogItem {
 
 export function exceptionItem(err: any): ILogItem {
   return {
-    type: 'exception',
+    type: "exception",
     payload: {
       err: makeEnumerableObject(err)
     }
   };
 }
 
-export function networkRequestItem(facility: any, body: any, headers: any, method: any, url: any): ILogItem {
+export function networkRequestItem(
+  facility: any,
+  body: any,
+  headers: any,
+  method: any,
+  url: any
+): ILogItem {
   return {
-    type: 'network-request',
+    type: "network-request",
     payload: {
       facility,
       body,
@@ -118,10 +124,15 @@ export function networkRequestItem(facility: any, body: any, headers: any, metho
   };
 }
 
-export function networkResponseItem(body: any, headers: any, statusCode: any, statusMessage: any, srcUrl: any)
-  : ILogItem {
+export function networkResponseItem(
+  body: any,
+  headers: any,
+  statusCode: any,
+  statusMessage: any,
+  srcUrl: any
+): ILogItem {
   return {
-    type: 'network-response',
+    type: "network-response",
     payload: {
       body,
       headers,
@@ -134,7 +145,7 @@ export function networkResponseItem(body: any, headers: any, statusCode: any, st
 
 export function ngrokExpirationItem(text: string): ILogItem {
   return {
-    type: 'ngrok-expiration',
+    type: "ngrok-expiration",
     payload: {
       text
     }

@@ -31,28 +31,37 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as HttpStatus from 'http-status-codes';
-import * as Restify from 'restify';
+import * as HttpStatus from "http-status-codes";
+import * as Restify from "restify";
 
-import BotEmulator from '../../botEmulator';
+import BotEmulator from "../../botEmulator";
 
 export default function tokenResponse(botEmulator: BotEmulator) {
-  return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+  return (
+    req: Restify.Request,
+    res: Restify.Response,
+    next: Restify.Next
+  ): any => {
     const body: {
-      token: string,
-      connectionName: string } = req.body;
+      token: string;
+      connectionName: string;
+    } = req.body;
 
     const conversationId = req.query.conversationId;
 
-    const conversation = botEmulator.facilities.conversations.conversationById(conversationId);
+    const conversation = botEmulator.facilities.conversations.conversationById(
+      conversationId
+    );
 
-    conversation.sendTokenResponse(body.connectionName, body.token, false).then(response => {
-      if (response.statusCode === HttpStatus.OK) {
+    conversation
+      .sendTokenResponse(body.connectionName, body.token, false)
+      .then(response => {
+        if (response.statusCode === HttpStatus.OK) {
           res.send(HttpStatus.OK, body);
-      } else {
+        } else {
           res.send(response.statusCode);
-      }
-      res.end();
-    });
+        }
+        res.end();
+      });
   };
 }

@@ -1,6 +1,6 @@
-import * as chokidar from 'chokidar';
-import { FSWatcher, WatchOptions } from 'chokidar';
-import * as fs from 'fs';
+import * as chokidar from "chokidar";
+import { FSWatcher, WatchOptions } from "chokidar";
+import * as fs from "fs";
 
 export abstract class FileWatcher implements FileWatcher {
   protected abstract onFileAdd: (file: string, fstats?: fs.Stats) => void;
@@ -20,12 +20,13 @@ export abstract class FileWatcher implements FileWatcher {
       this.watcher.close();
     }
 
-    this.watcher = chokidar.watch(paths)
-      .on('addDir', this.onFileAdd)
-      .on('add', this.onFileAdd)
-      .on('unlinkDir', this.onFileRemove)
-      .on('unlink', this.onFileRemove)
-      .on('change', this.onFileChange);
+    this.watcher = chokidar
+      .watch(paths)
+      .on("addDir", this.onFileAdd)
+      .on("add", this.onFileAdd)
+      .on("unlinkDir", this.onFileRemove)
+      .on("unlink", this.onFileRemove)
+      .on("change", this.onFileChange);
 
     return true;
   }

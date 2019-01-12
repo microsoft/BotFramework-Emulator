@@ -31,19 +31,19 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import CardAction from './cardAction';
-import Fact from './fact';
-import ReceiptItem from './receiptItem';
+import CardAction from "./cardAction";
+import Fact from "./fact";
+import ReceiptItem from "./receiptItem";
 
 interface ReceiptCard {
-  title: string;                  // Title of the Card
-  items: ReceiptItem[];          // Array of receipt items.
-  facts: Fact[];                 // Array of key-value pairs.
-  tap: CardAction;                   // This action will be activated when user taps on the section bubble.
-  total: string;                  // Total amount of money paid (or should be paid)
-  tax: string;                    // Total amount of TAX paid (or should be paid)
-  vat: string;                    // Total amount of VAT paid (or should be paid)
-  buttons: CardAction[];             // Set of actions applicable to the current card.
+  title: string; // Title of the Card
+  items: ReceiptItem[]; // Array of receipt items.
+  facts: Fact[]; // Array of key-value pairs.
+  tap: CardAction; // This action will be activated when user taps on the section bubble.
+  total: string; // Total amount of money paid (or should be paid)
+  tax: string; // Total amount of TAX paid (or should be paid)
+  vat: string; // Total amount of VAT paid (or should be paid)
+  buttons: CardAction[]; // Set of actions applicable to the current card.
 }
 
 export default ReceiptCard;

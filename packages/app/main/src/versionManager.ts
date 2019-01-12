@@ -31,11 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import got from 'got';
-import { DOMParser } from 'xmldom';
-import { mainWindow } from './main';
-import LogLevel from '@bfemulator/emulator-core/lib/types/log/level';
-import { textItem } from '@bfemulator/emulator-core/lib/types/log/util';
+import LogLevel from "@bfemulator/emulator-core/lib/types/log/level";
+import { textItem } from "@bfemulator/emulator-core/lib/types/log/util";
+import got from "got";
+import { DOMParser } from "xmldom";
+
+import { mainWindow } from "./main";
 
 interface Version {
   type?: string;
@@ -45,20 +46,23 @@ interface Version {
 }
 
 export class VersionManager {
-  static hasChecked: boolean = false;
-  static SDKTypes: string[] = ['(BotBuilder .Net/', '(BotBuilder Node.js/'];
-  static currentSdkVersion: Version = null;
+  public static hasChecked: boolean = false;
+  public static SDKTypes: string[] = ["(BotBuilder .Net/", "(BotBuilder Node.js/"];
+  public static currentSdkVersion: Version = null;
 
   public static checkVersion(conversationId: string, userAgent: string) {
     if (!VersionManager.hasChecked) {
-      let version = VersionManager.parseUserAgentForVersion(userAgent);
+      const version = VersionManager.parseUserAgentForVersion(userAgent);
       VersionManager.checkCurrentSdkVersion(conversationId, version);
       VersionManager.hasChecked = true;
     }
   }
 
-  public static checkCurrentSdkVersion(conversationId: string, version: Version) {
-    if (!version || version.type === 'node') {
+  public static checkCurrentSdkVersion(
+    conversationId: string,
+    version: Version
+  ) {
+    if (!version || version.type === "node") {
       VersionManager.checkNodeSdkVersion(conversationId, version);
     } else {
       VersionManager.checkDotNetSdkVersion(conversationId, version);
@@ -66,23 +70,29 @@ export class VersionManager {
   }
 
   public static checkNodeSdkVersion(conversationId: string, version: Version) {
-    let options = {
-      url: 'http://registry.npmjs.org/-/package/botbuilder/dist-tags',
-      method: 'GET',
+    const options = {
+      url: "http://registry.npmjs.org/-/package/botbuilder/dist-tags",
+      method: "GET",
       headers: {
-        Accept: 'application/json'
+        Accept: "application/json"
       },
       useElectronNet: true
     };
 
-    let responseCallback = (resp) => {
+    const responseCallback = resp => {
       if (resp.body) {
         try {
-          let verObj = JSON.parse(resp.body);
+          const verObj = JSON.parse(resp.body);
           if (verObj.latest) {
-            let latestVersion: Version = VersionManager.parseVersion(verObj.latest);
+            const latestVersion: Version = VersionManager.parseVersion(
+              verObj.latest
+            );
             if (!version || VersionManager.isLess(version, latestVersion)) {
-              VersionManager.warnAboutNewSdkVersion(conversationId, version, latestVersion);
+              VersionManager.warnAboutNewSdkVersion(
+                conversationId,
+                version,
+                latestVersion
+              );
             }
           }
         } catch (err) {
@@ -97,25 +107,37 @@ export class VersionManager {
       });
   }
 
-  public static checkDotNetSdkVersion(conversationId: string, version: Version) {
-    let options = {
-      url: 'https://www.nuget.org/api/v2/Packages?' +
-        '$filter=IsLatestVersion%20eq%20true%20and%20Id%20eq\'Microsoft.Bot.Builder\'&$select=NormalizedVersion',
-      method: 'GET',
+  public static checkDotNetSdkVersion(
+    conversationId: string,
+    version: Version
+  ) {
+    const options = {
+      url:
+        "https://www.nuget.org/api/v2/Packages?" +
+        "$filter=IsLatestVersion%20eq%20true%20and%20Id%20eq'Microsoft.Bot.Builder'&$select=NormalizedVersion",
+      method: "GET",
       useElectronNet: true
     };
 
-    let responseCallback = (resp) => {
+    const responseCallback = resp => {
       if (resp.body) {
         try {
-          let doc = new DOMParser().parseFromString(resp.body, 'text/xml');
-          let entryElem = doc.documentElement.getElementsByTagName('entry')[0];
-          let properties = entryElem.getElementsByTagName('m:properties')[0];
-          let versionElem = properties.getElementsByTagName('d:NormalizedVersion')[0];
+          const doc = new DOMParser().parseFromString(resp.body, "text/xml");
+          const entryElem = doc.documentElement.getElementsByTagName("entry")[0];
+          const properties = entryElem.getElementsByTagName("m:properties")[0];
+          const versionElem = properties.getElementsByTagName(
+            "d:NormalizedVersion"
+          )[0];
           if (versionElem.textContent) {
-            let latestVersion: Version = VersionManager.parseVersion(versionElem.textContent);
+            const latestVersion: Version = VersionManager.parseVersion(
+              versionElem.textContent
+            );
             if (!version || VersionManager.isLess(version, latestVersion)) {
-              VersionManager.warnAboutNewSdkVersion(conversationId, version, latestVersion);
+              VersionManager.warnAboutNewSdkVersion(
+                conversationId,
+                version,
+                latestVersion
+              );
             }
           }
         } catch (err) {
@@ -130,26 +152,39 @@ export class VersionManager {
       });
   }
 
-  private static warnAboutNewSdkVersion(conversationId: string, botVersion: Version, latestVersion: Version) {
-    mainWindow.logService.logToChat(conversationId,
-      textItem(LogLevel.Warn, 'Warning: The latest bot SDK version is ' + VersionManager.toString(latestVersion) +
-        (botVersion ? ' but the bot is running SDK version ' + VersionManager.toString(botVersion) : '')
-        + '. Consider upgrading the bot to the latest SDK.'));
+  private static warnAboutNewSdkVersion(
+    conversationId: string,
+    botVersion: Version,
+    latestVersion: Version
+  ) {
+    mainWindow.logService.logToChat(
+      conversationId,
+      textItem(
+        LogLevel.Warn,
+        "Warning: The latest bot SDK version is " +
+          VersionManager.toString(latestVersion) +
+          (botVersion
+            ? " but the bot is running SDK version " +
+              VersionManager.toString(botVersion)
+            : "") +
+          ". Consider upgrading the bot to the latest SDK."
+      )
+    );
   }
 
   private static parseUserAgentForVersion(userAgent: string): Version {
     if (userAgent && userAgent.length) {
       for (let i = 0; i < VersionManager.SDKTypes.length; i++) {
-        let type = VersionManager.SDKTypes[i];
+        const type = VersionManager.SDKTypes[i];
         let idx = userAgent.indexOf(type);
         if (idx !== -1) {
           idx += type.length;
-          let endIdx = userAgent.indexOf(')', idx);
+          const endIdx = userAgent.indexOf(")", idx);
           if (endIdx !== -1) {
-            let versionString = userAgent.substring(idx, endIdx);
-            let version = VersionManager.parseVersion(versionString);
+            const versionString = userAgent.substring(idx, endIdx);
+            const version = VersionManager.parseVersion(versionString);
             if (version) {
-              version.type = i === 0 ? 'dotnet' : 'node';
+              version.type = i === 0 ? "dotnet" : "node";
             }
             return version;
           }
@@ -161,9 +196,9 @@ export class VersionManager {
   }
 
   private static parseVersion(versionString: string): Version {
-    let parts = versionString.split('.');
+    const parts = versionString.split(".");
     if (parts.length >= 3) {
-      let version = {
+      const version = {
         major: parseInt(parts[0], 10),
         minor: parseInt(parts[1], 10),
         subminor: parseInt(parts[2], 10)
@@ -174,12 +209,14 @@ export class VersionManager {
   }
 
   private static toString(version: Version): string {
-    return version.major + '.' + version.minor + '.' + version.subminor;
+    return version.major + "." + version.minor + "." + version.subminor;
   }
 
   private static isLess(a: Version, b: Version): boolean {
-    return ((a.major < b.major) ||
+    return (
+      a.major < b.major ||
       (a.major === b.major && a.minor < b.minor) ||
-      (a.major === b.major && a.minor === b.minor && a.subminor < b.subminor));
+      (a.major === b.major && a.minor === b.minor && a.subminor < b.subminor)
+    );
   }
 }

@@ -31,10 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from 'react';
-import * as styles from './AnswersView.scss';
-import { Component } from 'react';
-import { Answer } from '../../Models/QnAMakerModels';
+import * as React from "react";
+import { Component } from "react";
+
+import { Answer } from "../../Models/QnAMakerModels";
+
+import * as styles from "./AnswersView.scss";
 
 interface AnswersViewProps {
   answers: Answer[];
@@ -48,51 +50,56 @@ export default class AnswersView extends Component<AnswersViewProps, {}> {
     super(props, context);
   }
 
-  render(): JSX.Element {
-    let answersRendered: JSX.Element[] = this.props.answers.map((answer) => this.renderAnswer(answer));
+  public render(): JSX.Element {
+    const answersRendered: JSX.Element[] = this.props.answers.map(answer =>
+      this.renderAnswer(answer)
+    );
     return (
-      <div className={ `${styles.answersColumn} answers-column` }>
+      <div className={`${styles.answersColumn} answers-column`}>
         <h3>Answer</h3>
         <p>Choose the most appropriate answer:</p>
-        { answersRendered }
+        {answersRendered}
         <input
           type="text"
           id="new-answer"
           placeholder="Enter a new answer here"
-          onKeyPress={ (e) => this.answerInputKeyPress(e) }
+          onKeyPress={e => this.answerInputKeyPress(e)}
         />
       </div>
     );
   }
 
   private renderAnswer(answer: Answer) {
-    let selected = this.props.selectedAnswer !== null && answer.text === this.props.selectedAnswer.text;
-    let blockClass = 'answer-block';
+    const selected =
+      this.props.selectedAnswer !== null &&
+      answer.text === this.props.selectedAnswer.text;
+    let blockClass = "answer-block";
     if (selected) {
-      blockClass += ' selected';
+      blockClass += " selected";
     }
-    let selectedBlock = selected
-      ? (
-        <div className={ styles.selected }>
-          <h4>Confidence score</h4>
-          <p>{ answer.score.toFixed(2) }</p>
-        </div>
-      )
-      : null;
+    const selectedBlock = selected ? (
+      <div className={styles.selected}>
+        <h4>Confidence score</h4>
+        <p>{answer.score.toFixed(2)}</p>
+      </div>
+    ) : null;
     return (
-      <div className="qna-answer" key={ answer.text }>
-        <button className={ `${styles.answersBlock} ${blockClass}` } onClick={ () => this.props.selectAnswer(answer) }>
-          { answer.text }
+      <div className="qna-answer" key={answer.text}>
+        <button
+          className={`${styles.answersBlock} ${blockClass}`}
+          onClick={() => this.props.selectAnswer(answer)}
+        >
+          {answer.text}
         </button>
-        { selectedBlock }
+        {selectedBlock}
       </div>
     );
   }
 
   private answerInputKeyPress(e: any) {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       this.props.addAnswer(e.target.value);
-      e.target.value = '';
+      e.target.value = "";
     }
   }
 }

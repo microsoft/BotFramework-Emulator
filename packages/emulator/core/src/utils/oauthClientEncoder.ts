@@ -31,31 +31,46 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import ActivityVisitor from './activityVisitor';
-import CardAction from '../types/card/cardAction';
-import Activity from '../types/activity/activity';
+import Activity from "../types/activity/activity";
+import CardAction from "../types/card/cardAction";
+
+import ActivityVisitor from "./activityVisitor";
 
 export default class OAuthClientEncoder extends ActivityVisitor {
-  public static OAuthEmulatorUrlProtocol: string = 'oauth:';
+  public static OAuthEmulatorUrlProtocol: string = "oauth:";
 
   private _conversationId: string;
 
   constructor(activity: Activity) {
-      super();
-      this._conversationId = activity && activity.conversation ? activity.conversation.id : undefined;
+    super();
+    this._conversationId =
+      activity && activity.conversation ? activity.conversation.id : undefined;
   }
 
   protected visitCardAction(cardAction: CardAction) {
     return null;
   }
 
-  protected visitOAuthCardAction(connectionName: string, cardAction: CardAction) {
-      if (this._conversationId && cardAction && cardAction.type === 'signin' && !cardAction.value) {
-          let url = OAuthClientEncoder.OAuthEmulatorUrlProtocol + '//' + connectionName + '&&&' + this._conversationId;
+  protected visitOAuthCardAction(
+    connectionName: string,
+    cardAction: CardAction
+  ) {
+    if (
+      this._conversationId &&
+      cardAction &&
+      cardAction.type === "signin" &&
+      !cardAction.value
+    ) {
+      const url =
+        OAuthClientEncoder.OAuthEmulatorUrlProtocol +
+        "//" +
+        connectionName +
+        "&&&" +
+        this._conversationId;
 
-          // change the card action to a special URL for the emulator
-          cardAction.type = 'openUrl';
-          cardAction.value = url;
-      }
+      // change the card action to a special URL for the emulator
+      cardAction.type = "openUrl";
+      cardAction.value = url;
+    }
   }
 }

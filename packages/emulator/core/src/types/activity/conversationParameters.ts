@@ -31,8 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import Activity from './activity';
-import ChannelAccount from '../account/channel';
+import ChannelAccount from "../account/channel";
+
+import Activity from "./activity";
 
 interface ConversationParameters extends Activity {
   activity?: Activity;

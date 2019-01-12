@@ -31,9 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { UpdateAvailableDialog, UpdateAvailableDialogProps } from './updateAvailableDialog';
-import { connect } from 'react-redux';
-import { DialogService } from '../service';
+import { connect } from "react-redux";
+
+import { DialogService } from "../service";
+
+import {
+  UpdateAvailableDialog,
+  UpdateAvailableDialogProps
+} from "./updateAvailableDialog";
 
 function mapDispatchToProps(_dispatch: any): UpdateAvailableDialogProps {
   return {
@@ -44,4 +49,7 @@ function mapDispatchToProps(_dispatch: any): UpdateAvailableDialogProps {
   };
 }
 
-export const UpdateAvailableDialogContainer = connect(null, mapDispatchToProps)(UpdateAvailableDialog);
+export const UpdateAvailableDialogContainer = connect(
+  null,
+  mapDispatchToProps
+)(UpdateAvailableDialog);

@@ -31,17 +31,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from 'react';
-import { connect } from 'react-redux';
+import { InsetShadow } from "@bfemulator/ui-react";
+import { IBotConfiguration } from "botframework-config/lib/schema";
+import * as React from "react";
+import { connect } from "react-redux";
 
-import { BotExplorerBarContainer } from '../botExplorerBar/botExplorerBarContainer';
-import * as Constants from '../../../../constants';
-import { IBotConfiguration } from 'botframework-config/lib/schema';
-import { RootState } from '../../../../data/store';
-import * as styles from './explorerBar.scss';
-import { NotificationsExplorerBar } from '../notificationsExplorer/notificationsExplorerBar';
-import { InsetShadow } from '@bfemulator/ui-react';
-import { ResourcesBarContainer } from '../resourcesBar/resourcesBarContainer';
+import * as Constants from "../../../../constants";
+import { RootState } from "../../../../data/store";
+import { BotExplorerBarContainer } from "../botExplorerBar/botExplorerBarContainer";
+import { NotificationsExplorerBar } from "../notificationsExplorer/notificationsExplorerBar";
+import { ResourcesBarContainer } from "../resourcesBar/resourcesBarContainer";
+
+import * as styles from "./explorerBar.scss";
 
 interface ExplorerBarProps {
   activeBot?: IBotConfiguration;
@@ -57,21 +58,22 @@ class ExplorerBarComponent extends React.Component<ExplorerBarProps> {
     const { activeBot = null, selectedNavTab = null } = this.props;
     return (
       <BotExplorerBarContainer
-        activeBot={ activeBot }
-        key={ 'bot-explorer-bar' }
-        hidden={ selectedNavTab !== Constants.NAVBAR_BOT_EXPLORER }/>
+        activeBot={activeBot}
+        key={"bot-explorer-bar"}
+        hidden={selectedNavTab !== Constants.NAVBAR_BOT_EXPLORER}
+      />
     );
   }
 
   private get notificationsBar(): JSX.Element {
-    return (<NotificationsExplorerBar key={ 'notifications-explorer-bar' }/>);
+    return <NotificationsExplorerBar key={"notifications-explorer-bar"} />;
   }
 
   private get resourcesBar(): JSX.Element {
-    return (<ResourcesBarContainer key="resources"/>);
+    return <ResourcesBarContainer key="resources" />;
   }
 
-  render(): JSX.Element {
+  public render(): JSX.Element {
     const { selectedNavTab = null } = this.props;
     let explorer;
     switch (selectedNavTab) {
@@ -89,9 +91,9 @@ class ExplorerBarComponent extends React.Component<ExplorerBarProps> {
     }
 
     return (
-      <div className={ styles.explorerBar }>
-        { explorer }
-        <InsetShadow orientation={ 'right' }/>
+      <div className={styles.explorerBar}>
+        {explorer}
+        <InsetShadow orientation={"right"} />
       </div>
     );
   }

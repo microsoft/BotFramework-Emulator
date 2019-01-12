@@ -45,68 +45,66 @@ const defaultSettings = {
 
 let mockSettings: any;
 
-jest.mock('electron-updater', () => ({
-  get autoUpdater() { return mockAutoUpdater; },
+jest.mock("electron-updater", () => ({
+  get autoUpdater() {
+    return mockAutoUpdater;
+  },
   UpdateInfo: typeof {}
 }));
 
-jest.mock('./settingsData/store', () => ({
+jest.mock("./settingsData/store", () => ({
   getSettings: () => ({ framework: mockSettings })
 }));
 
-import { AppUpdater } from './appUpdater';
+import { AppUpdater } from "./appUpdater";
 
-describe('AppUpdater', () => {
+describe("AppUpdater", () => {
   beforeEach(() => {
     mockAutoUpdater = {};
     mockSettings = { ...defaultSettings };
   });
 
-  it('should get userInitiated', () => {
+  it("should get userInitiated", () => {
     const tmp = (AppUpdater as any)._userInitiated;
     (AppUpdater as any)._userInitiated = true;
 
     expect(AppUpdater.userInitiated).toBe(true);
-
     (AppUpdater as any)._userInitiated = tmp;
   });
 
-  it('should get status', () => {
+  it("should get status", () => {
     const tmp = (AppUpdater as any)._status;
     (AppUpdater as any)._status = true;
 
     expect(AppUpdater.status).toBe(true);
-
     (AppUpdater as any)._status = tmp;
   });
 
-  it('should get downloadProgress', () => {
+  it("should get downloadProgress", () => {
     const tmp = (AppUpdater as any)._downloadProgress;
     (AppUpdater as any)._downloadProgress = true;
 
     expect(AppUpdater.downloadProgress).toBe(true);
-
     (AppUpdater as any)._downloadProgress = tmp;
   });
 
-  it('should get updateDownloaded', () => {
+  it("should get updateDownloaded", () => {
     const tmp = (AppUpdater as any)._updateDownloaded;
     (AppUpdater as any)._updateDownloaded = true;
 
     expect(AppUpdater.updateDownloaded).toBe(true);
-
     (AppUpdater as any)._updateDownloaded = tmp;
   });
 
-  it('should return the correct repo depending on the prerelease setting', () => {
+  it("should return the correct repo depending on the prerelease setting", () => {
     AppUpdater.allowPrerelease = true;
-    expect(AppUpdater.repo).toBe('BotFramework-Emulator-Nightlies');
+    expect(AppUpdater.repo).toBe("BotFramework-Emulator-Nightlies");
 
     AppUpdater.allowPrerelease = false;
-    expect(AppUpdater.repo).toBe('BotFramework-Emulator');
+    expect(AppUpdater.repo).toBe("BotFramework-Emulator");
   });
 
-  it('should get and set autoDownload', () => {
+  it("should get and set autoDownload", () => {
     mockAutoUpdater.autoDownload = false;
     AppUpdater.autoDownload = true;
 
@@ -114,7 +112,7 @@ describe('AppUpdater', () => {
     expect(AppUpdater.autoDownload).toBe(true);
   });
 
-  it('should get and set allowPrerelease', () => {
+  it("should get and set allowPrerelease", () => {
     mockAutoUpdater.allowPrerelease = false;
     AppUpdater.allowPrerelease = true;
 
@@ -122,7 +120,7 @@ describe('AppUpdater', () => {
     expect(AppUpdater.allowPrerelease).toBe(true);
   });
 
-  it('should startup and check for updates', () => {
+  it("should startup and check for updates", () => {
     mockSettings.usePrereleases = false;
     mockSettings.autoUpdate = true;
 
@@ -132,7 +130,7 @@ describe('AppUpdater', () => {
     mockAutoUpdater.setFeedURL = mockSetFeedURL;
 
     const tmp = AppUpdater.checkForUpdates;
-    const mockCheckForUpdates = jest.fn((_) => Promise.resolve(true));
+    const mockCheckForUpdates = jest.fn(_ => Promise.resolve(true));
     AppUpdater.checkForUpdates = mockCheckForUpdates;
 
     AppUpdater.startup();
@@ -150,7 +148,7 @@ describe('AppUpdater', () => {
     AppUpdater.checkForUpdates = tmp;
   });
 
-  it('should startup and not check for updates if autoUpdate is false ', () => {
+  it("should startup and not check for updates if autoUpdate is false ", () => {
     mockSettings.usePrereleases = true;
     mockSettings.autoUpdate = false;
 
@@ -160,7 +158,7 @@ describe('AppUpdater', () => {
     mockAutoUpdater.setFeedURL = mockSetFeedURL;
 
     const tmp = AppUpdater.checkForUpdates;
-    const mockCheckForUpdates = jest.fn((_) => Promise.resolve(true));
+    const mockCheckForUpdates = jest.fn(_ => Promise.resolve(true));
     AppUpdater.checkForUpdates = mockCheckForUpdates;
 
     AppUpdater.startup();
@@ -173,9 +171,11 @@ describe('AppUpdater', () => {
     AppUpdater.checkForUpdates = tmp;
   });
 
-  it('should check for updates from the stable release repo', () => {
+  it("should check for updates from the stable release repo", () => {
     const mockSetFeedURL = jest.fn((_options: any) => null);
-    const mockCheckForUpdates = jest.fn((_userInitiated: boolean) => Promise.resolve());
+    const mockCheckForUpdates = jest.fn((_userInitiated: boolean) =>
+      Promise.resolve()
+    );
     mockAutoUpdater.setFeedURL = mockSetFeedURL;
     mockAutoUpdater.checkForUpdates = mockCheckForUpdates;
 
@@ -184,42 +184,47 @@ describe('AppUpdater', () => {
     expect(AppUpdater.userInitiated).toBe(true);
 
     expect(mockSetFeedURL).toHaveBeenCalledWith({
-      repo: 'BotFramework-Emulator',
-      owner: 'Microsoft',
-      provider: 'github'
+      repo: "BotFramework-Emulator",
+      owner: "Microsoft",
+      provider: "github"
     });
 
     expect(mockCheckForUpdates).toHaveBeenCalledTimes(1);
   });
 
-  it('should check for updates from the nightly release repo', () => {
+  it("should check for updates from the nightly release repo", () => {
     mockSettings.usePrereleases = true;
     const mockSetFeedURL = jest.fn((_options: any) => null);
-    const mockCheckForUpdates = jest.fn((_userInitiated: boolean) => Promise.resolve());
+    const mockCheckForUpdates = jest.fn((_userInitiated: boolean) =>
+      Promise.resolve()
+    );
     mockAutoUpdater.setFeedURL = mockSetFeedURL;
     mockAutoUpdater.checkForUpdates = mockCheckForUpdates;
 
     AppUpdater.checkForUpdates(false);
 
     expect(mockSetFeedURL).toHaveBeenCalledWith({
-      repo: 'BotFramework-Emulator-Nightlies',
-      owner: 'Microsoft',
-      provider: 'github'
+      repo: "BotFramework-Emulator-Nightlies",
+      owner: "Microsoft",
+      provider: "github"
     });
 
     expect(mockCheckForUpdates).toHaveBeenCalledTimes(1);
   });
 
-  it('should throw if there is an error while trying to check for updates', async () => {
-    const mockCheckForUpdates = jest.fn((_userInitiated: boolean) => Promise.reject('ERROR'));
+  it("should throw if there is an error while trying to check for updates", async () => {
+    const mockCheckForUpdates = jest.fn((_userInitiated: boolean) =>
+      Promise.reject("ERROR")
+    );
     mockAutoUpdater.checkForUpdates = mockCheckForUpdates;
     mockAutoUpdater.setFeedURL = () => null;
 
-    await expect(AppUpdater.checkForUpdates(false))
-      .rejects.toBe('There was an error while checking for the latest update: ERROR');
+    await expect(AppUpdater.checkForUpdates(false)).rejects.toBe(
+      "There was an error while checking for the latest update: ERROR"
+    );
   });
 
-  it('should download updates', async () => {
+  it("should download updates", async () => {
     const mockDownloadUpdate = jest.fn(() => Promise.resolve(true));
     mockAutoUpdater.downloadUpdate = mockDownloadUpdate;
 
@@ -228,15 +233,18 @@ describe('AppUpdater', () => {
     expect(mockDownloadUpdate).toHaveBeenCalledTimes(1);
   });
 
-  it('should throw if there is an error while trying to download updates', async () => {
-    mockAutoUpdater.downloadUpdate = () => Promise.reject('ERROR');
+  it("should throw if there is an error while trying to download updates", async () => {
+    mockAutoUpdater.downloadUpdate = () => Promise.reject("ERROR");
 
-    await expect(AppUpdater.downloadUpdate(false))
-      .rejects.toBe('There was an error while trying to download the latest update: ERROR');
+    await expect(AppUpdater.downloadUpdate(false)).rejects.toBe(
+      "There was an error while trying to download the latest update: ERROR"
+    );
   });
 
-  it('should quit and install', () => {
-    const mockQuitAndInstall = jest.fn((isSilent: boolean, forceRunAfter: boolean) => null);
+  it("should quit and install", () => {
+    const mockQuitAndInstall = jest.fn(
+      (isSilent: boolean, forceRunAfter: boolean) => null
+    );
     mockAutoUpdater.quitAndInstall = mockQuitAndInstall;
 
     AppUpdater.quitAndInstall();
@@ -245,10 +253,13 @@ describe('AppUpdater', () => {
     expect(mockQuitAndInstall).toHaveBeenCalledWith(false, true);
   });
 
-  it('should throw if there is an error while trying to quit and install', () => {
-    mockAutoUpdater.quitAndInstall = () => { throw 'ERROR'; };
+  it("should throw if there is an error while trying to quit and install", () => {
+    mockAutoUpdater.quitAndInstall = () => {
+      throw "ERROR";
+    };
 
-    expect(() => AppUpdater.quitAndInstall())
-      .toThrow('There was an error while trying to quit and install the latest update: ERROR');
+    expect(() => AppUpdater.quitAndInstall()).toThrow(
+      "There was an error while trying to quit and install the latest update: ERROR"
+    );
   });
 });

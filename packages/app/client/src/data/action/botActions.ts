@@ -31,28 +31,28 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { BotInfo } from '@bfemulator/app-shared';
-import { BotConfigWithPath } from '@bfemulator/sdk-shared';
+import { BotInfo } from "@bfemulator/app-shared";
+import { BotConfigWithPath } from "@bfemulator/sdk-shared";
 
 export enum BotActions {
-  load = 'BOT/LOAD',
-  setActive = 'BOT/SET_ACTIVE',
-  close = 'BOT/CLOSE',
-  browse = 'BOT/BROWSE',
-  hashGenerated = 'BOT/HASH_GENERATED'
+  load = "BOT/LOAD",
+  setActive = "BOT/SET_ACTIVE",
+  close = "BOT/CLOSE",
+  browse = "BOT/BROWSE",
+  hashGenerated = "BOT/HASH_GENERATED"
 }
 
 export interface LoadBotAction {
   type: BotActions.load;
   payload: {
-    bots: BotInfo[]
+    bots: BotInfo[];
   };
 }
 
 export interface SetActiveBotAction {
   type: BotActions.setActive;
   payload: {
-    bot: BotConfigWithPath
+    bot: BotConfigWithPath;
   };
 }
 
@@ -72,11 +72,11 @@ export interface BotHashAction {
 }
 
 export type BotAction =
-  LoadBotAction |
-  SetActiveBotAction |
-  CloseBotAction |
-  BrowseBotAction |
-  BotHashAction;
+  | LoadBotAction
+  | SetActiveBotAction
+  | CloseBotAction
+  | BrowseBotAction
+  | BotHashAction;
 
 export function load(bots: BotInfo[]): LoadBotAction {
   // prune bad bots

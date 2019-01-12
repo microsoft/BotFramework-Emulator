@@ -31,22 +31,28 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IPC, isObject } from '@bfemulator/sdk-shared';
+import { IPC, isObject } from "@bfemulator/sdk-shared";
 
 export interface Process {
   pid: number;
   send?(message: any);
-  on(event: 'message', listener: NodeJS.MessageListener);
-  on(event: 'exit', listener: NodeJS.ExitListener);
+  on(event: "message", listener: NodeJS.MessageListener);
+  on(event: "exit", listener: NodeJS.ExitListener);
 }
 
 export class ProcessIPC extends IPC {
-  get id(): number { return this._process.pid; }
+  get id(): number {
+    return this._process.pid;
+  }
 
   constructor(private _process: Process) {
     super();
-    this._process.on('message', message => {
-      if (isObject(message) && message.type === 'ipc:message' && Array.isArray(message.args)) {
+    this._process.on("message", message => {
+      if (
+        isObject(message) &&
+        message.type === "ipc:message" &&
+        Array.isArray(message.args)
+      ) {
         const channelName = message.args.shift();
         const channel = super.getChannel(channelName);
         if (channel) {
@@ -56,10 +62,10 @@ export class ProcessIPC extends IPC {
     });
   }
 
-  send(...args: any[]): void {
+  public send(...args: any[]): void {
     if (this._process.send) {
       this._process.send({
-        type: 'ipc:message',
+        type: "ipc:message",
         args
       });
     }

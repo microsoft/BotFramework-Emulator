@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import ErrorResponse from './response/error';
+import ErrorResponse from "./response/error";
 
 interface APIException {
   error: ErrorResponse;

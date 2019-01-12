@@ -31,10 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import Activity from './activity';
+import Activity from "./activity";
 
 interface GenericActivity extends Activity {
-  attachments: { contentType: string }[];
+  attachments: Array<{ contentType: string }>;
   text: string;
 }
 

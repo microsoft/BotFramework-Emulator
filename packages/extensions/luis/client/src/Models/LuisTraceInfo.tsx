@@ -31,10 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { RecognizerResult } from './RecognizerResults';
-import { LuisResponse } from '../Luis/LuisResponse';
-import { LuisModel } from './LuisModel';
-import { LuisOptions } from '../Luis/LuisOptions';
+import { LuisOptions } from "../Luis/LuisOptions";
+import { LuisResponse } from "../Luis/LuisResponse";
+
+import { LuisModel } from "./LuisModel";
+import { RecognizerResult } from "./RecognizerResults";
 
 export interface LuisTraceInfo {
   recognizerResult: RecognizerResult;

@@ -1,39 +1,19 @@
 {
-  "extends": [
-    "tslint:latest",
-    "tslint-config-prettier"
-  ],
   "rules": {
-    "align": [
-      true,
-      "parameters",
-      "statements"
-    ],
+    "align": [true, "parameters", "statements"],
     "ban": false,
     "class-name": true,
-    "comment-format": [
-      true,
-      "check-space"
-    ],
+    "comment-format": [true, "check-space"],
     "curly": true,
     "eofline": false,
     "forin": true,
-    "indent": [
-      true,
-      "spaces"
-    ],
-    "interface-name": [
-      true,
-      "never-prefix"
-    ],
+    "indent": [true, "spaces"],
+    "interface-name": [true, "never-prefix"],
     "jsdoc-format": true,
     "jsx-no-lambda": false,
     "jsx-no-multiline-js": false,
     "label-position": true,
-    "max-line-length": [
-      true,
-      120
-    ],
+    "max-line-length": [true, 120],
     "member-ordering": [
       true,
       "public-before-private",
@@ -71,29 +51,13 @@
       "check-open-brace",
       "check-whitespace"
     ],
-    "quotemark": [
-      true,
-      "single",
-      "jsx-double"
-    ],
+    "quotemark": [true, "single", "jsx-double"],
     "radix": true,
-    "semicolon": [
-      true,
-      "always"
-    ],
+    "semicolon": [true, "always"],
     "switch-default": true,
-    "trailing-comma": [
-      false
-    ],
-    "triple-equals": [
-      true,
-      "allow-null-check"
-    ],
-    "typedef": [
-      true,
-      "parameter",
-      "property-declaration"
-    ],
+    "trailing-comma": [false],
+    "triple-equals": [true, "allow-null-check"],
+    "typedef": [true, "parameter", "property-declaration"],
     "typedef-whitespace": [
       true,
       {

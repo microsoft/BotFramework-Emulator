@@ -31,18 +31,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from 'react';
-import { Component, MouseEventHandler } from 'react';
-import * as styles from './ControlBar.scss';
+import * as React from "react";
+import { Component, MouseEventHandler } from "react";
+
+import * as styles from "./ControlBar.scss";
 
 enum ButtonSelected {
   RecognizerResult,
   RawResponse
 }
 
-interface ControlBarState {
-
-}
+interface ControlBarState {}
 
 interface ControlBarProps {
   setButtonSelected: (buttonSelected: ButtonSelected) => void;
@@ -50,27 +49,32 @@ interface ControlBarProps {
 }
 
 class ControlBar extends Component<ControlBarProps, ControlBarState> {
-
-  clickHandler: MouseEventHandler<HTMLAnchorElement> = (e: React.MouseEvent<HTMLAnchorElement>) => {
+  public clickHandler: MouseEventHandler<HTMLAnchorElement> = (
+    e: React.MouseEvent<HTMLAnchorElement>
+  ) => {
     e.preventDefault();
     this.props.setButtonSelected(ButtonSelected[e.currentTarget.id]);
-  }
+  };
 
   constructor(props: any, context: any) {
     super(props, context);
   }
 
-  render() {
+  public render() {
     return (
-      <div className={ styles.controlBar }>
+      <div className={styles.controlBar}>
         <span id="recognizerResultButton">
           <a
             id={ButtonSelected[ButtonSelected.RecognizerResult]}
             href="#"
             onClick={this.clickHandler}
-            style={this.props.buttonSelected === ButtonSelected.RecognizerResult ? {textDecoration: 'underline'} : {}}
+            style={
+              this.props.buttonSelected === ButtonSelected.RecognizerResult
+                ? { textDecoration: "underline" }
+                : {}
+            }
           >
-              Recognizer Result
+            Recognizer Result
           </a>
         </span>
         <span id="rawResponseButton">
@@ -78,9 +82,13 @@ class ControlBar extends Component<ControlBarProps, ControlBarState> {
             id={ButtonSelected[ButtonSelected.RawResponse]}
             href="#"
             onClick={this.clickHandler}
-            style={this.props.buttonSelected === ButtonSelected.RawResponse ? {textDecoration: 'underline'} : {}}
+            style={
+              this.props.buttonSelected === ButtonSelected.RawResponse
+                ? { textDecoration: "underline" }
+                : {}
+            }
           >
-              Raw Response
+            Raw Response
           </a>
         </span>
       </div>

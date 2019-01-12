@@ -31,12 +31,24 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { call, ForkEffect, put, takeEvery, takeLatest } from 'redux-saga/effects';
-import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
-import { SharedConstants } from '@bfemulator/app-shared';
-import { BotActions, botHashGenerated, SetActiveBotAction } from '../action/botActions';
-import { generateBotHash } from '../botHelpers';
-import { refreshConversationMenu } from './sharedSagas';
+import { SharedConstants } from "@bfemulator/app-shared";
+import {
+  call,
+  ForkEffect,
+  put,
+  takeEvery,
+  takeLatest
+} from "redux-saga/effects";
+
+import { CommandServiceImpl } from "../../platform/commands/commandServiceImpl";
+import {
+  BotActions,
+  botHashGenerated,
+  SetActiveBotAction
+} from "../action/botActions";
+import { generateBotHash } from "../botHelpers";
+
+import { refreshConversationMenu } from "./sharedSagas";
 
 /** Opens up native open file dialog to browse for a .bot file */
 export function* browseForBot(): IterableIterator<any> {
@@ -45,7 +57,9 @@ export function* browseForBot(): IterableIterator<any> {
     .catch(_err => null);
 }
 
-export function* generateHashForActiveBot(action: SetActiveBotAction): IterableIterator<any> {
+export function* generateHashForActiveBot(
+  action: SetActiveBotAction
+): IterableIterator<any> {
   const { bot } = action.payload;
   const generatedHash = yield call(generateBotHash, bot);
   yield put(botHashGenerated(generatedHash));
@@ -55,11 +69,7 @@ export function* botSagas(): IterableIterator<ForkEffect> {
   yield takeEvery(BotActions.browse, browseForBot);
   yield takeEvery(BotActions.setActive, generateHashForActiveBot);
   yield takeLatest(
-    [
-      BotActions.setActive, 
-      BotActions.load, 
-      BotActions.close
-    ],
+    [BotActions.setActive, BotActions.load, BotActions.close],
     refreshConversationMenu
   );
 }

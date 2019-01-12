@@ -36,8 +36,8 @@ import {
   AZURE_ARM_TOKEN_DATA_CHANGED,
   AZURE_BEGIN_AUTH_WORKFLOW,
   AZURE_INVALIDATE_ARM_TOKEN,
-  AzureAuthAction,
-} from '../action/azureAuthActions';
+  AzureAuthAction
+} from "../action/azureAuthActions";
 
 export interface AzureAuthState {
   access_token: string;
@@ -49,16 +49,17 @@ const initialState: AzureAuthState = {
   persistLogin: false
 };
 
-export function azureAuth(state: AzureAuthState = initialState, action: AzureAuthAction<ArmTokenData | void>)
-  : AzureAuthState {
-  const { payload = {}, type = '' } = action || {};
+export function azureAuth(
+  state: AzureAuthState = initialState,
+  action: AzureAuthAction<ArmTokenData | void>
+): AzureAuthState {
+  const { payload = {}, type = "" } = action || {};
   const { access_token } = (payload || {}) as ArmTokenData;
 
   switch (type) {
-
     case AZURE_BEGIN_AUTH_WORKFLOW:
     case AZURE_INVALIDATE_ARM_TOKEN:
-      return { ...state, access_token: ''};
+      return { ...state, access_token: "" };
 
     case AZURE_ARM_TOKEN_DATA_CHANGED:
       return { ...state, access_token };

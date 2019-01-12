@@ -30,17 +30,18 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import * as path from 'path';
-import * as fs from 'fs-extra';
-import * as Electron from 'electron';
-import { app, Menu, MessageBoxOptions } from 'electron';
-import { mainWindow } from '../main';
-import { showOpenDialog, showSaveDialog } from '../utils';
-import { AppMenuBuilder } from '../appMenuBuilder';
-import { ContextMenuService } from '../services/contextMenuService';
-import { getStore } from '../botData/store';
-import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
-import { SharedConstants } from '@bfemulator/app-shared';
+import { SharedConstants } from "@bfemulator/app-shared";
+import { CommandRegistryImpl } from "@bfemulator/sdk-shared";
+import * as Electron from "electron";
+import { app, Menu, MessageBoxOptions } from "electron";
+import * as fs from "fs-extra";
+import * as path from "path";
+
+import { AppMenuBuilder } from "../appMenuBuilder";
+import { getStore } from "../botData/store";
+import { mainWindow } from "../main";
+import { ContextMenuService } from "../services/contextMenuService";
+import { showOpenDialog, showSaveDialog } from "../utils";
 
 const { shell } = Electron;
 
@@ -52,22 +53,27 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
   // ---------------------------------------------------------------------------
   // Show OS-native messsage box
-  commandRegistry.registerCommand(Commands.ShowMessageBox, (modal: boolean, options: MessageBoxOptions) => {
-    options = {
-      message: '',
-      title: app.getName(),
-      ...options
-    };
-    const args = modal ? [mainWindow.browserWindow, options] : [options];
-    return Electron.dialog.showMessageBox.apply(Electron.dialog, args);
-  });
+  commandRegistry.registerCommand(
+    Commands.ShowMessageBox,
+    (modal: boolean, options: MessageBoxOptions) => {
+      options = {
+        message: "",
+        title: app.getName(),
+        ...options
+      };
+      const args = modal ? [mainWindow.browserWindow, options] : [options];
+      return Electron.dialog.showMessageBox.apply(Electron.dialog, args);
+    }
+  );
 
   // ---------------------------------------------------------------------------
   // Shows an open dialog and returns a path
-  commandRegistry.registerCommand(Commands.ShowOpenDialog,
+  commandRegistry.registerCommand(
+    Commands.ShowOpenDialog,
     (dialogOptions: Electron.OpenDialogOptions = {}): false | string => {
-    return showOpenDialog(mainWindow.browserWindow, dialogOptions);
-  });
+      return showOpenDialog(mainWindow.browserWindow, dialogOptions);
+    }
+  );
 
   // ---------------------------------------------------------------------------
   // Shows a save dialog and returns a path + filename
@@ -75,52 +81,67 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
     Commands.ShowSaveDialog,
     (dialogOptions: Electron.SaveDialogOptions = {}): string => {
       return showSaveDialog(mainWindow.browserWindow, dialogOptions);
-    });
+    }
+  );
 
   // ---------------------------------------------------------------------------
   // Builds a new app menu to reflect the updated recent bots list
-  commandRegistry.registerCommand(Commands.UpdateFileMenu, async (): Promise<void> => {
-    AppMenuBuilder.refreshFileMenu();
-    const state = store.getState();
-    const recentBots = state.bot && state.bot.botFiles ? state.bot.botFiles : [];
-    AppMenuBuilder.updateRecentBotsList(recentBots);
-  });
+  commandRegistry.registerCommand(
+    Commands.UpdateFileMenu,
+    async (): Promise<void> => {
+      AppMenuBuilder.refreshFileMenu();
+      const state = store.getState();
+      const recentBots =
+        state.bot && state.bot.botFiles ? state.bot.botFiles : [];
+      AppMenuBuilder.updateRecentBotsList(recentBots);
+    }
+  );
 
   // ---------------------------------------------------------------------------
   // Builds a new app menu to reflect the updated conversation send activity list
   commandRegistry.registerCommand(
     Commands.UpdateConversationMenu,
     async (clientEditorState: any): Promise<void> => {
+      // get the conversation menu items that we want to update
+      const sendActivityMenuItems = AppMenuBuilder.sendActivityMenuItems;
 
-    // get the conversation menu items that we want to update
-    const sendActivityMenuItems = AppMenuBuilder.sendActivityMenuItems;
+      // enable / disable the send activity menu
+      let enabled = false;
+      const { editors = {}, activeEditor = "" } = clientEditorState;
+      const { activeDocumentId = "" } = editors[activeEditor] || {};
 
-    // enable / disable the send activity menu
-    let enabled = false;
-    const { editors = {}, activeEditor = '' } = clientEditorState;
-    const { activeDocumentId = '' } = editors[activeEditor] || {};
+      if (
+        activeDocumentId &&
+        editors[activeEditor] &&
+        editors[activeEditor].documents
+      ) {
+        const activeDocument =
+          editors[activeEditor].documents[activeDocumentId];
+        const { contentType = "" } = activeDocument;
+        enabled =
+          contentType &&
+          contentType === SharedConstants.ContentTypes.CONTENT_TYPE_LIVE_CHAT;
+      }
 
-    if (activeDocumentId && editors[activeEditor] && editors[activeEditor].documents) {
-      const activeDocument = editors[activeEditor].documents[activeDocumentId];
-      const { contentType = '' } = activeDocument;
-      enabled = contentType && contentType === SharedConstants.ContentTypes.CONTENT_TYPE_LIVE_CHAT;
+      sendActivityMenuItems.forEach(item => {
+        item.enabled = enabled;
+      });
     }
-
-    sendActivityMenuItems.forEach(item => {
-      item.enabled = enabled;
-    });
-  });
+  );
 
   // ---------------------------------------------------------------------------
   // Toggles app fullscreen mode
-  commandRegistry.registerCommand(Commands.SetFullscreen, async (fullscreen: boolean): Promise<void> => {
-    mainWindow.browserWindow.setFullScreen(fullscreen);
-    if (fullscreen) {
-      Menu.setApplicationMenu(null);
-    } else {
-      await AppMenuBuilder.initAppMenu();
+  commandRegistry.registerCommand(
+    Commands.SetFullscreen,
+    async (fullscreen: boolean): Promise<void> => {
+      mainWindow.browserWindow.setFullScreen(fullscreen);
+      if (fullscreen) {
+        Menu.setApplicationMenu(null);
+      } else {
+        await AppMenuBuilder.initAppMenu();
+      }
     }
-  });
+  );
 
   // ---------------------------------------------------------------------------
   // Sets the app's title bar
@@ -134,7 +155,10 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
   // ---------------------------------------------------------------------------
   // Displays the context menu for a given element
-  commandRegistry.registerCommand(Commands.DisplayContextMenu, ContextMenuService.showMenuAndWaitForInput);
+  commandRegistry.registerCommand(
+    Commands.DisplayContextMenu,
+    ContextMenuService.showMenuAndWaitForInput
+  );
 
   // ---------------------------------------------------------------------------
   // Opens an external link
@@ -144,37 +168,47 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
   // ---------------------------------------------------------------------------
   // Opens and item on the disk in Explorer (win) or Finder (mac)
-  commandRegistry.registerCommand(Commands.OpenFileLocation, (filePath: string): boolean => {
-    const parts = path.parse(filePath);
-    return shell.openItem(path.resolve(parts.dir));
-  });
+  commandRegistry.registerCommand(
+    Commands.OpenFileLocation,
+    (filePath: string): boolean => {
+      const parts = path.parse(filePath);
+      return shell.openItem(path.resolve(parts.dir));
+    }
+  );
 
   // ---------------------------------------------------------------------------
   // Moves an item to the trash
-  commandRegistry.registerCommand(Commands.UnlinkFile, (filePath: string): boolean => {
-    return shell.moveItemToTrash(path.resolve(filePath));
-  });
+  commandRegistry.registerCommand(
+    Commands.UnlinkFile,
+    (filePath: string): boolean => {
+      return shell.moveItemToTrash(path.resolve(filePath));
+    }
+  );
 
   // ---------------------------------------------------------------------------
   // Renames a file - the payload must contain the property "path" and "name"
   // This will also rename the file extension if one is provided in the "name" field
-  commandRegistry.registerCommand(Commands.RenameFile,
-    async (info: { path: string, newPath: string, name: string }) => {
-    const { path: existingPath, newPath } = info;
-    let { name } = info;
-    const exists = await fs.pathExists(existingPath);
-    if (!exists) {
-      throw new ReferenceError(`Cannot rename File: ${existingPath} does not exist`);
+  commandRegistry.registerCommand(
+    Commands.RenameFile,
+    async (info: { path: string; newPath: string; name: string }) => {
+      const { path: existingPath, newPath } = info;
+      let { name } = info;
+      const exists = await fs.pathExists(existingPath);
+      if (!exists) {
+        throw new ReferenceError(
+          `Cannot rename File: ${existingPath} does not exist`
+        );
+      }
+      const parts = path.parse(newPath || existingPath);
+      if (!name) {
+        name = parts.base;
+      }
+      const nameHasExt = path.extname(name);
+      let fullPath = `${parts.dir}/${name}`;
+      if (!nameHasExt) {
+        fullPath += parts.ext;
+      }
+      return fs.rename(existingPath, fullPath); // let any errors propagate up the stack
     }
-    const parts = path.parse((newPath || existingPath));
-    if (!name) {
-      name = parts.base;
-    }
-    const nameHasExt = path.extname(name);
-    let fullPath = `${parts.dir}/${name}`;
-    if (!nameHasExt) {
-      fullPath += parts.ext;
-    }
-    return fs.rename(existingPath, fullPath); // let any errors propagate up the stack
-  });
+  );
 }

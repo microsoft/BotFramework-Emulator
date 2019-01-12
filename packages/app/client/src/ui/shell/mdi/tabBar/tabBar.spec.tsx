@@ -31,36 +31,48 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from 'react';
-import { mount } from 'enzyme';
-import { Provider } from 'react-redux';
-import { createStore } from 'redux';
-import { enable } from '../../../../data/action/presentationActions';
-import { setActiveTab, appendTab, splitTab } from '../../../../data/action/editorActions';
-import { TabBarContainer } from './tabBarContainer';
-import { TabBar } from './tabBar';
+import * as React from "react";
+import { mount } from "enzyme";
+import { Provider } from "react-redux";
+import { createStore } from "redux";
+import { enable } from "../../../../data/action/presentationActions";
+import {
+  setActiveTab,
+  appendTab,
+  splitTab
+} from "../../../../data/action/editorActions";
+import { TabBarContainer } from "./tabBarContainer";
+import { TabBar } from "./tabBar";
 import {
   CONTENT_TYPE_APP_SETTINGS,
   CONTENT_TYPE_LIVE_CHAT,
   CONTENT_TYPE_TRANSCRIPT,
   CONTENT_TYPE_WELCOME_PAGE
-} from '../../../../constants';
+} from "../../../../constants";
 
 const mockTab = class Tab extends React.Component {
   public render() {
-    return <div></div>;
+    return <div />;
   }
 };
 
-jest.mock('./tabBar.scss', () => ({}));
-jest.mock('../../../../data/reducer/editor', () => ({ Document: {}, Editor: {} }));
-jest.mock('../../../../data/editorHelpers', () => ({
-  getTabGroupForDocument: () => null,
-  getOtherTabGroup: (tabGroup: string) => tabGroup === 'primary' ? 'secondary' : 'primary'
+jest.mock("./tabBar.scss", () => ({}));
+jest.mock("../../../../data/reducer/editor", () => ({
+  Document: {},
+  Editor: {}
 }));
-jest.mock('../tab/tab', () => ({ get Tab() { return mockTab; } }));
+jest.mock("../../../../data/editorHelpers", () => ({
+  getTabGroupForDocument: () => null,
+  getOtherTabGroup: (tabGroup: string) =>
+    tabGroup === "primary" ? "secondary" : "primary"
+}));
+jest.mock("../tab/tab", () => ({
+  get Tab() {
+    return mockTab;
+  }
+}));
 
-describe('TabBar', () => {
+describe("TabBar", () => {
   let wrapper;
   let node;
   let instance;
@@ -71,95 +83,109 @@ describe('TabBar', () => {
     const defaultState = {
       bot: {
         activeBot: {
-          services: [{
-            id: 'someEndpointId',
-            name: 'myEndpoint'
-          }]
+          services: [
+            {
+              id: "someEndpointId",
+              name: "myEndpoint"
+            }
+          ]
         }
       },
       chat: {
         chats: {
-          doc1: { endpointId: 'someEndpointId' }
+          doc1: { endpointId: "someEndpointId" }
         }
       },
       editor: {
         editors: {
           primary: {
-            activeDocumentId: 'doc1',
-            tabOrder: ['doc1'],
+            activeDocumentId: "doc1",
+            tabOrder: ["doc1"],
             documents: {
-              doc1: { contentType: 'transcript', documentId: 'doc1' }
+              doc1: { contentType: "transcript", documentId: "doc1" }
             }
           }
         }
       }
     };
     mockStore = createStore((_state, _action) => defaultState);
-    mockDispatch = jest.spyOn(mockStore, 'dispatch');
+    mockDispatch = jest.spyOn(mockStore, "dispatch");
     wrapper = mount(
-      <Provider store={ mockStore }>
-        <TabBarContainer owningEditor={ 'primary' }/>
+      <Provider store={mockStore}>
+        <TabBarContainer owningEditor={"primary"} />
       </Provider>
     );
     node = wrapper.find(TabBar);
     instance = node.instance();
   });
 
-  it('should enable presentation mode', () => {
+  it("should enable presentation mode", () => {
     instance.onPresentationModeClick();
 
     expect(mockDispatch).toHaveBeenCalledWith(enable());
   });
 
-  it('should load widgets', () => {
+  it("should load widgets", () => {
     // no widgets
-    let dumbWrapper = mount(<TabBar tabOrder={ [] } documents={ {} } activeDocumentId={ '' }/>);
+    let dumbWrapper = mount(
+      <TabBar tabOrder={[]} documents={{}} activeDocumentId={""} />
+    );
     let dumbNode = dumbWrapper.find(TabBar);
     let dumbInstance = dumbNode.instance() as any;
     expect(dumbInstance.widgets).toHaveLength(0);
 
     // split widget
-    dumbWrapper = mount(<TabBar tabOrder={ [] } documents={ { doc1: {}, doc2: {} } } activeDocumentId={ '' }/>);
+    dumbWrapper = mount(
+      <TabBar
+        tabOrder={[]}
+        documents={{ doc1: {}, doc2: {} }}
+        activeDocumentId={""}
+      />
+    );
     dumbNode = dumbWrapper.find(TabBar);
     dumbInstance = dumbNode.instance() as any;
     expect(dumbInstance.widgets).toHaveLength(1);
 
     // split & presentation widgets
     dumbWrapper = mount(
-      <TabBar tabOrder={ [] } 
-              documents={ { doc1: { contentType: CONTENT_TYPE_LIVE_CHAT }, doc2: {} } }
-              activeDocumentId={ 'doc1' }/>
+      <TabBar
+        tabOrder={[]}
+        documents={{ doc1: { contentType: CONTENT_TYPE_LIVE_CHAT }, doc2: {} }}
+        activeDocumentId={"doc1"}
+      />
     );
     dumbNode = dumbWrapper.find(TabBar);
     dumbInstance = dumbNode.instance() as any;
     expect(dumbInstance.widgets).toHaveLength(2);
 
     dumbWrapper = mount(
-      <TabBar tabOrder={ [] } 
-              documents={ { doc1: { contentType: CONTENT_TYPE_TRANSCRIPT }, doc2: {} } }
-              activeDocumentId={ 'doc1' }/>
+      <TabBar
+        tabOrder={[]}
+        documents={{ doc1: { contentType: CONTENT_TYPE_TRANSCRIPT }, doc2: {} }}
+        activeDocumentId={"doc1"}
+      />
     );
     dumbNode = dumbWrapper.find(TabBar);
     dumbInstance = dumbNode.instance() as any;
     expect(dumbInstance.widgets).toHaveLength(2);
   });
 
-  it('should load tabs', () => {
+  it("should load tabs", () => {
     const tabs = instance.tabs;
 
     expect(tabs).toHaveLength(1);
   });
 
-  it('should handle a tab click', () => {
+  it("should handle a tab click", () => {
     instance.handleTabClick(0);
 
-    expect(mockDispatch).toHaveBeenCalledWith(setActiveTab('doc1'));
+    expect(mockDispatch).toHaveBeenCalledWith(setActiveTab("doc1"));
   });
 
-  it('should handle a key press', () => {
-    const mockOtherKeyPress = { key: 'a' };
-    const mockSpaceKeyPress = { key: ' ' };
-    const mockEnterKeyPress = { key: 'enter' };
+  it("should handle a key press", () => {
+    const mockOtherKeyPress = { key: "a" };
+    const mockSpaceKeyPress = { key: " " };
+    const mockEnterKeyPress = { key: "enter" };
 
     // simulate neither key press
     instance.handleKeyDown(mockOtherKeyPress, 0);
@@ -167,20 +193,22 @@ describe('TabBar', () => {
 
     // simulate space key press
     instance.handleKeyDown(mockSpaceKeyPress, 0);
-    expect(mockDispatch).toHaveBeenCalledWith(setActiveTab('doc1'));
+    expect(mockDispatch).toHaveBeenCalledWith(setActiveTab("doc1"));
 
     // simulate enter key press
     instance.handleKeyDown(mockEnterKeyPress, 0);
     expect(mockDispatch).toHaveBeenCalledTimes(2);
   });
 
-  it('should handle a split click', () => {
+  it("should handle a split click", () => {
     instance.onSplitClick();
-    
-    expect(mockDispatch).toHaveBeenCalledWith(splitTab('transcript', 'doc1', 'primary', 'secondary'));
+
+    expect(mockDispatch).toHaveBeenCalledWith(
+      splitTab("transcript", "doc1", "primary", "secondary")
+    );
   });
 
-  it('should handle a drag enter event', () => {
+  it("should handle a drag enter event", () => {
     const mockPreventDefault = jest.fn(() => null);
     const mockDragEvent = { preventDefault: mockPreventDefault };
 
@@ -188,10 +216,13 @@ describe('TabBar', () => {
     expect(mockPreventDefault).toHaveBeenCalled();
   });
 
-  it('should handle a drag over event', () => {
+  it("should handle a drag over event", () => {
     const mockStopPropagation = jest.fn(() => null);
     const mockPreventDefault = jest.fn(() => null);
-    const mockDragEvent = { preventDefault: mockPreventDefault, stopPropagation: mockStopPropagation };
+    const mockDragEvent = {
+      preventDefault: mockPreventDefault,
+      stopPropagation: mockStopPropagation
+    };
     instance.setState({ draggedOver: false });
 
     instance.onDragOver(mockDragEvent);
@@ -201,7 +232,7 @@ describe('TabBar', () => {
     expect(instance.state.draggedOver).toBe(true);
   });
 
-  it('should handle a drag leave event', () => {
+  it("should handle a drag leave event", () => {
     instance.setState({ draggedOver: true });
 
     instance.onDragLeave({});
@@ -209,7 +240,7 @@ describe('TabBar', () => {
     expect(instance.state.draggedOver).toBe(false);
   });
 
-  it('should handle a drop event', () => {
+  it("should handle a drop event", () => {
     const mockStopPropagation = jest.fn(() => null);
     const mockPreventDefault = jest.fn(() => null);
     const mockDragEvent = {
@@ -223,39 +254,49 @@ describe('TabBar', () => {
 
     instance.onDrop(mockDragEvent);
 
-    expect(mockDispatch).toHaveBeenCalledWith(appendTab('secondary', 'primary', 'doc2'));
+    expect(mockDispatch).toHaveBeenCalledWith(
+      appendTab("secondary", "primary", "doc2")
+    );
   });
 
-  it('should save a ref to the scrollable tabs element', () => {
-    instance.saveScrollable(':)');
+  it("should save a ref to the scrollable tabs element", () => {
+    instance.saveScrollable(":)");
 
-    expect(instance._scrollable).toEqual(':)');
+    expect(instance._scrollable).toEqual(":)");
   });
 
-  it('should push a tab element ref into the childRefs array', () => {
-    const mockElement = { isTabElement: 'yes!' };
+  it("should push a tab element ref into the childRefs array", () => {
+    const mockElement = { isTabElement: "yes!" };
     instance.setRef(mockElement);
-    
+
     expect(instance.childRefs.some(elem => elem === mockElement)).toBe(true);
   });
 
-  it('should get a tab label based on the document', () => {
-    let result = instance.getTabLabel({ contentType: CONTENT_TYPE_APP_SETTINGS });
-    expect(result).toBe('Emulator Settings');
+  it("should get a tab label based on the document", () => {
+    let result = instance.getTabLabel({
+      contentType: CONTENT_TYPE_APP_SETTINGS
+    });
+    expect(result).toBe("Emulator Settings");
 
     result = instance.getTabLabel({ contentType: CONTENT_TYPE_WELCOME_PAGE });
-    expect(result).toBe('Welcome');
+    expect(result).toBe("Welcome");
 
     result = instance.getTabLabel({ contentType: CONTENT_TYPE_TRANSCRIPT });
-    expect(result).toBe('Transcript');
-    result = instance.getTabLabel({ contentType: CONTENT_TYPE_TRANSCRIPT, fileName: 'test.transcript' });
-    expect(result).toBe('test.transcript');
+    expect(result).toBe("Transcript");
+    result = instance.getTabLabel({
+      contentType: CONTENT_TYPE_TRANSCRIPT,
+      fileName: "test.transcript"
+    });
+    expect(result).toBe("test.transcript");
 
-    result = instance.getTabLabel({ contentType: CONTENT_TYPE_LIVE_CHAT, documentId: 'doc1' });
+    result = instance.getTabLabel({
+      contentType: CONTENT_TYPE_LIVE_CHAT,
+      documentId: "doc1"
+    });
     expect(result).toBe(`Live Chat (myEndpoint)`);
 
     result = instance.getTabLabel({});
-    expect(result).toBe('');
+    expect(result).toBe("");
   });
 
   it('should respond trigger keyboard listeners', () => {

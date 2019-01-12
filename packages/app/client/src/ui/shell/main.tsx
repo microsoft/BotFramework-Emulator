@@ -31,17 +31,19 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Splitter } from '@bfemulator/ui-react';
-import * as React from 'react';
-import * as Constants from '../../constants';
-import { Editor } from '../../data/reducer/editor';
-import { StoreVisualizer } from '../debug/storeVisualizer';
-import { DialogHostContainer, TabManagerContainer } from '../dialogs';
-import { ExplorerBar } from './explorer';
-import * as styles from './main.scss';
-import { MDI } from './mdi';
-import { NavBar } from './navBar';
-import { StatusBar } from './statusBar/statusBar';
+import { Splitter } from "@bfemulator/ui-react";
+import * as React from "react";
+
+import * as Constants from "../../constants";
+import { Editor } from "../../data/reducer/editor";
+import { StoreVisualizer } from "../debug/storeVisualizer";
+import { DialogHostContainer, TabManagerContainer } from "../dialogs";
+
+import { ExplorerBar } from "./explorer";
+import * as styles from "./main.scss";
+import { MDI } from "./mdi";
+import { NavBar } from "./navBar";
+import { StatusBar } from "./statusBar/statusBar";
 
 // TODO: Re-enable once webchat reset bug is fixed
 // (https://github.com/Microsoft/BotFramework-Emulator/issues/825)
@@ -70,23 +72,31 @@ export class Main extends React.Component<MainProps, MainState> {
     };
   }
 
-  componentWillReceiveProps(newProps: any) {
+  public componentWillReceiveProps(newProps: any) {
     if (newProps.presentationModeEnabled) {
-      window.addEventListener('keydown', this.props.exitPresentationMode);
+      window.addEventListener("keydown", this.props.exitPresentationMode);
     } else {
-      window.removeEventListener('keydown', this.props.exitPresentationMode);
+      window.removeEventListener("keydown", this.props.exitPresentationMode);
     }
   }
 
-  render() {
-    const tabGroup1 = this.props.primaryEditor &&
-      <div className={ styles.mdiWrapper } key={ 'primaryEditor' }>
-        <MDI owningEditor={ Constants.EDITOR_KEY_PRIMARY }/>
-      </div>;
+  public render() {
+    const tabGroup1 = this.props.primaryEditor && (
+      <div className={styles.mdiWrapper} key={"primaryEditor"}>
+        <MDI owningEditor={Constants.EDITOR_KEY_PRIMARY} />
+      </div>
+    );
 
-    const tabGroup2 = this.props.secondaryEditor && Object.keys(this.props.secondaryEditor.documents).length ?
-      <div className={ `${styles.mdiWrapper} ${styles.secondaryMdi}` } key={ 'secondaryEditor' }><MDI
-        owningEditor={ Constants.EDITOR_KEY_SECONDARY }/></div> : null;
+    const tabGroup2 =
+      this.props.secondaryEditor &&
+      Object.keys(this.props.secondaryEditor.documents).length ? (
+        <div
+          className={`${styles.mdiWrapper} ${styles.secondaryMdi}`}
+          key={"secondaryEditor"}
+        >
+          <MDI owningEditor={Constants.EDITOR_KEY_SECONDARY} />
+        </div>
+      ) : null;
 
     // If falsy children aren't filtered out, splitter won't recognize change in number of children
     // (i.e. [child1, child2] -> [false, child2] is still seen as 2 children by the splitter)
@@ -97,34 +107,43 @@ export class Main extends React.Component<MainProps, MainState> {
     const workbenchChildren = [];
 
     if (this.props.explorerIsVisible && !this.props.presentationModeEnabled) {
-      workbenchChildren.push(<ExplorerBar key={ 'explorer-bar' }/>);
+      workbenchChildren.push(<ExplorerBar key={"explorer-bar"} />);
     }
 
     workbenchChildren.push(
-      <Splitter orientation={ 'vertical' } key={ 'tab-group-splitter' } minSizes={ { 0: 160, 1: 160 } }>
-        { tabGroups }
+      <Splitter
+        orientation={"vertical"}
+        key={"tab-group-splitter"}
+        minSizes={{ 0: 160, 1: 160 }}
+      >
+        {tabGroups}
       </Splitter>
     );
 
     return (
-      <div className={ styles.main }>
-        <div className={ styles.nav }>
-          { !this.props.presentationModeEnabled &&
-          <NavBar selection={ this.props.navBarSelection } explorerIsVisible={ this.props.explorerIsVisible }/> }
-          <div className={ styles.workbench }>
+      <div className={styles.main}>
+        <div className={styles.nav}>
+          {!this.props.presentationModeEnabled && (
+            <NavBar
+              selection={this.props.navBarSelection}
+              explorerIsVisible={this.props.explorerIsVisible}
+            />
+          )}
+          <div className={styles.workbench}>
             <Splitter
-              orientation={ 'vertical' }
-              primaryPaneIndex={ 0 }
-              minSizes={ { 0: 175, 1: 40 } }
-              initialSizes={ { 0: 280 } }>
-              { workbenchChildren }
+              orientation={"vertical"}
+              primaryPaneIndex={0}
+              minSizes={{ 0: 175, 1: 40 }}
+              initialSizes={{ 0: 280 }}
+            >
+              {workbenchChildren}
             </Splitter>
           </div>
-          <TabManagerContainer disabled={ false }/>
+          <TabManagerContainer disabled={false} />
         </div>
-        { !this.props.presentationModeEnabled && <StatusBar/> }
-        <DialogHostContainer/>
-        <StoreVisualizer enabled={ false }/>
+        {!this.props.presentationModeEnabled && <StatusBar />}
+        <DialogHostContainer />
+        <StoreVisualizer enabled={false} />
       </div>
     );
   }

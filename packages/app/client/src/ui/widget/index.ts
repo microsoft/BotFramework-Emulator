@@ -31,8 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import BFIcon from './botFrameworkIcon';
+import BFIcon from "./botFrameworkIcon";
 
-export {
-  BFIcon
-};
+export { BFIcon };

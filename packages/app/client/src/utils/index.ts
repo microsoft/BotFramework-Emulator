@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './debounce';
-export * from './expandFlatTree';
-export * from './getGlobal';
-export * from './generateBotSecret';
+export * from "./debounce";
+export * from "./expandFlatTree";
+export * from "./getGlobal";
+export * from "./generateBotSecret";

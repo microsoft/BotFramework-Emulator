@@ -31,22 +31,26 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export default function safeStringify(o: any, space: string | number = undefined): string {
+export default function safeStringify(o: any, space?: string | number): string {
   const cache = [];
 
-  if (typeof o !== 'object') {
-    return `${ o }`;
+  if (typeof o !== "object") {
+    return `${o}`;
   } else {
-    return JSON.stringify(o, (key, value) => {
-      if (typeof value === 'object' && value !== null) {
-        if (cache.indexOf(value)) {
-          return;
+    return JSON.stringify(
+      o,
+      (key, value) => {
+        if (typeof value === "object" && value !== null) {
+          if (cache.indexOf(value)) {
+            return;
+          }
+
+          cache.push(value);
         }
 
-        cache.push(value);
-      }
-
-      return value;
-    }, space);
+        return value;
+      },
+      space
+    );
   }
 }

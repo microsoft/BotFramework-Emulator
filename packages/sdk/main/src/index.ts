@@ -31,5 +31,5 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './ipc';
-export * from './utils';
+export * from "./ipc";
+export * from "./utils";

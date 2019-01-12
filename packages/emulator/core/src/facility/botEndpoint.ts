@@ -31,22 +31,25 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as HttpStatus from 'http-status-codes';
+import * as HttpStatus from "http-status-codes";
+import { URL, URLSearchParams } from "url";
 
-import { usGovernmentAuthentication, speech as speechEndpoint, authentication } from '../authEndpoints';
-import { URL, URLSearchParams } from 'url';
-import BotEndpointOptions from '../types/botEndpointOptions';
-import SpeechTokenInfo from '../types/speechToken';
-import statusCodeFamily from '../utils/statusCodeFamily';
+import {
+  authentication,
+  speech as speechEndpoint,
+  usGovernmentAuthentication
+} from "../authEndpoints";
+import BotEndpointOptions from "../types/botEndpointOptions";
+import SpeechTokenInfo from "../types/speechToken";
+import statusCodeFamily from "../utils/statusCodeFamily";
 
 // We will refresh if the token is going to expire within 5 minutes
 const TIME_TO_REFRESH = 5 * 60 * 1000;
 
 export default class BotEndpoint {
-
-  accessToken: string;
-  accessTokenExpires: number;
-  speechToken: string;
+  public accessToken: string;
+  public accessTokenExpires: number;
+  public speechToken: string;
 
   constructor(
     public id: string,
@@ -57,8 +60,7 @@ export default class BotEndpoint {
     public use10Tokens: boolean,
     public channelService: string,
     private _options: BotEndpointOptions
-  ) {
-  }
+  ) {}
 
   public async getSpeechToken(refresh: boolean = false, duration: number = 10) {
     if (this.speechToken && !refresh) {
@@ -66,30 +68,36 @@ export default class BotEndpoint {
     }
 
     if (!this.msaAppId || !this.msaPassword) {
-      throw new Error('bot must have Microsoft App ID and password');
+      throw new Error("bot must have Microsoft App ID and password");
     }
 
     const query = new URLSearchParams({ goodForInMinutes: duration } as any);
-    const res = await this.fetchWithAuth(new URL(`?${ query.toString() }`, speechEndpoint.tokenEndpoint).toString());
+    const res = await this.fetchWithAuth(
+      new URL(`?${query.toString()}`, speechEndpoint.tokenEndpoint).toString()
+    );
 
     if (statusCodeFamily(res.status, 200)) {
-      const body = await res.json() as SpeechTokenInfo;
+      const body = (await res.json()) as SpeechTokenInfo;
 
       if (body.access_Token) {
         this.speechToken = body.access_Token;
 
         return this.speechToken;
       } else {
-        throw new Error(body.error || 'could not retrieve speech token');
+        throw new Error(body.error || "could not retrieve speech token");
       }
     } else if (res.status === 401) {
-      throw new Error('not authorized to use Cognitive Services Speech API');
+      throw new Error("not authorized to use Cognitive Services Speech API");
     } else {
-      throw new Error('cannot retrieve speech token');
+      throw new Error("cannot retrieve speech token");
     }
   }
 
-  async fetchWithAuth(url: string, fetchOptions: any = {}, forceRefresh: boolean = false) {
+  public async fetchWithAuth(
+    url: string,
+    fetchOptions: any = {},
+    forceRefresh: boolean = false
+  ) {
     if (this.msaAppId) {
       fetchOptions.headers = {
         ...fetchOptions.headers,
@@ -100,36 +108,42 @@ export default class BotEndpoint {
     const response = await this._options.fetch(url, fetchOptions);
 
     if (
-      (response.status === HttpStatus.UNAUTHORIZED || response.status === HttpStatus.FORBIDDEN)
-      && (!forceRefresh && this.msaAppId)
+      (response.status === HttpStatus.UNAUTHORIZED ||
+        response.status === HttpStatus.FORBIDDEN) &&
+      (!forceRefresh && this.msaAppId)
     ) {
-      return await this.fetchWithAuth(url, fetchOptions, true);
+      return this.fetchWithAuth(url, fetchOptions, true);
     }
 
     return response;
   }
 
   private async getAccessToken(forceRefresh: boolean = false): Promise<string> {
-    if (!forceRefresh && this.accessToken && Date.now() < this.accessTokenExpires - TIME_TO_REFRESH) {
+    if (
+      !forceRefresh &&
+      this.accessToken &&
+      Date.now() < this.accessTokenExpires - TIME_TO_REFRESH
+    ) {
       return this.accessToken;
     }
 
     // Refresh access token
-    const tokenEndpoint: string = this.channelService === usGovernmentAuthentication.channelService ?
-        usGovernmentAuthentication.tokenEndpoint :
-        authentication.tokenEndpoint;
+    const tokenEndpoint: string =
+      this.channelService === usGovernmentAuthentication.channelService
+        ? usGovernmentAuthentication.tokenEndpoint
+        : authentication.tokenEndpoint;
     const resp = await this._options.fetch(tokenEndpoint, {
-      method: 'POST',
+      method: "POST",
       body: new URLSearchParams({
-        grant_type: 'client_credentials',
+        grant_type: "client_credentials",
         client_id: this.msaAppId,
         client_secret: this.msaPassword,
-        scope: `${ this.msaAppId }/.default`,
+        scope: `${this.msaAppId}/.default`,
         // flag to request a version 1.0 token
-        ...this.use10Tokens ? { atver: 1 } : {}
+        ...(this.use10Tokens ? { atver: 1 } : {})
       } as { [key: string]: string }).toString(),
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
+        "Content-Type": "application/x-www-form-urlencoded"
       }
     });
 
@@ -146,7 +160,9 @@ export default class BotEndpoint {
       // this.facilities.logger.logError(this.conversationId, 'Error: The bot\'s MSA appId or password is incorrect.');
       // this.facilities.logger.logError(this.conversationId, makeBotSettingsLink('Edit your bot\'s MSA info'));
 
-      throw new Error('Refresh access token failed with status code: ' + resp.status);
+      throw new Error(
+        "Refresh access token failed with status code: " + resp.status
+      );
     }
   }
 }

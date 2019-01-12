@@ -31,25 +31,31 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as HttpStatus from 'http-status-codes';
-import * as Restify from 'restify';
+import * as HttpStatus from "http-status-codes";
+import * as Restify from "restify";
 
-import BotEmulator from '../../botEmulator';
-import Conversation from '../../facility/conversation';
+import BotEmulator from "../../botEmulator";
+import Conversation from "../../facility/conversation";
 
 export default function getActivities(_botEmulator: BotEmulator) {
-  return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+  return (
+    req: Restify.Request,
+    res: Restify.Response,
+    next: Restify.Next
+  ): any => {
     const conversation: Conversation = (req as any).conversation;
 
     if (conversation) {
-      const { activities, watermark } = conversation.getActivitiesSince(Number(req.query.watermark || 0) || 0);
+      const { activities, watermark } = conversation.getActivitiesSince(
+        Number(req.query.watermark || 0) || 0
+      );
 
       res.json(HttpStatus.OK, {
         activities,
         watermark
       });
     } else {
-      res.send(HttpStatus.NOT_FOUND, 'conversation not found');
+      res.send(HttpStatus.NOT_FOUND, "conversation not found");
     }
 
     res.end();

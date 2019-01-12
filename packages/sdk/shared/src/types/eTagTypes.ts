@@ -32,5 +32,5 @@
 //
 
 export interface ETagObject {
-    eTag?: string;
+  eTag?: string;
 }

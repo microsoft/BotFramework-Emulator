@@ -31,9 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { connect } from 'react-redux';
-import { Tab, TabProps } from './tab';
-import { toggleDraggingTab, swapTabs } from '../../../../data/action/editorActions';
+import { connect } from "react-redux";
+
+import {
+  swapTabs,
+  toggleDraggingTab
+} from "../../../../data/action/editorActions";
+
+import { Tab, TabProps } from "./tab";
 
 const mapDispatchToProps = (dispatch, ownProps: TabProps): TabProps => ({
   toggleDraggingTab: (toggle: boolean) => dispatch(toggleDraggingTab(toggle)),
@@ -41,4 +46,7 @@ const mapDispatchToProps = (dispatch, ownProps: TabProps): TabProps => ({
     dispatch(swapTabs(editorKey, owningEditor, tabId, ownProps.documentId))
 });
 
-export const TabContainer = connect(null, mapDispatchToProps)(Tab);
+export const TabContainer = connect(
+  null,
+  mapDispatchToProps
+)(Tab);

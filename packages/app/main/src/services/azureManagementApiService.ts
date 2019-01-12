@@ -70,25 +70,24 @@ export interface SKU {
 }
 
 export enum Provider {
-  ApplicationInsights = 'microsoft.insights',
-  BotService = 'microsoft.botservice',
-  CognitiveServices = 'Microsoft.CognitiveServices',
-  CosmosDB = 'Microsoft.DocumentDB',
-  Storage = 'Microsoft.Storage'
+  ApplicationInsights = "microsoft.insights",
+  BotService = "microsoft.botservice",
+  CognitiveServices = "Microsoft.CognitiveServices",
+  CosmosDB = "Microsoft.DocumentDB",
+  Storage = "Microsoft.Storage"
 }
 
 export enum AccountIdentifier {
-  ApplicationInsights = 'components?api-version=2015-05-01',
-  CognitiveService = 'accounts?api-version=2017-04-18',
-  CosmosDb = 'databaseaccounts?api-version=2015-04-08',
-  BotServices = 'botservices?api-version=2018-07-12',
-  StorageAccounts = 'storageaccounts?api-version=2018-07-01'
+  ApplicationInsights = "components?api-version=2015-05-01",
+  CognitiveService = "accounts?api-version=2017-04-18",
+  CosmosDb = "databaseaccounts?api-version=2015-04-08",
+  BotServices = "botservices?api-version=2018-07-12",
+  StorageAccounts = "storageaccounts?api-version=2018-07-01"
 }
 
-const baseUrl = 'https://management.azure.com/';
+const baseUrl = "https://management.azure.com/";
 
 export class AzureManagementApiService {
-
   /**
    * Builds the RequestInit with the required
    * Authorization header containing the ARM token.
@@ -98,9 +97,9 @@ export class AzureManagementApiService {
   public static getRequestInit(armToken: string): RequestInit {
     return {
       headers: {
-        Authorization: `Bearer ${ armToken }`,
-        Accept: 'application/json, text/plain, */*',
-        'x-ms-date': new Date().toUTCString()
+        Authorization: `Bearer ${armToken}`,
+        Accept: "application/json, text/plain, */*",
+        "x-ms-date": new Date().toUTCString()
       }
     };
   }
@@ -111,13 +110,20 @@ export class AzureManagementApiService {
    *
    * @param armToken The user's arm token retrieved from a successful sign in.
    */
-  public static async getSubscriptions(armToken: string): Promise<Subscription[]> {
-    const url = `${ baseUrl }subscriptions?api-version=2018-07-01`;
-    const subscriptionsResponse = await fetch(url, AzureManagementApiService.getRequestInit(armToken));
+  public static async getSubscriptions(
+    armToken: string
+  ): Promise<Subscription[]> {
+    const url = `${baseUrl}subscriptions?api-version=2018-07-01`;
+    const subscriptionsResponse = await fetch(
+      url,
+      AzureManagementApiService.getRequestInit(armToken)
+    );
     if (!subscriptionsResponse.ok) {
       return null;
     }
-    const { value = [] }: { value: Subscription[] } = await subscriptionsResponse.json();
+    const {
+      value = []
+    }: { value: Subscription[] } = await subscriptionsResponse.json();
     return value.length ? value : null;
   }
 
@@ -138,12 +144,13 @@ export class AzureManagementApiService {
     subs: Subscription[],
     provider: Provider,
     identifier: AccountIdentifier,
-    kind: string = ''): Promise<AzureResource[]> {
-
-    const url = `${ baseUrl }{id}/providers/${ provider }/${ identifier }`;
+    kind: string = ""
+  ): Promise<AzureResource[]> {
+    const url = `${baseUrl}{id}/providers/${provider}/${identifier}`;
     const req = AzureManagementApiService.getRequestInit(armToken);
     const calls = subs.map(subscription =>
-      fetch(url.replace('{id}', subscription.id), req));
+      fetch(url.replace("{id}", subscription.id), req)
+    );
 
     const accountsResponses: Response[] = await Promise.all(calls);
     const accounts: AzureResource[] = [];
@@ -152,10 +159,14 @@ export class AzureManagementApiService {
       const { [i]: accountResponse } = accountsResponses;
       const { [i]: subscription } = subs;
       if (accountResponse.ok) {
-        const accountResponseJson: { value: AzureResource[] } = await accountResponse.json();
-        const filteredValues = kind ?
-          accountResponseJson.value.filter(account => (account.kind || '').includes(kind)) :
-          accountResponseJson.value;
+        const accountResponseJson: {
+          value: AzureResource[];
+        } = await accountResponse.json();
+        const filteredValues = kind
+          ? accountResponseJson.value.filter(account =>
+              (account.kind || "").includes(kind)
+            )
+          : accountResponseJson.value;
         // Amend the data with the tenant and subscription Ids since we lose
         // this fidelity when the response comes back with multiple resources
         // per subscriptionId.
@@ -180,13 +191,19 @@ export class AzureManagementApiService {
    * @param apiVersion
    * @param responseProperty
    */
-  public static async getKeysForAccounts
-  (armToken: string, accounts: AzureResource[], apiVersion: string, responseProperty: string): Promise<string[]> {
+  public static async getKeysForAccounts(
+    armToken: string,
+    accounts: AzureResource[],
+    apiVersion: string,
+    responseProperty: string
+  ): Promise<string[]> {
     const keys: any[] = [];
     const req = AzureManagementApiService.getRequestInit(armToken);
-    const url = `${ baseUrl }{id}/listKeys?api-version=${ apiVersion }`;
-    req.method = 'POST'; // Not sure why this is required by the endpoint...
-    const calls = accounts.map(account => fetch(url.replace('{id}', account.id), req));
+    const url = `${baseUrl}{id}/listKeys?api-version=${apiVersion}`;
+    req.method = "POST"; // Not sure why this is required by the endpoint...
+    const calls = accounts.map(account =>
+      fetch(url.replace("{id}", account.id), req)
+    );
     const keyResponses: Response[] = await Promise.all(calls);
     let i = keyResponses.length;
     while (i--) {
@@ -194,7 +211,8 @@ export class AzureManagementApiService {
       if (keyResponse.ok) {
         const keyResponseJson = await keyResponse.json();
         const key = keyResponseJson[responseProperty];
-        if (key && '' + key) { // Excludes empty strings and empty arrays
+        if (key && "" + key) {
+          // Excludes empty strings and empty arrays
           keys[i] = key; // maintain index position - do not "push"
         }
       }

@@ -31,9 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { BotConfigWithPath, applyBotConfigOverrides, botsAreTheSame } from '@bfemulator/sdk-shared';
-import { BotAction, BotActions } from '../actions/botActions';
-import { BotInfo } from '@bfemulator/app-shared';
+import { BotInfo } from "@bfemulator/app-shared";
+import {
+  applyBotConfigOverrides,
+  BotConfigWithPath,
+  botsAreTheSame
+} from "@bfemulator/sdk-shared";
+
+import { BotAction, BotActions } from "../actions/botActions";
 
 export interface BotState {
   activeBot: BotConfigWithPath;
@@ -44,10 +49,13 @@ export interface BotState {
 const DEFAULT_STATE: BotState = {
   activeBot: null,
   botFiles: [],
-  currentBotDirectory: ''
+  currentBotDirectory: ""
 };
 
-export const bot = (state: BotState = DEFAULT_STATE, action: BotAction): BotState => {
+export const bot = (
+  state: BotState = DEFAULT_STATE,
+  action: BotAction
+): BotState => {
   switch (action.type) {
     case BotActions.load: {
       state = setBotFilesState(action.payload.bots, state);
@@ -56,14 +64,21 @@ export const bot = (state: BotState = DEFAULT_STATE, action: BotAction): BotStat
 
     case BotActions.setActive: {
       // move active bot up to the top of the recent bots list
-      const mostRecentBot = state.botFiles.find(bot2 => bot2 && bot2.path === action.payload.bot.path);
-      let recentBots = state.botFiles.filter(bot3 => bot3 && bot3.path !== action.payload.bot.path);
+      const mostRecentBot = state.botFiles.find(
+        bot2 => bot2 && bot2.path === action.payload.bot.path
+      );
+      const recentBots = state.botFiles.filter(
+        bot3 => bot3 && bot3.path !== action.payload.bot.path
+      );
       if (mostRecentBot) {
         recentBots.unshift(mostRecentBot);
       }
       let newActiveBot = action.payload.bot;
       if (botsAreTheSame(state.activeBot, newActiveBot)) {
-        newActiveBot = applyBotConfigOverrides(newActiveBot, state.activeBot.overrides);
+        newActiveBot = applyBotConfigOverrides(
+          newActiveBot,
+          state.activeBot.overrides
+        );
       }
       state = setBotFilesState(recentBots, state);
       state = setActiveBot(newActiveBot, state);
@@ -88,23 +103,25 @@ export const bot = (state: BotState = DEFAULT_STATE, action: BotAction): BotStat
 };
 
 function setActiveBot(bot4: BotConfigWithPath, state: BotState): BotState {
-  return Object.assign({}, state, {
+  return {...state, 
     get activeBot() {
       // Clones only - this guarantees only pristine bots will exist in the store
       return JSON.parse(JSON.stringify(bot4));
-    }
-  });
+    }};
 }
 
 function setBotFilesState(botFilesState: BotInfo[], state: BotState): BotState {
-  let newState = Object.assign({}, state);
+  const newState = {...state};
 
   newState.botFiles = botFilesState;
   return newState;
 }
 
-function setCurrentBotDirectory(botDirectory: string, state: BotState): BotState {
-  let newState = Object.assign({}, state);
+function setCurrentBotDirectory(
+  botDirectory: string,
+  state: BotState
+): BotState {
+  const newState = {...state};
 
   newState.currentBotDirectory = botDirectory;
   return newState;

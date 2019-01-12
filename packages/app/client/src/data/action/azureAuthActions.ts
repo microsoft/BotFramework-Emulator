@@ -31,12 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Action } from 'redux';
-import { ComponentClass } from 'react';
+import { ComponentClass } from "react";
+import { Action } from "redux";
 
-export const AZURE_ARM_TOKEN_DATA_CHANGED = 'AZURE_ARM_TOKEN_DATA_CHANGED';
-export const AZURE_BEGIN_AUTH_WORKFLOW = 'AZURE_BEGIN_AUTH_WORKFLOW';
-export const AZURE_INVALIDATE_ARM_TOKEN = 'AZURE_INVALIDATE_ARM_TOKEN';
+export const AZURE_ARM_TOKEN_DATA_CHANGED = "AZURE_ARM_TOKEN_DATA_CHANGED";
+export const AZURE_BEGIN_AUTH_WORKFLOW = "AZURE_BEGIN_AUTH_WORKFLOW";
+export const AZURE_INVALIDATE_ARM_TOKEN = "AZURE_INVALIDATE_ARM_TOKEN";
 
 export interface AzureAuthAction<T> extends Action {
   payload?: T;
@@ -61,11 +61,18 @@ export function beginAzureAuthWorkflow(
 ): AzureAuthAction<AzureAuthWorkflow> {
   return {
     type: AZURE_BEGIN_AUTH_WORKFLOW,
-    payload: { promptDialog, promptDialogProps, loginSuccessDialog, loginFailedDialog }
+    payload: {
+      promptDialog,
+      promptDialogProps,
+      loginSuccessDialog,
+      loginFailedDialog
+    }
   };
 }
 
-export function azureArmTokenDataChanged(armToken: string): AzureAuthAction<ArmTokenData> {
+export function azureArmTokenDataChanged(
+  armToken: string
+): AzureAuthAction<ArmTokenData> {
   return {
     type: AZURE_ARM_TOKEN_DATA_CHANGED,
     payload: { access_token: armToken }

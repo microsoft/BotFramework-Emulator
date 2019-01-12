@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import ILogItem from './item';
+import ILogItem from "./item";
 
 interface LogService {
   logToChat(conversationId: string, ...items: ILogItem[]): void;

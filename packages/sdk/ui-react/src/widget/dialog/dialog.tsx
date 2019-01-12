@@ -31,11 +31,13 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import * as React from 'react';
-import { Component } from 'react';
-import * as styles from './dialog.scss';
-import { filterChildren, hmrSafeNameComparison } from '../../utils';
-import { DialogFooter } from './dialogFooter';
+import * as React from "react";
+import { Component } from "react";
+
+import { filterChildren, hmrSafeNameComparison } from "../../utils";
+
+import * as styles from "./dialog.scss";
+import { DialogFooter } from "./dialogFooter";
 
 export interface ModalProps extends JSX.ElementChildrenAttribute {
   cancel: (event: any) => void;
@@ -48,36 +50,50 @@ export interface ModalProps extends JSX.ElementChildrenAttribute {
 }
 
 export class Dialog extends Component<ModalProps, {}> {
-
   public render() {
-    const { className = '', titleClassName = '', title = '', children, modalStyle = '' } = this.props;
+    const {
+      className = "",
+      titleClassName = "",
+      title = "",
+      children,
+      modalStyle = ""
+    } = this.props;
     return (
       <>
-        <div className={ `${styles.modal} ${modalStyle}` }>&nbsp;</div>
-        <div className={ `${className} ${styles.dialog} dialog` }>
-          <header className={ `${titleClassName}` } role="heading">{ title }
-            <button className={ styles.cancelButton } aria-label="Close" onClick={ this.props.cancel }/>
+        <div className={`${styles.modal} ${modalStyle}`}>&nbsp;</div>
+        <div className={`${className} ${styles.dialog} dialog`}>
+          <header className={`${titleClassName}`} role="heading">
+            {title}
+            <button
+              className={styles.cancelButton}
+              aria-label="Close"
+              onClick={this.props.cancel}
+            />
           </header>
-          { filterChildren(children, child => hmrSafeNameComparison(child.type, DialogFooter, true)) }
-          { filterChildren(children, child => hmrSafeNameComparison(child.type, DialogFooter)) }
+          {filterChildren(children, child =>
+            hmrSafeNameComparison(child.type, DialogFooter, true)
+          )}
+          {filterChildren(children, child =>
+            hmrSafeNameComparison(child.type, DialogFooter)
+          )}
         </div>
       </>
     );
   }
 
   public componentWillMount(): void {
-    document.body.addEventListener('keydown', this.bodyKeyDownHandler);
+    document.body.addEventListener("keydown", this.bodyKeyDownHandler);
   }
 
   public componentWillUnmount(): void {
-    document.body.removeEventListener('keydown', this.bodyKeyDownHandler);
+    document.body.removeEventListener("keydown", this.bodyKeyDownHandler);
   }
 
   private bodyKeyDownHandler = (event: KeyboardEvent): void => {
-    if (event.key !== 'Escape') {
+    if (event.key !== "Escape") {
       return;
     }
 
     this.props.cancel(event);
-  }
+  };
 }

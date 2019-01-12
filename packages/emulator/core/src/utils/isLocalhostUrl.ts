@@ -31,9 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { parse } from 'url';
+import { parse } from "url";
 
-const LOCALHOST_NAMES = ['localhost', '127.0.0.1', '::1'];
+const LOCALHOST_NAMES = ["localhost", "127.0.0.1", "::1"];
 
 export default function isLocalhostUrl(urlStr: string): boolean {
   const { hostname } = parse(urlStr);

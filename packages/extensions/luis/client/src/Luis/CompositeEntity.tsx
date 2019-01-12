@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Entity } from './Entity';
+import { Entity } from "./Entity";
 
 export interface CompositeEntity extends Entity {
   parentType: string;

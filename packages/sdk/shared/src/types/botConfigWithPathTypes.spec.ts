@@ -31,92 +31,94 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { BotConfigWithPathImpl } from './botConfigWithPathTypes';
-import { ServiceTypes } from 'botframework-config/lib/schema';
+import { BotConfigWithPathImpl } from "./botConfigWithPathTypes";
+import { ServiceTypes } from "botframework-config/lib/schema";
 
-describe('BotConfigWithPathTypes tests', () => {
-  describe('fromJSON() functionality', () => {
+describe("BotConfigWithPathTypes tests", () => {
+  describe("fromJSON() functionality", () => {
     const endpointService = {
       type: ServiceTypes.Endpoint,
-      name: 'someEndpointName',
-      id: 'someEndpointUrl',
-      appId: 'someEndpointAppId',
-      appPassword: 'someEndpointAppPw',
-      endpoint: 'someEndpointUrl'
+      name: "someEndpointName",
+      id: "someEndpointUrl",
+      appId: "someEndpointAppId",
+      appPassword: "someEndpointAppPw",
+      endpoint: "someEndpointUrl"
     };
 
-    it('should work on object literals', () => {
+    it("should work on object literals", () => {
       const constructedBotConfig = BotConfigWithPathImpl.fromJSON({
-        name: 'someBotName',
-        description: 'some bot description',
+        name: "someBotName",
+        description: "some bot description",
         services: [endpointService],
-        path: 'somePath',
+        path: "somePath",
         overrides: {
           endpoint: {
-            endpoint: 'someOverriddenEndpoint',
-            name: 'someOverriddenEndpointName',
-            appId: 'someOverriddenEndpointAppId'
+            endpoint: "someOverriddenEndpoint",
+            name: "someOverriddenEndpointName",
+            appId: "someOverriddenEndpointAppId"
           }
         }
       });
 
-      expect(constructedBotConfig.name).toBe('someBotName');
-      expect(constructedBotConfig.description).toBe('some bot description');
-      expect(constructedBotConfig.path).toBe('somePath');
+      expect(constructedBotConfig.name).toBe("someBotName");
+      expect(constructedBotConfig.description).toBe("some bot description");
+      expect(constructedBotConfig.path).toBe("somePath");
       expect(constructedBotConfig.services[0]).toEqual(endpointService);
       expect(constructedBotConfig.overrides).toEqual({
         endpoint: {
-          endpoint: 'someOverriddenEndpoint',
-          name: 'someOverriddenEndpointName',
-          appId: 'someOverriddenEndpointAppId'
+          endpoint: "someOverriddenEndpoint",
+          name: "someOverriddenEndpointName",
+          appId: "someOverriddenEndpointAppId"
         }
       });
     });
 
-    it('should not truncate extraneous properties on variables', () => {
+    it("should not truncate extraneous properties on variables", () => {
       const botConfigVariable = {
-        name: 'someBotName',
-        description: 'some bot description',
+        name: "someBotName",
+        description: "some bot description",
         services: [endpointService],
-        path: 'somePath',
+        path: "somePath",
         overrides: {
           endpoint: {
-            endpoint: 'someOverriddenEndpoint',
-            name: 'someOverriddenEndpointName',
-            appId: 'someOverriddenEndpointAppId'
+            endpoint: "someOverriddenEndpoint",
+            name: "someOverriddenEndpointName",
+            appId: "someOverriddenEndpointAppId"
           }
         },
         extraneousProp: true
       };
 
-      const constructedBotConfig = BotConfigWithPathImpl.fromJSON(botConfigVariable);
+      const constructedBotConfig = BotConfigWithPathImpl.fromJSON(
+        botConfigVariable
+      );
 
-      expect(constructedBotConfig.name).toBe('someBotName');
-      expect(constructedBotConfig.description).toBe('some bot description');
-      expect(constructedBotConfig.path).toBe('somePath');
+      expect(constructedBotConfig.name).toBe("someBotName");
+      expect(constructedBotConfig.description).toBe("some bot description");
+      expect(constructedBotConfig.path).toBe("somePath");
       expect(constructedBotConfig.services[0]).toEqual(endpointService);
       expect(constructedBotConfig.overrides).toEqual({
         endpoint: {
-          endpoint: 'someOverriddenEndpoint',
-          name: 'someOverriddenEndpointName',
-          appId: 'someOverriddenEndpointAppId'
+          endpoint: "someOverriddenEndpoint",
+          name: "someOverriddenEndpointName",
+          appId: "someOverriddenEndpointAppId"
         }
       });
-      expect(Object.keys(constructedBotConfig)).toContain('extraneousProp');
+      expect(Object.keys(constructedBotConfig)).toContain("extraneousProp");
     });
 
-    it('should serialize correctly', () => {
+    it("should serialize correctly", () => {
       const botConfig = BotConfigWithPathImpl.fromJSON({
-        name: 'someBotName',
-        description: 'some description',
-        path: 'somePath',
+        name: "someBotName",
+        description: "some description",
+        path: "somePath",
         padlock: null,
         services: [],
         overrides: {}
       });
 
       const serializedVersion = JSON.stringify(botConfig);
-      expect(serializedVersion.includes('path')).toBe(true);
+      expect(serializedVersion.includes("path")).toBe(true);
     });
   });
 });

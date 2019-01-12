@@ -31,15 +31,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from 'react';
-import { DragEvent } from 'react';
-import { connect } from 'react-redux';
-import * as Constants from '../../../../../constants';
-import * as EditorActions from '../../../../../data/action/editorActions';
-import { Editor } from '../../../../../data/reducer/editor';
-import { RootState } from '../../../../../data/store';
-import * as styles from './rightContentOverlay.scss';
-import * as overlay from '../overlay.scss';
+import * as React from "react";
+import { DragEvent } from "react";
+import { connect } from "react-redux";
+
+import * as Constants from "../../../../../constants";
+import * as EditorActions from "../../../../../data/action/editorActions";
+import { Editor } from "../../../../../data/reducer/editor";
+import { RootState } from "../../../../../data/store";
+import * as overlay from "../overlay.scss";
+
+import * as styles from "./rightContentOverlay.scss";
 
 interface RightContentOverlayProps {
   draggingTab?: boolean;
@@ -51,7 +53,10 @@ interface RightContentOverlayState {
   draggedOver: boolean;
 }
 
-class RightContentOverlayComponent extends React.Component<RightContentOverlayProps, RightContentOverlayState> {
+class RightContentOverlayComponent extends React.Component<
+  RightContentOverlayProps,
+  RightContentOverlayState
+> {
   constructor(props: RightContentOverlayProps) {
     super(props);
 
@@ -60,42 +65,50 @@ class RightContentOverlayComponent extends React.Component<RightContentOverlayPr
     };
   }
 
-  render() {
-    let overlayClassName = this.state.draggedOver ? overlay.draggedOverOverlay : '';
-    overlayClassName += (this.props.draggingTab ? overlay.enabledForDrop : '');
+  public render() {
+    let overlayClassName = this.state.draggedOver
+      ? overlay.draggedOverOverlay
+      : "";
+    overlayClassName += this.props.draggingTab ? overlay.enabledForDrop : "";
 
     return (
-      <div className={ `${overlay.overlay} ${styles.rightContentOverlay} ${overlayClassName}` }
-           onDragEnterCapture={ this.onDragEnter } onDragLeave={ this.onDragLeave }
-           onDragOverCapture={ this.onDragOver } onDropCapture={ this.onDrop }/>
+      <div
+        className={`${overlay.overlay} ${
+          styles.rightContentOverlay
+        } ${overlayClassName}`}
+        onDragEnterCapture={this.onDragEnter}
+        onDragLeave={this.onDragLeave}
+        onDragOverCapture={this.onDragOver}
+        onDropCapture={this.onDrop}
+      />
     );
   }
 
-  private onDragEnter = (e) => {
+  private onDragEnter = e => {
     e.preventDefault();
     e.stopPropagation();
-  }
+  };
 
   private onDragLeave = () => {
-    this.setState(({ draggedOver: false }));
-  }
+    this.setState({ draggedOver: false });
+  };
 
   private onDragOver = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    this.setState(({ draggedOver: true }));
-  }
+    this.setState({ draggedOver: true });
+  };
 
   private onDrop = (e: DragEvent<HTMLDivElement>) => {
-    const tabData = JSON.parse(e.dataTransfer.getData('application/json'));
+    const tabData = JSON.parse(e.dataTransfer.getData("application/json"));
     const tabId = tabData.tabId;
     const docToSplit = this.props.primaryEditor.documents[tabId];
     this.props.splitTab(docToSplit.contentType, tabId);
-    this.setState(({ draggedOver: false }));
+    this.setState({ draggedOver: false });
 
     e.preventDefault();
     e.stopPropagation();
-  }
+  };
 }
 
 const mapStateToProps = (state: RootState): RightContentOverlayProps => ({
@@ -105,7 +118,17 @@ const mapStateToProps = (state: RootState): RightContentOverlayProps => ({
 
 const mapDispatchToProps = (dispatch): RightContentOverlayProps => ({
   splitTab: (contentType: string, tabId: string) =>
-    dispatch(EditorActions.splitTab(contentType, tabId, Constants.EDITOR_KEY_PRIMARY, Constants.EDITOR_KEY_SECONDARY))
+    dispatch(
+      EditorActions.splitTab(
+        contentType,
+        tabId,
+        Constants.EDITOR_KEY_PRIMARY,
+        Constants.EDITOR_KEY_SECONDARY
+      )
+    )
 });
 
-export const RightContentOverlay = connect(mapStateToProps, mapDispatchToProps)(RightContentOverlayComponent);
+export const RightContentOverlay = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(RightContentOverlayComponent);

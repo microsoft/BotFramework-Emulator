@@ -31,8 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export default function statusCodeFamily(statusCode: number | string, expectedFamily: number) {
-  if (typeof statusCode === 'string') {
+export default function statusCodeFamily(
+  statusCode: number | string,
+  expectedFamily: number
+) {
+  if (typeof statusCode === "string") {
     statusCode = +statusCode;
   }
 

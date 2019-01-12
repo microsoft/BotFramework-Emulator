@@ -31,9 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from 'react';
-import * as styles from './panel.scss';
-import { filterChildren, hmrSafeNameComparison } from '@bfemulator/ui-react';
+import { filterChildren, hmrSafeNameComparison } from "@bfemulator/ui-react";
+import * as React from "react";
+
+import * as styles from "./panel.scss";
 
 interface PanelProps {
   children?: any;
@@ -45,17 +46,21 @@ export default class Panel extends React.Component<PanelProps, {}> {
     super(props, context);
   }
 
-  render() {
+  public render() {
     return (
-      <div className={ styles.panel }>
-        <div className={ styles.panelHeader }>
-          { this.props.title }
-          <div className={ styles.accessories }>
-            { filterChildren(this.props.children, child => hmrSafeNameComparison(child.type, PanelControls)) }
+      <div className={styles.panel}>
+        <div className={styles.panelHeader}>
+          {this.props.title}
+          <div className={styles.accessories}>
+            {filterChildren(this.props.children, child =>
+              hmrSafeNameComparison(child.type, PanelControls)
+            )}
           </div>
         </div>
-        <div className={ styles.panelBody }>
-          { filterChildren(this.props.children, child => hmrSafeNameComparison(child.type, PanelContent)) }
+        <div className={styles.panelBody}>
+          {filterChildren(this.props.children, child =>
+            hmrSafeNameComparison(child.type, PanelContent)
+          )}
         </div>
       </div>
     );

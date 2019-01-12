@@ -31,25 +31,29 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as fs from 'fs';
-import * as HttpStatus from 'http-status-codes';
-import * as Restify from 'restify';
+import * as Formidable from "formidable";
+import * as fs from "fs";
+import * as HttpStatus from "http-status-codes";
+import * as Restify from "restify";
 
-import * as Formidable from 'formidable';
-import BotEmulator from '../../botEmulator';
-import Conversation from '../../facility/conversation';
-import Attachment from '../../types/attachment';
-import AttachmentData from '../../types/attachment/data';
-import { textItem } from '../../types/log/util';
-import LogLevel from '../../types/log/level';
-import BotEndpoint from '../../facility/botEndpoint';
-import sendErrorResponse from '../../utils/sendErrorResponse';
+import BotEmulator from "../../botEmulator";
+import BotEndpoint from "../../facility/botEndpoint";
+import Conversation from "../../facility/conversation";
+import Attachment from "../../types/attachment";
+import AttachmentData from "../../types/attachment/data";
+import LogLevel from "../../types/log/level";
+import { textItem } from "../../types/log/util";
+import sendErrorResponse from "../../utils/sendErrorResponse";
 
 export default function upload(botEmulator: BotEmulator) {
   const { logMessage } = botEmulator.facilities.logger;
 
-  return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-    if (req.params.conversationId.includes('transcript')) {
+  return (
+    req: Restify.Request,
+    res: Restify.Response,
+    next: Restify.Next
+  ): any => {
+    if (req.params.conversationId.includes("transcript")) {
       res.end();
       return;
     }
@@ -58,15 +62,20 @@ export default function upload(botEmulator: BotEmulator) {
     const botEndpoint: BotEndpoint = (req as any).botEndpoint;
 
     if (!conversation) {
-      res.send(HttpStatus.NOT_FOUND, 'conversation not found');
+      res.send(HttpStatus.NOT_FOUND, "conversation not found");
       res.end();
-      logMessage(req.params.conversationId, textItem(LogLevel.Error, 'Cannot upload file. Conversation not found.'));
+      logMessage(
+        req.params.conversationId,
+        textItem(LogLevel.Error, "Cannot upload file. Conversation not found.")
+      );
 
       return;
     }
 
-    if (req.getContentType() !== 'multipart/form-data' ||
-      (req.getContentLength() === 0 && !req.isChunked())) {
+    if (
+      req.getContentType() !== "multipart/form-data" ||
+      (req.getContentLength() === 0 && !req.isChunked())
+    ) {
       return;
     }
 
@@ -77,7 +86,9 @@ export default function upload(botEmulator: BotEmulator) {
     // TODO: Override form.onPart handler so it doesn't write temp files to disk.
     form.parse(req, async (err: any, fields: any, files: any) => {
       try {
-        const activity = JSON.parse(fs.readFileSync(files.activity.path, 'utf8'));
+        const activity = JSON.parse(
+          fs.readFileSync(files.activity.path, "utf8")
+        );
         let uploads = files.file;
 
         if (!Array.isArray(uploads)) {
@@ -85,35 +96,44 @@ export default function upload(botEmulator: BotEmulator) {
         }
         if (uploads && uploads.length) {
           activity.attachments = [];
-          uploads.forEach((upload1) => {
-            const name = (upload1 as any).name || 'file.dat';
+          uploads.forEach(upload1 => {
+            const name = (upload1 as any).name || "file.dat";
             const type = upload1.type;
             const path = upload1.path;
             const buf: Buffer = fs.readFileSync(path);
-            const contentBase64 = buf.toString('base64');
+            const contentBase64 = buf.toString("base64");
             const attachmentData: AttachmentData = {
               type,
               name,
               originalBase64: contentBase64,
               thumbnailBase64: contentBase64
             };
-            const attachmentId = botEmulator.facilities.attachments.uploadAttachment(attachmentData);
+            const attachmentId = botEmulator.facilities.attachments.uploadAttachment(
+              attachmentData
+            );
             const serviceUrl = botEmulator.getServiceUrl(botEndpoint.botUrl);
             const attachment: Attachment = {
               name,
               contentType: type,
-              contentUrl: `${ serviceUrl }/v3/attachments/${attachmentId}/views/original`
+              contentUrl: `${serviceUrl}/v3/attachments/${attachmentId}/views/original`
             };
 
             activity.attachments.push(attachment);
           });
 
           try {
-            const { activityId, statusCode, response } = await conversation.postActivityToBot(activity, true);
+            const {
+              activityId,
+              statusCode,
+              response
+            } = await conversation.postActivityToBot(activity, true);
 
             // logNetwork(conversation.conversationId, req, res, `[${activity.type}]`);
             if (~~statusCode === 0 && ~~statusCode > 300) {
-              res.send(statusCode || HttpStatus.INTERNAL_SERVER_ERROR, await response.text());
+              res.send(
+                statusCode || HttpStatus.INTERNAL_SERVER_ERROR,
+                await response.text()
+              );
               res.end();
             } else {
               res.send(statusCode, { id: activityId });
@@ -123,7 +143,7 @@ export default function upload(botEmulator: BotEmulator) {
             sendErrorResponse(req, res, next, err);
           }
         } else {
-          res.send(HttpStatus.BAD_REQUEST, 'no file uploaded');
+          res.send(HttpStatus.BAD_REQUEST, "no file uploaded");
           res.end();
         }
       } catch (e) {

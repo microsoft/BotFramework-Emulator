@@ -31,23 +31,20 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-let base64url = require('base64url');
-let getPem = require('rsa-pem-from-mod-exp');
+const base64url = require("base64url");
+const getPem = require("rsa-pem-from-mod-exp");
 
 export default class OpenIdMetadata {
   private lastUpdated = 0;
   private keys: Key[];
 
-  constructor(
-    public fetch: any,
-    public url: string
-  ) {}
+  constructor(public fetch: any, public url: string) {}
 
   public async getKey(keyId: string) {
     // If keys are more than 5 days old, refresh them
     const now = new Date().getTime();
 
-    if (this.lastUpdated < (now - 1000 * 60 * 60 * 24 * 5)) {
+    if (this.lastUpdated < now - 1000 * 60 * 60 * 24 * 5) {
       try {
         await this.refreshCache();
       } catch {
@@ -62,18 +59,18 @@ export default class OpenIdMetadata {
     const resp1 = await this.fetch(this.url);
 
     if (resp1.status >= 400) {
-      throw new Error(`Failed to load openID config: ${ resp1.statusCode }`);
+      throw new Error(`Failed to load openID config: ${resp1.statusCode}`);
     }
 
-    const openIdConfig = <OpenIdConfig> await resp1.json();
+    const openIdConfig = await resp1.json() as OpenIdConfig;
     const resp2 = await this.fetch(openIdConfig.jwks_uri);
 
     if (resp2.status >= 400) {
-      throw new Error(`Failed to load Keys: ${ resp2.statusCode }`);
+      throw new Error(`Failed to load Keys: ${resp2.statusCode}`);
     }
 
     this.lastUpdated = new Date().getTime();
-    this.keys = <Key[]> (await resp2.json()).keys;
+    this.keys = (await resp2.json()).keys as Key[];
   }
 
   private findKey(keyId: string): string {

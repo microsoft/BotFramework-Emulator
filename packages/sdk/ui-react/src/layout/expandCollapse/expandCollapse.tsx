@@ -32,11 +32,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from 'react';
-import { KeyboardEvent } from 'react';
+import * as React from "react";
+import { KeyboardEvent } from "react";
 
-import { filterChildren, hmrSafeNameComparison } from '../../utils';
-import * as styles from './expandCollapse.scss';
+import { filterChildren, hmrSafeNameComparison } from "../../utils";
+
+import * as styles from "./expandCollapse.scss";
 
 export interface ExpandCollapseProps {
   expanded?: boolean;
@@ -49,41 +50,49 @@ export interface ExpandCollapseState {
   expanded: boolean;
 }
 
-export class ExpandCollapse extends React.Component<ExpandCollapseProps, ExpandCollapseState> {
+export class ExpandCollapse extends React.Component<
+  ExpandCollapseProps,
+  ExpandCollapseState
+> {
   constructor(props: ExpandCollapseProps) {
     super(props);
     this.state = { expanded: !!props.expanded };
   }
 
-  render() {
+  public render() {
     const { expanded } = this.state;
-    const { className = '', title, children, ariaLabel } = this.props;
+    const { className = "", title, children, ariaLabel } = this.props;
     const { toggleIcon, onHeaderKeyPress, onToggleExpandedButtonClick } = this;
 
     return (
-      <div className={ `${styles.expandCollapse} ${className} ${ expanded ? 'expanded' : '' }` }>
+      <div
+        className={`${styles.expandCollapse} ${className} ${
+          expanded ? "expanded" : ""
+        }`}
+      >
         <div
-          aria-expanded={ expanded }
-          aria-label={ ariaLabel }
+          aria-expanded={expanded}
+          aria-label={ariaLabel}
           role="toolbar"
-          tabIndex={ 0 }
-          onKeyPress={ onHeaderKeyPress }
-          className={ styles.header }>
-          { toggleIcon }
-          <h3
-            onClick={ onToggleExpandedButtonClick }
-            title={ title }>
-            { title }
+          tabIndex={0}
+          onKeyPress={onHeaderKeyPress}
+          className={styles.header}
+        >
+          {toggleIcon}
+          <h3 onClick={onToggleExpandedButtonClick} title={title}>
+            {title}
           </h3>
-          <div className={ styles.accessories }>
-            { filterChildren(children, child => hmrSafeNameComparison(child.type, ExpandCollapseControls)) }
+          <div className={styles.accessories}>
+            {filterChildren(children, child =>
+              hmrSafeNameComparison(child.type, ExpandCollapseControls)
+            )}
           </div>
         </div>
-        <div className={ styles.body }>
-          {
-            expanded &&
-            filterChildren(children, child => hmrSafeNameComparison(child.type, ExpandCollapseContent))
-          }
+        <div className={styles.body}>
+          {expanded &&
+            filterChildren(children, child =>
+              hmrSafeNameComparison(child.type, ExpandCollapseContent)
+            )}
         </div>
       </div>
     );
@@ -92,20 +101,30 @@ export class ExpandCollapse extends React.Component<ExpandCollapseProps, ExpandC
   private get toggleIcon(): JSX.Element {
     if (this.state.expanded) {
       return (
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" aria-hidden={ true }>
-          <path d="M11 10.07H5.344L11 4.414v5.656z"/>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          aria-hidden={true}
+        >
+          <path d="M11 10.07H5.344L11 4.414v5.656z" />
         </svg>
       );
     }
     return (
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" aria-hidden={ true }>
-        <path d="M6 4v8l4-4-4-4zm1 2.414L8.586 8 7 9.586V6.414z"/>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="16"
+        height="16"
+        aria-hidden={true}
+      >
+        <path d="M6 4v8l4-4-4-4zm1 2.414L8.586 8 7 9.586V6.414z" />
       </svg>
     );
   }
 
   public componentWillReceiveProps(newProps: ExpandCollapseProps) {
-    if (typeof newProps.expanded !== 'undefined') {
+    if (typeof newProps.expanded !== "undefined") {
       const { expanded } = newProps;
       this.setState({ expanded });
     }
@@ -113,13 +132,13 @@ export class ExpandCollapse extends React.Component<ExpandCollapseProps, ExpandC
 
   private onToggleExpandedButtonClick = () => {
     this.setState(state => ({ expanded: !state.expanded }));
-  }
+  };
 
   private onHeaderKeyPress = (event: KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === ' ') {
+    if (event.key === " ") {
       this.onToggleExpandedButtonClick();
     }
-  }
+  };
 }
 
 export const ExpandCollapseControls = props => props.children;

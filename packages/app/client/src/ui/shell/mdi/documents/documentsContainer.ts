@@ -31,11 +31,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { connect } from 'react-redux';
-import { Documents, DocumentsProps } from './documents';
-import { RootState } from '../../../../data/store';
+import { connect } from "react-redux";
 
-function mapStateToProps(state: RootState, ownProps: DocumentsProps): DocumentsProps {
+import { RootState } from "../../../../data/store";
+
+import { Documents, DocumentsProps } from "./documents";
+
+function mapStateToProps(
+  state: RootState,
+  ownProps: DocumentsProps
+): DocumentsProps {
   const { editors } = state.editor;
   return {
     ...ownProps,
@@ -45,4 +50,7 @@ function mapStateToProps(state: RootState, ownProps: DocumentsProps): DocumentsP
   };
 }
 
-export const DocumentsContainer = connect(mapStateToProps, null)(Documents);
+export const DocumentsContainer = connect(
+  mapStateToProps,
+  null
+)(Documents);

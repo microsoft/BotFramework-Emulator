@@ -31,14 +31,19 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as Restify from 'restify';
-import { exceptionToAPIException } from './exceptionToAPIException';
-import { ErrorResponse } from '@bfemulator/app-shared';
+import { ErrorResponse } from "@bfemulator/app-shared";
+import * as Restify from "restify";
+
+import { exceptionToAPIException } from "./exceptionToAPIException";
 
 /** Send exception as error response */
-export const sendErrorResponse = (req: Restify.Request, res: Restify.Response, next: Restify.Next, exception: any)
-  : ErrorResponse => {
-  let apiException = exceptionToAPIException(exception);
+export const sendErrorResponse = (
+  req: Restify.Request,
+  res: Restify.Response,
+  next: Restify.Next,
+  exception: any
+): ErrorResponse => {
+  const apiException = exceptionToAPIException(exception);
   res.send(apiException.statusCode, apiException.error);
   res.end();
   return apiException.error;

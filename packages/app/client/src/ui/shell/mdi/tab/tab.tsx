@@ -31,11 +31,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from 'react';
-import { DragEvent, KeyboardEvent, SyntheticEvent } from 'react';
-import * as styles from './tab.scss';
-import { getTabGroupForDocument } from '../../../../data/editorHelpers';
-import { TruncateText } from '@bfemulator/ui-react';
+import { TruncateText } from "@bfemulator/ui-react";
+import * as React from "react";
+import { DragEvent, KeyboardEvent, SyntheticEvent } from "react";
+
+import { getTabGroupForDocument } from "../../../../data/editorHelpers";
+
+import * as styles from "./tab.scss";
 
 export interface TabProps {
   active?: boolean;
@@ -62,82 +64,101 @@ export class Tab extends React.Component<TabProps, TabState> {
     };
   }
 
-  render() {
-    const activeClassName = this.props.active ? styles.activeEditorTab : '';
-    const draggedOverClassName = this.state.draggedOver ? styles.draggedOverEditorTab : '';
+  public render() {
+    const activeClassName = this.props.active ? styles.activeEditorTab : "";
+    const draggedOverClassName = this.state.draggedOver
+      ? styles.draggedOverEditorTab
+      : "";
     const { label } = this.props;
 
     return (
-      <div className={ `${styles.tab} ${activeClassName} ${draggedOverClassName}` } draggable
-           onDragOver={ this.onDragOver } onDragEnter={ this.onDragEnter } onDragStart={ this.onDragStart }
-           onDrop={ this.onDrop } onDragLeave={ this.onDragLeave } onDragEnd={ this.onDragEnd }>
-        <span className={ styles.editorTabIcon }> </span>
-        <TruncateText className={ styles.truncatedTabText }>{ label }</TruncateText>
-        { this.props.dirty ? <span>*</span> : null }
-        <div className={ styles.tabSeparator }></div>
-        <div className={ styles.tabFocusTarget } 
-          role="button" tabIndex={ 0 } aria-label={ `${label}, tab` }>&nbsp;</div>
+      <div
+        className={`${styles.tab} ${activeClassName} ${draggedOverClassName}`}
+        draggable={true}
+        onDragOver={this.onDragOver}
+        onDragEnter={this.onDragEnter}
+        onDragStart={this.onDragStart}
+        onDrop={this.onDrop}
+        onDragLeave={this.onDragLeave}
+        onDragEnd={this.onDragEnd}
+      >
+        <span className={styles.editorTabIcon} />
+        <TruncateText className={styles.truncatedTabText}>{label}</TruncateText>
+        {this.props.dirty ? <span>*</span> : null}
+        <div className={styles.tabSeparator} />
+        <div
+          className={styles.tabFocusTarget}
+          role="button"
+          tabIndex={0}
+          aria-label={`${label}, tab`}
+        >
+          &nbsp;
+        </div>
         <button
           type="button"
-          title={ `Close ${label} tab` }
-          className={ styles.editorTabClose }
-          onKeyPress={ this.onCloseButtonKeyPress }
-          onClick={ this.onCloseClick }
+          title={`Close ${label} tab`}
+          className={styles.editorTabClose}
+          onKeyPress={this.onCloseButtonKeyPress}
+          onClick={this.onCloseClick}
         >
-          <span></span>
+          <span />
         </button>
       </div>
     );
   }
 
   private onCloseButtonKeyPress = (event: KeyboardEvent<HTMLButtonElement>) => {
-    if (event.key === ' ' || event.keyCode === 13) {
+    if (event.key === " " || event.keyCode === 13) {
       this.props.onCloseClick(this.props.documentId);
     }
-  }
+  };
 
   private onCloseClick = (event: SyntheticEvent<HTMLButtonElement>): void => {
     event.stopPropagation();
     this.props.onCloseClick(this.props.documentId);
-  }
+  };
 
-  private onDragStart = (e) => {
+  private onDragStart = e => {
     const dragData = {
       tabId: this.props.documentId,
       editorKey: this.state.owningEditor
     };
-    e.dataTransfer.setData('application/json', JSON.stringify(dragData));
+    e.dataTransfer.setData("application/json", JSON.stringify(dragData));
     this.props.toggleDraggingTab(true);
-  }
+  };
 
   private onDragEnd = () => {
     this.props.toggleDraggingTab(false);
-  }
+  };
 
   private onDragOver = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    this.setState(({ draggedOver: true }));
-  }
+    this.setState({ draggedOver: true });
+  };
 
   private onDragEnter = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-  }
+  };
 
   private onDragLeave = () => {
-    this.setState(({ draggedOver: false }));
-  }
+    this.setState({ draggedOver: false });
+  };
 
   private onDrop = (e: DragEvent<HTMLDivElement>) => {
-    const tabData = JSON.parse(e.dataTransfer.getData('application/json'));
+    const tabData = JSON.parse(e.dataTransfer.getData("application/json"));
 
     // only swap the tabs if they are different
     if (tabData.tabId !== this.props.documentId) {
-      this.props.swapTabs(tabData.editorKey, this.state.owningEditor, tabData.tabId);
+      this.props.swapTabs(
+        tabData.editorKey,
+        this.state.owningEditor,
+        tabData.tabId
+      );
     }
 
-    this.setState(({ draggedOver: false }));
+    this.setState({ draggedOver: false });
     e.preventDefault();
     e.stopPropagation();
-  }
+  };
 }

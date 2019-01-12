@@ -31,16 +31,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ExplorerAction, showExplorer } from '../action/explorerActions';
-import { explorer, ExplorerState } from './explorer';
+import { ExplorerAction, showExplorer } from "../action/explorerActions";
+import { explorer, ExplorerState } from "./explorer";
 
-describe('Explorer reducer tests', () => {
+describe("Explorer reducer tests", () => {
   const DEFAULT_STATE: ExplorerState = {
     showing: false,
     sortSelectionByPanelId: {}
   };
 
-  it('should return unaltered state for non-matching action type', () => {
+  it("should return unaltered state for non-matching action type", () => {
     const emptyAction: ExplorerAction<any> = { type: null, payload: null };
     const startingState = { ...DEFAULT_STATE };
     const endingState = explorer(DEFAULT_STATE, emptyAction);

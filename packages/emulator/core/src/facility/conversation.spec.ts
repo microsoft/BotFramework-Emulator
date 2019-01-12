@@ -31,83 +31,100 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import Conversation from './conversation';
+import Conversation from "./conversation";
 
-jest.mock('../botEmulator', () => ({ BotEmulator: {} }));
+jest.mock("../botEmulator", () => ({ BotEmulator: {} }));
 
-describe('Conversation class', () => {
-    let botEndpointBotId;
-    let botEndpoint;
-    let botEmulator: any;
-    let conversation: Conversation;
-    let conversationId;
-    let user: any;
+describe("Conversation class", () => {
+  let botEndpointBotId;
+  let botEndpoint;
+  let botEmulator: any;
+  let conversation: Conversation;
+  let conversationId;
+  let user: any;
 
-    beforeEach(() => {
-        botEndpointBotId = 'someBotEndpointBotId';
-        botEndpoint = { botId: botEndpointBotId };
-        botEmulator = {};
-        conversationId = 'someConversationId';
-        user = { id: 'someUserId' };
-        conversation = new Conversation(botEmulator, botEndpoint, conversationId, user);
+  beforeEach(() => {
+    botEndpointBotId = "someBotEndpointBotId";
+    botEndpoint = { botId: botEndpointBotId };
+    botEmulator = {};
+    conversationId = "someConversationId";
+    user = { id: "someUserId" };
+    conversation = new Conversation(
+      botEmulator,
+      botEndpoint,
+      conversationId,
+      user
+    );
+  });
+
+  it("should feed activities", () => {
+    const mockProcessActivity = jest.fn(activity => ({
+      ...activity,
+      processed: true
+    }));
+    conversation.processActivity = mockProcessActivity;
+    const fedActivities = [];
+    const mockAddActivityToQueue = jest.fn(activity => {
+      fedActivities.push(activity);
     });
+    (conversation as any).addActivityToQueue = mockAddActivityToQueue;
 
-    it('should feed activities', () => {
-        const mockProcessActivity = jest.fn(activity => ({
-            ...activity,
-            processed: true
-        }));
-        conversation.processActivity = mockProcessActivity;
-        const fedActivities = [];
-        const mockAddActivityToQueue = jest.fn(activity => { fedActivities.push(activity); });
-        (conversation as any).addActivityToQueue = mockAddActivityToQueue;
+    let activities: any = [
+      {
+        conversation: {},
+        type: "event",
+        from: { role: "bot" },
+        recipient: { role: "user", id: "userId" }
+      },
+      {
+        conversation: {},
+        type: "message",
+        from: { role: "user" },
+        recipient: { role: "bot", id: "botId" }
+      },
+      {
+        conversation: {},
+        type: "messageReaction",
+        from: { role: "bot", id: "botId" },
+        recipient: { role: "user" }
+      },
+      {
+        conversation: {},
+        type: "typing",
+        from: { role: "user", id: "userId" },
+        recipient: { role: "bot" }
+      }
+    ];
 
-        let activities: any = [{
-            conversation: {},
-            type: 'event',
-            from: { role: 'bot' },
-            recipient: { role: 'user', id: 'userId' }
-          }, {
-            conversation: {},
-            type: 'message',
-            from: { role: 'user' },
-            recipient: { role: 'bot', id: 'botId' }
-          }, {
-            conversation: {},
-            type: 'messageReaction',
-            from: { role: 'bot', id: 'botId' },
-            recipient: { role: 'user' }
-          }, {
-            conversation: {},
-            type: 'typing',
-            from: { role: 'user', id: 'userId' },
-            recipient: { role: 'bot' }
-          }];
+    conversation.feedActivities(activities);
 
-        conversation.feedActivities(activities);
-
-        expect(fedActivities).toEqual([{
-            conversation: { id: 'someConversationId' },
-            type: 'event',
-            from: { role: 'bot' },
-            recipient: { role: 'user', id: 'someUserId' },
-            processed: true
-          }, {
-            conversation: { id: 'someConversationId' },
-            type: 'message',
-            from: { role: 'user' },
-            recipient: { role: 'bot', id: 'someBotEndpointBotId' }
-          }, {
-            conversation: { id: 'someConversationId' },
-            type: 'messageReaction',
-            from: { role: 'bot', id: 'someBotEndpointBotId' },
-            recipient: { role: 'user' },
-            processed: true
-          }, {
-            conversation: { id: 'someConversationId' },
-            type: 'typing',
-            from: { role: 'user', id: 'someUserId' },
-            recipient: { role: 'bot' }
-          }]);
-    });
+    expect(fedActivities).toEqual([
+      {
+        conversation: { id: "someConversationId" },
+        type: "event",
+        from: { role: "bot" },
+        recipient: { role: "user", id: "someUserId" },
+        processed: true
+      },
+      {
+        conversation: { id: "someConversationId" },
+        type: "message",
+        from: { role: "user" },
+        recipient: { role: "bot", id: "someBotEndpointBotId" }
+      },
+      {
+        conversation: { id: "someConversationId" },
+        type: "messageReaction",
+        from: { role: "bot", id: "someBotEndpointBotId" },
+        recipient: { role: "user" },
+        processed: true
+      },
+      {
+        conversation: { id: "someConversationId" },
+        type: "typing",
+        from: { role: "user", id: "someUserId" },
+        recipient: { role: "bot" }
+      }
+    ]);
+  });
 });

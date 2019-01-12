@@ -1,5 +1,5 @@
-import { SharedConstants } from '@bfemulator/app-shared';
-import { CommandRegistry } from '@bfemulator/sdk-shared';
+import { SharedConstants } from "@bfemulator/app-shared";
+import { CommandRegistry } from "@bfemulator/sdk-shared";
 //
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license.
@@ -32,14 +32,18 @@ import { CommandRegistry } from '@bfemulator/sdk-shared';
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { app, remote } from 'electron';
-import { emulator } from '../emulator';
-import { mainWindow } from '../main';
-import { AzureAuthWorkflowService } from '../services/azureAuthWorkflowService';
-import { azureLoggedInUserChanged, azurePersistLoginChanged } from '../settingsData/actions/azureAuthActions';
-import { getStore as getSettingsStore } from '../settingsData/store';
+import { app, remote } from "electron";
 
-const { session } = require('electron');
+import { emulator } from "../emulator";
+import { mainWindow } from "../main";
+import { AzureAuthWorkflowService } from "../services/azureAuthWorkflowService";
+import {
+  azureLoggedInUserChanged,
+  azurePersistLoginChanged
+} from "../settingsData/actions/azureAuthActions";
+import { getStore as getSettingsStore } from "../settingsData/store";
+
+const { session } = require("electron");
 
 /** Registers LUIS commands */
 export function registerCommands(commandRegistry: CommandRegistry) {
@@ -47,62 +51,85 @@ export function registerCommands(commandRegistry: CommandRegistry) {
 
   // ---------------------------------------------------------------------------
   // Retrieve the Azure ARM Token
-  commandRegistry.registerCommand(Azure.RetrieveArmToken, async (renew: boolean = false) => {
-    const settingsStore = getSettingsStore();
-    const workflow = AzureAuthWorkflowService.retrieveAuthToken(renew);
-    let result = undefined;
-    while (true) {
-      const next = workflow.next(result);
-      if (next.done) {
-        break;
+  commandRegistry.registerCommand(
+    Azure.RetrieveArmToken,
+    async (renew: boolean = false) => {
+      const settingsStore = getSettingsStore();
+      const workflow = AzureAuthWorkflowService.retrieveAuthToken(renew);
+      let result;
+      while (true) {
+        const next = workflow.next(result);
+        if (next.done) {
+          break;
+        }
+        try {
+          result = await next.value;
+        } catch {
+          break;
+        }
       }
-      try {
-        result = await next.value;
-      } catch {
-        break;
+      if (result && !result.error) {
+        const [, payload] = (result.access_token as string).split(".");
+        const pjson = JSON.parse(Buffer.from(payload, "base64").toString());
+        settingsStore.dispatch(
+          azureLoggedInUserChanged(
+            pjson.upn || pjson.unique_name || pjson.name || pjson.email
+          )
+        );
+        await mainWindow.commandService.call(
+          SharedConstants.Commands.Electron.UpdateFileMenu
+        );
+        // Add the current persistLogin value which the UI can use
+        // to bind to without retrieving the entire settingsStore
+        result.persistLogin = settingsStore.getState().azure.persistLogin;
       }
+      return result;
     }
-    if (result && !result.error) {
-      const [, payload] = (result.access_token as string).split('.');
-      const pjson = JSON.parse(Buffer.from(payload, 'base64').toString());
-      settingsStore.dispatch(azureLoggedInUserChanged((pjson.upn || pjson.unique_name || pjson.name || pjson.email)));
-      await mainWindow.commandService.call(SharedConstants.Commands.Electron.UpdateFileMenu);
-      // Add the current persistLogin value which the UI can use
-      // to bind to without retrieving the entire settingsStore
-      result.persistLogin = settingsStore.getState().azure.persistLogin;
-    }
-    return result;
-  });
+  );
 
   // ---------------------------------------------------------------------------
   // Sign the user out of Azure
-  commandRegistry.registerCommand(Azure.SignUserOutOfAzure, async (prompt: boolean = true) => {
-    await new Promise(resolve => session.defaultSession.clearStorageData({}, resolve));
+  commandRegistry.registerCommand(
+    Azure.SignUserOutOfAzure,
+    async (prompt: boolean = true) => {
+      await new Promise(resolve =>
+        session.defaultSession.clearStorageData({}, resolve)
+      );
 
-    const store = getSettingsStore();
-    store.dispatch(azureLoggedInUserChanged(''));
-    try {
-      await mainWindow.commandService.call(SharedConstants.Commands.Electron.UpdateFileMenu);
-    } catch {
-      // Nothing to do
-    }
-    if (prompt) {
+      const store = getSettingsStore();
+      store.dispatch(azureLoggedInUserChanged(""));
       try {
-        await mainWindow.commandService.call(SharedConstants.Commands.Electron.ShowMessageBox, false, {
-          message: 'You have successfully signed out of azure',
-          title: 'Success!'
-        });
+        await mainWindow.commandService.call(
+          SharedConstants.Commands.Electron.UpdateFileMenu
+        );
       } catch {
         // Nothing to do
       }
-    }
+      if (prompt) {
+        try {
+          await mainWindow.commandService.call(
+            SharedConstants.Commands.Electron.ShowMessageBox,
+            false,
+            {
+              message: "You have successfully signed out of azure",
+              title: "Success!"
+            }
+          );
+        } catch {
+          // Nothing to do
+        }
+      }
 
-    return true;
-  });
+      return true;
+    }
+  );
 
   // ---------------------------------------------------------------------------
   // User has changed the "Keep me signed in" selection after a successful login
-  commandRegistry.registerCommand(Azure.PersistAzureLoginChanged, persistLogin => {
-    getSettingsStore().dispatch(azurePersistLoginChanged(persistLogin));
-  });
+  commandRegistry.registerCommand(
+    Azure.PersistAzureLoginChanged,
+    persistLogin => {
+      getSettingsStore().dispatch(azurePersistLoginChanged(persistLogin));
+    }
+  );
 }

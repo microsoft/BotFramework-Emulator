@@ -31,127 +31,133 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { RequestHandler, Server } from 'restify';
-import BotEmulator from '../botEmulator';
-import createFetchConversationMiddleware from './middleware/fetchConversation';
-import createJsonBodyParserMiddleware from '../utils/jsonBodyParser';
-import getFacility from '../middleware/getFacility';
-import getRouteName from '../middleware/getRouteName';
+import { RequestHandler, Server } from "restify";
 
-import addUsers from './middleware/addUsers';
-import contactAdded from './middleware/contactAdded';
-import contactRemoved from './middleware/contactRemoved';
-import deleteUserData from './middleware/deleteUserData';
-import getUsers from './middleware/getUsers';
-import paymentComplete from './middleware/paymentComplete';
-import ping from './middleware/ping';
-import removeUsers from './middleware/removeUsers';
-import typing from './middleware/typing';
-import updateShippingAddress from './middleware/updateShippingAddress';
-import updateShippingOption from './middleware/updateShippingOption';
-import sendTokenResponse from './middleware/sendTokenResponse';
+import BotEmulator from "../botEmulator";
+import getFacility from "../middleware/getFacility";
+import getRouteName from "../middleware/getRouteName";
+import createJsonBodyParserMiddleware from "../utils/jsonBodyParser";
 
-export default function registerRoutes(botEmulator: BotEmulator, server: Server, uses: RequestHandler[]) {
+import addUsers from "./middleware/addUsers";
+import contactAdded from "./middleware/contactAdded";
+import contactRemoved from "./middleware/contactRemoved";
+import deleteUserData from "./middleware/deleteUserData";
+import createFetchConversationMiddleware from "./middleware/fetchConversation";
+import getUsers from "./middleware/getUsers";
+import paymentComplete from "./middleware/paymentComplete";
+import ping from "./middleware/ping";
+import removeUsers from "./middleware/removeUsers";
+import sendTokenResponse from "./middleware/sendTokenResponse";
+import typing from "./middleware/typing";
+import updateShippingAddress from "./middleware/updateShippingAddress";
+import updateShippingOption from "./middleware/updateShippingOption";
+
+export default function registerRoutes(
+  botEmulator: BotEmulator,
+  server: Server,
+  uses: RequestHandler[]
+) {
   const fetchConversation = createFetchConversationMiddleware(botEmulator);
   const jsonBodyParser = createJsonBodyParserMiddleware();
-  const facility = getFacility('emulator');
+  const facility = getFacility("emulator");
 
   server.get(
-    '/emulator/:conversationId/users',
+    "/emulator/:conversationId/users",
     fetchConversation,
     facility,
-    getRouteName('getUsers'),
+    getRouteName("getUsers"),
     getUsers(botEmulator)
   );
 
   server.post(
-    '/emulator/:conversationId/users',
+    "/emulator/:conversationId/users",
     jsonBodyParser,
     fetchConversation,
     facility,
-    getRouteName('addUsers'),
+    getRouteName("addUsers"),
     addUsers(botEmulator)
   );
 
   server.del(
-    '/emulator/:conversationId/users',
+    "/emulator/:conversationId/users",
     fetchConversation,
     facility,
-    getRouteName('removeUsers'),
+    getRouteName("removeUsers"),
     removeUsers(botEmulator)
   );
 
   server.post(
-    '/emulator/:conversationId/contacts',
+    "/emulator/:conversationId/contacts",
     fetchConversation,
     facility,
-    getRouteName('contactAdded'),
+    getRouteName("contactAdded"),
     contactAdded(botEmulator)
   );
 
   server.del(
-    '/emulator/:conversationId/contacts',
+    "/emulator/:conversationId/contacts",
     fetchConversation,
     facility,
-    getRouteName('contactRemoved'),
+    getRouteName("contactRemoved"),
     contactRemoved(botEmulator)
   );
 
   server.post(
-    '/emulator/:conversationId/typing',
+    "/emulator/:conversationId/typing",
     fetchConversation,
     facility,
-    getRouteName('typing'),
+    getRouteName("typing"),
     typing(botEmulator)
   );
 
   server.post(
-    '/emulator/:conversationId/ping',
+    "/emulator/:conversationId/ping",
     fetchConversation,
     facility,
-    getRouteName('ping'),
+    getRouteName("ping"),
     ping(botEmulator)
   );
 
   server.del(
-    '/emulator/:conversationId/userdata',
+    "/emulator/:conversationId/userdata",
     fetchConversation,
     facility,
-    getRouteName('deleteUserData'),
+    getRouteName("deleteUserData"),
     deleteUserData(botEmulator)
   );
 
   server.post(
-    '/emulator/:conversationId/invoke/updateShippingAddress',
+    "/emulator/:conversationId/invoke/updateShippingAddress",
     jsonBodyParser,
     fetchConversation,
     facility,
-    getRouteName('updateShippingAddress'),
+    getRouteName("updateShippingAddress"),
     updateShippingAddress(botEmulator)
   );
 
   server.post(
-    '/emulator/:conversationId/invoke/updateShippingOption',
+    "/emulator/:conversationId/invoke/updateShippingOption",
     jsonBodyParser,
     fetchConversation,
     facility,
-    getRouteName('updateShippingOption'),
+    getRouteName("updateShippingOption"),
     updateShippingOption(botEmulator)
   );
 
   server.post(
-    '/emulator/:conversationId/invoke/paymentComplete',
+    "/emulator/:conversationId/invoke/paymentComplete",
     jsonBodyParser,
     fetchConversation,
     facility,
-    getRouteName('paymentComplete'),
+    getRouteName("paymentComplete"),
     paymentComplete(botEmulator)
   );
 
   server.post(
-    '/emulator/:conversationId/invoke/sendTokenResponse',
+    "/emulator/:conversationId/invoke/sendTokenResponse",
     jsonBodyParser,
     facility,
-    getRouteName('sendTokenResponse'),
-    sendTokenResponse(botEmulator));
+    getRouteName("sendTokenResponse"),
+    sendTokenResponse(botEmulator)
+  );
 }

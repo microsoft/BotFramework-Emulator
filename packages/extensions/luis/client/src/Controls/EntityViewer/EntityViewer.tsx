@@ -31,47 +31,47 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from 'react';
-import { Component } from 'react';
-import * as styles from './EntityViewer.scss';
+import * as React from "react";
+import { Component } from "react";
 
-const InstanceKey = '$instance';
+import * as styles from "./EntityViewer.scss";
+
+const InstanceKey = "$instance";
 
 interface EntityInfo {
   name: string;
   value: any;
 }
 
-interface EntityViewerState {
-
-}
+interface EntityViewerState {}
 
 interface EntityViwerProps {
   entity: any;
 }
 
 class EntityViewer extends Component<EntityViwerProps, EntityViewerState> {
-
-  static renderEntityValueObject(entityValue: object): string {
+  public static renderEntityValueObject(entityValue: object): string {
     if (InstanceKey in entityValue) {
       delete entityValue[InstanceKey];
     }
     return JSON.stringify(entityValue);
   }
 
-  static renderEntityValue(entityValue: any): string {
+  public static renderEntityValue(entityValue: any): string {
     if (Array.isArray(entityValue)) {
       entityValue = EntityViewer.flattenEntityValue(entityValue);
     }
 
     if (Array.isArray(entityValue)) {
-      if (typeof entityValue[0] === 'object') {
-        entityValue = entityValue.map(ev => EntityViewer.renderEntityValueObject(ev));
+      if (typeof entityValue[0] === "object") {
+        entityValue = entityValue.map(ev =>
+          EntityViewer.renderEntityValueObject(ev)
+        );
       }
-      return entityValue.join(', ');
+      return entityValue.join(", ");
     }
 
-    if (typeof entityValue === 'object') {
+    if (typeof entityValue === "object") {
       return EntityViewer.renderEntityValueObject(entityValue);
     }
 
@@ -79,7 +79,7 @@ class EntityViewer extends Component<EntityViwerProps, EntityViewerState> {
     return entityValue;
   }
 
-  static flattenEntityValue(entityValueArr: any[]) {
+  public static flattenEntityValue(entityValueArr: any[]) {
     return [].concat.apply([], entityValueArr);
   }
 
@@ -88,12 +88,14 @@ class EntityViewer extends Component<EntityViwerProps, EntityViewerState> {
     this.state = {};
   }
 
-  render() {
+  public render() {
     return (
-      <div className={ styles.entityViewer }>
-        <div id="entityName">{ this.props.entity.name }</div>
+      <div className={styles.entityViewer}>
+        <div id="entityName">{this.props.entity.name}</div>
         <div id="arrow">&nbsp; -->&nbsp; </div>
-        <div id="entityValue">{ EntityViewer.renderEntityValue(this.props.entity.value) }</div>
+        <div id="entityValue">
+          {EntityViewer.renderEntityValue(this.props.entity.value)}
+        </div>
       </div>
     );
   }

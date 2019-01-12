@@ -31,11 +31,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import notification, { NotificationState } from './notification';
-import { finishAdd, finishRemove, finishClear, NotificationAction } from '../action/notificationActions';
-import { newNotification } from '@bfemulator/app-shared';
+import notification, { NotificationState } from "./notification";
+import {
+  finishAdd,
+  finishRemove,
+  finishClear,
+  NotificationAction
+} from "../action/notificationActions";
+import { newNotification } from "@bfemulator/app-shared";
 
-describe('Notification reducer tests', () => {
+describe("Notification reducer tests", () => {
   let defaultState: NotificationState;
 
   beforeEach(() => {
@@ -44,14 +49,14 @@ describe('Notification reducer tests', () => {
     };
   });
 
-  test('default', () => {
+  test("default", () => {
     const action: NotificationAction = { type: null, payload: {} };
     const endingState = notification(defaultState, action);
     expect(endingState).toEqual(defaultState);
   });
 
-  test('finishAdd', () => {
-    const notification1 = newNotification('Hi, I am a notification!');
+  test("finishAdd", () => {
+    const notification1 = newNotification("Hi, I am a notification!");
     const action: NotificationAction = finishAdd(notification1);
     let endingState = notification(defaultState, action);
 
@@ -65,10 +70,10 @@ describe('Notification reducer tests', () => {
     expect(endingState.allIds.some(id => id === notification1.id)).toBe(true);
   });
 
-  test('finishRemove', () => {
-    const idToRemove = 'id1';
+  test("finishRemove", () => {
+    const idToRemove = "id1";
     const startingState: NotificationState = {
-      allIds: [idToRemove, 'id2']
+      allIds: [idToRemove, "id2"]
     };
     const action: NotificationAction = finishRemove(idToRemove);
     let endingState = notification(startingState, action);
@@ -83,9 +88,9 @@ describe('Notification reducer tests', () => {
     expect(endingState.allIds.some(id => id === idToRemove)).toBe(false);
   });
 
-  test('finishClear', () => {
+  test("finishClear", () => {
     const startingState: NotificationState = {
-      allIds: ['id1', 'id2', 'id3']
+      allIds: ["id1", "id2", "id3"]
     };
     const action: NotificationAction = finishClear();
     const endingState = notification(startingState, action);

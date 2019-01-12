@@ -31,50 +31,52 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from 'react';
-import { Component } from 'react';
-import { EntityViewer, EntityInfo } from '../EntityViewer/EntityViewer';
-import * as styles from './EntitiesViewer.scss';
+import * as React from "react";
+import { Component } from "react";
 
-const INSTANCE_KEY = '$instance';
+import { EntityInfo, EntityViewer } from "../EntityViewer/EntityViewer";
 
-interface EntitiesViewerState {
+import * as styles from "./EntitiesViewer.scss";
 
-}
+const INSTANCE_KEY = "$instance";
+
+interface EntitiesViewerState {}
 
 interface EntitiesViewerProps {
   entities: any;
 }
 
-class EntitiesViewer extends Component<EntitiesViewerProps, EntitiesViewerState> {
-
+class EntitiesViewer extends Component<
+  EntitiesViewerProps,
+  EntitiesViewerState
+> {
   constructor(props: any, context: any) {
     super(props, context);
     this.state = {};
   }
 
-  render() {
+  public render() {
     let entities: any[];
-    let filteredEntityKeys = Object.keys(this.props.entities || {}).filter(entityKey => {
-      return entityKey !== INSTANCE_KEY;
-    });
+    const filteredEntityKeys = Object.keys(this.props.entities || {}).filter(
+      entityKey => {
+        return entityKey !== INSTANCE_KEY;
+      }
+    );
     if (filteredEntityKeys.length > 0) {
       entities = filteredEntityKeys.map(entityKey => {
-        let entity: EntityInfo = {
+        const entity: EntityInfo = {
           name: entityKey,
           value: this.props.entities[entityKey]
         };
-        return <EntityViewer key={ entityKey } entity={ entity }/>;
+        return <EntityViewer key={entityKey} entity={entity} />;
       });
     } else {
       entities = [<span key="no-entities">No Entities</span>];
     }
     return (
-      <div className={ styles.entitiesViewer }>
+      <div className={styles.entitiesViewer}>
         <div id="header">Entities</div>
-        <div id="entities">
-          { entities }
-        </div>
+        <div id="entities">{entities}</div>
       </div>
     );
   }

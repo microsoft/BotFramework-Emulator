@@ -31,10 +31,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import ConversationResourceResponse from '../../types/response/conversationResource';
+import ConversationResourceResponse from "../../types/response/conversationResource";
 
-export default function createConversationResponse(id: string, activityId: string): ConversationResourceResponse {
-  let response: ConversationResourceResponse = { id };
+export default function createConversationResponse(
+  id: string,
+  activityId: string
+): ConversationResourceResponse {
+  const response: ConversationResourceResponse = { id };
 
   if (activityId !== null) {
     response.activityId = activityId;

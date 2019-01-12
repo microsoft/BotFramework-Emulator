@@ -31,8 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import uuidv1 from 'uuid/v1';
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
+import uuidv1 from "uuid/v1";
 
 export function uniqueIdv4(): string {
   return uuidv4().toString();
@@ -43,5 +43,5 @@ export function uniqueId(): string {
 }
 
 export function isObject(item: any): boolean {
-  return (item && typeof item === 'object' && !Array.isArray(item));
+  return item && typeof item === "object" && !Array.isArray(item);
 }

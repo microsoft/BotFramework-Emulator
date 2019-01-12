@@ -31,8 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import Activity from './activity';
-import IConversationReference from './invoke';
+import Activity from "./activity";
+import IConversationReference from "./invoke";
 
 interface EventActivity extends Activity {
   name?: string;

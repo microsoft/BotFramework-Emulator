@@ -4,19 +4,19 @@ import {
   CommandRegistryImpl,
   CommandService,
   DisposableImpl
-} from '@bfemulator/sdk-shared';
-import { openFileFromCommandLine } from './openFileFromCommandLine';
-import * as readFileSyncUtil from './readFileSync';
+} from "@bfemulator/sdk-shared";
+import { openFileFromCommandLine } from "./openFileFromCommandLine";
+import * as readFileSyncUtil from "./readFileSync";
 
-jest.mock('./readFileSync', () => ({
-  readFileSync: (file) => {
-    if (file.includes('error.transcript')) {
-      return '{}';
+jest.mock("./readFileSync", () => ({
+  readFileSync: file => {
+    if (file.includes("error.transcript")) {
+      return "{}";
     }
-    if (file.includes('.transcript')) {
-      return '[]';
+    if (file.includes(".transcript")) {
+      return "[]";
     }
-    if (file.includes('bots.json')) {
+    if (file.includes("bots.json")) {
       return `{'bots':[]}`;
     }
     return null;
@@ -43,33 +43,44 @@ class MockCommandService extends DisposableImpl implements CommandService {
   }
 }
 
-describe('The openFileFromCommandLine util', () => {
+describe("The openFileFromCommandLine util", () => {
   let commandService: MockCommandService;
   beforeEach(() => {
     commandService = new MockCommandService();
   });
 
-  it('should make the appropriate calls to open a .bot file', async () => {
-    await openFileFromCommandLine('some/path.bot', commandService);
-    expect(commandService.localCalls).toEqual([['bot:open', 'some/path.bot'], ['bot:set-active', null]]);
-    expect(commandService.remoteCalls).toEqual([['bot:load', null]]);
+  it("should make the appropriate calls to open a .bot file", async () => {
+    await openFileFromCommandLine("some/path.bot", commandService);
+    expect(commandService.localCalls).toEqual([
+      ["bot:open", "some/path.bot"],
+      ["bot:set-active", null]
+    ]);
+    expect(commandService.remoteCalls).toEqual([["bot:load", null]]);
   });
 
-  it('should make the appropriate calls to open a .transcript file', async () => {
-    await openFileFromCommandLine('some/path.transcript', commandService);
-    expect(commandService.remoteCalls).toEqual([['transcript:open', 'deepLinkedTranscript', {
-      'activities': [],
-      'inMemory': true
-    }]]);
+  it("should make the appropriate calls to open a .transcript file", async () => {
+    await openFileFromCommandLine("some/path.transcript", commandService);
+    expect(commandService.remoteCalls).toEqual([
+      [
+        "transcript:open",
+        "deepLinkedTranscript",
+        {
+          activities: [],
+          inMemory: true
+        }
+      ]
+    ]);
   });
 
-  it('should throw when the transcript is not an array', async () => {
+  it("should throw when the transcript is not an array", async () => {
     let thrown: boolean;
     try {
-      await openFileFromCommandLine('some/error.transcript', commandService);
+      await openFileFromCommandLine("some/error.transcript", commandService);
     } catch (e) {
       thrown = true;
-      expect(e.message).toEqual('Invalid transcript file contents; should be an array of conversation activities.');
+      expect(e.message).toEqual(
+        "Invalid transcript file contents; should be an array of conversation activities."
+      );
     }
     expect(thrown).toBeTruthy();
   });

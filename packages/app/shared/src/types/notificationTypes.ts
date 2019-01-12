@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { uniqueId } from '@bfemulator/sdk-shared';
+import { uniqueId } from "@bfemulator/sdk-shared";
 
 export enum NotificationType {
   Info,
@@ -55,12 +55,12 @@ export interface Notification {
 }
 
 export class NotificationImpl implements Notification {
-  readonly id: string;
-  readonly timestamp: number;
-  type: NotificationType;
-  message: string;
-  read: boolean;
-  buttons?: NotificationCTAButton[];
+  public readonly id: string;
+  public readonly timestamp: number;
+  public type: NotificationType;
+  public message: string;
+  public read: boolean;
+  public buttons?: NotificationCTAButton[];
 
   constructor() {
     this.id = uniqueId();

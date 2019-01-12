@@ -31,162 +31,171 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { call, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
-import { checkActiveDocForPendingChanges, editorSagas, promptUserToReloadDocument } from './editorSagas';
-import { EditorActions, removeDocPendingChange } from '../action/editorActions';
-import { SharedConstants } from '@bfemulator/app-shared';
-import { refreshConversationMenu, editorSelector } from './sharedSagas';
+import { call, put, select, takeEvery, takeLatest } from "redux-saga/effects";
+import {
+  checkActiveDocForPendingChanges,
+  editorSagas,
+  promptUserToReloadDocument
+} from "./editorSagas";
+import { EditorActions, removeDocPendingChange } from "../action/editorActions";
+import { SharedConstants } from "@bfemulator/app-shared";
+import { refreshConversationMenu, editorSelector } from "./sharedSagas";
 
-jest.mock('../store', () => ({
-    get store() {
-        return {};
-    }
+jest.mock("../store", () => ({
+  get store() {
+    return {};
+  }
 }));
 
-jest.mock('../../ui/dialogs', () => ({}));
+jest.mock("../../ui/dialogs", () => ({}));
 
 const mockSharedConstants = SharedConstants;
 let mockRemoteCommandsCalled = [];
 let mockLocalCommandsCalled = [];
 let mockMessageResponse = false;
 
-jest.mock('../../platform/commands/commandServiceImpl', () => ({
-    CommandServiceImpl: {
-        call: async (commandName: string, ...args: any[]) => {
-            mockLocalCommandsCalled.push({ commandName, args: args });
-        },
-        remoteCall: async (commandName: string, ...args: any[]) => {
-            mockRemoteCommandsCalled.push({ commandName, args: args });
+jest.mock("../../platform/commands/commandServiceImpl", () => ({
+  CommandServiceImpl: {
+    call: async (commandName: string, ...args: any[]) => {
+      mockLocalCommandsCalled.push({ commandName, args: args });
+    },
+    remoteCall: async (commandName: string, ...args: any[]) => {
+      mockRemoteCommandsCalled.push({ commandName, args: args });
 
-            switch (commandName) {
-                case mockSharedConstants.Commands.Electron.ShowMessageBox:
-                    if (mockMessageResponse) {
-                        return Promise.resolve(true);
-                    } else {
-                        return Promise.resolve(false);
-                    }                     
-                default:
-                    return Promise.resolve(true);
-            
-            }
-        }
+      switch (commandName) {
+        case mockSharedConstants.Commands.Electron.ShowMessageBox:
+          if (mockMessageResponse) {
+            return Promise.resolve(true);
+          } else {
+            return Promise.resolve(false);
+          }
+        default:
+          return Promise.resolve(true);
+      }
     }
+  }
 }));
 
-describe('The Editor Sagas', () => {
-    beforeEach(() => {
-        mockRemoteCommandsCalled = [];
-        mockLocalCommandsCalled = [];
-    });
+describe("The Editor Sagas", () => {
+  beforeEach(() => {
+    mockRemoteCommandsCalled = [];
+    mockLocalCommandsCalled = [];
+  });
 
-    it('should check the active doc for pending changes', () => {
-        const gen = checkActiveDocForPendingChanges();
-        const stateData = gen.next().value;
+  it("should check the active doc for pending changes", () => {
+    const gen = checkActiveDocForPendingChanges();
+    const stateData = gen.next().value;
 
-        expect(stateData).toEqual(select(editorSelector));
+    expect(stateData).toEqual(select(editorSelector));
 
-        const mockActiveDocId = 'doc1';
-        const mockEditorState = {
-            editors: {
-                someEditor: {
-                    activeDocumentId: mockActiveDocId
-                }
-            },
-            activeEditor: 'someEditor',
-            docsWithPendingChanges: [mockActiveDocId]
-        };
-        // should return the inner generator that we delegate to
-        const innerGen = gen.next(mockEditorState).value;
-        expect(innerGen).toEqual(call(promptUserToReloadDocument, mockActiveDocId));
+    const mockActiveDocId = "doc1";
+    const mockEditorState = {
+      editors: {
+        someEditor: {
+          activeDocumentId: mockActiveDocId
+        }
+      },
+      activeEditor: "someEditor",
+      docsWithPendingChanges: [mockActiveDocId]
+    };
+    // should return the inner generator that we delegate to
+    const innerGen = gen.next(mockEditorState).value;
+    expect(innerGen).toEqual(call(promptUserToReloadDocument, mockActiveDocId));
 
-        expect(gen.next().done).toBe(true);
-    });
+    expect(gen.next().done).toBe(true);
+  });
 
-    it('should prompt the user to reload the document when the file is chatdown', () => {
-        const mockChatFileName = 'doc1.chat';
-        const options = {
-            buttons: ['Cancel', 'Reload'],
-            title: 'File change detected',
-            message: 'We have detected a change in this file on disk. Would you like to reload it in the Emulator?'
-          };
-        const gen = promptUserToReloadDocument(mockChatFileName);
+  it("should prompt the user to reload the document when the file is chatdown", () => {
+    const mockChatFileName = "doc1.chat";
+    const options = {
+      buttons: ["Cancel", "Reload"],
+      title: "File change detected",
+      message:
+        "We have detected a change in this file on disk. Would you like to reload it in the Emulator?"
+    };
+    const gen = promptUserToReloadDocument(mockChatFileName);
 
-        gen.next();
+    gen.next();
 
-        const { ShowMessageBox } = SharedConstants.Commands.Electron;
-        expect(mockRemoteCommandsCalled).toHaveLength(1);
-        expect(mockRemoteCommandsCalled[0].commandName).toEqual(ShowMessageBox);
-        expect(mockRemoteCommandsCalled[0].args[0]).toEqual(options);
-        expect(gen.next(true).value).toEqual(put(removeDocPendingChange(mockChatFileName)));
-        
-        gen.next();
-        
-        const { OpenChatFile } = SharedConstants.Commands.Emulator;
+    const { ShowMessageBox } = SharedConstants.Commands.Electron;
+    expect(mockRemoteCommandsCalled).toHaveLength(1);
+    expect(mockRemoteCommandsCalled[0].commandName).toEqual(ShowMessageBox);
+    expect(mockRemoteCommandsCalled[0].args[0]).toEqual(options);
+    expect(gen.next(true).value).toEqual(
+      put(removeDocPendingChange(mockChatFileName))
+    );
 
-        expect(mockLocalCommandsCalled).toHaveLength(1);
-        expect(mockLocalCommandsCalled[0].commandName).toEqual(OpenChatFile);
-        expect(mockLocalCommandsCalled[0].args[0]).toBe(mockChatFileName);
-        expect(mockLocalCommandsCalled[0].args[1]).toBe(true);
-        expect(gen.next().done).toBe(true);
-    });
+    gen.next();
 
-    it('should prompt the user to reload the document when the file is a transcript', () => {
-        const mockTranscriptFile = 'doc2.transcript';
-        const options = {
-            buttons: ['Cancel', 'Reload'],
-            title: 'File change detected',
-            message: 'We have detected a change in this file on disk. Would you like to reload it in the Emulator?'
-          };
-        const gen = promptUserToReloadDocument(mockTranscriptFile);
+    const { OpenChatFile } = SharedConstants.Commands.Emulator;
 
-        gen.next();
+    expect(mockLocalCommandsCalled).toHaveLength(1);
+    expect(mockLocalCommandsCalled[0].commandName).toEqual(OpenChatFile);
+    expect(mockLocalCommandsCalled[0].args[0]).toBe(mockChatFileName);
+    expect(mockLocalCommandsCalled[0].args[1]).toBe(true);
+    expect(gen.next().done).toBe(true);
+  });
 
-        const { ShowMessageBox } = SharedConstants.Commands.Electron;
-        expect(mockRemoteCommandsCalled).toHaveLength(1);
-        expect(mockRemoteCommandsCalled[0].commandName).toEqual(ShowMessageBox);
-        expect(mockRemoteCommandsCalled[0].args[0]).toEqual(options);
-        expect(gen.next(true).value).toEqual(put(removeDocPendingChange(mockTranscriptFile)));
-        gen.next();
-        
-        const { ReloadTranscript } = SharedConstants.Commands.Emulator;
+  it("should prompt the user to reload the document when the file is a transcript", () => {
+    const mockTranscriptFile = "doc2.transcript";
+    const options = {
+      buttons: ["Cancel", "Reload"],
+      title: "File change detected",
+      message:
+        "We have detected a change in this file on disk. Would you like to reload it in the Emulator?"
+    };
+    const gen = promptUserToReloadDocument(mockTranscriptFile);
 
-        expect(mockLocalCommandsCalled).toHaveLength(1);
-        expect(mockLocalCommandsCalled[0].commandName).toEqual(ReloadTranscript);
-        expect(mockLocalCommandsCalled[0].args[0]).toBe(mockTranscriptFile);
-        expect(gen.next().done).toBe(true);
-    });
+    gen.next();
 
-    it('should initialize the root saga', () => {
-        let gen = editorSagas();
-        
-        const checkActiveDocsYield = gen.next().value;
-        
-        expect(checkActiveDocsYield).toEqual(
-            takeEvery(
-                [
-                    EditorActions.addDocPendingChange,
-                    EditorActions.setActiveEditor,
-                    EditorActions.setActiveTab,
-                    EditorActions.open
-                ],
-                checkActiveDocForPendingChanges
-            )
-        );
+    const { ShowMessageBox } = SharedConstants.Commands.Electron;
+    expect(mockRemoteCommandsCalled).toHaveLength(1);
+    expect(mockRemoteCommandsCalled[0].commandName).toEqual(ShowMessageBox);
+    expect(mockRemoteCommandsCalled[0].args[0]).toEqual(options);
+    expect(gen.next(true).value).toEqual(
+      put(removeDocPendingChange(mockTranscriptFile))
+    );
+    gen.next();
 
-        const refreshConversationMenuYield = gen.next().value;
+    const { ReloadTranscript } = SharedConstants.Commands.Emulator;
 
-        expect(refreshConversationMenuYield).toEqual(
-            takeLatest(
-                [
-                    EditorActions.close,
-                    EditorActions.open,
-                    EditorActions.setActiveEditor,
-                    EditorActions.setActiveTab
-                ],
-                refreshConversationMenu
-            )
-        );
+    expect(mockLocalCommandsCalled).toHaveLength(1);
+    expect(mockLocalCommandsCalled[0].commandName).toEqual(ReloadTranscript);
+    expect(mockLocalCommandsCalled[0].args[0]).toBe(mockTranscriptFile);
+    expect(gen.next().done).toBe(true);
+  });
 
-        expect(gen.next().done).toBe(true);
-    });
+  it("should initialize the root saga", () => {
+    let gen = editorSagas();
+
+    const checkActiveDocsYield = gen.next().value;
+
+    expect(checkActiveDocsYield).toEqual(
+      takeEvery(
+        [
+          EditorActions.addDocPendingChange,
+          EditorActions.setActiveEditor,
+          EditorActions.setActiveTab,
+          EditorActions.open
+        ],
+        checkActiveDocForPendingChanges
+      )
+    );
+
+    const refreshConversationMenuYield = gen.next().value;
+
+    expect(refreshConversationMenuYield).toEqual(
+      takeLatest(
+        [
+          EditorActions.close,
+          EditorActions.open,
+          EditorActions.setActiveEditor,
+          EditorActions.setActiveTab
+        ],
+        refreshConversationMenu
+      )
+    );
+
+    expect(gen.next().done).toBe(true);
+  });
 });

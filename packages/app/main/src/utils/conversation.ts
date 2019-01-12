@@ -1,13 +1,13 @@
-import { Activity } from 'botframework-directlinejs';
+import { Activity } from "botframework-directlinejs";
 
 interface CustomActivityProperties {
   from: {
-    role?: string
+    role?: string;
   };
 
   recipient?: {
-    id?: string,
-    role?: string
+    id?: string;
+    role?: string;
   };
 }
 
@@ -15,8 +15,8 @@ export type CustomActivity = Activity & CustomActivityProperties;
 
 export function cleanupId(
   activities: CustomActivity[],
-  botId: string = findIdWithRole(activities, 'bot'),
-  userId: string = findIdWithRole(activities, 'user')
+  botId: string = findIdWithRole(activities, "bot"),
+  userId: string = findIdWithRole(activities, "user")
 ) {
   const roleIdMap = { bot: botId, user: userId };
 
@@ -24,10 +24,10 @@ export function cleanupId(
     const { type } = activity;
 
     if (
-      type === 'event' 
-      || type === 'message' 
-      || type === 'messageReaction' 
-      || type === 'typing'
+      type === "event" ||
+      type === "message" ||
+      type === "messageReaction" ||
+      type === "typing"
     ) {
       activity = {
         ...activity,
@@ -41,26 +41,26 @@ export function cleanupId(
         }
       };
     }
-  
+
     return activity;
   });
 
   return activities;
 }
 
-export function findIdWithRole(activities: CustomActivity[], role: string): string {
-  return activities.reduce(
-    (id: string, { recipient }) => {
-      if (id) {
-        return id;
-      } else if (recipient && recipient.role === role) {
-        return recipient.id;
-      } else {
-        return null;
-      }
-    },
-    null
-  );
+export function findIdWithRole(
+  activities: CustomActivity[],
+  role: string
+): string {
+  return activities.reduce((id: string, { recipient }) => {
+    if (id) {
+      return id;
+    } else if (recipient && recipient.role === role) {
+      return recipient.id;
+    } else {
+      return null;
+    }
+  }, null);
 }
 
 export const __TESTABLES = { findIdWithRole };

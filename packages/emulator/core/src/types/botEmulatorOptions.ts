@@ -31,12 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import Logger from './logger';
-import LogService from './log/service';
+import LogService from "./log/service";
+import Logger from "./logger";
 
 export interface BotEmulatorOptions {
   fetch?: (url: string, options: any) => Promise<any>;
-  loggerOrLogService?: (Logger | LogService);
+  loggerOrLogService?: Logger | LogService;
   stateSizeLimitKB?: number;
 }
 

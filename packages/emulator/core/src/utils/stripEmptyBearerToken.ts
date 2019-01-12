@@ -41,9 +41,9 @@ export default function createStripEmptyBearerTokenMiddleware() {
       return next();
     }
 
-    const pieces = req.headers.authorization.split(' ', 2);
+    const pieces = req.headers.authorization.split(" ", 2);
 
-    if (pieces.length === 1 && pieces[0] === 'Bearer') {
+    if (pieces.length === 1 && pieces[0] === "Bearer") {
       delete req.headers.authorization;
     }
 

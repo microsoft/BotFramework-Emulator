@@ -1,37 +1,6 @@
 {
+  "extends": "../../../../tsconfig.json",
   "compilerOptions": {
-    "baseUrl": ".",
-    "outDir": "build/dist",
-    "module": "esnext",
-    "target": "es2017",
-    "lib": [
-      "es6",
-      "dom"
-    ],
-    "sourceMap": true,
-    "allowJs": true,
-    "jsx": "react",
-    "moduleResolution": "node",
-    "forceConsistentCasingInFileNames": true,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noImplicitAny": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "strictNullChecks": true,
-    "suppressImplicitAnyIndexErrors": true,
-    "skipLibCheck": true
-  },
-  "exclude": [
-    "node_modules",
-    "build",
-    "scripts",
-    "acceptance-tests",
-    "webpack",
-    "jest",
-    "src/setupTests.ts",
-    "./__tests__/**/*",
-    "./**/*.spec.ts",
-    "./**/*.test.ts"
-  ]
+    "outDir": "build/dist"
+  }
 }

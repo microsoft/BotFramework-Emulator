@@ -31,128 +31,134 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { RequestHandler, Server } from 'restify';
+import { RequestHandler, Server } from "restify";
 
-import BotEmulator from '../botEmulator';
-import createBotFrameworkAuthenticationMiddleware from '../utils/botFrameworkAuthentication';
-import createJsonBodyParser from '../utils/jsonBodyParser';
-import getFacility from '../middleware/getFacility';
-import getRouteName from '../middleware/getRouteName';
+import BotEmulator from "../botEmulator";
+import getFacility from "../middleware/getFacility";
+import getRouteName from "../middleware/getRouteName";
+import createBotFrameworkAuthenticationMiddleware from "../utils/botFrameworkAuthentication";
+import createJsonBodyParser from "../utils/jsonBodyParser";
 
-import createConversation from './middleware/createConversation';
-import createFetchConversationMiddleware from './middleware/fetchConversation';
-import deleteActivity from './middleware/deleteActivity';
-import getActivityMembers from './middleware/getActivityMembers';
-import getBotEndpoint from './middleware/getBotEndpoint';
-import getConversationMembers from './middleware/getConversationMembers';
-import replyToActivity from './middleware/replyToActivity';
-import sendActivityToConversation from './middleware/sendActivityToConversation';
-import sendHistoryToConversation from './middleware/sendHistoryToConversation';
-import updateActivity from './middleware/updateActivity';
-import uploadAttachment from './middleware/uploadAttachment';
+import createConversation from "./middleware/createConversation";
+import deleteActivity from "./middleware/deleteActivity";
+import createFetchConversationMiddleware from "./middleware/fetchConversation";
+import getActivityMembers from "./middleware/getActivityMembers";
+import getBotEndpoint from "./middleware/getBotEndpoint";
+import getConversationMembers from "./middleware/getConversationMembers";
+import replyToActivity from "./middleware/replyToActivity";
+import sendActivityToConversation from "./middleware/sendActivityToConversation";
+import sendHistoryToConversation from "./middleware/sendHistoryToConversation";
+import updateActivity from "./middleware/updateActivity";
+import uploadAttachment from "./middleware/uploadAttachment";
 
-export default function registerRoutes(botEmulator: BotEmulator, server: Server, uses: RequestHandler[]) {
+export default function registerRoutes(
+  botEmulator: BotEmulator,
+  server: Server,
+  uses: RequestHandler[]
+) {
   // TODO: Check if it works without MSA App ID
-  const verifyBotFramework = createBotFrameworkAuthenticationMiddleware(botEmulator.options.fetch);
+  const verifyBotFramework = createBotFrameworkAuthenticationMiddleware(
+    botEmulator.options.fetch
+  );
   // const verifyBotFramework = botEmulator.msaAppId ?
   // createBotFrameworkAuthenticationMiddleware(botEmulator.options.fetch) : [];
   const botEndpoint = getBotEndpoint(botEmulator);
-  const facility = getFacility('conversations');
+  const facility = getFacility("conversations");
   const jsonBodyParser = createJsonBodyParser();
   const fetchConversation = createFetchConversationMiddleware(botEmulator);
-  
+
   server.post(
-    '/v3/conversations',
+    "/v3/conversations",
     ...uses,
     verifyBotFramework,
     jsonBodyParser,
     botEndpoint,
     facility,
-    getRouteName('createConversation'),
+    getRouteName("createConversation"),
     createConversation(botEmulator)
   );
 
   server.post(
-    '/v3/conversations/:conversationId/activities',
+    "/v3/conversations/:conversationId/activities",
     ...uses,
     verifyBotFramework,
     jsonBodyParser,
     fetchConversation,
     facility,
-    getRouteName('sendToConversation'),
+    getRouteName("sendToConversation"),
     sendActivityToConversation(botEmulator)
   );
 
   server.post(
-    '/v3/conversations/:conversationId/activities/history',
+    "/v3/conversations/:conversationId/activities/history",
     ...uses,
     verifyBotFramework,
     jsonBodyParser,
     fetchConversation,
     facility,
-    getRouteName('sendToConversation'),
+    getRouteName("sendToConversation"),
     sendHistoryToConversation(botEmulator)
   );
 
   server.post(
-    '/v3/conversations/:conversationId/activities/:activityId',
+    "/v3/conversations/:conversationId/activities/:activityId",
     ...uses,
     verifyBotFramework,
     jsonBodyParser,
     fetchConversation,
     facility,
-    getRouteName('replyToActivity'),
+    getRouteName("replyToActivity"),
     replyToActivity(botEmulator)
   );
 
   server.put(
-    '/v3/conversations/:conversationId/activities/:activityId',
+    "/v3/conversations/:conversationId/activities/:activityId",
     ...uses,
     verifyBotFramework,
     jsonBodyParser,
     fetchConversation,
     facility,
-    getRouteName('updateActivity'),
+    getRouteName("updateActivity"),
     updateActivity(botEmulator)
   );
 
   server.del(
-    '/v3/conversations/:conversationId/activities/:activityId',
+    "/v3/conversations/:conversationId/activities/:activityId",
     ...uses,
     verifyBotFramework,
     fetchConversation,
     facility,
-    getRouteName('deleteActivity'),
+    getRouteName("deleteActivity"),
     deleteActivity(botEmulator)
   );
 
   server.get(
-    '/v3/conversations/:conversationId/members',
+    "/v3/conversations/:conversationId/members",
     ...uses,
     verifyBotFramework,
     fetchConversation,
     facility,
-    getRouteName('getConversationMembers'),
+    getRouteName("getConversationMembers"),
     getConversationMembers(botEmulator)
   );
 
   server.get(
-    '/v3/conversations/:conversationId/activities/:activityId/members',
+    "/v3/conversations/:conversationId/activities/:activityId/members",
     ...uses,
     verifyBotFramework,
     fetchConversation,
     facility,
-    getRouteName('getActivityMembers'),
+    getRouteName("getActivityMembers"),
     getActivityMembers(botEmulator)
   );
 
   server.post(
-    '/v3/conversations/:conversationId/attachments',
+    "/v3/conversations/:conversationId/attachments",
     ...uses,
     verifyBotFramework,
     jsonBodyParser,
     facility,
-    getRouteName('uploadAttachment'),
+    getRouteName("uploadAttachment"),
     uploadAttachment(botEmulator)
   );
 }

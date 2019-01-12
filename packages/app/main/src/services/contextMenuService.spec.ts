@@ -1,7 +1,7 @@
-import { MenuItemConstructorOptions } from 'electron';
-import { ContextMenuService } from './contextMenuService';
+import { MenuItemConstructorOptions } from "electron";
+import { ContextMenuService } from "./contextMenuService";
 
-jest.mock('electron', () => ({
+jest.mock("electron", () => ({
   Menu: class {
     public static buildFromTemplate(...args: any[]) {
       return {
@@ -9,19 +9,21 @@ jest.mock('electron', () => ({
       };
     }
   },
-  MenuItemConstructorOptions: class {
-  }
+  MenuItemConstructorOptions: class {}
 }));
 
-describe('The ContextMenuService', () => {
+describe("The ContextMenuService", () => {
   beforeAll(() => {
     (ContextMenuService as any).currentMenu = { closePopup: () => void 0 };
   });
 
-  it('should show the menu and wait for user input', async () => {
+  it("should show the menu and wait for user input", async () => {
     const options = {} as MenuItemConstructorOptions;
     let resolved = false;
-    const closePopupSpy = jest.spyOn((ContextMenuService as any).currentMenu, 'closePopup');
+    const closePopupSpy = jest.spyOn(
+      (ContextMenuService as any).currentMenu,
+      "closePopup"
+    );
     ContextMenuService.showMenuAndWaitForInput([options]).then(() => {
       resolved = true;
     });

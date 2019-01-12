@@ -31,15 +31,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as Constants from '../constants';
-import * as EditorActions from './action/editorActions';
-import { Editor } from './reducer/editor';
-import { store } from './store';
+import * as Constants from "../constants";
 
-export function hasNonGlobalTabs(tabGroups?: { [editorKey: string]: Editor }): number {
+import * as EditorActions from "./action/editorActions";
+import { Editor } from "./reducer/editor";
+import { store } from "./store";
+
+export function hasNonGlobalTabs(tabGroups?: {
+  [editorKey: string]: Editor;
+}): number {
   tabGroups = tabGroups || store.getState().editor.editors;
   let count = 0;
-  for (let key in tabGroups) {
+  for (const key in tabGroups) {
     if (tabGroups[key]) {
       count += Object.keys(tabGroups[key].documents)
         .map(documentId => tabGroups[key].documents[documentId])
@@ -52,9 +55,12 @@ export function hasNonGlobalTabs(tabGroups?: { [editorKey: string]: Editor }): n
 /**
  * Returns name of editor group, or undefined if doc is not open
  */
-export function getTabGroupForDocument(documentId: string, tabGroups?: { [editorKey: string]: Editor }): string {
+export function getTabGroupForDocument(
+  documentId: string,
+  tabGroups?: { [editorKey: string]: Editor }
+): string {
   tabGroups = tabGroups || store.getState().editor.editors;
-  for (let key in tabGroups) {
+  for (const key in tabGroups) {
     if (tabGroups[key] && tabGroups[key].documents) {
       if (tabGroups[key].documents[documentId]) {
         return key;
@@ -66,15 +72,19 @@ export function getTabGroupForDocument(documentId: string, tabGroups?: { [editor
 
 /** Takes a tab group key and returns the key of the other tab group */
 export function getOtherTabGroup(tabGroup: string): string {
-  return tabGroup === Constants.EDITOR_KEY_PRIMARY ? Constants.EDITOR_KEY_SECONDARY : Constants.EDITOR_KEY_PRIMARY;
+  return tabGroup === Constants.EDITOR_KEY_PRIMARY
+    ? Constants.EDITOR_KEY_SECONDARY
+    : Constants.EDITOR_KEY_PRIMARY;
 }
 
 export function showWelcomePage(): void {
-  store.dispatch(EditorActions.open({
-    contentType: Constants.CONTENT_TYPE_WELCOME_PAGE,
-    documentId: Constants.DOCUMENT_ID_WELCOME_PAGE,
-    isGlobal: true
-  }));
+  store.dispatch(
+    EditorActions.open({
+      contentType: Constants.CONTENT_TYPE_WELCOME_PAGE,
+      documentId: Constants.DOCUMENT_ID_WELCOME_PAGE,
+      isGlobal: true
+    })
+  );
 }
 
 export function tabGroupHasDocuments(tabGroup: Editor): boolean {

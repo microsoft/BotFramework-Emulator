@@ -1,21 +1,18 @@
 {
+  "extends": "../../../tsconfig.json",
   "compilerOptions": {
+    "allowJs": false,
     "declaration": true,
     "declarationDir": "lib",
     // Emit declaration only when we are building with Babel
     // "emitDeclarationOnly": true,
-    "lib": [
-      "es2016",
-      "dom"
-    ],
+    "lib": ["es2016", "dom"],
     "module": "commonjs",
     "moduleResolution": "node",
     "pretty": true,
     "skipLibCheck": true,
     "target": "es2017",
-    "types": [
-      "node"
-    ],
+    "types": ["node"],
     "sourceMap": true
   },
   "exclude": [
@@ -26,7 +23,5 @@
     "src/__tests__/**/*.js",
     "src/__tests__/**/*.ts"
   ],
-  "include": [
-    "src/**/*"
-  ]
+  "include": ["src/**/*"]
 }

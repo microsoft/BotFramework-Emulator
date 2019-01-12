@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import AttachmentView from './view';
+import AttachmentView from "./view";
 
 interface AttachmentInfo {
   /// Name of the attachment

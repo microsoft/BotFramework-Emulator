@@ -31,28 +31,38 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IPC, isObject } from '@bfemulator/sdk-shared';
-import * as WebSocket from 'ws';
+import { IPC, isObject } from "@bfemulator/sdk-shared";
+import * as WebSocket from "ws";
 
 export class WebSocketIPC extends IPC {
   private _ws: WebSocket;
   private _id: number;
 
-  get ws(): WebSocket { return this._ws; }
+  get ws(): WebSocket {
+    return this._ws;
+  }
 
-  get id(): number { return this._id; }
-  set id(value: number) { this._id = value; }
+  get id(): number {
+    return this._id;
+  }
+  set id(value: number) {
+    this._id = value;
+  }
 
-  constructor(arg: WebSocket | string = 'http://localhost:9091') {
+  constructor(arg: WebSocket | string = "http://localhost:9091") {
     super();
-    if (typeof arg === 'string') {
+    if (typeof arg === "string") {
       this._ws = new WebSocket(arg, { perMessageDeflate: false });
     } else if (arg instanceof WebSocket) {
       this._ws = arg;
     }
-    this._ws.on('message', s => {
+    this._ws.on("message", s => {
       const message = JSON.parse(s as string);
-      if (isObject(message) && message.type === 'ipc:message' && Array.isArray(message.args)) {
+      if (
+        isObject(message) &&
+        message.type === "ipc:message" &&
+        Array.isArray(message.args)
+      ) {
         const channelName = message.args.shift();
         const channel = super.getChannel(channelName);
         if (channel) {
@@ -62,9 +72,9 @@ export class WebSocketIPC extends IPC {
     });
   }
 
-  send(...args: any[]): void {
+  public send(...args: any[]): void {
     const message = {
-      type: 'ipc:message',
+      type: "ipc:message",
       args
     };
     const s = JSON.stringify(message);
@@ -78,7 +88,7 @@ export abstract class WebSocketServer {
 
   constructor(port: number = 9091) {
     this._wss = new WebSocket.Server({ port });
-    this._wss.on('connection', ws => {
+    this._wss.on("connection", ws => {
       this.onConnection(ws);
     });
   }

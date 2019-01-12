@@ -31,27 +31,40 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { BrowserWindow } from 'electron';
-import uuidv4 from 'uuid/v4';
-import * as jwt from 'jsonwebtoken';
+import { BrowserWindow } from "electron";
+import * as jwt from "jsonwebtoken";
+import uuidv4 from "uuid/v4";
 
-let getPem = require('rsa-pem-from-mod-exp');
+const getPem = require("rsa-pem-from-mod-exp");
 
-const clientId = 'f3723d34-6ff5-4ceb-a148-d99dcd2511fc';
-const replyUrl = 'https://dev.botframework.com/cb';
-const authorizationEndpoint = 'https://login.microsoftonline.com/common/oauth2/authorize';
+const clientId = "f3723d34-6ff5-4ceb-a148-d99dcd2511fc";
+const replyUrl = "https://dev.botframework.com/cb";
+const authorizationEndpoint =
+  "https://login.microsoftonline.com/common/oauth2/authorize";
 
-declare type Config = { authorization_endpoint: string, jwks_uri: string, token_endpoint: string };
-declare type AuthResponse = { 
-  code: string, access_token: string, state: string, session_state: string, error?: string };
-declare type Jwks = { keys: { x5t: string, n: string, e: string, x5c: string[] }[] };
+declare interface Config {
+  authorization_endpoint: string;
+  jwks_uri: string;
+  token_endpoint: string;
+}
+declare interface AuthResponse {
+  code: string;
+  access_token: string;
+  state: string;
+  session_state: string;
+  error?: string;
+}
+declare interface Jwks {
+  keys: Array<{ x5t: string; n: string; e: string; x5c: string[] }>;
+}
 
 export class AzureAuthWorkflowService {
-
   private static config: Config;
   private static jwks: Jwks;
 
-  public static* retrieveAuthToken(renew: boolean = false): IterableIterator<any> {
+  public static *retrieveAuthToken(
+    renew: boolean = false
+  ): IterableIterator<any> {
     const authWindow = yield this.launchAuthWindow(renew);
     authWindow.show();
     const result = yield this.waitForAuthResult(authWindow, replyUrl);
@@ -61,7 +74,7 @@ export class AzureAuthWorkflowService {
     }
     const valid = yield this.validateJWT(result.access_token);
     if (!valid) {
-      result.error = 'Invalid Token';
+      result.error = "Invalid Token";
     }
     if (result.error) {
       return false;
@@ -69,25 +82,30 @@ export class AzureAuthWorkflowService {
     yield result;
   }
 
-  private static async waitForAuthResult(browserWindow: BrowserWindow, redirectUri: string): Promise<AuthResponse> {
+  private static async waitForAuthResult(
+    browserWindow: BrowserWindow,
+    redirectUri: string
+  ): Promise<AuthResponse> {
     const response = await new Promise<AuthResponse>(resolve => {
       let interval;
       const poller = () => {
         let uri: string;
         const result: AuthResponse = {} as AuthResponse;
         try {
-          const { history = [] }: { history: string[] } = browserWindow.webContents as any;
-          uri = history[history.length - 1] || '';
+          const {
+            history = []
+          }: { history: string[] } = browserWindow.webContents as any;
+          uri = history[history.length - 1] || "";
         } catch (e) {
           clearInterval(interval);
           result.error = e.message;
           resolve(result);
         }
-        if (!(uri || '').toLowerCase().startsWith(redirectUri.toLowerCase())) {
+        if (!(uri || "").toLowerCase().startsWith(redirectUri.toLowerCase())) {
           return;
         }
-        const idx = uri.indexOf('#');
-        const values = uri.substring(idx + 1).split('&');
+        const idx = uri.indexOf("#");
+        const values = uri.substring(idx + 1).split("&");
         const len = values.length;
         for (let i = 0; i < len; i++) {
           const [key, value] = values[i].split(/[=]/);
@@ -96,8 +114,10 @@ export class AzureAuthWorkflowService {
         clearInterval(interval);
         resolve(result);
       };
-      browserWindow.addListener('close', () => resolve({ error: 'canceled' } as AuthResponse));
-      browserWindow.addListener('page-title-updated', poller);
+      browserWindow.addListener("close", () =>
+        resolve({ error: "canceled" } as AuthResponse)
+      );
+      browserWindow.addListener("page-title-updated", poller);
       interval = setInterval(poller, 500); // Backup if everything else fails
     });
 
@@ -107,12 +127,14 @@ export class AzureAuthWorkflowService {
 
     const isValid = await this.validateJWT(response.access_token);
     if (!isValid) {
-      response.error = 'Invalid token';
+      response.error = "Invalid token";
     }
     return response;
   }
 
-  private static async launchAuthWindow(renew: boolean): Promise<BrowserWindow> {
+  private static async launchAuthWindow(
+    renew: boolean
+  ): Promise<BrowserWindow> {
     const browserWindow = new BrowserWindow({
       modal: true,
       show: false,
@@ -125,7 +147,7 @@ export class AzureAuthWorkflowService {
     });
 
     browserWindow.setMenu(null);
-    
+
     const state = uuidv4();
     const requestId = uuidv4();
     const nonce = uuidv4();
@@ -136,18 +158,18 @@ export class AzureAuthWorkflowService {
       `state=${state}`,
       `client-request-id=${requestId}`,
       `nonce=${nonce}`,
-      'response_mode=fragment',
-      'resource=https://management.core.windows.net/'
+      "response_mode=fragment",
+      "resource=https://management.core.windows.net/"
     ];
 
     if (renew) {
-      bits.push('prompt=none');
+      bits.push("prompt=none");
     }
 
-    const url = bits.join('&');
+    const url = bits.join("&");
     browserWindow.loadURL(url);
     return new Promise<BrowserWindow>(resolve => {
-      browserWindow.once('ready-to-show', () => resolve(browserWindow));
+      browserWindow.once("ready-to-show", () => resolve(browserWindow));
     });
   }
 
@@ -155,7 +177,8 @@ export class AzureAuthWorkflowService {
     if (this.config) {
       return this.config;
     }
-    const configUrl = 'https://login.microsoftonline.com/common/.well-known/openid-configuration';
+    const configUrl =
+      "https://login.microsoftonline.com/common/.well-known/openid-configuration";
     const configResponse = await fetch(configUrl);
     this.config = await configResponse.json();
     return this.config;
@@ -172,8 +195,10 @@ export class AzureAuthWorkflowService {
   }
 
   private static async validateJWT(token: string): Promise<boolean> {
-    const [header] = token.split('.');
-    const headers: { alg: string, kid: string, x5t: string } = JSON.parse(Buffer.from(header, 'base64').toString());
+    const [header] = token.split(".");
+    const headers: { alg: string; kid: string; x5t: string } = JSON.parse(
+      Buffer.from(header, "base64").toString()
+    );
 
     try {
       const jwks = await this.getJwks();

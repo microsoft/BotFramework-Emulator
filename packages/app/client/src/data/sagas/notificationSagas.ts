@@ -31,21 +31,24 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { NotificationManager } from '../../notificationManager';
+import { ForkEffect, put, takeEvery } from "redux-saga/effects";
+
+import { NotificationManager } from "../../notificationManager";
 import {
   BeginAddNotificationAction,
-  NotificationActions,
   BeginRemoveNotificationAction,
   finishAdd,
   finishClear,
-  finishRemove
-} from '../action/notificationActions';
-import { ForkEffect, takeEvery, put } from 'redux-saga/effects';
+  finishRemove,
+  NotificationActions
+} from "../action/notificationActions";
 
 /** Adds a notification to the notification manager then
  *  adds it to the state store
  */
-export function* addNotification(action: BeginAddNotificationAction): IterableIterator<any> {
+export function* addNotification(
+  action: BeginAddNotificationAction
+): IterableIterator<any> {
   const { notification } = action.payload;
   NotificationManager.set(notification.id, notification);
   yield put(finishAdd(notification));
@@ -62,7 +65,9 @@ export function* clearNotifications(): IterableIterator<any> {
 /** Removes a single notification from the notification manager then
  *  removes it from the state store
  */
-export function* removeNotification(action: BeginRemoveNotificationAction): IterableIterator<any> {
+export function* removeNotification(
+  action: BeginRemoveNotificationAction
+): IterableIterator<any> {
   const { id: notificationId } = action.payload;
   NotificationManager.delete(notificationId);
   yield put(finishRemove(notificationId));

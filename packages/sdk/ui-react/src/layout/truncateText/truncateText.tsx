@@ -31,8 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from 'react';
-import * as styles from './truncateText.scss';
+import * as React from "react";
+
+import * as styles from "./truncateText.scss";
 
 export interface TruncateTextProps {
   className?: string;
@@ -43,7 +44,11 @@ export interface TruncateTextProps {
 // TODO: Instead of passing children here, we should consider passing a "text" props
 //       This is because this component is named "truncateText", it should not accept
 //       something that is not a text. It also help with eliminating the "title" props.
-export const TruncateText = (props: TruncateTextProps): JSX.Element =>
-  <span className={ `${styles.truncateText} ${props.className || ''}` } title={ props.title }>
-    { props.children }
-  </span>;
+export const TruncateText = (props: TruncateTextProps): JSX.Element => (
+  <span
+    className={`${styles.truncateText} ${props.className || ""}`}
+    title={props.title}
+  >
+    {props.children}
+  </span>
+);

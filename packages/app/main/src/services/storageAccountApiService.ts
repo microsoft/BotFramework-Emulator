@@ -30,9 +30,15 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { ServiceCodes } from '@bfemulator/app-shared';
-import { BlobStorageService } from 'botframework-config/lib/models';
-import { AccountIdentifier, AzureManagementApiService, AzureResource, Provider } from './azureManagementApiService';
+import { ServiceCodes } from "@bfemulator/app-shared";
+import { BlobStorageService } from "botframework-config/lib/models";
+
+import {
+  AccountIdentifier,
+  AzureManagementApiService,
+  AzureResource,
+  Provider
+} from "./azureManagementApiService";
 
 interface KeyEntry {
   keyName: string;
@@ -41,11 +47,12 @@ interface KeyEntry {
 }
 
 export class StorageAccountApiService {
-
-  public static* getBlobStorageServices(armToken: string): IterableIterator<any> {
+  public static *getBlobStorageServices(
+    armToken: string
+  ): IterableIterator<any> {
     const payload = { services: [], code: ServiceCodes.OK };
     // 1. get a list of subscriptions for the user
-    yield { label: 'Retrieving subscriptions from Azure…', progress: 25 };
+    yield { label: "Retrieving subscriptions from Azure…", progress: 25 };
     const subs = yield AzureManagementApiService.getSubscriptions(armToken);
     if (!subs) {
       payload.code = ServiceCodes.AccountNotFound;
@@ -53,9 +60,13 @@ export class StorageAccountApiService {
     }
     // 2. Retrieve a list of Azure storage accounts
     // These will allow us to retrieve the associated blob containers.
-    yield { label: 'Retrieving accounts from Azure…', progress: 50 };
-    const accounts: AzureResource[] = yield AzureManagementApiService
-      .getAzureResource(armToken, subs, Provider.Storage, AccountIdentifier.StorageAccounts);
+    yield { label: "Retrieving accounts from Azure…", progress: 50 };
+    const accounts: AzureResource[] = yield AzureManagementApiService.getAzureResource(
+      armToken,
+      subs,
+      Provider.Storage,
+      AccountIdentifier.StorageAccounts
+    );
     if (!accounts) {
       payload.code = ServiceCodes.AccountNotFound;
       return payload;
@@ -63,30 +74,45 @@ export class StorageAccountApiService {
 
     // 3. Get all blob containers and map them to
     // their respective accounts.
-    yield { label: 'Retrieving Blob Containers from Azure…', progress: 75 };
+    yield { label: "Retrieving Blob Containers from Azure…", progress: 75 };
     const req = AzureManagementApiService.getRequestInit(armToken);
-    const url = 'https://management.azure.com{id}/blobServices/default/containers?api-version=2018-07-01';
-    const requests = accounts.map(account => fetch(url.replace('{id}', account.id), req));
+    const url =
+      "https://management.azure.com{id}/blobServices/default/containers?api-version=2018-07-01";
+    const requests = accounts.map(account =>
+      fetch(url.replace("{id}", account.id), req)
+    );
     const blobContainerResponses: Response[] = yield Promise.all(requests);
-    const blobContainerInfos: { account: AzureResource, containers: AzureResource[] }[] = [];
+    const blobContainerInfos: Array<{
+      account: AzureResource;
+      containers: AzureResource[];
+    }> = [];
     let i = blobContainerResponses.length;
     while (i--) {
       const blobContainerResponse = blobContainerResponses[i];
       if (!blobContainerResponse.ok) {
         continue;
       }
-      const blobContainerJson: { value: any[] } = yield blobContainerResponse.json();
+      const blobContainerJson: {
+        value: any[];
+      } = yield blobContainerResponse.json();
       if (blobContainerJson.value.length) {
-        blobContainerInfos.push({ account: accounts[i], containers: blobContainerJson.value });
+        blobContainerInfos.push({
+          account: accounts[i],
+          containers: blobContainerJson.value
+        });
       }
     }
     // 4. Retrieve the Access Keys and use it combined
     // with properties from the respective AzureServiceAccount
     // and the BlobContainer json to compose the connectionString
-    yield { label: 'Retrieving Access Keys from Azure…', progress: 95 };
+    yield { label: "Retrieving Access Keys from Azure…", progress: 95 };
     // Do not retrieve keys for accounts without blob containers
-    const keys: KeyEntry[][] = yield AzureManagementApiService
-      .getKeysForAccounts(armToken, blobContainerInfos.map(info => info.account), '2018-07-01', 'keys');
+    const keys: KeyEntry[][] = yield AzureManagementApiService.getKeysForAccounts(
+      armToken,
+      blobContainerInfos.map(info => info.account),
+      "2018-07-01",
+      "keys"
+    );
     // Build the BlobStorageService objects
     i = keys.length;
     while (i--) {
@@ -96,14 +122,20 @@ export class StorageAccountApiService {
       }
       const firstKey = keysEntry[0];
       const { account, containers } = blobContainerInfos[i];
-      const blobStorageServices = containers.map(container => buildServiceModel(firstKey, account, container));
+      const blobStorageServices = containers.map(container =>
+        buildServiceModel(firstKey, account, container)
+      );
       payload.services.push(...blobStorageServices);
     }
     return payload;
   }
 }
 
-function buildServiceModel(key: KeyEntry, account: AzureResource, container: AzureResource): BlobStorageService {
+function buildServiceModel(
+  key: KeyEntry,
+  account: AzureResource,
+  container: AzureResource
+): BlobStorageService {
   const { tenantId, subscriptionId, name: serviceName } = account;
   const { id, name } = container;
   // TODO - review the connectionString for accuracy
@@ -112,9 +144,11 @@ function buildServiceModel(key: KeyEntry, account: AzureResource, container: Azu
     tenantId,
     subscriptionId,
     name,
-    connectionString: `DefaultEndpointsProtocol=https;AccountName=${ serviceName };AccountKey=${ key.value }` +
-      ';EndpointSuffix=core.windows.net',
-    resourceGroup: id.split('/')[3],
+    connectionString:
+      `DefaultEndpointsProtocol=https;AccountName=${serviceName};AccountKey=${
+        key.value
+      }` + ";EndpointSuffix=core.windows.net",
+    resourceGroup: id.split("/")[3],
     serviceName
   });
 }

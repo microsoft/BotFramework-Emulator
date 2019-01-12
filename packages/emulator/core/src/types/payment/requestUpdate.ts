@@ -31,8 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import PaymentAddress from './address';
-import PaymentDetails from './details';
+import PaymentAddress from "./address";
+import PaymentDetails from "./details";
 
 interface PaymentRequestUpdate {
   details: PaymentDetails;

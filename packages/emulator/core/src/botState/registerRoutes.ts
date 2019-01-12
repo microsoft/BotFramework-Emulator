@@ -31,97 +31,103 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { RequestHandler, Server } from 'restify';
+import { RequestHandler, Server } from "restify";
 
-import BotEmulator from '../botEmulator';
-import createBotFrameworkAuthenticationMiddleware from '../utils/botFrameworkAuthentication';
-import jsonBodyParser from '../utils/jsonBodyParser';
-import getFacility from '../middleware/getFacility';
-import getRouteName from '../middleware/getRouteName';
+import BotEmulator from "../botEmulator";
+import getFacility from "../middleware/getFacility";
+import getRouteName from "../middleware/getRouteName";
+import createBotFrameworkAuthenticationMiddleware from "../utils/botFrameworkAuthentication";
+import jsonBodyParser from "../utils/jsonBodyParser";
 
-import createFetchBotDataMiddleware from './middleware/fetchBotData';
-import getConversationData from './middleware/getConversationData';
-import getPrivateConversationData from './middleware/getPrivateConversationData';
-import getUserData from './middleware/getUserData';
-import setUserData from './middleware/setUserData';
-import setConversationData from './middleware/setConversationData';
-import setPrivateConversationData from './middleware/setPrivateConversationData';
-import deleteStateForUser from './middleware/deleteStateForUser';
+import deleteStateForUser from "./middleware/deleteStateForUser";
+import createFetchBotDataMiddleware from "./middleware/fetchBotData";
+import getConversationData from "./middleware/getConversationData";
+import getPrivateConversationData from "./middleware/getPrivateConversationData";
+import getUserData from "./middleware/getUserData";
+import setConversationData from "./middleware/setConversationData";
+import setPrivateConversationData from "./middleware/setPrivateConversationData";
+import setUserData from "./middleware/setUserData";
 
-export default function registerRoutes(botEmulator: BotEmulator, server: Server, uses: RequestHandler[]) {
+export default function registerRoutes(
+  botEmulator: BotEmulator,
+  server: Server,
+  uses: RequestHandler[]
+) {
   // TODO: Check if it works without MSA App ID
-  const verifyBotFramework = createBotFrameworkAuthenticationMiddleware(botEmulator.options.fetch);
+  const verifyBotFramework = createBotFrameworkAuthenticationMiddleware(
+    botEmulator.options.fetch
+  );
   // const verifyBotFramework = botEmulator.msaAppId ?
   // createBotFrameworkAuthenticationMiddleware(botEmulator.botId, botEmulator.options.fetch) : [];
   const fetchBotDataMiddleware = createFetchBotDataMiddleware(botEmulator);
-  const facility = getFacility('state');
+  const facility = getFacility("state");
 
   server.get(
-    '/v3/botstate/:channelId/users/:userId',
+    "/v3/botstate/:channelId/users/:userId",
     ...uses,
     verifyBotFramework,
     fetchBotDataMiddleware,
     facility,
-    getRouteName('getUserData'),
+    getRouteName("getUserData"),
     getUserData(botEmulator)
   );
 
   server.get(
-    '/v3/botstate/:channelId/conversations/:conversationId',
+    "/v3/botstate/:channelId/conversations/:conversationId",
     ...uses,
     verifyBotFramework,
     fetchBotDataMiddleware,
     facility,
-    getRouteName('getConversationData'),
+    getRouteName("getConversationData"),
     getConversationData(botEmulator)
   );
 
   server.get(
-    '/v3/botstate/:channelId/conversations/:conversationId/users/:userId',
+    "/v3/botstate/:channelId/conversations/:conversationId/users/:userId",
     ...uses,
     verifyBotFramework,
     fetchBotDataMiddleware,
     facility,
-    getRouteName('getPrivateConversationData'),
+    getRouteName("getPrivateConversationData"),
     getPrivateConversationData(botEmulator)
   );
 
   server.post(
-    '/v3/botstate/:channelId/users/:userId',
+    "/v3/botstate/:channelId/users/:userId",
     ...uses,
     verifyBotFramework,
     jsonBodyParser(),
     facility,
-    getRouteName('setUserData'),
+    getRouteName("setUserData"),
     setUserData(botEmulator)
   );
 
   server.post(
-    '/v3/botstate/:channelId/conversations/:conversationId',
+    "/v3/botstate/:channelId/conversations/:conversationId",
     ...uses,
     verifyBotFramework,
     jsonBodyParser(),
     facility,
-    getRouteName('setConversationData'),
+    getRouteName("setConversationData"),
     setConversationData(botEmulator)
   );
 
   server.post(
-    '/v3/botstate/:channelId/conversations/:conversationId/users/:userId',
+    "/v3/botstate/:channelId/conversations/:conversationId/users/:userId",
     ...uses,
     verifyBotFramework,
     jsonBodyParser(),
     facility,
-    getRouteName('setPrivateConversationData'),
+    getRouteName("setPrivateConversationData"),
     setPrivateConversationData(botEmulator)
   );
 
   server.del(
-    '/v3/botstate/:channelId/users/:userId',
+    "/v3/botstate/:channelId/users/:userId",
     ...uses,
     verifyBotFramework,
     facility,
-    getRouteName('deleteStateForUser'),
+    getRouteName("deleteStateForUser"),
     deleteStateForUser(botEmulator)
   );
 }

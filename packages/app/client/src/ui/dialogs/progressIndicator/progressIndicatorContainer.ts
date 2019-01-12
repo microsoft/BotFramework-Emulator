@@ -31,14 +31,19 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { connect } from 'react-redux';
-import { Action } from 'redux';
-import { RootState } from '../../../data/store';
-import { DialogService } from '../service';
-import { ProgressIndicator } from './progressIndicator';
-import { cancelCurrentProcess } from '../../../data/action/progressIndicatorActions';
+import { connect } from "react-redux";
+import { Action } from "redux";
 
-const mapStateToProps = (state: RootState, ownProps: { [propName: string]: any }) => {
+import { cancelCurrentProcess } from "../../../data/action/progressIndicatorActions";
+import { RootState } from "../../../data/store";
+import { DialogService } from "../service";
+
+import { ProgressIndicator } from "./progressIndicator";
+
+const mapStateToProps = (
+  state: RootState,
+  ownProps: { [propName: string]: any }
+) => {
   const { progressIndicator } = state;
   return {
     ...ownProps,

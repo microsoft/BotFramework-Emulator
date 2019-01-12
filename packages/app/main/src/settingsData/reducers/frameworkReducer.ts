@@ -31,15 +31,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { frameworkDefault, FrameworkSettings } from '@bfemulator/app-shared';
-import { FrameworkAction, SET_FRAMEWORK } from '../actions/frameworkActions';
+import { frameworkDefault, FrameworkSettings } from "@bfemulator/app-shared";
 
-export function frameworkReducer
-(state: FrameworkSettings = frameworkDefault, action: FrameworkAction<FrameworkSettings>) {
+import { FrameworkAction, SET_FRAMEWORK } from "../actions/frameworkActions";
+
+export function frameworkReducer(
+  state: FrameworkSettings = frameworkDefault,
+  action: FrameworkAction<FrameworkSettings>
+) {
   switch (action.type) {
-
     case SET_FRAMEWORK:
-      return Object.assign({}, state, action.state);
+      return {...state, ...action.state};
 
     default:
       return state;

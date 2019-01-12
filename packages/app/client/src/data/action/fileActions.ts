@@ -31,13 +31,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { FileInfo } from '@bfemulator/app-shared';
+import { FileInfo } from "@bfemulator/app-shared";
 
 export enum FileActions {
-  setRoot = 'FILE/SET_ROOT',
-  add = 'FILE/ADD',
-  remove = 'FILE/REMOVE',
-  clear = 'FILE/CLEAR'
+  setRoot = "FILE/SET_ROOT",
+  add = "FILE/ADD",
+  remove = "FILE/REMOVE",
+  clear = "FILE/CLEAR"
 }
 
 export function addFile(payload: FileInfo) {

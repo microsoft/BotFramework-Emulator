@@ -1,12 +1,13 @@
-import { IFileService } from 'botframework-config/lib/schema';
+import { IFileService } from "botframework-config/lib/schema";
+
 import {
   CHAT_FILES_UPDATED,
+  CHATS_DIRECTORY_UPDATED,
   EDIT_RESOURCE,
   ResourcesAction,
-  TRANSCRIPTS_UPDATED,
   TRANSCRIPTS_DIRECTORY_UPDATED,
-  CHATS_DIRECTORY_UPDATED
-} from '../action/resourcesAction';
+  TRANSCRIPTS_UPDATED
+} from "../action/resourcesAction";
 
 export interface ResourcesState {
   transcripts: IFileService[];
@@ -18,15 +19,20 @@ export interface ResourcesState {
 
 const initialState: ResourcesState = {
   transcripts: [],
-  transcriptsPath: '',
+  transcriptsPath: "",
   chats: [],
-  chatsPath: '',
+  chatsPath: "",
   resourceToRename: null
 };
 
-declare type ResourceActionType = ResourcesAction<IFileService | IFileService[] | string>;
+declare type ResourceActionType = ResourcesAction<
+  IFileService | IFileService[] | string
+>;
 
-export function resources(state: ResourcesState = initialState, action: ResourceActionType): ResourcesState {
+export function resources(
+  state: ResourcesState = initialState,
+  action: ResourceActionType
+): ResourcesState {
   switch (action.type) {
     case TRANSCRIPTS_UPDATED:
       return { ...state, transcripts: action.payload as IFileService[] };

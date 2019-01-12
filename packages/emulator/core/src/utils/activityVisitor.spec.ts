@@ -1,12 +1,12 @@
-import MessageActivity from '../types/activity/message';
-import AttachmentContentTypes from '../types/attachment/contentTypes';
-import CardAction from '../types/card/cardAction';
-import MediaCard from '../types/card/media';
-import OAuthCard from '../types/card/oAuth';
-import ReceiptCard from '../types/card/receipt';
-import SigninCard from '../types/card/signIn';
-import ThumbnailCard from '../types/card/thumbnail';
-import ActivityVisitor from './activityVisitor';
+import MessageActivity from "../types/activity/message";
+import AttachmentContentTypes from "../types/attachment/contentTypes";
+import CardAction from "../types/card/cardAction";
+import MediaCard from "../types/card/media";
+import OAuthCard from "../types/card/oAuth";
+import ReceiptCard from "../types/card/receipt";
+import SigninCard from "../types/card/signIn";
+import ThumbnailCard from "../types/card/thumbnail";
+import ActivityVisitor from "./activityVisitor";
 
 class MockActivityVisitor extends ActivityVisitor {
   public cardActionVisitors: CardAction[] = [];
@@ -16,53 +16,87 @@ class MockActivityVisitor extends ActivityVisitor {
   }
 }
 
-describe('The activityVisitor', () => {
+describe("The activityVisitor", () => {
   let activityVisitor: MockActivityVisitor;
   beforeEach(() => {
     activityVisitor = new MockActivityVisitor();
   });
 
-  it('should traverse each attachment based on type', () => {
+  it("should traverse each attachment based on type", () => {
     const mockMediaCard: Partial<MediaCard> = {
-      image: { url: '', alt: '', tap: { image: '', title: '', type: 'png', value: '' } },
-      buttons: [{ image: '', title: '', type: 'png', value: '' }]
+      image: {
+        url: "",
+        alt: "",
+        tap: { image: "", title: "", type: "png", value: "" }
+      },
+      buttons: [{ image: "", title: "", type: "png", value: "" }]
     };
 
     const mockThumbnailCard: Partial<ThumbnailCard> = {
-      buttons: [{ image: '', title: '', type: 'png', value: '' }],
-      tap: { image: '', title: '', type: 'png', value: '' },
-      images: [{ url: '', alt: '', tap: { image: '', title: '', type: 'png', value: '' } }]
+      buttons: [{ image: "", title: "", type: "png", value: "" }],
+      tap: { image: "", title: "", type: "png", value: "" },
+      images: [
+        {
+          url: "",
+          alt: "",
+          tap: { image: "", title: "", type: "png", value: "" }
+        }
+      ]
     };
 
     const mockReceiptCard: Partial<ReceiptCard> = {
-      buttons: [{ image: '', title: '', type: 'png', value: '' }],
-      tap: { image: '', title: '', type: 'png', value: '' },
+      buttons: [{ image: "", title: "", type: "png", value: "" }],
+      tap: { image: "", title: "", type: "png", value: "" }
     };
 
     const mockOauthCard: Partial<OAuthCard> = {
-      buttons: [{ image: '', title: '', type: 'png', value: '' }],
-      connectionName: 'oauth'
+      buttons: [{ image: "", title: "", type: "png", value: "" }],
+      connectionName: "oauth"
     };
 
     const mockSigninCard: Partial<SigninCard> = {
-      buttons: [{ image: '', title: '', type: 'png', value: '' }],
-      text: ''
+      buttons: [{ image: "", title: "", type: "png", value: "" }],
+      text: ""
     };
 
     const mockMessageActivity: MessageActivity = {
       attachments: [
-        { contentType: AttachmentContentTypes.animationCard, content: mockMediaCard },
-        { contentType: AttachmentContentTypes.audioCard, content: mockMediaCard },
-        { contentType: AttachmentContentTypes.heroCard, content: mockThumbnailCard },
-        { contentType: AttachmentContentTypes.oAuthCard, content: mockOauthCard },
-        { contentType: AttachmentContentTypes.receiptCard, content: mockReceiptCard },
-        { contentType: AttachmentContentTypes.signInCard, content: mockSigninCard },
-        { contentType: AttachmentContentTypes.thumbnailCard, content: mockThumbnailCard },
-        { contentType: AttachmentContentTypes.videoCard, content: mockMediaCard }
+        {
+          contentType: AttachmentContentTypes.animationCard,
+          content: mockMediaCard
+        },
+        {
+          contentType: AttachmentContentTypes.audioCard,
+          content: mockMediaCard
+        },
+        {
+          contentType: AttachmentContentTypes.heroCard,
+          content: mockThumbnailCard
+        },
+        {
+          contentType: AttachmentContentTypes.oAuthCard,
+          content: mockOauthCard
+        },
+        {
+          contentType: AttachmentContentTypes.receiptCard,
+          content: mockReceiptCard
+        },
+        {
+          contentType: AttachmentContentTypes.signInCard,
+          content: mockSigninCard
+        },
+        {
+          contentType: AttachmentContentTypes.thumbnailCard,
+          content: mockThumbnailCard
+        },
+        {
+          contentType: AttachmentContentTypes.videoCard,
+          content: mockMediaCard
+        }
       ]
     };
     activityVisitor.traverseActivity(mockMessageActivity);
-    const {cardActionVisitors} = activityVisitor;
+    const { cardActionVisitors } = activityVisitor;
     // Animation card
     expect(cardActionVisitors[0]).toBe(mockMediaCard.image.tap);
     expect(cardActionVisitors[1]).toBe(mockMediaCard.buttons[0]);

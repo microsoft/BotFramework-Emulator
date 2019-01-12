@@ -32,17 +32,17 @@
 //
 
 interface AttachmentData {
-    /// content type of the attachmnet
-    type: string;
+  /// content type of the attachmnet
+  type: string;
 
-    /// Name of the attachment
-    name: string;
+  /// Name of the attachment
+  name: string;
 
-    /// original content
-    originalBase64: string;
+  /// original content
+  originalBase64: string;
 
-    /// Thumbnail
-    thumbnailBase64: string;
+  /// Thumbnail
+  thumbnailBase64: string;
 }
 
 export default AttachmentData;

@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import PaymentCurrencyAmount from './currencyAmount';
+import PaymentCurrencyAmount from "./currencyAmount";
 
 interface PaymentItem {
   label: string;

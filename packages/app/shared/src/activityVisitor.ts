@@ -42,92 +42,92 @@ import {
   ReceiptCard,
   SigninCard,
   ThumbnailCard
-} from '@bfemulator/sdk-shared';
+} from "@bfemulator/sdk-shared";
 
 export abstract class ActivityVisitor {
-
-    public traverseActivity(activity: Activity) {
-        let messageActivity = activity as MessageActivity;
-        if (messageActivity) {
-            this.traverseMessageActivity(messageActivity);
-        }
+  public traverseActivity(activity: Activity) {
+    const messageActivity = activity as MessageActivity;
+    if (messageActivity) {
+      this.traverseMessageActivity(messageActivity);
     }
+  }
 
-    public traverseMessageActivity(messageActivity: MessageActivity) {
-        if (messageActivity) {
-            if (messageActivity.attachments) {
-                messageActivity.attachments.forEach(attachment =>
-                    this.traverseAttachment(attachment));
-            }
-        }
+  public traverseMessageActivity(messageActivity: MessageActivity) {
+    if (messageActivity) {
+      if (messageActivity.attachments) {
+        messageActivity.attachments.forEach(attachment =>
+          this.traverseAttachment(attachment)
+        );
+      }
     }
+  }
 
-    public traverseAttachment(attachment: Attachment) {
-        if (attachment) {
-            switch (attachment.contentType) {
-                case AttachmentContentTypes.animationCard:
-                case AttachmentContentTypes.videoCard:
-                case AttachmentContentTypes.audioCard:
-                    this.traverseMediaCard(attachment.content as MediaCard);
-                    break;
-                case AttachmentContentTypes.heroCard:
-                case AttachmentContentTypes.thumbnailCard:
-                    this.traverseThumbnailCard(attachment.content as ThumbnailCard);
-                    break;
-                case AttachmentContentTypes.receiptCard:
-                    this.traverseReceiptCard(attachment.content as ReceiptCard);
-                    break;
-                case AttachmentContentTypes.signInCard:
-                    this.traverseSignInCard(attachment.content as SigninCard);
-                    break;
+  public traverseAttachment(attachment: Attachment) {
+    if (attachment) {
+      switch (attachment.contentType) {
+        case AttachmentContentTypes.animationCard:
+        case AttachmentContentTypes.videoCard:
+        case AttachmentContentTypes.audioCard:
+          this.traverseMediaCard(attachment.content as MediaCard);
+          break;
+        case AttachmentContentTypes.heroCard:
+        case AttachmentContentTypes.thumbnailCard:
+          this.traverseThumbnailCard(attachment.content as ThumbnailCard);
+          break;
+        case AttachmentContentTypes.receiptCard:
+          this.traverseReceiptCard(attachment.content as ReceiptCard);
+          break;
+        case AttachmentContentTypes.signInCard:
+          this.traverseSignInCard(attachment.content as SigninCard);
+          break;
 
-              default:
-                break;
-            }
-        }
+        default:
+          break;
+      }
     }
+  }
 
-    public traverseMediaCard(mediaCard: MediaCard) {
-        if (mediaCard) {
-            this.traverseCardImage(mediaCard.image);
-            this.traverseButtons(mediaCard.buttons);
-        }
+  public traverseMediaCard(mediaCard: MediaCard) {
+    if (mediaCard) {
+      this.traverseCardImage(mediaCard.image);
+      this.traverseButtons(mediaCard.buttons);
     }
+  }
 
-    public traverseThumbnailCard(thumbnailCard: ThumbnailCard) {
-        this.visitCardAction(thumbnailCard.tap);
-        this.traverseButtons(thumbnailCard.buttons);
-        this.traverseCardImages(thumbnailCard.images);
+  public traverseThumbnailCard(thumbnailCard: ThumbnailCard) {
+    this.visitCardAction(thumbnailCard.tap);
+    this.traverseButtons(thumbnailCard.buttons);
+    this.traverseCardImages(thumbnailCard.images);
+  }
+
+  public traverseSignInCard(signInCard: SigninCard) {
+    this.traverseButtons(signInCard.buttons);
+  }
+
+  public traverseReceiptCard(receiptCard: ReceiptCard) {
+    this.visitCardAction(receiptCard.tap);
+    this.traverseButtons(receiptCard.buttons);
+  }
+
+  public traverseButtons(buttons: CardAction[]) {
+    if (buttons) {
+      buttons.forEach(cardAction => this.visitCardAction(cardAction));
     }
+  }
 
-    public traverseSignInCard(signInCard: SigninCard) {
-        this.traverseButtons(signInCard.buttons);
+  public traverseCardImages(cardImages: CardImage[]) {
+    if (cardImages) {
+      cardImages.forEach(image => {
+        this.traverseCardImage(image);
+      });
     }
+  }
 
-    public traverseReceiptCard(receiptCard: ReceiptCard) {
-        this.visitCardAction(receiptCard.tap);
-        this.traverseButtons(receiptCard.buttons);
+  public traverseCardImage(cardImage: CardImage) {
+    if (cardImage) {
+      this.visitCardAction(cardImage.tap);
     }
+  }
 
-    public traverseButtons(buttons: CardAction[]) {
-        if (buttons) {
-            buttons.forEach(cardAction => this.visitCardAction(cardAction));
-        }
-    }
-
-    public traverseCardImages(cardImages: CardImage[]) {
-        if (cardImages) {
-            cardImages.forEach(image => {
-                this.traverseCardImage(image);
-            });
-        }
-    }
-
-    public traverseCardImage(cardImage: CardImage) {
-        if (cardImage) {
-            this.visitCardAction(cardImage.tap);
-        }
-    }
-
-    protected abstract visitCardAction(cardAction: CardAction);
+  protected abstract visitCardAction(cardAction: CardAction);
 }

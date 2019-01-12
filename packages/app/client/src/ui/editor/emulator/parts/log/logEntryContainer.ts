@@ -31,12 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { connect } from 'react-redux';
-import { LogEntry as LogEntryComponent, LogEntryProps } from './logEntry';
-import { RootState } from '../../../../../data/store';
-import * as ChatActions from '../../../../../data/action/chatActions';
-import { SharedConstants } from '@bfemulator/app-shared';
-import { CommandServiceImpl } from '../../../../../platform/commands/commandServiceImpl';
+import { SharedConstants } from "@bfemulator/app-shared";
+import { connect } from "react-redux";
+
+import * as ChatActions from "../../../../../data/action/chatActions";
+import { RootState } from "../../../../../data/store";
+import { CommandServiceImpl } from "../../../../../platform/commands/commandServiceImpl";
+
+import { LogEntry as LogEntryComponent, LogEntryProps } from "./logEntry";
 
 function mapStateToProps(_state: RootState): Partial<LogEntryProps> {
   return {};
@@ -58,4 +60,7 @@ function mapDispatchToProps(dispatch: any): Partial<LogEntryProps> {
   };
 }
 
-export const LogEntry = connect(mapStateToProps, mapDispatchToProps)(LogEntryComponent);
+export const LogEntry = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(LogEntryComponent);

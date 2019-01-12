@@ -31,7 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { windowStateDefault, WindowStateSettings } from '@bfemulator/app-shared';
+import {
+  windowStateDefault,
+  WindowStateSettings
+} from "@bfemulator/app-shared";
+
 import {
   REMEMBER_BOUNDS,
   REMEMBER_THEME,
@@ -41,31 +45,30 @@ import {
   RememberZoomLevelPayload,
   WindowStateAction,
   WindowStatePayload
-} from '../actions/windowStateActions';
+} from "../actions/windowStateActions";
 
-export function windowStateReducer
-(state: WindowStateSettings = windowStateDefault, action: WindowStateAction<WindowStatePayload>) {
+export function windowStateReducer(
+  state: WindowStateSettings = windowStateDefault,
+  action: WindowStateAction<WindowStatePayload>
+) {
   switch (action.type) {
-
     case REMEMBER_BOUNDS:
       const bounds = action.state as RememberBoundsPayload;
-      return Object.assign({}, state, {
+      return {...state, 
         displayId: bounds.displayId,
         top: bounds.top,
         left: bounds.left,
         width: bounds.width,
-        height: bounds.height
-      });
+        height: bounds.height};
 
     case REMEMBER_ZOOM_LEVEL:
       const { zoomLevel } = action.state as RememberZoomLevelPayload;
-      return Object.assign({}, state, {
-        zoomLevel,
-      });
+      return {...state, 
+        zoomLevel};
 
     case REMEMBER_THEME:
       const { theme } = action.payload as RememberThemePayload;
-      return Object.assign({}, state, { theme });
+      return {...state,  theme};
 
     default:
       return state;

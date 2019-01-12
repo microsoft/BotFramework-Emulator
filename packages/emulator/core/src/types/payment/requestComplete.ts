@@ -31,8 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import PaymentRequest from './request';
-import PaymentResponse from './response';
+import PaymentRequest from "./request";
+import PaymentResponse from "./response";
 
 interface PaymentRequestComplete {
   id: string;

@@ -31,32 +31,39 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as HttpStatus from 'http-status-codes';
-import * as Restify from 'restify';
+import * as HttpStatus from "http-status-codes";
+import * as Restify from "restify";
 
-import BotEmulator from '../../botEmulator';
-import BotEndpoint from '../../facility/botEndpoint';
-import { TokenResponse } from '../TokenResponse';
-import { TokenParams } from '../TokenParams';
-import { TokenCache } from '../tokenCache';
-import sendErrorResponse from '../../utils/sendErrorResponse';
+import BotEmulator from "../../botEmulator";
+import BotEndpoint from "../../facility/botEndpoint";
+import sendErrorResponse from "../../utils/sendErrorResponse";
+import { TokenCache } from "../tokenCache";
+import { TokenParams } from "../TokenParams";
+import { TokenResponse } from "../TokenResponse";
 
 interface GetTokenParams extends TokenParams {
   code: string;
 }
 
 export default function getToken(_botEmulator: BotEmulator) {
-  return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+  return (
+    req: Restify.Request,
+    res: Restify.Response,
+    next: Restify.Next
+  ): any => {
     try {
-      let params: GetTokenParams = req.params;
+      const params: GetTokenParams = req.params;
       const botEndpoint: BotEndpoint = (req as any).botEndpoint;
 
-      let tokenResponse: TokenResponse = TokenCache
-        .getTokenFromCache(botEndpoint.botId, params.userId, params.connectionName);
+      const tokenResponse: TokenResponse = TokenCache.getTokenFromCache(
+        botEndpoint.botId,
+        params.userId,
+        params.connectionName
+      );
       if (tokenResponse) {
-          res.send(HttpStatus.OK, tokenResponse);
+        res.send(HttpStatus.OK, tokenResponse);
       } else {
-          res.send(HttpStatus.NOT_FOUND); 
+        res.send(HttpStatus.NOT_FOUND);
       }
 
       res.end();

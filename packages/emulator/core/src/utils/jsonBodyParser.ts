@@ -31,11 +31,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as Restify from 'restify';
+import * as Restify from "restify";
 
 const { bodyReader, jsonBodyParser: restifyJsonBodyParser } = Restify.plugins;
 
-export default function jsonBodyParser(options?: any): Restify.RequestHandler[] {
+export default function jsonBodyParser(
+  options?: any
+): Restify.RequestHandler[] {
   options = options || { mapParams: false };
   options.bodyReader = true;
 
@@ -43,12 +45,12 @@ export default function jsonBodyParser(options?: any): Restify.RequestHandler[] 
   const parseJson = restifyJsonBodyParser(options);
 
   function parseBody(req: any, res: any, next: any) {
-    if (req.method === 'HEAD') {
+    if (req.method === "HEAD") {
       next();
       return;
     }
 
-    if (req.method === 'GET' && !options.requestBodyOnGet) {
+    if (req.method === "GET" && !options.requestBodyOnGet) {
       next();
       return;
     }
@@ -61,7 +63,7 @@ export default function jsonBodyParser(options?: any): Restify.RequestHandler[] 
     let parser;
 
     switch (req.contentType().toLowerCase()) {
-      case 'application/json':
+      case "application/json":
         parser = parseJson[0];
         break;
 
@@ -76,5 +78,5 @@ export default function jsonBodyParser(options?: any): Restify.RequestHandler[] 
     }
   }
 
-  return ([read, parseBody]);
+  return [read, parseBody];
 }

@@ -31,9 +31,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
-import { PresentationAction, PresentationActions } from '../action/presentationActions';
-import { SharedConstants } from '@bfemulator/app-shared';
+import { SharedConstants } from "@bfemulator/app-shared";
+
+import { CommandServiceImpl } from "../../platform/commands/commandServiceImpl";
+import {
+  PresentationAction,
+  PresentationActions
+} from "../action/presentationActions";
 
 export interface PresentationState {
   enabled: boolean;
@@ -43,8 +47,10 @@ const DEFAULT_STATE: PresentationState = {
   enabled: false
 };
 
-export const presentation = (state: PresentationState = DEFAULT_STATE, action: PresentationAction)
-  : PresentationState => {
+export const presentation = (
+  state: PresentationState = DEFAULT_STATE,
+  action: PresentationAction
+): PresentationState => {
   switch (action.type) {
     case PresentationActions.disable:
       state = setEnabled(false, state);
@@ -61,11 +67,17 @@ export const presentation = (state: PresentationState = DEFAULT_STATE, action: P
   return state;
 };
 
-function setEnabled(enabled: boolean, state: PresentationState): PresentationState {
-  let newState = Object.assign({}, state);
+function setEnabled(
+  enabled: boolean,
+  state: PresentationState
+): PresentationState {
+  const newState = {...state};
   newState.enabled = enabled;
 
-  CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.SetFullscreen, enabled);
+  CommandServiceImpl.remoteCall(
+    SharedConstants.Commands.Electron.SetFullscreen,
+    enabled
+  );
 
   return newState;
 }

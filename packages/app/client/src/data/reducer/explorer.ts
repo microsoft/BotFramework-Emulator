@@ -36,7 +36,7 @@ import {
   ExplorerAction,
   ExplorerActions,
   ExplorerPayload
-} from '../action/explorerActions';
+} from "../action/explorerActions";
 
 export interface ExplorerState {
   showing: boolean;
@@ -47,14 +47,14 @@ export declare type SortCriteria = string;
 
 const DEFAULT_STATE: ExplorerState = {
   showing: true,
-  sortSelectionByPanelId: {[CONNECTED_SERVICES_PANEL_ID]: 'name'}
+  sortSelectionByPanelId: { [CONNECTED_SERVICES_PANEL_ID]: "name" }
 };
 
-export function explorer(state: ExplorerState = DEFAULT_STATE, action: ExplorerAction<ExplorerPayload>)
-  : ExplorerState {
-
+export function explorer(
+  state: ExplorerState = DEFAULT_STATE,
+  action: ExplorerAction<ExplorerPayload>
+): ExplorerState {
   switch (action.type) {
-
     case ExplorerActions.Show:
       state = { ...state, showing: action.payload.show };
       break;

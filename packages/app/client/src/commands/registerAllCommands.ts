@@ -31,18 +31,19 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ExtensionManager } from '../extensions';
-import * as LogService from '../platform/log/logService';
-import { registerCommands as registerBotCommands } from './botCommands';
-import { registerCommands as registerElectronCommands } from './electronCommands';
-import { registerCommands as registerEmulatorCommands } from './emulatorCommands';
-import { registerCommands as registerFileCommands } from './fileCommands';
-import { registerCommands as registerMiscCommands } from './miscCommands';
-import { registerCommands as registerNotificationCommands } from './notificationCommands';
-import { registerCommands as registerUICommands } from './uiCommands';
-import { registerCommands as registerSettingsCommand } from './settingsCommands';
+import { CommandRegistryImpl } from "@bfemulator/sdk-shared";
 
-import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
+import { ExtensionManager } from "../extensions";
+import * as LogService from "../platform/log/logService";
+
+import { registerCommands as registerBotCommands } from "./botCommands";
+import { registerCommands as registerElectronCommands } from "./electronCommands";
+import { registerCommands as registerEmulatorCommands } from "./emulatorCommands";
+import { registerCommands as registerFileCommands } from "./fileCommands";
+import { registerCommands as registerMiscCommands } from "./miscCommands";
+import { registerCommands as registerNotificationCommands } from "./notificationCommands";
+import { registerCommands as registerSettingsCommand } from "./settingsCommands";
+import { registerCommands as registerUICommands } from "./uiCommands";
 
 /** Registers all commands */
 export function registerAllCommands(commandRegistry: CommandRegistryImpl) {

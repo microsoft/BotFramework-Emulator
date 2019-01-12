@@ -31,18 +31,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from 'react';
-import { mount } from 'enzyme';
-import { createStore } from 'redux';
-import { Provider } from 'react-redux';
-import { TabContainer } from './tabContainer';
-import { Tab } from './tab';
-import { toggleDraggingTab } from '../../../../data/action/editorActions';
+import * as React from "react";
+import { mount } from "enzyme";
+import { createStore } from "redux";
+import { Provider } from "react-redux";
+import { TabContainer } from "./tabContainer";
+import { Tab } from "./tab";
+import { toggleDraggingTab } from "../../../../data/action/editorActions";
 
-jest.mock('./tab.scss', () => ({}));
-jest.mock('../../../dialogs', () => ({}));
+jest.mock("./tab.scss", () => ({}));
+jest.mock("../../../dialogs", () => ({}));
 
-describe('Tab', () => {
+describe("Tab", () => {
   const mockOnCloseClick = jest.fn(() => null);
   let mockStore;
   let mockDispatch;
@@ -52,24 +52,27 @@ describe('Tab', () => {
 
   beforeEach(() => {
     mockStore = createStore((_state, _action) => ({}));
-    mockDispatch = jest.spyOn(mockStore, 'dispatch');
+    mockDispatch = jest.spyOn(mockStore, "dispatch");
     wrapper = mount(
-      <Provider store={ mockStore }>
-        <TabContainer onCloseClick={ mockOnCloseClick } documentId={ 'someDocId' }/>
+      <Provider store={mockStore}>
+        <TabContainer
+          onCloseClick={mockOnCloseClick}
+          documentId={"someDocId"}
+        />
       </Provider>
     );
     node = wrapper.find(Tab);
     instance = node.instance();
   });
 
-  it('should render deeply', () => {
+  it("should render deeply", () => {
     expect(wrapper.find(Tab)).not.toBe(null);
   });
 
-  it('should handle space and enter key presses to close the tab', () => {
-    const mockSpaceKeyPress = { key: ' ' };
+  it("should handle space and enter key presses to close the tab", () => {
+    const mockSpaceKeyPress = { key: " " };
     const mockEnterKeyPress = { keyCode: 13 };
-    const mockSomeOtherKeyPress = { key: 'A', keyCode: 123 };
+    const mockSomeOtherKeyPress = { key: "A", keyCode: 123 };
 
     // simulate neither enter nor spacebar key press
     instance.onCloseButtonKeyPress(mockSomeOtherKeyPress);
@@ -83,55 +86,58 @@ describe('Tab', () => {
     instance.onCloseButtonKeyPress(mockSpaceKeyPress);
     expect(mockOnCloseClick).toHaveBeenCalledTimes(2);
 
-    expect(mockOnCloseClick).toHaveBeenCalledWith('someDocId');
+    expect(mockOnCloseClick).toHaveBeenCalledWith("someDocId");
   });
 
-  it('should handle a mouse click to close the tab', () => {
+  it("should handle a mouse click to close the tab", () => {
     const mockStopPropagation = jest.fn(() => null);
     const mockSomeOtherKeyPress = { stopPropagation: mockStopPropagation };
 
     // simulate neither enter nor spacebar key press
     instance.onCloseClick(mockSomeOtherKeyPress);
     expect(mockStopPropagation).toHaveBeenCalledTimes(1);
-    expect(mockOnCloseClick).toHaveBeenCalledWith('someDocId');
+    expect(mockOnCloseClick).toHaveBeenCalledWith("someDocId");
   });
 
-  it('should handle a drag start', () => {
+  it("should handle a drag start", () => {
     const mockSetData = jest.fn((...args) => null);
     const mockDragEvent = {
       dataTransfer: {
         setData: mockSetData
       }
     };
-    instance.setState({ owningEditor: 'primary' });
+    instance.setState({ owningEditor: "primary" });
 
     instance.onDragStart(mockDragEvent);
     expect(mockSetData).toHaveBeenCalledWith(
-      'application/json',
-      JSON.stringify({ tabId: 'someDocId', editorKey: 'primary' })
+      "application/json",
+      JSON.stringify({ tabId: "someDocId", editorKey: "primary" })
     );
     expect(mockDispatch).toHaveBeenCalledWith(toggleDraggingTab(true));
   });
 
-  it('should handle a drag end', () => {
+  it("should handle a drag end", () => {
     instance.onDragEnd();
     expect(mockDispatch).toHaveBeenCalledWith(toggleDraggingTab(false));
   });
 
-  it('should handle a drag over', () => {
+  it("should handle a drag over", () => {
     const mockPreventDefault = jest.fn(() => null);
     const mockStopPropagation = jest.fn(() => null);
-    const mockDragEvent = { preventDefault: mockPreventDefault, stopPropagation: mockStopPropagation };
+    const mockDragEvent = {
+      preventDefault: mockPreventDefault,
+      stopPropagation: mockStopPropagation
+    };
     instance.setState({ draggedOver: false });
 
     instance.onDragOver(mockDragEvent);
-    
+
     expect(mockPreventDefault).toHaveBeenCalled();
     expect(mockStopPropagation).toHaveBeenCalled();
     expect(instance.state.draggedOver).toBe(true);
   });
 
-  it('should handle a drag enter', () => {
+  it("should handle a drag enter", () => {
     const mockPreventDefault = jest.fn(() => null);
     const mockDragEvent = { preventDefault: mockPreventDefault };
 
@@ -140,7 +146,7 @@ describe('Tab', () => {
     expect(mockPreventDefault).toHaveBeenCalled();
   });
 
-  it('should handle a drag leave', () => {
+  it("should handle a drag leave", () => {
     instance.setState({ draggedOver: true });
 
     instance.onDragLeave();
@@ -148,7 +154,7 @@ describe('Tab', () => {
     expect(instance.state.draggedOver).toBe(false);
   });
 
-  it('should handle a drop', () => {
+  it("should handle a drop", () => {
     const mockPreventDefault = jest.fn(() => null);
     const mockStopPropagation = jest.fn(() => null);
     let mockGetData = jest.fn(() => '{ "tabId": "someDocId" }');
@@ -160,7 +166,7 @@ describe('Tab', () => {
       }
     };
     instance.setState({ draggedOver: true });
-    
+
     // drop tab on same tab
     instance.onDrop(mockDragEvent);
 

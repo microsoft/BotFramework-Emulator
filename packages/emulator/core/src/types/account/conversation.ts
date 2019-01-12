@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import ChannelAccount from './channel';
+import ChannelAccount from "./channel";
 
 interface ConversationAccount extends ChannelAccount {
   isGroup?: boolean;

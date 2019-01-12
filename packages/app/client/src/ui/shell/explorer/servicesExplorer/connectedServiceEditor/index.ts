@@ -31,4 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export { ConnectedServiceEditorContainer } from './connectedServiceEditorContainer';
+export {
+  ConnectedServiceEditorContainer
+} from "./connectedServiceEditorContainer";

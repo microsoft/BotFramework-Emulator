@@ -31,14 +31,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { BotInfo } from '@bfemulator/app-shared';
-import { join } from 'path';
-import { readFileSync } from './readFileSync';
-import { ensureStoragePath } from './ensureStoragePath';
+import { BotInfo } from "@bfemulator/app-shared";
+import { join } from "path";
+
+import { ensureStoragePath } from "./ensureStoragePath";
+import { readFileSync } from "./readFileSync";
 
 /** Reads and returns list of bots from %APPSTORAGEPATH%/bots.json */
 export const getBotsFromDisk = (): BotInfo[] => {
-  const botsJsonPath = join(ensureStoragePath(), 'bots.json');
+  const botsJsonPath = join(ensureStoragePath(), "bots.json");
   const botsJsonContents = readFileSync(botsJsonPath);
   const botsJson = botsJsonContents ? JSON.parse(botsJsonContents) : null;
 

@@ -31,9 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import PaymentDetails from './details';
-import PaymentMethodData from './methodData';
-import PaymentOptions from './options';
+import PaymentDetails from "./details";
+import PaymentMethodData from "./methodData";
+import PaymentOptions from "./options";
 
 interface PaymentRequest {
   details: PaymentDetails;

@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import BotEmulator from './botEmulator';
-import Conversation from './facility/conversation';
+import BotEmulator from "./botEmulator";
+import Conversation from "./facility/conversation";
 
 export { BotEmulator, Conversation };

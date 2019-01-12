@@ -31,20 +31,25 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { mainWindow } from '../main';
-import * as BotActions from '../botData/actions/botActions';
-import { emulator } from '../emulator';
-import { ExtensionManagerImpl } from '../extensions';
-import { Protocol } from '../constants';
-import { ProtocolHandler } from '../protocolHandler';
-import { getStore } from '../botData/store';
-import { getBotsFromDisk } from '../utils';
-import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
-import { ClientAwareSettings, Settings, SharedConstants } from '@bfemulator/app-shared';
-import { Migrator } from '../migrator';
-import { getStore as getSettingsStore } from '../settingsData/store';
-import { Store } from 'redux';
-import { openFileFromCommandLine } from '../utils/openFileFromCommandLine';
+import {
+  ClientAwareSettings,
+  Settings,
+  SharedConstants
+} from "@bfemulator/app-shared";
+import { CommandRegistryImpl } from "@bfemulator/sdk-shared";
+import { Store } from "redux";
+
+import * as BotActions from "../botData/actions/botActions";
+import { getStore } from "../botData/store";
+import { Protocol } from "../constants";
+import { emulator } from "../emulator";
+import { ExtensionManagerImpl } from "../extensions";
+import { mainWindow } from "../main";
+import { Migrator } from "../migrator";
+import { ProtocolHandler } from "../protocolHandler";
+import { getStore as getSettingsStore } from "../settingsData/store";
+import { getBotsFromDisk } from "../utils";
+import { openFileFromCommandLine } from "../utils/openFileFromCommandLine";
 
 /** Registers client initialization commands */
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
@@ -58,48 +63,73 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
     const bots = getBotsFromDisk();
     if (bots.length) {
       store.dispatch(BotActions.load(bots));
-      await mainWindow.commandService.remoteCall(Commands.Bot.SyncBotList, bots);
+      await mainWindow.commandService.remoteCall(
+        Commands.Bot.SyncBotList,
+        bots
+      );
     } else {
       await Migrator.startup();
     }
     // Reset the app title bar
     await mainWindow.commandService.call(Commands.Electron.SetTitleBar);
     // Un-fullscreen the screen
-    await mainWindow.commandService.call(Commands.Electron.SetFullscreen, false);
+    await mainWindow.commandService.call(
+      Commands.Electron.SetFullscreen,
+      false
+    );
     // Send app settings to client
-    await commandRegistry.getCommand(Commands.Settings.PushClientAwareSettings).handler();
+    await commandRegistry
+      .getCommand(Commands.Settings.PushClientAwareSettings)
+      .handler();
     // Load extensions
     ExtensionManagerImpl.unloadExtensions();
     ExtensionManagerImpl.loadExtensions();
   });
 
-  commandRegistry.registerCommand(Commands.Settings.PushClientAwareSettings, async () => {
-    const settingsStore: Store<Settings> = getSettingsStore();
-    const settingsState = settingsStore.getState();
-    await mainWindow.commandService.remoteCall(Commands.Settings.ReceiveGlobalSettings, {
-      serverUrl: (emulator.framework.serverUrl || '').replace('[::]', 'localhost'),
-      cwd: (__dirname || '').replace(/\\/g, '/'),
-      users: settingsState.users,
-      locale: settingsState.framework.locale
-    } as ClientAwareSettings);
-  });
+  commandRegistry.registerCommand(
+    Commands.Settings.PushClientAwareSettings,
+    async () => {
+      const settingsStore: Store<Settings> = getSettingsStore();
+      const settingsState = settingsStore.getState();
+      await mainWindow.commandService.remoteCall(
+        Commands.Settings.ReceiveGlobalSettings,
+        {
+          serverUrl: (emulator.framework.serverUrl || "").replace(
+            "[::]",
+            "localhost"
+          ),
+          cwd: (__dirname || "").replace(/\\/g, "/"),
+          users: settingsState.users,
+          locale: settingsState.framework.locale
+        } as ClientAwareSettings
+      );
+    }
+  );
 
   // ---------------------------------------------------------------------------
   // Client notifying us the welcome screen has been rendered
-  commandRegistry.registerCommand(Commands.ClientInit.PostWelcomeScreen, async (): Promise<void> => {
-    await mainWindow.commandService.call(Commands.Electron.UpdateFileMenu);
+  commandRegistry.registerCommand(
+    Commands.ClientInit.PostWelcomeScreen,
+    async (): Promise<void> => {
+      await mainWindow.commandService.call(Commands.Electron.UpdateFileMenu);
 
-    // Parse command line args for a protocol url
-    const args = process.argv.length ? process.argv.slice(1) : [];
-    if (args.some(arg => arg.includes(Protocol))) {
-      const protocolArg = args.find(arg => arg.includes(Protocol));
-      ProtocolHandler.parseProtocolUrlAndDispatch(protocolArg);
-    }
+      // Parse command line args for a protocol url
+      const args = process.argv.length ? process.argv.slice(1) : [];
+      if (args.some(arg => arg.includes(Protocol))) {
+        const protocolArg = args.find(arg => arg.includes(Protocol));
+        ProtocolHandler.parseProtocolUrlAndDispatch(protocolArg);
+      }
 
-    // Parse command line args to see if we are opening a .bot or .transcript file
-    const fileToBeOpened = args.find(arg => /(\.transcript)|(\.bot)$/.test(arg));
-    if (fileToBeOpened) {
-      await openFileFromCommandLine(fileToBeOpened, mainWindow.commandService);
+      // Parse command line args to see if we are opening a .bot or .transcript file
+      const fileToBeOpened = args.find(arg =>
+        /(\.transcript)|(\.bot)$/.test(arg)
+      );
+      if (fileToBeOpened) {
+        await openFileFromCommandLine(
+          fileToBeOpened,
+          mainWindow.commandService
+        );
+      }
     }
-  });
+  );
 }

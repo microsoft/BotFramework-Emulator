@@ -32,6 +32,6 @@
 //
 
 export interface TokenParams {
-    userId: string;
-    connectionName: string;
+  userId: string;
+  connectionName: string;
 }

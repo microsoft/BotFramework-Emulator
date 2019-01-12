@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { navigate } from './hyperlinkHandler';
+import { navigate } from "./hyperlinkHandler";
 
 export default function interceptHyperlink() {
   const interceptClickEvent = (e: Event) => {
@@ -48,7 +48,7 @@ export default function interceptHyperlink() {
     }
   };
 
-  document.addEventListener('click', interceptClickEvent);
+  document.addEventListener("click", interceptClickEvent);
 
   // Monkey patch window.open
   window.open = (url: string): any => {

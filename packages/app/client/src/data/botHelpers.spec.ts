@@ -31,19 +31,21 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-jest.mock('./store', () => ({
+jest.mock("./store", () => ({
   store: {
     getState: () => ({
       bot: {
         activeBot: {
-          name: 'bot1',
-          description: 'description1',
-          padlock: 'padlock1',
-          services: [],
+          name: "bot1",
+          description: "description1",
+          padlock: "padlock1",
+          services: []
         },
-        botFiles: [{
-          path: 'path1'
-        }]
+        botFiles: [
+          {
+            path: "path1"
+          }
+        ]
       }
     })
   }
@@ -53,40 +55,40 @@ import {
   getActiveBot,
   getBotInfoByPath,
   pathExistsInRecentBots
-} from './botHelpers';
-describe('Bot helpers tests', () => {
-  it('should get the active bot', () => {
+} from "./botHelpers";
+describe("Bot helpers tests", () => {
+  it("should get the active bot", () => {
     const activeBot = getActiveBot();
-    expect(activeBot.name).toBe('bot1');
-    expect(activeBot.description).toBe('description1');
-    expect(activeBot.padlock).toBe('padlock1');
+    expect(activeBot.name).toBe("bot1");
+    expect(activeBot.description).toBe("description1");
+    expect(activeBot.padlock).toBe("padlock1");
     expect(activeBot.services).toEqual([]);
   });
 
-  describe('returning a bot info object by path', () => {
-    it('should return the info object if found', () => {
-      const result = getBotInfoByPath('path1');
-      expect(result).toEqual({ path: 'path1' });
+  describe("returning a bot info object by path", () => {
+    it("should return the info object if found", () => {
+      const result = getBotInfoByPath("path1");
+      expect(result).toEqual({ path: "path1" });
     });
 
-    it('should return a falsy value if not found', () => {
-      const result = getBotInfoByPath('nonExistentPath');
+    it("should return a falsy value if not found", () => {
+      const result = getBotInfoByPath("nonExistentPath");
       expect(result).toBeFalsy();
     });
   });
 
-  describe('returning whether a bot exists in recent bots or not', () => {
-    it('should return true for an existing bot', () => {
-      const botFound = pathExistsInRecentBots('path1');
+  describe("returning whether a bot exists in recent bots or not", () => {
+    it("should return true for an existing bot", () => {
+      const botFound = pathExistsInRecentBots("path1");
       expect(botFound).toBe(true);
     });
 
-    it('should return false for a nonexistent bot', () => {
-      const botFound = pathExistsInRecentBots('nonExistentPath');
+    it("should return false for a nonexistent bot", () => {
+      const botFound = pathExistsInRecentBots("nonExistentPath");
       expect(botFound).toBe(false);
     });
   });
 
   // unmock store
-  jest.unmock('./store');
+  jest.unmock("./store");
 });

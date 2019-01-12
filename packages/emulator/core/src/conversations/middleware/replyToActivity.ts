@@ -31,18 +31,22 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as HttpStatus from 'http-status-codes';
-import * as Restify from 'restify';
+import * as HttpStatus from "http-status-codes";
+import * as Restify from "restify";
 
-import BotEmulator from '../../botEmulator';
-import ConversationAPIPathParameters from '../conversationAPIPathParameters';
-import GenericActivity from '../../types/activity/generic';
-import ResourceResponse from '../../types/response/resource';
-import sendErrorResponse from '../../utils/sendErrorResponse';
-import OAuthLinkEncoder from '../../utils/oauthLinkEncoder';
+import BotEmulator from "../../botEmulator";
+import GenericActivity from "../../types/activity/generic";
+import ResourceResponse from "../../types/response/resource";
+import OAuthLinkEncoder from "../../utils/oauthLinkEncoder";
+import sendErrorResponse from "../../utils/sendErrorResponse";
+import ConversationAPIPathParameters from "../conversationAPIPathParameters";
 
 export default function replyToActivity(botEmulator: BotEmulator) {
-  return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+  return (
+    req: Restify.Request,
+    res: Restify.Response,
+    next: Restify.Next
+  ): any => {
     const activity = req.body as GenericActivity;
     const conversationParameters: ConversationAPIPathParameters = req.params;
 
@@ -57,22 +61,29 @@ export default function replyToActivity(botEmulator: BotEmulator) {
       // if (!conversation.activities.find((existingActivity, index, obj) => existingActivity.id == activity.replyToId))
       // throw createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "replyToId is not a known activity id");
 
-      let continuation = function (): void {
-        const response: ResourceResponse = (req as any).conversation.postActivityToUser(activity);
+      const continuation = function(): void {
+        const response: ResourceResponse = (req as any).conversation.postActivityToUser(
+          activity
+        );
 
         res.send(HttpStatus.OK, response);
         res.end();
       };
 
-      let visitor = new OAuthLinkEncoder(botEmulator,
+      const visitor = new OAuthLinkEncoder(
+        botEmulator,
         req.headers.authorization as string,
         activity,
-        conversationParameters.conversationId);
-      visitor.resolveOAuthCards(activity).then((value?: any) => {
-        continuation();
-      }, (_reason: any) => {
-        continuation();
-      });
+        conversationParameters.conversationId
+      );
+      visitor.resolveOAuthCards(activity).then(
+        (value?: any) => {
+          continuation();
+        },
+        (_reason: any) => {
+          continuation();
+        }
+      );
     } catch (err) {
       sendErrorResponse(req, res, next, err);
     }

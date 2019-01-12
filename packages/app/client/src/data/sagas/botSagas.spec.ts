@@ -31,30 +31,28 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { BotActions, botHashGenerated, SetActiveBotAction } from '../action/botActions';
-import { BotConfigWithPath } from '@bfemulator/sdk-shared';
+import {
+  BotActions,
+  botHashGenerated,
+  SetActiveBotAction
+} from "../action/botActions";
+import { BotConfigWithPath } from "@bfemulator/sdk-shared";
 import {
   botSagas,
   browseForBot,
   editorSelector,
   generateHashForActiveBot
-  } from './botSagas';
-import {
-  call,
-  put,
-  select,
-  takeEvery,
-  takeLatest
-  } from 'redux-saga/effects';
-import { generateBotHash } from '../botHelpers';
-import { SharedConstants } from '@bfemulator/app-shared';
-import { refreshConversationMenu } from './sharedSagas';
+} from "./botSagas";
+import { call, put, select, takeEvery, takeLatest } from "redux-saga/effects";
+import { generateBotHash } from "../botHelpers";
+import { SharedConstants } from "@bfemulator/app-shared";
+import { refreshConversationMenu } from "./sharedSagas";
 
-jest.mock('../../ui/dialogs', () => ({}));
+jest.mock("../../ui/dialogs", () => ({}));
 
-jest.mock('../store', () => ({
+jest.mock("../store", () => ({
   get store() {
-      return {};
+    return {};
   }
 }));
 
@@ -62,81 +60,69 @@ const mockSharedConstants = SharedConstants;
 let mockRemoteCommandsCalled = [];
 let mockLocalCommandsCalled = [];
 
-jest.mock('../../platform/commands/commandServiceImpl', () => ({
+jest.mock("../../platform/commands/commandServiceImpl", () => ({
   CommandServiceImpl: {
     call: async (commandName: string, ...args: any[]) => {
       mockLocalCommandsCalled.push({ commandName, args: args });
 
       switch (commandName) {
-        case mockSharedConstants.Commands.Bot.OpenBrowse: 
+        case mockSharedConstants.Commands.Bot.OpenBrowse:
           return Promise.resolve(true);
-        default: 
+        default:
           return Promise.resolve(true);
-        }
+      }
     },
-    remoteCall: async (commandName: string, ... args: any[]) => {
-      mockRemoteCommandsCalled.push({ commandName, args: args});
+    remoteCall: async (commandName: string, ...args: any[]) => {
+      mockRemoteCommandsCalled.push({ commandName, args: args });
 
       return Promise.resolve(true);
     }
   }
 }));
 
-describe('The botSagas', () => {
-
+describe("The botSagas", () => {
   beforeEach(() => {
     mockRemoteCommandsCalled = [];
     mockLocalCommandsCalled = [];
   });
 
-  it('should initialize the root saga', () => {
+  it("should initialize the root saga", () => {
     let gen = botSagas();
 
     const browseForBotYield = gen.next().value;
 
     expect(browseForBotYield).toEqual(
-      takeEvery(
-        BotActions.browse,
-        browseForBot
-      )
+      takeEvery(BotActions.browse, browseForBot)
     );
 
     const generateBotHashYield = gen.next().value;
 
     expect(generateBotHashYield).toEqual(
-      takeEvery(
-        BotActions.setActive,
-        generateHashForActiveBot
-      )
+      takeEvery(BotActions.setActive, generateHashForActiveBot)
     );
 
     const refreshConversationMenuYield = gen.next().value;
 
     expect(refreshConversationMenuYield).toEqual(
       takeLatest(
-        [ 
-          BotActions.setActive,
-          BotActions.load,
-          BotActions.close
-        ],
+        [BotActions.setActive, BotActions.load, BotActions.close],
         refreshConversationMenu
       )
     );
 
     expect(gen.next().done).toBe(true);
-
   });
 
-  it('should generate a hash for an active bot', () => {
+  it("should generate a hash for an active bot", () => {
     const botConfigPath: BotConfigWithPath = {
-      name: 'botName',
-      description: 'a bot description here',
+      name: "botName",
+      description: "a bot description here",
       padlock: null,
       services: [],
-      path: '/some/Path/something',
-      version: '0.1'
+      path: "/some/Path/something",
+      version: "0.1"
     };
-    
+
     const setActiveBotAction: SetActiveBotAction = {
       type: BotActions.setActive,
       payload: {
@@ -153,7 +139,7 @@ describe('The botSagas', () => {
     expect(gen.next().done).toBe(true);
   });
 
-  it('should open native open file dialog to browse for .bot file', () => {
+  it("should open native open file dialog to browse for .bot file", () => {
     const gen = browseForBot();
     gen.next();
     expect(mockLocalCommandsCalled).toHaveLength(1);

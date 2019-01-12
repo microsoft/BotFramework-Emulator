@@ -31,11 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { store } from './store';
+import { store } from "./store";
 
 export function documentIdForConversation(conversationId: string): string {
   const state = store.getState();
-  for (let key in state.chat.chats) {
+  for (const key in state.chat.chats) {
     if (state.chat.chats[key].conversationId === conversationId) {
       return state.chat.chats[key].documentId;
     }

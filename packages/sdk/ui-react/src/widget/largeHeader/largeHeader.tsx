@@ -31,16 +31,19 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from 'react';
+import * as React from "react";
 
-import { TruncateText } from '../../layout';
-import * as styles from './largeHeader.scss';
+import { TruncateText } from "../../layout";
+
+import * as styles from "./largeHeader.scss";
 
 export interface LargeHeaderProps {
   className?: string;
   children?: any;
 }
 
-export const LargeHeader = (props: LargeHeaderProps): JSX.Element =>
-  <h1 className={ `${styles.largeHeader} ${props.className || ''}` } >
-    <TruncateText>{ props.children }</TruncateText></h1>;
+export const LargeHeader = (props: LargeHeaderProps): JSX.Element => (
+  <h1 className={`${styles.largeHeader} ${props.className || ""}`}>
+    <TruncateText>{props.children}</TruncateText>
+  </h1>
+);

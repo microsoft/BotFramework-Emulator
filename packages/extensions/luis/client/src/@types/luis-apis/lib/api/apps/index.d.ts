@@ -33,12 +33,11 @@
 
 /// <reference types="node" />
 
-declare module 'luis-apis/lib/api/apps' {
-
+declare module "luis-apis/lib/api/apps" {
   interface ApplicationPublishRequest {
-    versionId: string,
-    isStaging: bool,
-    region: string
+    versionId: string;
+    isStaging: bool;
+    region: string;
   }
 
   class Apps {

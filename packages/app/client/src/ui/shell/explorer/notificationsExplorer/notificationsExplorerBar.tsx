@@ -31,18 +31,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from 'react';
-import * as styles from './notificationsExplorerBar.scss';
-import * as explorerStyles from '../explorerStyles.scss';
-import { NotificationsExplorer } from './notificationsExplorer';
+import * as React from "react";
+
+import * as explorerStyles from "../explorerStyles.scss";
+
+import { NotificationsExplorer } from "./notificationsExplorer";
+import * as styles from "./notificationsExplorerBar.scss";
 
 export const NotificationsExplorerBar = () => (
-  <div className={ styles.notificationsExplorerBar }>
-    <div className={ explorerStyles.explorerBarHeader }>
-      <header>
-        Notifications
-      </header>
+  <div className={styles.notificationsExplorerBar}>
+    <div className={explorerStyles.explorerBarHeader}>
+      <header>Notifications</header>
     </div>
-    <NotificationsExplorer/>
+    <NotificationsExplorer />
   </div>
 );

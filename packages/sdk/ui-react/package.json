@@ -8,7 +8,7 @@
     "build": "run-s lint clean build:prod && tsc --emitDeclarationOnly --declaration",
     "build:prod": "webpack --mode production --progress --colors",
     "clean": "rimraf ./built",
-    "lint": "tslint --project tslint.json",
+    "lint": "tslint --project tsconfig.json",
     "prepare": "npm run clean",
     "test": "jest",
     "dev": "webpack --mode development --watch --progress --color"
@@ -46,7 +46,8 @@
     "webpack-cli": "^3.1.1"
   },
   "dependencies": {
-    "@babel/runtime": "^7.1.5"
+    "@babel/runtime": "^7.1.5",
+    "react": "^16.3.0"
   },
   "jest": {
     "transform": {

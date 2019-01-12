@@ -31,9 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import ChannelAccount from '../account/channel';
-import ConversationAccount from '../account/conversation';
-import ETagObject from './etagObject';
+import ChannelAccount from "../account/channel";
+import ConversationAccount from "../account/conversation";
+
+import ETagObject from "./etagObject";
 
 interface Activity extends ETagObject {
   channelData?: any;

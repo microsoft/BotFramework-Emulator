@@ -31,8 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export { MDI } from './mdiContainer';
-export * from './documents';
-export * from './tab';
-export * from './tabBar';
-export * from './tabbedDocument';
+export { MDI } from "./mdiContainer";
+export * from "./documents";
+export * from "./tab";
+export * from "./tabBar";
+export * from "./tabbedDocument";

@@ -31,9 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { BrowserWindow, dialog, SaveDialogOptions } from 'electron';
+import { BrowserWindow, dialog, SaveDialogOptions } from "electron";
 
 /** Shows a native save dialog */
-export const showSaveDialog = (window: BrowserWindow, options: SaveDialogOptions): string => {
+export const showSaveDialog = (
+  window: BrowserWindow,
+  options: SaveDialogOptions
+): string => {
   return dialog.showSaveDialog(window, options);
 };

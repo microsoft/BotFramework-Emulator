@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { AppInfo } from '../Luis/AppInfo';
+import { AppInfo } from "../Luis/AppInfo";
 
 export interface LuisAppInfo {
   appId: string;

@@ -1,3 +1,3 @@
-declare module '*.scss' {
+declare module "*.scss" {
   export let _: any;
 }

@@ -34,13 +34,19 @@
 // import * as log from './v1/log';
 
 export default function interceptError() {
-    (process as NodeJS.EventEmitter).on('uncaughtException', _error => {
-        // log.error('[err-client]', error.message, error.stack);
-    });
+  (process as NodeJS.EventEmitter).on("uncaughtException", _error => {
+    // log.error('[err-client]', error.message, error.stack);
+  });
 
-    window.onerror = (_message: string, _filename?: string, _lineno?: number, _colno?: number, _error?: Error) => {
-        // log.error('[err-client]', message, filename, lineno, colno, error);
+  window.onerror = (
+    _message: string,
+    _filename?: string,
+    _lineno?: number,
+    _colno?: number,
+    _error?: Error
+  ) => {
+    // log.error('[err-client]', message, filename, lineno, colno, error);
 
-        return true; // prevent default handler
-    };
+    return true; // prevent default handler
+  };
 }

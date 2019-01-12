@@ -31,21 +31,29 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as HttpStatus from 'http-status-codes';
-import * as Restify from 'restify';
+import * as HttpStatus from "http-status-codes";
+import * as Restify from "restify";
 
-import BotEmulator from '../../botEmulator';
-import BotEndpoint from '../../facility/botEndpoint';
-import { TokenParams } from '../TokenParams';
-import { TokenCache } from '../tokenCache';
-import sendErrorResponse from '../../utils/sendErrorResponse';
+import BotEmulator from "../../botEmulator";
+import BotEndpoint from "../../facility/botEndpoint";
+import sendErrorResponse from "../../utils/sendErrorResponse";
+import { TokenCache } from "../tokenCache";
+import { TokenParams } from "../TokenParams";
 
 export default function signOut(botEmulator: BotEmulator) {
-  return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+  return (
+    req: Restify.Request,
+    res: Restify.Response,
+    next: Restify.Next
+  ): any => {
     try {
-      let params: TokenParams = req.params;
+      const params: TokenParams = req.params;
       const botEndpoint: BotEndpoint = (req as any).botEndpoint;
-      TokenCache.deleteTokenFromCache(botEndpoint.botId, params.userId, params.connectionName);
+      TokenCache.deleteTokenFromCache(
+        botEndpoint.botId,
+        params.userId,
+        params.connectionName
+      );
 
       res.send(HttpStatus.OK);
       res.end();

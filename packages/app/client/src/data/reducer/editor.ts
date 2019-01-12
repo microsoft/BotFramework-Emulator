@@ -31,11 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { deepCopySlow } from '@bfemulator/app-shared';
-import * as Constants from '../../constants';
-import { EditorAction, EditorActions } from '../action/editorActions';
-import { BotAction } from '../action/botActions';
-import { getOtherTabGroup, tabGroupHasDocuments } from '../editorHelpers';
+import { deepCopySlow } from "@bfemulator/app-shared";
+
+import * as Constants from "../../constants";
+import { BotAction } from "../action/botActions";
+import { EditorAction, EditorActions } from "../action/editorActions";
+import { getOtherTabGroup, tabGroupHasDocuments } from "../editorHelpers";
 
 export interface EditorState {
   // TODO: enum editors
@@ -77,7 +78,10 @@ const DEFAULT_STATE: EditorState = {
   docsWithPendingChanges: []
 };
 
-export const editor = (state: EditorState = DEFAULT_STATE, action: EditorAction | BotAction): EditorState => {
+export const editor = (
+  state: EditorState = DEFAULT_STATE,
+  action: EditorAction | BotAction
+): EditorState => {
   Object.freeze(state);
 
   switch (action.type) {
@@ -87,11 +91,14 @@ export const editor = (state: EditorState = DEFAULT_STATE, action: EditorAction 
       /** if the tab is being appended to the end of its own editor, just re-adjust tab order */
       if (srcEditorKey === destEditorKey) {
         let tabOrder = [...state.editors[srcEditorKey].tabOrder];
-        tabOrder = [...tabOrder.filter(docId => docId !== action.payload.documentId), action.payload.documentId];
+        tabOrder = [
+          ...tabOrder.filter(docId => docId !== action.payload.documentId),
+          action.payload.documentId
+        ];
 
-        let editorState: Editor = {
+        const editorState: Editor = {
           ...state.editors[srcEditorKey],
-          tabOrder: tabOrder
+          tabOrder
         };
         state = setEditorState(srcEditorKey, editorState, state);
         state = setDraggingTab(false, state);
@@ -102,15 +109,26 @@ export const editor = (state: EditorState = DEFAULT_STATE, action: EditorAction 
        * if the tab is being appended to another editor,
        * we need to modify both editors' docs, recent tabs, and tab order
        */
-      const docToAppend = state.editors[srcEditorKey].documents[action.payload.documentId];
+      const docToAppend =
+        state.editors[srcEditorKey].documents[action.payload.documentId];
 
       // remove any trace of document from source editor
-      const srcEditor = removeDocumentFromTabGroup(state.editors[srcEditorKey], action.payload.documentId);
+      const srcEditor = removeDocumentFromTabGroup(
+        state.editors[srcEditorKey],
+        action.payload.documentId
+      );
 
       // add the tab to the dest editor
-      const destTabOrder = [...state.editors[destEditorKey].tabOrder, action.payload.documentId];
-      const destRecentTabs = [...state.editors[destEditorKey].recentTabs, action.payload.documentId];
-      const destDocs = Object.assign({}, state.editors[destEditorKey].documents);
+      const destTabOrder = [
+        ...state.editors[destEditorKey].tabOrder,
+        action.payload.documentId
+      ];
+      const destRecentTabs = [
+        ...state.editors[destEditorKey].recentTabs,
+        action.payload.documentId
+      ];
+      const destDocs = {...state.editors[destEditorKey].documents
+      };
       destDocs[action.payload.documentId] = docToAppend;
 
       const destEditor: Editor = {
@@ -120,10 +138,16 @@ export const editor = (state: EditorState = DEFAULT_STATE, action: EditorAction 
         tabOrder: destTabOrder
       };
 
-      if (!tabGroupHasDocuments(srcEditor) && srcEditorKey === Constants.EDITOR_KEY_PRIMARY) {
+      if (
+        !tabGroupHasDocuments(srcEditor) &&
+        srcEditorKey === Constants.EDITOR_KEY_PRIMARY
+      ) {
         state = setNewPrimaryEditor(destEditor, state);
       } else {
-        state = setActiveEditor(!tabGroupHasDocuments(srcEditor) ? destEditorKey : state.activeEditor, state);
+        state = setActiveEditor(
+          !tabGroupHasDocuments(srcEditor) ? destEditorKey : state.activeEditor,
+          state
+        );
         state = setEditorState(srcEditorKey, srcEditor, state);
         state = setEditorState(destEditorKey, destEditor, state);
       }
@@ -138,11 +162,17 @@ export const editor = (state: EditorState = DEFAULT_STATE, action: EditorAction 
       const { editorKey } = action.payload;
 
       // remove any trace of document from editor
-      const editor1 = removeDocumentFromTabGroup(state.editors[editorKey], action.payload.documentId);
+      const editor1 = removeDocumentFromTabGroup(
+        state.editors[editorKey],
+        action.payload.documentId
+      );
 
       // close empty editor if there is another one able to take its place
       const newPrimaryEditorKey = getOtherTabGroup(editorKey);
-      if (!tabGroupHasDocuments(editor1) && state.editors[newPrimaryEditorKey]) {
+      if (
+        !tabGroupHasDocuments(editor1) &&
+        state.editors[newPrimaryEditorKey]
+      ) {
         // if the editor being closed is the primary editor, have the secondary editor become the primary
         const tmp: Editor = deepCopySlow(state.editors[newPrimaryEditorKey]);
         state = setNewPrimaryEditor(tmp, state);
@@ -160,11 +190,11 @@ export const editor = (state: EditorState = DEFAULT_STATE, action: EditorAction 
           ...state
         };
 
-        for (let key in state.editors) {
+        for (const key in state.editors) {
           if (!state.editors.hasOwnProperty(key)) {
             continue;
           }
-          let tabGroup = state.editors[key];
+          const tabGroup = state.editors[key];
           if (tabGroup) {
             let newTabOrder = [...tabGroup.tabOrder];
             let newRecentTabs = [...tabGroup.recentTabs];
@@ -175,12 +205,16 @@ export const editor = (state: EditorState = DEFAULT_STATE, action: EditorAction 
               if (document.isGlobal) {
                 newDocs[documentId] = document;
               } else {
-                newTabOrder = newTabOrder.filter(documentIdArg => documentIdArg !== documentId);
-                newRecentTabs = newRecentTabs.filter(documentIdArg => documentIdArg !== documentId);
+                newTabOrder = newTabOrder.filter(
+                  documentIdArg => documentIdArg !== documentId
+                );
+                newRecentTabs = newRecentTabs.filter(
+                  documentIdArg => documentIdArg !== documentId
+                );
               }
             });
 
-            let newTabGroup: Editor = {
+            const newTabGroup: Editor = {
               activeDocumentId: newRecentTabs[0] || null,
               documents: newDocs,
               recentTabs: newRecentTabs,
@@ -207,10 +241,13 @@ export const editor = (state: EditorState = DEFAULT_STATE, action: EditorAction 
       const otherTabGroup = getOtherTabGroup(editorKey);
 
       // if the document is already in another tab group, focus that one
-      if (tabGroupHasDocuments(state.editors[otherTabGroup])
-        && state.editors[otherTabGroup].documents[action.payload.documentId]) {
-        const recentTabs = [...state.editors[otherTabGroup].recentTabs]
-          .filter(docId => docId !== action.payload.documentId);
+      if (
+        tabGroupHasDocuments(state.editors[otherTabGroup]) &&
+        state.editors[otherTabGroup].documents[action.payload.documentId]
+      ) {
+        const recentTabs = [...state.editors[otherTabGroup].recentTabs].filter(
+          docId => docId !== action.payload.documentId
+        );
         recentTabs.unshift(action.payload.documentId);
         const tabGroupState: Editor = {
           ...state.editors[otherTabGroup],
@@ -226,19 +263,30 @@ export const editor = (state: EditorState = DEFAULT_STATE, action: EditorAction 
       if (state.editors[editorKey].documents[action.payload.documentId]) {
         newTabOrder = [...state.editors[editorKey].tabOrder];
       } else {
-        const activeDocumentId = state.editors[state.activeEditor].activeDocumentId;
-        const activeIndex = state.editors[editorKey].tabOrder.indexOf(activeDocumentId);
+        const activeDocumentId =
+          state.editors[state.activeEditor].activeDocumentId;
+        const activeIndex = state.editors[editorKey].tabOrder.indexOf(
+          activeDocumentId
+        );
         if (activeIndex != null && activeIndex !== -1) {
-          state.editors[editorKey].tabOrder.splice(activeIndex + 1, 0, action.payload.documentId);
+          state.editors[editorKey].tabOrder.splice(
+            activeIndex + 1,
+            0,
+            action.payload.documentId
+          );
           newTabOrder = [...state.editors[editorKey].tabOrder];
         } else {
-          newTabOrder = [...state.editors[editorKey].tabOrder, action.payload.documentId];
+          newTabOrder = [
+            ...state.editors[editorKey].tabOrder,
+            action.payload.documentId
+          ];
         }
       }
 
       // move document to top of recent tabs
-      const newRecentTabs = [...state.editors[editorKey].recentTabs]
-        .filter(docId => docId !== action.payload.documentId);
+      const newRecentTabs = [...state.editors[editorKey].recentTabs].filter(
+        docId => docId !== action.payload.documentId
+      );
       newRecentTabs.unshift(action.payload.documentId);
 
       // add document to tab group
@@ -291,8 +339,13 @@ export const editor = (state: EditorState = DEFAULT_STATE, action: EditorAction 
 
     case EditorActions.setActiveTab: {
       Constants.EditorKeys.forEach(editorKey => {
-        if (state.editors[editorKey] && state.editors[editorKey].documents[action.payload.documentId]) {
-          const recentTabs = state.editors[editorKey].recentTabs.filter(tabId => tabId !== action.payload.documentId);
+        if (
+          state.editors[editorKey] &&
+          state.editors[editorKey].documents[action.payload.documentId]
+        ) {
+          const recentTabs = state.editors[editorKey].recentTabs.filter(
+            tabId => tabId !== action.payload.documentId
+          );
           recentTabs.unshift(action.payload.documentId);
 
           const editorState = {
@@ -309,7 +362,10 @@ export const editor = (state: EditorState = DEFAULT_STATE, action: EditorAction 
 
     case EditorActions.setDirtyFlag: {
       Constants.EditorKeys.forEach(editorKey => {
-        if (state.editors[editorKey] && state.editors[editorKey].documents[action.payload.documentId]) {
+        if (
+          state.editors[editorKey] &&
+          state.editors[editorKey].documents[action.payload.documentId]
+        ) {
           const newDocs = deepCopySlow(state.editors[editorKey].documents);
           const docToSet = newDocs[action.payload.documentId];
           docToSet.dirty = action.payload.dirty;
@@ -328,14 +384,19 @@ export const editor = (state: EditorState = DEFAULT_STATE, action: EditorAction 
       const { srcEditorKey } = action.payload;
       const { destEditorKey } = action.payload;
 
-      const docToAppend = state.editors[srcEditorKey].documents[action.payload.documentId];
+      const docToAppend =
+        state.editors[srcEditorKey].documents[action.payload.documentId];
 
       // remove any trace of document from source editor
-      const srcEditor = removeDocumentFromTabGroup(state.editors[srcEditorKey], action.payload.documentId);
+      const srcEditor = removeDocumentFromTabGroup(
+        state.editors[srcEditorKey],
+        action.payload.documentId
+      );
 
       // add the document to the dest editor
-      const destEditor: Editor = state.editors[destEditorKey] ?
-        deepCopySlow(state.editors[destEditorKey]) : getNewEditor();
+      const destEditor: Editor = state.editors[destEditorKey]
+        ? deepCopySlow(state.editors[destEditorKey])
+        : getNewEditor();
       const destTabOrder = [...destEditor.tabOrder, action.payload.documentId];
       const destRecentTabs = [...destEditor.recentTabs];
       destRecentTabs.unshift(action.payload.documentId);
@@ -362,14 +423,18 @@ export const editor = (state: EditorState = DEFAULT_STATE, action: EditorAction 
       if (srcEditorKey === destEditorKey) {
         // only change tab order
         const tabOrder = [...state.editors[srcEditorKey].tabOrder];
-        const srcTabIndex = tabOrder.findIndex(docId => docId === action.payload.srcTabId);
-        const destTabIndex1 = tabOrder.findIndex(docId => docId === action.payload.destTabId);
+        const srcTabIndex = tabOrder.findIndex(
+          docId => docId === action.payload.srcTabId
+        );
+        const destTabIndex1 = tabOrder.findIndex(
+          docId => docId === action.payload.destTabId
+        );
 
         const destTab = tabOrder[destTabIndex1];
         tabOrder[destTabIndex1] = tabOrder[srcTabIndex];
         tabOrder[srcTabIndex] = destTab;
 
-        let editorState = {
+        const editorState = {
           ...state.editors[srcEditorKey],
           tabOrder
         };
@@ -379,26 +444,44 @@ export const editor = (state: EditorState = DEFAULT_STATE, action: EditorAction 
       }
 
       /** swapping tab into a different tab group */
-      const docToSwap = state.editors[srcEditorKey].documents[action.payload.srcTabId];
+      const docToSwap =
+        state.editors[srcEditorKey].documents[action.payload.srcTabId];
 
       // remove any trace of document from source editor
-      const srcEditor = removeDocumentFromTabGroup(state.editors[srcEditorKey], action.payload.srcTabId);
+      const srcEditor = removeDocumentFromTabGroup(
+        state.editors[srcEditorKey],
+        action.payload.srcTabId
+      );
 
       // add the document to the destination tab group
       const destEditor: Editor = deepCopySlow(state.editors[destEditorKey]);
       destEditor.documents[action.payload.srcTabId] = docToSwap;
-      const destRecentTabs = [...destEditor.recentTabs, action.payload.srcTabId];
+      const destRecentTabs = [
+        ...destEditor.recentTabs,
+        action.payload.srcTabId
+      ];
       destEditor.recentTabs = destRecentTabs;
       // insert before the destination tab's position
-      const destTabIndex = destEditor.tabOrder.findIndex(docId => docId === action.payload.destTabId);
-      const destTabOrder = [...destEditor.tabOrder
-        .splice(0, destTabIndex + 1), action.payload.srcTabId, ...destEditor.tabOrder];
+      const destTabIndex = destEditor.tabOrder.findIndex(
+        docId => docId === action.payload.destTabId
+      );
+      const destTabOrder = [
+        ...destEditor.tabOrder.splice(0, destTabIndex + 1),
+        action.payload.srcTabId,
+        ...destEditor.tabOrder
+      ];
       destEditor.tabOrder = destTabOrder;
 
-      if (!tabGroupHasDocuments(srcEditor) && srcEditorKey === Constants.EDITOR_KEY_PRIMARY) {
+      if (
+        !tabGroupHasDocuments(srcEditor) &&
+        srcEditorKey === Constants.EDITOR_KEY_PRIMARY
+      ) {
         state = setNewPrimaryEditor(destEditor, state);
       } else {
-        state = setActiveEditor(!tabGroupHasDocuments(srcEditor) ? destEditorKey : state.activeEditor, state);
+        state = setActiveEditor(
+          !tabGroupHasDocuments(srcEditor) ? destEditorKey : state.activeEditor,
+          state
+        );
         state = setEditorState(srcEditorKey, srcEditor, state);
         state = setEditorState(destEditorKey, destEditor, state);
       }
@@ -411,8 +494,10 @@ export const editor = (state: EditorState = DEFAULT_STATE, action: EditorAction 
     }
 
     case EditorActions.addDocPendingChange: {
-      let docsPendingChange = [
-        ...state.docsWithPendingChanges.filter(d => d !== action.payload.documentId),
+      const docsPendingChange = [
+        ...state.docsWithPendingChanges.filter(
+          d => d !== action.payload.documentId
+        ),
         action.payload.documentId
       ];
       state = setDocsWithPendingChanges(docsPendingChange, state);
@@ -420,7 +505,9 @@ export const editor = (state: EditorState = DEFAULT_STATE, action: EditorAction 
     }
 
     case EditorActions.removeDocPendingChange: {
-      let docsPendingChange = [...state.docsWithPendingChanges].filter(d => d !== action.payload.documentId);
+      const docsPendingChange = [...state.docsWithPendingChanges].filter(
+        d => d !== action.payload.documentId
+      );
       state = setDocsWithPendingChanges(docsPendingChange, state);
       break;
     }
@@ -438,8 +525,12 @@ export const editor = (state: EditorState = DEFAULT_STATE, action: EditorAction 
       const primaryDocs = { [tabToIsolate]: docToIsolate };
 
       // move all documents but the one being dropped to the secondary tab group
-      const secondaryTabOrder = state.editors[primary].tabOrder.filter(tabId => tabId !== tabToIsolate);
-      const secondaryRecentTabs = state.editors[primary].recentTabs.filter(tabId => tabId !== tabToIsolate);
+      const secondaryTabOrder = state.editors[primary].tabOrder.filter(
+        tabId => tabId !== tabToIsolate
+      );
+      const secondaryRecentTabs = state.editors[primary].recentTabs.filter(
+        tabId => tabId !== tabToIsolate
+      );
       const secondaryDocs = state.editors[primary].documents;
       delete secondaryDocs[tabToIsolate];
 
@@ -479,40 +570,60 @@ function getNewEditor(): Editor {
 /** Removes all trace of a document from a tab group and returns
  *  the updated state, or a new editor if the tab group has no documents (empty)
  */
-export function removeDocumentFromTabGroup(tabGroup: Editor, documentId: string): Editor {
-  const newTabOrder = [...tabGroup.tabOrder].filter(docId => docId !== documentId);
-  const newRecentTabs = [...tabGroup.recentTabs].filter(docId => docId !== documentId);
-  const newDocs = Object.assign({}, tabGroup.documents);
+export function removeDocumentFromTabGroup(
+  tabGroup: Editor,
+  documentId: string
+): Editor {
+  const newTabOrder = [...tabGroup.tabOrder].filter(
+    docId => docId !== documentId
+  );
+  const newRecentTabs = [...tabGroup.recentTabs].filter(
+    docId => docId !== documentId
+  );
+  const newDocs = {...tabGroup.documents};
   delete newDocs[documentId];
   const newActiveDocumentId = newRecentTabs[0] || null;
 
-  const newTabGroup: Editor = Object.keys(newDocs).length === 0 ? getNewEditor() : {
-    ...tabGroup,
-    activeDocumentId: newActiveDocumentId,
-    documents: newDocs,
-    recentTabs: newRecentTabs,
-    tabOrder: newTabOrder
-  };
+  const newTabGroup: Editor =
+    Object.keys(newDocs).length === 0
+      ? getNewEditor()
+      : {
+          ...tabGroup,
+          activeDocumentId: newActiveDocumentId,
+          documents: newDocs,
+          recentTabs: newRecentTabs,
+          tabOrder: newTabOrder
+        };
   return newTabGroup;
 }
 
-export function setEditorState(editorKey: string, editorState: Editor, state: EditorState): EditorState {
-  let newState = deepCopySlow(state);
+export function setEditorState(
+  editorKey: string,
+  editorState: Editor,
+  state: EditorState
+): EditorState {
+  const newState = deepCopySlow(state);
 
   newState.editors[editorKey] = editorState;
   return newState;
 }
 
-export function setActiveEditor(editorKey: string, state: EditorState): EditorState {
-  let newState = deepCopySlow(state);
+export function setActiveEditor(
+  editorKey: string,
+  state: EditorState
+): EditorState {
+  const newState = deepCopySlow(state);
 
   newState.activeEditor = editorKey;
   return newState;
 }
 
 /** Sets a new primary editor, and resets the secondary editor */
-export function setNewPrimaryEditor(newPrimaryEditor: Editor, state: EditorState): EditorState {
-  let newState = deepCopySlow(state);
+export function setNewPrimaryEditor(
+  newPrimaryEditor: Editor,
+  state: EditorState
+): EditorState {
+  const newState = deepCopySlow(state);
 
   newState.editors[Constants.EDITOR_KEY_SECONDARY] = getNewEditor();
   newState.editors[Constants.EDITOR_KEY_PRIMARY] = newPrimaryEditor;
@@ -520,8 +631,11 @@ export function setNewPrimaryEditor(newPrimaryEditor: Editor, state: EditorState
   return newState;
 }
 
-export function setDraggingTab(dragging: boolean, state: EditorState): EditorState {
-  let newState = deepCopySlow(state);
+export function setDraggingTab(
+  dragging: boolean,
+  state: EditorState
+): EditorState {
+  const newState = deepCopySlow(state);
 
   newState.draggingTab = dragging;
   return newState;
@@ -529,13 +643,20 @@ export function setDraggingTab(dragging: boolean, state: EditorState): EditorSta
 
 /** Sets the secondary tab group as the primary if the primary is now empty */
 export function fixupTabGroups(state: EditorState): EditorState {
-  if (!tabGroupHasDocuments(state.editors[Constants.EDITOR_KEY_PRIMARY])
-    && tabGroupHasDocuments(state.editors[Constants.EDITOR_KEY_SECONDARY])) {
-    state = setNewPrimaryEditor(state.editors[Constants.EDITOR_KEY_SECONDARY], state);
+  if (
+    !tabGroupHasDocuments(state.editors[Constants.EDITOR_KEY_PRIMARY]) &&
+    tabGroupHasDocuments(state.editors[Constants.EDITOR_KEY_SECONDARY])
+  ) {
+    state = setNewPrimaryEditor(
+      state.editors[Constants.EDITOR_KEY_SECONDARY],
+      state
+    );
   }
 
-  if (state.activeEditor === Constants.EDITOR_KEY_SECONDARY
-    && !tabGroupHasDocuments(state.editors[Constants.EDITOR_KEY_SECONDARY])) {
+  if (
+    state.activeEditor === Constants.EDITOR_KEY_SECONDARY &&
+    !tabGroupHasDocuments(state.editors[Constants.EDITOR_KEY_SECONDARY])
+  ) {
     state = setActiveEditor(Constants.EDITOR_KEY_PRIMARY, state);
   }
 
@@ -543,8 +664,11 @@ export function fixupTabGroups(state: EditorState): EditorState {
 }
 
 /** Sets the list of docs with pending changes */
-export function setDocsWithPendingChanges(docs: string[], state: EditorState): EditorState {
-  let newState: EditorState = deepCopySlow(state);
+export function setDocsWithPendingChanges(
+  docs: string[],
+  state: EditorState
+): EditorState {
+  const newState: EditorState = deepCopySlow(state);
 
   newState.docsWithPendingChanges = docs;
   return newState;

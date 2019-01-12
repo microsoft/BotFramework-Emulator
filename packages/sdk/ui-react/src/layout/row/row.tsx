@@ -31,8 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from 'react';
-import * as styles from './row.scss';
+import * as React from "react";
+
+import * as styles from "./row.scss";
 
 export enum RowJustification {
   Left,
@@ -53,12 +54,15 @@ export interface RowProps {
 }
 
 export class Row extends React.Component<RowProps, {}> {
-
-  render(): JSX.Element {
-    const {className = ''} = this.props;
+  public render(): JSX.Element {
+    const { className = "" } = this.props;
     return (
-      <div className={ `${styles.row} ${this.getRowAlignment()} ${this.getRowAlignment()} ${className}` }>
-        { this.props.children }
+      <div
+        className={`${
+          styles.row
+        } ${this.getRowAlignment()} ${this.getRowAlignment()} ${className}`}
+      >
+        {this.props.children}
       </div>
     );
   }

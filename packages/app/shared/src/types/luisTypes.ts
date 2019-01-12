@@ -9,7 +9,7 @@ export interface LuisModel {
   createdDateTime: string;
   endpoints: {
     PRODUCTION: any;
-    STAGING: any
+    STAGING: any;
   };
   endpointHitsCount: number;
   activeVersion: string;
@@ -17,4 +17,4 @@ export interface LuisModel {
   region: LuisRegion;
 }
 
-export declare type LuisRegion = 'westus' | 'westeurope' | 'australiaeast';
+export declare type LuisRegion = "westus" | "westeurope" | "australiaeast";

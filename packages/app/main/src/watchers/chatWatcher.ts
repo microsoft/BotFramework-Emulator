@@ -1,14 +1,15 @@
-import { FileWatcher } from './fileWatcher';
-import * as fs from 'fs';
-import * as path from 'path';
-import { WatchOptions } from 'chokidar';
-import { mainWindow } from '../main';
-import { SharedConstants } from '@bfemulator/app-shared';
-import { IFileService, ServiceTypes } from 'botframework-config/lib/schema';
-import { isChatFile } from '@bfemulator/app-shared';
+import { SharedConstants } from "@bfemulator/app-shared";
+import { isChatFile } from "@bfemulator/app-shared";
+import { IFileService, ServiceTypes } from "botframework-config/lib/schema";
+import { WatchOptions } from "chokidar";
+import * as fs from "fs";
+import * as path from "path";
+
+import { mainWindow } from "../main";
+
+import { FileWatcher } from "./fileWatcher";
 
 export class ChatWatcher extends FileWatcher {
-
   private chatFiles: { [path: string]: boolean } = {};
   private notificationPending: NodeJS.Timer;
 
@@ -30,7 +31,7 @@ export class ChatWatcher extends FileWatcher {
     }
     this.chatFiles[file] = true;
     this.invalidateChatFiles();
-  }
+  };
 
   protected onFileRemove = (file: string, fstats?: fs.Stats): void => {
     if (!isChatFile(file)) {
@@ -38,11 +39,13 @@ export class ChatWatcher extends FileWatcher {
     }
     delete this.chatFiles[file];
     this.invalidateChatFiles();
-  }
+  };
 
   protected onFileChange = (file: string, fstats?: fs.Stats): void => {
-    mainWindow.commandService.remoteCall(SharedConstants.Commands.File.Changed, file).catch();
-  }
+    mainWindow.commandService
+      .remoteCall(SharedConstants.Commands.File.Changed, file)
+      .catch();
+  };
 
   /**
    * Batches the file changes to prevent a Chatty Patty
@@ -62,7 +65,9 @@ export class ChatWatcher extends FileWatcher {
         path: key
       };
     });
-    mainWindow.commandService.remoteCall(SharedConstants.Commands.Bot.ChatFilesUpdated, chatFiles).catch();
+    mainWindow.commandService
+      .remoteCall(SharedConstants.Commands.Bot.ChatFilesUpdated, chatFiles)
+      .catch();
     this.notificationPending = null;
-  }
+  };
 }

@@ -31,8 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './registry';
-export * from './service';
+export * from "./registry";
+export * from "./service";
 
 export interface Command {
   id: string;
@@ -44,12 +44,10 @@ export interface CommandMap {
   [id: string]: Command;
 }
 
-export interface CommandHandler {
-  (...args: any[]): any;
-}
+export type CommandHandler = (...args: any[]) => any;
 
 export interface CommandDescription {
   description: string;
-  args: { name: string; description?: string; }[];
+  args: Array<{ name: string; description?: string }>;
   returns?: string;
 }

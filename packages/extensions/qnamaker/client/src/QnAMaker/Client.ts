@@ -31,20 +31,23 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ServiceBase } from 'qnamaker/lib/api/serviceBase';
-const operations = require('qnamaker/lib/api/operations');
-const knowledgebase = require('qnamaker/lib/api/knowledgebase');
+import { ServiceBase } from "qnamaker/lib/api/serviceBase";
+const operations = require("qnamaker/lib/api/operations");
+const knowledgebase = require("qnamaker/lib/api/knowledgebase");
 
 class QnAMakerClientError extends Error {
-  private static getMessage(message: string, statusCode: number | undefined): string {
+  private static getMessage(
+    message: string,
+    statusCode: number | undefined
+  ): string {
     let errorMessage = message;
     if (statusCode) {
-      errorMessage += ' - HTTP Status Code: ' + statusCode;
+      errorMessage += " - HTTP Status Code: " + statusCode;
     }
     return errorMessage;
   }
 
-  constructor(message: string, statusCode: number | undefined = undefined) {
+  constructor(message: string, statusCode?: number) {
     super(QnAMakerClientError.getMessage(message, statusCode));
   }
 }
@@ -69,36 +72,45 @@ export class QnAMakerClient {
     this.operations = new operations();
   }
 
-  async updateKnowledgebase(kbId: string, requestBody: any): Promise<any> {
+  public async updateKnowledgebase(
+    kbId: string,
+    requestBody: any
+  ): Promise<any> {
     this.configureClient();
     const params = {
-      kbId: kbId
+      kbId
     };
-    let result = await this.knowledgebase.updateKnowledgebase(params, requestBody);
+    let result = await this.knowledgebase.updateKnowledgebase(
+      params,
+      requestBody
+    );
     if (result.status !== 202) {
-      throw new QnAMakerClientError('Failed to queue training.', result.statusCode);
+      throw new QnAMakerClientError(
+        "Failed to queue training.",
+        result.statusCode
+      );
     }
 
-    let resultJson = await result.json();
+    const resultJson = await result.json();
     let retryCounter = 0;
     return new Promise((resolve, reject) => {
       let intervalId: number;
-      let callLoop = async () => {
+      const callLoop = async () => {
         result = await this.operations.getOperationDetails({
           operationId: resultJson.operationId
         });
 
         if (retryCounter++ >= MaxRetries) {
           clearInterval(intervalId);
-          reject('Failed to train the knowledgebase');
+          reject("Failed to train the knowledgebase");
         }
 
         if (result.status !== 200) {
           return;
         }
 
-        let trainingStatus = await result.json();
-        if (trainingStatus.operationState === 'Succeeded') {
+        const trainingStatus = await result.json();
+        if (trainingStatus.operationState === "Succeeded") {
           clearInterval(intervalId);
           resolve(result);
         }
@@ -107,21 +119,21 @@ export class QnAMakerClient {
     });
   }
 
-  async publish(kbId: string): Promise<any> {
+  public async publish(kbId: string): Promise<any> {
     this.configureClient();
     const params = {
-      kbId: kbId
+      kbId
     };
-    let result = await this.knowledgebase.publishKnowledgebase(params);
+    const result = await this.knowledgebase.publishKnowledgebase(params);
     return result;
   }
 
-  async getOperationDetails(opId: string): Promise<any> {
+  public async getOperationDetails(opId: string): Promise<any> {
     this.configureClient();
     const params = {
       operationId: opId
     };
-    let result = await this.operations.getOperationDetails(params);
+    const result = await this.operations.getOperationDetails(params);
     return result;
   }
 
@@ -131,7 +143,7 @@ export class QnAMakerClient {
     // We should consider updating the Client SDK to make the configs per service
     ServiceBase.config = {
       endpointBasePath: this.qnaMakerKbInfo.baseUri,
-      subscriptionKey: this.qnaMakerKbInfo.subscriptionKey,
+      subscriptionKey: this.qnaMakerKbInfo.subscriptionKey
     };
   }
 }

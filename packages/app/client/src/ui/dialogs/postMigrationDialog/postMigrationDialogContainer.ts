@@ -1,6 +1,11 @@
-import { connect } from 'react-redux';
-import { DialogService } from '../service';
-import { PostMigrationDialog, PostMigrationDialogProps } from './postMigrationDialog';
+import { connect } from "react-redux";
+
+import { DialogService } from "../service";
+
+import {
+  PostMigrationDialog,
+  PostMigrationDialogProps
+} from "./postMigrationDialog";
 
 const mapStateToProps = (ownProps: PostMigrationDialogProps) => ownProps;
 
@@ -12,4 +17,7 @@ function mapDispatchToProps(): PostMigrationDialogProps {
   };
 }
 
-export const PostMigrationDialogContainer = connect(mapStateToProps, mapDispatchToProps)(PostMigrationDialog);
+export const PostMigrationDialogContainer = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(PostMigrationDialog);

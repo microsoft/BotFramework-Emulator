@@ -32,9 +32,9 @@
 //
 
 interface CardMediaUrl {
-  url: string;                    // Url to audio, video or animation media
-  profile: string;                // Optional profile hint to the client to differentiate
-                                  // multiple MediaUrl objects from each other
+  url: string; // Url to audio, video or animation media
+  profile: string; // Optional profile hint to the client to differentiate
+  // multiple MediaUrl objects from each other
 }
 
 export default CardMediaUrl;

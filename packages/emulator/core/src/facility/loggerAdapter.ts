@@ -30,14 +30,17 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
-import GenericActivity from '../types/activity/generic';
-import ILogItem from '../types/log/item';
-import LogService from '../types/log/service';
-import LogLevel from '../types/log/level';
-import Logger from '../types/logger';
-
-import { exceptionItem, inspectableObjectItem, summaryTextItem, textItem } from '../types/log/util';
+import GenericActivity from "../types/activity/generic";
+import ILogItem from "../types/log/item";
+import Logger from "../types/logger";
+import LogLevel from "../types/log/level";
+import LogService from "../types/log/service";
+import {
+  exceptionItem,
+  inspectableObjectItem,
+  summaryTextItem,
+  textItem
+} from "../types/log/util";
 
 export default class LoggerAdapter implements Logger {
   constructor(public logService: LogService) {
@@ -46,21 +49,29 @@ export default class LoggerAdapter implements Logger {
     this.logException = this.logException.bind(this);
   }
 
-  public logActivity(conversationId: string, activity: GenericActivity, role: string) {
+  public logActivity(
+    conversationId: string,
+    activity: GenericActivity,
+    role: string
+  ) {
     let direction: ILogItem;
-    if (role === 'user') {
-      direction = textItem(LogLevel.Debug, '<-');
+    if (role === "user") {
+      direction = textItem(LogLevel.Debug, "<-");
     } else {
-      direction = textItem(LogLevel.Debug, '->');
+      direction = textItem(LogLevel.Debug, "->");
     }
-    this.logService.logToChat(conversationId, direction, inspectableObjectItem(activity.type, activity),
-      summaryTextItem(activity));
+    this.logService.logToChat(
+      conversationId,
+      direction,
+      inspectableObjectItem(activity.type, activity),
+      summaryTextItem(activity)
+    );
   }
 
   public logMessage(conversationId: string, ...items: ILogItem[]) {
     this.logService.logToChat(conversationId, ...items);
   }
-  
+
   public logException(conversationId: string, err: Error) {
     this.logService.logToChat(conversationId, exceptionItem(err));
   }

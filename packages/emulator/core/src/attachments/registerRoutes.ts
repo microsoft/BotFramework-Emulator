@@ -31,31 +31,35 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { RequestHandlerType, Server } from 'restify';
+import { RequestHandlerType, Server } from "restify";
 
-import BotEmulator from '../botEmulator';
-import getFacility from '../middleware/getFacility';
-import getRouteName from '../middleware/getRouteName';
+import BotEmulator from "../botEmulator";
+import getFacility from "../middleware/getFacility";
+import getRouteName from "../middleware/getRouteName";
 
-import getAttachment from './middleware/getAttachment';
-import getAttachmentInfo from './middleware/getAttachmentInfo';
+import getAttachment from "./middleware/getAttachment";
+import getAttachmentInfo from "./middleware/getAttachmentInfo";
 
-export default function registerRoutes(botEmulator: BotEmulator, server: Server, uses: RequestHandlerType[]) {
-  const facility = getFacility('attachments');
+export default function registerRoutes(
+  botEmulator: BotEmulator,
+  server: Server,
+  uses: RequestHandlerType[]
+) {
+  const facility = getFacility("attachments");
 
   server.get(
-    '/v3/attachments/:attachmentId',
+    "/v3/attachments/:attachmentId",
     ...uses,
     facility,
-    getRouteName('getAttachmentInfo'),
+    getRouteName("getAttachmentInfo"),
     getAttachmentInfo(botEmulator)
   );
 
   server.get(
-    '/v3/attachments/:attachmentId/views/:viewId',
+    "/v3/attachments/:attachmentId/views/:viewId",
     ...uses,
     facility,
-    getRouteName('getAttachment'),
+    getRouteName("getAttachment"),
     getAttachment(botEmulator)
   );
 }

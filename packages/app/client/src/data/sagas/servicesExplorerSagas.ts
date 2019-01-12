@@ -31,9 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ServiceCodes, SharedConstants } from '@bfemulator/app-shared';
-import { BotConfigWithPath } from '@bfemulator/sdk-shared';
-import { BotConfigurationBase } from 'botframework-config/lib/botConfigurationBase';
+import { ServiceCodes, SharedConstants } from "@bfemulator/app-shared";
+import { BotConfigWithPath } from "@bfemulator/sdk-shared";
+import { BotConfigurationBase } from "botframework-config/lib/botConfigurationBase";
 import {
   IAzureService,
   IConnectedService,
@@ -41,12 +41,22 @@ import {
   ILuisService,
   IQnAService,
   ServiceTypes
-} from 'botframework-config/lib/schema';
-import { ForkEffect, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
-import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
-import { DialogService } from '../../ui/dialogs/service';
-import { serviceTypeLabels } from '../../utils/serviceTypeLables';
-import { ArmTokenData, beginAzureAuthWorkflow } from '../action/azureAuthActions';
+} from "botframework-config/lib/schema";
+import {
+  ForkEffect,
+  put,
+  select,
+  takeEvery,
+  takeLatest
+} from "redux-saga/effects";
+
+import { CommandServiceImpl } from "../../platform/commands/commandServiceImpl";
+import { DialogService } from "../../ui/dialogs/service";
+import { serviceTypeLabels } from "../../utils/serviceTypeLables";
+import {
+  ArmTokenData,
+  beginAzureAuthWorkflow
+} from "../action/azureAuthActions";
 import {
   ConnectedServiceAction,
   ConnectedServicePayload,
@@ -57,34 +67,48 @@ import {
   OPEN_CONNECTED_SERVICE_SORT_CONTEXT_MENU,
   OPEN_CONTEXT_MENU_FOR_CONNECTED_SERVICE,
   OPEN_SERVICE_DEEP_LINK
-} from '../action/connectedServiceActions';
-import { sortExplorerContents } from '../action/explorerActions';
-import { SortCriteria } from '../reducer/explorer';
-import { RootState } from '../store';
-import { getArmToken } from './azureAuthSaga';
+} from "../action/connectedServiceActions";
+import { sortExplorerContents } from "../action/explorerActions";
+import { SortCriteria } from "../reducer/explorer";
+import { RootState } from "../store";
 
-declare type ServicesPayload = { services: IConnectedService[], code: ServiceCodes };
+import { getArmToken } from "./azureAuthSaga";
 
-const getArmTokenFromState = (state: RootState): ArmTokenData => state.azureAuth;
-const geBotConfigFromState = (state: RootState): BotConfigWithPath => state.bot.activeBot;
-const getSortSelection = (state: RootState): { [paneldId: string]: SortCriteria } =>
+declare interface ServicesPayload {
+  services: IConnectedService[];
+  code: ServiceCodes;
+}
+
+const getArmTokenFromState = (state: RootState): ArmTokenData =>
+  state.azureAuth;
+const geBotConfigFromState = (state: RootState): BotConfigWithPath =>
+  state.bot.activeBot;
+const getSortSelection = (
+  state: RootState
+): { [paneldId: string]: SortCriteria } =>
   state.explorer.sortSelectionByPanelId;
 
-function* launchConnectedServicePicker(action: ConnectedServiceAction<ConnectedServicePickerPayload>)
-  : IterableIterator<any> {
+function* launchConnectedServicePicker(
+  action: ConnectedServiceAction<ConnectedServicePickerPayload>
+): IterableIterator<any> {
   // To retrieve azure services, luis models and KBs,
   // we must have the authoring key.
   // To get the authoring key, we need the arm token.
   let armTokenData: ArmTokenData & number = yield select(getArmTokenFromState);
   if (!armTokenData || !armTokenData.access_token) {
-    const { promptDialog, loginSuccessDialog, loginFailedDialog } = action.payload.azureAuthWorkflowComponents;
+    const {
+      promptDialog,
+      loginSuccessDialog,
+      loginFailedDialog
+    } = action.payload.azureAuthWorkflowComponents;
     armTokenData = yield* getArmToken(
       beginAzureAuthWorkflow(
         promptDialog,
         { serviceType: action.payload.serviceType },
         loginSuccessDialog,
         loginFailedDialog
-      ));
+      )
+    );
   }
 
   // 2 means the user has chosen to manually enter the connected service
@@ -92,17 +116,20 @@ function* launchConnectedServicePicker(action: ConnectedServiceAction<ConnectedS
     yield* launchConnectedServiceEditor(action);
     return;
   }
-  if (!armTokenData || 'error' in armTokenData) {
+  if (!armTokenData || "error" in armTokenData) {
     return null; // canceled or failed somewhere
   }
   // Add the authenticated user to the action since we now have the token
-  const pJson = JSON.parse(atob(armTokenData.access_token.split('.')[1]));
-  action.payload.authenticatedUser = (pJson.upn || pJson.unique_name || pJson.name || pJson.email);
+  const pJson = JSON.parse(atob(armTokenData.access_token.split(".")[1]));
+  action.payload.authenticatedUser =
+    pJson.upn || pJson.unique_name || pJson.name || pJson.email;
   const { serviceType, progressIndicatorComponent } = action.payload;
   if (progressIndicatorComponent) {
     DialogService.showDialog(progressIndicatorComponent).catch();
   }
-  let payload: ServicesPayload = yield* retrieveServicesByServiceType(serviceType);
+  const payload: ServicesPayload = yield* retrieveServicesByServiceType(
+    serviceType
+  );
 
   if (progressIndicatorComponent) {
     DialogService.hideDialog();
@@ -124,7 +151,11 @@ function* launchConnectedServicePicker(action: ConnectedServiceAction<ConnectedS
       yield* launchConnectedServiceEditor(action);
     }
   } else {
-    const servicesToAdd = yield* launchConnectedServicePickList(action, payload.services, serviceType);
+    const servicesToAdd = yield* launchConnectedServicePickList(
+      action,
+      payload.services,
+      serviceType
+    );
     if (servicesToAdd) {
       const botFile: BotConfigWithPath = yield select(geBotConfigFromState);
       botFile.services.push(...servicesToAdd);
@@ -139,8 +170,11 @@ function* launchConnectedServicePickList(
   availableServices: IConnectedService[],
   serviceType: ServiceTypes
 ): IterableIterator<any> {
-
-  const { pickerComponent, authenticatedUser, serviceType: type } = action.payload;
+  const {
+    pickerComponent,
+    authenticatedUser,
+    serviceType: type
+  } = action.payload;
   let result = yield DialogService.showDialog(pickerComponent, {
     availableServices,
     authenticatedUser,
@@ -150,7 +184,7 @@ function* launchConnectedServicePickList(
   if (result === 1) {
     action.payload.connectedService = BotConfigurationBase.serviceFromJSON({
       type,
-      hostname: '' /* defect workaround */
+      hostname: "" /* defect workaround */
     } as any);
     result = yield* launchConnectedServiceEditor(action);
   }
@@ -158,35 +192,57 @@ function* launchConnectedServicePickList(
   return result;
 }
 
-function* retrieveServicesByServiceType(serviceType: ServiceTypes): IterableIterator<any> {
-  let armTokenData: ArmTokenData = yield select(getArmTokenFromState);
+function* retrieveServicesByServiceType(
+  serviceType: ServiceTypes
+): IterableIterator<any> {
+  const armTokenData: ArmTokenData = yield select(getArmTokenFromState);
   if (!armTokenData || !armTokenData.access_token) {
-    throw new Error('Auth credentials do not exist.');
+    throw new Error("Auth credentials do not exist.");
   }
-  const { GetConnectedServicesByType } = SharedConstants.Commands.ConnectedService;
+  const {
+    GetConnectedServicesByType
+  } = SharedConstants.Commands.ConnectedService;
   let payload: ServicesPayload;
   try {
-    payload = yield CommandServiceImpl.remoteCall(GetConnectedServicesByType, armTokenData.access_token, serviceType);
+    payload = yield CommandServiceImpl.remoteCall(
+      GetConnectedServicesByType,
+      armTokenData.access_token,
+      serviceType
+    );
   } catch (e) {
     payload = { services: [], code: ServiceCodes.Error };
   }
   return payload;
 }
 
-function* openConnectedServiceDeepLink(action: ConnectedServiceAction<ConnectedServicePayload>): IterableIterator<any> {
+function* openConnectedServiceDeepLink(
+  action: ConnectedServiceAction<ConnectedServicePayload>
+): IterableIterator<any> {
   const { connectedService } = action.payload;
   switch (connectedService.type) {
     case ServiceTypes.AppInsights:
-      return openAzureProviderDeepLink('microsoft.insights/components', connectedService as IAzureService);
+      return openAzureProviderDeepLink(
+        "microsoft.insights/components",
+        connectedService as IAzureService
+      );
 
     case ServiceTypes.BlobStorage:
-      return openAzureProviderDeepLink('Microsoft.DocumentDB/storageAccounts', connectedService as IAzureService);
+      return openAzureProviderDeepLink(
+        "Microsoft.DocumentDB/storageAccounts",
+        connectedService as IAzureService
+      );
 
     case ServiceTypes.Bot:
-      return openAzureProviderDeepLink('Microsoft.BotService/botServices', connectedService as IAzureService);
+      return openAzureProviderDeepLink(
+        "Microsoft.BotService/botServices",
+        connectedService as IAzureService
+      );
 
     case ServiceTypes.CosmosDB:
-      return openAzureProviderDeepLink('Microsoft.DocumentDb/databaseAccounts', connectedService as IAzureService);
+      return openAzureProviderDeepLink(
+        "Microsoft.DocumentDb/databaseAccounts",
+        connectedService as IAzureService
+      );
 
     case ServiceTypes.Generic:
       return window.open((connectedService as IGenericService).url);
@@ -198,153 +254,235 @@ function* openConnectedServiceDeepLink(action: ConnectedServiceAction<ConnectedS
       return openQnaMakerDeepLink(connectedService as IQnAService);
 
     default:
-      return window.open('https://portal.azure.com');
+      return window.open("https://portal.azure.com");
   }
 }
 
-function* openContextMenuForService(action: ConnectedServiceAction<ConnectedServicePayload>)
-  : IterableIterator<any> {
+function* openContextMenuForService(
+  action: ConnectedServiceAction<ConnectedServicePayload>
+): IterableIterator<any> {
   const menuItems = [
-    { label: 'Manage service', id: 'open' },
-    { label: 'Edit configuration', id: 'edit' },
-    { label: 'Disconnect this service', id: 'forget' }
+    { label: "Manage service", id: "open" },
+    { label: "Edit configuration", id: "edit" },
+    { label: "Disconnect this service", id: "forget" }
   ];
-  const response = yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.DisplayContextMenu, menuItems);
+  const response = yield CommandServiceImpl.remoteCall(
+    SharedConstants.Commands.Electron.DisplayContextMenu,
+    menuItems
+  );
   const { connectedService } = action.payload;
   action.payload.serviceType = connectedService.type;
   switch (response.id) {
-    case 'open':
+    case "open":
       yield* openConnectedServiceDeepLink(action);
       break;
 
-    case 'edit':
+    case "edit":
       yield* launchConnectedServiceEditor(action);
       break;
 
-    case 'forget':
+    case "forget":
       yield* removeServiceFromActiveBot(connectedService);
       break;
 
-    default: // canceled context menu
+    default:
+      // canceled context menu
       return;
   }
 }
 
-function* openAddConnectedServiceContextMenu(action: ConnectedServiceAction<ConnectedServicePickerPayload>)
-  : IterableIterator<any> {
+function* openAddConnectedServiceContextMenu(
+  action: ConnectedServiceAction<ConnectedServicePickerPayload>
+): IterableIterator<any> {
   const menuItems = [
-    { label: 'Add Language Understanding (LUIS)', id: ServiceTypes.Luis },
-    { label: 'Add QnA Maker', id: ServiceTypes.QnA },
-    { label: 'Add Dispatch', id: ServiceTypes.Dispatch },
-    { type: 'separator' },
-    { label: 'Add Azure Cosmos DB account', id: ServiceTypes.CosmosDB },
-    { label: 'Add Azure Storage account', id: ServiceTypes.BlobStorage },
-    { label: 'Add Azure Application Insights', id: ServiceTypes.AppInsights },
-    { type: 'separator' },
-    { label: 'Add other service …', id: ServiceTypes.Generic },
+    { label: "Add Language Understanding (LUIS)", id: ServiceTypes.Luis },
+    { label: "Add QnA Maker", id: ServiceTypes.QnA },
+    { label: "Add Dispatch", id: ServiceTypes.Dispatch },
+    { type: "separator" },
+    { label: "Add Azure Cosmos DB account", id: ServiceTypes.CosmosDB },
+    { label: "Add Azure Storage account", id: ServiceTypes.BlobStorage },
+    { label: "Add Azure Application Insights", id: ServiceTypes.AppInsights },
+    { type: "separator" },
+    { label: "Add other service …", id: ServiceTypes.Generic }
   ];
 
-  const response = yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.DisplayContextMenu, menuItems);
+  const response = yield CommandServiceImpl.remoteCall(
+    SharedConstants.Commands.Electron.DisplayContextMenu,
+    menuItems
+  );
   const { id: serviceType } = response;
   action.payload.serviceType = serviceType;
-  if (serviceType === ServiceTypes.Generic ||
-    serviceType === ServiceTypes.AppInsights) {
+  if (
+    serviceType === ServiceTypes.Generic ||
+    serviceType === ServiceTypes.AppInsights
+  ) {
     yield* launchConnectedServiceEditor(action);
   } else {
     yield* launchConnectedServicePicker(action);
   }
 }
 
-function* openSortContextMenu(action: ConnectedServiceAction<ConnectedServicePayload>): IterableIterator<any> {
+function* openSortContextMenu(
+  action: ConnectedServiceAction<ConnectedServicePayload>
+): IterableIterator<any> {
   const sortSelectionByPanelId = yield select(getSortSelection);
   const currentSort = sortSelectionByPanelId[action.payload.panelId];
   const menuItems = [
-    { label: 'Sort by name', id: 'name', type: 'checkbox', checked: currentSort === 'name' },
-    { label: 'Sort by type', id: 'type', type: 'checkbox', checked: currentSort === 'type' },
+    {
+      label: "Sort by name",
+      id: "name",
+      type: "checkbox",
+      checked: currentSort === "name"
+    },
+    {
+      label: "Sort by type",
+      id: "type",
+      type: "checkbox",
+      checked: currentSort === "type"
+    }
   ];
-  const response = yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.DisplayContextMenu, menuItems);
-  yield response.id ? put(sortExplorerContents(action.payload.panelId, response.id)) : null;
+  const response = yield CommandServiceImpl.remoteCall(
+    SharedConstants.Commands.Electron.DisplayContextMenu,
+    menuItems
+  );
+  yield response.id
+    ? put(sortExplorerContents(action.payload.panelId, response.id))
+    : null;
 }
 
-function* removeServiceFromActiveBot(connectedService: IConnectedService): IterableIterator<any> {
+function* removeServiceFromActiveBot(
+  connectedService: IConnectedService
+): IterableIterator<any> {
   // TODO - localization
-  const result = yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.ShowMessageBox, true, {
-    type: 'question',
-    buttons: ['Cancel', 'OK'],
-    defaultId: 1,
-    message: `Remove ${ serviceTypeLabels[connectedService.type] } service: ${ connectedService.name }. Are you sure?`,
-    cancelId: 0,
-  });
+  const result = yield CommandServiceImpl.remoteCall(
+    SharedConstants.Commands.Electron.ShowMessageBox,
+    true,
+    {
+      type: "question",
+      buttons: ["Cancel", "OK"],
+      defaultId: 1,
+      message: `Remove ${serviceTypeLabels[connectedService.type]} service: ${
+        connectedService.name
+      }. Are you sure?`,
+      cancelId: 0
+    }
+  );
   if (result) {
     const { RemoveService } = SharedConstants.Commands.Bot;
-    yield CommandServiceImpl.remoteCall(RemoveService, connectedService.type, connectedService.id);
+    yield CommandServiceImpl.remoteCall(
+      RemoveService,
+      connectedService.type,
+      connectedService.id
+    );
   }
 }
 
-function* launchConnectedServiceEditor(action: ConnectedServiceAction<ConnectedServicePayload>)
-  : IterableIterator<any> {
-  const { editorComponent, authenticatedUser, connectedService, serviceType } = action.payload;
-  const servicesToUpdate: IConnectedService[] = yield DialogService.showDialog(editorComponent, {
-    connectedService,
+function* launchConnectedServiceEditor(
+  action: ConnectedServiceAction<ConnectedServicePayload>
+): IterableIterator<any> {
+  const {
+    editorComponent,
     authenticatedUser,
+    connectedService,
     serviceType
-  });
+  } = action.payload;
+  const servicesToUpdate: IConnectedService[] = yield DialogService.showDialog(
+    editorComponent,
+    {
+      connectedService,
+      authenticatedUser,
+      serviceType
+    }
+  );
 
   if (servicesToUpdate) {
     let i = servicesToUpdate.length;
     while (i--) {
       const service = servicesToUpdate[i];
-      yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.AddOrUpdateService, service.type, service);
+      yield CommandServiceImpl.remoteCall(
+        SharedConstants.Commands.Bot.AddOrUpdateService,
+        service.type,
+        service
+      );
     }
   }
   return null;
 }
 
-function openAzureProviderDeepLink(provider: string, azureService: IAzureService): void {
+function openAzureProviderDeepLink(
+  provider: string,
+  azureService: IAzureService
+): void {
   const { tenantId, subscriptionId, resourceGroup, serviceName } = azureService;
   const bits = [
-    `https://ms.portal.azure.com/#@${ tenantId }/resource/`,
-    `subscriptions/${ subscriptionId }/`,
-    `resourceGroups/${ encodeURI(resourceGroup) }/`,
-    `providers/${ provider }/${ encodeURI(serviceName) }/overview`
+    `https://ms.portal.azure.com/#@${tenantId}/resource/`,
+    `subscriptions/${subscriptionId}/`,
+    `resourceGroups/${encodeURI(resourceGroup)}/`,
+    `providers/${provider}/${encodeURI(serviceName)}/overview`
   ];
 
-  window.open(bits.join(''));
+  window.open(bits.join(""));
 }
 
 function openLuisDeepLink(luisService: ILuisService) {
   const { appId, version, region } = luisService;
   let regionPrefix: string;
   switch (region) {
-    case 'westeurope':
-      regionPrefix = 'eu.';
+    case "westeurope":
+      regionPrefix = "eu.";
       break;
 
-    case 'australiaeast':
-      regionPrefix = 'au.';
+    case "australiaeast":
+      regionPrefix = "au.";
       break;
 
     default:
-      regionPrefix = '';
+      regionPrefix = "";
       break;
   }
-  const linkArray = ['https://', `${ encodeURI(regionPrefix) }`, 'luis.ai/applications/'];
-  linkArray.push(`${ encodeURI(appId) }`, '/versions/', `${ encodeURI(version) }`, '/build');
-  const link = linkArray.join('');
+  const linkArray = [
+    "https://",
+    `${encodeURI(regionPrefix)}`,
+    "luis.ai/applications/"
+  ];
+  linkArray.push(
+    `${encodeURI(appId)}`,
+    "/versions/",
+    `${encodeURI(version)}`,
+    "/build"
+  );
+  const link = linkArray.join("");
   window.open(link);
 }
 
 function openQnaMakerDeepLink(service: IQnAService) {
   const { kbId } = service;
-  const link = `https://qnamaker.ai/Edit/KnowledgeBase?kbid=${ encodeURIComponent(kbId) }`;
+  const link = `https://qnamaker.ai/Edit/KnowledgeBase?kbid=${encodeURIComponent(
+    kbId
+  )}`;
   window.open(link);
 }
 
 export function* servicesExplorerSagas(): IterableIterator<ForkEffect> {
-  yield takeLatest(LAUNCH_CONNECTED_SERVICE_PICKER, launchConnectedServicePicker);
-  yield takeLatest(LAUNCH_CONNECTED_SERVICE_EDITOR, launchConnectedServiceEditor);
+  yield takeLatest(
+    LAUNCH_CONNECTED_SERVICE_PICKER,
+    launchConnectedServicePicker
+  );
+  yield takeLatest(
+    LAUNCH_CONNECTED_SERVICE_EDITOR,
+    launchConnectedServiceEditor
+  );
   yield takeEvery(OPEN_SERVICE_DEEP_LINK, openConnectedServiceDeepLink);
-  yield takeEvery(OPEN_CONTEXT_MENU_FOR_CONNECTED_SERVICE, openContextMenuForService);
-  yield takeEvery(OPEN_ADD_CONNECTED_SERVICE_CONTEXT_MENU, openAddConnectedServiceContextMenu);
-  yield takeEvery(OPEN_CONNECTED_SERVICE_SORT_CONTEXT_MENU, openSortContextMenu);
+  yield takeEvery(
+    OPEN_CONTEXT_MENU_FOR_CONNECTED_SERVICE,
+    openContextMenuForService
+  );
+  yield takeEvery(
+    OPEN_ADD_CONNECTED_SERVICE_CONTEXT_MENU,
+    openAddConnectedServiceContextMenu
+  );
+  yield takeEvery(
+    OPEN_CONNECTED_SERVICE_SORT_CONTEXT_MENU,
+    openSortContextMenu
+  );
 }

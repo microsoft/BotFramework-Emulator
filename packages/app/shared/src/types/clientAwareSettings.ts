@@ -1,4 +1,4 @@
-import { UserSettings } from './serverSettingsTypes';
+import { UserSettings } from "./serverSettingsTypes";
 
 export interface ClientAwareSettings {
   cwd: string;

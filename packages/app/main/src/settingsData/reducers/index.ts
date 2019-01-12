@@ -31,13 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { combineReducers } from 'redux';
-import { frameworkReducer } from './frameworkReducer';
-import { usersReducer } from './usersReducer';
-import { botsReducer } from './botReducer';
-import { windowStateReducer } from './windowStateReducer';
-import { azureAuth } from './azureAuthReducer';
-import { Settings } from '@bfemulator/app-shared';
+import { Settings } from "@bfemulator/app-shared";
+import { combineReducers } from "redux";
+
+import { azureAuth } from "./azureAuthReducer";
+import { botsReducer } from "./botReducer";
+import { frameworkReducer } from "./frameworkReducer";
+import { usersReducer } from "./usersReducer";
+import { windowStateReducer } from "./windowStateReducer";
 
 export default combineReducers<Settings>({
   azure: azureAuth,

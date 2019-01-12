@@ -1,11 +1,14 @@
-import { connect } from 'react-redux';
-import { RootState } from '../../../../../data/store';
-import { Inspector } from './inspector';
+import { connect } from "react-redux";
+
+import { RootState } from "../../../../../data/store";
+
+import { Inspector } from "./inspector";
 
 const mapStateToProps = (state: RootState, ownProps: any) => {
   const { bot, theme, clientAwareSettings } = state;
-  const cwdAsBase = !(clientAwareSettings.cwd || '').startsWith('/') ?
-    `/${clientAwareSettings.cwd}` : clientAwareSettings.cwd;
+  const cwdAsBase = !(clientAwareSettings.cwd || "").startsWith("/")
+    ? `/${clientAwareSettings.cwd}`
+    : clientAwareSettings.cwd;
   return {
     ...ownProps,
     botHash: bot.activeBotDigest,
@@ -15,4 +18,7 @@ const mapStateToProps = (state: RootState, ownProps: any) => {
   };
 };
 
-export const InspectorContainer = connect(mapStateToProps, null)(Inspector);
+export const InspectorContainer = connect(
+  mapStateToProps,
+  null
+)(Inspector);

@@ -1,23 +1,31 @@
 export const headers = {
-  'Content-Accept': 'application/json'
+  "Content-Accept": "application/json"
 };
 
 export class ConversationService {
-
-  public static addUser(serviceUrl: string, conversationId: string, name?: string, id?: string) {
+  public static addUser(
+    serviceUrl: string,
+    conversationId: string,
+    name?: string,
+    id?: string
+  ) {
     const url = `${serviceUrl}/emulator/${conversationId}/users`;
     return fetch(url, {
       headers,
-      method: 'POST',
+      method: "POST",
       body: JSON.stringify([{ name, id }])
     });
   }
 
-  public static removeUser(serviceUrl: string, conversationId: string, id: string) {
+  public static removeUser(
+    serviceUrl: string,
+    conversationId: string,
+    id: string
+  ) {
     const url = `${serviceUrl}/emulator/${conversationId}/users`;
     return fetch(url, {
       headers,
-      method: 'DELETE',
+      method: "DELETE",
       body: JSON.stringify([{ id }])
     });
   }
@@ -26,7 +34,7 @@ export class ConversationService {
     const url = `${serviceUrl}/emulator/${conversationId}/users`;
     return fetch(url, {
       headers,
-      method: 'DELETE',
+      method: "DELETE"
     });
   }
 
@@ -34,7 +42,7 @@ export class ConversationService {
     const url = `${serviceUrl}/emulator/${conversationId}/contacts`;
     return fetch(url, {
       headers,
-      method: 'POST'
+      method: "POST"
     });
   }
 
@@ -42,7 +50,7 @@ export class ConversationService {
     const url = `${serviceUrl}/emulator/${conversationId}/contacts`;
     return fetch(url, {
       headers,
-      method: 'DELETE'
+      method: "DELETE"
     });
   }
 
@@ -50,7 +58,7 @@ export class ConversationService {
     const url = `${serviceUrl}/emulator/${conversationId}/typing`;
     return fetch(url, {
       headers,
-      method: 'POST'
+      method: "POST"
     });
   }
 
@@ -58,7 +66,7 @@ export class ConversationService {
     const url = `${serviceUrl}/emulator/${conversationId}/ping`;
     return fetch(url, {
       headers,
-      method: 'POST'
+      method: "POST"
     });
   }
 
@@ -66,7 +74,7 @@ export class ConversationService {
     const url = `${serviceUrl}/emulator/${conversationId}/userdata`;
     return fetch(url, {
       headers,
-      method: 'DELETE'
+      method: "DELETE"
     });
   }
 }

@@ -1,6 +1,8 @@
-import { connect } from 'react-redux';
-import { RootState } from '../../../data/store';
-import { MDIComponent } from './mdi';
+import { connect } from "react-redux";
+
+import { RootState } from "../../../data/store";
+
+import { MDIComponent } from "./mdi";
 
 export interface MDIProps {
   owningEditor?: string;
@@ -12,4 +14,7 @@ const mapStateToProps = (state: RootState, ownProps: MDIProps): MDIProps => ({
   presentationModeEnabled: state.presentation.enabled
 });
 
-export const MDI = connect(mapStateToProps, null)(MDIComponent);
+export const MDI = connect(
+  mapStateToProps,
+  null
+)(MDIComponent);

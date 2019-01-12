@@ -31,8 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ChatAction, ChatActions } from '../action/chatActions';
-import { EditorAction, EditorActions } from '../action/editorActions';
+import { ChatAction, ChatActions } from "../action/chatActions";
+import { EditorAction, EditorActions } from "../action/editorActions";
 
 export interface ChatState {
   changeKey?: number;
@@ -44,10 +44,13 @@ export interface ChatState {
 const DEFAULT_STATE: ChatState = {
   changeKey: 0,
   chats: {},
-  transcripts: [],
+  transcripts: []
 };
 
-export function chat(state: ChatState = DEFAULT_STATE, action: ChatAction | EditorAction): ChatState {
+export function chat(
+  state: ChatState = DEFAULT_STATE,
+  action: ChatAction | EditorAction
+): ChatState {
   switch (action.type) {
     case ChatActions.addTranscript: {
       const { payload } = action;
@@ -89,7 +92,7 @@ export function chat(state: ChatState = DEFAULT_STATE, action: ChatAction | Edit
       // can't use the JSON.parse(JSON.stringify())
       // trick with chats because Subscribers are circular
       if (payload.documentId in state.chats) {
-        let copy = { ...state };
+        const copy = { ...state };
         copy.changeKey += 1;
         delete copy.chats[payload.documentId];
         state = { ...copy };
@@ -126,10 +129,7 @@ export function chat(state: ChatState = DEFAULT_STATE, action: ChatAction | Edit
           ...document,
           log: {
             ...document.log,
-            entries: [
-              ...document.log.entries,
-              payload.entry
-            ]
+            entries: [...document.log.entries, payload.entry]
           }
         };
         state = {
@@ -191,7 +191,7 @@ export function chat(state: ChatState = DEFAULT_STATE, action: ChatAction | Edit
 
     case ChatActions.updateChat: {
       const { payload } = action;
-      const { documentId = '', updatedValues = {} } = payload;
+      const { documentId = "", updatedValues = {} } = payload;
       let document = state.chats[documentId];
       if (document) {
         document = {
@@ -223,8 +223,11 @@ export function chat(state: ChatState = DEFAULT_STATE, action: ChatAction | Edit
   return state;
 }
 
-function setTranscriptsState(transcripts: string[], state: ChatState): ChatState {
-  let newState = Object.assign({}, state);
+function setTranscriptsState(
+  transcripts: string[],
+  state: ChatState
+): ChatState {
+  const newState = {...state};
 
   newState.transcripts = transcripts;
   newState.changeKey = state.changeKey + 1;

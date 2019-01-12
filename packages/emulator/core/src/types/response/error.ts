@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import Error from '../error';
+import Error from "../error";
 
 interface ErrorResponse {
   error: Error;

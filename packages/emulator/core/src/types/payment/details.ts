@@ -31,9 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import PaymentDetailsModifier from './detailsModifier';
-import PaymentItem from './item';
-import PaymentShippingOption from './shippingOption';
+import PaymentDetailsModifier from "./detailsModifier";
+import PaymentItem from "./item";
+import PaymentShippingOption from "./shippingOption";
 
 interface PaymentDetails {
   total: PaymentItem;

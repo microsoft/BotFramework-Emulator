@@ -31,7 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { BotConfigWithPath, BotConfigWithPathImpl, uniqueId } from '@bfemulator/sdk-shared';
+import { newNotification, SharedConstants } from "@bfemulator/app-shared";
+import {
+  BotConfigWithPath,
+  BotConfigWithPathImpl,
+  uniqueId
+} from "@bfemulator/sdk-shared";
 import {
   Checkbox,
   DefaultButton,
@@ -40,20 +45,21 @@ import {
   PrimaryButton,
   Row,
   RowAlignment,
-  TextField,
-} from '@bfemulator/ui-react';
-import { EndpointService } from 'botframework-config/lib/models';
-import { IEndpointService, ServiceTypes } from 'botframework-config/lib/schema';
-import { ChangeEvent } from 'react';
-import * as React from 'react';
-import * as styles from './botCreationDialog.scss';
-import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
-import { ActiveBotHelper } from '../../helpers/activeBotHelper';
-import { DialogService } from '../service';
-import { newNotification, SharedConstants } from '@bfemulator/app-shared';
-import { store } from '../../../data/store';
-import { beginAdd } from '../../../data/action/notificationActions';
-import { generateBotSecret } from '../../../utils';
+  TextField
+} from "@bfemulator/ui-react";
+import { EndpointService } from "botframework-config/lib/models";
+import { IEndpointService, ServiceTypes } from "botframework-config/lib/schema";
+import { ChangeEvent } from "react";
+import * as React from "react";
+
+import { beginAdd } from "../../../data/action/notificationActions";
+import { store } from "../../../data/store";
+import { CommandServiceImpl } from "../../../platform/commands/commandServiceImpl";
+import { generateBotSecret } from "../../../utils";
+import { ActiveBotHelper } from "../../helpers/activeBotHelper";
+import { DialogService } from "../service";
+
+import * as styles from "./botCreationDialog.scss";
 
 export interface BotCreationDialogState {
   bot: BotConfigWithPath;
@@ -63,138 +69,153 @@ export interface BotCreationDialogState {
   revealSecret: boolean;
 }
 
-export class BotCreationDialog extends React.Component<{}, BotCreationDialogState> {
+export class BotCreationDialog extends React.Component<
+  {},
+  BotCreationDialogState
+> {
   constructor(props: {}, context: BotCreationDialogState) {
     super(props, context);
 
     this.state = {
       bot: BotConfigWithPathImpl.fromJSON({
-        name: '',
-        description: '',
-        padlock: '',
+        name: "",
+        description: "",
+        padlock: "",
         services: [],
-        path: ''
+        path: ""
       }),
       endpoint: new EndpointService({
         type: ServiceTypes.Endpoint,
-        name: '',
+        name: "",
         id: uniqueId(),
-        appId: '',
-        appPassword: '',
-        endpoint: ''
+        appId: "",
+        appPassword: "",
+        endpoint: ""
       }),
-      secret: '',
+      secret: "",
       encryptKey: false,
       revealSecret: true
     };
   }
 
-  render(): JSX.Element {
+  public render(): JSX.Element {
     const { secret, bot, endpoint, encryptKey, revealSecret } = this.state;
     const secretCriteria = encryptKey ? secret : true;
 
-    const requiredFieldsCompleted = bot
-      && endpoint.endpoint
-      && bot.name
-      && secretCriteria;
+    const requiredFieldsCompleted =
+      bot && endpoint.endpoint && bot.name && secretCriteria;
 
     const endpointWarning = this.validateEndpoint(endpoint.endpoint);
-    const endpointPlaceholder = 'Your bot\'s endpoint (ex: http://localhost:3978/api/messages)';
+    const endpointPlaceholder =
+      "Your bot's endpoint (ex: http://localhost:3978/api/messages)";
 
     // TODO - localization
     return (
-      <Dialog className={ styles.main } title="New bot configuration" cancel={ this.onCancel } maxWidth={ 648 }>
-        <div className={ styles.botCreateForm }>
+      <Dialog
+        className={styles.main}
+        title="New bot configuration"
+        cancel={this.onCancel}
+        maxWidth={648}
+      >
+        <div className={styles.botCreateForm}>
           <TextField
-            value={ this.state.bot.name }
+            value={this.state.bot.name}
             data-prop="name"
-            onChange={ this.onInputChange }
-            label={ 'Bot name' }
-            required={ true }/>
+            onChange={this.onInputChange}
+            label={"Bot name"}
+            required={true}
+          />
           <TextField
-            onChange={ this.onInputChange }
+            onChange={this.onInputChange}
             data-prop="endpoint"
-            placeholder={ endpointPlaceholder } label={ 'Endpoint URL' }
-            required={ true }
-            value={ this.state.endpoint.endpoint }/>
-          { endpointWarning && <span className={ styles.endpointWarning }>{ endpointWarning }</span> }
-          <Row className={ styles.multiInputRow }>
+            placeholder={endpointPlaceholder}
+            label={"Endpoint URL"}
+            required={true}
+            value={this.state.endpoint.endpoint}
+          />
+          {endpointWarning && (
+            <span className={styles.endpointWarning}>{endpointWarning}</span>
+          )}
+          <Row className={styles.multiInputRow}>
             <TextField
-              inputContainerClassName={ styles.inputContainer }
+              inputContainerClassName={styles.inputContainer}
               data-prop="appId"
               label="Microsoft App ID"
-              onChange={ this.onInputChange }
+              onChange={this.onInputChange}
               placeholder="Optional"
-              value={ endpoint.appId }/>
+              value={endpoint.appId}
+            />
             <TextField
-              inputContainerClassName={ styles.inputContainer }
+              inputContainerClassName={styles.inputContainer}
               label="Microsoft App password"
               data-prop="appPassword"
-              onChange={ this.onInputChange }
+              onChange={this.onInputChange}
               placeholder="Optional"
               type="password"
-              value={ endpoint.appPassword }/>
+              value={endpoint.appPassword}
+            />
           </Row>
           <Checkbox
             label="Azure for US Government"
-            onChange={ this.onChannelServiceChange }
+            onChange={this.onChannelServiceChange}
           />
-          <Row align={ RowAlignment.Bottom }>
+          <Row align={RowAlignment.Bottom}>
             <Checkbox
-              className={ styles.encryptKeyCheckBox }
+              className={styles.encryptKeyCheckBox}
               label="Encrypt keys stored in your bot configuration."
-              checked={ encryptKey }
-              onChange={ this.onEncryptKeyChange }/>
+              checked={encryptKey}
+              onChange={this.onEncryptKeyChange}
+            />
             <a href="https://aka.ms/bot-framework-bot-file-encryption">
               &nbsp;Learn more.
             </a>
           </Row>
 
           <TextField
-            inputContainerClassName={ styles.key }
+            inputContainerClassName={styles.key}
             label="Secret "
-            value={ secret }
+            value={secret}
             placeholder="Your keys are not encrypted"
-            disabled={ true }
+            disabled={true}
             id="key-input"
-            type={ revealSecret ? 'text' : 'password' }/>
-          <ul className={ styles.actionsList }>
+            type={revealSecret ? "text" : "password"}
+          />
+          <ul className={styles.actionsList}>
             <li>
               <a
-                className={ !encryptKey ? styles.disabledAction : '' }
+                className={!encryptKey ? styles.disabledAction : ""}
                 href="javascript:void(0);"
-                onClick={ this.onRevealSecretClick }>
-                { revealSecret ? 'Hide' : 'Show' }
+                onClick={this.onRevealSecretClick}
+              >
+                {revealSecret ? "Hide" : "Show"}
               </a>
             </li>
             <li>
               <a
-                className={ !encryptKey ? styles.disabledAction : '' }
+                className={!encryptKey ? styles.disabledAction : ""}
                 href="javascript:void(0);"
-                onClick={ this.onCopyClick }>
+                onClick={this.onCopyClick}
+              >
                 Copy
               </a>
             </li>
-            { /* <li>
+            {/* <li>
               <a
                 className={ !encryptKey ? styles.disabledAction : '' }
                 href="javascript:void(0);"
                 onClick={ this.onResetClick }>
                 Generate new secret
               </a>
-            </li> */ }
+            </li> */}
           </ul>
         </div>
 
         <DialogFooter>
-          <DefaultButton
-            text="Cancel"
-            onClick={ this.onCancel }
-          />
+          <DefaultButton text="Cancel" onClick={this.onCancel} />
           <PrimaryButton
             text="Save and connect"
-            onClick={ this.onSaveAndConnect }
-            disabled={ !requiredFieldsCompleted }
+            onClick={this.onSaveAndConnect}
+            disabled={!requiredFieldsCompleted}
           />
         </DialogFooter>
       </Dialog>
@@ -204,50 +225,59 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
   private onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
     const { prop } = event.target.dataset;
-    if (prop === 'name') {
+    if (prop === "name") {
       // attach to bot
       this.setState({ bot: { ...this.state.bot, name: value } });
     } else {
-      this.setState({ endpoint: { ...this.state.endpoint, ...{ [prop]: value } } } as any);
+      this.setState({
+        endpoint: { ...this.state.endpoint, ...{ [prop]: value } }
+      } as any);
     }
-  }
+  };
 
   private onChannelServiceChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { checked } = event.target;
-    const channelService = checked ? 'https://botframework.azure.us' : '';
-    this.setState({ endpoint: { ...this.state.endpoint, ...{ channelService: channelService } } } as any);
-  }
+    const channelService = checked ? "https://botframework.azure.us" : "";
+    this.setState({
+      endpoint: {
+        ...this.state.endpoint,
+        ...{ channelService }
+      }
+    } as any);
+  };
 
   private onCancel = () => {
     DialogService.hideDialog();
-  }
+  };
 
   private onEncryptKeyChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { checked } = event.target;
-    const secret = checked ? generateBotSecret() : '';
+    const secret = checked ? generateBotSecret() : "";
     this.setState({ encryptKey: checked, secret, revealSecret: true });
-  }
+  };
 
   private onRevealSecretClick = () => {
     if (!this.state.encryptKey) {
       return null;
     }
     this.setState({ revealSecret: !this.state.revealSecret });
-  }
+  };
 
   private onCopyClick = (): void => {
     if (!this.state.encryptKey) {
       return null;
     }
-    const input: HTMLInputElement = window.document.getElementById('key-input') as HTMLInputElement;
-    input.removeAttribute('disabled');
+    const input: HTMLInputElement = window.document.getElementById(
+      "key-input"
+    ) as HTMLInputElement;
+    input.removeAttribute("disabled");
     const { type } = input;
-    input.type = 'text';
+    input.type = "text";
     input.select();
-    window.document.execCommand('copy');
+    window.document.execCommand("copy");
     input.type = type;
-    input.setAttribute('disabled', '');
-  }
+    input.setAttribute("disabled", "");
+  };
 
   // TODO: Re-enable ability to re-generate secret after 4.1
   // See 'https://github.com/Microsoft/BotFramework-Emulator/issues/964' for more information
@@ -268,12 +298,12 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
         await this.performCreate(path);
       } else {
         // user cancelled out of the save dialog
-        console.log('Bot creation save dialog was cancelled.');
+        console.log("Bot creation save dialog was cancelled.");
       }
     } catch (e) {
-      console.error('Error while trying to select a bot file location: ', e);
+      console.error("Error while trying to select a bot file location: ", e);
     }
-  }
+  };
 
   private performCreate = async (botPath: string) => {
     const endpoint: IEndpointService = {
@@ -284,7 +314,8 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
       appPassword: this.state.endpoint.appPassword.trim(),
       endpoint: this.state.endpoint.endpoint.trim()
     };
-    (endpoint as any).channelService = (this.state.endpoint as any).channelService;
+    (endpoint as any).channelService = (this.state
+      .endpoint as any).channelService;
 
     const bot: BotConfigWithPath = BotConfigWithPathImpl.fromJSON({
       ...this.state.bot,
@@ -294,7 +325,8 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
       path: botPath.trim()
     });
 
-    const secret = this.state.encryptKey && this.state.secret ? this.state.secret : null;
+    const secret =
+      this.state.encryptKey && this.state.secret ? this.state.secret : null;
 
     try {
       await ActiveBotHelper.confirmAndCreateBot(bot, secret);
@@ -305,32 +337,40 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
     } finally {
       DialogService.hideDialog();
     }
-  }
+  };
 
   private showBotSaveDialog = async (): Promise<any> => {
     const { Commands } = SharedConstants;
     // get a safe bot file name
-    const botFileName = await CommandServiceImpl.remoteCall(Commands.File.SanitizeString, this.state.bot.name);
+    const botFileName = await CommandServiceImpl.remoteCall(
+      Commands.File.SanitizeString,
+      this.state.bot.name
+    );
     // TODO - Localization
     const dialogOptions = {
       filters: [
         {
-          name: 'Bot Files',
-          extensions: ['bot']
+          name: "Bot Files",
+          extensions: ["bot"]
         }
       ],
       defaultPath: botFileName,
       showsTagField: false,
-      title: 'Save as',
-      buttonLabel: 'Save'
+      title: "Save as",
+      buttonLabel: "Save"
     };
 
-    return CommandServiceImpl.remoteCall(Commands.Electron.ShowSaveDialog, dialogOptions);
-  }
+    return CommandServiceImpl.remoteCall(
+      Commands.Electron.ShowSaveDialog,
+      dialogOptions
+    );
+  };
 
   /** Checks the endpoint to see if it has the correct route syntax at the end (/api/messages) */
   private validateEndpoint(endpoint: string): string {
     const controllerRegEx = /api\/messages\/?$/;
-    return controllerRegEx.test(endpoint) ? '' : `Please include route if necessary: "/api/messages"`;
+    return controllerRegEx.test(endpoint)
+      ? ""
+      : `Please include route if necessary: "/api/messages"`;
   }
 }

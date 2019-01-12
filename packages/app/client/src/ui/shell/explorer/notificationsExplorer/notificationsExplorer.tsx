@@ -31,55 +31,69 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from 'react';
-import { connect } from 'react-redux';
-import { RootState } from '../../../../data/store';
-import { Notification } from './notification';
-import { NotificationManager } from '../../../../notificationManager';
-import * as NotificationActions from '../../../../data/action/notificationActions';
-import * as styles from './notificationsExplorer.scss';
+import * as React from "react";
+import { connect } from "react-redux";
+
+import * as NotificationActions from "../../../../data/action/notificationActions";
+import { RootState } from "../../../../data/store";
+import { NotificationManager } from "../../../../notificationManager";
+
+import { Notification } from "./notification";
+import * as styles from "./notificationsExplorer.scss";
 
 interface NotificationExplorerProps {
   notifications?: string[];
   clearNotifications?: () => void;
 }
 
-class NotificationsExplorerComp extends React.Component<NotificationExplorerProps, {}> {
-
+class NotificationsExplorerComp extends React.Component<
+  NotificationExplorerProps,
+  {}
+> {
   constructor(props: NotificationExplorerProps) {
     super(props);
   }
 
-  render() {
+  public render() {
     const { notifications = [] } = this.props;
-    const clearAllButton = notifications.length ? this.renderClearAllButton() : null;
+    const clearAllButton = notifications.length
+      ? this.renderClearAllButton()
+      : null;
 
     // max-height: 100% of explorer pane - 20px (Clear all button height) - 40px (Explorer title height)
     return (
       <>
-        { clearAllButton }
-        <ul className={ styles.notificationsExplorer }>
-          {
-            notifications.length ?
+        {clearAllButton}
+        <ul className={styles.notificationsExplorer}>
+          {notifications.length ? (
             notifications.map(n => {
               const notification = NotificationManager.get(n);
-              return <Notification key={ notification.id } notification={ notification } />;
+              return (
+                <Notification
+                  key={notification.id}
+                  notification={notification}
+                />
+              );
             })
-            :
-            <p className={ styles.noNotificationsMsg }>No new notifications.</p>
-          }
+          ) : (
+            <p className={styles.noNotificationsMsg}>No new notifications.</p>
+          )}
         </ul>
       </>
     );
   }
 
   private renderClearAllButton = (): JSX.Element => {
-    return <a className={ styles.clearAllNotificationsBtn }
-      onClick={() => this.props.clearNotifications()}
-      href="javascript:void(0);">
-      Clear all
-            </a>;
-  }
+    return (
+      <a
+        className={styles.clearAllNotificationsBtn}
+        onClick={() => this.props.clearNotifications()}
+        href="javascript:void(0);"
+      >
+        Clear all
+      </a>
+    );
+  };
 }
 
 const mapStateToProps = (state: RootState): NotificationExplorerProps => {
@@ -90,8 +104,13 @@ const mapStateToProps = (state: RootState): NotificationExplorerProps => {
 
 const mapDispatchToProps = (dispatch): NotificationExplorerProps => {
   return {
-    clearNotifications: () => { dispatch(NotificationActions.beginClear()); }
+    clearNotifications: () => {
+      dispatch(NotificationActions.beginClear());
+    }
   };
 };
 
-export const NotificationsExplorer = connect(mapStateToProps, mapDispatchToProps)(NotificationsExplorerComp);
+export const NotificationsExplorer = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(NotificationsExplorerComp);
