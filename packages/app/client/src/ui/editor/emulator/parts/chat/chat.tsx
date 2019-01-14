@@ -40,22 +40,9 @@ import memoize from '../../../../helpers/memoize';
 import * as styles from './chat.scss';
 import { EmulatorMode } from '../../emulator';
 import ActivityWrapper from './activityWrapper';
+import webChatStyleOptions from './webChatTheme';
 
 // const CognitiveServices = require('botframework-webchat/CognitiveServices');
-
-const webChatStyleOptions = {
-  backgroundColor: 'var(--webchat-bg)',
-
-  bubbleBackground: 'var(--webchat-bubble-bg)',
-  bubbleFromUserBackground: 'var(--webchat-user-bubble-bg)',
-  bubbleFromUserTextColor: 'var(--webchat-user-bubble-text)',
-  bubbleTextColor: 'var(--webchat-bubble-text)',
-
-  microphoneButtonColorOnDictate: 'var(--webchat-buttons-dictate)',
-  sendBoxButtonColor: 'var(--webchat-buttons-color)',
-  sendBoxButtonColorOnFocus: 'var(--webchat-buttons-color-focus)',
-  sendBoxButtonColorOnHover: 'var(--webchat-buttons-color-focus)',
-};
 
 export interface ChatProps {
   document: any;

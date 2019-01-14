@@ -10,6 +10,11 @@
     box-sizing: unset;
   }
 
+  // the user-agent stylesheet sets background color to white.
+  input {
+    background-color: transparent;
+  }
+
   & > * {
     width: 100%;
   }

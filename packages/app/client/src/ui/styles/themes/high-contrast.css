@@ -22,20 +22,38 @@ html {
   --error-outline: #BE1100;
 
   /* webchat overridden colors */
+  /* activity bubbles */
   --webchat-bg: var(--tab-active-tab-bg);
-  --webchat-sendbox-bg: var(--tab-active-tab-bg);
-  --webchat-sendbox-text: var(--neutral-1);
   --webchat-bubble-bg: var(--neutral-15);
   --webchat-bubble-text: var(--neutral-1);
   --webchat-bubble-text-weight: 600;
   --webchat-user-bubble-bg: var(--neutral-1);
   --webchat-user-bubble-text: var(--neutral-15);
   --webchat-selected-activity-bg: #B89500;
-  --webchat-selected-actvity-border: #72C3DF;
+  --webchat-selected-actvity-border: #F38518;
   --webchat-selected-activity-text: var(--neutral-1);
+  --webchat-timestamp-text: var(--neutral-1);
+
+  /* sendbox */
+  --webchat-sendbox-bg: var(--tab-active-tab-bg);
+  --webchat-sendbox-text: var(--neutral-1);
   --webchat-buttons-color: var(--neutral-1);
   --webchat-buttons-color-focus: var(--neutral-4);
   --webchat-buttons-dictate: #BE1100;
+
+  /* transcript overlays */
+  --webchat-transcript-overlay-bg: rgba(0, 0, 0, .6);
+  --webchat-transcript-overlay-bg-focus: rgba(0, 0, 0, .8);
+  --webchat-transcript-overlay-text: var(--neutral-1);
+  --webchat-transcript-overlay-text-focus: var(--neutral-1);
+
+  /* suggested actions */
+  --webchat-sa-bg: var(--webchat-bubble-bg);
+  --webchat-sa-border: solid 1px var(--neutral-4);
+  --webchat-sa-text: #3794FF;
+  --webchat-sa-disabled-bg: var(--neutral-1);
+  --webchat-sa-disabled-border: solid 1px var(--neutral-4);
+  --webchat-sa-disabled-text: var(--webchat-bubble-text);
 
   /* Log panel custom colors */
   --log-panel-timestamp: #47B07F;
