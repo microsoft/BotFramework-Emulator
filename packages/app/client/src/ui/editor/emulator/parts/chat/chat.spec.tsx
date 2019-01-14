@@ -115,6 +115,34 @@ describe('<Chat />', () => {
       expect(activityWrapper.text()).toEqual('a child node');
     });
   });
+
+  describe('speech services', () => {
+    it('displays a message when fetching the speech token', () => {
+      (CommandServiceImpl as any).remoteCall = jest.fn();
+      const component = render({
+        endpoint: {
+          appId: 'some-app-id',
+          appPassword: 'some-password'
+        }
+      });
+
+      expect(component.text()).toEqual('Connecting...');
+    });
+
+    it('passes a web speech ponyfill factory to web chat', async () => {
+      (CommandServiceImpl as any).remoteCall = () => 'speech-token';
+
+      const component = render({
+        endpoint: {
+          appId: 'some-app-id',
+          appPassword: 'some-password'
+        }
+      });
+
+      await new Promise((resolve) => setTimeout(resolve, 250));
+      expect(component.find(ReactWebChat).prop('webSpeechPonyfillFactory')).toBeTruthy();
+    });
+  });
 });
 
 describe('getSpeechToken', () => {

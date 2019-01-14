@@ -34,7 +34,7 @@ import * as React from 'react';
 import { Component } from 'react';
 import { Activity } from '@bfemulator/sdk-shared';
 import { IEndpointService } from 'botframework-config/lib/schema';
-import ReactWebChat from 'botframework-webchat';
+import ReactWebChat, { createCognitiveServicesBingSpeechPonyfillFactory } from 'botframework-webchat';
 import { CommandServiceImpl } from '../../../../../platform/commands/commandServiceImpl';
 import * as styles from './chat.scss';
 import { EmulatorMode } from '../../emulator';
@@ -52,11 +52,23 @@ export interface ChatProps {
   updateSelectedActivity: (activity: Activity) => void;
 }
 
+interface ChatState {
+  waitForSpeechToken: boolean;
+  webSpeechPonyfillFactory: any;
+}
+
 function isCardSelected(selectedActivity: Activity | null, activity: Activity): boolean {
   return Boolean(selectedActivity && activity.id && selectedActivity.id === activity.id);
 }
 
-export async function getSpeechToken(endpoint: IEndpointService, refresh: boolean): Promise<string | void> {
+function isSpeechEnabled(endpoint: IEndpointService | null): boolean {
+  return Boolean(endpoint && endpoint.appId && endpoint.appPassword);
+}
+
+export async function getSpeechToken(
+  endpoint: IEndpointService,
+  refresh: boolean = false
+): Promise<string | void> {
   if (!endpoint) {
     console.warn('No endpoint for this chat, cannot fetch speech token.');
     return;
@@ -71,9 +83,42 @@ export async function getSpeechToken(endpoint: IEndpointService, refresh: boolea
   }
 }
 
-export class Chat extends Component<ChatProps> {
-  render() {
+export class Chat extends Component<ChatProps, ChatState> {
+  constructor(props: ChatProps, context: {}) {
+    super(props, context);
+
+    this.state = {
+      waitForSpeechToken: isSpeechEnabled(props.endpoint),
+      webSpeechPonyfillFactory: null
+    };
+  }
+
+  public async componentDidMount() {
+    if (this.state.waitForSpeechToken) {
+      const speechToken = await getSpeechToken(this.props.endpoint);
+
+      if (speechToken) {
+        const webSpeechPonyfillFactory = await createCognitiveServicesBingSpeechPonyfillFactory({
+          authorizationToken: speechToken
+        });
+
+        this.setState({ webSpeechPonyfillFactory, waitForSpeechToken: false });
+      } else {
+        this.setState({ waitForSpeechToken: false });
+      }
+    }
+  }
+
+  public render() {
     const { currentUserId, document, locale } = this.props;
+
+    if (this.state.waitForSpeechToken) {
+      return (
+        <div className={ styles.disconnected }>
+          Connecting...
+        </div>
+      );
+    }
 
     if (document.directLine) {
       const bot = {
@@ -91,16 +136,17 @@ export class Chat extends Component<ChatProps> {
             locale={ locale }
             styleOptions={ webChatStyleOptions }
             userId={ currentUserId }
+            webSpeechPonyfillFactory={ this.state.webSpeechPonyfillFactory }
           />
         </div>
       );
-    } else {
-      return (
-        <div className={ styles.disconnected }>
-          Not Connected
-        </div>
-      );
     }
+
+    return (
+      <div className={ styles.disconnected }>
+        Not Connected
+      </div>
+    );
   }
 
   private createActivityMiddleware = () => next => card => children => (
