@@ -36,13 +36,10 @@ import { Activity } from '@bfemulator/sdk-shared';
 import { IEndpointService } from 'botframework-config/lib/schema';
 import ReactWebChat from 'botframework-webchat';
 import { CommandServiceImpl } from '../../../../../platform/commands/commandServiceImpl';
-import memoize from '../../../../helpers/memoize';
 import * as styles from './chat.scss';
 import { EmulatorMode } from '../../emulator';
 import ActivityWrapper from './activityWrapper';
 import webChatStyleOptions from './webChatTheme';
-
-// const CognitiveServices = require('botframework-webchat/CognitiveServices');
 
 export interface ChatProps {
   document: any;
@@ -55,32 +52,8 @@ export interface ChatProps {
   updateSelectedActivity: (activity: Activity) => void;
 }
 
-function createWebChatProps(
-  botId: string,
-  userId: string,
-  directLine: any,
-  endpoint: IEndpointService
-): any {
-  return {
-    bot: {
-      id: botId || 'bot',
-      name: 'Bot'
-    },
-    directLine,
-    userID: userId
-    // speechOptions:
-    //   (endpoint && endpoint.appId && endpoint.appPassword) ? {
-    //     speechRecognizer: new CognitiveServices.SpeechRecognizer({
-    //       fetchCallback: getSpeechToken.bind(null, endpoint, false),
-    //       fetchOnExpiryCallback: getSpeechToken.bind(null, endpoint, true)
-    //     }),
-    //     speechSynthesizer: new Speech.BrowserSpeechSynthesizer()
-    //   } : null,
-  };
-}
-
-function isCardSelected(selectedActivity: Activity | null, activity: Activity) {
-  return selectedActivity && activity.id && selectedActivity.id === activity.id;
+function isCardSelected(selectedActivity: Activity | null, activity: Activity): boolean {
+  return Boolean(selectedActivity && activity.id && selectedActivity.id === activity.id);
 }
 
 export async function getSpeechToken(endpoint: IEndpointService, refresh: boolean): Promise<string | void> {
@@ -99,38 +72,25 @@ export async function getSpeechToken(endpoint: IEndpointService, refresh: boolea
 }
 
 export class Chat extends Component<ChatProps> {
-  createWebChatPropsMemoized: (
-    botId: string,
-    userId: string,
-    directLine: any,
-    endpoint: IEndpointService
-  ) => any;
-
-  constructor(props: ChatProps, context: {}) {
-    super(props, context);
-
-    this.createWebChatPropsMemoized = memoize(createWebChatProps);
-  }
-
   render() {
-    const { document, endpoint } = this.props;
+    const { currentUserId, document, locale } = this.props;
 
     if (document.directLine) {
-      const webChatProps = this.createWebChatPropsMemoized(
-        document.botId,
-        document.userId || this.props.currentUserId,
-        document.directLine,
-        endpoint
-      );
+      const bot = {
+        id: document.botId || 'bot',
+        name: 'Bot'
+      };
 
       return (
-        <div id="webchat-container" className={ `${styles.chat} wc-app wc-wide` }>
+        <div className={ `${styles.chat} wc-app wc-wide` }>
           <ReactWebChat
             activityMiddleware={ this.createActivityMiddleware }
+            bot={ bot }
+            directLine={ document.directLine }
             key={ document.directLine.token }
-            locale={ this.props.locale }
+            locale={ locale }
             styleOptions={ webChatStyleOptions }
-            { ...webChatProps }
+            userId={ currentUserId }
           />
         </div>
       );
