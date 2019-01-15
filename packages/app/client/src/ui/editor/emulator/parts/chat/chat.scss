@@ -54,6 +54,10 @@
 
   & li {
     margin-bottom: 0;
+
+    &:last-of-type {
+      margin-bottom: 8px;
+    }
   }
 }
 
@@ -81,7 +85,8 @@
 }
 
 
-.selected-activity :global .bubble {
+.selected-activity :global .bubble,
+.selected-activity :global .ac-container {
   background: var(--webchat-selected-activity-bg);
   color: var(--webchat-selected-activity-text);
 }

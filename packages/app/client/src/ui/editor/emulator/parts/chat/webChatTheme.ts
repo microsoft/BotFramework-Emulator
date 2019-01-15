@@ -19,9 +19,6 @@ export default {
   suggestedActionBackground: 'var(--webchat-sa-bg)',
   suggestedActionBorder: 'var(--webchat-sa-border)',
   suggestedActionTextColor: 'var(--webchat-sa-text)',
-  suggestedActionDisabledBackground: 'var(--webchat-sa-disabled-bg)',
-  suggestedActionDisabledBorder: 'var(--webchat-sa-disabled-border)',
-  suggestedActionDisabledTextColor: 'var(--webchat-sa-disabled-text)',
 
   transcriptOverlayButtonBackground: 'var(--webchat-transcript-overlay-bg)',
   transcriptOverlayButtonBackgroundOnFocus: 'var(--webchat-transcript-overlay-bg-focus)',

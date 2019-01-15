@@ -51,9 +51,6 @@ html {
   --webchat-sa-bg: var(--webchat-bubble-bg);
   --webchat-sa-border: none;
   --webchat-sa-text: #3794FF;
-  --webchat-sa-disabled-bg: var(--neutral-1);
-  --webchat-sa-disabled-border: solid 1px var(--neutral-4);
-  --webchat-sa-disabled-text: var(--webchat-bubble-text);
 
   /* Log panel custom colors */
   --log-panel-timestamp: #47B07F;

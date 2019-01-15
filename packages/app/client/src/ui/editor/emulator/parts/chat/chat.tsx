@@ -110,7 +110,7 @@ export class Chat extends Component<ChatProps, ChatState> {
   }
 
   public render() {
-    const { currentUserId, document, locale } = this.props;
+    const { currentUserId, document, locale, mode } = this.props;
 
     if (this.state.waitForSpeechToken) {
       return (
@@ -125,6 +125,7 @@ export class Chat extends Component<ChatProps, ChatState> {
         id: document.botId || 'bot',
         name: 'Bot'
       };
+      const isDisabled = mode === 'transcript';
 
       return (
         <div className={ `${styles.chat} wc-app wc-wide` }>
@@ -132,9 +133,10 @@ export class Chat extends Component<ChatProps, ChatState> {
             activityMiddleware={ this.createActivityMiddleware }
             bot={ bot }
             directLine={ document.directLine }
+            disabled={ isDisabled }
             key={ document.directLine.token }
             locale={ locale }
-            styleOptions={ webChatStyleOptions }
+            styleOptions={ { ...webChatStyleOptions, hideSendBox: isDisabled } }
             userId={ currentUserId }
             webSpeechPonyfillFactory={ this.state.webSpeechPonyfillFactory }
           />
