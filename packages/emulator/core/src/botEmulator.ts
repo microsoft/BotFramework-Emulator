@@ -32,6 +32,7 @@
 //
 
 import * as Restify from "restify";
+import fetch from 'node-fetch';
 
 import registerAttachmentRoutes from "./attachments/registerRoutes";
 import registerBotStateRoutes from "./botState/registerRoutes";
