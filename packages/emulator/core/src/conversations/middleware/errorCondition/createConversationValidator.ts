@@ -14,11 +14,6 @@ class CreateConversationError {
     ErrorCodes.BadSyntax,
     'The Emulator only supports creating conversation with 1 member.');
 
-  public static WRONG_USER = new CreateConversationError(
-    ErrorCodes.BadSyntax,
-    'The Emulator only supports creating conversation with the current user.'
-  );
-
   public static BOT_MISSING = new CreateConversationError(
     ErrorCodes.MissingProperty,
     'The "Bot" parameter is required'
@@ -49,7 +44,7 @@ class CreateConversationError {
 
 Object.freeze(CreateConversationError);
 
-function validateCreateConversationRequest(params: ConversationParameters, endpoint: BotEndpoint, userId: string)
+function validateCreateConversationRequest(params: ConversationParameters, endpoint: BotEndpoint)
   : CreateConversationError {
   if (!params.members) {
     return CreateConversationError.MEMBERS_MISSING;
@@ -59,17 +54,9 @@ function validateCreateConversationRequest(params: ConversationParameters, endpo
     return CreateConversationError.TOO_MANY_MEMBERS;
   }
 
-  if ('' + params.members[0].id !== '' + userId) {
-    return CreateConversationError.WRONG_USER;
-  }
-
   if (!params.bot) {
     return CreateConversationError.BOT_MISSING;
 
-  }
-
-  if (params.bot.id !== endpoint.botId) {
-    return CreateConversationError.BOT_ID_MISMATCH;
   }
 
   if (!endpoint) {
@@ -78,3 +65,5 @@ function validateCreateConversationRequest(params: ConversationParameters, endpo
 }
 
 export { CreateConversationError, validateCreateConversationRequest };
+
+// tslint:disable-next-line:no-consecutive-blank-lines

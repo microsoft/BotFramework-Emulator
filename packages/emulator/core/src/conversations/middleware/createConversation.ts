@@ -33,7 +33,6 @@
 
 import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
-
 import BotEmulator from '../../botEmulator';
 import BotEndpoint from '../../facility/botEndpoint';
 import Conversation from '../../facility/conversation';
@@ -49,8 +48,7 @@ export default function createConversation(botEmulator: BotEmulator) {
     const conversationParameters = req.body as ConversationParameters;
     const error = validateCreateConversationRequest(
       conversationParameters,
-      botEndpoint,
-      botEmulator.facilities.users.currentUserId);
+      botEndpoint);
 
     if (error) {
       sendErrorResponse(req, res, next, error.toAPIException());
