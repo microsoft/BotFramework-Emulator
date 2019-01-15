@@ -92,11 +92,13 @@
 }
 
 .disconnected {
-  padding: 16px;
-  background-color: white;
-  height: 100%;
-  display: flex;
   align-items: flex-start;
+  background-color: var(--webchat-bg);
+  color: var(--webchat-bubble-text);
+  display: flex;
+  height: 100%;
+  padding: 16px;
+
   & .startButton {
     flex-grow: 1;
     flex-shrink: 1;

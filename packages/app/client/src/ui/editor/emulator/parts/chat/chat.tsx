@@ -128,7 +128,7 @@ export class Chat extends Component<ChatProps, ChatState> {
       const isDisabled = mode === 'transcript';
 
       return (
-        <div className={ `${styles.chat} wc-app wc-wide` }>
+        <div className={ styles.chat }>
           <ReactWebChat
             activityMiddleware={ this.createActivityMiddleware }
             bot={ bot }
