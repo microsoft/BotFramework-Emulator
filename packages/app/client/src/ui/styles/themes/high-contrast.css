@@ -42,10 +42,10 @@ html {
   --webchat-buttons-dictate: #BE1100;
 
   /* transcript overlays */
-  --webchat-transcript-overlay-bg: rgba(0, 0, 0, .6);
-  --webchat-transcript-overlay-bg-focus: rgba(0, 0, 0, .8);
-  --webchat-transcript-overlay-text: var(--neutral-1);
-  --webchat-transcript-overlay-text-focus: var(--neutral-1);
+  --webchat-transcript-overlay-bg: var(--neutral-1);
+  --webchat-transcript-overlay-bg-focus: var(--neutral-5);
+  --webchat-transcript-overlay-text: var(--neutral-15);
+  --webchat-transcript-overlay-text-focus: var(--neutral-15);
 
   /* suggested actions */
   --webchat-sa-bg: var(--webchat-bubble-bg);
