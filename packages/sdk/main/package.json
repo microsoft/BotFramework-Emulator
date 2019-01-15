@@ -5,7 +5,8 @@
   "main": "built/index.js",
   "types": "built/index.d.ts",
   "scripts": {
-    "build": "npm run lint && npm run clean && babel ./src --out-dir built --extensions \".ts,.tsx\" --ignore \"**/*.spec.ts\"",
+    "build": "npm run lint && npm run clean && npm run build:prod && tsc --emitDeclarationOnly --declaration",
+    "build:prod": "babel ./src --out-dir built --extensions \".ts,.tsx\" --ignore \"**/*.spec.ts\"",
     "clean": "rimraf ./built",
     "lint": " tslint --project tsconfig.json",
     "prepare": "npm run clean",

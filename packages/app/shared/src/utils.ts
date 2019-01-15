@@ -48,7 +48,8 @@ export function isObject(item: any): boolean {
   );
 }
 
-export function mergeDeep<T, R>(target: T, source: R): T & R {
+export function mergeDeep<T extends {}, R extends {}>(target: T, source: R): T & R {
+  // @ts-ignore https://github.com/Microsoft/TypeScript/issues/26412
   const output = {...{} as T & R, ...target};
   // if (isObject(target) && isObject(source)) {
   {

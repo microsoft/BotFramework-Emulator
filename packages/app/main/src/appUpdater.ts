@@ -44,7 +44,7 @@ export enum UpdateStatus {
   UpdateReadyToInstall
 }
 
-export const AppUpdater = new class extends EventEmitter {
+class EmulatorUpdater extends EventEmitter {
   private _userInitiated: boolean;
   private _autoDownload: boolean;
   private _status: UpdateStatus = UpdateStatus.Idle;
@@ -187,4 +187,6 @@ export const AppUpdater = new class extends EventEmitter {
       );
     }
   }
-}();
+}
+
+export const AppUpdater = new EmulatorUpdater();

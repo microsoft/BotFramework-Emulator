@@ -44,7 +44,7 @@ export class TextField extends Component<TextFieldProps, {}> {
         className={ `${ className } ${ styles.label }` }>{ label }</label> : null;
   }
 
-  protected get errorNode(): ReactNode {
+  protected get errorNode(): React.ReactNode {
     const { errorMessage } = this.props;
     return errorMessage ? <sub className={ styles.sub }>{ errorMessage }</sub> : null;
   }

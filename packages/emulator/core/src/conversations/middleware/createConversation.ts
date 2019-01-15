@@ -89,7 +89,7 @@ function getConversation(params: ConversationParameters, emulator: BotEmulator, 
   return conversation;
 }
 
-function getActivityId(params: ConversationParameters, endpoint: BotEndpoint, conversation: Conversation): string {
+function getActivityId(params: ConversationParameters, endpoint: BotEndpoint, conversation: Conversation): string | null {
   const { activity, members } = params;
   if (activity) {
 
@@ -102,4 +102,6 @@ function getActivityId(params: ConversationParameters, endpoint: BotEndpoint, co
 
     return response.id;
   }
+
+  return null;
 }

@@ -88,7 +88,7 @@ class EmulatorSettingsImpl implements EmulatorSettings {
   }
 }
 
-export const SettingsService = new class extends DisposableImpl {
+class EmulatorSettingsService extends DisposableImpl {
   private _emulator: EmulatorSettingsImpl;
 
   get emulator(): EmulatorSettingsImpl {
@@ -103,4 +103,6 @@ export const SettingsService = new class extends DisposableImpl {
     super();
     this._emulator = new EmulatorSettingsImpl();
   }
-}();
+}
+
+export const SettingsService = new EmulatorSettingsService();

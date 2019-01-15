@@ -21,8 +21,8 @@
     "skipLibCheck": true,
     "declaration": true,
     "paths": {
-      "@bfemulator/sdk-shared": ["./packages/sdk/shared"],
-      "@bfemulator/main": ["./packages/sdk/main"]
+      "@bfemulator/sdk-shared": ["./packages/sdk/shared/build/dist"],
+      "@bfemulator/sdk-main": ["./packages/sdk/main/build/dist"]
     },
     "types": ["react", "react-dom", "node", "jest"]
   },

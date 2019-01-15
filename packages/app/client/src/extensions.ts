@@ -173,7 +173,7 @@ export interface ExtensionManager {
 }
 
 // =============================================================================
-export const ExtensionManager = new class implements ExtensionManager {
+class EmulatorExtensionManager implements ExtensionManager {
   private extensions: { [unid: string]: Extension } = {};
 
   public addExtension(config: ExtensionConfig, unid: string) {
@@ -233,4 +233,6 @@ export const ExtensionManager = new class implements ExtensionManager {
       ExtensionManager.removeExtension(location);
     });
   }
-}();
+}
+
+export const ExtensionManager = new EmulatorExtensionManager();

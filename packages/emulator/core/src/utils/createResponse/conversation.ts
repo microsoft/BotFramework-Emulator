@@ -35,7 +35,7 @@ import ConversationResourceResponse from "../../types/response/conversationResou
 
 export default function createConversationResponse(
   id: string,
-  activityId: string
+  activityId: string | null
 ): ConversationResourceResponse {
   const response: ConversationResourceResponse = { id };
 
