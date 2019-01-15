@@ -32,19 +32,19 @@
 //
 
 import { getBotDisplayName, newNotification, SharedConstants } from '@bfemulator/app-shared';
-import { IEndpointService, ServiceTypes } from 'botframework-config/lib/schema';
 import { BotConfigWithPath, mergeEndpoints } from '@bfemulator/sdk-shared';
-import { hasNonGlobalTabs } from '../../data/editorHelpers';
-import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
-import { getActiveBot } from '../../data/botHelpers';
-import * as BotActions from '../../data/action/botActions';
+import { IEndpointService, ServiceTypes } from 'botframework-config/lib/schema';
 import * as Constants from '../../constants';
+import * as BotActions from '../../data/action/botActions';
 import * as EditorActions from '../../data/action/editorActions';
 import * as ExplorerActions from '../../data/action/explorerActions';
 import * as FileActions from '../../data/action/fileActions';
 import * as NavBarActions from '../../data/action/navBarActions';
-import { store } from '../../data/store';
 import { beginAdd } from '../../data/action/notificationActions';
+import { getActiveBot } from '../../data/botHelpers';
+import { hasNonGlobalTabs } from '../../data/editorHelpers';
+import { store } from '../../data/store';
+import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 
 export const ActiveBotHelper = new class {
   async confirmSwitchBot(): Promise<any> {
@@ -182,9 +182,11 @@ export const ActiveBotHelper = new class {
     );
   }
 
-  async confirmAndOpenBotFromFile(): Promise<any> {
+  async confirmAndOpenBotFromFile(filename?: string): Promise<any> {
     try {
-      const filename = await this.browseForBotFile();
+      if (!filename) {
+        filename = await this.browseForBotFile();
+      }
 
       if (filename) {
         let activeBot = getActiveBot();

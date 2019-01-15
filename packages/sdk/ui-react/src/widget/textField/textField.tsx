@@ -21,15 +21,15 @@ export class TextField extends Component<TextFieldProps, {}> {
 
   public render(): ReactNode {
     // Trim off what we don't want to send to the input tag
-    const { inputContainerClassName = '', className = '', label, errorMessage, ...inputProps } = this.props;
-    let inputClassName = `${styles.input} ${className} `;
+    const { inputContainerClassName = '', className = '', label, errorMessage, children, ...inputProps } = this.props;
+    let inputClassName = `${ styles.input } ${ className } `;
     if (errorMessage) {
       inputClassName += styles.invalid;
     }
-    return <div className={ `${styles.inputContainer} ${inputContainerClassName}` }>
+    return <div className={ `${ styles.inputContainer } ${ inputContainerClassName }` }>
       { this.labelNode }
       <input { ...inputProps } id={ this.inputId } className={ inputClassName }/>
-      { this.props.children }
+      { children }
       { this.errorNode }
     </div>;
   }
@@ -41,7 +41,7 @@ export class TextField extends Component<TextFieldProps, {}> {
       <label
         aria-disabled={ disabled }
         htmlFor={ this.inputId }
-        className={ `${className} ${styles.label}` }>{ label }</label> : null;
+        className={ `${ className } ${ styles.label }` }>{ label }</label> : null;
   }
 
   protected get errorNode(): ReactNode {

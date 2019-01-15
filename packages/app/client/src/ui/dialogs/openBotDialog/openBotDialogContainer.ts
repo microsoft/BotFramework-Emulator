@@ -32,39 +32,41 @@
 //
 
 import { newNotification, SharedConstants } from '@bfemulator/app-shared';
-import { connect } from 'react-redux';
 import { Action } from 'redux';
+import { IEndpointService } from 'botframework-config/lib/schema';
+import { connect } from 'react-redux';
 import { beginAdd } from '../../../data/action/notificationActions';
 import { RootState } from '../../../data/store';
 import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
-import { WelcomePage, WelcomePageProps } from './welcomePage';
+import { ActiveBotHelper } from '../../helpers/activeBotHelper';
+import { DialogService } from '../service';
+import { OpenBotDialog, OpenBotDialogProps } from './openBotDialog';
 
-function mapStateToProps(state: RootState, ownProps: WelcomePageProps): WelcomePageProps {
+const mapStateToProps = (state: RootState, ownProps: { [propName: string]: any }): OpenBotDialogProps => {
   return {
-    ...ownProps,
-    accessToken: state.azureAuth.access_token,
+    showCreateNewBotDialog: () => CommandServiceImpl.call(SharedConstants.Commands.UI.ShowBotCreationDialog),
+    ...ownProps
   };
-}
+};
 
-function mapDispatchToProps(dispatch: (action: Action) => void): WelcomePageProps {
-  const { Commands } = SharedConstants;
+const mapDispatchToProps = (dispatch: (action: Action) => void): OpenBotDialogProps => {
+  const { Commands: { Emulator: { NewLiveChat }, Bot: { Switch } } } = SharedConstants;
   return {
-    onNewBotClick: () => {
-      CommandServiceImpl.call(Commands.UI.ShowBotCreationDialog).catch();
+    onDialogCancel: () => DialogService.hideDialog(),
+    openBot: (urlOrPath: string) => {
+      DialogService.hideDialog();
+      if (urlOrPath.startsWith('http')) {
+        return CommandServiceImpl.call(NewLiveChat, { endpoint: urlOrPath } as IEndpointService);
+      }
+      return ActiveBotHelper.confirmAndOpenBotFromFile(urlOrPath);
     },
-    showOpenBotDialog: (): Promise<any> => CommandServiceImpl.call(SharedConstants.Commands.UI.ShowOpenBotDialog),
     sendNotification: (error: Error) =>
-      dispatch(beginAdd(newNotification(`An Error occurred on the Welcome page: ${ error }`))),
-    signInWithAzure: () => {
-      CommandServiceImpl.call(Commands.UI.SignInToAzure).catch();
-    },
-    signOutWithAzure: () => {
-      CommandServiceImpl.remoteCall(Commands.Azure.SignUserOutOfAzure).catch();
-      CommandServiceImpl.call(Commands.UI.InvalidateAzureArmToken).catch();
-    },
-    switchToBot: (path: string) => CommandServiceImpl.call(Commands.Bot.Switch, path)
+      dispatch(beginAdd(newNotification(`An Error occurred on the Open Bot Dialog: ${ error }`))),
+    switchToBot: (path: string) => CommandServiceImpl.call(Switch, path)
   };
-}
+};
 
-// export const WelcomePage = connect(mapStateToProps, mapDispatchToProps)(hot(module)(WelcomePageComp)) as any;
-export const WelcomePageContainer = connect(mapStateToProps, mapDispatchToProps)(WelcomePage);
+export const OpenBotDialogContainer = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(OpenBotDialog);

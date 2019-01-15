@@ -31,30 +31,31 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { SharedConstants } from '@bfemulator/app-shared';
+import { CommandRegistry } from '@bfemulator/sdk-shared';
+import { ServiceTypes } from 'botframework-config/lib/schema';
+import * as Constants from '../constants';
+import { azureArmTokenDataChanged, beginAzureAuthWorkflow, invalidateArmToken } from '../data/action/azureAuthActions';
+import * as EditorActions from '../data/action/editorActions';
+import * as NavBarActions from '../data/action/navBarActions';
+import { ProgressIndicatorPayload, updateProgressIndicator } from '../data/action/progressIndicatorActions';
+import { switchTheme } from '../data/action/themeActions';
 import { showWelcomePage } from '../data/editorHelpers';
+import { AzureAuthState } from '../data/reducer/azureAuthReducer';
+import { store } from '../data/store';
 import {
   AzureLoginFailedDialogContainer,
   AzureLoginPromptDialogContainer,
   AzureLoginSuccessDialogContainer,
   BotCreationDialog,
   DialogService,
+  OpenBotDialogContainer,
   PostMigrationDialogContainer,
+  ProgressIndicatorContainer,
   SecretPromptDialogContainer,
   UpdateAvailableDialogContainer,
-  UpdateUnavailableDialogContainer,
-  ProgressIndicatorContainer
+  UpdateUnavailableDialogContainer
 } from '../ui/dialogs';
-import { store } from '../data/store';
-import * as EditorActions from '../data/action/editorActions';
-import * as NavBarActions from '../data/action/navBarActions';
-import * as Constants from '../constants';
-import { CommandRegistry } from '@bfemulator/sdk-shared';
-import { ServiceTypes } from 'botframework-config/lib/schema';
-import { SharedConstants } from '@bfemulator/app-shared';
-import { azureArmTokenDataChanged, beginAzureAuthWorkflow, invalidateArmToken } from '../data/action/azureAuthActions';
-import { AzureAuthState } from '../data/reducer/azureAuthReducer';
-import { ProgressIndicatorPayload, updateProgressIndicator } from '../data/action/progressIndicatorActions';
-import { switchTheme } from '../data/action/themeActions';
 
 /** Register UI commands (toggling UI) */
 export function registerCommands(commandRegistry: CommandRegistry) {
@@ -70,6 +71,12 @@ export function registerCommands(commandRegistry: CommandRegistry) {
   // Shows a bot creation dialog
   commandRegistry.registerCommand(UI.ShowBotCreationDialog, async () => {
     return await DialogService.showDialog(BotCreationDialog);
+  });
+
+  // ---------------------------------------------------------------------------
+  // Shows a bot creation dialog
+  commandRegistry.registerCommand(UI.ShowOpenBotDialog, async () => {
+    return await DialogService.showDialog(OpenBotDialogContainer);
   });
 
   // ---------------------------------------------------------------------------

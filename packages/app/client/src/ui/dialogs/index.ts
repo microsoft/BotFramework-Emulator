@@ -47,3 +47,4 @@ export * from './botSettingsEditor/botSettingsEditorContainer';
 export * from './resourcesSettings/resourcesSettingsContainer';
 export * from './updateAvailableDialog';
 export * from './updateUnavailableDialog';
+export * from './openBotDialog/openBotDialogContainer';

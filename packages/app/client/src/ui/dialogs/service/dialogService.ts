@@ -49,7 +49,6 @@ export interface DialogService {
 
 export const DialogService = new class implements DialogService {
   private _hostElement: HTMLElement;
-  private _dialogReturnValue: Promise<any>;
   private _resolve: (value?: any) => void;
 
   /** Returns a thenable that can return a value using hideDialog(value)
@@ -65,14 +64,13 @@ export const DialogService = new class implements DialogService {
     store.dispatch(DialogActions.setShowing(true));
 
     // set up the dialog to return a value from the dialog
-    this._dialogReturnValue = new Promise((resolve) => {
+    return new Promise((resolve) => {
       this._resolve = resolve;
     });
-    return this._dialogReturnValue;
   }
 
   hideDialog(dialogReturnValue?: any): void {
-    if (!this._hostElement) {
+    if (!this._hostElement || !this._resolve) {
       return;
     }
 
@@ -80,6 +78,7 @@ export const DialogService = new class implements DialogService {
     store.dispatch(DialogActions.setShowing(false));
 
     this._resolve(dialogReturnValue);
+    this._resolve = null;
   }
 
   setHost(hostElement: HTMLElement): void {

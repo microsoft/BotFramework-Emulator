@@ -36,34 +36,42 @@ import * as React from 'react';
 import * as styles from './botNotOpenExplorer.scss';
 
 export interface BotNotOpenExplorerProps {
-  onOpenBotClick: () => any;
+  hasChat?: boolean;
+  showOpenBotDialog: () => Promise<any>;
+  sendNotification: (error: Error) => void;
 }
 
 export class BotNotOpenExplorer extends React.Component<BotNotOpenExplorerProps, {}> {
-  constructor(props: BotNotOpenExplorerProps) {
-    super(props);
-  }
 
-  render() {
-    const { onOpenBotClick } = this.props;
-
+  public render() {
+    const { hasChat } = this.props;
+    const label = hasChat ? 'Services Not Available' : 'No Bot Opened';
+    const message = hasChat ? 'You are in Direct Connect mode.' : 'You have not yet opened a bot.';
     return (
       <ul className={ styles.botNotOpenExplorer }>
         <li>
           <ExpandCollapse
             expanded={ true }
-            ariaLabel="No Bot Opened"
-            title="No Bot Opened"
+            ariaLabel={ label }
+            title={ label }
           >
             <ExpandCollapseContent>
               <div className={ styles.explorerEmptyState }>
-                <span className={ styles.emptyStateText }>You have not yet opened a bot.</span>
-                <PrimaryButton text={ 'Open Bot' } className={ styles.openBot } onClick={ onOpenBotClick }/>
+                <span className={ styles.emptyStateText }>{ message }</span>
+                <PrimaryButton text={ 'Open Bot' } className={ styles.openBot } onClick={ this.onOpenBotClick }/>
               </div>
             </ExpandCollapseContent>
           </ExpandCollapse>
         </li>
       </ul>
     );
+  }
+
+  private onOpenBotClick = async () => {
+    try {
+      await this.props.showOpenBotDialog();
+    } catch (e) {
+      this.props.sendNotification(e);
+    }
   }
 }

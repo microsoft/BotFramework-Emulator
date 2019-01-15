@@ -169,9 +169,9 @@ export class AppMenuBuilder {
       },
       { type: 'separator' },
       {
-        label: 'Open Bot Configuration...',
+        label: 'Open Bot',
         click: () => {
-          mainWindow.commandService.remoteCall(Bot.OpenBrowse);
+          mainWindow.commandService.remoteCall(UI.ShowOpenBotDialog);
         }
       },
       {

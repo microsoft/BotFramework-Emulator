@@ -1,0 +1,36 @@
+
+.browse-button {
+  overflow: hidden;
+  position: absolute;
+  right: 0;
+  bottom: 12px;
+}
+
+.input-container {
+  padding-right: 115px;
+
+  & + div {
+    margin-left: 8px;
+  }
+}
+
+.file-input {
+  position: absolute;
+  left: 0;
+  height: 100%;
+  z-index: 2;
+  opacity: 0;
+}
+
+/* maintains "light" theme for the recent bots list since it's in a modal */
+.theme-overrides {
+  --my-bots-entry-bg: var(--neutral-4);
+  --my-bots-entry-border: 1px solid transparent;
+  --tab-icon-color: var(--neutral-12);
+  --my-bots-path-color: var(--neutral-12);
+  --focused-selected-list-item-bg: #006AB1;
+  --my-bots-well-bg: var(--neutral-3);
+  --my-bots-well-border: 0;
+  --my-bots-scrollbar-color: rgba(136, 136, 136, 0.5);
+  --my-bots-entry-color: var(--neutral-12);
+}
