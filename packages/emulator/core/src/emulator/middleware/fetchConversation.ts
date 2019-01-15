@@ -38,7 +38,7 @@ import createAPIException from '../../utils/createResponse/apiException';
 import { ErrorCodes } from '../../types/errorCodes';
 import Conversation from '../../facility/conversation';
 
-import { Request, Response, Next } from 'restify';
+import { Next, Request, Response } from 'restify';
 
 export interface ConversationAware extends Request {
   conversation: Conversation;

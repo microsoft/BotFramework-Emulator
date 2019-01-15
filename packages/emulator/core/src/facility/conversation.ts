@@ -109,7 +109,7 @@ export default class Conversation extends EventEmitter {
   /**
    * Sends the activity to the conversation's bot.
    */
-  async postActivityToBot(activity: Activity, recordInConversation: boolean) {
+  public async postActivityToBot(activity: Activity, recordInConversation: boolean) {
     if (!this.botEndpoint) {
       return this.botEmulator.facilities.logger.logMessage(this.conversationId,
         textItem(LogLevel.Error,
@@ -177,7 +177,7 @@ export default class Conversation extends EventEmitter {
     };
   }
 
-  async sendConversationUpdate(membersAdded: User[], membersRemoved: User[]) {
+  public async sendConversationUpdate(membersAdded: User[], membersRemoved: User[]) {
     const activity: ConversationUpdateActivity = {
       type: 'conversationUpdate',
       membersAdded,
@@ -417,7 +417,7 @@ export default class Conversation extends EventEmitter {
     shippingAddress: PaymentAddress,
     shippingOptionId: string
   ) {
-    return await this.sendUpdateShippingOperation(
+    return this.sendUpdateShippingOperation(
       checkoutSession,
       PaymentOperations.UpdateShippingAddressOperationName,
       request,
@@ -432,7 +432,7 @@ export default class Conversation extends EventEmitter {
     shippingAddress: PaymentAddress,
     shippingOptionId: string
   ) {
-    return await this.sendUpdateShippingOperation(
+    return this.sendUpdateShippingOperation(
       checkoutSession,
       PaymentOperations.UpdateShippingOptionOperationName,
       request,
@@ -480,9 +480,9 @@ export default class Conversation extends EventEmitter {
           paymentToken: pthBytes + '.' + ptsBytes + '.' + ptsigBytes
         },
         methodName: request.methodData[0].supportedMethods[0],
-        payerEmail: payerEmail,
-        payerPhone: payerPhone,
-        shippingAddress: shippingAddress,
+        payerEmail,
+        payerPhone,
+        shippingAddress,
         shippingOption: shippingOptionId
       }
     };
@@ -524,12 +524,12 @@ export default class Conversation extends EventEmitter {
       type: 'event',
       name: 'tokens/response',
       value: {
-        connectionName: connectionName,
-        token: token
+        connectionName,
+        token
       }
     };
 
-    return await this.postActivityToBot(activity, false);
+    return this.postActivityToBot(activity, false);
   }
 
   /**
@@ -640,7 +640,7 @@ export default class Conversation extends EventEmitter {
 
     const updateValue: PaymentRequestUpdate = {
       id: request.id,
-      shippingAddress: shippingAddress,
+      shippingAddress,
       shippingOption: shippingOptionId,
       details: request.details
     };
@@ -680,8 +680,8 @@ export default class Conversation extends EventEmitter {
       conversation: activity.conversation || { id: this.conversationId },
       id: activity.id || uniqueId(),
       localTimestamp: date.format(),
-      recipient: recipient,
-      timestamp: timestamp
+      recipient,
+      timestamp
     };
   }
 

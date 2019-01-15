@@ -20,9 +20,12 @@
     "noUnusedLocals": false,
     "skipLibCheck": true,
     "declaration": true,
+    "paths": {
+      "@bfemulator/sdk-shared": ["./packages/sdk/shared"],
+      "@bfemulator/main": ["./packages/sdk/main"]
+    },
     "types": ["react", "react-dom", "node", "jest"]
   },
-  "references": [{ "path": "./packages/app/shared/" }],
   "include": ["packages/**/src"],
   "exclude": [
     "node_modules",

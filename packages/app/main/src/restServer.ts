@@ -58,7 +58,7 @@ export class RestServer {
       this._botEmulator = new BotEmulator(
         botUrl => emulator.ngrok.getServiceUrl(botUrl),
         {
-          fetch: fetch,
+          fetch,
           loggerOrLogService: mainWindow.logService,
         });
       this._botEmulator.facilities.conversations.on('new', this.onNewConversation);

@@ -31,18 +31,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 // for hot reloading
+import { LogService } from './platform/log/logService';
 import { Provider } from 'react-redux';
-import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import interceptError from './interceptError';
 import interceptHyperlink from './interceptHyperlink';
 import Main from './ui/shell/mainContainer';
 import { store } from './data/store';
 import { CommandServiceImpl } from './platform/commands/commandServiceImpl';
-import { LogService } from './platform/log/logService';
+import * as React from 'react';
 import { showWelcomePage } from './data/editorHelpers';
 import { CommandRegistry, registerAllCommands } from './commands';
-import { SharedConstants, newNotification } from '@bfemulator/app-shared';
+import { newNotification, SharedConstants } from '@bfemulator/app-shared';
 import { beginAdd } from './data/action/notificationActions';
 import { globalHandlers } from './utils/eventHandlers';
 import './ui/styles/globals.scss';
