@@ -31,9 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import got from "got";
+import got from 'got';
 
-const getPem = require("rsa-pem-from-mod-exp");
+// eslint-disable-next-line typescript/no-var-requires
+const getPem = require('rsa-pem-from-mod-exp');
 
 export class OpenIdMetadata {
   private url: string;
@@ -66,33 +67,33 @@ export class OpenIdMetadata {
 
   private refreshCache(cb: (err: Error) => void): void {
     const options = {
-      method: "GET",
+      method: 'GET',
       url: this.url,
       json: true,
       strictSSL: false,
-      useElectronNet: true
+      useElectronNet: true,
     };
 
     got(options)
       .then(resp => {
         if (resp.statusCode >= 400 || !resp.body) {
-          throw new Error("Failed to load openID config: " + resp.statusCode);
+          throw new Error('Failed to load openID config: ' + resp.statusCode);
         }
 
         const openIdConfig = resp.body as OpenIdConfig;
 
         const options1 = {
-          method: "GET",
+          method: 'GET',
           url: openIdConfig.jwks_uri,
           json: true,
           strictSSL: false,
-          useElectronNet: true
+          useElectronNet: true,
         };
 
         got(options1)
           .then((resp1: any) => {
             if (resp1.statusCode >= 400 || !resp1.body) {
-              throw new Error("Failed to load Keys: " + resp1.statusCode);
+              throw new Error('Failed to load Keys: ' + resp1.statusCode);
             }
 
             this.lastUpdated = new Date().getTime();
@@ -123,7 +124,7 @@ export class OpenIdMetadata {
           return null;
         }
 
-        const modulus = Buffer.from(key.n).toString("base64");
+        const modulus = Buffer.from(key.n).toString('base64');
         const exponent = key.e;
 
         return getPem(modulus, exponent);

@@ -70,22 +70,22 @@ export interface SKU {
 }
 
 export enum Provider {
-  ApplicationInsights = "microsoft.insights",
-  BotService = "microsoft.botservice",
-  CognitiveServices = "Microsoft.CognitiveServices",
-  CosmosDB = "Microsoft.DocumentDB",
-  Storage = "Microsoft.Storage"
+  ApplicationInsights = 'microsoft.insights',
+  BotService = 'microsoft.botservice',
+  CognitiveServices = 'Microsoft.CognitiveServices',
+  CosmosDB = 'Microsoft.DocumentDB',
+  Storage = 'Microsoft.Storage',
 }
 
 export enum AccountIdentifier {
-  ApplicationInsights = "components?api-version=2015-05-01",
-  CognitiveService = "accounts?api-version=2017-04-18",
-  CosmosDb = "databaseaccounts?api-version=2015-04-08",
-  BotServices = "botservices?api-version=2018-07-12",
-  StorageAccounts = "storageaccounts?api-version=2018-07-01"
+  ApplicationInsights = 'components?api-version=2015-05-01',
+  CognitiveService = 'accounts?api-version=2017-04-18',
+  CosmosDb = 'databaseaccounts?api-version=2015-04-08',
+  BotServices = 'botservices?api-version=2018-07-12',
+  StorageAccounts = 'storageaccounts?api-version=2018-07-01',
 }
 
-const baseUrl = "https://management.azure.com/";
+const baseUrl = 'https://management.azure.com/';
 
 export class AzureManagementApiService {
   /**
@@ -98,9 +98,9 @@ export class AzureManagementApiService {
     return {
       headers: {
         Authorization: `Bearer ${armToken}`,
-        Accept: "application/json, text/plain, */*",
-        "x-ms-date": new Date().toUTCString()
-      }
+        Accept: 'application/json, text/plain, */*',
+        'x-ms-date': new Date().toUTCString(),
+      },
     };
   }
 
@@ -122,7 +122,7 @@ export class AzureManagementApiService {
       return null;
     }
     const {
-      value = []
+      value = [],
     }: { value: Subscription[] } = await subscriptionsResponse.json();
     return value.length ? value : null;
   }
@@ -144,12 +144,12 @@ export class AzureManagementApiService {
     subs: Subscription[],
     provider: Provider,
     identifier: AccountIdentifier,
-    kind: string = ""
+    kind: string = ''
   ): Promise<AzureResource[]> {
     const url = `${baseUrl}{id}/providers/${provider}/${identifier}`;
     const req = AzureManagementApiService.getRequestInit(armToken);
     const calls = subs.map(subscription =>
-      fetch(url.replace("{id}", subscription.id), req)
+      fetch(url.replace('{id}', subscription.id), req)
     );
 
     const accountsResponses: Response[] = await Promise.all(calls);
@@ -164,7 +164,7 @@ export class AzureManagementApiService {
         } = await accountResponse.json();
         const filteredValues = kind
           ? accountResponseJson.value.filter(account =>
-              (account.kind || "").includes(kind)
+              (account.kind || '').includes(kind)
             )
           : accountResponseJson.value;
         // Amend the data with the tenant and subscription Ids since we lose
@@ -200,9 +200,9 @@ export class AzureManagementApiService {
     const keys: any[] = [];
     const req = AzureManagementApiService.getRequestInit(armToken);
     const url = `${baseUrl}{id}/listKeys?api-version=${apiVersion}`;
-    req.method = "POST"; // Not sure why this is required by the endpoint...
+    req.method = 'POST'; // Not sure why this is required by the endpoint...
     const calls = accounts.map(account =>
-      fetch(url.replace("{id}", account.id), req)
+      fetch(url.replace('{id}', account.id), req)
     );
     const keyResponses: Response[] = await Promise.all(calls);
     let i = keyResponses.length;
@@ -211,7 +211,7 @@ export class AzureManagementApiService {
       if (keyResponse.ok) {
         const keyResponseJson = await keyResponse.json();
         const key = keyResponseJson[responseProperty];
-        if (key && "" + key) {
+        if (key && '' + key) {
           // Excludes empty strings and empty arrays
           keys[i] = key; // maintain index position - do not "push"
         }

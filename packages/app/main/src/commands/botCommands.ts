@@ -31,28 +31,29 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import * as path from 'path';
+
 import {
   BotInfo,
   getBotDisplayName,
-  SharedConstants
-} from "@bfemulator/app-shared";
+  SharedConstants,
+} from '@bfemulator/app-shared';
 import {
   BotConfigWithPath,
   CommandRegistryImpl,
   mergeEndpoints,
-  uniqueId
-} from "@bfemulator/sdk-shared";
-import { BotConfigurationBase } from "botframework-config/lib";
+  uniqueId,
+} from '@bfemulator/sdk-shared';
+import { BotConfigurationBase } from 'botframework-config/lib';
 import {
   IConnectedService,
   IEndpointService,
-  ServiceTypes
-} from "botframework-config/lib/schema";
-import * as path from "path";
+  ServiceTypes,
+} from 'botframework-config/lib/schema';
 
-import * as BotActions from "../botData/actions/botActions";
-import { setActive } from "../botData/actions/botActions";
-import { getStore } from "../botData/store";
+import * as BotActions from '../botData/actions/botActions';
+import { setActive } from '../botData/actions/botActions';
+import { getStore } from '../botData/store';
 import {
   getActiveBot,
   getBotInfoByPath,
@@ -61,15 +62,15 @@ import {
   pathExistsInRecentBots,
   removeBotFromList,
   saveBot,
-  toSavableBot
-} from "../botHelpers";
-import { emulator } from "../emulator";
-import { mainWindow } from "../main";
+  toSavableBot,
+} from '../botHelpers';
+import { emulator } from '../emulator';
+import { mainWindow } from '../main';
 import {
   botProjectFileWatcher,
   chatWatcher,
-  transcriptsWatcher
-} from "../watchers";
+  transcriptsWatcher,
+} from '../watchers';
 
 /** Registers bot commands */
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
@@ -89,8 +90,8 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
         path: bot.path,
         displayName: getBotDisplayName(bot),
         secret,
-        transcriptsPath: path.join(dirName, "./transcripts"),
-        chatsPath: path.join(dirName, "./dialogs")
+        transcriptsPath: path.join(dirName, './transcripts'),
+        chatsPath: path.join(dirName, './dialogs'),
       };
       await patchBotsJson(bot.path, botsJsonEntry);
 
@@ -99,6 +100,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
         await saveBot(bot);
       } catch (e) {
         // TODO: make sure these are surfaced on the client side and caught so we can act on them
+        // eslint-disable-next-line no-console
         console.error(`${Bot.Create}: Error trying to save bot: ${e}`);
         throw e;
       }
@@ -127,11 +129,11 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
         const dirName = path.dirname(botPath);
         let syncWithClient: boolean;
         if (!botInfo.transcriptsPath) {
-          botInfo.transcriptsPath = path.join(dirName, "./transcripts");
+          botInfo.transcriptsPath = path.join(dirName, './transcripts');
           syncWithClient = true;
         }
         if (!botInfo.chatsPath) {
-          botInfo.chatsPath = path.join(dirName, "./dialogs");
+          botInfo.chatsPath = path.join(dirName, './dialogs');
           syncWithClient = true;
         }
         if (syncWithClient) {
@@ -150,14 +152,14 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
       } catch (e) {
         const errMessage = `Failed to open the bot with error: ${e.message}`;
         await Electron.dialog.showMessageBox(mainWindow.browserWindow, {
-          type: "error",
-          message: errMessage
+          type: 'error',
+          message: errMessage,
         });
         throw new Error(errMessage);
       }
       if (!bot) {
         // user couldn't provide correct secret, abort
-        throw new Error("No secret provided to decrypt encrypted bot.");
+        throw new Error('No secret provided to decrypt encrypted bot.');
       }
 
       return bot;
@@ -180,25 +182,24 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
       const botInfo = getBotInfoByPath(bot.path) || {};
       const dirName = path.dirname(bot.path);
 
-      let {
-        chatsPath = path.join(dirName, "./dialogs"),
-        transcriptsPath = path.join(dirName, "./transcripts"),
-        path: botFilePath = ""
+      const {
+        chatsPath = path.join(dirName, './dialogs'),
+        transcriptsPath = path.join(dirName, './transcripts'),
       } = botInfo;
-      botFilePath = path.parse(botFilePath).dir;
+      const botFilePath = path.parse(botInfo.botFilePath || '').dir;
       const relativeChatsPath = path.relative(botFilePath, chatsPath);
       const relativeTranscriptsPath = path.relative(
         botFilePath,
         transcriptsPath
       );
-      const displayedChatsPath = relativeChatsPath.includes("..")
+      const displayedChatsPath = relativeChatsPath.includes('..')
         ? chatsPath
         : relativeChatsPath;
-      const displayedTranscriptsPath = relativeTranscriptsPath.includes("..")
+      const displayedTranscriptsPath = relativeTranscriptsPath.includes('..')
         ? transcriptsPath
         : relativeTranscriptsPath;
       const sep =
-        process.platform === "darwin"
+        process.platform === 'darwin'
           ? path.posix.sep
           : (path.posix as any).win32.sep;
       await Promise.all([
@@ -212,7 +213,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
           Bot.TranscriptsPathUpdated,
           `${displayedTranscriptsPath}${sep}`
         ),
-        mainWindow.commandService.call(Bot.RestartEndpointService)
+        mainWindow.commandService.call(Bot.RestartEndpointService),
       ]);
       // Workaround for a JSON serialization issue in bot.services where they're an array
       // on the Node side, but deserialize as a dictionary on the renderer side.
@@ -254,7 +255,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
             botUrl: endpoint.endpoint,
             msaAppId: endpoint.appId,
             msaPassword: endpoint.appPassword,
-            channelService: (endpoint as any).channelService
+            channelService: (endpoint as any).channelService,
           }
         );
       });
@@ -291,12 +292,12 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
           // Patch existing service
           botConfig.services[index] = BotConfigurationBase.serviceFromJSON({
             ...existing,
-            ...service
+            ...service,
           });
         } else {
           // Add new service
           if (service.type !== serviceType) {
-            throw new Error("serviceType does not match");
+            throw new Error('serviceType does not match');
           }
           botConfig.connectService(service);
         }
@@ -312,6 +313,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
             botConfig.getPath()
           );
         } catch (e) {
+          // eslint-disable-next-line no-console
           console.error(
             `bot:add-or-update-service: Error trying to save bot: ${e}`
           );
@@ -331,7 +333,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
       if (botInfo) {
         const botConfig = toSavableBot(activeBot, botInfo.secret);
         const id =
-          typeof serviceOrId === "string" ? serviceOrId : serviceOrId.id;
+          typeof serviceOrId === 'string' ? serviceOrId : serviceOrId.id;
         botConfig.disconnectService(id);
         try {
           await saveBot(botConfig);
@@ -342,6 +344,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
             botConfig.getPath()
           );
         } catch (e) {
+          // eslint-disable-next-line no-console
           console.error(`bot:remove-service: Error trying to save bot: ${e}`);
           throw e;
         }
@@ -360,13 +363,13 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
       const dirName = path.dirname(botInfo.path);
 
       const {
-        chatsPath = path.join(dirName, "./dialogs"),
-        transcriptsPath = path.join(dirName, "./transcripts")
+        chatsPath = path.join(dirName, './dialogs'),
+        transcriptsPath = path.join(dirName, './transcripts'),
       } = botInfo;
 
       await Promise.all([
         chatWatcher.watch(chatsPath),
-        transcriptsWatcher.watch(transcriptsPath)
+        transcriptsWatcher.watch(transcriptsPath),
       ]);
 
       return true;
@@ -383,11 +386,11 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
         ShowMessageBox,
         true,
         {
-          type: "question",
-          buttons: ["Cancel", "OK"],
+          type: 'question',
+          buttons: ['Cancel', 'OK'],
           defaultId: 1,
           message: `Remove Bot ${botPath} from bots list. Are you sure?`,
-          cancelId: 0
+          cancelId: 0,
         }
       );
       if (result) {

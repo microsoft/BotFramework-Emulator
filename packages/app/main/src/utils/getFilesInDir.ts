@@ -31,8 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as Fs from "fs";
+import * as Fs from 'fs';
 
 export const getFilesInDir = (path: string) => {
-  return Fs.readdirSync(path, "utf-8");
+  return Fs.readdirSync(path, 'utf-8');
 };

@@ -34,26 +34,27 @@
 import {
   Settings,
   settingsDefault,
-  SettingsImpl
-} from "@bfemulator/app-shared";
-import * as Electron from "electron";
-import { Action, applyMiddleware, createStore, Store } from "redux";
-import sagaMiddlewareFactory from "redux-saga";
+  SettingsImpl,
+} from '@bfemulator/app-shared';
+import * as Electron from 'electron';
+import { Action, applyMiddleware, createStore, Store } from 'redux';
+import sagaMiddlewareFactory from 'redux-saga';
 
-import { getThemes, loadSettings } from "../utils";
+import { getThemes, loadSettings } from '../utils';
 
-import reducers from "./reducers";
-import { settingsSagas } from "./sagas/settingsSagas";
+import reducers from './reducers';
+import { settingsSagas } from './sagas/settingsSagas';
 
 let started = false;
 let store: Store<Settings>;
 
 export const getStore = (): Store<Settings> => {
-  console.assert(started, "getStore() called before startup!");
+  // eslint-disable-next-line no-console
+  console.assert(started, 'getStore() called before startup!');
   if (!store) {
     const sagaMiddleWare = sagaMiddlewareFactory();
     // Create the settings store with initial settings from disk.
-    const initialSettings = loadSettings("server.json", settingsDefault);
+    const initialSettings = loadSettings('server.json', settingsDefault);
     initialSettings.windowState.availableThemes = getThemes();
 
     store = createStore(
@@ -74,11 +75,11 @@ export const getSettings = () => {
 
 export const startup = () => {
   // Listen for settings change requests from the client.
-  Electron.ipcMain.on("serverChangeSetting", (event, ...args) => {
+  Electron.ipcMain.on('serverChangeSetting', (event, ...args) => {
     // Apply change requests to the settings store.
     getStore().dispatch({
       type: args[0],
-      state: args[1]
+      state: args[1],
     });
   });
 

@@ -31,6 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { promisify } from 'util';
+
 import { FrameworkSettings } from '@bfemulator/app-shared';
 import { ILogItem } from '@bfemulator/emulator-core/lib/types/log/item';
 import LogLevel from '@bfemulator/emulator-core/lib/types/log/level';
@@ -39,9 +41,8 @@ import {
   exceptionItem,
   externalLinkItem,
   ngrokExpirationItem,
-  textItem
+  textItem,
 } from '@bfemulator/emulator-core/lib/types/log/util';
-import { promisify } from 'util';
 
 import { emulator } from './emulator';
 import { mainWindow } from './main';
@@ -65,12 +66,13 @@ export class NgrokService {
   }
 
   public async getServiceUrl(botUrl: string): Promise<string> {
-    const bypassNgrokLocalhost = getStore().getState().framework.bypassNgrokLocalhost;
+    const bypassNgrokLocalhost = getStore().getState().framework
+      .bypassNgrokLocalhost;
     if (botUrl && isLocalhostUrl(botUrl) && bypassNgrokLocalhost) {
       // Do not use ngrok
       const port = emulator.framework.serverPort;
 
-      return `http://${ this._localhost }:${ port }`;
+      return `http://${this._localhost}:${port}`;
     } else {
       if (!ngrok.running()) {
         await this.startup();
@@ -80,10 +82,10 @@ export class NgrokService {
     }
   }
 
-  public getSpawnStatus = (): { triedToSpawn: boolean, err: any } => ({
+  public getSpawnStatus = (): { triedToSpawn: boolean; err: any } => ({
     triedToSpawn: this._triedToSpawn,
-    err: this._spawnErr
-  })
+    err: this._spawnErr,
+  });
 
   public async updateNgrokFromSettings(framework: FrameworkSettings) {
     this.cacheSettings();
@@ -100,13 +102,14 @@ export class NgrokService {
       try {
         await killNgrok();
       } catch (err) {
+        // eslint-disable-next-line no-console
         console.error('Failed to kill ngrok', err);
       }
 
       const port = emulator.framework.serverPort;
 
       this._ngrokPath = getStore().getState().framework.ngrokPath;
-      this._serviceUrl = `http://${ this._localhost }:${ port }`;
+      this._serviceUrl = `http://${this._localhost}:${port}`;
       this._inspectUrl = null;
       this._spawnErr = null;
       this._triedToSpawn = false;
@@ -114,12 +117,16 @@ export class NgrokService {
       if (this._ngrokPath && this._ngrokPath.length) {
         try {
           this._triedToSpawn = true;
-          const { inspectUrl, url } = await ngrokConnect({ port, path: this._ngrokPath });
+          const { inspectUrl, url } = await ngrokConnect({
+            port,
+            path: this._ngrokPath,
+          });
 
           this._serviceUrl = url;
           this._inspectUrl = inspectUrl;
         } catch (err) {
           this._spawnErr = err;
+          // eslint-disable-next-line no-console
           console.error('Failed to spawn ngrok', err);
         }
       }
@@ -136,16 +143,21 @@ export class NgrokService {
 
   /** Logs messages signifying that ngrok has reconnected in all active conversations */
   public broadcastNgrokReconnected(): void {
-    const bypassNgrokLocalhost = getStore().getState().framework.bypassNgrokLocalhost;
+    const bypassNgrokLocalhost = getStore().getState().framework
+      .bypassNgrokLocalhost;
     const { broadcast } = this;
     broadcast(textItem(LogLevel.Debug, 'ngrok reconnected.'));
-    broadcast(textItem(LogLevel.Debug, `ngrok listening on ${ this._serviceUrl }`));
+    broadcast(
+      textItem(LogLevel.Debug, `ngrok listening on ${this._serviceUrl}`)
+    );
     broadcast(
       textItem(LogLevel.Debug, 'ngrok traffic inspector:'),
       externalLinkItem(this._inspectUrl, this._inspectUrl)
     );
     if (bypassNgrokLocalhost) {
-      broadcast(textItem(LogLevel.Debug, 'Will bypass ngrok for local addresses'));
+      broadcast(
+        textItem(LogLevel.Debug, 'Will bypass ngrok for local addresses')
+      );
     } else {
       broadcast(textItem(LogLevel.Debug, 'Will use ngrok for local addresses'));
     }
@@ -164,15 +176,20 @@ export class NgrokService {
   public report(conversationId: string): void {
     // TODO - localization
     if (this._spawnErr) {
-      mainWindow.logService.logToChat(conversationId,
-        textItem(LogLevel.Error, 'Failed to spawn ngrok'), exceptionItem(this._spawnErr));
+      mainWindow.logService.logToChat(
+        conversationId,
+        textItem(LogLevel.Error, 'Failed to spawn ngrok'),
+        exceptionItem(this._spawnErr)
+      );
     } else if (!this._ngrokPath || !this._ngrokPath.length) {
       this.reportNotConfigured(conversationId);
     } else if (ngrok.running()) {
       this.reportRunning(conversationId);
     } else {
-      mainWindow.logService.logToChat(conversationId,
-        textItem(LogLevel.Debug, 'ngrok configured but not running'));
+      mainWindow.logService.logToChat(
+        conversationId,
+        textItem(LogLevel.Debug, 'ngrok configured but not running')
+      );
     }
   }
 
@@ -183,27 +200,49 @@ export class NgrokService {
 
   /** Logs messages that tell the user that ngrok isn't configured */
   private reportNotConfigured(conversationId: string): void {
-    mainWindow.logService.logToChat(conversationId,
-      textItem(LogLevel.Debug, 'ngrok not configured (only needed when connecting to remotely hosted bots)'));
-    mainWindow.logService.logToChat(conversationId,
-      externalLinkItem('Connecting to bots hosted remotely', 'https://aka.ms/cnjvpo'));
-    mainWindow.logService.logToChat(conversationId, appSettingsItem('Edit ngrok settings'));
+    mainWindow.logService.logToChat(
+      conversationId,
+      textItem(
+        LogLevel.Debug,
+        'ngrok not configured (only needed when connecting to remotely hosted bots)'
+      )
+    );
+    mainWindow.logService.logToChat(
+      conversationId,
+      externalLinkItem(
+        'Connecting to bots hosted remotely',
+        'https://aka.ms/cnjvpo'
+      )
+    );
+    mainWindow.logService.logToChat(
+      conversationId,
+      appSettingsItem('Edit ngrok settings')
+    );
   }
 
   /** Logs messages that tell the user about ngrok's current running status */
   private reportRunning(conversationId: string): void {
-    const bypassNgrokLocalhost = getStore().getState().framework.bypassNgrokLocalhost;
-    mainWindow.logService.logToChat(conversationId,
-      textItem(LogLevel.Debug, `ngrok listening on ${ this._serviceUrl }`));
-    mainWindow.logService.logToChat(conversationId,
+    const bypassNgrokLocalhost = getStore().getState().framework
+      .bypassNgrokLocalhost;
+    mainWindow.logService.logToChat(
+      conversationId,
+      textItem(LogLevel.Debug, `ngrok listening on ${this._serviceUrl}`)
+    );
+    mainWindow.logService.logToChat(
+      conversationId,
       textItem(LogLevel.Debug, 'ngrok traffic inspector:'),
-      externalLinkItem(this._inspectUrl, this._inspectUrl));
+      externalLinkItem(this._inspectUrl, this._inspectUrl)
+    );
     if (bypassNgrokLocalhost) {
-      mainWindow.logService.logToChat(conversationId,
-        textItem(LogLevel.Debug, 'Will bypass ngrok for local addresses'));
+      mainWindow.logService.logToChat(
+        conversationId,
+        textItem(LogLevel.Debug, 'Will bypass ngrok for local addresses')
+      );
     } else {
-      mainWindow.logService.logToChat(conversationId,
-        textItem(LogLevel.Debug, 'Will use ngrok for local addresses'));
+      mainWindow.logService.logToChat(
+        conversationId,
+        textItem(LogLevel.Debug, 'Will use ngrok for local addresses')
+      );
     }
   }
 
@@ -226,16 +265,25 @@ export class NgrokService {
   }
 }
 
-function ngrokConnect({ path, port }: { path: string, port: number }): Promise<{ inspectUrl: string, url: string }> {
+function ngrokConnect({
+  path,
+  port,
+}: {
+  path: string;
+  port: number;
+}): Promise<{ inspectUrl: string; url: string }> {
   return new Promise((resolve, reject) => {
-    ngrok.connect({ path, port }, (err, url, inspectUrl) => {
-      err ? reject(err) : resolve({ inspectUrl, url });
-    });
+    ngrok.connect(
+      { path, port },
+      (err, url, inspectUrl) => {
+        err ? reject(err) : resolve({ inspectUrl, url });
+      }
+    );
   });
 }
 
 async function killNgrok() {
-  const killNgrokInternal = (cb) => {
+  const killNgrokInternal = cb => {
     ngrok.kill(wasRunning1 => {
       cb(null, wasRunning1);
     });

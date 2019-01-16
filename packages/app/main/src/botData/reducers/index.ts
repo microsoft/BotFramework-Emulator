@@ -31,10 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { combineReducers } from "redux";
+import { combineReducers } from 'redux';
 
-import { bot } from "./bot";
+import { bot } from './bot';
 
 export default combineReducers({
-  bot
+  bot,
 });

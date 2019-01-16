@@ -31,8 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { lstatSync, readdirSync } from "fs";
-import { join } from "path";
+import { lstatSync, readdirSync } from 'fs';
+import { join } from 'path';
 
 /** Returns a list of subfolders */
 export const getDirectories = source =>

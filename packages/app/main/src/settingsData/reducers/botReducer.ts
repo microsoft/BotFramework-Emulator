@@ -31,9 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Bot } from "@bfemulator/app-shared";
+import { Bot } from '@bfemulator/app-shared';
 
-import { BotAction } from "../actions/botActions";
+import { BotAction } from '../actions/botActions';
 
 export function botsReducer(state: Bot[] = [], action: BotAction<Bot[]>) {
   switch (action.type) {

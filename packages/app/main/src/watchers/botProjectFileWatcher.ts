@@ -31,24 +31,25 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { SharedConstants } from "@bfemulator/app-shared";
-import { WatchOptions } from "chokidar";
-import { existsSync, readFileSync, Stats } from "fs-extra";
-import * as path from "path";
+import * as path from 'path';
 
-import * as BotActions from "../botData/actions/botActions";
-import { getStore } from "../botData/store";
+import { SharedConstants } from '@bfemulator/app-shared';
+import { WatchOptions } from 'chokidar';
+import { existsSync, readFileSync, Stats } from 'fs-extra';
+
+import * as BotActions from '../botData/actions/botActions';
+import { getStore } from '../botData/store';
 import {
   getActiveBot,
   getBotInfoByPath,
-  loadBotWithRetry
-} from "../botHelpers";
-import { mainWindow } from "../main";
+  loadBotWithRetry,
+} from '../botHelpers';
+import { mainWindow } from '../main';
 
-import { FileWatcher } from "./fileWatcher";
+import { FileWatcher } from './fileWatcher';
 
 function findGitIgnore(directory: string): string {
-  const filePath = path.resolve(directory, ".gitignore");
+  const filePath = path.resolve(directory, '.gitignore');
   const found = existsSync(filePath);
   if (found) {
     return filePath;
@@ -61,11 +62,11 @@ function readGitIgnore(filePath: string): string[] {
   if (!filePath) {
     return [];
   }
-  const text = readFileSync(filePath, "utf-8");
+  const text = readFileSync(filePath, 'utf-8');
   return text
     .split(/[\n\r]/)
     .map(x => x.trim())
-    .filter(x => x && !(x || "").startsWith("#"));
+    .filter(x => x && !(x || '').startsWith('#'));
 }
 
 /** Singleton class that will watch one bot project directory at a time */
@@ -92,7 +93,7 @@ export class BotProjectFileWatcher extends FileWatcher {
     const bot = await loadBotWithRetry(this.botFilePath, botInfo.secret);
     if (!bot) {
       // user dismissed the secret prompt dialog (if it was shown)
-      throw new Error("No secret provided to decrypt encrypted bot.");
+      throw new Error('No secret provided to decrypt encrypted bot.');
     }
 
     // update store
@@ -106,7 +107,7 @@ export class BotProjectFileWatcher extends FileWatcher {
       ),
       mainWindow.commandService.call(
         SharedConstants.Commands.Bot.RestartEndpointService
-      )
+      ),
     ]);
   };
 
@@ -128,7 +129,7 @@ export class BotProjectFileWatcher extends FileWatcher {
     const ignoreGlobs = readGitIgnore(gitIgnoreFile);
     return {
       ignored: ignoreGlobs,
-      followSymlinks: false
+      followSymlinks: false,
     };
   }
 }

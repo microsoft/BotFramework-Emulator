@@ -31,14 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { BotInfo } from "@bfemulator/app-shared";
+import { BotInfo } from '@bfemulator/app-shared';
 import {
   applyBotConfigOverrides,
   BotConfigWithPath,
-  botsAreTheSame
-} from "@bfemulator/sdk-shared";
+  botsAreTheSame,
+} from '@bfemulator/sdk-shared';
 
-import { BotAction, BotActions } from "../actions/botActions";
+import { BotAction, BotActions } from '../actions/botActions';
 
 export interface BotState {
   activeBot: BotConfigWithPath;
@@ -49,7 +49,7 @@ export interface BotState {
 const DEFAULT_STATE: BotState = {
   activeBot: null,
   botFiles: [],
-  currentBotDirectory: ""
+  currentBotDirectory: '',
 };
 
 export const bot = (
@@ -103,15 +103,17 @@ export const bot = (
 };
 
 function setActiveBot(bot4: BotConfigWithPath, state: BotState): BotState {
-  return {...state, 
+  return {
+    ...state,
     get activeBot() {
       // Clones only - this guarantees only pristine bots will exist in the store
       return JSON.parse(JSON.stringify(bot4));
-    }};
+    },
+  };
 }
 
 function setBotFilesState(botFilesState: BotInfo[], state: BotState): BotState {
-  const newState = {...state};
+  const newState = { ...state };
 
   newState.botFiles = botFilesState;
   return newState;
@@ -121,7 +123,7 @@ function setCurrentBotDirectory(
   botDirectory: string,
   state: BotState
 ): BotState {
-  const newState = {...state};
+  const newState = { ...state };
 
   newState.currentBotDirectory = botDirectory;
   return newState;

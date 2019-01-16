@@ -31,11 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { SharedConstants } from "@bfemulator/app-shared";
-import { CommandRegistryImpl } from "@bfemulator/sdk-shared";
+import { SharedConstants } from '@bfemulator/app-shared';
+import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 
-import { emulator } from "../emulator";
-import { windowManager } from "../main";
+import { emulator } from '../emulator';
+import { windowManager } from '../main';
 
 /** Registers OAuth commands */
 export function registerCommands(commandRegistry: CommandRegistryImpl) {

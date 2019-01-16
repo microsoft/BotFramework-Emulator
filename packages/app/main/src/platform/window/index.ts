@@ -31,17 +31,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import ILogService from "@bfemulator/emulator-core/lib/types/log/service";
+import ILogService from '@bfemulator/emulator-core/lib/types/log/service';
 import {
   CommandService,
   CommandServiceImpl,
-  DisposableImpl
-} from "@bfemulator/sdk-shared";
-import { BrowserWindow, WebContents } from "electron";
+  DisposableImpl,
+} from '@bfemulator/sdk-shared';
+import { BrowserWindow, WebContents } from 'electron';
 
-import { CommandRegistry } from "../../commands";
-import { ElectronIPC, ElectronIPCServer } from "../../ipc";
-import { LogService } from "../log/logService";
+import { CommandRegistry } from '../../commands';
+import { ElectronIPC, ElectronIPCServer } from '../../ipc';
+import { LogService } from '../log/logService';
 
 export class Window extends DisposableImpl {
   private readonly _commandService: CommandService;
@@ -73,7 +73,7 @@ export class Window extends DisposableImpl {
     this._ipc = new ElectronIPC(this._browserWindow.webContents);
     const commandService = (this._commandService = new CommandServiceImpl(
       this._ipc,
-      "command-service",
+      'command-service',
       CommandRegistry
     ));
     const logService = (this._logService = new LogService(this));

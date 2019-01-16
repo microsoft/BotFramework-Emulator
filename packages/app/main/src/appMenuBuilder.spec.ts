@@ -31,34 +31,36 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { SharedConstants } from "@bfemulator/app-shared";
-import { AppMenuBuilder } from "./appMenuBuilder";
-import { join } from "path";
+import { join } from 'path';
 
-jest.mock("./settingsData/store", () => ({
+import { SharedConstants } from '@bfemulator/app-shared';
+
+import { AppMenuBuilder } from './appMenuBuilder';
+
+jest.mock('./settingsData/store', () => ({
   getStore: () => ({
     getState: () => ({
-      azure: { signedInUser: "TheAmazingAuthLad@hotmail.com" },
+      azure: { signedInUser: 'TheAmazingAuthLad@hotmail.com' },
       windowState: {
         availableThemes: [
-          { name: "light" },
-          { name: "dark" },
-          { name: "midnight" }
+          { name: 'light' },
+          { name: 'dark' },
+          { name: 'midnight' },
         ],
-        theme: "midnight"
-      }
-    })
-  })
+        theme: 'midnight',
+      },
+    }),
+  }),
 }));
 
 let mockBuildFromTemplate;
 let mockGetApplicationMenu;
 let mockSetApplicationMenu;
 const mockMenuClassAppend = jest.fn(() => null);
-jest.mock("electron", () => ({
+jest.mock('electron', () => ({
   app: {
-    getName: () => "bot-framework-emulator",
-    getVersion: () => "4.2.0"
+    getName: () => 'bot-framework-emulator',
+    getVersion: () => '4.2.0',
   },
   Menu: class {
     append = mockMenuClassAppend;
@@ -80,50 +82,50 @@ jest.mock("electron", () => ({
       this.label = options.label;
       this.click = options.click;
     }
-  }
+  },
 }));
 
-let mockUpdateStatus = {
+const mockUpdateStatus = {
   Idle: 0,
   UpdateAvailable: 1,
   UpdateDownloading: 2,
-  UpdateReadyToInstall: 3
+  UpdateReadyToInstall: 3,
 };
-let mockAppUpdater = {
-  status: mockUpdateStatus.Idle
+const mockAppUpdater = {
+  status: mockUpdateStatus.Idle,
 };
-jest.mock("./appUpdater", () => ({
+jest.mock('./appUpdater', () => ({
   get AppUpdater() {
     return mockAppUpdater;
   },
   get UpdateStatus() {
     return mockUpdateStatus;
-  }
+  },
 }));
 
 let mockRemoteCall = () => null;
-jest.mock("./emulator", () => ({}));
-jest.mock("./main", () => ({
+jest.mock('./emulator', () => ({}));
+jest.mock('./main', () => ({
   mainWindow: {
     commandService: {
       get remoteCall() {
         return mockRemoteCall;
-      }
-    }
-  }
+      },
+    },
+  },
 }));
 
-describe("AppMenuBuilder", () => {
+describe('AppMenuBuilder', () => {
   const mockSendActivityMenu = {
     submenu: {
       items: [
-        { label: "userAdded" },
-        { label: "userRemoved" },
-        { label: "typing" }
-      ]
-    }
+        { label: 'userAdded' },
+        { label: 'userRemoved' },
+        { label: 'typing' },
+      ],
+    },
   };
-  let mockRecentBotsMenuClear = jest.fn(() => null);
+  const mockRecentBotsMenuClear = jest.fn(() => null);
   let mockAppendedBots;
   const mockRecentBotsMenuAppend = jest.fn(botItem =>
     mockAppendedBots.push(botItem)
@@ -134,11 +136,11 @@ describe("AppMenuBuilder", () => {
       append: mockRecentBotsMenuAppend,
       clear: mockRecentBotsMenuClear,
       items: [
-        { label: "localhost:3978" },
-        { label: "echo-bot" },
-        { label: "TestBotV4" }
-      ]
-    }
+        { label: 'localhost:3978' },
+        { label: 'echo-bot' },
+        { label: 'TestBotV4' },
+      ],
+    },
   };
   const mockAutoUpdateRestartMenuItem = { visible: false };
   const mockAutoUpdateCheckMenuItem = { visible: false };
@@ -151,8 +153,8 @@ describe("AppMenuBuilder", () => {
   const mockFileMenu = {
     submenu: {
       append: mockFileMenuAppend,
-      clear: mockFileMenuClear
-    }
+      clear: mockFileMenuClear,
+    },
   };
   let mockGetMenuItemById;
   let processPlatformBackup;
@@ -164,22 +166,22 @@ describe("AppMenuBuilder", () => {
 
     mockGetMenuItemById = jest.fn((id: string) => {
       switch (id) {
-        case "send-activity":
+        case 'send-activity':
           return mockSendActivityMenu;
 
-        case "recent-bots":
+        case 'recent-bots':
           return mockRecentBotsMenu;
 
-        case "auto-update-restart":
+        case 'auto-update-restart':
           return mockAutoUpdateRestartMenuItem;
 
-        case "auto-update-check":
+        case 'auto-update-check':
           return mockAutoUpdateCheckMenuItem;
 
-        case "auto-update-downloading":
+        case 'auto-update-downloading':
           return mockAutoUpdateDownloadingMenuItem;
 
-        case "file":
+        case 'file':
           return mockFileMenu;
 
         default:
@@ -188,40 +190,40 @@ describe("AppMenuBuilder", () => {
     });
     mockBuildFromTemplate = jest.fn(() => null);
     mockGetApplicationMenu = jest.fn(() => ({
-      getMenuItemById: mockGetMenuItemById
+      getMenuItemById: mockGetMenuItemById,
     }));
     mockSetApplicationMenu = jest.fn(() => null);
   });
 
   afterEach(() => {
-    Object.defineProperty(process, "platform", {
-      value: processPlatformBackup
+    Object.defineProperty(process, 'platform', {
+      value: processPlatformBackup,
     });
   });
 
-  it("should get the send activity menu items", () => {
+  it('should get the send activity menu items', () => {
     expect(AppMenuBuilder.sendActivityMenuItems).toEqual(
       mockSendActivityMenu.submenu.items
     );
-    expect(mockGetMenuItemById).toHaveBeenCalledWith("send-activity");
+    expect(mockGetMenuItemById).toHaveBeenCalledWith('send-activity');
 
     // shouldn't return anything if menu is falsy
     mockGetApplicationMenu = jest.fn(() => null);
     expect(AppMenuBuilder.sendActivityMenuItems).toEqual([]);
   });
 
-  it("should get the recent bots menu items", () => {
+  it('should get the recent bots menu items', () => {
     expect(AppMenuBuilder.recentBotsMenuItems).toEqual(
       mockRecentBotsMenu.submenu.items
     );
-    expect(mockGetMenuItemById).toHaveBeenCalledWith("recent-bots");
+    expect(mockGetMenuItemById).toHaveBeenCalledWith('recent-bots');
 
     // shouldn't return anything if menu is falsy
     mockGetApplicationMenu = jest.fn(() => null);
     expect(AppMenuBuilder.recentBotsMenuItems).toEqual([]);
   });
 
-  it("should refresh the app update menu", () => {
+  it('should refresh the app update menu', () => {
     mockAppUpdater.status = mockUpdateStatus.Idle;
     AppMenuBuilder.refreshAppUpdateMenu();
 
@@ -251,13 +253,13 @@ describe("AppMenuBuilder", () => {
     expect(mockAutoUpdateDownloadingMenuItem.visible).toBe(true);
   });
 
-  it("should update the recent bots list", () => {
+  it('should update the recent bots list', () => {
     mockRemoteCall = jest.fn((..._args) => Promise.resolve(null));
-    const mockBotPath = join("path", "to", "bot");
+    const mockBotPath = join('path', 'to', 'bot');
     const mockRecentBots = [
-      { displayName: "bot1", path: mockBotPath },
-      { displayName: "bot2" },
-      { displayName: "bot3" }
+      { displayName: 'bot1', path: mockBotPath },
+      { displayName: 'bot2' },
+      { displayName: 'bot3' },
     ];
     AppMenuBuilder.updateRecentBotsList(mockRecentBots);
 
@@ -265,10 +267,10 @@ describe("AppMenuBuilder", () => {
     expect(mockRecentBotsMenuAppend).toHaveBeenCalledTimes(
       mockRecentBots.length
     );
-    expect(mockAppendedBots.some(bot => bot.label === "bot1")).toBe(true);
-    expect(mockAppendedBots.some(bot => bot.label === "bot2")).toBe(true);
-    expect(mockAppendedBots.some(bot => bot.label === "bot3")).toBe(true);
-    const botWithPath = mockAppendedBots.find(bot => bot.label === "bot1");
+    expect(mockAppendedBots.some(bot => bot.label === 'bot1')).toBe(true);
+    expect(mockAppendedBots.some(bot => bot.label === 'bot2')).toBe(true);
+    expect(mockAppendedBots.some(bot => bot.label === 'bot3')).toBe(true);
+    const botWithPath = mockAppendedBots.find(bot => bot.label === 'bot1');
     botWithPath.click();
     expect(mockRemoteCall).toHaveBeenCalledWith(
       SharedConstants.Commands.Bot.Switch,
@@ -277,10 +279,10 @@ describe("AppMenuBuilder", () => {
     expect(mockRecentBotsMenu.enabled).toBe(true);
   });
 
-  it("should refresh the file menu", () => {
-    const mockFileItems = ["fileItem1", "fileItem2", "fileItem3"];
+  it('should refresh the file menu', () => {
+    const mockFileItems = ['fileItem1', 'fileItem2', 'fileItem3'];
     mockBuildFromTemplate = jest.fn(() => ({
-      items: mockFileItems
+      items: mockFileItems,
     }));
 
     AppMenuBuilder.refreshFileMenu();
@@ -306,35 +308,36 @@ describe("AppMenuBuilder", () => {
     expect(mockFileMenuAppend).toHaveBeenCalledWith(mockFileItems[2]);
   });
 
-  it("should initialize the app menu for Win / Linux", async () => {
+  it('should initialize the app menu for Win / Linux', async () => {
     let appMenuTemplate;
     mockBuildFromTemplate = jest.fn(template => {
       // when trying to build from the template, pull the template out
       // so that we can examine it and return some menu placeholder
       appMenuTemplate = template;
-      return "I am a menu";
+      return 'I am a menu';
     });
     const mockState = {
       chat: {
         chats: {
           someDocId: {
-            conversationId: "someConversationId"
-          }
-        }
+            conversationId: 'someConversationId',
+          },
+        },
       },
       editor: {
-        activeEditor: "primary",
+        activeEditor: 'primary',
         editors: {
           primary: {
-            activeDocumentId: "someDocId",
+            activeDocumentId: 'someDocId',
             documents: {
               someDocId: {
-                contentType: SharedConstants.ContentTypes.CONTENT_TYPE_LIVE_CHAT
-              }
-            }
-          }
-        }
-      }
+                contentType:
+                  SharedConstants.ContentTypes.CONTENT_TYPE_LIVE_CHAT,
+              },
+            },
+          },
+        },
+      },
     };
     mockRemoteCall = jest.fn(commandName => {
       if ((commandName = SharedConstants.Commands.Misc.GetStoreState)) {
@@ -343,7 +346,7 @@ describe("AppMenuBuilder", () => {
         return Promise.resolve({});
       }
     });
-    Object.defineProperty(process, "platform", { value: "win32" });
+    Object.defineProperty(process, 'platform', { value: 'win32' });
     await AppMenuBuilder.initAppMenu();
 
     // verify that each section of the menu is the expected length
@@ -355,14 +358,14 @@ describe("AppMenuBuilder", () => {
     // should show the currently signed in user
     const azureSignInItem = fileMenuTemplate[9];
     expect(azureSignInItem.label).toBe(
-      "Sign out (TheAmazingAuthLad@hotmail.com)"
+      'Sign out (TheAmazingAuthLad@hotmail.com)'
     );
 
     // should list all available themes and selected theme (midnight) as checked
     const themeMenu = fileMenuTemplate[11];
-    expect(themeMenu.label).toBe("Themes");
+    expect(themeMenu.label).toBe('Themes');
     expect(themeMenu.submenu).toHaveLength(3); // light, dark, midnight
-    expect(themeMenu.submenu[2].label).toBe("midnight");
+    expect(themeMenu.submenu[2].label).toBe('midnight');
     expect(themeMenu.submenu[2].checked).toBe(true);
 
     const editMenuTemplate = appMenuTemplate[1].submenu;
@@ -379,38 +382,39 @@ describe("AppMenuBuilder", () => {
     const helpMenuTemplate = appMenuTemplate[4].submenu;
     expect(helpMenuTemplate).toHaveLength(13);
 
-    expect(mockSetApplicationMenu).toHaveBeenCalledWith("I am a menu");
+    expect(mockSetApplicationMenu).toHaveBeenCalledWith('I am a menu');
   });
 
-  it("should initialize the app menu for Mac", async () => {
+  it('should initialize the app menu for Mac', async () => {
     let appMenuTemplate;
     mockBuildFromTemplate = jest.fn(template => {
       // when trying to build from the template, pull the template out
       // so that we can examine it and return some menu placeholder
       appMenuTemplate = template;
-      return "I am a menu";
+      return 'I am a menu';
     });
     const mockState = {
       chat: {
         chats: {
           someDocId: {
-            conversationId: "someConversationId"
-          }
-        }
+            conversationId: 'someConversationId',
+          },
+        },
       },
       editor: {
-        activeEditor: "primary",
+        activeEditor: 'primary',
         editors: {
           primary: {
-            activeDocumentId: "someDocId",
+            activeDocumentId: 'someDocId',
             documents: {
               someDocId: {
-                contentType: SharedConstants.ContentTypes.CONTENT_TYPE_LIVE_CHAT
-              }
-            }
-          }
-        }
-      }
+                contentType:
+                  SharedConstants.ContentTypes.CONTENT_TYPE_LIVE_CHAT,
+              },
+            },
+          },
+        },
+      },
     };
     mockRemoteCall = jest.fn(commandName => {
       if ((commandName = SharedConstants.Commands.Misc.GetStoreState)) {
@@ -419,7 +423,7 @@ describe("AppMenuBuilder", () => {
         return Promise.resolve({});
       }
     });
-    Object.defineProperty(process, "platform", { value: "darwin" });
+    Object.defineProperty(process, 'platform', { value: 'darwin' });
     await AppMenuBuilder.initAppMenu();
 
     // verify that each section of the menu is the expected length

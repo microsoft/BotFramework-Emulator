@@ -31,49 +31,50 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import * as Path from 'path';
+import * as QueryString from 'querystring';
+
 import {
   FrameworkSettings,
   newBot,
   newEndpoint,
   newNotification,
-  SharedConstants
-} from "@bfemulator/app-shared";
+  SharedConstants,
+} from '@bfemulator/app-shared';
 import {
   applyBotConfigOverrides,
   BotConfigOverrides,
   BotConfigWithPath,
-  BotConfigWithPathImpl
-} from "@bfemulator/sdk-shared";
-import { IEndpointService } from "botframework-config/lib/schema";
-import got from "got";
-import * as Path from "path";
-import * as QueryString from "querystring";
+  BotConfigWithPathImpl,
+} from '@bfemulator/sdk-shared';
+import { IEndpointService } from 'botframework-config/lib/schema';
+import got from 'got';
 
-import * as BotActions from "./botData/actions/botActions";
-import { getStore } from "./botData/store";
-import { Protocol } from "./constants";
-import { emulator } from "./emulator";
-import { mainWindow } from "./main";
-import { ngrokEmitter, running } from "./ngrok";
-import { getSettings } from "./settingsData/store";
-import { sendNotificationToClient } from "./utils/sendNotificationToClient";
+import * as BotActions from './botData/actions/botActions';
+import { getStore } from './botData/store';
+import { Protocol } from './constants';
+import { emulator } from './emulator';
+import { mainWindow } from './main';
+import { ngrokEmitter, running } from './ngrok';
+import { getSettings } from './settingsData/store';
+import { sendNotificationToClient } from './utils/sendNotificationToClient';
 
 enum ProtocolDomains {
   livechat,
   transcript,
-  bot
+  bot,
 }
 
 enum ProtocolLiveChatActions {
-  open
+  open,
 }
 
 enum ProtocolTranscriptActions {
-  open
+  open,
 }
 
 enum ProtocolBotActions {
-  open
+  open,
 }
 
 export interface Protocol {
@@ -105,22 +106,22 @@ export const ProtocolHandler = new class ProtocolHandlerImpl
     }
 
     // grab what's left after the protocol prefix (protocol automatically places '/' before query string params)
-    const restOfUrl = url.substring(Protocol.length).replace(/\//g, "");
+    const restOfUrl = url.substring(Protocol.length).replace(/\//g, '');
 
     // split into two parts: domain.action?args -> ['domain.action', 'args']
-    const chunks = restOfUrl.split("?");
-    const domainAndAction = chunks[0].split(".");
+    const chunks = restOfUrl.split('?');
+    const domainAndAction = chunks[0].split('.');
 
-    const domain = (domainAndAction[0] || "").toLowerCase();
-    const action = (domainAndAction[1] || "").toLowerCase();
-    const args = chunks[1] || "";
+    const domain = (domainAndAction[0] || '').toLowerCase();
+    const action = (domainAndAction[1] || '').toLowerCase();
+    const args = chunks[1] || '';
     const parsedArgs = QueryString.parse(args);
 
     const info: Protocol = {
       domain,
       action,
       args,
-      parsedArgs
+      parsedArgs,
     };
 
     return info;
@@ -191,7 +192,7 @@ export const ProtocolHandler = new class ProtocolHandlerImpl
     // mock up a bot object
     const { botUrl, msaAppId, msaPassword } = protocol.parsedArgs;
     const bot: BotConfigWithPath = BotConfigWithPathImpl.fromJSON(newBot());
-    bot.name = "";
+    bot.name = '';
     bot.path = SharedConstants.TEMP_BOT_IN_MEMORY_PATH;
 
     const endpoint: IEndpointService = newEndpoint();
@@ -199,7 +200,7 @@ export const ProtocolHandler = new class ProtocolHandlerImpl
     endpoint.appId = msaAppId;
     endpoint.appPassword = msaPassword;
     endpoint.id = botUrl;
-    endpoint.name = "New livechat";
+    endpoint.name = 'New livechat';
 
     bot.services.push(endpoint);
     getStore().dispatch(BotActions.mockAndSetActive(bot));
@@ -214,7 +215,7 @@ export const ProtocolHandler = new class ProtocolHandlerImpl
       ) {
         throw new Error(
           `Error while trying to spawn ngrok instance: ${ngrokSpawnStatus.err ||
-            ""}`
+            ''}`
         );
       }
 
@@ -222,7 +223,7 @@ export const ProtocolHandler = new class ProtocolHandlerImpl
       await mainWindow.commandService.remoteCall(
         SharedConstants.Commands.Bot.SetActive,
         bot,
-        ""
+        ''
       );
       await mainWindow.commandService.call(
         SharedConstants.Commands.Bot.RestartEndpointService
@@ -236,7 +237,7 @@ export const ProtocolHandler = new class ProtocolHandlerImpl
       } else {
         // if ngrok hasn't connected yet, wait for it to connect and start the livechat
         ngrokEmitter.once(
-          "connect",
+          'connect',
           (...args: any[]): void => {
             mainWindow.commandService.remoteCall(
               SharedConstants.Commands.Emulator.NewLiveChat,
@@ -271,7 +272,7 @@ export const ProtocolHandler = new class ProtocolHandlerImpl
               const conversationActivities = JSON.parse(transcriptString);
               if (!Array.isArray(conversationActivities)) {
                 throw new Error(
-                  "Invalid transcript file contents; should be an array of conversation activities."
+                  'Invalid transcript file contents; should be an array of conversation activities.'
                 );
               }
               const { name, ext } = Path.parse(url);
@@ -280,7 +281,7 @@ export const ProtocolHandler = new class ProtocolHandlerImpl
               // extra info to differentiate it from a transcript on disk
               mainWindow.commandService.remoteCall(
                 SharedConstants.Commands.Emulator.OpenTranscript,
-                "deepLinkedTranscript",
+                'deepLinkedTranscript',
                 { activities: conversationActivities, inMemory: true, fileName }
               );
             } catch (e) {
@@ -292,7 +293,7 @@ export const ProtocolHandler = new class ProtocolHandlerImpl
         } else {
           if (res.statusCode === 401) {
             // auth failed
-            const stat = res.body || res.statusText || "";
+            const stat = res.body || res.statusText || '';
             throw new Error(
               `Authorization error while trying to download transcript: ${stat}`
             );
@@ -314,7 +315,7 @@ export const ProtocolHandler = new class ProtocolHandlerImpl
   public async openBot(protocol: Protocol): Promise<void> {
     const {
       path,
-      secret
+      secret,
     }: { path: string; secret: string } = protocol.parsedArgs;
 
     const endpointOverrides: Partial<IEndpointService> = parseEndpointOverrides(
@@ -356,7 +357,7 @@ export const ProtocolHandler = new class ProtocolHandlerImpl
       ) {
         throw new Error(
           `Error while trying to spawn ngrok instance: ${ngrokSpawnStatus.err ||
-            ""}`
+            ''}`
         );
       }
 
@@ -378,7 +379,7 @@ export const ProtocolHandler = new class ProtocolHandlerImpl
       } else {
         // if ngrok hasn't connected yet, wait for it to connect and load the bot
         ngrokEmitter.once(
-          "connect",
+          'connect',
           async (...args: any[]): Promise<void> => {
             try {
               await mainWindow.commandService.call(
@@ -433,7 +434,7 @@ export function parseEndpointOverrides(parsedArgs: {
     appId = null,
     appPassword = null,
     endpoint = null,
-    id = null
+    id = null,
   } = parsedArgs;
 
   if (appId) {

@@ -31,18 +31,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { CommandRegistryImpl } from "@bfemulator/sdk-shared";
+import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 
-import { registerCommands as registerAzureCommands } from "./azureCommands";
-import { registerCommands as registerBotCommands } from "./botCommands";
-import { registerCommands as registerClientInitCommands } from "./clientInitCommands";
-import { registerCommands as registerLuisCommands } from "./connectedServiceCommands";
-import { registerCommands as registerElectronCommands } from "./electronCommands";
-import { registerCommands as registerEmulatorCommands } from "./emulatorCommands";
-import { registerCommands as registerFileCommands } from "./fileCommands";
-import { registerCommands as registerNgrokCommands } from "./ngrokCommands";
-import { registerCommands as registerOAuthCommands } from "./oauthCommands";
-import { registerCommands as registerSettingsCommands } from "./settingsCommands";
+import { registerCommands as registerAzureCommands } from './azureCommands';
+import { registerCommands as registerBotCommands } from './botCommands';
+import { registerCommands as registerClientInitCommands } from './clientInitCommands';
+import { registerCommands as registerLuisCommands } from './connectedServiceCommands';
+import { registerCommands as registerElectronCommands } from './electronCommands';
+import { registerCommands as registerEmulatorCommands } from './emulatorCommands';
+import { registerCommands as registerFileCommands } from './fileCommands';
+import { registerCommands as registerNgrokCommands } from './ngrokCommands';
+import { registerCommands as registerOAuthCommands } from './oauthCommands';
+import { registerCommands as registerSettingsCommands } from './settingsCommands';
 
 /** Registers all commands */
 export function registerAllCommands(commandRegistry: CommandRegistryImpl) {

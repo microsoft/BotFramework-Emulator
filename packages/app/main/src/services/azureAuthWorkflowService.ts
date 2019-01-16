@@ -31,16 +31,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { BrowserWindow } from "electron";
-import * as jwt from "jsonwebtoken";
-import uuidv4 from "uuid/v4";
+import { BrowserWindow } from 'electron';
+import * as jwt from 'jsonwebtoken';
+import uuidv4 from 'uuid/v4';
 
-const getPem = require("rsa-pem-from-mod-exp");
+// eslint-disable-next-line typescript/no-var-requires
+const getPem = require('rsa-pem-from-mod-exp');
 
-const clientId = "f3723d34-6ff5-4ceb-a148-d99dcd2511fc";
-const replyUrl = "https://dev.botframework.com/cb";
+const clientId = 'f3723d34-6ff5-4ceb-a148-d99dcd2511fc';
+const replyUrl = 'https://dev.botframework.com/cb';
 const authorizationEndpoint =
-  "https://login.microsoftonline.com/common/oauth2/authorize";
+  'https://login.microsoftonline.com/common/oauth2/authorize';
 
 declare interface Config {
   authorization_endpoint: string;
@@ -55,7 +56,7 @@ declare interface AuthResponse {
   error?: string;
 }
 declare interface Jwks {
-  keys: Array<{ x5t: string; n: string; e: string; x5c: string[] }>;
+  keys: { x5t: string; n: string; e: string; x5c: string[] }[];
 }
 
 export class AzureAuthWorkflowService {
@@ -74,7 +75,7 @@ export class AzureAuthWorkflowService {
     }
     const valid = yield this.validateJWT(result.access_token);
     if (!valid) {
-      result.error = "Invalid Token";
+      result.error = 'Invalid Token';
     }
     if (result.error) {
       return false;
@@ -87,25 +88,27 @@ export class AzureAuthWorkflowService {
     redirectUri: string
   ): Promise<AuthResponse> {
     const response = await new Promise<AuthResponse>(resolve => {
+      // eslint-disable-next-line prefer-const
       let interval;
       const poller = () => {
         let uri: string;
+        // eslint-disable-next-line typescript/no-object-literal-type-assertion
         const result: AuthResponse = {} as AuthResponse;
         try {
           const {
-            history = []
+            history = [],
           }: { history: string[] } = browserWindow.webContents as any;
-          uri = history[history.length - 1] || "";
+          uri = history[history.length - 1] || '';
         } catch (e) {
           clearInterval(interval);
           result.error = e.message;
           resolve(result);
         }
-        if (!(uri || "").toLowerCase().startsWith(redirectUri.toLowerCase())) {
+        if (!(uri || '').toLowerCase().startsWith(redirectUri.toLowerCase())) {
           return;
         }
-        const idx = uri.indexOf("#");
-        const values = uri.substring(idx + 1).split("&");
+        const idx = uri.indexOf('#');
+        const values = uri.substring(idx + 1).split('&');
         const len = values.length;
         for (let i = 0; i < len; i++) {
           const [key, value] = values[i].split(/[=]/);
@@ -114,10 +117,11 @@ export class AzureAuthWorkflowService {
         clearInterval(interval);
         resolve(result);
       };
-      browserWindow.addListener("close", () =>
-        resolve({ error: "canceled" } as AuthResponse)
+      browserWindow.addListener('close', () =>
+        // eslint-disable-next-line typescript/no-object-literal-type-assertion
+        resolve({ error: 'canceled' } as AuthResponse)
       );
-      browserWindow.addListener("page-title-updated", poller);
+      browserWindow.addListener('page-title-updated', poller);
       interval = setInterval(poller, 500); // Backup if everything else fails
     });
 
@@ -127,7 +131,7 @@ export class AzureAuthWorkflowService {
 
     const isValid = await this.validateJWT(response.access_token);
     if (!isValid) {
-      response.error = "Invalid token";
+      response.error = 'Invalid token';
     }
     return response;
   }
@@ -143,7 +147,7 @@ export class AzureAuthWorkflowService {
       alwaysOnTop: true,
       width: 490,
       height: 366,
-      webPreferences: { contextIsolation: true, nativeWindowOpen: true }
+      webPreferences: { contextIsolation: true, nativeWindowOpen: true },
     });
 
     browserWindow.setMenu(null);
@@ -158,18 +162,18 @@ export class AzureAuthWorkflowService {
       `state=${state}`,
       `client-request-id=${requestId}`,
       `nonce=${nonce}`,
-      "response_mode=fragment",
-      "resource=https://management.core.windows.net/"
+      'response_mode=fragment',
+      'resource=https://management.core.windows.net/',
     ];
 
     if (renew) {
-      bits.push("prompt=none");
+      bits.push('prompt=none');
     }
 
-    const url = bits.join("&");
+    const url = bits.join('&');
     browserWindow.loadURL(url);
     return new Promise<BrowserWindow>(resolve => {
-      browserWindow.once("ready-to-show", () => resolve(browserWindow));
+      browserWindow.once('ready-to-show', () => resolve(browserWindow));
     });
   }
 
@@ -178,7 +182,7 @@ export class AzureAuthWorkflowService {
       return this.config;
     }
     const configUrl =
-      "https://login.microsoftonline.com/common/.well-known/openid-configuration";
+      'https://login.microsoftonline.com/common/.well-known/openid-configuration';
     const configResponse = await fetch(configUrl);
     this.config = await configResponse.json();
     return this.config;
@@ -188,6 +192,7 @@ export class AzureAuthWorkflowService {
     if (this.jwks) {
       return this.jwks;
     }
+    // eslint-disable-next-line typescript/camelcase
     const { jwks_uri } = await this.getConfig();
     const jwksResponse = await fetch(jwks_uri);
     this.jwks = await jwksResponse.json();
@@ -195,9 +200,9 @@ export class AzureAuthWorkflowService {
   }
 
   private static async validateJWT(token: string): Promise<boolean> {
-    const [header] = token.split(".");
+    const [header] = token.split('.');
     const headers: { alg: string; kid: string; x5t: string } = JSON.parse(
-      Buffer.from(header, "base64").toString()
+      Buffer.from(header, 'base64').toString()
     );
 
     try {

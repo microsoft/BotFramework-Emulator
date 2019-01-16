@@ -30,18 +30,19 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { SharedConstants } from "@bfemulator/app-shared";
-import { CommandRegistryImpl } from "@bfemulator/sdk-shared";
-import * as Electron from "electron";
-import { app, Menu, MessageBoxOptions } from "electron";
-import * as fs from "fs-extra";
-import * as path from "path";
+import * as path from 'path';
 
-import { AppMenuBuilder } from "../appMenuBuilder";
-import { getStore } from "../botData/store";
-import { mainWindow } from "../main";
-import { ContextMenuService } from "../services/contextMenuService";
-import { showOpenDialog, showSaveDialog } from "../utils";
+import { SharedConstants } from '@bfemulator/app-shared';
+import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
+import * as Electron from 'electron';
+import { app, Menu, MessageBoxOptions } from 'electron';
+import * as fs from 'fs-extra';
+
+import { AppMenuBuilder } from '../appMenuBuilder';
+import { getStore } from '../botData/store';
+import { mainWindow } from '../main';
+import { ContextMenuService } from '../services/contextMenuService';
+import { showOpenDialog, showSaveDialog } from '../utils';
 
 const { shell } = Electron;
 
@@ -57,9 +58,9 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
     Commands.ShowMessageBox,
     (modal: boolean, options: MessageBoxOptions) => {
       options = {
-        message: "",
+        message: '',
         title: app.getName(),
-        ...options
+        ...options,
       };
       const args = modal ? [mainWindow.browserWindow, options] : [options];
       return Electron.dialog.showMessageBox.apply(Electron.dialog, args);
@@ -107,8 +108,8 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
       // enable / disable the send activity menu
       let enabled = false;
-      const { editors = {}, activeEditor = "" } = clientEditorState;
-      const { activeDocumentId = "" } = editors[activeEditor] || {};
+      const { editors = {}, activeEditor = '' } = clientEditorState;
+      const { activeDocumentId = '' } = editors[activeEditor] || {};
 
       if (
         activeDocumentId &&
@@ -117,7 +118,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
       ) {
         const activeDocument =
           editors[activeEditor].documents[activeDocumentId];
-        const { contentType = "" } = activeDocument;
+        const { contentType = '' } = activeDocument;
         enabled =
           contentType &&
           contentType === SharedConstants.ContentTypes.CONTENT_TYPE_LIVE_CHAT;

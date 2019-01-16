@@ -31,24 +31,25 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { BotInfo, SharedConstants } from "@bfemulator/app-shared";
-import { BotConfiguration } from "botframework-config";
-import { app } from "electron";
-import * as Fs from "fs-extra";
-import { sync as mkdirp } from "mkdirp";
-import * as Path from "path";
+import * as Path from 'path';
 
-import * as BotActions from "./botData/actions/botActions";
-import { getStore } from "./botData/store";
-import { cloneBot, saveBot } from "./botHelpers";
-import { mainWindow } from "./main";
-import { ensureStoragePath } from "./utils/ensureStoragePath";
-import { getFilesInDir } from "./utils/getFilesInDir";
-import { writeFile } from "./utils/writeFile";
+import { BotInfo, SharedConstants } from '@bfemulator/app-shared';
+import { BotConfiguration } from 'botframework-config';
+import { app } from 'electron';
+import * as Fs from 'fs-extra';
+import { sync as mkdirp } from 'mkdirp';
+
+import * as BotActions from './botData/actions/botActions';
+import { getStore } from './botData/store';
+import { cloneBot, saveBot } from './botHelpers';
+import { mainWindow } from './main';
+import { ensureStoragePath } from './utils/ensureStoragePath';
+import { getFilesInDir } from './utils/getFilesInDir';
+import { writeFile } from './utils/writeFile';
 
 /** Performs the V4 side of migration from V3 -> V4 bots */
 export class Migrator {
-  private static readonly _migrationMarkerName = "migration_marker.txt";
+  private static readonly _migrationMarkerName = 'migration_marker.txt';
 
   /** Runs the V4 side of migration if necessary */
   public static async startup(): Promise<void> {
@@ -69,14 +70,14 @@ export class Migrator {
     let botFilesDirectory =
       // %appdata%/@bfemulator/main
       app
-        .getPath("userData")
+        .getPath('userData')
         // %appdata%/botframework-emulator/botframework-emulator
         .replace(
-          Path.join("@bfemulator", "main"),
-          Path.join("botframework-emulator", "botframework-emulator")
+          Path.join('@bfemulator', 'main'),
+          Path.join('botframework-emulator', 'botframework-emulator')
         );
     // %appdata%/botframework-emulator/botframework-emulator/migration
-    botFilesDirectory = Path.join(botFilesDirectory, "migration");
+    botFilesDirectory = Path.join(botFilesDirectory, 'migration');
 
     // if the /migration/ directory does not exist then abort migration
     if (!(await Fs.pathExists(botFilesDirectory))) {
@@ -93,7 +94,7 @@ export class Migrator {
           // v3 path
           const oldPath = Path.join(botFilesDirectory, botFile);
           // v4 path
-          const newPathBase = Path.join(ensureStoragePath(), "migration");
+          const newPathBase = Path.join(ensureStoragePath(), 'migration');
           if (!(await Fs.pathExists(newPathBase))) {
             mkdirp(newPathBase);
           }
@@ -108,7 +109,7 @@ export class Migrator {
           const botInfo: BotInfo = {
             path: newPath,
             displayName: bot.name,
-            secret: null
+            secret: null,
           };
           recentBotsList.unshift(botInfo);
         } catch (err) {
@@ -138,7 +139,7 @@ export class Migrator {
 
   /** Writes a file to app data that prevents migration from being performed again */
   private static leaveMigrationMarker(): void {
-    writeFile(Path.join(ensureStoragePath(), this._migrationMarkerName), "");
+    writeFile(Path.join(ensureStoragePath(), this._migrationMarkerName), '');
   }
 
   /** Checks for the migration marker to determine if it has already been performed */

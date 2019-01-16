@@ -36,9 +36,9 @@
 // 2. To skip bundling, we can hack with window['require']
 // 3. We cannot make a helper function to simplify the spaghetti code on require(),
 // because TypeScript would complain it cannot statically extract it
-const remote: Electron.Remote = (typeof window === "undefined"
-  ? require("electron")
-  : (window as any).require("electron")
+const remote: Electron.Remote = (typeof window === 'undefined'
+  ? require('electron')
+  : (window as any).require('electron')
 ).remote;
 
 export function getGlobal(attributeName: string, defaultValue?: any): any {

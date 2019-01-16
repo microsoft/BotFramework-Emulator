@@ -1,20 +1,53 @@
-import { ServiceCodes } from "@bfemulator/app-shared/built";
-import { CosmosDbService } from "botframework-config";
-import * as crypto from "crypto";
+//
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license.
+//
+// Microsoft Bot Framework: http://botframework.com
+//
+// Bot Framework Emulator Github:
+// https://github.com/Microsoft/BotFramwork-Emulator
+//
+// Copyright (c) Microsoft Corporation
+// All rights reserved.
+//
+// MIT License:
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+//
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED ""AS IS"", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
+import * as crypto from 'crypto';
+
+import { ServiceCodes } from '@bfemulator/app-shared/built';
+import { CosmosDbService } from 'botframework-config';
 
 import {
   AccountIdentifier,
   AzureManagementApiService,
   AzureResource,
-  Provider
-} from "./azureManagementApiService";
+  Provider,
+} from './azureManagementApiService';
 
 export class CosmosDbApiService {
   public static *getCosmosDbServices(armToken: string): IterableIterator<any> {
     const payload = { services: [], code: ServiceCodes.OK };
 
     // 1. get a list of subscriptions for the user
-    yield { label: "Retrieving subscriptions from Azure…", progress: 10 };
+    yield { label: 'Retrieving subscriptions from Azure…', progress: 10 };
     const subs = yield AzureManagementApiService.getSubscriptions(armToken);
     if (!subs) {
       payload.code = ServiceCodes.AccountNotFound;
@@ -22,7 +55,7 @@ export class CosmosDbApiService {
     }
 
     // 2. Retrieve a list of database accounts
-    yield { label: "Retrieving account data from Azure…", progress: 25 };
+    yield { label: 'Retrieving account data from Azure…', progress: 25 };
     const databaseAccounts: AzureResource[] = yield AzureManagementApiService.getAzureResource(
       armToken,
       subs,
@@ -35,12 +68,12 @@ export class CosmosDbApiService {
     }
 
     // 3. Retrieve a list of keys
-    yield { label: "Retrieving access keys from Azure…", progress: 45 };
+    yield { label: 'Retrieving access keys from Azure…', progress: 45 };
     const keys: string[] = yield AzureManagementApiService.getKeysForAccounts(
       armToken,
       databaseAccounts,
-      "2015-04-08",
-      "primaryMasterKey"
+      '2015-04-08',
+      'primaryMasterKey'
     );
     if (!keys) {
       payload.code = ServiceCodes.Error;
@@ -48,10 +81,10 @@ export class CosmosDbApiService {
     }
 
     // 4. retrieve a list of CosmosDBs
-    yield { label: "Retrieving Cosmos DBs from Azure…", progress: 65 };
+    yield { label: 'Retrieving Cosmos DBs from Azure…', progress: 65 };
     const cosmosDbRequests = databaseAccounts.map((account, index) => {
       const req = AzureManagementApiService.getRequestInit(armToken);
-      req.headers["x-ms-version"] = "2017-02-22";
+      req.headers['x-ms-version'] = '2017-02-22';
       (req.headers as any).Authorization = getAuthorizationTokenUsingMasterKey(
         keys[index]
       );
@@ -78,22 +111,22 @@ export class CosmosDbApiService {
     // It does not appear to be documented anywhere and was used because
     // the documented API was returning a 401 no matter what params and
     // auth headers where used.
-    yield { label: "Retrieving collections from Azure…", progress: 85 };
+    yield { label: 'Retrieving collections from Azure…', progress: 85 };
     const collectionRequests = cosmosDbs.map(info => {
       const { db, account } = info;
       const { id, name, properties, subscriptionId } = account as AzureResource;
       const req = AzureManagementApiService.getRequestInit(armToken);
-      const resourceGroup = id.split("/")[4];
+      const resourceGroup = id.split('/')[4];
       const params = [
         `resourceUrl=${properties.documentEndpoint}dbs/${db._rid}/colls/`,
         `rid=${db._rid}`,
-        "rtype=colls",
+        'rtype=colls',
         `sid=${subscriptionId}`,
         `rg=${resourceGroup}`,
-        `dba=${name}`
+        `dba=${name}`,
       ];
       const proxyUrl = `https://main.documentdb.ext.azure.com/api/RuntimeProxy?${params.join(
-        "&"
+        '&'
       )}`;
       return fetch(proxyUrl, req);
     });
@@ -125,7 +158,7 @@ function buildServiceModel(
   service.collection = collection.id;
   service.endpoint = account.properties.documentEndpoint;
   service.serviceName = service.name = collection.id;
-  service.resourceGroup = account.id.split("/")[4];
+  service.resourceGroup = account.id.split('/')[4];
   service.subscriptionId = account.subscriptionId;
   service.tenantId = account.tenantId;
 
@@ -133,25 +166,25 @@ function buildServiceModel(
 }
 
 function getAuthorizationTokenUsingMasterKey(
-  masterKey: string = "",
-  resourceId: string = ""
+  masterKey: string = '',
+  resourceId: string = ''
 ): string {
-  const key = Buffer.from(masterKey, "base64");
+  const key = Buffer.from(masterKey, 'base64');
   const text =
-    "get\n" +
-    "dbs\n" +
+    'get\n' +
+    'dbs\n' +
     resourceId +
-    "\n" +
+    '\n' +
     new Date().toUTCString().toLowerCase() +
-    "\n" +
-    "" +
-    "\n";
+    '\n' +
+    '' +
+    '\n';
 
   const body = Buffer.from(text);
   const signature = crypto
-    .createHmac("sha256", key)
+    .createHmac('sha256', key)
     .update(body)
-    .digest("base64");
+    .digest('base64');
 
-  return encodeURIComponent("type=master&ver=1.0&sig=" + signature);
+  return encodeURIComponent('type=master&ver=1.0&sig=' + signature);
 }

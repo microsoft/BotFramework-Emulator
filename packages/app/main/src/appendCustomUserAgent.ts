@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as Electron from "electron";
+import * as Electron from 'electron';
 
 export function appendCustomUserAgent(
   details: any,
@@ -40,7 +40,7 @@ export function appendCustomUserAgent(
   const { requestHeaders = {} } = details;
   const version = Electron.app.getVersion();
 
-  requestHeaders["User-Agent"] += ` botbuilder/emulator/${version}`;
+  requestHeaders['User-Agent'] += ` botbuilder/emulator/${version}`;
 
   callback({ cancel: false, requestHeaders });
 }

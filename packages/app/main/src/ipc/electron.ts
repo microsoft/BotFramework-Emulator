@@ -31,22 +31,22 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Disposable, IPC } from "@bfemulator/sdk-shared";
-import { Event, ipcMain, WebContents } from "electron";
+import { Disposable, IPC } from '@bfemulator/sdk-shared';
+import { Event, ipcMain, WebContents } from 'electron';
 
 export class ElectronIPC extends IPC {
   private _webContents: WebContents;
-  get webContents(): WebContents {
+  public get webContents(): WebContents {
     return this._webContents;
   }
 
-  constructor(webContents: WebContents) {
+  public constructor(webContents: WebContents) {
     super();
     this._webContents = webContents;
   }
 
   public send(...args: any[]): void {
-    this._webContents.send("ipc:message", ...args);
+    this._webContents.send('ipc:message', ...args);
   }
 
   public onMessage(event: Event, ...args: any[]): void {
@@ -58,7 +58,7 @@ export class ElectronIPC extends IPC {
   }
 }
 
-export const ElectronIPCServer = new class {
+class ElectronIPCServerImpl {
   private _ipcs: WeakMap<WebContents, ElectronIPC> = new WeakMap<
     WebContents,
     ElectronIPC
@@ -71,7 +71,7 @@ export const ElectronIPCServer = new class {
     return {
       dispose: () => {
         this._ipcs.delete(ipc.webContents);
-      }
+      },
     };
   }
 
@@ -79,7 +79,7 @@ export const ElectronIPCServer = new class {
     if (this.initialized) {
       return;
     }
-    ipcMain.on("ipc:message", (event: Event, ...args) => {
+    ipcMain.on('ipc:message', (event: Event, ...args) => {
       const ipc = this._ipcs.get(event.sender);
       if (ipc) {
         ipc.onMessage(event, ...args);
@@ -87,4 +87,6 @@ export const ElectronIPCServer = new class {
     });
     this.initialized = true;
   }
-}();
+}
+
+export const ElectronIPCServer = new ElectronIPCServerImpl();

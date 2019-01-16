@@ -31,14 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { BotInfo, newBot } from "@bfemulator/app-shared";
-import { BotConfigWithPath } from "@bfemulator/sdk-shared";
+import { BotInfo, newBot } from '@bfemulator/app-shared';
+import { BotConfigWithPath } from '@bfemulator/sdk-shared';
 
 export enum BotActions {
-  load = "BOT/LOAD",
-  setActive = "BOT/SET_ACTIVE",
-  setDirectory = "BOT/SET_DIRECTORY",
-  close = "BOT/CLOSE"
+  load = 'BOT/LOAD',
+  setActive = 'BOT/SET_ACTIVE',
+  setDirectory = 'BOT/SET_DIRECTORY',
+  close = 'BOT/CLOSE',
 }
 
 export interface LoadBotAction {
@@ -80,8 +80,8 @@ export function load(bots: BotInfo[]): LoadBotAction {
   return {
     type: BotActions.load,
     payload: {
-      bots
-    }
+      bots,
+    },
   };
 }
 
@@ -89,8 +89,8 @@ export function setActive(bot: BotConfigWithPath): SetActiveBotAction {
   return {
     type: BotActions.setActive,
     payload: {
-      bot
-    }
+      bot,
+    },
   };
 }
 
@@ -98,26 +98,26 @@ export function setDirectory(directory: string): SetDirectoryBotAction {
   return {
     type: BotActions.setDirectory,
     payload: {
-      directory
-    }
+      directory,
+    },
   };
 }
 
 export function close(): CloseBotAction {
   return {
     type: BotActions.close,
-    payload: {}
+    payload: {},
   };
 }
 
 export function mockAndSetActive(mock?: BotConfigWithPath): BotAction {
   const bot = newBot(
     {
-      version: "",
-      name: "Random Bot",
-      description: "",
+      version: '',
+      name: 'Random Bot',
+      description: '',
       services: [],
-      padlock: ""
+      padlock: '',
     },
     mock
   );

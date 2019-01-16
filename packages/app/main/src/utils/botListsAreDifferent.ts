@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { BotInfo } from "@bfemulator/app-shared";
+import { BotInfo } from '@bfemulator/app-shared';
 
 /**
  * Compares two bot lists against each other and returns whether they are different or not

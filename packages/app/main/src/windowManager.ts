@@ -31,12 +31,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as Electron from "electron";
-import * as path from "path";
-import * as URL from "url";
+import * as path from 'path';
+import * as URL from 'url';
 
-import { rememberZoomLevel } from "./settingsData/actions/windowStateActions";
-import { dispatch, getSettings } from "./settingsData/store";
+import * as Electron from 'electron';
+
+import { rememberZoomLevel } from './settingsData/actions/windowStateActions';
+import { dispatch, getSettings } from './settingsData/store';
 
 export class WindowManager {
   private mainWindow: Electron.BrowserWindow;
@@ -45,10 +46,10 @@ export class WindowManager {
   constructor() {
     this.windows = [];
 
-    Electron.ipcMain.on("createCheckoutWindow", (event, args) => {
+    Electron.ipcMain.on('createCheckoutWindow', (event, args) => {
       this.createCheckoutWindow(args.payload, args.settings, args.serviceUrl);
     });
-    Electron.ipcMain.on("getCheckoutState", (event, args) => {
+    Electron.ipcMain.on('getCheckoutState', (event, args) => {
       const state = event.sender.checkoutState;
       event.returnValue = state;
     });
@@ -101,24 +102,24 @@ export class WindowManager {
     serviceUrl: string
   ) {
     let page = URL.format({
-      protocol: "file",
+      protocol: 'file',
       slashes: true,
-      pathname: path.join(__dirname, "../client/payments/index.html")
+      pathname: path.join(__dirname, '../client/payments/index.html'),
     });
-    page += "?" + payload;
+    page += '?' + payload;
 
     const checkoutWindow = new Electron.BrowserWindow({
       width: 1000,
       height: 620,
-      title: "Checkout with Microsoft Emulator"
+      title: 'Checkout with Microsoft Emulator',
     });
     this.add(checkoutWindow);
     (checkoutWindow.webContents as any).checkoutState = {
       settings,
-      serviceUrl
+      serviceUrl,
     };
 
-    checkoutWindow.on("closed", () => {
+    checkoutWindow.on('closed', () => {
       this.remove(checkoutWindow);
     });
 
@@ -136,7 +137,7 @@ export class WindowManager {
     const win = new Electron.BrowserWindow({
       width: 800,
       height: 600,
-      title: "Sign In"
+      title: 'Sign In',
     });
     this.add(win);
     const webContents = win.webContents;
@@ -144,7 +145,7 @@ export class WindowManager {
     // webContents.openDevTools();
     webContents.setZoomLevel(getSettings().windowState.zoomLevel);
 
-    win.on("closed", () => {
+    win.on('closed', () => {
       this.remove(win);
     });
 
@@ -152,14 +153,14 @@ export class WindowManager {
     ses.webRequest.onBeforeRequest((details, callback) => {
       const url1 = details.url.toLowerCase();
       if (
-        url1.indexOf("/postsignincallback?") !== -1 &&
-        url1.indexOf("&code_verifier=") === -1
+        url1.indexOf('/postsignincallback?') !== -1 &&
+        url1.indexOf('&code_verifier=') === -1
       ) {
         if (getSettings().framework.useCodeValidation) {
-          codeVerifier = "emulated";
+          codeVerifier = 'emulated';
         }
         // final OAuth redirect so augment the call with the code_verifier
-        const newUrl = details.url + "&code_verifier=" + codeVerifier;
+        const newUrl = details.url + '&code_verifier=' + codeVerifier;
         callback({ redirectURL: newUrl });
       } else {
         // let the request happen

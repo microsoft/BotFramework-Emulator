@@ -31,17 +31,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ProgressInfo } from "builder-util-runtime";
-import { autoUpdater as electronUpdater, UpdateInfo } from "electron-updater";
-import { EventEmitter } from "events";
+import { EventEmitter } from 'events';
 
-import { getSettings } from "./settingsData/store";
+import { ProgressInfo } from 'builder-util-runtime';
+import { autoUpdater as electronUpdater, UpdateInfo } from 'electron-updater';
+
+import { getSettings } from './settingsData/store';
 
 export enum UpdateStatus {
   Idle,
   UpdateAvailable,
   UpdateDownloading,
-  UpdateReadyToInstall
+  UpdateReadyToInstall,
 }
 
 class EmulatorUpdater extends EventEmitter {
@@ -89,9 +90,9 @@ class EmulatorUpdater extends EventEmitter {
 
   public get repo(): string {
     if (this.allowPrerelease) {
-      return "BotFramework-Emulator-Nightlies";
+      return 'BotFramework-Emulator-Nightlies';
     }
-    return "BotFramework-Emulator";
+    return 'BotFramework-Emulator';
   }
 
   public startup() {
@@ -103,40 +104,40 @@ class EmulatorUpdater extends EventEmitter {
     electronUpdater.autoInstallOnAppQuit = true;
     electronUpdater.logger = null;
 
-    electronUpdater.on("checking-for-update", () => {
-      this.emit("checking-for-update");
+    electronUpdater.on('checking-for-update', () => {
+      this.emit('checking-for-update');
     });
-    electronUpdater.on("update-available", (updateInfo: UpdateInfo) => {
+    electronUpdater.on('update-available', (updateInfo: UpdateInfo) => {
       if (!this.autoDownload) {
         this._status = UpdateStatus.Idle;
-        this.emit("update-available", updateInfo);
+        this.emit('update-available', updateInfo);
       }
       // if this was initiated on startup, download in the background
       if (!this.userInitiated) {
         this.downloadUpdate(false);
       }
     });
-    electronUpdater.on("update-not-available", (updateInfo: UpdateInfo) => {
+    electronUpdater.on('update-not-available', (updateInfo: UpdateInfo) => {
       this._status = UpdateStatus.Idle;
-      this.emit("up-to-date");
+      this.emit('up-to-date');
     });
-    electronUpdater.on("error", (err: Error, message: string) => {
+    electronUpdater.on('error', (err: Error, message: string) => {
       this._status = UpdateStatus.Idle;
-      this.emit("error", err, message);
+      this.emit('error', err, message);
     });
-    electronUpdater.on("download-progress", (progress: ProgressInfo) => {
+    electronUpdater.on('download-progress', (progress: ProgressInfo) => {
       this._status = UpdateStatus.UpdateDownloading;
       this._downloadProgress = progress.percent;
-      this.emit("download-progress", progress);
+      this.emit('download-progress', progress);
     });
-    electronUpdater.on("update-downloaded", (updateInfo: UpdateInfo) => {
+    electronUpdater.on('update-downloaded', (updateInfo: UpdateInfo) => {
       if (this._installAfterDownload) {
         this.quitAndInstall();
         return;
       } else {
         this._status = UpdateStatus.UpdateReadyToInstall;
         this._updateDownloaded = true;
-        this.emit("update-downloaded", updateInfo);
+        this.emit('update-downloaded', updateInfo);
       }
     });
 
@@ -153,8 +154,8 @@ class EmulatorUpdater extends EventEmitter {
 
     electronUpdater.setFeedURL({
       repo: this.repo,
-      owner: "Microsoft",
-      provider: "github"
+      owner: 'Microsoft',
+      provider: 'github',
     });
 
     try {

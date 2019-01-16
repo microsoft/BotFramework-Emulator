@@ -34,17 +34,17 @@
 import {
   BotInfo,
   getBotDisplayName,
-  SharedConstants
-} from "@bfemulator/app-shared";
+  SharedConstants,
+} from '@bfemulator/app-shared';
 import {
   BotConfigWithPath,
-  BotConfigWithPathImpl
-} from "@bfemulator/sdk-shared";
-import { BotConfiguration } from "botframework-config";
+  BotConfigWithPathImpl,
+} from '@bfemulator/sdk-shared';
+import { BotConfiguration } from 'botframework-config';
 
-import * as BotActions from "./botData/actions/botActions";
-import { getStore } from "./botData/store";
-import { mainWindow } from "./main";
+import * as BotActions from './botData/actions/botActions';
+import { getStore } from './botData/store';
+import { mainWindow } from './main';
 
 const store = getStore();
 
@@ -98,7 +98,7 @@ export async function loadBotWithRetry(
       const botInfo: BotInfo = {
         path: botPath,
         displayName: getBotDisplayName(bot),
-        secret
+        secret,
       };
       await patchBotsJson(botPath, botInfo);
     }
@@ -108,7 +108,7 @@ export async function loadBotWithRetry(
     // TODO: Only prompt for password if we know for a fact we need it.
     // Lots of different errors can arrive here, like ENOENT, if the file wasn't found.
     // Add easily discernable errors / error codes to msbot package
-    if (e instanceof Error && e.message.includes("secret")) {
+    if (e instanceof Error && e.message.includes('secret')) {
       return promptForSecretAndRetry(botPath);
     } else {
       throw e;
@@ -139,7 +139,7 @@ export function toSavableBot(
   secret?: string
 ): BotConfiguration {
   if (!bot) {
-    throw new Error(`Cannot convert ${"" + bot} bot to savable bot.`);
+    throw new Error(`Cannot convert ${'' + bot} bot to savable bot.`);
   }
   const newBot = BotConfiguration.fromJSON(bot);
   (newBot as any).internal.location = bot.path; // Workaround until defect is fixed

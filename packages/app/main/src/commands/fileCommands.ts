@@ -31,11 +31,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { SharedConstants } from "@bfemulator/app-shared";
-import { CommandRegistryImpl } from "@bfemulator/sdk-shared";
+import { SharedConstants } from '@bfemulator/app-shared';
+import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 
-import { readFileSync, writeFile } from "../utils";
-const sanitize = require("sanitize-filename");
+import { readFileSync, writeFile } from '../utils';
+
+// eslint-disable-next-line typescript/no-var-requires
+const sanitize = require('sanitize-filename');
 
 /** Registers file commands */
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
@@ -49,6 +51,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
         const contents = readFileSync(path);
         return contents;
       } catch (e) {
+        // eslint-disable-next-line no-console
         console.error(`Failure reading file at ${path}: `, e);
         throw e;
       }
@@ -63,6 +66,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
       try {
         writeFile(path, contents);
       } catch (e) {
+        // eslint-disable-next-line no-console
         console.error(`Failure writing to file at ${path}: `, e);
         throw e;
       }

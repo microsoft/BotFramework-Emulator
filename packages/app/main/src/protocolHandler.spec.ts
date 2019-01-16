@@ -1,3 +1,35 @@
+//
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license.
+//
+// Microsoft Bot Framework: http://botframework.com
+//
+// Bot Framework Emulator Github:
+// https://github.com/Microsoft/BotFramwork-Emulator
+//
+// Copyright (c) Microsoft Corporation
+// All rights reserved.
+//
+// MIT License:
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+//
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED ""AS IS"", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
 // Allows us to bypass all the setup required in ./main
 //
 // NOTE: A significant part of protocolHandler is not testable
@@ -7,38 +39,38 @@
 // a property of main. However, any mocks written for the CommandService
 // will be overwritten due to the call to "jest.mock('./main', ...)"
 
-jest.mock("./main", () => ({}));
-jest.mock("./globals", () => ({
-  getGlobal: () => ({}),
-  setGlobal: () => null
-}));
-import "./fetchProxy";
+import './fetchProxy';
 import {
   Protocol,
   ProtocolHandler,
-  parseEndpointOverrides
-} from "./protocolHandler";
+  parseEndpointOverrides,
+} from './protocolHandler';
+jest.mock('./main', () => ({}));
+jest.mock('./globals', () => ({
+  getGlobal: () => ({}),
+  setGlobal: () => null,
+}));
 
-describe("Protocol handler tests", () => {
-  describe("parseProtocolUrl() functionality", () => {
-    it("should return an info object about the parsed URL", () => {
+describe('Protocol handler tests', () => {
+  describe('parseProtocolUrl() functionality', () => {
+    it('should return an info object about the parsed URL', () => {
       const info: Protocol = ProtocolHandler.parseProtocolUrl(
-        "bfemulator://bot.open?path=somePath"
+        'bfemulator://bot.open?path=somePath'
       );
-      expect(info.domain).toBe("bot");
-      expect(info.action).toBe("open");
-      expect(info.args).toEqual("path=somePath");
-      expect(info.parsedArgs).toEqual({ path: "somePath" });
+      expect(info.domain).toBe('bot');
+      expect(info.action).toBe('open');
+      expect(info.args).toEqual('path=somePath');
+      expect(info.parsedArgs).toEqual({ path: 'somePath' });
     });
 
-    it("should throw on an invalid protocol url", () => {
+    it('should throw on an invalid protocol url', () => {
       expect(() =>
-        ProtocolHandler.parseProtocolUrl("invalidProtocolUrl://blah")
+        ProtocolHandler.parseProtocolUrl('invalidProtocolUrl://blah')
       ).toThrow();
     });
   });
 
-  it("should dispatch the result of parseProtocolUrl", () => {
+  it('should dispatch the result of parseProtocolUrl', () => {
     // preserve functions that will be mocked
     const tmpParseProtocolUrl = ProtocolHandler.parseProtocolUrl;
     const tmpDispatchProtocolAction = ProtocolHandler.dispatchProtocolAction;
@@ -50,7 +82,7 @@ describe("Protocol handler tests", () => {
     ProtocolHandler.parseProtocolUrl = mockParseProtocolUrl;
     ProtocolHandler.dispatchProtocolAction = mockDispatchProtocolAction;
 
-    ProtocolHandler.parseProtocolUrlAndDispatch("someUrl");
+    ProtocolHandler.parseProtocolUrlAndDispatch('someUrl');
     expect(mockParseProtocolUrl).toHaveBeenCalledTimes(1);
     expect(mockDispatchProtocolAction).toHaveBeenCalledTimes(1);
 
@@ -59,7 +91,7 @@ describe("Protocol handler tests", () => {
     ProtocolHandler.dispatchProtocolAction = tmpDispatchProtocolAction;
   });
 
-  describe("dispatching protocol actions", () => {
+  describe('dispatching protocol actions', () => {
     let tmpPerformBotAction;
     let tmpPerformLiveChatAction;
     let tmpPerformTranscriptAction;
@@ -76,7 +108,7 @@ describe("Protocol handler tests", () => {
       ProtocolHandler.performTranscriptAction = tmpPerformTranscriptAction;
     });
 
-    it("shouldn\t do anything on an unrecognized action", () => {
+    it('shouldn\t do anything on an unrecognized action', () => {
       const mockPerformBotAction = jest.fn(() => null);
       ProtocolHandler.performBotAction = mockPerformBotAction;
       const mockPerformLiveChatAction = jest.fn(() => null);
@@ -84,71 +116,71 @@ describe("Protocol handler tests", () => {
       const mockPerformTranscriptAction = jest.fn(() => null);
       ProtocolHandler.performTranscriptAction = mockPerformTranscriptAction;
 
-      ProtocolHandler.dispatchProtocolAction({ domain: "invalidDomain" });
+      ProtocolHandler.dispatchProtocolAction({ domain: 'invalidDomain' });
 
       expect(mockPerformBotAction).not.toHaveBeenCalled();
       expect(mockPerformLiveChatAction).not.toHaveBeenCalled();
       expect(mockPerformTranscriptAction).not.toHaveBeenCalled();
     });
 
-    it("should dispatch a bot action", () => {
+    it('should dispatch a bot action', () => {
       const mockPerformBotAction = jest.fn(() => null);
       ProtocolHandler.performBotAction = mockPerformBotAction;
 
-      ProtocolHandler.dispatchProtocolAction({ domain: "bot" });
+      ProtocolHandler.dispatchProtocolAction({ domain: 'bot' });
 
       expect(mockPerformBotAction).toHaveBeenCalledTimes(1);
     });
 
-    it("should dispatch a livechat action", () => {
+    it('should dispatch a livechat action', () => {
       const mockPerformLiveChatAction = jest.fn(() => null);
       ProtocolHandler.performLiveChatAction = mockPerformLiveChatAction;
 
-      ProtocolHandler.dispatchProtocolAction({ domain: "livechat" });
+      ProtocolHandler.dispatchProtocolAction({ domain: 'livechat' });
 
       expect(mockPerformLiveChatAction).toHaveBeenCalledTimes(1);
     });
 
-    it("should dispatch a transcript action", () => {
+    it('should dispatch a transcript action', () => {
       const mockPerformTranscriptAction = jest.fn(() => null);
       ProtocolHandler.performTranscriptAction = mockPerformTranscriptAction;
 
-      ProtocolHandler.dispatchProtocolAction({ domain: "transcript" });
+      ProtocolHandler.dispatchProtocolAction({ domain: 'transcript' });
 
       expect(mockPerformTranscriptAction).toHaveBeenCalledTimes(1);
     });
   });
 
-  describe("parseEndpointOverrides() functionality", () => {
-    it("should return null when passed a falsy object", () => {
+  describe('parseEndpointOverrides() functionality', () => {
+    it('should return null when passed a falsy object', () => {
       const result = parseEndpointOverrides(null);
       expect(result).toBe(null);
     });
 
-    it("should return null when passed an empty object", () => {
+    it('should return null when passed an empty object', () => {
       const result = parseEndpointOverrides({});
       expect(result).toBe(null);
     });
 
-    it("should return an endpoint object with overrides", () => {
+    it('should return an endpoint object with overrides', () => {
       const parsedArgs = {
-        appId: "someAppId",
-        appPassword: "someAppPw",
-        endpoint: "someEndpoint",
-        someOtherArg: "someOtherArg"
+        appId: 'someAppId',
+        appPassword: 'someAppPw',
+        endpoint: 'someEndpoint',
+        someOtherArg: 'someOtherArg',
       };
 
       const overrides = parseEndpointOverrides(parsedArgs);
       expect(Object.keys(overrides).length).toBe(3);
-      expect(overrides.appId).toBe("someAppId");
-      expect(overrides.appPassword).toBe("someAppPw");
-      expect(overrides.endpoint).toBe("someEndpoint");
+      expect(overrides.appId).toBe('someAppId');
+      expect(overrides.appPassword).toBe('someAppPw');
+      expect(overrides.endpoint).toBe('someEndpoint');
     });
 
-    it("should return null if no overrides were parsed", () => {
+    it('should return null if no overrides were parsed', () => {
       const parsedArgs = {
-        notAnOverride: "testing",
-        notAnOverrideEither: "testing"
+        notAnOverride: 'testing',
+        notAnOverrideEither: 'testing',
       };
 
       const overrides = parseEndpointOverrides(parsedArgs);
@@ -157,6 +189,6 @@ describe("Protocol handler tests", () => {
   });
 
   // unmock mainWindow
-  jest.unmock("./main");
-  jest.unmock("./globals");
+  jest.unmock('./main');
+  jest.unmock('./globals');
 });

@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { BotState } from "./reducers/bot";
+import { BotState } from './reducers/bot';
 
 export interface State {
   bot: BotState;
@@ -41,6 +41,6 @@ export const DEFAULT_STATE: State = {
   bot: {
     activeBot: null,
     botFiles: [],
-    currentBotDirectory: ""
-  }
+    currentBotDirectory: '',
+  },
 };

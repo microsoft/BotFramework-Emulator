@@ -31,18 +31,19 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as fs from "fs";
+import * as fs from 'fs';
 
-import { ensureStoragePath } from "./ensureStoragePath";
+import { ensureStoragePath } from './ensureStoragePath';
 
 /** Save JSON object to file. */
 export const saveSettings = <T>(filename: string, settings: T): void => {
   try {
     filename = `${ensureStoragePath()}/${filename}`;
     fs.writeFileSync(filename, JSON.stringify(settings, null, 2), {
-      encoding: "utf8"
+      encoding: 'utf8',
     });
   } catch (e) {
+    // eslint-disable-next-line no-console
     console.error(`Failed to write file: ${filename}`, e);
   }
 };

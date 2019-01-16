@@ -31,25 +31,21 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import {
-  ClientAwareSettings,
-  Settings,
-  SharedConstants
-} from "@bfemulator/app-shared";
-import { CommandRegistryImpl } from "@bfemulator/sdk-shared";
-import { Store } from "redux";
+import { Settings, SharedConstants } from '@bfemulator/app-shared';
+import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
+import { Store } from 'redux';
 
-import * as BotActions from "../botData/actions/botActions";
-import { getStore } from "../botData/store";
-import { Protocol } from "../constants";
-import { emulator } from "../emulator";
-import { ExtensionManagerImpl } from "../extensions";
-import { mainWindow } from "../main";
-import { Migrator } from "../migrator";
-import { ProtocolHandler } from "../protocolHandler";
-import { getStore as getSettingsStore } from "../settingsData/store";
-import { getBotsFromDisk } from "../utils";
-import { openFileFromCommandLine } from "../utils/openFileFromCommandLine";
+import * as BotActions from '../botData/actions/botActions';
+import { getStore } from '../botData/store';
+import { Protocol } from '../constants';
+import { emulator } from '../emulator';
+import { ExtensionManagerImpl } from '../extensions';
+import { mainWindow } from '../main';
+import { Migrator } from '../migrator';
+import { ProtocolHandler } from '../protocolHandler';
+import { getStore as getSettingsStore } from '../settingsData/store';
+import { getBotsFromDisk } from '../utils';
+import { openFileFromCommandLine } from '../utils/openFileFromCommandLine';
 
 /** Registers client initialization commands */
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
@@ -94,14 +90,14 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
       await mainWindow.commandService.remoteCall(
         Commands.Settings.ReceiveGlobalSettings,
         {
-          serverUrl: (emulator.framework.serverUrl || "").replace(
-            "[::]",
-            "localhost"
+          serverUrl: (emulator.framework.serverUrl || '').replace(
+            '[::]',
+            'localhost'
           ),
-          cwd: (__dirname || "").replace(/\\/g, "/"),
+          cwd: (__dirname || '').replace(/\\/g, '/'),
           users: settingsState.users,
-          locale: settingsState.framework.locale
-        } as ClientAwareSettings
+          locale: settingsState.framework.locale,
+        }
       );
     }
   );

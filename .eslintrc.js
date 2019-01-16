@@ -38,12 +38,19 @@ module.exports = {
     'typescript/no-empty-interface': 'warn',
     'typescript/no-parameter-properties': 'off',
     'typescript/explicit-function-return-type': 'off',
+    'typescript/no-use-before-define': [
+      'error',
+      { functions: false, classes: false },
+    ],
   },
   overrides: [
     {
       files: ['**/*.test.tsx', '**/*.spec.tsx', '**/*.test.ts', '**/*.spec.ts'],
       env: {
         jest: true,
+      },
+      rules: {
+        'typescript/class-name-casing': 'off',
       },
     },
   ],

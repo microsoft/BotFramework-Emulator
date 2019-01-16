@@ -31,12 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import LogLevel from "@bfemulator/emulator-core/lib/types/log/level";
-import { textItem } from "@bfemulator/emulator-core/lib/types/log/util";
-import got from "got";
-import { DOMParser } from "xmldom";
+import LogLevel from '@bfemulator/emulator-core/lib/types/log/level';
+import { textItem } from '@bfemulator/emulator-core/lib/types/log/util';
+import got from 'got';
+import { DOMParser } from 'xmldom';
 
-import { mainWindow } from "./main";
+import { mainWindow } from './main';
 
 interface Version {
   type?: string;
@@ -47,7 +47,10 @@ interface Version {
 
 export class VersionManager {
   public static hasChecked: boolean = false;
-  public static SDKTypes: string[] = ["(BotBuilder .Net/", "(BotBuilder Node.js/"];
+  public static SDKTypes: string[] = [
+    '(BotBuilder .Net/',
+    '(BotBuilder Node.js/',
+  ];
   public static currentSdkVersion: Version = null;
 
   public static checkVersion(conversationId: string, userAgent: string) {
@@ -62,7 +65,7 @@ export class VersionManager {
     conversationId: string,
     version: Version
   ) {
-    if (!version || version.type === "node") {
+    if (!version || version.type === 'node') {
       VersionManager.checkNodeSdkVersion(conversationId, version);
     } else {
       VersionManager.checkDotNetSdkVersion(conversationId, version);
@@ -71,12 +74,12 @@ export class VersionManager {
 
   public static checkNodeSdkVersion(conversationId: string, version: Version) {
     const options = {
-      url: "http://registry.npmjs.org/-/package/botbuilder/dist-tags",
-      method: "GET",
+      url: 'http://registry.npmjs.org/-/package/botbuilder/dist-tags',
+      method: 'GET',
       headers: {
-        Accept: "application/json"
+        Accept: 'application/json',
       },
-      useElectronNet: true
+      useElectronNet: true,
     };
 
     const responseCallback = resp => {
@@ -113,20 +116,22 @@ export class VersionManager {
   ) {
     const options = {
       url:
-        "https://www.nuget.org/api/v2/Packages?" +
+        'https://www.nuget.org/api/v2/Packages?' +
         "$filter=IsLatestVersion%20eq%20true%20and%20Id%20eq'Microsoft.Bot.Builder'&$select=NormalizedVersion",
-      method: "GET",
-      useElectronNet: true
+      method: 'GET',
+      useElectronNet: true,
     };
 
     const responseCallback = resp => {
       if (resp.body) {
         try {
-          const doc = new DOMParser().parseFromString(resp.body, "text/xml");
-          const entryElem = doc.documentElement.getElementsByTagName("entry")[0];
-          const properties = entryElem.getElementsByTagName("m:properties")[0];
+          const doc = new DOMParser().parseFromString(resp.body, 'text/xml');
+          const entryElem = doc.documentElement.getElementsByTagName(
+            'entry'
+          )[0];
+          const properties = entryElem.getElementsByTagName('m:properties')[0];
           const versionElem = properties.getElementsByTagName(
-            "d:NormalizedVersion"
+            'd:NormalizedVersion'
           )[0];
           if (versionElem.textContent) {
             const latestVersion: Version = VersionManager.parseVersion(
@@ -161,13 +166,13 @@ export class VersionManager {
       conversationId,
       textItem(
         LogLevel.Warn,
-        "Warning: The latest bot SDK version is " +
+        'Warning: The latest bot SDK version is ' +
           VersionManager.toString(latestVersion) +
           (botVersion
-            ? " but the bot is running SDK version " +
+            ? ' but the bot is running SDK version ' +
               VersionManager.toString(botVersion)
-            : "") +
-          ". Consider upgrading the bot to the latest SDK."
+            : '') +
+          '. Consider upgrading the bot to the latest SDK.'
       )
     );
   }
@@ -179,12 +184,12 @@ export class VersionManager {
         let idx = userAgent.indexOf(type);
         if (idx !== -1) {
           idx += type.length;
-          const endIdx = userAgent.indexOf(")", idx);
+          const endIdx = userAgent.indexOf(')', idx);
           if (endIdx !== -1) {
             const versionString = userAgent.substring(idx, endIdx);
             const version = VersionManager.parseVersion(versionString);
             if (version) {
-              version.type = i === 0 ? "dotnet" : "node";
+              version.type = i === 0 ? 'dotnet' : 'node';
             }
             return version;
           }
@@ -196,12 +201,12 @@ export class VersionManager {
   }
 
   private static parseVersion(versionString: string): Version {
-    const parts = versionString.split(".");
+    const parts = versionString.split('.');
     if (parts.length >= 3) {
       const version = {
         major: parseInt(parts[0], 10),
         minor: parseInt(parts[1], 10),
-        subminor: parseInt(parts[2], 10)
+        subminor: parseInt(parts[2], 10),
       };
       return version;
     }
@@ -209,7 +214,7 @@ export class VersionManager {
   }
 
   private static toString(version: Version): string {
-    return version.major + "." + version.minor + "." + version.subminor;
+    return version.major + '.' + version.minor + '.' + version.subminor;
   }
 
   private static isLess(a: Version, b: Version): boolean {

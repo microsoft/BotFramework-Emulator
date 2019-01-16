@@ -32,4 +32,4 @@
 //
 
 /** Returns a starting name for a bot */
-export const getSafeBotName = (): string => "My Bot";
+export const getSafeBotName = (): string => 'My Bot';

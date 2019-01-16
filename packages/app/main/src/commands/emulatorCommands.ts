@@ -31,34 +31,35 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { newBot, newEndpoint, SharedConstants } from "@bfemulator/app-shared";
-import { Conversation } from "@bfemulator/emulator-core";
-import { BotConfigWithPath, CommandRegistryImpl } from "@bfemulator/sdk-shared";
-import * as fs from "fs-extra";
-import { sync as mkdirpSync } from "mkdirp";
-import * as path from "path";
+import * as path from 'path';
 
-import * as BotActions from "../botData/actions/botActions";
-import { getStore } from "../botData/store";
+import { newBot, newEndpoint, SharedConstants } from '@bfemulator/app-shared';
+import { Conversation } from '@bfemulator/emulator-core';
+import { BotConfigWithPath, CommandRegistryImpl } from '@bfemulator/sdk-shared';
+import * as fs from 'fs-extra';
+import { sync as mkdirpSync } from 'mkdirp';
+
+import * as BotActions from '../botData/actions/botActions';
+import { getStore } from '../botData/store';
 import {
   getActiveBot,
   getBotInfoByPath,
   patchBotsJson,
-  toSavableBot
-} from "../botHelpers";
-import { emulator } from "../emulator";
-import { mainWindow } from "../main";
-import { getStore as getSettingsStore } from "../settingsData/store";
+  toSavableBot,
+} from '../botHelpers';
+import { emulator } from '../emulator';
+import { mainWindow } from '../main';
+import { getStore as getSettingsStore } from '../settingsData/store';
 import {
   parseActivitiesFromChatFile,
   showSaveDialog,
-  writeFile
-} from "../utils";
+  writeFile,
+} from '../utils';
 import {
   cleanupId as cleanupActivityChannelAccountId,
-  CustomActivity
-} from "../utils/conversation";
-import { botProjectFileWatcher } from "../watchers";
+  CustomActivity,
+} from '../utils/conversation';
+import { botProjectFileWatcher } from '../watchers';
 
 /** Registers emulator (actual conversation emulation logic) commands */
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
@@ -86,20 +87,20 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
       let botInfo = getBotInfoByPath(activeBot.path);
       const dirName = path.dirname(activeBot.path);
 
-      const { transcriptsPath = path.join(dirName, "./transcripts") } = botInfo;
+      const { transcriptsPath = path.join(dirName, './transcripts') } = botInfo;
 
       const filename = showSaveDialog(mainWindow.browserWindow, {
         // TODO - Localization
         filters: [
           {
-            name: "Transcript Files",
-            extensions: ["transcript"]
-          }
+            name: 'Transcript Files',
+            extensions: ['transcript'],
+          },
         ],
         defaultPath: transcriptsPath,
         showsTagField: false,
-        title: "Save conversation transcript",
-        buttonLabel: "Save"
+        title: 'Save conversation transcript',
+        buttonLabel: 'Save',
       });
 
       // If there is no current bot directory, we should set the directory
@@ -146,7 +147,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
         );
       }
 
-      const activities = JSON.parse(await fs.readFile(transcriptPath, "utf-8"));
+      const activities = JSON.parse(await fs.readFile(transcriptPath, 'utf-8'));
 
       await mainWindow.commandService.call(
         Commands.FeedTranscriptFromMemory,
@@ -161,7 +162,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
       return {
         fileName,
-        filePath
+        filePath,
       };
     }
   );
@@ -179,7 +180,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
       const activeBot: BotConfigWithPath = getActiveBot();
 
       if (!activeBot) {
-        throw new Error("emulator:feed-transcript:deep-link: No active bot.");
+        throw new Error('emulator:feed-transcript:deep-link: No active bot.');
       }
 
       const convo = emulator.framework.server.botEmulator.facilities.conversations.conversationById(
@@ -227,7 +228,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
       const conversation = emulator.framework.server.botEmulator.facilities.conversations.newConversation(
         emulator.framework.server.botEmulator,
         null,
-        { id: getSettingsStore().getState().users.currentUserId, name: "User" },
+        { id: getSettingsStore().getState().users.currentUserId, name: 'User' },
         conversationId
       );
 
@@ -263,7 +264,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
     const { facilities } = emulator.framework.server.botEmulator;
     const { users } = facilities;
     users.currentUserId = userId;
-    users.users[userId] = { id: userId, name: "User" };
+    users.users[userId] = { id: userId, name: 'User' };
     facilities.users = users;
   });
 }

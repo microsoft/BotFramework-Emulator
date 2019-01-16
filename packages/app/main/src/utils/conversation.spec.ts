@@ -31,94 +31,94 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { cleanupId, findIdWithRole } from "./conversation";
+import { cleanupId, findIdWithRole } from './conversation';
 
-describe("conversation utilities", () => {
+describe('conversation utilities', () => {
   it('should find ID with role "bot"', () => {
     const activities: any = [
       {
-        recipient: { id: "bot-1", role: "bot" }
+        recipient: { id: 'bot-1', role: 'bot' },
       },
       {
-        recipient: { id: "bot-2", role: "bot" }
-      }
+        recipient: { id: 'bot-2', role: 'bot' },
+      },
     ];
 
-    expect(findIdWithRole(activities, "bot")).toBe("bot-1");
+    expect(findIdWithRole(activities, 'bot')).toBe('bot-1');
   });
 
-  it("should not alter conversationUpdate activites", () => {
+  it('should not alter conversationUpdate activites', () => {
     const activities: any = [
       {
-        type: "conversationUpdate",
-        recipient: { id: "bot-1", role: "bot" }
+        type: 'conversationUpdate',
+        recipient: { id: 'bot-1', role: 'bot' },
       },
       {
-        type: "conversationUpdate",
-        recipient: { id: "bot-2", role: "bot" }
-      }
+        type: 'conversationUpdate',
+        recipient: { id: 'bot-2', role: 'bot' },
+      },
     ];
     expect(cleanupId(activities)).toEqual(activities);
   });
 
-  it("should assign bot and user IDs to all activities with from and recipient fields", () => {
-    const botId = "bot123";
-    const userId = "user123";
+  it('should assign bot and user IDs to all activities with from and recipient fields', () => {
+    const botId = 'bot123';
+    const userId = 'user123';
     const activities: any = [
       {
-        type: "event",
-        from: { role: "bot" },
-        recipient: { role: "user" }
+        type: 'event',
+        from: { role: 'bot' },
+        recipient: { role: 'user' },
       },
       {
-        type: "message",
-        from: { role: "user" },
-        recipient: { role: "bot" }
+        type: 'message',
+        from: { role: 'user' },
+        recipient: { role: 'bot' },
       },
       {
-        type: "messageReaction",
-        from: { role: "bot" },
-        recipient: { role: "user" }
+        type: 'messageReaction',
+        from: { role: 'bot' },
+        recipient: { role: 'user' },
       },
       {
-        type: "typing",
-        from: { role: "user" },
-        recipient: { role: "bot" }
-      }
+        type: 'typing',
+        from: { role: 'user' },
+        recipient: { role: 'bot' },
+      },
     ];
     const fixedActivities = cleanupId(activities, botId, userId);
     expect(fixedActivities).toEqual([
       {
-        type: "event",
-        from: { id: "bot123", role: "bot" },
-        recipient: { id: "user123", role: "user" }
+        type: 'event',
+        from: { id: 'bot123', role: 'bot' },
+        recipient: { id: 'user123', role: 'user' },
       },
       {
-        type: "message",
-        from: { id: "user123", role: "user" },
-        recipient: { id: "bot123", role: "bot" }
+        type: 'message',
+        from: { id: 'user123', role: 'user' },
+        recipient: { id: 'bot123', role: 'bot' },
       },
       {
-        type: "messageReaction",
-        from: { id: "bot123", role: "bot" },
-        recipient: { id: "user123", role: "user" }
+        type: 'messageReaction',
+        from: { id: 'bot123', role: 'bot' },
+        recipient: { id: 'user123', role: 'user' },
       },
       {
-        type: "typing",
-        from: { id: "user123", role: "user" },
-        recipient: { id: "bot123", role: "bot" }
-      }
+        type: 'typing',
+        from: { id: 'user123', role: 'user' },
+        recipient: { id: 'bot123', role: 'bot' },
+      },
     ]);
   });
 });
 
-it("should use the id of the activity if no default bot / user ID was found or there is no role", () => {
+it('should use the id of the activity if no default bot / user ID was found or there is no role', () => {
   const activities: any = [
     {
-      type: "message",
-      from: { id: "user123" },
-      recipient: { id: "bot123" }
-    }
+      type: 'message',
+      from: { id: 'user123' },
+      recipient: { id: 'bot123' },
+    },
   ];
   const fixedActivities = cleanupId(activities);
   expect(fixedActivities).toEqual(activities);

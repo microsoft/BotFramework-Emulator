@@ -31,13 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as readTextFile from "read-text-file";
+import * as readTextFile from 'read-text-file';
 
 export const readFileSync = (path: string): string => {
   try {
     return readTextFile.readSync(path);
   } catch (e) {
+    // eslint-disable-next-line no-console
     console.error(`Error reading file ${path}: ${e}`);
-    return "";
+    return '';
   }
 };

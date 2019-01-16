@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { BrowserWindow, dialog, OpenDialogOptions } from "electron";
+import { BrowserWindow, dialog, OpenDialogOptions } from 'electron';
 
 /** Shows a native open file / directory dialog */
 export const showOpenDialog = (

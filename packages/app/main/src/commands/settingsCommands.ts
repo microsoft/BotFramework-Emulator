@@ -31,11 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { FrameworkSettings, SharedConstants } from "@bfemulator/app-shared";
-import { CommandRegistryImpl } from "@bfemulator/sdk-shared";
+import { FrameworkSettings, SharedConstants } from '@bfemulator/app-shared';
+import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 
-import { setFramework } from "../settingsData/actions/frameworkActions";
-import { dispatch, getSettings } from "../settingsData/store";
+import { setFramework } from '../settingsData/actions/frameworkActions';
+import { dispatch, getSettings } from '../settingsData/store';
 
 /** Registers settings commands */
 export function registerCommands(commandRegistry: CommandRegistryImpl) {

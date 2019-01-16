@@ -1,6 +1,39 @@
+//
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license.
+//
+// Microsoft Bot Framework: http://botframework.com
+//
+// Bot Framework Emulator Github:
+// https://github.com/Microsoft/BotFramwork-Emulator
+//
+// Copyright (c) Microsoft Corporation
+// All rights reserved.
+//
+// MIT License:
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+//
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED ""AS IS"", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
 // ------------------------------------------------------------------
 // Proxy support
-const nodeFetch = require("node-fetch");
+// eslint-disable-next-line typescript/no-var-requires
+const nodeFetch = require('node-fetch');
 
 declare function fetch(
   input: RequestInfo,
@@ -10,7 +43,7 @@ declare function fetch(
   const [urlOrRequest, requestInit = {}] = args;
   // No Proxy
   const url: string =
-    typeof urlOrRequest === "string" ? urlOrRequest : urlOrRequest.url;
+    typeof urlOrRequest === 'string' ? urlOrRequest : urlOrRequest.url;
   if (
     !process.env.HTTPS_PROXY ||
     (process.env.NO_PROXY && url.includes(process.env.NO_PROXY))
@@ -19,9 +52,10 @@ declare function fetch(
   }
   // URL is first param attach the proxy
   // to the RequestInit
-  const HttpsProxyAgent = require("https-proxy-agent");
+  // eslint-disable-next-line typescript/no-var-requires
+  const HttpsProxyAgent = require('https-proxy-agent');
   const agent = new HttpsProxyAgent(process.env.HTTPS_PROXY);
-  if (typeof urlOrRequest === "string") {
+  if (typeof urlOrRequest === 'string') {
     requestInit.agent = agent;
   } else {
     urlOrRequest.agent = agent;

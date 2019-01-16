@@ -31,21 +31,22 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as electron from "electron"; // use a lowercase name "electron" to prevent clash with "Electron" namespace
-import * as mkdirp from "mkdirp";
-import * as path from "path";
+import * as path from 'path';
 
-import * as globals from "../globals";
+import * as electron from 'electron'; // use a lowercase name "electron" to prevent clash with "Electron" namespace
+import * as mkdirp from 'mkdirp';
+
+import * as globals from '../globals';
 const electronApp: Electron.App = electron.app;
 const electronRemote: Electron.Remote = electron.remote;
 
 /** Returns the app storage path, and creates the directory if it doesn't exist */
 export const ensureStoragePath = (): string => {
-  const commandLineArgs = globals.getGlobal("commandlineargs");
+  const commandLineArgs = globals.getGlobal('commandlineargs');
   const app = electronApp || electronRemote.app;
   const storagePath =
     commandLineArgs.storagepath ||
-    path.join(app.getPath("userData"), "botframework-emulator");
+    path.join(app.getPath('userData'), 'botframework-emulator');
   mkdirp.sync(storagePath);
   return storagePath;
 };

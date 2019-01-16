@@ -31,12 +31,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as path from "path";
+import * as path from 'path';
 
-import { CustomActivity } from "./conversation";
+import { CustomActivity } from './conversation';
 
-const { fork } = require("child_process");
-const chatdown = require.resolve("chatdown/bin/chatdown");
+// eslint-disable-next-line typescript/no-var-requires
+const { fork } = require('child_process');
+const chatdown = require.resolve('chatdown/bin/chatdown');
 
 /**
  * Uses the chatdown library to convert a .chat file into a list of conversation activities
@@ -47,8 +48,8 @@ export const parseActivitiesFromChatFile = async (
 ): Promise<CustomActivity[]> => {
   let activities: CustomActivity[] = [];
 
-  if (path.extname(file) !== ".chat") {
-    throw new Error("Can only use chatdown on .chat files.");
+  if (path.extname(file) !== '.chat') {
+    throw new Error('Can only use chatdown on .chat files.');
   }
 
   // convert conversation to list of activities using chatdown
@@ -60,19 +61,19 @@ export const parseActivitiesFromChatFile = async (
     activities = (await new Promise((resolve, reject) => {
       const childProcess = fork(chatdown, [file], {
         cwd: path.dirname(file),
-        silent: true
+        silent: true,
       });
 
-      let str = "";
-      childProcess.stdout.on("data", (data: Uint8Array) => {
+      let str = '';
+      childProcess.stdout.on('data', (data: Uint8Array) => {
         str += data.toString();
       });
 
-      childProcess.stdout.on("end", () => {
+      childProcess.stdout.on('end', () => {
         resolve(JSON.parse(str));
       });
 
-      childProcess.stdout.on("error", err => {
+      childProcess.stdout.on('error', err => {
         reject(err);
       });
     })) as CustomActivity[];

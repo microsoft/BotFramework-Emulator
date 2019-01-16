@@ -31,10 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ErrorResponse } from "@bfemulator/app-shared";
-import * as Restify from "restify";
+import { ErrorResponse } from '@bfemulator/app-shared';
+import * as Restify from 'restify';
 
-import { exceptionToAPIException } from "./exceptionToAPIException";
+import { exceptionToAPIException } from './exceptionToAPIException';
 
 /** Send exception as error response */
 export const sendErrorResponse = (

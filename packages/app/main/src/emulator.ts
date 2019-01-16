@@ -31,14 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { BotFrameworkService } from "./botFrameworkService";
-import { NgrokService } from "./ngrokService";
-import * as Settings from "./settingsData/store";
+import { BotFrameworkService } from './botFrameworkService';
+import { NgrokService } from './ngrokService';
+import * as Settings from './settingsData/store';
 
-interface QueuedMessage {
-  channel: any;
-  args: any[];
-}
+export let emulator: Emulator;
 
 /**
  * Top-level state container for the Node process.
@@ -66,5 +63,3 @@ export class Emulator {
     this.ngrok.report(conversationId);
   }
 }
-
-export let emulator: Emulator;
