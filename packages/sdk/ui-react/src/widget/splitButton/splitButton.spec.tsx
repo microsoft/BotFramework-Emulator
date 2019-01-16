@@ -31,21 +31,22 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { mount } from "enzyme";
-import * as React from "react";
-import { SplitButton } from "./splitButton";
+import { mount } from 'enzyme';
+import * as React from 'react';
 
-jest.mock("./splitButton.scss", () => ({}));
-jest.mock("./splitButtonPanel/splitButtonPanel", () => ({
-  SplitButtonPanel: () => <div />
+import { SplitButton } from './splitButton';
+
+jest.mock('./splitButton.scss', () => ({}));
+jest.mock('./splitButtonPanel/splitButtonPanel', () => ({
+  SplitButtonPanel: () => <div />,
 }));
 
-describe("<SplitButton>", () => {
+describe('<SplitButton>', () => {
   let wrapper;
   let node;
   let instance;
   let mockHidePanel;
-  const mockOptions = ["option1", "option2", "option3"];
+  const mockOptions = ['option1', 'option2', 'option3'];
 
   beforeEach(() => {
     mockHidePanel = jest.fn(() => null);
@@ -54,18 +55,18 @@ describe("<SplitButton>", () => {
     instance = wrapper.instance();
   });
 
-  it("should render deeply", () => {
+  it('should render deeply', () => {
     expect(node.html()).not.toBe(null);
   });
 
-  it("should set a caret button ref", () => {
+  it('should set a caret button ref', () => {
     const mockCaretRef = "I'm a caret button!";
     instance.setCaretRef(mockCaretRef);
 
     expect(instance.caretRef).toBe(mockCaretRef);
   });
 
-  it("should handle clicking the caret button", () => {
+  it('should handle clicking the caret button', () => {
     const mockStopPropagation = jest.fn(() => null);
     const mockEvent = { stopPropagation: mockStopPropagation };
     instance.setState({ expanded: false, selected: 1 });
@@ -76,7 +77,7 @@ describe("<SplitButton>", () => {
     expect(instance.state.selected).toBe(0);
   });
 
-  it("should handle clicking the default button", () => {
+  it('should handle clicking the default button', () => {
     const mockOnClick = jest.fn((_value: number) => null);
     wrapper = mount(
       <SplitButton options={mockOptions} onClick={mockOnClick} />
@@ -84,10 +85,10 @@ describe("<SplitButton>", () => {
     instance = wrapper.instance();
     instance.onClickDefault();
 
-    expect(mockOnClick).toHaveBeenCalledWith("option1");
+    expect(mockOnClick).toHaveBeenCalledWith('option1');
   });
 
-  it("should handle clicking an option", () => {
+  it('should handle clicking an option', () => {
     const mockOnClick = jest.fn((_value: number) => null);
     wrapper = mount(
       <SplitButton options={mockOptions} onClick={mockOnClick} />
@@ -96,11 +97,11 @@ describe("<SplitButton>", () => {
     instance.hidePanel = mockHidePanel;
     instance.onClickOption(2);
 
-    expect(mockOnClick).toHaveBeenCalledWith("option3");
+    expect(mockOnClick).toHaveBeenCalledWith('option3');
     expect(mockHidePanel).toHaveBeenCalledTimes(1);
   });
 
-  it("should hide panel", () => {
+  it('should hide panel', () => {
     const mockFocus = jest.fn(() => null);
     instance.caretRef = { focus: mockFocus };
     instance.setState({ expanded: true, selected: 1 });
@@ -111,7 +112,7 @@ describe("<SplitButton>", () => {
     expect(mockFocus).toHaveBeenCalledTimes(1);
   });
 
-  it("should move selection up", () => {
+  it('should move selection up', () => {
     wrapper = mount(<SplitButton options={mockOptions} />);
     instance = wrapper.instance();
     instance.setState({ selected: 2 });
@@ -127,7 +128,7 @@ describe("<SplitButton>", () => {
     expect(instance.state.selected).toBe(0);
   });
 
-  it("should move selection down", () => {
+  it('should move selection down', () => {
     wrapper = mount(<SplitButton options={mockOptions} />);
     instance = wrapper.instance();
     instance.setState({ selected: 0 });
@@ -143,27 +144,27 @@ describe("<SplitButton>", () => {
     expect(instance.state.selected).toBe(2);
   });
 
-  it("should handle keydown events", () => {
+  it('should handle keydown events', () => {
     instance.hidePanel = mockHidePanel;
     const mockPreventDefault = jest.fn(() => null);
 
-    let mockEvent: any = { key: "ArrowDown" };
+    let mockEvent: any = { key: 'ArrowDown' };
     const mockMoveSelectionDown = jest.fn(() => null);
     instance.moveSelectionDown = mockMoveSelectionDown;
     instance.onKeyDown(mockEvent);
     expect(mockMoveSelectionDown).toHaveBeenCalledTimes(1);
 
-    mockEvent = { key: "ArrowUp" };
+    mockEvent = { key: 'ArrowUp' };
     const mockMoveSelectionUp = jest.fn(() => null);
     instance.moveSelectionUp = mockMoveSelectionUp;
     instance.onKeyDown(mockEvent);
     expect(mockMoveSelectionUp).toHaveBeenCalledTimes(1);
 
-    mockEvent = { key: "Escape" };
+    mockEvent = { key: 'Escape' };
     instance.onKeyDown(mockEvent);
     expect(mockHidePanel).toHaveBeenCalledTimes(1);
 
-    mockEvent = { key: "Enter", preventDefault: mockPreventDefault };
+    mockEvent = { key: 'Enter', preventDefault: mockPreventDefault };
     const mockOnClickOption = jest.fn((_index: number) => null);
     instance.onClickOption = mockOnClickOption;
     instance.setState({ selected: 5 });
@@ -172,9 +173,9 @@ describe("<SplitButton>", () => {
     expect(mockOnClickOption).toHaveBeenCalledWith(5);
 
     mockEvent = {
-      key: "Tab",
+      key: 'Tab',
       preventDefault: mockPreventDefault,
-      shiftKey: false
+      shiftKey: false,
     };
     instance.onKeyDown(mockEvent);
     expect(mockHidePanel).toHaveBeenCalledTimes(2);

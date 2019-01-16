@@ -13,11 +13,13 @@ module.exports = {
   rules: {
     // eslint rules
     'prefer-const': 'error',
+    'no-dupe-class-members': 'off',
 
     // plugin: import
     'import/first': 'error',
     'import/order': ['error', { 'newlines-between': 'always' }],
 
+    // plugin: notice
     'notice/notice': [
       'error',
       {
@@ -29,12 +31,12 @@ module.exports = {
       },
     ],
 
-    'no-dupe-class-members': 'off',
-
+    // plugin: typescript
     'typescript/explicit-member-accessibility': 'warn',
     'typescript/indent': 'off',
     'typescript/no-empty-interface': 'warn',
     'typescript/no-parameter-properties': 'off',
+    'typescript/explicit-function-return-type': 'off',
   },
   overrides: [
     {

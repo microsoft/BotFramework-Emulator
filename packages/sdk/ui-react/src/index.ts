@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from "./layout";
-export * from "./splitter";
-export * from "./utils";
-export * from "./widget";
+export * from './layout';
+export * from './splitter';
+export * from './utils';
+export * from './widget';

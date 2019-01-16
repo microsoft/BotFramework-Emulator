@@ -31,20 +31,20 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from "react";
+import * as React from 'react';
 
-import * as styles from "./row.scss";
+import * as styles from './row.scss';
 
 export enum RowJustification {
   Left,
   Center,
-  Right
+  Right,
 }
 
 export enum RowAlignment {
   Top,
   Center,
-  Bottom
+  Bottom,
 }
 
 export interface RowProps {
@@ -55,7 +55,7 @@ export interface RowProps {
 
 export class Row extends React.Component<RowProps, {}> {
   public render(): JSX.Element {
-    const { className = "" } = this.props;
+    const { className = '' } = this.props;
     return (
       <div
         className={`${

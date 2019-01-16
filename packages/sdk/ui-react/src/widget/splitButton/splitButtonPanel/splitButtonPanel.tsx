@@ -31,10 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from "react";
-import * as ReactDOM from "react-dom";
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 
-import * as styles from "./splitButtonPanel.scss";
+import * as styles from './splitButtonPanel.scss';
 
 export interface SplitButtonPanelProps {
   caretRef?: HTMLButtonElement;
@@ -50,13 +50,13 @@ export class SplitButtonPanel extends React.Component<SplitButtonPanelProps> {
   private panelRef: HTMLUListElement;
 
   public componentWillMount(): void {
-    document.addEventListener("wheel", this.onScroll);
-    document.body.addEventListener("click", this.onOutsideClick);
+    document.addEventListener('wheel', this.onScroll);
+    document.body.addEventListener('click', this.onOutsideClick);
   }
 
   public componentWillUnmount(): void {
-    document.removeEventListener("wheel", this.onScroll);
-    document.body.removeEventListener("click", this.onOutsideClick);
+    document.removeEventListener('wheel', this.onScroll);
+    document.body.removeEventListener('click', this.onOutsideClick);
   }
 
   public render() {
@@ -76,13 +76,13 @@ export class SplitButtonPanel extends React.Component<SplitButtonPanelProps> {
       options = [],
       expanded = false,
       onKeyDown = () => null,
-      selected = 0
+      selected = 0,
     } = this.props;
     if (expanded) {
       const caretClientRect = caretRef.getBoundingClientRect();
       const inlineStyle = {
         left: `${caretClientRect.left}px`,
-        top: `${caretClientRect.bottom}px`
+        top: `${caretClientRect.bottom}px`,
       };
 
       return (
@@ -90,20 +90,20 @@ export class SplitButtonPanel extends React.Component<SplitButtonPanelProps> {
           className={styles.panel}
           style={inlineStyle}
           ref={this.setPanelRef}
-          role={"listbox"}
+          role={'listbox'}
           tabIndex={-1}
           aria-activedescendant={this.getOptionId(selected)}
           onKeyDown={onKeyDown}
         >
           {options.map((option, index) => {
             const isSelected = index === selected;
-            const selectedClass = isSelected ? ` ${styles.selected}` : "";
+            const selectedClass = isSelected ? ` ${styles.selected}` : '';
             return (
               <li
                 id={this.getOptionId(index)}
                 key={option}
                 className={styles.option + selectedClass}
-                role={"option"}
+                role={'option'}
                 aria-selected={isSelected}
                 onClick={e => this.onSelectOption(e, index)}
               >

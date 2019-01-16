@@ -31,18 +31,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from "react";
-import * as ReactDom from "react-dom";
+import * as React from 'react';
+import * as ReactDom from 'react-dom';
 
-import { SplitterPane } from "./pane";
-import * as styles from "./splitter.scss";
+import { SplitterPane } from './pane';
+import * as styles from './splitter.scss';
 
 const DEFAULT_PANE_SIZE = 200;
 const MIN_PANE_SIZE = 0;
 const SPLITTER_SIZE = 0;
-const event = new Event("splitterResize");
+const event = new Event('splitterResize');
 
-export type SplitterOrientation = "horizontal" | "vertical";
+export type SplitterOrientation = 'horizontal' | 'vertical';
 
 export interface SplitterProps {
   children?: any;
@@ -60,9 +60,23 @@ export interface SplitterState {
   resizing?: boolean;
 }
 
+/** Used to clear any text selected as a side effect of holding down the mouse and dragging */
+function clearSelection(): void {
+  const _document = document as any;
+  if (window.getSelection) {
+    if (window.getSelection().empty) {
+      window.getSelection().empty();
+    } else if (window.getSelection().removeAllRanges) {
+      window.getSelection().removeAllRanges();
+    }
+  } else if (_document.selection) {
+    _document.selection.empty();
+  }
+}
+
 export class Splitter extends React.Component<SplitterProps, SplitterState> {
   public static defaultProps: SplitterProps = {
-    minSizes: {}
+    minSizes: {},
   };
 
   private activeSplitter: any;
@@ -73,7 +87,7 @@ export class Splitter extends React.Component<SplitterProps, SplitterState> {
   private containerSize: number;
   private containerRef: HTMLElement;
 
-  constructor(props: SplitterProps, context: SplitterState) {
+  public constructor(props: SplitterProps, context: SplitterState) {
     super(props, context);
 
     this.saveContainerRef = this.saveContainerRef.bind(this);
@@ -97,16 +111,16 @@ export class Splitter extends React.Component<SplitterProps, SplitterState> {
 
     this.state = {
       resizing: false,
-      paneSizes: []
+      paneSizes: [],
     };
   }
 
   public componentWillMount() {
     // set up event listeners
-    document.addEventListener("mousemove", this.onMouseMove);
-    document.addEventListener("mouseup", this.onMouseUp);
-    document.addEventListener("splitterResize", this.checkForContainerResize);
-    window.addEventListener("resize", this.checkForContainerResize);
+    document.addEventListener('mousemove', this.onMouseMove);
+    document.addEventListener('mouseup', this.onMouseUp);
+    document.addEventListener('splitterResize', this.checkForContainerResize);
+    window.addEventListener('resize', this.checkForContainerResize);
   }
 
   public componentDidMount() {
@@ -115,13 +129,13 @@ export class Splitter extends React.Component<SplitterProps, SplitterState> {
 
   public componentWillUnmount() {
     // remove event listeners
-    document.removeEventListener("mousemove", this.onMouseMove);
-    document.removeEventListener("mouseup", this.onMouseUp);
+    document.removeEventListener('mousemove', this.onMouseMove);
+    document.removeEventListener('mouseup', this.onMouseUp);
     document.removeEventListener(
-      "splitterResize",
+      'splitterResize',
       this.checkForContainerResize
     );
-    window.removeEventListener("resize", this.checkForContainerResize);
+    window.removeEventListener('resize', this.checkForContainerResize);
   }
 
   public componentWillReceiveProps(nextProps: SplitterProps) {
@@ -142,7 +156,7 @@ export class Splitter extends React.Component<SplitterProps, SplitterState> {
     let defaultPaneSize;
     let initialSizes = this.props.initialSizes;
     if (initialSizes) {
-      if (typeof initialSizes === "function") {
+      if (typeof initialSizes === 'function') {
         initialSizes = initialSizes();
       }
     }
@@ -154,7 +168,7 @@ export class Splitter extends React.Component<SplitterProps, SplitterState> {
       Object.keys(initialSizes).forEach(key => {
         // convert percentage to absolute value if necessary
         initialSizes[key] =
-          typeof initialSizes[key] === "string"
+          typeof initialSizes[key] === 'string'
             ? (parseInt(initialSizes[key], 10) / 100) * this.containerSize
             : initialSizes[key];
 
@@ -191,7 +205,7 @@ export class Splitter extends React.Component<SplitterProps, SplitterState> {
   public getContainerSize(): number {
     if (this.containerRef) {
       const containerDimensions = this.containerRef.getBoundingClientRect();
-      return this.props.orientation === "horizontal"
+      return this.props.orientation === 'horizontal'
         ? containerDimensions.height
         : containerDimensions.width;
     }
@@ -247,6 +261,7 @@ export class Splitter extends React.Component<SplitterProps, SplitterState> {
     if (!this.panes[index]) {
       this.panes[index] = {};
     }
+    // eslint-disable-next-line react/no-find-dom-node
     this.panes[index].ref = ReactDom.findDOMNode(element);
   }
 
@@ -281,7 +296,7 @@ export class Splitter extends React.Component<SplitterProps, SplitterState> {
     // the primary pane's size will be the difference between the top (horizontal) or left (vertical) of the pane,
     // and the mouse's Y (horizontal) or X (vertical) position
     const { minSizes } = this.props;
-    const condition1 = this.props.orientation === "horizontal";
+    const condition1 = this.props.orientation === 'horizontal';
     const rightEval1 = () => {
       return (this.panes[pane1Index].size = Math.max(
         e.clientY - pane1Dimensions.top,
@@ -299,7 +314,7 @@ export class Splitter extends React.Component<SplitterProps, SplitterState> {
     // the local container size will be the sum of the heights (horizontal)
     // or widths (vertical) of both panes and the splitter
     const localContainerSize =
-      this.props.orientation === "horizontal"
+      this.props.orientation === 'horizontal'
         ? pane1Dimensions.height +
           pane2Dimensions.height +
           splitterDimensions.height
@@ -309,7 +324,7 @@ export class Splitter extends React.Component<SplitterProps, SplitterState> {
 
     // bound the bottom (horizontal) or right (vertical) of the primary pane to the bottom or right of the container
     const splitterSize =
-      this.props.orientation === "horizontal"
+      this.props.orientation === 'horizontal'
         ? splitterDimensions.height
         : splitterDimensions.width;
     if (primarySize + splitterSize > localContainerSize) {
@@ -318,7 +333,7 @@ export class Splitter extends React.Component<SplitterProps, SplitterState> {
 
     // the secondary pane's size will be the remaining height (horizontal) or width (vertical)
     // left in the container after subtracting the size of the splitter and primary pane from the total size
-    const condition2 = this.props.orientation === "horizontal";
+    const condition2 = this.props.orientation === 'horizontal';
     const leftEval2 = () => {
       return (this.panes[pane2Index].size = Math.max(
         localContainerSize - primarySize - splitterDimensions.height,
@@ -340,7 +355,7 @@ export class Splitter extends React.Component<SplitterProps, SplitterState> {
       const globalContainerSize = this.getContainerSize();
       const paneSizes = currentPaneSizes.map(size => ({
         absolute: size,
-        percentage: (size / globalContainerSize) * 100
+        percentage: (size / globalContainerSize) * 100,
       }));
       this.props.onSizeChange(paneSizes);
     }
@@ -389,7 +404,7 @@ export class Splitter extends React.Component<SplitterProps, SplitterState> {
         }
 
         const splitterCss =
-          this.props.orientation === "horizontal"
+          this.props.orientation === 'horizontal'
             ? styles.horizontalSplitter
             : styles.verticalSplitter;
         // add a splitter
@@ -409,7 +424,7 @@ export class Splitter extends React.Component<SplitterProps, SplitterState> {
       this.paneNum++;
     });
     const flexDir =
-      this.props.orientation === "horizontal"
+      this.props.orientation === 'horizontal'
         ? styles.canvasCol
         : styles.canvasRow;
     return (
@@ -419,19 +434,5 @@ export class Splitter extends React.Component<SplitterProps, SplitterState> {
         </div>
       </div>
     );
-  }
-}
-
-/** Used to clear any text selected as a side effect of holding down the mouse and dragging */
-function clearSelection(): void {
-  const _document = document as any;
-  if (window.getSelection) {
-    if (window.getSelection().empty) {
-      window.getSelection().empty();
-    } else if (window.getSelection().removeAllRanges) {
-      window.getSelection().removeAllRanges();
-    }
-  } else if (_document.selection) {
-    _document.selection.empty();
   }
 }

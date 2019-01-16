@@ -31,20 +31,20 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from "react";
+import * as React from 'react';
 
-import * as styles from "./column.scss";
+import * as styles from './column.scss';
 
 export enum ColumnAlignment {
   Left,
   Center,
-  Right
+  Right,
 }
 
 export enum ColumnJustification {
   Top,
   Center,
-  Bottom
+  Bottom,
 }
 
 export interface ColumnProps {
@@ -55,7 +55,7 @@ export interface ColumnProps {
 
 export class Column extends React.Component<ColumnProps, {}> {
   public render(): JSX.Element {
-    const { className = "" } = this.props;
+    const { className = '' } = this.props;
     return (
       <div
         className={`${

@@ -31,16 +31,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Checkbox } from "./checkbox";
-import { mount, configure } from "enzyme";
-import * as React from "react";
-import Adapter from "enzyme-adapter-react-16";
+import { mount, configure } from 'enzyme';
+import * as React from 'react';
+import Adapter from 'enzyme-adapter-react-16';
+
+import { Checkbox } from './checkbox';
 
 configure({ adapter: new Adapter() });
 
-jest.mock("./checkbox.scss", () => ({}));
+jest.mock('./checkbox.scss', () => ({}));
 
-describe("Checkbox", () => {
+describe('Checkbox', () => {
   let wrapper;
   let instance;
 
@@ -49,11 +50,11 @@ describe("Checkbox", () => {
     instance = wrapper.instance();
   });
 
-  it("should render deeply", () => {
+  it('should render deeply', () => {
     expect(wrapper.find(Checkbox).html()).not.toBe(null);
   });
 
-  it("should derive state from props", () => {
+  it('should derive state from props', () => {
     // checked differs
     const newProps1 = { checked: false, indeterminate: false };
     const prevState1 = { checked: true, indeterminate: false };
@@ -72,7 +73,7 @@ describe("Checkbox", () => {
     expect(state3).toBe(same);
   });
 
-  it("should assign a new checkbox ref with event listeners", () => {
+  it('should assign a new checkbox ref with event listeners', () => {
     const mockRemoveListener = jest.fn(_event => null);
     const oldRef = { removeEventListener: mockRemoveListener };
 
@@ -86,20 +87,20 @@ describe("Checkbox", () => {
 
     // should remove listeners from old ref
     expect(mockRemoveListener).toHaveBeenCalledTimes(2);
-    expect(mockRemoveListener).toHaveBeenCalledWith("focus", mockEventHandler);
-    expect(mockRemoveListener).toHaveBeenCalledWith("blur", mockEventHandler);
+    expect(mockRemoveListener).toHaveBeenCalledWith('focus', mockEventHandler);
+    expect(mockRemoveListener).toHaveBeenCalledWith('blur', mockEventHandler);
 
     // should add listeners to new ref
     expect(mockAddListener).toHaveBeenCalledTimes(2);
-    expect(mockAddListener).toHaveBeenCalledWith("focus", mockEventHandler);
-    expect(mockAddListener).toHaveBeenCalledWith("blur", mockEventHandler);
+    expect(mockAddListener).toHaveBeenCalledWith('focus', mockEventHandler);
+    expect(mockAddListener).toHaveBeenCalledWith('blur', mockEventHandler);
   });
 
-  it("should handle focus and blur", () => {
-    instance.checkboxEventHandler({ type: "focus" });
+  it('should handle focus and blur', () => {
+    instance.checkboxEventHandler({ type: 'focus' });
     expect(instance.state.focused).toBe(true);
 
-    instance.checkboxEventHandler({ type: "blur" });
+    instance.checkboxEventHandler({ type: 'blur' });
     expect(instance.state.focused).toBe(false);
   });
 });

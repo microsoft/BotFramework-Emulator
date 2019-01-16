@@ -32,12 +32,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from "react";
-import { KeyboardEvent } from "react";
+import * as React from 'react';
+import { KeyboardEvent } from 'react';
 
-import { filterChildren, hmrSafeNameComparison } from "../../utils";
+import { filterChildren, hmrSafeNameComparison } from '../../utils';
 
-import * as styles from "./expandCollapse.scss";
+import * as styles from './expandCollapse.scss';
 
 export interface ExpandCollapseProps {
   expanded?: boolean;
@@ -50,24 +50,27 @@ export interface ExpandCollapseState {
   expanded: boolean;
 }
 
+export const ExpandCollapseControls = props => props.children;
+export const ExpandCollapseContent = props => props.children;
+
 export class ExpandCollapse extends React.Component<
   ExpandCollapseProps,
   ExpandCollapseState
 > {
-  constructor(props: ExpandCollapseProps) {
+  public constructor(props: ExpandCollapseProps) {
     super(props);
     this.state = { expanded: !!props.expanded };
   }
 
   public render() {
     const { expanded } = this.state;
-    const { className = "", title, children, ariaLabel } = this.props;
+    const { className = '', title, children, ariaLabel } = this.props;
     const { toggleIcon, onHeaderKeyPress, onToggleExpandedButtonClick } = this;
 
     return (
       <div
         className={`${styles.expandCollapse} ${className} ${
-          expanded ? "expanded" : ""
+          expanded ? 'expanded' : ''
         }`}
       >
         <div
@@ -124,7 +127,7 @@ export class ExpandCollapse extends React.Component<
   }
 
   public componentWillReceiveProps(newProps: ExpandCollapseProps) {
-    if (typeof newProps.expanded !== "undefined") {
+    if (typeof newProps.expanded !== 'undefined') {
       const { expanded } = newProps;
       this.setState({ expanded });
     }
@@ -135,11 +138,8 @@ export class ExpandCollapse extends React.Component<
   };
 
   private onHeaderKeyPress = (event: KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === " ") {
+    if (event.key === ' ') {
       this.onToggleExpandedButtonClick();
     }
   };
 }
-
-export const ExpandCollapseControls = props => props.children;
-export const ExpandCollapseContent = props => props.children;

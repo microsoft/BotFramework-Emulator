@@ -26,8 +26,8 @@ EOM
 echo "Done installing dependencies."
 printf "Add these two lines to the package.json:\n\n"
 
-printf "\t\"lint\": \"eslint --color --quiet ./src/**/*\",\n"
-printf "\t\"lint:fix\": \"prettier-eslint --log-level error --write './src/**/*.{ts,tsx,js,jsx}'\",\n"
+printf "\t\"lint\": \"eslint --color --quiet --ext .js,.jsx,.ts,.tsx ./src\",\n"
+printf "\t\"lint:fix\": \"npm run lint -- --fix\",\n"
 
 printf "\nCreate a .eslintrc in $target with:\n\n"
 printf "$eslintConfig"

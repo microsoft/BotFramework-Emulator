@@ -31,19 +31,20 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from "react";
-import { mount } from "enzyme";
-import { SplitButtonPanel } from "./splitButtonPanel";
+import * as React from 'react';
+import { mount } from 'enzyme';
 
-jest.mock("./splitButtonPanel.scss", () => ({}));
+import { SplitButtonPanel } from './splitButtonPanel';
 
-describe("<SplitButtonPanel>", () => {
+jest.mock('./splitButtonPanel.scss', () => ({}));
+
+describe('<SplitButtonPanel>', () => {
   let wrapper;
   let node;
   let instance;
   let mockOnClick;
-  let mockCaretRef = {
-    getBoundingClientRect: () => ({ top: 0, bottom: 0 })
+  const mockCaretRef = {
+    getBoundingClientRect: () => ({ top: 0, bottom: 0 }),
   } as any;
   let mockHidePanel;
 
@@ -56,41 +57,41 @@ describe("<SplitButtonPanel>", () => {
     instance = wrapper.instance();
   });
 
-  it("should add event listeners on mount", () => {
-    const docAddEventListenerSpy = jest.spyOn(document, "addEventListener");
+  it('should add event listeners on mount', () => {
+    const docAddEventListenerSpy = jest.spyOn(document, 'addEventListener');
     const docBodyAddEventListenerSpy = jest.spyOn(
       document.body,
-      "addEventListener"
+      'addEventListener'
     );
     instance.componentWillMount();
 
     expect(docAddEventListenerSpy).toHaveBeenCalledWith(
-      "wheel",
+      'wheel',
       instance.onScroll
     );
     expect(docBodyAddEventListenerSpy).toHaveBeenCalledWith(
-      "click",
+      'click',
       instance.onOutsideClick
     );
   });
 
-  it("should remove event listeners on unmount", () => {
+  it('should remove event listeners on unmount', () => {
     const docRemoveEventListenerSpy = jest.spyOn(
       document,
-      "removeEventListener"
+      'removeEventListener'
     );
     const docBodyRemoveEventListenerSpy = jest.spyOn(
       document.body,
-      "removeEventListener"
+      'removeEventListener'
     );
     instance.componentWillUnmount();
 
     expect(docRemoveEventListenerSpy).toHaveBeenCalledWith(
-      "wheel",
+      'wheel',
       instance.onScroll
     );
     expect(docBodyRemoveEventListenerSpy).toHaveBeenCalledWith(
-      "click",
+      'click',
       instance.onOutsideClick
     );
   });
@@ -102,14 +103,14 @@ describe("<SplitButtonPanel>", () => {
     expect(node.html()).toBe(null);
   });
 
-  it("should render deeply", () => {
+  it('should render deeply', () => {
     expect(node.html()).not.toBe(null);
   });
 
-  it("should set a panel ref and focus it", () => {
+  it('should set a panel ref and focus it', () => {
     const mockFocus = jest.fn(() => null);
     const mockPanelRef = {
-      focus: mockFocus
+      focus: mockFocus,
     };
     instance.setPanelRef(mockPanelRef);
 
@@ -117,19 +118,19 @@ describe("<SplitButtonPanel>", () => {
     expect(instance.panelRef).toBe(mockPanelRef);
   });
 
-  it("should return a panel element", () => {
+  it('should return a panel element', () => {
     const panel = instance.panel;
 
     expect(panel).not.toBe(null);
   });
 
-  it("should get an option id", () => {
+  it('should get an option id', () => {
     const optionId = instance.getOptionId(5);
 
-    expect(optionId).toBe("split_button_option_5");
+    expect(optionId).toBe('split_button_option_5');
   });
 
-  it("should select an option", () => {
+  it('should select an option', () => {
     mockOnClick = jest.fn((_index: number) => null);
     wrapper = mount(<SplitButtonPanel onClick={mockOnClick} />);
     instance = wrapper.instance();
@@ -139,7 +140,7 @@ describe("<SplitButtonPanel>", () => {
     expect(mockOnClick).toHaveBeenCalledWith(5);
   });
 
-  it("should hide on a scroll event", () => {
+  it('should hide on a scroll event', () => {
     wrapper = mount(
       <SplitButtonPanel
         hidePanel={mockHidePanel}
@@ -153,8 +154,8 @@ describe("<SplitButtonPanel>", () => {
     expect(mockHidePanel).toHaveBeenCalledTimes(1);
   });
 
-  it("should hide on an outside click", () => {
-    const mockEvent = { target: "outsideOfPanel" };
+  it('should hide on an outside click', () => {
+    const mockEvent = { target: 'outsideOfPanel' };
     wrapper = mount(
       <SplitButtonPanel
         hidePanel={mockHidePanel}
@@ -164,7 +165,7 @@ describe("<SplitButtonPanel>", () => {
     );
     instance = wrapper.instance();
     instance.panelRef = {
-      contains: (target: string) => (target === "withinPanel" ? true : false)
+      contains: (target: string) => (target === 'withinPanel' ? true : false),
     };
     instance.onOutsideClick(mockEvent);
 

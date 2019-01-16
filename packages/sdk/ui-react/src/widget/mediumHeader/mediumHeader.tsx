@@ -31,11 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from "react";
+import * as React from 'react';
 
-import { TruncateText } from "../../layout";
+import { TruncateText } from '../../layout';
 
-import * as styles from "./mediumHeader.scss";
+import * as styles from './mediumHeader.scss';
 
 export interface MediumHeaderProps {
   className?: string;
@@ -43,7 +43,7 @@ export interface MediumHeaderProps {
 }
 
 export const MediumHeader = (props: MediumHeaderProps): JSX.Element => (
-  <h2 className={`${styles.mediumHeader} ${props.className || ""}`}>
+  <h2 className={`${styles.mediumHeader} ${props.className || ''}`}>
     <TruncateText>{props.children}</TruncateText>
   </h2>
 );

@@ -31,11 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from "react";
+import * as React from 'react';
 
-import { TruncateText } from "../../layout";
+import { TruncateText } from '../../layout';
 
-import * as styles from "./smallHeader.scss";
+import * as styles from './smallHeader.scss';
 
 export interface SmallIHeaderProps {
   className?: string;
@@ -43,7 +43,7 @@ export interface SmallIHeaderProps {
 }
 
 export const SmallHeader = (props: SmallIHeaderProps): JSX.Element => (
-  <h3 className={`${styles.smallHeader} ${props.className || ""}`}>
+  <h3 className={`${styles.smallHeader} ${props.className || ''}`}>
     <TruncateText>{props.children}</TruncateText>
   </h3>
 );

@@ -8,8 +8,8 @@
     "build": "npm run lint && npm run clean && npm run build:prod && tsc --emitDeclarationOnly --declaration",
     "build:prod": "babel ./src --out-dir built --extensions \".ts,.tsx\" --ignore \"**/*.spec.ts\"",
     "clean": "rimraf ./built",
-    "lint": "eslint --color --quiet ./src/**/*",
-    "lint:fix": "prettier-eslint --log-level error --write './src/**/*.{ts,tsx,js,jsx}'",
+    "lint": "eslint --color --quiet --ext .js,.jsx,.ts,.tsx ./src",
+    "lint:fix": "npm run lint -- --fix",
     "prepare": "npm run clean",
     "test": "jest"
   },

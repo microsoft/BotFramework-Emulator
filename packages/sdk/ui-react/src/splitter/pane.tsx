@@ -31,9 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from "react";
+import * as React from 'react';
 
-import { SplitterOrientation } from ".";
+import { SplitterOrientation } from '.';
 
 export interface SplitterPaneProps {
   orientation?: SplitterOrientation;
@@ -43,26 +43,26 @@ export interface SplitterPaneProps {
 export class SplitterPane extends React.Component<SplitterPaneProps, {}> {
   public render() {
     const style: any = {
-      overflow: "hidden",
+      overflow: 'hidden',
       flexShrink: 1,
       flexGrow: 1,
       flexBasis: this.props.size,
-      boxSizing: "border-box",
-      zIndex: 0
+      boxSizing: 'border-box',
+      zIndex: 0,
     };
 
-    if (this.props.orientation === "horizontal") {
-      style.maxWidth = "100%";
+    if (this.props.orientation === 'horizontal') {
+      style.maxWidth = '100%';
       style.left = 0;
       style.right = 0;
     } else {
-      style.maxHeight = "100%";
+      style.maxHeight = '100%';
       style.top = 0;
       style.bottom = 0;
     }
 
     return (
-      <div className={"splitter-pane"} style={style}>
+      <div className={'splitter-pane'} style={style}>
         {this.props.children}
       </div>
     );

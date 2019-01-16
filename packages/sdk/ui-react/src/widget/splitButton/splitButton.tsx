@@ -31,10 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from "react";
+import * as React from 'react';
 
-import * as styles from "./splitButton.scss";
-import { SplitButtonPanel } from "./splitButtonPanel/splitButtonPanel";
+import * as styles from './splitButton.scss';
+import { SplitButtonPanel } from './splitButtonPanel/splitButtonPanel';
 
 export interface SplitButtonProps {
   buttonClass?: string;
@@ -62,16 +62,16 @@ export class SplitButton extends React.Component<
 
     this.state = {
       expanded: false,
-      selected: props.selected || 0
+      selected: props.selected || 0,
     };
   }
 
   public render(): JSX.Element {
     const {
-      buttonClass = "",
-      defaultLabel = "",
+      buttonClass = '',
+      defaultLabel = '',
       disabled = false,
-      options = []
+      options = [],
     } = this.props;
     const { expanded, selected } = this.state;
     const {
@@ -81,9 +81,9 @@ export class SplitButton extends React.Component<
       onClickDefault,
       onClickCaret,
       onKeyDown,
-      setCaretRef
+      setCaretRef,
     } = this;
-    const expandedClass = expanded ? ` ${styles.expanded}` : "";
+    const expandedClass = expanded ? ` ${styles.expanded}` : '';
 
     return (
       <>
@@ -100,7 +100,7 @@ export class SplitButton extends React.Component<
             className={styles.caretButton + expandedClass}
             ref={setCaretRef}
             onClick={onClickCaret}
-            aria-haspopup={"listbox"}
+            aria-haspopup={'listbox'}
             disabled={disabled}
           />
         </div>
@@ -167,28 +167,28 @@ export class SplitButton extends React.Component<
   };
 
   private onKeyDown = (e: React.KeyboardEvent<HTMLUListElement>): void => {
-    let { key = "" } = e;
+    let { key = '' } = e;
     key = key.toLowerCase();
 
     switch (key) {
-      case "arrowdown":
+      case 'arrowdown':
         this.moveSelectionDown();
         break;
 
-      case "arrowup":
+      case 'arrowup':
         this.moveSelectionUp();
         break;
 
-      case "escape":
+      case 'escape':
         this.hidePanel();
         break;
 
-      case "enter":
+      case 'enter':
         e.preventDefault();
         this.onClickOption(this.state.selected);
         break;
 
-      case "tab":
+      case 'tab':
         if (e.shiftKey) {
           // hidePanel() already re-focuses the caret button,
           // so we want to prevent the default behavior which
