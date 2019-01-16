@@ -9,8 +9,6 @@ packages=(
   eslint-plugin-notice
   eslint-plugin-prettier
   eslint-plugin-typescript@next
-  prettier-eslint
-  prettier-eslint-cli
 )
 
 for pkg in ${packages[*]}; do
