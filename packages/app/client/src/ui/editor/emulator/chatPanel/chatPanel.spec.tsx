@@ -113,7 +113,7 @@ describe('<ChatPanel />', () => {
       expect(component.state('selectedActivity')).toEqual({ new: 'activity' });
     });
 
-    it('passes and updater to the chat container', () => {
+    it('passes an updater to the chat container', () => {
       const component = render();
       const container = component.find(ChatContainer);
 
