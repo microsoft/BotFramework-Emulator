@@ -31,10 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { BotInfo } from "@bfemulator/app-shared";
-import { BotConfigWithPath } from "@bfemulator/sdk-shared";
+import { BotInfo } from '@bfemulator/app-shared';
+import { BotConfigWithPath } from '@bfemulator/sdk-shared';
 
-import { store } from "./store";
+import { store } from './store';
 
 export function getActiveBot(): BotConfigWithPath {
   return store.getState().bot.activeBot;
@@ -47,7 +47,7 @@ export const generateBotHash = async (
   bot: BotConfigWithPath
 ): Promise<string> => {
   const buffer = encoder.encode(JSON.stringify(bot));
-  const digest = await window.crypto.subtle.digest("SHA-256", buffer);
+  const digest = await window.crypto.subtle.digest('SHA-256', buffer);
   return btoa(encoder.encode(decoder.decode(digest)));
 };
 

@@ -31,25 +31,25 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from "react";
-import { Component } from "react";
-import { connect } from "react-redux";
+import * as React from 'react';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 
-import * as Constants from "../../../../../constants";
-import * as EditorActions from "../../../../../data/action/editorActions";
+import * as Constants from '../../../../../constants';
+import * as EditorActions from '../../../../../data/action/editorActions';
 import {
   getTabGroupForDocument,
-  tabGroupHasDocuments
-} from "../../../../../data/editorHelpers";
-import { Editor } from "../../../../../data/reducer/editor";
-import { RootState } from "../../../../../data/store";
+  tabGroupHasDocuments,
+} from '../../../../../data/editorHelpers';
+import { Editor } from '../../../../../data/reducer/editor';
+import { RootState } from '../../../../../data/store';
 import {
   ContentOverlay,
   LeftContentOverlay,
-  RightContentOverlay
-} from "../index";
+  RightContentOverlay,
+} from '../index';
 
-import * as styles from "./contentWrapper.scss";
+import * as styles from './contentWrapper.scss';
 
 interface TabbedDocumentContentProps {
   activeEditor?: string;
@@ -72,7 +72,7 @@ class TabbedDocumentContentWrapperComponent extends Component<
     super(props);
 
     this.state = {
-      owningEditor: getTabGroupForDocument(props.documentId)
+      owningEditor: getTabGroupForDocument(props.documentId),
     };
   }
 
@@ -121,12 +121,12 @@ class TabbedDocumentContentWrapperComponent extends Component<
 const mapStateToProps = (state: RootState): TabbedDocumentContentProps => ({
   activeEditor: state.editor.activeEditor,
   primaryEditor: state.editor.editors[Constants.EDITOR_KEY_PRIMARY],
-  secondaryEditor: state.editor.editors[Constants.EDITOR_KEY_SECONDARY]
+  secondaryEditor: state.editor.editors[Constants.EDITOR_KEY_SECONDARY],
 });
 
 const mapDispatchToProps = (dispatch): TabbedDocumentContentProps => ({
   setActiveEditor: (editor: string) =>
-    dispatch(EditorActions.setActiveEditor(editor))
+    dispatch(EditorActions.setActiveEditor(editor)),
 });
 
 export const TabbedDocumentContentWrapper = connect(

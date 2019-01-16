@@ -33,15 +33,15 @@
 
 import {
   NotificationAction,
-  NotificationActions
-} from "../action/notificationActions";
+  NotificationActions,
+} from '../action/notificationActions';
 
 export interface NotificationState {
   allIds: string[];
 }
 
 const DEFAULT_STATE: NotificationState = {
-  allIds: []
+  allIds: [],
 };
 
 export function notification(
@@ -58,7 +58,7 @@ export function notification(
         allIds = state.allIds;
       }
       state = {
-        allIds
+        allIds,
       };
       break;
     }
@@ -67,14 +67,14 @@ export function notification(
       const { id: idToRemove } = action.payload;
       const allIds = state.allIds.filter(id => id !== idToRemove);
       state = {
-        allIds
+        allIds,
       };
       break;
     }
 
     case NotificationActions.finishClear: {
       state = {
-        allIds: []
+        allIds: [],
       };
       break;
     }

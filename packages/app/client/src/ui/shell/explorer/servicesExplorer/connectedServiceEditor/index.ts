@@ -32,5 +32,5 @@
 //
 
 export {
-  ConnectedServiceEditorContainer
-} from "./connectedServiceEditorContainer";
+  ConnectedServiceEditorContainer,
+} from './connectedServiceEditorContainer';

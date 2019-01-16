@@ -31,12 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from "react";
-import { EventHandler, SyntheticEvent } from "react";
+import * as React from 'react';
+import { EventHandler, SyntheticEvent } from 'react';
 
-import { DialogService } from "../service";
+import { DialogService } from '../service';
 
-import * as styles from "./host.scss";
+import * as styles from './host.scss';
 
 export interface DialogHostProps {
   saveHostRef?: (elem: HTMLElement) => void;
@@ -51,15 +51,15 @@ export class DialogHost extends React.Component<DialogHostProps, {}> {
   }
 
   public componentDidMount() {
-    this._hostRef.addEventListener("dialogRendered", this.initFocusTrap);
+    this._hostRef.addEventListener('dialogRendered', this.initFocusTrap);
   }
 
   public componentWillUnmount() {
-    this._hostRef.removeEventListener("dialogRendered", this.initFocusTrap);
+    this._hostRef.removeEventListener('dialogRendered', this.initFocusTrap);
   }
 
   public render() {
-    const visibilityClass = this.props.showing ? styles.dialogHostVisible : "";
+    const visibilityClass = this.props.showing ? styles.dialogHostVisible : '';
     // sentinels shouldn't be tab-able when dialog is hidden
     const sentinelTabIndex = this.props.showing ? 0 : -1;
 
@@ -127,11 +127,11 @@ export class DialogHost extends React.Component<DialogHostProps, {}> {
         allFocusableElements.length - 1
       ] as HTMLElement;
 
-      if (lastChild.hasAttribute("disabled")) {
+      if (lastChild.hasAttribute('disabled')) {
         // focus the last element in the list that isn't disabled
         for (let i = allFocusableElements.length - 2; i >= 0; i--) {
           lastChild = allFocusableElements[i] as HTMLElement;
-          if (!lastChild.hasAttribute("disabled")) {
+          if (!lastChild.hasAttribute('disabled')) {
             lastChild.focus();
             break;
           }
@@ -150,11 +150,11 @@ export class DialogHost extends React.Component<DialogHostProps, {}> {
     if (allFocusableElements.length) {
       let firstChild: HTMLElement = allFocusableElements[0] as HTMLElement;
 
-      if (firstChild.hasAttribute("disabled")) {
+      if (firstChild.hasAttribute('disabled')) {
         // focus the first element in the list that isn't disabled
         for (let i = 1; i <= allFocusableElements.length - 1; i++) {
           firstChild = allFocusableElements[i] as HTMLElement;
-          if (!firstChild.hasAttribute("disabled")) {
+          if (!firstChild.hasAttribute('disabled')) {
             firstChild.focus();
             break;
           }

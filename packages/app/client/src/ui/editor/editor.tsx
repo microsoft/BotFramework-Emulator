@@ -31,16 +31,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from "react";
+import * as React from 'react';
 
-import * as Constants from "../../constants";
-import { Document } from "../../data/reducer/editor";
+import * as Constants from '../../constants';
+import { Document } from '../../data/reducer/editor';
 
 import {
   AppSettingsEditor,
   EmulatorContainer,
-  WelcomePageContainer
-} from "./index";
+  WelcomePageContainer,
+} from './index';
 
 interface EditorFactoryProps {
   document?: Document;

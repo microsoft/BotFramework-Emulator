@@ -31,8 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from "react";
+import * as React from 'react';
 
-import * as styles from "./statusBar.scss";
+import * as styles from './statusBar.scss';
 
 export const StatusBar = () => <div className={styles.statusBar} />;

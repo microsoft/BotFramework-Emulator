@@ -36,11 +36,11 @@ import {
   CommandService,
   CommandServiceImpl as InternalSharedService,
   Disposable,
-  DisposableImpl
-} from "@bfemulator/sdk-shared";
+  DisposableImpl,
+} from '@bfemulator/sdk-shared';
 
-import { CommandRegistry } from "../../commands";
-import { ElectronIPC } from "../../ipc";
+import { CommandRegistry } from '../../commands';
+import { ElectronIPC } from '../../ipc';
 
 export const CommandServiceImpl = new class extends DisposableImpl
   implements CommandService {
@@ -58,7 +58,7 @@ export const CommandServiceImpl = new class extends DisposableImpl
     super();
     this._service = new InternalSharedService(
       ElectronIPC,
-      "command-service",
+      'command-service',
       CommandRegistry
     );
     super.toDispose(this._service);
@@ -74,7 +74,7 @@ export const CommandServiceImpl = new class extends DisposableImpl
 
   public on(event: string, handler?: CommandHandler): Disposable;
   public on(
-    event: "command-not-found",
+    event: 'command-not-found',
     handler?: (commandName: string, ...args: any[]) => any
   ) {
     return this._service.on(event, handler);

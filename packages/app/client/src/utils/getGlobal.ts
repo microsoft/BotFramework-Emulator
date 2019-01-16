@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-const { remote } = require("electron");
+import { remote } from 'electron';
 
 /** Retreives a property on the global object */
 export function getGlobal(property: string): any {

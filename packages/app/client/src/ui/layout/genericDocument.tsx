@@ -31,9 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from "react";
+import * as React from 'react';
 
-import * as styles from "./genericDocument.scss";
+import * as styles from './genericDocument.scss';
 
 interface GenericDocumentProps {
   className?: string; // overrides
@@ -41,7 +41,7 @@ interface GenericDocumentProps {
 
 export class GenericDocument extends React.Component<GenericDocumentProps, {}> {
   public render(): JSX.Element {
-    const { className = "" } = this.props;
+    const { className = '' } = this.props;
     return (
       <div className={`${styles.genericDocument} ${className}`}>
         <div className={styles.genericDocContent}>{this.props.children}</div>

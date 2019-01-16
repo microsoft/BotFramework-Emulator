@@ -1,34 +1,67 @@
+//
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license.
+//
+// Microsoft Bot Framework: http://botframework.com
+//
+// Bot Framework Emulator Github:
+// https://github.com/Microsoft/BotFramwork-Emulator
+//
+// Copyright (c) Microsoft Corporation
+// All rights reserved.
+//
+// MIT License:
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+//
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED ""AS IS"", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
 import {
   BotInfo,
   isChatFile,
   isTranscriptFile,
   NotificationType,
-  SharedConstants
-} from "@bfemulator/app-shared";
-import { newNotification } from "@bfemulator/app-shared/built";
-import { IFileService } from "botframework-config/lib/schema";
-import { ComponentClass } from "react";
-import { ForkEffect, put, takeEvery } from "redux-saga/effects";
+  SharedConstants,
+} from '@bfemulator/app-shared';
+import { newNotification } from '@bfemulator/app-shared/built';
+import { IFileService } from 'botframework-config/lib/schema';
+import { ComponentClass } from 'react';
 
-import { CommandServiceImpl } from "../../platform/commands/commandServiceImpl";
-import { DialogService } from "../../ui/dialogs/service";
-import { beginAdd } from "../action/notificationActions";
+import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
+import { DialogService } from '../../ui/dialogs/service';
+import { beginAdd } from '../action/notificationActions';
 import {
   editResource,
   OPEN_CONTEXT_MENU_FOR_RESOURCE,
   OPEN_RESOURCE,
   OPEN_RESOURCE_SETTINGS,
   RENAME_RESOURCE,
-  ResourcesAction
-} from "../action/resourcesAction";
+  ResourcesAction,
+} from '../action/resourcesAction';
+
+import { ForkEffect, put, takeEvery } from 'redux-saga/effects';
 
 function* openContextMenuForResource(
   action: ResourcesAction<IFileService>
 ): IterableIterator<any> {
   const menuItems = [
-    { label: "Open file location", id: 0 },
-    { label: "Rename", id: 1 },
-    { label: "Delete", id: 2 }
+    { label: 'Open file location', id: 0 },
+    { label: 'Rename', id: 1 },
+    { label: 'Delete', id: 2 },
   ];
 
   const result = yield CommandServiceImpl.remoteCall(
@@ -63,12 +96,12 @@ function* deleteFile(
   const { name, path } = action.payload;
   const { ShowMessageBox, UnlinkFile } = SharedConstants.Commands.Electron;
   const result = yield CommandServiceImpl.remoteCall(ShowMessageBox, true, {
-    type: "info",
-    title: "Delete this file",
-    buttons: ["Cancel", "Delete"],
+    type: 'info',
+    title: 'Delete this file',
+    buttons: ['Cancel', 'Delete'],
     defaultId: 1,
     message: `This action cannot be undone. Are you sure you want to delete ${name}?`,
-    cancelId: 0
+    cancelId: 0,
   });
   if (result) {
     yield CommandServiceImpl.remoteCall(UnlinkFile, path);
@@ -80,12 +113,12 @@ function* doRename(action: ResourcesAction<IFileService>) {
   const { ShowMessageBox, RenameFile } = SharedConstants.Commands.Electron;
   if (!payload.name) {
     return CommandServiceImpl.remoteCall(ShowMessageBox, true, {
-      type: "error",
-      title: "Invalid file name",
-      buttons: ["Ok"],
+      type: 'error',
+      title: 'Invalid file name',
+      buttons: ['Ok'],
       defaultId: 1,
       message: `A valid file name must be used`,
-      cancelId: 0
+      cancelId: 0,
     });
   }
   yield CommandServiceImpl.remoteCall(RenameFile, payload);
@@ -120,7 +153,7 @@ function* launchResourcesSettingsModal(
       );
     } catch (e) {
       const notification = newNotification(
-        "Unable to save resource settings",
+        'Unable to save resource settings',
         NotificationType.Error
       );
       yield put(beginAdd(notification));

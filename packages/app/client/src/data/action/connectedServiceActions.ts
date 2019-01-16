@@ -33,24 +33,24 @@
 
 import {
   IConnectedService,
-  ServiceTypes
-} from "botframework-config/lib/schema";
-import { ComponentClass } from "react";
-import { Action } from "redux";
+  ServiceTypes,
+} from 'botframework-config/lib/schema';
+import { ComponentClass } from 'react';
+import { Action } from 'redux';
 
-import { CONNECTED_SERVICES_PANEL_ID } from "./explorerActions";
+import { CONNECTED_SERVICES_PANEL_ID } from './explorerActions';
 
-export const OPEN_SERVICE_DEEP_LINK = "OPEN_SERVICE_DEEP_LINK";
+export const OPEN_SERVICE_DEEP_LINK = 'OPEN_SERVICE_DEEP_LINK';
 export const OPEN_CONTEXT_MENU_FOR_CONNECTED_SERVICE =
-  "OPEN_CONTEXT_MENU_FOR_CONNECTED_SERVICE";
+  'OPEN_CONTEXT_MENU_FOR_CONNECTED_SERVICE';
 export const OPEN_ADD_CONNECTED_SERVICE_CONTEXT_MENU =
-  "OPEN_ADD_CONNECTED_SERVICE_CONTEXT_MENU";
+  'OPEN_ADD_CONNECTED_SERVICE_CONTEXT_MENU';
 export const OPEN_CONNECTED_SERVICE_SORT_CONTEXT_MENU =
-  "OPEN_CONNECTED_SERVICE_SORT_CONTEXT_MENU";
+  'OPEN_CONNECTED_SERVICE_SORT_CONTEXT_MENU';
 export const LAUNCH_CONNECTED_SERVICE_EDITOR =
-  "LAUNCH_CONNECTED_SERVICE_EDITOR";
+  'LAUNCH_CONNECTED_SERVICE_EDITOR';
 export const LAUNCH_CONNECTED_SERVICE_PICKER =
-  "LAUNCH_CONNECTED_SERVICE_PICKER";
+  'LAUNCH_CONNECTED_SERVICE_PICKER';
 
 export interface ConnectedServiceAction<T> extends Action {
   payload: T;
@@ -70,7 +70,7 @@ export function launchConnectedServiceEditor<T>(
 ): ConnectedServiceAction<ConnectedServicePayload> {
   return {
     type: LAUNCH_CONNECTED_SERVICE_EDITOR,
-    payload: { editorComponent, connectedService }
+    payload: { editorComponent, connectedService },
   };
 }
 
@@ -91,7 +91,7 @@ export function launchConnectedServicePicker(
 ): ConnectedServiceAction<ConnectedServicePickerPayload> {
   return {
     type: LAUNCH_CONNECTED_SERVICE_PICKER,
-    payload
+    payload,
   };
 }
 
@@ -100,7 +100,7 @@ export function openServiceDeepLink(
 ): ConnectedServiceAction<ConnectedServicePayload> {
   return {
     type: OPEN_SERVICE_DEEP_LINK,
-    payload: { connectedService }
+    payload: { connectedService },
   };
 }
 
@@ -110,7 +110,7 @@ export function openContextMenuForConnectedService<T>(
 ): ConnectedServiceAction<ConnectedServicePayload> {
   return {
     type: OPEN_CONTEXT_MENU_FOR_CONNECTED_SERVICE,
-    payload: { editorComponent, connectedService }
+    payload: { editorComponent, connectedService },
   };
 }
 
@@ -119,7 +119,7 @@ export function openAddServiceContextMenu(
 ): ConnectedServiceAction<ConnectedServicePickerPayload> {
   return {
     type: OPEN_ADD_CONNECTED_SERVICE_CONTEXT_MENU,
-    payload
+    payload,
   };
 }
 
@@ -128,6 +128,6 @@ export function openSortContextMenu(): ConnectedServiceAction<
 > {
   return {
     type: OPEN_CONNECTED_SERVICE_SORT_CONTEXT_MENU,
-    payload: { panelId: CONNECTED_SERVICES_PANEL_ID }
+    payload: { panelId: CONNECTED_SERVICES_PANEL_ID },
   };
 }

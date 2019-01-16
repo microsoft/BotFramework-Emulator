@@ -31,18 +31,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { InsetShadow } from "@bfemulator/ui-react";
-import { IBotConfiguration } from "botframework-config/lib/schema";
-import * as React from "react";
-import { connect } from "react-redux";
+import { InsetShadow } from '@bfemulator/ui-react';
+import { IBotConfiguration } from 'botframework-config/lib/schema';
+import * as React from 'react';
+import { connect } from 'react-redux';
 
-import * as Constants from "../../../../constants";
-import { RootState } from "../../../../data/store";
-import { BotExplorerBarContainer } from "../botExplorerBar/botExplorerBarContainer";
-import { NotificationsExplorerBar } from "../notificationsExplorer/notificationsExplorerBar";
-import { ResourcesBarContainer } from "../resourcesBar/resourcesBarContainer";
+import * as Constants from '../../../../constants';
+import { RootState } from '../../../../data/store';
+import { BotExplorerBarContainer } from '../botExplorerBar/botExplorerBarContainer';
+import { NotificationsExplorerBar } from '../notificationsExplorer/notificationsExplorerBar';
+import { ResourcesBarContainer } from '../resourcesBar/resourcesBarContainer';
 
-import * as styles from "./explorerBar.scss";
+import * as styles from './explorerBar.scss';
 
 interface ExplorerBarProps {
   activeBot?: IBotConfiguration;
@@ -59,14 +59,14 @@ class ExplorerBarComponent extends React.Component<ExplorerBarProps> {
     return (
       <BotExplorerBarContainer
         activeBot={activeBot}
-        key={"bot-explorer-bar"}
+        key={'bot-explorer-bar'}
         hidden={selectedNavTab !== Constants.NAVBAR_BOT_EXPLORER}
       />
     );
   }
 
   private get notificationsBar(): JSX.Element {
-    return <NotificationsExplorerBar key={"notifications-explorer-bar"} />;
+    return <NotificationsExplorerBar key={'notifications-explorer-bar'} />;
   }
 
   private get resourcesBar(): JSX.Element {
@@ -93,7 +93,7 @@ class ExplorerBarComponent extends React.Component<ExplorerBarProps> {
     return (
       <div className={styles.explorerBar}>
         {explorer}
-        <InsetShadow orientation={"right"} />
+        <InsetShadow orientation={'right'} />
       </div>
     );
   }
@@ -101,7 +101,7 @@ class ExplorerBarComponent extends React.Component<ExplorerBarProps> {
 
 const mapStateToProps = (state: RootState): ExplorerBarProps => ({
   activeBot: state.bot.activeBot,
-  selectedNavTab: state.navBar.selection
+  selectedNavTab: state.navBar.selection,
 });
 
 export const ExplorerBar = connect(mapStateToProps)(ExplorerBarComponent);

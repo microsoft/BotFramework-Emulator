@@ -32,7 +32,7 @@
 //
 
 export enum NavBarActions {
-  select = "NAVBAR/SELECT"
+  select = 'NAVBAR/SELECT',
 }
 
 export interface SelectNavBarAction {
@@ -48,7 +48,7 @@ export function select(selection: string): SelectNavBarAction {
   return {
     type: NavBarActions.select,
     payload: {
-      selection
-    }
+      selection,
+    },
   };
 }

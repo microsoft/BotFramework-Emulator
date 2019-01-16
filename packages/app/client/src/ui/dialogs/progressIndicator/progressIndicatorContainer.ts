@@ -31,14 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { connect } from "react-redux";
-import { Action } from "redux";
+import { connect } from 'react-redux';
+import { Action } from 'redux';
 
-import { cancelCurrentProcess } from "../../../data/action/progressIndicatorActions";
-import { RootState } from "../../../data/store";
-import { DialogService } from "../service";
+import { cancelCurrentProcess } from '../../../data/action/progressIndicatorActions';
+import { RootState } from '../../../data/store';
+import { DialogService } from '../service';
 
-import { ProgressIndicator } from "./progressIndicator";
+import { ProgressIndicator } from './progressIndicator';
 
 const mapStateToProps = (
   state: RootState,
@@ -47,14 +47,14 @@ const mapStateToProps = (
   const { progressIndicator } = state;
   return {
     ...ownProps,
-    ...progressIndicator
+    ...progressIndicator,
   };
 };
 
 const mapDispatchToProps = (dispatch: (action: Action) => void) => {
   return {
     cancel: () => DialogService.hideDialog(dispatch(cancelCurrentProcess())),
-    close: () => DialogService.hideDialog()
+    close: () => DialogService.hideDialog(),
   };
 };
 

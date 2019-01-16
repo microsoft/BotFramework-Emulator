@@ -31,19 +31,19 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { connect } from "react-redux";
+import { connect } from 'react-redux';
 
 import {
   swapTabs,
-  toggleDraggingTab
-} from "../../../../data/action/editorActions";
+  toggleDraggingTab,
+} from '../../../../data/action/editorActions';
 
-import { Tab, TabProps } from "./tab";
+import { Tab, TabProps } from './tab';
 
 const mapDispatchToProps = (dispatch, ownProps: TabProps): TabProps => ({
   toggleDraggingTab: (toggle: boolean) => dispatch(toggleDraggingTab(toggle)),
   swapTabs: (editorKey: string, owningEditor: string, tabId: string) =>
-    dispatch(swapTabs(editorKey, owningEditor, tabId, ownProps.documentId))
+    dispatch(swapTabs(editorKey, owningEditor, tabId, ownProps.documentId)),
 });
 
 export const TabContainer = connect(

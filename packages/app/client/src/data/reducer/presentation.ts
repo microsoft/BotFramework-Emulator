@@ -31,20 +31,20 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { SharedConstants } from "@bfemulator/app-shared";
+import { SharedConstants } from '@bfemulator/app-shared';
 
-import { CommandServiceImpl } from "../../platform/commands/commandServiceImpl";
+import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import {
   PresentationAction,
-  PresentationActions
-} from "../action/presentationActions";
+  PresentationActions,
+} from '../action/presentationActions';
 
 export interface PresentationState {
   enabled: boolean;
 }
 
 const DEFAULT_STATE: PresentationState = {
-  enabled: false
+  enabled: false,
 };
 
 export const presentation = (
@@ -71,7 +71,7 @@ function setEnabled(
   enabled: boolean,
   state: PresentationState
 ): PresentationState {
-  const newState = {...state};
+  const newState = { ...state };
   newState.enabled = enabled;
 
   CommandServiceImpl.remoteCall(

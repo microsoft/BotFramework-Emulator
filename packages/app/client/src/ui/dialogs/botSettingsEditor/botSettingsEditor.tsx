@@ -36,12 +36,12 @@ import {
   newNotification,
   Notification,
   NotificationType,
-  SharedConstants
-} from "@bfemulator/app-shared";
+  SharedConstants,
+} from '@bfemulator/app-shared';
 import {
   BotConfigWithPath,
-  BotConfigWithPathImpl
-} from "@bfemulator/sdk-shared";
+  BotConfigWithPathImpl,
+} from '@bfemulator/sdk-shared';
 import {
   Checkbox,
   DefaultButton,
@@ -50,21 +50,21 @@ import {
   PrimaryButton,
   Row,
   RowAlignment,
-  TextField
-} from "@bfemulator/ui-react";
+  TextField,
+} from '@bfemulator/ui-react';
 import {
   IConnectedService,
-  ServiceTypes
-} from "botframework-config/lib/schema";
-import { ChangeEvent } from "react";
-import * as React from "react";
+  ServiceTypes,
+} from 'botframework-config/lib/schema';
+import { ChangeEvent } from 'react';
+import * as React from 'react';
 
-import { getBotInfoByPath } from "../../../data/botHelpers";
-import { CommandServiceImpl } from "../../../platform/commands/commandServiceImpl";
-import { generateBotSecret } from "../../../utils";
-import { ActiveBotHelper } from "../../helpers/activeBotHelper";
+import { getBotInfoByPath } from '../../../data/botHelpers';
+import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
+import { generateBotSecret } from '../../../utils';
+import { ActiveBotHelper } from '../../helpers/activeBotHelper';
 
-import * as styles from "./botSettingsEditor.scss";
+import * as styles from './botSettingsEditor.scss';
 
 export interface BotSettingsEditorProps {
   bot: BotConfigWithPath;
@@ -97,7 +97,7 @@ export class BotSettingsEditor extends React.Component<
       ...bot,
       secret,
       revealSecret: false,
-      encryptKey: !!secret
+      encryptKey: !!secret,
     };
   }
 
@@ -114,7 +114,7 @@ export class BotSettingsEditor extends React.Component<
   public render() {
     const { name, dirty, secret, revealSecret, encryptKey } = this.state;
     const disabled = !name || !dirty;
-    const error = !name ? "The bot name is required" : "";
+    const error = !name ? 'The bot name is required' : '';
     return (
       <Dialog
         cancel={this.onCancel}
@@ -151,21 +151,21 @@ export class BotSettingsEditor extends React.Component<
           value={secret}
           disabled={true}
           id="key-input"
-          type={revealSecret ? "text" : "password"}
+          type={revealSecret ? 'text' : 'password'}
         />
         <ul className={styles.actionsList}>
           <li>
             <a
-              className={!encryptKey ? styles.disabledAction : ""}
+              className={!encryptKey ? styles.disabledAction : ''}
               href="javascript:void(0);"
               onClick={this.onRevealSecretClick}
             >
-              {revealSecret ? "Hide" : "Show"}
+              {revealSecret ? 'Hide' : 'Show'}
             </a>
           </li>
           <li>
             <a
-              className={!encryptKey ? styles.disabledAction : ""}
+              className={!encryptKey ? styles.disabledAction : ''}
               href="javascript:void(0);"
               onClick={this.onCopyClick}
             >
@@ -212,33 +212,33 @@ export class BotSettingsEditor extends React.Component<
     const { checked } = event.target;
     this.setState({
       encryptKey: checked,
-      secret: checked ? this.generatedSecret : "",
+      secret: checked ? this.generatedSecret : '',
       dirty: true,
-      revealSecret: checked ? checked : false
+      revealSecret: checked ? checked : false,
     });
   };
 
   private onLearnMoreEncryptionClick = (): void => {
     this.props.onAnchorClick(
-      "https://aka.ms/bot-framework-bot-file-encryption"
+      'https://aka.ms/bot-framework-bot-file-encryption'
     );
   };
 
   private onSaveClick = async () => {
     const {
-      name: botName = "",
-      description = "",
+      name: botName = '',
+      description = '',
       path,
       services,
-      padlock = "",
-      secret
+      padlock = '',
+      secret,
     } = this.state;
     const bot: BotConfigWithPath = BotConfigWithPathImpl.fromJSON({
       name: botName.trim(),
       description: description.trim(),
-      padlock: secret ? padlock : "",
+      padlock: secret ? padlock : '',
       path: path.trim(),
-      services
+      services,
     });
 
     const endpointService: IConnectedService = bot.services.find(
@@ -271,7 +271,7 @@ export class BotSettingsEditor extends React.Component<
     const botInfo: BotInfo = {
       displayName: bot.name,
       path: newPath,
-      secret: this.state.secret
+      secret: this.state.secret,
     };
     await CommandServiceImpl.remoteCall(
       PatchBotList,
@@ -305,8 +305,8 @@ export class BotSettingsEditor extends React.Component<
       await CommandServiceImpl.remoteCall(Save, bot);
     } catch {
       const note = newNotification(
-        "There was an error updating your bot settings. " +
-          "Try removing encryption and saving again. You can then add encryption back once successful",
+        'There was an error updating your bot settings. ' +
+          'Try removing encryption and saving again. You can then add encryption back once successful',
         NotificationType.Error
       );
       this.props.sendNotification(note);
@@ -327,14 +327,14 @@ export class BotSettingsEditor extends React.Component<
     const dialogOptions = {
       filters: [
         {
-          name: "Bot Files",
-          extensions: ["bot"]
-        }
+          name: 'Bot Files',
+          extensions: ['bot'],
+        },
       ],
       defaultPath: botFileName,
       showsTagField: false,
-      title: "Save as",
-      buttonLabel: "Save"
+      title: 'Save as',
+      buttonLabel: 'Save',
     };
     return CommandServiceImpl.remoteCall(
       SharedConstants.Commands.Electron.ShowSaveDialog,
@@ -355,15 +355,15 @@ export class BotSettingsEditor extends React.Component<
     }
     const { window } = this.props;
     const input: HTMLInputElement = window.document.getElementById(
-      "key-input"
+      'key-input'
     ) as HTMLInputElement;
-    input.removeAttribute("disabled");
+    input.removeAttribute('disabled');
     const { type } = input;
-    input.type = "text";
+    input.type = 'text';
     input.select();
-    window.document.execCommand("copy");
+    window.document.execCommand('copy');
     input.type = type;
-    input.setAttribute("disabled", "");
+    input.setAttribute('disabled', '');
   };
 
   // TODO: Re-enable ability to re-generate secret after 4.1

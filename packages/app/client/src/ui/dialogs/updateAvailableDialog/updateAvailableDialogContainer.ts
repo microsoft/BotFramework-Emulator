@@ -31,21 +31,21 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { connect } from "react-redux";
+import { connect } from 'react-redux';
 
-import { DialogService } from "../service";
+import { DialogService } from '../service';
 
 import {
   UpdateAvailableDialog,
-  UpdateAvailableDialogProps
-} from "./updateAvailableDialog";
+  UpdateAvailableDialogProps,
+} from './updateAvailableDialog';
 
 function mapDispatchToProps(_dispatch: any): UpdateAvailableDialogProps {
   return {
     onCloseClick: () => DialogService.hideDialog(null),
     onDownloadClick: (installAfterDownload: boolean) => {
       DialogService.hideDialog({ installAfterDownload });
-    }
+    },
   };
 }
 

@@ -31,15 +31,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { connect } from "react-redux";
+import { connect } from 'react-redux';
 
-import { RootState } from "../../../data/store";
-import { DialogService } from "../service";
+import { RootState } from '../../../data/store';
+import { DialogService } from '../service';
 
 import {
   AzureLoginSuccessDialog,
-  AzureLoginSuccessDialogProps
-} from "./azureLoginSuccessDialog";
+  AzureLoginSuccessDialogProps,
+} from './azureLoginSuccessDialog';
 
 const mapStateToProps = (
   state: RootState,
@@ -48,7 +48,7 @@ const mapStateToProps = (
   const { persistLogin } = state.azureAuth;
   return {
     persistLogin,
-    ...ownProps
+    ...ownProps,
   };
 };
 
@@ -56,7 +56,7 @@ const mapDispatchToProps = (
   _dispatch: () => void
 ): AzureLoginSuccessDialogProps => {
   return {
-    cancel: persistLogin => DialogService.hideDialog(persistLogin)
+    cancel: persistLogin => DialogService.hideDialog(persistLogin),
   };
 };
 

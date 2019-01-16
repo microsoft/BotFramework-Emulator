@@ -31,10 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Dialog, DialogFooter, PrimaryButton } from "@bfemulator/ui-react";
-import * as React from "react";
+import { Dialog, DialogFooter, PrimaryButton } from '@bfemulator/ui-react';
+import * as React from 'react';
 
-import * as styles from "./postMigrationDialog.scss";
+import * as styles from './postMigrationDialog.scss';
 
 export interface PostMigrationDialogProps {
   close: () => void;
@@ -43,7 +43,7 @@ export interface PostMigrationDialogProps {
 export class PostMigrationDialog extends React.Component<
   PostMigrationDialogProps
 > {
-  constructor(props: PostMigrationDialogProps) {
+  public constructor(props: PostMigrationDialogProps) {
     super(props);
   }
 
@@ -57,11 +57,12 @@ export class PostMigrationDialog extends React.Component<
           stores metadata about different services your bot consumes and enables
           you to edit these services directly from the Emulator v4.
           <a href="https://aka.ms/about-bot-file">
-            {" "}
+            {' '}
             Learn more about bot configuration files.
           </a>
         </p>
         <p>
+          {/* eslint-disable-next-line react/no-unescaped-entities */}
           You can move a bot to any location by right-clicking the bot's name
           under My Bots.
         </p>

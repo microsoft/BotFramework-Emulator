@@ -31,8 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from "./appSettingsEditor/appSettingsEditor";
-export * from "./editor";
-export * from "./panel/panel";
-export * from "./emulator";
-export * from "./welcomePage";
+export * from './appSettingsEditor/appSettingsEditor';
+export * from './editor';
+export * from './panel/panel';
+export * from './emulator';
+export * from './welcomePage';

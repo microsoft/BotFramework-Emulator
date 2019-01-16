@@ -34,7 +34,7 @@
 // import * as log from './v1/log';
 
 export default function interceptError() {
-  (process as NodeJS.EventEmitter).on("uncaughtException", _error => {
+  (process as NodeJS.EventEmitter).on('uncaughtException', _error => {
     // log.error('[err-client]', error.message, error.stack);
   });
 

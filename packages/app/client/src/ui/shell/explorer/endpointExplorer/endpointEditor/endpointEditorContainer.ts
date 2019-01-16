@@ -34,18 +34,18 @@
 import {
   IBotService,
   IEndpointService,
-  ServiceTypes
-} from "botframework-config/lib/schema";
-import { connect } from "react-redux";
+  ServiceTypes,
+} from 'botframework-config/lib/schema';
+import { connect } from 'react-redux';
 
-import { RootState } from "../../../../../data/store";
-import { DialogService } from "../../../../dialogs/service";
+import { RootState } from '../../../../../data/store';
+import { DialogService } from '../../../../dialogs/service';
 
 import {
   EndpointEditor,
   EndpointEditorProps,
-  UpdatedServicesPayload
-} from "./endpointEditor";
+  UpdatedServicesPayload,
+} from './endpointEditor';
 
 const mapStateToProps = (
   state: RootState,
@@ -63,7 +63,7 @@ const mapStateToProps = (
   }
   return {
     botService,
-    ...ownProps
+    ...ownProps,
   };
 };
 
@@ -71,7 +71,7 @@ const mapDispatchToProps = (): Partial<EndpointEditorProps> => {
   return {
     updateEndpointService: (updatedServices: UpdatedServicesPayload) =>
       DialogService.hideDialog(updatedServices),
-    cancel: () => DialogService.hideDialog()
+    cancel: () => DialogService.hideDialog(),
   };
 };
 

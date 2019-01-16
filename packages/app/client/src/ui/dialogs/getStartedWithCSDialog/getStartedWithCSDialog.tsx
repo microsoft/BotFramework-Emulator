@@ -1,15 +1,47 @@
+//
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license.
+//
+// Microsoft Bot Framework: http://botframework.com
+//
+// Bot Framework Emulator Github:
+// https://github.com/Microsoft/BotFramwork-Emulator
+//
+// Copyright (c) Microsoft Corporation
+// All rights reserved.
+//
+// MIT License:
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+//
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED ""AS IS"", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
 import {
   DefaultButton,
   Dialog,
   DialogFooter,
-  PrimaryButton
-} from "@bfemulator/ui-react";
-import { ServiceTypes } from "botframework-config/lib/schema";
-import * as React from "react";
-import { Component, ReactNode } from "react";
+  PrimaryButton,
+} from '@bfemulator/ui-react';
+import { ServiceTypes } from 'botframework-config/lib/schema';
+import * as React from 'react';
+import { Component, ReactNode } from 'react';
 
-import { serviceTypeLabels } from "../../../utils/serviceTypeLables";
-import * as styles from "../dialogStyles.scss";
+import { serviceTypeLabels } from '../../../utils/serviceTypeLables';
+import * as styles from '../dialogStyles.scss';
 
 export interface GetStartedWithCSDialogProps {
   cancel: () => void;
@@ -21,17 +53,17 @@ export interface GetStartedWithCSDialogProps {
 }
 
 const titleMap = {
-  [ServiceTypes.Luis]: "Create a LUIS app",
-  [ServiceTypes.Dispatch]: "Connect to a Dispatch model",
-  [ServiceTypes.QnA]: "Create a QnA Maker knowledge base",
-  [ServiceTypes.BlobStorage]: "Create a Blob Storage Container"
+  [ServiceTypes.Luis]: 'Create a LUIS app',
+  [ServiceTypes.Dispatch]: 'Connect to a Dispatch model',
+  [ServiceTypes.QnA]: 'Create a QnA Maker knowledge base',
+  [ServiceTypes.BlobStorage]: 'Create a Blob Storage Container',
 };
 
 const buttonTextMap = {
-  [ServiceTypes.Luis]: "LUIS",
-  [ServiceTypes.Dispatch]: "LUIS",
-  [ServiceTypes.QnA]: "QnA Maker",
-  [ServiceTypes.BlobStorage]: "Blob Storage"
+  [ServiceTypes.Luis]: 'LUIS',
+  [ServiceTypes.Dispatch]: 'LUIS',
+  [ServiceTypes.QnA]: 'QnA Maker',
+  [ServiceTypes.BlobStorage]: 'Blob Storage',
 };
 
 export class GetStartedWithCSDialog extends Component<
@@ -88,8 +120,8 @@ export class GetStartedWithCSDialog extends Component<
     return (
       <>
         <p>
-          {"Language Understanding Service (LUIS) is a matching learning-based service for adding language " +
-            "understanding to bots, applications and IoT devices."}
+          {'Language Understanding Service (LUIS) is a matching learning-based service for adding language ' +
+            'understanding to bots, applications and IoT devices.'}
         </p>
         <p>
           {`You have not signed up for a LUIS account under ${
@@ -100,14 +132,14 @@ export class GetStartedWithCSDialog extends Component<
           </a>
         </p>
         <p>
-          {"Alternatively, you can "}
+          {'Alternatively, you can '}
           <a
             href="javascript:void(0);"
             onClick={this.props.launchConnectedServiceEditor}
           >
             connect to a LUIS app manually
           </a>
-          {" if you know the app ID, version, and authoring key."}
+          {' if you know the app ID, version, and authoring key.'}
         </p>
       </>
     );
@@ -119,10 +151,10 @@ export class GetStartedWithCSDialog extends Component<
       <>
         <p>Signed in as {this.props.authenticatedUser}.</p>
         <p>
-          {"You do not have any {label} models associated with this account. "}
+          {'You do not have any {label} models associated with this account. '}
           <a href="javascript:void(0)">
             Connect to a {label} model manually
-          </a>{" "}
+          </a>{' '}
           by entering the app ID and key.
         </p>
         <p>
@@ -130,8 +162,8 @@ export class GetStartedWithCSDialog extends Component<
           <br />
         </p>
         <p>
-          {"You can link apps from a different {label} account to this Azure account by adding " +
-            "yourself as a collaborator."}
+          {'You can link apps from a different {label} account to this Azure account by adding ' +
+            'yourself as a collaborator.'}
           <a href="http://aka.ms/bot-framework-emulator-luis-collaboration">
             Learn more about collaborating
           </a>
@@ -148,8 +180,8 @@ export class GetStartedWithCSDialog extends Component<
     return (
       <>
         <p>
-          {"A Dispatch model is a LUIS model that enables your bot to dispatch intents across multiple LUIS " +
-            "apps and QnAMaker knowledge bases. "}
+          {'A Dispatch model is a LUIS model that enables your bot to dispatch intents across multiple LUIS ' +
+            'apps and QnAMaker knowledge bases. '}
           <a href="https://aka.ms/bot-framework-emulator-create-dispatch">
             Learn more about Dispatch models
           </a>
@@ -163,14 +195,14 @@ export class GetStartedWithCSDialog extends Component<
           </a>
         </p>
         <br />
-        {"Alternatively, you can "}
+        {'Alternatively, you can '}
         <a
           href="javascript:void(0);"
           onClick={this.props.launchConnectedServiceEditor}
         >
           connect to a Dispatch app manually
         </a>
-        {" if you know the app ID, version, and authoring key."}
+        {' if you know the app ID, version, and authoring key.'}
       </>
     );
   }
@@ -180,14 +212,14 @@ export class GetStartedWithCSDialog extends Component<
       <>
         <p>Signed in as {this.props.authenticatedUser}.</p>
         <p>
-          {"You do not have any Dispatch models associated with this account. "}
+          {'You do not have any Dispatch models associated with this account. '}
           <a
             href="javascript:void(0)"
             onClick={this.props.launchConnectedServiceEditor}
           >
             Connect to a Dispatch model manually
           </a>
-          {" by entering this app ID and key."}
+          {' by entering this app ID and key.'}
         </p>
         <p>
           <a href="https://aka.ms/bot-framework-emulator-create-dispatch">
@@ -195,8 +227,8 @@ export class GetStartedWithCSDialog extends Component<
           </a>
         </p>
         <p>
-          {"You can link apps from a different Dispatch account to this Azure account by adding " +
-            "yourself as a collaborator. "}
+          {'You can link apps from a different Dispatch account to this Azure account by adding ' +
+            'yourself as a collaborator. '}
           <a href="http://aka.ms/bot-framework-emulator-luis-collaboration">
             Learn more about collaborating
           </a>
@@ -210,7 +242,7 @@ export class GetStartedWithCSDialog extends Component<
       <>
         <p>
           {
-            "QnA Maker is a service that creates a question-and-answer knowledge base from FAQs and product manuals."
+            'QnA Maker is a service that creates a question-and-answer knowledge base from FAQs and product manuals.'
           }
         </p>
         <p>
@@ -222,14 +254,14 @@ export class GetStartedWithCSDialog extends Component<
           </a>
         </p>
         <p>
-          {" Alternatively, you can "}
+          {' Alternatively, you can '}
           <a
             href="https://aka.ms/bot-framework-emulator-qna-docs-home"
             onClick={this.props.launchConnectedServiceEditor}
           >
             connect to a knowledge base manually
           </a>
-          {" if you know the ID and subscription key."}
+          {' if you know the ID and subscription key.'}
         </p>
       </>
     );
@@ -239,7 +271,7 @@ export class GetStartedWithCSDialog extends Component<
     return (
       <>
         <p>
-          {"Blob Storage is a service that allows you to store unstructured " +
+          {'Blob Storage is a service that allows you to store unstructured ' +
             "data and is commonly used to store a Bot's transcripts."}
         </p>
         <p>
@@ -251,7 +283,7 @@ export class GetStartedWithCSDialog extends Component<
           </a>
         </p>
         <p>
-          {" Alternatively, you can "}
+          {' Alternatively, you can '}
           <a
             href="javascript:void(0);"
             onClick={this.props.launchConnectedServiceEditor}
@@ -259,7 +291,7 @@ export class GetStartedWithCSDialog extends Component<
             connect to a Blob container manually
           </a>
           {
-            " if you know the ID, subscription key, container name and connection string."
+            ' if you know the ID, subscription key, container name and connection string.'
           }
         </p>
       </>
@@ -283,7 +315,7 @@ export class GetStartedWithCSDialog extends Component<
           </a>
         </p>
         <p>
-          {" Alternatively, you can "}
+          {' Alternatively, you can '}
           <a
             href="javascript:void(0);"
             onClick={this.props.launchConnectedServiceEditor}
@@ -291,7 +323,7 @@ export class GetStartedWithCSDialog extends Component<
             connect to a CosmosDB collection manually
           </a>
           {
-            " if you know the ID, subscription key, collection and database name."
+            ' if you know the ID, subscription key, collection and database name.'
           }
         </p>
       </>

@@ -31,19 +31,19 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IEndpointService, ServiceTypes } from "botframework-config/lib/schema";
-import { ComponentClass } from "react";
-import { connect } from "react-redux";
+import { IEndpointService, ServiceTypes } from 'botframework-config/lib/schema';
+import { ComponentClass } from 'react';
+import { connect } from 'react-redux';
 
 import {
   launchEndpointEditor,
   openEndpointExplorerContextMenu,
-  openEndpointInEmulator
-} from "../../../../data/action/endpointServiceActions";
-import { RootState } from "../../../../data/store";
+  openEndpointInEmulator,
+} from '../../../../data/action/endpointServiceActions';
+import { RootState } from '../../../../data/store';
 
-import { EndpointEditor } from "./endpointEditor/endpointEditor";
-import { EndpointExplorer } from "./endpointExplorer";
+import { EndpointEditor } from './endpointEditor/endpointEditor';
+import { EndpointExplorer } from './endpointExplorer';
 
 const mapStateToProps = (state: RootState, ...ownProps: any[]) => {
   const { services } = state.bot.activeBot;
@@ -52,7 +52,7 @@ const mapStateToProps = (state: RootState, ...ownProps: any[]) => {
       service => service.type === ServiceTypes.Endpoint
     ),
     window,
-    ...ownProps
+    ...ownProps,
   };
 };
 
@@ -68,7 +68,9 @@ const mapDispatchToProps = dispatch => {
       endpointService: IEndpointService,
       endpointEditor: ComponentClass<EndpointEditor>
     ) =>
-      dispatch(openEndpointExplorerContextMenu(endpointEditor, endpointService))
+      dispatch(
+        openEndpointExplorerContextMenu(endpointEditor, endpointService)
+      ),
   };
 };
 

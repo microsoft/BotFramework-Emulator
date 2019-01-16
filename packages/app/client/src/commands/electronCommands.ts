@@ -31,8 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { SharedConstants } from "@bfemulator/app-shared";
-import { CommandRegistryImpl } from "@bfemulator/sdk-shared";
+import { SharedConstants } from '@bfemulator/app-shared';
+import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 
 /** Registers electron commands */
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
@@ -40,7 +40,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // ---------------------------------------------------------------------------
   // Toggle inspector dev tools for all open inspectors
   commandRegistry.registerCommand(Electron.ToggleDevTools, () => {
-    window.dispatchEvent(new Event("toggle-inspector-devtools"));
+    window.dispatchEvent(new Event('toggle-inspector-devtools'));
   });
 
   // ---------------------------------------------------------------------------
@@ -49,7 +49,8 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
     Electron.UpdateAvailable,
     (...args: any[]) => {
       // TODO: Show a notification
-      console.log("Update available", ...args);
+      // eslint-disable-next-line no-console
+      console.log('Update available', ...args);
     }
   );
 
@@ -57,7 +58,8 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // Application is up to date
   commandRegistry.registerCommand(Electron.UpdateNotAvailable, () => {
     // TODO: Show a notification
-    console.log("Application is up to date");
+    // eslint-disable-next-line no-console
+    console.log('Application is up to date');
   });
 
   // ---------------------------------------------------------------------------

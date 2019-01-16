@@ -31,32 +31,25 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ServiceCodes, SharedConstants } from "@bfemulator/app-shared";
-import { BotConfigWithPath } from "@bfemulator/sdk-shared";
-import { BotConfigurationBase } from "botframework-config/lib/botConfigurationBase";
+import { ServiceCodes, SharedConstants } from '@bfemulator/app-shared';
+import { BotConfigWithPath } from '@bfemulator/sdk-shared';
+import { BotConfigurationBase } from 'botframework-config/lib/botConfigurationBase';
 import {
   IAzureService,
   IConnectedService,
   IGenericService,
   ILuisService,
   IQnAService,
-  ServiceTypes
-} from "botframework-config/lib/schema";
-import {
-  ForkEffect,
-  put,
-  select,
-  takeEvery,
-  takeLatest
-} from "redux-saga/effects";
+  ServiceTypes,
+} from 'botframework-config/lib/schema';
 
-import { CommandServiceImpl } from "../../platform/commands/commandServiceImpl";
-import { DialogService } from "../../ui/dialogs/service";
-import { serviceTypeLabels } from "../../utils/serviceTypeLables";
+import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
+import { DialogService } from '../../ui/dialogs/service';
+import { serviceTypeLabels } from '../../utils/serviceTypeLables';
 import {
   ArmTokenData,
-  beginAzureAuthWorkflow
-} from "../action/azureAuthActions";
+  beginAzureAuthWorkflow,
+} from '../action/azureAuthActions';
 import {
   ConnectedServiceAction,
   ConnectedServicePayload,
@@ -66,13 +59,21 @@ import {
   OPEN_ADD_CONNECTED_SERVICE_CONTEXT_MENU,
   OPEN_CONNECTED_SERVICE_SORT_CONTEXT_MENU,
   OPEN_CONTEXT_MENU_FOR_CONNECTED_SERVICE,
-  OPEN_SERVICE_DEEP_LINK
-} from "../action/connectedServiceActions";
-import { sortExplorerContents } from "../action/explorerActions";
-import { SortCriteria } from "../reducer/explorer";
-import { RootState } from "../store";
+  OPEN_SERVICE_DEEP_LINK,
+} from '../action/connectedServiceActions';
+import { sortExplorerContents } from '../action/explorerActions';
+import { SortCriteria } from '../reducer/explorer';
+import { RootState } from '../store';
 
-import { getArmToken } from "./azureAuthSaga";
+import { getArmToken } from './azureAuthSaga';
+
+import {
+  ForkEffect,
+  put,
+  select,
+  takeEvery,
+  takeLatest,
+} from 'redux-saga/effects';
 
 declare interface ServicesPayload {
   services: IConnectedService[];
@@ -99,7 +100,7 @@ function* launchConnectedServicePicker(
     const {
       promptDialog,
       loginSuccessDialog,
-      loginFailedDialog
+      loginFailedDialog,
     } = action.payload.azureAuthWorkflowComponents;
     armTokenData = yield* getArmToken(
       beginAzureAuthWorkflow(
@@ -116,11 +117,11 @@ function* launchConnectedServicePicker(
     yield* launchConnectedServiceEditor(action);
     return;
   }
-  if (!armTokenData || "error" in armTokenData) {
+  if (!armTokenData || 'error' in armTokenData) {
     return null; // canceled or failed somewhere
   }
   // Add the authenticated user to the action since we now have the token
-  const pJson = JSON.parse(atob(armTokenData.access_token.split(".")[1]));
+  const pJson = JSON.parse(atob(armTokenData.access_token.split('.')[1]));
   action.payload.authenticatedUser =
     pJson.upn || pJson.unique_name || pJson.name || pJson.email;
   const { serviceType, progressIndicatorComponent } = action.payload;
@@ -140,7 +141,7 @@ function* launchConnectedServicePicker(
     const result = yield DialogService.showDialog(getStartedDialog, {
       serviceType,
       authenticatedUser,
-      showNoModelsFoundContent: !payload.services.length
+      showNoModelsFoundContent: !payload.services.length,
     });
     // Sign up with XXXX
     if (result === 1) {
@@ -173,18 +174,18 @@ function* launchConnectedServicePickList(
   const {
     pickerComponent,
     authenticatedUser,
-    serviceType: type
+    serviceType: type,
   } = action.payload;
   let result = yield DialogService.showDialog(pickerComponent, {
     availableServices,
     authenticatedUser,
-    serviceType
+    serviceType,
   });
 
   if (result === 1) {
     action.payload.connectedService = BotConfigurationBase.serviceFromJSON({
       type,
-      hostname: "" /* defect workaround */
+      hostname: '' /* defect workaround */,
     } as any);
     result = yield* launchConnectedServiceEditor(action);
   }
@@ -197,10 +198,10 @@ function* retrieveServicesByServiceType(
 ): IterableIterator<any> {
   const armTokenData: ArmTokenData = yield select(getArmTokenFromState);
   if (!armTokenData || !armTokenData.access_token) {
-    throw new Error("Auth credentials do not exist.");
+    throw new Error('Auth credentials do not exist.');
   }
   const {
-    GetConnectedServicesByType
+    GetConnectedServicesByType,
   } = SharedConstants.Commands.ConnectedService;
   let payload: ServicesPayload;
   try {
@@ -215,6 +216,7 @@ function* retrieveServicesByServiceType(
   return payload;
 }
 
+// eslint-disable-next-line require-yield
 function* openConnectedServiceDeepLink(
   action: ConnectedServiceAction<ConnectedServicePayload>
 ): IterableIterator<any> {
@@ -222,25 +224,25 @@ function* openConnectedServiceDeepLink(
   switch (connectedService.type) {
     case ServiceTypes.AppInsights:
       return openAzureProviderDeepLink(
-        "microsoft.insights/components",
+        'microsoft.insights/components',
         connectedService as IAzureService
       );
 
     case ServiceTypes.BlobStorage:
       return openAzureProviderDeepLink(
-        "Microsoft.DocumentDB/storageAccounts",
+        'Microsoft.DocumentDB/storageAccounts',
         connectedService as IAzureService
       );
 
     case ServiceTypes.Bot:
       return openAzureProviderDeepLink(
-        "Microsoft.BotService/botServices",
+        'Microsoft.BotService/botServices',
         connectedService as IAzureService
       );
 
     case ServiceTypes.CosmosDB:
       return openAzureProviderDeepLink(
-        "Microsoft.DocumentDb/databaseAccounts",
+        'Microsoft.DocumentDb/databaseAccounts',
         connectedService as IAzureService
       );
 
@@ -254,7 +256,7 @@ function* openConnectedServiceDeepLink(
       return openQnaMakerDeepLink(connectedService as IQnAService);
 
     default:
-      return window.open("https://portal.azure.com");
+      return window.open('https://portal.azure.com');
   }
 }
 
@@ -262,9 +264,9 @@ function* openContextMenuForService(
   action: ConnectedServiceAction<ConnectedServicePayload>
 ): IterableIterator<any> {
   const menuItems = [
-    { label: "Manage service", id: "open" },
-    { label: "Edit configuration", id: "edit" },
-    { label: "Disconnect this service", id: "forget" }
+    { label: 'Manage service', id: 'open' },
+    { label: 'Edit configuration', id: 'edit' },
+    { label: 'Disconnect this service', id: 'forget' },
   ];
   const response = yield CommandServiceImpl.remoteCall(
     SharedConstants.Commands.Electron.DisplayContextMenu,
@@ -273,15 +275,15 @@ function* openContextMenuForService(
   const { connectedService } = action.payload;
   action.payload.serviceType = connectedService.type;
   switch (response.id) {
-    case "open":
+    case 'open':
       yield* openConnectedServiceDeepLink(action);
       break;
 
-    case "edit":
+    case 'edit':
       yield* launchConnectedServiceEditor(action);
       break;
 
-    case "forget":
+    case 'forget':
       yield* removeServiceFromActiveBot(connectedService);
       break;
 
@@ -295,15 +297,15 @@ function* openAddConnectedServiceContextMenu(
   action: ConnectedServiceAction<ConnectedServicePickerPayload>
 ): IterableIterator<any> {
   const menuItems = [
-    { label: "Add Language Understanding (LUIS)", id: ServiceTypes.Luis },
-    { label: "Add QnA Maker", id: ServiceTypes.QnA },
-    { label: "Add Dispatch", id: ServiceTypes.Dispatch },
-    { type: "separator" },
-    { label: "Add Azure Cosmos DB account", id: ServiceTypes.CosmosDB },
-    { label: "Add Azure Storage account", id: ServiceTypes.BlobStorage },
-    { label: "Add Azure Application Insights", id: ServiceTypes.AppInsights },
-    { type: "separator" },
-    { label: "Add other service …", id: ServiceTypes.Generic }
+    { label: 'Add Language Understanding (LUIS)', id: ServiceTypes.Luis },
+    { label: 'Add QnA Maker', id: ServiceTypes.QnA },
+    { label: 'Add Dispatch', id: ServiceTypes.Dispatch },
+    { type: 'separator' },
+    { label: 'Add Azure Cosmos DB account', id: ServiceTypes.CosmosDB },
+    { label: 'Add Azure Storage account', id: ServiceTypes.BlobStorage },
+    { label: 'Add Azure Application Insights', id: ServiceTypes.AppInsights },
+    { type: 'separator' },
+    { label: 'Add other service …', id: ServiceTypes.Generic },
   ];
 
   const response = yield CommandServiceImpl.remoteCall(
@@ -329,17 +331,17 @@ function* openSortContextMenu(
   const currentSort = sortSelectionByPanelId[action.payload.panelId];
   const menuItems = [
     {
-      label: "Sort by name",
-      id: "name",
-      type: "checkbox",
-      checked: currentSort === "name"
+      label: 'Sort by name',
+      id: 'name',
+      type: 'checkbox',
+      checked: currentSort === 'name',
     },
     {
-      label: "Sort by type",
-      id: "type",
-      type: "checkbox",
-      checked: currentSort === "type"
-    }
+      label: 'Sort by type',
+      id: 'type',
+      type: 'checkbox',
+      checked: currentSort === 'type',
+    },
   ];
   const response = yield CommandServiceImpl.remoteCall(
     SharedConstants.Commands.Electron.DisplayContextMenu,
@@ -358,13 +360,13 @@ function* removeServiceFromActiveBot(
     SharedConstants.Commands.Electron.ShowMessageBox,
     true,
     {
-      type: "question",
-      buttons: ["Cancel", "OK"],
+      type: 'question',
+      buttons: ['Cancel', 'OK'],
       defaultId: 1,
       message: `Remove ${serviceTypeLabels[connectedService.type]} service: ${
         connectedService.name
       }. Are you sure?`,
-      cancelId: 0
+      cancelId: 0,
     }
   );
   if (result) {
@@ -384,14 +386,14 @@ function* launchConnectedServiceEditor(
     editorComponent,
     authenticatedUser,
     connectedService,
-    serviceType
+    serviceType,
   } = action.payload;
   const servicesToUpdate: IConnectedService[] = yield DialogService.showDialog(
     editorComponent,
     {
       connectedService,
       authenticatedUser,
-      serviceType
+      serviceType,
     }
   );
 
@@ -418,40 +420,40 @@ function openAzureProviderDeepLink(
     `https://ms.portal.azure.com/#@${tenantId}/resource/`,
     `subscriptions/${subscriptionId}/`,
     `resourceGroups/${encodeURI(resourceGroup)}/`,
-    `providers/${provider}/${encodeURI(serviceName)}/overview`
+    `providers/${provider}/${encodeURI(serviceName)}/overview`,
   ];
 
-  window.open(bits.join(""));
+  window.open(bits.join(''));
 }
 
 function openLuisDeepLink(luisService: ILuisService) {
   const { appId, version, region } = luisService;
   let regionPrefix: string;
   switch (region) {
-    case "westeurope":
-      regionPrefix = "eu.";
+    case 'westeurope':
+      regionPrefix = 'eu.';
       break;
 
-    case "australiaeast":
-      regionPrefix = "au.";
+    case 'australiaeast':
+      regionPrefix = 'au.';
       break;
 
     default:
-      regionPrefix = "";
+      regionPrefix = '';
       break;
   }
   const linkArray = [
-    "https://",
+    'https://',
     `${encodeURI(regionPrefix)}`,
-    "luis.ai/applications/"
+    'luis.ai/applications/',
   ];
   linkArray.push(
     `${encodeURI(appId)}`,
-    "/versions/",
+    '/versions/',
     `${encodeURI(version)}`,
-    "/build"
+    '/build'
   );
-  const link = linkArray.join("");
+  const link = linkArray.join('');
   window.open(link);
 }
 

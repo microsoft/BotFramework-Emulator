@@ -34,8 +34,8 @@
 import {
   FrameworkSettings,
   newNotification,
-  SharedConstants
-} from "@bfemulator/app-shared";
+  SharedConstants,
+} from '@bfemulator/app-shared';
 import {
   Checkbox,
   Column,
@@ -44,21 +44,21 @@ import {
   RowAlignment,
   RowJustification,
   SmallHeader,
-  TextField
-} from "@bfemulator/ui-react";
-import * as React from "react";
-import { ChangeEvent } from "react";
+  TextField,
+} from '@bfemulator/ui-react';
+import * as React from 'react';
+import { ChangeEvent } from 'react';
 
-import * as Constants from "../../../constants";
-import * as EditorActions from "../../../data/action/editorActions";
-import { beginAdd } from "../../../data/action/notificationActions";
-import { getTabGroupForDocument } from "../../../data/editorHelpers";
-import { store } from "../../../data/store";
-import { CommandServiceImpl } from "../../../platform/commands/commandServiceImpl";
-import { debounce } from "../../../utils";
-import { GenericDocument } from "../../layout";
+import * as Constants from '../../../constants';
+import * as EditorActions from '../../../data/action/editorActions';
+import { beginAdd } from '../../../data/action/notificationActions';
+import { getTabGroupForDocument } from '../../../data/editorHelpers';
+import { store } from '../../../data/store';
+import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
+import { debounce } from '../../../utils';
+import { GenericDocument } from '../../layout';
 
-import * as styles from "./appSettingsEditor.scss";
+import * as styles from './appSettingsEditor.scss';
 
 interface AppSettingsEditorProps {
   documentId?: string;
@@ -73,13 +73,13 @@ interface AppSettingsEditorState {
 const defaultAppSettings: FrameworkSettings = {
   autoUpdate: true,
   bypassNgrokLocalhost: true,
-  locale: "",
-  localhost: "",
-  ngrokPath: "",
+  locale: '',
+  localhost: '',
+  ngrokPath: '',
   stateSizeLimit: 64,
   use10Tokens: false,
   useCodeValidation: false,
-  usePrereleases: false
+  usePrereleases: false,
 };
 
 function shallowEqual(x: any, y: any) {
@@ -99,12 +99,12 @@ export class AppSettingsEditor extends React.Component<
     300
   );
 
-  constructor(props: AppSettingsEditorProps, context: any) {
+  public constructor(props: AppSettingsEditorProps, context: any) {
     super(props, context);
 
     this.state = {
       committed: { ...defaultAppSettings },
-      uncommitted: { ...defaultAppSettings }
+      uncommitted: { ...defaultAppSettings },
     };
   }
 
@@ -115,7 +115,7 @@ export class AppSettingsEditor extends React.Component<
       .then(settings => {
         this.setState(() => ({
           committed: settings,
-          uncommitted: settings
+          uncommitted: settings,
         }));
       })
       .catch(err => {
@@ -131,7 +131,7 @@ export class AppSettingsEditor extends React.Component<
 
       return {
         committed: { ...committed },
-        uncommitted: { ...committed }
+        uncommitted: { ...committed },
       };
     });
   }
@@ -146,17 +146,22 @@ export class AppSettingsEditor extends React.Component<
           <Column className={styles.spacing}>
             <SmallHeader>Service</SmallHeader>
             <p>
-              <a href="https://ngrok.com/" target="_blank">
+              <a
+                href="https://ngrok.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 ngrok
-              </a>{" "}
+              </a>{' '}
               is network tunneling software. The Bot Framework Emulator works
-              with ngrok to communicate with bots hosted remotely. Read the{" "}
+              with ngrok to communicate with bots hosted remotely. Read the{' '}
               <a
                 href="https://github.com/Microsoft/BotFramework-Emulator/wiki/Tunneling-(ngrok)"
                 target="_blank"
+                rel="noopener noreferrer"
               >
                 wiki page
-              </a>{" "}
+              </a>{' '}
               to learn more about using ngrok and to download it.
             </p>
             <Row align={RowAlignment.Center} className={styles.marginBottomRow}>
@@ -167,7 +172,7 @@ export class AppSettingsEditor extends React.Component<
                 value={uncommitted.ngrokPath}
                 onChange={this.onInputChange}
                 data-prop="ngrokPath"
-                label={"Path to ngrok"}
+                label={'Path to ngrok'}
               />
               <PrimaryButton
                 onClick={this.onClickBrowse}
@@ -205,7 +210,7 @@ export class AppSettingsEditor extends React.Component<
               />
             </Row>
           </Column>
-          <Column className={[styles.rightColumn, styles.spacing].join(" ")}>
+          <Column className={[styles.rightColumn, styles.spacing].join(' ')}>
             <SmallHeader>Auth</SmallHeader>
             <Checkbox
               className={styles.checkboxOverrides}
@@ -256,13 +261,13 @@ export class AppSettingsEditor extends React.Component<
 
   private onChangeAutoInstallUpdates = (): void => {
     this.setUncommittedState({
-      autoUpdate: !this.state.uncommitted.autoUpdate
+      autoUpdate: !this.state.uncommitted.autoUpdate,
     });
   };
 
   private onChangeUsePrereleases = (): void => {
     this.setUncommittedState({
-      usePrereleases: !this.state.uncommitted.usePrereleases
+      usePrereleases: !this.state.uncommitted.usePrereleases,
     });
   };
 
@@ -270,7 +275,7 @@ export class AppSettingsEditor extends React.Component<
     this.setState(state => {
       const nextUncommitted = {
         ...state.uncommitted,
-        ...patch
+        ...patch,
       };
 
       const clean = shallowEqual(state.uncommitted, state.committed);
@@ -287,9 +292,9 @@ export class AppSettingsEditor extends React.Component<
   private onClickBrowse = (): void => {
     const { Commands } = SharedConstants;
     const dialogOptions = {
-      title: "Browse for ngrok",
-      buttonLabel: "Select ngrok",
-      properties: ["openFile"]
+      title: 'Browse for ngrok',
+      buttonLabel: 'Select ngrok',
+      properties: ['openFile'],
     };
 
     CommandServiceImpl.remoteCall(
@@ -316,7 +321,7 @@ export class AppSettingsEditor extends React.Component<
       localhost: uncommitted.localhost.trim(),
       locale: uncommitted.locale.trim(),
       usePrereleases: uncommitted.usePrereleases,
-      autoUpdate: uncommitted.autoUpdate
+      autoUpdate: uncommitted.autoUpdate,
     };
 
     CommandServiceImpl.remoteCall(Commands.Settings.SaveAppSettings, settings)
@@ -330,19 +335,19 @@ export class AppSettingsEditor extends React.Component<
 
   private onChangeAuthTokenVersion = (): void => {
     this.setUncommittedState({
-      use10Tokens: !this.state.uncommitted.use10Tokens
+      use10Tokens: !this.state.uncommitted.use10Tokens,
     });
   };
 
   private onChangeUseValidationToken = (): void => {
     this.setUncommittedState({
-      useCodeValidation: !this.state.uncommitted.useCodeValidation
+      useCodeValidation: !this.state.uncommitted.useCodeValidation,
     });
   };
 
   private onChangeNgrokBypass = (): void => {
     this.setUncommittedState({
-      bypassNgrokLocalhost: !this.state.uncommitted.bypassNgrokLocalhost
+      bypassNgrokLocalhost: !this.state.uncommitted.bypassNgrokLocalhost,
     });
   };
 

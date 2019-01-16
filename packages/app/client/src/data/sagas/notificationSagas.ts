@@ -31,17 +31,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ForkEffect, put, takeEvery } from "redux-saga/effects";
-
-import { NotificationManager } from "../../notificationManager";
+import { NotificationManager } from '../../notificationManager';
 import {
   BeginAddNotificationAction,
   BeginRemoveNotificationAction,
   finishAdd,
   finishClear,
   finishRemove,
-  NotificationActions
-} from "../action/notificationActions";
+  NotificationActions,
+} from '../action/notificationActions';
+
+import { ForkEffect, put, takeEvery } from 'redux-saga/effects';
 
 /** Adds a notification to the notification manager then
  *  adds it to the state store

@@ -36,9 +36,9 @@ import {
   DefaultButton,
   Dialog,
   DialogFooter,
-  PrimaryButton
-} from "@bfemulator/ui-react";
-import * as React from "react";
+  PrimaryButton,
+} from '@bfemulator/ui-react';
+import * as React from 'react';
 
 export interface UpdateAvailableDialogProps {
   onCloseClick?: () => any;

@@ -31,26 +31,28 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { UpdateAvailableDialog } from "./updateAvailableDialog";
-import { UpdateAvailableDialogContainer } from "./updateAvailableDialogContainer";
-import { createStore } from "redux";
-import { Provider } from "react-redux";
-import { navBar } from "../../../data/reducer/navBar";
-import * as React from "react";
-import { mount } from "enzyme";
+import { createStore } from 'redux';
+import { Provider } from 'react-redux';
+import * as React from 'react';
+import { mount } from 'enzyme';
+
+import { navBar } from '../../../data/reducer/navBar';
+
+import { UpdateAvailableDialogContainer } from './updateAvailableDialogContainer';
+import { UpdateAvailableDialog } from './updateAvailableDialog';
 
 let mockHideDialog;
-jest.mock("../service", () => ({
+jest.mock('../service', () => ({
   DialogService: {
     get hideDialog() {
       return mockHideDialog;
-    }
-  }
+    },
+  },
 }));
 
-jest.mock("../../dialogs", () => ({}));
+jest.mock('../../dialogs', () => ({}));
 
-describe("UpdateAvailableDialog", () => {
+describe('UpdateAvailableDialog', () => {
   let wrapper;
   let node;
   let instance;
@@ -67,12 +69,12 @@ describe("UpdateAvailableDialog", () => {
     mockHideDialog = jest.fn(_ => null);
   });
 
-  it("should render deeply", () => {
+  it('should render deeply', () => {
     expect(wrapper.find(UpdateAvailableDialogContainer)).not.toBe(null);
     expect(node.find(UpdateAvailableDialog)).not.toBe(null);
   });
 
-  it("should change state when the install after download checkbox is toggled", () => {
+  it('should change state when the install after download checkbox is toggled', () => {
     instance.setState({ installAfterDownload: false });
 
     instance.onChangeInstallAfterDownload();
@@ -81,7 +83,7 @@ describe("UpdateAvailableDialog", () => {
     expect(state.installAfterDownload).toBe(true);
   });
 
-  it("should close properly", () => {
+  it('should close properly', () => {
     instance.props.onCloseClick();
 
     expect(mockHideDialog).toHaveBeenCalledWith(null);

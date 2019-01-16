@@ -31,10 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { SharedConstants } from "@bfemulator/app-shared";
-import { CommandRegistryImpl } from "@bfemulator/sdk-shared";
+import { SharedConstants } from '@bfemulator/app-shared';
+import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 
-import { store } from "../data/store";
+import { store } from '../data/store';
 
 /** Registers miscellaneous commands */
 export function registerCommands(commandRegistry: CommandRegistryImpl) {

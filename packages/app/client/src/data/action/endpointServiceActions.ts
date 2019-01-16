@@ -31,13 +31,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IEndpointService } from "botframework-config/lib/schema";
-import { ComponentClass } from "react";
-import { Action } from "redux";
+import { IEndpointService } from 'botframework-config/lib/schema';
+import { ComponentClass } from 'react';
+import { Action } from 'redux';
 
-export const OPEN_ENDPOINT_IN_EMULATOR = "OPEN_ENDPOINT_IN_EMULATOR";
-export const OPEN_ENDPOINT_CONTEXT_MENU = "OPEN_ENDPOINT_CONTEXT_MENU";
-export const LAUNCH_ENDPOINT_EDITOR = "LAUNCH_ENDPOINT_EDITOR";
+export const OPEN_ENDPOINT_IN_EMULATOR = 'OPEN_ENDPOINT_IN_EMULATOR';
+export const OPEN_ENDPOINT_CONTEXT_MENU = 'OPEN_ENDPOINT_CONTEXT_MENU';
+export const LAUNCH_ENDPOINT_EDITOR = 'LAUNCH_ENDPOINT_EDITOR';
 
 export interface EndpointServiceAction<T> extends Action {
   payload: T;
@@ -58,7 +58,7 @@ export function launchEndpointEditor(
 ): EndpointServiceAction<EndpointEditorPayload> {
   return {
     type: LAUNCH_ENDPOINT_EDITOR,
-    payload: { endpointEditorComponent, endpointService }
+    payload: { endpointEditorComponent, endpointService },
   };
 }
 
@@ -68,7 +68,7 @@ export function openEndpointInEmulator(
 ): EndpointServiceAction<EndpointServicePayload> {
   return {
     type: OPEN_ENDPOINT_IN_EMULATOR,
-    payload: { endpointService, focusExistingChatIfAvailable }
+    payload: { endpointService, focusExistingChatIfAvailable },
   };
 }
 
@@ -78,6 +78,6 @@ export function openEndpointExplorerContextMenu(
 ): EndpointServiceAction<EndpointEditorPayload> {
   return {
     type: OPEN_ENDPOINT_CONTEXT_MENU,
-    payload: { endpointEditorComponent, endpointService }
+    payload: { endpointEditorComponent, endpointService },
   };
 }

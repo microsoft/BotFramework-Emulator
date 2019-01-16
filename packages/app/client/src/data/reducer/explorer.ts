@@ -35,8 +35,8 @@ import {
   CONNECTED_SERVICES_PANEL_ID,
   ExplorerAction,
   ExplorerActions,
-  ExplorerPayload
-} from "../action/explorerActions";
+  ExplorerPayload,
+} from '../action/explorerActions';
 
 export interface ExplorerState {
   showing: boolean;
@@ -47,7 +47,7 @@ export declare type SortCriteria = string;
 
 const DEFAULT_STATE: ExplorerState = {
   showing: true,
-  sortSelectionByPanelId: { [CONNECTED_SERVICES_PANEL_ID]: "name" }
+  sortSelectionByPanelId: { [CONNECTED_SERVICES_PANEL_ID]: 'name' },
 };
 
 export function explorer(
@@ -59,13 +59,14 @@ export function explorer(
       state = { ...state, showing: action.payload.show };
       break;
 
-    case ExplorerActions.Sort:
+    case ExplorerActions.Sort: {
       const sortSelectionByPanelId = {
         ...state.sortSelectionByPanelId,
-        ...action.payload.sortSelectionByPanelId
+        ...action.payload.sortSelectionByPanelId,
       };
       state = { ...state, sortSelectionByPanelId };
       break;
+    }
 
     default:
       break;

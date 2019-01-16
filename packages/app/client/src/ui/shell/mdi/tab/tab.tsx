@@ -31,13 +31,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { TruncateText } from "@bfemulator/ui-react";
-import * as React from "react";
-import { DragEvent, KeyboardEvent, SyntheticEvent } from "react";
+import { TruncateText } from '@bfemulator/ui-react';
+import * as React from 'react';
+import { DragEvent, KeyboardEvent, SyntheticEvent } from 'react';
 
-import { getTabGroupForDocument } from "../../../../data/editorHelpers";
+import { getTabGroupForDocument } from '../../../../data/editorHelpers';
 
-import * as styles from "./tab.scss";
+import * as styles from './tab.scss';
 
 export interface TabProps {
   active?: boolean;
@@ -60,15 +60,15 @@ export class Tab extends React.Component<TabProps, TabState> {
 
     this.state = {
       draggedOver: false,
-      owningEditor: getTabGroupForDocument(props.documentId)
+      owningEditor: getTabGroupForDocument(props.documentId),
     };
   }
 
   public render() {
-    const activeClassName = this.props.active ? styles.activeEditorTab : "";
+    const activeClassName = this.props.active ? styles.activeEditorTab : '';
     const draggedOverClassName = this.state.draggedOver
       ? styles.draggedOverEditorTab
-      : "";
+      : '';
     const { label } = this.props;
 
     return (
@@ -108,7 +108,7 @@ export class Tab extends React.Component<TabProps, TabState> {
   }
 
   private onCloseButtonKeyPress = (event: KeyboardEvent<HTMLButtonElement>) => {
-    if (event.key === " " || event.keyCode === 13) {
+    if (event.key === ' ' || event.keyCode === 13) {
       this.props.onCloseClick(this.props.documentId);
     }
   };
@@ -121,9 +121,9 @@ export class Tab extends React.Component<TabProps, TabState> {
   private onDragStart = e => {
     const dragData = {
       tabId: this.props.documentId,
-      editorKey: this.state.owningEditor
+      editorKey: this.state.owningEditor,
     };
-    e.dataTransfer.setData("application/json", JSON.stringify(dragData));
+    e.dataTransfer.setData('application/json', JSON.stringify(dragData));
     this.props.toggleDraggingTab(true);
   };
 
@@ -146,7 +146,7 @@ export class Tab extends React.Component<TabProps, TabState> {
   };
 
   private onDrop = (e: DragEvent<HTMLDivElement>) => {
-    const tabData = JSON.parse(e.dataTransfer.getData("application/json"));
+    const tabData = JSON.parse(e.dataTransfer.getData('application/json'));
 
     // only swap the tabs if they are different
     if (tabData.tabId !== this.props.documentId) {

@@ -31,16 +31,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from "react";
-import { DragEvent } from "react";
-import { connect } from "react-redux";
+import * as React from 'react';
+import { DragEvent } from 'react';
+import { connect } from 'react-redux';
 
-import * as EditorActions from "../../../../../data/action/editorActions";
-import { getTabGroupForDocument } from "../../../../../data/editorHelpers";
-import { RootState } from "../../../../../data/store";
-import * as overlay from "../overlay.scss";
+import * as EditorActions from '../../../../../data/action/editorActions';
+import { getTabGroupForDocument } from '../../../../../data/editorHelpers';
+import { RootState } from '../../../../../data/store';
+import * as overlay from '../overlay.scss';
 
-import * as styles from "./contentOverlay.scss";
+import * as styles from './contentOverlay.scss';
 
 interface ContentOverlayProps {
   documentId?: string;
@@ -67,7 +67,7 @@ class ContentOverlayComponent extends React.Component<
 
     this.state = {
       draggedOver: false,
-      owningEditor: getTabGroupForDocument(props.documentId)
+      owningEditor: getTabGroupForDocument(props.documentId),
     };
   }
 
@@ -94,7 +94,7 @@ class ContentOverlayComponent extends React.Component<
   }
 
   public onDrop(e: DragEvent<HTMLDivElement>) {
-    const tabData = JSON.parse(e.dataTransfer.getData("application/json"));
+    const tabData = JSON.parse(e.dataTransfer.getData('application/json'));
     if (tabData.editorKey !== this.state.owningEditor) {
       this.props.appendTab(
         tabData.editorKey,
@@ -111,8 +111,8 @@ class ContentOverlayComponent extends React.Component<
   public render() {
     let overlayClassName = this.state.draggedOver
       ? overlay.draggedOverOverlay
-      : "";
-    overlayClassName += this.props.draggingTab ? overlay.enabledForDrop : "";
+      : '';
+    overlayClassName += this.props.draggingTab ? overlay.enabledForDrop : '';
 
     return (
       <div
@@ -129,12 +129,12 @@ class ContentOverlayComponent extends React.Component<
 }
 
 const mapStateToProps = (state: RootState): ContentOverlayProps => ({
-  draggingTab: state.editor.draggingTab
+  draggingTab: state.editor.draggingTab,
 });
 
 const mapDispatchToProps = (dispatch): ContentOverlayProps => ({
   appendTab: (editorKey: string, owningEditor: string, tabId: string) =>
-    dispatch(EditorActions.appendTab(editorKey, owningEditor, tabId))
+    dispatch(EditorActions.appendTab(editorKey, owningEditor, tabId)),
 });
 
 export const ContentOverlay = connect(

@@ -31,20 +31,21 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-const Electron = (window as any).require("electron");
-const { shell } = Electron;
-import { SharedConstants } from "@bfemulator/app-shared";
-import { uniqueId } from "@bfemulator/sdk-shared";
-import * as URL from "url";
+import * as URL from 'url';
 
-import { CommandServiceImpl } from "./platform/commands/commandServiceImpl";
+import { SharedConstants } from '@bfemulator/app-shared';
+import { uniqueId } from '@bfemulator/sdk-shared';
+
+import { CommandServiceImpl } from './platform/commands/commandServiceImpl';
+const Electron = (window as any).require('electron');
+const { shell } = Electron;
 
 export function navigate(url: string) {
   try {
-    const parsed = URL.parse(url) || { protocol: "" };
-    if ((parsed.protocol || "").startsWith("oauth:")) {
+    const parsed = URL.parse(url) || { protocol: '' };
+    if ((parsed.protocol || '').startsWith('oauth:')) {
       navigateEmulatedOAuthUrl(url.substring(8));
-    } else if (parsed.protocol.startsWith("oauthlink:")) {
+    } else if (parsed.protocol.startsWith('oauthlink:')) {
       navigateOAuthUrl(url.substring(12));
     } else {
       shell.openExternal(url, { activate: true });
@@ -56,18 +57,18 @@ export function navigate(url: string) {
 
 function navigateEmulatedOAuthUrl(oauthParam: string) {
   const { Commands } = SharedConstants;
-  const parts = oauthParam.split("&&&");
+  const parts = oauthParam.split('&&&');
   CommandServiceImpl.remoteCall(
     Commands.OAuth.SendTokenResponse,
     parts[0],
     parts[1],
-    "emulatedToken_" + uniqueId()
+    'emulatedToken_' + uniqueId()
   ).catch();
 }
 
 function navigateOAuthUrl(oauthParam: string) {
   const { Commands } = SharedConstants;
-  const parts = oauthParam.split("&&&");
+  const parts = oauthParam.split('&&&');
   CommandServiceImpl.remoteCall(
     Commands.OAuth.CreateOAuthWindow,
     parts[0],

@@ -31,12 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { deepCopySlow } from "@bfemulator/app-shared";
+import { deepCopySlow } from '@bfemulator/app-shared';
 
-import * as Constants from "../../constants";
-import { BotAction } from "../action/botActions";
-import { EditorAction, EditorActions } from "../action/editorActions";
-import { getOtherTabGroup, tabGroupHasDocuments } from "../editorHelpers";
+import * as Constants from '../../constants';
+import { BotAction } from '../action/botActions';
+import { EditorAction, EditorActions } from '../action/editorActions';
+import { getOtherTabGroup, tabGroupHasDocuments } from '../editorHelpers';
 
 export interface EditorState {
   // TODO: enum editors
@@ -73,9 +73,9 @@ const DEFAULT_STATE: EditorState = {
   draggingTab: false,
   editors: {
     [Constants.EDITOR_KEY_PRIMARY]: getNewEditor(),
-    [Constants.EDITOR_KEY_SECONDARY]: getNewEditor()
+    [Constants.EDITOR_KEY_SECONDARY]: getNewEditor(),
   },
-  docsWithPendingChanges: []
+  docsWithPendingChanges: [],
 };
 
 export const editor = (
@@ -93,12 +93,12 @@ export const editor = (
         let tabOrder = [...state.editors[srcEditorKey].tabOrder];
         tabOrder = [
           ...tabOrder.filter(docId => docId !== action.payload.documentId),
-          action.payload.documentId
+          action.payload.documentId,
         ];
 
         const editorState: Editor = {
           ...state.editors[srcEditorKey],
-          tabOrder
+          tabOrder,
         };
         state = setEditorState(srcEditorKey, editorState, state);
         state = setDraggingTab(false, state);
@@ -121,21 +121,20 @@ export const editor = (
       // add the tab to the dest editor
       const destTabOrder = [
         ...state.editors[destEditorKey].tabOrder,
-        action.payload.documentId
+        action.payload.documentId,
       ];
       const destRecentTabs = [
         ...state.editors[destEditorKey].recentTabs,
-        action.payload.documentId
+        action.payload.documentId,
       ];
-      const destDocs = {...state.editors[destEditorKey].documents
-      };
+      const destDocs = { ...state.editors[destEditorKey].documents };
       destDocs[action.payload.documentId] = docToAppend;
 
       const destEditor: Editor = {
         ...state.editors[destEditorKey],
         documents: destDocs,
         recentTabs: destRecentTabs,
-        tabOrder: destTabOrder
+        tabOrder: destTabOrder,
       };
 
       if (
@@ -187,7 +186,7 @@ export const editor = (
         return DEFAULT_STATE;
       } else {
         let newState: EditorState = {
-          ...state
+          ...state,
         };
 
         for (const key in state.editors) {
@@ -218,15 +217,15 @@ export const editor = (
               activeDocumentId: newRecentTabs[0] || null,
               documents: newDocs,
               recentTabs: newRecentTabs,
-              tabOrder: newTabOrder
+              tabOrder: newTabOrder,
             };
 
             newState = {
               ...newState,
               editors: {
                 ...newState.editors,
-                [key]: newTabGroup
-              }
+                [key]: newTabGroup,
+              },
             };
           }
         }
@@ -252,7 +251,7 @@ export const editor = (
         const tabGroupState: Editor = {
           ...state.editors[otherTabGroup],
           activeDocumentId: action.payload.documentId,
-          recentTabs
+          recentTabs,
         };
         state = setEditorState(otherTabGroup, tabGroupState, state);
         state = setActiveEditor(otherTabGroup, state);
@@ -278,7 +277,7 @@ export const editor = (
         } else {
           newTabOrder = [
             ...state.editors[editorKey].tabOrder,
-            action.payload.documentId
+            action.payload.documentId,
           ];
         }
       }
@@ -304,7 +303,7 @@ export const editor = (
         activeDocumentId: action.payload.documentId,
         documents: newDocs,
         recentTabs: newRecentTabs,
-        tabOrder: newTabOrder
+        tabOrder: newTabOrder,
       };
       state = setEditorState(editorKey, editorState, state);
       state = setActiveEditor(editorKey, state);
@@ -351,7 +350,7 @@ export const editor = (
           const editorState = {
             ...state.editors[editorKey],
             activeDocumentId: action.payload.documentId,
-            recentTabs
+            recentTabs,
           };
           state = setEditorState(editorKey, editorState, state);
           state = setActiveEditor(editorKey, state);
@@ -372,7 +371,7 @@ export const editor = (
 
           const editorState: Editor = {
             ...state.editors[editorKey],
-            documents: newDocs
+            documents: newDocs,
           };
           state = setEditorState(editorKey, editorState, state);
         }
@@ -436,7 +435,7 @@ export const editor = (
 
         const editorState = {
           ...state.editors[srcEditorKey],
-          tabOrder
+          tabOrder,
         };
 
         state = setEditorState(srcEditorKey, editorState, state);
@@ -458,7 +457,7 @@ export const editor = (
       destEditor.documents[action.payload.srcTabId] = docToSwap;
       const destRecentTabs = [
         ...destEditor.recentTabs,
-        action.payload.srcTabId
+        action.payload.srcTabId,
       ];
       destEditor.recentTabs = destRecentTabs;
       // insert before the destination tab's position
@@ -468,7 +467,7 @@ export const editor = (
       const destTabOrder = [
         ...destEditor.tabOrder.splice(0, destTabIndex + 1),
         action.payload.srcTabId,
-        ...destEditor.tabOrder
+        ...destEditor.tabOrder,
       ];
       destEditor.tabOrder = destTabOrder;
 
@@ -498,7 +497,7 @@ export const editor = (
         ...state.docsWithPendingChanges.filter(
           d => d !== action.payload.documentId
         ),
-        action.payload.documentId
+        action.payload.documentId,
       ];
       state = setDocsWithPendingChanges(docsPendingChange, state);
       break;
@@ -563,7 +562,7 @@ function getNewEditor(): Editor {
     activeDocumentId: null,
     documents: {},
     recentTabs: [],
-    tabOrder: []
+    tabOrder: [],
   };
 }
 
@@ -580,7 +579,7 @@ export function removeDocumentFromTabGroup(
   const newRecentTabs = [...tabGroup.recentTabs].filter(
     docId => docId !== documentId
   );
-  const newDocs = {...tabGroup.documents};
+  const newDocs = { ...tabGroup.documents };
   delete newDocs[documentId];
   const newActiveDocumentId = newRecentTabs[0] || null;
 
@@ -592,7 +591,7 @@ export function removeDocumentFromTabGroup(
           activeDocumentId: newActiveDocumentId,
           documents: newDocs,
           recentTabs: newRecentTabs,
-          tabOrder: newTabOrder
+          tabOrder: newTabOrder,
         };
   return newTabGroup;
 }

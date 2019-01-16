@@ -36,6 +36,6 @@ export function generateBotSecret(): string {
   const arr = new Uint8Array(32);
   window.crypto.getRandomValues(arr);
   return window.btoa(
-    arr.reduce((str, byte) => (str += String.fromCharCode(byte)), "")
+    arr.reduce((str, byte) => (str += String.fromCharCode(byte)), '')
   );
 }

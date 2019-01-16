@@ -31,10 +31,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { globalHandlers } from './eventHandlers';
 import { SharedConstants } from '@bfemulator/app-shared';
 
-const { Commands: { Bot: { OpenBrowse }, UI: { ShowBotCreationDialog }} } = SharedConstants;
+import { globalHandlers } from './eventHandlers';
+
+const {
+  Commands: {
+    Bot: { OpenBrowse },
+    UI: { ShowBotCreationDialog },
+  },
+} = SharedConstants;
 
 let mockLocalCommandsCalled = [];
 
@@ -43,7 +49,7 @@ jest.mock('../platform/commands/commandServiceImpl', () => ({
     call: async (commandName: string, ...args: any[]) => {
       mockLocalCommandsCalled.push({ commandName, args: args });
     },
-  }
+  },
 }));
 
 describe('#globalHandlers', () => {
@@ -86,8 +92,8 @@ describe('#globalHandlers', () => {
     expect(mockLocalCommandsCalled[0].commandName).toBe(ShowBotCreationDialog);
   });
 
-  it('calls nothing with a keydown it doesn\'t care about', () => {
-    const event = new KeyboardEvent('keydown', { ctrlKey: true, key: 'y'});
+  it("calls nothing with a keydown it doesn't care about", () => {
+    const event = new KeyboardEvent('keydown', { ctrlKey: true, key: 'y' });
 
     globalHandlers(event);
     expect(mockLocalCommandsCalled.length).toBe(0);

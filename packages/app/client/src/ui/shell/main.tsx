@@ -31,19 +31,19 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Splitter } from "@bfemulator/ui-react";
-import * as React from "react";
+import { Splitter } from '@bfemulator/ui-react';
+import * as React from 'react';
 
-import * as Constants from "../../constants";
-import { Editor } from "../../data/reducer/editor";
-import { StoreVisualizer } from "../debug/storeVisualizer";
-import { DialogHostContainer, TabManagerContainer } from "../dialogs";
+import * as Constants from '../../constants';
+import { Editor } from '../../data/reducer/editor';
+import { StoreVisualizer } from '../debug/storeVisualizer';
+import { DialogHostContainer, TabManagerContainer } from '../dialogs';
 
-import { ExplorerBar } from "./explorer";
-import * as styles from "./main.scss";
-import { MDI } from "./mdi";
-import { NavBar } from "./navBar";
-import { StatusBar } from "./statusBar/statusBar";
+import { ExplorerBar } from './explorer';
+import * as styles from './main.scss';
+import { MDI } from './mdi';
+import { NavBar } from './navBar';
+import { StatusBar } from './statusBar/statusBar';
 
 // TODO: Re-enable once webchat reset bug is fixed
 // (https://github.com/Microsoft/BotFramework-Emulator/issues/825)
@@ -68,21 +68,21 @@ export class Main extends React.Component<MainProps, MainState> {
     super(props);
 
     this.state = {
-      tabValue: 0
+      tabValue: 0,
     };
   }
 
   public componentWillReceiveProps(newProps: any) {
     if (newProps.presentationModeEnabled) {
-      window.addEventListener("keydown", this.props.exitPresentationMode);
+      window.addEventListener('keydown', this.props.exitPresentationMode);
     } else {
-      window.removeEventListener("keydown", this.props.exitPresentationMode);
+      window.removeEventListener('keydown', this.props.exitPresentationMode);
     }
   }
 
   public render() {
     const tabGroup1 = this.props.primaryEditor && (
-      <div className={styles.mdiWrapper} key={"primaryEditor"}>
+      <div className={styles.mdiWrapper} key={'primaryEditor'}>
         <MDI owningEditor={Constants.EDITOR_KEY_PRIMARY} />
       </div>
     );
@@ -92,7 +92,7 @@ export class Main extends React.Component<MainProps, MainState> {
       Object.keys(this.props.secondaryEditor.documents).length ? (
         <div
           className={`${styles.mdiWrapper} ${styles.secondaryMdi}`}
-          key={"secondaryEditor"}
+          key={'secondaryEditor'}
         >
           <MDI owningEditor={Constants.EDITOR_KEY_SECONDARY} />
         </div>
@@ -107,13 +107,13 @@ export class Main extends React.Component<MainProps, MainState> {
     const workbenchChildren = [];
 
     if (this.props.explorerIsVisible && !this.props.presentationModeEnabled) {
-      workbenchChildren.push(<ExplorerBar key={"explorer-bar"} />);
+      workbenchChildren.push(<ExplorerBar key={'explorer-bar'} />);
     }
 
     workbenchChildren.push(
       <Splitter
-        orientation={"vertical"}
-        key={"tab-group-splitter"}
+        orientation={'vertical'}
+        key={'tab-group-splitter'}
         minSizes={{ 0: 160, 1: 160 }}
       >
         {tabGroups}
@@ -131,7 +131,7 @@ export class Main extends React.Component<MainProps, MainState> {
           )}
           <div className={styles.workbench}>
             <Splitter
-              orientation={"vertical"}
+              orientation={'vertical'}
               primaryPaneIndex={0}
               minSizes={{ 0: 175, 1: 40 }}
               initialSizes={{ 0: 280 }}

@@ -31,15 +31,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from "react";
-import { DragEvent } from "react";
-import { connect } from "react-redux";
+import * as React from 'react';
+import { DragEvent } from 'react';
+import { connect } from 'react-redux';
 
-import * as EditorActions from "../../../../../data/action/editorActions";
-import { RootState } from "../../../../../data/store";
-import * as overlay from "../overlay.scss";
+import * as EditorActions from '../../../../../data/action/editorActions';
+import { RootState } from '../../../../../data/store';
+import * as overlay from '../overlay.scss';
 
-import * as styles from "./leftContentOverlay.scss";
+import * as styles from './leftContentOverlay.scss';
 
 interface LeftContentOverlayProps {
   documentId?: string;
@@ -56,14 +56,14 @@ class LeftContentOverlayComponent extends React.Component<
   LeftContentOverlayState
 > {
   public state = {
-    draggedOver: false
+    draggedOver: false,
   };
 
   public render() {
     let overlayClassName = this.state.draggedOver
       ? overlay.draggedOverOverlay
-      : "";
-    overlayClassName += this.props.draggingTab ? overlay.enabledForDrop : "";
+      : '';
+    overlayClassName += this.props.draggingTab ? overlay.enabledForDrop : '';
 
     return (
       <div
@@ -94,7 +94,7 @@ class LeftContentOverlayComponent extends React.Component<
   };
 
   private onDrop = (e: DragEvent<HTMLDivElement>) => {
-    const tabData = JSON.parse(e.dataTransfer.getData("application/json"));
+    const tabData = JSON.parse(e.dataTransfer.getData('application/json'));
     const tabId = tabData.tabId;
     this.props.handleTabDrop(tabId);
     this.setState({ draggedOver: false });
@@ -104,13 +104,13 @@ class LeftContentOverlayComponent extends React.Component<
 }
 
 const mapStateToProps = (state: RootState): LeftContentOverlayProps => ({
-  draggingTab: state.editor.draggingTab
+  draggingTab: state.editor.draggingTab,
 });
 
 const mapDispatchToProps = (dispatch): LeftContentOverlayProps => ({
   handleTabDrop: (tabId: string) => {
     dispatch(EditorActions.dropTabOnLeftOverlay(tabId));
-  }
+  },
 });
 
 export const LeftContentOverlay = connect(

@@ -31,11 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from "react";
-import { mount } from "enzyme";
-import { createStore } from "redux";
-import { Provider } from "react-redux";
-import { DocumentsContainer } from "./documentsContainer";
+import * as React from 'react';
+import { mount } from 'enzyme';
+import { createStore } from 'redux';
+import { Provider } from 'react-redux';
+
+import { DocumentsContainer } from './documentsContainer';
 
 const mockTabbedDocument = class Document extends React.Component {
   public render() {
@@ -49,44 +50,44 @@ const mockEditorFactory = class Factory extends React.Component {
   }
 };
 
-jest.mock("../../../editor", () => ({
+jest.mock('../../../editor', () => ({
   get EditorFactory() {
     return mockEditorFactory;
-  }
+  },
 }));
-jest.mock("../../../../data/reducer/editor", () => ({}));
-jest.mock("../tabbedDocument", () => ({
+jest.mock('../../../../data/reducer/editor', () => ({}));
+jest.mock('../tabbedDocument', () => ({
   get TabbedDocument() {
     return mockTabbedDocument;
-  }
+  },
 }));
 
-describe("Documents", () => {
+describe('Documents', () => {
   let mockStore;
   let wrapper;
 
   beforeEach(() => {
     mockStore = createStore((_state, _action) => ({
-      editor: { editors: { primary: {} } }
+      editor: { editors: { primary: {} } },
     }));
   });
 
-  it("should not render anything if there are no documentss", () => {
+  it('should not render anything if there are no documentss', () => {
     wrapper = mount(
       <Provider store={mockStore}>
-        <DocumentsContainer owningEditor={"primary"} />
+        <DocumentsContainer owningEditor={'primary'} />
       </Provider>
     );
     expect(wrapper.html()).toBe(null);
   });
 
-  it("should render a tabbedDocument if there are documents", () => {
+  it('should render a tabbedDocument if there are documents', () => {
     mockStore = createStore((_state, _action) => ({
-      editor: { editors: { primary: { tabOrder: ["doc1"] } } }
+      editor: { editors: { primary: { tabOrder: ['doc1'] } } },
     }));
     wrapper = mount(
       <Provider store={mockStore}>
-        <DocumentsContainer owningEditor={"primary"} />
+        <DocumentsContainer owningEditor={'primary'} />
       </Provider>
     );
     expect(wrapper.html()).not.toBe(null);

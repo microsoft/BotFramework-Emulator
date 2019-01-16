@@ -34,13 +34,13 @@
 import {
   isChatFile,
   isTranscriptFile,
-  SharedConstants
-} from "@bfemulator/app-shared";
-import { CommandRegistryImpl } from "@bfemulator/sdk-shared";
+  SharedConstants,
+} from '@bfemulator/app-shared';
+import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 
-import * as EditorActions from "../data/action/editorActions";
-import * as FileActions from "../data/action/fileActions";
-import { store } from "../data/store";
+import * as EditorActions from '../data/action/editorActions';
+import * as FileActions from '../data/action/fileActions';
+import { store } from '../data/store';
 
 /** Registers file commands */
 export function registerCommands(commandRegistry: CommandRegistryImpl) {

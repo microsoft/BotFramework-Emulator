@@ -31,14 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Notification as NotificationType } from "@bfemulator/app-shared";
-import { PrimaryButton } from "@bfemulator/ui-react";
-import * as React from "react";
-import { connect } from "react-redux";
+import { Notification as NotificationType } from '@bfemulator/app-shared';
+import { PrimaryButton } from '@bfemulator/ui-react';
+import * as React from 'react';
+import { connect } from 'react-redux';
 
-import * as NotificationActions from "../../../../data/action/notificationActions";
+import * as NotificationActions from '../../../../data/action/notificationActions';
 
-import * as styles from "./notification.scss";
+import * as styles from './notification.scss';
 
 export interface NotificationProps {
   notification?: NotificationType;
@@ -51,7 +51,7 @@ class NotificationComp extends React.Component<NotificationProps, {}> {
   }
 
   public render(): JSX.Element {
-    const { message = "", id = "" } = this.props.notification;
+    const { message = '', id = '' } = this.props.notification;
     const { removeNotification } = this.props;
 
     return (
@@ -91,16 +91,16 @@ class NotificationComp extends React.Component<NotificationProps, {}> {
     const { timestamp = null } = this.props.notification;
     if (timestamp) {
       const dateOptions = {
-        weekday: "short",
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-        hour: "numeric",
-        minute: "numeric"
+        weekday: 'short',
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
       };
       return (
         <span className={styles.notificationTimestamp}>
-          {new Date(timestamp).toLocaleString("en-US", dateOptions)}
+          {new Date(timestamp).toLocaleString('en-US', dateOptions)}
         </span>
       );
     }
@@ -111,7 +111,7 @@ class NotificationComp extends React.Component<NotificationProps, {}> {
 const mapDispatchToProps = (dispatch): NotificationProps => ({
   removeNotification: (id: string) => {
     dispatch(NotificationActions.beginRemove(id));
-  }
+  },
 });
 
 const mapStateToProps = (): NotificationProps => ({});

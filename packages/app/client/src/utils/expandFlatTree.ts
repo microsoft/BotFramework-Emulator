@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export function expandFlatTree(flattened: any[], delimiter: string = "/") {
+export function expandFlatTree(flattened: any[], delimiter: string = '/') {
   if (Array.isArray(flattened)) {
     flattened = flattened.reduce((map, path) => {
       map[path] = path;

@@ -31,21 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { SharedConstants } from "@bfemulator/app-shared";
-import { CommandRegistryImpl, DisposableImpl } from "@bfemulator/sdk-shared";
-
-export function registerCommands(commandRegistry: CommandRegistryImpl) {
-  commandRegistry.registerCommand(
-    SharedConstants.Commands.Settings.ReceiveGlobalSettings,
-    (settings: { url: string; cwd: string }): any => {
-      SettingsService.emulator.url = (settings.url || "").replace(
-        "[::]",
-        "localhost"
-      );
-      SettingsService.emulator.cwd = (settings.cwd || "").replace(/\\/g, "/");
-    }
-  );
-}
+import { SharedConstants } from '@bfemulator/app-shared';
+import { CommandRegistryImpl, DisposableImpl } from '@bfemulator/sdk-shared';
 
 export interface EmulatorSettings {
   url?: string;
@@ -59,7 +46,7 @@ class EmulatorSettingsImpl implements EmulatorSettings {
 
   get url(): string {
     if (!this._url || !this._url.length) {
-      throw new Error("Emulator url not set");
+      throw new Error('Emulator url not set');
     }
     return this._url;
   }
@@ -69,7 +56,7 @@ class EmulatorSettingsImpl implements EmulatorSettings {
 
   get cwd(): string {
     if (!this._cwd || !this._cwd.length) {
-      throw new Error("Emulator cwd not set");
+      throw new Error('Emulator cwd not set');
     }
     return this._cwd;
   }
@@ -79,8 +66,8 @@ class EmulatorSettingsImpl implements EmulatorSettings {
   }
 
   get cwdAsBase(): string {
-    let base = this.cwd || "";
-    if (!base.startsWith("/")) {
+    let base = this.cwd || '';
+    if (!base.startsWith('/')) {
       base = `/${base}`;
     }
 
@@ -106,3 +93,16 @@ class EmulatorSettingsService extends DisposableImpl {
 }
 
 export const SettingsService = new EmulatorSettingsService();
+
+export function registerCommands(commandRegistry: CommandRegistryImpl) {
+  commandRegistry.registerCommand(
+    SharedConstants.Commands.Settings.ReceiveGlobalSettings,
+    (settings: { url: string; cwd: string }): any => {
+      SettingsService.emulator.url = (settings.url || '').replace(
+        '[::]',
+        'localhost'
+      );
+      SettingsService.emulator.cwd = (settings.cwd || '').replace(/\\/g, '/');
+    }
+  );
+}

@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { EventEmitter } from "events";
+import { EventEmitter } from 'events';
 
 class DebugConnection extends EventEmitter {
   private _connection: any;
@@ -39,30 +39,33 @@ class DebugConnection extends EventEmitter {
   private onopen: any;
   private onclose: any;
 
-  constructor(connection: any) {
+  public constructor(connection: any) {
     super();
 
     this._connection = connection;
 
     this._connection.onmessage = event => {
+      // eslint-disable-next-line no-console
       console.info(`WS.recv: ${event.data}`);
-      this.emit("message", event);
+      this.emit('message', event);
       if (this.onmessage) {
         this.onmessage(event);
       }
     };
 
     this._connection.onopen = () => {
+      // eslint-disable-next-line no-console
       console.info(`WS.open`);
-      this.emit("open");
+      this.emit('open');
       if (this.onopen) {
         this.onopen();
       }
     };
 
     this._connection.onclose = () => {
+      // eslint-disable-next-line no-console
       console.info(`WS.close`);
-      this.emit("close");
+      this.emit('close');
       if (this.onclose) {
         this.onclose();
       }
@@ -78,6 +81,7 @@ class DebugConnection extends EventEmitter {
   }
 
   public send(data: any) {
+    // eslint-disable-next-line no-console
     console.info(`WS.send: ${data}`);
     this._connection.send(data);
   }

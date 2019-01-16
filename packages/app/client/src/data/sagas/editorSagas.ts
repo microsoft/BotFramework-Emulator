@@ -34,31 +34,32 @@
 import {
   isChatFile,
   isTranscriptFile,
-  SharedConstants
-} from "@bfemulator/app-shared";
+  SharedConstants,
+} from '@bfemulator/app-shared';
+
+import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
+import { EditorActions, removeDocPendingChange } from '../action/editorActions';
+
+import { editorSelector, refreshConversationMenu } from './sharedSagas';
+
 import {
   call,
   ForkEffect,
   put,
   select,
   takeEvery,
-  takeLatest
-} from "redux-saga/effects";
-
-import { CommandServiceImpl } from "../../platform/commands/commandServiceImpl";
-import { EditorActions, removeDocPendingChange } from "../action/editorActions";
-
-import { editorSelector, refreshConversationMenu } from "./sharedSagas";
+  takeLatest,
+} from 'redux-saga/effects';
 
 export function* promptUserToReloadDocument(
   filename: string
 ): IterableIterator<any> {
   const { Commands } = SharedConstants;
   const options = {
-    buttons: ["Cancel", "Reload"],
-    title: "File change detected",
+    buttons: ['Cancel', 'Reload'],
+    title: 'File change detected',
     message:
-      "We have detected a change in this file on disk. Would you like to reload it in the Emulator?"
+      'We have detected a change in this file on disk. Would you like to reload it in the Emulator?',
   };
   const confirmation = yield CommandServiceImpl.remoteCall(
     Commands.Electron.ShowMessageBox,
@@ -101,7 +102,7 @@ export function* editorSagas(): IterableIterator<ForkEffect> {
       EditorActions.addDocPendingChange,
       EditorActions.setActiveEditor,
       EditorActions.setActiveTab,
-      EditorActions.open
+      EditorActions.open,
     ],
     checkActiveDocForPendingChanges
   );
@@ -111,7 +112,7 @@ export function* editorSagas(): IterableIterator<ForkEffect> {
       EditorActions.close,
       EditorActions.open,
       EditorActions.setActiveEditor,
-      EditorActions.setActiveTab
+      EditorActions.setActiveTab,
     ],
     refreshConversationMenu
   );

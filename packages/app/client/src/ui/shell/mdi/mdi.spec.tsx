@@ -31,11 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { mount } from "enzyme";
-import * as React from "react";
-import { Provider } from "react-redux";
-import { createStore } from "redux";
-import { MDI } from "./mdiContainer";
+import { mount } from 'enzyme';
+import * as React from 'react';
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
+
+import { MDI } from './mdiContainer';
 
 const mockTabBarContainer = class TabBar extends React.Component {
   public render() {
@@ -49,38 +50,38 @@ const mockDocumentsContainer = class Documents extends React.Component {
 };
 
 const mockStore = createStore((_state, _action) => ({
-  presentation: { enabled: false }
+  presentation: { enabled: false },
 }));
 
-jest.mock("../../../data/store", () => ({
+jest.mock('../../../data/store', () => ({
   get store() {
     return mockStore;
-  }
+  },
 }));
-jest.mock("./tabBar/tabBarContainer", () => ({
+jest.mock('./tabBar/tabBarContainer', () => ({
   get TabBarContainer() {
     return mockTabBarContainer;
-  }
+  },
 }));
-jest.mock("./mdi.scss", () => ({}));
-jest.mock("./documents/documentsContainer", () => ({
+jest.mock('./mdi.scss', () => ({}));
+jest.mock('./documents/documentsContainer', () => ({
   get DocumentsContainer() {
     return mockDocumentsContainer;
-  }
+  },
 }));
 
-describe("MDI", () => {
+describe('MDI', () => {
   let wrapper;
 
   beforeEach(() => {
     wrapper = mount(
       <Provider store={mockStore}>
-        <MDI owningEditor={"primary"} />
+        <MDI owningEditor={'primary'} />
       </Provider>
     );
   });
 
-  it("should render deeply", () => {
+  it('should render deeply', () => {
     expect(wrapper.html()).not.toBe(null);
   });
 });

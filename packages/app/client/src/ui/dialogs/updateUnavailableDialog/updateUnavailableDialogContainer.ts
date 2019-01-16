@@ -31,18 +31,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { connect } from "react-redux";
+import { connect } from 'react-redux';
 
-import { DialogService } from "../service";
+import { DialogService } from '../service';
 
 import {
   UpdateUnavailableDialog,
-  UpdateUnavailableDialogProps
-} from "./updateUnavailableDialog";
+  UpdateUnavailableDialogProps,
+} from './updateUnavailableDialog';
 
 function mapDispatchToProps(_dispatch: any): UpdateUnavailableDialogProps {
   return {
-    onCloseClick: () => DialogService.hideDialog(null)
+    onCloseClick: () => DialogService.hideDialog(null),
   };
 }
 

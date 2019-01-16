@@ -31,17 +31,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from "react";
-import { DragEvent } from "react";
-import { connect } from "react-redux";
+import * as React from 'react';
+import { DragEvent } from 'react';
+import { connect } from 'react-redux';
 
-import * as Constants from "../../../../../constants";
-import * as EditorActions from "../../../../../data/action/editorActions";
-import { Editor } from "../../../../../data/reducer/editor";
-import { RootState } from "../../../../../data/store";
-import * as overlay from "../overlay.scss";
+import * as Constants from '../../../../../constants';
+import * as EditorActions from '../../../../../data/action/editorActions';
+import { Editor } from '../../../../../data/reducer/editor';
+import { RootState } from '../../../../../data/store';
+import * as overlay from '../overlay.scss';
 
-import * as styles from "./rightContentOverlay.scss";
+import * as styles from './rightContentOverlay.scss';
 
 interface RightContentOverlayProps {
   draggingTab?: boolean;
@@ -61,15 +61,15 @@ class RightContentOverlayComponent extends React.Component<
     super(props);
 
     this.state = {
-      draggedOver: false
+      draggedOver: false,
     };
   }
 
   public render() {
     let overlayClassName = this.state.draggedOver
       ? overlay.draggedOverOverlay
-      : "";
-    overlayClassName += this.props.draggingTab ? overlay.enabledForDrop : "";
+      : '';
+    overlayClassName += this.props.draggingTab ? overlay.enabledForDrop : '';
 
     return (
       <div
@@ -100,7 +100,7 @@ class RightContentOverlayComponent extends React.Component<
   };
 
   private onDrop = (e: DragEvent<HTMLDivElement>) => {
-    const tabData = JSON.parse(e.dataTransfer.getData("application/json"));
+    const tabData = JSON.parse(e.dataTransfer.getData('application/json'));
     const tabId = tabData.tabId;
     const docToSplit = this.props.primaryEditor.documents[tabId];
     this.props.splitTab(docToSplit.contentType, tabId);
@@ -113,7 +113,7 @@ class RightContentOverlayComponent extends React.Component<
 
 const mapStateToProps = (state: RootState): RightContentOverlayProps => ({
   draggingTab: state.editor.draggingTab,
-  primaryEditor: state.editor.editors[Constants.EDITOR_KEY_PRIMARY]
+  primaryEditor: state.editor.editors[Constants.EDITOR_KEY_PRIMARY],
 });
 
 const mapDispatchToProps = (dispatch): RightContentOverlayProps => ({
@@ -125,7 +125,7 @@ const mapDispatchToProps = (dispatch): RightContentOverlayProps => ({
         Constants.EDITOR_KEY_PRIMARY,
         Constants.EDITOR_KEY_SECONDARY
       )
-    )
+    ),
 });
 
 export const RightContentOverlay = connect(

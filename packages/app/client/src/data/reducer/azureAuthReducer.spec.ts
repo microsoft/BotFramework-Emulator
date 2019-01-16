@@ -30,38 +30,40 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+/* eslint-disable typescript/camelcase */
 
 import {
   azureArmTokenDataChanged,
-  invalidateArmToken
-} from "../action/azureAuthActions";
-import { azureAuth, AzureAuthState } from "./azureAuthReducer";
+  invalidateArmToken,
+} from '../action/azureAuthActions';
 
-describe("Azure auth reducer tests", () => {
+import { azureAuth, AzureAuthState } from './azureAuthReducer';
+
+describe('Azure auth reducer tests', () => {
   let startingState: AzureAuthState;
 
   beforeEach(() => {
     startingState = {
       access_token: null,
-      persistLogin: false
+      persistLogin: false,
     };
   });
 
-  it("should return unaltered state for non-matching action type", () => {
+  it('should return unaltered state for non-matching action type', () => {
     const emptyAction = { type: null, payload: undefined };
     const endingState = azureAuth(startingState, emptyAction);
     expect(endingState).toEqual(startingState);
   });
 
-  it("should change auth data", () => {
-    const action = azureArmTokenDataChanged("someKey");
+  it('should change auth data', () => {
+    const action = azureArmTokenDataChanged('someKey');
     const state = azureAuth(startingState, action);
-    expect(state.access_token).toEqual("someKey");
+    expect(state.access_token).toEqual('someKey');
   });
 
-  it("should remove access_token on invalidate", () => {
+  it('should remove access_token on invalidate', () => {
     const action = invalidateArmToken();
     const state = azureAuth(startingState, action);
-    expect(state.access_token).toBe("");
+    expect(state.access_token).toBe('');
   });
 });

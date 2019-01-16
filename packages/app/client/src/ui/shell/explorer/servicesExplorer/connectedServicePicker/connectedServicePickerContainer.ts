@@ -30,13 +30,13 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { ServiceTypes } from "botframework-config/lib/schema";
-import { connect } from "react-redux";
+import { ServiceTypes } from 'botframework-config/lib/schema';
+import { connect } from 'react-redux';
 
-import { RootState } from "../../../../../data/store";
-import { DialogService } from "../../../../dialogs/service";
+import { RootState } from '../../../../../data/store';
+import { DialogService } from '../../../../dialogs/service';
 
-import { ConnectedServicePicker } from "./connectedServicePicker";
+import { ConnectedServicePicker } from './connectedServicePicker';
 
 const mapStateToProps = (
   state: RootState,
@@ -47,7 +47,7 @@ const mapStateToProps = (
     connectedServices: services.filter(
       service => service.type !== ServiceTypes.Endpoint
     ),
-    ...ownProps
+    ...ownProps,
   };
 };
 
@@ -56,7 +56,7 @@ const mapDispatchToProps = (_dispatch: () => void) => {
     launchServiceEditor: () => DialogService.hideDialog(1),
     connectServices: servicesToConnect =>
       DialogService.hideDialog(servicesToConnect),
-    cancel: () => DialogService.hideDialog(0)
+    cancel: () => DialogService.hideDialog(0),
   };
 };
 

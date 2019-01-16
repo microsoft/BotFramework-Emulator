@@ -31,15 +31,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ServiceTypes } from "botframework-config/lib/schema";
+import { ServiceTypes } from 'botframework-config/lib/schema';
 
 export const serviceTypeLabels = {
-  [ServiceTypes.Luis]: "LUIS",
-  [ServiceTypes.Dispatch]: "Dispatch",
-  [ServiceTypes.QnA]: "QnA Maker",
-  [ServiceTypes.AppInsights]: "App Insights",
-  [ServiceTypes.Bot]: "Azure Bot Service",
-  [ServiceTypes.BlobStorage]: "Azure Storage",
-  [ServiceTypes.CosmosDB]: "Azure Cosmos DB",
-  [ServiceTypes.Generic]: "Generic"
+  [ServiceTypes.Luis]: 'LUIS',
+  [ServiceTypes.Dispatch]: 'Dispatch',
+  [ServiceTypes.QnA]: 'QnA Maker',
+  [ServiceTypes.AppInsights]: 'App Insights',
+  [ServiceTypes.Bot]: 'Azure Bot Service',
+  [ServiceTypes.BlobStorage]: 'Azure Storage',
+  [ServiceTypes.CosmosDB]: 'Azure Cosmos DB',
+  [ServiceTypes.Generic]: 'Generic',
 };

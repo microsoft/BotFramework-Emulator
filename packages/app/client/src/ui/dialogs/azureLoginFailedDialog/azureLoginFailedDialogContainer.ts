@@ -31,25 +31,25 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { connect } from "react-redux";
+import { connect } from 'react-redux';
 
-import { RootState } from "../../../data/store";
-import { DialogService } from "../service";
+import { RootState } from '../../../data/store';
+import { DialogService } from '../service';
 
-import { AzureLoginFailedDialog } from "./azureLoginFailedDialog";
+import { AzureLoginFailedDialog } from './azureLoginFailedDialog';
 
 const mapStateToProps = (
   state: RootState,
   ownProps: { [propName: string]: any }
 ) => {
   return {
-    ...ownProps
+    ...ownProps,
   };
 };
 
 const mapDispatchToProps = (_dispatch: () => void) => {
   return {
-    cancel: persistLogin => DialogService.hideDialog(persistLogin)
+    cancel: persistLogin => DialogService.hideDialog(persistLogin),
   };
 };
 

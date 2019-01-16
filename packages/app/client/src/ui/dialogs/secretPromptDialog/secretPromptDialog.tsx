@@ -35,14 +35,14 @@ import {
   DefaultButton,
   Dialog,
   PrimaryButton,
-  TextField
-} from "@bfemulator/ui-react";
-import { ChangeEvent } from "react";
-import * as React from "react";
+  TextField,
+} from '@bfemulator/ui-react';
+import { ChangeEvent } from 'react';
+import * as React from 'react';
 
-import * as dialogStyles from "../dialogStyles.scss";
+import * as dialogStyles from '../dialogStyles.scss';
 
-import * as styles from "./secretPromptDialog.scss";
+import * as styles from './secretPromptDialog.scss';
 
 interface SecretPromptDialogState {
   secret: string;
@@ -64,7 +64,7 @@ export class SecretPromptDialog extends React.Component<
   ) {
     super(props, context);
 
-    this.state = { secret: "", revealSecret: false };
+    this.state = { secret: '', revealSecret: false };
   }
 
   public render(): JSX.Element {
@@ -76,12 +76,12 @@ export class SecretPromptDialog extends React.Component<
         cancel={this.onDismissClick}
       >
         <p>
-          {" If you created your bot through the Azure Bot Service, you can find your bot file secret in the Azure " +
-            "portal under Application settings."}
+          {' If you created your bot through the Azure Bot Service, you can find your bot file secret in the Azure ' +
+            'portal under Application settings.'}
         </p>
         <p>
-          {"If you encrypted your bot file with the MsBot command-line tool, your bot file secret was displayed " +
-            "when you ran MsBot. "}
+          {'If you encrypted your bot file with the MsBot command-line tool, your bot file secret was displayed ' +
+            'when you ran MsBot. '}
           <a href="https://github.com/Microsoft/botbuilder-tools/tree/master/packages/MSBot">
             Learn more about MsBot.
           </a>
@@ -93,8 +93,8 @@ export class SecretPromptDialog extends React.Component<
             value={this.state.secret}
             placeholder="Enter your bot file's secret"
             onChange={this.onChangeSecret}
-            label={"Bot file secret"}
-            type={this.state.revealSecret ? "text" : "password"}
+            label={'Bot file secret'}
+            type={this.state.revealSecret ? 'text' : 'password'}
           />
           <a
             href="javascript:void(0);"
@@ -102,16 +102,16 @@ export class SecretPromptDialog extends React.Component<
             aria-disabled={!this.state.secret}
             onClick={this.onRevealSecretClick}
           >
-            {this.state.revealSecret ? "Hide" : "Show"}
+            {this.state.revealSecret ? 'Hide' : 'Show'}
           </a>
         </div>
 
         <div className={styles.buttonRow}>
-          <DefaultButton text={"Cancel"} onClick={this.onDismissClick} />
+          <DefaultButton text={'Cancel'} onClick={this.onDismissClick} />
           <PrimaryButton
             disabled={!this.state.secret}
             className={styles.saveButton}
-            text={"Submit"}
+            text={'Submit'}
             onClick={this.onSaveClick}
           />
         </div>

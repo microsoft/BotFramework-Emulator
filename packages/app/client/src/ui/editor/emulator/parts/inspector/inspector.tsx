@@ -1,4 +1,4 @@
-import LogLevel from "@bfemulator/emulator-core/lib/types/log/level";
+import LogLevel from '@bfemulator/emulator-core/lib/types/log/level';
 //
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license.
@@ -34,26 +34,26 @@ import LogLevel from "@bfemulator/emulator-core/lib/types/log/level";
 // Cheating here and pulling in a module from node. Can be easily replaced if we ever move the emulator to the web.
 import {
   logEntry,
-  textItem
-} from "@bfemulator/emulator-core/lib/types/log/util";
+  textItem,
+} from '@bfemulator/emulator-core/lib/types/log/util';
 import {
   ExtensionInspector,
   InspectorAccessory,
-  InspectorAccessoryState
-} from "@bfemulator/sdk-shared";
-import { Spinner } from "@bfemulator/ui-react";
-import { IBotConfiguration } from "botframework-config/lib/schema";
-import * as React from "react";
+  InspectorAccessoryState,
+} from '@bfemulator/sdk-shared';
+import { Spinner } from '@bfemulator/ui-react';
+import { IBotConfiguration } from 'botframework-config/lib/schema';
+import * as React from 'react';
 
 import {
   ExtensionManager,
   GetInspectorResult,
-  InspectorAPI
-} from "../../../../../extensions";
-import { LogService } from "../../../../../platform/log/logService";
-import Panel, { PanelContent, PanelControls } from "../../../panel/panel";
+  InspectorAPI,
+} from '../../../../../extensions';
+import { LogService } from '../../../../../platform/log/logService';
+import Panel, { PanelContent, PanelControls } from '../../../panel/panel';
 
-import * as styles from "./inspector.scss";
+import * as styles from './inspector.scss';
 
 interface GetInspectorResultInternal {
   response: GetInspectorResult;
@@ -118,7 +118,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
   ): InspectorState {
     const { document = {} } = newProps;
     const inspectorResult = Inspector.getInspector(document.inspectorObjects);
-    const { inspector = { name: "" } } = inspectorResult.response;
+    const { inspector = { name: '' } } = inspectorResult.response;
 
     if (
       newProps.botHash !== prevState.botHash ||
@@ -136,7 +136,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
         inspectObj: inspectorResult.inspectObj,
         themeInfo: newProps.themeInfo,
         title: inspector.name,
-        buttons: Inspector.getButtons(inspector.accessories)
+        buttons: Inspector.getButtons(inspector.accessories),
       };
     }
     return null;
@@ -152,7 +152,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
       // Find an inspector for this object.
       response: obj
         ? ExtensionManager.inspectorForObject(obj, true) || {}
-        : ({} as any)
+        : ({} as any),
     };
   }
 
@@ -165,8 +165,8 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
         if (config && config.states.default) {
           return {
             config,
-            state: "default",
-            enabled: true
+            state: 'default',
+            enabled: true,
           };
         } else {
           return null;
@@ -176,13 +176,13 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
   }
 
   public componentDidMount() {
-    window.addEventListener("toggle-inspector-devtools", this.toggleDevTools);
+    window.addEventListener('toggle-inspector-devtools', this.toggleDevTools);
     this.updateInspector(this.state);
   }
 
   public componentWillUnmount() {
     window.removeEventListener(
-      "toggle-inspector-devtools",
+      'toggle-inspector-devtools',
       this.toggleDevTools
     );
   }
@@ -192,9 +192,9 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
       return (
         <div className={styles.detailPanel}>
           <Panel
-            title={["inspector", this.state.title]
+            title={['inspector', this.state.title]
               .filter(s => s && s.length)
-              .join(" - ")}
+              .join(' - ')}
           >
             {this.renderAccessoryButtons(this.state.inspector)}
             <PanelContent>
@@ -221,7 +221,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
   }
 
   private renderAccessoryIcon(config: InspectorAccessoryState) {
-    if (config.icon === "Spinner") {
+    if (config.icon === 'Spinner') {
       return <Spinner segmentRadius={2} width={25} height={25} />;
     } else if (config.icon) {
       return (
@@ -283,22 +283,22 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
       this.inspect(newState.inspectObj);
     }
     if (
-      (oldState.themeInfo || { themeName: "" }).themeName !==
+      (oldState.themeInfo || { themeName: '' }).themeName !==
       newState.themeInfo.themeName
     ) {
-      this.sendToInspector("theme", newState.themeInfo);
+      this.sendToInspector('theme', newState.themeInfo);
     }
   }
 
   private updateInspector(state: InspectorState): void {
-    const { src } = state.inspector || { src: "" };
+    const { src } = state.inspector || { src: '' };
     if (!src) {
       return;
     }
     const { webViewByLocation: webViews, containerRef } = this;
     const nextInspector =
       webViews[src] || (webViews[src] = this.createWebView(state));
-    nextInspector.style.display = "";
+    nextInspector.style.display = '';
     this.sendInitializationStackToInspector();
 
     if (!containerRef) {
@@ -309,7 +309,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     }
     Array.prototype.forEach.call(containerRef.children, child => {
       if (child !== nextInspector) {
-        child.style.display = "none";
+        child.style.display = 'none';
       }
     });
   }
@@ -319,16 +319,16 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     const preload = `file://${cwdAsBase}/../../../node_modules/@bfemulator/client/public/inspector-preload.js`;
 
     const webView: ElectronHTMLWebViewElement = document.createElement(
-      "webview"
+      'webview'
     );
     webView.className = styles.webViewContainer;
-    webView.setAttribute("partition", `persist:${state.botHash}`);
-    webView.setAttribute("preload", preload);
-    webView.setAttribute("src", state.inspector.src);
-    webView.addEventListener("dragenter", this.onInspectorDrag, true);
-    webView.addEventListener("dragover", this.onInspectorDrag, true);
-    webView.addEventListener("dom-ready", this.onWebViewDOMReady);
-    webView.addEventListener("ipc-message", this.ipcMessageEventHandler);
+    webView.setAttribute('partition', `persist:${state.botHash}`);
+    webView.setAttribute('preload', preload);
+    webView.setAttribute('src', state.inspector.src);
+    webView.addEventListener('dragenter', this.onInspectorDrag, true);
+    webView.addEventListener('dragover', this.onInspectorDrag, true);
+    webView.addEventListener('dom-ready', this.onWebViewDOMReady);
+    webView.addEventListener('ipc-message', this.ipcMessageEventHandler);
 
     return webView;
   }
@@ -369,22 +369,22 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
   };
 
   private accessoryClick = (id: string): void => {
-    this.sendToInspector("accessory-click", id);
+    this.sendToInspector('accessory-click', id);
   };
 
   private toggleDevTools = (): void => {
-    this.sendToInspector("toggle-dev-tools");
+    this.sendToInspector('toggle-dev-tools');
   };
 
   private canInspect(inspectObj: any): boolean {
     return (
-      this.state.inspector.name === "JSON" ||
+      this.state.inspector.name === 'JSON' ||
       InspectorAPI.canInspect(this.state.inspector, inspectObj)
     );
   }
 
   private onWebViewDOMReady = (event: Event) => {
-    event.currentTarget.removeEventListener("domready", this.onWebViewDOMReady);
+    event.currentTarget.removeEventListener('domready', this.onWebViewDOMReady);
     this.sendInitializationStackToInspector();
   };
 
@@ -392,36 +392,38 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     // TODO - localization
     const { channel } = event;
     switch (channel) {
-      case "enable-accessory":
+      case 'enable-accessory':
         this.enableAccessory(event.args[0], event.args[1]);
         break;
 
-      case "set-accessory-state":
+      case 'set-accessory-state':
         this.setAccessoryState(event.args[0], event.args[1]);
         break;
 
-      case "set-inspector-title":
+      case 'set-inspector-title':
         this.setState({ titleOverride: event.args[0] });
         this.setInspectorTitle(event.args[0]);
         break;
 
-      case "logger.log":
-      case "logger.error":
+      case 'logger.log':
+      case 'logger.error': {
         const logLevel =
-          channel === "logger.log" ? LogLevel.Info : LogLevel.Error;
+          channel === 'logger.log' ? LogLevel.Info : LogLevel.Error;
         const { documentId } = this.props.document;
         const inspectorName =
-          this._state.titleOverride || this.state.inspector.name || "inspector";
+          this._state.titleOverride || this.state.inspector.name || 'inspector';
         const text = `[${inspectorName}] ${event.args[0]}`;
         LogService.logToDocument(
           documentId,
           logEntry(textItem(logLevel, text))
         );
         break;
+      }
 
       default:
+        // eslint-disable-next-line no-console
         console.warn(
-          "Unexpected message from inspector",
+          'Unexpected message from inspector',
           event.channel,
           ...event.args
         );
@@ -431,17 +433,17 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
   private sendInitializationStackToInspector(): void {
     this.botUpdated(this.state.activeBot);
     this.inspect(this.state.inspectObj);
-    this.sendToInspector("theme", this.state.themeInfo);
+    this.sendToInspector('theme', this.state.themeInfo);
   }
 
   private inspect(obj: any) {
     if (this.canInspect(obj)) {
-      this.sendToInspector("inspect", obj);
+      this.sendToInspector('inspect', obj);
     }
   }
 
   private botUpdated(bot: IBotConfiguration) {
-    this.sendToInspector("bot-updated", bot);
+    this.sendToInspector('bot-updated', bot);
   }
 
   private sendToInspector(channel: any, ...args: any[]) {
@@ -452,6 +454,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     try {
       inspector.send(channel, ...args);
     } catch (e) {
+      // eslint-disable-next-line no-console
       console.error(e);
     }
   }

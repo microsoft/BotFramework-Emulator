@@ -34,23 +34,23 @@
 import {
   BotInfo,
   getBotDisplayName,
-  SharedConstants
-} from "@bfemulator/app-shared";
-import { BotConfigWithPath, CommandRegistryImpl } from "@bfemulator/sdk-shared";
-import { IFileService } from "botframework-config/lib/schema";
+  SharedConstants,
+} from '@bfemulator/app-shared';
+import { BotConfigWithPath, CommandRegistryImpl } from '@bfemulator/sdk-shared';
+import { IFileService } from 'botframework-config/lib/schema';
 
-import * as BotActions from "../data/action/botActions";
-import * as FileActions from "../data/action/fileActions";
+import * as BotActions from '../data/action/botActions';
+import * as FileActions from '../data/action/fileActions';
 import {
   chatFilesUpdated,
   chatsDirectoryUpdated,
   transcriptDirectoryUpdated,
-  transcriptsUpdated
-} from "../data/action/resourcesAction";
-import { pathExistsInRecentBots } from "../data/botHelpers";
-import { store } from "../data/store";
-import { CommandServiceImpl } from "../platform/commands/commandServiceImpl";
-import { ActiveBotHelper } from "../ui/helpers/activeBotHelper";
+  transcriptsUpdated,
+} from '../data/action/resourcesAction';
+import { pathExistsInRecentBots } from '../data/botHelpers';
+import { store } from '../data/store';
+import { CommandServiceImpl } from '../platform/commands/commandServiceImpl';
+import { ActiveBotHelper } from '../ui/helpers/activeBotHelper';
 
 /** Registers bot commands */
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
@@ -83,7 +83,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
     (bot: BotConfigWithPath): Promise<any> => {
       if (!pathExistsInRecentBots(bot.path)) {
         // create and switch bots
-        return ActiveBotHelper.confirmAndCreateBot(bot, "");
+        return ActiveBotHelper.confirmAndCreateBot(bot, '');
       }
       return ActiveBotHelper.confirmAndSwitchBots(bot);
     }
@@ -111,7 +111,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
         CommandServiceImpl.remoteCall(
           Commands.Electron.SetTitleBar,
           getBotDisplayName(bot)
-        )
+        ),
       ]);
     }
   );

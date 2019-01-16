@@ -31,14 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { SharedConstants } from "@bfemulator/app-shared";
-import { connect } from "react-redux";
+import { SharedConstants } from '@bfemulator/app-shared';
+import { connect } from 'react-redux';
 
-import * as ChatActions from "../../../../../data/action/chatActions";
-import { RootState } from "../../../../../data/store";
-import { CommandServiceImpl } from "../../../../../platform/commands/commandServiceImpl";
+import * as ChatActions from '../../../../../data/action/chatActions';
+import { RootState } from '../../../../../data/store';
+import { CommandServiceImpl } from '../../../../../platform/commands/commandServiceImpl';
 
-import { LogEntry as LogEntryComponent, LogEntryProps } from "./logEntry";
+import { LogEntry as LogEntryComponent, LogEntryProps } from './logEntry';
 
 function mapStateToProps(_state: RootState): Partial<LogEntryProps> {
   return {};
@@ -56,7 +56,7 @@ function mapDispatchToProps(dispatch: any): Partial<LogEntryProps> {
     showAppSettings: () => {
       const { UI } = SharedConstants.Commands;
       CommandServiceImpl.call(UI.ShowAppSettings);
-    }
+    },
   };
 }
 

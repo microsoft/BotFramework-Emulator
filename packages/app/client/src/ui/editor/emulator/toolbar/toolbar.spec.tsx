@@ -31,14 +31,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from "react";
-import { ToolBar } from "./toolbar";
-import { mount } from "enzyme";
+import * as React from 'react';
+import { mount } from 'enzyme';
 
-jest.mock("./toolbar.scss", () => ({}));
+import { ToolBar } from './toolbar';
 
-describe("<Toolbar/>", () => {
-  it("should render deeply", () => {
+jest.mock('./toolbar.scss', () => ({}));
+
+describe('<Toolbar/>', () => {
+  it('should render deeply', () => {
     const wrapper = mount(
       <ToolBar>
         <div id="inside-toolbar" />
@@ -47,7 +48,7 @@ describe("<Toolbar/>", () => {
     const node = wrapper.find(ToolBar);
     expect(node.html()).not.toBe(null);
 
-    const children = node.find("div#inside-toolbar");
+    const children = node.find('div#inside-toolbar');
     expect(children).not.toBe(null);
   });
 });

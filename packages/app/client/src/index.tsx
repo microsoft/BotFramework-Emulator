@@ -31,18 +31,19 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 // for hot reloading
-import { LogService } from './platform/log/logService';
 import { Provider } from 'react-redux';
 import * as ReactDOM from 'react-dom';
+import * as React from 'react';
+import { newNotification, SharedConstants } from '@bfemulator/app-shared';
+
+import { LogService } from './platform/log/logService';
 import interceptError from './interceptError';
 import interceptHyperlink from './interceptHyperlink';
 import Main from './ui/shell/mainContainer';
 import { store } from './data/store';
 import { CommandServiceImpl } from './platform/commands/commandServiceImpl';
-import * as React from 'react';
 import { showWelcomePage } from './data/editorHelpers';
 import { CommandRegistry, registerAllCommands } from './commands';
-import { newNotification, SharedConstants } from '@bfemulator/app-shared';
 import { beginAdd } from './data/action/notificationActions';
 import { globalHandlers } from './utils/eventHandlers';
 import './ui/styles/globals.scss';
@@ -66,7 +67,9 @@ CommandServiceImpl.remoteCall(SharedConstants.Commands.ClientInit.Loaded)
   .then(() => {
     showWelcomePage();
     // do actions on main side that might open a document, so that they will be active over the welcome screen
-    CommandServiceImpl.remoteCall(SharedConstants.Commands.ClientInit.PostWelcomeScreen);
+    CommandServiceImpl.remoteCall(
+      SharedConstants.Commands.ClientInit.PostWelcomeScreen
+    );
     window.addEventListener('keydown', globalHandlers);
   })
   .catch(err => {

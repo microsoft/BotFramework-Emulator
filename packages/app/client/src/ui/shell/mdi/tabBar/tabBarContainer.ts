@@ -31,20 +31,20 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { connect } from "react-redux";
+import { connect } from 'react-redux';
 
-import { closeDocument } from "../../../../data/action/chatActions";
+import { closeDocument } from '../../../../data/action/chatActions';
 import {
   appendTab,
   close,
   setActiveTab,
-  splitTab
-} from "../../../../data/action/editorActions";
-import { enable as enablePresentationMode } from "../../../../data/action/presentationActions";
-import { getTabGroupForDocument } from "../../../../data/editorHelpers";
-import { RootState } from "../../../../data/store";
+  splitTab,
+} from '../../../../data/action/editorActions';
+import { enable as enablePresentationMode } from '../../../../data/action/presentationActions';
+import { getTabGroupForDocument } from '../../../../data/editorHelpers';
+import { RootState } from '../../../../data/store';
 
-import { TabBar, TabBarProps } from "./tabBar";
+import { TabBar, TabBarProps } from './tabBar';
 
 const mapStateToProps = (
   state: RootState,
@@ -58,7 +58,7 @@ const mapStateToProps = (
   chats: state.chat.chats,
   editors: state.editor.editors,
   documents: state.editor.editors[ownProps.owningEditor].documents,
-  tabOrder: state.editor.editors[ownProps.owningEditor].tabOrder
+  tabOrder: state.editor.editors[ownProps.owningEditor].tabOrder,
 });
 
 const mapDispatchToProps = (dispatch): TabBarProps => ({
@@ -75,7 +75,7 @@ const mapDispatchToProps = (dispatch): TabBarProps => ({
   closeTab: (documentId: string) => {
     dispatch(close(getTabGroupForDocument(documentId), documentId));
     dispatch(closeDocument(documentId));
-  }
+  },
 });
 
 export const TabBarContainer = connect(

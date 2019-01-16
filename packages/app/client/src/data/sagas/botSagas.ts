@@ -31,24 +31,25 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { SharedConstants } from "@bfemulator/app-shared";
+import { SharedConstants } from '@bfemulator/app-shared';
+
+import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
+import {
+  BotActions,
+  botHashGenerated,
+  SetActiveBotAction,
+} from '../action/botActions';
+import { generateBotHash } from '../botHelpers';
+
+import { refreshConversationMenu } from './sharedSagas';
+
 import {
   call,
   ForkEffect,
   put,
   takeEvery,
-  takeLatest
-} from "redux-saga/effects";
-
-import { CommandServiceImpl } from "../../platform/commands/commandServiceImpl";
-import {
-  BotActions,
-  botHashGenerated,
-  SetActiveBotAction
-} from "../action/botActions";
-import { generateBotHash } from "../botHelpers";
-
-import { refreshConversationMenu } from "./sharedSagas";
+  takeLatest,
+} from 'redux-saga/effects';
 
 /** Opens up native open file dialog to browse for a .bot file */
 export function* browseForBot(): IterableIterator<any> {

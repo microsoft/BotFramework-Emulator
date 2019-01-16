@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export { ServicesExplorerContainer } from "./servicesExplorerContainer";
+export { ServicesExplorerContainer } from './servicesExplorerContainer';
 export {
-  ConnectedServicePickerContainer
-} from "./connectedServicePicker/connectedServicePickerContainer";
+  ConnectedServicePickerContainer,
+} from './connectedServicePicker/connectedServicePickerContainer';

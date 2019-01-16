@@ -31,14 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { BotInfo } from "@bfemulator/app-shared";
+import { BotInfo } from '@bfemulator/app-shared';
 import {
   applyBotConfigOverrides,
   BotConfigWithPath,
-  botsAreTheSame
-} from "@bfemulator/sdk-shared";
+  botsAreTheSame,
+} from '@bfemulator/sdk-shared';
 
-import { BotAction, BotActions } from "../action/botActions";
+import { BotAction, BotActions } from '../action/botActions';
 
 export interface BotState {
   activeBot: BotConfigWithPath;
@@ -49,7 +49,7 @@ export interface BotState {
 const DEFAULT_STATE: BotState = {
   activeBot: null,
   activeBotDigest: null,
-  botFiles: []
+  botFiles: [],
 };
 
 export function bot(state: BotState = DEFAULT_STATE, action: BotAction) {
@@ -98,15 +98,17 @@ export function bot(state: BotState = DEFAULT_STATE, action: BotAction) {
 }
 
 function setActiveBot(botConfig: BotConfigWithPath, state: BotState): BotState {
-  return {...state, 
+  return {
+    ...state,
     get activeBot() {
       // Clones only - this guarantees only pristine bots will exist in the store
       return JSON.parse(JSON.stringify(botConfig));
-    }};
+    },
+  };
 }
 
 function setBotFilesState(botFilesState: BotInfo[], state: BotState): BotState {
-  const newState = {...state};
+  const newState = { ...state };
 
   newState.botFiles = botFilesState;
   return newState;

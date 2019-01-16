@@ -31,34 +31,35 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { SharedConstants } from "@bfemulator/app-shared";
+import { SharedConstants } from '@bfemulator/app-shared';
 import {
   IBotService,
   IEndpointService,
-  ServiceTypes
-} from "botframework-config/lib/schema";
-import { ComponentClass } from "react";
-import {
-  call,
-  ForkEffect,
-  put,
-  select,
-  takeEvery,
-  takeLatest
-} from "redux-saga/effects";
+  ServiceTypes,
+} from 'botframework-config/lib/schema';
+import { ComponentClass } from 'react';
 
-import { CommandServiceImpl } from "../../platform/commands/commandServiceImpl";
-import { DialogService } from "../../ui/dialogs/service";
-import { openServiceDeepLink } from "../action/connectedServiceActions";
+import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
+import { DialogService } from '../../ui/dialogs/service';
+import { openServiceDeepLink } from '../action/connectedServiceActions';
 import {
   EndpointEditorPayload,
   EndpointServiceAction,
   EndpointServicePayload,
   LAUNCH_ENDPOINT_EDITOR,
   OPEN_ENDPOINT_CONTEXT_MENU,
-  OPEN_ENDPOINT_IN_EMULATOR
-} from "../action/endpointServiceActions";
-import { RootState } from "../store";
+  OPEN_ENDPOINT_IN_EMULATOR,
+} from '../action/endpointServiceActions';
+import { RootState } from '../store';
+
+import {
+  call,
+  ForkEffect,
+  put,
+  select,
+  takeEvery,
+  takeLatest,
+} from 'redux-saga/effects';
 
 const getConnectedAbs = (state: RootState, endpointAppId: string) => {
   return (state.bot.activeBot.services || []).find(service => {
@@ -91,7 +92,7 @@ function* launchEndpointEditor(
           serviceName,
           resourceGroup,
           subscriptionId,
-          tenantId
+          tenantId,
         } = service as IBotService;
         shouldBeRemoved =
           !serviceName && !resourceGroup && !subscriptionId && !tenantId;
@@ -113,10 +114,10 @@ function* openEndpointContextMenu(
     action.payload.endpointService.appId
   );
   const menuItems = [
-    { label: "Open in Emulator", id: "open" },
-    { label: "Open in portal", id: "absLink", enabled: !!connectedAbs },
-    { label: "Edit configuration", id: "edit" },
-    { label: "Remove", id: "forget" }
+    { label: 'Open in Emulator', id: 'open' },
+    { label: 'Open in portal', id: 'absLink', enabled: !!connectedAbs },
+    { label: 'Edit configuration', id: 'edit' },
+    { label: 'Remove', id: 'forget' },
   ];
   const { DisplayContextMenu } = SharedConstants.Commands.Electron;
   const response = yield call(
@@ -125,19 +126,19 @@ function* openEndpointContextMenu(
     menuItems
   );
   switch (response.id) {
-    case "edit":
+    case 'edit':
       yield* launchEndpointEditor(action);
       break;
 
-    case "open":
+    case 'open':
       yield* openEndpointInEmulator(action);
       break;
 
-    case "absLink":
+    case 'absLink':
       yield put(openServiceDeepLink(connectedAbs));
       break;
 
-    case "forget":
+    case 'forget':
       yield* removeEndpointServiceFromActiveBot(action.payload.endpointService);
       break;
 
@@ -147,12 +148,13 @@ function* openEndpointContextMenu(
   }
 }
 
+// eslint-disable-next-line require-yield
 function* openEndpointInEmulator(
   action: EndpointServiceAction<EndpointServicePayload>
 ): IterableIterator<any> {
   const {
     endpointService,
-    focusExistingChatIfAvailable: focusExisting = false
+    focusExistingChatIfAvailable: focusExisting = false,
   } = action.payload;
   return CommandServiceImpl.call(
     SharedConstants.Commands.Emulator.NewLiveChat,
@@ -168,11 +170,11 @@ function* removeEndpointServiceFromActiveBot(
     SharedConstants.Commands.Electron.ShowMessageBox,
     true,
     {
-      type: "question",
-      buttons: ["Cancel", "OK"],
+      type: 'question',
+      buttons: ['Cancel', 'OK'],
       defaultId: 1,
       message: `Remove endpoint ${endpointService.name}. Are you sure?`,
-      cancelId: 0
+      cancelId: 0,
     }
   );
   if (result) {

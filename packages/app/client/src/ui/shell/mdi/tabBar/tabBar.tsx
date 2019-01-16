@@ -31,22 +31,22 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { BotConfigWithPath } from "@bfemulator/sdk-shared";
-import * as React from "react";
-import { DragEvent } from "react";
+import { BotConfigWithPath } from '@bfemulator/sdk-shared';
+import * as React from 'react';
+import { DragEvent } from 'react';
 
-import * as Constants from "../../../../constants";
+import * as Constants from '../../../../constants';
 import {
   CONTENT_TYPE_APP_SETTINGS,
   CONTENT_TYPE_LIVE_CHAT,
   CONTENT_TYPE_TRANSCRIPT,
-  CONTENT_TYPE_WELCOME_PAGE
-} from "../../../../constants";
-import { getOtherTabGroup } from "../../../../data/editorHelpers";
-import { Document, Editor } from "../../../../data/reducer/editor";
-import { Tab } from "../tab/tab";
+  CONTENT_TYPE_WELCOME_PAGE,
+} from '../../../../constants';
+import { getOtherTabGroup } from '../../../../data/editorHelpers';
+import { Document, Editor } from '../../../../data/reducer/editor';
+import { Tab } from '../tab/tab';
 
-import * as styles from "./tabBar.scss";
+import * as styles from './tabBar.scss';
 
 export interface TabBarProps {
   activeBot?: BotConfigWithPath;
@@ -91,7 +91,7 @@ export class TabBar extends React.Component<TabBarProps, TabBarState> {
     this.activeIndex = activeIndex === -1 ? 0 : activeIndex;
 
     this.state = {
-      draggedOver: false
+      draggedOver: false,
     };
   }
 
@@ -128,7 +128,7 @@ export class TabBar extends React.Component<TabBarProps, TabBarState> {
   }
 
   public render() {
-    const tabBarClassName = this.state.draggedOver ? styles.draggedOver : "";
+    const tabBarClassName = this.state.draggedOver ? styles.draggedOver : '';
     return (
       <div
         className={`${styles.tabBar} ${tabBarClassName}`}
@@ -152,11 +152,11 @@ export class TabBar extends React.Component<TabBarProps, TabBarState> {
     const ctrlOrCmdPressed = event.ctrlKey || event.metaKey;
     const key = event.key.toLowerCase();
 
-    if (ctrlOrCmdPressed && key ===  'w') {
+    if (ctrlOrCmdPressed && key === 'w') {
       this.props.closeTab(this.props.activeDocumentId);
       event.preventDefault();
     }
-  }
+  };
 
   private get widgets(): JSX.Element[] {
     const activeDoc = this.props.documents[this.props.activeDocumentId];
@@ -171,7 +171,7 @@ export class TabBar extends React.Component<TabBarProps, TabBarState> {
     if (presentationEnabled) {
       widgets.push(
         <button
-          key={"presentation-widget"}
+          key={'presentation-widget'}
           title="Presentation Mode"
           onClick={() => this.onPresentationModeClick()}
         >
@@ -182,7 +182,7 @@ export class TabBar extends React.Component<TabBarProps, TabBarState> {
     if (splitEnabled) {
       widgets.push(
         <button
-          key={"split-widget"}
+          key={'split-widget'}
           title="Split Editor"
           onClick={this.onSplitClick}
         >
@@ -227,9 +227,9 @@ export class TabBar extends React.Component<TabBarProps, TabBarState> {
     event: React.KeyboardEvent<HTMLDivElement>,
     tabIndex: number
   ): void => {
-    let { key = "" } = event;
+    let { key = '' } = event;
     key = key.toLowerCase();
-    if (key === " " || key === "enter") {
+    if (key === ' ' || key === 'enter') {
       this.handleTabClick(tabIndex);
     }
   };
@@ -266,7 +266,7 @@ export class TabBar extends React.Component<TabBarProps, TabBarState> {
     e.stopPropagation();
     this.setState({ draggedOver: false });
     try {
-      const tabData = JSON.parse(e.dataTransfer.getData("application/json"));
+      const tabData = JSON.parse(e.dataTransfer.getData('application/json'));
       const tabId = tabData.tabId;
       this.props.appendTab(tabData.editorKey, this.props.owningEditor, tabId);
     } catch {
@@ -285,16 +285,16 @@ export class TabBar extends React.Component<TabBarProps, TabBarState> {
   private getTabLabel(document: Document): string {
     switch (document.contentType) {
       case CONTENT_TYPE_APP_SETTINGS:
-        return "Emulator Settings";
+        return 'Emulator Settings';
 
       case CONTENT_TYPE_WELCOME_PAGE:
-        return "Welcome";
+        return 'Welcome';
 
       case CONTENT_TYPE_TRANSCRIPT:
-        return document.fileName || "Transcript";
+        return document.fileName || 'Transcript';
 
-      case CONTENT_TYPE_LIVE_CHAT:
-        let label = "Live Chat";
+      case CONTENT_TYPE_LIVE_CHAT: {
+        let label = 'Live Chat';
         const { services = [] } = this.props.activeBot || {};
         const { endpointId = null } =
           this.props.chats[document.documentId] || {};
@@ -304,9 +304,10 @@ export class TabBar extends React.Component<TabBarProps, TabBarState> {
           label += ` (${botEndpoint.name})`;
         }
         return label;
+      }
 
       default:
-        return "";
+        return '';
     }
   }
 }

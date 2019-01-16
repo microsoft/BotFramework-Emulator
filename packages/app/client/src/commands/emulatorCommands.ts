@@ -31,21 +31,21 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { newNotification, SharedConstants } from "@bfemulator/app-shared";
+import { newNotification, SharedConstants } from '@bfemulator/app-shared';
 import {
   Activity,
   CommandRegistryImpl,
-  uniqueId
-} from "@bfemulator/sdk-shared";
-import { IEndpointService } from "botframework-config/lib/schema";
+  uniqueId,
+} from '@bfemulator/sdk-shared';
+import { IEndpointService } from 'botframework-config/lib/schema';
 
-import * as Constants from "../constants";
-import * as ChatActions from "../data/action/chatActions";
-import * as EditorActions from "../data/action/editorActions";
-import { beginAdd } from "../data/action/notificationActions";
-import { getTabGroupForDocument } from "../data/editorHelpers";
-import { store } from "../data/store";
-import { CommandServiceImpl } from "../platform/commands/commandServiceImpl";
+import * as Constants from '../constants';
+import * as ChatActions from '../data/action/chatActions';
+import * as EditorActions from '../data/action/editorActions';
+import { beginAdd } from '../data/action/notificationActions';
+import { getTabGroupForDocument } from '../data/editorHelpers';
+import { store } from '../data/store';
+import { CommandServiceImpl } from '../platform/commands/commandServiceImpl';
 
 /** Registers emulator (actual conversation emulation logic) commands */
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
@@ -70,11 +70,11 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
         documentId = uniqueId();
         const { currentUserId } = state.clientAwareSettings.users;
         store.dispatch(
-          ChatActions.newDocument(documentId, "livechat", {
-            botId: "bot",
+          ChatActions.newDocument(documentId, 'livechat', {
+            botId: 'bot',
             endpointId: endpoint.id,
             endpointUrl: endpoint.endpoint,
-            userId: currentUserId
+            userId: currentUserId,
           })
         );
       }
@@ -83,7 +83,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
         EditorActions.open({
           contentType: Constants.CONTENT_TYPE_LIVE_CHAT,
           documentId,
-          isGlobal: false
+          isGlobal: false,
         })
       );
       return documentId;
@@ -99,10 +99,10 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
       const { currentUserId } = store.getState().clientAwareSettings.users;
       if (!tabGroup) {
         store.dispatch(
-          ChatActions.newDocument(filePath, "transcript", {
+          ChatActions.newDocument(filePath, 'transcript', {
             ...additionalData,
-            botId: "bot",
-            userId: currentUserId
+            botId: 'bot',
+            userId: currentUserId,
           })
         );
       }
@@ -113,7 +113,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
           documentId: filePath,
           fileName,
           filePath,
-          isGlobal: false
+          isGlobal: false,
         })
       );
     }
@@ -123,15 +123,15 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // Prompt to open a transcript file, then open it
   commandRegistry.registerCommand(Emulator.PromptToOpenTranscript, async () => {
     const dialogOptions = {
-      title: "Open transcript file",
-      buttonLabel: "Choose file",
-      properties: ["openFile"],
+      title: 'Open transcript file',
+      buttonLabel: 'Choose file',
+      properties: ['openFile'],
       filters: [
         {
-          name: "Transcript Files",
-          extensions: ["transcript"]
-        }
-      ]
+          name: 'Transcript Files',
+          extensions: ['transcript'],
+        },
+      ],
     };
     try {
       const { ShowOpenDialog } = SharedConstants.Commands.Electron;
@@ -161,10 +161,10 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
         store.dispatch(ChatActions.closeDocument(filePath));
       }
       store.dispatch(
-        ChatActions.newDocument(filePath, "transcript", {
+        ChatActions.newDocument(filePath, 'transcript', {
           ...additionalData,
-          botId: "bot",
-          userId: currentUserId
+          botId: 'bot',
+          userId: currentUserId,
         })
       );
       store.dispatch(
@@ -173,7 +173,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
           documentId: filePath,
           filePath,
           fileName,
-          isGlobal: false
+          isGlobal: false,
         })
       );
     }
@@ -188,7 +188,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
         // wait for the main side to use the chatdown library to parse the activities (transcript) out of the .chat file
         const {
           activities,
-          fileName
+          fileName,
         }: {
           activities: Activity[];
           fileName: string;

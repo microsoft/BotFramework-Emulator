@@ -31,6 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from "./chat/chat";
-export * from "./inspector/inspectorContainer";
-export * from "./log/log";
+export * from './chat/chat';
+export * from './inspector/inspectorContainer';
+export * from './log/log';

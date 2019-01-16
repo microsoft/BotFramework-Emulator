@@ -31,15 +31,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as constants from "../../constants";
-import { NavBarAction, NavBarActions } from "../action/navBarActions";
+import * as constants from '../../constants';
+import { NavBarAction, NavBarActions } from '../action/navBarActions';
 
 export interface NavBarState {
   selection: string;
 }
 
 const DEFAULT_STATE: NavBarState = {
-  selection: constants.NAVBAR_BOT_EXPLORER
+  selection: constants.NAVBAR_BOT_EXPLORER,
 };
 
 export function navBar(
@@ -50,7 +50,7 @@ export function navBar(
     case NavBarActions.select: {
       state = {
         ...state,
-        selection: action.payload.selection
+        selection: action.payload.selection,
       };
       break;
     }

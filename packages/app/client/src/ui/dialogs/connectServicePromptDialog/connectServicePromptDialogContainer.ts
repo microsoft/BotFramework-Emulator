@@ -31,14 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { connect } from "react-redux";
+import { connect } from 'react-redux';
 
-import { DialogService } from "../service";
+import { DialogService } from '../service';
 
 import {
   ConnectServicePromptDialog,
-  ConnectServicePromptDialogProps
-} from "./connectServicePromptDialog";
+  ConnectServicePromptDialogProps,
+} from './connectServicePromptDialog';
 
 const mapDispatchToProps = (
   _dispatch: () => void,
@@ -48,7 +48,7 @@ const mapDispatchToProps = (
     ...ownProps,
     cancel: () => DialogService.hideDialog(0),
     confirm: () => DialogService.hideDialog(1),
-    addServiceManually: () => DialogService.hideDialog(2)
+    addServiceManually: () => DialogService.hideDialog(2),
   };
 };
 

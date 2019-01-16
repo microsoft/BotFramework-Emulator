@@ -31,29 +31,29 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { expandFlatTree } from "./expandFlatTree";
+import { expandFlatTree } from './expandFlatTree';
 
 // TODO: Should write more tests
-test("expandFlatTree should expand", () => {
+test('expandFlatTree should expand', () => {
   const actual = expandFlatTree([
-    "abc.txt",
-    "abc/def.txt",
-    "abc/def/ghi.txt",
-    "xyz.txt",
-    "abc/ghi/xyz.txt"
+    'abc.txt',
+    'abc/def.txt',
+    'abc/def/ghi.txt',
+    'xyz.txt',
+    'abc/ghi/xyz.txt',
   ]);
 
   expect(actual).toEqual({
-    "abc.txt": "abc.txt",
+    'abc.txt': 'abc.txt',
     abc: {
       def: {
-        "ghi.txt": "abc/def/ghi.txt"
+        'ghi.txt': 'abc/def/ghi.txt',
       },
       ghi: {
-        "xyz.txt": "abc/ghi/xyz.txt"
+        'xyz.txt': 'abc/ghi/xyz.txt',
       },
-      "def.txt": "abc/def.txt"
+      'def.txt': 'abc/def.txt',
     },
-    "xyz.txt": "xyz.txt"
+    'xyz.txt': 'xyz.txt',
   });
 });

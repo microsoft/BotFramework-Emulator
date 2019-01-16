@@ -31,11 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from "react";
+import * as React from 'react';
 
-import { Document } from "../../../../data/reducer/editor";
-import { EditorFactory } from "../../../editor";
-import { TabbedDocument } from "../tabbedDocument";
+import { Document } from '../../../../data/reducer/editor';
+import { EditorFactory } from '../../../editor';
+import { TabbedDocument } from '../tabbedDocument';
 
 export interface DocumentsProps {
   activeDocumentId?: string;
@@ -46,7 +46,7 @@ export interface DocumentsProps {
 
 export class Documents extends React.Component<DocumentsProps> {
   public render(): JSX.Element[] {
-    const { activeDocumentId = "", tabOrder = [], documents = {} } = this.props;
+    const { activeDocumentId = '', tabOrder = [], documents = {} } = this.props;
 
     return tabOrder.map(documentId => {
       const isActive = activeDocumentId === documentId;

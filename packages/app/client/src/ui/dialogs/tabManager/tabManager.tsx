@@ -31,9 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from "react";
+import * as React from 'react';
 
-import * as styles from "./tabManager.scss";
+import * as styles from './tabManager.scss';
 
 export interface TabManagerProps {
   disabled?: boolean;
@@ -62,20 +62,20 @@ export class TabManager extends React.Component<
       controlIsPressed: false,
       selectedIndex: 0,
       shiftIsPressed: false,
-      showing: false
+      showing: false,
     };
   }
 
   public componentWillMount() {
     const { window } = this.props;
-    window.addEventListener("keydown", this.onKeyDown);
-    window.addEventListener("keyup", this.onKeyUp);
+    window.addEventListener('keydown', this.onKeyDown);
+    window.addEventListener('keyup', this.onKeyUp);
   }
 
   public componentWillUnmount() {
     const { window } = this.props;
-    window.removeEventListener("keydown", this.onKeyDown);
-    window.removeEventListener("keyup", this.onKeyUp);
+    window.removeEventListener('keydown', this.onKeyDown);
+    window.removeEventListener('keyup', this.onKeyUp);
   }
 
   public render() {
@@ -86,7 +86,7 @@ export class TabManager extends React.Component<
             // TODO: Come up with a simple way to retrieve document
             // name from store using documentId
             const tabClassName =
-              index === this.state.selectedIndex ? styles.selectedTab : "";
+              index === this.state.selectedIndex ? styles.selectedTab : '';
             return (
               <li
                 className={tabClassName}
@@ -113,23 +113,23 @@ export class TabManager extends React.Component<
     }
 
     switch (e.key) {
-      case "ArrowUp":
+      case 'ArrowUp':
         if (this.state.showing) {
           this.setState({ selectedIndex: this.moveIndexUp() });
         }
         break;
 
-      case "ArrowDown":
+      case 'ArrowDown':
         if (this.state.showing) {
           this.setState({ selectedIndex: this.moveIndexDown() });
         }
         break;
 
-      case "Control":
+      case 'Control':
         this.setState({ controlIsPressed: true });
         break;
 
-      case "Tab":
+      case 'Tab':
         if (this.state.controlIsPressed) {
           if (this.state.showing && !this.state.shiftIsPressed) {
             this.setState({ selectedIndex: this.moveIndexDown() });
@@ -141,7 +141,7 @@ export class TabManager extends React.Component<
         }
         break;
 
-      case "Shift":
+      case 'Shift':
         this.setState({ shiftIsPressed: true });
         break;
 
@@ -156,7 +156,7 @@ export class TabManager extends React.Component<
 
   private onKeyUp = (e: KeyboardEvent) => {
     switch (e.key) {
-      case "Control":
+      case 'Control':
         if (this.state.showing) {
           this.setState({ controlIsPressed: false, showing: false });
           this.props.setActiveTab(
@@ -167,7 +167,7 @@ export class TabManager extends React.Component<
         }
         break;
 
-      case "Shift":
+      case 'Shift':
         this.setState({ shiftIsPressed: false });
         break;
 

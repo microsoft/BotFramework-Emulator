@@ -31,15 +31,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { connect } from "react-redux";
+import { connect } from 'react-redux';
 
-import { RootState } from "../../../data/store";
-import { DialogService } from "../service";
+import { RootState } from '../../../data/store';
+import { DialogService } from '../service';
 
 import {
   GetStartedWithCSDialog,
-  GetStartedWithCSDialogProps
-} from "./getStartedWithCSDialog";
+  GetStartedWithCSDialogProps,
+} from './getStartedWithCSDialog';
 
 const mapDispatchToProps = (
   _dispatch: () => void
@@ -48,17 +48,17 @@ const mapDispatchToProps = (
   confirm: () => DialogService.hideDialog(1),
   launchConnectedServiceEditor: () => {
     DialogService.hideDialog(2);
-  }
+  },
 });
 
 const mapStateToProps = (state: RootState, ownProps) => {
-  const { access_token: token = "" } = state.azureAuth;
-  const [, payload] = token.split(".");
+  const { access_token: token = '' } = state.azureAuth;
+  const [, payload] = token.split('.');
   const pJson = JSON.parse(atob(payload));
 
   return {
     ...ownProps,
-    user: pJson.upn || pJson.unique_name || pJson.name || pJson.email
+    user: pJson.upn || pJson.unique_name || pJson.name || pJson.email,
   };
 };
 

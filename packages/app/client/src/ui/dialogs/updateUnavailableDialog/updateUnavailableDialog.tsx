@@ -31,8 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Dialog, DialogFooter, PrimaryButton } from "@bfemulator/ui-react";
-import * as React from "react";
+import { Dialog, DialogFooter, PrimaryButton } from '@bfemulator/ui-react';
+import * as React from 'react';
 
 export interface UpdateUnavailableDialogProps {
   onCloseClick?: () => any;

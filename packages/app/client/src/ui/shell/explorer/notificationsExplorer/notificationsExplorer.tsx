@@ -31,15 +31,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from "react";
-import { connect } from "react-redux";
+import * as React from 'react';
+import { connect } from 'react-redux';
 
-import * as NotificationActions from "../../../../data/action/notificationActions";
-import { RootState } from "../../../../data/store";
-import { NotificationManager } from "../../../../notificationManager";
+import * as NotificationActions from '../../../../data/action/notificationActions';
+import { RootState } from '../../../../data/store';
+import { NotificationManager } from '../../../../notificationManager';
 
-import { Notification } from "./notification";
-import * as styles from "./notificationsExplorer.scss";
+import { Notification } from './notification';
+import * as styles from './notificationsExplorer.scss';
 
 interface NotificationExplorerProps {
   notifications?: string[];
@@ -98,7 +98,7 @@ class NotificationsExplorerComp extends React.Component<
 
 const mapStateToProps = (state: RootState): NotificationExplorerProps => {
   return {
-    notifications: state.notification.allIds
+    notifications: state.notification.allIds,
   };
 };
 
@@ -106,7 +106,7 @@ const mapDispatchToProps = (dispatch): NotificationExplorerProps => {
   return {
     clearNotifications: () => {
       dispatch(NotificationActions.beginClear());
-    }
+    },
   };
 };
 

@@ -38,19 +38,19 @@ import {
   DialogFooter,
   PrimaryButton,
   Row,
-  TextField
-} from "@bfemulator/ui-react";
-import { BotService, EndpointService } from "botframework-config/lib/models";
-import { IBotService, IEndpointService } from "botframework-config/lib/schema";
-import * as React from "react";
-import { ChangeEvent, Component, MouseEvent } from "react";
+  TextField,
+} from '@bfemulator/ui-react';
+import { BotService, EndpointService } from 'botframework-config/lib/models';
+import { IBotService, IEndpointService } from 'botframework-config/lib/schema';
+import * as React from 'react';
+import { ChangeEvent, Component, MouseEvent } from 'react';
 
-import * as styles from "./endpointEditor.scss";
+import * as styles from './endpointEditor.scss';
 
 export interface UpdatedServicesPayload
   extends Array<IEndpointService | IBotService> {
-  "0": IEndpointService;
-  "1"?: IBotService;
+  '0': IEndpointService;
+  '1'?: IBotService;
   length: 1 | 2;
 }
 
@@ -71,10 +71,10 @@ export interface EndpointEditorState {
   endpointWarning: string;
 }
 
-const title = "Add an Endpoint for your bot";
+const title = 'Add an Endpoint for your bot';
 const detailedDescription =
-  "You can add an endpoint that you use to communicate to an instance of your bot";
-const usGovernmentAzureChannelService = "https://botframework.azure.us";
+  'You can add an endpoint that you use to communicate to an instance of your bot';
+const usGovernmentAzureChannelService = 'https://botframework.azure.us';
 
 export class EndpointEditor extends Component<
   EndpointEditorProps,
@@ -91,18 +91,18 @@ export class EndpointEditor extends Component<
     if (endpointService) {
       Object.assign(derivedState, {
         endpointService: new EndpointService(endpointService),
-        nameError: "",
-        endpointError: "",
-        appPasswordError: "",
-        appIdError: "",
-        endpointWarning: "",
-        isDirty: false
+        nameError: '',
+        endpointError: '',
+        appPasswordError: '',
+        appIdError: '',
+        endpointWarning: '',
+        isDirty: false,
       });
     }
 
     if (botService) {
       Object.assign(derivedState, {
-        botService: new BotService(botService)
+        botService: new BotService(botService),
       });
     }
 
@@ -112,7 +112,7 @@ export class EndpointEditor extends Component<
   private static validateEndpoint(endpoint: string): string {
     const controllerRegEx = /api\/messages\/?$/;
     return controllerRegEx.test(endpoint)
-      ? ""
+      ? ''
       : `Please include route if necessary: "/api/messages"`;
   }
 
@@ -126,11 +126,11 @@ export class EndpointEditor extends Component<
 
     this.state = {
       endpointService: new EndpointService(endpointService),
-      nameError: "",
-      endpointError: "",
-      appPasswordError: "",
-      appIdError: "",
-      endpointWarning: ""
+      nameError: '',
+      endpointError: '',
+      appPasswordError: '',
+      appIdError: '',
+      endpointWarning: '',
     };
 
     if (botService) {
@@ -146,19 +146,19 @@ export class EndpointEditor extends Component<
       endpointService,
       endpointWarning,
       nameError,
-      botService = {} as IBotService
+      botService = {} as IBotService,
     } = this.state;
     const {
-      name = "",
-      endpoint = "",
-      appId = "",
-      appPassword = ""
+      name = '',
+      endpoint = '',
+      appId = '',
+      appPassword = '',
     } = endpointService;
     const {
-      tenantId = "",
-      subscriptionId = "",
-      resourceGroup = "",
-      serviceName = ""
+      tenantId = '',
+      subscriptionId = '',
+      resourceGroup = '',
+      serviceName = '',
     } = botService;
     const hasBotService =
       tenantId || subscriptionId || resourceGroup || serviceName;
@@ -219,7 +219,7 @@ export class EndpointEditor extends Component<
         <a
           href="javascript:void(0)"
           className={`${styles.arrow} ${
-            hasBotService ? styles.arrowExpanded : ""
+            hasBotService ? styles.arrowExpanded : ''
           }`}
           onClick={this.onABSLinkClick}
         >
@@ -272,7 +272,7 @@ export class EndpointEditor extends Component<
   private get isDirty(): boolean {
     const {
       endpointService: originalEndpointService,
-      botService: originalBotService = {}
+      botService: originalBotService = {},
     } = this.props;
     const { endpointService, botService = {} } = this.state;
 
@@ -301,22 +301,22 @@ export class EndpointEditor extends Component<
     event: ChangeEvent<HTMLInputElement>
   ): void => {
     const { value } = event.target;
-    const required = !!event.target.hasAttribute("required");
+    const required = !!event.target.hasAttribute('required');
     const { prop } = event.target.dataset;
 
     const trimmedValue = value.trim();
     const errorMessage =
-      required && !trimmedValue ? `The field cannot be empty` : "";
+      required && !trimmedValue ? `The field cannot be empty` : '';
     const { endpointService } = this.state;
     endpointService[prop] = value;
     this.setState({ endpointService, [`${prop}Error`]: errorMessage } as any);
 
-    if (prop === "endpoint") {
+    if (prop === 'endpoint') {
       clearTimeout(this.endpointWarningDelay);
       this.endpointWarningDelay = setTimeout(
         () =>
           this.setState({
-            endpointWarning: EndpointEditor.validateEndpoint(value)
+            endpointWarning: EndpointEditor.validateEndpoint(value),
           }),
         500
       );
@@ -328,7 +328,7 @@ export class EndpointEditor extends Component<
     const { endpointService } = this.state;
     (endpointService as any).channelService = checked
       ? usGovernmentAzureChannelService
-      : "";
+      : '';
     this.setState({ endpointService } as any);
   };
 
@@ -360,15 +360,15 @@ export class EndpointEditor extends Component<
       return;
     }
     const {
-      tenantId = "",
-      subscriptionId = "",
-      resourceGroup = "",
-      serviceName = ""
+      tenantId = '',
+      subscriptionId = '',
+      resourceGroup = '',
+      serviceName = '',
     } = this.props.botService || {};
     const hasBotService =
       tenantId || subscriptionId || resourceGroup || serviceName;
     ref.style.height = hasBotService
       ? `${ref.firstElementChild.clientHeight}px`
-      : "0";
+      : '0';
   };
 }

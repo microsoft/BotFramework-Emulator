@@ -31,14 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { DialogAction, DialogActions } from "../action/dialogActions";
+import { DialogAction, DialogActions } from '../action/dialogActions';
 
 export interface DialogState {
   showing: boolean;
 }
 
 const DEFAULT_STATE: DialogState = {
-  showing: false
+  showing: false,
 };
 
 export function dialog(

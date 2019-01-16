@@ -31,6 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from "./botExplorerBar/botExplorerBar";
-export * from "./explorerBar/explorerBar";
-export * from "./resourcesBar/resourcesBar";
+export * from './botExplorerBar/botExplorerBar';
+export * from './explorerBar/explorerBar';
+export * from './resourcesBar/resourcesBar';

@@ -31,13 +31,33 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { SharedConstants } from "@bfemulator/app-shared";
-import LogEntry from "@bfemulator/emulator-core/lib/types/log/entry";
-import { CommandRegistryImpl, DisposableImpl } from "@bfemulator/sdk-shared";
+import { SharedConstants } from '@bfemulator/app-shared';
+import LogEntry from '@bfemulator/emulator-core/lib/types/log/entry';
+import { CommandRegistryImpl, DisposableImpl } from '@bfemulator/sdk-shared';
 
-import * as ChatActions from "../../data/action/chatActions";
-import * as chatHelpers from "../../data/chatHelpers";
-import { store } from "../../data/store";
+import * as ChatActions from '../../data/action/chatActions';
+import * as chatHelpers from '../../data/chatHelpers';
+import { store } from '../../data/store';
+
+class LogServiceImpl extends DisposableImpl {
+  public init() {
+    return null;
+  }
+
+  public logToChat(conversationId: string, entry: LogEntry): void {
+    const documentId = chatHelpers.documentIdForConversation(conversationId);
+    if (documentId) {
+      // eslint-disable-next-line typescript/no-use-before-define
+      LogService.logToDocument(documentId, entry);
+    }
+  }
+
+  public logToDocument(documentId: string, entry: LogEntry): void {
+    store.dispatch(ChatActions.appendToLog(documentId, entry));
+  }
+}
+
+export const LogService = new LogServiceImpl();
 
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
   commandRegistry.registerCommand(
@@ -47,20 +67,3 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
     }
   );
 }
-
-export const LogService = new class extends DisposableImpl {
-  public init() {
-    return null;
-  }
-
-  public logToChat(conversationId: string, entry: LogEntry): void {
-    const documentId = chatHelpers.documentIdForConversation(conversationId);
-    if (documentId) {
-      LogService.logToDocument(documentId, entry);
-    }
-  }
-
-  public logToDocument(documentId: string, entry: LogEntry): void {
-    store.dispatch(ChatActions.appendToLog(documentId, entry));
-  }
-}();

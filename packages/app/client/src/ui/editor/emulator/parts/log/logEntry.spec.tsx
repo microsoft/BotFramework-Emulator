@@ -31,15 +31,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from "react";
-import { mount, ReactWrapper } from "enzyme";
-import LogLevel from "@bfemulator/emulator-core/lib/types/log/level";
-import { textItem } from "@bfemulator/emulator-core/lib/types/log/util";
-import { number2, timestamp, LogEntry, LogEntryProps } from "./logEntry";
+import * as React from 'react';
+import { mount, ReactWrapper } from 'enzyme';
+import LogLevel from '@bfemulator/emulator-core/lib/types/log/level';
+import { textItem } from '@bfemulator/emulator-core/lib/types/log/util';
 
-jest.mock("./log.scss", () => ({}));
+import { number2, timestamp, LogEntry, LogEntryProps } from './logEntry';
 
-describe("logEntry component", () => {
+jest.mock('./log.scss', () => ({}));
+
+describe('logEntry component', () => {
   let wrapper: ReactWrapper;
 
   beforeEach(() => {
@@ -47,44 +48,44 @@ describe("logEntry component", () => {
       document: {},
       entry: {
         timestamp: 0,
-        items: []
-      }
+        items: [],
+      },
     };
     wrapper = mount(<LogEntry {...props} />);
   });
 
-  it("should render an outer entry component", () => {
-    expect(wrapper.find("div")).toHaveLength(1);
+  it('should render an outer entry component', () => {
+    expect(wrapper.find('div')).toHaveLength(1);
   });
 
-  it("should render a timestamped log entry with multiple items", () => {
+  it('should render a timestamped log entry with multiple items', () => {
     const entry = {
       timestamp: new Date(2018, 1, 1, 12, 34, 56).getTime(),
       items: [
-        textItem(LogLevel.Debug, "item1"),
-        textItem(LogLevel.Debug, "item2"),
-        textItem(LogLevel.Debug, "item3")
-      ]
+        textItem(LogLevel.Debug, 'item1'),
+        textItem(LogLevel.Debug, 'item2'),
+        textItem(LogLevel.Debug, 'item3'),
+      ],
     };
     wrapper.setProps({ entry });
-    expect(wrapper.find("span.timestamp")).toHaveLength(1);
-    expect(wrapper.find("span.text-item")).toHaveLength(3);
+    expect(wrapper.find('span.timestamp')).toHaveLength(1);
+    expect(wrapper.find('span.text-item')).toHaveLength(3);
 
-    const timestampNode = wrapper.find("span.timestamp");
-    expect(timestampNode.html()).toContain("12:34:56");
+    const timestampNode = wrapper.find('span.timestamp');
+    expect(timestampNode.html()).toContain('12:34:56');
   });
 
-  test("number2", () => {
+  test('number2', () => {
     const num1 = 5;
     const num2 = 34;
     const num3 = 666;
 
-    expect(number2(num1)).toBe("05");
-    expect(number2(num2)).toBe("34");
-    expect(number2(num3)).toBe("66");
+    expect(number2(num1)).toBe('05');
+    expect(number2(num2)).toBe('34');
+    expect(number2(num3)).toBe('66');
   });
 
-  test("timestamp", () => {
+  test('timestamp', () => {
     const time = Date.now();
     const date = new Date(time);
     const expectedHrs = number2(date.getHours());

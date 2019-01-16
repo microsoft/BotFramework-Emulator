@@ -36,29 +36,29 @@ import {
   DefaultButton,
   Dialog,
   DialogFooter,
-  PrimaryButton
-} from "@bfemulator/ui-react";
+  PrimaryButton,
+} from '@bfemulator/ui-react';
 import {
   IConnectedService,
-  ServiceTypes
-} from "botframework-config/lib/schema";
-import * as React from "react";
-import { ChangeEvent, ChangeEventHandler, Component, ReactNode } from "react";
+  ServiceTypes,
+} from 'botframework-config/lib/schema';
+import * as React from 'react';
+import { ChangeEvent, ChangeEventHandler, Component, ReactNode } from 'react';
 
-import * as styles from "./connectedServicePicker.scss";
+import * as styles from './connectedServicePicker.scss';
 
 const titleMap = {
-  [ServiceTypes.Luis]: "Connect to your LUIS apps",
-  [ServiceTypes.Dispatch]: "Connect to a Dispatch model",
-  [ServiceTypes.QnA]: "Connect to your QnA Maker knowledge base",
-  [ServiceTypes.Bot]: "Connect to an Azure Bot Service",
+  [ServiceTypes.Luis]: 'Connect to your LUIS apps',
+  [ServiceTypes.Dispatch]: 'Connect to a Dispatch model',
+  [ServiceTypes.QnA]: 'Connect to your QnA Maker knowledge base',
+  [ServiceTypes.Bot]: 'Connect to an Azure Bot Service',
   [ServiceTypes.AppInsights]:
-    "Connect to an Azure Application Insights resource",
-  [ServiceTypes.BlobStorage]: "Connect to an Azure Storage account",
-  [ServiceTypes.CosmosDB]: "Connect to an Azure Cosmos DB account"
+    'Connect to an Azure Application Insights resource',
+  [ServiceTypes.BlobStorage]: 'Connect to an Azure Storage account',
+  [ServiceTypes.CosmosDB]: 'Connect to an Azure Cosmos DB account',
 };
 
-const connected = "connected";
+const connected = 'connected';
 
 interface ConnectedServicesPickerProps {
   authenticatedUser: string;
@@ -75,7 +75,7 @@ interface ConnectedServicesPickerState {
   // false if the model is not selected
   // connected if the model is already connected
   // IConnectedService if the model is selected
-  [selectedLuisModelId: string]: IConnectedService | boolean | "connected";
+  [selectedLuisModelId: string]: IConnectedService | boolean | 'connected';
 
   checkAllChecked: boolean;
 }
@@ -139,12 +139,12 @@ export class ConnectedServicePicker extends Component<
         id: `service_${id}`,
         onChange,
         disabled: state[id] === connected,
-        "data-index": index
+        'data-index': index,
       };
       return (
         <li key={index}>
           <Checkbox {...checkboxProps} className={styles.checkboxOverride} />
-          {"version" in service ? (
+          {'version' in service ? (
             <span>v{(service as any).version}</span>
           ) : null}
         </li>
@@ -189,7 +189,7 @@ export class ConnectedServicePicker extends Component<
   private onAddClick: ChangeEventHandler<any> = () => {
     const { checkAllChecked: _discarded, ...services } = this.state;
     const reducer = (models, serviceId) => {
-      if (typeof services[serviceId] === "object") {
+      if (typeof services[serviceId] === 'object') {
         models.push(services[serviceId]);
       }
       return models;
@@ -247,11 +247,11 @@ export class ConnectedServicePicker extends Component<
   private get luisServiceHeader(): ReactNode {
     return (
       <p>
-        {"Select a LUIS app below to store the app ID in your bot file or "}
+        {'Select a LUIS app below to store the app ID in your bot file or '}
         <a href="javascript:void(0);" onClick={this.props.launchServiceEditor}>
           add a LUIS app manually
         </a>
-        {" by entering the app ID and key"}
+        {' by entering the app ID and key'}
       </p>
     );
   }
@@ -260,12 +260,12 @@ export class ConnectedServicePicker extends Component<
     return (
       <p>
         {
-          " Select a knowledge base below to store the knowledge base Id in your bot file or "
+          ' Select a knowledge base below to store the knowledge base Id in your bot file or '
         }
         <a href="javascript:void(0);" onClick={this.props.launchServiceEditor}>
           connect to a knowledge base manually
         </a>
-        {" by entering the knowledge base ID and key."}
+        {' by entering the knowledge base ID and key.'}
       </p>
     );
   }
@@ -273,11 +273,11 @@ export class ConnectedServicePicker extends Component<
   private get dispatchServiceHeader(): ReactNode {
     return (
       <p>
-        {"Select a Dispatch app below to store the app ID in your bot file or "}
+        {'Select a Dispatch app below to store the app ID in your bot file or '}
         <a href="javascript:void(0);" onClick={this.props.launchServiceEditor}>
           connect to a Dispatch app manually
         </a>
-        {" by entering the app ID and key."}
+        {' by entering the app ID and key.'}
       </p>
     );
   }
@@ -285,7 +285,7 @@ export class ConnectedServicePicker extends Component<
   private get appInsightsHeader(): ReactNode {
     return (
       <p>
-        {"Select a resource below or "}
+        {'Select a resource below or '}
         <a href="javascript:void(0);" onClick={this.props.launchServiceEditor}>
           connect to an Applications Insights resource manually.
         </a>
@@ -296,7 +296,7 @@ export class ConnectedServicePicker extends Component<
   private get blobStorageHeader(): ReactNode {
     return (
       <p>
-        {"Select a storage account below or "}
+        {'Select a storage account below or '}
         <a href="javascript:void(0);" onClick={this.props.launchServiceEditor}>
           connect to an Azure storage account manually.
         </a>
@@ -307,7 +307,7 @@ export class ConnectedServicePicker extends Component<
   private get cosmosDbHeader(): ReactNode {
     return (
       <p>
-        {"Select an account below or "}
+        {'Select an account below or '}
         <a href="javascript:void(0);" onClick={this.props.launchServiceEditor}>
           connect to an Azure storage account manually.
         </a>
@@ -356,7 +356,7 @@ export class ConnectedServicePicker extends Component<
             this.props.authenticatedUser
           }. You can link apps from a different LUIS `}
           {
-            "account to this Azure account by adding yourself as a collaborator."
+            'account to this Azure account by adding yourself as a collaborator.'
           }
           <a href="http://aka.ms/bot-framework-emulator-luis-collaboration">
             Learn more about collaborating.
@@ -394,7 +394,7 @@ export class ConnectedServicePicker extends Component<
             this.props.authenticatedUser
           }. You can link apps from a different LUIS `}
           {
-            "account to this Azure account by adding yourself as a collaborator. "
+            'account to this Azure account by adding yourself as a collaborator. '
           }
           <a href="http://aka.ms/bot-framework-emulator-luis-collaboration">
             Learn more about collaborating.

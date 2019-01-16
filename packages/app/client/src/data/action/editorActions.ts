@@ -31,23 +31,23 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Document } from "../reducer/editor";
+import { Document } from '../reducer/editor';
 
 export enum EditorActions {
-  appendTab = "EDITOR/APPEND_TAB",
-  addDocPendingChange = "EDITOR/ADD_DOC_PENDING_CHANGE",
-  removeDocPendingChange = "EDITOR/REMOVE_DOC_PENDING_CHANGE",
-  close = "EDITOR/CLOSE",
-  closeAll = "EDITOR/CLOSE_ALL",
-  dropTabOnLeftOverlay = "EDITOR/DROP_TAB_ON_LEFT_OVERLAY",
-  setDirtyFlag = "EDITOR/SET_DIRTY_FLAG",
-  open = "EDITOR/OPEN",
-  setActiveTab = "EDITOR/SET_ACTIVE_TAB",
-  setActiveEditor = "EDITOR/SET_ACTIVE_EDITOR",
-  splitTab = "EDITOR/SPLIT_TAB",
-  swapTabs = "EDITOR/SWAP_TABS",
-  toggleDraggingTab = "EDITOR/TOGGLE_DRAGGING_TAB",
-  updateDocument = "EDITOR/UPDATE_DOCUMENT"
+  appendTab = 'EDITOR/APPEND_TAB',
+  addDocPendingChange = 'EDITOR/ADD_DOC_PENDING_CHANGE',
+  removeDocPendingChange = 'EDITOR/REMOVE_DOC_PENDING_CHANGE',
+  close = 'EDITOR/CLOSE',
+  closeAll = 'EDITOR/CLOSE_ALL',
+  dropTabOnLeftOverlay = 'EDITOR/DROP_TAB_ON_LEFT_OVERLAY',
+  setDirtyFlag = 'EDITOR/SET_DIRTY_FLAG',
+  open = 'EDITOR/OPEN',
+  setActiveTab = 'EDITOR/SET_ACTIVE_TAB',
+  setActiveEditor = 'EDITOR/SET_ACTIVE_EDITOR',
+  splitTab = 'EDITOR/SPLIT_TAB',
+  swapTabs = 'EDITOR/SWAP_TABS',
+  toggleDraggingTab = 'EDITOR/TOGGLE_DRAGGING_TAB',
+  updateDocument = 'EDITOR/UPDATE_DOCUMENT',
 }
 
 export interface AppendTabAction {
@@ -180,8 +180,8 @@ export function appendTab(
     payload: {
       srcEditorKey,
       destEditorKey,
-      documentId
-    }
+      documentId,
+    },
   };
 }
 
@@ -191,8 +191,8 @@ export function addDocPendingChange(
   return {
     type: EditorActions.addDocPendingChange,
     payload: {
-      documentId
-    }
+      documentId,
+    },
   };
 }
 
@@ -202,8 +202,8 @@ export function removeDocPendingChange(
   return {
     type: EditorActions.removeDocPendingChange,
     payload: {
-      documentId
-    }
+      documentId,
+    },
   };
 }
 
@@ -215,8 +215,8 @@ export function close(
     type: EditorActions.close,
     payload: {
       editorKey,
-      documentId
-    }
+      documentId,
+    },
   };
 }
 
@@ -224,8 +224,8 @@ export function closeNonGlobalTabs(): CloseAllEditorAction {
   return {
     type: EditorActions.closeAll,
     payload: {
-      includeGlobal: false
-    }
+      includeGlobal: false,
+    },
   };
 }
 
@@ -237,15 +237,15 @@ export function setDirtyFlag(
     type: EditorActions.setDirtyFlag,
     payload: {
       documentId,
-      dirty
-    }
+      dirty,
+    },
   };
 }
 
 export function open(document: Document): OpenEditorAction {
   return {
     type: EditorActions.open,
-    payload: document
+    payload: document,
   };
 }
 
@@ -255,7 +255,7 @@ export function updateDocument(
 ): UpdateDocumentAction {
   return {
     type: EditorActions.updateDocument,
-    payload: { documentId, ...updatedDocument }
+    payload: { documentId, ...updatedDocument },
   };
 }
 
@@ -263,8 +263,8 @@ export function setActiveTab(documentId: string): SetActiveTabAction {
   return {
     type: EditorActions.setActiveTab,
     payload: {
-      documentId
-    }
+      documentId,
+    },
   };
 }
 
@@ -272,8 +272,8 @@ export function setActiveEditor(editorKey: string): SetActiveEditorAction {
   return {
     type: EditorActions.setActiveEditor,
     payload: {
-      editorKey
-    }
+      editorKey,
+    },
   };
 }
 
@@ -289,8 +289,8 @@ export function splitTab(
       contentType,
       documentId,
       srcEditorKey,
-      destEditorKey
-    }
+      destEditorKey,
+    },
   };
 }
 
@@ -306,8 +306,8 @@ export function swapTabs(
       srcEditorKey,
       destEditorKey,
       srcTabId,
-      destTabId
-    }
+      destTabId,
+    },
   };
 }
 
@@ -317,8 +317,8 @@ export function toggleDraggingTab(
   return {
     type: EditorActions.toggleDraggingTab,
     payload: {
-      draggingTab
-    }
+      draggingTab,
+    },
   };
 }
 
@@ -328,7 +328,7 @@ export function dropTabOnLeftOverlay(
   return {
     type: EditorActions.dropTabOnLeftOverlay,
     payload: {
-      tabId
-    }
+      tabId,
+    },
   };
 }

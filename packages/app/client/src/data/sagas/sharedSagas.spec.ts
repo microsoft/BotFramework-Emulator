@@ -31,34 +31,37 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { editorSelector, refreshConversationMenu } from "./sharedSagas";
-import { RootState } from "../store";
-import { select } from "redux-saga/effects";
-import { SharedConstants } from "@bfemulator/app-shared";
+import { SharedConstants } from '@bfemulator/app-shared';
+
+import { RootState } from '../store';
+
+import { editorSelector, refreshConversationMenu } from './sharedSagas';
+
+import { select } from 'redux-saga/effects';
 
 let mockRemoteCommandsCalled = [];
-jest.mock("../../platform/commands/commandServiceImpl", () => ({
+jest.mock('../../platform/commands/commandServiceImpl', () => ({
   CommandServiceImpl: {
     remoteCall: async (commandName: string, ...args: any[]) => {
       mockRemoteCommandsCalled.push({ commandName, args: args });
-    }
-  }
+    },
+  },
 }));
 
-describe("The sharedSagas", () => {
-  const editorState = { activeEditor: "primary" };
+describe('The sharedSagas', () => {
+  const editorState = { activeEditor: 'primary' };
 
   beforeEach(() => {
     mockRemoteCommandsCalled = [];
   });
 
-  it("should select the editor state from the store", () => {
+  it('should select the editor state from the store', () => {
     const state: RootState = { editor: editorState };
 
     expect(editorSelector(state)).toEqual(editorState);
   });
 
-  it("should refresh the conversation menu", () => {
+  it('should refresh the conversation menu', () => {
     const gen = refreshConversationMenu();
 
     const editorSelection = gen.next().value;

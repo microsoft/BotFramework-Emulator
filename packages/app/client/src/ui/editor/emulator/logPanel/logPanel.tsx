@@ -31,12 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from "react";
+import * as React from 'react';
 
-import Panel, { PanelContent } from "../../panel/panel";
-import { Log } from "../parts/log";
+import Panel, { PanelContent } from '../../panel/panel';
+import { Log } from '../parts/log';
 
-import * as styles from "./logPanel.scss";
+import * as styles from './logPanel.scss';
 
 interface LogPanelProps {
   document: any;

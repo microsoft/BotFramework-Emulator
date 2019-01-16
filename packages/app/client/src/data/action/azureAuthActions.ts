@@ -31,12 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ComponentClass } from "react";
-import { Action } from "redux";
+import { ComponentClass } from 'react';
+import { Action } from 'redux';
 
-export const AZURE_ARM_TOKEN_DATA_CHANGED = "AZURE_ARM_TOKEN_DATA_CHANGED";
-export const AZURE_BEGIN_AUTH_WORKFLOW = "AZURE_BEGIN_AUTH_WORKFLOW";
-export const AZURE_INVALIDATE_ARM_TOKEN = "AZURE_INVALIDATE_ARM_TOKEN";
+export const AZURE_ARM_TOKEN_DATA_CHANGED = 'AZURE_ARM_TOKEN_DATA_CHANGED';
+export const AZURE_BEGIN_AUTH_WORKFLOW = 'AZURE_BEGIN_AUTH_WORKFLOW';
+export const AZURE_INVALIDATE_ARM_TOKEN = 'AZURE_INVALIDATE_ARM_TOKEN';
 
 export interface AzureAuthAction<T> extends Action {
   payload?: T;
@@ -65,8 +65,8 @@ export function beginAzureAuthWorkflow(
       promptDialog,
       promptDialogProps,
       loginSuccessDialog,
-      loginFailedDialog
-    }
+      loginFailedDialog,
+    },
   };
 }
 
@@ -75,12 +75,13 @@ export function azureArmTokenDataChanged(
 ): AzureAuthAction<ArmTokenData> {
   return {
     type: AZURE_ARM_TOKEN_DATA_CHANGED,
-    payload: { access_token: armToken }
+    // eslint-disable-next-line typescript/camelcase
+    payload: { access_token: armToken },
   };
 }
 
 export function invalidateArmToken(): AzureAuthAction<void> {
   return {
-    type: AZURE_INVALIDATE_ARM_TOKEN
+    type: AZURE_INVALIDATE_ARM_TOKEN,
   };
 }

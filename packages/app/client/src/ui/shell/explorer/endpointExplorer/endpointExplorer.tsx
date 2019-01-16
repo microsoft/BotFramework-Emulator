@@ -31,15 +31,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { EndpointService } from "botframework-config/lib/models";
-import { IEndpointService } from "botframework-config/lib/schema";
-import * as React from "react";
-import { ComponentClass, MouseEventHandler, SyntheticEvent } from "react";
+import { EndpointService } from 'botframework-config/lib/models';
+import { IEndpointService } from 'botframework-config/lib/schema';
+import * as React from 'react';
+import { ComponentClass, MouseEventHandler, SyntheticEvent } from 'react';
 
-import { ServicePane, ServicePaneProps } from "../servicePane/servicePane";
+import { ServicePane, ServicePaneProps } from '../servicePane/servicePane';
 
-import { EndpointEditorContainer } from "./endpointEditor";
-import * as styles from "./endpointExplorer.scss";
+import { EndpointEditorContainer } from './endpointEditor';
+import * as styles from './endpointExplorer.scss';
 
 export interface EndpointProps extends ServicePaneProps {
   endpointServices?: IEndpointService[];
@@ -90,7 +90,7 @@ export class EndpointExplorer extends ServicePane<EndpointProps> {
   }
 
   protected onHandleKeyPress = (e): void => {
-    if (e.key === "Enter") {
+    if (e.key === 'Enter') {
       this.onLinkClick(e);
     }
   };

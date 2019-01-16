@@ -30,17 +30,18 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+/* eslint-disable react/prop-types */
 
 import {
   ExpandCollapse,
   ExpandCollapseContent,
-  ExpandCollapseControls
-} from "@bfemulator/ui-react";
-import { IConnectedService } from "botframework-config/lib/schema";
-import * as React from "react";
-import { Component, SyntheticEvent } from "react";
+  ExpandCollapseControls,
+} from '@bfemulator/ui-react';
+import { IConnectedService } from 'botframework-config/lib/schema';
+import * as React from 'react';
+import { Component, SyntheticEvent } from 'react';
 
-import * as styles from "./servicePane.scss";
+import * as styles from './servicePane.scss';
 
 export interface ServicePaneProps extends ServicePaneState {
   openContextMenuForService: (
@@ -148,20 +149,20 @@ export abstract class ServicePane<
 
   protected set listRef(value: HTMLUListElement) {
     const { window } = this.props;
-    window.removeEventListener("contextmenu", this.onContextMenu, true);
+    window.removeEventListener('contextmenu', this.onContextMenu, true);
     const ref = (this._listRef = value);
     if (ref) {
-      window.addEventListener("contextmenu", this.onContextMenu, true);
+      window.addEventListener('contextmenu', this.onContextMenu, true);
     }
   }
 
   protected onContextMenu = (event: MouseEvent) => {
     const { listRef } = this;
     let target = event.target as HTMLElement;
-    while (target && target.tagName !== "LI") {
+    while (target && target.tagName !== 'LI') {
       target = target.parentElement;
     }
-    if (!target || target.tagName !== "LI" || !listRef.contains(target)) {
+    if (!target || target.tagName !== 'LI' || !listRef.contains(target)) {
       return;
     }
     event.preventDefault();
@@ -172,14 +173,14 @@ export abstract class ServicePane<
   protected onContextMenuOverLiElement(li: HTMLLIElement): void {
     const { window } = this.props;
     const { document } = window;
-    li.setAttributeNode(document.createAttribute("data-selected")); // Boolean attribute
+    li.setAttributeNode(document.createAttribute('data-selected')); // Boolean attribute
     const deselectLiElement = function() {
-      window.removeEventListener("click", deselectLiElement, true);
-      window.removeEventListener("contextmenu", deselectLiElement, true);
-      li.removeAttribute("data-selected");
+      window.removeEventListener('click', deselectLiElement, true);
+      window.removeEventListener('contextmenu', deselectLiElement, true);
+      li.removeAttribute('data-selected');
     };
-    window.addEventListener("click", deselectLiElement, true);
-    window.addEventListener("contextmenu", deselectLiElement, true);
+    window.addEventListener('click', deselectLiElement, true);
+    window.addEventListener('contextmenu', deselectLiElement, true);
   }
 
   public render(): JSX.Element {

@@ -31,151 +31,153 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { bot, BotState } from "./bot";
-import { BotAction, close, load, setActive } from "../action/botActions";
-import { BotInfo } from "@bfemulator/app-shared";
-import { BotConfigWithPath } from "@bfemulator/sdk-shared";
+import { BotInfo } from '@bfemulator/app-shared';
+import { BotConfigWithPath } from '@bfemulator/sdk-shared';
 
-describe("Bot reducer tests", () => {
+import { BotAction, close, load, setActive } from '../action/botActions';
+
+import { bot, BotState } from './bot';
+
+describe('Bot reducer tests', () => {
   const DEFAULT_STATE: BotState = {
     activeBot: null,
     botFiles: [],
-    activeBotDigest: ""
+    activeBotDigest: '',
   };
 
-  it("should return unaltered state for non-matching action type", () => {
+  it('should return unaltered state for non-matching action type', () => {
     const emptyAction: BotAction = { type: null, payload: null };
     const startingState = { ...DEFAULT_STATE };
     const endingState = bot(DEFAULT_STATE, emptyAction);
     expect(endingState).toEqual(startingState);
   });
 
-  describe("setting a bot as active", () => {
+  describe('setting a bot as active', () => {
     const testbot: BotConfigWithPath = {
-      name: "bot1",
-      description: "",
+      name: 'bot1',
+      description: '',
       padlock: null,
       services: [],
-      path: "somePath",
-      version: "0.1"
+      path: 'somePath',
+      version: '0.1',
     };
 
-    it("should set a bot as active", () => {
+    it('should set a bot as active', () => {
       const action = setActive(testbot);
       const state = bot(DEFAULT_STATE, action);
       expect(state.activeBot).toEqual(testbot);
     });
 
-    it("should move the bot to the top of the recently used bots list", () => {
+    it('should move the bot to the top of the recently used bots list', () => {
       const testbots: BotInfo[] = [
         {
-          displayName: "bot2",
-          path: "path2",
-          secret: "test-secret"
+          displayName: 'bot2',
+          path: 'path2',
+          secret: 'test-secret',
         },
         {
-          displayName: "bot3",
-          path: "path3",
-          secret: null
+          displayName: 'bot3',
+          path: 'path3',
+          secret: null,
         },
         {
-          displayName: "bot1",
-          path: "somePath",
-          secret: null
-        }
+          displayName: 'bot1',
+          path: 'somePath',
+          secret: null,
+        },
       ];
 
       const startingState: BotState = {
         ...DEFAULT_STATE,
-        botFiles: testbots
+        botFiles: testbots,
       };
 
       const action = setActive(testbot);
       const endingState = bot(startingState, action);
-      expect(endingState.botFiles[0].path).toBe("somePath");
+      expect(endingState.botFiles[0].path).toBe('somePath');
     });
 
-    it("should preserve overrides from the previous bot if they have the same path", () => {
+    it('should preserve overrides from the previous bot if they have the same path', () => {
       const startingState: BotState = {
         ...DEFAULT_STATE,
         activeBot: {
-          name: "someActiveBot",
-          description: "",
+          name: 'someActiveBot',
+          description: '',
           services: [],
-          path: "somePath",
+          path: 'somePath',
           padlock: null,
           overrides: {
             endpoint: {
-              endpoint: "someEndpointOverride",
-              appId: "someAppId",
-              appPassword: "someAppPw",
-              id: "someEndpointOverride"
-            }
-          }
-        } as any
+              endpoint: 'someEndpointOverride',
+              appId: 'someAppId',
+              appPassword: 'someAppPw',
+              id: 'someEndpointOverride',
+            },
+          },
+        } as any,
       };
 
       const action = setActive(testbot);
       const endingState = bot(startingState, action);
       const activeBot = endingState.activeBot;
 
-      expect(activeBot.name).not.toBe("someActiveBot");
+      expect(activeBot.name).not.toBe('someActiveBot');
 
       expect(activeBot.overrides).toBeTruthy();
       const endpointOverrides = activeBot.overrides.endpoint;
-      expect(endpointOverrides.endpoint).toBe("someEndpointOverride");
-      expect(endpointOverrides.id).toBe("someEndpointOverride");
-      expect(endpointOverrides.appId).toBe("someAppId");
-      expect(endpointOverrides.appPassword).toBe("someAppPw");
+      expect(endpointOverrides.endpoint).toBe('someEndpointOverride');
+      expect(endpointOverrides.id).toBe('someEndpointOverride');
+      expect(endpointOverrides.appId).toBe('someAppId');
+      expect(endpointOverrides.appPassword).toBe('someAppPw');
     });
 
     it("should throw away overrides from the previous bot if they don't have the same path", () => {
       const startingState: BotState = {
         ...DEFAULT_STATE,
         activeBot: {
-          name: "someActiveBot",
-          description: "",
+          name: 'someActiveBot',
+          description: '',
           services: [],
-          path: "someOtherPath",
+          path: 'someOtherPath',
           padlock: null,
           overrides: {
             endpoint: {
-              endpoint: "someEndpointOverride",
-              appId: "someAppId",
-              appPassword: "someAppPw",
-              id: "someEndpointOverride"
-            }
-          }
-        } as any
+              endpoint: 'someEndpointOverride',
+              appId: 'someAppId',
+              appPassword: 'someAppPw',
+              id: 'someEndpointOverride',
+            },
+          },
+        } as any,
       };
 
       const action = setActive(testbot);
       const endingState = bot(startingState, action);
       const activeBot = endingState.activeBot;
 
-      expect(activeBot.name).not.toBe("someActiveBot");
+      expect(activeBot.name).not.toBe('someActiveBot');
       expect(activeBot.overrides).toBeFalsy();
     });
   });
 
-  it("should load an array of bots", () => {
+  it('should load an array of bots', () => {
     const bots: BotInfo[] = [
       {
-        displayName: "bot1",
-        path: "path1",
-        secret: null
+        displayName: 'bot1',
+        path: 'path1',
+        secret: null,
       },
       {
-        displayName: "bot2",
-        path: "path2",
-        secret: "test-secret"
+        displayName: 'bot2',
+        path: 'path2',
+        secret: 'test-secret',
       },
       {
-        displayName: "bot3",
-        path: "path3",
-        secret: null
+        displayName: 'bot3',
+        path: 'path3',
+        secret: null,
       },
-      null
+      null,
     ];
     const action = load(bots);
     const state = bot(DEFAULT_STATE, action);
@@ -183,32 +185,32 @@ describe("Bot reducer tests", () => {
     expect(state.botFiles.length).toBe(3);
     expect(state.botFiles).toEqual([
       {
-        displayName: "bot1",
-        path: "path1",
-        secret: null
+        displayName: 'bot1',
+        path: 'path1',
+        secret: null,
       },
       {
-        displayName: "bot2",
-        path: "path2",
-        secret: "test-secret"
+        displayName: 'bot2',
+        path: 'path2',
+        secret: 'test-secret',
       },
       {
-        displayName: "bot3",
-        path: "path3",
-        secret: null
-      }
+        displayName: 'bot3',
+        path: 'path3',
+        secret: null,
+      },
     ]);
   });
 
-  it("should close a bot", () => {
+  it('should close a bot', () => {
     const startingState: BotState = {
       ...DEFAULT_STATE,
       activeBot: {
-        name: "bot",
-        description: "this is a test bot",
+        name: 'bot',
+        description: 'this is a test bot',
         padlock: null,
-        services: []
-      } as any
+        services: [],
+      } as any,
     };
     const action = close();
     const endingState = bot(startingState, action);

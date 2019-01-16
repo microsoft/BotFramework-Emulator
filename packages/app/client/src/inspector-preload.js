@@ -31,44 +31,44 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-const { ipcRenderer, remote } = require("electron");
+import { ipcRenderer, remote } from 'electron';
 
-ipcRenderer.on("inspect", (sender, obj) => {
-  window.host.dispatch("inspect", obj);
+ipcRenderer.on('inspect', (sender, obj) => {
+  window.host.dispatch('inspect', obj);
 });
 
-ipcRenderer.on("bot-updated", (sender, bot) => {
+ipcRenderer.on('bot-updated', (sender, bot) => {
   window.host.bot = bot;
-  window.host.dispatch("bot-updated", bot);
+  window.host.dispatch('bot-updated', bot);
 });
 
-ipcRenderer.on("toggle-dev-tools", sender => {
+ipcRenderer.on('toggle-dev-tools', () => {
   remote.getCurrentWebContents().toggleDevTools();
 });
 
-ipcRenderer.on("accessory-click", (sender, id) => {
-  window.host.dispatch("accessory-click", id);
+ipcRenderer.on('accessory-click', (sender, id) => {
+  window.host.dispatch('accessory-click', id);
 });
 
-ipcRenderer.on("theme", (sender, ...args) => {
-  window.host.dispatch("theme", ...args);
+ipcRenderer.on('theme', (sender, ...args) => {
+  window.host.dispatch('theme', ...args);
 });
 
 window.host = {
   bot: {},
   handlers: {
-    "accessory-click": [],
-    "bot-updated": [],
+    'accessory-click': [],
+    'bot-updated': [],
     inspect: [],
-    theme: []
+    theme: [],
   },
   logger: {
     error: function(message) {
-      ipcRenderer.sendToHost("logger.error", message);
+      ipcRenderer.sendToHost('logger.error', message);
     },
     log: function(message) {
-      ipcRenderer.sendToHost("logger.log", message);
-    }
+      ipcRenderer.sendToHost('logger.log', message);
+    },
   },
 
   on: function(event, handler) {
@@ -87,24 +87,24 @@ window.host = {
   },
 
   enableAccessory: function(id, enabled) {
-    if (typeof id === "string") {
-      ipcRenderer.sendToHost("enable-accessory", id, !!enabled);
+    if (typeof id === 'string') {
+      ipcRenderer.sendToHost('enable-accessory', id, !!enabled);
     }
   },
 
   setAccessoryState: function(id, state) {
-    if (typeof id === "string" && typeof state === "string") {
-      ipcRenderer.sendToHost("set-accessory-state", id, state);
+    if (typeof id === 'string' && typeof state === 'string') {
+      ipcRenderer.sendToHost('set-accessory-state', id, state);
     }
   },
 
   setInspectorTitle: function(title) {
-    if (typeof title === "string") {
-      ipcRenderer.sendToHost("set-inspector-title", title);
+    if (typeof title === 'string') {
+      ipcRenderer.sendToHost('set-inspector-title', title);
     }
   },
 
   dispatch: function(event, ...args) {
     this.handlers[event].forEach(handler => handler(...args));
-  }
+  },
 };

@@ -33,28 +33,28 @@
 
 import {
   IConnectedService,
-  ServiceTypes
-} from "botframework-config/lib/schema";
-import { ComponentClass } from "react";
-import { connect } from "react-redux";
+  ServiceTypes,
+} from 'botframework-config/lib/schema';
+import { ComponentClass } from 'react';
+import { connect } from 'react-redux';
 
 import {
   ConnectedServicePickerPayload,
   openAddServiceContextMenu,
   openContextMenuForConnectedService,
   openServiceDeepLink,
-  openSortContextMenu
-} from "../../../../data/action/connectedServiceActions";
-import { CONNECTED_SERVICES_PANEL_ID } from "../../../../data/action/explorerActions";
-import { RootState } from "../../../../data/store";
+  openSortContextMenu,
+} from '../../../../data/action/connectedServiceActions';
+import { CONNECTED_SERVICES_PANEL_ID } from '../../../../data/action/explorerActions';
+import { RootState } from '../../../../data/store';
 
-import { ConnectedServiceEditor } from "./connectedServiceEditor/connectedServiceEditor";
-import { ServicesExplorer, ServicesExplorerProps } from "./servicesExplorer";
+import { ConnectedServiceEditor } from './connectedServiceEditor/connectedServiceEditor';
+import { ServicesExplorer, ServicesExplorerProps } from './servicesExplorer';
 
 const mapStateToProps = (state: RootState): Partial<ServicesExplorerProps> => {
   const { services = [] } = state.bot.activeBot;
   const {
-    [CONNECTED_SERVICES_PANEL_ID]: sortCriteria
+    [CONNECTED_SERVICES_PANEL_ID]: sortCriteria,
   } = state.explorer.sortSelectionByPanelId;
   return {
     services: services.filter(
@@ -68,7 +68,7 @@ const mapStateToProps = (state: RootState): Partial<ServicesExplorerProps> => {
         service.type === ServiceTypes.Luis
     ),
     sortCriteria,
-    window
+    window,
   };
 };
 
@@ -88,7 +88,7 @@ const mapDispatchToProps = (dispatch): Partial<ServicesExplorerProps> => {
         openContextMenuForConnectedService(editorComponent, connectedService)
       ),
 
-    openSortContextMenu: () => dispatch(openSortContextMenu())
+    openSortContextMenu: () => dispatch(openSortContextMenu()),
   };
 };
 

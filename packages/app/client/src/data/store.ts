@@ -31,28 +31,28 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ClientAwareSettings } from "@bfemulator/app-shared";
-import { applyMiddleware, combineReducers, createStore, Store } from "redux";
-import promiseMiddleware from "redux-promise-middleware";
-import sagaMiddlewareFactory from "redux-saga";
+import { ClientAwareSettings } from '@bfemulator/app-shared';
+import { applyMiddleware, combineReducers, createStore, Store } from 'redux';
+import promiseMiddleware from 'redux-promise-middleware';
+import sagaMiddlewareFactory from 'redux-saga';
 
-import { azureAuth, AzureAuthState } from "./reducer/azureAuthReducer";
-import { bot, BotState } from "./reducer/bot";
-import { chat, ChatState } from "./reducer/chat";
-import { clientAwareSettings } from "./reducer/clientAwareSettingsReducer";
-import { dialog, DialogState } from "./reducer/dialog";
-import { editor, EditorState } from "./reducer/editor";
-import { explorer, ExplorerState } from "./reducer/explorer";
-import { navBar, NavBarState } from "./reducer/navBar";
-import { notification, NotificationState } from "./reducer/notification";
-import { presentation, PresentationState } from "./reducer/presentation";
+import { azureAuth, AzureAuthState } from './reducer/azureAuthReducer';
+import { bot, BotState } from './reducer/bot';
+import { chat, ChatState } from './reducer/chat';
+import { clientAwareSettings } from './reducer/clientAwareSettingsReducer';
+import { dialog, DialogState } from './reducer/dialog';
+import { editor, EditorState } from './reducer/editor';
+import { explorer, ExplorerState } from './reducer/explorer';
+import { navBar, NavBarState } from './reducer/navBar';
+import { notification, NotificationState } from './reducer/notification';
+import { presentation, PresentationState } from './reducer/presentation';
 import {
   progressIndicator,
-  ProgressIndicatorState
-} from "./reducer/progressIndicator";
-import { resources, ResourcesState } from "./reducer/resourcesReducer";
-import { theme, ThemeState } from "./reducer/themeReducer";
-import { applicationSagas } from "./sagas";
+  ProgressIndicatorState,
+} from './reducer/progressIndicator';
+import { resources, ResourcesState } from './reducer/resourcesReducer';
+import { theme, ThemeState } from './reducer/themeReducer';
+import { applicationSagas } from './sagas';
 
 export interface RootState {
   azureAuth?: AzureAuthState;
@@ -90,7 +90,7 @@ const configureStore = (
       presentation,
       progressIndicator,
       resources,
-      theme
+      theme,
     }),
     initialState,
     applyMiddleware(sagaMiddleWare, promiseMiddleware())

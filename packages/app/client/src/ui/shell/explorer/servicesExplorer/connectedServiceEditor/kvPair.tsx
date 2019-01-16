@@ -31,11 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { TextField } from "@bfemulator/ui-react";
-import * as React from "react";
-import { ChangeEvent, Component, ReactNode } from "react";
+import { TextField } from '@bfemulator/ui-react';
+import * as React from 'react';
+import { ChangeEvent, Component, ReactNode } from 'react';
 
-import * as styles from "./connectedServiceEditor.scss";
+import * as styles from './connectedServiceEditor.scss';
 
 interface KvPairProps {
   kvPairs?: { [propName: string]: string };
@@ -44,7 +44,7 @@ interface KvPairProps {
 
 interface KvPairState {
   length: number;
-  kvPairs: Array<{ key: string; value: string }>;
+  kvPairs: { key: string; value: string }[];
 }
 
 export class KvPair extends Component<KvPairProps, KvPairState> {
@@ -63,14 +63,15 @@ export class KvPair extends Component<KvPairProps, KvPairState> {
     if (kvPairsKeys.length !== prevState.length) {
       return {
         kvPairs: kvPairsKeys.map(key => ({ key, value: nextProps[key] })),
-        length: kvPairsKeys.length
-      } as KvPairState;
+        length: kvPairsKeys.length,
+      };
     }
 
     return prevState;
   }
 
-  constructor(props: KvPairProps = {} as KvPairProps) {
+  // eslint-disable-next-line typescript/no-object-literal-type-assertion
+  public constructor(props: KvPairProps = {} as KvPairProps) {
     super(props);
     this.state = KvPair.getDerivedStateFromProps(props, null);
   }
@@ -101,7 +102,7 @@ export class KvPair extends Component<KvPairProps, KvPairState> {
     );
   }
 
-  private getTextFieldPair(key: string = "", value: string = ""): ReactNode {
+  private getTextFieldPair(key: string = '', value: string = ''): ReactNode {
     return (
       <>
         <TextField
@@ -133,7 +134,7 @@ export class KvPair extends Component<KvPairProps, KvPairState> {
     );
     const { kvPairs } = this.state;
     if (!kvPairs[index]) {
-      kvPairs[index] = { key: "", value: "" };
+      kvPairs[index] = { key: '', value: '' };
     }
     kvPairs[index][prop] = (target as HTMLInputElement).value;
     this.setState({ kvPairs: [...kvPairs], length: kvPairs.length });

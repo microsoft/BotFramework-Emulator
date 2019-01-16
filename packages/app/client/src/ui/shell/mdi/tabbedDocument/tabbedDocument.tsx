@@ -31,9 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from "react";
+import * as React from 'react';
 
-import { TabbedDocumentContentWrapper } from "./contentWrapper/contentWrapper";
+import { TabbedDocumentContentWrapper } from './contentWrapper/contentWrapper';
 
 export interface TabbedDocumentProps {
   children?: any;

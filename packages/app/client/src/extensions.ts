@@ -31,30 +31,30 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { SharedConstants } from "@bfemulator/app-shared";
+import { SharedConstants } from '@bfemulator/app-shared';
 import {
   CommandRegistryImpl,
   CommandService,
   CommandServiceImpl,
   ExtensionConfig,
-  ExtensionInspector
-} from "@bfemulator/sdk-shared";
+  ExtensionInspector,
+} from '@bfemulator/sdk-shared';
 
-import { ElectronIPC } from "./ipc";
+import { ElectronIPC } from './ipc';
 
 // =============================================================================
 export class Extension {
   private _ext: CommandService;
 
-  get unid(): string {
+  public get unid(): string {
     return this._unid;
   }
 
-  get config(): ExtensionConfig {
+  public get config(): ExtensionConfig {
     return this._config;
   }
 
-  constructor(private _config: ExtensionConfig, private _unid: string) {
+  public constructor(private _config: ExtensionConfig, private _unid: string) {
     this._ext = new CommandServiceImpl(ElectronIPC, `ext-${this._unid}`);
     /*
     this._ext.remoteCall('ext-ping')
@@ -71,7 +71,7 @@ export class Extension {
     return inspector
       ? {
           extension: this,
-          inspector
+          inspector,
         }
       : null;
   }
@@ -87,7 +87,7 @@ export class InspectorAPI {
     if (!obj) {
       return false;
     }
-    if (typeof obj !== "object") {
+    if (typeof obj !== 'object') {
       return false;
     }
     // Check the activity against the inspector's set of criteria
@@ -99,11 +99,11 @@ export class InspectorAPI {
     criterias.forEach(criteria => {
       // Path is a json-path
       const value = getValueFromPath(obj, criteria.path);
-      if (typeof value === "undefined") {
+      if (typeof value === 'undefined') {
         canInspect = false;
       } else {
         // Value can be a regex or a string literal
-        if ((criteria.value || "").startsWith("/")) {
+        if ((criteria.value || '').startsWith('/')) {
           const regex = new RegExp(criteria.value);
           canInspect = canInspect && regex.test(value);
         } else {
@@ -119,7 +119,7 @@ export class InspectorAPI {
     if (!Array.isArray(summaryTexts)) {
       summaryTexts = [summaryTexts];
     }
-    let text = "";
+    let text = '';
     for (let i = 0; i < summaryTexts.length; ++i) {
       const value = getValueFromPath(obj, summaryTexts[i]);
       if (value) {
@@ -128,7 +128,7 @@ export class InspectorAPI {
     }
 
     if (text.length > 50) {
-      text = text.substring(0, 50) + "...";
+      text = text.substring(0, 50) + '...';
     }
     return text;
   }
@@ -138,7 +138,7 @@ export function getValueFromPath(
   source: { [prop: string]: any },
   path: string
 ): any {
-  const parts = path.split(".");
+  const parts = path.split('.');
   let val = source;
   for (let i = 0; i < parts.length; i++) {
     const part = parts[i];
@@ -178,6 +178,7 @@ class EmulatorExtensionManager implements ExtensionManager {
 
   public addExtension(config: ExtensionConfig, unid: string) {
     this.removeExtension(unid);
+    // eslint-disable-next-line no-console
     console.log(`adding extension ${config.name}`);
     const ext = new Extension(config, unid);
     this.extensions[unid] = ext;
@@ -185,6 +186,7 @@ class EmulatorExtensionManager implements ExtensionManager {
 
   public removeExtension(unid: string) {
     if (this.extensions[unid]) {
+      // eslint-disable-next-line no-console
       console.log(`removing extension ${this.extensions[unid].config.name}`);
       delete this.extensions[unid];
     }
@@ -210,13 +212,14 @@ class EmulatorExtensionManager implements ExtensionManager {
       .shift();
     if (!result && defaultToJson) {
       // Default to the JSON inspector
-      const jsonExtension = ExtensionManager.findExtension("JSON");
+      // eslint-disable-next-line typescript/no-use-before-define
+      const jsonExtension = ExtensionManager.findExtension('JSON');
       if (jsonExtension) {
         result = {
           extension: jsonExtension,
           inspector: jsonExtension.config.client.inspectors
             ? jsonExtension.config.client.inspectors[0]
-            : null
+            : null,
         };
       }
     }
@@ -226,10 +229,12 @@ class EmulatorExtensionManager implements ExtensionManager {
   public registerCommands(commandRegistry: CommandRegistryImpl) {
     const { Connect, Disconnect } = SharedConstants.Commands.Extension;
     commandRegistry.registerCommand(Connect, (config: ExtensionConfig) => {
+      // eslint-disable-next-line typescript/no-use-before-define
       ExtensionManager.addExtension(config, config.location);
     });
 
     commandRegistry.registerCommand(Disconnect, (location: string) => {
+      // eslint-disable-next-line typescript/no-use-before-define
       ExtensionManager.removeExtension(location);
     });
   }

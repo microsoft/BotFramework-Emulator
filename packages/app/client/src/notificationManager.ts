@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Notification } from "@bfemulator/app-shared";
+import { Notification } from '@bfemulator/app-shared';
 
 /** Singleton that will keep track of all active notifications that we can't put in the store */
 export const NotificationManager = new Map<string, Notification>();

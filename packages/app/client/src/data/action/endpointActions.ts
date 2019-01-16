@@ -31,11 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IEndpointService } from "botframework-config/lib/schema";
-import { Action } from "redux";
+import { IEndpointService } from 'botframework-config/lib/schema';
+import { Action } from 'redux';
 
 export const OPEN_ENDPOINT_EXPLORER_CONTEXT_MENU =
-  "OPEN_ENDPOINT_EXPLORER_CONTEXT_MENU";
+  'OPEN_ENDPOINT_EXPLORER_CONTEXT_MENU';
 
 export interface EndpointServiceAction<T> extends Action {
   payload: T;
@@ -50,6 +50,6 @@ export function openEndpointExplorerContextMenu(
 ): EndpointServiceAction<EndpointServicePayload> {
   return {
     type: OPEN_ENDPOINT_EXPLORER_CONTEXT_MENU,
-    payload: { endpointService }
+    payload: { endpointService },
   };
 }

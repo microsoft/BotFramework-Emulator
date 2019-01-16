@@ -31,26 +31,29 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { put } from "redux-saga/effects";
-import { newNotification, NotificationType } from "@bfemulator/app-shared";
-import { NotificationManager } from "../../notificationManager";
+import { newNotification, NotificationType } from '@bfemulator/app-shared';
+
+import { NotificationManager } from '../../notificationManager';
 import {
   beginAdd,
   finishAdd,
   finishClear,
   beginRemove,
-  finishRemove
-} from "../action/notificationActions";
+  finishRemove,
+} from '../action/notificationActions';
+
 import {
   addNotification,
   clearNotifications,
   removeNotification,
-  markAllAsRead
-} from "./notificationSagas";
+  markAllAsRead,
+} from './notificationSagas';
 
-describe("Notification sagas", () => {
-  test("addNotification()", () => {
-    const notification = newNotification("someMessage", NotificationType.Info);
+import { put } from 'redux-saga/effects';
+
+describe('Notification sagas', () => {
+  test('addNotification()', () => {
+    const notification = newNotification('someMessage', NotificationType.Info);
     const action = beginAdd(notification, false);
     const gen = addNotification(action);
 
@@ -58,25 +61,25 @@ describe("Notification sagas", () => {
     expect(gen.next().value).toEqual(put(finishAdd(notification)));
   });
 
-  test("clearNotifications()", () => {
+  test('clearNotifications()', () => {
     const gen = clearNotifications();
 
     // dispatching a finishClear notification action
     expect(gen.next().value).toEqual(put(finishClear()));
   });
 
-  test("removeNotification()", () => {
-    const action = beginRemove("someId");
+  test('removeNotification()', () => {
+    const action = beginRemove('someId');
     const gen = removeNotification(action);
 
     // dispatching a finishRemove notification action
-    expect(gen.next().value).toEqual(put(finishRemove("someId")));
+    expect(gen.next().value).toEqual(put(finishRemove('someId')));
   });
 
-  test("markAllAsRead()", () => {
+  test('markAllAsRead()', () => {
     NotificationManager.clear();
-    const notification1 = newNotification("someMessage", NotificationType.Info);
-    const notification2 = newNotification("someMessage", NotificationType.Info);
+    const notification1 = newNotification('someMessage', NotificationType.Info);
+    const notification2 = newNotification('someMessage', NotificationType.Info);
     expect(notification1.read).toBe(false);
     expect(notification2.read).toBe(false);
     NotificationManager.set(notification1.id, notification1);

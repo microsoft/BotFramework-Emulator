@@ -31,16 +31,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Notification } from "@bfemulator/app-shared";
+import { Notification } from '@bfemulator/app-shared';
 
 export enum NotificationActions {
-  beginAdd = "NOTIFICATION/BEGIN_ADD",
-  finishAdd = "NOTIFICATION/FINISH_ADD",
-  beginRemove = "NOTIFICATION/BEGIN_REMOVE",
-  finishRemove = "NOTIFICATION/FINISH_REMOVE",
-  markAllAsRead = "NOTIFICATION/MARK_ALL_AS_READ",
-  beginClear = "NOTIFICATION/BEGIN_CLEAR",
-  finishClear = "NOTIFICATION/FINISH_CLEAR"
+  beginAdd = 'NOTIFICATION/BEGIN_ADD',
+  finishAdd = 'NOTIFICATION/FINISH_ADD',
+  beginRemove = 'NOTIFICATION/BEGIN_REMOVE',
+  finishRemove = 'NOTIFICATION/FINISH_REMOVE',
+  markAllAsRead = 'NOTIFICATION/MARK_ALL_AS_READ',
+  beginClear = 'NOTIFICATION/BEGIN_CLEAR',
+  finishClear = 'NOTIFICATION/FINISH_CLEAR',
 }
 
 export type NotificationAction =
@@ -104,8 +104,8 @@ export function beginAdd(
     type: NotificationActions.beginAdd,
     payload: {
       notification,
-      read
-    }
+      read,
+    },
   };
 }
 
@@ -115,8 +115,8 @@ export function finishAdd(
   return {
     type: NotificationActions.finishAdd,
     payload: {
-      notification
-    }
+      notification,
+    },
   };
 }
 
@@ -124,8 +124,8 @@ export function beginRemove(id: string): BeginRemoveNotificationAction {
   return {
     type: NotificationActions.beginRemove,
     payload: {
-      id
-    }
+      id,
+    },
   };
 }
 
@@ -133,28 +133,28 @@ export function finishRemove(id: string): FinishRemoveNotificationAction {
   return {
     type: NotificationActions.finishRemove,
     payload: {
-      id
-    }
+      id,
+    },
   };
 }
 
 export function markAllAsRead(): MarkAllAsReadNotificationAction {
   return {
     type: NotificationActions.markAllAsRead,
-    payload: {}
+    payload: {},
   };
 }
 
 export function beginClear(): BeginClearNotificationAction {
   return {
     type: NotificationActions.beginClear,
-    payload: {}
+    payload: {},
   };
 }
 
 export function finishClear(): FinishClearNotificationAction {
   return {
     type: NotificationActions.finishClear,
-    payload: {}
+    payload: {},
   };
 }

@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { store } from "./store";
+import { store } from './store';
 
 export function documentIdForConversation(conversationId: string): string {
   const state = store.getState();

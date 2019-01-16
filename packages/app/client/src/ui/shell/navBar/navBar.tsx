@@ -31,13 +31,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from "react";
-import { SyntheticEvent } from "react";
+import * as React from 'react';
+import { SyntheticEvent } from 'react';
 
-import * as Constants from "../../../constants";
-import { NotificationManager } from "../../../notificationManager";
+import * as Constants from '../../../constants';
+import { NotificationManager } from '../../../notificationManager';
 
-import * as styles from "./navBar.scss";
+import * as styles from './navBar.scss';
 
 export interface NavBarProps {
   selection?: string;
@@ -57,7 +57,7 @@ const selectionMap = [
   Constants.NAVBAR_BOT_EXPLORER,
   Constants.NAVBAR_RESOURCES,
   Constants.NAVBAR_NOTIFICATIONS,
-  Constants.NAVBAR_SETTINGS
+  Constants.NAVBAR_SETTINGS,
 ];
 
 export class NavBarComponent extends React.Component<NavBarProps, NavBarState> {
@@ -80,11 +80,11 @@ export class NavBarComponent extends React.Component<NavBarProps, NavBarState> {
       anchor
     );
     switch (index) {
-      // Bot Explorer
+      // 0: Bot Explorer
+      // 1: Resources
+      // 2: Notifications
       case 0:
-      // Resources
       case 1:
-      // Notifications
       case 2:
         if (currentSelection === selectionMap[index]) {
           // TODO: Re-enable once webchat reset bug is fixed
@@ -113,7 +113,7 @@ export class NavBarComponent extends React.Component<NavBarProps, NavBarState> {
     const { selection } = this.state;
     const { explorerIsVisible, botIsOpen = false } = this.props;
 
-    return ["Bot Explorer", "Resources", "Notifications", "Settings"].map(
+    return ['Bot Explorer', 'Resources', 'Notifications', 'Settings'].map(
       (title, index) => {
         return (
           <button
@@ -136,7 +136,7 @@ export class NavBarComponent extends React.Component<NavBarProps, NavBarState> {
 
   /** Renders a circular counter badge in the corner of the notification icon */
   private renderNotificationBadge(navSelection: string): JSX.Element {
-    if (navSelection === "Notifications") {
+    if (navSelection === 'Notifications') {
       const { notifications } = this.props;
       const numUnreadNotifications = notifications
         .map(notificationId => NotificationManager.get(notificationId))

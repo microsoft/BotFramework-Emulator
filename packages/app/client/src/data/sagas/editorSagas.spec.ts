@@ -31,30 +31,33 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { call, put, select, takeEvery, takeLatest } from "redux-saga/effects";
+import { SharedConstants } from '@bfemulator/app-shared';
+
+import { EditorActions, removeDocPendingChange } from '../action/editorActions';
+
 import {
   checkActiveDocForPendingChanges,
   editorSagas,
-  promptUserToReloadDocument
-} from "./editorSagas";
-import { EditorActions, removeDocPendingChange } from "../action/editorActions";
-import { SharedConstants } from "@bfemulator/app-shared";
-import { refreshConversationMenu, editorSelector } from "./sharedSagas";
+  promptUserToReloadDocument,
+} from './editorSagas';
+import { refreshConversationMenu, editorSelector } from './sharedSagas';
 
-jest.mock("../store", () => ({
+import { call, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
+
+jest.mock('../store', () => ({
   get store() {
     return {};
-  }
+  },
 }));
 
-jest.mock("../../ui/dialogs", () => ({}));
+jest.mock('../../ui/dialogs', () => ({}));
 
 const mockSharedConstants = SharedConstants;
 let mockRemoteCommandsCalled = [];
 let mockLocalCommandsCalled = [];
-let mockMessageResponse = false;
+const mockMessageResponse = false;
 
-jest.mock("../../platform/commands/commandServiceImpl", () => ({
+jest.mock('../../platform/commands/commandServiceImpl', () => ({
   CommandServiceImpl: {
     call: async (commandName: string, ...args: any[]) => {
       mockLocalCommandsCalled.push({ commandName, args: args });
@@ -72,31 +75,31 @@ jest.mock("../../platform/commands/commandServiceImpl", () => ({
         default:
           return Promise.resolve(true);
       }
-    }
-  }
+    },
+  },
 }));
 
-describe("The Editor Sagas", () => {
+describe('The Editor Sagas', () => {
   beforeEach(() => {
     mockRemoteCommandsCalled = [];
     mockLocalCommandsCalled = [];
   });
 
-  it("should check the active doc for pending changes", () => {
+  it('should check the active doc for pending changes', () => {
     const gen = checkActiveDocForPendingChanges();
     const stateData = gen.next().value;
 
     expect(stateData).toEqual(select(editorSelector));
 
-    const mockActiveDocId = "doc1";
+    const mockActiveDocId = 'doc1';
     const mockEditorState = {
       editors: {
         someEditor: {
-          activeDocumentId: mockActiveDocId
-        }
+          activeDocumentId: mockActiveDocId,
+        },
       },
-      activeEditor: "someEditor",
-      docsWithPendingChanges: [mockActiveDocId]
+      activeEditor: 'someEditor',
+      docsWithPendingChanges: [mockActiveDocId],
     };
     // should return the inner generator that we delegate to
     const innerGen = gen.next(mockEditorState).value;
@@ -105,13 +108,13 @@ describe("The Editor Sagas", () => {
     expect(gen.next().done).toBe(true);
   });
 
-  it("should prompt the user to reload the document when the file is chatdown", () => {
-    const mockChatFileName = "doc1.chat";
+  it('should prompt the user to reload the document when the file is chatdown', () => {
+    const mockChatFileName = 'doc1.chat';
     const options = {
-      buttons: ["Cancel", "Reload"],
-      title: "File change detected",
+      buttons: ['Cancel', 'Reload'],
+      title: 'File change detected',
       message:
-        "We have detected a change in this file on disk. Would you like to reload it in the Emulator?"
+        'We have detected a change in this file on disk. Would you like to reload it in the Emulator?',
     };
     const gen = promptUserToReloadDocument(mockChatFileName);
 
@@ -136,13 +139,13 @@ describe("The Editor Sagas", () => {
     expect(gen.next().done).toBe(true);
   });
 
-  it("should prompt the user to reload the document when the file is a transcript", () => {
-    const mockTranscriptFile = "doc2.transcript";
+  it('should prompt the user to reload the document when the file is a transcript', () => {
+    const mockTranscriptFile = 'doc2.transcript';
     const options = {
-      buttons: ["Cancel", "Reload"],
-      title: "File change detected",
+      buttons: ['Cancel', 'Reload'],
+      title: 'File change detected',
       message:
-        "We have detected a change in this file on disk. Would you like to reload it in the Emulator?"
+        'We have detected a change in this file on disk. Would you like to reload it in the Emulator?',
     };
     const gen = promptUserToReloadDocument(mockTranscriptFile);
 
@@ -165,8 +168,8 @@ describe("The Editor Sagas", () => {
     expect(gen.next().done).toBe(true);
   });
 
-  it("should initialize the root saga", () => {
-    let gen = editorSagas();
+  it('should initialize the root saga', () => {
+    const gen = editorSagas();
 
     const checkActiveDocsYield = gen.next().value;
 
@@ -176,7 +179,7 @@ describe("The Editor Sagas", () => {
           EditorActions.addDocPendingChange,
           EditorActions.setActiveEditor,
           EditorActions.setActiveTab,
-          EditorActions.open
+          EditorActions.open,
         ],
         checkActiveDocForPendingChanges
       )
@@ -190,7 +193,7 @@ describe("The Editor Sagas", () => {
           EditorActions.close,
           EditorActions.open,
           EditorActions.setActiveEditor,
-          EditorActions.setActiveTab
+          EditorActions.setActiveTab,
         ],
         refreshConversationMenu
       )

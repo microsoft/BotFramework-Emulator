@@ -31,8 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ChatAction, ChatActions } from "../action/chatActions";
-import { EditorAction, EditorActions } from "../action/editorActions";
+import { ChatAction, ChatActions } from '../action/chatActions';
+import { EditorAction, EditorActions } from '../action/editorActions';
 
 export interface ChatState {
   changeKey?: number;
@@ -44,7 +44,7 @@ export interface ChatState {
 const DEFAULT_STATE: ChatState = {
   changeKey: 0,
   chats: {},
-  transcripts: []
+  transcripts: [],
 };
 
 export function chat(
@@ -81,8 +81,8 @@ export function chat(
         changeKey: state.changeKey + 1,
         chats: {
           ...state.chats,
-          [payload.documentId]: { ...payload }
-        }
+          [payload.documentId]: { ...payload },
+        },
       };
       break;
     }
@@ -106,16 +106,16 @@ export function chat(
       if (document) {
         document = {
           ...document,
-          ...payload.options
+          ...payload.options,
         };
         state = {
           ...state,
           chats: {
             ...state.chats,
             [payload.documentId]: {
-              ...document
-            }
-          }
+              ...document,
+            },
+          },
         };
       }
       break;
@@ -129,17 +129,17 @@ export function chat(
           ...document,
           log: {
             ...document.log,
-            entries: [...document.log.entries, payload.entry]
-          }
+            entries: [...document.log.entries, payload.entry],
+          },
         };
         state = {
           ...state,
           chats: {
             ...state.chats,
             [payload.documentId]: {
-              ...document
-            }
-          }
+              ...document,
+            },
+          },
         };
       }
       break;
@@ -152,17 +152,17 @@ export function chat(
         document = {
           ...document,
           log: {
-            entries: []
-          }
+            entries: [],
+          },
         };
         state = {
           ...state,
           chats: {
             ...state.chats,
             [payload.documentId]: {
-              ...document
-            }
-          }
+              ...document,
+            },
+          },
         };
       }
       break;
@@ -174,7 +174,7 @@ export function chat(
       if (document) {
         document = {
           ...document,
-          inspectorObjects: payload.objs
+          inspectorObjects: payload.objs,
         };
       }
       state = {
@@ -182,30 +182,30 @@ export function chat(
         chats: {
           ...state.chats,
           [payload.documentId]: {
-            ...document
-          }
-        }
+            ...document,
+          },
+        },
       };
       break;
     }
 
     case ChatActions.updateChat: {
       const { payload } = action;
-      const { documentId = "", updatedValues = {} } = payload;
+      const { documentId = '', updatedValues = {} } = payload;
       let document = state.chats[documentId];
       if (document) {
         document = {
           ...document,
-          ...updatedValues
+          ...updatedValues,
         };
         state = {
           ...state,
           chats: {
             ...state.chats,
             [payload.documentId]: {
-              ...document
-            }
-          }
+              ...document,
+            },
+          },
         };
       }
       break;
@@ -227,7 +227,7 @@ function setTranscriptsState(
   transcripts: string[],
   state: ChatState
 ): ChatState {
-  const newState = {...state};
+  const newState = { ...state };
 
   newState.transcripts = transcripts;
   newState.changeKey = state.changeKey + 1;

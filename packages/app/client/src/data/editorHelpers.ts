@@ -31,11 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as Constants from "../constants";
+import * as Constants from '../constants';
 
-import * as EditorActions from "./action/editorActions";
-import { Editor } from "./reducer/editor";
-import { store } from "./store";
+import * as EditorActions from './action/editorActions';
+import { Editor } from './reducer/editor';
+import { store } from './store';
 
 export function hasNonGlobalTabs(tabGroups?: {
   [editorKey: string]: Editor;
@@ -82,7 +82,7 @@ export function showWelcomePage(): void {
     EditorActions.open({
       contentType: Constants.CONTENT_TYPE_WELCOME_PAGE,
       documentId: Constants.DOCUMENT_ID_WELCOME_PAGE,
-      isGlobal: true
+      isGlobal: true,
     })
   );
 }

@@ -30,19 +30,20 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { SharedConstants } from "@bfemulator/app-shared";
-import { call, ForkEffect, put, select, takeEvery } from "redux-saga/effects";
+import { SharedConstants } from '@bfemulator/app-shared';
 
-import { CommandServiceImpl } from "../../platform/commands/commandServiceImpl";
-import { DialogService } from "../../ui/dialogs";
+import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
+import { DialogService } from '../../ui/dialogs';
 import {
   AZURE_BEGIN_AUTH_WORKFLOW,
   azureArmTokenDataChanged,
   AzureAuthAction,
-  AzureAuthWorkflow
-} from "../action/azureAuthActions";
-import { AzureAuthState } from "../reducer/azureAuthReducer";
-import { RootState } from "../store";
+  AzureAuthWorkflow,
+} from '../action/azureAuthActions';
+import { AzureAuthState } from '../reducer/azureAuthReducer';
+import { RootState } from '../store';
+
+import { call, ForkEffect, put, select, takeEvery } from 'redux-saga/effects';
 
 const getArmTokenFromState = (state: RootState) => state.azureAuth;
 
@@ -63,13 +64,13 @@ export function* getArmToken(
   }
   const {
     RetrieveArmToken,
-    PersistAzureLoginChanged
+    PersistAzureLoginChanged,
   } = SharedConstants.Commands.Azure;
   azureAuth = yield call(
     CommandServiceImpl.remoteCall.bind(CommandServiceImpl),
     RetrieveArmToken
   );
-  if (azureAuth && !("error" in azureAuth)) {
+  if (azureAuth && !('error' in azureAuth)) {
     const persistLogin = yield DialogService.showDialog(
       action.payload.loginSuccessDialog,
       azureAuth

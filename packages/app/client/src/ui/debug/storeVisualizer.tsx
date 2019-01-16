@@ -31,24 +31,24 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { PrimaryButton } from "@bfemulator/ui-react";
-import * as React from "react";
-import { connect } from "react-redux";
+import { PrimaryButton } from '@bfemulator/ui-react';
+import * as React from 'react';
+import { connect } from 'react-redux';
 
-import { RootState } from "../../data/store";
+import { RootState } from '../../data/store';
 
-import * as styles from "./storeVisualizer.scss";
+import * as styles from './storeVisualizer.scss';
 
 type StateSlice =
-  | "assetExplorer"
-  | "bot"
-  | "chat"
-  | "dialog"
-  | "editor"
-  | "explorer"
-  | "navBar"
-  | "presentation"
-  | "server";
+  | 'assetExplorer'
+  | 'bot'
+  | 'chat'
+  | 'dialog'
+  | 'editor'
+  | 'explorer'
+  | 'navBar'
+  | 'presentation'
+  | 'server';
 
 interface StoreVisualizerProps {
   enabled?: boolean;
@@ -73,7 +73,7 @@ class StoreVisualizerComponent extends React.Component<
 
     this.state = {
       showing: true,
-      selectedSlice: "editor"
+      selectedSlice: 'editor',
     };
   }
 
@@ -131,7 +131,7 @@ class StoreVisualizerComponent extends React.Component<
 }
 
 const mapStateToProps = (state: RootState): StoreVisualizerProps => ({
-  rootState: state
+  rootState: state,
 });
 
 export const StoreVisualizer = connect(mapStateToProps)(

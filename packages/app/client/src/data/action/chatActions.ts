@@ -31,22 +31,22 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import LogEntry from "@bfemulator/emulator-core/lib/types/log/entry";
-import { Action } from "redux";
+import LogEntry from '@bfemulator/emulator-core/lib/types/log/entry';
+import { Action } from 'redux';
 
 export enum ChatActions {
-  activeInspectorChanged = "CHAT/INSPECTOR/CHANGED",
-  newChat = "CHAT/DOCUMENT/NEW",
-  openChat = "CHAT/DOCUMENT/OPEN",
-  closeChat = "CHAT/DOCUMENT/CLOSE",
-  newConversation = "CHAT/CONVERSATION/NEW",
-  appendLog = "CHAT/LOG/APPEND",
-  clearLog = "CHAT/LOG/CLEAR",
-  setInspectorObjects = "CHAT/INSPECTOR/OBJECTS/SET",
-  addTranscript = "CHAT/TRANSCRIPT/ADD",
-  clearTranscripts = "CHAT/TRANSCRIPT/CLEAR",
-  removeTranscript = "CHAT/TRANSCRIPT/REMOVE",
-  updateChat = "CHAT/DOCUMENT/UPDATE"
+  activeInspectorChanged = 'CHAT/INSPECTOR/CHANGED',
+  newChat = 'CHAT/DOCUMENT/NEW',
+  openChat = 'CHAT/DOCUMENT/OPEN',
+  closeChat = 'CHAT/DOCUMENT/CLOSE',
+  newConversation = 'CHAT/CONVERSATION/NEW',
+  appendLog = 'CHAT/LOG/APPEND',
+  clearLog = 'CHAT/LOG/CLEAR',
+  setInspectorObjects = 'CHAT/INSPECTOR/OBJECTS/SET',
+  addTranscript = 'CHAT/TRANSCRIPT/ADD',
+  clearTranscripts = 'CHAT/TRANSCRIPT/CLEAR',
+  removeTranscript = 'CHAT/TRANSCRIPT/REMOVE',
+  updateChat = 'CHAT/DOCUMENT/UPDATE',
 }
 
 export interface ActiveInspectorChangedPayload {
@@ -100,14 +100,14 @@ export interface ChatAction<T = any> extends Action {
   payload: T;
 }
 
-type ChatMode = "livechat" | "transcript";
+type ChatMode = 'livechat' | 'transcript';
 
 export function inspectorChanged(
   inspectorWebView: HTMLWebViewElement
 ): ChatAction<ActiveInspectorChangedPayload> {
   return {
     type: ChatActions.activeInspectorChanged,
-    payload: { inspectorWebView }
+    payload: { inspectorWebView },
   };
 }
 
@@ -117,15 +117,15 @@ export function addTranscript(
   return {
     type: ChatActions.addTranscript,
     payload: {
-      filename
-    }
+      filename,
+    },
   };
 }
 
 export function clearTranscripts(): ChatAction<{}> {
   return {
     type: ChatActions.clearTranscripts,
-    payload: {}
+    payload: {},
   };
 }
 
@@ -135,8 +135,8 @@ export function removeTranscript(
   return {
     type: ChatActions.removeTranscript,
     payload: {
-      filename
-    }
+      filename,
+    },
   };
 }
 
@@ -153,33 +153,33 @@ export function newDocument(
       conversationId: null,
       directLine: null,
       log: {
-        entries: []
+        entries: [],
       },
       inspectorObjects: [],
       ui: {
         horizontalSplitter: [
           {
             absolute: null,
-            percentage: 50
+            percentage: 50,
           },
           {
             absolute: null,
-            percentage: 50
-          }
+            percentage: 50,
+          },
         ],
         verticalSplitter: [
           {
             absolute: null,
-            percentage: 50
+            percentage: 50,
           },
           {
             absolute: null,
-            percentage: 50
-          }
-        ]
+            percentage: 50,
+          },
+        ],
       },
-      ...additionalData
-    }
+      ...additionalData,
+    },
   };
 }
 
@@ -189,8 +189,8 @@ export function closeDocument(
   return {
     type: ChatActions.closeChat,
     payload: {
-      documentId
-    }
+      documentId,
+    },
   };
 }
 
@@ -202,8 +202,8 @@ export function newConversation(
     type: ChatActions.newConversation,
     payload: {
       documentId,
-      options
-    }
+      options,
+    },
   };
 }
 
@@ -215,8 +215,8 @@ export function appendToLog(
     type: ChatActions.appendLog,
     payload: {
       documentId,
-      entry
-    }
+      entry,
+    },
   };
 }
 
@@ -224,8 +224,8 @@ export function clearLog(documentId: string): ChatAction<ClearLogPayload> {
   return {
     type: ChatActions.clearLog,
     payload: {
-      documentId
-    }
+      documentId,
+    },
   };
 }
 
@@ -238,8 +238,8 @@ export function setInspectorObjects(
     type: ChatActions.setInspectorObjects,
     payload: {
       documentId,
-      objs
-    }
+      objs,
+    },
   };
 }
 
@@ -251,7 +251,7 @@ export function updateChat(
     type: ChatActions.updateChat,
     payload: {
       documentId,
-      updatedValues
-    }
+      updatedValues,
+    },
   };
 }
