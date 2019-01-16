@@ -54,5 +54,3 @@ function validateCreateConversationRequest(params: ConversationParameters, endpo
 }
 
 export { CreateConversationError, validateCreateConversationRequest };
-
-// tslint:disable-next-line:no-consecutive-blank-lines
