@@ -16,3 +16,9 @@ packages=(
 for pkg in ${packages[*]}; do
   lerna add --scope "$1" --dev $pkg
 done
+
+echo "Done installing dependencies."
+printf "Add these two lines to the package.json:\n\n"
+
+printf "\t\"lint\": \"eslint --color --quiet ./src/**/*\",\n"
+printf "\t\"lint:fix\": \"prettier-eslint --log-level error --write './src/**/*.{ts,tsx,js,jsx}'\",\n"
