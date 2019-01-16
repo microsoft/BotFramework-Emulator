@@ -31,21 +31,38 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { newNotification, SharedConstants } from '@bfemulator/app-shared';
-import { connect } from 'react-redux';
-import { Action } from 'redux';
-import { beginAdd } from '../../../../data/action/notificationActions';
-import { RootState } from '../../../../data/store';
-import { CommandServiceImpl } from '../../../../platform/commands/commandServiceImpl';
-import { BotNotOpenExplorer as BotNotOpenExplorerComp, BotNotOpenExplorerProps } from './botNotOpenExplorer';
+.browse-button {
+  overflow: hidden;
+  position: absolute;
+  right: 0;
+  bottom: 12px;
+}
 
-const mapStateToProps = (state: RootState): any => ({
-  hasChat: !!Object.keys(state.chat.chats).length
-});
-const mapDispatchToProps = (dispatch: (action: Action) => void): BotNotOpenExplorerProps => ({
-  showOpenBotDialog: (): Promise<any> => CommandServiceImpl.call(SharedConstants.Commands.UI.ShowOpenBotDialog),
-  sendNotification: (error: Error) =>
-    dispatch(beginAdd(newNotification(`An Error occurred on the Bot Not Open Explorer: ${ error }`))),
-});
+.input-container {
+  padding-right: 115px;
 
-export const BotNotOpenExplorerContainer = connect(mapStateToProps, mapDispatchToProps)(BotNotOpenExplorerComp);
+  & + div {
+    margin-left: 8px;
+  }
+}
+
+.file-input {
+  position: absolute;
+  left: 0;
+  height: 100%;
+  z-index: 2;
+  opacity: 0;
+}
+
+/* maintains "light" theme for the recent bots list since it's in a modal */
+.theme-overrides {
+  --my-bots-entry-bg: var(--neutral-4);
+  --my-bots-entry-border: 1px solid transparent;
+  --tab-icon-color: var(--neutral-12);
+  --my-bots-path-color: var(--neutral-12);
+  --focused-selected-list-item-bg: #006AB1;
+  --my-bots-well-bg: var(--neutral-3);
+  --my-bots-well-border: 0;
+  --my-bots-scrollbar-color: rgba(136, 136, 136, 0.5);
+  --my-bots-entry-color: var(--neutral-12);
+}

@@ -10,23 +10,22 @@ jest.mock('../ui/dialogs', () => ({
     }
   }
 ));
-import { EditorActions, OpenEditorAction } from '../data/action/editorActions';
-import * as Constants from '../constants';
+import { SharedConstants } from '@bfemulator/app-shared';
+import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 import { CONTENT_TYPE_APP_SETTINGS, DOCUMENT_ID_APP_SETTINGS } from '../constants';
+import { AzureAuthAction, AzureAuthWorkflow, invalidateArmToken } from '../data/action/azureAuthActions';
+import { EditorActions, OpenEditorAction } from '../data/action/editorActions';
 import { NavBarActions, SelectNavBarAction } from '../data/action/navBarActions';
+import * as editorHelpers from '../data/editorHelpers';
+import { store } from '../data/store';
 import {
   AzureLoginPromptDialogContainer,
   AzureLoginSuccessDialogContainer,
   BotCreationDialog,
-  DialogService,
+  DialogService, OpenBotDialogContainer,
   SecretPromptDialogContainer
 } from '../ui/dialogs';
-import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
-import { SharedConstants } from '@bfemulator/app-shared';
 import { registerCommands } from './uiCommands';
-import * as editorHelpers from '../data/editorHelpers';
-import { store } from '../data/store';
-import { AzureAuthAction, AzureAuthWorkflow, invalidateArmToken } from '../data/action/azureAuthActions';
 
 const Commands = SharedConstants.Commands.UI;
 
@@ -57,6 +56,13 @@ describe('the uiCommands', () => {
     expect(result).toBe(true);
   });
 
+  it('should call DialogService.showDialog when the ShowOpenBotDialog command is dispatched', async () => {
+    const spy = jest.spyOn(DialogService, 'showDialog');
+    const result = await registry.getCommand(Commands.ShowOpenBotDialog).handler();
+    expect(spy).toHaveBeenCalledWith(OpenBotDialogContainer);
+    expect(result).toBe(true);
+  });
+
   describe('should dispatch the appropriate action to the store', () => {
     it('when the SwitchNavBarTab command is dispatched', () => {
       let arg: SelectNavBarAction = {} as SelectNavBarAction;
@@ -65,7 +71,7 @@ describe('the uiCommands', () => {
       expect(arg.type).toBe(NavBarActions.select);
       expect(arg.payload.selection).toBe('Do it Nauuuw!');
     });
-    
+
     it('when the ShowAppSettings command is dispatched', () => {
       let arg: OpenEditorAction = {} as OpenEditorAction;
       store.dispatch = action => (arg as any) = action;

@@ -126,7 +126,7 @@ html {
   --tab-icon-hover-color: var(--neutral-15);
 
   /* Notifications */
-  --notification-bg: rgba(128,128,128,0.2);
+  --notification-bg: rgba(128, 128, 128, 0.2);
   --notification-message-color: var(--neutral-12);
   --notification-timestamp-color: var(--neutral-8);
   --notification-close-icon-color: var(--neutral-13);
@@ -156,7 +156,7 @@ html {
   --my-bots-entry-border: 1px solid transparent;
   --my-bots-entry-color: var(--neutral-12);
   --my-bots-path-color: var(--neutral-12);
-  --my-bots-scrollbar-color: rgba(136,136,136,0.5);
+  --my-bots-scrollbar-color: rgba(136, 136, 136, 0.5);
 
   /* Status Bar */
   --status-bar-bg: #007ACC;

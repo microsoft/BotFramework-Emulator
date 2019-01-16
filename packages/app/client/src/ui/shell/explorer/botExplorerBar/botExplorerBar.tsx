@@ -31,17 +31,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from 'react';
-import * as styles from './botExplorerBar.scss';
-import * as explorerStyles from '../explorerStyles.scss';
-import { EndpointExplorerContainer } from '../endpointExplorer';
-import { BotNotOpenExplorer } from '../botNotOpenExplorer';
 import { IBotConfiguration } from 'botframework-config/lib/schema';
+import * as React from 'react';
+import { BotNotOpenExplorerContainer } from '../botNotOpenExplorer';
+import { EndpointExplorerContainer } from '../endpointExplorer';
+import * as explorerStyles from '../explorerStyles.scss';
 import { ServicesExplorerContainer } from '../servicesExplorer';
-
-interface BotExplorerBarState {
-  isBotActive: boolean;
-}
+import * as styles from './botExplorerBar.scss';
 
 interface BotExplorerBarProps {
   activeBot: IBotConfiguration;
@@ -49,33 +45,22 @@ interface BotExplorerBarProps {
   openBotSettings: () => void;
 }
 
-export default class BotExplorerBar extends React.Component<BotExplorerBarProps, BotExplorerBarState> {
-  public state: BotExplorerBarState = {} as any;
+export default class BotExplorerBar extends React.Component<BotExplorerBarProps, {}> {
 
-  public static getDerivedStateFromProps(newProps: BotExplorerBarProps) {
-    return {
-      isBotActive: !!newProps.activeBot
-    };
-  }
-
-  private get activeBotJsx(): JSX.Element {
+  private static get activeBotJsx(): JSX.Element {
     return (
       <>
-        <EndpointExplorerContainer title="Endpoint" ariaLabel="Endpoints" />
-        <ServicesExplorerContainer title="Services" ariaLabel="Services" />
+        <EndpointExplorerContainer title="Endpoint" ariaLabel="Endpoints"/>
+        <ServicesExplorerContainer title="Services" ariaLabel="Services"/>
       </>
     );
   }
 
-  private get botNotOpenJsx(): JSX.Element {
-    return <BotNotOpenExplorer/>;
-  }
-
   public render() {
     const className = this.props.hidden ? styles.explorerOffScreen : '';
-    const explorerBody = this.props.activeBot ? this.activeBotJsx : this.botNotOpenJsx;
+    const explorerBody = this.props.activeBot ? BotExplorerBar.activeBotJsx : <BotNotOpenExplorerContainer/>;
     return (
-      <div className={ `${styles.botExplorerBar} ${className}` }>
+      <div className={ `${ styles.botExplorerBar } ${ className }` }>
         <div className={ explorerStyles.explorerBarHeader }>
           <header>
             Bot Explorer
@@ -83,9 +68,9 @@ export default class BotExplorerBar extends React.Component<BotExplorerBarProps,
           <button
             aria-label="Open bot settings"
             className={ explorerStyles.botSettings }
-            disabled={ !this.state.isBotActive }
+            disabled={ !this.props.activeBot }
             onClick={ this.props.openBotSettings }>
-            <span></span>
+            <span/>
           </button>
         </div>
         <ul className={ explorerStyles.explorerSet }>

@@ -31,23 +31,22 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from 'react';
 import { BotInfo } from '@bfemulator/app-shared';
-import * as styles from './welcomePage.scss';
-import { Column, LargeHeader, PrimaryButton, Row, SmallHeader, TruncateText } from '@bfemulator/ui-react';
+import { Column, LargeHeader, PrimaryButton, Row, SmallHeader } from '@bfemulator/ui-react';
+import * as React from 'react';
 import { GenericDocument } from '../../layout';
+import { RecentBotsListContainer } from '../recentBotsList/recentBotsListContainer';
+import { HowToBuildABot } from './howToBuildABot';
+import * as styles from './welcomePage.scss';
 
 export interface WelcomePageProps {
   accessToken?: string;
-  documentId?: string;
   onNewBotClick?: () => void;
-  onOpenBotClick?: () => void;
-  onBotClick?: (_e: any, path: string) => void;
-  onDeleteBotClick?: (_e: any, path: string) => void;
-  showContextMenuForBot?: (bot: BotInfo) => void;
-  recentBots?: BotInfo[];
+  showOpenBotDialog: () => Promise<any>;
+  sendNotification?: (error: Error) => void;
   signInWithAzure?: () => void;
   signOutWithAzure?: () => void;
+  switchToBot?: (path: string) => Promise<any>;
 }
 
 export class WelcomePage extends React.Component<WelcomePageProps, {}> {
@@ -56,7 +55,7 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
   }
 
   public render(): JSX.Element {
-    const { startSection, myBotsSection, howToBuildSection, signInSection } = this;
+    const { startSection, signInSection } = this;
 
     return (
       <GenericDocument>
@@ -65,38 +64,18 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
             <LargeHeader>Bot Framework Emulator</LargeHeader>
             <span className={ styles.versionNumber }>Version 4</span>
             { startSection }
-            { myBotsSection }
+            <RecentBotsListContainer onBotSelected={ this.onBotSelected }/>
             { signInSection }
           </Column>
           <Column className={ styles.rightColumn }>
-            { howToBuildSection }
+            <HowToBuildABot/>
           </Column>
         </Row>
       </GenericDocument>
     );
   }
 
-  private onBotClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    const { index } = event.currentTarget.dataset;
-    const bot = this.props.recentBots[index];
-    this.props.onBotClick(event, bot.path);
-  }
-
-  private onBotContextMenu = (event: React.MouseEvent<HTMLLIElement>): void => {
-    const { index } = event.currentTarget.dataset;
-    const bot: BotInfo = this.props.recentBots[index];
-    this.props.showContextMenuForBot(bot);
-  }
-
-  private onDeleteBotClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    const { index } = event.currentTarget.dataset;
-    const bot = this.props.recentBots[index];
-    this.props.onDeleteBotClick(event, bot.path);
-  }
-
   private get startSection(): JSX.Element {
-    const { onNewBotClick, onOpenBotClick } = this.props;
-
     return (
       <div className={ styles.section }>
         <SmallHeader className={ styles.marginFix }>Start by testing your bot</SmallHeader>
@@ -107,54 +86,37 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
           </a>
         </span>
         <Row>
-          <PrimaryButton className={ styles.openBot } text="Open Bot" onClick={ onOpenBotClick }/>
+          <PrimaryButton className={ styles.openBot } text="Open Bot" onClick={ this.onOpenBotClick }/>
         </Row>
         <span>If you don’t have a bot configuration,&nbsp;
-          <button className={ styles.ctaLink }
-                  onClick={ onNewBotClick }>create a new bot configuration.
+          <button
+            className={ styles.ctaLink }
+            onClick={ this.props.onNewBotClick }>
+            create a new bot configuration.
         </button>
         </span>
       </div>
     );
   }
 
-  private get myBotsSection(): JSX.Element {
-    return (
-      <div className={ styles.section }>
-        <SmallHeader className={ styles.marginFix }>My Bots</SmallHeader>
-        <ul className={ `${ styles.recentBotsList } ${ styles.well }` }>
-          {
-            this.props.recentBots && this.props.recentBots.length ?
-              this.props.recentBots.slice(0, 10).map((bot, index) => bot &&
-                <li className={ styles.recentBot }
-                    key={ bot.path }
-                    data-index={ index }
-                    onContextMenu={ this.onBotContextMenu }>
-                  <button
-                    data-index={ index }
-                    onClick={ this.onBotClick }
-                    title={ bot.path }>
-                    <TruncateText>{ bot.displayName }</TruncateText>
-                  </button>
-                  <TruncateText className={ styles.recentBotPath }
-                                title={ bot.path }>{ bot.path }</TruncateText>
-                  <div className={ styles.recentBotActionBar }>
-                    <button data-index={ index } onClick={ this.onDeleteBotClick }></button>
-                  </div>
-                </li>)
-              :
-              <li>
-                <span className={ styles.noBots }><TruncateText>You have not opened any bots</TruncateText></span>
-              </li>
-          }
-        </ul>
-      </div>
-    );
+  private onBotSelected = async (bot: BotInfo) => {
+    try {
+      await this.props.switchToBot(bot.path);
+    } catch (e) {
+      this.props.sendNotification(e);
+    }
+  }
+
+  private onOpenBotClick = async () => {
+    try {
+      await this.props.showOpenBotDialog();
+    } catch (e) {
+      this.props.sendNotification(e);
+    }
   }
 
   private get signInSection(): JSX.Element {
     const { accessToken, signInWithAzure, signOutWithAzure } = this.props;
-
     return (
       <div>
         {
@@ -165,122 +127,6 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
               Sign in with your Azure account.
             </button>
         }</div>
-    );
-  }
-
-  private get howToBuildSection(): JSX.Element {
-    return (
-      <div className={ styles.section }>
-        <div className={ styles.howToBuildSection }>
-          <h3>How to build a bot</h3>
-          <div className={ styles.stepContainer }>
-            <div className={ styles.stepIcon }>
-              <div className={ styles.buildPlan01 }></div>
-            </div>
-            <dl>
-              <dt>Plan:</dt>
-              <dd>
-                Review the bot&nbsp;
-                <a className={ styles.ctaLink } href="https://aka.ms/bot-framework-emulator-design-guidelines">
-                  design guidelines
-                </a> for best practices&nbsp;
-              </dd>
-            </dl>
-          </div>
-          <div className={ styles.stepContainer }>
-            <div className={ styles.stepIcon }>
-              <div className={ styles.buildPlan02 }></div>
-            </div>
-            <dl>
-              <dt>Build:</dt>
-              <dd>
-                <a className={ styles.ctaLink } href="https://aka.ms/bot-framework-emulator-tools">
-                  Download Command Line tools
-                </a><br/>
-                Create a bot&nbsp;
-                <a className={ styles.ctaLink } href="https://aka.ms/bot-framework-emulator-create-bot-azure">
-                  from Azure
-                </a> or&nbsp;
-                <a className={ styles.ctaLink } href="https://aka.ms/bot-framework-emulator-create-bot-locally">
-                  locally
-                </a><br/>
-                Add services such as<br/>
-                <a className={ styles.ctaLink } href="https://aka.ms/bot-framework-emulator-LUIS-docs-home">
-                  Language Understanding (LUIS)
-                </a>,&nbsp;
-                <a className={ styles.ctaLink } href="https://aka.ms/bot-framework-emulator-qna-docs-home">QnAMaker</a>
-                &nbsp;and&nbsp;
-                <a className={ styles.ctaLink } href="https://aka.ms/bot-framework-emulator-create-dispatch">
-                  Dispatch
-                </a>
-              </dd>
-            </dl>
-          </div>
-          <div className={ styles.stepContainer }>
-            <div className={ styles.stepIcon }>
-              <div className={ styles.buildPlan03 }></div>
-            </div>
-            <dl>
-              <dt className={ styles.testBullet }>Test:</dt>
-              <dd>
-                Test with the&nbsp;
-                <a className={ styles.ctaLink } href="https://aka.ms/bot-framework-emulator-debug-with-emulator">
-                  Emulator
-                </a> <br/>
-                Test online in&nbsp;
-                <a className={ styles.ctaLink } href="https://aka.ms/bot-framework-emulator-debug-with-web-chat">
-                  Web Chat
-                </a></dd>
-            </dl>
-          </div>
-          <div className={ styles.stepContainer }>
-            <div className={ styles.stepIcon }>
-              <div className={ styles.buildPlan04 }></div>
-            </div>
-            <dl>
-              <dt>Publish:</dt>
-              <dd>
-                Publish directly to Azure or<br/>
-                Use 
-              <a className={ styles.ctaLink }
-                href="https://aka.ms/bot-framework-emulator-publish-continuous-deployment"
-              >&nbsp;
-                Continuous Deployment
-              </a>
-                &nbsp;
-              </dd>
-            </dl>
-          </div>
-          <div className={ styles.stepContainer }>
-            <div className={ styles.stepIcon }>
-              <div className={ styles.buildPlan05 }></div>
-            </div>
-            <dl>
-              <dt>Connect:</dt>
-              <dd>
-                Connect to&nbsp;
-                <a className={ styles.ctaLink } href="https://aka.ms/bot-framework-emulator-connect-channels">
-                  channels
-                </a>
-                &nbsp;
-              </dd>
-            </dl>
-          </div>
-          <div className={ styles.stepContainer }>
-            <div className={ styles.stepIcon }>
-              <div className={ styles.buildPlan06 }></div>
-            </div>
-            <dl>
-              <dt>Evaluate:</dt>
-              <dd>
-                <a className={ styles.ctaLink } href="https://aka.ms/bot-framework-emulator-bot-analytics">
-                  View analytics
-                </a>
-              </dd>
-            </dl>
-          </div>
-        </div>
-      </div>
     );
   }
 }

@@ -31,21 +31,33 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { newNotification, SharedConstants } from '@bfemulator/app-shared';
+import { BotInfo, newNotification, SharedConstants } from '@bfemulator/app-shared';
 import { connect } from 'react-redux';
 import { Action } from 'redux';
-import { beginAdd } from '../../../../data/action/notificationActions';
-import { RootState } from '../../../../data/store';
-import { CommandServiceImpl } from '../../../../platform/commands/commandServiceImpl';
-import { BotNotOpenExplorer as BotNotOpenExplorerComp, BotNotOpenExplorerProps } from './botNotOpenExplorer';
+import { beginAdd } from '../../../data/action/notificationActions';
+import { openContextMenuForBot } from '../../../data/action/welcomePageActions';
+import { RootState } from '../../../data/store';
+import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
+import { RecentBotsList, RecentBotsListProps } from './recentBotsList';
 
-const mapStateToProps = (state: RootState): any => ({
-  hasChat: !!Object.keys(state.chat.chats).length
-});
-const mapDispatchToProps = (dispatch: (action: Action) => void): BotNotOpenExplorerProps => ({
-  showOpenBotDialog: (): Promise<any> => CommandServiceImpl.call(SharedConstants.Commands.UI.ShowOpenBotDialog),
-  sendNotification: (error: Error) =>
-    dispatch(beginAdd(newNotification(`An Error occurred on the Bot Not Open Explorer: ${ error }`))),
-});
+const mapStateToProps = (state: RootState, ownProps: { [propName: string]: any }): RecentBotsListProps => {
+  return {
+    recentBots: state.bot.botFiles,
+    ...ownProps
+  };
+};
 
-export const BotNotOpenExplorerContainer = connect(mapStateToProps, mapDispatchToProps)(BotNotOpenExplorerComp);
+const mapDispatchToProps = (dispatch: (action: Action) => void): RecentBotsListProps => {
+  return {
+    onDeleteBotClick: (path: string): Promise<any> =>
+      CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.RemoveFromBotList, path),
+    sendNotification: (error: Error) =>
+      dispatch(beginAdd(newNotification(`An Error occurred on the Recent Bots List: ${ error }`))),
+    showContextMenuForBot: (bot: BotInfo): void => dispatch(openContextMenuForBot(bot)),
+  };
+};
+
+export const RecentBotsListContainer = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(RecentBotsList);

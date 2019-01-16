@@ -153,6 +153,7 @@ export const SharedConstants = {
     UI: {
       ShowWelcomePage: 'welcome-page:showExplorer',
       ShowBotCreationDialog: 'bot-creation:showExplorer',
+      ShowOpenBotDialog: 'open-bot:show',
       ShowSecretPromptDialog: 'secret-prompt:showExplorer',
       SwitchNavBarTab: 'navbar:switch-tab',
       ShowAppSettings: 'shell:showExplorer-app-settings',
