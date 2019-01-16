@@ -35,9 +35,7 @@ describe('The conversations middleware', () => {
     emulator.facilities.users.currentUserId = '456';
     emulator.facilities.logger = { logActivity: () => null } as any;
     emulator.facilities.attachments = new Attachments();
-    emulator.options = {
-      tunnelingServiceUrl: 'https://localhost:8888'
-    };
+    emulator.options = {};
   });
 
   it('should create a new conversation', () => {

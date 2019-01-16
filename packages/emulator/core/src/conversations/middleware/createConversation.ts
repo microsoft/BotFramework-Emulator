@@ -33,13 +33,13 @@
 
 import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
-
 import BotEmulator from '../../botEmulator';
 import BotEndpoint from '../../facility/botEndpoint';
 import Conversation from '../../facility/conversation';
 import ConversationParameters from '../../types/activity/conversationParameters';
 import createConversationResponse from '../../utils/createResponse/conversation';
 import sendErrorResponse from '../../utils/sendErrorResponse';
+import uniqueId from '../../utils/uniqueId';
 import { validateCreateConversationRequest } from './errorCondition/createConversationValidator';
 
 export default function createConversation(botEmulator: BotEmulator) {
@@ -49,8 +49,7 @@ export default function createConversation(botEmulator: BotEmulator) {
     const conversationParameters = req.body as ConversationParameters;
     const error = validateCreateConversationRequest(
       conversationParameters,
-      botEndpoint,
-      botEmulator.facilities.users.currentUserId);
+      botEndpoint);
 
     if (error) {
       sendErrorResponse(req, res, next, error.toAPIException());
@@ -76,7 +75,9 @@ function getConversation(params: ConversationParameters, emulator: BotEmulator, 
   }
 
   if (!conversation) {
-    const { id, name } = params.members[0];
+    const { members = [] } = params;
+    const [member] = members;
+    const { id = uniqueId(), name = 'User' } = (member || {});
     conversation = emulator.facilities.conversations.newConversation(
       emulator,
       endpoint,
