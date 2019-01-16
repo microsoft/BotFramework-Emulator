@@ -17,7 +17,7 @@
     "noImplicitAny": false,
     // "strictNullChecks": true,
     "suppressImplicitAnyIndexErrors": true,
-    "noUnusedLocals": false,
+    "noUnusedLocals": true,
     "skipLibCheck": true,
     "declaration": true,
     "paths": {

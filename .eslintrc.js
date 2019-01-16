@@ -14,6 +14,7 @@ module.exports = {
     // eslint rules
     'prefer-const': 'error',
     'no-dupe-class-members': 'off',
+    'no-undef': 'off', // ts compiler catches this
 
     // plugin: import
     'import/first': 'error',
