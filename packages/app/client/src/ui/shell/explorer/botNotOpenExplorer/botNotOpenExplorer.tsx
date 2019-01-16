@@ -31,22 +31,21 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ExpandCollapse, ExpandCollapseContent, PrimaryButton } from '@bfemulator/ui-react';
+import { ExpandCollapse, ExpandCollapseContent } from '@bfemulator/ui-react';
 import * as React from 'react';
 import * as styles from './botNotOpenExplorer.scss';
 
 export interface BotNotOpenExplorerProps {
   hasChat?: boolean;
-  showOpenBotDialog: () => Promise<any>;
+  openBotFile?: () => Promise<any>;
+  showCreateNewBotDialog?: () => Promise<void>;
   sendNotification: (error: Error) => void;
 }
 
 export class BotNotOpenExplorer extends React.Component<BotNotOpenExplorerProps, {}> {
 
   public render() {
-    const { hasChat } = this.props;
-    const label = hasChat ? 'Services Not Available' : 'No Bot Opened';
-    const message = hasChat ? 'You are in Direct Connect mode.' : 'You have not yet opened a bot.';
+    const label = 'Services Not Available';
     return (
       <ul className={ styles.botNotOpenExplorer }>
         <li>
@@ -57,8 +56,10 @@ export class BotNotOpenExplorer extends React.Component<BotNotOpenExplorerProps,
           >
             <ExpandCollapseContent>
               <div className={ styles.explorerEmptyState }>
-                <span className={ styles.emptyStateText }>{ message }</span>
-                <PrimaryButton text={ 'Open Bot' } className={ styles.openBot } onClick={ this.onOpenBotClick }/>
+                { `To connect the Emulator services, ` }
+                <a href="javascript:void(0);" onClick={ this.onOpenBotFileClick }>open a .bot file</a>
+                { ` or ` }
+                <a href="javascript:void(0)" onClick={ this.onCreateNewBotClick }>create a new bot configuration</a>.
               </div>
             </ExpandCollapseContent>
           </ExpandCollapse>
@@ -67,9 +68,17 @@ export class BotNotOpenExplorer extends React.Component<BotNotOpenExplorerProps,
     );
   }
 
-  private onOpenBotClick = async () => {
+  private onCreateNewBotClick = async () => {
     try {
-      await this.props.showOpenBotDialog();
+      await this.props.showCreateNewBotDialog();
+    } catch (e) {
+      this.props.sendNotification(e);
+    }
+  }
+
+  private onOpenBotFileClick = async () => {
+    try {
+      await this.props.openBotFile();
     } catch (e) {
       this.props.sendNotification(e);
     }

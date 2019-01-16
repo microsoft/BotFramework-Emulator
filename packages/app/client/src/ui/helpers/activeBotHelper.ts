@@ -97,7 +97,7 @@ export const ActiveBotHelper = new class {
         CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.SetTitleBar, getBotDisplayName(bot))
       ]);
     } catch (e) {
-      const errMsg = `Error while setting active bot: ${e}`;
+      const errMsg = `Error while setting active bot: ${ e }`;
       const notification = newNotification(errMsg);
       store.dispatch(beginAdd(notification));
       throw new Error(errMsg);
@@ -112,7 +112,7 @@ export const ActiveBotHelper = new class {
         CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.SetTitleBar, '');
       })
       .catch(err => {
-        const errMsg = `Error while closing active bot: ${err}`;
+        const errMsg = `Error while closing active bot: ${ err }`;
         const notification = newNotification(errMsg);
         store.dispatch(beginAdd(notification));
         throw new Error(errMsg);
@@ -159,7 +159,7 @@ export const ActiveBotHelper = new class {
         store.dispatch(NavBarActions.select(Constants.NAVBAR_BOT_EXPLORER));
         store.dispatch(ExplorerActions.showExplorer(true));
       } catch (err) {
-        const errMsg = `Error during bot create: ${err}`;
+        const errMsg = `Error during bot create: ${ err }`;
         const notification = newNotification(errMsg);
         store.dispatch(beginAdd(notification));
         throw new Error(errMsg);
@@ -194,34 +194,21 @@ export const ActiveBotHelper = new class {
           await CommandServiceImpl.call(SharedConstants.Commands.Bot.Switch, activeBot);
           return;
         }
+        const result = this.confirmSwitchBot();
 
-        try {
-          const result = this.confirmSwitchBot();
-
-          if (result) {
-            try {
-              store.dispatch(EditorActions.closeNonGlobalTabs());
-              const bot = await CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.Open, filename)
-                // Secret prompt dialog was closed
-                .catch(_err => null);
-              if (!bot) {
-                return;
-              }
-              await CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.SetActive, bot);
-              await CommandServiceImpl.call(SharedConstants.Commands.Bot.Load, bot);
-            } catch (err) {
-              console.error('Error while trying to open bot from file: ', err);
-              throw new Error(`[confirmAndOpenBotFromFile] Error while trying to open bot from file: ${err}`);
-            }
+        if (result) {
+          store.dispatch(EditorActions.closeNonGlobalTabs());
+          const bot = await CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.Open, filename);
+          if (!bot) {
+            return;
           }
-        } catch (err) {
-          console.error('Error while calling confirmSwitchBot: ', err);
-          throw new Error(`[confirmAndOpenBotFromFile] Error while calling confirmSwitchBot: ${err}`);
+          await CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.SetActive, bot);
+          await CommandServiceImpl.call(SharedConstants.Commands.Bot.Load, bot);
         }
       }
     } catch (err) {
       console.error('Error while calling browseForBotFile: ', err);
-      throw new Error(`[confirmAndOpenBotFromFile] Error while calling browseForBotFile: ${err}`);
+      throw new Error(`[confirmAndOpenBotFromFile] Error while calling browseForBotFile: ${ err }`);
     }
   }
 
@@ -241,13 +228,13 @@ export const ActiveBotHelper = new class {
         await CommandServiceImpl.call(
           SharedConstants.Commands.Emulator.NewLiveChat, currentActiveBot.services[0]);
       } catch (e) {
-        throw new Error(`[confirmAndSwitchBots] Error while trying to open bot at ${botPath}: ${e}`);
+        throw new Error(`[confirmAndSwitchBots] Error while trying to open bot at ${ botPath }: ${ e }`);
       }
       return;
     }
 
     // TODO: We need to think about merging this with confirmAndCreateBot
-    console.log(`Switching to bot ${botPath}`);
+    console.log(`Switching to bot ${ botPath }`);
 
     try {
       // prompt the user to confirm the switch
@@ -261,7 +248,7 @@ export const ActiveBotHelper = new class {
           try {
             newActiveBot = await CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.Open, bot);
           } catch (e) {
-            throw new Error(`[confirmAndSwitchBots] Error while trying to open bot at ${botPath}: ${e}`);
+            throw new Error(`[confirmAndSwitchBots] Error while trying to open bot at ${ botPath }: ${ e }`);
           }
         } else {
           newActiveBot = bot;
@@ -300,7 +287,7 @@ export const ActiveBotHelper = new class {
         store.dispatch(ExplorerActions.showExplorer(true));
       }
     } catch (e) {
-      const errMsg = `Error while trying to switch to bot: ${botPath}`;
+      const errMsg = `Error while trying to switch to bot: ${ botPath }`;
       const notification = newNotification(errMsg);
       store.dispatch(beginAdd(notification));
       throw new Error(errMsg);
@@ -324,7 +311,7 @@ export const ActiveBotHelper = new class {
         }
       })
       .catch(err => {
-        const errMsg = `Error while closing active bot: ${err}`;
+        const errMsg = `Error while closing active bot: ${ err }`;
         const notification = newNotification(errMsg);
         store.dispatch(beginAdd(notification));
         throw new Error(errMsg);

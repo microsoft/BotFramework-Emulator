@@ -31,16 +31,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { BotInfo } from '@bfemulator/app-shared';
+// import { BotInfo } from '@bfemulator/app-shared';
 import { DefaultButton, Dialog, DialogFooter, PrimaryButton, TextField } from '@bfemulator/ui-react';
 import * as React from 'react';
 import { ChangeEvent, FocusEvent, ReactNode } from 'react';
-import { RecentBotsListContainer } from '../../editor/recentBotsList/recentBotsListContainer';
+// import { RecentBotsListContainer } from '../../editor/recentBotsList/recentBotsListContainer';
 import * as styles from '../dialogStyles.scss';
 import * as openBotStyles from './openBotDialog.scss';
 
 export interface OpenBotDialogProps {
-  showCreateNewBotDialog?: () => Promise<void>;
   onDialogCancel?: () => void;
   openBot?: (urlOrPath: string) => Promise<void>;
   sendNotification?: (error: Error) => void;
@@ -71,62 +70,41 @@ export class OpenBotDialog extends React.Component<OpenBotDialogProps, OpenBotDi
       <Dialog
         cancel={ this.props.onDialogCancel }
         className={ `${ styles.dialogMedium } ${ openBotStyles.themeOverrides }` }
-        title="Open a Bot">
-        <p>
-          { `You can open a bot using just a URL, choose from a list of recently opened bots or ` }
-          <a href="javascript:void(0);" onClick={ this.onCreateNewBotClick }>create a new bot configuration</a>
-        </p>
-        <TextField
-          errorMessage={ errorMessage }
-          inputContainerClassName={ openBotStyles.inputContainer }
-          label="Bot URL or File Location"
-          onChange={ this.onInputChange }
-          onFocus={ this.onFocus }
-          value={ botUrl }>
+        title="Open a bot">
+        <form onSubmit={ this.onSubmit }>
+          <TextField
+            errorMessage={ errorMessage }
+            inputContainerClassName={ openBotStyles.inputContainer }
+            label="Bot URL or file location"
+            onChange={ this.onInputChange }
+            onFocus={ this.onFocus }
+            value={ botUrl }>
 
-          <PrimaryButton
-            className={ openBotStyles.browseButton }>
-            Browse
-            <input
-              className={ openBotStyles.fileInput }
-              onChange={ this.onInputChange }
-              accept=".bot"
-              type="file"/>
-          </PrimaryButton>
+            <PrimaryButton
+              className={ openBotStyles.browseButton }>
+              Browse
+              <input
+                className={ openBotStyles.fileInput }
+                onChange={ this.onInputChange }
+                accept=".bot"
+                type="file"/>
+            </PrimaryButton>
 
-        </TextField>
-        <RecentBotsListContainer onBotSelected={ this.onBotSelected }/>
-        <DialogFooter>
-          <PrimaryButton
-            text="Close"
-            onClick={ this.props.onDialogCancel }
-          />
-          <DefaultButton
-            disabled={ !!errorMessage }
-            onClick={ this.onOpenClick }
-            text="Open/Connect"
-          />
-        </DialogFooter>
+          </TextField>
+          <DialogFooter>
+            <DefaultButton
+              text="Cancel"
+              onClick={ this.props.onDialogCancel }
+            />
+            <PrimaryButton
+              type="submit"
+              disabled={ !!errorMessage || !botUrl }
+              text="Connect"
+            />
+          </DialogFooter>
+        </form>
       </Dialog>
     );
-  }
-
-  private onBotSelected = async (bot: BotInfo) => {
-    try {
-      await this.props.switchToBot(bot.path);
-      this.props.onDialogCancel();
-    } catch (e) {
-      this.props.sendNotification(e);
-    }
-  }
-
-  private onCreateNewBotClick = async () => {
-    try {
-      await this.props.showCreateNewBotDialog();
-      this.props.onDialogCancel();
-    } catch (e) {
-      this.props.sendNotification(e);
-    }
   }
 
   private onFocus = (event: FocusEvent<HTMLInputElement>) => {
@@ -140,7 +118,7 @@ export class OpenBotDialog extends React.Component<OpenBotDialogProps, OpenBotDi
     this.setState({ botUrl });
   }
 
-  private onOpenClick = async () => {
+  private onSubmit = async () => {
     try {
       await this.props.openBot(this.state.botUrl);
     } catch (e) {

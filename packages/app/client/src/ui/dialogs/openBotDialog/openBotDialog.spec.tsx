@@ -31,13 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { newNotification, SharedConstants } from '@bfemulator/app-shared';
+import { SharedConstants } from '@bfemulator/app-shared';
 import { mount } from 'enzyme';
 import * as React from 'react';
 import { Provider } from 'react-redux';
 import { combineReducers, createStore } from 'redux';
 import * as BotActions from '../../../data/action/botActions';
-import { beginAdd } from '../../../data/action/notificationActions';
 import { bot } from '../../../data/reducer/bot';
 import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
 import { ActiveBotHelper } from '../../helpers/activeBotHelper';
@@ -72,13 +71,11 @@ const bots = [
 ];
 
 describe('The OpenBotDialog', () => {
-  let mockDispatch;
   let node;
   let parent;
   let instance;
   beforeEach(() => {
     mockStore.dispatch(BotActions.load(bots));
-    mockDispatch = jest.spyOn(mockStore, 'dispatch');
     parent = mount(<Provider store={ mockStore }>
       <OpenBotDialogContainer/>
     </Provider>);
@@ -90,47 +87,6 @@ describe('The OpenBotDialog', () => {
     const spy = jest.spyOn(DialogService, 'hideDialog');
     instance.props.onDialogCancel();
     expect(spy).toHaveBeenCalled();
-  });
-
-  it('should orchestrate the appropriate sequences when a recent bot is clicked', async () => {
-    const commandServiceSpy = jest.spyOn(CommandServiceImpl, 'call').mockResolvedValue(true);
-    const dialogSpy = jest.spyOn(DialogService, 'hideDialog');
-    await instance.onBotSelected(bots[0]);
-    const { Switch } = SharedConstants.Commands.Bot;
-    expect(commandServiceSpy).toHaveBeenCalledWith(Switch, '/some/path');
-    expect(dialogSpy).toHaveBeenCalled();
-  });
-
-  it('should send a notification when the bot fails to open', async () => {
-    await instance.onBotSelected(null);
-    const message = `An Error occurred on the Open Bot Dialog: TypeError: Cannot read property 'path' of null`;
-    const notification = newNotification(message);
-    const action = beginAdd(notification);
-    notification.timestamp = jasmine.any(Number) as any;
-    notification.id = jasmine.any(String) as any;
-    expect(mockDispatch).toHaveBeenLastCalledWith(action);
-  });
-
-  it('should make the appropriate calls when onCreateNewBotClick in called', async () => {
-    const commandServiceSpy = jest.spyOn(CommandServiceImpl, 'call').mockResolvedValue(true);
-    const dialogSpy = jest.spyOn(DialogService, 'hideDialog');
-
-    await instance.onCreateNewBotClick();
-    expect(commandServiceSpy).toHaveBeenLastCalledWith(SharedConstants.Commands.UI.ShowBotCreationDialog);
-    expect(dialogSpy).toHaveBeenCalled();
-  });
-
-  it('should send a notification when onCreateNewBotClick fails', async () => {
-    const commandServiceSpy = jest.spyOn(CommandServiceImpl, 'call').mockRejectedValue('oh noes!');
-    await instance.onCreateNewBotClick();
-    const message = `An Error occurred on the Open Bot Dialog: oh noes!`;
-    const notification = newNotification(message);
-    const action = beginAdd(notification);
-    notification.timestamp = jasmine.any(Number) as any;
-    notification.id = jasmine.any(String) as any;
-    expect(mockDispatch).toHaveBeenLastCalledWith(action);
-
-    expect(commandServiceSpy).toHaveBeenLastCalledWith(SharedConstants.Commands.UI.ShowBotCreationDialog);
   });
 
   it('should properly set the state when the input changes', () => {
@@ -174,7 +130,7 @@ describe('The OpenBotDialog', () => {
     } as any);
 
     const botHelperSpy = jest.spyOn(ActiveBotHelper, 'confirmAndOpenBotFromFile').mockResolvedValue(true);
-    await instance.onOpenClick();
+    await instance.onSubmit();
 
     expect(botHelperSpy).toHaveBeenCalledWith('some/path/to/myBot.bot');
   });
@@ -188,7 +144,7 @@ describe('The OpenBotDialog', () => {
     } as any);
 
     const commandServiceSpy = jest.spyOn(CommandServiceImpl, 'call');
-    await instance.onOpenClick();
+    await instance.onSubmit();
 
     expect(commandServiceSpy).toHaveBeenCalledWith(SharedConstants.Commands.Emulator.NewLiveChat,
       { endpoint: 'http://localhost:6500/api/messages' });
