@@ -81,19 +81,4 @@ export class Row extends React.Component<RowProps, {}> {
         return styles.alignTop;
     }
   }
-
-  /** Converts a row justification (horizontal axis) type to its flexbox style value */
-  private getRowJustification(): string {
-    switch (this.props.justify) {
-      case RowJustification.Center:
-        return styles.justifyCenter;
-
-      case RowJustification.Right:
-        return styles.justifyRight;
-
-      case RowJustification.Left:
-      default:
-        return styles.justifyLeft;
-    }
-  }
 }
