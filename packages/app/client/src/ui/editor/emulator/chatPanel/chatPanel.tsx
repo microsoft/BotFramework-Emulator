@@ -83,7 +83,7 @@ export default class ChatPanel extends React.Component<ChatPanelProps, ChatPanel
           showInInspector: true
         });
       }
-    }
+    };
   }
 
   render() {
