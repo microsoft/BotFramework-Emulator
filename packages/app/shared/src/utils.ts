@@ -34,23 +34,26 @@
 // We need to skip Webpack bundler on bundling 'electron':
 // 1. We are using react-scripts, thus, we are not able to configure Webpack
 // 2. To skip bundling, we can hack with window['require']
-import { BotConfigWithPath, uniqueId } from "@bfemulator/sdk-shared";
-import { IEndpointService, ServiceTypes } from "botframework-config/lib/schema";
+import { BotConfigWithPath, uniqueId } from '@bfemulator/sdk-shared';
+import { IEndpointService, ServiceTypes } from 'botframework-config/lib/schema';
 
-import { Notification, NotificationImpl, NotificationType } from "./types";
+import { Notification, NotificationImpl, NotificationType } from './types';
 
 export function isObject(item: any): boolean {
   return !!(
     item &&
-    typeof item === "object" &&
+    typeof item === 'object' &&
     !Array.isArray(item) &&
     item !== null
   );
 }
 
-export function mergeDeep<T extends {}, R extends {}>(target: T, source: R): T & R {
+export function mergeDeep<T extends {}, R extends {}>(
+  target: T,
+  source: R
+): T & R {
   // @ts-ignore https://github.com/Microsoft/TypeScript/issues/26412
-  const output = {...{} as T & R, ...target};
+  const output: T & R = { ...{}, ...target };
   // if (isObject(target) && isObject(source)) {
   {
     Object.keys(source).forEach(key => {
@@ -72,6 +75,31 @@ export function deepCopySlow(obj: any): any {
   return JSON.parse(JSON.stringify(obj));
 }
 
+/** Creates a new bot */
+export const newBot = (...bots: BotConfigWithPath[]): BotConfigWithPath => {
+  return Object.assign(
+    {},
+    {
+      name: '',
+      description: '',
+      services: [],
+    },
+    ...bots
+  );
+};
+
+/** Returns the first endpoint service of a bot */
+export const getFirstBotEndpoint = (
+  bot: BotConfigWithPath
+): IEndpointService => {
+  if (bot.services && bot.services.length) {
+    return bot.services.find(
+      service => service.type === ServiceTypes.Endpoint
+    ) as IEndpointService;
+  }
+  return null;
+};
+
 /** Tries to scan the bot record for a display string */
 export const getBotDisplayName = (
   bot: BotConfigWithPath = newBot()
@@ -80,20 +108,7 @@ export const getBotDisplayName = (
     bot.name ||
     bot.path ||
     (getFirstBotEndpoint(bot) ? getFirstBotEndpoint(bot).endpoint : null) ||
-    "¯\\_(ツ)_/¯"
-  );
-};
-
-/** Creates a new bot */
-export const newBot = (...bots: BotConfigWithPath[]): BotConfigWithPath => {
-  return Object.assign(
-    {},
-    {
-      name: "",
-      description: "",
-      services: []
-    },
-    ...bots
+    '¯\\_(ツ)_/¯'
   );
 };
 
@@ -105,26 +120,14 @@ export const newEndpoint = (
     {},
     {
       type: ServiceTypes.Endpoint,
-      name: "",
+      name: '',
       id: uniqueId(),
-      appId: "",
-      appPassword: "",
-      endpoint: "http://localhost:3978/api/messages"
+      appId: '',
+      appPassword: '',
+      endpoint: 'http://localhost:3978/api/messages',
     },
     ...endpoints
   );
-};
-
-/** Returns the first endpoint service of a bot */
-export const getFirstBotEndpoint = (
-  bot: BotConfigWithPath
-): IEndpointService => {
-  if (bot.services && bot.services.length) {
-    return (
-      bot.services.find(service => service.type === ServiceTypes.Endpoint)
-    ) as IEndpointService;
-  }
-  return null;
 };
 
 /** Creates and returns a new notification */
@@ -138,10 +141,10 @@ export const newNotification = (
   return notification;
 };
 
-export function isChatFile(file: string = "") {
-  return file.endsWith(".chat");
+export function isChatFile(file: string = '') {
+  return file.endsWith('.chat');
 }
 
-export function isTranscriptFile(file: string = "") {
-  return file.endsWith(".transcript");
+export function isTranscriptFile(file: string = '') {
+  return file.endsWith('.transcript');
 }

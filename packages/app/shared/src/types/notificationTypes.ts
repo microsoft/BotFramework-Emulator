@@ -31,12 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { uniqueId } from "@bfemulator/sdk-shared";
+import { uniqueId } from '@bfemulator/sdk-shared';
 
 export enum NotificationType {
   Info,
   Error,
-  Warning
+  Warning,
 }
 
 export interface NotificationCTAButton {

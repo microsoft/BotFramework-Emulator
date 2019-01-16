@@ -51,19 +51,19 @@ export interface ConversationResourceResponse {
 
 export const ErrorCodes = {
   /// unknown service error
-  ServiceError: "ServiceError",
+  ServiceError: 'ServiceError',
 
   /// Bad argument
-  BadArgument: "BadArgument",
+  BadArgument: 'BadArgument',
 
   /// Error parsing request
-  BadSyntax: "BadSyntax",
+  BadSyntax: 'BadSyntax',
 
   /// Mandatory property was not specified
-  MissingProperty: "MissingProperty",
+  MissingProperty: 'MissingProperty',
 
   /// Message exceeded size limits
-  MessageSizeTooBig: "MessageSizeTooBig"
+  MessageSizeTooBig: 'MessageSizeTooBig',
 };
 
 export interface APIException {
@@ -97,8 +97,8 @@ export function createErrorResponse(
   return {
     error: {
       code,
-      message
-    }
+      message,
+    },
   };
 }
 
@@ -110,6 +110,6 @@ export function createAPIException(
 ): APIException {
   return {
     statusCode,
-    error: createErrorResponse(code, message)
+    error: createErrorResponse(code, message),
   };
 }

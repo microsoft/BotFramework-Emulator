@@ -31,23 +31,24 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { BotConfigWithPath } from '@bfemulator/sdk-shared';
+import { IEndpointService, ServiceTypes } from 'botframework-config/lib/schema';
+
 import {
   isObject,
   deepCopySlow,
   newBot,
   newEndpoint,
   getFirstBotEndpoint,
-  newNotification
-} from "./utils";
-import { NotificationType } from "./types";
-import { BotConfigWithPath } from "@bfemulator/sdk-shared";
-import { IEndpointService, ServiceTypes } from "botframework-config/lib/schema";
+  newNotification,
+} from './utils';
+import { NotificationType } from './types';
 
-describe("utility function tests", () => {
-  test("isObject()", () => {
-    const someObj = { a: 1, b: "someString", c: false };
+describe('utility function tests', () => {
+  test('isObject()', () => {
+    const someObj = { a: 1, b: 'someString', c: false };
     const notObj1 = [1, 2, 3];
-    const notObj2 = "someStr";
+    const notObj2 = 'someStr';
     const notObj3 = null;
 
     expect(isObject(someObj)).toBe(true);
@@ -57,79 +58,79 @@ describe("utility function tests", () => {
     expect(isObject(notObj3)).toBe(false);
   });
 
-  test("deepCopySlow()", () => {
-    const a = { outer: 3, inner: { prop: ":)" } };
+  test('deepCopySlow()', () => {
+    const a = { outer: 3, inner: { prop: ':)' } };
     const b = deepCopySlow(a);
 
     expect(b).toEqual(a);
     expect(b).not.toBe(a);
   });
 
-  test("newBot()", () => {
+  test('newBot()', () => {
     const bot1 = newBot();
     const bot2: BotConfigWithPath = {
-      name: "someName",
-      description: "someDescription",
-      padlock: "somePadlock",
-      services: []
+      name: 'someName',
+      description: 'someDescription',
+      padlock: 'somePadlock',
+      services: [],
     };
     const bot3 = newBot(bot2);
 
-    expect(bot1.name).toBe("");
-    expect(bot1.description).toBe("");
+    expect(bot1.name).toBe('');
+    expect(bot1.description).toBe('');
     expect(bot1.services).toHaveLength(0);
 
-    expect(bot3.name).toBe("someName");
-    expect(bot3.description).toBe("someDescription");
-    expect(bot3.padlock).toBe("somePadlock");
+    expect(bot3.name).toBe('someName');
+    expect(bot3.description).toBe('someDescription');
+    expect(bot3.padlock).toBe('somePadlock');
   });
 
-  test("newEndpoint()", () => {
+  test('newEndpoint()', () => {
     const endpoint1 = newEndpoint();
     const endpoint2: IEndpointService = {
-      id: "someId",
-      endpoint: "someEndpoint",
+      id: 'someId',
+      endpoint: 'someEndpoint',
       type: ServiceTypes.Endpoint,
-      appId: "someAppId",
-      appPassword: "someAppPw",
-      name: "someName"
+      appId: 'someAppId',
+      appPassword: 'someAppPw',
+      name: 'someName',
     };
     const endpoint3 = newEndpoint(endpoint2);
 
     expect(endpoint1.type).toBe(ServiceTypes.Endpoint);
     expect(endpoint1.id).toBeTruthy();
-    expect(endpoint1.endpoint).toBe("http://localhost:3978/api/messages");
+    expect(endpoint1.endpoint).toBe('http://localhost:3978/api/messages');
 
-    expect(endpoint3.id).toBe("someId");
-    expect(endpoint3.endpoint).toBe("someEndpoint");
-    expect(endpoint3.appId).toBe("someAppId");
-    expect(endpoint3.appPassword).toBe("someAppPw");
-    expect(endpoint3.name).toBe("someName");
+    expect(endpoint3.id).toBe('someId');
+    expect(endpoint3.endpoint).toBe('someEndpoint');
+    expect(endpoint3.appId).toBe('someAppId');
+    expect(endpoint3.appPassword).toBe('someAppPw');
+    expect(endpoint3.name).toBe('someName');
   });
 
-  test("getFirstBotEndpoint()", () => {
+  test('getFirstBotEndpoint()', () => {
     const endpoint: IEndpointService = {
-      id: "someId",
-      endpoint: "someEndpoint",
+      id: 'someId',
+      endpoint: 'someEndpoint',
       type: ServiceTypes.Endpoint,
-      appId: "someAppId",
-      appPassword: "someAppPw",
-      name: "someName"
+      appId: 'someAppId',
+      appPassword: 'someAppPw',
+      name: 'someName',
     };
     const bot: BotConfigWithPath = {
-      name: "someName",
-      description: "someDescription",
-      padlock: "somePadlock",
-      services: [endpoint]
+      name: 'someName',
+      description: 'someDescription',
+      padlock: 'somePadlock',
+      services: [endpoint],
     };
 
     expect(getFirstBotEndpoint(bot)).toBe(endpoint);
   });
 
-  test("newNotification()", () => {
-    const notif = newNotification("someMessage");
+  test('newNotification()', () => {
+    const notif = newNotification('someMessage');
 
-    expect(notif.message).toBe("someMessage");
+    expect(notif.message).toBe('someMessage');
     expect(notif.type).toBe(NotificationType.Info);
   });
 });

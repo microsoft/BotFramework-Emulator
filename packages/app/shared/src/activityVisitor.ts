@@ -41,8 +41,8 @@ import {
   MessageActivity,
   ReceiptCard,
   SigninCard,
-  ThumbnailCard
-} from "@bfemulator/sdk-shared";
+  ThumbnailCard,
+} from '@bfemulator/sdk-shared';
 
 export abstract class ActivityVisitor {
   public traverseActivity(activity: Activity) {

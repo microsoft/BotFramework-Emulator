@@ -32,7 +32,7 @@
 //
 
 export interface FileInfo {
-  type: "container" | "leaf";
+  type: 'container' | 'leaf';
   name: string;
   path: string;
 }

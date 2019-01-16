@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ETagObject } from "@bfemulator/sdk-shared";
+import { ETagObject } from '@bfemulator/sdk-shared';
 
 export interface Conversation extends ETagObject {
   conversationId?: string;
