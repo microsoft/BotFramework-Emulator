@@ -76,8 +76,6 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
   }
 
   private get startSection(): JSX.Element {
-    const { onNewBotClick } = this.props;
-
     return (
       <div className={ styles.section }>
         <SmallHeader className={ styles.marginFix }>Start by testing your bot</SmallHeader>
@@ -91,8 +89,10 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
           <PrimaryButton className={ styles.openBot } text="Open Bot" onClick={ this.onOpenBotClick }/>
         </Row>
         <span>If you don’t have a bot configuration,&nbsp;
-          <button className={ styles.ctaLink }
-                  onClick={ onNewBotClick }>create a new bot configuration.
+          <button
+            className={ styles.ctaLink }
+            onClick={ this.props.onNewBotClick }>
+            create a new bot configuration.
         </button>
         </span>
       </div>
