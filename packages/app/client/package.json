@@ -12,7 +12,6 @@
     "build:shared:dev": "webpack --mode development --progress --colors",
     "build:app:dev": "webpack --mode development --progress --colors",
     "build": "run-s lint build:vendors build:shared build:app",
-    "lint": "prettier-eslint --log-level error --write "./src/**/*.{ts,tsx,js,jsx}",
     "start": "run-s build:vendors:dev build:shared:dev webpackdevServer:dev",
     "webpackdevServer:dev": "webpack-dev-server --mode development --hot --inline --progress --colors --content-base ./public",
     "test": "jest"

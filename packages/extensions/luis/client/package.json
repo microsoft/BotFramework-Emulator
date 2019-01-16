@@ -18,7 +18,6 @@
   "scripts": {
     "start": "webpack-dev-server --hot --inline --mode development --content-base ./public",
     "build": "webpack --mode production",
-    "lint": "prettier-eslint --log-level error --write "./src/**/*.{ts,tsx,js,jsx}",
     "test": ""
   },
   "devDependencies": {

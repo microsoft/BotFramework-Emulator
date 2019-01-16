@@ -8,7 +8,6 @@
     "build": "run-s lint clean build:prod && tsc --emitDeclarationOnly --declaration",
     "build:prod": "webpack --mode production --progress --colors",
     "clean": "rimraf ./built",
-    "lint": "prettier-eslint --log-level error --write "./src/**/*.{ts,tsx,js,jsx}",
     "prepare": "npm run clean",
     "test": "jest",
     "dev": "webpack --mode development --watch --progress --color"

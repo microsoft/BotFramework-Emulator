@@ -11,7 +11,6 @@
     "build:electron": "babel ./src --out-dir app/server --extensions \".ts,.tsx\" --ignore \"**/*.spec.ts\" && npm run copy:extension:stubs",
     "copy:extension:stubs": "ncp src/extensions app/extensions",
     "dist": "electron-builder",
-    "lint": "prettier-eslint --log-level error --write "./src/**/*.{ts,tsx,js,jsx}",
     "pack": "electron-builder --dir",
     "start": "concurrently --kill-others --names \"electron,react-app\" --success first \"npm run start:electron:dev\" \"npm run start:react-app\"",
     "start:electron": "./node_modules/.bin/electron --inspect=7777 --remote-debugging-port=7778 .",
