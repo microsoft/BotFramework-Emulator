@@ -8,7 +8,7 @@
     "build": "npm run lint && npm run clean && npm run build:prod && tsc --emitDeclarationOnly --declaration",
     "build:prod": "babel ./src --out-dir built --extensions \".ts,.tsx\" --ignore \"**/*.spec.ts\"",
     "clean": "rimraf ./built",
-    "lint": "tslint --project tsconfig.json",
+    "lint": "prettier-eslint --log-level error --write "./src/**/*.{ts,tsx,js,jsx}",
     "prepare": "npm run clean",
     "test": "jest"
   },

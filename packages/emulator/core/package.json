@@ -11,7 +11,7 @@
     "build": "babel ./src --out-dir lib --extensions \".ts,.tsx\" --ignore \"**/*.spec.ts\" --source-maps inline && tsc --emitDeclarationOnly --declaration",
     "build:watch": "npm run build:prod --outdir lib --watch",
     "clean": "rimraf lib",
-    "lint": "tslint --project tsconfig.json",
+    "lint": "prettier-eslint --log-level error --write "./src/**/*.{ts,tsx,js,jsx}",
     "start": "node-dev .",
     "test": "jest",
     "typecheck": "tsc"
