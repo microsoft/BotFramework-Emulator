@@ -31,8 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IPC, isObject } from "@bfemulator/sdk-shared";
-import * as WebSocket from "ws";
+import { IPC, isObject } from '@bfemulator/sdk-shared';
+import * as WebSocket from 'ws';
 
 export class WebSocketIPC extends IPC {
   private _ws: WebSocket;
@@ -49,18 +49,18 @@ export class WebSocketIPC extends IPC {
     this._id = value;
   }
 
-  constructor(arg: WebSocket | string = "http://localhost:9091") {
+  constructor(arg: WebSocket | string = 'http://localhost:9091') {
     super();
-    if (typeof arg === "string") {
+    if (typeof arg === 'string') {
       this._ws = new WebSocket(arg, { perMessageDeflate: false });
     } else if (arg instanceof WebSocket) {
       this._ws = arg;
     }
-    this._ws.on("message", s => {
+    this._ws.on('message', s => {
       const message = JSON.parse(s as string);
       if (
         isObject(message) &&
-        message.type === "ipc:message" &&
+        message.type === 'ipc:message' &&
         Array.isArray(message.args)
       ) {
         const channelName = message.args.shift();
@@ -74,8 +74,8 @@ export class WebSocketIPC extends IPC {
 
   public send(...args: any[]): void {
     const message = {
-      type: "ipc:message",
-      args
+      type: 'ipc:message',
+      args,
     };
     const s = JSON.stringify(message);
     this._ws.send(s);
@@ -88,7 +88,7 @@ export abstract class WebSocketServer {
 
   constructor(port: number = 9091) {
     this._wss = new WebSocket.Server({ port });
-    this._wss.on("connection", ws => {
+    this._wss.on('connection', ws => {
       this.onConnection(ws);
     });
   }

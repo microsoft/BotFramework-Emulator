@@ -31,5 +31,5 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from "./process";
-export * from "./websocket";
+export * from './process';
+export * from './websocket';
