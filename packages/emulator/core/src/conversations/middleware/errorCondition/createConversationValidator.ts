@@ -6,9 +6,6 @@ import { ErrorCodes } from '../../../types/errorCodes';
 import createAPIException from '../../../utils/createResponse/apiException';
 
 class CreateConversationError {
-  public static MEMBERS_MISSING = new CreateConversationError(
-    ErrorCodes.MissingProperty,
-    'The "members" parameter is required.');
 
   public static TOO_MANY_MEMBERS = new CreateConversationError(
     ErrorCodes.BadSyntax,
@@ -17,11 +14,6 @@ class CreateConversationError {
   public static BOT_MISSING = new CreateConversationError(
     ErrorCodes.MissingProperty,
     'The "Bot" parameter is required'
-  );
-
-  public static BOT_ID_MISMATCH = new CreateConversationError(
-    ErrorCodes.BadArgument,
-    'conversationParameters.bot.id doesn\'t match security bot id'
   );
 
   public static APP_ID_MISSING = new CreateConversationError(
@@ -46,11 +38,8 @@ Object.freeze(CreateConversationError);
 
 function validateCreateConversationRequest(params: ConversationParameters, endpoint: BotEndpoint)
   : CreateConversationError {
-  if (!params.members) {
-    return CreateConversationError.MEMBERS_MISSING;
-  }
 
-  if (params.members.length !== 1) {
+  if (params.members && params.members.length > 1) {
     return CreateConversationError.TOO_MANY_MEMBERS;
   }
 
