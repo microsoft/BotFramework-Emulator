@@ -13,6 +13,6 @@ packages=(
   prettier-eslint-cli
 )
 
-for pkg in $packages; do
+for pkg in ${packages[*]}; do
   lerna add --scope "$1" --dev $pkg
 done
