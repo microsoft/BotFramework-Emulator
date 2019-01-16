@@ -7,7 +7,7 @@ const {
   NamedModulesPlugin,
   HotModuleReplacementPlugin,
   DefinePlugin,
-  WatchIgnorePlugin
+  WatchIgnorePlugin,
 } = webpack;
 const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 
@@ -21,17 +21,17 @@ const use = [
       plugins: ['react-hot-loader/babel'],
     },
   },
-  'ts-loader'
+  'ts-loader',
 ];
 const defaultConfig = {
   entry: {
-    index: require.resolve('./src/index.tsx')
+    index: require.resolve('./src/index.tsx'),
   },
 
   target: 'electron-renderer',
 
   stats: {
-    warnings: false
+    warnings: false,
   },
 
   module: {
@@ -42,17 +42,13 @@ const defaultConfig = {
         use: {
           loader: 'babel-loader',
           options: {
-            ignore: ['**/*.spec.tsx?']
-          }
-        }
+            ignore: ['**/*.spec.tsx?'],
+          },
+        },
       },
       {
         test: /\.css$/,
-        use: [
-          'style-loader',
-          'resolve-url-loader',
-          'css-loader'
-        ]
+        use: ['style-loader', 'resolve-url-loader', 'css-loader'],
       },
       {
         test: /\.(png|jpg|gif|svg|woff|woff2)$/,
@@ -60,10 +56,10 @@ const defaultConfig = {
           {
             loader: 'url-loader',
             options: {
-              limit: 8192
-            }
-          }
-        ]
+              limit: 8192,
+            },
+          },
+        ],
       },
       {
         test: /\.scss$/,
@@ -78,19 +74,15 @@ const defaultConfig = {
               namedExport: true,
               camelCase: true,
               sourcemaps: true,
-              banner: '// This is a generated file. Changes are likely to result in being overwritten'
-            }
+              banner:
+                '// This is a generated file. Changes are likely to result in being overwritten',
+            },
           },
           'resolve-url-loader',
-          'sass-loader'
-        ]
+          'sass-loader',
+        ],
       },
-      {
-        test: /\.tsx?$/,
-        loader: 'tslint-loader',
-        options: {}
-      }
-    ]
+    ],
   },
 
   devtool: 'source-map',
@@ -99,11 +91,11 @@ const defaultConfig = {
     hot: true,
     inline: true,
     port: 3000,
-    historyApiFallback: false
+    historyApiFallback: false,
   },
 
   resolve: {
-    extensions: ['.js', '.jsx', '.json', '.ts', '.tsx']
+    extensions: ['.js', '.jsx', '.json', '.ts', '.tsx'],
   },
 
   output: {
@@ -121,18 +113,19 @@ const defaultConfig = {
       { from: './src/index.html', to: './index.html' },
       { from: './src/ui/styles/themes/light.css', to: 'themes/light.css' },
       { from: './src/ui/styles/themes/dark.css', to: 'themes/dark.css' },
-      { from: './src/ui/styles/themes/high-contrast.css', to: 'themes/high-contrast.css' },
+      {
+        from: './src/ui/styles/themes/high-contrast.css',
+        to: 'themes/high-contrast.css',
+      },
       { from: './src/ui/styles/themes/neutral.css', to: 'css/neutral.css' },
       { from: './src/ui/styles/themes/fonts.css', to: 'css/fonts.css' },
       { from: './src/ui/styles/themes/redline.css', to: 'css/redline.css' },
     ]),
     new DefinePlugin({
-      DEV: JSON.stringify((npm_lifecycle_event.includes("dev")))
+      DEV: JSON.stringify(npm_lifecycle_event.includes('dev')),
     }),
-    new WatchIgnorePlugin([
-      './src/**/*.d.ts'
-    ])
-  ]
+    new WatchIgnorePlugin(['./src/**/*.d.ts']),
+  ],
 };
 
 const buildConfig = mode => {
@@ -141,9 +134,13 @@ const buildConfig = mode => {
 
     plugins: [
       ...defaultConfig.plugins,
-      new DllReferencePlugin({ manifest: require(path.join(manifestLocation, 'vendors-manifest.json')) }),
-      new DllReferencePlugin({ manifest: require(path.join(manifestLocation, 'shared-manifest.json')) })
-    ]
+      new DllReferencePlugin({
+        manifest: require(path.join(manifestLocation, 'vendors-manifest.json')),
+      }),
+      new DllReferencePlugin({
+        manifest: require(path.join(manifestLocation, 'shared-manifest.json')),
+      }),
+    ],
   };
   if (mode === 'development') {
     config.module.rules[0].use = use;
@@ -154,52 +151,54 @@ const buildConfig = mode => {
 const sharedConfig = () => ({
   ...defaultConfig,
   entry: {
-    shared: [path.resolve('./src/shared.ts')]
+    shared: [path.resolve('./src/shared.ts')],
   },
 
   output: {
     ...defaultConfig.output,
-    library: '[name]_[hash]'
+    library: '[name]_[hash]',
   },
 
   node: {
-    fs: 'empty'
+    fs: 'empty',
   },
 
   plugins: [
     ...defaultConfig.plugins,
     new DllPlugin({
       path: path.join(manifestLocation, 'shared-manifest.json'),
-      name: '[name]_[hash]'
+      name: '[name]_[hash]',
     }),
 
-    new DllReferencePlugin({ manifest: require(path.join(manifestLocation, 'vendors-manifest.json')) })
-  ]
+    new DllReferencePlugin({
+      manifest: require(path.join(manifestLocation, 'vendors-manifest.json')),
+    }),
+  ],
 });
 
 const vendorsConfig = () => ({
   ...defaultConfig,
   entry: {
-    vendors: [path.resolve('./src/vendors.ts')]
+    vendors: [path.resolve('./src/vendors.ts')],
   },
 
   output: {
     ...defaultConfig.output,
-    library: '[name]_[hash]'
+    library: '[name]_[hash]',
   },
 
   plugins: [
     ...defaultConfig.plugins,
     new DllPlugin({
       path: path.join(manifestLocation, 'vendors-manifest.json'),
-      name: '[name]_[hash]'
-    })
-  ]
+      name: '[name]_[hash]',
+    }),
+  ],
 });
 
 const buildClassification = npm_lifecycle_event.split(':')[1];
 
-module.exports = function (env, argv) {
+module.exports = function(env, argv) {
   switch (buildClassification) {
     case 'vendors':
       return vendorsConfig();

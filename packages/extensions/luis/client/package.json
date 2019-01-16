@@ -40,8 +40,6 @@
     "resolve-url-loader": "^2.3.0",
     "sass-loader": "^7.1.0",
     "ts-loader": "^4.4.2",
-    "tslint": "^5.10.0",
-    "tslint-loader": "^3.6.0",
     "typescript": "3.1.1",
     "typings-for-css-modules-loader": "^1.7.0",
     "webpack": "4.16.4",

@@ -1,12 +1,13 @@
 const {
   NamedModulesPlugin,
   HotModuleReplacementPlugin,
-  WatchIgnorePlugin } = require('webpack');
+  WatchIgnorePlugin,
+} = require('webpack');
 const path = require('path');
 const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 module.exports = {
   entry: {
-    qna: path.resolve('./src/index.tsx')
+    qna: path.resolve('./src/index.tsx'),
   },
 
   target: 'electron-renderer',
@@ -25,17 +26,18 @@ module.exports = {
               sass: false,
               namedExport: true,
               camelCase: true,
-              sourcemaps:true,
-              banner: '// This is a generated file. Changes are likely to result in being overwritten'
-            }
+              sourcemaps: true,
+              banner:
+                '// This is a generated file. Changes are likely to result in being overwritten',
+            },
           },
           'resolve-url-loader',
-          'sass-loader'
-        ]
+          'sass-loader',
+        ],
       },
       {
         test: /\.(png|jpg|gif|svg)$/,
-        use: [ 'file-loader' ]
+        use: ['file-loader'],
       },
       {
         test: /\.(tsx?)|(jsx)$/,
@@ -43,15 +45,9 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            ignore: ['**/*.spec.ts']
-          }
-        }
-      },
-      {
-        test: /\.tsx$/,
-        enforce: 'pre',
-        loader: 'tslint-loader',
-        options: { /* Loader options go here */ }
+            ignore: ['**/*.spec.ts'],
+          },
+        },
       },
     ],
   },
@@ -60,11 +56,11 @@ module.exports = {
     hot: true,
     inline: true,
     port: 8080,
-    historyApiFallback: false
+    historyApiFallback: false,
   },
 
   resolve: {
-    extensions: ['.js', '.jsx', '.json', '.ts', '.tsx']
+    extensions: ['.js', '.jsx', '.json', '.ts', '.tsx'],
   },
 
   output: {
@@ -74,7 +70,7 @@ module.exports = {
   },
 
   stats: {
-    warnings: false
+    warnings: false,
   },
 
   externals: {},
@@ -84,6 +80,6 @@ module.exports = {
       './build/**/*.*',
       './public/**/*.*',
       './src/**/*.d.ts',
-    ])
-  ]
+    ]),
+  ],
 };

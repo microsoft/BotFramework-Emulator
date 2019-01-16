@@ -1,4 +1,3 @@
-/* tslint:disable:max-line-length */
 //
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license.

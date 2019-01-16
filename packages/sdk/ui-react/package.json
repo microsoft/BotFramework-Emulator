@@ -47,8 +47,6 @@
     "resolve-url-loader": "^2.3.0",
     "rimraf": "^2.6.2",
     "sass-loader": "^7.1.0",
-    "tslint": "^5.10.0",
-    "tslint-loader": "^3.6.0",
     "typescript": "3.1.1",
     "typings-for-css-modules-loader": "^1.7.0",
     "url-loader": "^1.0.1",
