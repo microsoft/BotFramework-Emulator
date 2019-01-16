@@ -75,29 +75,30 @@ export default class ChatPanel extends React.Component<ChatPanelProps, ChatPanel
     }
   }
 
-  updateSelectedActivity = (activity) => {
-    const { document } = this.props;
-
-    if (document && document.selectedActivity$) {
-      document.selectedActivity$.next({
-        ...activity,
-        showInInspector: true
-      });
+  updateSelectedActivityObservable = (observable: BehaviorSubject<Activity>) => {
+    return (activity: Activity) => {
+      if (observable) {
+        observable.next({
+          ...activity,
+          showInInspector: true
+        });
+      }
     }
   }
 
   render() {
-    const { endpointUrl } = this.props.document || { endpointUrl: '' };
+    const { document, mode, onStartConversation } = this.props;
+    const { endpointUrl } = document || { endpointUrl: '' };
 
     return (
       <div className={ `${styles.chatPanel} ${this.props.className || ''}` }>
         <header>{ endpointUrl }</header>
         <ChatContainer
-          document={ this.props.document }
-          mode={ this.props.mode }
-          onStartConversation={ this.props.onStartConversation }
+          document={ document }
+          mode={ mode }
+          onStartConversation={ onStartConversation }
           selectedActivity={ this.state.selectedActivity }
-          updateSelectedActivity={ this.updateSelectedActivity }
+          updateSelectedActivity={ this.updateSelectedActivityObservable(document && document.selectedActivity$) }
         />
       </div>
     );
