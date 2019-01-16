@@ -93,9 +93,9 @@ export interface PaymentRequest {
 }
 
 export const PaymentOperations = {
-  PaymentCompleteOperationName: "payments/complete",
-  UpdateShippingAddressOperationName: "payments/update/shippingAddress",
-  UpdateShippingOptionOperationName: "payments/update/shippingOption"
+  PaymentCompleteOperationName: 'payments/complete',
+  UpdateShippingAddressOperationName: 'payments/update/shippingAddress',
+  UpdateShippingOptionOperationName: 'payments/update/shippingOption',
 };
 
 export interface PaymentAddress {

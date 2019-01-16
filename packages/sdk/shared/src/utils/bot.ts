@@ -31,13 +31,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IEndpointService } from "botframework-config/lib/schema";
+import { IEndpointService } from 'botframework-config/lib/schema';
 
 import {
   BotConfigOverrides,
   BotConfigWithPath,
-  BotConfigWithPathImpl
-} from "../types";
+  BotConfigWithPathImpl,
+} from '../types';
 
 /**
  * Takes bot config overrides and applies them to the target bot
@@ -50,7 +50,7 @@ export function applyBotConfigOverrides(
 ): BotConfigWithPath {
   const botConfig: BotConfigWithPath = BotConfigWithPathImpl.fromJSON({
     ...targetBot,
-    ...{ overrides }
+    ...{ overrides },
   });
   return botConfig;
 }

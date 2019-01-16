@@ -31,9 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Disposable } from "../lifecycle";
+import { Disposable } from '../lifecycle';
 
-import { Sender } from "./sender";
+import { Sender } from './sender';
 
 export interface Listener {
   (...args: any[]);
@@ -58,7 +58,7 @@ export class Channel {
     return {
       dispose: () => {
         this.clearListener(messageName);
-      }
+      },
     };
   }
 

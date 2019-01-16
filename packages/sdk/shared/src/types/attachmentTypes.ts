@@ -87,13 +87,13 @@ export interface CardAction {
 }
 
 export class AttachmentContentTypes {
-  public static animationCard = "application/vnd.microsoft.card.animation";
-  public static audioCard = "application/vnd.microsoft.card.audio";
-  public static heroCard = "application/vnd.microsoft.card.hero";
-  public static receiptCard = "application/vnd.microsoft.card.receipt";
-  public static signInCard = "application/vnd.microsoft.card.signin";
-  public static thumbnailCard = "application/vnd.microsoft.card.thumbnail";
-  public static videoCard = "application/vnd.microsoft.card.video";
+  public static animationCard = 'application/vnd.microsoft.card.animation';
+  public static audioCard = 'application/vnd.microsoft.card.audio';
+  public static heroCard = 'application/vnd.microsoft.card.hero';
+  public static receiptCard = 'application/vnd.microsoft.card.receipt';
+  public static signInCard = 'application/vnd.microsoft.card.signin';
+  public static thumbnailCard = 'application/vnd.microsoft.card.thumbnail';
+  public static videoCard = 'application/vnd.microsoft.card.video';
 }
 
 export interface CardImage {

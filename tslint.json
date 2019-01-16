@@ -20,6 +20,10 @@
     "jsx-no-multiline-js": false,
     "label-position": true,
     "max-line-length": [true, 120],
+
+
+
+
     "no-object-literal-type-assertion": false,
     "only-arrow-functions": false,
     "prefer-const": false,
@@ -62,6 +66,12 @@
       "static-before-instance",
       "variables-before-functions"
     ],
+
+
+
+
+
+
     "no-any": false,
     "no-arg": true,
     "no-console": [

@@ -31,12 +31,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { CommandRegistry, CommandRegistryImpl } from "..";
-import { Channel, IPC } from "../ipc";
-import { Disposable, DisposableImpl } from "../lifecycle";
-import { uniqueId } from "../utils";
+import { CommandRegistry, CommandRegistryImpl } from '..';
 
-import { CommandHandler } from ".";
+import { Channel, IPC } from '../ipc';
+import { Disposable, DisposableImpl } from '../lifecycle';
+import { uniqueId } from '../utils';
+
+import { CommandHandler } from '.';
 
 export interface CommandService extends DisposableImpl {
   registry: CommandRegistry;
@@ -48,7 +49,7 @@ export interface CommandService extends DisposableImpl {
   on(commandName: string, handler?: CommandHandler): Disposable;
 
   on(
-    event: "command-not-found",
+    event: 'command-not-found',
     notFoundHandler?: (commandName: string, ...args: any[]) => any
   );
 }
@@ -67,7 +68,7 @@ export class CommandServiceImpl extends DisposableImpl
 
   constructor(
     _ipc: IPC,
-    _channelName: string = "command-service",
+    _channelName: string = 'command-service',
     _registry: CommandRegistry = new CommandRegistryImpl()
   ) {
     super();
@@ -79,7 +80,7 @@ export class CommandServiceImpl extends DisposableImpl
     this.toDispose(this._ipc.registerChannel(this._channel));
     this.toDispose(
       this._channel.setListener(
-        "call",
+        'call',
         (commandName: string, transactionId: string, ...args: any[]) => {
           this.call(commandName, ...args)
             .then(result => {
@@ -97,10 +98,10 @@ export class CommandServiceImpl extends DisposableImpl
 
   public on(event: string, handler?: CommandHandler): Disposable;
   public on(
-    event: "command-not-found",
+    event: 'command-not-found',
     handler?: (commandName: string, ...args: any[]) => any
   ) {
-    if (event === "command-not-found") {
+    if (event === 'command-not-found') {
       this._notFoundHandler = handler;
       return undefined;
     } else {
@@ -129,14 +130,16 @@ export class CommandServiceImpl extends DisposableImpl
 
   public remoteCall(commandName: string, ...args: any[]): Promise<any> {
     const transactionId = uniqueId();
-    this._channel.send("call", commandName, transactionId, ...args);
+    this._channel.send('call', commandName, transactionId, ...args);
     return new Promise<any>((resolve, reject) => {
       this._channel.setListener(
         transactionId,
         (success: boolean, ...responseArgs: any[]) => {
           this._channel.clearListener(transactionId);
           if (success) {
-            const result = responseArgs.length ? responseArgs.shift() : undefined;
+            const result = responseArgs.length
+              ? responseArgs.shift()
+              : undefined;
             resolve(result);
           } else {
             reject(responseArgs.shift());

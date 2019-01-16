@@ -31,10 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ChannelAccount, ConversationAccount } from "./accountTypes";
-import { Attachment } from "./attachmentTypes";
-import { Entity } from "./entityTypes";
-import { ETagObject } from "./eTagTypes";
+import { ChannelAccount, ConversationAccount } from './accountTypes';
+import { Attachment } from './attachmentTypes';
+import { Entity } from './entityTypes';
+import { ETagObject } from './eTagTypes';
 
 export interface ActivityOrID {
   activity?: GenericActivity;

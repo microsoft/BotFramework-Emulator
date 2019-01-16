@@ -31,11 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from "./accountTypes";
-export * from "./activityTypes";
-export * from "./attachmentTypes";
-export * from "./entityTypes";
-export * from "./eTagTypes";
-export * from "./paymentTypes";
-export * from "./userTypes";
-export * from "./botConfigWithPathTypes";
+export * from './accountTypes';
+export * from './activityTypes';
+export * from './attachmentTypes';
+export * from './entityTypes';
+export * from './eTagTypes';
+export * from './paymentTypes';
+export * from './userTypes';
+export * from './botConfigWithPathTypes';

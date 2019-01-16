@@ -31,11 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { BotConfigurationBase } from "botframework-config/lib/botConfigurationBase";
+import { BotConfigurationBase } from 'botframework-config/lib/botConfigurationBase';
 import {
   IBotConfiguration,
-  IEndpointService
-} from "botframework-config/lib/schema";
+  IEndpointService,
+} from 'botframework-config/lib/schema';
 
 export interface BotConfigOverrides {
   readonly endpoint?: Partial<IEndpointService>;
@@ -48,14 +48,14 @@ export interface BotConfigWithPath extends IBotConfiguration {
 
 export class BotConfigWithPathImpl extends BotConfigurationBase
   implements BotConfigWithPath {
-  public path = "";
+  public path = '';
   public overrides = null;
 
   public static fromJSON(
     source: Partial<BotConfigWithPathImpl>
   ): BotConfigWithPathImpl {
     const botConfig = super.fromJSON(source) as Partial<BotConfigWithPathImpl>;
-    const { path = "", overrides = null } = source;
+    const { path = '', overrides = null } = source;
     const botConfigWithPath = new BotConfigWithPathImpl();
     Object.assign(botConfigWithPath, botConfig, { path, overrides });
 
