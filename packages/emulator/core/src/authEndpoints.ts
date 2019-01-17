@@ -56,5 +56,6 @@ export const v32Authentication = {
 };
 
 export const speech = {
+  // Access token for Bing Speech Api
   tokenEndpoint: 'https://login.botframework.com/v3/speechtoken'
 };

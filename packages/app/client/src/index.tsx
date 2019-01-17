@@ -45,7 +45,6 @@ import { CommandRegistry, registerAllCommands } from './commands';
 import { SharedConstants, newNotification } from '@bfemulator/app-shared';
 import { beginAdd } from './data/action/notificationActions';
 import { globalHandlers } from './utils/eventHandlers';
-import 'botframework-webchat/botchat.css';
 import './ui/styles/globals.scss';
 
 interceptError();

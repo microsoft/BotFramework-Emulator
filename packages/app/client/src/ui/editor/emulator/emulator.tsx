@@ -31,8 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as BotChat from 'botframework-webchat';
-import { uniqueId, uniqueIdv4 } from '@bfemulator/sdk-shared';
+import { createDirectLine } from 'botframework-webchat';
+import { Activity, uniqueId, uniqueIdv4 } from '@bfemulator/sdk-shared';
 import { Splitter, SplitButton } from '@bfemulator/ui-react';
 import base64Url from 'base64url';
 import { IEndpointService } from 'botframework-config/lib/schema';
@@ -148,10 +148,11 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
     if (props.document.subscription) {
       props.document.subscription.unsubscribe();
     }
-    const selectedActivity$ = new BehaviorSubject({});
-    const subscription = selectedActivity$.subscribe((obj: any) => {
-      if (obj && obj.activity) {
-        this.props.setInspectorObjects(props.document.documentId, obj.activity);
+    const selectedActivity$ = new BehaviorSubject<Activity | null>({});
+    const subscription = selectedActivity$.subscribe((activity) => {
+
+      if (activity && activity.showInInspector) {
+        this.props.setInspectorObjects(props.document.documentId, activity);
       }
     });
 
@@ -219,7 +220,7 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
 
     // TODO: We need to use encoded token because we need to pass both endpoint ID and conversation ID
     //       We should think about a better model to pass conversation ID from Web Chat to emulator core
-    const directLine = new BotChat.DirectLine({
+    const directLine = createDirectLine({
       secret: encodedOptions,
       domain: `${ this.props.url }/v3/directline`,
       webSocket: false
@@ -251,8 +252,8 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
                      onStartConversation={ this.onStartOverClick }/>
           { chatPanelChild }
         </div>
-        <span 
-          className={ styles.closePresentationIcon } 
+        <span
+          className={ styles.closePresentationIcon }
           onClick={ () => this.onPresentationClick(false) }
         />
       </div>
@@ -268,13 +269,13 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
           this.props.mode === 'livechat' &&
           <div className={ styles.header }>
             <ToolBar>
-              <SplitButton 
+              <SplitButton
                 defaultLabel="Restart conversation"
                 buttonClass={ styles.restartIcon }
                 options={ [NewUserId, SameUserId] }
                 onClick={ this.onStartOverClick }/>
-              <button 
-                className={ `${ styles.saveTranscriptIcon } ${ styles.toolbarIcon || '' }` } 
+              <button
+                className={ `${ styles.saveTranscriptIcon } ${ styles.toolbarIcon || '' }` }
                 onClick={ this.onExportClick }
               >
                 Save transcript
@@ -328,7 +329,7 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
     const { NewUserId, SameUserId } = RestartConversationOptions;
     this.props.clearLog(this.props.document.documentId);
     this.props.setInspectorObjects(this.props.document.documentId, []);
-    
+
     switch (option) {
       case NewUserId:
         const newUserId = uniqueIdv4();

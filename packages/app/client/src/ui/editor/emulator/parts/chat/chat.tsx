@@ -32,15 +32,14 @@
 //
 import * as React from 'react';
 import { Component } from 'react';
+import { Activity } from '@bfemulator/sdk-shared';
 import { IEndpointService } from 'botframework-config/lib/schema';
-import { Chat as WebChat, Speech } from 'botframework-webchat';
+import ReactWebChat, { createCognitiveServicesBingSpeechPonyfillFactory } from 'botframework-webchat';
 import { CommandServiceImpl } from '../../../../../platform/commands/commandServiceImpl';
-import memoize from '../../../../helpers/memoize';
 import * as styles from './chat.scss';
 import { EmulatorMode } from '../../emulator';
-
-const CognitiveServices = require('botframework-webchat/CognitiveServices');
-const AdaptiveCardsHostConfig = require('botframework-webchat/adaptivecards-hostconfig.json');
+import ActivityWrapper from './activityWrapper';
+import webChatStyleOptions from './webChatTheme';
 
 export interface ChatProps {
   document: any;
@@ -49,42 +48,27 @@ export interface ChatProps {
   onStartConversation: any;
   currentUserId: string;
   locale: string;
+  selectedActivity: Activity | null;
+  updateSelectedActivity: (activity: Activity) => void;
 }
 
-function createWebChatProps(
-  botId: string,
-  userId: string,
-  directLine: any,
-  selectedActivity$: any,
+interface ChatState {
+  waitForSpeechToken: boolean;
+  webSpeechPonyfillFactory: any;
+}
+
+function isCardSelected(selectedActivity: Activity | null, activity: Activity): boolean {
+  return Boolean(selectedActivity && activity.id && selectedActivity.id === activity.id);
+}
+
+function isSpeechEnabled(endpoint: IEndpointService | null): boolean {
+  return Boolean(endpoint && endpoint.appId && endpoint.appPassword);
+}
+
+export async function getSpeechToken(
   endpoint: IEndpointService,
-  mode: string
-): any {
-  return {
-    adaptiveCardsHostConfig: AdaptiveCardsHostConfig,
-    bot: {
-      id: botId || 'bot',
-      name: 'Bot'
-    },
-    botConnection: directLine,
-    chatTitle: false,
-    selectedActivity: selectedActivity$,
-    showShell: mode === 'livechat',
-    speechOptions:
-      (endpoint && endpoint.appId && endpoint.appPassword) ? {
-        speechRecognizer: new CognitiveServices.SpeechRecognizer({
-          fetchCallback: getSpeechToken.bind(null, endpoint, false),
-          fetchOnExpiryCallback: getSpeechToken.bind(null, endpoint, true)
-        }),
-        speechSynthesizer: new Speech.BrowserSpeechSynthesizer()
-      } : null,
-    user: {
-      id: userId,
-      name: 'User'
-    }
-  };
-}
-
-export async function getSpeechToken(endpoint: IEndpointService, refresh: boolean): Promise<string | void> {
+  refresh: boolean = false
+): Promise<string | void> {
   if (!endpoint) {
     console.warn('No endpoint for this chat, cannot fetch speech token.');
     return;
@@ -99,50 +83,81 @@ export async function getSpeechToken(endpoint: IEndpointService, refresh: boolea
   }
 }
 
-export class Chat extends Component<ChatProps> {
-  createWebChatPropsMemoized: (
-    botId: string,
-    userId: string,
-    directLine: any,
-    selectedActivity$: any,
-    endpoint: IEndpointService,
-    mode: string
-  ) => any;
-
+export class Chat extends Component<ChatProps, ChatState> {
   constructor(props: ChatProps, context: {}) {
     super(props, context);
 
-    this.createWebChatPropsMemoized = memoize(createWebChatProps);
+    this.state = {
+      waitForSpeechToken: isSpeechEnabled(props.endpoint),
+      webSpeechPonyfillFactory: null
+    };
   }
 
-  render() {
-    const { document, endpoint } = this.props;
+  public async componentDidMount() {
+    if (this.state.waitForSpeechToken) {
+      const speechToken = await getSpeechToken(this.props.endpoint);
 
-    if (document.directLine) {
-      const webChatProps = this.createWebChatPropsMemoized(
-        document.botId,
-        document.userId || this.props.currentUserId,
-        document.directLine,
-        document.selectedActivity$,
-        endpoint,
-        this.props.mode
-      );
+      if (speechToken) {
+        const webSpeechPonyfillFactory = await createCognitiveServicesBingSpeechPonyfillFactory({
+          authorizationToken: speechToken
+        });
 
-      return (
-        <div id="webchat-container" className={ `${styles.chat} wc-app wc-wide` }>
-          <WebChat
-            locale={ this.props.locale }
-            key={ document.directLine.token }
-            { ...webChatProps }
-          />
-        </div>
-      );
-    } else {
+        this.setState({ webSpeechPonyfillFactory, waitForSpeechToken: false });
+      } else {
+        this.setState({ waitForSpeechToken: false });
+      }
+    }
+  }
+
+  public render() {
+    const { currentUserId, document, locale, mode } = this.props;
+
+    if (this.state.waitForSpeechToken) {
       return (
         <div className={ styles.disconnected }>
-          Not Connected
+          Connecting...
         </div>
       );
     }
+
+    if (document.directLine) {
+      const bot = {
+        id: document.botId || 'bot',
+        name: 'Bot'
+      };
+      const isDisabled = mode === 'transcript';
+
+      return (
+        <div className={ styles.chat }>
+          <ReactWebChat
+            activityMiddleware={ this.createActivityMiddleware }
+            bot={ bot }
+            directLine={ document.directLine }
+            disabled={ isDisabled }
+            key={ document.directLine.token }
+            locale={ locale }
+            styleOptions={ { ...webChatStyleOptions, hideSendBox: isDisabled } }
+            userId={ currentUserId }
+            webSpeechPonyfillFactory={ this.state.webSpeechPonyfillFactory }
+          />
+        </div>
+      );
+    }
+
+    return (
+      <div className={ styles.disconnected }>
+        Not Connected
+      </div>
+    );
   }
+
+  private createActivityMiddleware = () => next => card => children => (
+    <ActivityWrapper
+      activity={ card.activity }
+      onClick={ this.props.updateSelectedActivity }
+      isSelected={ isCardSelected(this.props.selectedActivity, card.activity) }
+    >
+      { next(card)(children) }
+    </ActivityWrapper>
+  )
 }

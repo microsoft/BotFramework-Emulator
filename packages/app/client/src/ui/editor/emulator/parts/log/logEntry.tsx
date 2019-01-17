@@ -64,8 +64,7 @@ export class LogEntry extends React.Component<LogEntryProps> {
    * @param obj Can be a conversation activity or network request
    */
   inspect(obj: {}) {
-    const fromLog: ActivitySelectionFromLog = { clicked: true };
-    this.props.document.selectedActivity$.next({ fromLog });
+    this.props.document.selectedActivity$.next({ showInInspector: true });
     this.props.setInspectorObjects(this.props.document.documentId, obj);
   }
 
@@ -76,16 +75,14 @@ export class LogEntry extends React.Component<LogEntryProps> {
   inspectAndHighlightInWebchat(obj: any) {
     this.inspect(obj);
     if (obj.id) {
-      const fromLog: ActivitySelectionFromLog = { clicked: true };
-      this.props.document.selectedActivity$.next({ ...obj, fromLog });
+      this.props.document.selectedActivity$.next({ ...obj, showInInspector: true });
     }
   }
 
   /** Highlights an activity in webchat (triggered by hover in log) */
   highlightInWebchat(obj: any) {
     if (obj.id) {
-      const fromLog: ActivitySelectionFromLog = { clicked: false };
-      this.props.document.selectedActivity$.next({ ...obj, fromLog });
+      this.props.document.selectedActivity$.next({ ...obj, showInInspector: false });
     }
   }
 
@@ -95,14 +92,12 @@ export class LogEntry extends React.Component<LogEntryProps> {
       // re-highlight last-inspected activity if possible
       const { currentlyInspectedActivity } = this.props;
       if (currentlyInspectedActivity && currentlyInspectedActivity.id) {
-        const fromLog: ActivitySelectionFromLog = { clicked: true };
         this.props.document.selectedActivity$.next({
           ...currentlyInspectedActivity,
-          fromLog
+          showInInspector: true
         });
       } else {
-        const fromLog: ActivitySelectionFromLog = { clicked: false };
-        this.props.document.selectedActivity$.next({ fromLog });
+        this.props.document.selectedActivity$.next({ showInInspector: false });
       }
     }
   }
