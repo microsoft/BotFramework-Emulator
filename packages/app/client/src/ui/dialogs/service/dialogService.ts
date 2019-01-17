@@ -50,7 +50,7 @@ export interface DialogService {
   setHost(hostElement: HTMLElement): void;
 }
 
-export const DialogService = new class implements DialogService {
+class DialogServiceImpl implements DialogService {
   private _hostElement: HTMLElement;
   private _resolve: (value?: any) => void;
 
@@ -101,4 +101,6 @@ export const DialogService = new class implements DialogService {
       this._hostElement.dispatchEvent(new Event('dialogRendered'));
     }
   };
-}();
+}
+
+export const DialogService = new DialogServiceImpl();

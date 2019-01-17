@@ -42,8 +42,7 @@ import {
 import { CommandRegistry } from '../../commands';
 import { ElectronIPC } from '../../ipc';
 
-export const CommandServiceImpl = new class extends DisposableImpl
-  implements CommandService {
+class CServiceImpl extends DisposableImpl implements CommandService {
   private readonly _service: InternalSharedService;
 
   public init() {
@@ -79,4 +78,6 @@ export const CommandServiceImpl = new class extends DisposableImpl
   ) {
     return this._service.on(event, handler);
   }
-}();
+}
+
+export const CommandServiceImpl = new CServiceImpl();

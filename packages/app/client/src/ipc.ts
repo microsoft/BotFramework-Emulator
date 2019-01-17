@@ -35,7 +35,7 @@ import { Channel, Disposable, IPC } from '@bfemulator/sdk-shared';
 
 const electron = (window as any).require('electron');
 
-export const ElectronIPC = new class extends IPC {
+class ElectronIPCImpl extends IPC {
   constructor() {
     super();
     electron.ipcRenderer.on('ipc:message', (_sender: any, ...args: any[]) => {
@@ -54,4 +54,6 @@ export const ElectronIPC = new class extends IPC {
   public registerChannel(channel: Channel): Disposable {
     return super.registerChannel(channel);
   }
-}();
+}
+
+export const ElectronIPC = new ElectronIPCImpl();
