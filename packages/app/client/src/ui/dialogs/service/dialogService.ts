@@ -35,12 +35,15 @@ import * as React from 'react';
 import { ComponentClass, StatelessComponent } from 'react';
 import * as ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import * as DialogActions from '../../../data/action/dialogActions';
 
+import * as DialogActions from '../../../data/action/dialogActions';
 import { store } from '../../../data/store';
 
 export interface DialogService {
-  showDialog(dialog: ComponentClass<any> | StatelessComponent<any>, props: { [propName: string]: any }): any;
+  showDialog(
+    dialog: ComponentClass<any> | StatelessComponent<any>,
+    props: { [propName: string]: any }
+  ): any;
 
   hideDialog(): any;
 
@@ -55,16 +58,23 @@ export const DialogService = new class implements DialogService {
    *
    * Ex. DialogService.showDialog(PasswordPromptDialog).then(pw => // do something with password from dialog)
    */
-  showDialog<T extends ComponentClass | StatelessComponent, R = any>(dialog: T, props: {} = {}): Promise<R> {
+  showDialog<T extends ComponentClass | StatelessComponent, R = any>(
+    dialog: T,
+    props: {} = {}
+  ): Promise<R> {
     if (!this._hostElement) {
-      return new Promise((resolve) => resolve(null));
+      return new Promise(resolve => resolve(null));
     }
-    const reactElement = React.createElement(Provider, { store }, React.createElement(dialog, props));
+    const reactElement = React.createElement(
+      Provider,
+      { store },
+      React.createElement(dialog, props)
+    );
     ReactDOM.render(reactElement, this._hostElement, this.notifyHostOfRender);
     store.dispatch(DialogActions.setShowing(true));
 
     // set up the dialog to return a value from the dialog
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       this._resolve = resolve;
     });
   }
@@ -90,5 +100,5 @@ export const DialogService = new class implements DialogService {
     if (this._hostElement) {
       this._hostElement.dispatchEvent(new Event('dialogRendered'));
     }
-  }
-};
+  };
+}();

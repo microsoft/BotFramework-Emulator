@@ -67,33 +67,35 @@ class ActivityWrapper extends Component<ActivityWrapperProps> {
     let classes = styles.chatActivity;
 
     if (isSelected) {
-      classes = `${ classes } ${ styles.selectedActivity }`;
+      classes = `${classes} ${styles.selectedActivity}`;
     }
 
     return (
       <div
-        className={ classes }
-        onClick={ this.setSelectedActivity(activity) }
-        onKeyDown={ this.onKeyDown(activity) }
+        className={classes}
+        onClick={this.setSelectedActivity(activity)}
+        onKeyDown={this.onKeyDown(activity)}
         role="button"
-        tabIndex={ 0 }
+        tabIndex={0}
       >
-        { children }
+        {children}
       </div>
     );
   }
 
-  private setSelectedActivity = (activity: Activity) => (e: React.SyntheticEvent) => {
+  private setSelectedActivity = (activity: Activity) => (
+    e: React.SyntheticEvent
+  ) => {
     if (shouldSelectActivity(e)) {
       this.props.onClick(activity);
     }
-  }
+  };
 
   private onKeyDown = (activity: Activity) => (e: React.KeyboardEvent) => {
     if (shouldSelectActivity(e) && [' ', 'Enter'].includes(e.key)) {
       this.props.onClick(activity);
     }
-  }
+  };
 }
 
 export default ActivityWrapper;

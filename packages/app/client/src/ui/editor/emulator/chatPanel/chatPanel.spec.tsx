@@ -41,11 +41,11 @@ import ChatPanel from './chatPanel';
 jest.mock('./chatPanel.scss', () => ({}));
 jest.mock('../parts/chat/chat.scss', () => ({}));
 jest.mock('../../../dialogs', () => ({
-  AzureLoginPromptDialogContainer: () => ({ }),
-  AzureLoginSuccessDialogContainer: () => ({ }),
-  BotCreationDialog: () => ({ }),
+  AzureLoginPromptDialogContainer: () => ({}),
+  AzureLoginSuccessDialogContainer: () => ({}),
+  BotCreationDialog: () => ({}),
   DialogService: { showDialog: () => Promise.resolve(true) },
-  SecretPromptDialog: () => ({ })
+  SecretPromptDialog: () => ({}),
 }));
 
 const document = {
@@ -61,15 +61,16 @@ const document = {
       this._listeners.push(cb);
 
       return {
-        unsubscribe: () => this._listeners = this._listeners.filter(l => l !== cb)
+        unsubscribe: () =>
+          (this._listeners = this._listeners.filter(l => l !== cb)),
       };
-    }
-  }
+    },
+  },
 };
 
 function render() {
   const props = {
-    document
+    document,
   };
 
   // @ts-ignore - mocking out BehaviorSubject
@@ -121,8 +122,8 @@ describe('<ChatPanel />', () => {
 
       expect(component.state('selectedActivity')).toEqual({
         new: 'activity',
-        showInInspector: true
-     });
+        showInInspector: true,
+      });
     });
   });
 });

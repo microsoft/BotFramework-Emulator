@@ -35,12 +35,16 @@ import { SharedConstants } from '@bfemulator/app-shared';
 import { BotEmulator, Conversation } from '@bfemulator/emulator-core';
 import ConversationSet from '@bfemulator/emulator-core/lib/facility/conversationSet';
 import LogLevel from '@bfemulator/emulator-core/lib/types/log/level';
-import { networkRequestItem, networkResponseItem, textItem } from '@bfemulator/emulator-core/lib/types/log/util';
+import {
+  networkRequestItem,
+  networkResponseItem,
+  textItem,
+} from '@bfemulator/emulator-core/lib/types/log/util';
 import { IEndpointService } from 'botframework-config';
 import { createServer, Request, Response, Route, Server } from 'restify';
 import CORS from 'restify-cors-middleware';
-import { emulator } from './emulator';
 
+import { emulator } from './emulator';
 import { mainWindow } from './main';
 
 interface ConversationAwareRequest extends Request {
@@ -60,8 +64,12 @@ export class RestServer {
         {
           fetch,
           loggerOrLogService: mainWindow.logService,
-        });
-      this._botEmulator.facilities.conversations.on('new', this.onNewConversation);
+        }
+      );
+      this._botEmulator.facilities.conversations.on(
+        'new',
+        this.onNewConversation
+      );
     }
     return this._botEmulator;
   }
@@ -70,12 +78,12 @@ export class RestServer {
     const cors = CORS({
       origins: ['*'],
       allowHeaders: ['authorization', 'x-requested-with'],
-      exposeHeaders: []
+      exposeHeaders: [],
     });
 
     const router = createServer({
       name: 'Emulator',
-      handleUncaughtExceptions: true
+      handleUncaughtExceptions: true,
     });
 
     router.on('after', this.onRouterAfter);
@@ -85,7 +93,7 @@ export class RestServer {
     this.router = router;
   }
 
-  public listen(port?: number): Promise<{ url: string, port: number }> {
+  public listen(port?: number): Promise<{ url: string; port: number }> {
     return new Promise((resolve, reject) => {
       this.router.once('error', err => reject(err));
       this.router.listen(port, () => {
@@ -135,14 +143,13 @@ export class RestServer {
         res.statusMessage,
         req.url
       ),
-      textItem(
-        level,
-        `${ facility }.${ routeName }`
-      ),
+      textItem(level, `${facility}.${routeName}`)
     );
-  }
+  };
 
-  private onNewConversation = async (conversation: Conversation = {} as Conversation) => {
+  private onNewConversation = async (
+    conversation: Conversation = {} as Conversation
+  ) => {
     const { conversationId = '' } = conversation;
     if (!conversationId || conversationId.includes('transcript')) {
       return;
@@ -150,27 +157,46 @@ export class RestServer {
     // Check for an existing livechat window
     // before creating a new one since "new"
     // can also mean "restart".
-    if (!hasLiveChat(conversationId, this.botEmulator.facilities.conversations)) {
-      const { botEndpoint: { id, botUrl } } = conversation;
-      await mainWindow.commandService.remoteCall(SharedConstants.Commands.Emulator.NewLiveChat, {
-        id,
-        endpoint: botUrl
-      } as IEndpointService);
+    if (
+      !hasLiveChat(conversationId, this.botEmulator.facilities.conversations)
+    ) {
+      const {
+        botEndpoint: { id, botUrl },
+      } = conversation;
+      await mainWindow.commandService.remoteCall(
+        SharedConstants.Commands.Emulator.NewLiveChat,
+        {
+          id,
+          endpoint: botUrl,
+        } as IEndpointService
+      );
     }
     emulator.report(conversationId);
-  }
+  };
 }
 
-function shouldPostToChat(conversationId: string, method: string, route: Route): boolean {
-  const isDLine = method === 'GET' && route.spec.path === '/v3/directline/conversations/:conversationId/activities';
+function shouldPostToChat(
+  conversationId: string,
+  method: string,
+  route: Route
+): boolean {
+  const isDLine =
+    method === 'GET' &&
+    route.spec.path ===
+      '/v3/directline/conversations/:conversationId/activities';
   return !isDLine && !!conversationId && !conversationId.includes('transcript');
 }
 
 function getConversationId(req: ConversationAwareRequest): string {
-  return req.conversation ? req.conversation.conversationId : req.params.conversationId;
+  return req.conversation
+    ? req.conversation.conversationId
+    : req.params.conversationId;
 }
 
-function hasLiveChat(conversationId: string, conversationSet: ConversationSet): boolean {
+function hasLiveChat(
+  conversationId: string,
+  conversationSet: ConversationSet
+): boolean {
   if (conversationId.endsWith('|livechat')) {
     return !!conversationSet.conversationById(conversationId);
   }

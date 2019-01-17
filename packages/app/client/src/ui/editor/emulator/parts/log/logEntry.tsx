@@ -31,12 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as styles from './log.scss';
 import * as React from 'react';
-import { ExtensionManager, InspectorAPI } from '../../../../../extensions';
 import LogEntryModel from '@bfemulator/emulator-core/lib/types/log/entry';
 import { ILogItem } from '@bfemulator/emulator-core/lib/types/log/item';
 import LogLevel from '@bfemulator/emulator-core/lib/types/log/level';
+
+import { ExtensionManager, InspectorAPI } from '../../../../../extensions';
+
+import * as styles from './log.scss';
 
 /** One of these will always be "nexted" to the selectedActivity$
  *  subscription when called from within the log
@@ -75,14 +77,20 @@ export class LogEntry extends React.Component<LogEntryProps> {
   inspectAndHighlightInWebchat(obj: any) {
     this.inspect(obj);
     if (obj.id) {
-      this.props.document.selectedActivity$.next({ ...obj, showInInspector: true });
+      this.props.document.selectedActivity$.next({
+        ...obj,
+        showInInspector: true,
+      });
     }
   }
 
   /** Highlights an activity in webchat (triggered by hover in log) */
   highlightInWebchat(obj: any) {
     if (obj.id) {
-      this.props.document.selectedActivity$.next({ ...obj, showInInspector: false });
+      this.props.document.selectedActivity$.next({
+        ...obj,
+        showInInspector: false,
+      });
     }
   }
 
@@ -94,7 +102,7 @@ export class LogEntry extends React.Component<LogEntryProps> {
       if (currentlyInspectedActivity && currentlyInspectedActivity.id) {
         this.props.document.selectedActivity$.next({
           ...currentlyInspectedActivity,
-          showInInspector: true
+          showInInspector: true,
         });
       } else {
         this.props.document.selectedActivity$.next({ showInInspector: false });
@@ -110,8 +118,10 @@ export class LogEntry extends React.Component<LogEntryProps> {
     // any rendered inspectable items will add themselves to this.inspectableObjects
     const innerJsx = (
       <>
-        { this.renderTimestamp(this.props.entry.timestamp) }
-        { this.props.entry.items.map((item, key) => this.renderItem(item, '' + key)) }
+        {this.renderTimestamp(this.props.entry.timestamp)}
+        {this.props.entry.items.map((item, key) =>
+          this.renderItem(item, '' + key)
+        )}
       </>
     );
 
@@ -126,16 +136,19 @@ export class LogEntry extends React.Component<LogEntryProps> {
     }
 
     return (
-      <div key="entry" className={ [styles.entry, inspectedActivityClass].join(' ') } >
-        { innerJsx }
+      <div
+        key="entry"
+        className={[styles.entry, inspectedActivityClass].join(' ')}
+      >
+        {innerJsx}
       </div>
     );
   }
 
   renderTimestamp(t: number) {
     return (
-      <span key="timestamp" className={ 'timestamp ' + styles.spaced }>
-        [<span className={ styles.timestamp }>{ timestamp(t) }</span>]
+      <span key="timestamp" className={'timestamp ' + styles.spaced}>
+        [<span className={styles.timestamp}>{timestamp(t)}</span>]
       </span>
     );
   }
@@ -164,11 +177,31 @@ export class LogEntry extends React.Component<LogEntryProps> {
       }
       case 'network-request': {
         const { facility, body, headers, method, url } = item.payload;
-        return this.renderNetworkRequestItem(facility, body, headers, method, url, key);
+        return this.renderNetworkRequestItem(
+          facility,
+          body,
+          headers,
+          method,
+          url,
+          key
+        );
       }
       case 'network-response': {
-        const { body, headers, statusCode, statusMessage, srcUrl } = item.payload;
-        return this.renderNetworkResponseItem(body, headers, statusCode, statusMessage, srcUrl, key);
+        const {
+          body,
+          headers,
+          statusCode,
+          statusMessage,
+          srcUrl,
+        } = item.payload;
+        return this.renderNetworkResponseItem(
+          body,
+          headers,
+          statusCode,
+          statusMessage,
+          srcUrl,
+          key
+        );
       }
       case 'ngrok-expiration': {
         const { text } = item.payload;
@@ -181,17 +214,23 @@ export class LogEntry extends React.Component<LogEntryProps> {
 
   renderTextItem(level: LogLevel, text: string, key: string) {
     return (
-      <span key={ key } className={ `text-item ${ styles.spaced } ${ logLevelToClassName(level) }` }>
-        { text }
+      <span
+        key={key}
+        className={`text-item ${styles.spaced} ${logLevelToClassName(level)}`}
+      >
+        {text}
       </span>
     );
   }
 
   renderExternalLinkItem(text: string, hyperlink: string, key: string) {
     return (
-      <span key={ key } className={ styles.spaced }>
-        <button className={ styles.link } onClick={ () => window.open(hyperlink, '_blank') }>
-          { text }
+      <span key={key} className={styles.spaced}>
+        <button
+          className={styles.link}
+          onClick={() => window.open(hyperlink, '_blank')}
+        >
+          {text}
         </button>
       </span>
     );
@@ -199,9 +238,12 @@ export class LogEntry extends React.Component<LogEntryProps> {
 
   renderAppSettingsItem(text: string, key: string) {
     return (
-      <span key={ key } className={ styles.spaced }>
-        <button className={ styles.link } onClick={ () => this.props.showAppSettings() }>
-          { text }
+      <span key={key} className={styles.spaced}>
+        <button
+          className={styles.link}
+          onClick={() => this.props.showAppSettings()}
+        >
+          {text}
         </button>
       </span>
     );
@@ -209,8 +251,8 @@ export class LogEntry extends React.Component<LogEntryProps> {
 
   renderExceptionItem(err: Error, key: string) {
     return (
-      <span key={ key } className={ `${ styles.spaced } ${ styles.level3 }` }>
-        { err && err.message ? err.message : '' }
+      <span key={key} className={`${styles.spaced} ${styles.level3}`}>
+        {err && err.message ? err.message : ''}
       </span>
     );
   }
@@ -225,54 +267,35 @@ export class LogEntry extends React.Component<LogEntryProps> {
     if (typeof obj.type === 'string') {
       title = obj.type;
     }
-    let summaryText = this.summaryText(obj) || '';
+    const summaryText = this.summaryText(obj) || '';
     return (
-      <span key={ key }
-        onMouseOver={ () => this.highlightInWebchat(obj) }
-        onMouseLeave={ () => this.removeHighlightInWebchat(obj) }>
-        <span className={ `${ styles.spaced } ${ styles.level0 }` }>
-          <button className={ styles.link } onClick={ () => this.inspectAndHighlightInWebchat(obj) } >
-            { title }
+      <span
+        key={key}
+        onMouseOver={() => this.highlightInWebchat(obj)}
+        onMouseLeave={() => this.removeHighlightInWebchat(obj)}
+      >
+        <span className={`${styles.spaced} ${styles.level0}`}>
+          <button
+            className={styles.link}
+            onClick={() => this.inspectAndHighlightInWebchat(obj)}
+          >
+            {title}
           </button>
         </span>
-        <span className={ `${ styles.spaced } ${ styles.level0 }` }>
-          { summaryText }
+        <span className={`${styles.spaced} ${styles.level0}`}>
+          {summaryText}
         </span>
       </span>
     );
   }
 
-  renderNetworkRequestItem(_facility: any, body: any, _headers: any, method: any, _url: string, key: string) {
-    let obj;
-    if (typeof body === 'string') {
-      try {
-        obj = JSON.parse(body);
-      } catch (e) {
-        obj = body;
-      }
-    } else {
-      obj = body;
-    }
-    if (obj) {
-      return (
-        <span key={ key } className={ `${ styles.spaced } ${ styles.level0 }` }>
-          <button className={ styles.link } onClick={ () => this.inspect(obj) }>
-            { method }
-          </button>
-        </span>
-      );
-    } else {
-      return (
-        <span key={ key } className={ `${ styles.spaced } ${ styles.level0 }` }>
-          { method }
-        </span>
-      );
-    }
-  }
-
-  renderNetworkResponseItem(
-    body: any, _headers: any, statusCode: number,
-    _statusMessage: string, _srcUrl: string, key: string
+  renderNetworkRequestItem(
+    _facility: any,
+    body: any,
+    _headers: any,
+    method: any,
+    _url: string,
+    key: string
   ) {
     let obj;
     if (typeof body === 'string') {
@@ -286,16 +309,51 @@ export class LogEntry extends React.Component<LogEntryProps> {
     }
     if (obj) {
       return (
-        <span key={ key } className={ `${ styles.spaced } ${ styles.level0 }` }>
-          <button className={ styles.link } onClick={ () => this.inspect(obj) } >
-            { statusCode }
+        <span key={key} className={`${styles.spaced} ${styles.level0}`}>
+          <button className={styles.link} onClick={() => this.inspect(obj)}>
+            {method}
           </button>
         </span>
       );
     } else {
       return (
-        <span key={ key } className={ `${ styles.spaced } ${ styles.level0 }` }>
-          { statusCode }
+        <span key={key} className={`${styles.spaced} ${styles.level0}`}>
+          {method}
+        </span>
+      );
+    }
+  }
+
+  renderNetworkResponseItem(
+    body: any,
+    _headers: any,
+    statusCode: number,
+    _statusMessage: string,
+    _srcUrl: string,
+    key: string
+  ) {
+    let obj;
+    if (typeof body === 'string') {
+      try {
+        obj = JSON.parse(body);
+      } catch (e) {
+        obj = body;
+      }
+    } else {
+      obj = body;
+    }
+    if (obj) {
+      return (
+        <span key={key} className={`${styles.spaced} ${styles.level0}`}>
+          <button className={styles.link} onClick={() => this.inspect(obj)}>
+            {statusCode}
+          </button>
+        </span>
+      );
+    } else {
+      return (
+        <span key={key} className={`${styles.spaced} ${styles.level0}`}>
+          {statusCode}
         </span>
       );
     }
@@ -303,9 +361,12 @@ export class LogEntry extends React.Component<LogEntryProps> {
 
   renderNgrokExpirationItem(text: string, key: string): JSX.Element {
     return (
-      <span key={ key } className={ `${ styles.spaced } ${ styles.level3 }` }>
-        { text + ' ' }
-        <button className={ styles.link } onClick={ () => this.props.reconnectNgrok() }>
+      <span key={key} className={`${styles.spaced} ${styles.level3}`}>
+        {text + ' '}
+        <button
+          className={styles.link}
+          onClick={() => this.props.reconnectNgrok()}
+        >
           Please reconnect.
         </button>
       </span>
@@ -327,11 +388,11 @@ export function number2(n: number) {
 }
 
 export function timestamp(t: number) {
-  let timestamp1 = new Date(t);
-  let hours = number2(timestamp1.getHours());
-  let minutes = number2(timestamp1.getMinutes());
-  let seconds = number2(timestamp1.getSeconds());
-  return `${ hours }:${ minutes }:${ seconds }`;
+  const timestamp1 = new Date(t);
+  const hours = number2(timestamp1.getHours());
+  const minutes = number2(timestamp1.getMinutes());
+  const seconds = number2(timestamp1.getSeconds());
+  return `${hours}:${minutes}:${seconds}`;
 }
 
 function logLevelToClassName(level: LogLevel): string {

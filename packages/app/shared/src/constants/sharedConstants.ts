@@ -37,7 +37,6 @@ export const SharedConstants = {
 
   /** Names of commands used in both main and client */
   Commands: {
-
     Azure: {
       RetrieveArmToken: 'azure:retrieve-arm-token',
       PersistAzureLoginChanged: 'azure:persist-azure-login-changed',
@@ -64,7 +63,7 @@ export const SharedConstants = {
       ChatFilesUpdated: 'bot:chat-files-updated',
       TranscriptFilesUpdated: 'bot:transcript-files-updated',
       TranscriptsPathUpdated: 'bot:transcripts-path-updated',
-      ChatsPathUpdated: 'bot:chats-path-updated'
+      ChatsPathUpdated: 'bot:chats-path-updated',
     },
 
     ClientInit: {
@@ -88,7 +87,7 @@ export const SharedConstants = {
       ShowAboutDialog: 'shell:about',
       OpenFileLocation: 'shell:open-file-location',
       UnlinkFile: 'shell:unlink-file',
-      RenameFile: 'shell:rename-file'
+      RenameFile: 'shell:rename-file',
     },
 
     Emulator: {
@@ -103,7 +102,7 @@ export const SharedConstants = {
       ReloadTranscript: 'transcript:reload',
       OpenChatFile: 'chat:open',
       AppendToLog: 'log:append',
-      SetCurrentUser: 'emulator:set-current-user'
+      SetCurrentUser: 'emulator:set-current-user',
     },
 
     Extension: {
@@ -147,7 +146,7 @@ export const SharedConstants = {
       SaveAppSettings: 'app:settings:save',
       LoadAppSettings: 'app:settings:load',
       ReceiveGlobalSettings: 'receive-global-settings',
-      PushClientAwareSettings: 'push-client-aware-settings'
+      PushClientAwareSettings: 'push-client-aware-settings',
     },
 
     UI: {
@@ -165,10 +164,11 @@ export const SharedConstants = {
       InvalidateAzureArmToken: 'shell:invalidateAzureArmToken',
       ShowUpdateAvailableDialog: 'update-available-dialog:show',
       ShowUpdateUnavailableDialog: 'update-unavailable-dialog:show',
-      ShowProgressIndicator: 'progress-indicator:show'
-    }
+      ShowProgressIndicator: 'progress-indicator:show',
+    },
   },
-    ContentTypes: {
-      CONTENT_TYPE_LIVE_CHAT: 'application/vnd.microsoft.bfemulator.document.livechat'
-    }
+  ContentTypes: {
+    CONTENT_TYPE_LIVE_CHAT:
+      'application/vnd.microsoft.bfemulator.document.livechat',
+  },
 };

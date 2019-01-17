@@ -32,10 +32,18 @@
 //
 
 import { BotInfo } from '@bfemulator/app-shared';
-import { Column, LargeHeader, PrimaryButton, Row, SmallHeader } from '@bfemulator/ui-react';
+import {
+  Column,
+  LargeHeader,
+  PrimaryButton,
+  Row,
+  SmallHeader,
+} from '@bfemulator/ui-react';
 import * as React from 'react';
+
 import { GenericDocument } from '../../layout';
 import { RecentBotsListContainer } from '../recentBotsList/recentBotsListContainer';
+
 import { HowToBuildABot } from './howToBuildABot';
 import * as styles from './welcomePage.scss';
 
@@ -60,15 +68,15 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
     return (
       <GenericDocument>
         <Row>
-          <Column className={ styles.spacing }>
+          <Column className={styles.spacing}>
             <LargeHeader>Bot Framework Emulator</LargeHeader>
-            <span className={ styles.versionNumber }>Version 4</span>
-            { startSection }
-            <RecentBotsListContainer onBotSelected={ this.onBotSelected }/>
-            { signInSection }
+            <span className={styles.versionNumber}>Version 4</span>
+            {startSection}
+            <RecentBotsListContainer onBotSelected={this.onBotSelected} />
+            {signInSection}
           </Column>
-          <Column className={ styles.rightColumn }>
-            <HowToBuildABot/>
+          <Column className={styles.rightColumn}>
+            <HowToBuildABot />
           </Column>
         </Row>
       </GenericDocument>
@@ -77,23 +85,33 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
 
   private get startSection(): JSX.Element {
     return (
-      <div className={ styles.section }>
-        <SmallHeader className={ styles.marginFix }>Start by testing your bot</SmallHeader>
-        <span>Start talking to your bot by connecting to an endpoint or by opening a
-          bot saved locally.<br/>
-          <a className={ styles.ctaLink } href="https://aka.ms/bot-framework-emulator-create-bot-locally">
+      <div className={styles.section}>
+        <SmallHeader className={styles.marginFix}>
+          Start by testing your bot
+        </SmallHeader>
+        <span>
+          Start talking to your bot by connecting to an endpoint or by opening a
+          bot saved locally.
+          <br />
+          <a
+            className={styles.ctaLink}
+            href="https://aka.ms/bot-framework-emulator-create-bot-locally"
+          >
             More about working locally with a bot.
           </a>
         </span>
         <Row>
-          <PrimaryButton className={ styles.openBot } text="Open Bot" onClick={ this.onOpenBotClick }/>
+          <PrimaryButton
+            className={styles.openBot}
+            text="Open Bot"
+            onClick={this.onOpenBotClick}
+          />
         </Row>
-        <span>If you don’t have a bot configuration,&nbsp;
-          <button
-            className={ styles.ctaLink }
-            onClick={ this.props.onNewBotClick }>
+        <span>
+          If you don’t have a bot configuration,&nbsp;
+          <button className={styles.ctaLink} onClick={this.props.onNewBotClick}>
             create a new bot configuration.
-        </button>
+          </button>
         </span>
       </div>
     );
@@ -105,7 +123,7 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
     } catch (e) {
       this.props.sendNotification(e);
     }
-  }
+  };
 
   private onOpenBotClick = async () => {
     try {
@@ -113,20 +131,22 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
     } catch (e) {
       this.props.sendNotification(e);
     }
-  }
+  };
 
   private get signInSection(): JSX.Element {
     const { accessToken, signInWithAzure, signOutWithAzure } = this.props;
     return (
       <div>
-        {
-          (accessToken && !accessToken.startsWith('invalid')) ?
-            <button className={ styles.ctaLink } onClick={ signOutWithAzure }>Sign out</button>
-            :
-            <button className={ styles.ctaLink } onClick={ signInWithAzure }>
-              Sign in with your Azure account.
-            </button>
-        }</div>
+        {accessToken && !accessToken.startsWith('invalid') ? (
+          <button className={styles.ctaLink} onClick={signOutWithAzure}>
+            Sign out
+          </button>
+        ) : (
+          <button className={styles.ctaLink} onClick={signInWithAzure}>
+            Sign in with your Azure account.
+          </button>
+        )}
+      </div>
     );
   }
 }
