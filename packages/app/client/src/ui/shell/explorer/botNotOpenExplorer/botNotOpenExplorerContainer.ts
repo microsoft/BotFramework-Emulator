@@ -34,20 +34,37 @@
 import { newNotification, SharedConstants } from '@bfemulator/app-shared';
 import { connect } from 'react-redux';
 import { Action } from 'redux';
+
 import { beginAdd } from '../../../../data/action/notificationActions';
 import { RootState } from '../../../../data/store';
 import { CommandServiceImpl } from '../../../../platform/commands/commandServiceImpl';
 import { ActiveBotHelper } from '../../../helpers/activeBotHelper';
-import { BotNotOpenExplorer as BotNotOpenExplorerComp, BotNotOpenExplorerProps } from './botNotOpenExplorer';
+
+import {
+  BotNotOpenExplorer as BotNotOpenExplorerComp,
+  BotNotOpenExplorerProps,
+} from './botNotOpenExplorer';
 
 const mapStateToProps = (state: RootState): any => ({
   hasChat: !!Object.keys(state.chat.chats).length,
-  showCreateNewBotDialog: () => CommandServiceImpl.call(SharedConstants.Commands.UI.ShowBotCreationDialog),
+  showCreateNewBotDialog: () =>
+    CommandServiceImpl.call(SharedConstants.Commands.UI.ShowBotCreationDialog),
 });
-const mapDispatchToProps = (dispatch: (action: Action) => void): BotNotOpenExplorerProps => ({
+const mapDispatchToProps = (
+  dispatch: (action: Action) => void
+): BotNotOpenExplorerProps => ({
   openBotFile: () => ActiveBotHelper.confirmAndOpenBotFromFile(),
   sendNotification: (error: Error) =>
-    dispatch(beginAdd(newNotification(`An Error occurred on the Bot Not Open Explorer: ${ error }`))),
+    dispatch(
+      beginAdd(
+        newNotification(
+          `An Error occurred on the Bot Not Open Explorer: ${error}`
+        )
+      )
+    ),
 });
 
-export const BotNotOpenExplorerContainer = connect(mapStateToProps, mapDispatchToProps)(BotNotOpenExplorerComp);
+export const BotNotOpenExplorerContainer = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(BotNotOpenExplorerComp);
