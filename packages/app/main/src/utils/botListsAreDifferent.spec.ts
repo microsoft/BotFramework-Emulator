@@ -32,28 +32,29 @@
 //
 
 import { BotInfo } from '@bfemulator/app-shared';
+
 import { botListsAreDifferent } from './botListsAreDifferent';
 
 test('botListsAreDifferent() tests', () => {
-  let list1: BotInfo[] = [
+  const list1: BotInfo[] = [
     {
       path: 'path1',
       displayName: 'bot1',
-      secret: null
+      secret: null,
     },
     {
       path: 'path2',
       displayName: 'bot2',
-      secret: null
+      secret: null,
     },
     {
       path: 'path3',
       displayName: 'bot3',
-      secret: null
-    }
+      secret: null,
+    },
   ];
 
-  let list2: BotInfo[] = [];
+  const list2: BotInfo[] = [];
 
   expect(botListsAreDifferent(list1, list2)).toBe(true);
 

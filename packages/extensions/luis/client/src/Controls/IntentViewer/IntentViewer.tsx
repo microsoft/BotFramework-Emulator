@@ -33,7 +33,9 @@
 
 import * as React from 'react';
 import { Component } from 'react';
+
 import { Intent } from '../../Models/Intent';
+
 import * as styles from './IntentViewer.scss';
 
 interface IntentViewerProps {
@@ -43,12 +45,13 @@ interface IntentViewerProps {
 class IntentViewer extends Component<IntentViewerProps, {}> {
   public state = {};
 
-  render() {
+  public render() {
     const { intent, score } = this.props.topScoringIntent;
     return (
-      <div className={ styles.intentViewer }>
+      <div className={styles.intentViewer}>
         <div id="topScoreIntentLabel">Top-Scoring Intent</div>
-        <div id="topScoringIntentValue">{ intent } ({ score })
+        <div id="topScoringIntentValue">
+          {intent} ({score})
         </div>
       </div>
     );

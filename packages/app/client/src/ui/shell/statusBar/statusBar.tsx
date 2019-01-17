@@ -32,6 +32,7 @@
 //
 
 import * as React from 'react';
+
 import * as styles from './statusBar.scss';
 
-export const StatusBar = () => (<div className={ styles.statusBar }></div>);
+export const StatusBar = () => <div className={styles.statusBar} />;

@@ -31,9 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import LogLevel from './level';
-import ILogItem from './item';
 import LogEntry from './entry';
+import ILogItem from './item';
+import LogLevel from './level';
 
 // TODO: Move this to a generally available location and export
 export function makeEnumerableObject(src: any) {
@@ -42,7 +42,7 @@ export function makeEnumerableObject(src: any) {
   }
   const dst = {};
   const keys = Object.getOwnPropertyNames(src);
-  keys.forEach(key => dst[key] = src[key]);
+  keys.forEach(key => (dst[key] = src[key]));
   return dst;
 }
 
@@ -53,8 +53,8 @@ export function textItem(level: LogLevel, text: string): ILogItem {
     type: 'text',
     payload: {
       level,
-      text
-    }
+      text,
+    },
   };
 }
 
@@ -63,8 +63,8 @@ export function externalLinkItem(text: string, hyperlink: string): ILogItem {
     type: 'external-link',
     payload: {
       text,
-      hyperlink
-    }
+      hyperlink,
+    },
   };
 }
 
@@ -73,8 +73,8 @@ export function inspectableObjectItem(text: string, obj: any): ILogItem {
     type: 'inspectable-object',
     payload: {
       text,
-      obj
-    }
+      obj,
+    },
   };
 }
 
@@ -82,8 +82,8 @@ export function summaryTextItem(obj: any): ILogItem {
   return {
     type: 'summary-text',
     payload: {
-      obj
-    }
+      obj,
+    },
   };
 }
 
@@ -91,8 +91,8 @@ export function appSettingsItem(text: string): ILogItem {
   return {
     type: 'open-app-settings',
     payload: {
-      text
-    }
+      text,
+    },
   };
 }
 
@@ -100,12 +100,18 @@ export function exceptionItem(err: any): ILogItem {
   return {
     type: 'exception',
     payload: {
-      err: makeEnumerableObject(err)
-    }
+      err: makeEnumerableObject(err),
+    },
   };
 }
 
-export function networkRequestItem(facility: any, body: any, headers: any, method: any, url: any): ILogItem {
+export function networkRequestItem(
+  facility: any,
+  body: any,
+  headers: any,
+  method: any,
+  url: any
+): ILogItem {
   return {
     type: 'network-request',
     payload: {
@@ -113,13 +119,18 @@ export function networkRequestItem(facility: any, body: any, headers: any, metho
       body,
       headers,
       method,
-      url
-    }
+      url,
+    },
   };
 }
 
-export function networkResponseItem(body: any, headers: any, statusCode: any, statusMessage: any, srcUrl: any)
-  : ILogItem {
+export function networkResponseItem(
+  body: any,
+  headers: any,
+  statusCode: any,
+  statusMessage: any,
+  srcUrl: any
+): ILogItem {
   return {
     type: 'network-response',
     payload: {
@@ -127,8 +138,8 @@ export function networkResponseItem(body: any, headers: any, statusCode: any, st
       headers,
       statusCode,
       statusMessage,
-      srcUrl
-    }
+      srcUrl,
+    },
   };
 }
 
@@ -136,14 +147,14 @@ export function ngrokExpirationItem(text: string): ILogItem {
   return {
     type: 'ngrok-expiration',
     payload: {
-      text
-    }
+      text,
+    },
   };
 }
 
 export function logEntry(...items: ILogItem[]): LogEntry {
   return {
     timestamp: Date.now(),
-    items: [...items]
+    items: [...items],
   };
 }

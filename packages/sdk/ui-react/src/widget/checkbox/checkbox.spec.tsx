@@ -31,10 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Checkbox } from './checkbox';
 import { mount, configure } from 'enzyme';
 import * as React from 'react';
 import Adapter from 'enzyme-adapter-react-16';
+
+import { Checkbox } from './checkbox';
 
 configure({ adapter: new Adapter() });
 
@@ -45,7 +46,7 @@ describe('Checkbox', () => {
   let instance;
 
   beforeEach(() => {
-    wrapper = mount(<Checkbox checked={ true }/>);
+    wrapper = mount(<Checkbox checked={true} />);
     instance = wrapper.instance();
   });
 
@@ -59,7 +60,7 @@ describe('Checkbox', () => {
     const prevState1 = { checked: true, indeterminate: false };
     const state1 = Checkbox.getDerivedStateFromProps(newProps1, prevState1);
     expect(state1).toEqual(newProps1);
-    
+
     // indeterminate differs
     const newProps2 = { checked: false, indeterminate: false };
     const prevState2 = { checked: false, indeterminate: true };
@@ -98,7 +99,7 @@ describe('Checkbox', () => {
   it('should handle focus and blur', () => {
     instance.checkboxEventHandler({ type: 'focus' });
     expect(instance.state.focused).toBe(true);
-    
+
     instance.checkboxEventHandler({ type: 'blur' });
     expect(instance.state.focused).toBe(false);
   });

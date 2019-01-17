@@ -32,16 +32,16 @@
 //
 
 import { AppState } from '../App';
-import { LuisTraceInfo } from '../Models/LuisTraceInfo';
+import { ButtonSelected } from '../Controls/ControlBar/ControlBar';
 import { AppInfo } from '../Luis/AppInfo';
 import { IntentInfo } from '../Luis/IntentInfo';
-import { ButtonSelected } from '../Controls/ControlBar/ControlBar';
+import { LuisTraceInfo } from '../Models/LuisTraceInfo';
 
 export default class MockState implements AppState {
-  traceInfo: LuisTraceInfo = {
+  public traceInfo: LuisTraceInfo = {
     luisModel: {
       ModelID: '6209a76f-e836-413b-ba92-a5772d1b2087',
-      SubscriptionKey: '****'
+      SubscriptionKey: '****',
     },
     luisResult: {
       query: 'hi',
@@ -50,107 +50,103 @@ export default class MockState implements AppState {
       intents: [],
       topScoringIntent: {
         intent: 'TopScoring',
-        score: 0.5
-      }
+        score: 0.5,
+      },
     },
     recognizerResult: {
       entities: {
-        '$instance': {
-          'Airline': [
+        $instance: {
+          Airline: [
             {
-              'endIndex': 24,
-              'score': null,
-              'startIndex': 20,
-              'text': 'delta'
+              endIndex: 24,
+              score: null,
+              startIndex: 20,
+              text: 'delta',
             },
             {
-              'endIndex': 24,
-              'score': null,
-              'startIndex': 20,
-              'text': 'delta'
+              endIndex: 24,
+              score: null,
+              startIndex: 20,
+              text: 'delta',
             },
             {
-              'endIndex': 24,
-              'score': null,
-              'startIndex': 20,
-              'text': 'delta'
+              endIndex: 24,
+              score: null,
+              startIndex: 20,
+              text: 'delta',
             },
             {
-              'endIndex': 24,
-              'score': null,
-              'startIndex': 20,
-              'text': 'delta'
+              endIndex: 24,
+              score: null,
+              startIndex: 20,
+              text: 'delta',
             },
             {
-              'endIndex': 24,
-              'score': null,
-              'startIndex': 20,
-              'text': 'delta'
+              endIndex: 24,
+              score: null,
+              startIndex: 20,
+              text: 'delta',
             },
             {
-              'endIndex': 24,
-              'score': null,
-              'startIndex': 20,
-              'text': 'delta'
+              endIndex: 24,
+              score: null,
+              startIndex: 20,
+              text: 'delta',
             },
             {
-              'endIndex': 24,
-              'score': null,
-              'startIndex': 20,
-              'text': 'delta'
+              endIndex: 24,
+              score: null,
+              startIndex: 20,
+              text: 'delta',
             },
             {
-              'endIndex': 24,
-              'score': null,
-              'startIndex': 20,
-              'text': 'delta'
-            },            {
-              'endIndex': 24,
-              'score': null,
-              'startIndex': 20,
-              'text': 'delta'
-            }
-          ]
+              endIndex: 24,
+              score: null,
+              startIndex: 20,
+              text: 'delta',
+            },
+            {
+              endIndex: 24,
+              score: null,
+              startIndex: 20,
+              text: 'delta',
+            },
+          ],
         },
-        'Airline': [
-          [
-            'Delta'
-          ]
-        ]
+        Airline: [['Delta']],
       },
       intents: {
         Greeting: { score: 0.99 },
-        Travel: { score: 0.01 }
+        Travel: { score: 0.01 },
       },
-      text: 'hi'
+      text: 'hi',
     },
-    luisOptions: {}
+    luisOptions: {},
   };
-  appInfo: AppInfo = {
+  public appInfo: AppInfo = {
     activeVersion: '0.1',
     authorized: false,
     name: 'Contoso App',
     appId: '6209a76f-e836-413b-ba92-a5772d1b2087',
     endpoints: {},
-    isDispatchApp: false
+    isDispatchApp: false,
   };
-  persistentState: {
-  };
-  controlBarButtonSelected: ButtonSelected.RawResponse;
-  id: '6209a76f-e836-413b-ba92-a5772d1b2003';
-  authoringKey: '';
-  intentInfo: IntentInfo[] = [
+  public persistentState: {};
+  public controlBarButtonSelected: ButtonSelected.RawResponse;
+  public id: '6209a76f-e836-413b-ba92-a5772d1b2003';
+  public authoringKey: '';
+  public intentInfo: IntentInfo[] = [
     {
       id: '6209a76f-e836-413b-ba92-a5772d1b2000',
-      name: 'Greeting'
+      name: 'Greeting',
     },
     {
       id: '6209a76f-e836-413b-ba92-a5772d1b2001',
-      name: 'Cancel'
+      name: 'Cancel',
     },
     {
       id: '6209a76f-e836-413b-ba92-a5772d1b2002',
-      name: 'Travel'
-    }
+      name: 'Travel',
+    },
   ];
 }

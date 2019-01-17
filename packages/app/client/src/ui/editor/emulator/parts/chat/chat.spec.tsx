@@ -34,26 +34,27 @@
 import * as React from 'react';
 import { mount, shallow, ShallowWrapper } from 'enzyme';
 import ReactWebChat from 'botframework-webchat';
-import { CommandServiceImpl } from '../../../../../platform/commands/commandServiceImpl';
-import { Chat, getSpeechToken } from './chat';
 
+import { CommandServiceImpl } from '../../../../../platform/commands/commandServiceImpl';
+
+import { Chat, getSpeechToken } from './chat';
 import webChatStyleOptions from './webChatTheme';
 
 jest.mock('../../../../dialogs', () => ({
-  AzureLoginPromptDialogContainer: () => ({ }),
-  AzureLoginSuccessDialogContainer: () => ({ }),
-  BotCreationDialog: () => ({ }),
+  AzureLoginPromptDialogContainer: () => ({}),
+  AzureLoginSuccessDialogContainer: () => ({}),
+  BotCreationDialog: () => ({}),
   DialogService: { showDialog: () => Promise.resolve(true) },
-  SecretPromptDialog: () => ({ })
+  SecretPromptDialog: () => ({}),
 }));
 
 jest.mock('./chat.scss', () => ({}));
 
 const defaultDocument = {
   directLine: {
-    token: 'direct line token'
+    token: 'direct line token',
   },
-  botId: '456'
+  botId: '456',
 };
 
 function render(overrides: any = {}): ShallowWrapper {
@@ -66,7 +67,7 @@ function render(overrides: any = {}): ShallowWrapper {
     locale: 'en-US',
     selectedActivity: null,
     updateSelectedActivity: jest.fn(),
-    ...overrides
+    ...overrides,
   };
 
   return shallow(<Chat {...props} />);
@@ -91,7 +92,7 @@ describe('<Chat />', () => {
         directLine: defaultDocument.directLine,
         locale: 'en-US',
         styleOptions: webChatStyleOptions,
-        userId: '123'
+        userId: '123',
       });
     });
   });
@@ -110,7 +111,7 @@ describe('<Chat />', () => {
       expect(activityWrapper.props()).toMatchObject({
         activity: card.activity,
         onClick: updateSelectedActivity,
-        isSelected: false
+        isSelected: false,
       });
       expect(activityWrapper.text()).toEqual('a child node');
     });
@@ -122,8 +123,8 @@ describe('<Chat />', () => {
       const component = render({
         endpoint: {
           appId: 'some-app-id',
-          appPassword: 'some-password'
-        }
+          appPassword: 'some-password',
+        },
       });
 
       expect(component.text()).toEqual('Connecting...');
@@ -135,12 +136,14 @@ describe('<Chat />', () => {
       const component = render({
         endpoint: {
           appId: 'some-app-id',
-          appPassword: 'some-password'
-        }
+          appPassword: 'some-password',
+        },
       });
 
-      await new Promise((resolve) => setTimeout(resolve, 250));
-      expect(component.find(ReactWebChat).prop('webSpeechPonyfillFactory')).toBeTruthy();
+      await new Promise(resolve => setTimeout(resolve, 250));
+      expect(
+        component.find(ReactWebChat).prop('webSpeechPonyfillFactory')
+      ).toBeTruthy();
     });
   });
 });
@@ -151,13 +154,16 @@ describe('getSpeechToken', () => {
 
     (CommandServiceImpl as any).remoteCall = mockRemoteCall;
 
-    const speechToken = getSpeechToken({
-      appId: 'APP_ID',
-      appPassword: 'APP_PASSWORD',
-      endpoint: 'http://example.com/',
-      id: '123',
-      name: 'bot endpoint'
-    }, true);
+    const speechToken = getSpeechToken(
+      {
+        appId: 'APP_ID',
+        appPassword: 'APP_PASSWORD',
+        endpoint: 'http://example.com/',
+        id: '123',
+        name: 'bot endpoint',
+      },
+      true
+    );
 
     expect(speechToken).resolves.toBe('1A2B3C4');
     expect(mockRemoteCall).toHaveBeenCalledTimes(1);

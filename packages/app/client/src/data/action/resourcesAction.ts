@@ -1,6 +1,38 @@
+//
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license.
+//
+// Microsoft Bot Framework: http://botframework.com
+//
+// Bot Framework Emulator Github:
+// https://github.com/Microsoft/BotFramwork-Emulator
+//
+// Copyright (c) Microsoft Corporation
+// All rights reserved.
+//
+// MIT License:
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+//
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED ""AS IS"", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
 import { IFileService } from 'botframework-config/lib/schema';
-import { Action } from 'redux';
 import { ComponentClass } from 'react';
+import { Action } from 'redux';
 
 export const TRANSCRIPTS_UPDATED = 'TRANSCRIPTS_UPDATED';
 export const TRANSCRIPTS_DIRECTORY_UPDATED = 'TRANSCRIPTS_DIRECTORY_UPDATED';
@@ -16,67 +48,87 @@ export interface ResourcesAction<T> extends Action {
   payload: T;
 }
 
-export function transcriptsUpdated(payload: IFileService[]): ResourcesAction<IFileService[]> {
+export function transcriptsUpdated(
+  payload: IFileService[]
+): ResourcesAction<IFileService[]> {
   return {
     type: TRANSCRIPTS_UPDATED,
-    payload
+    payload,
   };
 }
 
-export function transcriptDirectoryUpdated(payload: string): ResourcesAction<string> {
+export function transcriptDirectoryUpdated(
+  payload: string
+): ResourcesAction<string> {
   return {
     type: TRANSCRIPTS_DIRECTORY_UPDATED,
-    payload
+    payload,
   };
 }
 
-export function chatsDirectoryUpdated(payload: string): ResourcesAction<string> {
+export function chatsDirectoryUpdated(
+  payload: string
+): ResourcesAction<string> {
   return {
     type: CHATS_DIRECTORY_UPDATED,
-    payload
+    payload,
   };
 }
 
-export function chatFilesUpdated(payload: IFileService[]): ResourcesAction<IFileService[]> {
+export function chatFilesUpdated(
+  payload: IFileService[]
+): ResourcesAction<IFileService[]> {
   return {
     type: CHAT_FILES_UPDATED,
-    payload
+    payload,
   };
 }
 
-export function openContextMenuForResource(payload: IFileService): ResourcesAction<IFileService> {
+export function openContextMenuForResource(
+  payload: IFileService
+): ResourcesAction<IFileService> {
   return {
     type: OPEN_CONTEXT_MENU_FOR_RESOURCE,
-    payload
+    payload,
   };
 }
 
-export function editResource(payload: IFileService): ResourcesAction<IFileService> {
+export function editResource(
+  payload: IFileService
+): ResourcesAction<IFileService> {
   return {
     type: EDIT_RESOURCE,
-    payload
+    payload,
   };
 }
 
-export function renameResource(payload: IFileService): ResourcesAction<IFileService> {
+export function renameResource(
+  payload: IFileService
+): ResourcesAction<IFileService> {
   return {
     type: RENAME_RESOURCE,
-    payload
+    payload,
   };
 }
 
-export function openResource(payload: IFileService): ResourcesAction<IFileService> {
+export function openResource(
+  payload: IFileService
+): ResourcesAction<IFileService> {
   return {
     type: OPEN_RESOURCE,
-    payload
+    payload,
   };
 }
 
-declare type ResourceSettingsPayload = { dialog: ComponentClass<any> };
+declare interface ResourceSettingsPayload {
+  dialog: ComponentClass<any>;
+}
 
-export function openResourcesSettings(payload: ResourceSettingsPayload): ResourcesAction<ResourceSettingsPayload> {
+export function openResourcesSettings(
+  payload: ResourceSettingsPayload
+): ResourcesAction<ResourceSettingsPayload> {
   return {
     type: OPEN_RESOURCE_SETTINGS,
-    payload
+    payload,
   };
 }

@@ -34,10 +34,10 @@
 import CardAction from './cardAction';
 
 interface CardImage {
-  url: string;                    // Thumbnail image for major content property.
-  alt: string;                    // Image description intended for screen readers
-  tap: CardAction;                // Action assigned to specific Attachment. E.g.
-                                  // navigate to specific URL or play/open media content
+  url: string; // Thumbnail image for major content property.
+  alt: string; // Image description intended for screen readers
+  tap: CardAction; // Action assigned to specific Attachment. E.g.
+  // navigate to specific URL or play/open media content
 }
 
 export default CardImage;

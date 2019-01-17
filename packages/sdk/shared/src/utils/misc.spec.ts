@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { uniqueId, uniqueIdv4, isObject } from './misc';
+import { isObject, uniqueId, uniqueIdv4 } from './misc';
 
 describe('Misc utility function tests', () => {
   it('should generate a uniqueId', () => {
@@ -68,5 +68,5 @@ describe('Misc utility function tests', () => {
     expect(id1).not.toEqual(id2);
     expect(id1).not.toEqual(id3);
     expect(id2).not.toEqual(id3);
-  })
+  });
 });

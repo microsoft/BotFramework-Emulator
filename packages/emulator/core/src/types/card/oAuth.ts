@@ -34,9 +34,9 @@
 import CardAction from './cardAction';
 
 interface OAuthCard {
-  text: string;                   // Title of the Card 
-  connectionName: string;         // OAuth connection name
-  buttons: CardAction[];         // Sign in action
+  text: string; // Title of the Card
+  connectionName: string; // OAuth connection name
+  buttons: CardAction[]; // Sign in action
 }
 
 export default OAuthCard;

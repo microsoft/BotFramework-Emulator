@@ -33,26 +33,33 @@
 
 import * as React from 'react';
 import { Component } from 'react';
+
 import * as styles from './QnAMakerHeader.scss';
 
-interface QnAMakerHeaderState {
-}
+interface QnAMakerHeaderState {}
 
 interface QnAMakerHeaderProps {
   knowledgeBaseName: string;
-  knowledgeBaseId: String;
+  knowledgeBaseId: string;
 }
 
-export default class QnAMakerHeader extends Component<QnAMakerHeaderProps, QnAMakerHeaderState> {
+export default class QnAMakerHeader extends Component<
+  QnAMakerHeaderProps,
+  QnAMakerHeaderState
+> {
   constructor(props: QnAMakerHeaderProps, context: any) {
     super(props, context);
   }
 
-  render() {
+  public render() {
     return (
-      <div className={ styles.qnaMakerHeader }>
-        <span className={ styles.knowledgebaseName }>{ this.props.knowledgeBaseName }</span>
-        <span className="appid">Knowledgebase Id: { this.props.knowledgeBaseId }</span>
+      <div className={styles.qnaMakerHeader}>
+        <span className={styles.knowledgebaseName}>
+          {this.props.knowledgeBaseName}
+        </span>
+        <span className="appid">
+          Knowledgebase Id: {this.props.knowledgeBaseId}
+        </span>
       </div>
     );
   }

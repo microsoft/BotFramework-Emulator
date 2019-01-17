@@ -33,10 +33,13 @@
 
 import { mount } from 'enzyme';
 import * as React from 'react';
+
 import { SplitButton } from './splitButton';
 
 jest.mock('./splitButton.scss', () => ({}));
-jest.mock('./splitButtonPanel/splitButtonPanel', () => ({ SplitButtonPanel: () => <div></div>}));
+jest.mock('./splitButtonPanel/splitButtonPanel', () => ({
+  SplitButtonPanel: () => <div />,
+}));
 
 describe('<SplitButton>', () => {
   let wrapper;
@@ -47,7 +50,7 @@ describe('<SplitButton>', () => {
 
   beforeEach(() => {
     mockHidePanel = jest.fn(() => null);
-    wrapper = mount(<SplitButton/>);
+    wrapper = mount(<SplitButton />);
     node = wrapper.find(SplitButton);
     instance = wrapper.instance();
   });
@@ -57,7 +60,7 @@ describe('<SplitButton>', () => {
   });
 
   it('should set a caret button ref', () => {
-    const mockCaretRef = 'I\'m a caret button!';
+    const mockCaretRef = "I'm a caret button!";
     instance.setCaretRef(mockCaretRef);
 
     expect(instance.caretRef).toBe(mockCaretRef);
@@ -76,7 +79,9 @@ describe('<SplitButton>', () => {
 
   it('should handle clicking the default button', () => {
     const mockOnClick = jest.fn((_value: number) => null);
-    wrapper = mount(<SplitButton options={ mockOptions } onClick={ mockOnClick }/>);
+    wrapper = mount(
+      <SplitButton options={mockOptions} onClick={mockOnClick} />
+    );
     instance = wrapper.instance();
     instance.onClickDefault();
 
@@ -85,7 +90,9 @@ describe('<SplitButton>', () => {
 
   it('should handle clicking an option', () => {
     const mockOnClick = jest.fn((_value: number) => null);
-    wrapper = mount(<SplitButton options={ mockOptions } onClick={ mockOnClick }/>);
+    wrapper = mount(
+      <SplitButton options={mockOptions} onClick={mockOnClick} />
+    );
     instance = wrapper.instance();
     instance.hidePanel = mockHidePanel;
     instance.onClickOption(2);
@@ -106,32 +113,32 @@ describe('<SplitButton>', () => {
   });
 
   it('should move selection up', () => {
-    wrapper = mount(<SplitButton options={ mockOptions } />);
+    wrapper = mount(<SplitButton options={mockOptions} />);
     instance = wrapper.instance();
     instance.setState({ selected: 2 });
-    
+
     instance.moveSelectionUp();
     expect(instance.state.selected).toBe(1);
 
     instance.moveSelectionUp();
     expect(instance.state.selected).toBe(0);
-    
+
     // should stop at first option
     instance.moveSelectionUp();
     expect(instance.state.selected).toBe(0);
   });
 
   it('should move selection down', () => {
-    wrapper = mount(<SplitButton options={ mockOptions } />);
+    wrapper = mount(<SplitButton options={mockOptions} />);
     instance = wrapper.instance();
     instance.setState({ selected: 0 });
-    
+
     instance.moveSelectionDown();
     expect(instance.state.selected).toBe(1);
 
     instance.moveSelectionDown();
     expect(instance.state.selected).toBe(2);
-    
+
     // should stop at last option
     instance.moveSelectionDown();
     expect(instance.state.selected).toBe(2);
@@ -165,7 +172,11 @@ describe('<SplitButton>', () => {
     expect(mockPreventDefault).toHaveBeenCalledTimes(1);
     expect(mockOnClickOption).toHaveBeenCalledWith(5);
 
-    mockEvent = { key: 'Tab', preventDefault: mockPreventDefault, shiftKey: false };
+    mockEvent = {
+      key: 'Tab',
+      preventDefault: mockPreventDefault,
+      shiftKey: false,
+    };
     instance.onKeyDown(mockEvent);
     expect(mockHidePanel).toHaveBeenCalledTimes(2);
     expect(mockPreventDefault).toHaveBeenCalledTimes(1);

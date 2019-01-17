@@ -34,10 +34,12 @@
 import * as React from 'react';
 import { DragEvent } from 'react';
 import { connect } from 'react-redux';
-import * as styles from './leftContentOverlay.scss';
-import * as overlay from '../overlay.scss';
-import { RootState } from '../../../../../data/store';
+
 import * as EditorActions from '../../../../../data/action/editorActions';
+import { RootState } from '../../../../../data/store';
+import * as overlay from '../overlay.scss';
+
+import * as styles from './leftContentOverlay.scss';
 
 interface LeftContentOverlayProps {
   documentId?: string;
@@ -49,55 +51,69 @@ interface LeftContentOverlayState {
   draggedOver: boolean;
 }
 
-class LeftContentOverlayComponent extends React.Component<LeftContentOverlayProps, LeftContentOverlayState> {
+class LeftContentOverlayComponent extends React.Component<
+  LeftContentOverlayProps,
+  LeftContentOverlayState
+> {
   public state = {
-    draggedOver: false
+    draggedOver: false,
   };
 
-  render() {
-    let overlayClassName = this.state.draggedOver ? overlay.draggedOverOverlay : '';
-    overlayClassName += (this.props.draggingTab ? overlay.enabledForDrop : '');
+  public render() {
+    let overlayClassName = this.state.draggedOver
+      ? overlay.draggedOverOverlay
+      : '';
+    overlayClassName += this.props.draggingTab ? overlay.enabledForDrop : '';
 
     return (
-      <div className={ `${overlay.overlay} ${styles.leftContentOverlay} ${overlayClassName}` }
-           onDragEnterCapture={ this.onDragEnter } onDragLeave={ this.onDragLeave }
-           onDragOverCapture={ this.onDragOver } onDropCapture={ this.onDrop }/>
+      <div
+        className={`${overlay.overlay} ${
+          styles.leftContentOverlay
+        } ${overlayClassName}`}
+        onDragEnterCapture={this.onDragEnter}
+        onDragLeave={this.onDragLeave}
+        onDragOverCapture={this.onDragOver}
+        onDropCapture={this.onDrop}
+      />
     );
   }
 
-  private onDragEnter = (e) => {
+  private onDragEnter = e => {
     e.preventDefault();
     e.stopPropagation();
-  }
+  };
 
   private onDragLeave = (_e: DragEvent<HTMLDivElement>) => {
-    this.setState(({ draggedOver: false }));
-  }
+    this.setState({ draggedOver: false });
+  };
 
   private onDragOver = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    this.setState(({ draggedOver: true }));
-  }
+    this.setState({ draggedOver: true });
+  };
 
   private onDrop = (e: DragEvent<HTMLDivElement>) => {
     const tabData = JSON.parse(e.dataTransfer.getData('application/json'));
     const tabId = tabData.tabId;
     this.props.handleTabDrop(tabId);
-    this.setState(({ draggedOver: false }));
+    this.setState({ draggedOver: false });
     e.preventDefault();
     e.stopPropagation();
-  }
+  };
 }
 
 const mapStateToProps = (state: RootState): LeftContentOverlayProps => ({
-  draggingTab: state.editor.draggingTab
+  draggingTab: state.editor.draggingTab,
 });
 
 const mapDispatchToProps = (dispatch): LeftContentOverlayProps => ({
   handleTabDrop: (tabId: string) => {
     dispatch(EditorActions.dropTabOnLeftOverlay(tabId));
-  }
+  },
 });
 
-export const LeftContentOverlay = connect(mapStateToProps, mapDispatchToProps)(LeftContentOverlayComponent);
+export const LeftContentOverlay = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(LeftContentOverlayComponent);

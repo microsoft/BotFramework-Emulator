@@ -31,10 +31,19 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { BotState, bot } from './bot';
-import { BotAction, load, setActive, setDirectory, close, mockAndSetActive } from '../actions/botActions';
 import { BotInfo } from '@bfemulator/app-shared';
 import { BotConfigWithPath } from '@bfemulator/sdk-shared';
+
+import {
+  BotAction,
+  load,
+  setActive,
+  setDirectory,
+  close,
+  mockAndSetActive,
+} from '../actions/botActions';
+
+import { BotState, bot } from './bot';
 
 describe('Bot reducer tests', () => {
   let defaultState: BotState;
@@ -43,7 +52,7 @@ describe('Bot reducer tests', () => {
     defaultState = {
       activeBot: null,
       botFiles: [],
-      currentBotDirectory: null
+      currentBotDirectory: null,
     };
   });
 
@@ -60,19 +69,19 @@ describe('Bot reducer tests', () => {
       {
         displayName: 'bot1',
         path: 'path1',
-        secret: null
+        secret: null,
       },
       {
         displayName: 'bot2',
         path: 'path2',
-        secret: 'test-secret'
+        secret: 'test-secret',
       },
       {
         displayName: 'bot3',
         path: 'path3',
-        secret: null
+        secret: null,
       },
-      null
+      null,
     ];
     const action = load(bots);
     const state = bot(defaultState, action);
@@ -83,18 +92,18 @@ describe('Bot reducer tests', () => {
       {
         displayName: 'bot1',
         path: 'path1',
-        secret: null
+        secret: null,
       },
       {
         displayName: 'bot2',
         path: 'path2',
-        secret: 'test-secret'
+        secret: 'test-secret',
       },
       {
         displayName: 'bot3',
         path: 'path3',
-        secret: null
-      }
+        secret: null,
+      },
     ]);
   });
 
@@ -104,11 +113,11 @@ describe('Bot reducer tests', () => {
       description: 'testing',
       padlock: null,
       services: [],
-      path: 'somePath'
+      path: 'somePath',
     };
     const startingState: BotState = {
       ...defaultState,
-      activeBot
+      activeBot,
     };
 
     const action = close();
@@ -130,7 +139,7 @@ describe('Bot reducer tests', () => {
       description: 'some description',
       padlock: null,
       services: [],
-      path: 'somePath'
+      path: 'somePath',
     };
     expect(defaultState.activeBot).toBe(null);
 
@@ -153,20 +162,20 @@ describe('Bot reducer tests', () => {
           endpoint: 'someEndpointOverride',
           id: 'someEndpointOverride',
           appId: 'someAppIdOverride',
-          appPassword: 'someAppPwOverride'
-        }
-      }
+          appPassword: 'someAppPwOverride',
+        },
+      },
     };
     const startingState: BotState = {
       ...defaultState,
-      activeBot
+      activeBot,
     };
     const newActiveBot: BotConfigWithPath = {
       name: 'someBot',
       description: 'some description',
       padlock: null,
       services: [],
-      path: 'somePath'
+      path: 'somePath',
     };
 
     const action = setActive(newActiveBot);
@@ -182,7 +191,7 @@ describe('Bot reducer tests', () => {
     expect(endpointOverrides.appPassword).toBe('someAppPwOverride');
   });
 
-  it('should throw away overrides from the previous bot if they don\'t have the same path', () => {
+  it("should throw away overrides from the previous bot if they don't have the same path", () => {
     const activeBot: BotConfigWithPath = {
       name: 'someActiveBot',
       description: 'testing',
@@ -194,20 +203,20 @@ describe('Bot reducer tests', () => {
           endpoint: 'someEndpointOverride',
           id: 'someEndpointOverride',
           appId: 'someAppIdOverride',
-          appPassword: 'someAppPwOverride'
-        }
-      }
+          appPassword: 'someAppPwOverride',
+        },
+      },
     };
     const startingState: BotState = {
       ...defaultState,
-      activeBot
+      activeBot,
     };
     const newActiveBot: BotConfigWithPath = {
       name: 'someBot',
       description: 'some description',
       padlock: null,
       services: [],
-      path: 'someOtherPath'
+      path: 'someOtherPath',
     };
 
     const action = setActive(newActiveBot);
@@ -223,7 +232,7 @@ describe('Bot reducer tests', () => {
       description: '',
       padlock: null,
       path: 'mockedPath',
-      services: []
+      services: [],
     };
     const action = mockAndSetActive(botMock);
     const state = bot(defaultState, action);

@@ -31,29 +31,30 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { SharedConstants } from '@bfemulator/app-shared';
 import {
   CommandRegistryImpl,
   CommandService,
   CommandServiceImpl,
   ExtensionConfig,
-  ExtensionInspector
+  ExtensionInspector,
 } from '@bfemulator/sdk-shared';
+
 import { ElectronIPC } from './ipc';
-import { SharedConstants } from '@bfemulator/app-shared';
 
 // =============================================================================
 export class Extension {
   private _ext: CommandService;
 
-  get unid(): string {
+  public get unid(): string {
     return this._unid;
   }
 
-  get config(): ExtensionConfig {
+  public get config(): ExtensionConfig {
     return this._config;
   }
 
-  constructor(private _config: ExtensionConfig, private _unid: string) {
+  public constructor(private _config: ExtensionConfig, private _unid: string) {
     this._ext = new CommandServiceImpl(ElectronIPC, `ext-${this._unid}`);
     /*
     this._ext.remoteCall('ext-ping')
@@ -64,11 +65,15 @@ export class Extension {
 
   public inspectorForObject(obj: any): GetInspectorResult | null {
     const inspectors = this.config.client.inspectors || [];
-    const inspector = inspectors.find(inspectorArg => InspectorAPI.canInspect(inspectorArg, obj));
-    return inspector ? {
-      extension: this,
-      inspector
-    } : null;
+    const inspector = inspectors.find(inspectorArg =>
+      InspectorAPI.canInspect(inspectorArg, obj)
+    );
+    return inspector
+      ? {
+          extension: this,
+          inspector,
+        }
+      : null;
   }
 
   public call(commandName: string, ...args: any[]): Promise<any> {
@@ -129,7 +134,10 @@ export class InspectorAPI {
   }
 }
 
-export function getValueFromPath(source: { [prop: string]: any }, path: string): any {
+export function getValueFromPath(
+  source: { [prop: string]: any },
+  path: string
+): any {
   const parts = path.split('.');
   let val = source;
   for (let i = 0; i < parts.length; i++) {
@@ -158,15 +166,19 @@ export interface ExtensionManager {
 
   getExtensions(): Extension[];
 
-  inspectorForObject(obj: any, defaultToJson: boolean): GetInspectorResult | null;
+  inspectorForObject(
+    obj: any,
+    defaultToJson: boolean
+  ): GetInspectorResult | null;
 }
 
 // =============================================================================
-export const ExtensionManager = new class implements ExtensionManager {
+class EmulatorExtensionManager implements ExtensionManager {
   private extensions: { [unid: string]: Extension } = {};
 
   public addExtension(config: ExtensionConfig, unid: string) {
     this.removeExtension(unid);
+    // eslint-disable-next-line no-console
     console.log(`adding extension ${config.name}`);
     const ext = new Extension(config, unid);
     this.extensions[unid] = ext;
@@ -174,30 +186,40 @@ export const ExtensionManager = new class implements ExtensionManager {
 
   public removeExtension(unid: string) {
     if (this.extensions[unid]) {
+      // eslint-disable-next-line no-console
       console.log(`removing extension ${this.extensions[unid].config.name}`);
       delete this.extensions[unid];
     }
   }
 
   public findExtension(name: string): Extension {
-    return this.getExtensions().find(extension => extension.config.name === name);
+    return this.getExtensions().find(
+      extension => extension.config.name === name
+    );
   }
 
   public getExtensions(): Extension[] {
     return Object.keys(this.extensions).map(key => this.extensions[key]) || [];
   }
 
-  public inspectorForObject(obj: any, defaultToJson: boolean): GetInspectorResult | null {
+  public inspectorForObject(
+    obj: any,
+    defaultToJson: boolean
+  ): GetInspectorResult | null {
     let result = this.getExtensions()
       .map(extension => extension.inspectorForObject(obj))
-      .filter(resultArg => !!resultArg).shift();
+      .filter(resultArg => !!resultArg)
+      .shift();
     if (!result && defaultToJson) {
       // Default to the JSON inspector
+      // eslint-disable-next-line typescript/no-use-before-define
       const jsonExtension = ExtensionManager.findExtension('JSON');
       if (jsonExtension) {
         result = {
           extension: jsonExtension,
-          inspector: jsonExtension.config.client.inspectors ? jsonExtension.config.client.inspectors[0] : null
+          inspector: jsonExtension.config.client.inspectors
+            ? jsonExtension.config.client.inspectors[0]
+            : null,
         };
       }
     }
@@ -207,11 +229,15 @@ export const ExtensionManager = new class implements ExtensionManager {
   public registerCommands(commandRegistry: CommandRegistryImpl) {
     const { Connect, Disconnect } = SharedConstants.Commands.Extension;
     commandRegistry.registerCommand(Connect, (config: ExtensionConfig) => {
+      // eslint-disable-next-line typescript/no-use-before-define
       ExtensionManager.addExtension(config, config.location);
     });
 
     commandRegistry.registerCommand(Disconnect, (location: string) => {
+      // eslint-disable-next-line typescript/no-use-before-define
       ExtensionManager.removeExtension(location);
     });
   }
-};
+}
+
+export const ExtensionManager = new EmulatorExtensionManager();

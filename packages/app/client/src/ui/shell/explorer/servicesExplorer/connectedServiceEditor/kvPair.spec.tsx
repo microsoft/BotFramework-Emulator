@@ -33,6 +33,7 @@
 
 import { mount } from 'enzyme';
 import * as React from 'react';
+
 import { KvPair } from './kvPair';
 
 jest.mock('./connectedServiceEditor.scss', () => ({}));
@@ -40,15 +41,17 @@ describe('The KvPair component', () => {
   let node;
   let mockKvs;
   const mockOnChange = {
-    onKvPairChanged: () => null
+    onKvPairChanged: () => null,
   };
 
   beforeEach(() => {
     mockKvs = {
-      someKey: 'someValue'
+      someKey: 'someValue',
     };
 
-    node = mount(<KvPair onChange={ mockOnChange.onKvPairChanged } kvPairs={ mockKvs }/>);
+    node = mount(
+      <KvPair onChange={mockOnChange.onKvPairChanged} kvPairs={mockKvs} />
+    );
   });
 
   it('should render at least one empty row when at least one non-empty row exist in the data', () => {
@@ -63,16 +66,17 @@ describe('The KvPair component', () => {
 
     node.instance().onChange({ target: instance });
     expect(node.state()).toEqual({
-      'kvPairs': [
+      kvPairs: [
         {
           key: 'someKey',
-          value: undefined
+          value: undefined,
         },
         {
           key: 'someKey2',
-          value: ''
-        }
-      ], length: 2
+          value: '',
+        },
+      ],
+      length: 2,
     });
   });
 });

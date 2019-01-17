@@ -31,11 +31,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import {
+  Settings,
+  settingsDefault,
+  SettingsImpl,
+} from '@bfemulator/app-shared';
 import * as Electron from 'electron';
 import { Action, applyMiddleware, createStore, Store } from 'redux';
-import { getThemes, loadSettings } from '../utils';
 import sagaMiddlewareFactory from 'redux-saga';
-import { Settings, settingsDefault, SettingsImpl, } from '@bfemulator/app-shared';
+
+import { getThemes, loadSettings } from '../utils';
+
 import reducers from './reducers';
 import { settingsSagas } from './sagas/settingsSagas';
 
@@ -43,6 +49,7 @@ let started = false;
 let store: Store<Settings>;
 
 export const getStore = (): Store<Settings> => {
+  // eslint-disable-next-line no-console
   console.assert(started, 'getStore() called before startup!');
   if (!store) {
     const sagaMiddleWare = sagaMiddlewareFactory();
@@ -50,12 +57,17 @@ export const getStore = (): Store<Settings> => {
     const initialSettings = loadSettings('server.json', settingsDefault);
     initialSettings.windowState.availableThemes = getThemes();
 
-    store = createStore(reducers, initialSettings, applyMiddleware(sagaMiddleWare));
+    store = createStore(
+      reducers,
+      initialSettings,
+      applyMiddleware(sagaMiddleWare)
+    );
     sagaMiddleWare.run(settingsSagas);
   }
   return store;
 };
-export const dispatch = <T extends Action>(obj: any) => getStore().dispatch<T>(obj);
+export const dispatch = <T extends Action>(obj: any) =>
+  getStore().dispatch<T>(obj);
 
 export const getSettings = () => {
   return new SettingsImpl(getStore().getState());
@@ -67,7 +79,7 @@ export const startup = () => {
     // Apply change requests to the settings store.
     getStore().dispatch({
       type: args[0],
-      state: args[1]
+      state: args[1],
     });
   });
 

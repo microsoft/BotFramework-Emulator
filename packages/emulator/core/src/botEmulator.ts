@@ -32,6 +32,8 @@
 //
 
 import * as Restify from 'restify';
+import fetch from 'node-fetch';
+
 import registerAttachmentRoutes from './attachments/registerRoutes';
 import registerBotStateRoutes from './botState/registerRoutes';
 import registerConversationRoutes from './conversations/registerRoutes';
@@ -43,7 +45,6 @@ import ConsoleLogService from './facility/consoleLogService';
 import ConversationSet from './facility/conversationSet';
 import EndpointSet from './facility/endpointSet';
 import LoggerAdapter from './facility/loggerAdapter';
-
 import Users from './facility/users';
 import registerSessionRoutes from './session/registerRoutes';
 import BotEmulatorOptions from './types/botEmulatorOptions';
@@ -55,7 +56,7 @@ import stripEmptyBearerToken from './utils/stripEmptyBearerToken';
 const DEFAULT_OPTIONS: BotEmulatorOptions = {
   fetch,
   loggerOrLogService: new ConsoleLogService(),
-  stateSizeLimitKB: 64
+  stateSizeLimitKB: 64,
 };
 
 export interface Facilities {
@@ -75,14 +76,19 @@ export default class BotEmulator {
   public options: BotEmulatorOptions;
   public facilities: Facilities;
 
-  constructor(getServiceUrl: (botUrl: string) => Promise<string>, options: BotEmulatorOptions = DEFAULT_OPTIONS) {
+  constructor(
+    getServiceUrl: (botUrl: string) => Promise<string>,
+    options: BotEmulatorOptions = DEFAULT_OPTIONS
+  ) {
     this.getServiceUrl = getServiceUrl;
 
     this.options = { ...DEFAULT_OPTIONS, ...options };
 
     const logService = this.options.loggerOrLogService as LogService;
-    const logger: Logger = (logService && logService.logToChat) ? new LoggerAdapter(logService as LogService)
-      : (this.options.loggerOrLogService as Logger);
+    const logger: Logger =
+      logService && logService.logToChat
+        ? new LoggerAdapter(logService as LogService)
+        : (this.options.loggerOrLogService as Logger);
 
     this.facilities = {
       attachments: new Attachments(),
@@ -90,16 +96,16 @@ export default class BotEmulator {
       conversations: new ConversationSet(),
       endpoints: new EndpointSet(this.options),
       logger,
-      users: new Users()
+      users: new Users(),
     };
   }
 
-  mount(router: Restify.Server): BotEmulator {
+  public mount(router: Restify.Server): BotEmulator {
     const uses = [
       Restify.plugins.acceptParser(router.acceptable),
       stripEmptyBearerToken(),
       Restify.plugins.dateParser(),
-      Restify.plugins.queryParser()
+      Restify.plugins.queryParser(),
     ];
 
     registerAttachmentRoutes(this, router, uses);

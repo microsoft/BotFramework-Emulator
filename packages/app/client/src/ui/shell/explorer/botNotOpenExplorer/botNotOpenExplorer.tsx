@@ -33,6 +33,7 @@
 
 import { ExpandCollapse, ExpandCollapseContent } from '@bfemulator/ui-react';
 import * as React from 'react';
+
 import * as styles from './botNotOpenExplorer.scss';
 
 export interface BotNotOpenExplorerProps {
@@ -42,24 +43,27 @@ export interface BotNotOpenExplorerProps {
   sendNotification: (error: Error) => void;
 }
 
-export class BotNotOpenExplorer extends React.Component<BotNotOpenExplorerProps, {}> {
-
+export class BotNotOpenExplorer extends React.Component<
+  BotNotOpenExplorerProps,
+  {}
+> {
   public render() {
     const label = 'Services Not Available';
     return (
-      <ul className={ styles.botNotOpenExplorer }>
+      <ul className={styles.botNotOpenExplorer}>
         <li>
-          <ExpandCollapse
-            expanded={ true }
-            ariaLabel={ label }
-            title={ label }
-          >
+          <ExpandCollapse expanded={true} ariaLabel={label} title={label}>
             <ExpandCollapseContent>
-              <div className={ styles.explorerEmptyState }>
-                { `To connect the Emulator services, ` }
-                <a href="javascript:void(0);" onClick={ this.onOpenBotFileClick }>open a .bot file</a>
-                { ` or ` }
-                <a href="javascript:void(0)" onClick={ this.onCreateNewBotClick }>create a new bot configuration</a>.
+              <div className={styles.explorerEmptyState}>
+                {`To connect the Emulator services, `}
+                <a href="javascript:void(0);" onClick={this.onOpenBotFileClick}>
+                  open a .bot file
+                </a>
+                {` or `}
+                <a href="javascript:void(0)" onClick={this.onCreateNewBotClick}>
+                  create a new bot configuration
+                </a>
+                .
               </div>
             </ExpandCollapseContent>
           </ExpandCollapse>
@@ -74,7 +78,7 @@ export class BotNotOpenExplorer extends React.Component<BotNotOpenExplorerProps,
     } catch (e) {
       this.props.sendNotification(e);
     }
-  }
+  };
 
   private onOpenBotFileClick = async () => {
     try {
@@ -82,5 +86,5 @@ export class BotNotOpenExplorer extends React.Component<BotNotOpenExplorerProps,
     } catch (e) {
       this.props.sendNotification(e);
     }
-  }
+  };
 }

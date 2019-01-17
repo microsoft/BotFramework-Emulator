@@ -32,17 +32,28 @@
 //
 
 import { connect } from 'react-redux';
-import { TabBarProps, TabBar } from './tabBar';
-import { RootState } from '../../../../data/store';
-import { splitTab, appendTab, setActiveTab, close } from '../../../../data/action/editorActions';
-import { enable as enablePresentationMode } from '../../../../data/action/presentationActions';
-import { closeDocument } from '../../../../data/action/chatActions';
-import { getTabGroupForDocument } from '../../../../data/editorHelpers';
 
-const mapStateToProps = (state: RootState, ownProps: TabBarProps): TabBarProps => ({
+import { closeDocument } from '../../../../data/action/chatActions';
+import {
+  appendTab,
+  close,
+  setActiveTab,
+  splitTab,
+} from '../../../../data/action/editorActions';
+import { enable as enablePresentationMode } from '../../../../data/action/presentationActions';
+import { getTabGroupForDocument } from '../../../../data/editorHelpers';
+import { RootState } from '../../../../data/store';
+
+import { TabBar, TabBarProps } from './tabBar';
+
+const mapStateToProps = (
+  state: RootState,
+  ownProps: TabBarProps
+): TabBarProps => ({
   ...ownProps,
   activeBot: state.bot.activeBot,
-  activeDocumentId: state.editor.editors[ownProps.owningEditor].activeDocumentId,
+  activeDocumentId:
+    state.editor.editors[ownProps.owningEditor].activeDocumentId,
   activeEditor: state.editor.activeEditor,
   chats: state.chat.chats,
   editors: state.editor.editors,
@@ -51,8 +62,12 @@ const mapStateToProps = (state: RootState, ownProps: TabBarProps): TabBarProps =
 });
 
 const mapDispatchToProps = (dispatch): TabBarProps => ({
-  splitTab: (contentType: string, documentId: string, srcEditorKey: string, destEditorKey: string) =>
-    dispatch(splitTab(contentType, documentId, srcEditorKey, destEditorKey)),
+  splitTab: (
+    contentType: string,
+    documentId: string,
+    srcEditorKey: string,
+    destEditorKey: string
+  ) => dispatch(splitTab(contentType, documentId, srcEditorKey, destEditorKey)),
   appendTab: (srcEditorKey: string, destEditorKey: string, tabId: string) =>
     dispatch(appendTab(srcEditorKey, destEditorKey, tabId)),
   enablePresentationMode: () => dispatch(enablePresentationMode()),
@@ -60,7 +75,10 @@ const mapDispatchToProps = (dispatch): TabBarProps => ({
   closeTab: (documentId: string) => {
     dispatch(close(getTabGroupForDocument(documentId), documentId));
     dispatch(closeDocument(documentId));
-  }
+  },
 });
 
-export const TabBarContainer = connect(mapStateToProps, mapDispatchToProps)(TabBar);
+export const TabBarContainer = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(TabBar);

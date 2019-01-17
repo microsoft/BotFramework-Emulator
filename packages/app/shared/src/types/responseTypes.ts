@@ -63,7 +63,7 @@ export const ErrorCodes = {
   MissingProperty: 'MissingProperty',
 
   /// Message exceeded size limits
-  MessageSizeTooBig: 'MessageSizeTooBig'
+  MessageSizeTooBig: 'MessageSizeTooBig',
 };
 
 export interface APIException {
@@ -75,11 +75,14 @@ export interface APIException {
 // Create ResourceResponse object
 //
 export function createResourceResponse(id: string): ResourceResponse {
-  return { id: id };
+  return { id };
 }
 
-export function createConversationResponse(id: string, activityId: string): ConversationResourceResponse {
-  let response: ConversationResourceResponse = { id: id };
+export function createConversationResponse(
+  id: string,
+  activityId: string
+): ConversationResourceResponse {
+  const response: ConversationResourceResponse = { id };
   if (activityId != null) {
     response.activityId = activityId;
   }
@@ -87,19 +90,26 @@ export function createConversationResponse(id: string, activityId: string): Conv
 }
 
 // Create ErrorResponse object
-export function createErrorResponse(code: string, message: string): ErrorResponse {
+export function createErrorResponse(
+  code: string,
+  message: string
+): ErrorResponse {
   return {
     error: {
-      code: code,
-      message: message
-    }
+      code,
+      message,
+    },
   };
 }
 
 // Create Exception
-export function createAPIException(statusCode: number, code: string, message: string): APIException {
+export function createAPIException(
+  statusCode: number,
+  code: string,
+  message: string
+): APIException {
   return {
-    statusCode: statusCode,
-    error: createErrorResponse(code, message)
+    statusCode,
+    error: createErrorResponse(code, message),
   };
 }

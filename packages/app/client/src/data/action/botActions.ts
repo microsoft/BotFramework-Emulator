@@ -39,20 +39,20 @@ export enum BotActions {
   setActive = 'BOT/SET_ACTIVE',
   close = 'BOT/CLOSE',
   browse = 'BOT/BROWSE',
-  hashGenerated = 'BOT/HASH_GENERATED'
+  hashGenerated = 'BOT/HASH_GENERATED',
 }
 
 export interface LoadBotAction {
   type: BotActions.load;
   payload: {
-    bots: BotInfo[]
+    bots: BotInfo[];
   };
 }
 
 export interface SetActiveBotAction {
   type: BotActions.setActive;
   payload: {
-    bot: BotConfigWithPath
+    bot: BotConfigWithPath;
   };
 }
 
@@ -72,11 +72,11 @@ export interface BotHashAction {
 }
 
 export type BotAction =
-  LoadBotAction |
-  SetActiveBotAction |
-  CloseBotAction |
-  BrowseBotAction |
-  BotHashAction;
+  | LoadBotAction
+  | SetActiveBotAction
+  | CloseBotAction
+  | BrowseBotAction
+  | BotHashAction;
 
 export function load(bots: BotInfo[]): LoadBotAction {
   // prune bad bots
@@ -85,8 +85,8 @@ export function load(bots: BotInfo[]): LoadBotAction {
   return {
     type: BotActions.load,
     payload: {
-      bots
-    }
+      bots,
+    },
   };
 }
 
@@ -98,28 +98,28 @@ export function setActive(bot: BotConfigWithPath): SetActiveBotAction {
   return {
     type: BotActions.setActive,
     payload: {
-      bot
-    }
+      bot,
+    },
   };
 }
 
 export function close(): CloseBotAction {
   return {
     type: BotActions.close,
-    payload: {}
+    payload: {},
   };
 }
 
 export function browse(): BrowseBotAction {
   return {
     type: BotActions.browse,
-    payload: {}
+    payload: {},
   };
 }
 
 export function botHashGenerated(hash: string): BotHashAction {
   return {
     type: BotActions.hashGenerated,
-    payload: { hash }
+    payload: { hash },
   };
 }

@@ -41,5 +41,5 @@ export const serviceTypeLabels = {
   [ServiceTypes.Bot]: 'Azure Bot Service',
   [ServiceTypes.BlobStorage]: 'Azure Storage',
   [ServiceTypes.CosmosDB]: 'Azure Cosmos DB',
-  [ServiceTypes.Generic]: 'Generic'
+  [ServiceTypes.Generic]: 'Generic',
 };

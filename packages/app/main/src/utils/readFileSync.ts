@@ -37,6 +37,7 @@ export const readFileSync = (path: string): string => {
   try {
     return readTextFile.readSync(path);
   } catch (e) {
+    // eslint-disable-next-line no-console
     console.error(`Error reading file ${path}: ${e}`);
     return '';
   }

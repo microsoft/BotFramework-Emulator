@@ -31,30 +31,47 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import {
+  IBotService,
+  IEndpointService,
+  ServiceTypes,
+} from 'botframework-config/lib/schema';
 import { connect } from 'react-redux';
+
 import { RootState } from '../../../../../data/store';
 import { DialogService } from '../../../../dialogs/service';
-import { EndpointEditor, EndpointEditorProps, UpdatedServicesPayload } from './endpointEditor';
-import { IBotService, IEndpointService, ServiceTypes } from 'botframework-config/lib/schema';
 
-const mapStateToProps = (state: RootState, ownProps: EndpointEditorProps): EndpointEditorProps => {
+import {
+  EndpointEditor,
+  EndpointEditorProps,
+  UpdatedServicesPayload,
+} from './endpointEditor';
+
+const mapStateToProps = (
+  state: RootState,
+  ownProps: EndpointEditorProps
+): EndpointEditorProps => {
   const { endpointService = {} as IEndpointService } = ownProps;
   const { services = [] } = state.bot.activeBot;
   let botService: IBotService;
   if (endpointService.appId) {
-    botService = services.find(service =>
-      service.type === ServiceTypes.Bot && (service as IBotService).appId === endpointService.appId) as IBotService;
+    botService = services.find(
+      service =>
+        service.type === ServiceTypes.Bot &&
+        (service as IBotService).appId === endpointService.appId
+    ) as IBotService;
   }
   return {
     botService,
-    ...ownProps
+    ...ownProps,
   };
 };
 
 const mapDispatchToProps = (): Partial<EndpointEditorProps> => {
   return {
-    updateEndpointService: (updatedServices: UpdatedServicesPayload) => DialogService.hideDialog(updatedServices),
-    cancel: () => DialogService.hideDialog()
+    updateEndpointService: (updatedServices: UpdatedServicesPayload) =>
+      DialogService.hideDialog(updatedServices),
+    cancel: () => DialogService.hideDialog(),
   };
 };
 

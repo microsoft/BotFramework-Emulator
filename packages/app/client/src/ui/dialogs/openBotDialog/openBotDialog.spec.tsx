@@ -36,11 +36,13 @@ import { mount } from 'enzyme';
 import * as React from 'react';
 import { Provider } from 'react-redux';
 import { combineReducers, createStore } from 'redux';
+
 import * as BotActions from '../../../data/action/botActions';
 import { bot } from '../../../data/reducer/bot';
 import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
 import { ActiveBotHelper } from '../../helpers/activeBotHelper';
 import { DialogService } from '../service';
+
 import { OpenBotDialog } from './openBotDialog';
 import { OpenBotDialogContainer } from './openBotDialogContainer';
 
@@ -49,13 +51,13 @@ jest.mock('./openBotDialog.scss', () => ({}));
 jest.mock('../../../data/store', () => ({
   get store() {
     return mockStore;
-  }
+  },
 }));
 jest.mock('../service', () => ({
   DialogService: {
     showDialog: () => Promise.resolve(true),
     hideDialog: () => Promise.resolve(false),
-  }
+  },
 }));
 jest.mock('../dialogStyles.scss', () => ({}));
 jest.mock('../../editor/recentBotsList/recentBotsList.scss', () => ({}));
@@ -63,11 +65,11 @@ jest.mock('../', () => ({}));
 
 const bots = [
   {
-    'path': '/some/path',
-    'displayName': 'mockMock',
-    'transcriptsPath': '/Users/microsoft/Documents/testbot/transcripts',
-    'chatsPath': '/Users/microsoft/Documents/testbot/dialogs'
-  }
+    path: '/some/path',
+    displayName: 'mockMock',
+    transcriptsPath: '/Users/microsoft/Documents/testbot/transcripts',
+    chatsPath: '/Users/microsoft/Documents/testbot/dialogs',
+  },
 ];
 
 describe('The OpenBotDialog', () => {
@@ -76,9 +78,11 @@ describe('The OpenBotDialog', () => {
   let instance;
   beforeEach(() => {
     mockStore.dispatch(BotActions.load(bots));
-    parent = mount(<Provider store={ mockStore }>
-      <OpenBotDialogContainer/>
-    </Provider>);
+    parent = mount(
+      <Provider store={mockStore}>
+        <OpenBotDialogContainer />
+      </Provider>
+    );
     node = parent.find(OpenBotDialog);
     instance = node.instance();
   });
@@ -93,8 +97,8 @@ describe('The OpenBotDialog', () => {
     instance.onInputChange({
       target: {
         type: 'text',
-        value: 'http://localhost:6500/api/messages'
-      }
+        value: 'http://localhost:6500/api/messages',
+      },
     } as any);
 
     expect(instance.state.botUrl).toBe('http://localhost:6500/api/messages');
@@ -102,8 +106,8 @@ describe('The OpenBotDialog', () => {
     instance.onInputChange({
       target: {
         type: 'file',
-        files: { item: () => ({ path: 'some/path/to/myBot.bot' }) }
-      }
+        files: { item: () => ({ path: 'some/path/to/myBot.bot' }) },
+      },
     } as any);
 
     expect(instance.state.botUrl).toBe('some/path/to/myBot.bot');
@@ -113,7 +117,7 @@ describe('The OpenBotDialog', () => {
     const spy = jest.fn();
     const mockInput = {
       value: 'this is some text',
-      setSelectionRange: spy
+      setSelectionRange: spy,
     };
 
     instance.onFocus({ target: mockInput } as any);
@@ -125,11 +129,13 @@ describe('The OpenBotDialog', () => {
     instance.onInputChange({
       target: {
         type: 'file',
-        files: { item: () => ({ path: 'some/path/to/myBot.bot' }) }
-      }
+        files: { item: () => ({ path: 'some/path/to/myBot.bot' }) },
+      },
     } as any);
 
-    const botHelperSpy = jest.spyOn(ActiveBotHelper, 'confirmAndOpenBotFromFile').mockResolvedValue(true);
+    const botHelperSpy = jest
+      .spyOn(ActiveBotHelper, 'confirmAndOpenBotFromFile')
+      .mockResolvedValue(true);
     await instance.onSubmit();
 
     expect(botHelperSpy).toHaveBeenCalledWith('some/path/to/myBot.bot');
@@ -139,14 +145,16 @@ describe('The OpenBotDialog', () => {
     instance.onInputChange({
       target: {
         type: 'text',
-        value: 'http://localhost:6500/api/messages'
-      }
+        value: 'http://localhost:6500/api/messages',
+      },
     } as any);
 
     const commandServiceSpy = jest.spyOn(CommandServiceImpl, 'call');
     await instance.onSubmit();
 
-    expect(commandServiceSpy).toHaveBeenCalledWith(SharedConstants.Commands.Emulator.NewLiveChat,
-      { endpoint: 'http://localhost:6500/api/messages' });
+    expect(commandServiceSpy).toHaveBeenCalledWith(
+      SharedConstants.Commands.Emulator.NewLiveChat,
+      { endpoint: 'http://localhost:6500/api/messages' }
+    );
   });
 });

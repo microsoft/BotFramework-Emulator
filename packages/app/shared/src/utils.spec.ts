@@ -31,17 +31,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { BotConfigWithPath } from '@bfemulator/sdk-shared';
+import { IEndpointService, ServiceTypes } from 'botframework-config/lib/schema';
+
 import {
   isObject,
   deepCopySlow,
   newBot,
   newEndpoint,
   getFirstBotEndpoint,
-  newNotification
+  newNotification,
 } from './utils';
 import { NotificationType } from './types';
-import { BotConfigWithPath } from '@bfemulator/sdk-shared';
-import { IEndpointService, ServiceTypes } from 'botframework-config/lib/schema';
 
 describe('utility function tests', () => {
   test('isObject()', () => {
@@ -58,7 +59,7 @@ describe('utility function tests', () => {
   });
 
   test('deepCopySlow()', () => {
-    const a = { outer: 3, inner: { prop: ':)' }};
+    const a = { outer: 3, inner: { prop: ':)' } };
     const b = deepCopySlow(a);
 
     expect(b).toEqual(a);
@@ -71,7 +72,7 @@ describe('utility function tests', () => {
       name: 'someName',
       description: 'someDescription',
       padlock: 'somePadlock',
-      services: []
+      services: [],
     };
     const bot3 = newBot(bot2);
 
@@ -92,7 +93,7 @@ describe('utility function tests', () => {
       type: ServiceTypes.Endpoint,
       appId: 'someAppId',
       appPassword: 'someAppPw',
-      name: 'someName'
+      name: 'someName',
     };
     const endpoint3 = newEndpoint(endpoint2);
 
@@ -114,13 +115,13 @@ describe('utility function tests', () => {
       type: ServiceTypes.Endpoint,
       appId: 'someAppId',
       appPassword: 'someAppPw',
-      name: 'someName'
+      name: 'someName',
     };
     const bot: BotConfigWithPath = {
       name: 'someName',
       description: 'someDescription',
       padlock: 'somePadlock',
-      services: [endpoint]
+      services: [endpoint],
     };
 
     expect(getFirstBotEndpoint(bot)).toBe(endpoint);

@@ -32,8 +32,10 @@
 //
 
 import * as path from 'path';
+
 import { CustomActivity } from './conversation';
 
+// eslint-disable-next-line typescript/no-var-requires
 const { fork } = require('child_process');
 const chatdown = require.resolve('chatdown/bin/chatdown');
 
@@ -41,7 +43,9 @@ const chatdown = require.resolve('chatdown/bin/chatdown');
  * Uses the chatdown library to convert a .chat file into a list of conversation activities
  * @param file The .chat file to parse
  */
-export const parseActivitiesFromChatFile = async (file: string): Promise<CustomActivity[]> => {
+export const parseActivitiesFromChatFile = async (
+  file: string
+): Promise<CustomActivity[]> => {
   let activities: CustomActivity[] = [];
 
   if (path.extname(file) !== '.chat') {
@@ -54,10 +58,10 @@ export const parseActivitiesFromChatFile = async (file: string): Promise<CustomA
     // in the case of activities that include attachments.
     // This takes a bit longer to process but achieves
     // the equivalent result as if the chatdown cli was used directly.
-    activities = await new Promise((resolve, reject) => {
+    activities = (await new Promise((resolve, reject) => {
       const childProcess = fork(chatdown, [file], {
         cwd: path.dirname(file),
-        silent: true
+        silent: true,
       });
 
       let str = '';
@@ -69,13 +73,14 @@ export const parseActivitiesFromChatFile = async (file: string): Promise<CustomA
         resolve(JSON.parse(str));
       });
 
-      childProcess.stdout.on('error', (err) => {
+      childProcess.stdout.on('error', err => {
         reject(err);
       });
-    }) as CustomActivity[];
-
+    })) as CustomActivity[];
   } catch (err) {
-    throw new Error(`Error while converting .chat file to list of activites: ${err}`);
+    throw new Error(
+      `Error while converting .chat file to list of activites: ${err}`
+    );
   }
 
   return activities;

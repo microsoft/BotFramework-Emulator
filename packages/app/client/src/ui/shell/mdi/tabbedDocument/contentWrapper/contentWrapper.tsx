@@ -34,13 +34,22 @@
 import * as React from 'react';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import * as styles from './contentWrapper.scss';
-import * as EditorActions from '../../../../../data/action/editorActions';
-import { ContentOverlay, LeftContentOverlay, RightContentOverlay } from '../index';
+
 import * as Constants from '../../../../../constants';
-import { getTabGroupForDocument, tabGroupHasDocuments } from '../../../../../data/editorHelpers';
+import * as EditorActions from '../../../../../data/action/editorActions';
+import {
+  getTabGroupForDocument,
+  tabGroupHasDocuments,
+} from '../../../../../data/editorHelpers';
 import { Editor } from '../../../../../data/reducer/editor';
 import { RootState } from '../../../../../data/store';
+import {
+  ContentOverlay,
+  LeftContentOverlay,
+  RightContentOverlay,
+} from '../index';
+
+import * as styles from './contentWrapper.scss';
 
 interface TabbedDocumentContentProps {
   activeEditor?: string;
@@ -55,45 +64,47 @@ interface TabbedDocumentContentState {
   owningEditor: string;
 }
 
-class TabbedDocumentContentWrapperComponent extends Component<TabbedDocumentContentProps, TabbedDocumentContentState> {
+class TabbedDocumentContentWrapperComponent extends Component<
+  TabbedDocumentContentProps,
+  TabbedDocumentContentState
+> {
   constructor(props: TabbedDocumentContentProps) {
     super(props);
 
     this.state = {
-      owningEditor: getTabGroupForDocument(props.documentId)
+      owningEditor: getTabGroupForDocument(props.documentId),
     };
   }
 
-  render() {
-    const onlyOneEditorActive = tabGroupHasDocuments(this.props.primaryEditor) &&
+  public render() {
+    const onlyOneEditorActive =
+      tabGroupHasDocuments(this.props.primaryEditor) &&
       !tabGroupHasDocuments(this.props.secondaryEditor);
 
-    const splittingEnabled = onlyOneEditorActive &&
+    const splittingEnabled =
+      onlyOneEditorActive &&
       this.props.primaryEditor.documents &&
       Object.keys(this.props.primaryEditor.documents).length > 1;
 
     return (
       <div
-        className={ styles.contentWrapper }
-        hidden={ this.props.hidden }
-        onClickCapture={ this.onClick }
+        className={styles.contentWrapper}
+        hidden={this.props.hidden}
+        onClickCapture={this.onClick}
       >
-        { this.props.children }
-        <ContentOverlay documentId={ this.props.documentId }/>
-        {
-          splittingEnabled ?
-            <>
-              <LeftContentOverlay/>
-              <RightContentOverlay/>
-            </>
-            :
-            null
-        }
+        {this.props.children}
+        <ContentOverlay documentId={this.props.documentId} />
+        {splittingEnabled ? (
+          <>
+            <LeftContentOverlay />
+            <RightContentOverlay />
+          </>
+        ) : null}
       </div>
     );
   }
 
-  componentWillReceiveProps(newProps: TabbedDocumentContentProps) {
+  public componentWillReceiveProps(newProps: TabbedDocumentContentProps) {
     const { documentId: newDocumentId } = newProps;
     if (this.props.documentId && this.props.documentId !== newDocumentId) {
       this.setState({ owningEditor: getTabGroupForDocument(newDocumentId) });
@@ -104,18 +115,21 @@ class TabbedDocumentContentWrapperComponent extends Component<TabbedDocumentCont
     if (this.state.owningEditor !== this.props.activeEditor) {
       this.props.setActiveEditor(this.state.owningEditor);
     }
-  }
+  };
 }
 
 const mapStateToProps = (state: RootState): TabbedDocumentContentProps => ({
   activeEditor: state.editor.activeEditor,
   primaryEditor: state.editor.editors[Constants.EDITOR_KEY_PRIMARY],
-  secondaryEditor: state.editor.editors[Constants.EDITOR_KEY_SECONDARY]
+  secondaryEditor: state.editor.editors[Constants.EDITOR_KEY_SECONDARY],
 });
 
 const mapDispatchToProps = (dispatch): TabbedDocumentContentProps => ({
-  setActiveEditor: (editor: string) => dispatch(EditorActions.setActiveEditor(editor))
+  setActiveEditor: (editor: string) =>
+    dispatch(EditorActions.setActiveEditor(editor)),
 });
 
-export const TabbedDocumentContentWrapper =
-  connect(mapStateToProps, mapDispatchToProps)(TabbedDocumentContentWrapperComponent) as any;
+export const TabbedDocumentContentWrapper = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(TabbedDocumentContentWrapperComponent) as any;

@@ -31,8 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 import { SharedConstants } from '@bfemulator/app-shared';
+import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 
 /** Registers electron commands */
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
@@ -45,15 +45,20 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
   // ---------------------------------------------------------------------------
   // An update is ready to install
-  commandRegistry.registerCommand(Electron.UpdateAvailable, (...args: any[]) => {
-    // TODO: Show a notification
-    console.log('Update available', ...args);
-  });
+  commandRegistry.registerCommand(
+    Electron.UpdateAvailable,
+    (...args: any[]) => {
+      // TODO: Show a notification
+      // eslint-disable-next-line no-console
+      console.log('Update available', ...args);
+    }
+  );
 
   // ---------------------------------------------------------------------------
   // Application is up to date
   commandRegistry.registerCommand(Electron.UpdateNotAvailable, () => {
     // TODO: Show a notification
+    // eslint-disable-next-line no-console
     console.log('Application is up to date');
   });
 

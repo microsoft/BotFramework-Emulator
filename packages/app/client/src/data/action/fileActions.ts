@@ -37,33 +37,33 @@ export enum FileActions {
   setRoot = 'FILE/SET_ROOT',
   add = 'FILE/ADD',
   remove = 'FILE/REMOVE',
-  clear = 'FILE/CLEAR'
+  clear = 'FILE/CLEAR',
 }
 
 export function addFile(payload: FileInfo) {
   return {
     type: FileActions.add,
-    payload
+    payload,
   };
 }
 
 export function clear() {
   return {
     type: FileActions.clear,
-    payload: {}
+    payload: {},
   };
 }
 
 export function removeFile(path: string) {
   return {
     type: FileActions.remove,
-    payload: { path }
+    payload: { path },
   };
 }
 
 export function setRoot(path: string) {
   return {
     type: FileActions.setRoot,
-    payload: { path }
+    payload: { path },
   };
 }

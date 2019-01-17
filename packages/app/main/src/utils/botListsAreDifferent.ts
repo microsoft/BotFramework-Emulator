@@ -38,7 +38,10 @@ import { BotInfo } from '@bfemulator/app-shared';
  * @param list1 First bot list to compare
  * @param list2 Second bot list to compare
  */
-export const botListsAreDifferent = (list1: BotInfo[], list2: BotInfo[]): boolean => {
+export const botListsAreDifferent = (
+  list1: BotInfo[],
+  list2: BotInfo[]
+): boolean => {
   if (list1.length !== list2.length) {
     return true;
   }
@@ -46,11 +49,13 @@ export const botListsAreDifferent = (list1: BotInfo[], list2: BotInfo[]): boolea
     const bot1 = list1[i];
     const bot2 = list2[i];
 
-    if (bot1.displayName !== bot2.displayName ||
+    if (
+      bot1.displayName !== bot2.displayName ||
       bot1.path !== bot2.path ||
       bot1.secret !== bot2.secret ||
       bot1.chatsPath !== bot2.chatsPath ||
-      bot1.transcriptsPath !== bot2.transcriptsPath) {
+      bot1.transcriptsPath !== bot2.transcriptsPath
+    ) {
       return true;
     }
   }

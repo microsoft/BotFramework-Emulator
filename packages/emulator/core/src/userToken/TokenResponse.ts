@@ -32,6 +32,6 @@
 //
 
 export interface TokenResponse {
-    token: string;
-    connectionName: string;
+  token: string;
+  connectionName: string;
 }

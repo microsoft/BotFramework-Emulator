@@ -45,11 +45,8 @@ export class TabbedDocument extends React.Component<TabbedDocumentProps> {
   public render() {
     const { children, documentId, hidden } = this.props;
     return (
-      <TabbedDocumentContentWrapper
-        documentId={ documentId }
-        hidden={ hidden }
-      >
-        { children }
+      <TabbedDocumentContentWrapper documentId={documentId} hidden={hidden}>
+        {children}
       </TabbedDocumentContentWrapper>
     );
   }

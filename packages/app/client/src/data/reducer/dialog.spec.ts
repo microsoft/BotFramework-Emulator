@@ -32,11 +32,12 @@
 //
 
 import { DialogAction, setShowing } from '../action/dialogActions';
+
 import { dialog, DialogState } from './dialog';
 
 describe('Dialog reducer tests', () => {
   const DEFAULT_STATE: DialogState = {
-    showing: false
+    showing: false,
   };
 
   it('should return unaltered state for non-matching action type', () => {

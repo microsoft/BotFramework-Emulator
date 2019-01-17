@@ -45,5 +45,5 @@ export enum ErrorCodes {
   MissingProperty = 'MissingProperty',
 
   /// Message exceeded size limits
-  MessageSizeTooBig = 'MessageSizeTooBig'
+  MessageSizeTooBig = 'MessageSizeTooBig',
 }

@@ -40,12 +40,22 @@ import { ErrorCodes } from '../../types/errorCodes';
 import ConversationAPIPathParameters from '../conversationAPIPathParameters';
 
 export default function fetchConversation(botEmulator: BotEmulator) {
-  return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+  return (
+    req: Restify.Request,
+    res: Restify.Response,
+    next: Restify.Next
+  ): any => {
     const conversationParameters: ConversationAPIPathParameters = req.params;
-    const conversation = botEmulator.facilities.conversations.conversationById(conversationParameters.conversationId);
+    const conversation = botEmulator.facilities.conversations.conversationById(
+      conversationParameters.conversationId
+    );
 
     if (!conversation) {
-      throw createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, 'conversation not found');
+      throw createAPIException(
+        HttpStatus.NOT_FOUND,
+        ErrorCodes.BadArgument,
+        'conversation not found'
+      );
     }
 
     (req as any).conversation = conversation;

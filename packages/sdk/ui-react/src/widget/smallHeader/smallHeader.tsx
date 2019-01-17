@@ -32,15 +32,18 @@
 //
 
 import * as React from 'react';
-import * as styles from './smallHeader.scss';
 
 import { TruncateText } from '../../layout';
+
+import * as styles from './smallHeader.scss';
 
 export interface SmallIHeaderProps {
   className?: string;
   children?: any;
 }
 
-export const SmallHeader = (props: SmallIHeaderProps): JSX.Element =>
-  <h3 className={ `${styles.smallHeader} ${props.className || ''}` }>
-    <TruncateText>{ props.children }</TruncateText></h3>;
+export const SmallHeader = (props: SmallIHeaderProps): JSX.Element => (
+  <h3 className={`${styles.smallHeader} ${props.className || ''}`}>
+    <TruncateText>{props.children}</TruncateText>
+  </h3>
+);

@@ -32,15 +32,15 @@
 //
 
 import * as React from 'react';
-import { Component, FormEvent, HTMLAttributes, ReactNode } from 'react';
+
 import * as styles from './checkbox.scss';
 
-export interface CheckboxProps extends HTMLAttributes<HTMLInputElement> {
+export interface CheckboxProps extends React.HTMLAttributes<HTMLInputElement> {
   label?: string;
   checkboxContainerClassName?: string;
   checked?: boolean;
   indeterminate?: boolean;
-  onChange?: (event: FormEvent<HTMLInputElement>) => void;
+  onChange?: (event: React.FormEvent<HTMLInputElement>) => void;
 }
 
 export interface CheckboxState {
@@ -51,14 +51,20 @@ export interface CheckboxState {
 
 let id = 0;
 
-export class Checkbox extends Component<CheckboxProps, CheckboxState> {
+export class Checkbox extends React.Component<CheckboxProps, CheckboxState> {
   private readonly checkboxId = 'emulator-checkbox-' + id++;
   private inputRef: HTMLInputElement;
 
-  public static getDerivedStateFromProps(newProps: CheckboxProps, prevState: CheckboxState = {}): CheckboxState {
+  public static getDerivedStateFromProps(
+    newProps: CheckboxProps,
+    prevState: CheckboxState = {}
+  ): CheckboxState {
     const { checked = false, indeterminate = false } = newProps;
-    const { checked: prevChecked, indeterminate: prevIndeterminate } = prevState;
-    if (  prevChecked !== checked || prevIndeterminate !== indeterminate) {
+    const {
+      checked: prevChecked,
+      indeterminate: prevIndeterminate,
+    } = prevState;
+    if (prevChecked !== checked || prevIndeterminate !== indeterminate) {
       return { checked, indeterminate };
     }
     return prevState;
@@ -70,7 +76,7 @@ export class Checkbox extends Component<CheckboxProps, CheckboxState> {
     this.state = { focused: false, checked };
   }
 
-  public render(): ReactNode {
+  public render(): React.ReactNode {
     // Trim off what we don't want to send to the input tag
     const { className, label = '', ...inputProps } = this.props;
     const { checked = false, indeterminate = false, focused } = this.state;
@@ -85,13 +91,20 @@ export class Checkbox extends Component<CheckboxProps, CheckboxState> {
     }
     return (
       <label
-        id={ this.checkboxId }
-        className={ `${styles.label} ${className}` }
-        data-checked={ checked }>
-        <span className={ `${styles.checkMark} ${checkMarkStyles}` }/>
-        <input type="checkbox" { ...inputProps } className={ styles.checkbox } ref={ this.checkboxRef } readOnly/>
-        { label }
-        { this.props.children }
+        id={this.checkboxId}
+        className={`${styles.label} ${className}`}
+        data-checked={checked}
+      >
+        <span className={`${styles.checkMark} ${checkMarkStyles}`} />
+        <input
+          type="checkbox"
+          {...inputProps}
+          className={styles.checkbox}
+          ref={this.checkboxRef}
+          readOnly={true}
+        />
+        {label}
+        {this.props.children}
       </label>
     );
   }
@@ -107,7 +120,7 @@ export class Checkbox extends Component<CheckboxProps, CheckboxState> {
       ref.addEventListener('focus', checkboxEventHandler);
       ref.addEventListener('blur', checkboxEventHandler);
     }
-  }
+  };
 
   private checkboxEventHandler = (event: Event): void => {
     switch (event.type) {
@@ -120,6 +133,5 @@ export class Checkbox extends Component<CheckboxProps, CheckboxState> {
       default:
         return null;
     }
-
-  }
+  };
 }

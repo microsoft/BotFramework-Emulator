@@ -31,14 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { azureAuthSagas } from './azureAuthSaga';
 import { botSagas } from './botSagas';
 import { editorSagas } from './editorSagas';
 import { endpointSagas } from './endpointSagas';
-import { servicesExplorerSagas } from './servicesExplorerSagas';
 import { navBarSagas } from './navBarSagas';
 import { notificationSagas } from './notificationSagas';
-import { azureAuthSagas } from './azureAuthSaga';
 import { resourceSagas } from './resourcesSagas';
+import { servicesExplorerSagas } from './servicesExplorerSagas';
 import { welcomePageSagas } from './welcomePageSagas';
 
 export const applicationSagas = [
@@ -50,5 +50,5 @@ export const applicationSagas = [
   navBarSagas,
   notificationSagas,
   resourceSagas,
-  welcomePageSagas
+  welcomePageSagas,
 ];

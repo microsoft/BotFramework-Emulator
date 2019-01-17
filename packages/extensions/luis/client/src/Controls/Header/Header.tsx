@@ -33,6 +33,7 @@
 
 import * as React from 'react';
 import { Component } from 'react';
+
 import * as styles from './Header.scss';
 
 interface HeaderProps {
@@ -43,13 +44,15 @@ interface HeaderProps {
 }
 
 class Header extends Component<HeaderProps, {}> {
-  render() {
+  public render() {
     return (
-      <div className={ styles.header }>
-        <span><strong>{ this.props.appName }</strong></span>
-        <span className={ styles.appId }>App ID: { this.props.appId }</span>
-        <span>Version: { this.props.version }</span>
-        <span>Slot: { this.props.slot }</span>
+      <div className={styles.header}>
+        <span>
+          <strong>{this.props.appName}</strong>
+        </span>
+        <span className={styles.appId}>App ID: {this.props.appId}</span>
+        <span>Version: {this.props.version}</span>
+        <span>Slot: {this.props.slot}</span>
       </div>
     );
   }

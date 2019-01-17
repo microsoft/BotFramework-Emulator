@@ -32,8 +32,9 @@
 //
 
 import * as React from 'react';
-import { ToolBar } from './toolbar';
 import { mount } from 'enzyme';
+
+import { ToolBar } from './toolbar';
 
 jest.mock('./toolbar.scss', () => ({}));
 
@@ -41,12 +42,12 @@ describe('<Toolbar/>', () => {
   it('should render deeply', () => {
     const wrapper = mount(
       <ToolBar>
-        <div id="inside-toolbar"></div>
+        <div id="inside-toolbar" />
       </ToolBar>
     );
     const node = wrapper.find(ToolBar);
     expect(node.html()).not.toBe(null);
-    
+
     const children = node.find('div#inside-toolbar');
     expect(children).not.toBe(null);
   });

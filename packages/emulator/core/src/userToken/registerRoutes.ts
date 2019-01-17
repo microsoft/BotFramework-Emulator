@@ -34,20 +34,26 @@
 import { RequestHandler, Server } from 'restify';
 
 import BotEmulator from '../botEmulator';
-import createBotFrameworkAuthenticationMiddleware from '../utils/botFrameworkAuthentication';
-import createJsonBodyParserMiddleware from '../utils/jsonBodyParser';
 import getBotEndpoint from '../middleware/getBotEndpoint';
 import getFacility from '../middleware/getFacility';
 import getRouteName from '../middleware/getRouteName';
+import createBotFrameworkAuthenticationMiddleware from '../utils/botFrameworkAuthentication';
+import createJsonBodyParserMiddleware from '../utils/jsonBodyParser';
 
-import getToken from './middleware/getToken';
 import emulateOAuthCards from './middleware/emulateOAuthCards';
+import getToken from './middleware/getToken';
 import signOut from './middleware/signOut';
 import tokenResponse from './middleware/tokenResponse';
 
-export default function registerRoutes(botEmulator: BotEmulator, server: Server, uses: RequestHandler[]) {
+export default function registerRoutes(
+  botEmulator: BotEmulator,
+  server: Server,
+  uses: RequestHandler[]
+) {
   const jsonBodyParser = createJsonBodyParserMiddleware();
-  const verifyBotFramework = createBotFrameworkAuthenticationMiddleware(botEmulator.options.fetch);
+  const verifyBotFramework = createBotFrameworkAuthenticationMiddleware(
+    botEmulator.options.fetch
+  );
   const botEndpoint = getBotEndpoint(botEmulator);
   const facility = getFacility('api');
 

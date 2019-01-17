@@ -32,6 +32,7 @@
 //
 
 import LogEntry from '@bfemulator/emulator-core/lib/types/log/entry';
+
 import {
   addTranscript,
   appendToLog,
@@ -43,9 +44,10 @@ import {
   newDocument,
   removeTranscript,
   setInspectorObjects,
-  updateChat
+  updateChat,
 } from '../action/chatActions';
 import { closeNonGlobalTabs } from '../action/editorActions';
+
 import { chat, ChatState } from './chat';
 
 describe('Chat reducer tests', () => {
@@ -55,9 +57,9 @@ describe('Chat reducer tests', () => {
     chats: {
       [testChatId]: {
         log: {
-          entries: []
-        }
-      }
+          entries: [],
+        },
+      },
     },
     transcripts: [],
   };
@@ -116,13 +118,13 @@ describe('Chat reducer tests', () => {
       ...DEFAULT_STATE,
       chats: {
         ...DEFAULT_STATE.chats,
-        [testChatId]: {}
-      }
+        [testChatId]: {},
+      },
     };
     const endingState = chat(startingState, action);
     const expectedDoc = {
       ...endingState.chats[testChatId],
-      testing: true
+      testing: true,
     };
     expect(endingState.chats[testChatId]).toEqual(expectedDoc);
   });
@@ -135,10 +137,10 @@ describe('Chat reducer tests', () => {
           type: 'text',
           payload: {
             level: 0,
-            text: 'testing'
-          }
-        }
-      ]
+            text: 'testing',
+          },
+        },
+      ],
     };
     const action = appendToLog(testChatId, logEntry);
     const startingState = {
@@ -147,10 +149,10 @@ describe('Chat reducer tests', () => {
         ...DEFAULT_STATE.chats,
         [testChatId]: {
           log: {
-            entries: []
-          }
-        }
-      }
+            entries: [],
+          },
+        },
+      },
     };
     const endingState = chat(startingState, action);
     expect(endingState.chats[testChatId].log.entries[0]).toBeTruthy();
@@ -165,10 +167,10 @@ describe('Chat reducer tests', () => {
           type: 'text',
           payload: {
             level: 0,
-            text: 'testing'
-          }
-        }
-      ]
+            text: 'testing',
+          },
+        },
+      ],
     };
     const startingState = {
       ...DEFAULT_STATE,
@@ -176,10 +178,10 @@ describe('Chat reducer tests', () => {
         ...DEFAULT_STATE.chats,
         [testChatId]: {
           log: {
-            entries: []
-          }
-        }
-      }
+            entries: [],
+          },
+        },
+      },
     };
 
     let state = chat(startingState, appendToLog(testChatId, logEntry));
@@ -195,12 +197,16 @@ describe('Chat reducer tests', () => {
       ...DEFAULT_STATE,
       chats: {
         ...DEFAULT_STATE.chats,
-        [testChatId]: {}
-      }
+        [testChatId]: {},
+      },
     };
     const endingState = chat(startingState, action);
-    expect(endingState.chats[testChatId].inspectorObjects.length).toBeGreaterThan(0);
-    expect(endingState.chats[testChatId].inspectorObjects[0]).toEqual({ testing: true });
+    expect(
+      endingState.chats[testChatId].inspectorObjects.length
+    ).toBeGreaterThan(0);
+    expect(endingState.chats[testChatId].inspectorObjects[0]).toEqual({
+      testing: true,
+    });
   });
 
   it('should reset state on a "close all" editor action', () => {
@@ -209,10 +215,10 @@ describe('Chat reducer tests', () => {
       changeKey: 999,
       chats: {
         [tempChat]: {
-          testing: true
-        }
+          testing: true,
+        },
       },
-      transcripts: ['xs1', 'xs2', 'xs3']
+      transcripts: ['xs1', 'xs2', 'xs3'],
     };
     const action = closeNonGlobalTabs();
     const state = chat(alteredState, action);
@@ -228,11 +234,14 @@ describe('Chat reducer tests', () => {
         ...DEFAULT_STATE.chats,
         chat1: {
           id: 'chat',
-          userId: 'userId'
-        }
-      }
+          userId: 'userId',
+        },
+      },
     };
-    const action = updateChat('chat1', { id: 'updatedChatId', userId: 'updatedUserId' });
+    const action = updateChat('chat1', {
+      id: 'updatedChatId',
+      userId: 'updatedUserId',
+    });
     const state = chat(startingState, action);
     expect(state.chats.chat1.id).toBe('updatedChatId');
     expect(state.chats.chat1.userId).toBe('updatedUserId');

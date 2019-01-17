@@ -32,9 +32,9 @@
 //
 
 interface CheckoutConversationSession {
-    paymentActivityId: string;
-    checkoutConversationId: string;
-    checkoutFromId: string;
+  paymentActivityId: string;
+  checkoutConversationId: string;
+  checkoutFromId: string;
 }
 
 export default CheckoutConversationSession;

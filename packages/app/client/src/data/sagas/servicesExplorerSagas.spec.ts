@@ -1,13 +1,46 @@
+//
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license.
+//
+// Microsoft Bot Framework: http://botframework.com
+//
+// Bot Framework Emulator Github:
+// https://github.com/Microsoft/BotFramwork-Emulator
+//
+// Copyright (c) Microsoft Corporation
+// All rights reserved.
+//
+// MIT License:
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+//
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED ""AS IS"", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
 import { ServiceCodes, SharedConstants } from '@bfemulator/app-shared';
 import { ServiceTypes } from 'botframework-config/lib/schema';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import sagaMiddlewareFactory from 'redux-saga';
+
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import {
   AzureLoginFailedDialogContainer,
   AzureLoginSuccessDialogContainer,
   ConnectServicePromptDialogContainer,
-  GetStartedWithCSDialogContainer
+  GetStartedWithCSDialogContainer,
 } from '../../ui/dialogs';
 import { DialogService } from '../../ui/dialogs/service'; // ☣☣ careful! ☣☣
 import { ConnectedServicePickerContainer } from '../../ui/shell/explorer/servicesExplorer';
@@ -21,62 +54,71 @@ import {
   launchConnectedServicePicker,
   openAddServiceContextMenu,
   openContextMenuForConnectedService,
-  openServiceDeepLink
+  openServiceDeepLink,
 } from '../action/connectedServiceActions';
 import { azureAuth } from '../reducer/azureAuthReducer';
 import { bot } from '../reducer/bot';
+
 import { servicesExplorerSagas } from './servicesExplorerSagas';
 
 const sagaMiddleWare = sagaMiddlewareFactory();
-const mockStore = createStore(combineReducers({ azureAuth, bot }), {}, applyMiddleware(sagaMiddleWare));
+const mockStore = createStore(
+  combineReducers({ azureAuth, bot }),
+  {},
+  applyMiddleware(sagaMiddleWare)
+);
 sagaMiddleWare.run(servicesExplorerSagas);
 
-const mockArmToken = 'bm90aGluZw==.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds';
+const mockArmToken =
+  'bm90aGluZw==.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds';
 
 jest.mock('../../ui/dialogs', () => ({
-    AzureLoginPromptDialogContainer: function mock() {
-      return undefined;
-    },
-    AzureLoginSuccessDialogContainer: function mock() {
-      return undefined;
-    },
-    BotCreationDialog: function mock() {
-      return undefined;
-    },
-    DialogService: {
-      showDialog: () => Promise.resolve(true)
-    },
-    SecretPromptDialog: function mock() {
-      return undefined;
-    }
-  }
-));
-
-jest.mock('../../ui/shell/explorer/servicesExplorer/connectedServiceEditor', () => ({
-  ConnectedServiceEditorContainer: function mock() {
+  AzureLoginPromptDialogContainer: function mock() {
     return undefined;
-  }
+  },
+  AzureLoginSuccessDialogContainer: function mock() {
+    return undefined;
+  },
+  BotCreationDialog: function mock() {
+    return undefined;
+  },
+  DialogService: {
+    showDialog: () => Promise.resolve(true),
+  },
+  SecretPromptDialog: function mock() {
+    return undefined;
+  },
 }));
+
+jest.mock(
+  '../../ui/shell/explorer/servicesExplorer/connectedServiceEditor',
+  () => ({
+    ConnectedServiceEditorContainer: function mock() {
+      return undefined;
+    },
+  })
+);
 
 jest.mock('../../ui/shell/explorer/servicesExplorer', () => ({
   ConnectedServicePicker: function mock() {
     return undefined;
-  }
+  },
 }));
 
 jest.mock('../store', () => ({
   get store() {
     return mockStore;
-  }
+  },
 }));
 
 jest.mock('./azureAuthSaga', () => ({
-  getArmToken: function* () {
+  getArmToken: function*() {
+    // eslint-disable-next-line typescript/camelcase
     yield { access_token: mockArmToken };
-  }
+  },
 }));
 
-CommandServiceImpl.remoteCall = async function (type: string) {
+CommandServiceImpl.remoteCall = async function(type: string) {
   switch (type) {
     case SharedConstants.Commands.ConnectedService.GetConnectedServicesByType:
       return { services: [{ id: 'a luis service' }], code: ServiceCodes.OK };
@@ -96,24 +138,29 @@ describe('The ServiceExplorerSagas', () => {
         azureAuthWorkflowComponents: {
           loginFailedDialog: AzureLoginFailedDialogContainer,
           loginSuccessDialog: AzureLoginSuccessDialogContainer,
-          promptDialog: ConnectServicePromptDialogContainer
+          promptDialog: ConnectServicePromptDialogContainer,
         },
         getStartedDialog: GetStartedWithCSDialogContainer,
         editorComponent: ConnectedServiceEditorContainer,
         pickerComponent: ConnectedServicePickerContainer,
       };
-      launchConnectedServicePickerGen = servicesExplorerSagas().next().value.FORK.args[1];
+      launchConnectedServicePickerGen = servicesExplorerSagas().next().value
+        .FORK.args[1];
       mockStore.dispatch(azureArmTokenDataChanged(mockArmToken));
     });
 
     it('should retrieve the arm token from the store', () => {
-      const token = launchConnectedServicePickerGen().next().value.SELECT.selector(mockStore.getState());
+      const token = launchConnectedServicePickerGen()
+        .next()
+        .value.SELECT.selector(mockStore.getState());
       expect(token.access_token).toBe(mockArmToken);
     });
 
     it('should prompt the user to login if the armToken does not exist in the store', () => {
       mockStore.dispatch(azureArmTokenDataChanged(''));
-      const it = launchConnectedServicePickerGen(launchConnectedServicePicker(payload));
+      const it = launchConnectedServicePickerGen(
+        launchConnectedServicePicker(payload)
+      );
       let token = it.next().value.SELECT.selector(mockStore.getState());
       expect(token.access_token).toBe('');
       token = it.next().value;
@@ -133,7 +180,8 @@ describe('The ServiceExplorerSagas', () => {
     });
 
     it('should launch the luis models picklist after the luis models are retrieved', async () => {
-      DialogService.showDialog = () => Promise.resolve([{ id: 'a new service to add' }]) as any;
+      DialogService.showDialog = () =>
+        Promise.resolve([{ id: 'a new service to add' }]) as any;
       const action = launchConnectedServicePicker(payload);
       const it = launchConnectedServicePickerGen(action);
       let token = it.next().value.SELECT.selector(mockStore.getState());
@@ -162,7 +210,8 @@ describe('The ServiceExplorerSagas', () => {
       mockStore.dispatch(load([mockBot]));
       mockStore.dispatch(setActive(mockBot));
 
-      DialogService.showDialog = () => Promise.resolve([{ id: 'a new service to add' }]) as any;
+      DialogService.showDialog = () =>
+        Promise.resolve([{ id: 'a new service to add' }]) as any;
       const action = launchConnectedServicePicker(payload);
       const it = launchConnectedServicePickerGen(action);
       let token = it.next().value.SELECT.selector(mockStore.getState());
@@ -171,10 +220,12 @@ describe('The ServiceExplorerSagas', () => {
       const luisModels = await it.next(token).value;
 
       const newModels = await it.next(luisModels).value;
-      const botConfig = it.next(newModels).value.SELECT.selector(mockStore.getState());
+      const botConfig = it
+        .next(newModels)
+        .value.SELECT.selector(mockStore.getState());
       let _type;
       let _args;
-      CommandServiceImpl.remoteCall = function (type: string, ...args: any[]) {
+      CommandServiceImpl.remoteCall = function(type: string, ...args: any[]) {
         _type = type;
         _args = args;
         return Promise.resolve(true);
@@ -202,8 +253,9 @@ describe('The ServiceExplorerSagas', () => {
 
     beforeEach(() => {
       const sagaIt = servicesExplorerSagas();
-      action = openContextMenuForConnectedService<ConnectedServiceAction<ConnectedServicePayload>>
-      (ConnectedServiceEditorContainer, mockService);
+      action = openContextMenuForConnectedService<
+        ConnectedServiceAction<ConnectedServicePayload>
+      >(ConnectedServiceEditorContainer, mockService);
       let i = 4;
       while (i--) {
         contextMenuGen = sagaIt.next().value.FORK.args[1];
@@ -222,7 +274,9 @@ describe('The ServiceExplorerSagas', () => {
       await it.next(result).value;
 
       expect(window.open).toHaveBeenCalledWith(
-        `https://luis.ai/applications/${ mockService.appId }/versions/${ mockService.version }/build`
+        `https://luis.ai/applications/${mockService.appId}/versions/${
+          mockService.version
+        }/build`
       );
     });
 
@@ -369,7 +423,7 @@ describe('The ServiceExplorerSagas', () => {
         azureAuthWorkflowComponents: {
           loginFailedDialog: AzureLoginFailedDialogContainer,
           loginSuccessDialog: AzureLoginSuccessDialogContainer,
-          promptDialog: ConnectServicePromptDialogContainer
+          promptDialog: ConnectServicePromptDialogContainer,
         },
         getStartedDialog: GetStartedWithCSDialogContainer,
         editorComponent: ConnectedServiceEditorContainer,
@@ -396,7 +450,12 @@ describe('The ServiceExplorerSagas', () => {
   });
 
   describe('openConnectedServiceDeepLink', () => {
-    const mockModel = { type: ServiceTypes.Luis, appId: '1234', version: '0.1', region: 'westeurope' };
+    const mockModel = {
+      type: ServiceTypes.Luis,
+      appId: '1234',
+      version: '0.1',
+      region: 'westeurope',
+    };
     let openConnectedServiceGen;
     beforeEach(() => {
       const sagaIt = servicesExplorerSagas();
@@ -435,61 +494,67 @@ describe('The ServiceExplorerSagas', () => {
     it('should open the correct service url for CosmosDB services', () => {
       window.open = jest.fn();
       const mock = {
-        'type': ServiceTypes.CosmosDB,
-        'collection': 'fdsa',
-        'database': 'fsa',
-        'endpoint': 'fsda',
-        'id': '206',
-        'name': 'Cosmos',
-        'resourceGroup': 'db-service',
-        'serviceName': 'cosmosdb',
-        'subscriptionId': '0389857f-aaaa-ssss-fff-gfsgfdsfgssdgfd',
-        'tenantId': 'microsoft.com'
+        type: ServiceTypes.CosmosDB,
+        collection: 'fdsa',
+        database: 'fsa',
+        endpoint: 'fsda',
+        id: '206',
+        name: 'Cosmos',
+        resourceGroup: 'db-service',
+        serviceName: 'cosmosdb',
+        subscriptionId: '0389857f-aaaa-ssss-fff-gfsgfdsfgssdgfd',
+        tenantId: 'microsoft.com',
       };
 
       const action = openServiceDeepLink(mock as any);
       openConnectedServiceGen(action).next();
-      expect(window.open).toHaveBeenCalledWith('https://ms.portal.azure.com/#@microsoft.com/resource/subscriptions/' +
-        '0389857f-aaaa-ssss-fff-gfsgfdsfgssdgfd/resourceGroups/db-service/providers/Microsoft.DocumentDb/' +
-        'databaseAccounts/cosmosdb/overview');
+      expect(window.open).toHaveBeenCalledWith(
+        'https://ms.portal.azure.com/#@microsoft.com/resource/subscriptions/' +
+          '0389857f-aaaa-ssss-fff-gfsgfdsfgssdgfd/resourceGroups/db-service/providers/Microsoft.DocumentDb/' +
+          'databaseAccounts/cosmosdb/overview'
+      );
     });
 
     it('should open the correct service url for BlobStorage services', () => {
       window.open = jest.fn();
       const mock = {
-        'type': ServiceTypes.BlobStorage,
-        'id': '206',
-        'name': 'Blob',
-        'resourceGroup': 'blob-service',
-        'serviceName': 'blob',
-        'subscriptionId': '0389857f-aaaa-ssss-fff-gfsgfdsfgssdgfd',
-        'tenantId': 'microsoft.com'
+        type: ServiceTypes.BlobStorage,
+        id: '206',
+        name: 'Blob',
+        resourceGroup: 'blob-service',
+        serviceName: 'blob',
+        subscriptionId: '0389857f-aaaa-ssss-fff-gfsgfdsfgssdgfd',
+        tenantId: 'microsoft.com',
       };
 
       const action = openServiceDeepLink(mock as any);
       openConnectedServiceGen(action).next();
-      expect(window.open).toHaveBeenCalledWith('https://ms.portal.azure.com/#@microsoft.com/resource/subscriptions/' +
-        '0389857f-aaaa-ssss-fff-gfsgfdsfgssdgfd/resourceGroups/blob-service/providers/Microsoft.DocumentDB/' +
-        'storageAccounts/blob/overview');
+      expect(window.open).toHaveBeenCalledWith(
+        'https://ms.portal.azure.com/#@microsoft.com/resource/subscriptions/' +
+          '0389857f-aaaa-ssss-fff-gfsgfdsfgssdgfd/resourceGroups/blob-service/providers/Microsoft.DocumentDB/' +
+          'storageAccounts/blob/overview'
+      );
     });
 
     it('should open the correct service url for AppInsights services', () => {
       window.open = jest.fn();
       const mock = {
-        'type': ServiceTypes.AppInsights,
-        'id': '206',
-        'name': 'appInsights',
-        'resourceGroup': 'appInsights-service',
-        'serviceName': 'appInsights',
-        'subscriptionId': '0389857f-aaaa-ssss-fff-gfsgfdsfgssdgfd',
-        'tenantId': 'microsoft.com'
+        type: ServiceTypes.AppInsights,
+        id: '206',
+        name: 'appInsights',
+        resourceGroup: 'appInsights-service',
+        serviceName: 'appInsights',
+        subscriptionId: '0389857f-aaaa-ssss-fff-gfsgfdsfgssdgfd',
+        tenantId: 'microsoft.com',
       };
 
       const action = openServiceDeepLink(mock as any);
       openConnectedServiceGen(action).next();
-      expect(window.open).toHaveBeenCalledWith('https://ms.portal.azure.com/#@microsoft.com/resource/subscriptions/' +
-        '0389857f-aaaa-ssss-fff-gfsgfdsfgssdgfd/resourceGroups/appInsights-service/providers/microsoft.insights/' +
-        'components/appInsights/overview');
+      expect(window.open).toHaveBeenCalledWith(
+        'https://ms.portal.azure.com/#@microsoft.com/resource/subscriptions/' +
+          '0389857f-aaaa-ssss-fff-gfsgfdsfgssdgfd/resourceGroups/appInsights-service/providers/microsoft.insights/' +
+          'components/appInsights/overview'
+      );
     });
 
     it('should open the correct service URL for qnaMaker services', () => {
@@ -499,7 +564,9 @@ describe('The ServiceExplorerSagas', () => {
 
       const action = openServiceDeepLink(mockModel as any);
       openConnectedServiceGen(action).next();
-      expect(window.open).toHaveBeenCalledWith('https://qnamaker.ai/Edit/KnowledgeBase?kbid=45432');
+      expect(window.open).toHaveBeenCalledWith(
+        'https://qnamaker.ai/Edit/KnowledgeBase?kbid=45432'
+      );
     });
   });
 });

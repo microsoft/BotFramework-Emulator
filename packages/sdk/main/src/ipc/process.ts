@@ -41,12 +41,18 @@ export interface Process {
 }
 
 export class ProcessIPC extends IPC {
-  get id(): number { return this._process.pid; }
+  get id(): number {
+    return this._process.pid;
+  }
 
   constructor(private _process: Process) {
     super();
     this._process.on('message', message => {
-      if (isObject(message) && message.type === 'ipc:message' && Array.isArray(message.args)) {
+      if (
+        isObject(message) &&
+        message.type === 'ipc:message' &&
+        Array.isArray(message.args)
+      ) {
         const channelName = message.args.shift();
         const channel = super.getChannel(channelName);
         if (channel) {
@@ -56,11 +62,11 @@ export class ProcessIPC extends IPC {
     });
   }
 
-  send(...args: any[]): void {
+  public send(...args: any[]): void {
     if (this._process.send) {
       this._process.send({
         type: 'ipc:message',
-        args
+        args,
       });
     }
   }

@@ -31,20 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { DisposableImpl, CommandRegistryImpl } from '@bfemulator/sdk-shared';
 import { SharedConstants } from '@bfemulator/app-shared';
-
-export function registerCommands(commandRegistry: CommandRegistryImpl) {
-  commandRegistry.registerCommand(
-    SharedConstants.Commands.Settings.ReceiveGlobalSettings,
-    (settings: {
-      url: string,
-      cwd: string
-    }): any => {
-      SettingsService.emulator.url = (settings.url || '').replace('[::]', 'localhost');
-      SettingsService.emulator.cwd = (settings.cwd || '').replace(/\\/g, '/');
-    });
-}
+import { CommandRegistryImpl, DisposableImpl } from '@bfemulator/sdk-shared';
 
 export interface EmulatorSettings {
   url?: string;
@@ -87,16 +75,34 @@ class EmulatorSettingsImpl implements EmulatorSettings {
   }
 }
 
-export const SettingsService = new class extends DisposableImpl {
-
+class EmulatorSettingsService extends DisposableImpl {
   private _emulator: EmulatorSettingsImpl;
 
-  get emulator(): EmulatorSettingsImpl { return this._emulator; }
+  get emulator(): EmulatorSettingsImpl {
+    return this._emulator;
+  }
 
-  init() { return null; }
+  public init() {
+    return null;
+  }
 
   constructor() {
     super();
     this._emulator = new EmulatorSettingsImpl();
   }
-};
+}
+
+export const SettingsService = new EmulatorSettingsService();
+
+export function registerCommands(commandRegistry: CommandRegistryImpl) {
+  commandRegistry.registerCommand(
+    SharedConstants.Commands.Settings.ReceiveGlobalSettings,
+    (settings: { url: string; cwd: string }): any => {
+      SettingsService.emulator.url = (settings.url || '').replace(
+        '[::]',
+        'localhost'
+      );
+      SettingsService.emulator.cwd = (settings.cwd || '').replace(/\\/g, '/');
+    }
+  );
+}

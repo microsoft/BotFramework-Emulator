@@ -30,8 +30,13 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+/* eslint-disable typescript/camelcase */
 
-import { azureArmTokenDataChanged, invalidateArmToken, } from '../action/azureAuthActions';
+import {
+  azureArmTokenDataChanged,
+  invalidateArmToken,
+} from '../action/azureAuthActions';
+
 import { azureAuth, AzureAuthState } from './azureAuthReducer';
 
 describe('Azure auth reducer tests', () => {
@@ -40,7 +45,7 @@ describe('Azure auth reducer tests', () => {
   beforeEach(() => {
     startingState = {
       access_token: null,
-      persistLogin: false
+      persistLogin: false,
     };
   });
 

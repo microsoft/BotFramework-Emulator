@@ -31,16 +31,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import AttachmentContentTypes from '../types/attachment/contentTypes';
 import Activity from '../types/activity/activity';
+import MessageActivity from '../types/activity/message';
 import Attachment from '../types/attachment';
+import AttachmentContentTypes from '../types/attachment/contentTypes';
 import CardAction from '../types/card/cardAction';
 import CardImage from '../types/card/cardImage';
 import MediaCard from '../types/card/media';
-import MessageActivity from '../types/activity/message';
+import OAuthCard from '../types/card/oAuth';
 import ReceiptCard from '../types/card/receipt';
 import SigninCard from '../types/card/signIn';
-import OAuthCard from '../types/card/oAuth';
 import ThumbnailCard from '../types/card/thumbnail';
 
 export default abstract class ActivityVisitor {
@@ -110,10 +110,12 @@ export default abstract class ActivityVisitor {
   }
 
   public traverseOAuthCard(oauthCard: OAuthCard) {
-      let buttons = oauthCard.buttons;
-      if (buttons) {
-          buttons.forEach(cardAction => this.visitOAuthCardAction(oauthCard.connectionName, cardAction));
-      }
+    const buttons = oauthCard.buttons;
+    if (buttons) {
+      buttons.forEach(cardAction =>
+        this.visitOAuthCardAction(oauthCard.connectionName, cardAction)
+      );
+    }
   }
 
   public traverseReceiptCard(receiptCard: ReceiptCard) {
@@ -143,7 +145,10 @@ export default abstract class ActivityVisitor {
 
   protected abstract visitCardAction(cardAction: CardAction);
 
-  protected visitOAuthCardAction(connectionName: string, cardAction: CardAction) {
-      this.visitCardAction(cardAction);
+  protected visitOAuthCardAction(
+    connectionName: string,
+    cardAction: CardAction
+  ) {
+    this.visitCardAction(cardAction);
   }
 }

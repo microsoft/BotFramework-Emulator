@@ -31,12 +31,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import { Action } from 'redux';
+
 import { SortCriteria } from '../reducer/explorer';
 export const CONNECTED_SERVICES_PANEL_ID = 'connectedServices';
 
 export enum ExplorerActions {
   Show = 'EXPLORER/SHOW',
-  Sort = 'EXPLORER/SORT'
+  Sort = 'EXPLORER/SORT',
 }
 
 export interface ExplorerAction<T> extends Action {
@@ -52,13 +53,16 @@ export interface ExplorerPayload {
 export function showExplorer(show: boolean): ExplorerAction<ExplorerPayload> {
   return {
     type: ExplorerActions.Show,
-    payload: { show }
+    payload: { show },
   };
 }
 
-export function sortExplorerContents(panelId: string, sort: SortCriteria): ExplorerAction<ExplorerPayload> {
+export function sortExplorerContents(
+  panelId: string,
+  sort: SortCriteria
+): ExplorerAction<ExplorerPayload> {
   return {
     type: ExplorerActions.Sort,
-    payload: { sortSelectionByPanelId: { [panelId]: sort } }
+    payload: { sortSelectionByPanelId: { [panelId]: sort } },
   };
 }

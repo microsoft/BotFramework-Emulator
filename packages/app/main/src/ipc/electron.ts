@@ -31,25 +31,25 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Event, ipcMain, WebContents } from 'electron';
 import { Disposable, IPC } from '@bfemulator/sdk-shared';
+import { Event, ipcMain, WebContents } from 'electron';
 
 export class ElectronIPC extends IPC {
   private _webContents: WebContents;
-  get webContents(): WebContents {
+  public get webContents(): WebContents {
     return this._webContents;
   }
 
-  constructor(webContents: WebContents) {
+  public constructor(webContents: WebContents) {
     super();
     this._webContents = webContents;
   }
 
-  send(...args: any[]): void {
+  public send(...args: any[]): void {
     this._webContents.send('ipc:message', ...args);
   }
 
-  onMessage(event: Event, ...args: any[]): void {
+  public onMessage(event: Event, ...args: any[]): void {
     const channelName = args.shift();
     const channel = super.getChannel(channelName);
     if (channel) {
@@ -58,17 +58,20 @@ export class ElectronIPC extends IPC {
   }
 }
 
-export const ElectronIPCServer = new class {
-  private _ipcs: WeakMap<WebContents, ElectronIPC> = new WeakMap<WebContents, ElectronIPC>();
+class ElectronIPCServerImpl {
+  private _ipcs: WeakMap<WebContents, ElectronIPC> = new WeakMap<
+    WebContents,
+    ElectronIPC
+  >();
   private initialized = false;
 
-  registerIPC(ipc: ElectronIPC): Disposable {
+  public registerIPC(ipc: ElectronIPC): Disposable {
     this._ipcs.set(ipc.webContents, ipc);
     this.initialize();
     return {
       dispose: () => {
         this._ipcs.delete(ipc.webContents);
-      }
+      },
     };
   }
 
@@ -84,4 +87,6 @@ export const ElectronIPCServer = new class {
     });
     this.initialized = true;
   }
-};
+}
+
+export const ElectronIPCServer = new ElectronIPCServerImpl();

@@ -31,10 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Disposable, DisposableImpl } from '../lifecycle';
-import { Channel, IPC } from '../ipc';
-import { uniqueId } from '../utils';
 import { CommandRegistry, CommandRegistryImpl } from '..';
+
+import { Channel, IPC } from '../ipc';
+import { Disposable, DisposableImpl } from '../lifecycle';
+import { uniqueId } from '../utils';
+
 import { CommandHandler } from '.';
 
 export interface CommandService extends DisposableImpl {
@@ -46,11 +48,14 @@ export interface CommandService extends DisposableImpl {
 
   on(commandName: string, handler?: CommandHandler): Disposable;
 
-  on(event: 'command-not-found', notFoundHandler?: (commandName: string, ...args: any[]) => any);
+  on(
+    event: 'command-not-found',
+    notFoundHandler?: (commandName: string, ...args: any[]) => any
+  );
 }
 
-export class CommandServiceImpl extends DisposableImpl implements CommandService {
-
+export class CommandServiceImpl extends DisposableImpl
+  implements CommandService {
   private readonly _channel: Channel;
   private readonly _registry: CommandRegistry;
   private readonly _channelName: string;
@@ -61,9 +66,11 @@ export class CommandServiceImpl extends DisposableImpl implements CommandService
     return this._registry;
   }
 
-  constructor(_ipc: IPC,
-              _channelName: string = 'command-service',
-              _registry: CommandRegistry = new CommandRegistryImpl()) {
+  constructor(
+    _ipc: IPC,
+    _channelName: string = 'command-service',
+    _registry: CommandRegistry = new CommandRegistryImpl()
+  ) {
     super();
 
     this._ipc = _ipc;
@@ -72,21 +79,28 @@ export class CommandServiceImpl extends DisposableImpl implements CommandService
     this._channel = new Channel(this._channelName, this._ipc);
     this.toDispose(this._ipc.registerChannel(this._channel));
     this.toDispose(
-      this._channel.setListener('call', (commandName: string, transactionId: string, ...args: any[]) => {
-        this.call(commandName, ...args)
-          .then(result => {
-            result = Array.isArray(result) ? result : [result];
-            this._channel.send(transactionId, true, ...result);
-          })
-          .catch(err => {
-            err = err.message ? err.message : err;
-            this._channel.send(transactionId, false, err);
-          });
-      }));
+      this._channel.setListener(
+        'call',
+        (commandName: string, transactionId: string, ...args: any[]) => {
+          this.call(commandName, ...args)
+            .then(result => {
+              result = Array.isArray(result) ? result : [result];
+              this._channel.send(transactionId, true, ...result);
+            })
+            .catch(err => {
+              err = err.message ? err.message : err;
+              this._channel.send(transactionId, false, err);
+            });
+        }
+      )
+    );
   }
 
-  on(event: string, handler?: CommandHandler): Disposable;
-  on(event: 'command-not-found', handler?: (commandName: string, ...args: any[]) => any) {
+  public on(event: string, handler?: CommandHandler): Disposable;
+  public on(
+    event: 'command-not-found',
+    handler?: (commandName: string, ...args: any[]) => any
+  ) {
     if (event === 'command-not-found') {
       this._notFoundHandler = handler;
       return undefined;
@@ -95,7 +109,7 @@ export class CommandServiceImpl extends DisposableImpl implements CommandService
     }
   }
 
-  call(commandName: string, ...args: any[]): Promise<any> {
+  public call(commandName: string, ...args: any[]): Promise<any> {
     const command = this._registry.getCommand(commandName);
     try {
       if (!command) {
@@ -114,19 +128,24 @@ export class CommandServiceImpl extends DisposableImpl implements CommandService
     }
   }
 
-  remoteCall(commandName: string, ...args: any[]): Promise<any> {
+  public remoteCall(commandName: string, ...args: any[]): Promise<any> {
     const transactionId = uniqueId();
     this._channel.send('call', commandName, transactionId, ...args);
     return new Promise<any>((resolve, reject) => {
-      this._channel.setListener(transactionId, (success: boolean, ...responseArgs: any[]) => {
-        this._channel.clearListener(transactionId);
-        if (success) {
-          let result = responseArgs.length ? responseArgs.shift() : undefined;
-          resolve(result);
-        } else {
-          reject(responseArgs.shift());
+      this._channel.setListener(
+        transactionId,
+        (success: boolean, ...responseArgs: any[]) => {
+          this._channel.clearListener(transactionId);
+          if (success) {
+            const result = responseArgs.length
+              ? responseArgs.shift()
+              : undefined;
+            resolve(result);
+          } else {
+            reject(responseArgs.shift());
+          }
         }
-      });
+      );
     });
   }
 }

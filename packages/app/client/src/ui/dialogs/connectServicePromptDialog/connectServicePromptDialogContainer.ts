@@ -32,17 +32,23 @@
 //
 
 import { connect } from 'react-redux';
+
 import { DialogService } from '../service';
-import { ConnectServicePromptDialog, ConnectServicePromptDialogProps } from './connectServicePromptDialog';
+
+import {
+  ConnectServicePromptDialog,
+  ConnectServicePromptDialogProps,
+} from './connectServicePromptDialog';
 
 const mapDispatchToProps = (
-  _dispatch: () => void, ownProps: { [propName: string]: any }
+  _dispatch: () => void,
+  ownProps: { [propName: string]: any }
 ): ConnectServicePromptDialogProps => {
   return {
     ...ownProps,
     cancel: () => DialogService.hideDialog(0),
     confirm: () => DialogService.hideDialog(1),
-    addServiceManually: () => DialogService.hideDialog(2)
+    addServiceManually: () => DialogService.hideDialog(2),
   };
 };
 

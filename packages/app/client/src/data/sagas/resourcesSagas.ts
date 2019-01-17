@@ -1,31 +1,79 @@
-import { ForkEffect, put, takeEvery } from 'redux-saga/effects';
+//
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license.
+//
+// Microsoft Bot Framework: http://botframework.com
+//
+// Bot Framework Emulator Github:
+// https://github.com/Microsoft/BotFramwork-Emulator
+//
+// Copyright (c) Microsoft Corporation
+// All rights reserved.
+//
+// MIT License:
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+//
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED ""AS IS"", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
+import {
+  BotInfo,
+  isChatFile,
+  isTranscriptFile,
+  NotificationType,
+  SharedConstants,
+} from '@bfemulator/app-shared';
+import { newNotification } from '@bfemulator/app-shared/built';
+import { IFileService } from 'botframework-config/lib/schema';
+import { ComponentClass } from 'react';
+
+import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
+import { DialogService } from '../../ui/dialogs/service';
+import { beginAdd } from '../action/notificationActions';
 import {
   editResource,
   OPEN_CONTEXT_MENU_FOR_RESOURCE,
   OPEN_RESOURCE,
   OPEN_RESOURCE_SETTINGS,
   RENAME_RESOURCE,
-  ResourcesAction
+  ResourcesAction,
 } from '../action/resourcesAction';
-import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
-import { BotInfo, isChatFile, isTranscriptFile, NotificationType, SharedConstants } from '@bfemulator/app-shared';
-import { IFileService } from 'botframework-config/lib/schema';
-import { ComponentClass } from 'react';
-import { DialogService } from '../../ui/dialogs/service';
-import { beginAdd } from '../action/notificationActions';
-import { newNotification } from '@bfemulator/app-shared/built';
 
-function* openContextMenuForResource(action: ResourcesAction<IFileService>): IterableIterator<any> {
+import { ForkEffect, put, takeEvery } from 'redux-saga/effects';
+
+function* openContextMenuForResource(
+  action: ResourcesAction<IFileService>
+): IterableIterator<any> {
   const menuItems = [
     { label: 'Open file location', id: 0 },
     { label: 'Rename', id: 1 },
-    { label: 'Delete', id: 2 }
+    { label: 'Delete', id: 2 },
   ];
 
-  const result = yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.DisplayContextMenu, menuItems);
+  const result = yield CommandServiceImpl.remoteCall(
+    SharedConstants.Commands.Electron.DisplayContextMenu,
+    menuItems
+  );
   switch (result.id) {
     case 0:
-      yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.OpenFileLocation, action.payload.path);
+      yield CommandServiceImpl.remoteCall(
+        SharedConstants.Commands.Electron.OpenFileLocation,
+        action.payload.path
+      );
       break;
 
     case 1:
@@ -42,7 +90,9 @@ function* openContextMenuForResource(action: ResourcesAction<IFileService>): Ite
   }
 }
 
-function* deleteFile(action: ResourcesAction<IFileService>): IterableIterator<any> {
+function* deleteFile(
+  action: ResourcesAction<IFileService>
+): IterableIterator<any> {
   const { name, path } = action.payload;
   const { ShowMessageBox, UnlinkFile } = SharedConstants.Commands.Electron;
   const result = yield CommandServiceImpl.remoteCall(ShowMessageBox, true, {
@@ -75,7 +125,9 @@ function* doRename(action: ResourcesAction<IFileService>) {
   yield put(editResource(null));
 }
 
-function* doOpenResource(action: ResourcesAction<IFileService>): IterableIterator<any> {
+function* doOpenResource(
+  action: ResourcesAction<IFileService>
+): IterableIterator<any> {
   const { OpenChatFile, OpenTranscript } = SharedConstants.Commands.Emulator;
   const { path } = action.payload;
   if (isChatFile(path)) {
@@ -86,13 +138,24 @@ function* doOpenResource(action: ResourcesAction<IFileService>): IterableIterato
   // unknown types just fall into the abyss
 }
 
-function* launchResourcesSettingsModal(action: ResourcesAction<{ dialog: ComponentClass<any> }>) {
-  const result: Partial<BotInfo> = yield DialogService.showDialog(action.payload.dialog);
+function* launchResourcesSettingsModal(
+  action: ResourcesAction<{ dialog: ComponentClass<any> }>
+) {
+  const result: Partial<BotInfo> = yield DialogService.showDialog(
+    action.payload.dialog
+  );
   if (result) {
     try {
-      yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.PatchBotList, result.path, result);
+      yield CommandServiceImpl.remoteCall(
+        SharedConstants.Commands.Bot.PatchBotList,
+        result.path,
+        result
+      );
     } catch (e) {
-      const notification = newNotification('Unable to save resource settings', NotificationType.Error);
+      const notification = newNotification(
+        'Unable to save resource settings',
+        NotificationType.Error
+      );
       yield put(beginAdd(notification));
     }
   }

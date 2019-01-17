@@ -39,7 +39,11 @@ import sendErrorResponse from '../../utils/sendErrorResponse';
 
 // get members of a conversation
 export default function getConversationMembers(botEmulator: BotEmulator) {
-  return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+  return (
+    req: Restify.Request,
+    res: Restify.Response,
+    next: Restify.Next
+  ): any => {
     try {
       // look up conversation
       res.send(HttpStatus.OK, (req as any).conversation.members);

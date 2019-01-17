@@ -31,6 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import {
+  getActiveBot,
+  getBotInfoByPath,
+  pathExistsInRecentBots,
+} from './botHelpers';
+
 jest.mock('./store', () => ({
   store: {
     getState: () => ({
@@ -41,19 +47,15 @@ jest.mock('./store', () => ({
           padlock: 'padlock1',
           services: [],
         },
-        botFiles: [{
-          path: 'path1'
-        }]
-      }
-    })
-  }
+        botFiles: [
+          {
+            path: 'path1',
+          },
+        ],
+      },
+    }),
+  },
 }));
-
-import {
-  getActiveBot,
-  getBotInfoByPath,
-  pathExistsInRecentBots
-} from './botHelpers';
 describe('Bot helpers tests', () => {
   it('should get the active bot', () => {
     const activeBot = getActiveBot();

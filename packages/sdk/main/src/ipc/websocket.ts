@@ -38,10 +38,16 @@ export class WebSocketIPC extends IPC {
   private _ws: WebSocket;
   private _id: number;
 
-  get ws(): WebSocket { return this._ws; }
+  get ws(): WebSocket {
+    return this._ws;
+  }
 
-  get id(): number { return this._id; }
-  set id(value: number) { this._id = value; }
+  get id(): number {
+    return this._id;
+  }
+  set id(value: number) {
+    this._id = value;
+  }
 
   constructor(arg: WebSocket | string = 'http://localhost:9091') {
     super();
@@ -52,7 +58,11 @@ export class WebSocketIPC extends IPC {
     }
     this._ws.on('message', s => {
       const message = JSON.parse(s as string);
-      if (isObject(message) && message.type === 'ipc:message' && Array.isArray(message.args)) {
+      if (
+        isObject(message) &&
+        message.type === 'ipc:message' &&
+        Array.isArray(message.args)
+      ) {
         const channelName = message.args.shift();
         const channel = super.getChannel(channelName);
         if (channel) {
@@ -62,10 +72,10 @@ export class WebSocketIPC extends IPC {
     });
   }
 
-  send(...args: any[]): void {
+  public send(...args: any[]): void {
     const message = {
       type: 'ipc:message',
-      args
+      args,
     };
     const s = JSON.stringify(message);
     this._ws.send(s);

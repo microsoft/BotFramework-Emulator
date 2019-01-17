@@ -6,7 +6,7 @@
     "target": "es2017",
     "lib": ["es6", "dom", "es2015", "esnext"],
     "sourceMap": true,
-    "allowJs": true,
+    // "allowJs": true,
     "jsx": "react",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
@@ -17,14 +17,16 @@
     "noImplicitAny": false,
     // "strictNullChecks": true,
     "suppressImplicitAnyIndexErrors": true,
-    "noUnusedLocals": false,
+    "noUnusedLocals": true,
     "skipLibCheck": true,
     "declaration": true,
+    "paths": {
+      "@bfemulator/sdk-shared": ["./packages/sdk/shared/build/dist"],
+      "@bfemulator/sdk-main": ["./packages/sdk/main/build/dist"]
+    },
     "types": ["react", "react-dom", "node", "jest"]
   },
-  "include": [
-    "packages/**/src"
-  ],
+  "include": ["packages/**/src"],
   "exclude": [
     "node_modules",
     "packages/**/src/**/*.test.tsx",

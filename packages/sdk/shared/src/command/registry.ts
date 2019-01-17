@@ -30,9 +30,9 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+import { Disposable } from '../lifecycle';
 
 import { Command, CommandHandler, CommandMap } from './';
-import { Disposable } from '../lifecycle';
 
 export interface CommandRegistry {
   registerCommand(id: string, command: CommandHandler): Disposable;
@@ -45,11 +45,12 @@ export interface CommandRegistry {
 }
 
 export class CommandRegistryImpl implements CommandRegistry {
-
   private _commands: CommandMap = {};
 
-  registerCommand(idOrCommand: string | Command, handler?: CommandHandler): Disposable {
-
+  public registerCommand(
+    idOrCommand: string | Command,
+    handler?: CommandHandler
+  ): Disposable {
     if (!idOrCommand) {
       throw new Error('invalid command');
     }
@@ -66,15 +67,15 @@ export class CommandRegistryImpl implements CommandRegistry {
     this._commands[id] = idOrCommand;
 
     return {
-      dispose: () => delete this._commands[id]
+      dispose: () => delete this._commands[id],
     };
   }
 
-  getCommand(id: string): Command {
+  public getCommand(id: string): Command {
     return this._commands[id];
   }
 
-  getCommands(): CommandMap {
+  public getCommands(): CommandMap {
     return this._commands;
   }
 }

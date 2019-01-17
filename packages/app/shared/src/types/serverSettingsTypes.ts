@@ -31,9 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Bot } from './botTypes';
 import { User } from '@bfemulator/sdk-shared';
 import uuidv4 from 'uuid/v4';
+
+import { Bot } from './botTypes';
 
 export interface FrameworkSettings {
   // path to use for ngrok
@@ -63,7 +64,7 @@ export interface WindowStateSettings {
   width?: number;
   height?: number;
   theme?: string;
-  availableThemes?: { name: string, href: string }[];
+  availableThemes?: { name: string; href: string }[];
 }
 
 export interface UserSettings {
@@ -96,8 +97,9 @@ export class SettingsImpl implements Settings {
   public users: UserSettings;
   public azure: AzureSettings;
 
-  constructor(source?: Settings) {
-    const { framework, bots, windowState, users, azure } = source || {} as Settings;
+  public constructor(source?: Settings) {
+    const { framework, bots, windowState, users, azure }: Settings =
+      source || {};
     Object.assign(this, { framework, bots, windowState, users, azure });
   }
 
@@ -122,7 +124,7 @@ export const frameworkDefault: FrameworkSettings = {
   localhost: 'localhost',
   locale: '',
   usePrereleases: false,
-  autoUpdate: true
+  autoUpdate: true,
 };
 
 export const windowStateDefault: WindowStateSettings = {
@@ -132,21 +134,21 @@ export const windowStateDefault: WindowStateSettings = {
   left: 100,
   top: 50,
   theme: 'Light',
-  availableThemes: []
+  availableThemes: [],
 };
 
 export const settingsDefault: Settings = new SettingsImpl({
   framework: frameworkDefault,
   bots: [
     {
-      'botId': uuidv4(),
-      'botUrl': 'http://localhost:3978/api/messages',
-      'msaAppId': '',
-      'msaPassword': '',
-      'locale': ''
-    }
+      botId: uuidv4(),
+      botUrl: 'http://localhost:3978/api/messages',
+      msaAppId: '',
+      msaPassword: '',
+      locale: '',
+    },
   ],
   windowState: windowStateDefault,
   users: {},
-  azure: {} as AzureSettings
+  azure: {},
 });

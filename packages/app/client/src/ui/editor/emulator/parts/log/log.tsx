@@ -64,30 +64,40 @@ export class Log extends React.Component<LogProps, LogState> {
   }
 
   componentDidUpdate(): void {
-    let { props, scrollMe, selectedActivitySubscription, state } = this;
+    const { props, scrollMe, state } = this;
     // set up selected activity subscription once it's available
-    if (props.document && props.document.selectedActivity$ && !selectedActivitySubscription) {
-      selectedActivitySubscription =
-        props.document.selectedActivity$.subscribe((selectedActivity: Activity) => {
+    if (
+      props.document &&
+      props.document.selectedActivity$ &&
+      !this.selectedActivitySubscription
+    ) {
+      this.selectedActivitySubscription = props.document.selectedActivity$.subscribe(
+        (selectedActivity: Activity) => {
           if (selectedActivity) {
             const { showInInspector } = selectedActivity;
-            const currentlyInspectedActivity = showInInspector ? selectedActivity : null;
+            const currentlyInspectedActivity = showInInspector
+              ? selectedActivity
+              : null;
 
-            this.setState((prevState): any => {
-              if (
-                prevState.selectedActivity !== selectedActivity
-                || prevState.currentlyInspectedActivity !== currentlyInspectedActivity
-              ) {
-                return { currentlyInspectedActivity, selectedActivity };
+            this.setState(
+              (prevState): any => {
+                if (
+                  prevState.selectedActivity !== selectedActivity ||
+                  prevState.currentlyInspectedActivity !==
+                    currentlyInspectedActivity
+                ) {
+                  return { currentlyInspectedActivity, selectedActivity };
+                }
               }
-            });
+            );
           }
-        });
+        }
+      );
     }
     if (props.document.log.entries.length !== state.count) {
       scrollMe.scrollTop = scrollMe.scrollHeight;
       this.setState({
-        count: props.document.log.entries.length
+        count: props.document.log.entries.length,
       });
     }
   }
@@ -102,18 +112,16 @@ export class Log extends React.Component<LogProps, LogState> {
   render() {
     let key = 0;
     return (
-      <div className={ styles.log } ref={ ref => this.scrollMe = ref }>
-        {
-          this.props.document.log.entries.map(entry =>
-            <LogEntry
-              currentlyInspectedActivity={ this.state.currentlyInspectedActivity }
-              document={ this.props.document }
-              entry={ entry }
-              key={ `entry-${key++}` }
-              selectedActivity={ this.state.selectedActivity }
-            />
-          )
-        }
+      <div className={styles.log} ref={ref => (this.scrollMe = ref)}>
+        {this.props.document.log.entries.map(entry => (
+          <LogEntry
+            currentlyInspectedActivity={this.state.currentlyInspectedActivity}
+            document={this.props.document}
+            entry={entry}
+            key={`entry-${key++}`}
+            selectedActivity={this.state.selectedActivity}
+          />
+        ))}
       </div>
     );
   }

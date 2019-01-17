@@ -32,5 +32,5 @@
 //
 
 export interface Entity {
-    type?: string;
+  type?: string;
 }

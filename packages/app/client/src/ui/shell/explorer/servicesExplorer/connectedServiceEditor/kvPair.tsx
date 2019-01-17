@@ -34,6 +34,7 @@
 import { TextField } from '@bfemulator/ui-react';
 import * as React from 'react';
 import { ChangeEvent, Component, ReactNode } from 'react';
+
 import * as styles from './connectedServiceEditor.scss';
 
 interface KvPairProps {
@@ -43,12 +44,14 @@ interface KvPairProps {
 
 interface KvPairState {
   length: number;
-  kvPairs: { key: string, value: string }[];
+  kvPairs: { key: string; value: string }[];
 }
 
 export class KvPair extends Component<KvPairProps, KvPairState> {
-
-  public static getDerivedStateFromProps(nextProps: KvPairProps, prevState: KvPairState): KvPairState {
+  public static getDerivedStateFromProps(
+    nextProps: KvPairProps,
+    prevState: KvPairState
+  ): KvPairState {
     if (!prevState) {
       prevState = { length: 0, kvPairs: [] };
     }
@@ -60,14 +63,15 @@ export class KvPair extends Component<KvPairProps, KvPairState> {
     if (kvPairsKeys.length !== prevState.length) {
       return {
         kvPairs: kvPairsKeys.map(key => ({ key, value: nextProps[key] })),
-        length: kvPairsKeys.length
-      } as KvPairState;
+        length: kvPairsKeys.length,
+      };
     }
 
     return prevState;
   }
 
-  constructor(props: KvPairProps = {} as KvPairProps) {
+  // eslint-disable-next-line typescript/no-object-literal-type-assertion
+  public constructor(props: KvPairProps = {} as KvPairProps) {
     super(props);
     this.state = KvPair.getDerivedStateFromProps(props, null);
   }
@@ -79,27 +83,21 @@ export class KvPair extends Component<KvPairProps, KvPairState> {
 
     kvPairs.forEach((kvPair, index) => {
       rows.push(
-        <li key={ index }>
-          { this.getTextFieldPair(kvPair.key, kvPair.value) }
-        </li>);
+        <li key={index}>{this.getTextFieldPair(kvPair.key, kvPair.value)}</li>
+      );
     });
 
     for (let i = 0; i < numEmptyRows; i++) {
-      rows.push(
-        <li key={ kvPairs.length + i }>
-          { this.getTextFieldPair() }
-        </li>);
+      rows.push(<li key={kvPairs.length + i}>{this.getTextFieldPair()}</li>);
     }
 
     return (
       <div>
-        <header className={ styles.header }>
+        <header className={styles.header}>
           <span>Key</span>
           <span>Value</span>
         </header>
-        <ul className={ styles.kvPairContainer }>
-          { rows }
-        </ul>
+        <ul className={styles.kvPairContainer}>{rows}</ul>
       </div>
     );
   }
@@ -108,18 +106,20 @@ export class KvPair extends Component<KvPairProps, KvPairState> {
     return (
       <>
         <TextField
-          className={ styles.noBorder }
+          className={styles.noBorder}
           placeholder="Add a key (optional)"
-          value={ key }
+          value={key}
           data-prop="key"
-          onChange={ this.onChange }/>
+          onChange={this.onChange}
+        />
         <TextField
-          className={ styles.noBorder }
+          className={styles.noBorder}
           placeholder="Add a value (optional)"
-          disabled={ !key || !key.trim() }
-          value={ value }
+          disabled={!key || !key.trim()}
+          value={value}
           data-prop="value"
-          onChange={ this.onChange }/>
+          onChange={this.onChange}
+        />
       </>
     );
   }
@@ -128,7 +128,10 @@ export class KvPair extends Component<KvPairProps, KvPairState> {
     const { target } = event;
     const { prop } = target.dataset;
     const targetLi = target.parentElement.parentElement as HTMLOListElement;
-    const index = Array.prototype.findIndex.call(targetLi.parentElement.children, li => li === targetLi);
+    const index = Array.prototype.findIndex.call(
+      targetLi.parentElement.children,
+      li => li === targetLi
+    );
     const { kvPairs } = this.state;
     if (!kvPairs[index]) {
       kvPairs[index] = { key: '', value: '' };
@@ -136,11 +139,13 @@ export class KvPair extends Component<KvPairProps, KvPairState> {
     kvPairs[index][prop] = (target as HTMLInputElement).value;
     this.setState({ kvPairs: [...kvPairs], length: kvPairs.length });
 
-    this.props.onChange(kvPairs.reduce((kvPairMap, kvPair) => {
-      if (kvPair.key && kvPair.key.trim()) {
-        kvPairMap[kvPair.key] = kvPair.value;
-      }
-      return kvPairMap;
-    }, {}));
-  }
+    this.props.onChange(
+      kvPairs.reduce((kvPairMap, kvPair) => {
+        if (kvPair.key && kvPair.key.trim()) {
+          kvPairMap[kvPair.key] = kvPair.value;
+        }
+        return kvPairMap;
+      }, {})
+    );
+  };
 }

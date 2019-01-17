@@ -34,10 +34,11 @@
 import { EventEmitter } from 'events';
 
 import BotEmulator from '../botEmulator';
-import BotEndpoint from './botEndpoint';
-import Conversation from './conversation';
 import User from '../types/user';
 import uniqueId from '../utils/uniqueId';
+
+import BotEndpoint from './botEndpoint';
+import Conversation from './conversation';
 
 /**
  * A set of conversations with a bot.
@@ -46,8 +47,12 @@ export default class ConversationSet extends EventEmitter {
   private conversations: Conversation[] = [];
 
   // TODO: May be we want to move "bot" back to the constructor
-  newConversation(botEmulator: BotEmulator, botEndpoint: BotEndpoint, user: User,
-                  conversationId: string = uniqueId()): Conversation {
+  public newConversation(
+    botEmulator: BotEmulator,
+    botEndpoint: BotEndpoint,
+    user: User,
+    conversationId: string = uniqueId()
+  ): Conversation {
     const conversation = new Conversation(
       botEmulator,
       botEndpoint,
@@ -61,11 +66,13 @@ export default class ConversationSet extends EventEmitter {
     return conversation;
   }
 
-  conversationById(conversationId: string): Conversation {
-    return this.conversations.find(value => value.conversationId === conversationId);
+  public conversationById(conversationId: string): Conversation {
+    return this.conversations.find(
+      value => value.conversationId === conversationId
+    );
   }
 
-  getConversationIds(): string[] {
+  public getConversationIds(): string[] {
     return this.conversations.map(conversation => conversation.conversationId);
   }
 }

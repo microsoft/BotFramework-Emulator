@@ -39,13 +39,14 @@ class DebugConnection extends EventEmitter {
   private onopen: any;
   private onclose: any;
 
-  constructor(connection: any) {
+  public constructor(connection: any) {
     super();
 
     this._connection = connection;
 
     this._connection.onmessage = event => {
-      console.info(`WS.recv: ${ event.data }`);
+      // eslint-disable-next-line no-console
+      console.info(`WS.recv: ${event.data}`);
       this.emit('message', event);
       if (this.onmessage) {
         this.onmessage(event);
@@ -53,6 +54,7 @@ class DebugConnection extends EventEmitter {
     };
 
     this._connection.onopen = () => {
+      // eslint-disable-next-line no-console
       console.info(`WS.open`);
       this.emit('open');
       if (this.onopen) {
@@ -61,6 +63,7 @@ class DebugConnection extends EventEmitter {
     };
 
     this._connection.onclose = () => {
+      // eslint-disable-next-line no-console
       console.info(`WS.close`);
       this.emit('close');
       if (this.onclose) {
@@ -69,16 +72,17 @@ class DebugConnection extends EventEmitter {
     };
   }
 
-  close() {
+  public close() {
     this._connection.close();
   }
 
-  end() {
+  public end() {
     this._connection.end();
   }
 
-  send(data: any) {
-    console.info(`WS.send: ${ data }`);
+  public send(data: any) {
+    // eslint-disable-next-line no-console
+    console.info(`WS.send: ${data}`);
     this._connection.send(data);
   }
 }

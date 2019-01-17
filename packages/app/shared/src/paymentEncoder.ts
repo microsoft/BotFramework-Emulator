@@ -32,19 +32,23 @@
 //
 
 import { CardAction, PaymentRequest } from '@bfemulator/sdk-shared';
+
 import { ActivityVisitor } from './activityVisitor';
 
 export class PaymentEncoder extends ActivityVisitor {
-    public static PaymentEmulatorUrlProtocol: string = 'payment:';
+  public static PaymentEmulatorUrlProtocol: string = 'payment:';
 
-    protected visitCardAction(cardAction: CardAction) {
-        if (cardAction && cardAction.type === 'payment') {
-            let paymentRequest = cardAction.value as PaymentRequest;
-            let url = PaymentEncoder.PaymentEmulatorUrlProtocol + '//' + JSON.stringify(paymentRequest);
+  protected visitCardAction(cardAction: CardAction) {
+    if (cardAction && cardAction.type === 'payment') {
+      const paymentRequest = cardAction.value as PaymentRequest;
+      const url =
+        PaymentEncoder.PaymentEmulatorUrlProtocol +
+        '//' +
+        JSON.stringify(paymentRequest);
 
-            // change the card action to a special URL for the emulator
-            cardAction.type = 'openUrl';
-            cardAction.value = url;
-        }
+      // change the card action to a special URL for the emulator
+      cardAction.type = 'openUrl';
+      cardAction.value = url;
     }
+  }
 }

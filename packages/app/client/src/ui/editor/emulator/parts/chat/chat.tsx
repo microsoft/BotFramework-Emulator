@@ -34,10 +34,14 @@ import * as React from 'react';
 import { Component } from 'react';
 import { Activity } from '@bfemulator/sdk-shared';
 import { IEndpointService } from 'botframework-config/lib/schema';
-import ReactWebChat, { createCognitiveServicesBingSpeechPonyfillFactory } from 'botframework-webchat';
+import ReactWebChat, {
+  createCognitiveServicesBingSpeechPonyfillFactory,
+} from 'botframework-webchat';
+
 import { CommandServiceImpl } from '../../../../../platform/commands/commandServiceImpl';
-import * as styles from './chat.scss';
 import { EmulatorMode } from '../../emulator';
+
+import * as styles from './chat.scss';
 import ActivityWrapper from './activityWrapper';
 import webChatStyleOptions from './webChatTheme';
 
@@ -57,8 +61,13 @@ interface ChatState {
   webSpeechPonyfillFactory: any;
 }
 
-function isCardSelected(selectedActivity: Activity | null, activity: Activity): boolean {
-  return Boolean(selectedActivity && activity.id && selectedActivity.id === activity.id);
+function isCardSelected(
+  selectedActivity: Activity | null,
+  activity: Activity
+): boolean {
+  return Boolean(
+    selectedActivity && activity.id && selectedActivity.id === activity.id
+  );
 }
 
 function isSpeechEnabled(endpoint: IEndpointService | null): boolean {
@@ -70,15 +79,17 @@ export async function getSpeechToken(
   refresh: boolean = false
 ): Promise<string | void> {
   if (!endpoint) {
+    // eslint-disable-next-line no-console
     console.warn('No endpoint for this chat, cannot fetch speech token.');
     return;
   }
 
-  let command = refresh ? 'speech-token:refresh' : 'speech-token:get';
+  const command = refresh ? 'speech-token:refresh' : 'speech-token:get';
 
   try {
     return await CommandServiceImpl.remoteCall(command, endpoint.id);
   } catch (err) {
+    // eslint-disable-next-line no-console
     console.error(err);
   }
 }
@@ -89,7 +100,7 @@ export class Chat extends Component<ChatProps, ChatState> {
 
     this.state = {
       waitForSpeechToken: isSpeechEnabled(props.endpoint),
-      webSpeechPonyfillFactory: null
+      webSpeechPonyfillFactory: null,
     };
   }
 
@@ -98,9 +109,11 @@ export class Chat extends Component<ChatProps, ChatState> {
       const speechToken = await getSpeechToken(this.props.endpoint);
 
       if (speechToken) {
-        const webSpeechPonyfillFactory = await createCognitiveServicesBingSpeechPonyfillFactory({
-          authorizationToken: speechToken
-        });
+        const webSpeechPonyfillFactory = await createCognitiveServicesBingSpeechPonyfillFactory(
+          {
+            authorizationToken: speechToken,
+          }
+        );
 
         this.setState({ webSpeechPonyfillFactory, waitForSpeechToken: false });
       } else {
@@ -113,51 +126,43 @@ export class Chat extends Component<ChatProps, ChatState> {
     const { currentUserId, document, locale, mode } = this.props;
 
     if (this.state.waitForSpeechToken) {
-      return (
-        <div className={ styles.disconnected }>
-          Connecting...
-        </div>
-      );
+      return <div className={styles.disconnected}>Connecting...</div>;
     }
 
     if (document.directLine) {
       const bot = {
         id: document.botId || 'bot',
-        name: 'Bot'
+        name: 'Bot',
       };
       const isDisabled = mode === 'transcript';
 
       return (
-        <div className={ styles.chat }>
+        <div className={styles.chat}>
           <ReactWebChat
-            activityMiddleware={ this.createActivityMiddleware }
-            bot={ bot }
-            directLine={ document.directLine }
-            disabled={ isDisabled }
-            key={ document.directLine.token }
-            locale={ locale }
-            styleOptions={ { ...webChatStyleOptions, hideSendBox: isDisabled } }
-            userId={ currentUserId }
-            webSpeechPonyfillFactory={ this.state.webSpeechPonyfillFactory }
+            activityMiddleware={this.createActivityMiddleware}
+            bot={bot}
+            directLine={document.directLine}
+            disabled={isDisabled}
+            key={document.directLine.token}
+            locale={locale}
+            styleOptions={{ ...webChatStyleOptions, hideSendBox: isDisabled }}
+            userId={currentUserId}
+            webSpeechPonyfillFactory={this.state.webSpeechPonyfillFactory}
           />
         </div>
       );
     }
 
-    return (
-      <div className={ styles.disconnected }>
-        Not Connected
-      </div>
-    );
+    return <div className={styles.disconnected}>Not Connected</div>;
   }
 
   private createActivityMiddleware = () => next => card => children => (
     <ActivityWrapper
-      activity={ card.activity }
-      onClick={ this.props.updateSelectedActivity }
-      isSelected={ isCardSelected(this.props.selectedActivity, card.activity) }
+      activity={card.activity}
+      onClick={this.props.updateSelectedActivity}
+      isSelected={isCardSelected(this.props.selectedActivity, card.activity)}
     >
-      { next(card)(children) }
+      {next(card)(children)}
     </ActivityWrapper>
-  )
+  );
 }

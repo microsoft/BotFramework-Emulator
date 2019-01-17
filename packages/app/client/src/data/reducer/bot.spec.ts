@@ -31,16 +31,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { bot, BotState } from './bot';
-import { BotAction, close, load, setActive } from '../action/botActions';
 import { BotInfo } from '@bfemulator/app-shared';
 import { BotConfigWithPath } from '@bfemulator/sdk-shared';
+
+import { BotAction, close, load, setActive } from '../action/botActions';
+
+import { bot, BotState } from './bot';
 
 describe('Bot reducer tests', () => {
   const DEFAULT_STATE: BotState = {
     activeBot: null,
     botFiles: [],
-    activeBotDigest: ''
+    activeBotDigest: '',
   };
 
   it('should return unaltered state for non-matching action type', () => {
@@ -57,7 +59,7 @@ describe('Bot reducer tests', () => {
       padlock: null,
       services: [],
       path: 'somePath',
-      version: '0.1'
+      version: '0.1',
     };
 
     it('should set a bot as active', () => {
@@ -71,23 +73,23 @@ describe('Bot reducer tests', () => {
         {
           displayName: 'bot2',
           path: 'path2',
-          secret: 'test-secret'
+          secret: 'test-secret',
         },
         {
           displayName: 'bot3',
           path: 'path3',
-          secret: null
+          secret: null,
         },
         {
           displayName: 'bot1',
           path: 'somePath',
-          secret: null
+          secret: null,
         },
       ];
 
       const startingState: BotState = {
         ...DEFAULT_STATE,
-        botFiles: testbots
+        botFiles: testbots,
       };
 
       const action = setActive(testbot);
@@ -109,10 +111,10 @@ describe('Bot reducer tests', () => {
               endpoint: 'someEndpointOverride',
               appId: 'someAppId',
               appPassword: 'someAppPw',
-              id: 'someEndpointOverride'
-            }
-          }
-        } as any
+              id: 'someEndpointOverride',
+            },
+          },
+        } as any,
       };
 
       const action = setActive(testbot);
@@ -129,7 +131,7 @@ describe('Bot reducer tests', () => {
       expect(endpointOverrides.appPassword).toBe('someAppPw');
     });
 
-    it('should throw away overrides from the previous bot if they don\'t have the same path', () => {
+    it("should throw away overrides from the previous bot if they don't have the same path", () => {
       const startingState: BotState = {
         ...DEFAULT_STATE,
         activeBot: {
@@ -143,10 +145,10 @@ describe('Bot reducer tests', () => {
               endpoint: 'someEndpointOverride',
               appId: 'someAppId',
               appPassword: 'someAppPw',
-              id: 'someEndpointOverride'
-            }
-          }
-        } as any
+              id: 'someEndpointOverride',
+            },
+          },
+        } as any,
       };
 
       const action = setActive(testbot);
@@ -163,19 +165,19 @@ describe('Bot reducer tests', () => {
       {
         displayName: 'bot1',
         path: 'path1',
-        secret: null
+        secret: null,
       },
       {
         displayName: 'bot2',
         path: 'path2',
-        secret: 'test-secret'
+        secret: 'test-secret',
       },
       {
         displayName: 'bot3',
         path: 'path3',
-        secret: null
+        secret: null,
       },
-      null
+      null,
     ];
     const action = load(bots);
     const state = bot(DEFAULT_STATE, action);
@@ -185,18 +187,18 @@ describe('Bot reducer tests', () => {
       {
         displayName: 'bot1',
         path: 'path1',
-        secret: null
+        secret: null,
       },
       {
         displayName: 'bot2',
         path: 'path2',
-        secret: 'test-secret'
+        secret: 'test-secret',
       },
       {
         displayName: 'bot3',
         path: 'path3',
-        secret: null
-      }
+        secret: null,
+      },
     ]);
   });
 
@@ -207,8 +209,8 @@ describe('Bot reducer tests', () => {
         name: 'bot',
         description: 'this is a test bot',
         padlock: null,
-        services: []
-      } as any
+        services: [],
+      } as any,
     };
     const action = close();
     const endingState = bot(startingState, action);

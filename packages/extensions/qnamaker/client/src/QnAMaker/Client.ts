@@ -32,11 +32,17 @@
 //
 
 import { ServiceBase } from 'qnamaker/lib/api/serviceBase';
+
+/* eslint-disable typescript/no-var-requires */
 const operations = require('qnamaker/lib/api/operations');
 const knowledgebase = require('qnamaker/lib/api/knowledgebase');
+/* eslint-enable typescript/no-var-requires */
 
 class QnAMakerClientError extends Error {
-  private static getMessage(message: string, statusCode: number | undefined): string {
+  private static getMessage(
+    message: string,
+    statusCode: number | undefined
+  ): string {
     let errorMessage = message;
     if (statusCode) {
       errorMessage += ' - HTTP Status Code: ' + statusCode;
@@ -44,7 +50,7 @@ class QnAMakerClientError extends Error {
     return errorMessage;
   }
 
-  constructor(message: string, statusCode: number | undefined = undefined) {
+  constructor(message: string, statusCode?: number) {
     super(QnAMakerClientError.getMessage(message, statusCode));
   }
 }
@@ -69,23 +75,33 @@ export class QnAMakerClient {
     this.operations = new operations();
   }
 
-  async updateKnowledgebase(kbId: string, requestBody: any): Promise<any> {
+  public async updateKnowledgebase(
+    kbId: string,
+    requestBody: any
+  ): Promise<any> {
     this.configureClient();
     const params = {
-      kbId: kbId
+      kbId,
     };
-    let result = await this.knowledgebase.updateKnowledgebase(params, requestBody);
+    let result = await this.knowledgebase.updateKnowledgebase(
+      params,
+      requestBody
+    );
     if (result.status !== 202) {
-      throw new QnAMakerClientError('Failed to queue training.', result.statusCode);
+      throw new QnAMakerClientError(
+        'Failed to queue training.',
+        result.statusCode
+      );
     }
 
-    let resultJson = await result.json();
+    const resultJson = await result.json();
     let retryCounter = 0;
     return new Promise((resolve, reject) => {
+      // eslint-disable-next-line prefer-const
       let intervalId: number;
-      let callLoop = async () => {
+      const callLoop = async () => {
         result = await this.operations.getOperationDetails({
-          operationId: resultJson.operationId
+          operationId: resultJson.operationId,
         });
 
         if (retryCounter++ >= MaxRetries) {
@@ -97,7 +113,7 @@ export class QnAMakerClient {
           return;
         }
 
-        let trainingStatus = await result.json();
+        const trainingStatus = await result.json();
         if (trainingStatus.operationState === 'Succeeded') {
           clearInterval(intervalId);
           resolve(result);
@@ -107,21 +123,21 @@ export class QnAMakerClient {
     });
   }
 
-  async publish(kbId: string): Promise<any> {
+  public async publish(kbId: string): Promise<any> {
     this.configureClient();
     const params = {
-      kbId: kbId
+      kbId,
     };
-    let result = await this.knowledgebase.publishKnowledgebase(params);
+    const result = await this.knowledgebase.publishKnowledgebase(params);
     return result;
   }
 
-  async getOperationDetails(opId: string): Promise<any> {
+  public async getOperationDetails(opId: string): Promise<any> {
     this.configureClient();
     const params = {
-      operationId: opId
+      operationId: opId,
     };
-    let result = await this.operations.getOperationDetails(params);
+    const result = await this.operations.getOperationDetails(params);
     return result;
   }
 

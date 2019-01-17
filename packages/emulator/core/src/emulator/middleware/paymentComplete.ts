@@ -36,10 +36,15 @@ import * as Restify from 'restify';
 
 import BotEmulator from '../../botEmulator';
 import sendErrorResponse from '../../utils/sendErrorResponse';
+
 import { ConversationAware } from './fetchConversation';
 
 export default function paymentComplete(_botEmulator: BotEmulator) {
-  return async (req: ConversationAware, res: Restify.Response, next: Restify.Next): Promise<any> => {
+  return async (
+    req: ConversationAware,
+    res: Restify.Response,
+    next: Restify.Next
+  ): Promise<any> => {
     const {
       checkoutSession,
       request,
@@ -48,10 +53,20 @@ export default function paymentComplete(_botEmulator: BotEmulator) {
       payerPhone,
       payerEmail,
     } = req.body[0];
-    const args = [checkoutSession, request, shippingAddress, shippingOptionId, payerEmail, payerPhone];
+    const args = [
+      checkoutSession,
+      request,
+      shippingAddress,
+      shippingOptionId,
+      payerEmail,
+      payerPhone,
+    ];
 
     try {
-      const response = await req.conversation.sendPaymentCompleteOperation.apply(req.conversation, args);
+      const response = await req.conversation.sendPaymentCompleteOperation.apply(
+        req.conversation,
+        args
+      );
       res.send(HttpStatus.OK, response);
     } catch (err) {
       sendErrorResponse(req, res, next, err);

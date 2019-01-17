@@ -38,8 +38,11 @@ import BotEmulator from '../../botEmulator';
 import sendErrorResponse from '../../utils/sendErrorResponse';
 
 export default function getActivityMembers(botEmulator: BotEmulator) {
-  return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-
+  return (
+    req: Restify.Request,
+    res: Restify.Response,
+    next: Restify.Next
+  ): any => {
     try {
       res.send(HttpStatus.OK, (req as any).conversation.members);
       res.end();

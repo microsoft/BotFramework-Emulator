@@ -35,12 +35,8 @@ import * as React from 'react';
 import { mount, ReactWrapper } from 'enzyme';
 import LogLevel from '@bfemulator/emulator-core/lib/types/log/level';
 import { textItem } from '@bfemulator/emulator-core/lib/types/log/util';
-import {
-  number2,
-  timestamp,
-  LogEntry,
-  LogEntryProps
-} from './logEntry';
+
+import { number2, timestamp, LogEntry, LogEntryProps } from './logEntry';
 
 jest.mock('./log.scss', () => ({}));
 
@@ -52,10 +48,10 @@ describe('logEntry component', () => {
       document: {},
       entry: {
         timestamp: 0,
-        items: []
-      }
+        items: [],
+      },
     };
-    wrapper = mount(<LogEntry { ...props } />);
+    wrapper = mount(<LogEntry {...props} />);
   });
 
   it('should render an outer entry component', () => {
@@ -68,8 +64,8 @@ describe('logEntry component', () => {
       items: [
         textItem(LogLevel.Debug, 'item1'),
         textItem(LogLevel.Debug, 'item2'),
-        textItem(LogLevel.Debug, 'item3')
-      ]
+        textItem(LogLevel.Debug, 'item3'),
+      ],
     };
     wrapper.setProps({ entry });
     expect(wrapper.find('span.timestamp')).toHaveLength(1);

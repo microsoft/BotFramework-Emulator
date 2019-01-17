@@ -52,27 +52,32 @@ export interface EndpointEditorPayload extends EndpointServicePayload {
   endpointEditorComponent?: ComponentClass<any>;
 }
 
-export function launchEndpointEditor(endpointEditorComponent: ComponentClass<any>,
-                                     endpointService?: IEndpointService): EndpointServiceAction<EndpointEditorPayload> {
+export function launchEndpointEditor(
+  endpointEditorComponent: ComponentClass<any>,
+  endpointService?: IEndpointService
+): EndpointServiceAction<EndpointEditorPayload> {
   return {
     type: LAUNCH_ENDPOINT_EDITOR,
-    payload: { endpointEditorComponent, endpointService }
+    payload: { endpointEditorComponent, endpointService },
   };
 }
 
-export function openEndpointInEmulator(endpointService: IEndpointService, focusExistingChatIfAvailable: boolean = false)
-  : EndpointServiceAction<EndpointServicePayload> {
+export function openEndpointInEmulator(
+  endpointService: IEndpointService,
+  focusExistingChatIfAvailable: boolean = false
+): EndpointServiceAction<EndpointServicePayload> {
   return {
     type: OPEN_ENDPOINT_IN_EMULATOR,
-    payload: { endpointService, focusExistingChatIfAvailable }
+    payload: { endpointService, focusExistingChatIfAvailable },
   };
 }
 
-export function openEndpointExplorerContextMenu(endpointEditorComponent: ComponentClass<any>,
-                                                endpointService?: IEndpointService)
-  : EndpointServiceAction<EndpointEditorPayload> {
+export function openEndpointExplorerContextMenu(
+  endpointEditorComponent: ComponentClass<any>,
+  endpointService?: IEndpointService
+): EndpointServiceAction<EndpointEditorPayload> {
   return {
     type: OPEN_ENDPOINT_CONTEXT_MENU,
-    payload: { endpointEditorComponent, endpointService }
+    payload: { endpointEditorComponent, endpointService },
   };
 }
