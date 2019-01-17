@@ -31,16 +31,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { TraceActivity } from "@bfemulator/sdk-shared";
+import { TraceActivity } from '@bfemulator/sdk-shared';
 
-import { RecognizerResultAdapter } from "../Adapters/RecognizerResultAdapter";
-import { AppState, PersistentAppState } from "../App";
-import { ButtonSelected } from "../Controls/ControlBar/ControlBar";
-import { AppInfo } from "../Luis/AppInfo";
-import { IntentInfo } from "../Luis/IntentInfo";
-import { LuisTraceInfo } from "../Models/LuisTraceInfo";
+import { RecognizerResultAdapter } from '../Adapters/RecognizerResultAdapter';
+import { AppState, PersistentAppState } from '../App';
+import { ButtonSelected } from '../Controls/ControlBar/ControlBar';
+import { AppInfo } from '../Luis/AppInfo';
+import { IntentInfo } from '../Luis/IntentInfo';
+import { LuisTraceInfo } from '../Models/LuisTraceInfo';
 
-const LuisTraceType = "https://www.luis.ai/schemas/trace";
+const LuisTraceType = 'https://www.luis.ai/schemas/trace';
 
 export default class AppStateAdapter implements AppState {
   public authoringKey: string;
@@ -56,7 +56,7 @@ export default class AppStateAdapter implements AppState {
       return false;
     }
     const trace = obj as TraceActivity;
-    if (trace.type !== "trace" || trace.valueType !== LuisTraceType) {
+    if (trace.type !== 'trace' || trace.valueType !== LuisTraceType) {
       return false;
     }
     if (!trace.value) {
@@ -87,6 +87,6 @@ export default class AppStateAdapter implements AppState {
         this.traceInfo.luisResult
       );
     }
-    this.id = traceActivity.id || "";
+    this.id = traceActivity.id || '';
   }
 }

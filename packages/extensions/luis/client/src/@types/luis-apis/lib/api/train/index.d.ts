@@ -33,7 +33,7 @@
 
 /// <reference types="node" />
 
-declare module "luis-apis/lib/api/train" {
+declare module 'luis-apis/lib/api/train' {
   interface ModelTrainStatusDetails {
     statusId: TrainStatus;
     status: string;

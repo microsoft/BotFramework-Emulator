@@ -31,12 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from "react";
-import { Component } from "react";
+import * as React from 'react';
+import { Component } from 'react';
 
-import { Intent } from "../../Models/Intent";
+import { Intent } from '../../Models/Intent';
 
-import * as styles from "./IntentViewer.scss";
+import * as styles from './IntentViewer.scss';
 
 interface IntentViewerProps {
   topScoringIntent: Intent;

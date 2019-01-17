@@ -31,22 +31,22 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from "react";
-import { Component } from "react";
+import * as React from 'react';
+import { Component } from 'react';
 
-import { IntentInfo } from "../../Luis/IntentInfo";
-import { Intent } from "../../Models/Intent";
+import { IntentInfo } from '../../Luis/IntentInfo';
+import { Intent } from '../../Models/Intent';
 
-import * as styles from "./IntentEditor.scss";
+import * as styles from './IntentEditor.scss';
 
 const TraceIntentStatesKey: string = Symbol(
-  "PersistedTraceIntentStates"
+  'PersistedTraceIntentStates'
 ).toString();
 
 enum IntentEditorMode {
   Enabled,
   Disabled,
-  Hidden
+  Hidden,
 }
 
 interface TraceIntentState {
@@ -78,12 +78,12 @@ class IntentEditor extends Component<IntentEditorProps, IntentEditorState> {
     } else {
       currentTraceIntentStates[nextProps.traceId] = {
         originalIntent: nextProps.currentIntent.intent,
-        currentIntent: ""
+        currentIntent: '',
       };
     }
 
     return {
-      traceIntentStates: currentTraceIntentStates
+      traceIntentStates: currentTraceIntentStates,
     };
   }
 
@@ -95,7 +95,7 @@ class IntentEditor extends Component<IntentEditorProps, IntentEditorState> {
       traceIntentStates = JSON.parse(persisted);
     }
     this.state = {
-      traceIntentStates
+      traceIntentStates,
     };
   }
 
@@ -159,7 +159,7 @@ class IntentEditor extends Component<IntentEditorProps, IntentEditorState> {
     [key: string]: TraceIntentState;
   }) {
     this.setState({
-      traceIntentStates: states
+      traceIntentStates: states,
     });
     localStorage.setItem(TraceIntentStatesKey, JSON.stringify(states));
   }

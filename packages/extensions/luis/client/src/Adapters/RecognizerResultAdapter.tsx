@@ -31,14 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { CompositeEntity } from "../Luis/CompositeEntity";
-import { Entity } from "../Luis/Entity";
-import { LuisResponse } from "../Luis/LuisResponse";
-import { Intent } from "../Models/Intent";
+import { CompositeEntity } from '../Luis/CompositeEntity';
+import { Entity } from '../Luis/Entity';
+import { LuisResponse } from '../Luis/LuisResponse';
+import { Intent } from '../Models/Intent';
 import {
   RecognizerResult,
-  RecognizerResultIntent
-} from "../Models/RecognizerResults";
+  RecognizerResultIntent,
+} from '../Models/RecognizerResults';
 
 // This adapter adapts the old LUIS Response schema to the the new schema
 // since v3 of the BotBuilder SDKs don't support the new schemas, so this
@@ -59,7 +59,7 @@ export class RecognizerResultAdapter implements RecognizerResult {
   }
 
   private normalizeName(name: string): string {
-    return name.replace(/\./g, "_");
+    return name.replace(/\./g, '_');
   }
 
   private getIntents(
@@ -77,7 +77,7 @@ export class RecognizerResultAdapter implements RecognizerResult {
     } else {
       const topScoringIntent = luisResult.topScoringIntent;
       intents[this.normalizeName(topScoringIntent.intent)] = {
-        score: topScoringIntent.score
+        score: topScoringIntent.score,
       };
     }
     return intents;
@@ -134,7 +134,7 @@ export class RecognizerResultAdapter implements RecognizerResult {
       return entity.entity;
     }
 
-    if ((entity || "").type.startsWith("builtin.datetimeV2.")) {
+    if ((entity || '').type.startsWith('builtin.datetimeV2.')) {
       if (!entity.resolution.values || !entity.resolution.values.length) {
         return entity.resolution;
       }
@@ -149,20 +149,20 @@ export class RecognizerResultAdapter implements RecognizerResult {
     } else {
       const res = entity.resolution;
       switch (entity.type) {
-        case "builtin.number":
-        case "builtin.ordinal":
+        case 'builtin.number':
+        case 'builtin.ordinal':
           return Number(res.value);
-        case "builtin.percentage": {
+        case 'builtin.percentage': {
           let svalue = res.value;
-          if (svalue.endsWith("%")) {
+          if (svalue.endsWith('%')) {
             svalue = svalue.substring(0, svalue.length - 1);
           }
           return Number(svalue);
         }
-        case "builtin.age":
-        case "builtin.dimension":
-        case "builtin.currency":
-        case "builtin.temperature": {
+        case 'builtin.age':
+        case 'builtin.dimension':
+        case 'builtin.currency':
+        case 'builtin.temperature': {
           const val = res.value;
           const obj: any = {};
           if (val) {
@@ -186,23 +186,23 @@ export class RecognizerResultAdapter implements RecognizerResult {
       startIndex: entity.startIndex,
       endIndex: entity.endIndex + 1,
       text: entity.entity,
-      score: entity.score
+      score: entity.score,
     };
   }
 
   private getNormalizedEntityType(entity: Entity): string {
     // Type::Role -> Role
-    let type = entity.type.split(":").pop() || "";
-    if (type.startsWith("builtin.datetimeV2.")) {
-      type = "builtin_datetime";
+    let type = entity.type.split(':').pop() || '';
+    if (type.startsWith('builtin.datetimeV2.')) {
+      type = 'builtin_datetime';
     }
-    if (type.startsWith("builtin.currency")) {
-      type = "builtin_money";
+    if (type.startsWith('builtin.currency')) {
+      type = 'builtin_money';
     }
     if (entity.role != null) {
       type = entity.role;
     }
-    return type.replace(/\./g, "_");
+    return type.replace(/\./g, '_');
   }
 
   private populateCompositeEntity(
@@ -215,15 +215,17 @@ export class RecognizerResultAdapter implements RecognizerResult {
     let childrenEntitiesMetadata: any = {};
 
     // This is now implemented as O(n^2) search and can be reduced to O(2n) using a map as an optimization if n grows
-    const compositeEntityMetadata: Entity | undefined = entities.find(entity => {
-      // For now we are matching by value, which can be ambiguous if the same composite entity
-      // shows up with the same text multiple times within an utterance, but this is just a
-      // stop gap solution till the indices are included in composite entities
-      return (
-        entity.type === compositeEntity.parentType &&
-        entity.entity === compositeEntity.value
-      );
-    });
+    const compositeEntityMetadata: Entity | undefined = entities.find(
+      entity => {
+        // For now we are matching by value, which can be ambiguous if the same composite entity
+        // shows up with the same text multiple times within an utterance, but this is just a
+        // stop gap solution till the indices are included in composite entities
+        return (
+          entity.type === compositeEntity.parentType &&
+          entity.entity === compositeEntity.value
+        );
+      }
+    );
 
     const filteredEntities: Entity[] = [];
     if (verbose && compositeEntityMetadata) {

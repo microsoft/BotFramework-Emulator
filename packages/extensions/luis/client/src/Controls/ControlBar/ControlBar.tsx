@@ -31,14 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from "react";
-import { Component, MouseEventHandler } from "react";
+import * as React from 'react';
+import { Component, MouseEventHandler } from 'react';
 
-import * as styles from "./ControlBar.scss";
+import * as styles from './ControlBar.scss';
 
 enum ButtonSelected {
   RecognizerResult,
-  RawResponse
+  RawResponse,
 }
 
 interface ControlBarState {}
@@ -70,7 +70,7 @@ class ControlBar extends Component<ControlBarProps, ControlBarState> {
             onClick={this.clickHandler}
             style={
               this.props.buttonSelected === ButtonSelected.RecognizerResult
-                ? { textDecoration: "underline" }
+                ? { textDecoration: 'underline' }
                 : {}
             }
           >
@@ -84,7 +84,7 @@ class ControlBar extends Component<ControlBarProps, ControlBarState> {
             onClick={this.clickHandler}
             style={
               this.props.buttonSelected === ButtonSelected.RawResponse
-                ? { textDecoration: "underline" }
+                ? { textDecoration: 'underline' }
                 : {}
             }
           >

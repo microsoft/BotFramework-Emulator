@@ -18,6 +18,8 @@
   "scripts": {
     "start": "webpack-dev-server --hot --inline --mode development --content-base ./public",
     "build": "webpack --mode production",
+    "lint": "eslint --color --quiet --ext .js,.jsx,.ts,.tsx ./src",
+    "lint:fix": "npm run lint -- --fix",
     "test": ""
   },
   "devDependencies": {
@@ -35,6 +37,12 @@
     "@types/react-dom": "^16.0.4",
     "babel-jest": "23.6.0",
     "css-loader": "^0.28.11",
+    "eslint": "^5.12.0",
+    "eslint-config-prettier": "^3.5.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-notice": "^0.7.7",
+    "eslint-plugin-prettier": "^3.0.1",
+    "eslint-plugin-typescript": "^1.0.0-rc.3",
     "file-loader": "^1.1.11",
     "jest": "^23.0.0",
     "resolve-url-loader": "^2.3.0",

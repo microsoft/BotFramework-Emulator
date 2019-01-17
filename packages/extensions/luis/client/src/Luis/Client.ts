@@ -31,39 +31,39 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as LSCache from "lscache";
+import * as LSCache from 'lscache';
 import {
   ApplicationPublishRequest,
   Apps,
-  Publish
-} from "luis-apis/lib/api/apps";
+  Publish,
+} from 'luis-apis/lib/api/apps';
 import {
   AddLabelParams,
   Example,
-  ExampleLabelObject
-} from "luis-apis/lib/api/examples";
-import Intents from "luis-apis/lib/api/models/intents";
-import { ServiceBase } from "luis-apis/lib/api/serviceBase";
-import { ModelTrainStatus, Train } from "luis-apis/lib/api/train";
+  ExampleLabelObject,
+} from 'luis-apis/lib/api/examples';
+import Intents from 'luis-apis/lib/api/models/intents';
+import { ServiceBase } from 'luis-apis/lib/api/serviceBase';
+import { ModelTrainStatus, Train } from 'luis-apis/lib/api/train';
 
-import { LuisAppInfo } from "../Models/LuisAppInfo";
+import { LuisAppInfo } from '../Models/LuisAppInfo';
 
-import { AppInfo } from "./AppInfo";
-import { IntentInfo } from "./IntentInfo";
-import { LuisResponse } from "./LuisResponse";
+import { AppInfo } from './AppInfo';
+import { IntentInfo } from './IntentInfo';
+import { LuisResponse } from './LuisResponse';
 
-const DefaultVersion = "0.1";
+const DefaultVersion = '0.1';
 const TrainStatusRetryCount = 30;
 const WaitIntervalInMs = 500;
 const CacheTtlInMins = 30;
-const Unauthorized = "Unauthorized";
-const CortanaAppId = "c413b2ef-382c-45bd-8ff0-f76d60e2a821";
+const Unauthorized = 'Unauthorized';
+const CortanaAppId = 'c413b2ef-382c-45bd-8ff0-f76d60e2a821';
 
 enum TrainStatus {
   Success = 0,
   Fail = 1,
   UpToDate = 2,
-  InProgress = 3
+  InProgress = 3,
 }
 
 class LuisClientError extends Error {
@@ -73,7 +73,7 @@ class LuisClientError extends Error {
   ): string {
     let errorMessage = message;
     if (statusCode) {
-      errorMessage += " - HTTP Status Code: " + statusCode;
+      errorMessage += ' - HTTP Status Code: ' + statusCode;
     }
     return errorMessage;
   }
@@ -91,11 +91,11 @@ class LuisClient {
   private publishService: Publish;
   private luisAppInfo: LuisAppInfo;
 
-  private static getNormalizedEntityType(entityType: string = ""): string {
-    const builtinPrefix = "builtin.";
+  private static getNormalizedEntityType(entityType: string = ''): string {
+    const builtinPrefix = 'builtin.';
     const builtInPrefixLength = builtinPrefix.length;
     if (entityType.startsWith(builtinPrefix)) {
-      let typeEndIndex = entityType.indexOf(".", builtInPrefixLength);
+      let typeEndIndex = entityType.indexOf('.', builtInPrefixLength);
       if (typeEndIndex < 0) {
         typeEndIndex = entityType.length;
       }
@@ -109,9 +109,9 @@ class LuisClient {
     appId: string,
     versionId?: string
   ): string {
-    let key: string = apiName + "_" + appId;
+    let key: string = apiName + '_' + appId;
     if (versionId) {
-      key += "_";
+      key += '_';
       key += versionId;
     }
     return key;
@@ -133,7 +133,7 @@ class LuisClient {
 
   public async getApplicationInfo(): Promise<AppInfo> {
     const opCacheKey: string = LuisClient.getCacheKey(
-      "GetAppInfo",
+      'GetAppInfo',
       this.luisAppInfo.appId
     );
     let cached: AppInfo;
@@ -142,7 +142,7 @@ class LuisClient {
     }
     this.configureClient();
     const r = await this.appsService.getApplicationInfo({
-      appId: this.luisAppInfo.appId
+      appId: this.luisAppInfo.appId,
     });
     let appInfo: AppInfo = {} as AppInfo;
     if (
@@ -157,17 +157,17 @@ class LuisClient {
         name: Unauthorized,
         appId: this.luisAppInfo.appId,
         endpoints: {},
-        isDispatchApp: false
+        isDispatchApp: false,
       };
     } else if (r.status !== 200) {
-      throw new LuisClientError("Failed to get the Azure App Info", r.status);
+      throw new LuisClientError('Failed to get the Azure App Info', r.status);
     } else {
       appInfo = await r.json();
       appInfo.authorized = true;
       appInfo.appId = this.luisAppInfo.appId;
       appInfo.isDispatchApp = appInfo.activeVersion
         .toLocaleLowerCase()
-        .startsWith("dispatch");
+        .startsWith('dispatch');
       LSCache.set(opCacheKey, appInfo, CacheTtlInMins);
     }
     return appInfo;
@@ -175,7 +175,7 @@ class LuisClient {
 
   public async getApplicationIntents(appInfo: AppInfo): Promise<IntentInfo[]> {
     const opCacheKey: string = LuisClient.getCacheKey(
-      "GetAppInfo",
+      'GetAppInfo',
       appInfo.appId,
       appInfo.activeVersion
     );
@@ -186,7 +186,7 @@ class LuisClient {
     this.configureClient();
     const r = await this.intentsService.getVersionIntentList({
       appId: appInfo.appId,
-      versionId: appInfo.activeVersion
+      versionId: appInfo.activeVersion,
     });
     const intents = await r.json();
     const intentInfo = intents.map((i: any) => i as IntentInfo);
@@ -205,16 +205,16 @@ class LuisClient {
       intentName: newIntent,
       entityLabels: luisResponse.entities.map(e => {
         return {
-          entityName: LuisClient.getNormalizedEntityType(e.type || ""),
+          entityName: LuisClient.getNormalizedEntityType(e.type || ''),
           startCharIndex: e.startIndex,
-          endCharIndex: e.endIndex
+          endCharIndex: e.endIndex,
         };
-      })
+      }),
     };
 
     const addLabelParapms: AddLabelParams = {
       appId: appInfo.appId,
-      versionId: appInfo.activeVersion || DefaultVersion
+      versionId: appInfo.activeVersion || DefaultVersion,
     };
 
     const r = await this.exampleService.addLabel(
@@ -222,28 +222,28 @@ class LuisClient {
       exampleLabelObject
     );
     if (r.status !== 201) {
-      throw new LuisClientError("Failed to add label", r.status);
+      throw new LuisClientError('Failed to add label', r.status);
     }
   }
 
   public async publish(appInfo: AppInfo, staging: boolean): Promise<any> {
     this.configureClient();
-    const endpointKey: string = staging ? "STAGING" : "PRODUCTION";
+    const endpointKey: string = staging ? 'STAGING' : 'PRODUCTION';
     const region: string = appInfo.endpoints[endpointKey].endpointRegion;
     if (!region) {
-      throw new LuisClientError("Unknown publishing region");
+      throw new LuisClientError('Unknown publishing region');
     }
     const applicationPublishRequest: ApplicationPublishRequest = {
       isStaging: staging,
       region,
-      versionId: appInfo.activeVersion
+      versionId: appInfo.activeVersion,
     };
     const r = await this.publishService.publishApplication(
       { appId: appInfo.appId },
       applicationPublishRequest
     );
     if (r.status !== 201) {
-      throw new LuisClientError("Publish Failed", r.status);
+      throw new LuisClientError('Publish Failed', r.status);
     }
   }
 
@@ -251,10 +251,10 @@ class LuisClient {
     this.configureClient();
     let r = await this.trainService.trainApplicationVersion({
       appId: appInfo.appId,
-      versionId: appInfo.activeVersion
+      versionId: appInfo.activeVersion,
     });
     if (r.status !== 202) {
-      throw new LuisClientError("Failed to queue training request", r.status);
+      throw new LuisClientError('Failed to queue training request', r.status);
     }
 
     let retryCounter = 0;
@@ -262,12 +262,12 @@ class LuisClient {
       const intervalId = setInterval(async () => {
         r = await this.trainService.getVersionTrainingStatus({
           appId: appInfo.appId,
-          versionId: appInfo.activeVersion
+          versionId: appInfo.activeVersion,
         });
 
         if (retryCounter++ >= TrainStatusRetryCount) {
           clearInterval(intervalId);
-          reject("Failed to train the application");
+          reject('Failed to train the application');
         }
 
         if (r.status !== 200) {
@@ -295,7 +295,7 @@ class LuisClient {
     // We should consider updating the Client SDK to make the configs per service
     ServiceBase.config = {
       endpointBasePath: this.luisAppInfo.baseUri,
-      authoringKey: this.luisAppInfo.key
+      authoringKey: this.luisAppInfo.key,
     };
   }
 }

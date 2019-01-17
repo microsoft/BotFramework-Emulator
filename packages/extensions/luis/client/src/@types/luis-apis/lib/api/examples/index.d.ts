@@ -33,7 +33,7 @@
 
 /// <reference types="node" />
 
-declare module "luis-apis/lib/api/examples" {
+declare module 'luis-apis/lib/api/examples' {
   export class Example {
     addLabel(params: any, exampleLabelObject: any): Promise<any>;
   }

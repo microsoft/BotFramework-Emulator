@@ -31,10 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { CompositeEntity } from "../Luis/CompositeEntity";
+import { CompositeEntity } from '../Luis/CompositeEntity';
 
-import { Entity } from "./Entity";
-import { Intent } from "./Intent";
+import { Entity } from './Entity';
+import { Intent } from './Intent';
 
 export interface LuisResponse {
   query: string;

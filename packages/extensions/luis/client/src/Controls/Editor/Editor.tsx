@@ -31,23 +31,23 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from "react";
-import { Component } from "react";
+import * as React from 'react';
+import { Component } from 'react';
 
-import { AppInfo } from "../../Luis/AppInfo";
-import { IntentInfo } from "../../Luis/IntentInfo";
-import { Intent } from "../../Models/Intent";
+import { AppInfo } from '../../Luis/AppInfo';
+import { IntentInfo } from '../../Luis/IntentInfo';
+import { Intent } from '../../Models/Intent';
 import {
   RecognizerResult,
-  RecognizerResultIntent
-} from "../../Models/RecognizerResults";
-import EntitiesViewer from "../EntitiesViewer/EntitiesViewer";
-import { IntentEditor, IntentEditorMode } from "../IntentEditor/IntentEditor";
-import IntentViewer from "../IntentViewer/IntentViewer";
+  RecognizerResultIntent,
+} from '../../Models/RecognizerResults';
+import EntitiesViewer from '../EntitiesViewer/EntitiesViewer';
+import { IntentEditor, IntentEditorMode } from '../IntentEditor/IntentEditor';
+import IntentViewer from '../IntentViewer/IntentViewer';
 
-import * as styles from "./Editor.scss";
+import * as styles from './Editor.scss';
 
-const NoneIntent: string = "None";
+const NoneIntent = 'None';
 
 interface EditorState {}
 
@@ -80,7 +80,7 @@ class Editor extends Component<EditorProps, EditorState> {
     const topScoringIntent = this.getTopScoringIntent();
     let mode: IntentEditorMode;
     const {
-      appInfo = { authorized: false, isDispatchApp: false }
+      appInfo = { authorized: false, isDispatchApp: false },
     } = this.props;
     if (appInfo.authorized) {
       mode = IntentEditorMode.Enabled;

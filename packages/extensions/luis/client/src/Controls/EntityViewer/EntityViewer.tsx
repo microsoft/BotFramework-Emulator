@@ -31,12 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from "react";
-import { Component } from "react";
+import * as React from 'react';
+import { Component } from 'react';
 
-import * as styles from "./EntityViewer.scss";
+import * as styles from './EntityViewer.scss';
 
-const InstanceKey = "$instance";
+const InstanceKey = '$instance';
 
 interface EntityInfo {
   name: string;
@@ -63,15 +63,15 @@ class EntityViewer extends Component<EntityViwerProps, EntityViewerState> {
     }
 
     if (Array.isArray(entityValue)) {
-      if (typeof entityValue[0] === "object") {
+      if (typeof entityValue[0] === 'object') {
         entityValue = entityValue.map(ev =>
           EntityViewer.renderEntityValueObject(ev)
         );
       }
-      return entityValue.join(", ");
+      return entityValue.join(', ');
     }
 
-    if (typeof entityValue === "object") {
+    if (typeof entityValue === 'object') {
       return EntityViewer.renderEntityValueObject(entityValue);
     }
 
@@ -92,7 +92,7 @@ class EntityViewer extends Component<EntityViwerProps, EntityViewerState> {
     return (
       <div className={styles.entityViewer}>
         <div id="entityName">{this.props.entity.name}</div>
-        <div id="arrow">&nbsp; -->&nbsp; </div>
+        <div id="arrow">{'&nbsp; -->&nbsp; '}</div>
         <div id="entityValue">
           {EntityViewer.renderEntityValue(this.props.entity.value)}
         </div>

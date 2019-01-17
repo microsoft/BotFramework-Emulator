@@ -31,14 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from "react";
-import { Component } from "react";
+import * as React from 'react';
+import { Component } from 'react';
 
-import { EntityInfo, EntityViewer } from "../EntityViewer/EntityViewer";
+import { EntityInfo, EntityViewer } from '../EntityViewer/EntityViewer';
 
-import * as styles from "./EntitiesViewer.scss";
+import * as styles from './EntitiesViewer.scss';
 
-const INSTANCE_KEY = "$instance";
+const INSTANCE_KEY = '$instance';
 
 interface EntitiesViewerState {}
 
@@ -66,7 +66,7 @@ class EntitiesViewer extends Component<
       entities = filteredEntityKeys.map(entityKey => {
         const entity: EntityInfo = {
           name: entityKey,
-          value: this.props.entities[entityKey]
+          value: this.props.entities[entityKey],
         };
         return <EntityViewer key={entityKey} entity={entity} />;
       });
