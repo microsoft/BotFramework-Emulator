@@ -34,7 +34,6 @@
 import { DefaultButton, Dialog, DialogFooter, PrimaryButton, TextField } from '@bfemulator/ui-react';
 import * as React from 'react';
 import { ChangeEvent, FocusEvent, ReactNode } from 'react';
-import * as styles from '../dialogStyles.scss';
 import * as openBotStyles from './openBotDialog.scss';
 
 export interface OpenBotDialogProps {
@@ -67,7 +66,7 @@ export class OpenBotDialog extends React.Component<OpenBotDialogProps, OpenBotDi
     return (
       <Dialog
         cancel={ this.props.onDialogCancel }
-        className={ `${ styles.dialogMedium } ${ openBotStyles.themeOverrides }` }
+        className={ openBotStyles.themeOverrides }
         title="Open a bot">
         <form onSubmit={ this.onSubmit }>
           <TextField
@@ -76,6 +75,7 @@ export class OpenBotDialog extends React.Component<OpenBotDialogProps, OpenBotDi
             label="Bot URL or file location"
             onChange={ this.onInputChange }
             onFocus={ this.onFocus }
+            autoFocus={ true }
             value={ botUrl }>
 
             <PrimaryButton
