@@ -31,11 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-// import { BotInfo } from '@bfemulator/app-shared';
 import { DefaultButton, Dialog, DialogFooter, PrimaryButton, TextField } from '@bfemulator/ui-react';
 import * as React from 'react';
 import { ChangeEvent, FocusEvent, ReactNode } from 'react';
-// import { RecentBotsListContainer } from '../../editor/recentBotsList/recentBotsListContainer';
 import * as styles from '../dialogStyles.scss';
 import * as openBotStyles from './openBotDialog.scss';
 
