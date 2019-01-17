@@ -31,33 +31,33 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { InspectorHost } from "@bfemulator/sdk-client";
-import { Splitter } from "@bfemulator/ui-react";
+import { InspectorHost } from '@bfemulator/sdk-client';
+import { Splitter } from '@bfemulator/ui-react';
 import {
   IBotConfiguration,
   IQnAService,
-  ServiceTypes
-} from "botframework-config/lib/schema";
-import * as React from "react";
+  ServiceTypes,
+} from 'botframework-config/lib/schema';
+import * as React from 'react';
 
-import * as styles from "./App.scss";
-import AppStateAdapter from "./AppStateAdapter";
-import { Answer } from "./Models/QnAMakerModels";
-import { QnAMakerTraceInfo } from "./Models/QnAMakerTraceInfo";
-import { QnAKbInfo, QnAMakerClient } from "./QnAMaker/Client";
-import AnswersView from "./Views/AnswersView/AnswersView";
-import PhrasingsView from "./Views/PhrasingsView/PhrasingsView";
-import QnAMakerHeader from "./Views/QnAMakerHeader/QnAMakerHeader";
+import * as styles from './App.scss';
+import AppStateAdapter from './AppStateAdapter';
+import { Answer } from './Models/QnAMakerModels';
+import { QnAMakerTraceInfo } from './Models/QnAMakerTraceInfo';
+import { QnAKbInfo, QnAMakerClient } from './QnAMaker/Client';
+import AnswersView from './Views/AnswersView/AnswersView';
+import PhrasingsView from './Views/PhrasingsView/PhrasingsView';
+import QnAMakerHeader from './Views/QnAMakerHeader/QnAMakerHeader';
 
 const $host: InspectorHost = (window as any).host;
 const QnAApiBasePath =
-  "https://westus.api.cognitive.microsoft.com/qnamaker/v4.0";
-const TrainAccessoryId = "train";
-const PublishAccessoryId = "publish";
-const AccessoryDefaultState = "default";
-const AccessoryWorkingState = "working";
+  'https://westus.api.cognitive.microsoft.com/qnamaker/v4.0';
+const TrainAccessoryId = 'train';
+const PublishAccessoryId = 'publish';
+const AccessoryDefaultState = 'default';
+const AccessoryWorkingState = 'working';
 
-const persistentStateKey = Symbol("persistentState").toString();
+const persistentStateKey = Symbol('persistentState').toString();
 
 interface AppState {
   id: string;
@@ -101,28 +101,28 @@ class App extends React.Component<any, AppState> {
   constructor(props: any, context: any) {
     super(props, context);
     this.state = {
-      id: "",
+      id: '',
       traceInfo: {
         message: {},
         queryResults: [],
-        knowledgeBaseId: "",
+        knowledgeBaseId: '',
         scoreThreshold: 0.3,
         top: 1,
         strictFilters: null,
-        metadataBoost: null
+        metadataBoost: null,
       },
       qnaService: null,
       persistentState: this.loadAppPersistentState(),
       phrasings: [],
       answers: [],
-      selectedAnswer: null
+      selectedAnswer: null,
     };
   }
 
   public componentWillMount() {
     // Attach a handler to listen on inspect events
     if (!this.runningDetached()) {
-      $host.on("inspect", async (obj: any) => {
+      $host.on('inspect', async (obj: any) => {
         const appState = new AppStateAdapter(obj);
         appState.qnaService = App.getQnAServiceFromBot(
           $host.bot,
@@ -133,10 +133,10 @@ class App extends React.Component<any, AppState> {
           this.client = new QnAMakerClient({
             kbId: appState.traceInfo.knowledgeBaseId,
             baseUri: QnAApiBasePath,
-            subscriptionKey: appState.qnaService.subscriptionKey
+            subscriptionKey: appState.qnaService.subscriptionKey,
           } as QnAKbInfo);
         }
-        $host.setInspectorTitle("QnAMaker");
+        $host.setInspectorTitle('QnAMaker');
         $host.setAccessoryState(TrainAccessoryId, AccessoryDefaultState);
         $host.setAccessoryState(PublishAccessoryId, AccessoryDefaultState);
         $host.enableAccessory(
@@ -152,7 +152,7 @@ class App extends React.Component<any, AppState> {
         );
       });
 
-      $host.on("accessory-click", async (id: string) => {
+      $host.on('accessory-click', async (id: string) => {
         switch (id) {
           case TrainAccessoryId:
             await this.train();
@@ -165,37 +165,37 @@ class App extends React.Component<any, AppState> {
         }
       });
 
-      $host.on("bot-updated", (bot: IBotConfiguration) => {
+      $host.on('bot-updated', (bot: IBotConfiguration) => {
         this.setState({
           qnaService: App.getQnAServiceFromBot(
             bot,
             this.state.traceInfo.knowledgeBaseId
-          )
+          ),
         });
       });
 
       $host.on(
-        "theme",
+        'theme',
         async (themeInfo: { themeName: string; themeComponents: string[] }) => {
           const oldThemeComponents = document.querySelectorAll<HTMLLinkElement>(
             '[data-theme-component="true"]'
           );
           const head = document.querySelector<HTMLHeadElement>(
-            "head"
+            'head'
           ) as HTMLHeadElement;
           const fragment = document.createDocumentFragment();
-          const promises: Array<Promise<any>> = [];
+          const promises: Promise<any>[] = [];
           // Create the new links for each theme component
           themeInfo.themeComponents.forEach(themeComponent => {
-            const link = document.createElement<"link">("link");
+            const link = document.createElement<'link'>('link');
             promises.push(
               new Promise(resolve => {
-                link.addEventListener("load", resolve);
+                link.addEventListener('load', resolve);
               })
             );
             link.href = themeComponent;
-            link.rel = "stylesheet";
-            link.setAttribute("data-theme-component", "true");
+            link.rel = 'stylesheet';
+            link.setAttribute('data-theme-component', 'true');
             fragment.appendChild(link);
           });
           head.insertBefore(fragment, head.firstElementChild);
@@ -218,9 +218,9 @@ class App extends React.Component<any, AppState> {
   public render() {
     if (this.state.qnaService === null) {
       const text =
-        "Unable to find a QnA Maker service with Knowledge Base ID " +
+        'Unable to find a QnA Maker service with Knowledge Base ID ' +
         this.state.traceInfo.knowledgeBaseId +
-        ". Please add a QnA Maker service to your bot.";
+        '. Please add a QnA Maker service to your bot.';
       return (
         <div className={styles.noService}>
           <p>{text}</p>
@@ -234,7 +234,7 @@ class App extends React.Component<any, AppState> {
           knowledgeBaseName={this.state.qnaService.name}
         />
         <Splitter
-          orientation={"vertical"}
+          orientation={'vertical'}
           primaryPaneIndex={0}
           minSizes={{ 0: 306, 1: 306 }}
           initialSizes={{ 0: 306 }}
@@ -271,11 +271,11 @@ class App extends React.Component<any, AppState> {
               {
                 id: this.state.selectedAnswer.id,
                 answer: this.state.selectedAnswer.text,
-                source: "Editorial",
+                source: 'Editorial',
                 questions,
-                metadata
-              }
-            ]
+                metadata,
+              },
+            ],
           };
           const body = newQuestion ? { add: qnaList } : { update: qnaList };
           const response = await this.client.updateKnowledgebase(
@@ -284,11 +284,11 @@ class App extends React.Component<any, AppState> {
           );
           success = response.status === 200;
           $host.logger.log(
-            "Successfully trained Knowledge Base " +
+            'Successfully trained Knowledge Base ' +
               this.state.traceInfo.knowledgeBaseId
           );
         } else {
-          $host.logger.error("Select an answer before trying to train.");
+          $host.logger.error('Select an answer before trying to train.');
         }
       }
     } catch (err) {
@@ -297,7 +297,7 @@ class App extends React.Component<any, AppState> {
       $host.setAccessoryState(TrainAccessoryId, AccessoryDefaultState);
       this.setAppPersistentState({
         pendingPublish: success,
-        pendingTrain: !success
+        pendingTrain: !success,
       });
     }
   }
@@ -307,19 +307,19 @@ class App extends React.Component<any, AppState> {
     let success = false;
     try {
       if (this.state.qnaService !== null) {
-        $host.logger.log("Publishing...");
+        $host.logger.log('Publishing...');
         const response = await this.client.publish(
           this.state.traceInfo.knowledgeBaseId
         );
         success = response.status === 204;
         if (success) {
           $host.logger.log(
-            "Successfully published Knowledge Base " +
+            'Successfully published Knowledge Base ' +
               this.state.traceInfo.knowledgeBaseId
           );
         } else {
           $host.logger.error(
-            "Request to QnA Maker failed. " + response.statusText
+            'Request to QnA Maker failed. ' + response.statusText
           );
         }
       }
@@ -330,7 +330,7 @@ class App extends React.Component<any, AppState> {
     }
     this.setAppPersistentState({
       pendingPublish: !success,
-      pendingTrain: false
+      pendingTrain: false,
     });
   }
 
@@ -341,11 +341,11 @@ class App extends React.Component<any, AppState> {
   private selectAnswer() {
     return (newAnswer: Answer) => {
       this.setState({
-        selectedAnswer: newAnswer
+        selectedAnswer: newAnswer,
       });
       this.setAppPersistentState({
         pendingPublish: false,
-        pendingTrain: true
+        pendingTrain: true,
       });
     };
   }
@@ -355,11 +355,11 @@ class App extends React.Component<any, AppState> {
       const newPhrases: string[] = this.state.phrasings;
       newPhrases.push(phrase);
       this.setState({
-        phrasings: newPhrases
+        phrasings: newPhrases,
       });
       this.setAppPersistentState({
         pendingPublish: false,
-        pendingTrain: this.state.selectedAnswer !== null
+        pendingTrain: this.state.selectedAnswer !== null,
       });
     };
   }
@@ -370,11 +370,11 @@ class App extends React.Component<any, AppState> {
       const phrasesIndex = newPhrases.indexOf(phrase);
       newPhrases.splice(phrasesIndex, 1);
       this.setState({
-        phrasings: newPhrases
+        phrasings: newPhrases,
       });
       this.setAppPersistentState({
         pendingPublish: false,
-        pendingTrain: this.state.selectedAnswer !== null
+        pendingTrain: this.state.selectedAnswer !== null,
       });
     };
   }
@@ -385,22 +385,23 @@ class App extends React.Component<any, AppState> {
         filters: {},
         id: 0,
         score: 0,
-        text: newAnswer
+        text: newAnswer,
       };
       const newAnswers: Answer[] = this.state.answers;
       newAnswers.push(answerObj);
       this.setState({
         answers: newAnswers,
-        selectedAnswer: answerObj
+        selectedAnswer: answerObj,
       });
       this.setAppPersistentState({
         pendingPublish: false,
-        pendingTrain: this.state.selectedAnswer !== null
+        pendingTrain: this.state.selectedAnswer !== null,
       });
     };
   }
 
   private setAppPersistentState(persistentState: PersistentAppState) {
+    // eslint-disable-next-line react/no-direct-mutation-state
     this.state.persistentState[this.state.id] = persistentState;
     this.setState({ persistentState: this.state.persistentState });
     localStorage.setItem(
@@ -417,10 +418,10 @@ class App extends React.Component<any, AppState> {
       return JSON.parse(persisted);
     }
     return {
-      "": {
+      '': {
         pendingPublish: false,
-        pendingTrain: true
-      }
+        pendingTrain: true,
+      },
     };
   }
 }

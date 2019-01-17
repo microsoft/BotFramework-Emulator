@@ -31,12 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from "react";
-import { Component } from "react";
+import * as React from 'react';
+import { Component } from 'react';
 
-import { Answer } from "../../Models/QnAMakerModels";
+import { Answer } from '../../Models/QnAMakerModels';
 
-import * as styles from "./AnswersView.scss";
+import * as styles from './AnswersView.scss';
 
 interface AnswersViewProps {
   answers: Answer[];
@@ -73,9 +73,9 @@ export default class AnswersView extends Component<AnswersViewProps, {}> {
     const selected =
       this.props.selectedAnswer !== null &&
       answer.text === this.props.selectedAnswer.text;
-    let blockClass = "answer-block";
+    let blockClass = 'answer-block';
     if (selected) {
-      blockClass += " selected";
+      blockClass += ' selected';
     }
     const selectedBlock = selected ? (
       <div className={styles.selected}>
@@ -97,9 +97,9 @@ export default class AnswersView extends Component<AnswersViewProps, {}> {
   }
 
   private answerInputKeyPress(e: any) {
-    if (e.key === "Enter") {
+    if (e.key === 'Enter') {
       this.props.addAnswer(e.target.value);
-      e.target.value = "";
+      e.target.value = '';
     }
   }
 }

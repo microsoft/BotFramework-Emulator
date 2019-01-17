@@ -31,10 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from "react";
-import { Component } from "react";
+import * as React from 'react';
+import { Component } from 'react';
 
-import * as styles from "./PhrasingsView.scss";
+import * as styles from './PhrasingsView.scss';
 
 interface PhrasingsViewProps {
   phrasings: string[];
@@ -84,19 +84,19 @@ export default class PhrasingsView extends Component<PhrasingsViewProps, {}> {
   }
 
   private phraseInputKeyPress(e: any) {
-    if (e.key === "Enter") {
+    if (e.key === 'Enter') {
       this.handleAddPhraseClick();
     }
   }
 
   private handleAddPhraseClick() {
     const newPhrase = (document.getElementById(
-      "phrasing-input"
+      'phrasing-input'
     ) as HTMLInputElement).value;
     if (newPhrase) {
       this.props.addPhrasing(newPhrase);
-      (document.getElementById("phrasing-input") as HTMLInputElement).value =
-        "";
+      (document.getElementById('phrasing-input') as HTMLInputElement).value =
+        '';
     }
   }
 

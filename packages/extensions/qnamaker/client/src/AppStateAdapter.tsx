@@ -31,14 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { TraceActivity } from "@bfemulator/sdk-shared";
-import { IQnAService } from "botframework-config/lib/schema";
+import { TraceActivity } from '@bfemulator/sdk-shared';
+import { IQnAService } from 'botframework-config/lib/schema';
 
-import { AppState, PersistentAppState } from "./App";
-import { Answer } from "./Models/QnAMakerModels";
-import { QnAMakerTraceInfo, QueryResult } from "./Models/QnAMakerTraceInfo";
+import { AppState, PersistentAppState } from './App';
+import { Answer } from './Models/QnAMakerModels';
+import { QnAMakerTraceInfo, QueryResult } from './Models/QnAMakerTraceInfo';
 
-const QnaMakerTracerType = "https://www.qnamaker.ai/schemas/trace";
+const QnaMakerTracerType = 'https://www.qnamaker.ai/schemas/trace';
 
 interface QnaMakerModel {
   ModelID: string;
@@ -59,7 +59,7 @@ export default class AppStateAdapter implements AppState {
       return false;
     }
     const trace = obj as TraceActivity;
-    if (trace.type !== "trace" || trace.valueType !== QnaMakerTracerType) {
+    if (trace.type !== 'trace' || trace.valueType !== QnaMakerTracerType) {
       return false;
     }
     if (!trace.value) {
@@ -81,15 +81,15 @@ export default class AppStateAdapter implements AppState {
     }
     const traceActivity = obj as TraceActivity;
     this.traceInfo = traceActivity.value as QnAMakerTraceInfo;
-    this.id = traceActivity.id || "";
+    this.id = traceActivity.id || '';
 
-    this.phrasings = [this.traceInfo.message.text || ""];
+    this.phrasings = [this.traceInfo.message.text || ''];
 
     this.answers = this.traceInfo.queryResults.map((result: QueryResult) => ({
       id: result.id,
       text: result.answer,
       score: result.score,
-      filters: null
+      filters: null,
     }));
     this.selectedAnswer = this.answers.length > 0 ? this.answers[0] : null;
   }

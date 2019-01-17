@@ -31,9 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ServiceBase } from "qnamaker/lib/api/serviceBase";
-const operations = require("qnamaker/lib/api/operations");
-const knowledgebase = require("qnamaker/lib/api/knowledgebase");
+import { ServiceBase } from 'qnamaker/lib/api/serviceBase';
+
+/* eslint-disable typescript/no-var-requires */
+const operations = require('qnamaker/lib/api/operations');
+const knowledgebase = require('qnamaker/lib/api/knowledgebase');
+/* eslint-enable typescript/no-var-requires */
 
 class QnAMakerClientError extends Error {
   private static getMessage(
@@ -42,7 +45,7 @@ class QnAMakerClientError extends Error {
   ): string {
     let errorMessage = message;
     if (statusCode) {
-      errorMessage += " - HTTP Status Code: " + statusCode;
+      errorMessage += ' - HTTP Status Code: ' + statusCode;
     }
     return errorMessage;
   }
@@ -78,7 +81,7 @@ export class QnAMakerClient {
   ): Promise<any> {
     this.configureClient();
     const params = {
-      kbId
+      kbId,
     };
     let result = await this.knowledgebase.updateKnowledgebase(
       params,
@@ -86,7 +89,7 @@ export class QnAMakerClient {
     );
     if (result.status !== 202) {
       throw new QnAMakerClientError(
-        "Failed to queue training.",
+        'Failed to queue training.',
         result.statusCode
       );
     }
@@ -94,15 +97,16 @@ export class QnAMakerClient {
     const resultJson = await result.json();
     let retryCounter = 0;
     return new Promise((resolve, reject) => {
+      // eslint-disable-next-line prefer-const
       let intervalId: number;
       const callLoop = async () => {
         result = await this.operations.getOperationDetails({
-          operationId: resultJson.operationId
+          operationId: resultJson.operationId,
         });
 
         if (retryCounter++ >= MaxRetries) {
           clearInterval(intervalId);
-          reject("Failed to train the knowledgebase");
+          reject('Failed to train the knowledgebase');
         }
 
         if (result.status !== 200) {
@@ -110,7 +114,7 @@ export class QnAMakerClient {
         }
 
         const trainingStatus = await result.json();
-        if (trainingStatus.operationState === "Succeeded") {
+        if (trainingStatus.operationState === 'Succeeded') {
           clearInterval(intervalId);
           resolve(result);
         }
@@ -122,7 +126,7 @@ export class QnAMakerClient {
   public async publish(kbId: string): Promise<any> {
     this.configureClient();
     const params = {
-      kbId
+      kbId,
     };
     const result = await this.knowledgebase.publishKnowledgebase(params);
     return result;
@@ -131,7 +135,7 @@ export class QnAMakerClient {
   public async getOperationDetails(opId: string): Promise<any> {
     this.configureClient();
     const params = {
-      operationId: opId
+      operationId: opId,
     };
     const result = await this.operations.getOperationDetails(params);
     return result;
@@ -143,7 +147,7 @@ export class QnAMakerClient {
     // We should consider updating the Client SDK to make the configs per service
     ServiceBase.config = {
       endpointBasePath: this.qnaMakerKbInfo.baseUri,
-      subscriptionKey: this.qnaMakerKbInfo.subscriptionKey
+      subscriptionKey: this.qnaMakerKbInfo.subscriptionKey,
     };
   }
 }
