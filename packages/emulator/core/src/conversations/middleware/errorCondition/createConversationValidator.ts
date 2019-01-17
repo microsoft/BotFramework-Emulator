@@ -76,7 +76,7 @@ Object.freeze(CreateConversationError);
 function validateCreateConversationRequest(
   params: ConversationParameters,
   endpoint: BotEndpoint
-): CreateConversationError {
+): CreateConversationError | void {
   if (params.members && params.members.length > 1) {
     return CreateConversationError.TOO_MANY_MEMBERS;
   }
