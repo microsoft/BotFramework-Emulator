@@ -238,6 +238,18 @@ describe('ActiveBotHelper tests', () => {
     }
   });
 
+  it('should throw when confirmAndSwitchBots fails', async () => {
+    jest.spyOn(CommandServiceImpl, 'call').mockRejectedValueOnce('oh noes!');
+    jest.spyOn(botHelpers, 'getActiveBot').mockReturnValueOnce({path: ''});
+    try {
+      await ActiveBotHelper.confirmAndSwitchBots('');
+      expect(false);
+    } catch (e) {
+      expect(e).not.toBeNull();
+    }
+    jest.resetAllMocks();
+  });
+
   it('confirmAndSwitchBots() functionality', async () => {
     const backupBotAlreadyOpen = ActiveBotHelper.botAlreadyOpen;
     const backupConfirmSwitchBot = ActiveBotHelper.confirmSwitchBot;
