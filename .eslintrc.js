@@ -46,7 +46,11 @@ module.exports = {
   },
   overrides: [
     {
-      files: ['**/*.test.tsx', '**/*.spec.tsx', '**/*.test.ts', '**/*.spec.ts'],
+      files: ['**/*.+(js|jsx)'],
+      parser: 'babel-eslint',
+    },
+    {
+      files: ['**/*.+(test|spec).+(js|jsx|ts|tsx)'],
       env: {
         jest: true,
       },

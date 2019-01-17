@@ -5,12 +5,19 @@ module.exports = {
       version: 'detect',
     },
   },
+  parserOptions: {
+    ecmaVersion: 6,
+    sourceType: 'module',
+    ecmaFeatures: {
+      jsx: true,
+    },
+  },
   rules: {
     'react/no-deprecated': 'warn',
   },
   overrides: [
     {
-      files: ['**/*.test.tsx', '**/*.spec.tsx', '**/*.test.ts', '**/*.spec.ts'],
+      files: ['**/*.+(test|spec).+(js|jsx|ts|tsx)'],
       rules: {
         'react/display-name': 'off',
       },
