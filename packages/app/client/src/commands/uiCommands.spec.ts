@@ -111,7 +111,8 @@ describe('the uiCommands', () => {
 
   describe('should dispatch the appropriate action to the store', () => {
     it('when the SwitchNavBarTab command is dispatched', () => {
-      const arg: SelectNavBarAction = {} as SelectNavBarAction;
+      // eslint-disable-next-line prefer-const
+      let arg: SelectNavBarAction = {} as SelectNavBarAction;
       store.dispatch = action => ((arg as any) = action);
       registry.getCommand(Commands.SwitchNavBarTab).handler('Do it Nauuuw!');
       expect(arg.type).toBe(NavBarActions.select);
@@ -119,7 +120,8 @@ describe('the uiCommands', () => {
     });
 
     it('when the ShowAppSettings command is dispatched', () => {
-      const arg: OpenEditorAction = {} as OpenEditorAction;
+      // eslint-disable-next-line prefer-const
+      let arg: OpenEditorAction = {} as OpenEditorAction;
       store.dispatch = action => ((arg as any) = action);
       registry.getCommand(Commands.ShowAppSettings).handler();
       expect(arg.type).toBe(EditorActions.open);
@@ -129,7 +131,8 @@ describe('the uiCommands', () => {
     });
 
     it('when the SignInToAzure command is dispatched', async () => {
-      const arg: AzureAuthAction<AzureAuthWorkflow> = {} as AzureAuthAction<
+      // eslint-disable-next-line prefer-const
+      let arg: AzureAuthAction<AzureAuthWorkflow> = {} as AzureAuthAction<
         AzureAuthWorkflow
       >;
       store.dispatch = action => ((arg as any) = action);
@@ -141,7 +144,8 @@ describe('the uiCommands', () => {
     });
 
     it('when the InvalidateArmToken command is dispatched', async () => {
-      const arg: AzureAuthAction<void> = {} as AzureAuthAction<void>;
+      // eslint-disable-next-line prefer-const
+      let arg: AzureAuthAction<void> = {} as AzureAuthAction<void>;
       store.dispatch = action => ((arg as any) = action);
       registry.getCommand(Commands.InvalidateAzureArmToken).handler();
       expect(arg).toEqual(invalidateArmToken());

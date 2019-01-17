@@ -219,7 +219,7 @@ describe('AppUpdater', () => {
     mockAutoUpdater.checkForUpdates = mockCheckForUpdates;
     mockAutoUpdater.setFeedURL = () => null;
 
-    await expect(AppUpdater.checkForUpdates(false)).rejects.toBe(
+    await expect(AppUpdater.checkForUpdates(false)).rejects.toThrowError(
       'There was an error while checking for the latest update: ERROR'
     );
   });
@@ -236,7 +236,7 @@ describe('AppUpdater', () => {
   it('should throw if there is an error while trying to download updates', async () => {
     mockAutoUpdater.downloadUpdate = () => Promise.reject('ERROR');
 
-    await expect(AppUpdater.downloadUpdate(false)).rejects.toBe(
+    await expect(AppUpdater.downloadUpdate(false)).rejects.toThrowError(
       'There was an error while trying to download the latest update: ERROR'
     );
   });
