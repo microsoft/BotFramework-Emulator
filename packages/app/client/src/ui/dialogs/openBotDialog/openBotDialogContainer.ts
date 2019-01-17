@@ -32,25 +32,17 @@
 //
 
 import { newNotification, SharedConstants } from '@bfemulator/app-shared';
-import { Action } from 'redux';
 import { IEndpointService } from 'botframework-config/lib/schema';
 import { connect } from 'react-redux';
+import { Action } from 'redux';
 import { beginAdd } from '../../../data/action/notificationActions';
-import { RootState } from '../../../data/store';
 import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
 import { ActiveBotHelper } from '../../helpers/activeBotHelper';
 import { DialogService } from '../service';
 import { OpenBotDialog, OpenBotDialogProps } from './openBotDialog';
 
-const mapStateToProps = (state: RootState, ownProps: { [propName: string]: any }): OpenBotDialogProps => {
-  return {
-    showCreateNewBotDialog: () => CommandServiceImpl.call(SharedConstants.Commands.UI.ShowBotCreationDialog),
-    ...ownProps
-  };
-};
-
 const mapDispatchToProps = (dispatch: (action: Action) => void): OpenBotDialogProps => {
-  const { Commands: { Emulator: { NewLiveChat }, Bot: { Switch } } } = SharedConstants;
+  const { Commands: { Emulator: { NewLiveChat } } } = SharedConstants;
   return {
     onDialogCancel: () => DialogService.hideDialog(),
     openBot: (urlOrPath: string) => {
@@ -62,11 +54,10 @@ const mapDispatchToProps = (dispatch: (action: Action) => void): OpenBotDialogPr
     },
     sendNotification: (error: Error) =>
       dispatch(beginAdd(newNotification(`An Error occurred on the Open Bot Dialog: ${ error }`))),
-    switchToBot: (path: string) => CommandServiceImpl.call(Switch, path)
   };
 };
 
 export const OpenBotDialogContainer = connect(
-  mapStateToProps,
+  null,
   mapDispatchToProps
 )(OpenBotDialog);

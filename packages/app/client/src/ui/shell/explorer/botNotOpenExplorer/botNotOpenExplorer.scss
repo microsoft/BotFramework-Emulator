@@ -40,20 +40,17 @@
   list-style-type: none;
   margin: 0;
   padding: 0;
+}
 
-  & .explorer-empty-state {
-    padding: 16px;
-    overflow: hidden;
-  }
+.explorer-empty-state {
+  padding: 16px;
+  margin-top: 13px;
+  overflow: hidden;
+}
 
-  & .open-bot {
-    margin-top: 13px;
-    margin-bottom: 26px;
-    width: 180px;
-    height: 26px;
-  }
-
-  & .empty-state-text {
-    margin-top: 13px;
-  }
+.open-bot {
+  margin-top: 13px;
+  margin-bottom: 26px;
+  width: 180px;
+  height: 26px;
 }

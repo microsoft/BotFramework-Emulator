@@ -34,11 +34,12 @@
 .browse-button {
   overflow: hidden;
   position: absolute;
-  right: 0;
-  bottom: 12px;
+  right: 4px;
+  bottom: 11.5px;
 }
 
 .input-container {
+  margin-top: 10px;
   padding-right: 115px;
 
   & + div {
