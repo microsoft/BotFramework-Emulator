@@ -31,8 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import CardAction from "./cardAction";
-import CardImage from "./cardImage";
+import CardAction from './cardAction';
+import CardImage from './cardImage';
 
 interface ReceiptItem {
   title: string; // Title of the Card

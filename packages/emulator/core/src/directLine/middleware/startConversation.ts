@@ -31,13 +31,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as HttpStatus from "http-status-codes";
-import onErrorResumeNext from "on-error-resume-next";
-import * as Restify from "restify";
+import * as HttpStatus from 'http-status-codes';
+import onErrorResumeNext from 'on-error-resume-next';
+import * as Restify from 'restify';
 
-import BotEmulator from "../../botEmulator";
-import BotEndpoint from "../../facility/botEndpoint";
-import uniqueId from "../../utils/uniqueId";
+import BotEmulator from '../../botEmulator';
+import BotEndpoint from '../../facility/botEndpoint';
+import uniqueId from '../../utils/uniqueId';
 
 export default function startConversation(botEmulator: BotEmulator) {
   return (
@@ -45,15 +45,15 @@ export default function startConversation(botEmulator: BotEmulator) {
     res: Restify.Response,
     next: Restify.Next
   ): any => {
-    const auth = req.header("Authorization");
+    const auth = req.header('Authorization');
 
     // TODO: We should not use token as conversation ID
     const tokenMatch = /Bearer\s+(.+)/.exec(auth);
     const botEndpoint: BotEndpoint = (req as any).botEndpoint;
     const conversationId =
       onErrorResumeNext(() => {
-        const optionsJson = new Buffer(tokenMatch[1], "base64").toString(
-          "utf8"
+        const optionsJson = new Buffer(tokenMatch[1], 'base64').toString(
+          'utf8'
         );
 
         return JSON.parse(optionsJson).conversationId;
@@ -73,7 +73,7 @@ export default function startConversation(botEmulator: BotEmulator) {
       );
       // Send "bot added to conversation"
       conversation.sendConversationUpdate(
-        [{ id: botEndpoint.botId, name: "Bot" }],
+        [{ id: botEndpoint.botId, name: 'Bot' }],
         undefined
       );
       // Send "user added to conversation"
@@ -87,7 +87,7 @@ export default function startConversation(botEmulator: BotEmulator) {
         ) === -1
       ) {
         // Sends "bot added to conversation"
-        conversation.addMember(botEndpoint.botId, "Bot");
+        conversation.addMember(botEndpoint.botId, 'Bot');
       }
 
       if (
@@ -105,8 +105,9 @@ export default function startConversation(botEmulator: BotEmulator) {
     res.json(created ? HttpStatus.CREATED : HttpStatus.OK, {
       conversationId: conversation.conversationId,
       token: botEndpoint && botEndpoint.id,
+      // eslint-disable-next-line typescript/camelcase
       expires_in: Math.pow(2, 31) - 1,
-      streamUrl: ""
+      streamUrl: '',
     });
 
     res.end();

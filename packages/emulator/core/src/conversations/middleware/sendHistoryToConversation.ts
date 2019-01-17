@@ -31,12 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as HttpStatus from "http-status-codes";
-import * as Restify from "restify";
+import * as HttpStatus from 'http-status-codes';
+import * as Restify from 'restify';
 
-import BotEmulator from "../../botEmulator";
-import Activity from "../../types/activity/activity";
-import createResourceResponse from "../../utils/createResponse/resource";
+import BotEmulator from '../../botEmulator';
+import Activity from '../../types/activity/activity';
+import createResourceResponse from '../../utils/createResponse/resource';
 
 export default function sendHistoryToConversation(botEmulator: BotEmulator) {
   return (
@@ -46,14 +46,14 @@ export default function sendHistoryToConversation(botEmulator: BotEmulator) {
   ): any => {
     const { activities }: { activities: Activity[] } = req.body;
     let successCount = 0;
-    let firstErrorMessage = "";
+    let firstErrorMessage = '';
 
     for (const activity of activities) {
       try {
         (req as any).conversation.postActivityToUser(activity, true);
         successCount++;
       } catch (err) {
-        if (firstErrorMessage === "") {
+        if (firstErrorMessage === '') {
           firstErrorMessage = err;
         }
       }

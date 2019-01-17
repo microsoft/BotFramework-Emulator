@@ -1,12 +1,45 @@
-import MessageActivity from "../types/activity/message";
-import AttachmentContentTypes from "../types/attachment/contentTypes";
-import CardAction from "../types/card/cardAction";
-import MediaCard from "../types/card/media";
-import OAuthCard from "../types/card/oAuth";
-import ReceiptCard from "../types/card/receipt";
-import SigninCard from "../types/card/signIn";
-import ThumbnailCard from "../types/card/thumbnail";
-import ActivityVisitor from "./activityVisitor";
+//
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license.
+//
+// Microsoft Bot Framework: http://botframework.com
+//
+// Bot Framework Emulator Github:
+// https://github.com/Microsoft/BotFramwork-Emulator
+//
+// Copyright (c) Microsoft Corporation
+// All rights reserved.
+//
+// MIT License:
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+//
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED ""AS IS"", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
+import MessageActivity from '../types/activity/message';
+import AttachmentContentTypes from '../types/attachment/contentTypes';
+import CardAction from '../types/card/cardAction';
+import MediaCard from '../types/card/media';
+import OAuthCard from '../types/card/oAuth';
+import ReceiptCard from '../types/card/receipt';
+import SigninCard from '../types/card/signIn';
+import ThumbnailCard from '../types/card/thumbnail';
+
+import ActivityVisitor from './activityVisitor';
 
 class MockActivityVisitor extends ActivityVisitor {
   public cardActionVisitors: CardAction[] = [];
@@ -16,84 +49,84 @@ class MockActivityVisitor extends ActivityVisitor {
   }
 }
 
-describe("The activityVisitor", () => {
+describe('The activityVisitor', () => {
   let activityVisitor: MockActivityVisitor;
   beforeEach(() => {
     activityVisitor = new MockActivityVisitor();
   });
 
-  it("should traverse each attachment based on type", () => {
+  it('should traverse each attachment based on type', () => {
     const mockMediaCard: Partial<MediaCard> = {
       image: {
-        url: "",
-        alt: "",
-        tap: { image: "", title: "", type: "png", value: "" }
+        url: '',
+        alt: '',
+        tap: { image: '', title: '', type: 'png', value: '' },
       },
-      buttons: [{ image: "", title: "", type: "png", value: "" }]
+      buttons: [{ image: '', title: '', type: 'png', value: '' }],
     };
 
     const mockThumbnailCard: Partial<ThumbnailCard> = {
-      buttons: [{ image: "", title: "", type: "png", value: "" }],
-      tap: { image: "", title: "", type: "png", value: "" },
+      buttons: [{ image: '', title: '', type: 'png', value: '' }],
+      tap: { image: '', title: '', type: 'png', value: '' },
       images: [
         {
-          url: "",
-          alt: "",
-          tap: { image: "", title: "", type: "png", value: "" }
-        }
-      ]
+          url: '',
+          alt: '',
+          tap: { image: '', title: '', type: 'png', value: '' },
+        },
+      ],
     };
 
     const mockReceiptCard: Partial<ReceiptCard> = {
-      buttons: [{ image: "", title: "", type: "png", value: "" }],
-      tap: { image: "", title: "", type: "png", value: "" }
+      buttons: [{ image: '', title: '', type: 'png', value: '' }],
+      tap: { image: '', title: '', type: 'png', value: '' },
     };
 
     const mockOauthCard: Partial<OAuthCard> = {
-      buttons: [{ image: "", title: "", type: "png", value: "" }],
-      connectionName: "oauth"
+      buttons: [{ image: '', title: '', type: 'png', value: '' }],
+      connectionName: 'oauth',
     };
 
     const mockSigninCard: Partial<SigninCard> = {
-      buttons: [{ image: "", title: "", type: "png", value: "" }],
-      text: ""
+      buttons: [{ image: '', title: '', type: 'png', value: '' }],
+      text: '',
     };
 
     const mockMessageActivity: MessageActivity = {
       attachments: [
         {
           contentType: AttachmentContentTypes.animationCard,
-          content: mockMediaCard
+          content: mockMediaCard,
         },
         {
           contentType: AttachmentContentTypes.audioCard,
-          content: mockMediaCard
+          content: mockMediaCard,
         },
         {
           contentType: AttachmentContentTypes.heroCard,
-          content: mockThumbnailCard
+          content: mockThumbnailCard,
         },
         {
           contentType: AttachmentContentTypes.oAuthCard,
-          content: mockOauthCard
+          content: mockOauthCard,
         },
         {
           contentType: AttachmentContentTypes.receiptCard,
-          content: mockReceiptCard
+          content: mockReceiptCard,
         },
         {
           contentType: AttachmentContentTypes.signInCard,
-          content: mockSigninCard
+          content: mockSigninCard,
         },
         {
           contentType: AttachmentContentTypes.thumbnailCard,
-          content: mockThumbnailCard
+          content: mockThumbnailCard,
         },
         {
           contentType: AttachmentContentTypes.videoCard,
-          content: mockMediaCard
-        }
-      ]
+          content: mockMediaCard,
+        },
+      ],
     };
     activityVisitor.traverseActivity(mockMessageActivity);
     const { cardActionVisitors } = activityVisitor;

@@ -31,9 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import ChannelAccount from "../account/channel";
+import ChannelAccount from '../account/channel';
 
-import Activity from "./activity";
+import Activity from './activity';
 
 interface ConversationUpdateActivity extends Activity {
   historyDisclosed?: boolean;

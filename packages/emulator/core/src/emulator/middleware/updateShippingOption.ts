@@ -31,13 +31,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as HttpStatus from "http-status-codes";
-import * as Restify from "restify";
+import * as HttpStatus from 'http-status-codes';
+import * as Restify from 'restify';
 
-import BotEmulator from "../../botEmulator";
-import sendErrorResponse from "../../utils/sendErrorResponse";
+import BotEmulator from '../../botEmulator';
+import sendErrorResponse from '../../utils/sendErrorResponse';
 
-import { ConversationAware } from "./fetchConversation";
+import { ConversationAware } from './fetchConversation';
 
 export default function updateShippingOption(_botEmulator: BotEmulator) {
   return async (
@@ -49,7 +49,7 @@ export default function updateShippingOption(_botEmulator: BotEmulator) {
       checkoutSession,
       request,
       shippingAddress,
-      shippingOptionId
+      shippingOptionId,
     } = req.body[0];
     const args = [checkoutSession, request, shippingAddress, shippingOptionId];
     try {

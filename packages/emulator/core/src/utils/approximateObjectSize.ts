@@ -36,16 +36,16 @@ export default function approximateObjectSize(
   cache: any[] = []
 ): number {
   switch (typeof object) {
-    case "boolean":
+    case 'boolean':
       return 4;
 
-    case "number":
+    case 'number':
       return 8;
 
-    case "string":
+    case 'string':
       return object.length * 2;
 
-    case "object":
+    case 'object': {
       let bytes = 0;
 
       cache.push(object);
@@ -57,7 +57,7 @@ export default function approximateObjectSize(
         const value = object[i];
 
         // check for infinite recursion
-        if (typeof value === "object" && value !== null) {
+        if (typeof value === 'object' && value !== null) {
           if (cache.indexOf(value) !== -1) {
             continue;
           }
@@ -69,6 +69,7 @@ export default function approximateObjectSize(
       }
 
       return bytes;
+    }
 
     default:
       // value is null, undefined, or a function

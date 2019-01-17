@@ -31,14 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as HttpStatus from "http-status-codes";
-import * as Restify from "restify";
+import * as HttpStatus from 'http-status-codes';
+import * as Restify from 'restify';
 
-import BotEmulator from "../../botEmulator";
-import ChannelAccount from "../../types/account/channel";
-import sendErrorResponse from "../../utils/sendErrorResponse";
+import BotEmulator from '../../botEmulator';
+import ChannelAccount from '../../types/account/channel';
+import sendErrorResponse from '../../utils/sendErrorResponse';
 
-import { ConversationAware } from "./fetchConversation";
+import { ConversationAware } from './fetchConversation';
 
 export default function addUsers(_botEmulator: BotEmulator) {
   return async (
@@ -47,7 +47,7 @@ export default function addUsers(_botEmulator: BotEmulator) {
     next: Restify.Next
   ): Promise<any> => {
     try {
-      const members: ChannelAccount[] = JSON.parse(req.body || "[]");
+      const members: ChannelAccount[] = JSON.parse(req.body || '[]');
       const it = members[Symbol.iterator](); // Node does not support array.values() :(
       let member;
       while ((member = it.next().value)) {

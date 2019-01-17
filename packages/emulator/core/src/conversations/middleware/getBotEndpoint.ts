@@ -36,7 +36,11 @@ import * as Restify from 'restify';
 import BotEmulator from '../../botEmulator';
 
 export default function getBotEndpoint(botEmulator: BotEmulator) {
-  return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+  return (
+    req: Restify.Request,
+    res: Restify.Response,
+    next: Restify.Next
+  ): any => {
     // TODO: We need to know how to find the correct endpoint from user
     //       We can find out the app ID from JWT
     //       But what if the bot does not supply app ID
@@ -61,8 +65,10 @@ export default function getBotEndpoint(botEmulator: BotEmulator) {
     //           uti: 'ZPtC8TT5bk-41eVUsOAAAA',
     //           ver: '1.0' },
 
-    (req as any).botEndpoint = botEmulator.facilities.endpoints.getByAppId((req as any).jwt.appid);
-    
+    (req as any).botEndpoint = botEmulator.facilities.endpoints.getByAppId(
+      (req as any).jwt.appid
+    );
+
     return next();
   };
 }

@@ -31,16 +31,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import APIException from "../../types/apiException";
-import ErrorResponse from "../../types/response/error";
+import APIException from '../../types/apiException';
+import ErrorResponse from '../../types/response/error';
 
 // Create ErrorResponse object
 function createErrorResponse(code: string, message: string): ErrorResponse {
   return {
     error: {
       code,
-      message
-    }
+      message,
+    },
   };
 }
 
@@ -52,6 +52,6 @@ export default function createAPIException(
 ): APIException {
   return {
     statusCode,
-    error: createErrorResponse(code, message)
+    error: createErrorResponse(code, message),
   };
 }

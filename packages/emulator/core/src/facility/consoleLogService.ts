@@ -31,11 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import log from "npmlog";
+import log from 'npmlog';
 
-import ILogItem from "../types/log/item";
-import LogLevel from "../types/log/level";
-import LogService from "../types/log/service";
+import ILogItem from '../types/log/item';
+import LogLevel from '../types/log/level';
+import LogService from '../types/log/service';
 
 function logLevel(logLevelArg: LogLevel) {
   switch (logLevelArg) {
@@ -57,9 +57,9 @@ export default class ConsoleLogService implements LogService {
   public logToChat(conversationId: string, ...items: ILogItem[]) {
     items.forEach(message => {
       switch (message.type) {
-        case "text": {
+        case 'text': {
           logLevel(message.payload.level)(
-            conversationId ? conversationId : "",
+            conversationId ? conversationId : '',
             message.payload.text
           );
           break;

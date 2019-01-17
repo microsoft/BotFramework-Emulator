@@ -31,9 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import CardAction from "./cardAction";
-import CardImage from "./cardImage";
-import Keyboard from "./keyboard";
+import CardAction from './cardAction';
+import CardImage from './cardImage';
+import Keyboard from './keyboard';
 
 interface ThumbnailCard extends Keyboard {
   title: string; // Title of the Card

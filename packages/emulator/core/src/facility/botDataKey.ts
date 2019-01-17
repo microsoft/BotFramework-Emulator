@@ -36,5 +36,5 @@ export default function botDataKey(
   conversationId: string,
   userId: string
 ) {
-  return `${channelId || "*"}!${conversationId || "*"}!${userId || "*"}`;
+  return `${channelId || '*'}!${conversationId || '*'}!${userId || '*'}`;
 }

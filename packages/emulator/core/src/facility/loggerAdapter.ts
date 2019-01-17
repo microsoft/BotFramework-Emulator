@@ -30,17 +30,17 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import GenericActivity from "../types/activity/generic";
-import ILogItem from "../types/log/item";
-import Logger from "../types/logger";
-import LogLevel from "../types/log/level";
-import LogService from "../types/log/service";
+import GenericActivity from '../types/activity/generic';
+import ILogItem from '../types/log/item';
+import Logger from '../types/logger';
+import LogLevel from '../types/log/level';
+import LogService from '../types/log/service';
 import {
   exceptionItem,
   inspectableObjectItem,
   summaryTextItem,
-  textItem
-} from "../types/log/util";
+  textItem,
+} from '../types/log/util';
 
 export default class LoggerAdapter implements Logger {
   constructor(public logService: LogService) {
@@ -55,10 +55,10 @@ export default class LoggerAdapter implements Logger {
     role: string
   ) {
     let direction: ILogItem;
-    if (role === "user") {
-      direction = textItem(LogLevel.Debug, "<-");
+    if (role === 'user') {
+      direction = textItem(LogLevel.Debug, '<-');
     } else {
-      direction = textItem(LogLevel.Debug, "->");
+      direction = textItem(LogLevel.Debug, '->');
     }
     this.logService.logToChat(
       conversationId,

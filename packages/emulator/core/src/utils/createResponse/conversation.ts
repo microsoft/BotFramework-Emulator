@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import ConversationResourceResponse from "../../types/response/conversationResource";
+import ConversationResourceResponse from '../../types/response/conversationResource';
 
 export default function createConversationResponse(
   id: string,

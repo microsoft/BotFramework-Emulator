@@ -31,9 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as Restify from "restify";
+import * as Restify from 'restify';
 
-import BotEmulator from "../../botEmulator";
+import BotEmulator from '../../botEmulator';
 
 export default function fetchBotData(botEmulator: BotEmulator) {
   return (

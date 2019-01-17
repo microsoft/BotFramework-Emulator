@@ -31,14 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { EventEmitter } from "events";
+import { EventEmitter } from 'events';
 
-import BotEmulator from "../botEmulator";
-import User from "../types/user";
-import uniqueId from "../utils/uniqueId";
+import BotEmulator from '../botEmulator';
+import User from '../types/user';
+import uniqueId from '../utils/uniqueId';
 
-import BotEndpoint from "./botEndpoint";
-import Conversation from "./conversation";
+import BotEndpoint from './botEndpoint';
+import Conversation from './conversation';
 
 /**
  * A set of conversations with a bot.
@@ -61,7 +61,7 @@ export default class ConversationSet extends EventEmitter {
     );
 
     this.conversations.push(conversation);
-    this.emit("new", conversation);
+    this.emit('new', conversation);
 
     return conversation;
   }

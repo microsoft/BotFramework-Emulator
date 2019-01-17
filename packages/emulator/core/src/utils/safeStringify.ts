@@ -34,13 +34,13 @@
 export default function safeStringify(o: any, space?: string | number): string {
   const cache = [];
 
-  if (typeof o !== "object") {
+  if (typeof o !== 'object') {
     return `${o}`;
   } else {
     return JSON.stringify(
       o,
       (key, value) => {
-        if (typeof value === "object" && value !== null) {
+        if (typeof value === 'object' && value !== null) {
           if (cache.indexOf(value)) {
             return;
           }

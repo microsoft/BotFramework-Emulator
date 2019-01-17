@@ -35,7 +35,7 @@ export default function statusCodeFamily(
   statusCode: number | string,
   expectedFamily: number
 ) {
-  if (typeof statusCode === "string") {
+  if (typeof statusCode === 'string') {
     statusCode = +statusCode;
   }
 

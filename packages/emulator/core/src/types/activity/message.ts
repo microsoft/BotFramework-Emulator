@@ -31,10 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import Attachment from "../attachment";
-import Entity from "../entity";
+import Attachment from '../attachment';
+import Entity from '../entity';
 
-import Activity from "./activity";
+import Activity from './activity';
 
 interface MessageActivity extends Activity {
   locale?: string;

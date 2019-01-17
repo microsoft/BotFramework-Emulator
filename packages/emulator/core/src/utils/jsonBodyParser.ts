@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as Restify from "restify";
+import * as Restify from 'restify';
 
 const { bodyReader, jsonBodyParser: restifyJsonBodyParser } = Restify.plugins;
 
@@ -45,12 +45,12 @@ export default function jsonBodyParser(
   const parseJson = restifyJsonBodyParser(options);
 
   function parseBody(req: any, res: any, next: any) {
-    if (req.method === "HEAD") {
+    if (req.method === 'HEAD') {
       next();
       return;
     }
 
-    if (req.method === "GET" && !options.requestBodyOnGet) {
+    if (req.method === 'GET' && !options.requestBodyOnGet) {
       next();
       return;
     }
@@ -63,7 +63,7 @@ export default function jsonBodyParser(
     let parser;
 
     switch (req.contentType().toLowerCase()) {
-      case "application/json":
+      case 'application/json':
         parser = parseJson[0];
         break;
 

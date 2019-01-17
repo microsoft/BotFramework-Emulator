@@ -31,19 +31,19 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { RequestHandler, Server } from "restify";
+import { RequestHandler, Server } from 'restify';
 
-import BotEmulator from "../botEmulator";
-import getBotEndpoint from "../middleware/getBotEndpoint";
-import getFacility from "../middleware/getFacility";
-import getRouteName from "../middleware/getRouteName";
-import createBotFrameworkAuthenticationMiddleware from "../utils/botFrameworkAuthentication";
-import createJsonBodyParserMiddleware from "../utils/jsonBodyParser";
+import BotEmulator from '../botEmulator';
+import getBotEndpoint from '../middleware/getBotEndpoint';
+import getFacility from '../middleware/getFacility';
+import getRouteName from '../middleware/getRouteName';
+import createBotFrameworkAuthenticationMiddleware from '../utils/botFrameworkAuthentication';
+import createJsonBodyParserMiddleware from '../utils/jsonBodyParser';
 
-import emulateOAuthCards from "./middleware/emulateOAuthCards";
-import getToken from "./middleware/getToken";
-import signOut from "./middleware/signOut";
-import tokenResponse from "./middleware/tokenResponse";
+import emulateOAuthCards from './middleware/emulateOAuthCards';
+import getToken from './middleware/getToken';
+import signOut from './middleware/signOut';
+import tokenResponse from './middleware/tokenResponse';
 
 export default function registerRoutes(
   botEmulator: BotEmulator,
@@ -55,40 +55,40 @@ export default function registerRoutes(
     botEmulator.options.fetch
   );
   const botEndpoint = getBotEndpoint(botEmulator);
-  const facility = getFacility("api");
+  const facility = getFacility('api');
 
   server.get(
-    "/api/usertoken/GetToken",
+    '/api/usertoken/GetToken',
     verifyBotFramework,
     botEndpoint,
     facility,
-    getRouteName("getToken"),
+    getRouteName('getToken'),
     getToken(botEmulator)
   );
 
   server.post(
-    "/api/usertoken/emulateOAuthCards",
+    '/api/usertoken/emulateOAuthCards',
     verifyBotFramework,
     facility,
-    getRouteName("emulateOAuthCards"),
+    getRouteName('emulateOAuthCards'),
     emulateOAuthCards(botEmulator)
   );
 
   server.del(
-    "/api/usertoken/SignOut",
+    '/api/usertoken/SignOut',
     verifyBotFramework,
     botEndpoint,
     facility,
-    getRouteName("signOut"),
+    getRouteName('signOut'),
     signOut(botEmulator)
   );
 
   server.post(
-    "/api/usertoken/tokenResponse",
+    '/api/usertoken/tokenResponse',
     ...uses,
     jsonBodyParser,
     facility,
-    getRouteName("tokenResponse"),
+    getRouteName('tokenResponse'),
     tokenResponse(botEmulator)
   );
 }

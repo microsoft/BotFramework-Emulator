@@ -31,13 +31,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as HttpStatus from "http-status-codes";
-import * as Restify from "restify";
+import * as HttpStatus from 'http-status-codes';
+import * as Restify from 'restify';
 
-import BotEmulator from "../../botEmulator";
-import Conversation from "../../facility/conversation";
-import LogLevel from "../../types/log/level";
-import { textItem } from "../../types/log/util";
+import BotEmulator from '../../botEmulator';
+import Conversation from '../../facility/conversation';
+import LogLevel from '../../types/log/level';
+import { textItem } from '../../types/log/util';
 
 export default function reconnectToConversation(botEmulator: BotEmulator) {
   const { logMessage } = botEmulator.facilities.logger;
@@ -53,16 +53,17 @@ export default function reconnectToConversation(botEmulator: BotEmulator) {
       res.json(HttpStatus.OK, {
         conversationId: conversation.conversationId,
         token: conversation.conversationId,
+        // eslint-disable-next-line typescript/camelcase
         expires_in: Math.pow(2, 31) - 1,
-        streamUrl: ""
+        streamUrl: '',
       });
     } else {
-      res.send(HttpStatus.NOT_FOUND, "conversation not found");
+      res.send(HttpStatus.NOT_FOUND, 'conversation not found');
       logMessage(
         req.params.conversationId,
         textItem(
           LogLevel.Error,
-          "Cannot reconnect to conversation. Conversation not found."
+          'Cannot reconnect to conversation. Conversation not found.'
         )
       );
     }

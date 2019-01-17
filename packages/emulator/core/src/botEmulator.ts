@@ -31,32 +31,32 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as Restify from "restify";
+import * as Restify from 'restify';
 import fetch from 'node-fetch';
 
-import registerAttachmentRoutes from "./attachments/registerRoutes";
-import registerBotStateRoutes from "./botState/registerRoutes";
-import registerConversationRoutes from "./conversations/registerRoutes";
-import registerDirectLineRoutes from "./directLine/registerRoutes";
-import registerEmulatorRoutes from "./emulator/registerRoutes";
-import Attachments from "./facility/attachments";
-import BotState from "./facility/botState";
-import ConsoleLogService from "./facility/consoleLogService";
-import ConversationSet from "./facility/conversationSet";
-import EndpointSet from "./facility/endpointSet";
-import LoggerAdapter from "./facility/loggerAdapter";
-import Users from "./facility/users";
-import registerSessionRoutes from "./session/registerRoutes";
-import BotEmulatorOptions from "./types/botEmulatorOptions";
-import LogService from "./types/log/service";
-import Logger from "./types/logger";
-import registerUserTokenRoutes from "./userToken/registerRoutes";
-import stripEmptyBearerToken from "./utils/stripEmptyBearerToken";
+import registerAttachmentRoutes from './attachments/registerRoutes';
+import registerBotStateRoutes from './botState/registerRoutes';
+import registerConversationRoutes from './conversations/registerRoutes';
+import registerDirectLineRoutes from './directLine/registerRoutes';
+import registerEmulatorRoutes from './emulator/registerRoutes';
+import Attachments from './facility/attachments';
+import BotState from './facility/botState';
+import ConsoleLogService from './facility/consoleLogService';
+import ConversationSet from './facility/conversationSet';
+import EndpointSet from './facility/endpointSet';
+import LoggerAdapter from './facility/loggerAdapter';
+import Users from './facility/users';
+import registerSessionRoutes from './session/registerRoutes';
+import BotEmulatorOptions from './types/botEmulatorOptions';
+import LogService from './types/log/service';
+import Logger from './types/logger';
+import registerUserTokenRoutes from './userToken/registerRoutes';
+import stripEmptyBearerToken from './utils/stripEmptyBearerToken';
 
 const DEFAULT_OPTIONS: BotEmulatorOptions = {
   fetch,
   loggerOrLogService: new ConsoleLogService(),
-  stateSizeLimitKB: 64
+  stateSizeLimitKB: 64,
 };
 
 export interface Facilities {
@@ -96,7 +96,7 @@ export default class BotEmulator {
       conversations: new ConversationSet(),
       endpoints: new EndpointSet(this.options),
       logger,
-      users: new Users()
+      users: new Users(),
     };
   }
 
@@ -105,7 +105,7 @@ export default class BotEmulator {
       Restify.plugins.acceptParser(router.acceptable),
       stripEmptyBearerToken(),
       Restify.plugins.dateParser(),
-      Restify.plugins.queryParser()
+      Restify.plugins.queryParser(),
     ];
 
     registerAttachmentRoutes(this, router, uses);

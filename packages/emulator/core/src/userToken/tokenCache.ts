@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { TokenResponse } from "./TokenResponse";
+import { TokenResponse } from './TokenResponse';
 
 export class TokenCache {
   private static tokenStore: { [key: string]: TokenResponse } = {};
@@ -44,7 +44,7 @@ export class TokenCache {
   ) {
     this.tokenStore[this.tokenKey(botId, userId, connectionName)] = {
       connectionName,
-      token
+      token,
     };
   }
 

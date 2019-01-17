@@ -31,14 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as HttpStatus from "http-status-codes";
-import * as Restify from "restify";
+import * as HttpStatus from 'http-status-codes';
+import * as Restify from 'restify';
 
-import BotEmulator from "../../botEmulator";
-import BotEndpoint from "../../facility/botEndpoint";
-import sendErrorResponse from "../../utils/sendErrorResponse";
-import { TokenCache } from "../tokenCache";
-import { TokenParams } from "../TokenParams";
+import BotEmulator from '../../botEmulator';
+import BotEndpoint from '../../facility/botEndpoint';
+import sendErrorResponse from '../../utils/sendErrorResponse';
+import { TokenCache } from '../tokenCache';
+import { TokenParams } from '../TokenParams';
 
 export default function signOut(botEmulator: BotEmulator) {
   return (

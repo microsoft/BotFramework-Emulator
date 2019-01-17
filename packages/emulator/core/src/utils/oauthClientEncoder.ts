@@ -31,13 +31,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import Activity from "../types/activity/activity";
-import CardAction from "../types/card/cardAction";
+import Activity from '../types/activity/activity';
+import CardAction from '../types/card/cardAction';
 
-import ActivityVisitor from "./activityVisitor";
+import ActivityVisitor from './activityVisitor';
 
 export default class OAuthClientEncoder extends ActivityVisitor {
-  public static OAuthEmulatorUrlProtocol: string = "oauth:";
+  public static OAuthEmulatorUrlProtocol: string = 'oauth:';
 
   private _conversationId: string;
 
@@ -58,18 +58,18 @@ export default class OAuthClientEncoder extends ActivityVisitor {
     if (
       this._conversationId &&
       cardAction &&
-      cardAction.type === "signin" &&
+      cardAction.type === 'signin' &&
       !cardAction.value
     ) {
       const url =
         OAuthClientEncoder.OAuthEmulatorUrlProtocol +
-        "//" +
+        '//' +
         connectionName +
-        "&&&" +
+        '&&&' +
         this._conversationId;
 
       // change the card action to a special URL for the emulator
-      cardAction.type = "openUrl";
+      cardAction.type = 'openUrl';
       cardAction.value = url;
     }
   }

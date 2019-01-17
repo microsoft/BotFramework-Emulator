@@ -36,12 +36,17 @@ import * as Restify from 'restify';
 import BotEmulator from '../botEmulator';
 
 export default function getBotEndpoint(botEmulator: BotEmulator) {
-  return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+  return (
+    req: Restify.Request,
+    res: Restify.Response,
+    next: Restify.Next
+  ): any => {
     const auth = req.header('Authorization');
     const { endpoints } = botEmulator.facilities;
     // TODO: We should not use token as conversation ID
     const tokenMatch = /Bearer\s+(.+)/.exec(auth) || [];
-    (req as any).botEndpoint = endpoints.get(tokenMatch[1]) || endpoints.getDefault();
+    (req as any).botEndpoint =
+      endpoints.get(tokenMatch[1]) || endpoints.getDefault();
     next();
   };
 }

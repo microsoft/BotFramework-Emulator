@@ -31,22 +31,22 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { RequestHandler, Server } from "restify";
+import { RequestHandler, Server } from 'restify';
 
-import BotEmulator from "../botEmulator";
-import getBotEndpoint from "../middleware/getBotEndpoint";
-import getFacility from "../middleware/getFacility";
-import getRouteName from "../middleware/getRouteName";
-import createJsonBodyParserMiddleware from "../utils/jsonBodyParser";
+import BotEmulator from '../botEmulator';
+import getBotEndpoint from '../middleware/getBotEndpoint';
+import getFacility from '../middleware/getFacility';
+import getRouteName from '../middleware/getRouteName';
+import createJsonBodyParserMiddleware from '../utils/jsonBodyParser';
 
-import getActivities from "./middleware/getActivities";
-import getConversation from "./middleware/getConversation";
-import options from "./middleware/options";
-import postActivity from "./middleware/postActivity";
-import reconnectToConversation from "./middleware/reconnectToConversation";
-import startConversation from "./middleware/startConversation";
-import stream from "./middleware/stream";
-import upload from "./middleware/upload";
+import getActivities from './middleware/getActivities';
+import getConversation from './middleware/getConversation';
+import options from './middleware/options';
+import postActivity from './middleware/postActivity';
+import reconnectToConversation from './middleware/reconnectToConversation';
+import startConversation from './middleware/startConversation';
+import stream from './middleware/stream';
+import upload from './middleware/upload';
 
 export default function registerRoutes(
   botEmulator: BotEmulator,
@@ -56,72 +56,72 @@ export default function registerRoutes(
   const jsonBodyParser = createJsonBodyParserMiddleware();
   const botEndpoint = getBotEndpoint(botEmulator);
   const conversation = getConversation(botEmulator);
-  const facility = getFacility("directline");
+  const facility = getFacility('directline');
 
   server.opts(
-    "/v3/directline",
+    '/v3/directline',
     ...uses,
     facility,
-    getRouteName("options"),
+    getRouteName('options'),
     options(botEmulator)
   );
 
   server.post(
-    "/v3/directline/conversations",
+    '/v3/directline/conversations',
     ...uses,
     botEndpoint,
     jsonBodyParser,
     facility,
-    getRouteName("startConversation"),
+    getRouteName('startConversation'),
     startConversation(botEmulator)
   );
 
   server.get(
-    "/v3/directline/conversations/:conversationId",
+    '/v3/directline/conversations/:conversationId',
     ...uses,
     botEndpoint,
     conversation,
     facility,
-    getRouteName("reconnectToConversation"),
+    getRouteName('reconnectToConversation'),
     reconnectToConversation(botEmulator)
   );
 
   server.get(
-    "/v3/directline/conversations/:conversationId/activities",
+    '/v3/directline/conversations/:conversationId/activities',
     ...uses,
     botEndpoint,
     conversation,
     facility,
-    getRouteName("getActivities"),
+    getRouteName('getActivities'),
     getActivities(botEmulator)
   );
 
   server.post(
-    "/v3/directline/conversations/:conversationId/activities",
+    '/v3/directline/conversations/:conversationId/activities',
     ...uses,
     jsonBodyParser,
     botEndpoint,
     conversation,
     facility,
-    getRouteName("postActivity"),
+    getRouteName('postActivity'),
     postActivity(botEmulator)
   );
 
   server.post(
-    "/v3/directline/conversations/:conversationId/upload",
+    '/v3/directline/conversations/:conversationId/upload',
     ...uses,
     botEndpoint,
     conversation,
     facility,
-    getRouteName("upload"),
+    getRouteName('upload'),
     upload(botEmulator)
   );
 
   server.get(
-    "/v3/directline/conversations/:conversationId/stream",
+    '/v3/directline/conversations/:conversationId/stream',
     ...uses,
     facility,
-    getRouteName("stream"),
+    getRouteName('stream'),
     stream(botEmulator)
   );
 }

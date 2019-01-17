@@ -31,16 +31,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as HttpStatus from "http-status-codes";
-import * as Restify from "restify";
+import * as HttpStatus from 'http-status-codes';
+import * as Restify from 'restify';
 
-import BotEmulator from "../../botEmulator";
-import Conversation from "../../facility/conversation";
-import GenericActivity from "../../types/activity/generic";
-import LogLevel from "../../types/log/level";
-import { textItem } from "../../types/log/util";
-import sendErrorResponse from "../../utils/sendErrorResponse";
-import statusCodeFamily from "../../utils/statusCodeFamily";
+import BotEmulator from '../../botEmulator';
+import Conversation from '../../facility/conversation';
+import GenericActivity from '../../types/activity/generic';
+import LogLevel from '../../types/log/level';
+import { textItem } from '../../types/log/util';
+import sendErrorResponse from '../../utils/sendErrorResponse';
+import statusCodeFamily from '../../utils/statusCodeFamily';
 
 export default function postActivity(botEmulator: BotEmulator) {
   const { logMessage } = botEmulator.facilities.logger;
@@ -54,14 +54,14 @@ export default function postActivity(botEmulator: BotEmulator) {
     const conversation: Conversation = (req as any).conversation;
 
     if (!conversation) {
-      res.send(HttpStatus.NOT_FOUND, "conversation not found");
+      res.send(HttpStatus.NOT_FOUND, 'conversation not found');
       res.end();
 
       logMessage(
         req.params.conversationId,
         textItem(
           LogLevel.Error,
-          "Cannot post activity. Conversation not found."
+          'Cannot post activity. Conversation not found.'
         )
       );
       return;
@@ -73,7 +73,7 @@ export default function postActivity(botEmulator: BotEmulator) {
       const {
         activityId,
         response,
-        statusCode
+        statusCode,
       } = await conversation.postActivityToBot(activity, true);
 
       if (!statusCodeFamily(statusCode, 200)) {
@@ -83,7 +83,7 @@ export default function postActivity(botEmulator: BotEmulator) {
         ) {
           logMessage(
             req.params.conversationId,
-            textItem(LogLevel.Error, "Cannot post activity. Unauthorized.")
+            textItem(LogLevel.Error, 'Cannot post activity. Unauthorized.')
           );
         }
         res.send(

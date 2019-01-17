@@ -31,17 +31,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as HttpStatus from "http-status-codes";
-import { URL, URLSearchParams } from "url";
+import { URL, URLSearchParams } from 'url';
+
+import * as HttpStatus from 'http-status-codes';
 
 import {
   authentication,
   speech as speechEndpoint,
-  usGovernmentAuthentication
-} from "../authEndpoints";
-import BotEndpointOptions from "../types/botEndpointOptions";
-import SpeechTokenInfo from "../types/speechToken";
-import statusCodeFamily from "../utils/statusCodeFamily";
+  usGovernmentAuthentication,
+} from '../authEndpoints';
+import BotEndpointOptions from '../types/botEndpointOptions';
+import SpeechTokenInfo from '../types/speechToken';
+import statusCodeFamily from '../utils/statusCodeFamily';
 
 // We will refresh if the token is going to expire within 5 minutes
 const TIME_TO_REFRESH = 5 * 60 * 1000;
@@ -68,7 +69,7 @@ export default class BotEndpoint {
     }
 
     if (!this.msaAppId || !this.msaPassword) {
-      throw new Error("bot must have Microsoft App ID and password");
+      throw new Error('bot must have Microsoft App ID and password');
     }
 
     const query = new URLSearchParams({ goodForInMinutes: duration } as any);
@@ -84,12 +85,12 @@ export default class BotEndpoint {
 
         return this.speechToken;
       } else {
-        throw new Error(body.error || "could not retrieve speech token");
+        throw new Error(body.error || 'could not retrieve speech token');
       }
     } else if (res.status === 401) {
-      throw new Error("not authorized to use Cognitive Services Speech API");
+      throw new Error('not authorized to use Cognitive Services Speech API');
     } else {
-      throw new Error("cannot retrieve speech token");
+      throw new Error('cannot retrieve speech token');
     }
   }
 
@@ -101,7 +102,7 @@ export default class BotEndpoint {
     if (this.msaAppId) {
       fetchOptions.headers = {
         ...fetchOptions.headers,
-        Authorization: `Bearer ${await this.getAccessToken(forceRefresh)}`
+        Authorization: `Bearer ${await this.getAccessToken(forceRefresh)}`,
       };
     }
 
@@ -132,20 +133,22 @@ export default class BotEndpoint {
       this.channelService === usGovernmentAuthentication.channelService
         ? usGovernmentAuthentication.tokenEndpoint
         : authentication.tokenEndpoint;
+    /* eslint-disable typescript/camelcase */
     const resp = await this._options.fetch(tokenEndpoint, {
-      method: "POST",
+      method: 'POST',
       body: new URLSearchParams({
-        grant_type: "client_credentials",
+        grant_type: 'client_credentials',
         client_id: this.msaAppId,
         client_secret: this.msaPassword,
         scope: `${this.msaAppId}/.default`,
         // flag to request a version 1.0 token
-        ...(this.use10Tokens ? { atver: 1 } : {})
+        ...(this.use10Tokens ? { atver: 1 } : {}),
       } as { [key: string]: string }).toString(),
       headers: {
-        "Content-Type": "application/x-www-form-urlencoded"
-      }
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
     });
+    /* eslint-enable typescript/camelcase */
 
     if (statusCodeFamily(resp.status, 200)) {
       // Subtract 5 minutes from expires_in so they'll we'll get a
@@ -161,7 +164,7 @@ export default class BotEndpoint {
       // this.facilities.logger.logError(this.conversationId, makeBotSettingsLink('Edit your bot\'s MSA info'));
 
       throw new Error(
-        "Refresh access token failed with status code: " + resp.status
+        'Refresh access token failed with status code: ' + resp.status
       );
     }
   }

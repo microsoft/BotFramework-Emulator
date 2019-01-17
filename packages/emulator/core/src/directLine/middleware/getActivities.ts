@@ -31,11 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as HttpStatus from "http-status-codes";
-import * as Restify from "restify";
+import * as HttpStatus from 'http-status-codes';
+import * as Restify from 'restify';
 
-import BotEmulator from "../../botEmulator";
-import Conversation from "../../facility/conversation";
+import BotEmulator from '../../botEmulator';
+import Conversation from '../../facility/conversation';
 
 export default function getActivities(_botEmulator: BotEmulator) {
   return (
@@ -52,10 +52,10 @@ export default function getActivities(_botEmulator: BotEmulator) {
 
       res.json(HttpStatus.OK, {
         activities,
-        watermark
+        watermark,
       });
     } else {
-      res.send(HttpStatus.NOT_FOUND, "conversation not found");
+      res.send(HttpStatus.NOT_FOUND, 'conversation not found');
     }
 
     res.end();

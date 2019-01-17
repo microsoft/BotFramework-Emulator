@@ -31,15 +31,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as HttpStatus from "http-status-codes";
-import * as Restify from "restify";
+import * as HttpStatus from 'http-status-codes';
+import * as Restify from 'restify';
 
-import BotEmulator from "../../botEmulator";
-import GenericActivity from "../../types/activity/generic";
-import ResourceResponse from "../../types/response/resource";
-import OAuthLinkEncoder from "../../utils/oauthLinkEncoder";
-import sendErrorResponse from "../../utils/sendErrorResponse";
-import ConversationAPIPathParameters from "../conversationAPIPathParameters";
+import BotEmulator from '../../botEmulator';
+import GenericActivity from '../../types/activity/generic';
+import ResourceResponse from '../../types/response/resource';
+import OAuthLinkEncoder from '../../utils/oauthLinkEncoder';
+import sendErrorResponse from '../../utils/sendErrorResponse';
+import ConversationAPIPathParameters from '../conversationAPIPathParameters';
 
 export default function replyToActivity(botEmulator: BotEmulator) {
   return (

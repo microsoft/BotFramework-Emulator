@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import CardAction from "./cardAction";
+import CardAction from './cardAction';
 
 interface Keyboard {
   buttons: CardAction[]; // Set of actions applicable to the current card.

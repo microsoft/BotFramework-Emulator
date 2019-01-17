@@ -31,10 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import ChannelAccount from "../account/channel";
-import ConversationAccount from "../account/conversation";
+import ChannelAccount from '../account/channel';
+import ConversationAccount from '../account/conversation';
 
-import Activity from "./activity";
+import Activity from './activity';
 
 export interface ConversationReference {
   activityId: string;

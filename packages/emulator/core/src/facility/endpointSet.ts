@@ -31,14 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import base64Url from "base64url";
-import onErrorResumeNext from "on-error-resume-next";
+import base64Url from 'base64url';
+import onErrorResumeNext from 'on-error-resume-next';
 
-import BotEmulatorOptions from "../types/botEmulatorOptions";
-import BotEndpointType from "../types/botEndpoint";
-import uniqueId from "../utils/uniqueId";
+import BotEmulatorOptions from '../types/botEmulatorOptions';
+import BotEndpointType from '../types/botEndpoint';
+import uniqueId from '../utils/uniqueId';
 
-import BotEndpoint from "./botEndpoint";
+import BotEndpoint from './botEndpoint';
 
 const { decode } = base64Url;
 
@@ -49,7 +49,7 @@ function mapMap<T, U>(
   return Object.keys(map).reduce(
     (nextMap, key) => ({
       ...nextMap,
-      [key]: mapper.call(map, map[key], key)
+      [key]: mapper.call(map, map[key], key),
     }),
     {}
   );
@@ -71,7 +71,7 @@ export default class Endpoints {
       botEndpoint.use10Tokens,
       botEndpoint.channelService,
       {
-        fetch: this._options.fetch
+        fetch: this._options.fetch,
       }
     );
 
@@ -120,7 +120,7 @@ export default class Endpoints {
       botUrl: value.botUrl,
       msaAppId: value.msaAppId,
       msaPassword: value.msaPassword,
-      use10Tokens: value.use10Tokens
+      use10Tokens: value.use10Tokens,
     }));
   }
 }

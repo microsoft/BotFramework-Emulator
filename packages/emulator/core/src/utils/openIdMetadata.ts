@@ -31,8 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-const base64url = require("base64url");
-const getPem = require("rsa-pem-from-mod-exp");
+/* eslint-disable typescript/no-var-requires */
+const base64url = require('base64url');
+const getPem = require('rsa-pem-from-mod-exp');
+/* eslint-enable typescript/no-var-requires */
 
 export default class OpenIdMetadata {
   private lastUpdated = 0;
@@ -62,7 +64,7 @@ export default class OpenIdMetadata {
       throw new Error(`Failed to load openID config: ${resp1.statusCode}`);
     }
 
-    const openIdConfig = await resp1.json() as OpenIdConfig;
+    const openIdConfig = (await resp1.json()) as OpenIdConfig;
     const resp2 = await this.fetch(openIdConfig.jwks_uri);
 
     if (resp2.status >= 400) {

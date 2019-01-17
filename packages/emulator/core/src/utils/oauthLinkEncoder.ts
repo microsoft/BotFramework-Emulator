@@ -31,17 +31,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import BotEmulator from "../botEmulator";
-import GenericActivity from "../types/activity/generic";
-import Attachment from "../types/attachment";
-import AttachmentContentTypes from "../types/attachment/contentTypes";
-import OAuthCard from "../types/card/oAuth";
-import uniqueId from "../utils/uniqueId";
+import BotEmulator from '../botEmulator';
+import GenericActivity from '../types/activity/generic';
+import Attachment from '../types/attachment';
+import AttachmentContentTypes from '../types/attachment/contentTypes';
+import OAuthCard from '../types/card/oAuth';
+import uniqueId from '../utils/uniqueId';
 
-const shajs = require("sha.js");
+// eslint-disable-next-line typescript/no-var-requires
+const shajs = require('sha.js');
 
 export default class OAuthLinkEncoder {
-  public static OAuthUrlProtocol: string = "oauthlink:";
+  public static OAuthUrlProtocol: string = 'oauthlink:';
   public static EmulateOAuthCards: boolean = false;
 
   private readonly authorizationHeader: string;
@@ -75,7 +76,7 @@ export default class OAuthLinkEncoder {
       if (oauthCard.buttons && oauthCard.buttons.length === 1) {
         const cardAction = oauthCard.buttons[0];
         if (
-          cardAction.type === "signin" &&
+          cardAction.type === 'signin' &&
           !cardAction.value &&
           !OAuthLinkEncoder.EmulateOAuthCards
         ) {
@@ -84,7 +85,7 @@ export default class OAuthLinkEncoder {
             codeChallenge
           );
           cardAction.value = link;
-          cardAction.type = "openUrl";
+          cardAction.type = 'openUrl';
         }
       }
     }
@@ -101,9 +102,9 @@ export default class OAuthLinkEncoder {
     );
     conversation.codeVerifier = codeVerifier;
 
-    const codeChallenge: string = shajs("sha256")
+    const codeChallenge: string = shajs('sha256')
       .update(codeVerifier)
-      .digest("hex");
+      .digest('hex');
 
     return codeChallenge;
   }
@@ -119,19 +120,19 @@ export default class OAuthLinkEncoder {
         Bot: this.activity.from, // Activity is from the bot to the user
         ChannelId: this.activity.channelId
           ? this.activity.channelId
-          : "emulator",
+          : 'emulator',
         Conversation: this.activity.conversation
           ? this.activity.conversation
           : { id: this.conversationId },
         ServiceUrl: this.activity.serviceUrl,
-        User: this.activity.recipient
-      }
+        User: this.activity.recipient,
+      },
     };
 
     const serializedState = JSON.stringify(tokenExchangeState);
-    const state = Buffer.from(serializedState).toString("base64");
+    const state = Buffer.from(serializedState).toString('base64');
     const headers = {
-      Authorization: this.authorizationHeader
+      Authorization: this.authorizationHeader,
     };
     const conversation = this.botEmulator.facilities.conversations.conversationById(
       this.conversationId
@@ -140,23 +141,23 @@ export default class OAuthLinkEncoder {
       conversation.botEndpoint.botUrl
     );
     const url =
-      "https://api.botframework.com/api/botsignin/GetSignInUrl?state=" +
+      'https://api.botframework.com/api/botsignin/GetSignInUrl?state=' +
       state +
-      "&emulatorUrl=" +
+      '&emulatorUrl=' +
       emulatorUrl +
-      "&code_challenge=" +
+      '&code_challenge=' +
       codeChallenge;
 
     const response = await fetch(url, {
       headers,
-      method: "GET"
+      method: 'GET',
     });
     const link = await response.text();
     return (
       OAuthLinkEncoder.OAuthUrlProtocol +
-      "//" +
+      '//' +
       link +
-      "&&&" +
+      '&&&' +
       this.conversationId
     );
   }

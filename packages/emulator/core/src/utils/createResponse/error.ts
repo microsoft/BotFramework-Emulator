@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import ErrorResponse from "../../types/response/error";
+import ErrorResponse from '../../types/response/error';
 
 export default function createErrorResponse(
   code: string,
@@ -40,7 +40,7 @@ export default function createErrorResponse(
   return {
     error: {
       code,
-      message
-    }
+      message,
+    },
   };
 }

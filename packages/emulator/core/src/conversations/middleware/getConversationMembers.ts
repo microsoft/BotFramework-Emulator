@@ -31,11 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as HttpStatus from "http-status-codes";
-import * as Restify from "restify";
+import * as HttpStatus from 'http-status-codes';
+import * as Restify from 'restify';
 
-import BotEmulator from "../../botEmulator";
-import sendErrorResponse from "../../utils/sendErrorResponse";
+import BotEmulator from '../../botEmulator';
+import sendErrorResponse from '../../utils/sendErrorResponse';
 
 // get members of a conversation
 export default function getConversationMembers(botEmulator: BotEmulator) {
