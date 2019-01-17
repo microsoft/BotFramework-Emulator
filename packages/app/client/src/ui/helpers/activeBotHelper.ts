@@ -207,7 +207,6 @@ export const ActiveBotHelper = new class {
         }
       }
     } catch (err) {
-      console.error('Error while calling browseForBotFile: ', err);
       throw new Error(`[confirmAndOpenBotFromFile] Error while calling browseForBotFile: ${ err }`);
     }
   }

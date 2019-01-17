@@ -1,27 +1,27 @@
-import { ActiveBotHelper } from './activeBotHelper';
-import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
-import * as editorHelpers from '../../data/editorHelpers';
-import { store } from '../../data/store';
-import * as botHelpers from '../../data/botHelpers';
+import { SharedConstants } from '@bfemulator/app-shared';
 import { BotConfigWithPath } from '@bfemulator/sdk-shared';
 import { IEndpointService, ServiceTypes } from 'botframework-config/lib/schema';
-import { SharedConstants } from '@bfemulator/app-shared';
+import * as botHelpers from '../../data/botHelpers';
+import * as editorHelpers from '../../data/editorHelpers';
+import { store } from '../../data/store';
+import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
+import { ActiveBotHelper } from './activeBotHelper';
 
 jest.mock('../../ui/dialogs', () => ({
-  AzureLoginPromptDialogContainer: function mock() {
-    return undefined;
-  },
-  AzureLoginSuccessDialogContainer: function mock() {
-    return undefined;
-  },
-  BotCreationDialog: function mock() {
-    return undefined;
-  },
-  DialogService: { showDialog: () => Promise.resolve(true) },
-  SecretPromptDialog: function mock() {
-    return undefined;
+    AzureLoginPromptDialogContainer: function mock() {
+      return undefined;
+    },
+    AzureLoginSuccessDialogContainer: function mock() {
+      return undefined;
+    },
+    BotCreationDialog: function mock() {
+      return undefined;
+    },
+    DialogService: { showDialog: () => Promise.resolve(true) },
+    SecretPromptDialog: function mock() {
+      return undefined;
+    }
   }
-}
 ));
 
 describe('ActiveBotHelper tests', () => {
@@ -226,6 +226,16 @@ describe('ActiveBotHelper tests', () => {
     ActiveBotHelper.browseForBotFile = backupBrowseForBotFile;
     ActiveBotHelper.botAlreadyOpen = backupBotAlreadyOpen;
     ActiveBotHelper.confirmSwitchBot = backupConfirmSwitchBot;
+  });
+
+  it('should throw an error when confirmAndOpenBotFromFile fails', async () => {
+    jest.spyOn(ActiveBotHelper, 'browseForBotFile').mockRejectedValueOnce('oh noes!');
+    try {
+      await ActiveBotHelper.confirmAndOpenBotFromFile('');
+      expect(false);
+    } catch (e) {
+      expect(e).not.toBeNull();
+    }
   });
 
   it('confirmAndSwitchBots() functionality', async () => {
