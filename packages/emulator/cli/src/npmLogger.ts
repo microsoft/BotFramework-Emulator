@@ -31,14 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import IGenericActivity from "@bfemulator/emulator-core/lib/types/activity/generic";
-import ILogItem from "@bfemulator/emulator-core/lib/types/log/item";
-import LogLevel from "@bfemulator/emulator-core/lib/types/log/level";
-import ILogger from "@bfemulator/emulator-core/lib/types/logger";
-import * as log from "npmlog";
+import IGenericActivity from '@bfemulator/emulator-core/lib/types/activity/generic';
+import ILogItem from '@bfemulator/emulator-core/lib/types/log/item';
+import LogLevel from '@bfemulator/emulator-core/lib/types/log/level';
+import ILogger from '@bfemulator/emulator-core/lib/types/logger';
+import * as log from 'npmlog';
 
 function shortId(id: string) {
-  return [id.substr(0, 3), id.substr(-5)].join("...");
+  return [id.substr(0, 3), id.substr(-5)].join('...');
 }
 
 function logLevel(level: LogLevel) {
@@ -69,7 +69,7 @@ export default class NpmLogger implements ILogger {
   public logMessage(conversationId: string, ...items: ILogItem[]) {
     items.forEach(message => {
       switch (message.type) {
-        case "text":
+        case 'text':
           logLevel(message.payload.level)(
             shortId(conversationId),
             message.payload.text
