@@ -2,8 +2,8 @@
   "scripts": {
     "bootstrap": "lerna bootstrap --hoist",
     "build": "npm rebuild node-sass && lerna run build",
-    "lint": "lerna run lint",
-    "lint:fix": "lerna run lint:fix",
+    "lint": "lerna run lint --no-bail",
+    "lint:fix": "lerna run lint:fix --no-bail",
     "start": "cd packages\\app\\client && npm run start",
     "test": "jest --no-cache",
     "test:coveralls": "jest --runInBand --bail --coverage --coverageReporters=text-lcov | coveralls"
