@@ -31,7 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ipcRenderer, remote } from 'electron';
+// eslint-disable-next-line typescript/no-var-requires
+const { ipcRenderer, remote } = require('electron');
 
 ipcRenderer.on('inspect', (sender, obj) => {
   window.host.dispatch('inspect', obj);
