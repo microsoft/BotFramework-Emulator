@@ -31,22 +31,25 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { put } from 'redux-saga/effects';
 import { newNotification, NotificationType } from '@bfemulator/app-shared';
+
 import { NotificationManager } from '../../notificationManager';
 import {
   beginAdd,
   finishAdd,
   finishClear,
   beginRemove,
-  finishRemove
+  finishRemove,
 } from '../action/notificationActions';
+
 import {
   addNotification,
   clearNotifications,
   removeNotification,
-  markAllAsRead
+  markAllAsRead,
 } from './notificationSagas';
+
+import { put } from 'redux-saga/effects';
 
 describe('Notification sagas', () => {
   test('addNotification()', () => {

@@ -34,12 +34,12 @@
 import { RequestHandler, Server } from 'restify';
 
 import BotEmulator from '../botEmulator';
-import createJsonBodyParserMiddleware from '../utils/jsonBodyParser';
+import getBotEndpoint from '../middleware/getBotEndpoint';
 import getFacility from '../middleware/getFacility';
 import getRouteName from '../middleware/getRouteName';
+import createJsonBodyParserMiddleware from '../utils/jsonBodyParser';
 
 import getActivities from './middleware/getActivities';
-import getBotEndpoint from '../middleware/getBotEndpoint';
 import getConversation from './middleware/getConversation';
 import options from './middleware/options';
 import postActivity from './middleware/postActivity';
@@ -48,7 +48,11 @@ import startConversation from './middleware/startConversation';
 import stream from './middleware/stream';
 import upload from './middleware/upload';
 
-export default function registerRoutes(botEmulator: BotEmulator, server: Server, uses: RequestHandler[]) {
+export default function registerRoutes(
+  botEmulator: BotEmulator,
+  server: Server,
+  uses: RequestHandler[]
+) {
   const jsonBodyParser = createJsonBodyParserMiddleware();
   const botEndpoint = getBotEndpoint(botEmulator);
   const conversation = getConversation(botEmulator);

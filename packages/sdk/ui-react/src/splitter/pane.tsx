@@ -41,15 +41,14 @@ export interface SplitterPaneProps {
 }
 
 export class SplitterPane extends React.Component<SplitterPaneProps, {}> {
-
-  render() {
+  public render() {
     const style: any = {
       overflow: 'hidden',
       flexShrink: 1,
       flexGrow: 1,
       flexBasis: this.props.size,
       boxSizing: 'border-box',
-      zIndex: 0
+      zIndex: 0,
     };
 
     if (this.props.orientation === 'horizontal') {
@@ -63,8 +62,8 @@ export class SplitterPane extends React.Component<SplitterPaneProps, {}> {
     }
 
     return (
-      <div className={ 'splitter-pane' } style={ style } >
-        { this.props.children }
+      <div className={'splitter-pane'} style={style}>
+        {this.props.children}
       </div>
     );
   }

@@ -33,10 +33,12 @@
 
 import { IBotConfiguration } from 'botframework-config/lib/schema';
 import * as React from 'react';
+
 import { BotNotOpenExplorerContainer } from '../botNotOpenExplorer';
 import { EndpointExplorerContainer } from '../endpointExplorer';
 import * as explorerStyles from '../explorerStyles.scss';
 import { ServicesExplorerContainer } from '../servicesExplorer';
+
 import * as styles from './botExplorerBar.scss';
 
 interface BotExplorerBarProps {
@@ -45,36 +47,41 @@ interface BotExplorerBarProps {
   openBotSettings: () => void;
 }
 
-export default class BotExplorerBar extends React.Component<BotExplorerBarProps, {}> {
-
+export default class BotExplorerBar extends React.Component<
+  BotExplorerBarProps,
+  {}
+> {
   private static get activeBotJsx(): JSX.Element {
     return (
       <>
-        <EndpointExplorerContainer title="Endpoint" ariaLabel="Endpoints"/>
-        <ServicesExplorerContainer title="Services" ariaLabel="Services"/>
+        <EndpointExplorerContainer title="Endpoint" ariaLabel="Endpoints" />
+        <ServicesExplorerContainer title="Services" ariaLabel="Services" />
       </>
     );
   }
 
   public render() {
     const className = this.props.hidden ? styles.explorerOffScreen : '';
-    const explorerBody = this.props.activeBot ? BotExplorerBar.activeBotJsx : <BotNotOpenExplorerContainer/>;
+    const explorerBody = this.props.activeBot ? (
+      BotExplorerBar.activeBotJsx
+    ) : (
+      <BotNotOpenExplorerContainer />
+    );
     return (
-      <div className={ `${ styles.botExplorerBar } ${ className }` }>
-        <div className={ explorerStyles.explorerBarHeader }>
-          <header>
-            Bot Explorer
-          </header>
+      <div className={`${styles.botExplorerBar} ${className}`}>
+        <div className={explorerStyles.explorerBarHeader}>
+          <header>Bot Explorer</header>
           <button
             aria-label="Open bot settings"
-            className={ explorerStyles.botSettings }
-            disabled={ !this.props.activeBot }
-            onClick={ this.props.openBotSettings }>
-            <span/>
+            className={explorerStyles.botSettings}
+            disabled={!this.props.activeBot}
+            onClick={this.props.openBotSettings}
+          >
+            <span />
           </button>
         </div>
-        <ul className={ explorerStyles.explorerSet }>
-          <li>{ explorerBody }</li>
+        <ul className={explorerStyles.explorerSet}>
+          <li>{explorerBody}</li>
         </ul>
       </div>
     );

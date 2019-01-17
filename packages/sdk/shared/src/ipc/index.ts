@@ -31,19 +31,20 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './channel';
-export * from './sender';
-
 import { Disposable, DisposableImpl } from '../lifecycle';
+
 import { Channel } from './channel';
 import { Sender } from './sender';
+
+export * from './channel';
+export * from './sender';
 
 export abstract class IPC extends DisposableImpl implements Sender {
   protected _channels: { [id: string]: Channel } = {};
 
   public id: number;
 
-  registerChannel(channel: Channel): Disposable {
+  public registerChannel(channel: Channel): Disposable {
     if (!channel) {
       throw new Error('channel cannot be null');
     }
@@ -54,17 +55,19 @@ export abstract class IPC extends DisposableImpl implements Sender {
     return {
       dispose: () => {
         delete this._channels[channel.name];
-      }
+      },
     };
   }
 
-  getChannel(name: string): Channel {
+  public getChannel(name: string): Channel {
     return this._channels[name];
   }
 
-  abstract send(...args: any[]): void;
+  public abstract send(...args: any[]): void;
 }
 
+// eslint does not support abstract classes
+// eslint-disable-next-line no-undef
 export class NoopIPC extends IPC {
   constructor(private _id: number) {
     super();
@@ -74,7 +77,7 @@ export class NoopIPC extends IPC {
     return this._id;
   }
 
-  send(...args: any[]): void {
+  public send(...args: any[]): void {
     return null;
   }
 }

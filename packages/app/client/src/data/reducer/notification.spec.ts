@@ -31,16 +31,23 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import notification, { NotificationState } from './notification';
-import { finishAdd, finishRemove, finishClear, NotificationAction } from '../action/notificationActions';
 import { newNotification } from '@bfemulator/app-shared';
+
+import {
+  finishAdd,
+  finishRemove,
+  finishClear,
+  NotificationAction,
+} from '../action/notificationActions';
+
+import notification, { NotificationState } from './notification';
 
 describe('Notification reducer tests', () => {
   let defaultState: NotificationState;
 
   beforeEach(() => {
     defaultState = {
-      allIds: []
+      allIds: [],
     };
   });
 
@@ -68,7 +75,7 @@ describe('Notification reducer tests', () => {
   test('finishRemove', () => {
     const idToRemove = 'id1';
     const startingState: NotificationState = {
-      allIds: [idToRemove, 'id2']
+      allIds: [idToRemove, 'id2'],
     };
     const action: NotificationAction = finishRemove(idToRemove);
     let endingState = notification(startingState, action);
@@ -85,7 +92,7 @@ describe('Notification reducer tests', () => {
 
   test('finishClear', () => {
     const startingState: NotificationState = {
-      allIds: ['id1', 'id2', 'id3']
+      allIds: ['id1', 'id2', 'id3'],
     };
     const action: NotificationAction = finishClear();
     const endingState = notification(startingState, action);

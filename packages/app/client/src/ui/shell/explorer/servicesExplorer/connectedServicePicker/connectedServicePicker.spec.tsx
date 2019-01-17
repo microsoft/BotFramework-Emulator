@@ -1,11 +1,45 @@
+//
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license.
+//
+// Microsoft Bot Framework: http://botframework.com
+//
+// Bot Framework Emulator Github:
+// https://github.com/Microsoft/BotFramwork-Emulator
+//
+// Copyright (c) Microsoft Corporation
+// All rights reserved.
+//
+// MIT License:
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+//
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED ""AS IS"", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
 import { ServiceTypes } from 'botframework-config/lib/schema';
 import { mount } from 'enzyme';
 import * as React from 'react';
 import { Provider } from 'react-redux';
 import { combineReducers, createStore } from 'redux';
+
 import { load, setActive } from '../../../../../data/action/botActions';
 import { bot } from '../../../../../data/reducer/bot';
 import { DialogService } from '../../../../dialogs/service';
+
 import { ConnectedServicePicker } from './connectedServicePicker';
 import { ConnectedServicePickerContainer } from './connectedServicePickerContainer';
 
@@ -14,7 +48,7 @@ jest.mock('../../../../dialogs/service', () => ({
   DialogService: {
     showDialog: () => Promise.resolve(true),
     hideDialog: () => Promise.resolve(false),
-  }
+  },
 }));
 
 jest.mock('../../../../dialogs/', () => ({
@@ -22,7 +56,7 @@ jest.mock('../../../../dialogs/', () => ({
   AzureLoginSuccessDialogContainer: () => undefined,
   BotCreationDialog: () => undefined,
   DialogService: { showDialog: () => Promise.resolve(true) },
-  SecretPromptDialog: () => undefined
+  SecretPromptDialog: () => undefined,
 }));
 
 describe('The ConnectedServicePicker component', () => {
@@ -52,9 +86,14 @@ describe('The ConnectedServicePicker component', () => {
     mockService = { ...mockBot.services[0] };
     mockService.id = 'mock';
 
-    parent = mount(<Provider store={ mockStore }>
-      <ConnectedServicePickerContainer availableServices={ [mockService] } authenticatedUser="bot@bot.com"/>
-    </Provider>);
+    parent = mount(
+      <Provider store={mockStore}>
+        <ConnectedServicePickerContainer
+          availableServices={[mockService]}
+          authenticatedUser="bot@bot.com"
+        />
+      </Provider>
+    );
     node = parent.find(ConnectedServicePicker);
   });
 
@@ -121,22 +160,27 @@ describe('The ConnectedServicePicker component', () => {
       const state = ConnectedServicePicker.getDerivedStateFromProps(
         {
           connectedServices: [{ id: 'testId777' }],
-          availableServices: [{ id: 'testId123' }]
+          availableServices: [{ id: 'testId123' }],
         } as any,
         {
-          testId777: 'connected'
-        } as any);
+          testId777: 'connected',
+        } as any
+      );
       expect(state.testId123).toBe(false);
     });
   });
 
   describe('should render the expected content when', () => {
-
     it('ServiceTypes.Luis is passed into the props', () => {
-      parent = mount(<Provider store={ mockStore }>
-        <ConnectedServicePickerContainer availableServices={ [mockService] }
-                                         authenticatedUser="bot@bot.com" serviceType={ ServiceTypes.Luis }/>
-      </Provider>);
+      parent = mount(
+        <Provider store={mockStore}>
+          <ConnectedServicePickerContainer
+            availableServices={[mockService]}
+            authenticatedUser="bot@bot.com"
+            serviceType={ServiceTypes.Luis}
+          />
+        </Provider>
+      );
       node = parent.find(ConnectedServicePicker);
 
       expect(node.headerElements).toBe(node.luisServiceHeader);
@@ -144,10 +188,15 @@ describe('The ConnectedServicePicker component', () => {
     });
 
     it('ServiceTypes.Dispatch is passed into the props', () => {
-      parent = mount(<Provider store={ mockStore }>
-        <ConnectedServicePickerContainer availableServices={ [mockService] }
-                                         authenticatedUser="bot@bot.com" serviceType={ ServiceTypes.Dispatch }/>
-      </Provider>);
+      parent = mount(
+        <Provider store={mockStore}>
+          <ConnectedServicePickerContainer
+            availableServices={[mockService]}
+            authenticatedUser="bot@bot.com"
+            serviceType={ServiceTypes.Dispatch}
+          />
+        </Provider>
+      );
       node = parent.find(ConnectedServicePicker);
 
       expect(node.headerElements).toBe(node.dispatchServiceHeader);
@@ -155,10 +204,15 @@ describe('The ConnectedServicePicker component', () => {
     });
 
     it('ServiceTypes.QnA is passed into the props', () => {
-      parent = mount(<Provider store={ mockStore }>
-        <ConnectedServicePickerContainer availableServices={ [mockService] }
-                                         authenticatedUser="bot@bot.com" serviceType={ ServiceTypes.QnA }/>
-      </Provider>);
+      parent = mount(
+        <Provider store={mockStore}>
+          <ConnectedServicePickerContainer
+            availableServices={[mockService]}
+            authenticatedUser="bot@bot.com"
+            serviceType={ServiceTypes.QnA}
+          />
+        </Provider>
+      );
       node = parent.find(ConnectedServicePicker);
 
       expect(node.headerElements).toBe(node.qnaServiceHeader);
@@ -166,10 +220,15 @@ describe('The ConnectedServicePicker component', () => {
     });
 
     it('ServiceTypes.BlobStorage is passed into the props', () => {
-      parent = mount(<Provider store={ mockStore }>
-        <ConnectedServicePickerContainer availableServices={ [mockService] }
-                                         authenticatedUser="bot@bot.com" serviceType={ ServiceTypes.BlobStorage }/>
-      </Provider>);
+      parent = mount(
+        <Provider store={mockStore}>
+          <ConnectedServicePickerContainer
+            availableServices={[mockService]}
+            authenticatedUser="bot@bot.com"
+            serviceType={ServiceTypes.BlobStorage}
+          />
+        </Provider>
+      );
       node = parent.find(ConnectedServicePicker);
 
       expect(node.headerElements).toBe(node.blobStorageHeader);
@@ -177,10 +236,15 @@ describe('The ConnectedServicePicker component', () => {
     });
 
     it('ServiceTypes.AppInsights is passed into the props', () => {
-      parent = mount(<Provider store={ mockStore }>
-        <ConnectedServicePickerContainer availableServices={ [mockService] }
-                                         authenticatedUser="bot@bot.com" serviceType={ ServiceTypes.AppInsights }/>
-      </Provider>);
+      parent = mount(
+        <Provider store={mockStore}>
+          <ConnectedServicePickerContainer
+            availableServices={[mockService]}
+            authenticatedUser="bot@bot.com"
+            serviceType={ServiceTypes.AppInsights}
+          />
+        </Provider>
+      );
       node = parent.find(ConnectedServicePicker);
 
       expect(node.headerElements).toBe(node.appInsightsHeader);
@@ -188,10 +252,15 @@ describe('The ConnectedServicePicker component', () => {
     });
 
     it('ServiceTypes.CosmosDB is passed into the props', () => {
-      parent = mount(<Provider store={ mockStore }>
-        <ConnectedServicePickerContainer availableServices={ [mockService] }
-                                         authenticatedUser="bot@bot.com" serviceType={ ServiceTypes.CosmosDB }/>
-      </Provider>);
+      parent = mount(
+        <Provider store={mockStore}>
+          <ConnectedServicePickerContainer
+            availableServices={[mockService]}
+            authenticatedUser="bot@bot.com"
+            serviceType={ServiceTypes.CosmosDB}
+          />
+        </Provider>
+      );
       node = parent.find(ConnectedServicePicker);
 
       expect(node.headerElements).toBe(node.cosmosDbHeader);

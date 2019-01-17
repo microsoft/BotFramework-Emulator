@@ -36,11 +36,13 @@ import { mount } from 'enzyme';
 import * as React from 'react';
 import { Provider } from 'react-redux';
 import { combineReducers, createStore } from 'redux';
+
 import { beginAdd } from '../../../../data/action/notificationActions';
 import { bot } from '../../../../data/reducer/bot';
 import { chat } from '../../../../data/reducer/chat';
 import { CommandServiceImpl } from '../../../../platform/commands/commandServiceImpl';
 import { ActiveBotHelper } from '../../../helpers/activeBotHelper';
+
 import { BotNotOpenExplorer } from './botNotOpenExplorer';
 import { BotNotOpenExplorerContainer } from './botNotOpenExplorerContainer';
 
@@ -50,14 +52,14 @@ jest.mock('../../../dialogs', () => ({
   DialogService: {
     showDialog: () => Promise.resolve(true),
     hideDialog: () => Promise.resolve(false),
-  }
+  },
 }));
 
 jest.mock('./botNotOpenExplorer.scss', () => ({}));
 jest.mock('../../../../data/store', () => ({
   get store() {
     return mockStore;
-  }
+  },
 }));
 
 describe('The EndpointExplorer component should', () => {
@@ -67,21 +69,29 @@ describe('The EndpointExplorer component should', () => {
   let instance;
   beforeEach(() => {
     mockDispatch = jest.spyOn(mockStore, 'dispatch');
-    parent = mount(<Provider store={ mockStore }>
-      <BotNotOpenExplorerContainer/>
-    </Provider>);
+    parent = mount(
+      <Provider store={mockStore}>
+        <BotNotOpenExplorerContainer />
+      </Provider>
+    );
     node = parent.find(BotNotOpenExplorer);
     instance = node.instance();
   });
 
   it('should make the appropriate calls when onCreateNewBotClick in called', async () => {
-    const commandServiceSpy = jest.spyOn(CommandServiceImpl, 'call').mockResolvedValue(true);
+    const commandServiceSpy = jest
+      .spyOn(CommandServiceImpl, 'call')
+      .mockResolvedValue(true);
     await instance.onCreateNewBotClick();
-    expect(commandServiceSpy).toHaveBeenLastCalledWith(SharedConstants.Commands.UI.ShowBotCreationDialog);
+    expect(commandServiceSpy).toHaveBeenLastCalledWith(
+      SharedConstants.Commands.UI.ShowBotCreationDialog
+    );
   });
 
   it('should send a notification when onCreateNewBotClick fails', async () => {
-    const commandServiceSpy = jest.spyOn(CommandServiceImpl, 'call').mockRejectedValue('oh noes!');
+    const commandServiceSpy = jest
+      .spyOn(CommandServiceImpl, 'call')
+      .mockRejectedValue('oh noes!');
     await instance.onCreateNewBotClick();
     const message = `An Error occurred on the Bot Not Open Explorer: oh noes!`;
     const notification = newNotification(message);
@@ -90,17 +100,23 @@ describe('The EndpointExplorer component should', () => {
     notification.id = jasmine.any(String) as any;
     expect(mockDispatch).toHaveBeenLastCalledWith(action);
 
-    expect(commandServiceSpy).toHaveBeenLastCalledWith(SharedConstants.Commands.UI.ShowBotCreationDialog);
+    expect(commandServiceSpy).toHaveBeenLastCalledWith(
+      SharedConstants.Commands.UI.ShowBotCreationDialog
+    );
   });
 
   it('should make the appropriate calls when onOpenBotFileClick in called', async () => {
-    const spy = jest.spyOn(ActiveBotHelper, 'confirmAndOpenBotFromFile').mockResolvedValue(true);
+    const spy = jest
+      .spyOn(ActiveBotHelper, 'confirmAndOpenBotFromFile')
+      .mockResolvedValue(true);
     await instance.onOpenBotFileClick();
     expect(spy).toHaveBeenCalled();
   });
 
   it('should send a notification when onOpenBotFileClick fails', async () => {
-    const spy = jest.spyOn(ActiveBotHelper, 'confirmAndOpenBotFromFile').mockRejectedValue('oh noes!');
+    const spy = jest
+      .spyOn(ActiveBotHelper, 'confirmAndOpenBotFromFile')
+      .mockRejectedValue('oh noes!');
     await instance.onOpenBotFileClick();
     const message = `An Error occurred on the Bot Not Open Explorer: oh noes!`;
     const notification = newNotification(message);

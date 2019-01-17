@@ -35,16 +35,20 @@ import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 
 import BotEmulator from '../../botEmulator';
-import createResourceResponse from '../../utils/createResponse/resource';
 import Activity from '../../types/activity/activity';
+import createResourceResponse from '../../utils/createResponse/resource';
 
 export default function sendHistoryToConversation(botEmulator: BotEmulator) {
-  return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+  return (
+    req: Restify.Request,
+    res: Restify.Response,
+    next: Restify.Next
+  ): any => {
     const { activities }: { activities: Activity[] } = req.body;
     let successCount = 0;
     let firstErrorMessage = '';
 
-    for (let activity of activities) {
+    for (const activity of activities) {
       try {
         (req as any).conversation.postActivityToUser(activity, true);
         successCount++;
@@ -54,7 +58,9 @@ export default function sendHistoryToConversation(botEmulator: BotEmulator) {
         }
       }
     }
-    const id = `Processed ${successCount} of ${activities.length} activities successfully.${firstErrorMessage}`;
+    const id = `Processed ${successCount} of ${
+      activities.length
+    } activities successfully.${firstErrorMessage}`;
     const response = createResourceResponse(id);
     res.send(HttpStatus.OK, response);
     res.end();

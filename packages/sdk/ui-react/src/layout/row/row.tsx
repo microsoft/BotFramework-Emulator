@@ -32,18 +32,19 @@
 //
 
 import * as React from 'react';
+
 import * as styles from './row.scss';
 
 export enum RowJustification {
   Left,
   Center,
-  Right
+  Right,
 }
 
 export enum RowAlignment {
   Top,
   Center,
-  Bottom
+  Bottom,
 }
 
 export interface RowProps {
@@ -53,12 +54,15 @@ export interface RowProps {
 }
 
 export class Row extends React.Component<RowProps, {}> {
-
-  render(): JSX.Element {
-    const {className = ''} = this.props;
+  public render(): JSX.Element {
+    const { className = '' } = this.props;
     return (
-      <div className={ `${styles.row} ${this.getRowAlignment()} ${this.getRowAlignment()} ${className}` }>
-        { this.props.children }
+      <div
+        className={`${
+          styles.row
+        } ${this.getRowAlignment()} ${this.getRowAlignment()} ${className}`}
+      >
+        {this.props.children}
       </div>
     );
   }
@@ -75,21 +79,6 @@ export class Row extends React.Component<RowProps, {}> {
       case RowAlignment.Top:
       default:
         return styles.alignTop;
-    }
-  }
-
-  /** Converts a row justification (horizontal axis) type to its flexbox style value */
-  private getRowJustification(): string {
-    switch (this.props.justify) {
-      case RowJustification.Center:
-        return styles.justifyCenter;
-
-      case RowJustification.Right:
-        return styles.justifyRight;
-
-      case RowJustification.Left:
-      default:
-        return styles.justifyLeft;
     }
   }
 }

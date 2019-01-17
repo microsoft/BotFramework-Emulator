@@ -1,3 +1,35 @@
+//
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license.
+//
+// Microsoft Bot Framework: http://botframework.com
+//
+// Bot Framework Emulator Github:
+// https://github.com/Microsoft/BotFramwork-Emulator
+//
+// Copyright (c) Microsoft Corporation
+// All rights reserved.
+//
+// MIT License:
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+//
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED ""AS IS"", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
 // Allows us to bypass all the setup required in ./main
 //
 // NOTE: A significant part of protocolHandler is not testable
@@ -7,20 +39,19 @@
 // a property of main. However, any mocks written for the CommandService
 // will be overwritten due to the call to "jest.mock('./main', ...)"
 
-jest.mock('./main', () => ({}));
-jest.mock('./globals', () => ({
-  getGlobal: () => ({}),
-  setGlobal: () => null
-}));
 import './fetchProxy';
 import {
   Protocol,
   ProtocolHandler,
-  parseEndpointOverrides
+  parseEndpointOverrides,
 } from './protocolHandler';
+jest.mock('./main', () => ({}));
+jest.mock('./globals', () => ({
+  getGlobal: () => ({}),
+  setGlobal: () => null,
+}));
 
 describe('Protocol handler tests', () => {
-
   describe('parseProtocolUrl() functionality', () => {
     it('should return an info object about the parsed URL', () => {
       const info: Protocol = ProtocolHandler.parseProtocolUrl(
@@ -33,7 +64,9 @@ describe('Protocol handler tests', () => {
     });
 
     it('should throw on an invalid protocol url', () => {
-      expect(() => ProtocolHandler.parseProtocolUrl('invalidProtocolUrl://blah')).toThrow();
+      expect(() =>
+        ProtocolHandler.parseProtocolUrl('invalidProtocolUrl://blah')
+      ).toThrow();
     });
   });
 
@@ -134,7 +167,7 @@ describe('Protocol handler tests', () => {
         appId: 'someAppId',
         appPassword: 'someAppPw',
         endpoint: 'someEndpoint',
-        someOtherArg: 'someOtherArg'
+        someOtherArg: 'someOtherArg',
       };
 
       const overrides = parseEndpointOverrides(parsedArgs);
@@ -147,7 +180,7 @@ describe('Protocol handler tests', () => {
     it('should return null if no overrides were parsed', () => {
       const parsedArgs = {
         notAnOverride: 'testing',
-        notAnOverrideEither: 'testing'
+        notAnOverrideEither: 'testing',
       };
 
       const overrides = parseEndpointOverrides(parsedArgs);

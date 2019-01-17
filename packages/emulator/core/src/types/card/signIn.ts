@@ -34,8 +34,8 @@
 import CardAction from './cardAction';
 
 interface SigninCard {
-  text: string;                   // Title of the Card
-  buttons: CardAction[];         // Sign in action
+  text: string; // Title of the Card
+  buttons: CardAction[]; // Sign in action
 }
 
 export default SigninCard;

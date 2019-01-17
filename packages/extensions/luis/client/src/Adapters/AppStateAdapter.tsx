@@ -31,24 +31,25 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { TraceActivity } from '@bfemulator/sdk-shared';
+
+import { RecognizerResultAdapter } from '../Adapters/RecognizerResultAdapter';
 import { AppState, PersistentAppState } from '../App';
-import { LuisTraceInfo } from '../Models/LuisTraceInfo';
+import { ButtonSelected } from '../Controls/ControlBar/ControlBar';
 import { AppInfo } from '../Luis/AppInfo';
 import { IntentInfo } from '../Luis/IntentInfo';
-import { TraceActivity } from '@bfemulator/sdk-shared';
-import { ButtonSelected } from '../Controls/ControlBar/ControlBar';
-import { RecognizerResultAdapter } from '../Adapters/RecognizerResultAdapter';
+import { LuisTraceInfo } from '../Models/LuisTraceInfo';
 
 const LuisTraceType = 'https://www.luis.ai/schemas/trace';
 
 export default class AppStateAdapter implements AppState {
-  authoringKey: string;
-  persistentState: { [key: string]: PersistentAppState; };
-  appInfo: AppInfo;
-  intentInfo: IntentInfo[];
-  traceInfo: LuisTraceInfo;
-  controlBarButtonSelected: ButtonSelected;
-  id: string;
+  public authoringKey: string;
+  public persistentState: { [key: string]: PersistentAppState };
+  public appInfo: AppInfo;
+  public intentInfo: IntentInfo[];
+  public traceInfo: LuisTraceInfo;
+  public controlBarButtonSelected: ButtonSelected;
+  public id: string;
 
   private static validate(obj: any): boolean {
     if (!obj) {
@@ -75,14 +76,16 @@ export default class AppStateAdapter implements AppState {
     if (!AppStateAdapter.validate(obj)) {
       return;
     }
-    let traceActivity = (obj as TraceActivity);
+    const traceActivity = obj as TraceActivity;
     this.traceInfo = traceActivity.value as LuisTraceInfo;
-    this.controlBarButtonSelected = this.traceInfo.recognizerResult ?
-                                      ButtonSelected.RecognizerResult :
-                                      ButtonSelected.RawResponse;
+    this.controlBarButtonSelected = this.traceInfo.recognizerResult
+      ? ButtonSelected.RecognizerResult
+      : ButtonSelected.RawResponse;
     if (!this.traceInfo.recognizerResult) {
       // Polyfill the Recognizer Result object
-      this.traceInfo.recognizerResult = new RecognizerResultAdapter(this.traceInfo.luisResult);
+      this.traceInfo.recognizerResult = new RecognizerResultAdapter(
+        this.traceInfo.luisResult
+      );
     }
     this.id = traceActivity.id || '';
   }

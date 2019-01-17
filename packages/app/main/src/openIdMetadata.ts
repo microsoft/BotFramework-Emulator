@@ -33,7 +33,8 @@
 
 import got from 'got';
 
-let getPem = require('rsa-pem-from-mod-exp');
+// eslint-disable-next-line typescript/no-var-requires
+const getPem = require('rsa-pem-from-mod-exp');
 
 export class OpenIdMetadata {
   private url: string;
@@ -46,47 +47,47 @@ export class OpenIdMetadata {
 
   public getKey(keyId: string, cb: (key: string) => void): void {
     // If keys are more than 5 days old, refresh them
-    let now = new Date().getTime();
-    if (this.lastUpdated < (now - 1000 * 60 * 60 * 24 * 5)) {
-      this.refreshCache((err) => {
+    const now = new Date().getTime();
+    if (this.lastUpdated < now - 1000 * 60 * 60 * 24 * 5) {
+      this.refreshCache(err => {
         if (err) {
           // fall through and return cached key on error
         }
 
         // Search the cache even if we failed to refresh
-        let key = this.findKey(keyId);
+        const key = this.findKey(keyId);
         cb(key);
       });
     } else {
       // Otherwise read from cache
-      let key = this.findKey(keyId);
+      const key = this.findKey(keyId);
       cb(key);
     }
   }
 
   private refreshCache(cb: (err: Error) => void): void {
-    let options = {
+    const options = {
       method: 'GET',
       url: this.url,
       json: true,
       strictSSL: false,
-      useElectronNet: true
+      useElectronNet: true,
     };
 
     got(options)
-      .then((resp) => {
+      .then(resp => {
         if (resp.statusCode >= 400 || !resp.body) {
           throw new Error('Failed to load openID config: ' + resp.statusCode);
         }
 
-        let openIdConfig = <OpenIdConfig> resp.body;
+        const openIdConfig = resp.body as OpenIdConfig;
 
-        let options1 = {
+        const options1 = {
           method: 'GET',
           url: openIdConfig.jwks_uri,
           json: true,
           strictSSL: false,
-          useElectronNet: true
+          useElectronNet: true,
         };
 
         got(options1)
@@ -96,15 +97,15 @@ export class OpenIdMetadata {
             }
 
             this.lastUpdated = new Date().getTime();
-            this.keys = <Key[]> resp1.body.keys;
+            this.keys = resp1.body.keys as Key[];
 
             cb(null);
           })
-          .catch((err) => {
+          .catch(err => {
             cb(err);
           });
       })
-      .catch((err) => {
+      .catch(err => {
         cb(err);
       });
   }
@@ -116,15 +117,15 @@ export class OpenIdMetadata {
 
     for (let i = 0; i < this.keys.length; i++) {
       if (this.keys[i].kid === keyId) {
-        let key = this.keys[i];
+        const key = this.keys[i];
 
         if (!key.n || !key.e) {
           // Return null for non-RSA keys
           return null;
         }
 
-        let modulus = Buffer.from(key.n).toString('base64');
-        let exponent = key.e;
+        const modulus = Buffer.from(key.n).toString('base64');
+        const exponent = key.e;
 
         return getPem(modulus, exponent);
       }

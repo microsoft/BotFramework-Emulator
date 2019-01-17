@@ -31,9 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { setGlobal, deleteGlobal } from '../globals';
 import { Notification, SharedConstants } from '@bfemulator/app-shared';
 import { CommandService } from '@bfemulator/sdk-shared';
+
+import { deleteGlobal, setGlobal } from '../globals';
 import { mainWindow } from '../main';
 
 /** Sends a notification to the client side using the Electron 'global' object

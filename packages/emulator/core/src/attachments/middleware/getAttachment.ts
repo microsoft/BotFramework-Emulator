@@ -32,6 +32,7 @@
 //
 
 import * as HttpStatus from 'http-status-codes';
+import { Next, Request, Response } from 'restify';
 
 import BotEmulator from '../../botEmulator';
 import createAPIException from '../../utils/createResponse/apiException';
@@ -39,17 +40,21 @@ import { ErrorCodes } from '../../types/errorCodes';
 import AttachmentData from '../../types/attachment/data';
 import AttachmentParams from '../attachmentParams';
 import sendErrorResponse from '../../utils/sendErrorResponse';
-import { Next, Request, Response } from 'restify';
 
 export default function getAttachment(bot: BotEmulator) {
   return (req: Request, res: Response, next: Next): any => {
     try {
       const parms: AttachmentParams = req.params;
-      const attachment: AttachmentData = bot.facilities.attachments.getAttachmentData(parms.attachmentId);
+      const attachment: AttachmentData = bot.facilities.attachments.getAttachmentData(
+        parms.attachmentId
+      );
 
       if (attachment) {
         if (parms.viewId === 'original' || parms.viewId === 'thumbnail') {
-          const attachmentBase64 = parms.viewId === 'original' ? attachment.originalBase64 : attachment.thumbnailBase64;
+          const attachmentBase64 =
+            parms.viewId === 'original'
+              ? attachment.originalBase64
+              : attachment.thumbnailBase64;
 
           if (attachmentBase64) {
             const buffer = Buffer.from(attachmentBase64, 'base64');
@@ -57,19 +62,45 @@ export default function getAttachment(bot: BotEmulator) {
             res.contentType = attachment.type;
             res.send(HttpStatus.OK, buffer);
           } else {
-            sendErrorResponse(req, res, next, createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument,
-              parms.viewId === 'original' ? 'There is no original view' : 'There is no thumbnail view'));
+            sendErrorResponse(
+              req,
+              res,
+              next,
+              createAPIException(
+                HttpStatus.NOT_FOUND,
+                ErrorCodes.BadArgument,
+                parms.viewId === 'original'
+                  ? 'There is no original view'
+                  : 'There is no thumbnail view'
+              )
+            );
           }
         }
       } else {
-        sendErrorResponse(req, res, next, createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument,
-          `attachment[${ parms.attachmentId }] not found`));
+        sendErrorResponse(
+          req,
+          res,
+          next,
+          createAPIException(
+            HttpStatus.NOT_FOUND,
+            ErrorCodes.BadArgument,
+            `attachment[${parms.attachmentId}] not found`
+          )
+        );
       }
     } catch (err) {
-      sendErrorResponse(req, res, next, createAPIException(HttpStatus.INTERNAL_SERVER_ERROR, ErrorCodes.ServiceError,
-        err.message));
+      sendErrorResponse(
+        req,
+        res,
+        next,
+        createAPIException(
+          HttpStatus.INTERNAL_SERVER_ERROR,
+          ErrorCodes.ServiceError,
+          err.message
+        )
+      );
     }
-    
+
     next();
   };
 }

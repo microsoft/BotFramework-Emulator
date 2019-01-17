@@ -31,10 +31,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { URL, URLSearchParams } from 'url';
+
 import * as HttpStatus from 'http-status-codes';
 
-import { usGovernmentAuthentication, speech as speechEndpoint, authentication } from '../authEndpoints';
-import { URL, URLSearchParams } from 'url';
+import {
+  authentication,
+  speech as speechEndpoint,
+  usGovernmentAuthentication,
+} from '../authEndpoints';
 import BotEndpointOptions from '../types/botEndpointOptions';
 import SpeechTokenInfo from '../types/speechToken';
 import statusCodeFamily from '../utils/statusCodeFamily';
@@ -43,10 +48,9 @@ import statusCodeFamily from '../utils/statusCodeFamily';
 const TIME_TO_REFRESH = 5 * 60 * 1000;
 
 export default class BotEndpoint {
-
-  accessToken: string;
-  accessTokenExpires: number;
-  speechToken: string;
+  public accessToken: string;
+  public accessTokenExpires: number;
+  public speechToken: string;
 
   constructor(
     public id: string,
@@ -57,8 +61,7 @@ export default class BotEndpoint {
     public use10Tokens: boolean,
     public channelService: string,
     private _options: BotEndpointOptions
-  ) {
-  }
+  ) {}
 
   public async getSpeechToken(refresh: boolean = false, duration: number = 10) {
     if (this.speechToken && !refresh) {
@@ -70,10 +73,12 @@ export default class BotEndpoint {
     }
 
     const query = new URLSearchParams({ goodForInMinutes: duration } as any);
-    const res = await this.fetchWithAuth(new URL(`?${ query.toString() }`, speechEndpoint.tokenEndpoint).toString());
+    const res = await this.fetchWithAuth(
+      new URL(`?${query.toString()}`, speechEndpoint.tokenEndpoint).toString()
+    );
 
     if (statusCodeFamily(res.status, 200)) {
-      const body = await res.json() as SpeechTokenInfo;
+      const body = (await res.json()) as SpeechTokenInfo;
 
       if (body.access_Token) {
         this.speechToken = body.access_Token;
@@ -89,49 +94,61 @@ export default class BotEndpoint {
     }
   }
 
-  async fetchWithAuth(url: string, fetchOptions: any = {}, forceRefresh: boolean = false) {
+  public async fetchWithAuth(
+    url: string,
+    fetchOptions: any = {},
+    forceRefresh: boolean = false
+  ) {
     if (this.msaAppId) {
       fetchOptions.headers = {
         ...fetchOptions.headers,
-        Authorization: `Bearer ${await this.getAccessToken(forceRefresh)}`
+        Authorization: `Bearer ${await this.getAccessToken(forceRefresh)}`,
       };
     }
 
     const response = await this._options.fetch(url, fetchOptions);
 
     if (
-      (response.status === HttpStatus.UNAUTHORIZED || response.status === HttpStatus.FORBIDDEN)
-      && (!forceRefresh && this.msaAppId)
+      (response.status === HttpStatus.UNAUTHORIZED ||
+        response.status === HttpStatus.FORBIDDEN) &&
+      (!forceRefresh && this.msaAppId)
     ) {
-      return await this.fetchWithAuth(url, fetchOptions, true);
+      return this.fetchWithAuth(url, fetchOptions, true);
     }
 
     return response;
   }
 
   private async getAccessToken(forceRefresh: boolean = false): Promise<string> {
-    if (!forceRefresh && this.accessToken && Date.now() < this.accessTokenExpires - TIME_TO_REFRESH) {
+    if (
+      !forceRefresh &&
+      this.accessToken &&
+      Date.now() < this.accessTokenExpires - TIME_TO_REFRESH
+    ) {
       return this.accessToken;
     }
 
     // Refresh access token
-    const tokenEndpoint: string = this.channelService === usGovernmentAuthentication.channelService ?
-        usGovernmentAuthentication.tokenEndpoint :
-        authentication.tokenEndpoint;
+    const tokenEndpoint: string =
+      this.channelService === usGovernmentAuthentication.channelService
+        ? usGovernmentAuthentication.tokenEndpoint
+        : authentication.tokenEndpoint;
+    /* eslint-disable typescript/camelcase */
     const resp = await this._options.fetch(tokenEndpoint, {
       method: 'POST',
       body: new URLSearchParams({
         grant_type: 'client_credentials',
         client_id: this.msaAppId,
         client_secret: this.msaPassword,
-        scope: `${ this.msaAppId }/.default`,
+        scope: `${this.msaAppId}/.default`,
         // flag to request a version 1.0 token
-        ...this.use10Tokens ? { atver: 1 } : {}
+        ...(this.use10Tokens ? { atver: 1 } : {}),
       } as { [key: string]: string }).toString(),
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      }
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
     });
+    /* eslint-enable typescript/camelcase */
 
     if (statusCodeFamily(resp.status, 200)) {
       // Subtract 5 minutes from expires_in so they'll we'll get a
@@ -146,7 +163,9 @@ export default class BotEndpoint {
       // this.facilities.logger.logError(this.conversationId, 'Error: The bot\'s MSA appId or password is incorrect.');
       // this.facilities.logger.logError(this.conversationId, makeBotSettingsLink('Edit your bot\'s MSA info'));
 
-      throw new Error('Refresh access token failed with status code: ' + resp.status);
+      throw new Error(
+        'Refresh access token failed with status code: ' + resp.status
+      );
     }
   }
 }

@@ -34,23 +34,29 @@
 import { RequestHandler, Server } from 'restify';
 
 import BotEmulator from '../botEmulator';
-import createBotFrameworkAuthenticationMiddleware from '../utils/botFrameworkAuthentication';
-import jsonBodyParser from '../utils/jsonBodyParser';
 import getFacility from '../middleware/getFacility';
 import getRouteName from '../middleware/getRouteName';
+import createBotFrameworkAuthenticationMiddleware from '../utils/botFrameworkAuthentication';
+import jsonBodyParser from '../utils/jsonBodyParser';
 
+import deleteStateForUser from './middleware/deleteStateForUser';
 import createFetchBotDataMiddleware from './middleware/fetchBotData';
 import getConversationData from './middleware/getConversationData';
 import getPrivateConversationData from './middleware/getPrivateConversationData';
 import getUserData from './middleware/getUserData';
-import setUserData from './middleware/setUserData';
 import setConversationData from './middleware/setConversationData';
 import setPrivateConversationData from './middleware/setPrivateConversationData';
-import deleteStateForUser from './middleware/deleteStateForUser';
+import setUserData from './middleware/setUserData';
 
-export default function registerRoutes(botEmulator: BotEmulator, server: Server, uses: RequestHandler[]) {
+export default function registerRoutes(
+  botEmulator: BotEmulator,
+  server: Server,
+  uses: RequestHandler[]
+) {
   // TODO: Check if it works without MSA App ID
-  const verifyBotFramework = createBotFrameworkAuthenticationMiddleware(botEmulator.options.fetch);
+  const verifyBotFramework = createBotFrameworkAuthenticationMiddleware(
+    botEmulator.options.fetch
+  );
   // const verifyBotFramework = botEmulator.msaAppId ?
   // createBotFrameworkAuthenticationMiddleware(botEmulator.botId, botEmulator.options.fetch) : [];
   const fetchBotDataMiddleware = createFetchBotDataMiddleware(botEmulator);

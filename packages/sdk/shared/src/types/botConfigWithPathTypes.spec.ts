@@ -31,8 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { BotConfigWithPathImpl } from './botConfigWithPathTypes';
 import { ServiceTypes } from 'botframework-config/lib/schema';
+
+import { BotConfigWithPathImpl } from './botConfigWithPathTypes';
 
 describe('BotConfigWithPathTypes tests', () => {
   describe('fromJSON() functionality', () => {
@@ -42,7 +43,7 @@ describe('BotConfigWithPathTypes tests', () => {
       id: 'someEndpointUrl',
       appId: 'someEndpointAppId',
       appPassword: 'someEndpointAppPw',
-      endpoint: 'someEndpointUrl'
+      endpoint: 'someEndpointUrl',
     };
 
     it('should work on object literals', () => {
@@ -55,9 +56,9 @@ describe('BotConfigWithPathTypes tests', () => {
           endpoint: {
             endpoint: 'someOverriddenEndpoint',
             name: 'someOverriddenEndpointName',
-            appId: 'someOverriddenEndpointAppId'
-          }
-        }
+            appId: 'someOverriddenEndpointAppId',
+          },
+        },
       });
 
       expect(constructedBotConfig.name).toBe('someBotName');
@@ -68,8 +69,8 @@ describe('BotConfigWithPathTypes tests', () => {
         endpoint: {
           endpoint: 'someOverriddenEndpoint',
           name: 'someOverriddenEndpointName',
-          appId: 'someOverriddenEndpointAppId'
-        }
+          appId: 'someOverriddenEndpointAppId',
+        },
       });
     });
 
@@ -83,13 +84,15 @@ describe('BotConfigWithPathTypes tests', () => {
           endpoint: {
             endpoint: 'someOverriddenEndpoint',
             name: 'someOverriddenEndpointName',
-            appId: 'someOverriddenEndpointAppId'
-          }
+            appId: 'someOverriddenEndpointAppId',
+          },
         },
-        extraneousProp: true
+        extraneousProp: true,
       };
 
-      const constructedBotConfig = BotConfigWithPathImpl.fromJSON(botConfigVariable);
+      const constructedBotConfig = BotConfigWithPathImpl.fromJSON(
+        botConfigVariable
+      );
 
       expect(constructedBotConfig.name).toBe('someBotName');
       expect(constructedBotConfig.description).toBe('some bot description');
@@ -99,8 +102,8 @@ describe('BotConfigWithPathTypes tests', () => {
         endpoint: {
           endpoint: 'someOverriddenEndpoint',
           name: 'someOverriddenEndpointName',
-          appId: 'someOverriddenEndpointAppId'
-        }
+          appId: 'someOverriddenEndpointAppId',
+        },
       });
       expect(Object.keys(constructedBotConfig)).toContain('extraneousProp');
     });
@@ -112,7 +115,7 @@ describe('BotConfigWithPathTypes tests', () => {
         path: 'somePath',
         padlock: null,
         services: [],
-        overrides: {}
+        overrides: {},
       });
 
       const serializedVersion = JSON.stringify(botConfig);

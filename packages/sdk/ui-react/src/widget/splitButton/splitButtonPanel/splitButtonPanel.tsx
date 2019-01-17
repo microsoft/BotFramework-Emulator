@@ -33,6 +33,7 @@
 
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+
 import * as styles from './splitButtonPanel.scss';
 
 export interface SplitButtonPanelProps {
@@ -59,10 +60,7 @@ export class SplitButtonPanel extends React.Component<SplitButtonPanelProps> {
   }
 
   public render() {
-    return ReactDOM.createPortal(
-      this.panel,
-      document.body
-    );
+    return ReactDOM.createPortal(this.panel, document.body);
   }
 
   private setPanelRef = (ref: HTMLUListElement) => {
@@ -70,34 +68,49 @@ export class SplitButtonPanel extends React.Component<SplitButtonPanelProps> {
     if (this.panelRef) {
       this.panelRef.focus();
     }
-  }
+  };
 
   private get panel(): JSX.Element {
-    const { caretRef, options = [], expanded = false, onKeyDown = () => null, selected = 0 } = this.props;
+    const {
+      caretRef,
+      options = [],
+      expanded = false,
+      onKeyDown = () => null,
+      selected = 0,
+    } = this.props;
     if (expanded) {
       const caretClientRect = caretRef.getBoundingClientRect();
-      const inlineStyle = { top: `${caretClientRect.bottom}px`, left: `${caretClientRect.left}px` };
+      const inlineStyle = {
+        left: `${caretClientRect.left}px`,
+        top: `${caretClientRect.bottom}px`,
+      };
 
       return (
-        <ul 
-          className={ styles.panel } style={ inlineStyle } ref={ this.setPanelRef } role={ 'listbox' } tabIndex={ -1 }
-          aria-activedescendant={ this.getOptionId(selected) }
-          onKeyDown={ onKeyDown }>
-          {
-            options.map((option, index) => {
-              const isSelected = index === selected;
-              const selectedClass = isSelected ? ` ${styles.selected}` : '';
-              return <li
-                        id={ this.getOptionId(index) }
-                        key={ option }
-                        className={ styles.option + selectedClass }
-                        role={ 'option' }
-                        aria-selected={ isSelected }
-                        onClick={ e => this.onSelectOption(e, index) }>
-                        { option }
-                      </li>;
-            })
-          }
+        <ul
+          className={styles.panel}
+          style={inlineStyle}
+          ref={this.setPanelRef}
+          role={'listbox'}
+          tabIndex={-1}
+          aria-activedescendant={this.getOptionId(selected)}
+          onKeyDown={onKeyDown}
+        >
+          {options.map((option, index) => {
+            const isSelected = index === selected;
+            const selectedClass = isSelected ? ` ${styles.selected}` : '';
+            return (
+              <li
+                id={this.getOptionId(index)}
+                key={option}
+                className={styles.option + selectedClass}
+                role={'option'}
+                aria-selected={isSelected}
+                onClick={e => this.onSelectOption(e, index)}
+              >
+                {option}
+              </li>
+            );
+          })}
         </ul>
       );
     }
@@ -108,18 +121,21 @@ export class SplitButtonPanel extends React.Component<SplitButtonPanelProps> {
     return `split_button_option_${index}`;
   }
 
-  private onSelectOption = (_e: React.SyntheticEvent<HTMLLIElement>, index: number): void => {
+  private onSelectOption = (
+    _e: React.SyntheticEvent<HTMLLIElement>,
+    index: number
+  ): void => {
     if (this.props.onClick) {
       this.props.onClick(index);
     }
-  }
+  };
 
   private onScroll = (_e: WheelEvent): void => {
     const { expanded, hidePanel } = this.props;
     if (expanded && hidePanel) {
       hidePanel();
     }
-  }
+  };
 
   private onOutsideClick = (e: MouseEvent): void => {
     const { target = null } = e as any;
@@ -128,5 +144,5 @@ export class SplitButtonPanel extends React.Component<SplitButtonPanelProps> {
     if (expanded && hidePanel && !panelRef.contains(target)) {
       hidePanel();
     }
-  }
+  };
 }

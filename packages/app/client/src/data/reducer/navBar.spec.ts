@@ -32,11 +32,12 @@
 //
 
 import { NavBarAction, select } from '../action/navBarActions';
+
 import { navBar, NavBarState } from './navBar';
 
 describe('NavBar reducer unit tests', () => {
   const DEFAULT_STATE: NavBarState = {
-    selection: null
+    selection: null,
   };
 
   it('should return unaltered state for non-matching action type', () => {

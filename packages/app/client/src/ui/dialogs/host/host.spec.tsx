@@ -35,6 +35,7 @@ import * as React from 'react';
 import { mount } from 'enzyme';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
+
 import { DialogHostContainer } from './hostContainer';
 import { DialogHost } from './host';
 
@@ -44,11 +45,11 @@ let mockSetHost;
 let mockHideDialog;
 jest.mock('../service', () => ({
   get DialogService() {
-      return {
-        setHost: mockSetHost,
-        hideDialog: mockHideDialog
+    return {
+      setHost: mockSetHost,
+      hideDialog: mockHideDialog,
     };
-  }
+  },
 }));
 
 describe('<DialogHost>', () => {
@@ -62,8 +63,8 @@ describe('<DialogHost>', () => {
     mockHideDialog = jest.fn(() => null);
     mockState = { dialog: { showing: true } };
     wrapper = mount(
-      <Provider store={ createStore((_action, state) => mockState, {}) }>
-        <DialogHostContainer/>
+      <Provider store={createStore((_action, state) => mockState, {})}>
+        <DialogHostContainer />
       </Provider>
     );
     node = wrapper.find(DialogHost);
@@ -79,14 +80,20 @@ describe('<DialogHost>', () => {
     const mockRemoveEventLister = jest.fn(() => null);
     instance._hostRef = {
       addEventListener: mockAddEventListener,
-      removeEventListener: mockRemoveEventLister
+      removeEventListener: mockRemoveEventLister,
     };
 
     instance.componentDidMount();
-    expect(mockAddEventListener).toHaveBeenCalledWith('dialogRendered', instance.initFocusTrap);
+    expect(mockAddEventListener).toHaveBeenCalledWith(
+      'dialogRendered',
+      instance.initFocusTrap
+    );
 
     instance.componentWillUnmount();
-    expect(mockRemoveEventLister).toHaveBeenCalledWith('dialogRendered', instance.initFocusTrap);
+    expect(mockRemoveEventLister).toHaveBeenCalledWith(
+      'dialogRendered',
+      instance.initFocusTrap
+    );
   });
 
   it('should handle an overlay click', () => {
@@ -113,7 +120,7 @@ describe('<DialogHost>', () => {
     expect(mockSetHost).toHaveBeenCalledWith(mockElem);
     expect(instance._hostRef).toBe(mockElem);
   });
-  
+
   it('should get all focusable elements in the modal', () => {
     // create mock inner dialog
     //   <div>
@@ -141,7 +148,7 @@ describe('<DialogHost>', () => {
       return [
         { elem: 'elem1', focus: mockFocus }, // should be focused
         { elem: 'elem2' },
-        { elem: 'elem3' }
+        { elem: 'elem3' },
       ];
     });
     instance.getFocusableElementsInModal = mockGetFocusableElementsInModal;
@@ -158,12 +165,16 @@ describe('<DialogHost>', () => {
     const mockGetFocusableElementsInModal = jest.fn(() => {
       return [
         { elem: 'elem1' },
-        { elem: 'elem2', hasAttribute: () => false, focus: mockFocusEnabledElement }, // should be focused
+        {
+          elem: 'elem2',
+          hasAttribute: () => false,
+          focus: mockFocusEnabledElement,
+        }, // should be focused
         {
           elem: 'disabledElem',
           hasAttribute: () => true, // should be skipped because disabled
-          focus: mockFocusDisabledElement
-        }
+          focus: mockFocusDisabledElement,
+        },
       ];
     });
     instance.getFocusableElementsInModal = mockGetFocusableElementsInModal;
@@ -183,9 +194,13 @@ describe('<DialogHost>', () => {
         {
           elem: 'disabledElem',
           hasAttribute: () => true, // should be skipped because disabled
-          focus: mockFocusDisabledElement
+          focus: mockFocusDisabledElement,
         },
-        { elem: 'elem1', hasAttribute: () => false, focus: mockFocusEnabledElement }, // should be focused
+        {
+          elem: 'elem1',
+          hasAttribute: () => false,
+          focus: mockFocusEnabledElement,
+        }, // should be focused
         { elem: 'elem2' },
       ];
     });

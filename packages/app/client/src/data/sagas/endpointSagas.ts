@@ -32,9 +32,13 @@
 //
 
 import { SharedConstants } from '@bfemulator/app-shared';
-import { IBotService, IEndpointService, ServiceTypes } from 'botframework-config/lib/schema';
+import {
+  IBotService,
+  IEndpointService,
+  ServiceTypes,
+} from 'botframework-config/lib/schema';
 import { ComponentClass } from 'react';
-import { call, ForkEffect, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
+
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { DialogService } from '../../ui/dialogs/service';
 import { openServiceDeepLink } from '../action/connectedServiceActions';
@@ -44,20 +48,36 @@ import {
   EndpointServicePayload,
   LAUNCH_ENDPOINT_EDITOR,
   OPEN_ENDPOINT_CONTEXT_MENU,
-  OPEN_ENDPOINT_IN_EMULATOR
+  OPEN_ENDPOINT_IN_EMULATOR,
 } from '../action/endpointServiceActions';
 import { RootState } from '../store';
 
+import {
+  call,
+  ForkEffect,
+  put,
+  select,
+  takeEvery,
+  takeLatest,
+} from 'redux-saga/effects';
+
 const getConnectedAbs = (state: RootState, endpointAppId: string) => {
   return (state.bot.activeBot.services || []).find(service => {
-    return service.type === ServiceTypes.Bot && (service as IBotService).appId === endpointAppId;
+    return (
+      service.type === ServiceTypes.Bot &&
+      (service as IBotService).appId === endpointAppId
+    );
   });
 };
 
-function* launchEndpointEditor(action: EndpointServiceAction<EndpointEditorPayload>): IterableIterator<any> {
+function* launchEndpointEditor(
+  action: EndpointServiceAction<EndpointEditorPayload>
+): IterableIterator<any> {
   const { endpointEditorComponent, endpointService = {} } = action.payload;
-  const servicesToUpdate = yield DialogService.showDialog<ComponentClass<any>, IEndpointService[]>
-  (endpointEditorComponent, { endpointService });
+  const servicesToUpdate = yield DialogService.showDialog<
+    ComponentClass<any>,
+    IEndpointService[]
+  >(endpointEditorComponent, { endpointService });
 
   if (servicesToUpdate) {
     const { AddOrUpdateService, RemoveService } = SharedConstants.Commands.Bot;
@@ -68,25 +88,43 @@ function* launchEndpointEditor(action: EndpointServiceAction<EndpointEditorPaylo
       if (service.type === ServiceTypes.Bot) {
         // Since we could end up with an invalid ABS
         // naively validate and remove it if all fields are missing
-        const { serviceName, resourceGroup, subscriptionId, tenantId } = service as IBotService;
-        shouldBeRemoved = !serviceName && !resourceGroup && !subscriptionId && !tenantId;
+        const {
+          serviceName,
+          resourceGroup,
+          subscriptionId,
+          tenantId,
+        } = service as IBotService;
+        shouldBeRemoved =
+          !serviceName && !resourceGroup && !subscriptionId && !tenantId;
       }
-      yield CommandServiceImpl.remoteCall(shouldBeRemoved ? RemoveService : AddOrUpdateService, service.type, service);
+      yield CommandServiceImpl.remoteCall(
+        shouldBeRemoved ? RemoveService : AddOrUpdateService,
+        service.type,
+        service
+      );
     }
   }
 }
 
-function* openEndpointContextMenu(action: EndpointServiceAction<EndpointServicePayload | EndpointEditorPayload>)
-  : IterableIterator<any> {
-  const connectedAbs = yield select<RootState, string>(getConnectedAbs, action.payload.endpointService.appId);
+function* openEndpointContextMenu(
+  action: EndpointServiceAction<EndpointServicePayload | EndpointEditorPayload>
+): IterableIterator<any> {
+  const connectedAbs = yield select<RootState, string>(
+    getConnectedAbs,
+    action.payload.endpointService.appId
+  );
   const menuItems = [
     { label: 'Open in Emulator', id: 'open' },
     { label: 'Open in portal', id: 'absLink', enabled: !!connectedAbs },
     { label: 'Edit configuration', id: 'edit' },
-    { label: 'Remove', id: 'forget' }
+    { label: 'Remove', id: 'forget' },
   ];
   const { DisplayContextMenu } = SharedConstants.Commands.Electron;
-  const response = yield call(CommandServiceImpl.remoteCall.bind(CommandServiceImpl), DisplayContextMenu, menuItems);
+  const response = yield call(
+    CommandServiceImpl.remoteCall.bind(CommandServiceImpl),
+    DisplayContextMenu,
+    menuItems
+  );
   switch (response.id) {
     case 'edit':
       yield* launchEndpointEditor(action);
@@ -104,27 +142,47 @@ function* openEndpointContextMenu(action: EndpointServiceAction<EndpointServiceP
       yield* removeEndpointServiceFromActiveBot(action.payload.endpointService);
       break;
 
-    default: // canceled context menu
+    default:
+      // canceled context menu
       return;
   }
 }
 
-function* openEndpointInEmulator(action: EndpointServiceAction<EndpointServicePayload>): IterableIterator<any> {
-  const { endpointService, focusExistingChatIfAvailable: focusExisting = false } = action.payload;
-  return CommandServiceImpl.call(SharedConstants.Commands.Emulator.NewLiveChat, endpointService, focusExisting);
+// eslint-disable-next-line require-yield
+function* openEndpointInEmulator(
+  action: EndpointServiceAction<EndpointServicePayload>
+): IterableIterator<any> {
+  const {
+    endpointService,
+    focusExistingChatIfAvailable: focusExisting = false,
+  } = action.payload;
+  return CommandServiceImpl.call(
+    SharedConstants.Commands.Emulator.NewLiveChat,
+    endpointService,
+    focusExisting
+  );
 }
 
-function* removeEndpointServiceFromActiveBot(endpointService: IEndpointService): IterableIterator<any> {
-  const result = yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.ShowMessageBox, true, {
-    type: 'question',
-    buttons: ['Cancel', 'OK'],
-    defaultId: 1,
-    message: `Remove endpoint ${endpointService.name}. Are you sure?`,
-    cancelId: 0,
-  });
+function* removeEndpointServiceFromActiveBot(
+  endpointService: IEndpointService
+): IterableIterator<any> {
+  const result = yield CommandServiceImpl.remoteCall(
+    SharedConstants.Commands.Electron.ShowMessageBox,
+    true,
+    {
+      type: 'question',
+      buttons: ['Cancel', 'OK'],
+      defaultId: 1,
+      message: `Remove endpoint ${endpointService.name}. Are you sure?`,
+      cancelId: 0,
+    }
+  );
   if (result) {
-    yield CommandServiceImpl
-      .remoteCall(SharedConstants.Commands.Bot.RemoveService, endpointService.type, endpointService.id);
+    yield CommandServiceImpl.remoteCall(
+      SharedConstants.Commands.Bot.RemoveService,
+      endpointService.type,
+      endpointService.id
+    );
   }
 }
 

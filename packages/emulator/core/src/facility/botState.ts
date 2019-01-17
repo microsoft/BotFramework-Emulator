@@ -35,13 +35,14 @@ import * as HttpStatus from 'http-status-codes';
 
 import approximateObjectSize from '../utils/approximateObjectSize';
 import BotEmulator from '../botEmulator';
-import botDataKey from './botDataKey';
-import Conversation from './conversation';
 import createAPIException from '../utils/createResponse/apiException';
 import { ErrorCodes } from '../types/errorCodes';
 import BotData from '../types/botData';
 import { externalLinkItem, textItem } from '../types/log/util';
 import LogLevel from '../types/log/level';
+
+import Conversation from './conversation';
+import botDataKey from './botDataKey';
 
 export default class BotState {
   private botDataStore: { [key: string]: BotData } = {};
@@ -49,42 +50,64 @@ export default class BotState {
   constructor(
     public botEmulator: BotEmulator,
     public stateSizeLimitKB: number
-  ) {
-  }
+  ) {}
 
-  public getBotData(channelId: string, conversationId: string, userId: string): BotData {
+  public getBotData(
+    channelId: string,
+    conversationId: string,
+    userId: string
+  ): BotData {
     this.logBotStateApiDeprecationWarning(conversationId);
 
     const key = botDataKey(channelId, conversationId, userId);
 
-    return this.botDataStore[key] || {
-      data: null,
-      eTag: '*'
-    };
+    return (
+      this.botDataStore[key] || {
+        data: null,
+        eTag: '*',
+      }
+    );
   }
 
-  public setBotData(channelId: string, conversationId: string, userId: string, incomingData: BotData): BotData {
+  public setBotData(
+    channelId: string,
+    conversationId: string,
+    userId: string,
+    incomingData: BotData
+  ): BotData {
     this.logBotStateApiDeprecationWarning(conversationId);
 
     const key = botDataKey(channelId, conversationId, userId);
     const oldData = this.botDataStore[key];
 
-    if (oldData &&
+    if (
+      oldData &&
       oldData.eTag &&
-      (oldData.eTag.length > 0) &&
-      (incomingData.eTag !== '*') &&
-      (oldData.eTag !== incomingData.eTag)) {
-      throw createAPIException(HttpStatus.PRECONDITION_FAILED, ErrorCodes.BadArgument, 'The data is changed');
+      oldData.eTag.length > 0 &&
+      incomingData.eTag !== '*' &&
+      oldData.eTag !== incomingData.eTag
+    ) {
+      throw createAPIException(
+        HttpStatus.PRECONDITION_FAILED,
+        ErrorCodes.BadArgument,
+        'The data is changed'
+      );
     }
 
-    if ((this.stateSizeLimitKB > 0) && (approximateObjectSize(incomingData) > this.stateSizeLimitKB * 1024)) {
-      throw createAPIException(HttpStatus.BAD_REQUEST, ErrorCodes.MessageSizeTooBig,
-        'State size exceeded configured limit.');
+    if (
+      this.stateSizeLimitKB > 0 &&
+      approximateObjectSize(incomingData) > this.stateSizeLimitKB * 1024
+    ) {
+      throw createAPIException(
+        HttpStatus.BAD_REQUEST,
+        ErrorCodes.MessageSizeTooBig,
+        'State size exceeded configured limit.'
+      );
     }
 
     const newData: BotData = {
       eTag: Date.now().toString(),
-      data: incomingData.data
+      data: incomingData.data,
     };
 
     if (!incomingData.data) {
@@ -103,24 +126,31 @@ export default class BotState {
     for (let i = 0; i < keys.length; i++) {
       const key = keys[i];
 
-      if (key.endsWith(`!${ userId }`)) {
+      if (key.endsWith(`!${userId}`)) {
         delete this.botDataStore[key];
       }
     }
   }
 
   private logBotStateApiDeprecationWarning(conversationId: string) {
-    const conversation: Conversation = this.botEmulator.facilities.conversations.conversationById(conversationId);
+    const conversation: Conversation = this.botEmulator.facilities.conversations.conversationById(
+      conversationId
+    );
 
     if (conversation && !conversation.stateApiDeprecationWarningShown) {
       conversation.stateApiDeprecationWarningShown = true;
 
       this.botEmulator.facilities.logger.logMessage(
         conversationId,
-        textItem(LogLevel.Warn, 'Warning: The Bot Framework State API is not recommended for production ' +
-          'environments, and may be deprecated in a future release.'),
-        externalLinkItem('Learn how to implement your own storage adapter.',
-          'https://aka.ms/botframework-state-service')
+        textItem(
+          LogLevel.Warn,
+          'Warning: The Bot Framework State API is not recommended for production ' +
+            'environments, and may be deprecated in a future release.'
+        ),
+        externalLinkItem(
+          'Learn how to implement your own storage adapter.',
+          'https://aka.ms/botframework-state-service'
+        )
       );
     }
   }

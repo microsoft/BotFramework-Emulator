@@ -38,8 +38,10 @@ import { mount } from 'enzyme';
 import * as React from 'react';
 import { Provider } from 'react-redux';
 import { combineReducers, createStore } from 'redux';
+
 import { azureAuth } from '../../../../../data/reducer/azureAuthReducer';
 import { DialogService } from '../../../../dialogs/service';
+
 import { ConnectedServiceEditor } from './connectedServiceEditor';
 import { ConnectedServiceEditorContainer } from './connectedServiceEditorContainer';
 
@@ -47,7 +49,7 @@ jest.mock('../../../../dialogs/service', () => ({
   DialogService: {
     showDialog: () => Promise.resolve(true),
     hideDialog: () => Promise.resolve(false),
-  }
+  },
 }));
 
 jest.mock('../../../../dialogs/', () => ({
@@ -55,7 +57,7 @@ jest.mock('../../../../dialogs/', () => ({
   AzureLoginSuccessDialogContainer: () => undefined,
   BotCreationDialog: () => undefined,
   DialogService: { showDialog: () => Promise.resolve(true) },
-  SecretPromptDialog: () => undefined
+  SecretPromptDialog: () => undefined,
 }));
 
 jest.mock('./connectedServiceEditor.scss', () => ({}));
@@ -75,9 +77,14 @@ describe('The ConnectedServiceEditor component ', () => {
             "authoringKey": "poo",
             "subscriptionKey": "emoji"
         }`);
-    parent = mount(<Provider store={ createStore(combineReducers({ azureAuth })) }>
-      <ConnectedServiceEditorContainer connectedService={ mockService } serviceType={ mockService.type }/>
-    </Provider>);
+    parent = mount(
+      <Provider store={createStore(combineReducers({ azureAuth }))}>
+        <ConnectedServiceEditorContainer
+          connectedService={mockService}
+          serviceType={mockService.type}
+        />
+      </Provider>
+    );
     node = parent.find(ConnectedServiceEditor);
   });
 
@@ -88,7 +95,9 @@ describe('The ConnectedServiceEditor component ', () => {
 
   it('should contain a cancel and updateConnectedService functions in the props', () => {
     expect(typeof (node.props() as any).cancel).toBe('function');
-    expect(typeof (node.props() as any).updateConnectedService).toBe('function');
+    expect(typeof (node.props() as any).updateConnectedService).toBe(
+      'function'
+    );
   });
 
   it('should exit with a 0 value when canceled', () => {
@@ -100,7 +109,9 @@ describe('The ConnectedServiceEditor component ', () => {
 
   it('should make a copy of the connected service passed in the props', () => {
     const instance = node.instance();
-    expect(instance.state.connectedServiceCopy instanceof LuisService).toBeTruthy();
+    expect(
+      instance.state.connectedServiceCopy instanceof LuisService
+    ).toBeTruthy();
     expect(instance.state.connectedServiceCopy === mockService).toBeFalsy();
   });
 
@@ -115,7 +126,9 @@ describe('The ConnectedServiceEditor component ', () => {
   it('should exit with the newly edited model when clicking submit', () => {
     const spy = jest.spyOn(DialogService, 'hideDialog');
     const instance = node.instance();
-    const mockEvent = { target: { value: 'renamed model', dataset: { prop: 'name' } } };
+    const mockEvent = {
+      target: { value: 'renamed model', dataset: { prop: 'name' } },
+    };
     instance.onInputChange(mockEvent as any);
     instance.onSubmitClick();
     const mockMock = { ...mockService };
@@ -125,7 +138,9 @@ describe('The ConnectedServiceEditor component ', () => {
 
   it('should enable the submit button when all required fields have non-null values', () => {
     const instance = node.instance();
-    const mockEvent = { target: { value: 'renamed model', dataset: { prop: 'name' } } };
+    const mockEvent = {
+      target: { value: 'renamed model', dataset: { prop: 'name' } },
+    };
     instance.onInputChange(mockEvent as any);
     mockEvent.target.dataset.prop = 'subscriptionKey';
     mockEvent.target.value = '';
@@ -138,7 +153,7 @@ describe('The ConnectedServiceEditor component ', () => {
   it('should update the connectedServiceCopy.configuration when the "onKvPairChange()" handler is called', () => {
     const instance = node.instance();
     const mockData = {
-      someKey: 'Some Value'
+      someKey: 'Some Value',
     };
 
     instance.onKvPairChange(mockData);
@@ -150,7 +165,7 @@ describe('The ConnectedServiceEditor component ', () => {
 describe('The ConnectedServiceEditor component should render the correct content when the service type is', () => {
   let parent;
   let node;
-  let mockService = JSON.parse(`{
+  const mockService = JSON.parse(`{
             "id": "b5af3f67-7ec8-444a-ae91-c4f02883c8f4",
             "name": "It's mathmatical!",
             "version": "0.1",
@@ -165,41 +180,74 @@ describe('The ConnectedServiceEditor component should render the correct content
     ServiceTypes.AppInsights,
     ServiceTypes.BlobStorage,
     ServiceTypes.CosmosDB,
-    ServiceTypes.Generic
+    ServiceTypes.Generic,
   ];
 
   beforeEach(() => {
     mockService.type = services.shift();
-    parent = mount(<Provider store={ createStore(combineReducers({ azureAuth })) }>
-      <ConnectedServiceEditorContainer connectedService={ mockService } serviceType={ mockService.type }/>
-    </Provider>);
+    parent = mount(
+      <Provider store={createStore(combineReducers({ azureAuth }))}>
+        <ConnectedServiceEditorContainer
+          connectedService={mockService}
+          serviceType={mockService.type}
+        />
+      </Provider>
+    );
     node = parent.find(ConnectedServiceEditor);
   });
 
   it('ServiceTypes.Luis', () => {
     const instance = node.instance();
-    expect(instance.learnMoreLink).toBe('http://aka.ms/bot-framework-emulator-LUIS-docs-home');
-    expect(instance.editableFields).toEqual(['name', 'appId', 'authoringKey', 'version', 'region', 'subscriptionKey']);
+    expect(instance.learnMoreLink).toBe(
+      'http://aka.ms/bot-framework-emulator-LUIS-docs-home'
+    );
+    expect(instance.editableFields).toEqual([
+      'name',
+      'appId',
+      'authoringKey',
+      'version',
+      'region',
+      'subscriptionKey',
+    ]);
     expect(instance.headerContent).toEqual(instance.luisAndDispatchHeader);
   });
 
   it('ServiceTypes.Dispatch', () => {
     const instance = node.instance();
-    expect(instance.learnMoreLink).toBe('https://aka.ms/bot-framework-emulator-create-dispatch');
-    expect(instance.editableFields).toEqual(['name', 'appId', 'authoringKey', 'version', 'region', 'subscriptionKey']);
+    expect(instance.learnMoreLink).toBe(
+      'https://aka.ms/bot-framework-emulator-create-dispatch'
+    );
+    expect(instance.editableFields).toEqual([
+      'name',
+      'appId',
+      'authoringKey',
+      'version',
+      'region',
+      'subscriptionKey',
+    ]);
     expect(instance.headerContent).toEqual(instance.luisAndDispatchHeader);
   });
 
   it('ServiceTypes.QnA', () => {
     const instance = node.instance();
-    expect(instance.learnMoreLink).toBe('http://aka.ms/bot-framework-emulator-qna-keys');
-    expect(instance.editableFields).toEqual(['name', 'kbId', 'hostname', 'subscriptionKey', 'endpointKey']);
+    expect(instance.learnMoreLink).toBe(
+      'http://aka.ms/bot-framework-emulator-qna-keys'
+    );
+    expect(instance.editableFields).toEqual([
+      'name',
+      'kbId',
+      'hostname',
+      'subscriptionKey',
+      'endpointKey',
+    ]);
     expect(instance.headerContent).toEqual(instance.qnaHeader);
   });
 
   it('ServiceTypes.AppInsights', () => {
     const instance = node.instance();
-    expect(instance.learnMoreLink).toBe('https://aka.ms/bot-framework-emulator-appinsights-keys');
+    expect(instance.learnMoreLink).toBe(
+      'https://aka.ms/bot-framework-emulator-appinsights-keys'
+    );
     expect(instance.editableFields).toEqual([
       'name',
       'tenantId',
@@ -207,14 +255,18 @@ describe('The ConnectedServiceEditor component should render the correct content
       'resourceGroup',
       'serviceName',
       'instrumentationKey',
-      'applicationId'
+      'applicationId',
     ]);
-    expect(instance.headerContent).toEqual(instance.appInsightsAndBlobStorageHeader);
+    expect(instance.headerContent).toEqual(
+      instance.appInsightsAndBlobStorageHeader
+    );
   });
 
   it('ServiceTypes.Blob', () => {
     const instance = node.instance();
-    expect(instance.learnMoreLink).toBe('https://aka.ms/bot-framework-emulator-storage-keys');
+    expect(instance.learnMoreLink).toBe(
+      'https://aka.ms/bot-framework-emulator-storage-keys'
+    );
     expect(instance.editableFields).toEqual([
       'name',
       'tenantId',
@@ -222,14 +274,18 @@ describe('The ConnectedServiceEditor component should render the correct content
       'resourceGroup',
       'serviceName',
       'connectionString',
-      'container'
+      'container',
     ]);
-    expect(instance.headerContent).toEqual(instance.appInsightsAndBlobStorageHeader);
+    expect(instance.headerContent).toEqual(
+      instance.appInsightsAndBlobStorageHeader
+    );
   });
 
   it('ServiceTypes.CosmosDB', () => {
     const instance = node.instance();
-    expect(instance.learnMoreLink).toBe('https://aka.ms/bot-framework-emulator-cosmosdb-keys');
+    expect(instance.learnMoreLink).toBe(
+      'https://aka.ms/bot-framework-emulator-cosmosdb-keys'
+    );
     expect(instance.editableFields).toEqual([
       'name',
       'tenantId',
@@ -238,17 +294,14 @@ describe('The ConnectedServiceEditor component should render the correct content
       'serviceName',
       'endpoint',
       'database',
-      'collection'
+      'collection',
     ]);
     expect(instance.headerContent).toEqual(instance.cosmosDbHeader);
   });
 
   it('ServiceTypes.Generic', () => {
     const instance = node.instance();
-    expect(instance.editableFields).toEqual([
-      'name',
-      'url'
-    ]);
+    expect(instance.editableFields).toEqual(['name', 'url']);
 
     expect(instance.headerContent).toEqual(instance.genericHeader);
   });

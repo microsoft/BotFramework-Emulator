@@ -34,8 +34,8 @@
 import { ETagObject } from '@bfemulator/sdk-shared';
 
 export interface Conversation extends ETagObject {
-    conversationId?: string;
-    token?: string;
-    expires_in?: number;
-    streamUrl?: string;
+  conversationId?: string;
+  token?: string;
+  expires_in?: number;
+  streamUrl?: string;
 }

@@ -35,5 +35,7 @@ import * as url from 'url';
 
 export const isLocalhostUrl = (urlStr: string): boolean => {
   const parsedUrl = url.parse(urlStr);
-  return ( parsedUrl.hostname === 'localhost' || parsedUrl.hostname === '127.0.0.1' );
+  return (
+    parsedUrl.hostname === 'localhost' || parsedUrl.hostname === '127.0.0.1'
+  );
 };

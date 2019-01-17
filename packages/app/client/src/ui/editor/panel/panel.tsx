@@ -31,36 +31,41 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from 'react';
-import * as styles from './panel.scss';
 import { filterChildren, hmrSafeNameComparison } from '@bfemulator/ui-react';
+import * as React from 'react';
+
+import * as styles from './panel.scss';
 
 interface PanelProps {
   children?: any;
   title?: string;
 }
 
+export const PanelControls = props => props.children;
+export const PanelContent = props => props.children;
+
 export default class Panel extends React.Component<PanelProps, {}> {
-  constructor(props: PanelProps, context: {}) {
+  public constructor(props: PanelProps, context: {}) {
     super(props, context);
   }
 
-  render() {
+  public render() {
     return (
-      <div className={ styles.panel }>
-        <div className={ styles.panelHeader }>
-          { this.props.title }
-          <div className={ styles.accessories }>
-            { filterChildren(this.props.children, child => hmrSafeNameComparison(child.type, PanelControls)) }
+      <div className={styles.panel}>
+        <div className={styles.panelHeader}>
+          {this.props.title}
+          <div className={styles.accessories}>
+            {filterChildren(this.props.children, child =>
+              hmrSafeNameComparison(child.type, PanelControls)
+            )}
           </div>
         </div>
-        <div className={ styles.panelBody }>
-          { filterChildren(this.props.children, child => hmrSafeNameComparison(child.type, PanelContent)) }
+        <div className={styles.panelBody}>
+          {filterChildren(this.props.children, child =>
+            hmrSafeNameComparison(child.type, PanelContent)
+          )}
         </div>
       </div>
     );
   }
 }
-
-export const PanelControls = props => props.children;
-export const PanelContent = props => props.children;

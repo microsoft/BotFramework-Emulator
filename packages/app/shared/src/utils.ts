@@ -36,14 +36,24 @@
 // 2. To skip bundling, we can hack with window['require']
 import { BotConfigWithPath, uniqueId } from '@bfemulator/sdk-shared';
 import { IEndpointService, ServiceTypes } from 'botframework-config/lib/schema';
-import { NotificationType, Notification, NotificationImpl } from './types';
+
+import { Notification, NotificationImpl, NotificationType } from './types';
 
 export function isObject(item: any): boolean {
-  return !!(item && typeof item === 'object' && !Array.isArray(item) && item !== null);
+  return !!(
+    item &&
+    typeof item === 'object' &&
+    !Array.isArray(item) &&
+    item !== null
+  );
 }
 
-export function mergeDeep<T, R>(target: T, source: R): T & R {
-  let output = Object.assign({} as T & R, target);
+export function mergeDeep<T extends {}, R extends {}>(
+  target: T,
+  source: R
+): T & R {
+  // @ts-ignore https://github.com/Microsoft/TypeScript/issues/26412
+  const output: T & R = { ...{}, ...target };
   // if (isObject(target) && isObject(source)) {
   {
     Object.keys(source).forEach(key => {
@@ -65,11 +75,6 @@ export function deepCopySlow(obj: any): any {
   return JSON.parse(JSON.stringify(obj));
 }
 
-/** Tries to scan the bot record for a display string */
-export const getBotDisplayName = (bot: BotConfigWithPath = newBot()): string => {
-  return bot.name || bot.path || (getFirstBotEndpoint(bot) ? getFirstBotEndpoint(bot).endpoint : null) || '¯\\_(ツ)_/¯';
-};
-
 /** Creates a new bot */
 export const newBot = (...bots: BotConfigWithPath[]): BotConfigWithPath => {
   return Object.assign(
@@ -77,14 +82,40 @@ export const newBot = (...bots: BotConfigWithPath[]): BotConfigWithPath => {
     {
       name: '',
       description: '',
-      services: []
+      services: [],
     },
     ...bots
   );
 };
 
+/** Returns the first endpoint service of a bot */
+export const getFirstBotEndpoint = (
+  bot: BotConfigWithPath
+): IEndpointService => {
+  if (bot.services && bot.services.length) {
+    return bot.services.find(
+      service => service.type === ServiceTypes.Endpoint
+    ) as IEndpointService;
+  }
+  return null;
+};
+
+/** Tries to scan the bot record for a display string */
+export const getBotDisplayName = (
+  bot: BotConfigWithPath = newBot()
+): string => {
+  return (
+    bot.name ||
+    bot.path ||
+    (getFirstBotEndpoint(bot) ? getFirstBotEndpoint(bot).endpoint : null) ||
+    '¯\\_(ツ)_/¯'
+  );
+};
+
 /** Creates a new endpoint */
-export const newEndpoint = (...endpoints: IEndpointService[]): IEndpointService => {
+export const newEndpoint = (
+  ...endpoints: IEndpointService[]
+): IEndpointService => {
   return Object.assign(
     {},
     {
@@ -93,22 +124,17 @@ export const newEndpoint = (...endpoints: IEndpointService[]): IEndpointService 
       id: uniqueId(),
       appId: '',
       appPassword: '',
-      endpoint: 'http://localhost:3978/api/messages'
+      endpoint: 'http://localhost:3978/api/messages',
     },
     ...endpoints
   );
 };
 
-/** Returns the first endpoint service of a bot */
-export const getFirstBotEndpoint = (bot: BotConfigWithPath): IEndpointService => {
-  if (bot.services && bot.services.length) {
-    return <IEndpointService> bot.services.find(service => service.type === ServiceTypes.Endpoint);
-  }
-  return null;
-};
-
 /** Creates and returns a new notification */
-export const newNotification = (message: string, type: NotificationType = NotificationType.Info): Notification => {
+export const newNotification = (
+  message: string,
+  type: NotificationType = NotificationType.Info
+): Notification => {
   const notification = new NotificationImpl();
   notification.message = message;
   notification.type = type;

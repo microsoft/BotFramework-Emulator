@@ -31,17 +31,25 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { UpdateAvailableDialog, UpdateAvailableDialogProps } from './updateAvailableDialog';
 import { connect } from 'react-redux';
+
 import { DialogService } from '../service';
+
+import {
+  UpdateAvailableDialog,
+  UpdateAvailableDialogProps,
+} from './updateAvailableDialog';
 
 function mapDispatchToProps(_dispatch: any): UpdateAvailableDialogProps {
   return {
     onCloseClick: () => DialogService.hideDialog(null),
     onDownloadClick: (installAfterDownload: boolean) => {
       DialogService.hideDialog({ installAfterDownload });
-    }
+    },
   };
 }
 
-export const UpdateAvailableDialogContainer = connect(null, mapDispatchToProps)(UpdateAvailableDialog);
+export const UpdateAvailableDialogContainer = connect(
+  null,
+  mapDispatchToProps
+)(UpdateAvailableDialog);

@@ -31,20 +31,26 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { CommandServiceImpl } from '../platform/commands/commandServiceImpl';
 import { SharedConstants } from '@bfemulator/app-shared';
+
+import { CommandServiceImpl } from '../platform/commands/commandServiceImpl';
 
 export const globalHandlers: EventListener = (event: KeyboardEvent): void => {
   // Meta corresponds to 'Command' on Mac
   const ctrlOrCmdPressed = event.ctrlKey || event.metaKey;
   const key = event.key.toLowerCase();
-  const { Commands: { Bot: { OpenBrowse }, UI: { ShowBotCreationDialog }} } = SharedConstants;
+  const {
+    Commands: {
+      Bot: { OpenBrowse },
+      UI: { ShowBotCreationDialog },
+    },
+  } = SharedConstants;
 
-  if (ctrlOrCmdPressed && key ===  'o') {
+  if (ctrlOrCmdPressed && key === 'o') {
     CommandServiceImpl.call(OpenBrowse).catch();
   }
 
-  if (ctrlOrCmdPressed && key ===  'n') {
+  if (ctrlOrCmdPressed && key === 'n') {
     CommandServiceImpl.call(ShowBotCreationDialog).catch();
   }
 };

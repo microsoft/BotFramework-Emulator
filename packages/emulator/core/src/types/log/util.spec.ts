@@ -42,7 +42,7 @@ import {
   networkResponseItem,
   logEntry,
   ngrokExpirationItem,
-  makeEnumerableObject
+  makeEnumerableObject,
 } from './util';
 import { ILogItem } from './item';
 import LogLevel from './level';
@@ -55,7 +55,10 @@ describe('utils tests', () => {
   test('textItem', () => {
     const item = textItem(LogLevel.Error, 'someErrorItem');
     expect(item.type).toBe('text');
-    expect(item.payload).toEqual({ level: LogLevel.Error, text: 'someErrorItem' });
+    expect(item.payload).toEqual({
+      level: LogLevel.Error,
+      text: 'someErrorItem',
+    });
   });
 
   test('externalLinkItem', () => {
@@ -67,7 +70,10 @@ describe('utils tests', () => {
   test('inspectableObjectItem', () => {
     const item = inspectableObjectItem('someText', { a: 1, b: 'someValue' });
     expect(item.type).toBe('inspectable-object');
-    expect(item.payload).toEqual({ text: 'someText', obj: { a: 1, b: 'someValue' } });
+    expect(item.payload).toEqual({
+      text: 'someText',
+      obj: { a: 1, b: 'someValue' },
+    });
   });
 
   test('summaryTextItem', () => {
@@ -102,7 +108,7 @@ describe('utils tests', () => {
       body: 'someBody',
       headers: 'someHeaders',
       method: 'someMethod',
-      url: 'someUrl'
+      url: 'someUrl',
     });
   });
 
@@ -120,7 +126,7 @@ describe('utils tests', () => {
       headers: 'someHeaders',
       statusCode: 'someStatusCode',
       statusMessage: 'someStatusMessage',
-      srcUrl: 'someSrcUrl'
+      srcUrl: 'someSrcUrl',
     });
   });
 

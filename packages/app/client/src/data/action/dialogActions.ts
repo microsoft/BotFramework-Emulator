@@ -32,13 +32,13 @@
 //
 
 export enum DialogActions {
-  setShowing = 'DIALOG/SET_SHOWING'
+  setShowing = 'DIALOG/SET_SHOWING',
 }
 
 export interface SetShowingDialogAction {
   type: DialogActions.setShowing;
   payload: {
-    showing: boolean
+    showing: boolean;
   };
 }
 
@@ -48,7 +48,7 @@ export function setShowing(showing: boolean = false): SetShowingDialogAction {
   return {
     type: DialogActions.setShowing,
     payload: {
-      showing
-    }
+      showing,
+    },
   };
 }

@@ -33,8 +33,11 @@
 
 import ConversationResourceResponse from '../../types/response/conversationResource';
 
-export default function createConversationResponse(id: string, activityId: string): ConversationResourceResponse {
-  let response: ConversationResourceResponse = { id };
+export default function createConversationResponse(
+  id: string,
+  activityId: string | null
+): ConversationResourceResponse {
+  const response: ConversationResourceResponse = { id };
 
   if (activityId !== null) {
     response.activityId = activityId;

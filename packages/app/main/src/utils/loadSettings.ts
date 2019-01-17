@@ -31,19 +31,28 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as fs from 'fs-extra';
-import { ensureStoragePath } from './ensureStoragePath';
 import { mergeDeep, Settings } from '@bfemulator/app-shared';
+import * as fs from 'fs-extra';
 import uuidv4 from 'uuid/v4';
 
+import { ensureStoragePath } from './ensureStoragePath';
+
 /** Load JSON object from file. */
-export const loadSettings = (filename: string, defaultSettings: Partial<Settings>): Settings => {
+export const loadSettings = (
+  filename: string,
+  defaultSettings: Partial<Settings>
+): Settings => {
   try {
     filename = `${ensureStoragePath()}/${filename}`;
     const stat = fs.statSync(filename);
     if (stat.isFile()) {
-      const settingsJson = JSON.parse(fs.readFileSync(filename, 'utf8')) as Settings;
-      const settings = mergeDeep<Settings, Settings>(defaultSettings, settingsJson);
+      const settingsJson = JSON.parse(
+        fs.readFileSync(filename, 'utf8')
+      ) as Settings;
+      const settings = mergeDeep<Settings, Settings>(
+        defaultSettings,
+        settingsJson
+      );
       if (enforceNoDefaultUser(settings)) {
         fs.writeFileSync(filename, JSON.stringify(settings, null, 2));
       }
@@ -51,13 +60,14 @@ export const loadSettings = (filename: string, defaultSettings: Partial<Settings
     }
     return defaultSettings;
   } catch (e) {
+    // eslint-disable-next-line no-console
     console.error(`Failed to read file: ${filename}`, e);
     return defaultSettings;
   }
 };
 
 function enforceNoDefaultUser(settings: Settings): boolean {
-  let { users = {} } = settings; // default initialized here
+  const { users = {} } = settings; // default initialized here
   if (!users.currentUserId || users.currentUserId === 'default-user') {
     users.currentUserId = uuidv4();
     if (!users.usersById) {
@@ -69,7 +79,10 @@ function enforceNoDefaultUser(settings: Settings): boolean {
       users.usersById[users.currentUserId] = defaultUser;
       delete users.usersById['default-user'];
     } else if (!Object.keys(users.usersById).length) {
-      users.usersById[users.currentUserId] = { id: users.currentUserId, name: 'User' };
+      users.usersById[users.currentUserId] = {
+        id: users.currentUserId,
+        name: 'User',
+      };
     }
     settings.users = users;
     return true;

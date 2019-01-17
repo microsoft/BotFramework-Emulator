@@ -31,6 +31,4 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export interface StringProvider {
-  (): string;
-}
+export type StringProvider = () => string;

@@ -36,19 +36,27 @@ import * as Restify from 'restify';
 
 import BotEmulator from '../../botEmulator';
 import sendErrorResponse from '../../utils/sendErrorResponse';
+
 import { ConversationAware } from './fetchConversation';
 
 export default function updateShippingAddress(_botEmulator: BotEmulator) {
-  return async (req: ConversationAware, res: Restify.Response, next: Restify.Next): Promise<any> => {
+  return async (
+    req: ConversationAware,
+    res: Restify.Response,
+    next: Restify.Next
+  ): Promise<any> => {
     const {
       checkoutSession,
       request,
       shippingAddress,
-      shippingOptionId
+      shippingOptionId,
     } = req.body[0];
     const args = [checkoutSession, request, shippingAddress, shippingOptionId];
     try {
-      const response = await req.conversation.sendUpdateShippingAddressOperation.apply(req.conversation, args);
+      const response = await req.conversation.sendUpdateShippingAddressOperation.apply(
+        req.conversation,
+        args
+      );
       const json = await response.json();
       res.send(HttpStatus.OK, json);
     } catch (err) {

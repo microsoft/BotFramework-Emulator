@@ -32,6 +32,7 @@
 //
 
 import * as React from 'react';
+
 import * as styles from './splitButton.scss';
 import { SplitButtonPanel } from './splitButtonPanel/splitButtonPanel';
 
@@ -50,7 +51,10 @@ export interface SplitButtonState {
   selected?: number;
 }
 
-export class SplitButton extends React.Component<SplitButtonProps, SplitButtonState> {
+export class SplitButton extends React.Component<
+  SplitButtonProps,
+  SplitButtonState
+> {
   private caretRef: HTMLButtonElement;
 
   constructor(props: SplitButtonProps) {
@@ -58,60 +62,79 @@ export class SplitButton extends React.Component<SplitButtonProps, SplitButtonSt
 
     this.state = {
       expanded: false,
-      selected: props.selected || 0
+      selected: props.selected || 0,
     };
   }
 
   public render(): JSX.Element {
-    const { buttonClass = '', defaultLabel = '', disabled = false, options = [] } = this.props;
+    const {
+      buttonClass = '',
+      defaultLabel = '',
+      disabled = false,
+      options = [],
+    } = this.props;
     const { expanded, selected } = this.state;
-    const { caretRef, hidePanel, onClickOption, onClickDefault, onClickCaret, onKeyDown, setCaretRef } = this;
+    const {
+      caretRef,
+      hidePanel,
+      onClickOption,
+      onClickDefault,
+      onClickCaret,
+      onKeyDown,
+      setCaretRef,
+    } = this;
     const expandedClass = expanded ? ` ${styles.expanded}` : '';
-    
+
     return (
       <>
-        <div className={ styles.container }>
+        <div className={styles.container}>
           <button
-            className={ `${styles.defaultButton} ${buttonClass}` }
-            disabled={ disabled }
-            onClick={ onClickDefault }>
-            <span>{ defaultLabel }</span>
+            className={`${styles.defaultButton} ${buttonClass}`}
+            disabled={disabled}
+            onClick={onClickDefault}
+          >
+            <span>{defaultLabel}</span>
           </button>
-          <div className={ styles.separator }></div>
-          <button className={ styles.caretButton + expandedClass }
-            ref={ setCaretRef }
-            onClick={ onClickCaret }
-            aria-haspopup={ 'listbox' }
-            disabled={ disabled }></button>
+          <div className={styles.separator} />
+          <button
+            className={styles.caretButton + expandedClass}
+            ref={setCaretRef}
+            onClick={onClickCaret}
+            aria-haspopup={'listbox'}
+            disabled={disabled}
+          />
         </div>
         <SplitButtonPanel
-          expanded={ expanded }
-          caretRef={ caretRef }
-          selected={ selected }
-          hidePanel={ hidePanel }
-          onClick={ onClickOption }
-          onKeyDown={ onKeyDown }
-          options={ options }/>
+          expanded={expanded}
+          caretRef={caretRef}
+          selected={selected}
+          hidePanel={hidePanel}
+          onClick={onClickOption}
+          onKeyDown={onKeyDown}
+          options={options}
+        />
       </>
     );
   }
 
   private setCaretRef = (ref: HTMLButtonElement): void => {
     this.caretRef = ref;
-  }
+  };
 
   private onClickCaret = (e: React.SyntheticEvent<HTMLButtonElement>): void => {
     e.stopPropagation();
     const { expanded } = this.state;
     this.setState({ expanded: !expanded, selected: 0 });
-  }
+  };
 
-  private onClickDefault = (e: React.SyntheticEvent<HTMLButtonElement>): void => {
+  private onClickDefault = (
+    e: React.SyntheticEvent<HTMLButtonElement>
+  ): void => {
     const { onClick, options = [] } = this.props;
     if (onClick && options.length) {
       onClick(options[0]);
     }
-  }
+  };
 
   private onClickOption = (index: number): void => {
     const { onClick, options = [] } = this.props;
@@ -120,12 +143,12 @@ export class SplitButton extends React.Component<SplitButtonProps, SplitButtonSt
       onClick(newValue);
     }
     this.hidePanel();
-  }
+  };
 
   private hidePanel = (): void => {
     this.caretRef.focus();
     this.setState({ expanded: false, selected: 0 });
-  }
+  };
 
   private moveSelectionUp = (): void => {
     const { options = [] } = this.props;
@@ -133,7 +156,7 @@ export class SplitButton extends React.Component<SplitButtonProps, SplitButtonSt
     if (options.length && selected > 0) {
       this.setState({ selected: selected - 1 });
     }
-  }
+  };
 
   private moveSelectionDown = (): void => {
     const { options = [] } = this.props;
@@ -141,7 +164,7 @@ export class SplitButton extends React.Component<SplitButtonProps, SplitButtonSt
     if (options.length && selected < options.length - 1) {
       this.setState({ selected: selected + 1 });
     }
-  }
+  };
 
   private onKeyDown = (e: React.KeyboardEvent<HTMLUListElement>): void => {
     let { key = '' } = e;
@@ -178,5 +201,5 @@ export class SplitButton extends React.Component<SplitButtonProps, SplitButtonSt
       default:
         break;
     }
-  }
+  };
 }

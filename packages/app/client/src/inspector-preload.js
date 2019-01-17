@@ -31,6 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+// eslint-disable-next-line typescript/no-var-requires
 const { ipcRenderer, remote } = require('electron');
 
 ipcRenderer.on('inspect', (sender, obj) => {
@@ -42,7 +43,7 @@ ipcRenderer.on('bot-updated', (sender, bot) => {
   window.host.dispatch('bot-updated', bot);
 });
 
-ipcRenderer.on('toggle-dev-tools', (sender) => {
+ipcRenderer.on('toggle-dev-tools', () => {
   remote.getCurrentWebContents().toggleDevTools();
 });
 
@@ -55,29 +56,35 @@ ipcRenderer.on('theme', (sender, ...args) => {
 });
 
 window.host = {
-  handlers: {
-    'inspect': [],
-    'bot-updated': [],
-    'accessory-click': [],
-    'theme': []
-  },
   bot: {},
+  handlers: {
+    'accessory-click': [],
+    'bot-updated': [],
+    inspect: [],
+    theme: [],
+  },
   logger: {
+    error: function(message) {
+      ipcRenderer.sendToHost('logger.error', message);
+    },
     log: function(message) {
       ipcRenderer.sendToHost('logger.log', message);
     },
-    error: function(message) {
-      ipcRenderer.sendToHost('logger.error', message);
-    }
   },
 
   on: function(event, handler) {
-    if (handler && Array.isArray(this.handlers[event]) && !this.handlers[event].includes(handler)) {
+    if (
+      handler &&
+      Array.isArray(this.handlers[event]) &&
+      !this.handlers[event].includes(handler)
+    ) {
       this.handlers[event].push(handler);
     }
     return () => {
-      this.handlers[event] = this.handlers[event].filter(item => item !== handler);
-    }
+      this.handlers[event] = this.handlers[event].filter(
+        item => item !== handler
+      );
+    };
   },
 
   enableAccessory: function(id, enabled) {

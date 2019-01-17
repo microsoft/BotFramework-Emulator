@@ -32,11 +32,11 @@
 //
 
 export interface ChannelAccount {
-    id?: string;
-    name?: string;
-    role?: string;
+  id?: string;
+  name?: string;
+  role?: string;
 }
 
 export interface ConversationAccount extends ChannelAccount {
-    isGroup?: boolean;
+  isGroup?: boolean;
 }

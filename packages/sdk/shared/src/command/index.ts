@@ -44,12 +44,10 @@ export interface CommandMap {
   [id: string]: Command;
 }
 
-export interface CommandHandler {
-  (...args: any[]): any;
-}
+export type CommandHandler = (...args: any[]) => any;
 
 export interface CommandDescription {
   description: string;
-  args: { name: string; description?: string; }[];
+  args: { name: string; description?: string }[];
   returns?: string;
 }

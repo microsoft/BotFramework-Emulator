@@ -34,7 +34,7 @@
 import CardAction from './cardAction';
 
 interface Keyboard {
-  buttons: CardAction[];         // Set of actions applicable to the current card.
+  buttons: CardAction[]; // Set of actions applicable to the current card.
 }
 
 export default Keyboard;

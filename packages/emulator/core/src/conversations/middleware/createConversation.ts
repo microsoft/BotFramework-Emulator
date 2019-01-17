@@ -33,6 +33,7 @@
 
 import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
+
 import BotEmulator from '../../botEmulator';
 import BotEndpoint from '../../facility/botEndpoint';
 import Conversation from '../../facility/conversation';
@@ -40,16 +41,21 @@ import ConversationParameters from '../../types/activity/conversationParameters'
 import createConversationResponse from '../../utils/createResponse/conversation';
 import sendErrorResponse from '../../utils/sendErrorResponse';
 import uniqueId from '../../utils/uniqueId';
+
 import { validateCreateConversationRequest } from './errorCondition/createConversationValidator';
 
 export default function createConversation(botEmulator: BotEmulator) {
-
-  return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+  return (
+    req: Restify.Request,
+    res: Restify.Response,
+    next: Restify.Next
+  ): any => {
     const botEndpoint: BotEndpoint = (req as any).botEndpoint;
     const conversationParameters = req.body as ConversationParameters;
     const error = validateCreateConversationRequest(
       conversationParameters,
-      botEndpoint);
+      botEndpoint
+    );
 
     if (error) {
       sendErrorResponse(req, res, next, error.toAPIException());
@@ -57,9 +63,20 @@ export default function createConversation(botEmulator: BotEmulator) {
       return;
     }
 
-    const newConversation: Conversation = getConversation(conversationParameters, botEmulator, botEndpoint);
-    const activityId = getActivityId(conversationParameters, botEndpoint, newConversation);
-    const response = createConversationResponse(newConversation.conversationId, activityId);
+    const newConversation: Conversation = getConversation(
+      conversationParameters,
+      botEmulator,
+      botEndpoint
+    );
+    const activityId = getActivityId(
+      conversationParameters,
+      botEndpoint,
+      newConversation
+    );
+    const response = createConversationResponse(
+      newConversation.conversationId,
+      activityId
+    );
 
     res.send(HttpStatus.OK, response);
     res.end();
@@ -67,17 +84,23 @@ export default function createConversation(botEmulator: BotEmulator) {
   };
 }
 
-function getConversation(params: ConversationParameters, emulator: BotEmulator, endpoint: BotEndpoint): Conversation {
+function getConversation(
+  params: ConversationParameters,
+  emulator: BotEmulator,
+  endpoint: BotEndpoint
+): Conversation {
   let conversation: Conversation;
 
   if (params.conversationId) {
-    conversation = emulator.facilities.conversations.conversationById(params.conversationId);
+    conversation = emulator.facilities.conversations.conversationById(
+      params.conversationId
+    );
   }
 
   if (!conversation) {
     const { members = [] } = params;
     const [member] = members;
-    const { id = uniqueId(), name = 'User' } = (member || {});
+    const { id = uniqueId(), name = 'User' } = member || {};
     conversation = emulator.facilities.conversations.newConversation(
       emulator,
       endpoint,
@@ -89,10 +112,13 @@ function getConversation(params: ConversationParameters, emulator: BotEmulator, 
   return conversation;
 }
 
-function getActivityId(params: ConversationParameters, endpoint: BotEndpoint, conversation: Conversation): string {
+function getActivityId(
+  params: ConversationParameters,
+  endpoint: BotEndpoint,
+  conversation: Conversation
+): string | null {
   const { activity, members } = params;
   if (activity) {
-
     // set routing information for new conversation
     activity.conversation = { id: conversation.conversationId };
     activity.from = { id: endpoint.botId };
@@ -102,4 +128,6 @@ function getActivityId(params: ConversationParameters, endpoint: BotEndpoint, co
 
     return response.id;
   }
+
+  return null;
 }

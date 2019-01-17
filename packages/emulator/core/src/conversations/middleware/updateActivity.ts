@@ -43,7 +43,11 @@ import ResourceResponse from '../../types/response/resource';
 import sendErrorResponse from '../../utils/sendErrorResponse';
 
 export default function updateActivity(botEmulator: BotEmulator) {
-  return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+  return (
+    req: Restify.Request,
+    res: Restify.Response,
+    next: Restify.Next
+  ): any => {
     const activity = req.body as GenericActivity;
     const conversationParameters: ConversationAPIPathParameters = req.params;
 
@@ -51,12 +55,17 @@ export default function updateActivity(botEmulator: BotEmulator) {
       activity.replyToId = conversationParameters.activityId;
 
       if (activity.id !== conversationParameters.activityId) {
-        throw createAPIException(HttpStatus.BAD_REQUEST, ErrorCodes.BadArgument,
-          'uri activity id does not match payload activity id');
+        throw createAPIException(
+          HttpStatus.BAD_REQUEST,
+          ErrorCodes.BadArgument,
+          'uri activity id does not match payload activity id'
+        );
       }
 
       // post activity
-      const response: ResourceResponse = (req as any).conversation.updateActivity(activity);
+      const response: ResourceResponse = (req as any).conversation.updateActivity(
+        activity
+      );
 
       res.send(HttpStatus.OK, response);
       res.end();

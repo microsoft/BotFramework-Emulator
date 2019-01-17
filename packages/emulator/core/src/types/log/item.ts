@@ -33,62 +33,71 @@
 
 import LogLevel from './level';
 
-export type ILogItem = {
-  type: 'text',
-  payload: {
-    level: LogLevel,
-    text: string
-  }
-} | {
-  type: 'external-link',
-  payload: {
-    text: string,
-    hyperlink: string
-  }
-} | {
-  type: 'inspectable-object',
-  payload: {
-    text: string,
-    obj: any
-  }
-} | {
-  type: 'network-request',
-  payload: {
-    facility?: string,
-    body?: string,
-    headers?: { [header: string]: number | string | string[] },
-    method?: string,
-    url?: string
-  }
-} | {
-  type: 'network-response',
-  payload: {
-    body?: string,
-    headers?: { [header: string]: number | string | string[] },
-    statusCode?: number,
-    statusMessage?: string,
-    srcUrl?: string
-  }
-} | {
-  type: 'summary-text',
-  payload: {
-    obj: any
-  }
-} | {
-  type: 'open-app-settings',
-  payload: {
-    text: string
-  }
-} | {
-  type: 'exception',
-  payload: {
-    err: any  // Shape of `Error`, but enumerable
-  }
-} | {
-  type: 'ngrok-expiration',
-  payload: {
-    text: string
-  }
-};
+export type ILogItem =
+  | {
+      type: 'text';
+      payload: {
+        level: LogLevel;
+        text: string;
+      };
+    }
+  | {
+      type: 'external-link';
+      payload: {
+        text: string;
+        hyperlink: string;
+      };
+    }
+  | {
+      type: 'inspectable-object';
+      payload: {
+        text: string;
+        obj: any;
+      };
+    }
+  | {
+      type: 'network-request';
+      payload: {
+        facility?: string;
+        body?: string;
+        headers?: { [header: string]: number | string | string[] };
+        method?: string;
+        url?: string;
+      };
+    }
+  | {
+      type: 'network-response';
+      payload: {
+        body?: string;
+        headers?: { [header: string]: number | string | string[] };
+        statusCode?: number;
+        statusMessage?: string;
+        srcUrl?: string;
+      };
+    }
+  | {
+      type: 'summary-text';
+      payload: {
+        obj: any;
+      };
+    }
+  | {
+      type: 'open-app-settings';
+      payload: {
+        text: string;
+      };
+    }
+  | {
+      type: 'exception';
+      payload: {
+        err: any; // Shape of `Error`, but enumerable
+      };
+    }
+  | {
+      type: 'ngrok-expiration';
+      payload: {
+        text: string;
+      };
+    };
 
 export default ILogItem;

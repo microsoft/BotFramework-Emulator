@@ -35,9 +35,11 @@ import * as React from 'react';
 import { mount } from 'enzyme';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
+
+import { toggleDraggingTab } from '../../../../data/action/editorActions';
+
 import { TabContainer } from './tabContainer';
 import { Tab } from './tab';
-import { toggleDraggingTab } from '../../../../data/action/editorActions';
 
 jest.mock('./tab.scss', () => ({}));
 jest.mock('../../../dialogs', () => ({}));
@@ -54,8 +56,11 @@ describe('Tab', () => {
     mockStore = createStore((_state, _action) => ({}));
     mockDispatch = jest.spyOn(mockStore, 'dispatch');
     wrapper = mount(
-      <Provider store={ mockStore }>
-        <TabContainer onCloseClick={ mockOnCloseClick } documentId={ 'someDocId' }/>
+      <Provider store={mockStore}>
+        <TabContainer
+          onCloseClick={mockOnCloseClick}
+          documentId={'someDocId'}
+        />
       </Provider>
     );
     node = wrapper.find(Tab);
@@ -100,8 +105,8 @@ describe('Tab', () => {
     const mockSetData = jest.fn((...args) => null);
     const mockDragEvent = {
       dataTransfer: {
-        setData: mockSetData
-      }
+        setData: mockSetData,
+      },
     };
     instance.setState({ owningEditor: 'primary' });
 
@@ -121,11 +126,14 @@ describe('Tab', () => {
   it('should handle a drag over', () => {
     const mockPreventDefault = jest.fn(() => null);
     const mockStopPropagation = jest.fn(() => null);
-    const mockDragEvent = { preventDefault: mockPreventDefault, stopPropagation: mockStopPropagation };
+    const mockDragEvent = {
+      preventDefault: mockPreventDefault,
+      stopPropagation: mockStopPropagation,
+    };
     instance.setState({ draggedOver: false });
 
     instance.onDragOver(mockDragEvent);
-    
+
     expect(mockPreventDefault).toHaveBeenCalled();
     expect(mockStopPropagation).toHaveBeenCalled();
     expect(instance.state.draggedOver).toBe(true);
@@ -156,11 +164,11 @@ describe('Tab', () => {
       preventDefault: mockPreventDefault,
       stopPropagation: mockStopPropagation,
       dataTransfer: {
-        getData: mockGetData
-      }
+        getData: mockGetData,
+      },
     };
     instance.setState({ draggedOver: true });
-    
+
     // drop tab on same tab
     instance.onDrop(mockDragEvent);
 
@@ -175,8 +183,8 @@ describe('Tab', () => {
       preventDefault: mockPreventDefault,
       stopPropagation: mockStopPropagation,
       dataTransfer: {
-        getData: mockGetData
-      }
+        getData: mockGetData,
+      },
     };
     instance.onDrop(mockDragEvent);
 

@@ -31,31 +31,32 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { BotActions, botHashGenerated, SetActiveBotAction } from '../action/botActions';
 import { BotConfigWithPath } from '@bfemulator/sdk-shared';
+import { SharedConstants } from '@bfemulator/app-shared';
+
+import {
+  BotActions,
+  botHashGenerated,
+  SetActiveBotAction,
+} from '../action/botActions';
+import { generateBotHash } from '../botHelpers';
+
 import {
   botSagas,
   browseForBot,
   editorSelector,
-  generateHashForActiveBot
-  } from './botSagas';
-import {
-  call,
-  put,
-  select,
-  takeEvery,
-  takeLatest
-  } from 'redux-saga/effects';
-import { generateBotHash } from '../botHelpers';
-import { SharedConstants } from '@bfemulator/app-shared';
+  generateHashForActiveBot,
+} from './botSagas';
 import { refreshConversationMenu } from './sharedSagas';
+
+import { call, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
 
 jest.mock('../../ui/dialogs', () => ({}));
 
 jest.mock('../store', () => ({
   get store() {
-      return {};
-  }
+    return {};
+  },
 }));
 
 const mockSharedConstants = SharedConstants;
@@ -68,63 +69,51 @@ jest.mock('../../platform/commands/commandServiceImpl', () => ({
       mockLocalCommandsCalled.push({ commandName, args: args });
 
       switch (commandName) {
-        case mockSharedConstants.Commands.Bot.OpenBrowse: 
+        case mockSharedConstants.Commands.Bot.OpenBrowse:
           return Promise.resolve(true);
-        default: 
+        default:
           return Promise.resolve(true);
-        }
+      }
     },
-    remoteCall: async (commandName: string, ... args: any[]) => {
-      mockRemoteCommandsCalled.push({ commandName, args: args});
+    remoteCall: async (commandName: string, ...args: any[]) => {
+      mockRemoteCommandsCalled.push({ commandName, args: args });
 
       return Promise.resolve(true);
-    }
-  }
+    },
+  },
 }));
 
 describe('The botSagas', () => {
-
   beforeEach(() => {
     mockRemoteCommandsCalled = [];
     mockLocalCommandsCalled = [];
   });
 
   it('should initialize the root saga', () => {
-    let gen = botSagas();
+    const gen = botSagas();
 
     const browseForBotYield = gen.next().value;
 
     expect(browseForBotYield).toEqual(
-      takeEvery(
-        BotActions.browse,
-        browseForBot
-      )
+      takeEvery(BotActions.browse, browseForBot)
     );
 
     const generateBotHashYield = gen.next().value;
 
     expect(generateBotHashYield).toEqual(
-      takeEvery(
-        BotActions.setActive,
-        generateHashForActiveBot
-      )
+      takeEvery(BotActions.setActive, generateHashForActiveBot)
     );
 
     const refreshConversationMenuYield = gen.next().value;
 
     expect(refreshConversationMenuYield).toEqual(
       takeLatest(
-        [ 
-          BotActions.setActive,
-          BotActions.load,
-          BotActions.close
-        ],
+        [BotActions.setActive, BotActions.load, BotActions.close],
         refreshConversationMenu
       )
     );
 
     expect(gen.next().done).toBe(true);
-
   });
 
   it('should generate a hash for an active bot', () => {
@@ -134,14 +123,14 @@ describe('The botSagas', () => {
       padlock: null,
       services: [],
       path: '/some/Path/something',
-      version: '0.1'
+      version: '0.1',
     };
-    
+
     const setActiveBotAction: SetActiveBotAction = {
       type: BotActions.setActive,
       payload: {
-        bot: botConfigPath
-      }
+        bot: botConfigPath,
+      },
     };
     const gen = generateHashForActiveBot(setActiveBotAction);
     const generatedHash = gen.next().value;

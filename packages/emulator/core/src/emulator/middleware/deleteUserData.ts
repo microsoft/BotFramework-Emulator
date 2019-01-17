@@ -36,10 +36,15 @@ import * as Restify from 'restify';
 
 import BotEmulator from '../../botEmulator';
 import sendErrorResponse from '../../utils/sendErrorResponse';
+
 import { ConversationAware } from './fetchConversation';
 
 export default function deleteUserData(_botEmulator: BotEmulator) {
-  return async (req: ConversationAware, res: Restify.Response, next: Restify.Next): Promise<any> => {
+  return async (
+    req: ConversationAware,
+    res: Restify.Response,
+    next: Restify.Next
+  ): Promise<any> => {
     try {
       await req.conversation.sendDeleteUserData();
       res.send(HttpStatus.OK);

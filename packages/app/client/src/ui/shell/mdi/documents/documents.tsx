@@ -32,9 +32,10 @@
 //
 
 import * as React from 'react';
-import { TabbedDocument } from '../tabbedDocument';
-import { EditorFactory } from '../../../editor';
+
 import { Document } from '../../../../data/reducer/editor';
+import { EditorFactory } from '../../../editor';
+import { TabbedDocument } from '../tabbedDocument';
 
 export interface DocumentsProps {
   activeDocumentId?: string;
@@ -52,10 +53,14 @@ export class Documents extends React.Component<DocumentsProps> {
       const document = documents[documentId];
 
       return (
-        <TabbedDocument key={ documentId } documentId={ documentId } hidden={ !isActive }>
-          <EditorFactory document={ document }/>
+        <TabbedDocument
+          key={documentId}
+          documentId={documentId}
+          hidden={!isActive}
+        >
+          <EditorFactory document={document} />
         </TabbedDocument>
       );
-    }); 
+    });
   }
 }

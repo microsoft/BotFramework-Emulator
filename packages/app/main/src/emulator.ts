@@ -32,32 +32,29 @@
 //
 
 import { BotFrameworkService } from './botFrameworkService';
-import * as Settings from './settingsData/store';
 import { NgrokService } from './ngrokService';
+import * as Settings from './settingsData/store';
 
-interface QueuedMessage {
-  channel: any;
-  args: any[];
-}
+export let emulator: Emulator;
 
 /**
  * Top-level state container for the Node process.
  */
 export class Emulator {
-  ngrok = new NgrokService();
-  framework = new BotFrameworkService();
+  public ngrok = new NgrokService();
+  public framework = new BotFrameworkService();
 
   /**
    * Loads settings from disk and then creates the emulator.
    */
-  static async startup() {
+  public static async startup() {
     Settings.startup();
     emulator = new Emulator();
     await emulator.startup();
     return emulator;
   }
 
-  async startup() {
+  public async startup() {
     await this.framework.startup();
   }
 
@@ -66,5 +63,3 @@ export class Emulator {
     this.ngrok.report(conversationId);
   }
 }
-
-export let emulator: Emulator;

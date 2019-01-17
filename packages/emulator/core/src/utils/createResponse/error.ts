@@ -33,11 +33,14 @@
 
 import ErrorResponse from '../../types/response/error';
 
-export default function createErrorResponse(code: string, message: string): ErrorResponse {
+export default function createErrorResponse(
+  code: string,
+  message: string
+): ErrorResponse {
   return {
     error: {
-      code: code,
-      message: message
-    }
+      code,
+      message,
+    },
   };
 }

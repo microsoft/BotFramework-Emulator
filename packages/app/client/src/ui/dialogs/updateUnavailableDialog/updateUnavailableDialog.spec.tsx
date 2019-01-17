@@ -31,19 +31,23 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { UpdateUnavailableDialog } from './updateUnavailableDialog';
-import { UpdateUnavailableDialogContainer } from './updateUnavailableDialogContainer';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
-import { navBar } from '../../../data/reducer/navBar';
 import * as React from 'react';
 import { mount } from 'enzyme';
+
+import { navBar } from '../../../data/reducer/navBar';
+
+import { UpdateUnavailableDialogContainer } from './updateUnavailableDialogContainer';
+import { UpdateUnavailableDialog } from './updateUnavailableDialog';
 
 let mockHideDialog;
 jest.mock('../service', () => ({
   DialogService: {
-    get hideDialog() { return mockHideDialog; }
-  }
+    get hideDialog() {
+      return mockHideDialog;
+    },
+  },
 }));
 
 jest.mock('../../dialogs', () => ({}));
@@ -55,8 +59,8 @@ describe('UpdateUnavailableDialog', () => {
 
   beforeEach(() => {
     wrapper = mount(
-      <Provider store={ createStore(navBar) } >
-        <UpdateUnavailableDialogContainer/>
+      <Provider store={createStore(navBar)}>
+        <UpdateUnavailableDialogContainer />
       </Provider>
     );
 

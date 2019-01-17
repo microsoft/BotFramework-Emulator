@@ -32,17 +32,25 @@
 //
 
 import { connect } from 'react-redux';
-import { Documents, DocumentsProps } from './documents';
+
 import { RootState } from '../../../../data/store';
 
-function mapStateToProps(state: RootState, ownProps: DocumentsProps): DocumentsProps {
+import { Documents, DocumentsProps } from './documents';
+
+function mapStateToProps(
+  state: RootState,
+  ownProps: DocumentsProps
+): DocumentsProps {
   const { editors } = state.editor;
   return {
     ...ownProps,
     activeDocumentId: editors[ownProps.owningEditor].activeDocumentId,
     documents: editors[ownProps.owningEditor].documents,
-    tabOrder: editors[ownProps.owningEditor].tabOrder
+    tabOrder: editors[ownProps.owningEditor].tabOrder,
   };
 }
 
-export const DocumentsContainer = connect(mapStateToProps, null)(Documents);
+export const DocumentsContainer = connect(
+  mapStateToProps,
+  null
+)(Documents);

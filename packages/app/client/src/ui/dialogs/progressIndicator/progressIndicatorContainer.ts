@@ -33,23 +33,28 @@
 
 import { connect } from 'react-redux';
 import { Action } from 'redux';
+
+import { cancelCurrentProcess } from '../../../data/action/progressIndicatorActions';
 import { RootState } from '../../../data/store';
 import { DialogService } from '../service';
-import { ProgressIndicator } from './progressIndicator';
-import { cancelCurrentProcess } from '../../../data/action/progressIndicatorActions';
 
-const mapStateToProps = (state: RootState, ownProps: { [propName: string]: any }) => {
+import { ProgressIndicator } from './progressIndicator';
+
+const mapStateToProps = (
+  state: RootState,
+  ownProps: { [propName: string]: any }
+) => {
   const { progressIndicator } = state;
   return {
     ...ownProps,
-    ...progressIndicator
+    ...progressIndicator,
   };
 };
 
 const mapDispatchToProps = (dispatch: (action: Action) => void) => {
   return {
     cancel: () => DialogService.hideDialog(dispatch(cancelCurrentProcess())),
-    close: () => DialogService.hideDialog()
+    close: () => DialogService.hideDialog(),
   };
 };
 

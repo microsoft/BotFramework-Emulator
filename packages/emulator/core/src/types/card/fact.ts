@@ -32,8 +32,8 @@
 //
 
 interface Fact {
-  key: string;                    // Name of parameter
-  value: string;                  // Value of parameter
+  key: string; // Name of parameter
+  value: string; // Value of parameter
 }
 
 export default Fact;

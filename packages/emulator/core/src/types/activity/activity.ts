@@ -33,6 +33,7 @@
 
 import ChannelAccount from '../account/channel';
 import ConversationAccount from '../account/conversation';
+
 import ETagObject from './etagObject';
 
 interface Activity extends ETagObject {

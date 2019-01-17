@@ -31,9 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { readFileSync, writeFile } from '../utils';
-import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 import { SharedConstants } from '@bfemulator/app-shared';
+import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
+
+import { readFileSync, writeFile } from '../utils';
+
+// eslint-disable-next-line typescript/no-var-requires
 const sanitize = require('sanitize-filename');
 
 /** Registers file commands */
@@ -41,30 +44,41 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   const Commands = SharedConstants.Commands.File;
   // ---------------------------------------------------------------------------
   // Read file
-  commandRegistry.registerCommand(Commands.Read, (path: string): any => {
-    try {
-      const contents = readFileSync(path);
-      return contents;
-    } catch (e) {
-      console.error(`Failure reading file at ${path}: `, e);
-      throw e;
+  commandRegistry.registerCommand(
+    Commands.Read,
+    (path: string): any => {
+      try {
+        const contents = readFileSync(path);
+        return contents;
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.error(`Failure reading file at ${path}: `, e);
+        throw e;
+      }
     }
-  });
+  );
 
   // ---------------------------------------------------------------------------
   // Write file
-  commandRegistry.registerCommand(Commands.Write, (path: string, contents: object | string) => {
-    try {
-      writeFile(path, contents);
-    } catch (e) {
-      console.error(`Failure writing to file at ${path}: `, e);
-      throw e;
+  commandRegistry.registerCommand(
+    Commands.Write,
+    (path: string, contents: object | string) => {
+      try {
+        writeFile(path, contents);
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.error(`Failure writing to file at ${path}: `, e);
+        throw e;
+      }
     }
-  });
+  );
 
   // ---------------------------------------------------------------------------
   // Sanitize a string for file name usage
-  commandRegistry.registerCommand(Commands.SanitizeString, (path: string): string => {
-    return sanitize(path);
-  });
+  commandRegistry.registerCommand(
+    Commands.SanitizeString,
+    (path: string): string => {
+      return sanitize(path);
+    }
+  );
 }

@@ -32,6 +32,7 @@
 //
 
 import { Bot } from '@bfemulator/app-shared';
+
 import { BotAction } from '../actions/botActions';
 
 export function botsReducer(state: Bot[] = [], action: BotAction<Bot[]>) {

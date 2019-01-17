@@ -32,13 +32,21 @@
 //
 
 import { connect } from 'react-redux';
+
 import { DialogService } from '../service';
-import { UpdateUnavailableDialog, UpdateUnavailableDialogProps } from './updateUnavailableDialog';
+
+import {
+  UpdateUnavailableDialog,
+  UpdateUnavailableDialogProps,
+} from './updateUnavailableDialog';
 
 function mapDispatchToProps(_dispatch: any): UpdateUnavailableDialogProps {
   return {
-    onCloseClick: () => DialogService.hideDialog(null)
+    onCloseClick: () => DialogService.hideDialog(null),
   };
 }
 
-export const UpdateUnavailableDialogContainer = connect(null, mapDispatchToProps)(UpdateUnavailableDialog);
+export const UpdateUnavailableDialogContainer = connect(
+  null,
+  mapDispatchToProps
+)(UpdateUnavailableDialog);

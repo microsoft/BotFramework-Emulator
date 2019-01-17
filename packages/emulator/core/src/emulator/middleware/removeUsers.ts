@@ -37,7 +37,11 @@ import * as Restify from 'restify';
 import BotEmulator from '../../botEmulator';
 
 export default function removeUsers(botEmulator: BotEmulator) {
-  return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+  return (
+    req: Restify.Request,
+    res: Restify.Response,
+    next: Restify.Next
+  ): any => {
     // try {
     //   let members: ChannelAccount[] = req.body;
 

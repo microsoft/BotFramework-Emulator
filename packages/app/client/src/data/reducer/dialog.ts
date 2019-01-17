@@ -38,10 +38,13 @@ export interface DialogState {
 }
 
 const DEFAULT_STATE: DialogState = {
-  showing: false
+  showing: false,
 };
 
-export function dialog(state: DialogState = DEFAULT_STATE, action: DialogAction): DialogState {
+export function dialog(
+  state: DialogState = DEFAULT_STATE,
+  action: DialogAction
+): DialogState {
   switch (action.type) {
     case DialogActions.setShowing: {
       state = setShowing(action.payload.showing, state);
@@ -55,5 +58,5 @@ export function dialog(state: DialogState = DEFAULT_STATE, action: DialogAction)
 }
 
 export function setShowing(showing: boolean, _state: DialogState): DialogState {
-  return { showing: showing };
+  return { showing };
 }

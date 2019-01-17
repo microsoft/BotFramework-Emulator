@@ -30,6 +30,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+/* eslint-disable typescript/camelcase */
 
 import {
   ArmTokenData,
@@ -46,19 +47,20 @@ export interface AzureAuthState {
 
 const initialState: AzureAuthState = {
   access_token: null,
-  persistLogin: false
+  persistLogin: false,
 };
 
-export function azureAuth(state: AzureAuthState = initialState, action: AzureAuthAction<ArmTokenData | void>)
-  : AzureAuthState {
+export function azureAuth(
+  state: AzureAuthState = initialState,
+  action: AzureAuthAction<ArmTokenData | void>
+): AzureAuthState {
   const { payload = {}, type = '' } = action || {};
   const { access_token } = (payload || {}) as ArmTokenData;
 
   switch (type) {
-
     case AZURE_BEGIN_AUTH_WORKFLOW:
     case AZURE_INVALIDATE_ARM_TOKEN:
-      return { ...state, access_token: ''};
+      return { ...state, access_token: '' };
 
     case AZURE_ARM_TOKEN_DATA_CHANGED:
       return { ...state, access_token };

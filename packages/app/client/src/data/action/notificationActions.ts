@@ -40,44 +40,44 @@ export enum NotificationActions {
   finishRemove = 'NOTIFICATION/FINISH_REMOVE',
   markAllAsRead = 'NOTIFICATION/MARK_ALL_AS_READ',
   beginClear = 'NOTIFICATION/BEGIN_CLEAR',
-  finishClear = 'NOTIFICATION/FINISH_CLEAR'
+  finishClear = 'NOTIFICATION/FINISH_CLEAR',
 }
 
 export type NotificationAction =
-  BeginAddNotificationAction |
-  FinishAddNotificationAction |
-  BeginRemoveNotificationAction |
-  FinishRemoveNotificationAction |
-  MarkAllAsReadNotificationAction |
-  BeginClearNotificationAction |
-  FinishClearNotificationAction;
+  | BeginAddNotificationAction
+  | FinishAddNotificationAction
+  | BeginRemoveNotificationAction
+  | FinishRemoveNotificationAction
+  | MarkAllAsReadNotificationAction
+  | BeginClearNotificationAction
+  | FinishClearNotificationAction;
 
 export interface BeginAddNotificationAction {
   type: NotificationActions.beginAdd;
   payload: {
-    notification: Notification,
-    read: boolean
+    notification: Notification;
+    read: boolean;
   };
 }
 
 export interface FinishAddNotificationAction {
   type: NotificationActions.finishAdd;
   payload: {
-    notification: Notification
+    notification: Notification;
   };
 }
 
 export interface BeginRemoveNotificationAction {
   type: NotificationActions.beginRemove;
   payload: {
-    id: string
+    id: string;
   };
 }
 
 export interface FinishRemoveNotificationAction {
   type: NotificationActions.finishRemove;
   payload: {
-    id: string
+    id: string;
   };
 }
 
@@ -96,22 +96,27 @@ export interface FinishClearNotificationAction {
   payload: {};
 }
 
-export function beginAdd(notification: Notification, read: boolean = false): BeginAddNotificationAction {
+export function beginAdd(
+  notification: Notification,
+  read: boolean = false
+): BeginAddNotificationAction {
   return {
     type: NotificationActions.beginAdd,
     payload: {
       notification,
-      read
-    }
+      read,
+    },
   };
 }
 
-export function finishAdd(notification: Notification): FinishAddNotificationAction {
+export function finishAdd(
+  notification: Notification
+): FinishAddNotificationAction {
   return {
     type: NotificationActions.finishAdd,
     payload: {
-      notification
-    }
+      notification,
+    },
   };
 }
 
@@ -119,8 +124,8 @@ export function beginRemove(id: string): BeginRemoveNotificationAction {
   return {
     type: NotificationActions.beginRemove,
     payload: {
-      id
-    }
+      id,
+    },
   };
 }
 
@@ -128,28 +133,28 @@ export function finishRemove(id: string): FinishRemoveNotificationAction {
   return {
     type: NotificationActions.finishRemove,
     payload: {
-      id
-    }
+      id,
+    },
   };
 }
 
 export function markAllAsRead(): MarkAllAsReadNotificationAction {
   return {
     type: NotificationActions.markAllAsRead,
-    payload: {}
+    payload: {},
   };
 }
 
 export function beginClear(): BeginClearNotificationAction {
   return {
     type: NotificationActions.beginClear,
-    payload: {}
+    payload: {},
   };
 }
 
 export function finishClear(): FinishClearNotificationAction {
   return {
     type: NotificationActions.finishClear,
-    payload: {}
+    payload: {},
   };
 }

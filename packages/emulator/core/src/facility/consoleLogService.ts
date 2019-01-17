@@ -33,9 +33,9 @@
 
 import log from 'npmlog';
 
-import LogService from '../types/log/service';
-import LogLevel from '../types/log/level';
 import ILogItem from '../types/log/item';
+import LogLevel from '../types/log/level';
+import LogService from '../types/log/service';
 
 function logLevel(logLevelArg: LogLevel) {
   switch (logLevelArg) {
@@ -54,7 +54,7 @@ function logLevel(logLevelArg: LogLevel) {
 }
 
 export default class ConsoleLogService implements LogService {
-  logToChat(conversationId: string, ...items: ILogItem[]) {
+  public logToChat(conversationId: string, ...items: ILogItem[]) {
     items.forEach(message => {
       switch (message.type) {
         case 'text': {

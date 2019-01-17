@@ -31,17 +31,23 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { NotificationAction, NotificationActions } from '../action/notificationActions';
+import {
+  NotificationAction,
+  NotificationActions,
+} from '../action/notificationActions';
 
 export interface NotificationState {
   allIds: string[];
 }
 
 const DEFAULT_STATE: NotificationState = {
-  allIds: []
+  allIds: [],
 };
 
-export function notification(state: NotificationState = DEFAULT_STATE, action: NotificationAction): NotificationState {
+export function notification(
+  state: NotificationState = DEFAULT_STATE,
+  action: NotificationAction
+): NotificationState {
   switch (action.type) {
     case NotificationActions.finishAdd: {
       const { id: idToAdd } = action.payload.notification;
@@ -52,7 +58,7 @@ export function notification(state: NotificationState = DEFAULT_STATE, action: N
         allIds = state.allIds;
       }
       state = {
-        allIds
+        allIds,
       };
       break;
     }
@@ -61,14 +67,14 @@ export function notification(state: NotificationState = DEFAULT_STATE, action: N
       const { id: idToRemove } = action.payload;
       const allIds = state.allIds.filter(id => id !== idToRemove);
       state = {
-        allIds
+        allIds,
       };
       break;
     }
 
     case NotificationActions.finishClear: {
       state = {
-        allIds: []
+        allIds: [],
       };
       break;
     }

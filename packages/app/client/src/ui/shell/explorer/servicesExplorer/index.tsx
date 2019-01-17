@@ -32,4 +32,6 @@
 //
 
 export { ServicesExplorerContainer } from './servicesExplorerContainer';
-export { ConnectedServicePickerContainer } from './connectedServicePicker/connectedServicePickerContainer';
+export {
+  ConnectedServicePickerContainer,
+} from './connectedServicePicker/connectedServicePickerContainer';

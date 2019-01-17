@@ -41,6 +41,6 @@ export const DEFAULT_STATE: State = {
   bot: {
     activeBot: null,
     botFiles: [],
-    currentBotDirectory: ''
-  }
+    currentBotDirectory: '',
+  },
 };

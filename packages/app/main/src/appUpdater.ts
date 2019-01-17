@@ -31,20 +31,21 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { autoUpdater as electronUpdater, UpdateInfo } from 'electron-updater';
 import { EventEmitter } from 'events';
+
 import { ProgressInfo } from 'builder-util-runtime';
-import { FrameworkSettings } from '@bfemulator/app-shared';
+import { autoUpdater as electronUpdater, UpdateInfo } from 'electron-updater';
+
 import { getSettings } from './settingsData/store';
 
 export enum UpdateStatus {
   Idle,
   UpdateAvailable,
   UpdateDownloading,
-  UpdateReadyToInstall
+  UpdateReadyToInstall,
 }
 
-export const AppUpdater = new class extends EventEmitter {
+class EmulatorUpdater extends EventEmitter {
   private _userInitiated: boolean;
   private _autoDownload: boolean;
   private _status: UpdateStatus = UpdateStatus.Idle;
@@ -154,13 +155,15 @@ export const AppUpdater = new class extends EventEmitter {
     electronUpdater.setFeedURL({
       repo: this.repo,
       owner: 'Microsoft',
-      provider: 'github'
+      provider: 'github',
     });
 
     try {
       await electronUpdater.checkForUpdates();
     } catch (e) {
-      throw `There was an error while checking for the latest update: ${e}`;
+      throw new Error(
+        `There was an error while checking for the latest update: ${e}`
+      );
     }
   }
 
@@ -170,7 +173,9 @@ export const AppUpdater = new class extends EventEmitter {
     try {
       await electronUpdater.downloadUpdate();
     } catch (e) {
-      throw `There was an error while trying to download the latest update: ${e}`;
+      throw new Error(
+        `There was an error while trying to download the latest update: ${e}`
+      );
     }
   }
 
@@ -178,7 +183,11 @@ export const AppUpdater = new class extends EventEmitter {
     try {
       electronUpdater.quitAndInstall(false, true);
     } catch (e) {
-      throw `There was an error while trying to quit and install the latest update: ${e}`;
+      throw new Error(
+        `There was an error while trying to quit and install the latest update: ${e}`
+      );
     }
   }
-};
+}
+
+export const AppUpdater = new EmulatorUpdater();

@@ -31,11 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { AppState, PersistentAppState } from './App';
-import { QnAMakerTraceInfo, QueryResult } from './Models/QnAMakerTraceInfo';
-import { Answer } from './Models/QnAMakerModels';
 import { TraceActivity } from '@bfemulator/sdk-shared';
-import { IQnAService } from 'botframework-config/lib/schema' ;
+import { IQnAService } from 'botframework-config/lib/schema';
+
+import { AppState, PersistentAppState } from './App';
+import { Answer } from './Models/QnAMakerModels';
+import { QnAMakerTraceInfo, QueryResult } from './Models/QnAMakerTraceInfo';
 
 const QnaMakerTracerType = 'https://www.qnamaker.ai/schemas/trace';
 
@@ -45,13 +46,13 @@ interface QnaMakerModel {
 }
 
 export default class AppStateAdapter implements AppState {
-  id: string;
-  qnaService: IQnAService | null;
-  traceInfo: QnAMakerTraceInfo;
-  persistentState: { [key: string]: PersistentAppState; };
-  phrasings: string[];
-  answers: Answer[];
-  selectedAnswer: Answer | null;
+  public id: string;
+  public qnaService: IQnAService | null;
+  public traceInfo: QnAMakerTraceInfo;
+  public persistentState: { [key: string]: PersistentAppState };
+  public phrasings: string[];
+  public answers: Answer[];
+  public selectedAnswer: Answer | null;
 
   private static validate(obj: any): boolean {
     if (!obj) {
@@ -78,7 +79,7 @@ export default class AppStateAdapter implements AppState {
     if (!AppStateAdapter.validate(obj)) {
       return;
     }
-    let traceActivity = (obj as TraceActivity);
+    const traceActivity = obj as TraceActivity;
     this.traceInfo = traceActivity.value as QnAMakerTraceInfo;
     this.id = traceActivity.id || '';
 
@@ -88,7 +89,7 @@ export default class AppStateAdapter implements AppState {
       id: result.id,
       text: result.answer,
       score: result.score,
-      filters: null
+      filters: null,
     }));
     this.selectedAnswer = this.answers.length > 0 ? this.answers[0] : null;
   }

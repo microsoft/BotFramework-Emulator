@@ -33,16 +33,20 @@
 
 import * as React from 'react';
 import { Component } from 'react';
-import { Intent } from '../../Models/Intent';
+
 import { IntentInfo } from '../../Luis/IntentInfo';
+import { Intent } from '../../Models/Intent';
+
 import * as styles from './IntentEditor.scss';
 
-const TraceIntentStatesKey: string = Symbol('PersistedTraceIntentStates').toString();
+const TraceIntentStatesKey: string = Symbol(
+  'PersistedTraceIntentStates'
+).toString();
 
 enum IntentEditorMode {
   Enabled,
   Disabled,
-  Hidden
+  Hidden,
 }
 
 interface TraceIntentState {
@@ -63,57 +67,69 @@ interface IntentEditorProps {
 }
 
 class IntentEditor extends Component<IntentEditorProps, IntentEditorState> {
-
-  static getDerivedStateFromProps(nextProps: IntentEditorProps, prevState: IntentEditorState) {
-    let currentTraceIntentStates = prevState.traceIntentStates;
+  public static getDerivedStateFromProps(
+    nextProps: IntentEditorProps,
+    prevState: IntentEditorState
+  ) {
+    const currentTraceIntentStates = prevState.traceIntentStates;
     if (nextProps.traceId in currentTraceIntentStates) {
-      currentTraceIntentStates[nextProps.traceId].originalIntent = nextProps.currentIntent.intent;
+      currentTraceIntentStates[nextProps.traceId].originalIntent =
+        nextProps.currentIntent.intent;
     } else {
       currentTraceIntentStates[nextProps.traceId] = {
         originalIntent: nextProps.currentIntent.intent,
-        currentIntent: ''
+        currentIntent: '',
       };
     }
 
     return {
-      traceIntentStates: currentTraceIntentStates
+      traceIntentStates: currentTraceIntentStates,
     };
   }
 
   constructor(props: any, context: any) {
     super(props, context);
-    let persisted = localStorage.getItem(TraceIntentStatesKey);
+    const persisted = localStorage.getItem(TraceIntentStatesKey);
     let traceIntentStates: { [key: string]: TraceIntentState } = {};
     if (persisted !== null) {
       traceIntentStates = JSON.parse(persisted);
     }
     this.state = {
-      traceIntentStates: traceIntentStates
+      traceIntentStates,
     };
   }
 
-  render() {
+  public render() {
     if (!this.props.intentInfo || this.props.mode === IntentEditorMode.Hidden) {
-      return (<div id="hidden" className={ styles.hidden }/>);
+      return <div id="hidden" className={styles.hidden} />;
     } else if (this.props.mode === IntentEditorMode.Disabled) {
       return (
-        <div className={ styles.disabled }>
+        <div className={styles.disabled}>
           Please add your LUIS service to enable reassigning.
         </div>
       );
     }
-    let options = this.props.intentInfo.map(i => {
-      return <option key={ i.id } value={ i.name } label={ i.name }>{ i.name }</option>;
+    const options = this.props.intentInfo.map(i => {
+      return (
+        <option key={i.id} value={i.name} label={i.name}>
+          {i.name}
+        </option>
+      );
     });
 
-    let currentIntent = this.state.traceIntentStates[this.props.traceId].currentIntent ||
+    const currentIntent =
+      this.state.traceIntentStates[this.props.traceId].currentIntent ||
       this.state.traceIntentStates[this.props.traceId].originalIntent;
     return (
-      <div className={ styles.intentEditor }>
+      <div className={styles.intentEditor}>
         <form>
           <label>Reassign Intent</label>
-          <select className={ styles.selector } value={ currentIntent } onChange={ this.handleChange }>
-            { options }
+          <select
+            className={styles.selector}
+            value={currentIntent}
+            onChange={this.handleChange}
+          >
+            {options}
           </select>
         </form>
       </div>
@@ -121,9 +137,9 @@ class IntentEditor extends Component<IntentEditorProps, IntentEditorState> {
   }
 
   private handleChange = (event: React.FormEvent<HTMLSelectElement>) => {
-    let newIntent: string = event.currentTarget.value;
-    let currentTraceIntentStates = this.state.traceIntentStates;
-    let currentIntentState = currentTraceIntentStates[this.props.traceId];
+    const newIntent: string = event.currentTarget.value;
+    const currentTraceIntentStates = this.state.traceIntentStates;
+    const currentIntentState = currentTraceIntentStates[this.props.traceId];
     let needsRetrain: boolean;
     if (newIntent === currentIntentState.originalIntent) {
       currentIntentState.currentIntent = undefined;
@@ -137,11 +153,13 @@ class IntentEditor extends Component<IntentEditorProps, IntentEditorState> {
     if (this.props.intentReassigner) {
       this.props.intentReassigner(newIntent, needsRetrain).catch();
     }
-  }
+  };
 
-  private setAndPersistTraceIntentStates(states: { [key: string]: TraceIntentState }) {
+  private setAndPersistTraceIntentStates(states: {
+    [key: string]: TraceIntentState;
+  }) {
     this.setState({
-      traceIntentStates: states
+      traceIntentStates: states,
     });
     localStorage.setItem(TraceIntentStatesKey, JSON.stringify(states));
   }

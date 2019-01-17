@@ -32,12 +32,13 @@
 //
 
 import { ExplorerAction, showExplorer } from '../action/explorerActions';
+
 import { explorer, ExplorerState } from './explorer';
 
 describe('Explorer reducer tests', () => {
   const DEFAULT_STATE: ExplorerState = {
     showing: false,
-    sortSelectionByPanelId: {}
+    sortSelectionByPanelId: {},
   };
 
   it('should return unaltered state for non-matching action type', () => {

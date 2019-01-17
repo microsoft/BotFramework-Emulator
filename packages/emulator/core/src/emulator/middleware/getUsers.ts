@@ -36,10 +36,15 @@ import * as Restify from 'restify';
 
 import BotEmulator from '../../botEmulator';
 import sendErrorResponse from '../../utils/sendErrorResponse';
+
 import { ConversationAware } from './fetchConversation';
 
 export default function getUsers(_botEmulator: BotEmulator) {
-  return (req: ConversationAware, res: Restify.Response, next: Restify.Next): any => {
+  return (
+    req: ConversationAware,
+    res: Restify.Response,
+    next: Restify.Next
+  ): any => {
     try {
       res.json(HttpStatus.OK, req.conversation.members);
       res.end();

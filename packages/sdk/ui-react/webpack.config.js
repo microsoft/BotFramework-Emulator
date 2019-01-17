@@ -22,12 +22,13 @@ module.exports = {
               namedExport: true,
               camelCase: true,
               sourcemaps: true,
-              banner: '// This is a generated file. Changes are likely to result in being overwritten'
-            }
+              banner:
+                '// This is a generated file. Changes are likely to result in being overwritten',
+            },
           },
           'resolve-url-loader',
-          'sass-loader'
-        ]
+          'sass-loader',
+        ],
       },
       {
         test: /\.(png|jpg|gif|svg)$/,
@@ -35,10 +36,10 @@ module.exports = {
           {
             loader: 'url-loader',
             options: {
-              limit: 8192
-            }
-          }
-        ]
+              limit: 8192,
+            },
+          },
+        ],
       },
       {
         test: /\.(tsx?)|(jsx)$/,
@@ -46,16 +47,11 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            ignore: ['**/*.spec.tsx?']
-          }
-        }
+            ignore: ['**/*.spec.tsx?'],
+          },
+        },
       },
-      {
-        test: /\.tsx?$/,
-        loader: 'tslint-loader',
-        options: { /* Loader options go here */ }
-      }
-    ]
+    ],
   },
 
   externals: {
@@ -64,19 +60,15 @@ module.exports = {
   },
 
   resolve: {
-    extensions: ['.js', '.jsx', '.json', '.ts', '.tsx', '.scss']
+    extensions: ['.js', '.jsx', '.json', '.ts', '.tsx', '.scss'],
   },
 
   output: {
     path: path.resolve('./built'),
     filename: '[name].js',
     libraryTarget: 'umd',
-    library: "[name]",
+    library: '[name]',
   },
 
-  plugins: [
-    new WatchIgnorePlugin([
-      './src/**/*.d.ts'
-    ])
-  ]
+  plugins: [new WatchIgnorePlugin(['./src/**/*.d.ts'])],
 };

@@ -32,8 +32,10 @@
 //
 
 import { IEndpointService, ServiceTypes } from 'botframework-config/lib/schema';
+
+import { BotConfigOverrides, BotConfigWithPath } from '../types';
+
 import { applyBotConfigOverrides, botsAreTheSame, mergeEndpoints } from './bot';
-import { BotConfigWithPath, BotConfigOverrides } from '../types';
 
 describe('Bot utility function tests', () => {
   const bot: BotConfigWithPath = {
@@ -43,7 +45,7 @@ describe('Bot utility function tests', () => {
     padlock: null,
     services: [],
     overrides: null,
-    version: '0.1'
+    version: '0.1',
   };
 
   it('should apply bot config overrides', () => {
@@ -52,8 +54,8 @@ describe('Bot utility function tests', () => {
         endpoint: 'someEndpoint',
         appId: 'someAppId',
         appPassword: 'someAppPw',
-        id: 'someEndpoint'
-      }
+        id: 'someEndpoint',
+      },
     };
     const overriddenBot = applyBotConfigOverrides(bot, overrides);
 
@@ -74,13 +76,13 @@ describe('Bot utility function tests', () => {
       expect(result2).toBe(false);
     });
 
-    it('should return false when the bots don\'t have matching paths', () => {
+    it("should return false when the bots don't have matching paths", () => {
       const nonMatchingBot: BotConfigWithPath = {
         name: 'someName',
         description: '',
         padlock: null,
         services: [],
-        version: '0.1'
+        version: '0.1',
       };
       const result = botsAreTheSame(bot, nonMatchingBot);
 
@@ -94,7 +96,7 @@ describe('Bot utility function tests', () => {
         padlock: null,
         services: [],
         path: 'somePath',
-        version: '0.1'
+        version: '0.1',
       };
       const result = botsAreTheSame(bot, matchingBot);
       expect(result).toBe(true);
@@ -108,14 +110,14 @@ describe('Bot utility function tests', () => {
       id: 'http://www.endpoint1.com/api/messages',
       endpoint: 'http://www.endpoint1.com/api/messages',
       appId: 'someAppId1',
-      appPassword: 'someAppPw1'
+      appPassword: 'someAppPw1',
     };
 
     const endpoint2: Partial<IEndpointService> = {
       id: 'http://www.endpoint2.com/api/messages',
       endpoint: 'http://www.endpoint2.com/api/messages',
       appId: 'someAppId2',
-      appPassword: null
+      appPassword: null,
     };
 
     const result = mergeEndpoints(endpoint1, endpoint2);

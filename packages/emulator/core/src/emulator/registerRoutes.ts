@@ -32,26 +32,31 @@
 //
 
 import { RequestHandler, Server } from 'restify';
+
 import BotEmulator from '../botEmulator';
-import createFetchConversationMiddleware from './middleware/fetchConversation';
-import createJsonBodyParserMiddleware from '../utils/jsonBodyParser';
 import getFacility from '../middleware/getFacility';
 import getRouteName from '../middleware/getRouteName';
+import createJsonBodyParserMiddleware from '../utils/jsonBodyParser';
 
 import addUsers from './middleware/addUsers';
 import contactAdded from './middleware/contactAdded';
 import contactRemoved from './middleware/contactRemoved';
 import deleteUserData from './middleware/deleteUserData';
+import createFetchConversationMiddleware from './middleware/fetchConversation';
 import getUsers from './middleware/getUsers';
 import paymentComplete from './middleware/paymentComplete';
 import ping from './middleware/ping';
 import removeUsers from './middleware/removeUsers';
+import sendTokenResponse from './middleware/sendTokenResponse';
 import typing from './middleware/typing';
 import updateShippingAddress from './middleware/updateShippingAddress';
 import updateShippingOption from './middleware/updateShippingOption';
-import sendTokenResponse from './middleware/sendTokenResponse';
 
-export default function registerRoutes(botEmulator: BotEmulator, server: Server, uses: RequestHandler[]) {
+export default function registerRoutes(
+  botEmulator: BotEmulator,
+  server: Server,
+  uses: RequestHandler[]
+) {
   const fetchConversation = createFetchConversationMiddleware(botEmulator);
   const jsonBodyParser = createJsonBodyParserMiddleware();
   const facility = getFacility('emulator');
@@ -153,5 +158,6 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     jsonBodyParser,
     facility,
     getRouteName('sendTokenResponse'),
-    sendTokenResponse(botEmulator));
+    sendTokenResponse(botEmulator)
+  );
 }

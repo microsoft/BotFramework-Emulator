@@ -31,7 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { APIException, createErrorResponse, ErrorCodes } from '@bfemulator/app-shared';
+import {
+  APIException,
+  createErrorResponse,
+  ErrorCodes,
+} from '@bfemulator/app-shared';
 import * as HttpStatus from 'http-status-codes';
 
 export const exceptionToAPIException = (exception: any): APIException => {
@@ -40,6 +44,6 @@ export const exceptionToAPIException = (exception: any): APIException => {
   }
   return {
     error: createErrorResponse(ErrorCodes.ServiceError, exception.message),
-    statusCode: HttpStatus.BAD_REQUEST
+    statusCode: HttpStatus.BAD_REQUEST,
   };
 };

@@ -32,16 +32,23 @@
 //
 
 import { connect } from 'react-redux';
-import { DialogService } from '../service';
-import { GetStartedWithCSDialog, GetStartedWithCSDialogProps } from './getStartedWithCSDialog';
-import { RootState } from '../../../data/store';
 
-const mapDispatchToProps = (_dispatch: () => void): GetStartedWithCSDialogProps => ({
+import { RootState } from '../../../data/store';
+import { DialogService } from '../service';
+
+import {
+  GetStartedWithCSDialog,
+  GetStartedWithCSDialogProps,
+} from './getStartedWithCSDialog';
+
+const mapDispatchToProps = (
+  _dispatch: () => void
+): GetStartedWithCSDialogProps => ({
   cancel: () => DialogService.hideDialog(0),
   confirm: () => DialogService.hideDialog(1),
   launchConnectedServiceEditor: () => {
     DialogService.hideDialog(2);
-  }
+  },
 });
 
 const mapStateToProps = (state: RootState, ownProps) => {
@@ -49,7 +56,10 @@ const mapStateToProps = (state: RootState, ownProps) => {
   const [, payload] = token.split('.');
   const pJson = JSON.parse(atob(payload));
 
-  return { ...ownProps, user: pJson.upn || pJson.unique_name || pJson.name || pJson.email };
+  return {
+    ...ownProps,
+    user: pJson.upn || pJson.unique_name || pJson.name || pJson.email,
+  };
 };
 
 export const GetStartedWithCSDialogContainer = connect(

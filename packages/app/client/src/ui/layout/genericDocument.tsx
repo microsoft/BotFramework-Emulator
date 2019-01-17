@@ -32,6 +32,7 @@
 //
 
 import * as React from 'react';
+
 import * as styles from './genericDocument.scss';
 
 interface GenericDocumentProps {
@@ -39,14 +40,11 @@ interface GenericDocumentProps {
 }
 
 export class GenericDocument extends React.Component<GenericDocumentProps, {}> {
-
-  render(): JSX.Element {
+  public render(): JSX.Element {
     const { className = '' } = this.props;
     return (
-      <div className={ `${styles.genericDocument} ${className}` }>
-        <div className={ styles.genericDocContent }>
-          { this.props.children }
-        </div>
+      <div className={`${styles.genericDocument} ${className}`}>
+        <div className={styles.genericDocContent}>{this.props.children}</div>
       </div>
     );
   }

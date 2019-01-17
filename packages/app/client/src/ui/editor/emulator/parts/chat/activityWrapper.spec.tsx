@@ -39,7 +39,7 @@ import ActivityWrapper from './activityWrapper';
 
 jest.mock('./chat.scss', () => ({
   chatActivity: 'chat-activity',
-  selectedActivity: 'selected-activity'
+  selectedActivity: 'selected-activity',
 }));
 
 const defaultProps = {
@@ -57,11 +57,7 @@ function render(
     ...overrides,
   };
 
-  return mount(
-    <ActivityWrapper {...props}>
-      { children }
-    </ActivityWrapper>
-  );
+  return mount(<ActivityWrapper {...props}>{children}</ActivityWrapper>);
 }
 
 describe('<ActivityWrapper />', () => {

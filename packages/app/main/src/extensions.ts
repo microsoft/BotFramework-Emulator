@@ -31,21 +31,22 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { ChildProcess, fork } from 'child_process';
+import * as path from 'path';
+
+import { SharedConstants } from '@bfemulator/app-shared';
+import { ProcessIPC, WebSocketIPC } from '@bfemulator/sdk-main';
 import {
   CommandService,
   CommandServiceImpl,
   DisposableImpl,
   ExtensionConfig,
   IPC,
-  NoopIPC
+  NoopIPC,
 } from '@bfemulator/sdk-shared';
-import { ProcessIPC, WebSocketIPC, WebSocketServer } from '@bfemulator/sdk-main';
-import { getDirectories, readFileSync } from './utils';
-import { ChildProcess, fork } from 'child_process';
-import * as path from 'path';
+
 import { mainWindow } from './main';
-import * as WebSocket from 'ws';
-import { SharedConstants } from '@bfemulator/app-shared';
+import { getDirectories, readFileSync } from './utils';
 
 // =============================================================================
 export interface Extension {
@@ -62,7 +63,8 @@ export interface Extension {
 }
 
 // =============================================================================
-export abstract class ExtensionImpl extends DisposableImpl implements Extension {
+export abstract class ExtensionImpl extends DisposableImpl
+  implements Extension {
   protected _ext: CommandService;
   protected _cli: CommandService;
 
@@ -76,8 +78,14 @@ export abstract class ExtensionImpl extends DisposableImpl implements Extension 
 
   protected constructor(private _config: ExtensionConfig, protected _ipc: IPC) {
     super();
-    this._ext = new CommandServiceImpl(this._ipc, `ext-${this._config.location}`);
-    this._cli = new CommandServiceImpl(mainWindow.ipc, `ext-${this._config.location}`);
+    this._ext = new CommandServiceImpl(
+      this._ipc,
+      `ext-${this._config.location}`
+    );
+    this._cli = new CommandServiceImpl(
+      mainWindow.ipc,
+      `ext-${this._config.location}`
+    );
     this.toDispose(this._ipc);
     this.toDispose(this._ext);
 
@@ -95,15 +103,21 @@ export abstract class ExtensionImpl extends DisposableImpl implements Extension 
 
     // -------------------------------------------------------------------------
     // Pass unknown commands from client to extension
-    this._cli.on('command-not-found', (commandName: string, ...args: any[]): Promise<any> => {
-      return this._ext.remoteCall(commandName, ...args);
-    });
+    this._cli.on(
+      'command-not-found',
+      (commandName: string, ...args: any[]): Promise<any> => {
+        return this._ext.remoteCall(commandName, ...args);
+      }
+    );
 
     // -------------------------------------------------------------------------
     // Pass unknown commands from extension to shell
-    this._ext.on('command-not-found', (commandName: string, ...args: any[]): Promise<any> => {
-      return mainWindow.commandService.call(commandName, ...args);
-    });
+    this._ext.on(
+      'command-not-found',
+      (commandName: string, ...args: any[]): Promise<any> => {
+        return mainWindow.commandService.call(commandName, ...args);
+      }
+    );
   }
 
   public call(commandName: string, ...args: any[]): Promise<any> {
@@ -114,20 +128,19 @@ export abstract class ExtensionImpl extends DisposableImpl implements Extension 
     }
   }
 
-  abstract on(event: 'exit', listener: NodeJS.ExitListener);
+  public abstract on(event: 'exit', listener: NodeJS.ExitListener);
 
-  abstract connect();
+  public abstract connect();
 
-  abstract disconnect();
+  public abstract disconnect();
 
-  toDispose(obj: any) {
+  public toDispose(obj: any) {
     super.toDispose(obj);
   }
 }
 
 // =============================================================================
 export class ChildExtension extends ExtensionImpl {
-
   constructor(config: ExtensionConfig, private _process: ChildProcess) {
     super(config, new ProcessIPC(_process));
   }
@@ -167,21 +180,21 @@ export class PeerExtension extends ExtensionImpl {
 
 // =============================================================================
 export class ClientExtension extends ExtensionImpl {
-  static counter: number = 0;
+  public static counter: number = 0;
 
   constructor(config: ExtensionConfig) {
     super(config, new NoopIPC(--ClientExtension.counter));
   }
 
-  on() {
+  public on() {
     return null;
   }
 
-  connect() {
+  public connect() {
     return null;
   }
 
-  disconnect() {
+  public disconnect() {
     return null;
   }
 }
@@ -198,12 +211,11 @@ export interface ExtensionManager {
 }
 
 // =============================================================================
-export const ExtensionManagerImpl = new class extends DisposableImpl implements ExtensionManager {
-
+class ExtManagerImpl extends DisposableImpl implements ExtensionManager {
   private extensions: Map<IPC, ExtensionImpl> = new Map<IPC, ExtensionImpl>();
 
   public findExtension(name: string): ExtensionImpl {
-    for (let kvPair of this.extensions) {
+    for (const kvPair of this.extensions) {
       if (kvPair[1].config.name === name) {
         return kvPair[1];
       }
@@ -215,7 +227,9 @@ export const ExtensionManagerImpl = new class extends DisposableImpl implements 
     let folders = [];
     try {
       // Get all subdirectories under ../extensions
-      const folder = this.unpackedFolder(path.resolve(path.join(__dirname, '..', 'extensions')));
+      const folder = this.unpackedFolder(
+        path.resolve(path.join(__dirname, '..', 'extensions'))
+      );
       folders = getDirectories(folder);
     } catch {
       // do nothing
@@ -225,13 +239,14 @@ export const ExtensionManagerImpl = new class extends DisposableImpl implements 
       try {
         this.spawnExtension(folder);
       } catch (ex) {
+        // eslint-disable-next-line no-console
         console.log(`Failed to spawn extension '${folder}'`, ex);
       }
     });
   }
 
   public unloadExtensions() {
-    for (let kvPair of this.extensions) {
+    for (const kvPair of this.extensions) {
       this.unloadExtension(kvPair[0]);
     }
   }
@@ -239,11 +254,15 @@ export const ExtensionManagerImpl = new class extends DisposableImpl implements 
   public unloadExtension(ipc: IPC) {
     const extension = this.extensions.get(ipc);
     if (extension) {
+      // eslint-disable-next-line no-console
       console.log(`Removing extension ${extension.config.name}`);
       // Disconnect from the extension process
       extension.disconnect();
       // Notify the client that the extension is gone.
-      mainWindow.commandService.remoteCall(SharedConstants.Commands.Extension.Disconnect, extension.config.location);
+      mainWindow.commandService.remoteCall(
+        SharedConstants.Commands.Extension.Disconnect,
+        extension.config.location
+      );
       // Cleanup
       this.extensions.delete(ipc);
     }
@@ -256,30 +275,38 @@ export const ExtensionManagerImpl = new class extends DisposableImpl implements 
     this.unloadExtension(extension.ipc);
     // Save it off.
     this.extensions.set(extension.ipc, extension);
-    extension.on('exit', (code) => {
+    extension.on('exit', () => {
       // Unload the extension if its process exits.
       this.unloadExtension(extension.ipc);
     });
+    // eslint-disable-next-line no-console
     console.log(`Adding extension ${extension.config.name}`);
     // Cleanup some data
     extension.config.client = extension.config.client || {};
     extension.config.node = extension.config.node || {};
     // Cleanup basePath (root of webpack-dev-server, where index.html would live)
-    extension.config.client.basePath = (extension.config.client.basePath || '').replace(/\\/g, '/');
+    extension.config.client.basePath = (
+      extension.config.client.basePath || ''
+    ).replace(/\\/g, '/');
     // Get the list of inspectors
     const inspectors = extension.config.client.inspectors || [];
     // Cleanup inspector paths
     inspectors.forEach(inspector => {
       inspector.src = (inspector.src || '').replace(/\\/g, '/');
     });
-    if (extension.config.client.debug
-      && extension.config.client.debug.enabled
-      && extension.config.client.debug.webpack) {
+    if (
+      extension.config.client.debug &&
+      extension.config.client.debug.enabled &&
+      extension.config.client.debug.webpack
+    ) {
       // If running in debug mode, rewrite inspector paths as http URLs for webpack-dev-server.
       const port = extension.config.client.debug.webpack.port || 3030;
       const host = extension.config.client.debug.webpack.host || 'localhost';
       inspectors.forEach(inspector => {
-        inspector.src = `http://${host}:${port}/${inspector.src}`.replace(extension.config.client.basePath, '');
+        inspector.src = `http://${host}:${port}/${inspector.src}`.replace(
+          extension.config.client.basePath,
+          ''
+        );
       });
     } else {
       // If not in debug mode, rewrite paths as file path URLs.
@@ -294,7 +321,10 @@ export const ExtensionManagerImpl = new class extends DisposableImpl implements 
     // Connect to the extension's node process (if any).
     extension.connect();
     // Notify the client of the new extension.
-    mainWindow.commandService.remoteCall(SharedConstants.Commands.Extension.Connect, extension.config);
+    mainWindow.commandService.remoteCall(
+      SharedConstants.Commands.Extension.Connect,
+      extension.config
+    );
   }
 
   // Check whether we're running from an 'app.asar' packfile. If so, it means we were installed
@@ -330,33 +360,47 @@ export const ExtensionManagerImpl = new class extends DisposableImpl implements 
         folder = this.unpackedFolder(path.resolve(config.location));
       }
       try {
-        Object.assign(config, JSON.parse(readFileSync(`${folder}/bf-extension.json`)));
+        Object.assign(
+          config,
+          JSON.parse(readFileSync(`${folder}/bf-extension.json`))
+        );
       } catch (ex) {
         config = null;
       }
       if (config && config.name) {
         if (config.node) {
           if (config.node.debug && config.node.debug.enabled) {
-            if (config.node.debug.websocket && config.node.debug.websocket.port) {
+            if (
+              config.node.debug.websocket &&
+              config.node.debug.websocket.port
+            ) {
               const port = +config.node.debug.websocket.port;
               try {
                 // This extension is going to connect to us over websocket. Once that
                 // connection is established we'll add the extension.
                 // const wss = new ExtensionServer(port);
-                console.log(`Waiting for extension ${config.name} to connect on port ${port}`);
+                // eslint-disable-next-line no-console
+                console.log(
+                  `Waiting for extension ${
+                    config.name
+                  } to connect on port ${port}`
+                );
               } catch (err) {
-                const msg = `Failed to spawn WebSocketServer on port ${port}. 
+                const msg = `Failed to spawn WebSocketServer on port ${port}.
                 Extension ${config.name} will be unable to connect.`;
+                // eslint-disable-next-line no-console
                 console.log(msg, err);
               }
             }
           } else if (config.node.main) {
             // Launch node process as a child of this one.
-            const file = this.unpackedFolder(path.resolve(folder, config.node.main));
+            const file = this.unpackedFolder(
+              path.resolve(folder, config.node.main)
+            );
             // Start the extension in a child process.
             child = fork(file, [], {
               cwd: path.dirname(file),
-              stdio: [0, 1, 2, 'ipc']
+              stdio: [0, 1, 2, 'ipc'],
             });
             // Wrap the extension process.
             const extension = new ChildExtension(config, child);
@@ -372,6 +416,7 @@ export const ExtensionManagerImpl = new class extends DisposableImpl implements 
       }
     } catch (err) {
       // Something went wrong. If we still have a child process, try to kill it.
+      // eslint-disable-next-line no-console
       console.log('Failed to spawn extension', folder, err);
       try {
         if (child) {
@@ -382,43 +427,46 @@ export const ExtensionManagerImpl = new class extends DisposableImpl implements 
       }
     }
   }
-};
+}
+export const ExtensionManagerImpl = new ExtManagerImpl();
 
 // =============================================================================
-class PendingExtension extends DisposableImpl {
-  private readonly _ipc: WebSocketIPC;
-  private readonly _ext: CommandService;
+// class PendingExtension extends DisposableImpl {
+//   private readonly _ipc: WebSocketIPC;
+//   private readonly _ext: CommandService;
 
-  constructor(private _ws: WebSocket) {
-    super();
-    this._ipc = new WebSocketIPC(this._ws);
-    this._ext = new CommandServiceImpl(this._ipc, 'connector');
-    super.toDispose(this._ipc);
-    super.toDispose(this._ext);
-    this._ext.remoteCall('hello')
-      .then((reply: {
-        id: number,
-        configPath: string,
-        config: ExtensionConfig
-      }) => {
-        const ipc = new WebSocketIPC(this._ws);
-        ipc.id = reply.id;
-        const configPath = reply.configPath;
-        const extension = new PeerExtension(reply.config, ipc);
-        ExtensionManagerImpl.addExtension(extension, configPath);
-        super.dispose();
-      });
-  }
-}
+//   public constructor(private _ws: WebSocket) {
+//     super();
+//     this._ipc = new WebSocketIPC(this._ws);
+//     this._ext = new CommandServiceImpl(this._ipc, 'connector');
+//     super.toDispose(this._ipc);
+//     super.toDispose(this._ext);
+//     this._ext
+//       .remoteCall('hello')
+//       .then(
+//         (reply: {
+//           id: number;
+//           configPath: string;
+//           config: ExtensionConfig;
+//         }) => {
+//           const ipc = new WebSocketIPC(this._ws);
+//           ipc.id = reply.id;
+//           const configPath = reply.configPath;
+//           const extension = new PeerExtension(reply.config, ipc);
+//           ExtensionManagerImpl.addExtension(extension, configPath);
+//           super.dispose();
+//         }
+//       );
+//   }
+// }
 
 // =============================================================================
-class ExtensionServer extends WebSocketServer {
+// class ExtensionServer extends WebSocketServer {
+//   constructor(port: number) {
+//     super(port);
+//   }
 
-  constructor(port: number) {
-    super(port);
-  }
-
-  public onConnection(ws: WebSocket): PendingExtension {
-    return new PendingExtension(ws);
-  }
-}
+//   public onConnection(ws: WebSocket): PendingExtension {
+//     return new PendingExtension(ws);
+//   }
+// }

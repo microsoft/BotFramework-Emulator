@@ -32,5 +32,5 @@
 //
 
 export interface CommandLineArgs {
-    storagepath?: string;
+  storagepath?: string;
 }

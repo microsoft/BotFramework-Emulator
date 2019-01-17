@@ -33,10 +33,14 @@
 
 import { SharedConstants } from '@bfemulator/app-shared';
 
-export const CONTENT_TYPE_APP_SETTINGS = 'application/vnd.microsoft.bfemulator.document.appsettings';
-export const CONTENT_TYPE_WELCOME_PAGE = 'application/vnd.microsoft.bfemulator.document.welcome';
-export const CONTENT_TYPE_TRANSCRIPT = 'application/vnd.microsoft.bfemulator.document.transcript';
-export const CONTENT_TYPE_LIVE_CHAT = SharedConstants.ContentTypes.CONTENT_TYPE_LIVE_CHAT;
+export const CONTENT_TYPE_APP_SETTINGS =
+  'application/vnd.microsoft.bfemulator.document.appsettings';
+export const CONTENT_TYPE_WELCOME_PAGE =
+  'application/vnd.microsoft.bfemulator.document.welcome';
+export const CONTENT_TYPE_TRANSCRIPT =
+  'application/vnd.microsoft.bfemulator.document.transcript';
+export const CONTENT_TYPE_LIVE_CHAT =
+  SharedConstants.ContentTypes.CONTENT_TYPE_LIVE_CHAT;
 
 export const NAVBAR_BOT_EXPLORER = 'navbar.botExplorer';
 export const NAVBAR_SETTINGS = 'navbar.settings';
@@ -46,10 +50,7 @@ export const NAVBAR_RESOURCES = 'navbar:resources';
 export const EDITOR_KEY_PRIMARY = 'primary';
 export const EDITOR_KEY_SECONDARY = 'secondary';
 
-export const EditorKeys = [
-  EDITOR_KEY_PRIMARY,
-  EDITOR_KEY_SECONDARY
-];
+export const EditorKeys = [EDITOR_KEY_PRIMARY, EDITOR_KEY_SECONDARY];
 
 export const DOCUMENT_ID_APP_SETTINGS = 'app:settings';
 export const DOCUMENT_ID_BOT_SETTINGS = 'bot:settings';

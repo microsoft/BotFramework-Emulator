@@ -32,18 +32,19 @@
 //
 
 import * as React from 'react';
+
 import * as styles from './column.scss';
 
 export enum ColumnAlignment {
   Left,
   Center,
-  Right
+  Right,
 }
 
 export enum ColumnJustification {
   Top,
   Center,
-  Bottom
+  Bottom,
 }
 
 export interface ColumnProps {
@@ -53,12 +54,15 @@ export interface ColumnProps {
 }
 
 export class Column extends React.Component<ColumnProps, {}> {
-
-  render(): JSX.Element {
+  public render(): JSX.Element {
     const { className = '' } = this.props;
     return (
-      <div className={ `${styles.column} ${this.getColumnAlignment()} ${this.getColumnJustification()} ${className}` }>
-        { this.props.children }
+      <div
+        className={`${
+          styles.column
+        } ${this.getColumnAlignment()} ${this.getColumnJustification()} ${className}`}
+      >
+        {this.props.children}
       </div>
     );
   }

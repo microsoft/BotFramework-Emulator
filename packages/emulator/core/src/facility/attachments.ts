@@ -47,13 +47,19 @@ export default class Attachments {
 
   public uploadAttachment(attachmentData: AttachmentData): string {
     if (!attachmentData.type) {
-      throw createAPIException(HttpStatus.BAD_REQUEST, ErrorCodes.MissingProperty,
-        'You must specify type property for the attachment');
+      throw createAPIException(
+        HttpStatus.BAD_REQUEST,
+        ErrorCodes.MissingProperty,
+        'You must specify type property for the attachment'
+      );
     }
 
     if (!attachmentData.originalBase64) {
-      throw createAPIException(HttpStatus.BAD_REQUEST, ErrorCodes.MissingProperty,
-        'You must specify originalBase64 byte[] for the attachment');
+      throw createAPIException(
+        HttpStatus.BAD_REQUEST,
+        ErrorCodes.MissingProperty,
+        'You must specify originalBase64 byte[] for the attachment'
+      );
     }
 
     const attachment: any = { ...attachmentData, id: uniqueId() };
