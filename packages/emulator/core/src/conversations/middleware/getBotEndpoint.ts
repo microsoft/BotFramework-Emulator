@@ -30,8 +30,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
-import { ConversationParameters } from '@bfemulator/sdk-shared';
 import * as Restify from 'restify';
 
 import BotEmulator from '../../botEmulator';
@@ -56,7 +54,7 @@ export default function getBotEndpoint(botEmulator: BotEmulator) {
       } = req.query;
       let endpoint = endpoints.get(botUrl);
       if (!endpoint) {
-        const params = req.body as ConversationParameters;
+        const params = req.body as any;
         endpoint = endpoints.push(null, {
           botId: params.bot.id,
           botUrl,
