@@ -41,6 +41,10 @@
 .input-container {
   margin-top: 10px;
   padding-right: 115px;
+}
+
+.input-container-row {
+  width: 100%;
 
   & + div {
     margin-left: 8px;
@@ -53,6 +57,10 @@
   height: 100%;
   z-index: 2;
   opacity: 0;
+}
+
+.multi-input-row {
+  justify-content: space-between;
 }
 
 /* maintains "light" theme for the recent bots list since it's in a modal */

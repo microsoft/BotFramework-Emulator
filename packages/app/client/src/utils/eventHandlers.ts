@@ -31,26 +31,47 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { SharedConstants } from '@bfemulator/app-shared';
+import {
+  Notification,
+  NotificationType,
+  SharedConstants,
+} from '@bfemulator/app-shared';
 
 import { CommandServiceImpl } from '../platform/commands/commandServiceImpl';
 
-export const globalHandlers: EventListener = (event: KeyboardEvent): void => {
+export const globalHandlers: EventListener = async (
+  event: KeyboardEvent
+): Promise<any> => {
   // Meta corresponds to 'Command' on Mac
   const ctrlOrCmdPressed = event.ctrlKey || event.metaKey;
   const key = event.key.toLowerCase();
   const {
     Commands: {
-      Bot: { OpenBrowse },
-      UI: { ShowBotCreationDialog },
+      UI: { ShowBotCreationDialog, ShowOpenBotDialog },
+      Notifications: { Add },
     },
   } = SharedConstants;
 
+  let awaitable: Promise<any>;
   if (ctrlOrCmdPressed && key === 'o') {
-    CommandServiceImpl.call(OpenBrowse).catch();
+    awaitable = CommandServiceImpl.call(ShowOpenBotDialog);
   }
 
   if (ctrlOrCmdPressed && key === 'n') {
-    CommandServiceImpl.call(ShowBotCreationDialog).catch();
+    awaitable = CommandServiceImpl.call(ShowBotCreationDialog);
+  }
+
+  if (awaitable) {
+    // Prevents the char from showing up if an input is focused
+    event.preventDefault();
+    event.stopPropagation();
+    try {
+      await awaitable;
+    } catch (e) {
+      await CommandServiceImpl.call(Add, {
+        message: '' + e,
+        type: NotificationType.Error,
+      } as Notification);
+    }
   }
 };

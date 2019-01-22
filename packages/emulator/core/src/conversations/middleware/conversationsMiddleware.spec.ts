@@ -35,6 +35,7 @@ import * as HttpStatus from 'http-status-codes';
 import BotEmulator from '../../botEmulator';
 import ConversationSet from '../../facility/conversationSet';
 import BotEndpoint from '../../facility/botEndpoint';
+import Endpoints from '../../facility/endpointSet';
 import ConversationParameters from '../../types/activity/conversationParameters';
 import Users from '../../facility/users';
 import Conversation from '../../facility/conversation';
@@ -46,6 +47,7 @@ import createConversation from './createConversation';
 import deleteActivity from './deleteActivity';
 import fetchConversation from './fetchConversation';
 import getActivityMembers from './getActivityMembers';
+import getBotEndpoint from './getBotEndpoint';
 import replyToActivity from './replyToActivity';
 import sendActivityToConversation from './sendActivityToConversation';
 import sendHistoryToConversation from './sendHistoryToConversation';
@@ -61,13 +63,7 @@ describe('The conversations middleware', () => {
       end: () => null,
       contentType: '',
     };
-    emulator = { facilities: { logger: { logMessage: () => true } } } as any;
-    emulator.facilities.conversations = new ConversationSet();
-    emulator.facilities.users = new Users();
-    emulator.facilities.users.currentUserId = '456';
-    emulator.facilities.logger = { logActivity: () => null } as any;
-    emulator.facilities.attachments = new Attachments();
-    emulator.options = {};
+    emulator = createEmulatorUtil();
   });
 
   it('should create a new conversation', () => {
@@ -578,6 +574,78 @@ describe('The conversations middleware', () => {
   });
 });
 
+describe('The getBotEndpoint middleware', () => {
+  let emulator: BotEmulator;
+  let res;
+  let getBotEndpointMiddleware;
+  beforeEach(() => {
+    res = {
+      send: () => null,
+      end: () => null,
+      contentType: '',
+    };
+    emulator = createEmulatorUtil();
+    getBotEndpointMiddleware = getBotEndpoint(emulator);
+  });
+
+  it('should push a new endpoint to the EndpointSet when the params contain the appropriate data', () => {
+    const req = {
+      body: {
+        bot: {
+          id: '1234',
+        },
+      },
+      query: {
+        botEndpoint: 'http://localhost:5050/api/messages',
+        msaAppId: '12e34',
+        msaPassword: '54543',
+      },
+    } as any;
+    getBotEndpointMiddleware(req as any, res, (() => null) as any);
+
+    expect(
+      emulator.facilities.endpoints.get('http://localhost:5050/api/messages')
+    ).not.toBeNull();
+  });
+
+  it('should retrieve the endpoint from the jwt when one exists', () => {
+    const req = {
+      jwt: {
+        appId: '1234',
+      },
+    } as any;
+
+    emulator.facilities.endpoints.push(null, {
+      botId: 'vfgdsfgds',
+      botUrl: 'http://localhost/api/messages',
+      msaAppId: '1234',
+      msaPassword: 'fdsa',
+    });
+
+    getBotEndpointMiddleware(req as any, res, (() => null) as any);
+    expect(req.botEndpoint).not.toBeNull();
+  });
+
+  it('should update the msaAppId and msaAppPassword if the exist in the query', () => {
+    emulator.facilities.endpoints.push(null, {
+      botId: 'vfgdsfgds',
+      botUrl: 'http://localhost/api/messages',
+      msaAppId: 'oldAppId',
+      msaPassword: 'oldPassword',
+    });
+    const req = {
+      query: {
+        botEndpoint: 'http://localhost/api/messages',
+        msaAppId: 'newAppId',
+        msaPassword: 'newPassword',
+      },
+    } as any;
+    getBotEndpointMiddleware(req as any, res, (() => null) as any);
+    expect(req.botEndpoint.msaAppId).toBe('newAppId');
+    expect(req.botEndpoint.msaPassword).toBe('newPassword');
+  });
+});
+
 function createConversationUtil(emulator: BotEmulator): Conversation {
   // create the conversation with an activity
   const bot = { role: 'bot', name: 'thebot', id: '456' };
@@ -608,4 +676,19 @@ function createConversationUtil(emulator: BotEmulator): Conversation {
   );
 
   return emulator.facilities.conversations.conversationById('007');
+}
+
+function createEmulatorUtil(): BotEmulator {
+  const emulator = {
+    facilities: { logger: { logMessage: () => true } },
+  } as any;
+  emulator.facilities.conversations = new ConversationSet();
+  emulator.facilities.users = new Users();
+  emulator.facilities.users.currentUserId = '456';
+  emulator.facilities.endpoints = new Endpoints(emulator);
+  emulator.facilities.logger = { logActivity: () => null } as any;
+  emulator.facilities.attachments = new Attachments();
+  emulator.options = {};
+
+  return emulator;
 }

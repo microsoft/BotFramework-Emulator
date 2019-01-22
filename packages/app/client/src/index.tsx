@@ -70,13 +70,13 @@ CommandServiceImpl.remoteCall(SharedConstants.Commands.ClientInit.Loaded)
     CommandServiceImpl.remoteCall(
       SharedConstants.Commands.ClientInit.PostWelcomeScreen
     );
-    window.addEventListener('keydown', globalHandlers);
+    window.addEventListener('keydown', globalHandlers, true);
   })
   .catch(err => {
     const errMsg = `Error occurred while client was loading: ${err}`;
     const notification = newNotification(errMsg);
     store.dispatch(beginAdd(notification));
-    window.removeEventListener('keydown', globalHandlers);
+    window.removeEventListener('keydown', globalHandlers, true);
   });
 
 if (module.hasOwnProperty('hot')) {
