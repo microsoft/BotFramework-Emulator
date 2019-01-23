@@ -10,7 +10,6 @@ import {
   Settings,
   SharedConstants,
 } from '@bfemulator/app-shared';
-import { Users } from '@bfemulator/sdk-shared';
 import { ProgressInfo } from 'builder-util-runtime';
 import * as Electron from 'electron';
 import { app, systemPreferences } from 'electron';
@@ -47,6 +46,7 @@ import { UpdateInfo } from 'electron-updater';
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import { Store } from 'redux';
+import Users from '@bfemulator/emulator-core/lib/facility/users';
 
 import { appendCustomUserAgent } from './appendCustomUserAgent';
 import { AppMenuBuilder } from './appMenuBuilder';
