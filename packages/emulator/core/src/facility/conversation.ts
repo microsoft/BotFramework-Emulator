@@ -31,31 +31,30 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { EventEmitter } from 'events';
-
 import {
   Activity,
   appSettingsItem,
+  Attachment,
   CheckoutConversationSession,
   ContactRelationUpdateActivity,
   ConversationUpdateActivity,
   ErrorCodes,
+  EventActivity,
   externalLinkItem,
+  GenericActivity,
+  InvokeActivity,
   LogLevel,
+  MessageActivity,
+  PaymentOperations,
+  PaymentRequest,
+  PaymentRequestComplete,
+  PaymentRequestUpdate,
   ResourceResponse,
   textItem,
   TranscriptRecord,
-  PaymentRequest,
   User,
-  InvokeActivity,
-  PaymentOperations,
-  PaymentRequestComplete,
-  EventActivity,
-  PaymentRequestUpdate,
-  GenericActivity,
-  MessageActivity,
-  Attachment,
 } from '@bfemulator/sdk-shared';
+import { EventEmitter } from 'events';
 import * as HttpStatus from 'http-status-codes';
 import updateIn from 'simple-update-in';
 
@@ -227,10 +226,12 @@ export default class Conversation extends EventEmitter {
       membersRemoved,
     };
 
-    try {
-      await this.postActivityToBot(activity, false);
-    } catch (err) {
-      this.botEmulator.facilities.logger.logException(this.conversationId, err);
+    const result = await this.postActivityToBot(activity, false);
+    if (!/2\d\d/.test('' + result.statusCode)) {
+      this.botEmulator.facilities.logger.logException(
+        this.conversationId,
+        result.response
+      );
     }
   }
 
