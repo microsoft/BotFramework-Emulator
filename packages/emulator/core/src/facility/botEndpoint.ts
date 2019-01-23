@@ -31,9 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { BotEndpointOptions, SpeechTokenInfo } from '@bfemulator/sdk-shared';
 import { URL, URLSearchParams } from 'url';
 
+import { BotEndpointOptions, SpeechTokenInfo } from '@bfemulator/sdk-shared';
 import * as HttpStatus from 'http-status-codes';
 
 import {

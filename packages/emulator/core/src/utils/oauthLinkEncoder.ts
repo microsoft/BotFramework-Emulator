@@ -37,6 +37,7 @@ import {
   GenericActivity,
   OAuthCard,
 } from '@bfemulator/sdk-shared';
+
 import BotEmulator from '../botEmulator';
 import uniqueId from '../utils/uniqueId';
 

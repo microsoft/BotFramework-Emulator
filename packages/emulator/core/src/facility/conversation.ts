@@ -31,6 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { EventEmitter } from 'events';
+
 import {
   Activity,
   appSettingsItem,
@@ -54,8 +56,6 @@ import {
   MessageActivity,
   Attachment,
 } from '@bfemulator/sdk-shared';
-import { EventEmitter } from 'events';
-
 import * as HttpStatus from 'http-status-codes';
 import updateIn from 'simple-update-in';
 

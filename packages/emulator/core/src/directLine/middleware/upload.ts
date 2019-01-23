@@ -31,14 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import * as fs from 'fs';
+
 import {
   Attachment,
   AttachmentData,
   LogLevel,
   textItem,
 } from '@bfemulator/sdk-shared';
-import * as fs from 'fs';
-
 import * as Formidable from 'formidable';
 import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';

@@ -9,6 +9,7 @@ import {
   SigninCard,
   ThumbnailCard,
 } from '@bfemulator/sdk-shared';
+
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license.
 //

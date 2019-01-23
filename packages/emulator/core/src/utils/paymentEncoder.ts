@@ -32,6 +32,7 @@
 //
 
 import { CardAction } from '@bfemulator/sdk-shared';
+
 import ActivityVisitor from './activityVisitor';
 
 export default class PaymentEncoder extends ActivityVisitor {

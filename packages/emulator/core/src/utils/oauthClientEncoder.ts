@@ -32,6 +32,7 @@
 //
 
 import { Activity, CardAction } from '@bfemulator/sdk-shared';
+
 import ActivityVisitor from './activityVisitor';
 
 export default class OAuthClientEncoder extends ActivityVisitor {
