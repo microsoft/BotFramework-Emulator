@@ -1,4 +1,9 @@
 //
+import {
+  AttachmentData,
+  ConversationParameters,
+  GenericActivity,
+} from '@bfemulator/sdk-shared';
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license.
 //
@@ -36,11 +41,8 @@ import BotEmulator from '../../botEmulator';
 import ConversationSet from '../../facility/conversationSet';
 import BotEndpoint from '../../facility/botEndpoint';
 import Endpoints from '../../facility/endpointSet';
-import ConversationParameters from '../../types/activity/conversationParameters';
 import Users from '../../facility/users';
 import Conversation from '../../facility/conversation';
-import GenericActivity from '../../types/activity/generic';
-import AttachmentData from '../../types/attachment/data';
 import Attachments from '../../facility/attachments';
 
 import createConversation from './createConversation';

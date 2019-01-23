@@ -1,4 +1,5 @@
 //
+import { ConversationParameters } from '@bfemulator/sdk-shared';
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license.
 //
@@ -36,7 +37,6 @@ import * as HttpStatus from 'http-status-codes';
 import BotEmulator from '../../botEmulator';
 import Conversation from '../../facility/conversation';
 import BotEndpoint from '../../facility/botEndpoint';
-import ConversationParameters from '../../types/activity/conversationParameters';
 import createConversation from '../../conversations/middleware/createConversation';
 import ConversationSet from '../../facility/conversationSet';
 import Users from '../../facility/users';

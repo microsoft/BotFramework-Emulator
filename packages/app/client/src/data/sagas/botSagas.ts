@@ -31,46 +31,98 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { SharedConstants } from '@bfemulator/app-shared';
-
-import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
+import { newNotification, UserSettings } from '@bfemulator/app-shared';
 import {
-  BotActions,
-  botHashGenerated,
-  SetActiveBotAction,
-} from '../action/botActions';
-import { generateBotHash } from '../botHelpers';
-
-import { refreshConversationMenu } from './sharedSagas';
+  ConversationService,
+  StartConversationParams,
+} from '@bfemulator/sdk-shared';
 
 import {
   call,
   ForkEffect,
   put,
+  select,
   takeEvery,
   takeLatest,
 } from 'redux-saga/effects';
+import { ActiveBotHelper } from '../../ui/helpers/activeBotHelper';
+import {
+  BotAction,
+  BotActionType,
+  BotConfigWithPathPayload,
+  botHashGenerated,
+} from '../action/botActions';
+import { beginAdd } from '../action/notificationActions';
+import { generateBotHash } from '../botHelpers';
+import { RootState } from '../store';
+
+import { refreshConversationMenu } from './sharedSagas';
 
 /** Opens up native open file dialog to browse for a .bot file */
 export function* browseForBot(): IterableIterator<any> {
-  yield CommandServiceImpl.call(SharedConstants.Commands.Bot.OpenBrowse)
-    // dialog was closed
-    .catch(_err => null);
+  yield call([ActiveBotHelper, ActiveBotHelper.confirmAndOpenBotFromFile]);
 }
 
 export function* generateHashForActiveBot(
-  action: SetActiveBotAction
+  action: BotAction<BotConfigWithPathPayload>
 ): IterableIterator<any> {
   const { bot } = action.payload;
   const generatedHash = yield call(generateBotHash, bot);
   yield put(botHashGenerated(generatedHash));
 }
 
+export function* openBotViaFilePath(action: BotAction<string>) {
+  try {
+    yield call(
+      [ActiveBotHelper, ActiveBotHelper.confirmAndOpenBotFromFile],
+      action.payload
+    );
+  } catch (e) {
+    const errorNotification = beginAdd(
+      newNotification(
+        `An Error occurred opening the bot at ${action.payload}: ${e}`
+      )
+    );
+    yield put(errorNotification);
+  }
+}
+
+export function* openBotViaUrl(
+  action: BotAction<Partial<StartConversationParams>>
+) {
+  const serverUrl = yield select(
+    (state: RootState) => state.clientAwareSettings.serverUrl
+  );
+  if (!action.payload.user) {
+    // If no user is provided, select the current user
+    const users: UserSettings = yield select(
+      (state: RootState) => state.clientAwareSettings.users
+    );
+    action.payload.user = users.usersById[users.currentUserId];
+  }
+  const response = yield ConversationService.startConversation(
+    serverUrl,
+    action.payload
+  );
+  if (!response.ok) {
+    const errorNotification = beginAdd(
+      newNotification(
+        `An Error occurred opening the bot at ${action.payload.endpoint}: ${
+          response.statusText
+        }`
+      )
+    );
+    yield put(errorNotification);
+  }
+}
+
 export function* botSagas(): IterableIterator<ForkEffect> {
-  yield takeEvery(BotActions.browse, browseForBot);
-  yield takeEvery(BotActions.setActive, generateHashForActiveBot);
+  yield takeEvery(BotActionType.browse, browseForBot);
+  yield takeEvery(BotActionType.openViaUrl, openBotViaUrl);
+  yield takeEvery(BotActionType.openViaFilePath, openBotViaFilePath);
+  yield takeEvery(BotActionType.setActive, generateHashForActiveBot);
   yield takeLatest(
-    [BotActions.setActive, BotActions.load, BotActions.close],
+    [BotActionType.setActive, BotActionType.load, BotActionType.close],
     refreshConversationMenu
   );
 }

@@ -31,17 +31,19 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import Activity from '../types/activity/activity';
-import MessageActivity from '../types/activity/message';
-import Attachment from '../types/attachment';
-import AttachmentContentTypes from '../types/attachment/contentTypes';
-import CardAction from '../types/card/cardAction';
-import CardImage from '../types/card/cardImage';
-import MediaCard from '../types/card/media';
-import OAuthCard from '../types/card/oAuth';
-import ReceiptCard from '../types/card/receipt';
-import SigninCard from '../types/card/signIn';
-import ThumbnailCard from '../types/card/thumbnail';
+import {
+  Activity,
+  Attachment,
+  AttachmentContentTypes,
+  CardAction,
+  CardImage,
+  MediaCard,
+  MessageActivity,
+  OAuthCard,
+  ReceiptCard,
+  SigninCard,
+  ThumbnailCard,
+} from '@bfemulator/sdk-shared';
 
 export default abstract class ActivityVisitor {
   public traverseActivity(activity: Activity) {

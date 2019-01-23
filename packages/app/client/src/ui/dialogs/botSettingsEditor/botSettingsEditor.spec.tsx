@@ -40,7 +40,7 @@ import { BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
 import { SharedConstants } from '@bfemulator/app-shared';
 
 import { bot } from '../../../data/reducer/bot';
-import { setActive } from '../../../data/action/botActions';
+import { setActiveBot } from '../../../data/action/botActions';
 
 import { BotSettingsEditor } from './botSettingsEditor';
 import { BotSettingsEditorContainer } from './botSettingsEditorContainer';
@@ -117,7 +117,7 @@ describe('The BotSettingsEditor dialog should', () => {
   let parent;
   let node;
   beforeEach(() => {
-    mockStore.dispatch(setActive(mockBot));
+    mockStore.dispatch(setActiveBot(mockBot));
     mockRemoteCommandsCalled.length = 0;
     parent = mount(
       <Provider store={mockStore}>

@@ -1,4 +1,14 @@
 //
+import {
+  AttachmentContentTypes,
+  CardAction,
+  MediaCard,
+  MessageActivity,
+  OAuthCard,
+  ReceiptCard,
+  SigninCard,
+  ThumbnailCard,
+} from '@bfemulator/sdk-shared';
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license.
 //
@@ -30,15 +40,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import MessageActivity from '../types/activity/message';
-import AttachmentContentTypes from '../types/attachment/contentTypes';
-import CardAction from '../types/card/cardAction';
-import MediaCard from '../types/card/media';
-import OAuthCard from '../types/card/oAuth';
-import ReceiptCard from '../types/card/receipt';
-import SigninCard from '../types/card/signIn';
-import ThumbnailCard from '../types/card/thumbnail';
-
 import ActivityVisitor from './activityVisitor';
 
 class MockActivityVisitor extends ActivityVisitor {

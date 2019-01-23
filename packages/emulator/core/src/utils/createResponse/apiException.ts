@@ -31,10 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import APIException from '../../types/apiException';
-import ErrorResponse from '../../types/response/error';
-
 // Create ErrorResponse object
+import { APIException, ErrorResponse } from '@bfemulator/sdk-shared';
+
 function createErrorResponse(code: string, message: string): ErrorResponse {
   return {
     error: {

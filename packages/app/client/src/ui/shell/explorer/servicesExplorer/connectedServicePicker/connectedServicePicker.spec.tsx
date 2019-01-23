@@ -36,7 +36,10 @@ import * as React from 'react';
 import { Provider } from 'react-redux';
 import { combineReducers, createStore } from 'redux';
 
-import { load, setActive } from '../../../../../data/action/botActions';
+import {
+  loadBotInfos,
+  setActiveBot,
+} from '../../../../../data/action/botActions';
 import { bot } from '../../../../../data/reducer/bot';
 import { DialogService } from '../../../../dialogs/service';
 
@@ -81,8 +84,8 @@ describe('The ConnectedServicePicker component', () => {
         }]
       }`);
 
-    mockStore.dispatch(load([mockBot]));
-    mockStore.dispatch(setActive(mockBot));
+    mockStore.dispatch(loadBotInfos([mockBot]));
+    mockStore.dispatch(setActiveBot(mockBot));
     mockService = { ...mockBot.services[0] };
     mockService.id = 'mock';
 

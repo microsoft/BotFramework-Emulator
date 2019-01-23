@@ -46,7 +46,7 @@ import * as openBotStyles from './openBotDialog.scss';
 
 export interface OpenBotDialogProps {
   onDialogCancel?: () => void;
-  openBot?: (state: OpenBotDialogState) => Promise<void>;
+  openBot?: (state: OpenBotDialogState) => void;
   sendNotification?: (error: Error) => void;
   switchToBot?: (path: string) => void;
 }
@@ -115,10 +115,9 @@ export class OpenBotDialog extends Component<
         <form onSubmit={this.onSubmit}>
           <TextField
             autoFocus={true}
-            data-prop="botUrl"
+            name="botUrl"
             errorMessage={errorMessage}
             inputContainerClassName={openBotStyles.inputContainer}
-            inputRef={this.urlInputRef}
             label="Bot URL or file location"
             onChange={this.onInputChange}
             onFocus={this.onFocus}
@@ -130,6 +129,7 @@ export class OpenBotDialog extends Component<
               <input
                 accept=".bot"
                 className={openBotStyles.fileInput}
+                name="botUrl"
                 onChange={this.onInputChange}
                 type="file"
               />
@@ -138,7 +138,7 @@ export class OpenBotDialog extends Component<
           <Row className={openBotStyles.multiInputRow}>
             <TextField
               inputContainerClassName={openBotStyles.inputContainerRow}
-              data-prop="appId"
+              name="appId"
               label="Microsoft App ID"
               onChange={this.onInputChange}
               placeholder="Optional"
@@ -147,7 +147,7 @@ export class OpenBotDialog extends Component<
             <TextField
               inputContainerClassName={openBotStyles.inputContainerRow}
               label="Microsoft App password"
-              data-prop="appPassword"
+              name="appPassword"
               onChange={this.onInputChange}
               placeholder="Optional"
               type="password"
@@ -173,42 +173,15 @@ export class OpenBotDialog extends Component<
   };
 
   private onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const {
-      type,
-      files,
-      value,
-      dataset: { prop },
-    } = event.target;
-    if (prop === 'botUrl') {
-      const botUrl = type === 'file' ? files.item(0).path : value;
-      this.setState({ botUrl });
-    } else {
-      this.setState({ [prop]: value });
+    const { type, files, value, name } = event.target;
+    let newValue = value;
+    if (name === 'botUrl') {
+      newValue = type === 'file' ? files.item(0).path : value;
     }
+    this.setState({ [name]: newValue });
   };
 
-  private onInputRefChange = (event: Event) => {
-    const { value } = event.target as HTMLInputElement;
-    try {
-      const { appId, appPassword, endpoint: botUrl } = JSON.parse(value);
-      this.setState({ appId, appPassword, botUrl });
-      event.preventDefault();
-    } catch {
-      // No-op
-    }
-  };
-
-  private onSubmit = async () => {
-    try {
-      await this.props.openBot(this.state);
-    } catch (e) {
-      this.props.sendNotification(e);
-    }
-  };
-
-  private urlInputRef = (input: HTMLInputElement) => {
-    if (input) {
-      input.addEventListener('input', this.onInputRefChange);
-    }
+  private onSubmit = () => {
+    this.props.openBot(this.state);
   };
 }

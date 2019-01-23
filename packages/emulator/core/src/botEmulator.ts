@@ -31,6 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { BotEmulatorOptions, Logger, LogService } from '@bfemulator/sdk-shared';
 import * as Restify from 'restify';
 import fetch from 'node-fetch';
 
@@ -47,9 +48,6 @@ import EndpointSet from './facility/endpointSet';
 import LoggerAdapter from './facility/loggerAdapter';
 import Users from './facility/users';
 import registerSessionRoutes from './session/registerRoutes';
-import BotEmulatorOptions from './types/botEmulatorOptions';
-import LogService from './types/log/service';
-import Logger from './types/logger';
 import registerUserTokenRoutes from './userToken/registerRoutes';
 import stripEmptyBearerToken from './utils/stripEmptyBearerToken';
 

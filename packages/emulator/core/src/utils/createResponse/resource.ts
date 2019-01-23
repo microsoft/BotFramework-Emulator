@@ -31,11 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import ResourceResponse from '../../types/response/resource';
-
 //
 // Create ResourceResponse object
 //
+import { ResourceResponse } from '@bfemulator/sdk-shared';
+
 export default function createResourceResponse(id: string): ResourceResponse {
   return { id };
 }

@@ -31,15 +31,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import {
+  ErrorCodes,
+  GenericActivity,
+  ResourceResponse,
+} from '@bfemulator/sdk-shared';
 import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 
 import BotEmulator from '../../botEmulator';
 import createAPIException from '../../utils/createResponse/apiException';
-import { ErrorCodes } from '../../types/errorCodes';
 import ConversationAPIPathParameters from '../conversationAPIPathParameters';
-import GenericActivity from '../../types/activity/generic';
-import ResourceResponse from '../../types/response/resource';
 import sendErrorResponse from '../../utils/sendErrorResponse';
 
 export default function updateActivity(botEmulator: BotEmulator) {

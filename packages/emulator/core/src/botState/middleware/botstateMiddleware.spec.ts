@@ -1,4 +1,5 @@
 //
+import { User } from '@bfemulator/sdk-shared';
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license.
 //
@@ -37,7 +38,6 @@ import ConversationSet from '../../facility/conversationSet';
 import BotEndpoint from '../../facility/botEndpoint';
 import Conversation from '../../facility/conversation';
 import BotEmulator from '../../botEmulator';
-import User from '../../types/user';
 
 import deleteStateForUser from './deleteStateForUser';
 import fetchBotData from './fetchBotData';

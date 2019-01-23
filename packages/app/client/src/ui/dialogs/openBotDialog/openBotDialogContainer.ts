@@ -32,13 +32,14 @@
 //
 
 import { newNotification } from '@bfemulator/app-shared';
-import { uniqueId } from '@bfemulator/sdk-shared';
 import { connect } from 'react-redux';
 import { Action } from 'redux';
 
+import {
+  openBotViaFilePathAction,
+  openBotViaUrlAction,
+} from '../../../data/action/botActions';
 import { beginAdd } from '../../../data/action/notificationActions';
-import { RootState } from '../../../data/store';
-import { ActiveBotHelper } from '../../helpers/activeBotHelper';
 import { DialogService } from '../service';
 
 import {
@@ -47,47 +48,25 @@ import {
   OpenBotDialogState,
 } from './openBotDialog';
 
-const mapStateToProps = (state: RootState) => {
-  return {
-    openBot: async (componentState: OpenBotDialogState) => {
-      DialogService.hideDialog();
-      const { appId = '', appPassword = '', botUrl = '' } = componentState;
-      if (botUrl.startsWith('http')) {
-        const { serverUrl, users } = state.clientAwareSettings;
-        const result = await fetch(
-          serverUrl +
-            `/v3/conversations?botEndpoint=${botUrl}&msaAppId=${appId}&msaPassword=${appPassword}`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              bot: {
-                id: uniqueId(),
-                name: 'Bot',
-                role: 'bot',
-              },
-              members: [users.usersById[users.currentUserId]],
-            }),
-          }
-        );
-        if (result.ok) {
-          return result.text();
-        }
-        throw new Error(
-          `Failed to create a new conversation: ${result.statusText}`
-        );
-      }
-      return ActiveBotHelper.confirmAndOpenBotFromFile(botUrl);
-    },
-  };
-};
-
 const mapDispatchToProps = (
   dispatch: (action: Action) => void
 ): OpenBotDialogProps => {
   return {
+    openBot: (componentState: OpenBotDialogState) => {
+      DialogService.hideDialog();
+      const { appId = '', appPassword = '', botUrl = '' } = componentState;
+      if (botUrl.startsWith('http')) {
+        dispatch(
+          openBotViaUrlAction({
+            appId,
+            appPassword,
+            endpoint: botUrl,
+          })
+        );
+      } else {
+        dispatch(openBotViaFilePathAction(botUrl));
+      }
+    },
     onDialogCancel: () => DialogService.hideDialog(),
     sendNotification: (error: Error) =>
       dispatch(
@@ -99,6 +78,6 @@ const mapDispatchToProps = (
 };
 
 export const OpenBotDialogContainer = connect(
-  mapStateToProps,
+  null,
   mapDispatchToProps
 )(OpenBotDialog);

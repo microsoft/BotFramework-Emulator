@@ -126,7 +126,7 @@ describe('The bot commands', () => {
     );
     handler([{}]);
 
-    expect(dispatchSpy).toHaveBeenCalledWith(BotActions.load([{}]));
+    expect(dispatchSpy).toHaveBeenCalledWith(BotActions.loadBotInfos([{}]));
     expect(remoteCallSpy).toHaveBeenCalledWith(
       SharedConstants.Commands.Electron.UpdateFileMenu
     );

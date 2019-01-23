@@ -100,7 +100,7 @@ export const ActiveBotHelper = new class {
         SharedConstants.Commands.Bot.SetActive,
         bot
       );
-      store.dispatch(BotActions.setActive(bot));
+      store.dispatch(BotActions.setActiveBot(bot));
       store.dispatch(FileActions.setRoot(botDirectory));
 
       // update the app file menu and title bar
@@ -125,7 +125,7 @@ export const ActiveBotHelper = new class {
   closeActiveBot(): Promise<any> {
     return CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.Close)
       .then(() => {
-        store.dispatch(BotActions.close());
+        store.dispatch(BotActions.closeBot());
         CommandServiceImpl.remoteCall(
           SharedConstants.Commands.Electron.SetTitleBar,
           ''

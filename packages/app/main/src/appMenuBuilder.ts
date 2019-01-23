@@ -32,15 +32,15 @@
 //
 
 import { BotInfo, SharedConstants } from '@bfemulator/app-shared';
+import { ConversationService } from '@bfemulator/sdk-shared';
 import * as Electron from 'electron';
 
 import { AppUpdater, UpdateStatus } from './appUpdater';
+import { getActiveBot } from './botHelpers';
 import { emulator } from './emulator';
 import { mainWindow } from './main';
-import { ConversationService } from './services/conversationService';
 import { rememberTheme } from './settingsData/actions/windowStateActions';
 import { getStore as getSettingsStore } from './settingsData/store';
-import { getActiveBot } from './botHelpers';
 
 declare type MenuOpts = Electron.MenuItemConstructorOptions;
 

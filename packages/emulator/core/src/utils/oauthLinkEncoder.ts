@@ -31,11 +31,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import {
+  Attachment,
+  AttachmentContentTypes,
+  GenericActivity,
+  OAuthCard,
+} from '@bfemulator/sdk-shared';
 import BotEmulator from '../botEmulator';
-import GenericActivity from '../types/activity/generic';
-import Attachment from '../types/attachment';
-import AttachmentContentTypes from '../types/attachment/contentTypes';
-import OAuthCard from '../types/card/oAuth';
 import uniqueId from '../utils/uniqueId';
 
 // eslint-disable-next-line typescript/no-var-requires

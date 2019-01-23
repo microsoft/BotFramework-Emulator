@@ -43,7 +43,7 @@ import {
   chatFilesUpdated,
   transcriptsUpdated,
 } from '../../../../data/action/resourcesAction';
-import { load, setActive } from '../../../../data/action/botActions'; // important
+import { loadBotInfos, setActiveBot } from '../../../../data/action/botActions'; // important
 
 import { ResourcesBar } from './resourcesBar';
 import { ResourcesBarContainer } from './resourcesBarContainer';
@@ -98,8 +98,8 @@ describe('The ServicesExplorer component should', () => {
       name: 'testTranscript',
     } as any);
 
-    mockStore.dispatch(load([mockBot]));
-    mockStore.dispatch(setActive(mockBot));
+    mockStore.dispatch(loadBotInfos([mockBot]));
+    mockStore.dispatch(setActiveBot(mockBot));
     mockStore.dispatch(transcriptsUpdated([mockTranscript]));
     mockStore.dispatch(chatFilesUpdated([mockChat]));
     parent = mount(

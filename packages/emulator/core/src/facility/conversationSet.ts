@@ -31,10 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { User } from '@bfemulator/sdk-shared';
 import { EventEmitter } from 'events';
 
 import BotEmulator from '../botEmulator';
-import User from '../types/user';
 import uniqueId from '../utils/uniqueId';
 
 import BotEndpoint from './botEndpoint';

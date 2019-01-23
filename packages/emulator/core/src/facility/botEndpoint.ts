@@ -31,6 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { BotEndpointOptions, SpeechTokenInfo } from '@bfemulator/sdk-shared';
 import { URL, URLSearchParams } from 'url';
 
 import * as HttpStatus from 'http-status-codes';
@@ -40,27 +41,25 @@ import {
   speech as speechEndpoint,
   usGovernmentAuthentication,
 } from '../authEndpoints';
-import BotEndpointOptions from '../types/botEndpointOptions';
-import SpeechTokenInfo from '../types/speechToken';
 import statusCodeFamily from '../utils/statusCodeFamily';
 
 // We will refresh if the token is going to expire within 5 minutes
 const TIME_TO_REFRESH = 5 * 60 * 1000;
 
 export default class BotEndpoint {
-  public accessToken: string;
-  public accessTokenExpires: number;
-  public speechToken: string;
+  public accessToken?: string;
+  public accessTokenExpires?: number;
+  public speechToken?: string;
 
   constructor(
-    public id: string,
-    public botId: string,
-    public botUrl: string,
-    public msaAppId: string,
-    public msaPassword: string,
-    public use10Tokens: boolean,
-    public channelService: string,
-    private _options: BotEndpointOptions
+    public id?: string,
+    public botId?: string,
+    public botUrl?: string,
+    public msaAppId?: string,
+    public msaPassword?: string,
+    public use10Tokens?: boolean,
+    public channelService?: string,
+    private _options?: BotEndpointOptions
   ) {}
 
   public async getSpeechToken(refresh: boolean = false, duration: number = 10) {

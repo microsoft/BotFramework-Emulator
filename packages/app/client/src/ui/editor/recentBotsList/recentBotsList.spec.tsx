@@ -70,7 +70,7 @@ describe('The RecentBotsList', () => {
   const mockOnBotSelected = jest.fn();
 
   beforeEach(() => {
-    mockStore.dispatch(BotActions.load(bots));
+    mockStore.dispatch(BotActions.loadBotInfos(bots));
     mockDispatch = jest.spyOn(mockStore, 'dispatch');
     parent = mount(
       <Provider store={mockStore}>

@@ -42,7 +42,10 @@ import LogLevel from '@bfemulator/emulator-core/lib/types/log/level';
 
 import { bot } from '../../../../../data/reducer/bot';
 import { clientAwareSettings } from '../../../../../data/reducer/clientAwareSettingsReducer';
-import { load, setActive } from '../../../../../data/action/botActions';
+import {
+  loadBotInfos,
+  setActiveBot,
+} from '../../../../../data/action/botActions';
 import { theme } from '../../../../../data/reducer/themeReducer';
 import { switchTheme } from '../../../../../data/action/themeActions';
 import { ExtensionManager } from '../../../../../extensions';
@@ -266,8 +269,8 @@ describe('The Inspector component', () => {
   };
   beforeEach(() => {
     mockStore.dispatch(switchTheme('light', ['vars.css', 'light.css']));
-    mockStore.dispatch(load([mockState.bot]));
-    mockStore.dispatch(setActive(mockState.bot as any));
+    mockStore.dispatch(loadBotInfos([mockState.bot]));
+    mockStore.dispatch(setActiveBot(mockState.bot as any));
 
     parent = mount(
       <Provider store={mockStore}>

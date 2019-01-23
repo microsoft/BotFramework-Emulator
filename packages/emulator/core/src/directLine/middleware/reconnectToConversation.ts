@@ -31,13 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { LogLevel, textItem } from '@bfemulator/sdk-shared';
 import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 
 import BotEmulator from '../../botEmulator';
 import Conversation from '../../facility/conversation';
-import LogLevel from '../../types/log/level';
-import { textItem } from '../../types/log/util';
 
 export default function reconnectToConversation(botEmulator: BotEmulator) {
   const { logMessage } = botEmulator.facilities.logger;

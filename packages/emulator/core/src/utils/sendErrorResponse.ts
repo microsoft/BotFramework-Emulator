@@ -31,12 +31,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import {
+  APIException,
+  ErrorCodes,
+  ErrorResponse,
+} from '@bfemulator/sdk-shared';
 import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
-
-import APIException from '../types/apiException';
-import { ErrorCodes } from '../types/errorCodes';
-import ErrorResponse from '../types/response/error';
 
 import createErrorResponse from './createResponse/error';
 

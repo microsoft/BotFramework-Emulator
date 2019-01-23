@@ -31,11 +31,23 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './accountTypes';
-export * from './activityTypes';
-export * from './attachmentTypes';
-export * from './entityTypes';
-export * from './eTagTypes';
-export * from './paymentTypes';
-export * from './userTypes';
-export * from './botConfigWithPathTypes';
+export * from './account';
+export * from './activity';
+export * from './attachment';
+export * from './card';
+export * from './log';
+export * from './payment';
+export * from './response';
+
+export * from './apiException';
+export * from './botConfigWithPath';
+export * from './botData';
+export * from './botEmulatorOptions';
+export * from './botEndpointOptions';
+export * from './entity';
+export * from './error';
+export * from './errorCodes';
+export * from './logger';
+export * from './speechToken';
+export * from './transcriptRecord';
+export * from './user';

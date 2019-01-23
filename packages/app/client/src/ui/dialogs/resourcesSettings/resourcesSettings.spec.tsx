@@ -37,7 +37,7 @@ import { combineReducers, createStore } from 'redux';
 
 import { bot } from '../../../data/reducer/bot';
 import { resources } from '../../../data/reducer/resourcesReducer';
-import { load, setActive } from '../../../data/action/botActions';
+import { loadBotInfos, setActiveBot } from '../../../data/action/botActions';
 import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
 
 import { ResourcesSettings } from './resourcesSettings';
@@ -94,8 +94,8 @@ describe('The ResourcesSettings component should', () => {
         }]
       }`);
 
-    mockStore.dispatch(load([mockBot]));
-    mockStore.dispatch(setActive(mockBot));
+    mockStore.dispatch(loadBotInfos([mockBot]));
+    mockStore.dispatch(setActiveBot(mockBot));
     parent = mount(
       <Provider store={mockStore}>
         <ResourcesSettingsContainer label="test" progress={50} />

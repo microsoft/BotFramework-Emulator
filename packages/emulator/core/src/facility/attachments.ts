@@ -31,11 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { AttachmentData, ErrorCodes } from '@bfemulator/sdk-shared';
 import * as HttpStatus from 'http-status-codes';
 
 import createAPIException from '../utils/createResponse/apiException';
-import { ErrorCodes } from '../types/errorCodes';
-import AttachmentData from '../types/attachment/data';
 import uniqueId from '../utils/uniqueId';
 
 export default class Attachments {

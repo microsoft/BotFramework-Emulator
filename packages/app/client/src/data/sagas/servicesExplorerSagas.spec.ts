@@ -46,7 +46,7 @@ import { DialogService } from '../../ui/dialogs/service'; // ☣☣ careful! ☣
 import { ConnectedServicePickerContainer } from '../../ui/shell/explorer/servicesExplorer';
 import { ConnectedServiceEditorContainer } from '../../ui/shell/explorer/servicesExplorer/connectedServiceEditor';
 import { azureArmTokenDataChanged } from '../action/azureAuthActions';
-import { load, setActive } from '../action/botActions';
+import { loadBotInfos, setActiveBot } from '../action/botActions';
 import {
   ConnectedServiceAction,
   ConnectedServicePayload,
@@ -207,8 +207,8 @@ describe('The ServiceExplorerSagas', () => {
         }]
       }`);
 
-      mockStore.dispatch(load([mockBot]));
-      mockStore.dispatch(setActive(mockBot));
+      mockStore.dispatch(loadBotInfos([mockBot]));
+      mockStore.dispatch(setActiveBot(mockBot));
 
       DialogService.showDialog = () =>
         Promise.resolve([{ id: 'a new service to add' }]) as any;

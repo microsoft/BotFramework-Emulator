@@ -31,32 +31,35 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import {
+  Activity,
+  appSettingsItem,
+  CheckoutConversationSession,
+  ContactRelationUpdateActivity,
+  ConversationUpdateActivity,
+  ErrorCodes,
+  externalLinkItem,
+  LogLevel,
+  ResourceResponse,
+  textItem,
+  TranscriptRecord,
+  PaymentRequest,
+  User,
+  InvokeActivity,
+  PaymentOperations,
+  PaymentRequestComplete,
+  EventActivity,
+  PaymentRequestUpdate,
+  GenericActivity,
+  MessageActivity,
+  Attachment,
+} from '@bfemulator/sdk-shared';
 import { EventEmitter } from 'events';
 
 import * as HttpStatus from 'http-status-codes';
 import updateIn from 'simple-update-in';
 
 import BotEmulator from '../botEmulator';
-import Activity from '../types/activity/activity';
-import ContactRelationUpdateActivity from '../types/activity/contactRelationUpdate';
-import ConversationUpdateActivity from '../types/activity/conversationUpdate';
-import EventActivity from '../types/activity/event';
-import GenericActivity from '../types/activity/generic';
-import InvokeActivity from '../types/activity/invoke';
-import MessageActivity from '../types/activity/message';
-import Attachment from '../types/attachment';
-import { ErrorCodes } from '../types/errorCodes';
-import LogLevel from '../types/log/level';
-import { appSettingsItem, externalLinkItem, textItem } from '../types/log/util';
-import PaymentAddress from '../types/payment/address';
-import CheckoutConversationSession from '../types/payment/checkoutConversationSession';
-import PaymentOperations from '../types/payment/operations';
-import PaymentRequest from '../types/payment/request';
-import PaymentRequestComplete from '../types/payment/requestComplete';
-import PaymentRequestUpdate from '../types/payment/requestUpdate';
-import ResourceResponse from '../types/response/resource';
-import TranscriptRecord from '../types/transcriptRecord';
-import User from '../types/user';
 import { TokenCache } from '../userToken/tokenCache';
 import createAPIException from '../utils/createResponse/apiException';
 import createResourceResponse from '../utils/createResponse/resource';

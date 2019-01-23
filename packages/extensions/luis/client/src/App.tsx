@@ -32,7 +32,7 @@
 //
 
 import { InspectorHost } from '@bfemulator/sdk-client';
-import { json2HTML } from '@bfemulator/sdk-shared/built/utils/json2HTML';
+import { json2HTML } from '@bfemulator/sdk-shared';
 import { Splitter } from '@bfemulator/ui-react';
 import {
   IBotConfiguration,

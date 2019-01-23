@@ -31,11 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { BotData } from '@bfemulator/sdk-shared';
 import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 
 import BotEmulator from '../../botEmulator';
-import BotData from '../../types/botData';
 import sendErrorResponse from '../../utils/sendErrorResponse';
 
 export default function setConversationData(botEmulator: BotEmulator) {

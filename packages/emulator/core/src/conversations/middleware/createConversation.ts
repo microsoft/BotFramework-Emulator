@@ -31,13 +31,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { ConversationParameters } from '@bfemulator/sdk-shared';
 import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 
 import BotEmulator from '../../botEmulator';
 import BotEndpoint from '../../facility/botEndpoint';
 import Conversation from '../../facility/conversation';
-import ConversationParameters from '../../types/activity/conversationParameters';
 import createConversationResponse from '../../utils/createResponse/conversation';
 import sendErrorResponse from '../../utils/sendErrorResponse';
 import uniqueId from '../../utils/uniqueId';

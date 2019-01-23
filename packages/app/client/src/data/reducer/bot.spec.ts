@@ -34,7 +34,12 @@
 import { BotInfo } from '@bfemulator/app-shared';
 import { BotConfigWithPath } from '@bfemulator/sdk-shared';
 
-import { BotAction, close, load, setActive } from '../action/botActions';
+import {
+  BotAction,
+  closeBot,
+  loadBotInfos,
+  setActiveBot,
+} from '../action/botActions';
 
 import { bot, BotState } from './bot';
 
@@ -63,7 +68,7 @@ describe('Bot reducer tests', () => {
     };
 
     it('should set a bot as active', () => {
-      const action = setActive(testbot);
+      const action = setActiveBot(testbot);
       const state = bot(DEFAULT_STATE, action);
       expect(state.activeBot).toEqual(testbot);
     });
@@ -92,7 +97,7 @@ describe('Bot reducer tests', () => {
         botFiles: testbots,
       };
 
-      const action = setActive(testbot);
+      const action = setActiveBot(testbot);
       const endingState = bot(startingState, action);
       expect(endingState.botFiles[0].path).toBe('somePath');
     });
@@ -117,7 +122,7 @@ describe('Bot reducer tests', () => {
         } as any,
       };
 
-      const action = setActive(testbot);
+      const action = setActiveBot(testbot);
       const endingState = bot(startingState, action);
       const activeBot = endingState.activeBot;
 
@@ -151,7 +156,7 @@ describe('Bot reducer tests', () => {
         } as any,
       };
 
-      const action = setActive(testbot);
+      const action = setActiveBot(testbot);
       const endingState = bot(startingState, action);
       const activeBot = endingState.activeBot;
 
@@ -179,7 +184,7 @@ describe('Bot reducer tests', () => {
       },
       null,
     ];
-    const action = load(bots);
+    const action = loadBotInfos(bots);
     const state = bot(DEFAULT_STATE, action);
     expect(state.botFiles).not.toEqual(bots);
     expect(state.botFiles.length).toBe(3);
@@ -212,7 +217,7 @@ describe('Bot reducer tests', () => {
         services: [],
       } as any,
     };
-    const action = close();
+    const action = closeBot();
     const endingState = bot(startingState, action);
     expect(endingState.activeBot).toBe(null);
   });

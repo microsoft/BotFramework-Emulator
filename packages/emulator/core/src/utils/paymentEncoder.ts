@@ -31,9 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import CardAction from '../types/card/cardAction';
-import PaymentRequest from '../types/payment/request';
-
+import { CardAction } from '@bfemulator/sdk-shared';
 import ActivityVisitor from './activityVisitor';
 
 export default class PaymentEncoder extends ActivityVisitor {
