@@ -42,7 +42,7 @@ import {
 import { IEndpointService } from 'botframework-config';
 import { createServer, Request, Response, Route, Server } from 'restify';
 import CORS from 'restify-cors-middleware';
-import ConversationSet from '@bfemulator/emulator-core/lib/facility/conversationSet';
+import { ConversationSet } from '@bfemulator/emulator-core';
 
 import { emulator } from './emulator';
 import { mainWindow } from './main';
