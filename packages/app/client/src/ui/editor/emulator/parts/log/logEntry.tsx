@@ -31,8 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import LogEntryModel from '@bfemulator/sdk-shared';
-import LogLevel, { ILogItem } from '@bfemulator/sdk-shared';
+import { ILogItem, LogEntryModel, LogLevel } from '@bfemulator/sdk-shared';
 import * as React from 'react';
 
 import { ExtensionManager, InspectorAPI } from '../../../../../extensions';
