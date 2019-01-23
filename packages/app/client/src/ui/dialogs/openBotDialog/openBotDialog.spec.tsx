@@ -36,6 +36,7 @@ import { mount } from 'enzyme';
 import * as React from 'react';
 import { Provider } from 'react-redux';
 import { combineReducers, createStore } from 'redux';
+
 import * as botActions from '../../../data/action/botActions';
 import * as BotActions from '../../../data/action/botActions';
 import { clientAwareSettingsChanged } from '../../../data/action/clientAwareSettingsActions';
