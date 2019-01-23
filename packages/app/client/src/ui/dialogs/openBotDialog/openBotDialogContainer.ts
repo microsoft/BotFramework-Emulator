@@ -31,7 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { newNotification } from '@bfemulator/app-shared';
 import { connect } from 'react-redux';
 import { Action } from 'redux';
 
@@ -39,7 +38,6 @@ import {
   openBotViaFilePathAction,
   openBotViaUrlAction,
 } from '../../../data/action/botActions';
-import { beginAdd } from '../../../data/action/notificationActions';
 import { DialogService } from '../service';
 
 import {
@@ -68,12 +66,6 @@ const mapDispatchToProps = (
       }
     },
     onDialogCancel: () => DialogService.hideDialog(),
-    sendNotification: (error: Error) =>
-      dispatch(
-        beginAdd(
-          newNotification(`An Error occurred on the Open Bot Dialog: ${error}`)
-        )
-      ),
   };
 };
 

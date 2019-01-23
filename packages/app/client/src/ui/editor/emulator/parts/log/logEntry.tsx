@@ -31,7 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ILogItem, LogEntryModel, LogLevel } from '@bfemulator/sdk-shared';
+import {
+  ILogItem,
+  LogEntry as ILogEntry,
+  LogLevel,
+} from '@bfemulator/sdk-shared';
 import * as React from 'react';
 
 import { ExtensionManager, InspectorAPI } from '../../../../../extensions';
@@ -48,7 +52,7 @@ export interface ActivitySelectionFromLog {
 
 export interface LogEntryProps {
   document: any;
-  entry: LogEntryModel;
+  entry: ILogEntry;
   selectedActivity?: any;
   currentlyInspectedActivity?: any;
   setInspectorObjects?: (...args: any[]) => void;
