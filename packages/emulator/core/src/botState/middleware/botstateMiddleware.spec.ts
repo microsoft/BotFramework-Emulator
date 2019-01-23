@@ -37,7 +37,7 @@ import BotState from '../../facility/botState';
 import ConversationSet from '../../facility/conversationSet';
 import BotEndpoint from '../../facility/botEndpoint';
 import Conversation from '../../facility/conversation';
-import BotEmulator from '../../botEmulator';
+import { BotEmulator } from '../../botEmulator';
 
 import deleteStateForUser from './deleteStateForUser';
 import fetchBotData from './fetchBotData';

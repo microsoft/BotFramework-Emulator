@@ -35,7 +35,7 @@ import { BotData } from '@bfemulator/sdk-shared';
 import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 
-import BotEmulator from '../../botEmulator';
+import { BotEmulator } from '../../botEmulator';
 import sendErrorResponse from '../../utils/sendErrorResponse';
 
 export default function setPrivateConversationData(botEmulator: BotEmulator) {

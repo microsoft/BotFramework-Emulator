@@ -35,7 +35,7 @@ import { ConversationParameters } from '@bfemulator/sdk-shared';
 import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 
-import BotEmulator from '../../botEmulator';
+import { BotEmulator } from '../../botEmulator';
 import BotEndpoint from '../../facility/botEndpoint';
 import Conversation from '../../facility/conversation';
 import createConversationResponse from '../../utils/createResponse/conversation';

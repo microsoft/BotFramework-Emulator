@@ -31,9 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { BotEmulator } from '../botEmulator';
+import BotEndpoint from './botEndpoint';
 import Conversation from './conversation';
-
-jest.mock('../botEmulator', () => ({ BotEmulator: {} }));
 
 describe('Conversation class', () => {
   let botEndpointBotId;
@@ -42,21 +42,37 @@ describe('Conversation class', () => {
   let conversation: Conversation;
   let conversationId;
   let user: any;
-
+  let fetch = (function() {
+    const fetch = () => {
+      return {
+        ok: true,
+        json: async () => ({}),
+        text: async () => '{}',
+      };
+    };
+    (fetch as any).Headers = class {};
+    (fetch as any).Response = class {};
+    return fetch as any;
+  })();
   beforeEach(() => {
     botEndpointBotId = 'someBotEndpointBotId';
-    botEndpoint = {
-      botId: botEndpointBotId,
-      fetchWithAuth: async () => ({ status: 200 }),
-      botUrl: 'http://ngrok',
-    };
-    botEmulator = {
-      facilities: {
-        locale: 'en-us',
-        logger: { logMessage: async () => true, logActivity: async () => true },
-      },
-      getServiceUrl: async () => 'http://localhost',
-    };
+    botEndpoint = new BotEndpoint(
+      '123',
+      botEndpointBotId,
+      'http://ngrok',
+      null,
+      null,
+      null,
+      null,
+      { fetch }
+    );
+    botEmulator = new BotEmulator(async () => 'http://localhost', {
+      fetch,
+      loggerOrLogService: {
+        logMessage: async () => true,
+        logActivity: async () => true,
+      } as any,
+    });
     conversationId = 'someConversationId';
     user = { id: 'someUserId' };
     conversation = new Conversation(
@@ -150,13 +166,7 @@ describe('Conversation class', () => {
 
   it('should post an activity to the bot', async () => {
     const result = await conversation.postActivityToBot(mockActivity, true);
-    expect(result).toEqual({
-      activityId: jasmine.any(String),
-      response: {
-        status: 200,
-      },
-      statusCode: 200,
-    });
+    expect(result.activityId).toEqual(jasmine.any(String));
   });
 
   it('should send a conversation update', async () => {

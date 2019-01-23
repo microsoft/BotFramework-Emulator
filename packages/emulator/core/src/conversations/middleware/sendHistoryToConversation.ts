@@ -35,7 +35,7 @@ import { Activity } from '@bfemulator/sdk-shared';
 import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 
-import BotEmulator from '../../botEmulator';
+import { BotEmulator } from '../../botEmulator';
 import createResourceResponse from '../../utils/createResponse/resource';
 
 export default function sendHistoryToConversation(botEmulator: BotEmulator) {

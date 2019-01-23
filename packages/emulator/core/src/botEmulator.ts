@@ -67,7 +67,7 @@ export interface Facilities {
   locale?: string;
 }
 
-export default class BotEmulator {
+export class BotEmulator {
   // TODO: Instead of providing a getter for serviceUrl, we should let the upstream to set the serviceUrl
   // Currently, the upstreamer doesn't really know when the serviceUrl change (ngrok), they need to do their job
   public getServiceUrl: (botUrl: string) => Promise<string>;

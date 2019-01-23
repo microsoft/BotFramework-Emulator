@@ -35,7 +35,7 @@ import { ErrorCodes } from '@bfemulator/sdk-shared';
 import * as HttpStatus from 'http-status-codes';
 import { Next, Request, Response } from 'restify';
 
-import BotEmulator from '../../botEmulator';
+import { BotEmulator } from '../../botEmulator';
 import createAPIException from '../../utils/createResponse/apiException';
 import Conversation from '../../facility/conversation';
 

@@ -58,7 +58,7 @@ import { EventEmitter } from 'events';
 import * as HttpStatus from 'http-status-codes';
 import updateIn from 'simple-update-in';
 
-import BotEmulator from '../botEmulator';
+import { BotEmulator } from '../botEmulator';
 import { TokenCache } from '../userToken/tokenCache';
 import createAPIException from '../utils/createResponse/apiException';
 import createResourceResponse from '../utils/createResponse/resource';

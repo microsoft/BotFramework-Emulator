@@ -38,7 +38,7 @@ import {
   OAuthCard,
 } from '@bfemulator/sdk-shared';
 
-import BotEmulator from '../botEmulator';
+import { BotEmulator } from '../botEmulator';
 import uniqueId from '../utils/uniqueId';
 
 // eslint-disable-next-line typescript/no-var-requires

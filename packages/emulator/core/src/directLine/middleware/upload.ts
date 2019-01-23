@@ -43,7 +43,7 @@ import * as Formidable from 'formidable';
 import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 
-import BotEmulator from '../../botEmulator';
+import { BotEmulator } from '../../botEmulator';
 import BotEndpoint from '../../facility/botEndpoint';
 import Conversation from '../../facility/conversation';
 import sendErrorResponse from '../../utils/sendErrorResponse';

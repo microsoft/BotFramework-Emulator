@@ -37,7 +37,7 @@ import {
 //
 import * as HttpStatus from 'http-status-codes';
 
-import BotEmulator from '../../botEmulator';
+import { BotEmulator } from '../../botEmulator';
 import ConversationSet from '../../facility/conversationSet';
 import BotEndpoint from '../../facility/botEndpoint';
 import Endpoints from '../../facility/endpointSet';
