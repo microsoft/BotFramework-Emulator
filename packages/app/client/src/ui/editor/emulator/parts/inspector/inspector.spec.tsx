@@ -1,4 +1,6 @@
 //
+import { logEntry, LogLevel, textItem } from '@bfemulator/sdk-shared';
+import { mount } from 'enzyme';
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license.
 //
@@ -32,27 +34,21 @@
 //
 import * as React from 'react';
 import { Provider } from 'react-redux';
-import { mount } from 'enzyme';
 import { combineReducers, createStore } from 'redux';
-import {
-  logEntry,
-  textItem,
-} from '@bfemulator/emulator-core/lib/types/log/util';
-import LogLevel from '@bfemulator/emulator-core/lib/types/log/level';
-
-import { bot } from '../../../../../data/reducer/bot';
-import { clientAwareSettings } from '../../../../../data/reducer/clientAwareSettingsReducer';
 import {
   loadBotInfos,
   setActiveBot,
 } from '../../../../../data/action/botActions';
-import { theme } from '../../../../../data/reducer/themeReducer';
 import { switchTheme } from '../../../../../data/action/themeActions';
+
+import { bot } from '../../../../../data/reducer/bot';
+import { clientAwareSettings } from '../../../../../data/reducer/clientAwareSettingsReducer';
+import { theme } from '../../../../../data/reducer/themeReducer';
 import { ExtensionManager } from '../../../../../extensions';
 import { LogService } from '../../../../../platform/log/logService';
+import { Inspector } from './inspector';
 
 import { InspectorContainer } from './inspectorContainer';
-import { Inspector } from './inspector';
 
 const mockStore = createStore(
   combineReducers({ theme, bot, clientAwareSettings }),
