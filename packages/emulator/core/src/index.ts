@@ -33,5 +33,7 @@
 
 import BotEmulator from './botEmulator';
 import Conversation from './facility/conversation';
+import ConversationSet from './facility/conversationSet';
+import Users from './facility/users';
 
-export { BotEmulator, Conversation };
+export { BotEmulator, Conversation, ConversationSet, Users };

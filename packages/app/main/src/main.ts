@@ -46,7 +46,7 @@ import { UpdateInfo } from 'electron-updater';
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import { Store } from 'redux';
-import Users from '@bfemulator/emulator-core/lib/facility/users';
+import Users from '@bfemulator/emulator-core';
 
 import { appendCustomUserAgent } from './appendCustomUserAgent';
 import { AppMenuBuilder } from './appMenuBuilder';

@@ -203,12 +203,29 @@ describe('Conversation class', () => {
   });
 
   it('should delete an activity', async () => {
-    let result = await conversation.postActivityToBot(mockActivity, true);
+    const result = await conversation.postActivityToBot(mockActivity, true);
     let activityDeleted = false;
     conversation.on('deleteactivity', () => (activityDeleted = true));
     await conversation.deleteActivity(result.activityId);
     expect(activityDeleted).toBeTruthy();
   });
+
+  it('should send Contact Removed', async () => {
+    await conversation.sendContactRemoved();
+    expect((conversation as any).transcript[0].activity.action).toBe('remove');
+  });
+
+  it('should send the typing activity', async () => {
+    await conversation.sendTyping();
+    expect((conversation as any).transcript[1].activity.type).toBe('typing');
+  });
+
+  it('should send the ping activity', async () => {
+    await conversation.sendPing();
+    expect((conversation as any).transcript[1].activity.type).toBe('ping');
+  });
+
+  it('should send the delete user data activity', async () => {});
 });
 
 const mockTranscript = [
