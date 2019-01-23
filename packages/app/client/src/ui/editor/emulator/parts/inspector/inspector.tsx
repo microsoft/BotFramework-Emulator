@@ -32,10 +32,7 @@ import LogLevel from '@bfemulator/emulator-core/lib/types/log/level';
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 // Cheating here and pulling in a module from node. Can be easily replaced if we ever move the emulator to the web.
-import {
-  logEntry,
-  textItem,
-} from '@bfemulator/emulator-core/lib/types/log/util';
+import { logEntry, textItem } from '@bfemulator/app-shared';
 import {
   ExtensionInspector,
   InspectorAccessory,
