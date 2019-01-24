@@ -33,12 +33,13 @@
 
 import { SharedConstants } from '@bfemulator/app-shared';
 
+import { CommandServiceImpl } from '../platform/commands/commandServiceImpl';
+
 import { globalHandlers } from './eventHandlers';
 
 const {
   Commands: {
-    Bot: { OpenBrowse },
-    UI: { ShowBotCreationDialog },
+    UI: { ShowBotCreationDialog, ShowOpenBotDialog },
   },
 } = SharedConstants;
 
@@ -61,41 +62,54 @@ describe('#globalHandlers', () => {
     jest.restoreAllMocks();
   });
 
-  it('calls OpenBrowse when CMD+O is pressed', () => {
+  it('calls ShowOpenBotDialog when CMD+O is pressed', async () => {
     const event = new KeyboardEvent('keydown', { metaKey: true, key: 'o' });
-    globalHandlers(event);
+    await globalHandlers(event);
     expect(mockLocalCommandsCalled.length).toBe(1);
-    expect(mockLocalCommandsCalled[0].commandName).toBe(OpenBrowse);
+    expect(mockLocalCommandsCalled[0].commandName).toBe(ShowOpenBotDialog);
   });
 
-  it('calls OpenBrowse when CTRL+O is pressed', () => {
+  it('calls ShowOpenBotDialog when CTRL+O is pressed', async () => {
     const event = new KeyboardEvent('keydown', { ctrlKey: true, key: 'O' });
 
-    globalHandlers(event);
+    await globalHandlers(event);
     expect(mockLocalCommandsCalled.length).toBe(1);
-    expect(mockLocalCommandsCalled[0].commandName).toBe(OpenBrowse);
+    expect(mockLocalCommandsCalled[0].commandName).toBe(ShowOpenBotDialog);
   });
 
-  it('calls ShowBotCreationDialog when CMD+N is pressed', () => {
+  it('calls ShowBotCreationDialog when CMD+N is pressed', async () => {
     const event = new KeyboardEvent('keydown', { metaKey: true, key: 'n' });
 
-    globalHandlers(event);
+    await globalHandlers(event);
     expect(mockLocalCommandsCalled.length).toBe(1);
     expect(mockLocalCommandsCalled[0].commandName).toBe(ShowBotCreationDialog);
   });
 
-  it('calls ShowBotCreationDialog when CTRL+N is pressed', () => {
+  it('calls ShowBotCreationDialog when CTRL+N is pressed', async () => {
     const event = new KeyboardEvent('keydown', { ctrlKey: true, key: 'N' });
 
-    globalHandlers(event);
+    await globalHandlers(event);
     expect(mockLocalCommandsCalled.length).toBe(1);
     expect(mockLocalCommandsCalled[0].commandName).toBe(ShowBotCreationDialog);
   });
 
-  it("calls nothing with a keydown it doesn't care about", () => {
+  it("calls nothing with a keydown it doesn't care about", async () => {
     const event = new KeyboardEvent('keydown', { ctrlKey: true, key: 'y' });
 
-    globalHandlers(event);
+    await globalHandlers(event);
     expect(mockLocalCommandsCalled.length).toBe(0);
+  });
+
+  it('should send a notification if a command fails', async () => {
+    const event = new KeyboardEvent('keydown', { ctrlKey: true, key: 'N' });
+    const spy = jest
+      .spyOn(CommandServiceImpl, 'call')
+      .mockRejectedValueOnce('oh noes!');
+
+    await globalHandlers(event);
+    expect(spy).toHaveBeenLastCalledWith('notification:add', {
+      message: 'oh noes!',
+      type: 1,
+    });
   });
 });

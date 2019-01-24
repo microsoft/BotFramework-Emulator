@@ -30,17 +30,17 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import GenericActivity from '../types/activity/generic';
-import ILogItem from '../types/log/item';
-import Logger from '../types/logger';
-import LogLevel from '../types/log/level';
-import LogService from '../types/log/service';
 import {
   exceptionItem,
+  GenericActivity,
+  ILogItem,
   inspectableObjectItem,
+  Logger,
+  LogLevel,
+  LogService,
   summaryTextItem,
   textItem,
-} from '../types/log/util';
+} from '@bfemulator/sdk-shared';
 
 export default class LoggerAdapter implements Logger {
   constructor(public logService: LogService) {

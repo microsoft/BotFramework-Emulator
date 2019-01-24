@@ -80,7 +80,7 @@ describe('The AzureLoginFailedDialogContainer component should', () => {
   let instance: any;
   beforeEach(() => {
     mockStore.dispatch(azureArmTokenDataChanged(mockArmToken));
-    mockStore.dispatch(BotActions.load(bots));
+    mockStore.dispatch(BotActions.loadBotInfos(bots));
     parent = mount(
       <Provider store={mockStore}>
         <WelcomePageContainer />

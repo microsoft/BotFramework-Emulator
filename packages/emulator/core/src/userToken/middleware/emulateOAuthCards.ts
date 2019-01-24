@@ -34,7 +34,7 @@
 import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 
-import BotEmulator from '../../botEmulator';
+import { BotEmulator } from '../../botEmulator';
 import OAuthLinkEncoder from '../../utils/oauthLinkEncoder';
 import sendErrorResponse from '../../utils/sendErrorResponse';
 

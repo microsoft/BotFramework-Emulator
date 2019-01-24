@@ -37,7 +37,10 @@ import { combineReducers, createStore } from 'redux';
 
 import { bot } from '../../../../../data/reducer/bot';
 import { DialogService } from '../../../../dialogs/service';
-import { load, setActive } from '../../../../../data/action/botActions';
+import {
+  loadBotInfos,
+  setActiveBot,
+} from '../../../../../data/action/botActions';
 
 import { EndpointEditor } from './endpointEditor';
 import { EndpointEditorContainer } from './endpointEditorContainer';
@@ -80,8 +83,8 @@ describe('The EndpointExplorer component should', () => {
   let node;
 
   beforeEach(() => {
-    mockStore.dispatch(load([mockBot as any]));
-    mockStore.dispatch(setActive(mockBot as any));
+    mockStore.dispatch(loadBotInfos([mockBot as any]));
+    mockStore.dispatch(setActiveBot(mockBot as any));
 
     parent = mount(
       <Provider store={mockStore}>

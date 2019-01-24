@@ -34,15 +34,15 @@
 import { promisify } from 'util';
 
 import { FrameworkSettings } from '@bfemulator/app-shared';
-import { ILogItem } from '@bfemulator/emulator-core/lib/types/log/item';
-import LogLevel from '@bfemulator/emulator-core/lib/types/log/level';
+import { ILogItem } from '@bfemulator/sdk-shared';
+import { LogLevel } from '@bfemulator/sdk-shared';
 import {
   appSettingsItem,
   exceptionItem,
   externalLinkItem,
   ngrokExpirationItem,
   textItem,
-} from '@bfemulator/emulator-core/lib/types/log/util';
+} from '@bfemulator/sdk-shared';
 
 import { emulator } from './emulator';
 import { mainWindow } from './main';

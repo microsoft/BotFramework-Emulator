@@ -31,11 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import ILogService from '@bfemulator/emulator-core/lib/types/log/service';
 import {
   CommandService,
   CommandServiceImpl,
   DisposableImpl,
+  LogService as ILogService,
 } from '@bfemulator/sdk-shared';
 import { BrowserWindow, WebContents } from 'electron';
 

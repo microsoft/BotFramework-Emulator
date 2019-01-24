@@ -36,47 +36,76 @@ import {
   Dialog,
   DialogFooter,
   PrimaryButton,
+  Row,
   TextField,
 } from '@bfemulator/ui-react';
 import * as React from 'react';
-import { ChangeEvent, FocusEvent, ReactNode } from 'react';
+import { ChangeEvent, Component, FocusEvent, ReactNode } from 'react';
 
 import * as openBotStyles from './openBotDialog.scss';
 
 export interface OpenBotDialogProps {
   onDialogCancel?: () => void;
-  openBot?: (urlOrPath: string) => Promise<void>;
+  openBot?: (state: OpenBotDialogState) => void;
   sendNotification?: (error: Error) => void;
   switchToBot?: (path: string) => void;
 }
 
 export interface OpenBotDialogState {
   botUrl?: string;
+  appId?: string;
+  appPassword?: string;
 }
 
-export class OpenBotDialog extends React.Component<
+enum ValidationResult {
+  Invalid,
+  RouteMissing,
+  Valid,
+  Empty,
+}
+
+export class OpenBotDialog extends Component<
   OpenBotDialogProps,
   OpenBotDialogState
 > {
-  public state = { botUrl: '' };
+  public state = { botUrl: '', appId: '', appPassword: '' };
 
-  private static validateEndpoint(endpoint: string): string {
-    if (!endpoint) {
+  private static getErrorMessage(result: ValidationResult): string {
+    if (
+      result === ValidationResult.Empty ||
+      result === ValidationResult.Valid
+    ) {
       return ''; // Allow empty endpoints
     }
-    if (/(http)(s)?(:\/\/)/.test(endpoint)) {
-      return endpoint.endsWith('/api/messages')
-        ? ''
-        : `Please include route if necessary: "/api/messages"`;
+
+    return result === ValidationResult.Invalid
+      ? 'Please choose a valid bot file or endpoint URL'
+      : `Please include route if necessary: "/api/messages"`;
+  }
+
+  private static validateEndpoint(endpoint: string): ValidationResult {
+    if (!endpoint) {
+      return ValidationResult.Empty;
     }
+
+    if (/(http)(s)?(:\/\/)[\w+]/.test(endpoint)) {
+      return endpoint.endsWith('/api/messages')
+        ? ValidationResult.Valid
+        : ValidationResult.RouteMissing;
+    }
+
     return endpoint.endsWith('.bot')
-      ? ''
-      : 'Please choose a valid bot file or endpoint URL';
+      ? ValidationResult.Valid
+      : ValidationResult.Invalid;
   }
 
   public render(): ReactNode {
-    const { botUrl } = this.state;
-    const errorMessage = OpenBotDialog.validateEndpoint(botUrl);
+    const { botUrl, appId, appPassword } = this.state;
+    const validationResult = OpenBotDialog.validateEndpoint(botUrl);
+    const errorMessage = OpenBotDialog.getErrorMessage(validationResult);
+    const shouldBeDisabled =
+      validationResult === ValidationResult.Invalid ||
+      validationResult === ValidationResult.Empty;
     return (
       <Dialog
         cancel={this.props.onDialogCancel}
@@ -85,31 +114,53 @@ export class OpenBotDialog extends React.Component<
       >
         <form onSubmit={this.onSubmit}>
           <TextField
+            autoFocus={true}
+            name="botUrl"
             errorMessage={errorMessage}
             inputContainerClassName={openBotStyles.inputContainer}
             label="Bot URL or file location"
             onChange={this.onInputChange}
             onFocus={this.onFocus}
-            autoFocus={true}
+            placeholder="bot url or .bot file location"
             value={botUrl}
           >
             <PrimaryButton className={openBotStyles.browseButton}>
               Browse
               <input
-                className={openBotStyles.fileInput}
-                onChange={this.onInputChange}
                 accept=".bot"
+                className={openBotStyles.fileInput}
+                name="botUrl"
+                onChange={this.onInputChange}
                 type="file"
               />
             </PrimaryButton>
           </TextField>
-          <DialogFooter>
-            <DefaultButton text="Cancel" onClick={this.props.onDialogCancel} />
-            <PrimaryButton
-              type="submit"
-              disabled={!!errorMessage || !botUrl}
-              text="Connect"
+          <Row className={openBotStyles.multiInputRow}>
+            <TextField
+              inputContainerClassName={openBotStyles.inputContainerRow}
+              name="appId"
+              label="Microsoft App ID"
+              onChange={this.onInputChange}
+              placeholder="Optional"
+              value={appId}
             />
+            <TextField
+              inputContainerClassName={openBotStyles.inputContainerRow}
+              label="Microsoft App password"
+              name="appPassword"
+              onChange={this.onInputChange}
+              placeholder="Optional"
+              type="password"
+              value={appPassword}
+            />
+          </Row>
+          <DialogFooter>
+            <DefaultButton onClick={this.props.onDialogCancel}>
+              Cancel
+            </DefaultButton>
+            <PrimaryButton type="submit" disabled={shouldBeDisabled}>
+              Connect
+            </PrimaryButton>
           </DialogFooter>
         </form>
       </Dialog>
@@ -122,16 +173,15 @@ export class OpenBotDialog extends React.Component<
   };
 
   private onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const { type, files, value } = event.target;
-    const botUrl = type === 'file' ? files.item(0).path : value;
-    this.setState({ botUrl });
+    const { type, files, value, name } = event.target;
+    let newValue = value;
+    if (name === 'botUrl') {
+      newValue = type === 'file' ? files.item(0).path : value;
+    }
+    this.setState({ [name]: newValue });
   };
 
-  private onSubmit = async () => {
-    try {
-      await this.props.openBot(this.state.botUrl);
-    } catch (e) {
-      this.props.sendNotification(e);
-    }
+  private onSubmit = () => {
+    this.props.openBot(this.state);
   };
 }

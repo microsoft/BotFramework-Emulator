@@ -35,7 +35,7 @@ import * as React from 'react';
 import { Provider } from 'react-redux';
 import { combineReducers, createStore } from 'redux';
 
-import { load, setActive } from '../../../../data/action/botActions';
+import { loadBotInfos, setActiveBot } from '../../../../data/action/botActions';
 import {
   openEndpointExplorerContextMenu,
   openEndpointInEmulator,
@@ -99,8 +99,8 @@ describe('The EndpointExplorer component should', () => {
   let mockDispatch;
 
   beforeEach(() => {
-    mockStore.dispatch(load([mockBot as any]));
-    mockStore.dispatch(setActive(mockBot as any));
+    mockStore.dispatch(loadBotInfos([mockBot as any]));
+    mockStore.dispatch(setActiveBot(mockBot as any));
 
     parent = mount(
       <Provider store={mockStore}>

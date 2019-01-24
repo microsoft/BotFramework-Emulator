@@ -30,26 +30,25 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+import { logEntry, LogLevel, textItem } from '@bfemulator/sdk-shared';
+import { mount } from 'enzyme';
 import * as React from 'react';
 import { Provider } from 'react-redux';
-import { mount } from 'enzyme';
 import { combineReducers, createStore } from 'redux';
-import {
-  logEntry,
-  textItem,
-} from '@bfemulator/emulator-core/lib/types/log/util';
-import LogLevel from '@bfemulator/emulator-core/lib/types/log/level';
 
+import {
+  loadBotInfos,
+  setActiveBot,
+} from '../../../../../data/action/botActions';
+import { switchTheme } from '../../../../../data/action/themeActions';
 import { bot } from '../../../../../data/reducer/bot';
 import { clientAwareSettings } from '../../../../../data/reducer/clientAwareSettingsReducer';
-import { load, setActive } from '../../../../../data/action/botActions';
 import { theme } from '../../../../../data/reducer/themeReducer';
-import { switchTheme } from '../../../../../data/action/themeActions';
 import { ExtensionManager } from '../../../../../extensions';
 import { LogService } from '../../../../../platform/log/logService';
 
-import { InspectorContainer } from './inspectorContainer';
 import { Inspector } from './inspector';
+import { InspectorContainer } from './inspectorContainer';
 
 const mockStore = createStore(
   combineReducers({ theme, bot, clientAwareSettings }),
@@ -266,8 +265,8 @@ describe('The Inspector component', () => {
   };
   beforeEach(() => {
     mockStore.dispatch(switchTheme('light', ['vars.css', 'light.css']));
-    mockStore.dispatch(load([mockState.bot]));
-    mockStore.dispatch(setActive(mockState.bot as any));
+    mockStore.dispatch(loadBotInfos([mockState.bot]));
+    mockStore.dispatch(setActiveBot(mockState.bot as any));
 
     parent = mount(
       <Provider store={mockStore}>

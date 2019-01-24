@@ -31,14 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-interface RecognizerResultIntent {
+export interface RecognizerResultIntent {
   score: number;
 }
 
-interface RecognizerResult {
+export interface RecognizerResult {
   text: string;
   intents: { [key: string]: RecognizerResultIntent };
   entities: any;
 }
-
-export { RecognizerResult, RecognizerResultIntent };

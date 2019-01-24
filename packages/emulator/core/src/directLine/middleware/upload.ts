@@ -33,17 +33,19 @@
 
 import * as fs from 'fs';
 
+import {
+  Attachment,
+  AttachmentData,
+  LogLevel,
+  textItem,
+} from '@bfemulator/sdk-shared';
 import * as Formidable from 'formidable';
 import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 
-import BotEmulator from '../../botEmulator';
+import { BotEmulator } from '../../botEmulator';
 import BotEndpoint from '../../facility/botEndpoint';
 import Conversation from '../../facility/conversation';
-import Attachment from '../../types/attachment';
-import AttachmentData from '../../types/attachment/data';
-import LogLevel from '../../types/log/level';
-import { textItem } from '../../types/log/util';
 import sendErrorResponse from '../../utils/sendErrorResponse';
 
 export default function upload(botEmulator: BotEmulator) {

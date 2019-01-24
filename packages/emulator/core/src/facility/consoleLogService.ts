@@ -31,11 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { ILogItem, LogLevel, LogService } from '@bfemulator/sdk-shared';
 import log from 'npmlog';
-
-import ILogItem from '../types/log/item';
-import LogLevel from '../types/log/level';
-import LogService from '../types/log/service';
 
 function logLevel(logLevelArg: LogLevel) {
   switch (logLevelArg) {

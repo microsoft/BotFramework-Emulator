@@ -94,7 +94,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   commandRegistry.registerCommand(
     Commands.Bot.SyncBotList,
     async (bots: BotInfo[]): Promise<void> => {
-      store.dispatch(BotActions.load(bots));
+      store.dispatch(BotActions.loadBotInfos(bots));
       await CommandServiceImpl.remoteCall(Commands.Electron.UpdateFileMenu);
     }
   );
@@ -104,7 +104,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   commandRegistry.registerCommand(
     Commands.Bot.SetActive,
     async (bot: BotConfigWithPath, botDirectory: string) => {
-      store.dispatch(BotActions.setActive(bot));
+      store.dispatch(BotActions.setActiveBot(bot));
       store.dispatch(FileActions.setRoot(botDirectory));
       await Promise.all([
         CommandServiceImpl.remoteCall(Commands.Electron.UpdateFileMenu),

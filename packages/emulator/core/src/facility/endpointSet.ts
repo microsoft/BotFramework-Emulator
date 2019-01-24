@@ -31,11 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { BotEmulatorOptions } from '@bfemulator/sdk-shared';
 import base64Url from 'base64url';
 import onErrorResumeNext from 'on-error-resume-next';
 
-import BotEmulatorOptions from '../types/botEmulatorOptions';
-import BotEndpointType from '../types/botEndpoint';
 import uniqueId from '../utils/uniqueId';
 
 import BotEndpoint from './botEndpoint';
@@ -59,7 +58,7 @@ export default class Endpoints {
   private _endpoints: { [key: string]: BotEndpoint } = {};
   constructor(private _options: BotEmulatorOptions) {}
 
-  public push(id: string, botEndpoint: BotEndpointType): BotEndpoint {
+  public push(id: string, botEndpoint: Partial<BotEndpoint>): BotEndpoint {
     id = id || botEndpoint.botUrl || uniqueId();
 
     const botEndpointInstance = new BotEndpoint(
@@ -114,13 +113,17 @@ export default class Endpoints {
     ];
   }
 
-  public getAll(): { [key: string]: BotEndpointType } {
-    return mapMap<BotEndpoint, BotEndpointType>(this._endpoints, value => ({
-      botId: value.botId,
-      botUrl: value.botUrl,
-      msaAppId: value.msaAppId,
-      msaPassword: value.msaPassword,
-      use10Tokens: value.use10Tokens,
-    }));
+  public getAll(): { [key: string]: BotEndpoint } {
+    return mapMap<BotEndpoint, BotEndpoint>(
+      this._endpoints,
+      value =>
+        ({
+          botId: value.botId,
+          botUrl: value.botUrl,
+          msaAppId: value.msaAppId,
+          msaPassword: value.msaPassword,
+          use10Tokens: value.use10Tokens,
+        } as any)
+    );
   }
 }

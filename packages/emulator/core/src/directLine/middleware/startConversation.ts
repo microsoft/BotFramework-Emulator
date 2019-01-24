@@ -35,7 +35,7 @@ import * as HttpStatus from 'http-status-codes';
 import onErrorResumeNext from 'on-error-resume-next';
 import * as Restify from 'restify';
 
-import BotEmulator from '../../botEmulator';
+import { BotEmulator } from '../../botEmulator';
 import BotEndpoint from '../../facility/botEndpoint';
 import uniqueId from '../../utils/uniqueId';
 

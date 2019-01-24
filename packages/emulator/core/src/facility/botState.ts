@@ -31,15 +31,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import {
+  BotData,
+  ErrorCodes,
+  externalLinkItem,
+  LogLevel,
+  textItem,
+} from '@bfemulator/sdk-shared';
 import * as HttpStatus from 'http-status-codes';
 
 import approximateObjectSize from '../utils/approximateObjectSize';
-import BotEmulator from '../botEmulator';
+import { BotEmulator } from '../botEmulator';
 import createAPIException from '../utils/createResponse/apiException';
-import { ErrorCodes } from '../types/errorCodes';
-import BotData from '../types/botData';
-import { externalLinkItem, textItem } from '../types/log/util';
-import LogLevel from '../types/log/level';
 
 import Conversation from './conversation';
 import botDataKey from './botDataKey';

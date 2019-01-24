@@ -38,7 +38,7 @@ import {
   botsAreTheSame,
 } from '@bfemulator/sdk-shared';
 
-import { BotAction, BotActions } from '../action/botActions';
+import { BotAction, BotActionType } from '../action/botActions';
 
 export interface BotState {
   activeBot: BotConfigWithPath;
@@ -54,12 +54,12 @@ const DEFAULT_STATE: BotState = {
 
 export function bot(state: BotState = DEFAULT_STATE, action: BotAction) {
   switch (action.type) {
-    case BotActions.load: {
+    case BotActionType.load: {
       state = setBotFilesState(action.payload.bots, state);
       break;
     }
 
-    case BotActions.setActive: {
+    case BotActionType.setActive: {
       // move active bot up to the top of the recent bots list
       const mostRecentBot = state.botFiles.find(
         botArg => botArg && botArg.path === action.payload.bot.path
@@ -82,13 +82,13 @@ export function bot(state: BotState = DEFAULT_STATE, action: BotAction) {
       break;
     }
 
-    case BotActions.close: {
+    case BotActionType.close: {
       // close the active bot
       state = setActiveBot(null, state);
       break;
     }
 
-    case BotActions.hashGenerated:
+    case BotActionType.hashGenerated:
       return { ...state, activeBotDigest: action.payload.hash };
 
     default:

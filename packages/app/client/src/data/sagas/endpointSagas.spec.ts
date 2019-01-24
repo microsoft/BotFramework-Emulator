@@ -36,7 +36,7 @@ import { Component } from 'react';
 import { SharedConstants } from '@bfemulator/app-shared';
 
 import { bot } from '../reducer/bot';
-import { load, setActive } from '../action/botActions';
+import { loadBotInfos, setActiveBot } from '../action/botActions';
 import {
   launchEndpointEditor,
   openEndpointExplorerContextMenu,
@@ -102,8 +102,8 @@ jest.mock('../../ui/dialogs', () => ({
 
 describe('The endpoint sagas', () => {
   beforeEach(() => {
-    mockStore.dispatch(load([mockBot]));
-    mockStore.dispatch(setActive(mockBot));
+    mockStore.dispatch(loadBotInfos([mockBot]));
+    mockStore.dispatch(setActiveBot(mockBot));
   });
 
   it('should launch the endpoint editor and execute a command to save the edited services', async () => {

@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import User from '../types/user';
+import { User } from '@bfemulator/sdk-shared';
 
 export default class Users {
   public currentUserId: string = 'default-user';

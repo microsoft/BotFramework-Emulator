@@ -30,7 +30,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { ClientAwareSettings } from '@bfemulator/app-shared/built';
+import { ClientAwareSettings } from '@bfemulator/app-shared';
 
 import {
   CLIENT_AWARE_SETTINGS_CHANGED,

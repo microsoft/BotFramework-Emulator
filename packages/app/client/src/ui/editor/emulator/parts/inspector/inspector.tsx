@@ -1,4 +1,3 @@
-import LogLevel from '@bfemulator/emulator-core/lib/types/log/level';
 //
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license.
@@ -32,10 +31,8 @@ import LogLevel from '@bfemulator/emulator-core/lib/types/log/level';
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 // Cheating here and pulling in a module from node. Can be easily replaced if we ever move the emulator to the web.
-import {
-  logEntry,
-  textItem,
-} from '@bfemulator/emulator-core/lib/types/log/util';
+import { LogLevel } from '@bfemulator/sdk-shared';
+import { logEntry, textItem } from '@bfemulator/sdk-shared';
 import {
   ExtensionInspector,
   InspectorAccessory,

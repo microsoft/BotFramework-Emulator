@@ -31,43 +31,41 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { newNotification, SharedConstants } from '@bfemulator/app-shared';
-import { IEndpointService } from 'botframework-config/lib/schema';
 import { connect } from 'react-redux';
 import { Action } from 'redux';
 
-import { beginAdd } from '../../../data/action/notificationActions';
-import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
-import { ActiveBotHelper } from '../../helpers/activeBotHelper';
+import {
+  openBotViaFilePathAction,
+  openBotViaUrlAction,
+} from '../../../data/action/botActions';
 import { DialogService } from '../service';
 
-import { OpenBotDialog, OpenBotDialogProps } from './openBotDialog';
+import {
+  OpenBotDialog,
+  OpenBotDialogProps,
+  OpenBotDialogState,
+} from './openBotDialog';
 
 const mapDispatchToProps = (
   dispatch: (action: Action) => void
 ): OpenBotDialogProps => {
-  const {
-    Commands: {
-      Emulator: { NewLiveChat },
-    },
-  } = SharedConstants;
   return {
-    onDialogCancel: () => DialogService.hideDialog(),
-    openBot: (urlOrPath: string) => {
+    openBot: (componentState: OpenBotDialogState) => {
       DialogService.hideDialog();
-      if (urlOrPath.startsWith('http')) {
-        return CommandServiceImpl.call(NewLiveChat, {
-          endpoint: urlOrPath,
-        } as IEndpointService);
+      const { appId = '', appPassword = '', botUrl = '' } = componentState;
+      if (botUrl.startsWith('http')) {
+        dispatch(
+          openBotViaUrlAction({
+            appId,
+            appPassword,
+            endpoint: botUrl,
+          })
+        );
+      } else {
+        dispatch(openBotViaFilePathAction(botUrl));
       }
-      return ActiveBotHelper.confirmAndOpenBotFromFile(urlOrPath);
     },
-    sendNotification: (error: Error) =>
-      dispatch(
-        beginAdd(
-          newNotification(`An Error occurred on the Open Bot Dialog: ${error}`)
-        )
-      ),
+    onDialogCancel: () => DialogService.hideDialog(),
   };
 };
 

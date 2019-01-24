@@ -41,7 +41,7 @@ import {
   Settings,
   SharedConstants,
 } from '@bfemulator/app-shared';
-import Users from '@bfemulator/emulator-core/lib/facility/users';
+import { Users } from '@bfemulator/emulator-core';
 import { ProgressInfo } from 'builder-util-runtime';
 import * as Electron from 'electron';
 import { app, systemPreferences } from 'electron';

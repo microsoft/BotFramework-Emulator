@@ -31,12 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from 'react';
+import { LogLevel, textItem } from '@bfemulator/sdk-shared';
 import { mount, ReactWrapper } from 'enzyme';
-import LogLevel from '@bfemulator/emulator-core/lib/types/log/level';
-import { textItem } from '@bfemulator/emulator-core/lib/types/log/util';
+import * as React from 'react';
 
-import { number2, timestamp, LogEntry, LogEntryProps } from './logEntry';
+import { LogEntry, LogEntryProps, number2, timestamp } from './logEntry';
 
 jest.mock('./log.scss', () => ({}));
 

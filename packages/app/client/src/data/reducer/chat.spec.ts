@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import LogEntry from '@bfemulator/emulator-core/lib/types/log/entry';
+import { LogEntry } from '@bfemulator/sdk-shared';
 
 import {
   addTranscript,

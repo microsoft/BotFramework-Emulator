@@ -32,7 +32,7 @@
 //
 
 import { SharedConstants } from '@bfemulator/app-shared';
-import LogEntry from '@bfemulator/emulator-core/lib/types/log/entry';
+import { LogEntry } from '@bfemulator/sdk-shared';
 import { CommandRegistryImpl, DisposableImpl } from '@bfemulator/sdk-shared';
 
 import * as ChatActions from '../../data/action/chatActions';

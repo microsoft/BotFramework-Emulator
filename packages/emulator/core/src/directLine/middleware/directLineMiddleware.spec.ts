@@ -32,11 +32,10 @@
 //
 /* eslint-disable typescript/camelcase */
 import * as HttpStatus from 'http-status-codes';
-
-import BotEmulator from '../../botEmulator';
+import { ConversationParameters } from '@bfemulator/sdk-shared';
+import { BotEmulator } from '../../botEmulator';
 import Conversation from '../../facility/conversation';
 import BotEndpoint from '../../facility/botEndpoint';
-import ConversationParameters from '../../types/activity/conversationParameters';
 import createConversation from '../../conversations/middleware/createConversation';
 import ConversationSet from '../../facility/conversationSet';
 import Users from '../../facility/users';
@@ -484,8 +483,7 @@ describe('The directLine middleware', () => {
       getContentLength: () => 8,
       botEndpoint: conversation.botEndpoint,
     };
-    let activityId = '';
-    res.send = (status, data) => (activityId = data.id);
+    res.send = () => void 0;
     await upload(emulator)(req as any, res, (() => null) as any);
     await Promise.resolve(true);
     await Promise.resolve(true);

@@ -31,6 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { BotEmulatorOptions, Logger, LogService } from '@bfemulator/sdk-shared';
 import * as Restify from 'restify';
 import fetch from 'node-fetch';
 
@@ -47,9 +48,6 @@ import EndpointSet from './facility/endpointSet';
 import LoggerAdapter from './facility/loggerAdapter';
 import Users from './facility/users';
 import registerSessionRoutes from './session/registerRoutes';
-import BotEmulatorOptions from './types/botEmulatorOptions';
-import LogService from './types/log/service';
-import Logger from './types/logger';
 import registerUserTokenRoutes from './userToken/registerRoutes';
 import stripEmptyBearerToken from './utils/stripEmptyBearerToken';
 
@@ -69,7 +67,7 @@ export interface Facilities {
   locale?: string;
 }
 
-export default class BotEmulator {
+export class BotEmulator {
   // TODO: Instead of providing a getter for serviceUrl, we should let the upstream to set the serviceUrl
   // Currently, the upstreamer doesn't really know when the serviceUrl change (ngrok), they need to do their job
   public getServiceUrl: (botUrl: string) => Promise<string>;

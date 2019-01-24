@@ -31,22 +31,23 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { SharedConstants } from '@bfemulator/app-shared';
+import { ClientAwareSettings, UserSettings } from '@bfemulator/app-shared';
 import { mount } from 'enzyme';
 import * as React from 'react';
 import { Provider } from 'react-redux';
 import { combineReducers, createStore } from 'redux';
 
+import * as botActions from '../../../data/action/botActions';
 import * as BotActions from '../../../data/action/botActions';
+import { clientAwareSettingsChanged } from '../../../data/action/clientAwareSettingsActions';
 import { bot } from '../../../data/reducer/bot';
-import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
-import { ActiveBotHelper } from '../../helpers/activeBotHelper';
+import { clientAwareSettings } from '../../../data/reducer/clientAwareSettingsReducer';
 import { DialogService } from '../service';
 
 import { OpenBotDialog } from './openBotDialog';
 import { OpenBotDialogContainer } from './openBotDialogContainer';
 
-const mockStore = createStore(combineReducers({ bot }));
+let mockStore;
 jest.mock('./openBotDialog.scss', () => ({}));
 jest.mock('../../../data/store', () => ({
   get store() {
@@ -77,7 +78,17 @@ describe('The OpenBotDialog', () => {
   let parent;
   let instance;
   beforeEach(() => {
-    mockStore.dispatch(BotActions.load(bots));
+    mockStore = createStore(combineReducers({ bot, clientAwareSettings }));
+    mockStore.dispatch(BotActions.loadBotInfos(bots));
+    mockStore.dispatch(
+      clientAwareSettingsChanged({
+        serverUrl: 'http://localhost:3543',
+        users: {
+          usersById: { user1: {} },
+          currentUserId: 'user1',
+        } as UserSettings,
+      } as ClientAwareSettings)
+    );
     parent = mount(
       <Provider store={mockStore}>
         <OpenBotDialogContainer />
@@ -96,6 +107,7 @@ describe('The OpenBotDialog', () => {
   it('should properly set the state when the input changes', () => {
     instance.onInputChange({
       target: {
+        name: 'botUrl',
         type: 'text',
         value: 'http://localhost:6500/api/messages',
       },
@@ -106,6 +118,7 @@ describe('The OpenBotDialog', () => {
     instance.onInputChange({
       target: {
         type: 'file',
+        name: 'botUrl',
         files: { item: () => ({ path: 'some/path/to/myBot.bot' }) },
       },
     } as any);
@@ -128,33 +141,34 @@ describe('The OpenBotDialog', () => {
   it('should open a bot when a path is provided', async () => {
     instance.onInputChange({
       target: {
+        name: 'botUrl',
         type: 'file',
         files: { item: () => ({ path: 'some/path/to/myBot.bot' }) },
       },
     } as any);
 
-    const botHelperSpy = jest
-      .spyOn(ActiveBotHelper, 'confirmAndOpenBotFromFile')
-      .mockResolvedValue(true);
+    const spy = jest.spyOn(botActions, 'openBotViaFilePathAction');
     await instance.onSubmit();
 
-    expect(botHelperSpy).toHaveBeenCalledWith('some/path/to/myBot.bot');
+    expect(spy).toHaveBeenCalledWith('some/path/to/myBot.bot');
   });
 
-  it('should open an endpoint when a URL is provided', async () => {
+  it('should open a bot when a URL is provided', async () => {
     instance.onInputChange({
       target: {
+        name: 'botUrl',
         type: 'text',
-        value: 'http://localhost:6500/api/messages',
+        value: 'http://localhost',
       },
     } as any);
 
-    const commandServiceSpy = jest.spyOn(CommandServiceImpl, 'call');
+    const spy = jest.spyOn(botActions, 'openBotViaUrlAction');
     await instance.onSubmit();
 
-    expect(commandServiceSpy).toHaveBeenCalledWith(
-      SharedConstants.Commands.Emulator.NewLiveChat,
-      { endpoint: 'http://localhost:6500/api/messages' }
-    );
+    expect(spy).toHaveBeenCalledWith({
+      appId: '',
+      appPassword: '',
+      endpoint: 'http://localhost',
+    });
   });
 });

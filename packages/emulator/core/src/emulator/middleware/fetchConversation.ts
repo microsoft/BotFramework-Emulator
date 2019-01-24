@@ -31,12 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { ErrorCodes } from '@bfemulator/sdk-shared';
 import * as HttpStatus from 'http-status-codes';
 import { Next, Request, Response } from 'restify';
 
-import BotEmulator from '../../botEmulator';
+import { BotEmulator } from '../../botEmulator';
 import createAPIException from '../../utils/createResponse/apiException';
-import { ErrorCodes } from '../../types/errorCodes';
 import Conversation from '../../facility/conversation';
 
 export interface ConversationAware extends Request {

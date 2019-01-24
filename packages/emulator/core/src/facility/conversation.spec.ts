@@ -31,9 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { BotEmulator } from '../botEmulator';
+import BotEndpoint from './botEndpoint';
 import Conversation from './conversation';
-
-jest.mock('../botEmulator', () => ({ BotEmulator: {} }));
 
 describe('Conversation class', () => {
   let botEndpointBotId;
@@ -42,11 +42,37 @@ describe('Conversation class', () => {
   let conversation: Conversation;
   let conversationId;
   let user: any;
-
+  let fetch = (function() {
+    const fetch = () => {
+      return {
+        ok: true,
+        json: async () => ({}),
+        text: async () => '{}',
+      };
+    };
+    (fetch as any).Headers = class {};
+    (fetch as any).Response = class {};
+    return fetch as any;
+  })();
   beforeEach(() => {
     botEndpointBotId = 'someBotEndpointBotId';
-    botEndpoint = { botId: botEndpointBotId };
-    botEmulator = {};
+    botEndpoint = new BotEndpoint(
+      '123',
+      botEndpointBotId,
+      'http://ngrok',
+      null,
+      null,
+      null,
+      null,
+      { fetch }
+    );
+    botEmulator = new BotEmulator(async () => 'http://localhost', {
+      fetch,
+      loggerOrLogService: {
+        logMessage: async () => true,
+        logActivity: async () => true,
+      } as any,
+    });
     conversationId = 'someConversationId';
     user = { id: 'someUserId' };
     conversation = new Conversation(
@@ -127,4 +153,236 @@ describe('Conversation class', () => {
       },
     ]);
   });
+
+  it('should get the transcript from the conversation', async () => {
+    (conversation as any).transcript = mockTranscript;
+    const transcripts = await conversation.getTranscript();
+    expect(transcripts.length).toBe(4);
+    let i = transcripts.length;
+    while (i--) {
+      expect(transcripts[i]).toEqual(mockTranscript[i].activity);
+    }
+  });
+
+  it('should post an activity to the bot', async () => {
+    const result = await conversation.postActivityToBot(mockActivity, true);
+    expect(result.activityId).toEqual(jasmine.any(String));
+  });
+
+  it('should send a conversation update', async () => {
+    await conversation.postActivityToBot(mockActivity, true);
+    const spy = jest
+      .spyOn(conversation, 'postActivityToBot')
+      .mockResolvedValueOnce({
+        response: {
+          status: 200,
+        },
+        statusCode: 200,
+      });
+    await conversation.sendConversationUpdate(
+      mockActivity.membersAdded,
+      mockActivity.membersAdded
+    );
+    expect(spy).toHaveBeenCalledWith(
+      {
+        membersAdded: [
+          {
+            id: '1',
+            name: 'Bot',
+          },
+        ],
+        membersRemoved: [{ id: '1', name: 'Bot' }],
+        type: 'conversationUpdate',
+      },
+      false
+    );
+  });
+
+  it('should post an activity to the user', async () => {
+    const activity = await conversation.postActivityToUser(mockUserActivity);
+    expect(activity).toEqual({
+      id: jasmine.any(String),
+    });
+  });
+
+  it('should update an activity', async () => {
+    let result = await conversation.postActivityToBot(mockActivity, true);
+    const updatedActivity = { id: result.activityId, test: 'revised activity' };
+    result = await conversation.updateActivity(updatedActivity);
+    expect(result.id).toBe(updatedActivity.id);
+  });
+
+  it('should delete an activity', async () => {
+    const result = await conversation.postActivityToBot(mockActivity, true);
+    let activityDeleted = false;
+    conversation.on('deleteactivity', () => (activityDeleted = true));
+    await conversation.deleteActivity(result.activityId);
+    expect(activityDeleted).toBeTruthy();
+  });
+
+  it('should send Contact Removed', async () => {
+    await conversation.sendContactRemoved();
+    expect((conversation as any).transcript[0].activity.action).toBe('remove');
+  });
+
+  it('should send the typing activity', async () => {
+    await conversation.sendTyping();
+    expect((conversation as any).transcript[1].activity.type).toBe('typing');
+  });
+
+  it('should send the ping activity', async () => {
+    await conversation.sendPing();
+    expect((conversation as any).transcript[1].activity.type).toBe('ping');
+  });
+
+  it('should send the delete user data activity', async () => {});
 });
+
+const mockTranscript = [
+  {
+    type: 'activity add',
+    activity: {
+      type: 'conversationUpdate',
+      membersAdded: [
+        {
+          id: '1',
+          name: 'Bot',
+        },
+      ],
+      channelId: 'emulator',
+      conversation: {
+        id: 'b94a54f0-1f4d-11e9-a14a-49165b6799aa|livechat',
+      },
+      id: 'b9c48e00-1f4d-11e9-bad7-9740f2a4e769',
+      localTimestamp: '2019-01-23T12:30:30-08:00',
+      recipient: {
+        id: '1',
+        name: 'Bot',
+        role: 'bot',
+      },
+      timestamp: '2019-01-23T20:30:30.111Z',
+      from: {
+        id: '5e1f1c4c-6a89-4880-8db0-0f222c07ae9a',
+        name: 'User',
+      },
+      locale: 'en-us',
+      serviceUrl: 'https://3a469f6b.ngrok.io',
+    },
+  },
+  {
+    type: 'activity add',
+    activity: {
+      type: 'conversationUpdate',
+      membersAdded: [
+        {
+          id: '5e1f1c4c-6a89-4880-8db0-0f222c07ae9a',
+          name: 'User',
+        },
+      ],
+      channelId: 'emulator',
+      conversation: {
+        id: 'b94a54f0-1f4d-11e9-a14a-49165b6799aa|livechat',
+      },
+      id: 'b9c50330-1f4d-11e9-bad7-9740f2a4e769',
+      localTimestamp: '2019-01-23T12:30:30-08:00',
+      recipient: {
+        id: '1',
+        name: 'Bot',
+        role: 'bot',
+      },
+      timestamp: '2019-01-23T20:30:30.115Z',
+      from: {
+        id: '5e1f1c4c-6a89-4880-8db0-0f222c07ae9a',
+        name: 'User',
+      },
+      locale: 'en-us',
+      serviceUrl: 'https://3a469f6b.ngrok.io',
+    },
+  },
+  {
+    type: 'activity add',
+    activity: {
+      type: 'message',
+      serviceUrl: 'https://3a469f6b.ngrok.io',
+      channelId: 'emulator',
+      from: {
+        id: '1',
+        name: 'Bot',
+        role: 'bot',
+      },
+      conversation: {
+        id: 'b94a54f0-1f4d-11e9-a14a-49165b6799aa|livechat',
+      },
+      recipient: {
+        id: '5e1f1c4c-6a89-4880-8db0-0f222c07ae9a',
+        role: 'user',
+      },
+      text: '[conversationUpdate event detected]',
+      inputHint: 'acceptingInput',
+      replyToId: 'b9c48e00-1f4d-11e9-bad7-9740f2a4e769',
+      id: 'bce46ba0-1f4d-11e9-bad7-9740f2a4e769',
+      localTimestamp: '2019-01-23T12:30:35-08:00',
+      timestamp: '2019-01-23T20:30:35.354Z',
+      locale: 'en-us',
+    },
+  },
+  {
+    type: 'activity add',
+    activity: {
+      type: 'message',
+      serviceUrl: 'https://3a469f6b.ngrok.io',
+      channelId: 'emulator',
+      from: {
+        id: '1',
+        name: 'Bot',
+        role: 'bot',
+      },
+      conversation: {
+        id: 'b94a54f0-1f4d-11e9-a14a-49165b6799aa|livechat',
+      },
+      recipient: {
+        id: '5e1f1c4c-6a89-4880-8db0-0f222c07ae9a',
+        role: 'user',
+      },
+      text: '[conversationUpdate event detected]',
+      inputHint: 'acceptingInput',
+      replyToId: 'b9c50330-1f4d-11e9-bad7-9740f2a4e769',
+      id: 'bde42860-1f4d-11e9-bad7-9740f2a4e769',
+      localTimestamp: '2019-01-23T12:30:37-08:00',
+      timestamp: '2019-01-23T20:30:37.030Z',
+      locale: 'en-us',
+    },
+  },
+];
+
+const mockActivity = {
+  type: 'conversationUpdate',
+  membersAdded: [
+    {
+      id: '1',
+      name: 'Bot',
+    },
+  ],
+};
+
+const mockUserActivity = {
+  type: 'message',
+  serviceUrl: 'https://70d0a286.ngrok.io',
+  channelId: 'emulator',
+  from: {
+    id: '1',
+    name: 'Bot',
+    role: 'bot',
+  },
+  conversation: {
+    id: '95d86570-1f5c-11e9-b075-774f2d8ccec5|livechat',
+  },
+  recipient: {
+    id: '5e1f1c4c-6a89-4880-8db0-0f222c07ae9a',
+    name: 'User',
+  },
+  text: '[conversationUpdate event detected]',
+  inputHint: 'acceptingInput',
+  replyToId: '96547340-1f5c-11e9-9b39-f387f690c8a4',
+  id: null,
+};

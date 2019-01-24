@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import '../fetchProxy';
-import { CosmosDbApiService } from './cosmosDbApiService';
+import { CosmosDbApiService } from '../../../../app/main/src/services/cosmosDbApiService';
 
 const mockArmToken =
   'bm90aGluZw.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds';

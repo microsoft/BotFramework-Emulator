@@ -31,13 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { AttachmentData, ErrorCodes } from '@bfemulator/sdk-shared';
 import * as HttpStatus from 'http-status-codes';
 import { Next, Request, Response } from 'restify';
 
-import BotEmulator from '../../botEmulator';
+import { BotEmulator } from '../../botEmulator';
 import createAPIException from '../../utils/createResponse/apiException';
-import { ErrorCodes } from '../../types/errorCodes';
-import AttachmentData from '../../types/attachment/data';
 import AttachmentParams from '../attachmentParams';
 import sendErrorResponse from '../../utils/sendErrorResponse';
 

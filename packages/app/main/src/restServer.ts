@@ -33,16 +33,16 @@
 
 import { SharedConstants } from '@bfemulator/app-shared';
 import { BotEmulator, Conversation } from '@bfemulator/emulator-core';
-import ConversationSet from '@bfemulator/emulator-core/lib/facility/conversationSet';
-import LogLevel from '@bfemulator/emulator-core/lib/types/log/level';
 import {
+  LogLevel,
   networkRequestItem,
   networkResponseItem,
   textItem,
-} from '@bfemulator/emulator-core/lib/types/log/util';
+} from '@bfemulator/sdk-shared';
 import { IEndpointService } from 'botframework-config';
 import { createServer, Request, Response, Route, Server } from 'restify';
 import CORS from 'restify-cors-middleware';
+import { ConversationSet } from '@bfemulator/emulator-core';
 
 import { emulator } from './emulator';
 import { mainWindow } from './main';

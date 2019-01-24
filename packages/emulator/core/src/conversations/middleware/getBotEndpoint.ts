@@ -30,10 +30,9 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
 import * as Restify from 'restify';
 
-import BotEmulator from '../../botEmulator';
+import { BotEmulator } from '../../botEmulator';
 
 export default function getBotEndpoint(botEmulator: BotEmulator) {
   return (
@@ -41,33 +40,41 @@ export default function getBotEndpoint(botEmulator: BotEmulator) {
     res: Restify.Response,
     next: Restify.Next
   ): any => {
-    // TODO: We need to know how to find the correct endpoint from user
-    //       We can find out the app ID from JWT
-    //       But what if the bot does not supply app ID
-    //       Only "createConversation from bot" use this function
-
-    //       { header:
-    //         { typ: 'JWT',
-    //           alg: 'RS256',
-    //           x5t: 'FSimuFrFNoC0sJXGmv13nNZceDc',
-    //           kid: 'FSimuFrFNoC0sJXGmv13nNZceDc' },
-    //         payload:
-    //         { aud: 'https://api.botframework.com',
-    //           iss: 'https://sts.windows.net/d6d49420-f39b-4df7-a1dc-d59a935871db/',
-    //           iat: 1524702525,
-    //           nbf: 1524702525,
-    //           exp: 1524706425,
-    //           aio: 'Y2dgYOjiffRgz8v9D1dum12cW/vrOgA=',
-    //           appid: '31e41702-aedd-4a84-85ee-4239332360f1',
-    //           appidacr: '1',
-    //           idp: 'https://sts.windows.net/d6d49420-f39b-4df7-a1dc-d59a935871db/',
-    //           tid: 'd6d49420-f39b-4df7-a1dc-d59a935871db',
-    //           uti: 'ZPtC8TT5bk-41eVUsOAAAA',
-    //           ver: '1.0' },
-
-    (req as any).botEndpoint = botEmulator.facilities.endpoints.getByAppId(
-      (req as any).jwt.appid
-    );
+    const request = req as any;
+    const { endpoints } = botEmulator.facilities;
+    /**
+     * IF query params exist, the call is creating a
+     * conversation independent from a bot file.
+     */
+    if (req.query && 'botEndpoint' in req.query) {
+      const {
+        botEndpoint: botUrl,
+        msaAppId = '',
+        msaPassword = '',
+      } = req.query;
+      let endpoint = endpoints.get(botUrl);
+      if (!endpoint) {
+        const params = req.body as any;
+        endpoint = endpoints.push(null, {
+          botId: params.bot.id,
+          botUrl,
+          msaAppId,
+          msaPassword,
+        });
+      } else {
+        // update the endpoint in memory with the new
+        // appId and password if they exist in the params
+        if (msaAppId) {
+          endpoint.msaAppId = msaAppId;
+        }
+        if (msaPassword) {
+          endpoint.msaPassword = msaPassword;
+        }
+      }
+      request.botEndpoint = endpoint;
+    } else {
+      request.botEndpoint = endpoints.getByAppId(request.jwt.appid);
+    }
 
     return next();
   };

@@ -31,8 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import Activity from '../types/activity/activity';
-import CardAction from '../types/card/cardAction';
+import { Activity, CardAction } from '@bfemulator/sdk-shared';
 
 import ActivityVisitor from './activityVisitor';
 

@@ -36,7 +36,7 @@ import * as React from 'react';
 import { Provider } from 'react-redux';
 import { combineReducers, createStore } from 'redux';
 
-import { load, setActive } from '../../../../data/action/botActions';
+import { loadBotInfos, setActiveBot } from '../../../../data/action/botActions';
 import {
   openAddServiceContextMenu,
   openContextMenuForConnectedService,
@@ -91,8 +91,8 @@ describe('The ServicesExplorer component should', () => {
         }]
       }`);
     mockBot.services[0] = new LuisService(mockBot.services[0]);
-    mockStore.dispatch(load([mockBot]));
-    mockStore.dispatch(setActive(mockBot));
+    mockStore.dispatch(loadBotInfos([mockBot]));
+    mockStore.dispatch(setActiveBot(mockBot));
     mockDispatch = jest.spyOn(mockStore, 'dispatch');
     parent = mount(
       <Provider store={mockStore}>

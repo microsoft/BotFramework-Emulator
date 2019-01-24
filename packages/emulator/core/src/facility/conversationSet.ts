@@ -33,8 +33,9 @@
 
 import { EventEmitter } from 'events';
 
-import BotEmulator from '../botEmulator';
-import User from '../types/user';
+import { User } from '@bfemulator/sdk-shared';
+
+import { BotEmulator } from '../botEmulator';
 import uniqueId from '../utils/uniqueId';
 
 import BotEndpoint from './botEndpoint';

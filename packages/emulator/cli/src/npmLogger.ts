@@ -31,10 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import IGenericActivity from '@bfemulator/emulator-core/lib/types/activity/generic';
-import ILogItem from '@bfemulator/emulator-core/lib/types/log/item';
-import LogLevel from '@bfemulator/emulator-core/lib/types/log/level';
-import ILogger from '@bfemulator/emulator-core/lib/types/logger';
+import {
+  GenericActivity,
+  Logger,
+  ILogItem,
+  LogLevel,
+} from '@bfemulator/sdk-shared';
 import * as log from 'npmlog';
 
 function shortId(id: string) {
@@ -57,10 +59,10 @@ function logLevel(level: LogLevel) {
   }
 }
 
-export default class NpmLogger implements ILogger {
+export default class NpmLogger implements Logger {
   public logActivity(
     conversationId: string,
-    activity: IGenericActivity,
+    activity: GenericActivity,
     role: string
   ) {
     log.verbose(shortId(conversationId), `Activity to ${role}`, activity);

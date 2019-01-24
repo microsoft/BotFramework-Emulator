@@ -33,7 +33,7 @@
 
 import { RequestHandler, Server } from 'restify';
 
-import BotEmulator from '../botEmulator';
+import { BotEmulator } from '../botEmulator';
 import getFacility from '../middleware/getFacility';
 import getRouteName from '../middleware/getRouteName';
 import createBotFrameworkAuthenticationMiddleware from '../utils/botFrameworkAuthentication';

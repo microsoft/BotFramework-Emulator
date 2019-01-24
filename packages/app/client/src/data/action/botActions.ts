@@ -32,94 +32,95 @@
 //
 
 import { BotInfo } from '@bfemulator/app-shared';
-import { BotConfigWithPath } from '@bfemulator/sdk-shared';
+import {
+  BotConfigWithPath,
+  StartConversationParams,
+} from '@bfemulator/sdk-shared';
 
-export enum BotActions {
-  load = 'BOT/LOAD',
-  setActive = 'BOT/SET_ACTIVE',
+export enum BotActionType {
   close = 'BOT/CLOSE',
   browse = 'BOT/BROWSE',
   hashGenerated = 'BOT/HASH_GENERATED',
+  load = 'BOT/LOAD',
+  open = 'BOT/OPEN',
+  openViaUrl = 'BOT/OPEN_VIA_URL',
+  openViaFilePath = 'BOT/OPEN_VIA_FILE_PATH',
+  setActive = 'BOT/SET_ACTIVE',
 }
 
-export interface LoadBotAction {
-  type: BotActions.load;
-  payload: {
-    bots: BotInfo[];
+export interface BotAction<T = any> {
+  readonly type: BotActionType;
+  payload: T;
+}
+
+export interface BotConfigWithPathPayload {
+  bot: BotConfigWithPath;
+}
+
+export interface BotInfosPayload {
+  bots: BotInfo[];
+}
+
+export interface HashPayload {
+  hash: string;
+}
+
+export function botHashGenerated(hash: string): BotAction<HashPayload> {
+  return {
+    type: BotActionType.hashGenerated,
+    payload: { hash },
   };
 }
 
-export interface SetActiveBotAction {
-  type: BotActions.setActive;
-  payload: {
-    bot: BotConfigWithPath;
+export function browse(): BotAction<{}> {
+  return {
+    type: BotActionType.browse,
+    payload: {},
   };
 }
 
-export interface CloseBotAction {
-  type: BotActions.close;
-  payload: {};
+export function closeBot(): BotAction<{}> {
+  return {
+    type: BotActionType.close,
+    payload: {},
+  };
 }
 
-export interface BrowseBotAction {
-  type: BotActions.browse;
-  payload: {};
-}
-
-export interface BotHashAction {
-  type: BotActions.hashGenerated;
-  payload: { hash: string };
-}
-
-export type BotAction =
-  | LoadBotAction
-  | SetActiveBotAction
-  | CloseBotAction
-  | BrowseBotAction
-  | BotHashAction;
-
-export function load(bots: BotInfo[]): LoadBotAction {
+export function loadBotInfos(bots: BotInfo[]): BotAction<BotInfosPayload> {
   // prune bad bots
   bots = bots.filter(bot => !!bot);
 
   return {
-    type: BotActions.load,
+    type: BotActionType.load,
     payload: {
       bots,
     },
   };
 }
 
-/**
- *
- * @param bot The new active bot
- */
-export function setActive(bot: BotConfigWithPath): SetActiveBotAction {
+export function openBotViaFilePathAction(path: string): BotAction<string> {
   return {
-    type: BotActions.setActive,
+    type: BotActionType.openViaFilePath,
+    payload: path,
+  };
+}
+
+export function openBotViaUrlAction(
+  params: Partial<StartConversationParams>
+): BotAction<Partial<StartConversationParams>> {
+  return {
+    type: BotActionType.openViaUrl,
+    payload: params,
+  };
+}
+
+export function setActiveBot(
+  bot: BotConfigWithPath
+): BotAction<BotConfigWithPathPayload> {
+  return {
+    type: BotActionType.setActive,
     payload: {
       bot,
     },
-  };
-}
-
-export function close(): CloseBotAction {
-  return {
-    type: BotActions.close,
-    payload: {},
-  };
-}
-
-export function browse(): BrowseBotAction {
-  return {
-    type: BotActions.browse,
-    payload: {},
-  };
-}
-
-export function botHashGenerated(hash: string): BotHashAction {
-  return {
-    type: BotActions.hashGenerated,
-    payload: { hash },
   };
 }

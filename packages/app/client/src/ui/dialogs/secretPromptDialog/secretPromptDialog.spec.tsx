@@ -37,7 +37,7 @@ import { combineReducers, createStore } from 'redux';
 import { BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
 
 import { bot } from '../../../data/reducer/bot';
-import { setActive } from '../../../data/action/botActions';
+import { setActiveBot } from '../../../data/action/botActions';
 import { DialogService } from '../service';
 
 import { SecretPromptDialogContainer } from './secretPromptDialogContainer';
@@ -78,7 +78,7 @@ describe('The Secret prompt dialog', () => {
   let parent;
   let node;
   beforeEach(() => {
-    mockStore.dispatch(setActive(mockBot));
+    mockStore.dispatch(setActiveBot(mockBot));
     parent = mount(
       <Provider store={mockStore}>
         <SecretPromptDialogContainer />

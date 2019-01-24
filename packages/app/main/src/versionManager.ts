@@ -31,8 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import LogLevel from '@bfemulator/emulator-core/lib/types/log/level';
-import { textItem } from '@bfemulator/emulator-core/lib/types/log/util';
+import { LogLevel, textItem } from '@bfemulator/sdk-shared';
 import got from 'got';
 import { DOMParser } from 'xmldom';
 
