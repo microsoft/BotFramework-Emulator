@@ -31,16 +31,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-interface EndpointInfo {
+export interface EndpointInfo {
   endpointRegion: string;
 }
 
-interface Endpoints {
+export interface Endpoints {
   PRODUCTION?: EndpointInfo;
   STAGING?: EndpointInfo;
 }
 
-interface AppInfo {
+export interface AppInfo {
   activeVersion: string;
   name: string;
   authorized: boolean;
@@ -48,5 +48,3 @@ interface AppInfo {
   endpoints: Endpoints;
   isDispatchApp: boolean;
 }
-
-export { EndpointInfo, Endpoints, AppInfo };

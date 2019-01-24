@@ -59,7 +59,7 @@ const AccessoryWorkingState = 'working';
 
 const persistentStateKey = Symbol('persistentState').toString();
 
-interface AppState {
+export interface AppState {
   id: string;
   traceInfo: QnAMakerTraceInfo;
   qnaService: IQnAService | null;
@@ -70,12 +70,12 @@ interface AppState {
   selectedAnswer: Answer | null;
 }
 
-interface PersistentAppState {
+export interface PersistentAppState {
   pendingTrain: boolean;
   pendingPublish: boolean;
 }
 
-class App extends React.Component<any, AppState> {
+export class App extends React.Component<any, AppState> {
   public client: QnAMakerClient;
 
   public static getQnAServiceFromBot(
@@ -425,5 +425,3 @@ class App extends React.Component<any, AppState> {
     };
   }
 }
-
-export { App, AppState, PersistentAppState };
