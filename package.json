@@ -29,11 +29,11 @@
     },
     "collectCoverageFrom": [
       "<rootDir>/packages/**/src/**/?(*.)(ts)?(x)",
-      "!(*.)(scss).(d).(ts)",
+      "!<rootDir>/packages/**/src/**/?(*.)(scss).(d).(ts)",
+      "!<rootDir>/packages/**/src/**/?(*.)(spec|test).(ts)?(x)",
       "!**/node_modules/**",
       "!**/lib/**",
-      "!**/build/**",
-      "!<rootDir>/packages/**/src/**/?(*.)(spec|test).(ts)?(x)"
+      "!**/build/**"
     ],
     "testURL": "http://localhost",
     "testMatch": [
