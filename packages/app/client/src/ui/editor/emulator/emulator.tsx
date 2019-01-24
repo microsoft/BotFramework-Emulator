@@ -93,7 +93,8 @@ interface EmulatorProps {
   url?: string;
 }
 
-class EmulatorComponent extends React.Component<EmulatorProps, {}> {
+// exported for testing
+export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
   private readonly onVerticalSizeChange = debounce(sizes => {
     this.props.document.ui = {
       ...this.props.document.ui,
@@ -180,17 +181,7 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
       endpointId: props.endpointId,
     };
 
-    if (props.document.directLine) {
-      // issue with direct line. #end currently throws an error
-      try {
-        props.document.directLine.end();
-      } catch (e) {
-        if (e.message !== 'conversation ended') {
-          throw e;
-        }
-      }
-    }
-
+    this.endConversation(props.document.directLine);
     this.initConversation(props, options, selectedActivity$, subscription);
 
     if (props.mode === 'transcript') {
@@ -428,6 +419,19 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
       this.onStartOverClick();
     }
   };
+
+  private endConversation(directLine: any): void {
+    if (directLine) {
+      // issue with direct line. #end currently throws an error
+      try {
+        directLine.end();
+      } catch (e) {
+        if (e.message !== 'conversation ended') {
+          throw e;
+        }
+      }
+    }
+  }
 }
 
 const mapStateToProps = (
