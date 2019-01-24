@@ -29,7 +29,7 @@
     },
     "collectCoverageFrom": [
       "<rootDir>/packages/**/src/**/?(*.)(ts)?(x)",
-      "!(*.d.ts)",
+      "!(*.)(scss).(d).(ts)",
       "!**/node_modules/**",
       "!**/lib/**",
       "!**/build/**",
