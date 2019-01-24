@@ -23,6 +23,9 @@
     "transform": {
       "^.+\\.(tsx?|jsx?)$": "babel-jest"
     },
+    "moduleNameMapper": {
+      "^.+\\.scss$": "<rootDir>/__mocks__/styleMock.js"
+    },
     "testURL": "http://localhost",
     "rootDir": "./src",
     "testMatch": [
