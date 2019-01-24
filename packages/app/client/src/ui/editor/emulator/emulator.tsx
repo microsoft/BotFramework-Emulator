@@ -181,7 +181,14 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
     };
 
     if (props.document.directLine) {
-      props.document.directLine.end();
+      // issue with direct line. #end currently throws an error
+      try {
+        props.document.directLine.end();
+      } catch (e) {
+        if (e.message !== 'conversation ended') {
+          throw e;
+        }
+      }
     }
 
     this.initConversation(props, options, selectedActivity$, subscription);
