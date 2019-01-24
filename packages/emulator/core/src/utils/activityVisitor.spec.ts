@@ -1,15 +1,4 @@
 //
-import {
-  AttachmentContentTypes,
-  CardAction,
-  MediaCard,
-  MessageActivity,
-  OAuthCard,
-  ReceiptCard,
-  SigninCard,
-  ThumbnailCard,
-} from '@bfemulator/sdk-shared';
-
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license.
 //
@@ -42,7 +31,16 @@ import {
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import ActivityVisitor from './activityVisitor';
-
+import {
+  AttachmentContentTypes,
+  CardAction,
+  MediaCard,
+  MessageActivity,
+  OAuthCard,
+  ReceiptCard,
+  SigninCard,
+  ThumbnailCard,
+} from '@bfemulator/sdk-shared';
 class MockActivityVisitor extends ActivityVisitor {
   public cardActionVisitors: CardAction[] = [];
 

@@ -1,5 +1,4 @@
 //
-import { User } from '@bfemulator/sdk-shared';
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license.
 //
@@ -31,13 +30,13 @@ import { User } from '@bfemulator/sdk-shared';
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+import { User } from '@bfemulator/sdk-shared';
 import * as HttpStatus from 'http-status-codes';
-
-import BotState from '../../facility/botState';
-import ConversationSet from '../../facility/conversationSet';
-import BotEndpoint from '../../facility/botEndpoint';
-import Conversation from '../../facility/conversation';
 import { BotEmulator } from '../../botEmulator';
+import BotEndpoint from '../../facility/botEndpoint';
+import BotState from '../../facility/botState';
+import Conversation from '../../facility/conversation';
+import ConversationSet from '../../facility/conversationSet';
 
 import deleteStateForUser from './deleteStateForUser';
 import fetchBotData from './fetchBotData';

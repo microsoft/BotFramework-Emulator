@@ -1,6 +1,4 @@
 //
-import { logEntry, LogLevel, textItem } from '@bfemulator/sdk-shared';
-import { mount } from 'enzyme';
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license.
 //
@@ -32,6 +30,8 @@ import { mount } from 'enzyme';
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+import { logEntry, LogLevel, textItem } from '@bfemulator/sdk-shared';
+import { mount } from 'enzyme';
 import * as React from 'react';
 import { Provider } from 'react-redux';
 import { combineReducers, createStore } from 'redux';

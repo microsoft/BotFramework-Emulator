@@ -1,19 +1,4 @@
 //
-import * as path from 'path';
-import { setTimeout } from 'timers';
-import * as url from 'url';
-
-import {
-  newNotification,
-  Notification,
-  PersistentSettings,
-  Settings,
-  SharedConstants,
-} from '@bfemulator/app-shared';
-import { ProgressInfo } from 'builder-util-runtime';
-import * as Electron from 'electron';
-import { app, systemPreferences } from 'electron';
-import { UpdateInfo } from 'electron-updater';
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license.
 //
@@ -45,9 +30,22 @@ import { UpdateInfo } from 'electron-updater';
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { Store } from 'redux';
+import {
+  newNotification,
+  Notification,
+  PersistentSettings,
+  Settings,
+  SharedConstants,
+} from '@bfemulator/app-shared';
 import { Users } from '@bfemulator/emulator-core';
-
+import { ProgressInfo } from 'builder-util-runtime';
+import * as Electron from 'electron';
+import { app, systemPreferences } from 'electron';
+import { UpdateInfo } from 'electron-updater';
+import * as path from 'path';
+import { Store } from 'redux';
+import { setTimeout } from 'timers';
+import * as url from 'url';
 import { appendCustomUserAgent } from './appendCustomUserAgent';
 import { AppMenuBuilder } from './appMenuBuilder';
 import { AppUpdater } from './appUpdater';

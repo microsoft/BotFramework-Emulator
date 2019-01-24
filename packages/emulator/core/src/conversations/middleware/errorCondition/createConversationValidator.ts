@@ -1,9 +1,4 @@
 //
-import {
-  APIException,
-  ConversationParameters,
-  ErrorCodes,
-} from '@bfemulator/sdk-shared';
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license.
 //
@@ -35,8 +30,12 @@ import {
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+import {
+  APIException,
+  ConversationParameters,
+  ErrorCodes,
+} from '@bfemulator/sdk-shared';
 import * as HttpStatus from 'http-status-codes';
-
 import BotEndpoint from '../../../facility/botEndpoint';
 import createAPIException from '../../../utils/createResponse/apiException';
 
