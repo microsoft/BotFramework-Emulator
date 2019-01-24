@@ -6,7 +6,7 @@
     "lint:fix": "lerna run lint:fix --no-bail",
     "start": "cd packages\\app\\client && npm run start",
     "test": "jest --no-cache",
-    "test:coveralls": "jest --runInBand --bail --coverage --coverageReporters=text-lcov | coveralls"
+    "test:coveralls": "jest --runInBand --coverage --coverageReporters=text-lcov | coveralls"
   },
   "devDependencies": {
     "@babel/cli": "^7.1.0",
@@ -27,7 +27,13 @@
     "transform": {
       "^.+\\.(tsx|ts|js)$": "./babel-jest-config"
     },
-    "coveragePathIgnorePatterns": ["/lib/", "/node_modules/", "/built/", "/build/", "/public/", "/generated/"],
+    "collectCoverageFrom": [
+      "<rootDir>/packages/**/src/**/?(*.)(ts)?(x)",
+      "!**/node_modules/**",
+      "!**/lib/**",
+      "!**/build/**",
+      "!<rootDir>/packages/**/src/**/?(*.)(spec|test).(ts)?(x)"
+    ],
     "testURL": "http://localhost",
     "testMatch": [
       "<rootDir>/packages/**/src/**/?(*.)(spec|test).(ts)?(x)"
