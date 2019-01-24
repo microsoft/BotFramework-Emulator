@@ -27,6 +27,7 @@
     "transform": {
       "^.+\\.(tsx|ts|js)$": "./babel-jest-config"
     },
+    "coveragePathIgnorePatterns": ["/lib/", "/node_modules/", "/built/", "/build/", "/public/", "/generated/"],
     "testURL": "http://localhost",
     "testMatch": [
       "<rootDir>/packages/**/src/**/?(*.)(spec|test).(ts)?(x)"
