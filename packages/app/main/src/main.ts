@@ -30,6 +30,10 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+import * as path from 'path';
+import { setTimeout } from 'timers';
+import * as url from 'url';
+
 import {
   newNotification,
   Notification,
@@ -42,10 +46,8 @@ import { ProgressInfo } from 'builder-util-runtime';
 import * as Electron from 'electron';
 import { app, systemPreferences } from 'electron';
 import { UpdateInfo } from 'electron-updater';
-import * as path from 'path';
 import { Store } from 'redux';
-import { setTimeout } from 'timers';
-import * as url from 'url';
+
 import { appendCustomUserAgent } from './appendCustomUserAgent';
 import { AppMenuBuilder } from './appMenuBuilder';
 import { AppUpdater } from './appUpdater';
