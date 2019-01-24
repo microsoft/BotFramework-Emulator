@@ -38,18 +38,16 @@ import * as styles from './EntityViewer.scss';
 
 const InstanceKey = '$instance';
 
-interface EntityInfo {
+export interface EntityInfo {
   name: string;
   value: any;
 }
 
-interface EntityViewerState {}
-
-interface EntityViwerProps {
+export interface EntityViwerProps {
   entity: any;
 }
 
-class EntityViewer extends Component<EntityViwerProps, EntityViewerState> {
+export class EntityViewer extends Component<EntityViwerProps, {}> {
   public static renderEntityValueObject(entityValue: object): string {
     if (InstanceKey in entityValue) {
       delete entityValue[InstanceKey];
@@ -100,5 +98,3 @@ class EntityViewer extends Component<EntityViwerProps, EntityViewerState> {
     );
   }
 }
-
-export { EntityViewer, EntityInfo };

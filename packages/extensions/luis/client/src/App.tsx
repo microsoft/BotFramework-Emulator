@@ -65,7 +65,7 @@ const AccessoryWorkingState = 'working';
 
 const persistentStateKey = Symbol('persistentState').toString();
 
-interface AppState {
+export interface AppState {
   traceInfo: LuisTraceInfo;
   appInfo: AppInfo;
   intentInfo: IntentInfo[];
@@ -75,12 +75,12 @@ interface AppState {
   id: string;
 }
 
-interface PersistentAppState {
+export interface PersistentAppState {
   pendingTrain: boolean;
   pendingPublish: boolean;
 }
 
-class App extends Component<any, AppState> {
+export class App extends Component<any, AppState> {
   public luisclient: LuisClient;
 
   public static getLuisAuthoringKey(
@@ -384,5 +384,3 @@ class App extends Component<any, AppState> {
     };
   }
 }
-
-export { App, AppState, PersistentAppState };
