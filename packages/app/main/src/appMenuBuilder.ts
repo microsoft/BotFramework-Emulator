@@ -104,9 +104,7 @@ export class AppMenuBuilder {
         recentBotsMenuItems.forEach(item => {
           recentBotsMenu.append(item);
         });
-        const fileMenuContent = Electron.Menu.buildFromTemplate(
-          this.getUpdatedFileMenuContent(recentBotsMenu)
-        );
+        const fileMenuContent = Electron.Menu.buildFromTemplate(this.getUpdatedFileMenuContent(recentBotsMenu));
         fileMenu.submenu.clear();
         fileMenuContent.items.forEach(item => {
           fileMenu.submenu.append(item);
@@ -120,11 +118,7 @@ export class AppMenuBuilder {
     const menu = Electron.Menu.getApplicationMenu();
     if (menu) {
       const recentBotsMenu = menu.getMenuItemById('recent-bots') as any;
-      if (
-        recentBotsMenu &&
-        recentBotsMenu.submenu &&
-        recentBotsMenu.submenu.items
-      ) {
+      if (recentBotsMenu && recentBotsMenu.submenu && recentBotsMenu.submenu.items) {
         const recentBots = this.getRecentBotsList(updatedBots);
         // we have to reconstruct the menu due to Electron menu item limitations
         recentBotsMenu.submenu.clear();
@@ -139,12 +133,7 @@ export class AppMenuBuilder {
     const menu = Electron.Menu.getApplicationMenu();
     if (menu) {
       const { status } = AppUpdater;
-      const {
-        Idle,
-        UpdateAvailable,
-        UpdateDownloading,
-        UpdateReadyToInstall,
-      } = UpdateStatus;
+      const { Idle, UpdateAvailable, UpdateDownloading, UpdateReadyToInstall } = UpdateStatus;
       const updateRestartItem = menu.getMenuItemById('auto-update-restart');
       if (updateRestartItem) {
         updateRestartItem.visible = status === UpdateReadyToInstall;
@@ -153,9 +142,7 @@ export class AppMenuBuilder {
       if (updateCheckItem) {
         updateCheckItem.visible = status === Idle || status === UpdateAvailable;
       }
-      const updateDownloadingItem = menu.getMenuItemById(
-        'auto-update-downloading'
-      );
+      const updateDownloadingItem = menu.getMenuItemById('auto-update-downloading');
       if (updateDownloadingItem) {
         updateDownloadingItem.visible = status === UpdateDownloading;
       }
@@ -173,24 +160,17 @@ export class AppMenuBuilder {
           new Electron.MenuItem({
             label: bot.displayName,
             click: () => {
-              mainWindow.commandService
-                .remoteCall(SharedConstants.Commands.Bot.Switch, bot.path)
-                .catch(err =>
-                  // eslint-disable-next-line no-console
-                  console.error(
-                    'Error while switching bots from file menu recent bots list: ',
-                    err
-                  )
-                );
+              mainWindow.commandService.remoteCall(SharedConstants.Commands.Bot.Switch, bot.path).catch(err =>
+                // eslint-disable-next-line no-console
+                console.error('Error while switching bots from file menu recent bots list: ', err)
+              );
             },
           })
       );
   }
 
   /** Returns the template to construct a file menu that reflects updated state */
-  private static getUpdatedFileMenuContent(
-    recentBotsMenu: Electron.Menu = new Electron.Menu()
-  ): MenuOpts[] {
+  private static getUpdatedFileMenuContent(recentBotsMenu: Electron.Menu = new Electron.Menu()): MenuOpts[] {
     const { Azure, UI, Bot, Emulator } = SharedConstants.Commands;
 
     // TODO - localization
@@ -219,9 +199,7 @@ export class AppMenuBuilder {
         label: 'Open Transcript...',
         click: async () => {
           try {
-            mainWindow.commandService.remoteCall(
-              Emulator.PromptToOpenTranscript
-            );
+            mainWindow.commandService.remoteCall(Emulator.PromptToOpenTranscript);
           } catch (err) {
             // eslint-disable-next-line no-console
             console.error('Error opening transcript file from menu: ', err);
@@ -237,9 +215,7 @@ export class AppMenuBuilder {
       label: 'Close Tab',
       click: async () => {
         await mainWindow.commandService.remoteCall(Bot.Close);
-        await mainWindow.commandService.call(
-          SharedConstants.Commands.Electron.UpdateFileMenu
-        );
+        await mainWindow.commandService.call(SharedConstants.Commands.Electron.UpdateFileMenu);
       },
       enabled: activeBot !== null,
     });
@@ -247,9 +223,7 @@ export class AppMenuBuilder {
     const settingsStore = getSettingsStore();
     const settingsState = settingsStore.getState();
     const { signedInUser } = settingsState.azure;
-    const azureMenuItemLabel = signedInUser
-      ? `Sign out (${signedInUser})`
-      : 'Sign in with Azure';
+    const azureMenuItemLabel = signedInUser ? `Sign out (${signedInUser})` : 'Sign in with Azure';
 
     subMenu.push({ type: 'separator' });
     subMenu.push({
@@ -257,9 +231,7 @@ export class AppMenuBuilder {
       click: async () => {
         if (signedInUser) {
           await mainWindow.commandService.call(Azure.SignUserOutOfAzure);
-          await mainWindow.commandService.remoteCall(
-            UI.InvalidateAzureArmToken
-          );
+          await mainWindow.commandService.remoteCall(UI.InvalidateAzureArmToken);
         } else {
           await mainWindow.commandService.remoteCall(UI.SignInToAzure);
         }
@@ -279,9 +251,7 @@ export class AppMenuBuilder {
           click: async () => {
             settingsStore.dispatch(rememberTheme(t.name));
 
-            await mainWindow.commandService.call(
-              SharedConstants.Commands.Electron.UpdateFileMenu
-            );
+            await mainWindow.commandService.call(SharedConstants.Commands.Electron.UpdateFileMenu);
           },
         })),
       },
@@ -293,10 +263,7 @@ export class AppMenuBuilder {
   }
 
   private static async initConversationMenu(): Promise<MenuOpts> {
-    const getState = () =>
-      mainWindow.commandService.remoteCall(
-        SharedConstants.Commands.Misc.GetStoreState
-      );
+    const getState = () => mainWindow.commandService.remoteCall(SharedConstants.Commands.Misc.GetStoreState);
 
     const getConversationId = async () => {
       const state = await getState();
@@ -317,8 +284,7 @@ export class AppMenuBuilder {
       }
     };
 
-    const getServiceUrl = () =>
-      emulator.framework.serverUrl.replace('[::]', 'localhost');
+    const getServiceUrl = () => emulator.framework.serverUrl.replace('[::]', 'localhost');
     const createClickHandler = (serviceFunction, callback?) => async () => {
       const conversationId = await getConversationId();
 
@@ -328,9 +294,7 @@ export class AppMenuBuilder {
       }
     };
 
-    const enabled =
-      (await getActiveDocumentContentType()) ===
-      SharedConstants.ContentTypes.CONTENT_TYPE_LIVE_CHAT;
+    const enabled = (await getActiveDocumentContentType()) === SharedConstants.ContentTypes.CONTENT_TYPE_LIVE_CHAT;
 
     return {
       id: 'conversation',
@@ -356,19 +320,15 @@ export class AppMenuBuilder {
             },
             {
               label: 'contactRelationUpdate ( bot added )',
-              click: createClickHandler(
-                ConversationService.botContactAdded,
-                () =>
-                  TelemetryService.trackEvent('sendActivity_botContactAdded')
+              click: createClickHandler(ConversationService.botContactAdded, () =>
+                TelemetryService.trackEvent('sendActivity_botContactAdded')
               ),
               enabled,
             },
             {
               label: 'contactRelationUpdate ( bot removed )',
-              click: createClickHandler(
-                ConversationService.botContactRemoved,
-                () =>
-                  TelemetryService.trackEvent('sendActivity_botContactRemoved')
+              click: createClickHandler(ConversationService.botContactRemoved, () =>
+                TelemetryService.trackEvent('sendActivity_botContactRemoved')
               ),
               enabled,
             },
@@ -388,9 +348,8 @@ export class AppMenuBuilder {
             },
             {
               label: 'deleteUserData',
-              click: createClickHandler(
-                ConversationService.deleteUserData,
-                () => TelemetryService.trackEvent('sendActivity_deleteUserData')
+              click: createClickHandler(ConversationService.deleteUserData, () =>
+                TelemetryService.trackEvent('sendActivity_deleteUserData')
               ),
               enabled,
             },
@@ -458,13 +417,7 @@ export class AppMenuBuilder {
   }
 
   private static async initWindowMenuMac(): Promise<MenuOpts[]> {
-    return [
-      { role: 'close' },
-      { role: 'minimize' },
-      { role: 'zoom' },
-      { type: 'separator' },
-      { role: 'front' },
-    ];
+    return [{ role: 'close' }, { role: 'minimize' }, { role: 'zoom' }, { type: 'separator' }, { role: 'front' }];
   }
 
   private static async initHelpMenu(): Promise<MenuOpts> {
@@ -477,19 +430,13 @@ export class AppMenuBuilder {
       submenu: [
         {
           label: 'Welcome',
-          click: () =>
-            mainWindow.commandService.remoteCall(
-              SharedConstants.Commands.UI.ShowWelcomePage
-            ),
+          click: () => mainWindow.commandService.remoteCall(SharedConstants.Commands.UI.ShowWelcomePage),
         },
         { type: 'separator' },
         {
           label: 'Privacy',
           click: () =>
-            Electron.shell.openExternal(
-              'https://go.microsoft.com/fwlink/?LinkId=512132',
-              { activate: true }
-            ),
+            Electron.shell.openExternal('https://go.microsoft.com/fwlink/?LinkId=512132', { activate: true }),
         },
         {
           // TODO: Proper link for the license instead of third party credits
@@ -535,9 +482,7 @@ export class AppMenuBuilder {
           label: 'Check for Update...',
           click: () => AppUpdater.checkForUpdates(true),
           enabled: true,
-          visible:
-            AppUpdater.status === UpdateStatus.Idle ||
-            AppUpdater.status === UpdateStatus.UpdateAvailable,
+          visible: AppUpdater.status === UpdateStatus.Idle || AppUpdater.status === UpdateStatus.UpdateAvailable,
         },
         { type: 'separator' },
         {

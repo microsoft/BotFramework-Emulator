@@ -46,9 +46,7 @@ export function getThemes(): { name: string; href: string }[] {
   files = files.filter(filePath => filePath.includes('.css')).sort();
   return files.map(file => {
     const parsedPath = path.parse(file);
-    const name = parsedPath.name.replace(/^[a-z]/, match =>
-      match.toUpperCase()
-    );
+    const name = parsedPath.name.replace(/^[a-z]/, match => match.toUpperCase());
     return {
       name,
       href: `./themes/${parsedPath.base}`,

@@ -98,10 +98,7 @@ describe('The openFileFromCommandLine util', () => {
 
   it('should make the appropriate calls to open a .bot file', async () => {
     await openFileFromCommandLine('some/path.bot', commandService);
-    expect(commandService.localCalls).toEqual([
-      ['bot:open', 'some/path.bot'],
-      ['bot:set-active', null],
-    ]);
+    expect(commandService.localCalls).toEqual([['bot:open', 'some/path.bot'], ['bot:set-active', null]]);
     expect(commandService.remoteCalls).toEqual([['bot:load', null]]);
   });
 
@@ -128,9 +125,7 @@ describe('The openFileFromCommandLine util', () => {
       await openFileFromCommandLine('some/error.transcript', commandService);
     } catch (e) {
       thrown = true;
-      expect(e.message).toEqual(
-        'Invalid transcript file contents; should be an array of conversation activities.'
-      );
+      expect(e.message).toEqual('Invalid transcript file contents; should be an array of conversation activities.');
     }
     expect(thrown).toBeTruthy();
   });

@@ -44,11 +44,7 @@ function createErrorResponse(code: string, message: string): ErrorResponse {
 }
 
 // Create Exception
-export default function createAPIException(
-  statusCode: number,
-  code: string,
-  message: string
-): APIException {
+export default function createAPIException(statusCode: number, code: string, message: string): APIException {
   return {
     statusCode,
     error: createErrorResponse(code, message),

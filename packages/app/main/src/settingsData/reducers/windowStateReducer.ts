@@ -31,10 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import {
-  windowStateDefault,
-  WindowStateSettings,
-} from '@bfemulator/app-shared';
+import { windowStateDefault, WindowStateSettings } from '@bfemulator/app-shared';
 
 import {
   REMEMBER_BOUNDS,

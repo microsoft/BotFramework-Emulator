@@ -31,14 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import {
-  DefaultButton,
-  Dialog,
-  DialogFooter,
-  PrimaryButton,
-  Row,
-  TextField,
-} from '@bfemulator/ui-react';
+import { DefaultButton, Dialog, DialogFooter, PrimaryButton, Row, TextField } from '@bfemulator/ui-react';
 import * as React from 'react';
 import { ChangeEvent, Component, FocusEvent, ReactNode } from 'react';
 
@@ -64,17 +57,11 @@ enum ValidationResult {
   Empty,
 }
 
-export class OpenBotDialog extends Component<
-  OpenBotDialogProps,
-  OpenBotDialogState
-> {
+export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogState> {
   public state = { botUrl: '', appId: '', appPassword: '' };
 
   private static getErrorMessage(result: ValidationResult): string {
-    if (
-      result === ValidationResult.Empty ||
-      result === ValidationResult.Valid
-    ) {
+    if (result === ValidationResult.Empty || result === ValidationResult.Valid) {
       return ''; // Allow empty endpoints
     }
 
@@ -89,14 +76,10 @@ export class OpenBotDialog extends Component<
     }
 
     if (/(http)(s)?(:\/\/)[\w+]/.test(endpoint)) {
-      return endpoint.endsWith('/api/messages')
-        ? ValidationResult.Valid
-        : ValidationResult.RouteMissing;
+      return endpoint.endsWith('/api/messages') ? ValidationResult.Valid : ValidationResult.RouteMissing;
     }
 
-    return endpoint.endsWith('.bot')
-      ? ValidationResult.Valid
-      : ValidationResult.Invalid;
+    return endpoint.endsWith('.bot') ? ValidationResult.Valid : ValidationResult.Invalid;
   }
 
   public render(): ReactNode {
@@ -104,14 +87,9 @@ export class OpenBotDialog extends Component<
     const validationResult = OpenBotDialog.validateEndpoint(botUrl);
     const errorMessage = OpenBotDialog.getErrorMessage(validationResult);
     const shouldBeDisabled =
-      validationResult === ValidationResult.Invalid ||
-      validationResult === ValidationResult.Empty;
+      validationResult === ValidationResult.Invalid || validationResult === ValidationResult.Empty;
     return (
-      <Dialog
-        cancel={this.props.onDialogCancel}
-        className={openBotStyles.themeOverrides}
-        title="Open a bot"
-      >
+      <Dialog cancel={this.props.onDialogCancel} className={openBotStyles.themeOverrides} title="Open a bot">
         <form onSubmit={this.onSubmit}>
           <TextField
             autoFocus={true}
@@ -155,9 +133,7 @@ export class OpenBotDialog extends Component<
             />
           </Row>
           <DialogFooter>
-            <DefaultButton onClick={this.props.onDialogCancel}>
-              Cancel
-            </DefaultButton>
+            <DefaultButton onClick={this.props.onDialogCancel}>Cancel</DefaultButton>
             <PrimaryButton type="submit" disabled={shouldBeDisabled}>
               Connect
             </PrimaryButton>

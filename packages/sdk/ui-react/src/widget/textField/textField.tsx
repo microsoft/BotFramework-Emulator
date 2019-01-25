@@ -71,12 +71,7 @@ export class TextField extends Component<TextFieldProps, {}> {
     return (
       <div className={`${styles.inputContainer} ${inputContainerClassName}`}>
         {this.labelNode}
-        <input
-          {...inputProps}
-          className={inputClassName}
-          id={this.inputId}
-          ref={inputRef || undefined}
-        />
+        <input {...inputProps} className={inputClassName} id={this.inputId} ref={inputRef || undefined} />
         {children}
         {this.errorNode}
       </div>
@@ -87,11 +82,7 @@ export class TextField extends Component<TextFieldProps, {}> {
     const { label, required, disabled } = this.props;
     const className = required ? styles.requiredIndicator : '';
     return label ? (
-      <label
-        aria-disabled={disabled}
-        htmlFor={this.inputId}
-        className={`${className} ${styles.label}`}
-      >
+      <label aria-disabled={disabled} htmlFor={this.inputId} className={`${className} ${styles.label}`}>
         {label}
       </label>
     ) : null;
@@ -99,8 +90,6 @@ export class TextField extends Component<TextFieldProps, {}> {
 
   protected get errorNode(): React.ReactNode {
     const { errorMessage } = this.props;
-    return errorMessage ? (
-      <sub className={styles.sub}>{errorMessage}</sub>
-    ) : null;
+    return errorMessage ? <sub className={styles.sub}>{errorMessage}</sub> : null;
   }
 }

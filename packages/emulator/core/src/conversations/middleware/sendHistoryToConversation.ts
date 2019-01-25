@@ -39,11 +39,7 @@ import { BotEmulator } from '../../botEmulator';
 import createResourceResponse from '../../utils/createResponse/resource';
 
 export default function sendHistoryToConversation(botEmulator: BotEmulator) {
-  return (
-    req: Restify.Request,
-    res: Restify.Response,
-    next: Restify.Next
-  ): any => {
+  return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     const { activities }: { activities: Activity[] } = req.body;
     let successCount = 0;
     let firstErrorMessage = '';
@@ -58,9 +54,7 @@ export default function sendHistoryToConversation(botEmulator: BotEmulator) {
         }
       }
     }
-    const id = `Processed ${successCount} of ${
-      activities.length
-    } activities successfully.${firstErrorMessage}`;
+    const id = `Processed ${successCount} of ${activities.length} activities successfully.${firstErrorMessage}`;
     const response = createResourceResponse(id);
     res.send(HttpStatus.OK, response);
     res.end();

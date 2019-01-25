@@ -38,10 +38,7 @@ import {
   AzureAuthAction,
 } from '../actions/azureAuthActions';
 
-export function azureAuth(
-  state: AzureSettings = {},
-  action: AzureAuthAction<string | boolean>
-): AzureSettings {
+export function azureAuth(state: AzureSettings = {}, action: AzureAuthAction<string | boolean>): AzureSettings {
   switch (action.type) {
     case AZURE_PERSIST_LOGIN_CHANGED:
       return { ...state, persistLogin: action.payload as boolean };

@@ -57,11 +57,7 @@ export class Column extends React.Component<ColumnProps, {}> {
   public render(): JSX.Element {
     const { className = '' } = this.props;
     return (
-      <div
-        className={`${
-          styles.column
-        } ${this.getColumnAlignment()} ${this.getColumnJustification()} ${className}`}
-      >
+      <div className={`${styles.column} ${this.getColumnAlignment()} ${this.getColumnJustification()} ${className}`}>
         {this.props.children}
       </div>
     );

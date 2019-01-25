@@ -39,8 +39,7 @@ import { ConnectedServiceEditor } from './connectedServiceEditor';
 
 const mapDispatchToProps = (_dispatch: () => void) => {
   return {
-    updateConnectedService: updatedLuisService =>
-      DialogService.hideDialog([updatedLuisService]),
+    updateConnectedService: updatedLuisService => DialogService.hideDialog([updatedLuisService]),
     cancel: () => DialogService.hideDialog(0),
   };
 };

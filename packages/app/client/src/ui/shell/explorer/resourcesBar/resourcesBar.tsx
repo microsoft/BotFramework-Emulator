@@ -46,10 +46,7 @@ export interface ResourcesBarProps {
   transcriptsPath: string;
 }
 
-export class ResourcesBar extends Component<
-  ResourcesBarProps,
-  ResourcesBarProps
-> {
+export class ResourcesBar extends Component<ResourcesBarProps, ResourcesBarProps> {
   public render() {
     return (
       <div className={styles.resourcesBar}>

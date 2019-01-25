@@ -31,10 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export default function approximateObjectSize(
-  object: any,
-  cache: any[] = []
-): number {
+export default function approximateObjectSize(object: any, cache: any[] = []): number {
   switch (typeof object) {
     case 'boolean':
       return 4;

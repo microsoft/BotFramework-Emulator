@@ -47,10 +47,7 @@ const DEFAULT_STATE: ChatState = {
   transcripts: [],
 };
 
-export function chat(
-  state: ChatState = DEFAULT_STATE,
-  action: ChatAction | EditorAction
-): ChatState {
+export function chat(state: ChatState = DEFAULT_STATE, action: ChatAction | EditorAction): ChatState {
   switch (action.type) {
     case ChatActions.addTranscript: {
       const { payload } = action;
@@ -223,10 +220,7 @@ export function chat(
   return state;
 }
 
-function setTranscriptsState(
-  transcripts: string[],
-  state: ChatState
-): ChatState {
+function setTranscriptsState(transcripts: string[], state: ChatState): ChatState {
   const newState = { ...state };
 
   newState.transcripts = transcripts;

@@ -57,10 +57,7 @@ export function showExplorer(show: boolean): ExplorerAction<ExplorerPayload> {
   };
 }
 
-export function sortExplorerContents(
-  panelId: string,
-  sort: SortCriteria
-): ExplorerAction<ExplorerPayload> {
+export function sortExplorerContents(panelId: string, sort: SortCriteria): ExplorerAction<ExplorerPayload> {
   return {
     type: ExplorerActions.Sort,
     payload: { sortSelectionByPanelId: { [panelId]: sort } },

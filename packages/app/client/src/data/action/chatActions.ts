@@ -102,18 +102,14 @@ export interface ChatAction<T = any> extends Action {
 
 type ChatMode = 'livechat' | 'transcript';
 
-export function inspectorChanged(
-  inspectorWebView: HTMLWebViewElement
-): ChatAction<ActiveInspectorChangedPayload> {
+export function inspectorChanged(inspectorWebView: HTMLWebViewElement): ChatAction<ActiveInspectorChangedPayload> {
   return {
     type: ChatActions.activeInspectorChanged,
     payload: { inspectorWebView },
   };
 }
 
-export function addTranscript(
-  filename: string
-): ChatAction<AddTranscriptPayload> {
+export function addTranscript(filename: string): ChatAction<AddTranscriptPayload> {
   return {
     type: ChatActions.addTranscript,
     payload: {
@@ -129,9 +125,7 @@ export function clearTranscripts(): ChatAction<{}> {
   };
 }
 
-export function removeTranscript(
-  filename: string
-): ChatAction<RemoveTranscriptPayload> {
+export function removeTranscript(filename: string): ChatAction<RemoveTranscriptPayload> {
   return {
     type: ChatActions.removeTranscript,
     payload: {
@@ -140,11 +134,7 @@ export function removeTranscript(
   };
 }
 
-export function newDocument(
-  documentId: string,
-  mode: ChatMode,
-  additionalData?: object
-): NewChatAction {
+export function newDocument(documentId: string, mode: ChatMode, additionalData?: object): NewChatAction {
   return {
     type: ChatActions.newChat,
     payload: {
@@ -183,9 +173,7 @@ export function newDocument(
   };
 }
 
-export function closeDocument(
-  documentId: string
-): ChatAction<CloseChatPayload> {
+export function closeDocument(documentId: string): ChatAction<CloseChatPayload> {
   return {
     type: ChatActions.closeChat,
     payload: {
@@ -194,10 +182,7 @@ export function closeDocument(
   };
 }
 
-export function newConversation(
-  documentId: string,
-  options: any
-): ChatAction<NewConversationPayload> {
+export function newConversation(documentId: string, options: any): ChatAction<NewConversationPayload> {
   return {
     type: ChatActions.newConversation,
     payload: {
@@ -207,10 +192,7 @@ export function newConversation(
   };
 }
 
-export function appendToLog(
-  documentId: string,
-  entry: LogEntry
-): ChatAction<AppendLogPayload> {
+export function appendToLog(documentId: string, entry: LogEntry): ChatAction<AppendLogPayload> {
   return {
     type: ChatActions.appendLog,
     payload: {
@@ -229,10 +211,7 @@ export function clearLog(documentId: string): ChatAction<ClearLogPayload> {
   };
 }
 
-export function setInspectorObjects(
-  documentId: string,
-  objs: any
-): ChatAction<SetInspectorObjectsPayload> {
+export function setInspectorObjects(documentId: string, objs: any): ChatAction<SetInspectorObjectsPayload> {
   objs = Array.isArray(objs) ? objs : [objs];
   return {
     type: ChatActions.setInspectorObjects,
@@ -243,10 +222,7 @@ export function setInspectorObjects(
   };
 }
 
-export function updateChat(
-  documentId: string,
-  updatedValues: any
-): ChatAction<UpdateChatPayload> {
+export function updateChat(documentId: string, updatedValues: any): ChatAction<UpdateChatPayload> {
   return {
     type: ChatActions.updateChat,
     payload: {

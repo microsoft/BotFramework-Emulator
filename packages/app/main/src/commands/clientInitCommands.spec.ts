@@ -31,10 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import { SettingsImpl, SharedConstants } from '@bfemulator/app-shared';
-import {
-  BotConfigWithPathImpl,
-  CommandRegistryImpl,
-} from '@bfemulator/sdk-shared';
+import { BotConfigWithPathImpl, CommandRegistryImpl } from '@bfemulator/sdk-shared';
 import { combineReducers, createStore } from 'redux';
 
 import { bot } from '../botData/reducers/bot';
@@ -126,9 +123,7 @@ describe('The clientInitCommands', () => {
   });
 
   it('should retrieve the bots from disk and do other things when the client is done loading', async () => {
-    const command = registry.getCommand(
-      SharedConstants.Commands.ClientInit.Loaded
-    ).handler;
+    const command = registry.getCommand(SharedConstants.Commands.ClientInit.Loaded).handler;
 
     const remoteCommandArgs = [];
     const localCommandArgs = [];
@@ -140,10 +135,7 @@ describe('The clientInitCommands', () => {
     };
 
     await command();
-    expect(localCommandArgs).toEqual([
-      ['electron:set-title-bar'],
-      ['electron:set-fullscreen', false],
-    ]);
+    expect(localCommandArgs).toEqual([['electron:set-title-bar'], ['electron:set-fullscreen', false]]);
     expect(remoteCommandArgs).toEqual([
       [
         'receive-global-settings',
@@ -158,9 +150,7 @@ describe('The clientInitCommands', () => {
   });
 
   it('should push client aware settings', async () => {
-    const command = registry.getCommand(
-      SharedConstants.Commands.Settings.PushClientAwareSettings
-    ).handler;
+    const command = registry.getCommand(SharedConstants.Commands.Settings.PushClientAwareSettings).handler;
     const remoteCommandArgs = [];
     (mainWindow.commandService as any).remoteCall = (...args) => {
       remoteCommandArgs.push(args);
@@ -212,9 +202,7 @@ describe('The clientInitCommands', () => {
       return null;
     };
 
-    const command = registry.getCommand(
-      SharedConstants.Commands.ClientInit.PostWelcomeScreen
-    ).handler;
+    const command = registry.getCommand(SharedConstants.Commands.ClientInit.PostWelcomeScreen).handler;
     await command();
     expect(localCommandArgs).toEqual([
       ['menu:update-file-menu'],

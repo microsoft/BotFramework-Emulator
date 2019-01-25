@@ -110,9 +110,7 @@ describe('The ServicesExplorer component should', () => {
   it('should dispatch a request to open a luis deep link when a service is clicked', () => {
     const instance = node.instance();
     instance.onLinkClick({ currentTarget: { dataset: { index: 0 } } });
-    expect(mockDispatch).toHaveBeenCalledWith(
-      openServiceDeepLink(mockBot.services[0])
-    );
+    expect(mockDispatch).toHaveBeenCalledWith(openServiceDeepLink(mockBot.services[0]));
   });
 
   it('should dispatch a request to open the context menu when right clicking on a luis service', () => {
@@ -122,10 +120,7 @@ describe('The ServicesExplorer component should', () => {
 
     instance.onContextMenuOverLiElement(mockLi);
     expect(mockDispatch).toHaveBeenCalledWith(
-      openContextMenuForConnectedService(
-        ConnectedServiceEditorContainer,
-        mockBot.services[0]
-      )
+      openContextMenuForConnectedService(ConnectedServiceEditorContainer, mockBot.services[0])
     );
   });
 

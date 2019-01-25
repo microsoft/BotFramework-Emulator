@@ -55,12 +55,7 @@ export function cleanupId(
   activities = activities.map((activity: any) => {
     const { type } = activity;
 
-    if (
-      type === 'event' ||
-      type === 'message' ||
-      type === 'messageReaction' ||
-      type === 'typing'
-    ) {
+    if (type === 'event' || type === 'message' || type === 'messageReaction' || type === 'typing') {
       activity = {
         ...activity,
         from: {
@@ -80,10 +75,7 @@ export function cleanupId(
   return activities;
 }
 
-export function findIdWithRole(
-  activities: CustomActivity[],
-  role: string
-): string {
+export function findIdWithRole(activities: CustomActivity[], role: string): string {
   return activities.reduce((id: string, { recipient }) => {
     if (id) {
       return id;

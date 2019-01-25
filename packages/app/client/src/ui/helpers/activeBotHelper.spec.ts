@@ -63,9 +63,7 @@ describe('ActiveBotHelper tests', () => {
       .fn()
       .mockReturnValueOnce(true)
       .mockReturnValueOnce(false);
-    (CommandServiceImpl as any).remoteCall = jest
-      .fn()
-      .mockResolvedValue('done');
+    (CommandServiceImpl as any).remoteCall = jest.fn().mockResolvedValue('done');
 
     const result1 = await ActiveBotHelper.confirmSwitchBot();
     expect(result1).toBe('done');
@@ -80,9 +78,7 @@ describe('ActiveBotHelper tests', () => {
       .mockReturnValueOnce(true)
       .mockReturnValueOnce(false);
 
-    (CommandServiceImpl as any).remoteCall = jest
-      .fn()
-      .mockResolvedValue('done');
+    (CommandServiceImpl as any).remoteCall = jest.fn().mockResolvedValue('done');
 
     const result1 = await ActiveBotHelper.confirmCloseBot();
     expect(result1).toBe('done');
@@ -102,9 +98,7 @@ describe('ActiveBotHelper tests', () => {
     const mockRemoteCall2 = jest.fn().mockRejectedValue('err');
     (CommandServiceImpl as any).remoteCall = mockRemoteCall2;
 
-    expect(ActiveBotHelper.closeActiveBot()).rejects.toEqual(
-      new Error('Error while closing active bot: err')
-    );
+    expect(ActiveBotHelper.closeActiveBot()).rejects.toEqual(new Error('Error while closing active bot: err'));
   });
 
   it('botAlreadyOpen() functionality', async () => {
@@ -146,9 +140,7 @@ describe('ActiveBotHelper tests', () => {
 
     // test catch on promise
     ActiveBotHelper.confirmCloseBot = jest.fn().mockRejectedValue('err');
-    expect(ActiveBotHelper.confirmAndCloseBot()).rejects.toEqual(
-      new Error('Error while closing active bot: err')
-    );
+    expect(ActiveBotHelper.confirmAndCloseBot()).rejects.toEqual(new Error('Error while closing active bot: err'));
 
     ActiveBotHelper.confirmCloseBot = backupConfirmCloseBot;
     ActiveBotHelper.closeActiveBot = backupCloseActiveBot;
@@ -173,26 +165,19 @@ describe('ActiveBotHelper tests', () => {
     await ActiveBotHelper.setActiveBot(bot);
     expect(mockDispatch).toHaveBeenCalledTimes(2);
     expect(mockRemoteCall).toHaveBeenCalledTimes(3);
-    expect(mockRemoteCall).toHaveBeenCalledWith(
-      SharedConstants.Commands.Bot.SetActive,
-      bot
-    );
+    expect(mockRemoteCall).toHaveBeenCalledWith(SharedConstants.Commands.Bot.SetActive, bot);
 
     mockRemoteCall = jest.fn().mockRejectedValueOnce('error');
     (CommandServiceImpl as any).remoteCall = mockRemoteCall;
-    expect(ActiveBotHelper.setActiveBot(bot)).rejects.toEqual(
-      new Error('Error while setting active bot: error')
-    );
+    expect(ActiveBotHelper.setActiveBot(bot)).rejects.toEqual(new Error('Error while setting active bot: error'));
   });
 
   it('confirmAndCreateBot() functionality', async () => {
     const backupConfirmSwitchBot = ActiveBotHelper.confirmSwitchBot;
-    ActiveBotHelper.confirmSwitchBot = () =>
-      new Promise((resolve, reject) => resolve(true));
+    ActiveBotHelper.confirmSwitchBot = () => new Promise((resolve, reject) => resolve(true));
 
     const backupSetActiveBot = ActiveBotHelper.setActiveBot;
-    ActiveBotHelper.setActiveBot = (activeBot: any) =>
-      new Promise((resolve, reject) => resolve());
+    ActiveBotHelper.setActiveBot = (activeBot: any) => new Promise((resolve, reject) => resolve());
 
     const mockDispatch = jest.fn().mockReturnValue(null);
     (store as any).dispatch = mockDispatch;
@@ -219,23 +204,16 @@ describe('ActiveBotHelper tests', () => {
 
     await ActiveBotHelper.confirmAndCreateBot(bot, 'someSecret');
     expect(mockDispatch).toHaveBeenCalledTimes(3);
-    expect(mockCall).toHaveBeenCalledWith(
-      SharedConstants.Commands.Emulator.NewLiveChat,
-      endpoint
-    );
-    expect(mockRemoteCall).toHaveBeenCalledWith(
-      SharedConstants.Commands.Bot.Create,
-      bot,
-      'someSecret'
-    );
+    expect(mockCall).toHaveBeenCalledWith(SharedConstants.Commands.Emulator.NewLiveChat, endpoint);
+    expect(mockRemoteCall).toHaveBeenCalledWith(SharedConstants.Commands.Bot.Create, bot, 'someSecret');
 
     mockRemoteCall = jest.fn().mockRejectedValue('err');
     (CommandServiceImpl as any).remoteCall = mockRemoteCall;
     (CommandServiceImpl as any).call = mockCall;
 
-    expect(
-      ActiveBotHelper.confirmAndCreateBot(bot, 'someSecret')
-    ).rejects.toEqual(new Error('Error during bot create: err'));
+    expect(ActiveBotHelper.confirmAndCreateBot(bot, 'someSecret')).rejects.toEqual(
+      new Error('Error during bot create: err')
+    );
 
     ActiveBotHelper.confirmSwitchBot = backupConfirmSwitchBot;
     ActiveBotHelper.setActiveBot = backupSetActiveBot;
@@ -259,8 +237,7 @@ describe('ActiveBotHelper tests', () => {
     (store as any).dispatch = mockDispatch;
 
     // opening a bot that's already open
-    ActiveBotHelper.browseForBotFile = () =>
-      new Promise((resolve, reject) => resolve('somePath'));
+    ActiveBotHelper.browseForBotFile = () => new Promise((resolve, reject) => resolve('somePath'));
     (botHelpers as any).getActiveBot = () => bot;
     ActiveBotHelper.botAlreadyOpen = () => null;
 
@@ -268,10 +245,8 @@ describe('ActiveBotHelper tests', () => {
     expect(mockDispatch).not.toHaveBeenCalled();
 
     // opening a bot that isn't already open
-    ActiveBotHelper.browseForBotFile = () =>
-      new Promise((resolve, reject) => resolve('someOtherPath'));
-    ActiveBotHelper.confirmSwitchBot = () =>
-      new Promise((resolve, reject) => resolve(true));
+    ActiveBotHelper.browseForBotFile = () => new Promise((resolve, reject) => resolve('someOtherPath'));
+    ActiveBotHelper.confirmSwitchBot = () => new Promise((resolve, reject) => resolve(true));
 
     const mockRemoteCall = jest
       .fn()
@@ -283,23 +258,13 @@ describe('ActiveBotHelper tests', () => {
 
     await ActiveBotHelper.confirmAndOpenBotFromFile();
     expect(mockDispatch).toHaveBeenCalledTimes(1);
-    expect(mockCall).toHaveBeenCalledWith(
-      SharedConstants.Commands.Bot.Load,
-      bot
-    );
-    expect(mockRemoteCall).toHaveBeenCalledWith(
-      SharedConstants.Commands.Bot.Open,
-      'someOtherPath'
-    );
-    expect(mockRemoteCall).toHaveBeenCalledWith(
-      SharedConstants.Commands.Bot.SetActive,
-      bot
-    );
-    expect(mockRemoteCall).toHaveBeenCalledWith(
-      SharedConstants.Commands.Telemetry.TrackEvent,
-      'bot_open',
-      { method: 'file_browse', numOfServices: 0 }
-    );
+    expect(mockCall).toHaveBeenCalledWith(SharedConstants.Commands.Bot.Load, bot);
+    expect(mockRemoteCall).toHaveBeenCalledWith(SharedConstants.Commands.Bot.Open, 'someOtherPath');
+    expect(mockRemoteCall).toHaveBeenCalledWith(SharedConstants.Commands.Bot.SetActive, bot);
+    expect(mockRemoteCall).toHaveBeenCalledWith(SharedConstants.Commands.Telemetry.TrackEvent, 'bot_open', {
+      method: 'file_browse',
+      numOfServices: 0,
+    });
 
     ActiveBotHelper.browseForBotFile = backupBrowseForBotFile;
     ActiveBotHelper.botAlreadyOpen = backupBotAlreadyOpen;
@@ -307,9 +272,7 @@ describe('ActiveBotHelper tests', () => {
   });
 
   it('should throw an error when confirmAndOpenBotFromFile fails', async () => {
-    jest
-      .spyOn(ActiveBotHelper, 'browseForBotFile')
-      .mockRejectedValueOnce('oh noes!');
+    jest.spyOn(ActiveBotHelper, 'browseForBotFile').mockRejectedValueOnce('oh noes!');
     try {
       await ActiveBotHelper.confirmAndOpenBotFromFile('');
       expect(false);
@@ -358,8 +321,7 @@ describe('ActiveBotHelper tests', () => {
 
     // switching to a bot that's already open
     (botHelpers.getActiveBot as any) = () => bot;
-    ActiveBotHelper.botAlreadyOpen = () =>
-      new Promise((resolve, reject) => resolve(null));
+    ActiveBotHelper.botAlreadyOpen = () => new Promise((resolve, reject) => resolve(null));
 
     await ActiveBotHelper.confirmAndSwitchBots(bot);
 
@@ -369,26 +331,18 @@ describe('ActiveBotHelper tests', () => {
     const mockCall = jest.fn().mockResolvedValue(null);
     (CommandServiceImpl as any).call = mockCall;
     (CommandServiceImpl as any).remoteCall = mockRemoteCall;
-    ActiveBotHelper.confirmSwitchBot = () =>
-      new Promise((resolve, reject) => resolve(true));
-    ActiveBotHelper.setActiveBot = (arg: any) =>
-      new Promise((resolve, reject) => resolve(null));
+    ActiveBotHelper.confirmSwitchBot = () => new Promise((resolve, reject) => resolve(true));
+    ActiveBotHelper.setActiveBot = (arg: any) => new Promise((resolve, reject) => resolve(null));
 
     await ActiveBotHelper.confirmAndSwitchBots(bot);
-    expect(mockCall).toHaveBeenCalledWith(
-      SharedConstants.Commands.Emulator.NewLiveChat,
-      endpoint
-    );
+    expect(mockCall).toHaveBeenCalledWith(SharedConstants.Commands.Emulator.NewLiveChat, endpoint);
     expect(mockDispatch).toHaveBeenCalledTimes(3);
     mockDispatch.mockClear();
     mockCall.mockClear();
 
     // switching to a bot with only the bot path available
     await ActiveBotHelper.confirmAndSwitchBots('someBotPath');
-    expect(mockRemoteCall).toHaveBeenCalledWith(
-      SharedConstants.Commands.Bot.Open,
-      'someBotPath'
-    );
+    expect(mockRemoteCall).toHaveBeenCalledWith(SharedConstants.Commands.Bot.Open, 'someBotPath');
     mockCall.mockClear();
     mockDispatch.mockClear();
 
@@ -399,10 +353,10 @@ describe('ActiveBotHelper tests', () => {
       },
     };
     await ActiveBotHelper.confirmAndSwitchBots(bot);
-    expect(mockCall).toHaveBeenCalledWith(
-      SharedConstants.Commands.Emulator.NewLiveChat,
-      { ...endpoint, endpoint: 'someOverride' }
-    );
+    expect(mockCall).toHaveBeenCalledWith(SharedConstants.Commands.Emulator.NewLiveChat, {
+      ...endpoint,
+      endpoint: 'someOverride',
+    });
     mockCall.mockClear();
 
     // switching to a bot with multiple endpoints, with endpoint overrides including an endpoint id
@@ -418,10 +372,10 @@ describe('ActiveBotHelper tests', () => {
       },
     };
     await ActiveBotHelper.confirmAndSwitchBots(bot);
-    expect(mockCall).toHaveBeenCalledWith(
-      SharedConstants.Commands.Emulator.NewLiveChat,
-      { ...secondEndpoint, endpoint: 'someOtherOverride' }
-    );
+    expect(mockCall).toHaveBeenCalledWith(SharedConstants.Commands.Emulator.NewLiveChat, {
+      ...secondEndpoint,
+      endpoint: 'someOtherOverride',
+    });
 
     ActiveBotHelper.botAlreadyOpen = backupBotAlreadyOpen;
     ActiveBotHelper.confirmSwitchBot = backupConfirmSwitchBot;

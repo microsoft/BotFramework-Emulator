@@ -108,12 +108,8 @@ describe('Editor reducer tests', () => {
       const docIdToAppend = 'doc1';
       const action = appendTab(srcEditorKey, destEditorKey, docIdToAppend);
       const endingState = editor(startingState, action);
-      expect(
-        endingState.editors[Constants.EDITOR_KEY_PRIMARY].tabOrder[0]
-      ).not.toBe(docIdToAppend);
-      expect(
-        endingState.editors[Constants.EDITOR_KEY_PRIMARY].tabOrder[1]
-      ).toBe(docIdToAppend);
+      expect(endingState.editors[Constants.EDITOR_KEY_PRIMARY].tabOrder[0]).not.toBe(docIdToAppend);
+      expect(endingState.editors[Constants.EDITOR_KEY_PRIMARY].tabOrder[1]).toBe(docIdToAppend);
 
       // assert that draggingTab is toggled off
       expect(endingState.draggingTab).toBe(false);
@@ -222,12 +218,8 @@ describe('Editor reducer tests', () => {
       const action = appendTab(srcEditorKey, destEditorKey, 'doc1');
       const endingState = editor(startingState, action);
       expect(endingState.activeEditor).toBe(Constants.EDITOR_KEY_PRIMARY);
-      expect(
-        endingState.editors[Constants.EDITOR_KEY_PRIMARY].tabOrder
-      ).toEqual(['doc2', 'doc1']);
-      expect(
-        endingState.editors[Constants.EDITOR_KEY_SECONDARY].tabOrder
-      ).toEqual([]);
+      expect(endingState.editors[Constants.EDITOR_KEY_PRIMARY].tabOrder).toEqual(['doc2', 'doc1']);
+      expect(endingState.editors[Constants.EDITOR_KEY_SECONDARY].tabOrder).toEqual([]);
 
       // assert that draggingTab is toggled off
       expect(endingState.draggingTab).toBe(false);
@@ -296,11 +288,7 @@ describe('Editor reducer tests', () => {
       expect(primaryEditor.recentTabs).toEqual(['doc2']);
       expect(primaryEditor.tabOrder).toEqual(['doc2']);
       expect(Object.keys(primaryEditor.documents)).toContain('doc2');
-      expect(
-        Object.keys(
-          endingState.editors[Constants.EDITOR_KEY_SECONDARY].documents
-        )
-      ).not.toContain('doc1');
+      expect(Object.keys(endingState.editors[Constants.EDITOR_KEY_SECONDARY].documents)).not.toContain('doc1');
     });
   });
 
@@ -374,10 +362,7 @@ describe('Editor reducer tests', () => {
     const dirtyDocId = 'doc3';
     const action = setDirtyFlag(dirtyDocId, true);
     const endingState = editor(startingState, action);
-    expect(
-      endingState.editors[Constants.EDITOR_KEY_SECONDARY].documents[dirtyDocId]
-        .dirty
-    ).toBe(true);
+    expect(endingState.editors[Constants.EDITOR_KEY_SECONDARY].documents[dirtyDocId].dirty).toBe(true);
   });
 
   it('should close all non-global tabs', () => {
@@ -450,9 +435,11 @@ describe('Editor reducer tests', () => {
       dirty: true,
     });
     const endingState = editor(startingState, action);
-    expect(
-      endingState.editors[Constants.EDITOR_KEY_PRIMARY].documents[docToUpdateId]
-    ).toEqual({ documentId: 'doc1', isGlobal: true, dirty: true });
+    expect(endingState.editors[Constants.EDITOR_KEY_PRIMARY].documents[docToUpdateId]).toEqual({
+      documentId: 'doc1',
+      isGlobal: true,
+      dirty: true,
+    });
   });
 
   describe('opening a document', () => {
@@ -490,9 +477,7 @@ describe('Editor reducer tests', () => {
       });
       const endingState = editor(startingState, action);
       expect(endingState.activeEditor).toBe(Constants.EDITOR_KEY_SECONDARY);
-      expect(
-        endingState.editors[Constants.EDITOR_KEY_SECONDARY].recentTabs
-      ).toEqual(['doc2', 'doc3']);
+      expect(endingState.editors[Constants.EDITOR_KEY_SECONDARY].recentTabs).toEqual(['doc2', 'doc3']);
     });
 
     it('should focus an already existing document in the same tab group', () => {
@@ -658,12 +643,7 @@ describe('Editor reducer tests', () => {
           },
         },
       };
-      const action = swapTabs(
-        Constants.EDITOR_KEY_PRIMARY,
-        Constants.EDITOR_KEY_PRIMARY,
-        'doc1',
-        'doc3'
-      );
+      const action = swapTabs(Constants.EDITOR_KEY_PRIMARY, Constants.EDITOR_KEY_PRIMARY, 'doc1', 'doc3');
       const endingState = editor(startingState, action);
       const primaryEditor = endingState.editors[Constants.EDITOR_KEY_PRIMARY];
       expect(primaryEditor.tabOrder).toEqual(['doc3', 'doc2', 'doc1']);
@@ -696,16 +676,10 @@ describe('Editor reducer tests', () => {
           },
         },
       };
-      const action = swapTabs(
-        Constants.EDITOR_KEY_SECONDARY,
-        Constants.EDITOR_KEY_PRIMARY,
-        'doc3',
-        'doc1'
-      );
+      const action = swapTabs(Constants.EDITOR_KEY_SECONDARY, Constants.EDITOR_KEY_PRIMARY, 'doc3', 'doc1');
       const endingState = editor(startingState, action);
       const primaryEditor = endingState.editors[Constants.EDITOR_KEY_PRIMARY];
-      const secondaryEditor =
-        endingState.editors[Constants.EDITOR_KEY_SECONDARY];
+      const secondaryEditor = endingState.editors[Constants.EDITOR_KEY_SECONDARY];
       expect(endingState.activeEditor).toBe(Constants.EDITOR_KEY_SECONDARY);
 
       expect(Object.keys(primaryEditor.documents)).toContain('doc3');
@@ -744,12 +718,7 @@ describe('Editor reducer tests', () => {
           },
         },
       };
-      const action = swapTabs(
-        Constants.EDITOR_KEY_SECONDARY,
-        Constants.EDITOR_KEY_PRIMARY,
-        'doc3',
-        'doc1'
-      );
+      const action = swapTabs(Constants.EDITOR_KEY_SECONDARY, Constants.EDITOR_KEY_PRIMARY, 'doc3', 'doc1');
       const endingState = editor(startingState, action);
       expect(endingState.activeEditor).toBe(Constants.EDITOR_KEY_PRIMARY);
     });
@@ -780,16 +749,10 @@ describe('Editor reducer tests', () => {
           },
         },
       };
-      const action = swapTabs(
-        Constants.EDITOR_KEY_PRIMARY,
-        Constants.EDITOR_KEY_SECONDARY,
-        'doc1',
-        'doc2'
-      );
+      const action = swapTabs(Constants.EDITOR_KEY_PRIMARY, Constants.EDITOR_KEY_SECONDARY, 'doc1', 'doc2');
       const endingState = editor(startingState, action);
       const primaryEditor = endingState.editors[Constants.EDITOR_KEY_PRIMARY];
-      const secondaryEditor =
-        endingState.editors[Constants.EDITOR_KEY_SECONDARY];
+      const secondaryEditor = endingState.editors[Constants.EDITOR_KEY_SECONDARY];
       expect(endingState.activeEditor).toBe(Constants.EDITOR_KEY_PRIMARY);
 
       expect(primaryEditor.activeDocumentId).toBe('doc2');
@@ -813,23 +776,13 @@ describe('Editor reducer tests', () => {
       const action1 = addDocPendingChange('doc4');
       const endingState1 = editor(startingState, action1);
 
-      expect(endingState1.docsWithPendingChanges).toEqual([
-        'doc1',
-        'doc2',
-        'doc3',
-        'doc4',
-      ]);
+      expect(endingState1.docsWithPendingChanges).toEqual(['doc1', 'doc2', 'doc3', 'doc4']);
 
       // shouldn't allow duplicates
       const action2 = addDocPendingChange('doc4');
       const endingState2 = editor(endingState1, action2);
 
-      expect(endingState2.docsWithPendingChanges).toEqual([
-        'doc1',
-        'doc2',
-        'doc3',
-        'doc4',
-      ]);
+      expect(endingState2.docsWithPendingChanges).toEqual(['doc1', 'doc2', 'doc3', 'doc4']);
     });
 
     it('should remove a doc from the list', () => {
@@ -883,31 +836,15 @@ describe('Editor reducer utility function tests', () => {
 
     const endingState = setNewPrimaryEditor(newPrimaryEditor, startingState);
     expect(endingState.activeEditor).toBe(Constants.EDITOR_KEY_PRIMARY);
-    expect(
-      endingState.editors[Constants.EDITOR_KEY_PRIMARY].activeDocumentId
-    ).toEqual('doc2');
-    expect(endingState.editors[Constants.EDITOR_KEY_PRIMARY].tabOrder).toEqual([
-      'doc2',
-    ]);
-    expect(
-      endingState.editors[Constants.EDITOR_KEY_PRIMARY].recentTabs
-    ).toEqual(['doc2']);
-    expect(
-      Object.keys(endingState.editors[Constants.EDITOR_KEY_PRIMARY].documents)
-    ).toContain('doc2');
+    expect(endingState.editors[Constants.EDITOR_KEY_PRIMARY].activeDocumentId).toEqual('doc2');
+    expect(endingState.editors[Constants.EDITOR_KEY_PRIMARY].tabOrder).toEqual(['doc2']);
+    expect(endingState.editors[Constants.EDITOR_KEY_PRIMARY].recentTabs).toEqual(['doc2']);
+    expect(Object.keys(endingState.editors[Constants.EDITOR_KEY_PRIMARY].documents)).toContain('doc2');
 
-    expect(
-      endingState.editors[Constants.EDITOR_KEY_SECONDARY].activeDocumentId
-    ).toBe(null);
-    expect(
-      endingState.editors[Constants.EDITOR_KEY_SECONDARY].documents
-    ).toEqual({});
-    expect(
-      endingState.editors[Constants.EDITOR_KEY_SECONDARY].recentTabs
-    ).toEqual([]);
-    expect(
-      endingState.editors[Constants.EDITOR_KEY_SECONDARY].tabOrder
-    ).toEqual([]);
+    expect(endingState.editors[Constants.EDITOR_KEY_SECONDARY].activeDocumentId).toBe(null);
+    expect(endingState.editors[Constants.EDITOR_KEY_SECONDARY].documents).toEqual({});
+    expect(endingState.editors[Constants.EDITOR_KEY_SECONDARY].recentTabs).toEqual([]);
+    expect(endingState.editors[Constants.EDITOR_KEY_SECONDARY].tabOrder).toEqual([]);
   });
 
   it('setActiveEditor() functionality', () => {
@@ -923,21 +860,11 @@ describe('Editor reducer utility function tests', () => {
       tabOrder: ['testing'],
       recentTabs: ['testing'],
     };
-    const newState = setEditorState(
-      Constants.EDITOR_KEY_PRIMARY,
-      updatedEditor,
-      defaultState
-    );
+    const newState = setEditorState(Constants.EDITOR_KEY_PRIMARY, updatedEditor, defaultState);
     expect(newState).not.toBe(defaultState);
-    expect(
-      newState.editors[Constants.EDITOR_KEY_PRIMARY].activeDocumentId
-    ).toBe('testing');
-    expect(newState.editors[Constants.EDITOR_KEY_PRIMARY].tabOrder).toEqual([
-      'testing',
-    ]);
-    expect(newState.editors[Constants.EDITOR_KEY_PRIMARY].recentTabs).toEqual([
-      'testing',
-    ]);
+    expect(newState.editors[Constants.EDITOR_KEY_PRIMARY].activeDocumentId).toBe('testing');
+    expect(newState.editors[Constants.EDITOR_KEY_PRIMARY].tabOrder).toEqual(['testing']);
+    expect(newState.editors[Constants.EDITOR_KEY_PRIMARY].recentTabs).toEqual(['testing']);
   });
 
   describe('removeDocumentFromTabGroup() functionality', () => {
@@ -953,10 +880,7 @@ describe('Editor reducer utility function tests', () => {
         recentTabs: [docToRemove, 'doc2'],
       };
 
-      const modifiedEditor = removeDocumentFromTabGroup(
-        tempEditor,
-        docToRemove
-      );
+      const modifiedEditor = removeDocumentFromTabGroup(tempEditor, docToRemove);
       expect(modifiedEditor).not.toBe(tempEditor);
       expect(modifiedEditor.activeDocumentId).toBe('doc2');
       expect(modifiedEditor.recentTabs).not.toContain(docToRemove);

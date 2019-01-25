@@ -35,10 +35,7 @@ import { SharedConstants } from '@bfemulator/app-shared';
 import { ServiceTypes } from 'botframework-config/lib/schema';
 
 import { store } from '../store';
-import {
-  azureArmTokenDataChanged,
-  beginAzureAuthWorkflow,
-} from '../action/azureAuthActions';
+import { azureArmTokenDataChanged, beginAzureAuthWorkflow } from '../action/azureAuthActions';
 import {
   AzureLoginFailedDialogContainer,
   AzureLoginPromptDialogContainer,
@@ -173,19 +170,14 @@ describe('The azureAuthSaga', () => {
             if (ct === 2) {
               // Login was unsuccessful
               expect(val).toBe(false);
-              expect(remoteCallSpy).toHaveBeenCalledWith([
-                SharedConstants.Commands.Azure.RetrieveArmToken,
-              ]);
+              expect(remoteCallSpy).toHaveBeenCalledWith([SharedConstants.Commands.Azure.RetrieveArmToken]);
             }
           }
         }
         ct++;
       }
       expect(ct).toBe(5);
-      expect(remoteCallSpy).toHaveBeenCalledWith(
-        SharedConstants.Commands.Telemetry.TrackEvent,
-        'signIn_failure'
-      );
+      expect(remoteCallSpy).toHaveBeenCalledWith(SharedConstants.Commands.Telemetry.TrackEvent, 'signIn_failure');
     });
 
     it('should contain 6 steps when the Azure login dialog prompt is confirmed and auth succeeds', async () => {
@@ -241,15 +233,10 @@ describe('The azureAuthSaga', () => {
             if (ct === 2) {
               // Login was successful
               expect(val.access_token).toBe('a valid access_token');
-              expect(remoteCallSpy).toHaveBeenCalledWith([
-                SharedConstants.Commands.Azure.RetrieveArmToken,
-              ]);
+              expect(remoteCallSpy).toHaveBeenCalledWith([SharedConstants.Commands.Azure.RetrieveArmToken]);
             } else if (ct === 4) {
               expect(val.persistLogin).toBe(true);
-              expect(remoteCallSpy).toHaveBeenCalledWith([
-                SharedConstants.Commands.Azure.PersistAzureLoginChanged,
-                1,
-              ]);
+              expect(remoteCallSpy).toHaveBeenCalledWith([SharedConstants.Commands.Azure.PersistAzureLoginChanged, 1]);
             }
           }
         } else if ('PUT' in val) {
@@ -258,13 +245,8 @@ describe('The azureAuthSaga', () => {
         ct++;
       }
       expect(ct).toBe(6);
-      expect(store.getState().azureAuth.access_token).toBe(
-        'a valid access_token'
-      );
-      expect(remoteCallSpy).toHaveBeenCalledWith(
-        SharedConstants.Commands.Telemetry.TrackEvent,
-        'signIn_success'
-      );
+      expect(store.getState().azureAuth.access_token).toBe('a valid access_token');
+      expect(remoteCallSpy).toHaveBeenCalledWith(SharedConstants.Commands.Telemetry.TrackEvent, 'signIn_success');
     });
   });
 });

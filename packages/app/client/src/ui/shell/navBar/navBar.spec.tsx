@@ -122,13 +122,8 @@ describe('<NavBar/>', () => {
     instance.onLinkClick(mockEvent);
 
     expect(mockRemoteCallsMade).toHaveLength(1);
-    expect(mockRemoteCallsMade[0].commandName).toBe(
-      SharedConstants.Commands.Telemetry.TrackEvent
-    );
-    expect(mockRemoteCallsMade[0].args).toEqual([
-      'navbar_selection',
-      { selection: 'notifications' },
-    ]);
+    expect(mockRemoteCallsMade[0].commandName).toBe(SharedConstants.Commands.Telemetry.TrackEvent);
+    expect(mockRemoteCallsMade[0].args).toEqual(['navbar_selection', { selection: 'notifications' }]);
     expect(mockDispatch).toHaveBeenCalledWith(select('navbar.notifications'));
     expect(instance.state.selection).toBe('navbar.notifications');
   });

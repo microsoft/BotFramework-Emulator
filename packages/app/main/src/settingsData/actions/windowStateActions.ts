@@ -43,14 +43,8 @@ export interface WindowStateAction<P> extends Action {
   state?: P;
 }
 
-export declare type WindowStateActionType =
-  | 'REMEMBER_THEME'
-  | 'REMEMBER_BOUNDS'
-  | 'REMEMBER_ZOOM_LEVEL';
-export declare type WindowStatePayload =
-  | RememberZoomLevelPayload
-  | RememberBoundsPayload
-  | RememberThemePayload;
+export declare type WindowStateActionType = 'REMEMBER_THEME' | 'REMEMBER_BOUNDS' | 'REMEMBER_ZOOM_LEVEL';
+export declare type WindowStatePayload = RememberZoomLevelPayload | RememberBoundsPayload | RememberThemePayload;
 
 export interface RememberThemePayload {
   theme?: string;
@@ -68,9 +62,7 @@ export interface RememberZoomLevelPayload {
   zoomLevel?: number;
 }
 
-export function rememberTheme(
-  theme: string
-): WindowStateAction<RememberThemePayload> {
+export function rememberTheme(theme: string): WindowStateAction<RememberThemePayload> {
   return {
     type: REMEMBER_THEME,
     payload: {
@@ -79,18 +71,14 @@ export function rememberTheme(
   };
 }
 
-export function rememberBounds(
-  state: WindowStateSettings
-): WindowStateAction<RememberBoundsPayload> {
+export function rememberBounds(state: WindowStateSettings): WindowStateAction<RememberBoundsPayload> {
   return {
     type: REMEMBER_BOUNDS,
     state,
   };
 }
 
-export function rememberZoomLevel(
-  state: WindowStateSettings
-): WindowStateAction<RememberZoomLevelPayload> {
+export function rememberZoomLevel(state: WindowStateSettings): WindowStateAction<RememberZoomLevelPayload> {
   return {
     type: REMEMBER_ZOOM_LEVEL,
     state,

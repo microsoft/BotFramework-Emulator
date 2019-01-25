@@ -46,11 +46,7 @@ interface GetTokenParams extends TokenParams {
 }
 
 export default function getToken(_botEmulator: BotEmulator) {
-  return (
-    req: Restify.Request,
-    res: Restify.Response,
-    next: Restify.Next
-  ): any => {
+  return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     try {
       const params: GetTokenParams = req.params;
       const botEndpoint: BotEndpoint = (req as any).botEndpoint;

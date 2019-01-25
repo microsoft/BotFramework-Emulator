@@ -32,41 +32,24 @@
 //
 
 import { newNotification, UserSettings } from '@bfemulator/app-shared';
-import {
-  ConversationService,
-  StartConversationParams,
-} from '@bfemulator/sdk-shared';
+import { ConversationService, StartConversationParams } from '@bfemulator/sdk-shared';
 
 import { ActiveBotHelper } from '../../ui/helpers/activeBotHelper';
-import {
-  BotAction,
-  BotActionType,
-  BotConfigWithPathPayload,
-  botHashGenerated,
-} from '../action/botActions';
+import { BotAction, BotActionType, BotConfigWithPathPayload, botHashGenerated } from '../action/botActions';
 import { beginAdd } from '../action/notificationActions';
 import { generateBotHash } from '../botHelpers';
 import { RootState } from '../store';
 
 import { refreshConversationMenu } from './sharedSagas';
 
-import {
-  call,
-  ForkEffect,
-  put,
-  select,
-  takeEvery,
-  takeLatest,
-} from 'redux-saga/effects';
+import { call, ForkEffect, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
 
 /** Opens up native open file dialog to browse for a .bot file */
 export function* browseForBot(): IterableIterator<any> {
   yield call([ActiveBotHelper, ActiveBotHelper.confirmAndOpenBotFromFile]);
 }
 
-export function* generateHashForActiveBot(
-  action: BotAction<BotConfigWithPathPayload>
-): IterableIterator<any> {
+export function* generateHashForActiveBot(action: BotAction<BotConfigWithPathPayload>): IterableIterator<any> {
   const { bot } = action.payload;
   const generatedHash = yield call(generateBotHash, bot);
   yield put(botHashGenerated(generatedHash));
@@ -74,44 +57,24 @@ export function* generateHashForActiveBot(
 
 export function* openBotViaFilePath(action: BotAction<string>) {
   try {
-    yield call(
-      [ActiveBotHelper, ActiveBotHelper.confirmAndOpenBotFromFile],
-      action.payload
-    );
+    yield call([ActiveBotHelper, ActiveBotHelper.confirmAndOpenBotFromFile], action.payload);
   } catch (e) {
-    const errorNotification = beginAdd(
-      newNotification(
-        `An Error occurred opening the bot at ${action.payload}: ${e}`
-      )
-    );
+    const errorNotification = beginAdd(newNotification(`An Error occurred opening the bot at ${action.payload}: ${e}`));
     yield put(errorNotification);
   }
 }
 
-export function* openBotViaUrl(
-  action: BotAction<Partial<StartConversationParams>>
-) {
-  const serverUrl = yield select(
-    (state: RootState) => state.clientAwareSettings.serverUrl
-  );
+export function* openBotViaUrl(action: BotAction<Partial<StartConversationParams>>) {
+  const serverUrl = yield select((state: RootState) => state.clientAwareSettings.serverUrl);
   if (!action.payload.user) {
     // If no user is provided, select the current user
-    const users: UserSettings = yield select(
-      (state: RootState) => state.clientAwareSettings.users
-    );
+    const users: UserSettings = yield select((state: RootState) => state.clientAwareSettings.users);
     action.payload.user = users.usersById[users.currentUserId];
   }
-  const response = yield ConversationService.startConversation(
-    serverUrl,
-    action.payload
-  );
+  const response = yield ConversationService.startConversation(serverUrl, action.payload);
   if (!response.ok) {
     const errorNotification = beginAdd(
-      newNotification(
-        `An Error occurred opening the bot at ${action.payload.endpoint}: ${
-          response.statusText
-        }`
-      )
+      newNotification(`An Error occurred opening the bot at ${action.payload.endpoint}: ${response.statusText}`)
     );
     yield put(errorNotification);
   }
@@ -122,8 +85,5 @@ export function* botSagas(): IterableIterator<ForkEffect> {
   yield takeEvery(BotActionType.openViaUrl, openBotViaUrl);
   yield takeEvery(BotActionType.openViaFilePath, openBotViaFilePath);
   yield takeEvery(BotActionType.setActive, generateHashForActiveBot);
-  yield takeLatest(
-    [BotActionType.setActive, BotActionType.load, BotActionType.close],
-    refreshConversationMenu
-  );
+  yield takeLatest([BotActionType.setActive, BotActionType.load, BotActionType.close], refreshConversationMenu);
 }

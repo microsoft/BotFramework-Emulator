@@ -101,10 +101,7 @@ jest.mock('./ngrok', () => {
   let connected = false;
   return {
     running: () => connected,
-    connect: (opts, cb) => (
-      (connected = true),
-      cb(null, 'http://fdsfds.ngrok.io', 'http://fdsfds.ngrok.io')
-    ),
+    connect: (opts, cb) => ((connected = true), cb(null, 'http://fdsfds.ngrok.io', 'http://fdsfds.ngrok.io')),
     kill: cb => ((connected = false), cb(null, !connected)),
   };
 });
@@ -122,16 +119,12 @@ describe('The ngrokService', () => {
   });
 
   it('should not invoke ngrok for localhost urls', async () => {
-    const serviceUrl = await ngrokService.getServiceUrl(
-      'http://localhost:3030/v3/messages'
-    );
+    const serviceUrl = await ngrokService.getServiceUrl('http://localhost:3030/v3/messages');
     expect(serviceUrl).toBe('http://localhost:8080');
   });
 
   it('should connect to ngrok when a remote endpoint is used', async () => {
-    const serviceUrl = await ngrokService.getServiceUrl(
-      'http://myBot.someorg:3030/v3/messages'
-    );
+    const serviceUrl = await ngrokService.getServiceUrl('http://myBot.someorg:3030/v3/messages');
     expect(serviceUrl).toBe('http://fdsfds.ngrok.io');
   });
 

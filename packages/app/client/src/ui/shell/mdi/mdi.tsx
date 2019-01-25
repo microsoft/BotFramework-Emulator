@@ -43,9 +43,7 @@ export class MDIComponent extends React.Component<MDIProps> {
     const { presentationModeEnabled } = this.props;
     return (
       <div className={styles.mdi}>
-        {!presentationModeEnabled && (
-          <TabBarContainer owningEditor={this.props.owningEditor} />
-        )}
+        {!presentationModeEnabled && <TabBarContainer owningEditor={this.props.owningEditor} />}
         <DocumentsContainer owningEditor={this.props.owningEditor} />
       </div>
     );

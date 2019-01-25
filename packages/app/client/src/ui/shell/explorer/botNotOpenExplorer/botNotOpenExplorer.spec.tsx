@@ -79,19 +79,13 @@ describe('The EndpointExplorer component should', () => {
   });
 
   it('should make the appropriate calls when onCreateNewBotClick in called', async () => {
-    const commandServiceSpy = jest
-      .spyOn(CommandServiceImpl, 'call')
-      .mockResolvedValue(true);
+    const commandServiceSpy = jest.spyOn(CommandServiceImpl, 'call').mockResolvedValue(true);
     await instance.onCreateNewBotClick();
-    expect(commandServiceSpy).toHaveBeenLastCalledWith(
-      SharedConstants.Commands.UI.ShowBotCreationDialog
-    );
+    expect(commandServiceSpy).toHaveBeenLastCalledWith(SharedConstants.Commands.UI.ShowBotCreationDialog);
   });
 
   it('should send a notification when onCreateNewBotClick fails', async () => {
-    const commandServiceSpy = jest
-      .spyOn(CommandServiceImpl, 'call')
-      .mockRejectedValue('oh noes!');
+    const commandServiceSpy = jest.spyOn(CommandServiceImpl, 'call').mockRejectedValue('oh noes!');
     await instance.onCreateNewBotClick();
     const message = `An Error occurred on the Bot Not Open Explorer: oh noes!`;
     const notification = newNotification(message);
@@ -100,23 +94,17 @@ describe('The EndpointExplorer component should', () => {
     notification.id = jasmine.any(String) as any;
     expect(mockDispatch).toHaveBeenLastCalledWith(action);
 
-    expect(commandServiceSpy).toHaveBeenLastCalledWith(
-      SharedConstants.Commands.UI.ShowBotCreationDialog
-    );
+    expect(commandServiceSpy).toHaveBeenLastCalledWith(SharedConstants.Commands.UI.ShowBotCreationDialog);
   });
 
   it('should make the appropriate calls when onOpenBotFileClick in called', async () => {
-    const spy = jest
-      .spyOn(ActiveBotHelper, 'confirmAndOpenBotFromFile')
-      .mockResolvedValue(true);
+    const spy = jest.spyOn(ActiveBotHelper, 'confirmAndOpenBotFromFile').mockResolvedValue(true);
     await instance.onOpenBotFileClick();
     expect(spy).toHaveBeenCalled();
   });
 
   it('should send a notification when onOpenBotFileClick fails', async () => {
-    const spy = jest
-      .spyOn(ActiveBotHelper, 'confirmAndOpenBotFromFile')
-      .mockRejectedValue('oh noes!');
+    const spy = jest.spyOn(ActiveBotHelper, 'confirmAndOpenBotFromFile').mockRejectedValue('oh noes!');
     await instance.onOpenBotFileClick();
     const message = `An Error occurred on the Bot Not Open Explorer: oh noes!`;
     const notification = newNotification(message);

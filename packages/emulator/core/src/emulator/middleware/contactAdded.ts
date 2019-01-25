@@ -40,11 +40,7 @@ import sendErrorResponse from '../../utils/sendErrorResponse';
 import { ConversationAware } from './fetchConversation';
 
 export default function contactAdded(_botEmulator: BotEmulator) {
-  return async (
-    req: ConversationAware,
-    res: Restify.Response,
-    next: Restify.Next
-  ): Promise<any> => {
+  return async (req: ConversationAware, res: Restify.Response, next: Restify.Next): Promise<any> => {
     try {
       await req.conversation.sendContactAdded();
       res.send(HttpStatus.OK);

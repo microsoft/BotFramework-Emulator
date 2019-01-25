@@ -53,13 +53,9 @@ export default {
   suggestedActionTextColor: 'var(--webchat-sa-text)',
 
   transcriptOverlayButtonBackground: 'var(--webchat-transcript-overlay-bg)',
-  transcriptOverlayButtonBackgroundOnFocus:
-    'var(--webchat-transcript-overlay-bg-focus)',
-  transcriptOverlayButtonBackgroundOnHover:
-    'var(--webchat-transcript-overlay-bg-focus)',
+  transcriptOverlayButtonBackgroundOnFocus: 'var(--webchat-transcript-overlay-bg-focus)',
+  transcriptOverlayButtonBackgroundOnHover: 'var(--webchat-transcript-overlay-bg-focus)',
   transcriptOverlayButtonColor: 'var(--webchat-transcript-overlay-text)',
-  transcriptOverlayButtonColorOnFocus:
-    'var(--webchat-transcript-overlay-text-focus)',
-  transcriptOverlayButtonColorOnHover:
-    'var(--webchat-transcript-overlay-text-focus)',
+  transcriptOverlayButtonColorOnFocus: 'var(--webchat-transcript-overlay-text-focus)',
+  transcriptOverlayButtonColorOnHover: 'var(--webchat-transcript-overlay-text-focus)',
 };

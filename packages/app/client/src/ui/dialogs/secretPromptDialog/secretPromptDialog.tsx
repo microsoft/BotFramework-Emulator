@@ -31,12 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import {
-  DefaultButton,
-  Dialog,
-  PrimaryButton,
-  TextField,
-} from '@bfemulator/ui-react';
+import { DefaultButton, Dialog, PrimaryButton, TextField } from '@bfemulator/ui-react';
 import { ChangeEvent } from 'react';
 import * as React from 'react';
 
@@ -54,14 +49,8 @@ export interface SecretPromptDialogProps {
   onSaveClick: (newSecret: string) => void;
 }
 
-export class SecretPromptDialog extends React.Component<
-  SecretPromptDialogProps,
-  SecretPromptDialogState
-> {
-  constructor(
-    props: SecretPromptDialogProps,
-    context: SecretPromptDialogState
-  ) {
+export class SecretPromptDialog extends React.Component<SecretPromptDialogProps, SecretPromptDialogState> {
+  constructor(props: SecretPromptDialogProps, context: SecretPromptDialogState) {
     super(props, context);
 
     this.state = { secret: '', revealSecret: false };
@@ -82,9 +71,7 @@ export class SecretPromptDialog extends React.Component<
         <p>
           {'If you encrypted your bot file with the MsBot command-line tool, your bot file secret was displayed ' +
             'when you ran MsBot. '}
-          <a href="https://github.com/Microsoft/botbuilder-tools/tree/master/packages/MSBot">
-            Learn more about MsBot.
-          </a>
+          <a href="https://github.com/Microsoft/botbuilder-tools/tree/master/packages/MSBot">Learn more about MsBot.</a>
         </p>
         <div className={styles.keyContainer}>
           <TextField

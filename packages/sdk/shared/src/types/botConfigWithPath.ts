@@ -32,10 +32,7 @@
 //
 
 import { BotConfigurationBase } from 'botframework-config/lib/botConfigurationBase';
-import {
-  IBotConfiguration,
-  IEndpointService,
-} from 'botframework-config/lib/schema';
+import { IBotConfiguration, IEndpointService } from 'botframework-config/lib/schema';
 
 export interface BotConfigOverrides {
   readonly endpoint?: Partial<IEndpointService>;
@@ -46,14 +43,11 @@ export interface BotConfigWithPath extends IBotConfiguration {
   overrides?: BotConfigOverrides;
 }
 
-export class BotConfigWithPathImpl extends BotConfigurationBase
-  implements BotConfigWithPath {
+export class BotConfigWithPathImpl extends BotConfigurationBase implements BotConfigWithPath {
   public path = '';
   public overrides = null;
 
-  public static fromJSON(
-    source: Partial<BotConfigWithPathImpl>
-  ): BotConfigWithPathImpl {
+  public static fromJSON(source: Partial<BotConfigWithPathImpl>): BotConfigWithPathImpl {
     const botConfig = super.fromJSON(source) as Partial<BotConfigWithPathImpl>;
     const { path = '', overrides = null } = source;
     const botConfigWithPath = new BotConfigWithPathImpl();

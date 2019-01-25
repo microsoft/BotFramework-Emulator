@@ -114,9 +114,7 @@ export default abstract class ActivityVisitor {
   public traverseOAuthCard(oauthCard: OAuthCard) {
     const buttons = oauthCard.buttons;
     if (buttons) {
-      buttons.forEach(cardAction =>
-        this.visitOAuthCardAction(oauthCard.connectionName, cardAction)
-      );
+      buttons.forEach(cardAction => this.visitOAuthCardAction(oauthCard.connectionName, cardAction));
     }
   }
 
@@ -147,10 +145,7 @@ export default abstract class ActivityVisitor {
 
   protected abstract visitCardAction(cardAction: CardAction);
 
-  protected visitOAuthCardAction(
-    connectionName: string,
-    cardAction: CardAction
-  ) {
+  protected visitOAuthCardAction(connectionName: string, cardAction: CardAction) {
     this.visitCardAction(cardAction);
   }
 }

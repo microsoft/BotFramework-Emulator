@@ -39,11 +39,5 @@ import { DEFAULT_STATE as state, State } from './state';
 
 let store;
 export const getStore = (): Store<State> => {
-  return (
-    store ||
-    (store = applyMiddleware(createPromiseMiddleware())(createStore)(
-      reducers,
-      state
-    ))
-  );
+  return store || (store = applyMiddleware(createPromiseMiddleware())(createStore)(reducers, state));
 };

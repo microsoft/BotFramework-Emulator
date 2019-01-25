@@ -79,9 +79,7 @@ describe('<SplitButton>', () => {
 
   it('should handle clicking the default button', () => {
     const mockOnClick = jest.fn((_value: number) => null);
-    wrapper = mount(
-      <SplitButton options={mockOptions} onClick={mockOnClick} />
-    );
+    wrapper = mount(<SplitButton options={mockOptions} onClick={mockOnClick} />);
     instance = wrapper.instance();
     instance.onClickDefault();
 
@@ -90,9 +88,7 @@ describe('<SplitButton>', () => {
 
   it('should handle clicking an option', () => {
     const mockOnClick = jest.fn((_value: number) => null);
-    wrapper = mount(
-      <SplitButton options={mockOptions} onClick={mockOnClick} />
-    );
+    wrapper = mount(<SplitButton options={mockOptions} onClick={mockOnClick} />);
     instance = wrapper.instance();
     instance.hidePanel = mockHidePanel;
     instance.onClickOption(2);

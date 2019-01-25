@@ -65,9 +65,7 @@ export class Extension {
 
   public inspectorForObject(obj: any): GetInspectorResult | null {
     const inspectors = this.config.client.inspectors || [];
-    const inspector = inspectors.find(inspectorArg =>
-      InspectorAPI.canInspect(inspectorArg, obj)
-    );
+    const inspector = inspectors.find(inspectorArg => InspectorAPI.canInspect(inspectorArg, obj));
     return inspector
       ? {
           extension: this,
@@ -134,10 +132,7 @@ export class InspectorAPI {
   }
 }
 
-export function getValueFromPath(
-  source: { [prop: string]: any },
-  path: string
-): any {
+export function getValueFromPath(source: { [prop: string]: any }, path: string): any {
   const parts = path.split('.');
   let val = source;
   for (let i = 0; i < parts.length; i++) {
@@ -166,10 +161,7 @@ export interface ExtensionManager {
 
   getExtensions(): Extension[];
 
-  inspectorForObject(
-    obj: any,
-    defaultToJson: boolean
-  ): GetInspectorResult | null;
+  inspectorForObject(obj: any, defaultToJson: boolean): GetInspectorResult | null;
 }
 
 // =============================================================================
@@ -193,19 +185,14 @@ class EmulatorExtensionManager implements ExtensionManager {
   }
 
   public findExtension(name: string): Extension {
-    return this.getExtensions().find(
-      extension => extension.config.name === name
-    );
+    return this.getExtensions().find(extension => extension.config.name === name);
   }
 
   public getExtensions(): Extension[] {
     return Object.keys(this.extensions).map(key => this.extensions[key]) || [];
   }
 
-  public inspectorForObject(
-    obj: any,
-    defaultToJson: boolean
-  ): GetInspectorResult | null {
+  public inspectorForObject(obj: any, defaultToJson: boolean): GetInspectorResult | null {
     let result = this.getExtensions()
       .map(extension => extension.inspectorForObject(obj))
       .filter(resultArg => !!resultArg)
@@ -217,9 +204,7 @@ class EmulatorExtensionManager implements ExtensionManager {
       if (jsonExtension) {
         result = {
           extension: jsonExtension,
-          inspector: jsonExtension.config.client.inspectors
-            ? jsonExtension.config.client.inspectors[0]
-            : null,
+          inspector: jsonExtension.config.client.inspectors ? jsonExtension.config.client.inspectors[0] : null,
         };
       }
     }

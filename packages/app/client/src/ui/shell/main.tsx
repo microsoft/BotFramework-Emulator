@@ -88,12 +88,8 @@ export class Main extends React.Component<MainProps, MainState> {
     );
 
     const tabGroup2 =
-      this.props.secondaryEditor &&
-      Object.keys(this.props.secondaryEditor.documents).length ? (
-        <div
-          className={`${styles.mdiWrapper} ${styles.secondaryMdi}`}
-          key={'secondaryEditor'}
-        >
+      this.props.secondaryEditor && Object.keys(this.props.secondaryEditor.documents).length ? (
+        <div className={`${styles.mdiWrapper} ${styles.secondaryMdi}`} key={'secondaryEditor'}>
           <MDI owningEditor={Constants.EDITOR_KEY_SECONDARY} />
         </div>
       ) : null;
@@ -111,11 +107,7 @@ export class Main extends React.Component<MainProps, MainState> {
     }
 
     workbenchChildren.push(
-      <Splitter
-        orientation={'vertical'}
-        key={'tab-group-splitter'}
-        minSizes={{ 0: 160, 1: 160 }}
-      >
+      <Splitter orientation={'vertical'} key={'tab-group-splitter'} minSizes={{ 0: 160, 1: 160 }}>
         {tabGroups}
       </Splitter>
     );
@@ -124,10 +116,7 @@ export class Main extends React.Component<MainProps, MainState> {
       <div className={styles.main}>
         <div className={styles.nav}>
           {!this.props.presentationModeEnabled && (
-            <NavBar
-              selection={this.props.navBarSelection}
-              explorerIsVisible={this.props.explorerIsVisible}
-            />
+            <NavBar selection={this.props.navBarSelection} explorerIsVisible={this.props.explorerIsVisible} />
           )}
           <div className={styles.workbench}>
             <Splitter

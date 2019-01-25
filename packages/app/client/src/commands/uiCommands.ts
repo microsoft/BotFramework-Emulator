@@ -36,17 +36,10 @@ import { CommandRegistry } from '@bfemulator/sdk-shared';
 import { ServiceTypes } from 'botframework-config/lib/schema';
 
 import * as Constants from '../constants';
-import {
-  azureArmTokenDataChanged,
-  beginAzureAuthWorkflow,
-  invalidateArmToken,
-} from '../data/action/azureAuthActions';
+import { azureArmTokenDataChanged, beginAzureAuthWorkflow, invalidateArmToken } from '../data/action/azureAuthActions';
 import * as EditorActions from '../data/action/editorActions';
 import * as NavBarActions from '../data/action/navBarActions';
-import {
-  ProgressIndicatorPayload,
-  updateProgressIndicator,
-} from '../data/action/progressIndicatorActions';
+import { ProgressIndicatorPayload, updateProgressIndicator } from '../data/action/progressIndicatorActions';
 import { switchTheme } from '../data/action/themeActions';
 import { showWelcomePage } from '../data/editorHelpers';
 import { AzureAuthState } from '../data/reducer/azureAuthReducer';
@@ -122,49 +115,35 @@ export function registerCommands(commandRegistry: CommandRegistry) {
 
   // ---------------------------------------------------------------------------
   // Theme switching from main
-  commandRegistry.registerCommand(
-    UI.SwitchTheme,
-    (themeName: string, themeHref: string) => {
-      const linkTags = document.querySelectorAll<HTMLLinkElement>(
-        '[data-theme-component="true"]'
-      );
-      const themeTag = document.getElementById('themeVars') as HTMLLinkElement;
-      if (themeTag) {
-        themeTag.href = themeHref;
-      }
-      const themeComponents = Array.prototype.map.call(
-        linkTags,
-        link => link.href
-      ); // href is fully qualified
-      store.dispatch(switchTheme(themeName, themeComponents));
-      CommandServiceImpl.remoteCall(Telemetry.TrackEvent, 'app_chooseTheme', {
-        themeName,
-      }).catch(_e => void 0);
+  commandRegistry.registerCommand(UI.SwitchTheme, (themeName: string, themeHref: string) => {
+    const linkTags = document.querySelectorAll<HTMLLinkElement>('[data-theme-component="true"]');
+    const themeTag = document.getElementById('themeVars') as HTMLLinkElement;
+    if (themeTag) {
+      themeTag.href = themeHref;
     }
-  );
+    const themeComponents = Array.prototype.map.call(linkTags, link => link.href); // href is fully qualified
+    store.dispatch(switchTheme(themeName, themeComponents));
+    CommandServiceImpl.remoteCall(Telemetry.TrackEvent, 'app_chooseTheme', {
+      themeName,
+    }).catch(_e => void 0);
+  });
 
   // ---------------------------------------------------------------------------
   // Azure sign in
-  commandRegistry.registerCommand(
-    UI.SignInToAzure,
-    (serviceType: ServiceTypes) => {
-      store.dispatch(
-        beginAzureAuthWorkflow(
-          AzureLoginPromptDialogContainer,
-          { serviceType },
-          AzureLoginSuccessDialogContainer,
-          AzureLoginFailedDialogContainer
-        )
-      );
-    }
-  );
+  commandRegistry.registerCommand(UI.SignInToAzure, (serviceType: ServiceTypes) => {
+    store.dispatch(
+      beginAzureAuthWorkflow(
+        AzureLoginPromptDialogContainer,
+        { serviceType },
+        AzureLoginSuccessDialogContainer,
+        AzureLoginFailedDialogContainer
+      )
+    );
+  });
 
-  commandRegistry.registerCommand(
-    UI.ArmTokenReceivedOnStartup,
-    (azureAuth: AzureAuthState) => {
-      store.dispatch(azureArmTokenDataChanged(azureAuth.access_token));
-    }
-  );
+  commandRegistry.registerCommand(UI.ArmTokenReceivedOnStartup, (azureAuth: AzureAuthState) => {
+    store.dispatch(azureArmTokenDataChanged(azureAuth.access_token));
+  });
 
   commandRegistry.registerCommand(UI.InvalidateAzureArmToken, () => {
     store.dispatch(invalidateArmToken());
@@ -178,37 +157,28 @@ export function registerCommands(commandRegistry: CommandRegistry) {
 
   // ---------------------------------------------------------------------------
   // Shows the progress indicator component
-  commandRegistry.registerCommand(
-    UI.ShowProgressIndicator,
-    async (props?: ProgressIndicatorPayload) => {
-      return await DialogService.showDialog(
-        ProgressIndicatorContainer,
-        props
-        // eslint-disable-next-line no-console
-      ).catch(e => console.error(e));
-    }
-  );
+  commandRegistry.registerCommand(UI.ShowProgressIndicator, async (props?: ProgressIndicatorPayload) => {
+    return await DialogService.showDialog(
+      ProgressIndicatorContainer,
+      props
+      // eslint-disable-next-line no-console
+    ).catch(e => console.error(e));
+  });
 
   // ---------------------------------------------------------------------------
   // Updates the progress of the progress indicator component
-  commandRegistry.registerCommand(
-    UI.UpdateProgressIndicator,
-    (value: ProgressIndicatorPayload) => {
-      store.dispatch(updateProgressIndicator(value));
-    }
-  );
+  commandRegistry.registerCommand(UI.UpdateProgressIndicator, (value: ProgressIndicatorPayload) => {
+    store.dispatch(updateProgressIndicator(value));
+  });
 
   // ---------------------------------------------------------------------------
   // Shows the dialog telling the user that an update is available
-  commandRegistry.registerCommand(
-    UI.ShowUpdateAvailableDialog,
-    async (version: string = '') => {
-      return await DialogService.showDialog(UpdateAvailableDialogContainer, {
-        version,
-        // eslint-disable-next-line no-console
-      }).catch(e => console.error(e));
-    }
-  );
+  commandRegistry.registerCommand(UI.ShowUpdateAvailableDialog, async (version: string = '') => {
+    return await DialogService.showDialog(UpdateAvailableDialogContainer, {
+      version,
+      // eslint-disable-next-line no-console
+    }).catch(e => console.error(e));
+  });
 
   // ---------------------------------------------------------------------------
   // Shows the dialog telling the user that an update is unavailable

@@ -49,11 +49,7 @@ import { resources } from '../reducer/resourcesReducer';
 import { resourceSagas } from './resourcesSagas';
 
 const sagaMiddleWare = sagaMiddlewareFactory();
-const mockStore = createStore(
-  combineReducers({ resources }),
-  {},
-  applyMiddleware(sagaMiddleWare)
-);
+const mockStore = createStore(combineReducers({ resources }), {}, applyMiddleware(sagaMiddleWare));
 sagaMiddleWare.run(resourceSagas);
 
 jest.mock('../store', () => ({
@@ -137,9 +133,7 @@ describe('The ResourceSagas', () => {
           commandName: 'shell:open-file-location',
           args: ['the/file/path'],
         },
-      ].forEach((command, index) =>
-        expect(mockRemoteCommandsCalled[index]).toEqual(command)
-      );
+      ].forEach((command, index) => expect(mockRemoteCommandsCalled[index]).toEqual(command));
     });
 
     it('and put the resource in the store as the "resourceToRename" property when "edit" is chosen', async () => {
@@ -177,8 +171,7 @@ describe('The ResourceSagas', () => {
               title: 'Delete this file',
               buttons: ['Cancel', 'Delete'],
               defaultId: 1,
-              message:
-                'This action cannot be undone. Are you sure you want to delete testChat?',
+              message: 'This action cannot be undone. Are you sure you want to delete testChat?',
               cancelId: 0,
             },
           ],
@@ -187,9 +180,7 @@ describe('The ResourceSagas', () => {
           commandName: 'shell:unlink-file',
           args: ['the/file/path'],
         },
-      ].forEach((command, index) =>
-        expect(mockRemoteCommandsCalled[index]).toEqual(command)
-      );
+      ].forEach((command, index) => expect(mockRemoteCommandsCalled[index]).toEqual(command));
     });
   });
 
@@ -290,8 +281,6 @@ describe('The ResourceSagas', () => {
     await mockStore.dispatch(openResourcesSettings({ dialog: mockClass }));
     await Promise.resolve();
 
-    expect(mockRemoteCommandsCalled).toEqual([
-      { commandName: 'bot:list:patch', args: [undefined, true] },
-    ]);
+    expect(mockRemoteCommandsCalled).toEqual([{ commandName: 'bot:list:patch', args: [undefined, true] }]);
   });
 });

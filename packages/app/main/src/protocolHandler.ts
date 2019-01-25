@@ -34,13 +34,7 @@
 import * as Path from 'path';
 import * as QueryString from 'querystring';
 
-import {
-  FrameworkSettings,
-  newBot,
-  newEndpoint,
-  newNotification,
-  SharedConstants,
-} from '@bfemulator/app-shared';
+import { FrameworkSettings, newBot, newEndpoint, newNotification, SharedConstants } from '@bfemulator/app-shared';
 import got from 'got';
 import { IEndpointService } from 'botframework-config/lib/schema';
 import {
@@ -97,8 +91,7 @@ export interface ProtocolHandler {
   performBotAction: (protocol: Protocol) => void;
 }
 
-export const ProtocolHandler = new class ProtocolHandlerImpl
-  implements ProtocolHandler {
+export const ProtocolHandler = new class ProtocolHandlerImpl implements ProtocolHandler {
   /** Extracts useful information out of a protocol URL */
   public parseProtocolUrl(url: string): Protocol {
     const validProtocol = /^bfemulator:\/\//;
@@ -210,49 +203,28 @@ export const ProtocolHandler = new class ProtocolHandlerImpl
 
     if (appSettings.ngrokPath) {
       const ngrokSpawnStatus = emulator.ngrok.getSpawnStatus();
-      if (
-        !ngrokSpawnStatus.triedToSpawn ||
-        (ngrokSpawnStatus.triedToSpawn && ngrokSpawnStatus.err)
-      ) {
-        throw new Error(
-          `Error while trying to spawn ngrok instance: ${ngrokSpawnStatus.err ||
-            ''}`
-        );
+      if (!ngrokSpawnStatus.triedToSpawn || (ngrokSpawnStatus.triedToSpawn && ngrokSpawnStatus.err)) {
+        throw new Error(`Error while trying to spawn ngrok instance: ${ngrokSpawnStatus.err || ''}`);
       }
 
       // make sure there is an active bot on the client side and the emulator object contains the new endpoint
-      await mainWindow.commandService.remoteCall(
-        SharedConstants.Commands.Bot.SetActive,
-        bot,
-        ''
-      );
-      await mainWindow.commandService.call(
-        SharedConstants.Commands.Bot.RestartEndpointService
-      );
+      await mainWindow.commandService.remoteCall(SharedConstants.Commands.Bot.SetActive, bot, '');
+      await mainWindow.commandService.call(SharedConstants.Commands.Bot.RestartEndpointService);
 
       if (running()) {
-        mainWindow.commandService.remoteCall(
-          SharedConstants.Commands.Emulator.NewLiveChat,
-          endpoint
-        );
+        mainWindow.commandService.remoteCall(SharedConstants.Commands.Emulator.NewLiveChat, endpoint);
       } else {
         // if ngrok hasn't connected yet, wait for it to connect and start the livechat
         ngrokEmitter.once(
           'connect',
           (...args: any[]): void => {
-            mainWindow.commandService.remoteCall(
-              SharedConstants.Commands.Emulator.NewLiveChat,
-              endpoint
-            );
+            mainWindow.commandService.remoteCall(SharedConstants.Commands.Emulator.NewLiveChat, endpoint);
           }
         );
       }
     } else {
       // try to connect and let the chat log showExplorer the user the error
-      mainWindow.commandService.remoteCall(
-        SharedConstants.Commands.Emulator.NewLiveChat,
-        endpoint
-      );
+      mainWindow.commandService.remoteCall(SharedConstants.Commands.Emulator.NewLiveChat, endpoint);
     }
   }
 
@@ -272,9 +244,7 @@ export const ProtocolHandler = new class ProtocolHandlerImpl
               const transcriptString = res.body;
               const conversationActivities = JSON.parse(transcriptString);
               if (!Array.isArray(conversationActivities)) {
-                throw new Error(
-                  'Invalid transcript file contents; should be an array of conversation activities.'
-                );
+                throw new Error('Invalid transcript file contents; should be an array of conversation activities.');
               }
               const { name, ext } = Path.parse(url);
               const fileName = `${name}${ext}`;
@@ -286,18 +256,14 @@ export const ProtocolHandler = new class ProtocolHandlerImpl
                 { activities: conversationActivities, inMemory: true, fileName }
               );
             } catch (e) {
-              throw new Error(
-                `Error occured while reading downloaded transcript: ${e}`
-              );
+              throw new Error(`Error occured while reading downloaded transcript: ${e}`);
             }
           }
         } else {
           if (res.statusCode === 401) {
             // auth failed
             const stat = res.body || res.statusText || '';
-            throw new Error(
-              `Authorization error while trying to download transcript: ${stat}`
-            );
+            throw new Error(`Authorization error while trying to download transcript: ${stat}`);
           }
           if (res.statusCode === 404) {
             // transcript link is broken / doesn't exist anymore
@@ -314,34 +280,21 @@ export const ProtocolHandler = new class ProtocolHandlerImpl
 
   /** Opens the bot project associated with the .bot file at the specified path */
   public async openBot(protocol: Protocol): Promise<void> {
-    const {
-      path,
-      secret,
-    }: { path: string; secret: string } = protocol.parsedArgs;
+    const { path, secret }: { path: string; secret: string } = protocol.parsedArgs;
 
-    const endpointOverrides: Partial<IEndpointService> = parseEndpointOverrides(
-      protocol.parsedArgs
-    );
-    const overrides: BotConfigOverrides = endpointOverrides
-      ? { endpoint: endpointOverrides }
-      : null;
+    const endpointOverrides: Partial<IEndpointService> = parseEndpointOverrides(protocol.parsedArgs);
+    const overrides: BotConfigOverrides = endpointOverrides ? { endpoint: endpointOverrides } : null;
 
     let bot: BotConfigWithPath;
     try {
-      bot = await mainWindow.commandService.call(
-        SharedConstants.Commands.Bot.Open,
-        path,
-        secret
-      );
+      bot = await mainWindow.commandService.call(SharedConstants.Commands.Bot.Open, path, secret);
       if (!bot) {
         throw new Error(
           `Error occurred while trying to open bot at ${path} inside of protocol handler: Bot is invalid.`
         );
       }
     } catch (e) {
-      throw new Error(
-        `Error occurred while trying to open bot at ${path} inside of protocol handler: ${e}`
-      );
+      throw new Error(`Error occurred while trying to open bot at ${path} inside of protocol handler: ${e}`);
     }
 
     // apply any overrides
@@ -352,30 +305,16 @@ export const ProtocolHandler = new class ProtocolHandlerImpl
     const appSettings: FrameworkSettings = getSettings().framework;
     if (appSettings.ngrokPath) {
       const ngrokSpawnStatus = emulator.ngrok.getSpawnStatus();
-      if (
-        !ngrokSpawnStatus.triedToSpawn ||
-        (ngrokSpawnStatus.triedToSpawn && ngrokSpawnStatus.err)
-      ) {
-        throw new Error(
-          `Error while trying to spawn ngrok instance: ${ngrokSpawnStatus.err ||
-            ''}`
-        );
+      if (!ngrokSpawnStatus.triedToSpawn || (ngrokSpawnStatus.triedToSpawn && ngrokSpawnStatus.err)) {
+        throw new Error(`Error while trying to spawn ngrok instance: ${ngrokSpawnStatus.err || ''}`);
       }
 
       if (running()) {
         try {
-          await mainWindow.commandService.call(
-            SharedConstants.Commands.Bot.SetActive,
-            bot
-          );
-          await mainWindow.commandService.remoteCall(
-            SharedConstants.Commands.Bot.Load,
-            bot
-          );
+          await mainWindow.commandService.call(SharedConstants.Commands.Bot.SetActive, bot);
+          await mainWindow.commandService.remoteCall(SharedConstants.Commands.Bot.Load, bot);
         } catch (e) {
-          throw new Error(
-            `(ngrok running) Error occurred while trying to deep link to bot project at ${path}: ${e}`
-          );
+          throw new Error(`(ngrok running) Error occurred while trying to deep link to bot project at ${path}: ${e}`);
         }
       } else {
         // if ngrok hasn't connected yet, wait for it to connect and load the bot
@@ -383,14 +322,8 @@ export const ProtocolHandler = new class ProtocolHandlerImpl
           'connect',
           async (...args: any[]): Promise<void> => {
             try {
-              await mainWindow.commandService.call(
-                SharedConstants.Commands.Bot.SetActive,
-                bot
-              );
-              await mainWindow.commandService.remoteCall(
-                SharedConstants.Commands.Bot.Load,
-                bot
-              );
+              await mainWindow.commandService.call(SharedConstants.Commands.Bot.SetActive, bot);
+              await mainWindow.commandService.remoteCall(SharedConstants.Commands.Bot.Load, bot);
             } catch (e) {
               throw new Error(
                 `(ngrok running but not connected) Error occurred while ` +
@@ -402,14 +335,8 @@ export const ProtocolHandler = new class ProtocolHandlerImpl
       }
     } else {
       try {
-        await mainWindow.commandService.call(
-          SharedConstants.Commands.Bot.SetActive,
-          bot
-        );
-        await mainWindow.commandService.remoteCall(
-          SharedConstants.Commands.Bot.Load,
-          bot
-        );
+        await mainWindow.commandService.call(SharedConstants.Commands.Bot.SetActive, bot);
+        await mainWindow.commandService.remoteCall(SharedConstants.Commands.Bot.Load, bot);
       } catch (e) {
         throw new Error(
           `(ngrok not configured) Error occurred while trying to deep link to bot project at ${path}: ${e}`
@@ -429,20 +356,13 @@ export const ProtocolHandler = new class ProtocolHandlerImpl
  * override object if there are appropriate parameters
  * @param parsedArgs Parsed protocol URI query parameters
  */
-export function parseEndpointOverrides(parsedArgs: {
-  [key: string]: string;
-}): Partial<IEndpointService> {
+export function parseEndpointOverrides(parsedArgs: { [key: string]: string }): Partial<IEndpointService> {
   if (!parsedArgs || !Object.keys(parsedArgs).length) {
     return null;
   }
 
   const endpointOverrides: Partial<IEndpointService> = {};
-  const {
-    appId = null,
-    appPassword = null,
-    endpoint = null,
-    id = null,
-  } = parsedArgs;
+  const { appId = null, appPassword = null, endpoint = null, id = null } = parsedArgs;
 
   if (appId) {
     endpointOverrides.appId = appId;

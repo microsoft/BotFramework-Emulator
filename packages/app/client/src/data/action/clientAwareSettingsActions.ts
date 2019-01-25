@@ -42,9 +42,7 @@ export interface ClientAwareSettingsActions extends Action {
   payload: ClientAwareSettings;
 }
 
-export function clientAwareSettingsChanged(
-  settings: ClientAwareSettings
-): ClientAwareSettingsActions {
+export function clientAwareSettingsChanged(settings: ClientAwareSettings): ClientAwareSettingsActions {
   return {
     type: CLIENT_AWARE_SETTINGS_CHANGED,
     payload: settings,

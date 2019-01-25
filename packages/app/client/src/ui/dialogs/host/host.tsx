@@ -64,25 +64,10 @@ export class DialogHost extends React.Component<DialogHostProps, {}> {
     const sentinelTabIndex = this.props.showing ? 0 : -1;
 
     return (
-      <div
-        className={`${styles.host} ${visibilityClass}`}
-        onClick={this.handleOverlayClick}
-      >
-        <span
-          tabIndex={sentinelTabIndex}
-          onFocus={this.onFocusStartingSentinel}
-          className={styles.focusSentinel}
-        />
-        <div
-          className={styles.dialogHostContent}
-          onClick={this.handleContentClick}
-          ref={this.saveHostRef}
-        />
-        <span
-          tabIndex={sentinelTabIndex}
-          onFocus={this.onFocusEndingSentinel}
-          className={styles.focusSentinel}
-        />
+      <div className={`${styles.host} ${visibilityClass}`} onClick={this.handleOverlayClick}>
+        <span tabIndex={sentinelTabIndex} onFocus={this.onFocusStartingSentinel} className={styles.focusSentinel} />
+        <div className={styles.dialogHostContent} onClick={this.handleContentClick} ref={this.saveHostRef} />
+        <span tabIndex={sentinelTabIndex} onFocus={this.onFocusEndingSentinel} className={styles.focusSentinel} />
       </div>
     );
   }
@@ -123,9 +108,7 @@ export class DialogHost extends React.Component<DialogHostProps, {}> {
 
     const allFocusableElements = this.getFocusableElementsInModal();
     if (allFocusableElements.length) {
-      let lastChild: HTMLElement = allFocusableElements[
-        allFocusableElements.length - 1
-      ] as HTMLElement;
+      let lastChild: HTMLElement = allFocusableElements[allFocusableElements.length - 1] as HTMLElement;
 
       if (lastChild.hasAttribute('disabled')) {
         // focus the last element in the list that isn't disabled

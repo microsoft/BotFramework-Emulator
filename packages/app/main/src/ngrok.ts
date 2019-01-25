@@ -138,15 +138,11 @@ function runNgrok(opts: any, cb: any) {
     return cb();
   }
   const filename = `${opts.path ? path.basename(opts.path) : bin}`;
-  const folder = opts.path
-    ? path.dirname(opts.path)
-    : path.join(__dirname, 'bin');
+  const folder = opts.path ? path.dirname(opts.path) : path.join(__dirname, 'bin');
 
-  ngrok = spawn(
-    path.join(folder, filename),
-    ['start', '--none', '--log=stdout', '--region=' + opts.region],
-    { cwd: folder }
-  ).on('error', err => {
+  ngrok = spawn(path.join(folder, filename), ['start', '--none', '--log=stdout', '--region=' + opts.region], {
+    cwd: folder,
+  }).on('error', err => {
     cb(err);
   });
 
@@ -198,10 +194,7 @@ function checkForNgrokExpiration(): void {
     cleanUpNgrokExpirationTimer();
     ngrokEmitter.emit('expired');
   } else {
-    ngrokExpirationTimer = setTimeout(
-      checkForNgrokExpiration,
-      NGROK_EXPIRATION_POLLING_INTERVAL
-    );
+    ngrokExpirationTimer = setTimeout(checkForNgrokExpiration, NGROK_EXPIRATION_POLLING_INTERVAL);
   }
 }
 
@@ -220,10 +213,7 @@ function runTunnel(opts: any, cb: any) {
 
     // start polling for ngrok expiration
     ngrokStartTime = Date.now();
-    ngrokExpirationTimer = setTimeout(
-      checkForNgrokExpiration,
-      NGROK_EXPIRATION_POLLING_INTERVAL
-    );
+    ngrokExpirationTimer = setTimeout(checkForNgrokExpiration, NGROK_EXPIRATION_POLLING_INTERVAL);
 
     ngrokEmitter.emit('connect', url, inspectPort);
     return cb(null, url, inspectPort);
@@ -243,12 +233,7 @@ function _runTunnel(opts: any, cb: any) {
       .then(resp => {
         const url = resp.body && resp.body.public_url;
         if (!url) {
-          return cb(
-            xtend(
-              new Error(resp.body.msg || 'failed to start tunnel'),
-              resp.body
-            )
-          );
+          return cb(xtend(new Error(resp.body.msg || 'failed to start tunnel'), resp.body));
         }
         tunnels[url] = resp.body.uri;
         if (opts.proto === 'http' && opts.bind_tls !== false) {
@@ -263,9 +248,7 @@ function _runTunnel(opts: any, cb: any) {
             err.response.body.details &&
             err.response.body.details.err === 'tunnel session not ready yet');
         if (notReady) {
-          return retries--
-            ? setTimeout(retry, 200)
-            : cb(new Error(err.response.body));
+          return retries-- ? setTimeout(retry, 200) : cb(new Error(err.response.body));
         }
         return cb(err);
       });

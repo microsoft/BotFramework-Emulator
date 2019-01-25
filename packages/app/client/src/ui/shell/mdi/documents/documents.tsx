@@ -53,11 +53,7 @@ export class Documents extends React.Component<DocumentsProps> {
       const document = documents[documentId];
 
       return (
-        <TabbedDocument
-          key={documentId}
-          documentId={documentId}
-          hidden={!isActive}
-        >
+        <TabbedDocument key={documentId} documentId={documentId} hidden={!isActive}>
           <EditorFactory document={document} />
         </TabbedDocument>
       );

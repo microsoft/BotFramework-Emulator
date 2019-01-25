@@ -105,13 +105,7 @@ export function exceptionItem(err: any): ILogItem {
   };
 }
 
-export function networkRequestItem(
-  facility: any,
-  body: any,
-  headers: any,
-  method: any,
-  url: any
-): ILogItem {
+export function networkRequestItem(facility: any, body: any, headers: any, method: any, url: any): ILogItem {
   return {
     type: 'network-request',
     payload: {

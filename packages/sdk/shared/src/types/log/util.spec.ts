@@ -94,13 +94,7 @@ describe('utils tests', () => {
   });
 
   test('networkRequestItem', () => {
-    const item = networkRequestItem(
-      'someFacility',
-      'someBody',
-      'someHeaders',
-      'someMethod',
-      'someUrl'
-    );
+    const item = networkRequestItem('someFacility', 'someBody', 'someHeaders', 'someMethod', 'someUrl');
     expect(item.type).toBe('network-request');
     expect(item.payload).toEqual({
       facility: 'someFacility',
@@ -112,13 +106,7 @@ describe('utils tests', () => {
   });
 
   test('networkResponseItem', () => {
-    const item = networkResponseItem(
-      'someBody',
-      'someHeaders',
-      'someStatusCode',
-      'someStatusMessage',
-      'someSrcUrl'
-    );
+    const item = networkResponseItem('someBody', 'someHeaders', 'someStatusCode', 'someStatusMessage', 'someSrcUrl');
     expect(item.type).toBe('network-response');
     expect(item.payload).toEqual({
       body: 'someBody',

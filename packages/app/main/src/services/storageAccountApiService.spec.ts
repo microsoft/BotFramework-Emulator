@@ -33,8 +33,7 @@
 import '../fetchProxy';
 import { StorageAccountApiService } from './storageAccountApiService';
 
-const mockArmToken =
-  'bm90aGluZw.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds';
+const mockArmToken = 'bm90aGluZw.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds';
 const mockResponseTemplate = [
   {
     value: [

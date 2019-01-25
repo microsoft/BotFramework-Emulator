@@ -155,9 +155,7 @@ describe('BotCreationDialog tests', () => {
     (testWrapper.instance() as any).onChannelServiceChange(mockCheck as any);
 
     state = testWrapper.state() as Partial<BotCreationDialogState>;
-    expect((state.endpoint as any).channelService).toBe(
-      'https://botframework.azure.us'
-    );
+    expect((state.endpoint as any).channelService).toBe('https://botframework.azure.us');
 
     // unchecked
     mockCheck.target.checked = false;
@@ -168,35 +166,24 @@ describe('BotCreationDialog tests', () => {
   });
 
   it('should validate the endpoint', () => {
-    expect(
-      (testWrapper.instance() as any).validateEndpoint(
-        'http://localhost:3000/api/messages'
-      )
-    ).toBe('');
-    expect(
-      (testWrapper.instance() as any).validateEndpoint('http://localhost:3000')
-    ).toBe(`Please include route if necessary: "/api/messages"`);
+    expect((testWrapper.instance() as any).validateEndpoint('http://localhost:3000/api/messages')).toBe('');
+    expect((testWrapper.instance() as any).validateEndpoint('http://localhost:3000')).toBe(
+      `Please include route if necessary: "/api/messages"`
+    );
   });
 
   it('should save and connect', async () => {
     const instance = testWrapper.instance();
-    const remoteCallSpy = jest
-      .spyOn(CommandServiceImpl, 'remoteCall')
-      .mockResolvedValue('some/path');
-    const confirmAndCreateSpy = jest
-      .spyOn(ActiveBotHelper, 'confirmAndCreateBot')
-      .mockResolvedValue(true);
+    const remoteCallSpy = jest.spyOn(CommandServiceImpl, 'remoteCall').mockResolvedValue('some/path');
+    const confirmAndCreateSpy = jest.spyOn(ActiveBotHelper, 'confirmAndCreateBot').mockResolvedValue(true);
     await instance.onSaveAndConnect();
-    expect(remoteCallSpy).toHaveBeenCalledWith(
-      'shell:showExplorer-save-dialog',
-      {
-        buttonLabel: 'Save',
-        defaultPath: 'some/path',
-        filters: [{ extensions: ['bot'], name: 'Bot Files' }],
-        showsTagField: false,
-        title: 'Save as',
-      }
-    );
+    expect(remoteCallSpy).toHaveBeenCalledWith('shell:showExplorer-save-dialog', {
+      buttonLabel: 'Save',
+      defaultPath: 'some/path',
+      filters: [{ extensions: ['bot'], name: 'Bot Files' }],
+      showsTagField: false,
+      title: 'Save as',
+    });
     expect(confirmAndCreateSpy).toHaveBeenCalledWith(
       {
         description: '',

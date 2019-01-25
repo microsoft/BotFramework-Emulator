@@ -33,8 +33,7 @@
 import '../fetchProxy';
 import { CosmosDbApiService } from '../../../../app/main/src/services/cosmosDbApiService';
 
-const mockArmToken =
-  'bm90aGluZw.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds';
+const mockArmToken = 'bm90aGluZw.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds';
 const mockArgsPassedToFetch = [];
 let mockResponses;
 jest.mock('node-fetch', () => {
@@ -87,8 +86,7 @@ const mockResponseTemplate = [
   {
     value: [
       {
-        id:
-          '/subscriptions/0fb11cbc/resourceGroups/gfds/providers/Microsoft.DocumentDB/databaseAccounts/gfds',
+        id: '/subscriptions/0fb11cbc/resourceGroups/gfds/providers/Microsoft.DocumentDB/databaseAccounts/gfds',
         name: 'gfds',
         location: 'South Central Los Angeles',
         type: 'Microsoft.DocumentDB/databaseAccounts',
@@ -105,8 +103,7 @@ const mockResponseTemplate = [
   {
     value: [
       {
-        id:
-          '/subscriptions/0fb11cbc/resourceGroups/gfds1/providers/Microsoft.DocumentDB/databaseAccounts/gfds1',
+        id: '/subscriptions/0fb11cbc/resourceGroups/gfds1/providers/Microsoft.DocumentDB/databaseAccounts/gfds1',
         name: 'gfds1',
         location: 'South Central Los Angeles',
         type: 'Microsoft.DocumentDB/databaseAccounts',

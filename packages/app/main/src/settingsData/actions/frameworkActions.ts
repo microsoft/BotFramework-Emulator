@@ -41,9 +41,7 @@ export interface FrameworkAction<P> extends Action {
   state: P;
 }
 
-export function setFramework(
-  frameworkSettings: FrameworkSettings
-): FrameworkAction<FrameworkSettings> {
+export function setFramework(frameworkSettings: FrameworkSettings): FrameworkAction<FrameworkSettings> {
   return {
     type: SET_FRAMEWORK,
     state: frameworkSettings,

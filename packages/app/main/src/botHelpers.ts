@@ -31,15 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import {
-  BotInfo,
-  getBotDisplayName,
-  SharedConstants,
-} from '@bfemulator/app-shared';
-import {
-  BotConfigWithPath,
-  BotConfigWithPathImpl,
-} from '@bfemulator/sdk-shared';
+import { BotInfo, getBotDisplayName, SharedConstants } from '@bfemulator/app-shared';
+import { BotConfigWithPath, BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
 import { BotConfiguration } from 'botframework-config';
 
 import * as BotActions from './botData/actions/botActions';
@@ -67,10 +60,7 @@ export function pathExistsInRecentBots(path: string): boolean {
  *  to keep retrying until the correct secret is entered or the popup
  *  is dismissed.
  */
-export async function loadBotWithRetry(
-  botPath: string,
-  secret?: string
-): Promise<BotConfigWithPath> {
+export async function loadBotWithRetry(botPath: string, secret?: string): Promise<BotConfigWithPath> {
   try {
     // load the bot and transform it into internal BotConfig implementation
     let bot: BotConfigWithPath = await BotConfiguration.load(botPath, secret);
@@ -117,14 +107,10 @@ export async function loadBotWithRetry(
 }
 
 /** Prompts the user for a secret and retries the bot load flow */
-export async function promptForSecretAndRetry(
-  botPath: string
-): Promise<BotConfigWithPath> {
+export async function promptForSecretAndRetry(botPath: string): Promise<BotConfigWithPath> {
   // bot requires a secret to decrypt properties
   const { Commands } = SharedConstants;
-  const newSecret = await mainWindow.commandService.remoteCall(
-    Commands.UI.ShowSecretPromptDialog
-  );
+  const newSecret = await mainWindow.commandService.remoteCall(Commands.UI.ShowSecretPromptDialog);
   if (newSecret === null) {
     // pop-up was dismissed; stop trying to prompt for secret
     return null;
@@ -134,10 +120,7 @@ export async function promptForSecretAndRetry(
 }
 
 /** Converts a BotConfigWithPath to a BotConfig */
-export function toSavableBot(
-  bot: BotConfigWithPath,
-  secret?: string
-): BotConfiguration {
+export function toSavableBot(bot: BotConfigWithPath, secret?: string): BotConfiguration {
   if (!bot) {
     throw new Error(`Cannot convert ${'' + bot} bot to savable bot.`);
   }
@@ -162,10 +145,7 @@ export function cloneBot(bot: BotConfigWithPath): BotConfigWithPath {
 /** Patches a bot record in bots.json, and updates the list
  *  in the store and on disk.
  */
-export async function patchBotsJson(
-  botPath: string,
-  bot: BotInfo
-): Promise<BotInfo[]> {
+export async function patchBotsJson(botPath: string, bot: BotInfo): Promise<BotInfo[]> {
   const state = store.getState();
   const bots = [...state.bot.botFiles];
   const botIndex = bots.findIndex(bot1 => bot1.path === botPath);
@@ -176,9 +156,7 @@ export async function patchBotsJson(
   }
   store.dispatch(BotActions.load(bots));
   const { Commands } = SharedConstants;
-  await mainWindow.commandService
-    .remoteCall(Commands.Bot.SyncBotList, bots)
-    .catch();
+  await mainWindow.commandService.remoteCall(Commands.Bot.SyncBotList, bots).catch();
 
   return bots;
 }
@@ -201,7 +179,5 @@ export async function removeBotFromList(botPath: string): Promise<void> {
   const bots = [...state.bot.botFiles].filter(bot => bot.path !== botPath);
   store.dispatch(BotActions.load(bots));
   const { Commands } = SharedConstants;
-  await mainWindow.commandService
-    .remoteCall(Commands.Bot.SyncBotList, bots)
-    .catch();
+  await mainWindow.commandService.remoteCall(Commands.Bot.SyncBotList, bots).catch();
 }

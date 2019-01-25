@@ -60,18 +60,15 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
   // ---------------------------------------------------------------------------
   // Write file
-  commandRegistry.registerCommand(
-    Commands.Write,
-    (path: string, contents: object | string) => {
-      try {
-        writeFile(path, contents);
-      } catch (e) {
-        // eslint-disable-next-line no-console
-        console.error(`Failure writing to file at ${path}: `, e);
-        throw e;
-      }
+  commandRegistry.registerCommand(Commands.Write, (path: string, contents: object | string) => {
+    try {
+      writeFile(path, contents);
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error(`Failure writing to file at ${path}: `, e);
+      throw e;
     }
-  );
+  });
 
   // ---------------------------------------------------------------------------
   // Sanitize a string for file name usage

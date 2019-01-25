@@ -62,9 +62,7 @@ export class EntityViewer extends Component<EntityViwerProps, {}> {
 
     if (Array.isArray(entityValue)) {
       if (typeof entityValue[0] === 'object') {
-        entityValue = entityValue.map(ev =>
-          EntityViewer.renderEntityValueObject(ev)
-        );
+        entityValue = entityValue.map(ev => EntityViewer.renderEntityValueObject(ev));
       }
       return entityValue.join(', ');
     }
@@ -91,9 +89,7 @@ export class EntityViewer extends Component<EntityViwerProps, {}> {
       <div className={styles.entityViewer}>
         <div id="entityName">{this.props.entity.name}</div>
         <div id="arrow">{'&nbsp; -->&nbsp; '}</div>
-        <div id="entityValue">
-          {EntityViewer.renderEntityValue(this.props.entity.value)}
-        </div>
+        <div id="entityValue">{EntityViewer.renderEntityValue(this.props.entity.value)}</div>
       </div>
     );
   }

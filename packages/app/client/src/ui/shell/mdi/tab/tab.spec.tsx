@@ -57,10 +57,7 @@ describe('Tab', () => {
     mockDispatch = jest.spyOn(mockStore, 'dispatch');
     wrapper = mount(
       <Provider store={mockStore}>
-        <TabContainer
-          onCloseClick={mockOnCloseClick}
-          documentId={'someDocId'}
-        />
+        <TabContainer onCloseClick={mockOnCloseClick} documentId={'someDocId'} />
       </Provider>
     );
     node = wrapper.find(Tab);

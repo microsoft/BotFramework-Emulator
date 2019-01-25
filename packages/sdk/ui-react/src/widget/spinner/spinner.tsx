@@ -43,13 +43,7 @@ export class Spinner extends React.Component<SpinnerProps, {}> {
   private animationFrame = 0;
 
   public render(): React.ReactNode {
-    const {
-      numSegments = 8,
-      segmentRadius = 3,
-      width = 40,
-      height = 40,
-      ...svgProps
-    } = this.props;
+    const { numSegments = 8, segmentRadius = 3, width = 40, height = 40, ...svgProps } = this.props;
     const segments = [];
     let i = numSegments;
     while (i--) {
@@ -85,10 +79,7 @@ export class Spinner extends React.Component<SpinnerProps, {}> {
       if (shouldTick) {
         const deg = ((360 / 1.5 / numSegments) * tickCt) % 360;
         const { firstElementChild: g } = svg;
-        g.setAttribute(
-          'transform',
-          `rotate(${deg} ${width / 2} ${height / 2})`
-        );
+        g.setAttribute('transform', `rotate(${deg} ${width / 2} ${height / 2})`);
         tickCt++;
         lastTick = time;
       }

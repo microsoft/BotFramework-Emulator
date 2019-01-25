@@ -31,17 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import {
-  Checkbox,
-  DefaultButton,
-  Dialog,
-  DialogFooter,
-  PrimaryButton,
-} from '@bfemulator/ui-react';
-import {
-  IConnectedService,
-  ServiceTypes,
-} from 'botframework-config/lib/schema';
+import { Checkbox, DefaultButton, Dialog, DialogFooter, PrimaryButton } from '@bfemulator/ui-react';
+import { IConnectedService, ServiceTypes } from 'botframework-config/lib/schema';
 import * as React from 'react';
 import { ChangeEvent, ChangeEventHandler, Component, ReactNode } from 'react';
 
@@ -52,8 +43,7 @@ const titleMap = {
   [ServiceTypes.Dispatch]: 'Connect to a Dispatch model',
   [ServiceTypes.QnA]: 'Connect to your QnA Maker knowledge base',
   [ServiceTypes.Bot]: 'Connect to an Azure Bot Service',
-  [ServiceTypes.AppInsights]:
-    'Connect to an Azure Application Insights resource',
+  [ServiceTypes.AppInsights]: 'Connect to an Azure Application Insights resource',
   [ServiceTypes.BlobStorage]: 'Connect to an Azure Storage account',
   [ServiceTypes.CosmosDB]: 'Connect to an Azure Cosmos DB account',
 };
@@ -80,10 +70,7 @@ interface ConnectedServicesPickerState {
   checkAllChecked: boolean;
 }
 
-export class ConnectedServicePicker extends Component<
-  ConnectedServicesPickerProps,
-  ConnectedServicesPickerState
-> {
+export class ConnectedServicePicker extends Component<ConnectedServicesPickerProps, ConnectedServicesPickerState> {
   public state: ConnectedServicesPickerState = { checkAllChecked: false };
 
   public static getDerivedStateFromProps(
@@ -118,11 +105,7 @@ export class ConnectedServicePicker extends Component<
         </div>
         <DialogFooter>
           <DefaultButton text="Cancel" onClick={this.props.cancel} />
-          <PrimaryButton
-            text="Add"
-            onClick={this.onAddClick}
-            disabled={!this.addButtonEnabled}
-          />
+          <PrimaryButton text="Add" onClick={this.onAddClick} disabled={!this.addButtonEnabled} />
         </DialogFooter>
       </Dialog>
     );
@@ -144,9 +127,7 @@ export class ConnectedServicePicker extends Component<
       return (
         <li key={index}>
           <Checkbox {...checkboxProps} className={styles.checkboxOverride} />
-          {'version' in service ? (
-            <span>v{(service as any).version}</span>
-          ) : null}
+          {'version' in service ? <span>v{(service as any).version}</span> : null}
         </li>
       );
     });
@@ -155,9 +136,7 @@ export class ConnectedServicePicker extends Component<
   private get addButtonEnabled(): boolean {
     const { state } = this;
     const { checkAllChecked: _discarded, ...selectedModels } = state;
-    return Object.keys(selectedModels).some(
-      key => !!state[key] && state[key] !== connected
-    );
+    return Object.keys(selectedModels).some(key => !!state[key] && state[key] !== connected);
   }
 
   private onChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -165,9 +144,7 @@ export class ConnectedServicePicker extends Component<
     const { index } = event.target.dataset;
     const service = this.props.availableServices[index];
     newState[service.id] = !this.state[service.id] ? service : false;
-    newState.checkAllChecked = Object.keys(newState).every(
-      key => !!newState[key]
-    );
+    newState.checkAllChecked = Object.keys(newState).every(key => !!newState[key]);
     this.setState(newState);
   };
 
@@ -194,10 +171,7 @@ export class ConnectedServicePicker extends Component<
       }
       return models;
     };
-    const addedModels: IConnectedService[] = Object.keys(services).reduce(
-      reducer,
-      []
-    );
+    const addedModels: IConnectedService[] = Object.keys(services).reduce(reducer, []);
     this.props.connectServices(addedModels);
   };
 
@@ -259,9 +233,7 @@ export class ConnectedServicePicker extends Component<
   private get qnaServiceHeader(): ReactNode {
     return (
       <p>
-        {
-          ' Select a knowledge base below to store the knowledge base Id in your bot file or '
-        }
+        {' Select a knowledge base below to store the knowledge base Id in your bot file or '}
         <a href="javascript:void(0);" onClick={this.props.launchServiceEditor}>
           connect to a knowledge base manually
         </a>
@@ -345,22 +317,13 @@ export class ConnectedServicePicker extends Component<
   private get luisServiceContent(): ReactNode {
     return (
       <>
-        <a
-          href="http://aka.ms/bot-framework-emulator-create-luis-app"
-          className={styles.paddedLink}
-        >
+        <a href="http://aka.ms/bot-framework-emulator-create-luis-app" className={styles.paddedLink}>
           Create a new LUIS app
         </a>
         <p>
-          {`Signed in as ${
-            this.props.authenticatedUser
-          }. You can link apps from a different LUIS `}
-          {
-            'account to this Azure account by adding yourself as a collaborator.'
-          }
-          <a href="http://aka.ms/bot-framework-emulator-luis-collaboration">
-            Learn more about collaborating.
-          </a>
+          {`Signed in as ${this.props.authenticatedUser}. You can link apps from a different LUIS `}
+          {'account to this Azure account by adding yourself as a collaborator.'}
+          <a href="http://aka.ms/bot-framework-emulator-luis-collaboration">Learn more about collaborating.</a>
         </p>
       </>
     );
@@ -369,10 +332,7 @@ export class ConnectedServicePicker extends Component<
   private get qnaServiceContent(): ReactNode {
     return (
       <>
-        <a
-          href="http://aka.ms/bot-framework-emulator-create-qna-kb"
-          className={styles.paddedLink}
-        >
+        <a href="http://aka.ms/bot-framework-emulator-create-qna-kb" className={styles.paddedLink}>
           Create a new knowledge base.
         </a>
         <p>{` Signed in as ${this.props.authenticatedUser}.`}</p>
@@ -383,22 +343,13 @@ export class ConnectedServicePicker extends Component<
   private get dispatchServiceContent(): ReactNode {
     return (
       <>
-        <a
-          href="https://aka.ms/bot-framework-emulator-create-dispatch"
-          className={styles.paddedLink}
-        >
+        <a href="https://aka.ms/bot-framework-emulator-create-dispatch" className={styles.paddedLink}>
           Learn more about using Dispatch apps.
         </a>
         <p>
-          {` Signed in as ${
-            this.props.authenticatedUser
-          }. You can link apps from a different LUIS `}
-          {
-            'account to this Azure account by adding yourself as a collaborator. '
-          }
-          <a href="http://aka.ms/bot-framework-emulator-luis-collaboration">
-            Learn more about collaborating.
-          </a>
+          {` Signed in as ${this.props.authenticatedUser}. You can link apps from a different LUIS `}
+          {'account to this Azure account by adding yourself as a collaborator. '}
+          <a href="http://aka.ms/bot-framework-emulator-luis-collaboration">Learn more about collaborating.</a>
         </p>
       </>
     );
@@ -407,10 +358,7 @@ export class ConnectedServicePicker extends Component<
   private get blobStorageServiceContent(): ReactNode {
     return (
       <>
-        <a
-          href="https://aka.ms/bot-framework-emulator-create-storage"
-          className={styles.paddedLink}
-        >
+        <a href="https://aka.ms/bot-framework-emulator-create-storage" className={styles.paddedLink}>
           Create a new Azure storage account
         </a>
         <p>{` Signed in as ${this.props.authenticatedUser}.`}</p>
@@ -421,10 +369,7 @@ export class ConnectedServicePicker extends Component<
   private get appInsightsServiceContent(): ReactNode {
     return (
       <>
-        <a
-          href="https://aka.ms/bot-framework-emulator-create-appinsights"
-          className={styles.paddedLink}
-        >
+        <a href="https://aka.ms/bot-framework-emulator-create-appinsights" className={styles.paddedLink}>
           Create a new Azure storage account
         </a>
         <p>{` Signed in as ${this.props.authenticatedUser}.`}</p>
@@ -435,10 +380,7 @@ export class ConnectedServicePicker extends Component<
   private get cosmosDbServiceContent(): ReactNode {
     return (
       <>
-        <a
-          href="https://aka.ms/bot-framework-emulator-create-storage"
-          className={styles.paddedLink}
-        >
+        <a href="https://aka.ms/bot-framework-emulator-create-storage" className={styles.paddedLink}>
           Create a new Azure Cosmos DB account.
         </a>
         <p>{` Signed in as ${this.props.authenticatedUser}.`}</p>

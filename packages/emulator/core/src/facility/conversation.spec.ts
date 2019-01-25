@@ -32,211 +32,9 @@
 //
 
 import { BotEmulator } from '../botEmulator';
+
 import BotEndpoint from './botEndpoint';
 import Conversation from './conversation';
-
-describe('Conversation class', () => {
-  let botEndpointBotId;
-  let botEndpoint;
-  let botEmulator: any;
-  let conversation: Conversation;
-  let conversationId;
-  let user: any;
-  let fetch = (function() {
-    const fetch = () => {
-      return {
-        ok: true,
-        json: async () => ({}),
-        text: async () => '{}',
-      };
-    };
-    (fetch as any).Headers = class {};
-    (fetch as any).Response = class {};
-    return fetch as any;
-  })();
-  beforeEach(() => {
-    botEndpointBotId = 'someBotEndpointBotId';
-    botEndpoint = new BotEndpoint(
-      '123',
-      botEndpointBotId,
-      'http://ngrok',
-      null,
-      null,
-      null,
-      null,
-      { fetch }
-    );
-    botEmulator = new BotEmulator(async () => 'http://localhost', {
-      fetch,
-      loggerOrLogService: {
-        logMessage: async () => true,
-        logActivity: async () => true,
-      } as any,
-    });
-    conversationId = 'someConversationId';
-    user = { id: 'someUserId' };
-    conversation = new Conversation(
-      botEmulator,
-      botEndpoint,
-      conversationId,
-      user
-    );
-  });
-
-  it('should feed activities', () => {
-    const mockProcessActivity = jest.fn(activity => ({
-      ...activity,
-      processed: true,
-    }));
-    conversation.processActivity = mockProcessActivity;
-    const fedActivities = [];
-    const mockAddActivityToQueue = jest.fn(activity => {
-      fedActivities.push(activity);
-    });
-    (conversation as any).addActivityToQueue = mockAddActivityToQueue;
-
-    const activities: any = [
-      {
-        conversation: {},
-        type: 'event',
-        from: { role: 'bot' },
-        recipient: { role: 'user', id: 'userId' },
-      },
-      {
-        conversation: {},
-        type: 'message',
-        from: { role: 'user' },
-        recipient: { role: 'bot', id: 'botId' },
-      },
-      {
-        conversation: {},
-        type: 'messageReaction',
-        from: { role: 'bot', id: 'botId' },
-        recipient: { role: 'user' },
-      },
-      {
-        conversation: {},
-        type: 'typing',
-        from: { role: 'user', id: 'userId' },
-        recipient: { role: 'bot' },
-      },
-    ];
-
-    conversation.feedActivities(activities);
-
-    expect(fedActivities).toEqual([
-      {
-        conversation: { id: 'someConversationId' },
-        type: 'event',
-        from: { role: 'bot' },
-        recipient: { role: 'user', id: 'someUserId' },
-        processed: true,
-      },
-      {
-        conversation: { id: 'someConversationId' },
-        type: 'message',
-        from: { role: 'user' },
-        recipient: { role: 'bot', id: 'someBotEndpointBotId' },
-      },
-      {
-        conversation: { id: 'someConversationId' },
-        type: 'messageReaction',
-        from: { role: 'bot', id: 'someBotEndpointBotId' },
-        recipient: { role: 'user' },
-        processed: true,
-      },
-      {
-        conversation: { id: 'someConversationId' },
-        type: 'typing',
-        from: { role: 'user', id: 'someUserId' },
-        recipient: { role: 'bot' },
-      },
-    ]);
-  });
-
-  it('should get the transcript from the conversation', async () => {
-    (conversation as any).transcript = mockTranscript;
-    const transcripts = await conversation.getTranscript();
-    expect(transcripts.length).toBe(4);
-    let i = transcripts.length;
-    while (i--) {
-      expect(transcripts[i]).toEqual(mockTranscript[i].activity);
-    }
-  });
-
-  it('should post an activity to the bot', async () => {
-    const result = await conversation.postActivityToBot(mockActivity, true);
-    expect(result.activityId).toEqual(jasmine.any(String));
-  });
-
-  it('should send a conversation update', async () => {
-    await conversation.postActivityToBot(mockActivity, true);
-    const spy = jest
-      .spyOn(conversation, 'postActivityToBot')
-      .mockResolvedValueOnce({
-        response: {
-          status: 200,
-        },
-        statusCode: 200,
-      });
-    await conversation.sendConversationUpdate(
-      mockActivity.membersAdded,
-      mockActivity.membersAdded
-    );
-    expect(spy).toHaveBeenCalledWith(
-      {
-        membersAdded: [
-          {
-            id: '1',
-            name: 'Bot',
-          },
-        ],
-        membersRemoved: [{ id: '1', name: 'Bot' }],
-        type: 'conversationUpdate',
-      },
-      false
-    );
-  });
-
-  it('should post an activity to the user', async () => {
-    const activity = await conversation.postActivityToUser(mockUserActivity);
-    expect(activity).toEqual({
-      id: jasmine.any(String),
-    });
-  });
-
-  it('should update an activity', async () => {
-    let result = await conversation.postActivityToBot(mockActivity, true);
-    const updatedActivity = { id: result.activityId, test: 'revised activity' };
-    result = await conversation.updateActivity(updatedActivity);
-    expect(result.id).toBe(updatedActivity.id);
-  });
-
-  it('should delete an activity', async () => {
-    const result = await conversation.postActivityToBot(mockActivity, true);
-    let activityDeleted = false;
-    conversation.on('deleteactivity', () => (activityDeleted = true));
-    await conversation.deleteActivity(result.activityId);
-    expect(activityDeleted).toBeTruthy();
-  });
-
-  it('should send Contact Removed', async () => {
-    await conversation.sendContactRemoved();
-    expect((conversation as any).transcript[0].activity.action).toBe('remove');
-  });
-
-  it('should send the typing activity', async () => {
-    await conversation.sendTyping();
-    expect((conversation as any).transcript[1].activity.type).toBe('typing');
-  });
-
-  it('should send the ping activity', async () => {
-    await conversation.sendPing();
-    expect((conversation as any).transcript[1].activity.type).toBe('ping');
-  });
-
-  it('should send the delete user data activity', async () => {});
-});
 
 const mockTranscript = [
   {
@@ -386,3 +184,187 @@ const mockUserActivity = {
   replyToId: '96547340-1f5c-11e9-9b39-f387f690c8a4',
   id: null,
 };
+
+describe('Conversation class', () => {
+  let botEndpointBotId;
+  let botEndpoint;
+  let botEmulator: any;
+  let conversation: Conversation;
+  let conversationId;
+  let user: any;
+  const fetch = (function() {
+    const fetch = () => {
+      return {
+        ok: true,
+        json: async () => ({}),
+        text: async () => '{}',
+      };
+    };
+    (fetch as any).Headers = class {};
+    (fetch as any).Response = class {};
+    return fetch as any;
+  })();
+  beforeEach(() => {
+    botEndpointBotId = 'someBotEndpointBotId';
+    botEndpoint = new BotEndpoint('123', botEndpointBotId, 'http://ngrok', null, null, null, null, { fetch });
+    botEmulator = new BotEmulator(async () => 'http://localhost', {
+      fetch,
+      loggerOrLogService: {
+        logMessage: async () => true,
+        logActivity: async () => true,
+      } as any,
+    });
+    conversationId = 'someConversationId';
+    user = { id: 'someUserId' };
+    conversation = new Conversation(botEmulator, botEndpoint, conversationId, user);
+  });
+
+  it('should feed activities', () => {
+    const mockProcessActivity = jest.fn(activity => ({
+      ...activity,
+      processed: true,
+    }));
+    conversation.processActivity = mockProcessActivity;
+    const fedActivities = [];
+    const mockAddActivityToQueue = jest.fn(activity => {
+      fedActivities.push(activity);
+    });
+    (conversation as any).addActivityToQueue = mockAddActivityToQueue;
+
+    const activities: any = [
+      {
+        conversation: {},
+        type: 'event',
+        from: { role: 'bot' },
+        recipient: { role: 'user', id: 'userId' },
+      },
+      {
+        conversation: {},
+        type: 'message',
+        from: { role: 'user' },
+        recipient: { role: 'bot', id: 'botId' },
+      },
+      {
+        conversation: {},
+        type: 'messageReaction',
+        from: { role: 'bot', id: 'botId' },
+        recipient: { role: 'user' },
+      },
+      {
+        conversation: {},
+        type: 'typing',
+        from: { role: 'user', id: 'userId' },
+        recipient: { role: 'bot' },
+      },
+    ];
+
+    conversation.feedActivities(activities);
+
+    expect(fedActivities).toEqual([
+      {
+        conversation: { id: 'someConversationId' },
+        type: 'event',
+        from: { role: 'bot' },
+        recipient: { role: 'user', id: 'someUserId' },
+        processed: true,
+      },
+      {
+        conversation: { id: 'someConversationId' },
+        type: 'message',
+        from: { role: 'user' },
+        recipient: { role: 'bot', id: 'someBotEndpointBotId' },
+      },
+      {
+        conversation: { id: 'someConversationId' },
+        type: 'messageReaction',
+        from: { role: 'bot', id: 'someBotEndpointBotId' },
+        recipient: { role: 'user' },
+        processed: true,
+      },
+      {
+        conversation: { id: 'someConversationId' },
+        type: 'typing',
+        from: { role: 'user', id: 'someUserId' },
+        recipient: { role: 'bot' },
+      },
+    ]);
+  });
+
+  it('should get the transcript from the conversation', async () => {
+    (conversation as any).transcript = mockTranscript;
+    const transcripts = await conversation.getTranscript();
+    expect(transcripts.length).toBe(4);
+    let i = transcripts.length;
+    while (i--) {
+      expect(transcripts[i]).toEqual(mockTranscript[i].activity);
+    }
+  });
+
+  it('should post an activity to the bot', async () => {
+    const result = await conversation.postActivityToBot(mockActivity, true);
+    expect(result.activityId).toEqual(jasmine.any(String));
+  });
+
+  it('should send a conversation update', async () => {
+    await conversation.postActivityToBot(mockActivity, true);
+    const spy = jest.spyOn(conversation, 'postActivityToBot').mockResolvedValueOnce({
+      response: {
+        status: 200,
+      },
+      statusCode: 200,
+    });
+    await conversation.sendConversationUpdate(mockActivity.membersAdded, mockActivity.membersAdded);
+    expect(spy).toHaveBeenCalledWith(
+      {
+        membersAdded: [
+          {
+            id: '1',
+            name: 'Bot',
+          },
+        ],
+        membersRemoved: [{ id: '1', name: 'Bot' }],
+        type: 'conversationUpdate',
+      },
+      false
+    );
+  });
+
+  it('should post an activity to the user', async () => {
+    const activity = await conversation.postActivityToUser(mockUserActivity);
+    expect(activity).toEqual({
+      id: jasmine.any(String),
+    });
+  });
+
+  it('should update an activity', async () => {
+    let result = await conversation.postActivityToBot(mockActivity, true);
+    const updatedActivity = { id: result.activityId, test: 'revised activity' };
+    result = await conversation.updateActivity(updatedActivity);
+    expect(result.id).toBe(updatedActivity.id);
+  });
+
+  it('should delete an activity', async () => {
+    const result = await conversation.postActivityToBot(mockActivity, true);
+    let activityDeleted = false;
+    conversation.on('deleteactivity', () => (activityDeleted = true));
+    await conversation.deleteActivity(result.activityId);
+    expect(activityDeleted).toBeTruthy();
+  });
+
+  it('should send Contact Removed', async () => {
+    await conversation.sendContactRemoved();
+    expect((conversation as any).transcript[0].activity.action).toBe('remove');
+  });
+
+  it('should send the typing activity', async () => {
+    await conversation.sendTyping();
+    expect((conversation as any).transcript[1].activity.type).toBe('typing');
+  });
+
+  it('should send the ping activity', async () => {
+    await conversation.sendPing();
+    expect((conversation as any).transcript[1].activity.type).toBe('ping');
+  });
+
+  it('should send the delete user data activity', async () => {});
+});

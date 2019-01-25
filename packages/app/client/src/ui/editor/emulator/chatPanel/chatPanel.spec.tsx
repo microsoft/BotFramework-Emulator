@@ -61,8 +61,7 @@ const document = {
       this._listeners.push(cb);
 
       return {
-        unsubscribe: () =>
-          (this._listeners = this._listeners.filter(l => l !== cb)),
+        unsubscribe: () => (this._listeners = this._listeners.filter(l => l !== cb)),
       };
     },
   },

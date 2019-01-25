@@ -43,10 +43,7 @@ export function expandFlatTree(flattened: any[], delimiter: string = '/') {
   return Object.keys(flattened).reduce((expanded, path) => {
     const segments = path.split(delimiter);
     const filename = segments.pop();
-    const parent = segments.reduce(
-      (p, segment) => p[segment] || (p[segment] = {}),
-      expanded
-    );
+    const parent = segments.reduce((p, segment) => p[segment] || (p[segment] = {}), expanded);
 
     parent[filename] = flattened[path];
 

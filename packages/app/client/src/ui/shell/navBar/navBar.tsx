@@ -76,10 +76,7 @@ export class NavBarComponent extends React.Component<NavBarProps, NavBarState> {
   public onLinkClick = (event: SyntheticEvent<HTMLButtonElement>): void => {
     const { selection: currentSelection } = this.props;
     const { currentTarget: anchor } = event;
-    const index = Array.prototype.indexOf.call(
-      anchor.parentElement.children,
-      anchor
-    );
+    const index = Array.prototype.indexOf.call(anchor.parentElement.children, anchor);
     switch (index) {
       // 0: Bot Explorer
       // 1: Resources
@@ -119,25 +116,21 @@ export class NavBarComponent extends React.Component<NavBarProps, NavBarState> {
     const { selection } = this.state;
     const { explorerIsVisible, botIsOpen = false } = this.props;
 
-    return ['Bot Explorer', 'Resources', 'Notifications', 'Settings'].map(
-      (title, index) => {
-        return (
-          <button
-            aria-selected={
-              explorerIsVisible && selection === selectionMap[index]
-            }
-            title={title}
-            className={styles.navLink}
-            key={index}
-            disabled={!botIsOpen && index === 1}
-            onClick={this.onLinkClick}
-          >
-            <div />
-            {this.renderNotificationBadge(title)}
-          </button>
-        );
-      }
-    );
+    return ['Bot Explorer', 'Resources', 'Notifications', 'Settings'].map((title, index) => {
+      return (
+        <button
+          aria-selected={explorerIsVisible && selection === selectionMap[index]}
+          title={title}
+          className={styles.navLink}
+          key={index}
+          disabled={!botIsOpen && index === 1}
+          onClick={this.onLinkClick}
+        >
+          <div />
+          {this.renderNotificationBadge(title)}
+        </button>
+      );
+    });
   }
 
   /** Renders a circular counter badge in the corner of the notification icon */
@@ -149,9 +142,7 @@ export class NavBarComponent extends React.Component<NavBarProps, NavBarState> {
         .map(notification => notification.read)
         .filter(notificationHasBeenRead => !notificationHasBeenRead).length;
 
-      return numUnreadNotifications ? (
-        <span className={styles.badge}>{numUnreadNotifications}</span>
-      ) : null;
+      return numUnreadNotifications ? <span className={styles.badge}>{numUnreadNotifications}</span> : null;
     }
     return null;
   }

@@ -53,10 +53,7 @@ describe('The ContextMenuService', () => {
   it('should show the menu and wait for user input', async () => {
     const options: MenuItemConstructorOptions = {};
     let resolved = false;
-    const closePopupSpy = jest.spyOn(
-      (ContextMenuService as any).currentMenu,
-      'closePopup'
-    );
+    const closePopupSpy = jest.spyOn((ContextMenuService as any).currentMenu, 'closePopup');
     ContextMenuService.showMenuAndWaitForInput([options]).then(() => {
       resolved = true;
     });

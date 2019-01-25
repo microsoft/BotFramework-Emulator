@@ -50,8 +50,7 @@ const mapStateToProps = (state: RootState): NavBarProps => ({
 
 const mapDispatchToProps = (dispatch): NavBarProps => ({
   showExplorer: show => dispatch(ExplorerActions.showExplorer(show)),
-  navBarSelectionChanged: newSelection =>
-    dispatch(NavBarActions.select(newSelection)),
+  navBarSelectionChanged: newSelection => dispatch(NavBarActions.select(newSelection)),
   openEmulatorSettings: () => {
     const { CONTENT_TYPE_APP_SETTINGS, DOCUMENT_ID_APP_SETTINGS } = Constants;
     dispatch(
@@ -64,11 +63,7 @@ const mapDispatchToProps = (dispatch): NavBarProps => ({
     );
   },
   trackEvent: (name: string, properties?: { [key: string]: any }) => {
-    CommandServiceImpl.remoteCall(
-      SharedConstants.Commands.Telemetry.TrackEvent,
-      name,
-      properties
-    ).catch(_e => void 0);
+    CommandServiceImpl.remoteCall(SharedConstants.Commands.Telemetry.TrackEvent, name, properties).catch(_e => void 0);
   },
 });
 

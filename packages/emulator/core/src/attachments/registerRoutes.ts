@@ -40,11 +40,7 @@ import getRouteName from '../middleware/getRouteName';
 import getAttachment from './middleware/getAttachment';
 import getAttachmentInfo from './middleware/getAttachmentInfo';
 
-export default function registerRoutes(
-  botEmulator: BotEmulator,
-  server: Server,
-  uses: RequestHandlerType[]
-) {
+export default function registerRoutes(botEmulator: BotEmulator, server: Server, uses: RequestHandlerType[]) {
   const facility = getFacility('attachments');
 
   server.get(

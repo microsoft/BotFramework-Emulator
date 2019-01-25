@@ -39,18 +39,14 @@ export interface AzureAuthAction<T> extends Action {
   payload: T;
 }
 
-export function azurePersistLoginChanged(
-  persistLogin: boolean
-): AzureAuthAction<boolean> {
+export function azurePersistLoginChanged(persistLogin: boolean): AzureAuthAction<boolean> {
   return {
     type: AZURE_PERSIST_LOGIN_CHANGED,
     payload: persistLogin,
   };
 }
 
-export function azureLoggedInUserChanged(
-  signedInUser: string
-): AzureAuthAction<string> {
+export function azureLoggedInUserChanged(signedInUser: string): AzureAuthAction<string> {
   return {
     type: AZURE_LOGGED_IN_USER_CHANGED,
     payload: signedInUser,

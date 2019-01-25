@@ -40,10 +40,7 @@ import { DialogService } from '../service';
 
 import { ProgressIndicator } from './progressIndicator';
 
-const mapStateToProps = (
-  state: RootState,
-  ownProps: { [propName: string]: any }
-) => {
+const mapStateToProps = (state: RootState, ownProps: { [propName: string]: any }) => {
   const { progressIndicator } = state;
   return {
     ...ownProps,

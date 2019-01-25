@@ -43,9 +43,7 @@ const chatdown = require.resolve('chatdown/bin/chatdown');
  * Uses the chatdown library to convert a .chat file into a list of conversation activities
  * @param file The .chat file to parse
  */
-export const parseActivitiesFromChatFile = async (
-  file: string
-): Promise<CustomActivity[]> => {
+export const parseActivitiesFromChatFile = async (file: string): Promise<CustomActivity[]> => {
   let activities: CustomActivity[] = [];
 
   if (path.extname(file) !== '.chat') {
@@ -78,9 +76,7 @@ export const parseActivitiesFromChatFile = async (
       });
     })) as CustomActivity[];
   } catch (err) {
-    throw new Error(
-      `Error while converting .chat file to list of activites: ${err}`
-    );
+    throw new Error(`Error while converting .chat file to list of activites: ${err}`);
   }
 
   return activities;

@@ -254,9 +254,7 @@ describe('AppUpdater', () => {
   });
 
   it('should quit and install', () => {
-    const mockQuitAndInstall = jest.fn(
-      (isSilent: boolean, forceRunAfter: boolean) => null
-    );
+    const mockQuitAndInstall = jest.fn((isSilent: boolean, forceRunAfter: boolean) => null);
     mockAutoUpdater.quitAndInstall = mockQuitAndInstall;
 
     AppUpdater.quitAndInstall();

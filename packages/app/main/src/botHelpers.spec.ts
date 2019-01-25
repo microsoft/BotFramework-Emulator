@@ -132,9 +132,7 @@ describe('The botHelpers', () => {
 
   it('toSavableBot() should convert the specified bot to a savable instance', () => {
     const bot1 = null;
-    expect(() => toSavableBot(bot1)).toThrowError(
-      'Cannot convert null bot to savable bot.'
-    );
+    expect(() => toSavableBot(bot1)).toThrowError('Cannot convert null bot to savable bot.');
 
     const bot2: BotConfigWithPath = BotConfigWithPathImpl.fromJSON({
       version: '',
@@ -179,15 +177,13 @@ describe('The botHelpers', () => {
 
   it('saveBot() should save a bot', async () => {
     let saved = false;
-    const fromJSONSpy = jest
-      .spyOn(BotConfiguration, 'fromJSON')
-      .mockReturnValue({
-        internal: {},
-        validateSecret: () => true,
-        save: async () => {
-          saved = true;
-        },
-      });
+    const fromJSONSpy = jest.spyOn(BotConfiguration, 'fromJSON').mockReturnValue({
+      internal: {},
+      validateSecret: () => true,
+      save: async () => {
+        saved = true;
+      },
+    });
     await saveBot({
       path: 'path4',
     } as any);
@@ -196,9 +192,7 @@ describe('The botHelpers', () => {
 
   describe('loadBotWithRetry()', () => {
     it('should prompt the user for the secret and retry if no secret was given for an encrypted bot', async () => {
-      const botConfigLoadSpy = jest
-        .spyOn(BotConfiguration, 'load')
-        .mockResolvedValue({ padlock: '55sdgfd' });
+      const botConfigLoadSpy = jest.spyOn(BotConfiguration, 'load').mockResolvedValue({ padlock: '55sdgfd' });
       const result = await loadBotWithRetry('path');
       expect(botConfigLoadSpy).toHaveBeenCalledWith('path', undefined);
 
@@ -214,12 +208,8 @@ describe('The botHelpers', () => {
     });
 
     it('should update the secret when the specified secret does not match the one on record', async () => {
-      const botConfigLoadSpy = jest
-        .spyOn(BotConfiguration, 'load')
-        .mockResolvedValue({ padlock: 'newSecret' });
-      const remoteCallSpy = jest
-        .spyOn(mainWindow.commandService, 'remoteCall')
-        .mockResolvedValue('newSecret');
+      const botConfigLoadSpy = jest.spyOn(BotConfiguration, 'load').mockResolvedValue({ padlock: 'newSecret' });
+      const remoteCallSpy = jest.spyOn(mainWindow.commandService, 'remoteCall').mockResolvedValue('newSecret');
       const result = await loadBotWithRetry('path1');
       expect(botConfigLoadSpy).toHaveBeenCalledWith('path1', undefined);
       expect(result).toEqual({

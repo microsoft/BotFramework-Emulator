@@ -56,10 +56,7 @@ class NotificationComp extends React.Component<NotificationProps, {}> {
 
     return (
       <li className={styles.notification}>
-        <div
-          className={styles.closeIcon}
-          onClick={() => removeNotification(id)}
-        />
+        <div className={styles.closeIcon} onClick={() => removeNotification(id)} />
         <p className={styles.notificationMessage}>{message}</p>
         {this.timestamp}
         {this.buttonRow}
@@ -73,15 +70,9 @@ class NotificationComp extends React.Component<NotificationProps, {}> {
     const { buttons = [] } = this.props.notification;
     if (buttons.length) {
       const renderedButtons = buttons.map((btn, i) => (
-        <PrimaryButton
-          key={`button${i}`}
-          onClick={() => btn.onClick()}
-          text={btn.text}
-        />
+        <PrimaryButton key={`button${i}`} onClick={() => btn.onClick()} text={btn.text} />
       ));
-      return (
-        <div className={styles.notificationButtonRow}>{renderedButtons}</div>
-      );
+      return <div className={styles.notificationButtonRow}>{renderedButtons}</div>;
     }
     return null;
   }
@@ -99,9 +90,7 @@ class NotificationComp extends React.Component<NotificationProps, {}> {
         minute: 'numeric',
       };
       return (
-        <span className={styles.notificationTimestamp}>
-          {new Date(timestamp).toLocaleString('en-US', dateOptions)}
-        </span>
+        <span className={styles.notificationTimestamp}>{new Date(timestamp).toLocaleString('en-US', dateOptions)}</span>
       );
     }
     return null;

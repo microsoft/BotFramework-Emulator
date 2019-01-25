@@ -38,11 +38,7 @@ import { createStore } from 'redux';
 import { SharedConstants } from '@bfemulator/app-shared';
 
 import { enable } from '../../../../data/action/presentationActions';
-import {
-  setActiveTab,
-  appendTab,
-  splitTab,
-} from '../../../../data/action/editorActions';
+import { setActiveTab, appendTab, splitTab } from '../../../../data/action/editorActions';
 import {
   CONTENT_TYPE_APP_SETTINGS,
   CONTENT_TYPE_LIVE_CHAT,
@@ -66,8 +62,7 @@ jest.mock('../../../../data/reducer/editor', () => ({
 }));
 jest.mock('../../../../data/editorHelpers', () => ({
   getTabGroupForDocument: () => null,
-  getOtherTabGroup: (tabGroup: string) =>
-    tabGroup === 'primary' ? 'secondary' : 'primary',
+  getOtherTabGroup: (tabGroup: string) => (tabGroup === 'primary' ? 'secondary' : 'primary'),
 }));
 jest.mock('../tab/tab', () => ({
   get Tab() {
@@ -138,29 +133,19 @@ describe('TabBar', () => {
 
     expect(mockDispatch).toHaveBeenCalledWith(enable());
     expect(mockRemoteCallsMade).toHaveLength(1);
-    expect(mockRemoteCallsMade[0].commandName).toBe(
-      SharedConstants.Commands.Telemetry.TrackEvent
-    );
+    expect(mockRemoteCallsMade[0].commandName).toBe(SharedConstants.Commands.Telemetry.TrackEvent);
     expect(mockRemoteCallsMade[0].args).toEqual(['tabBar_presentationMode']);
   });
 
   it('should load widgets', () => {
     // no widgets
-    let dumbWrapper = mount(
-      <TabBar tabOrder={[]} documents={{}} activeDocumentId={''} />
-    );
+    let dumbWrapper = mount(<TabBar tabOrder={[]} documents={{}} activeDocumentId={''} />);
     let dumbNode = dumbWrapper.find(TabBar);
     let dumbInstance = dumbNode.instance() as any;
     expect(dumbInstance.widgets).toHaveLength(0);
 
     // split widget
-    dumbWrapper = mount(
-      <TabBar
-        tabOrder={[]}
-        documents={{ doc1: {}, doc2: {} }}
-        activeDocumentId={''}
-      />
-    );
+    dumbWrapper = mount(<TabBar tabOrder={[]} documents={{ doc1: {}, doc2: {} }} activeDocumentId={''} />);
     dumbNode = dumbWrapper.find(TabBar);
     dumbInstance = dumbNode.instance() as any;
     expect(dumbInstance.widgets).toHaveLength(1);
@@ -222,13 +207,9 @@ describe('TabBar', () => {
   it('should handle a split click', () => {
     instance.onSplitClick();
 
-    expect(mockDispatch).toHaveBeenCalledWith(
-      splitTab('transcript', 'doc1', 'primary', 'secondary')
-    );
+    expect(mockDispatch).toHaveBeenCalledWith(splitTab('transcript', 'doc1', 'primary', 'secondary'));
     expect(mockRemoteCallsMade).toHaveLength(1);
-    expect(mockRemoteCallsMade[0].commandName).toBe(
-      SharedConstants.Commands.Telemetry.TrackEvent
-    );
+    expect(mockRemoteCallsMade[0].commandName).toBe(SharedConstants.Commands.Telemetry.TrackEvent);
     expect(mockRemoteCallsMade[0].args).toEqual(['tabBar_splitTab']);
   });
 
@@ -278,9 +259,7 @@ describe('TabBar', () => {
 
     instance.onDrop(mockDragEvent);
 
-    expect(mockDispatch).toHaveBeenCalledWith(
-      appendTab('secondary', 'primary', 'doc2')
-    );
+    expect(mockDispatch).toHaveBeenCalledWith(appendTab('secondary', 'primary', 'doc2'));
   });
 
   it('should save a ref to the scrollable tabs element', () => {
@@ -330,14 +309,7 @@ describe('TabBar', () => {
     });
     const closeTabSpy = jest.fn();
 
-    mount(
-      <TabBar
-        tabOrder={[]}
-        documents={{}}
-        activeDocumentId={'1234'}
-        closeTab={closeTabSpy}
-      />
-    );
+    mount(<TabBar tabOrder={[]} documents={{}} activeDocumentId={'1234'} closeTab={closeTabSpy} />);
 
     map.keydown({
       key: 'w',

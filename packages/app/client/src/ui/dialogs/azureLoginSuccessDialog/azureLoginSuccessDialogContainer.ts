@@ -36,15 +36,9 @@ import { connect } from 'react-redux';
 import { RootState } from '../../../data/store';
 import { DialogService } from '../service';
 
-import {
-  AzureLoginSuccessDialog,
-  AzureLoginSuccessDialogProps,
-} from './azureLoginSuccessDialog';
+import { AzureLoginSuccessDialog, AzureLoginSuccessDialogProps } from './azureLoginSuccessDialog';
 
-const mapStateToProps = (
-  state: RootState,
-  ownProps: { [propName: string]: any }
-): AzureLoginSuccessDialogProps => {
+const mapStateToProps = (state: RootState, ownProps: { [propName: string]: any }): AzureLoginSuccessDialogProps => {
   const { persistLogin } = state.azureAuth;
   return {
     persistLogin,
@@ -52,9 +46,7 @@ const mapStateToProps = (
   };
 };
 
-const mapDispatchToProps = (
-  _dispatch: () => void
-): AzureLoginSuccessDialogProps => {
+const mapDispatchToProps = (_dispatch: () => void): AzureLoginSuccessDialogProps => {
   return {
     cancel: persistLogin => DialogService.hideDialog(persistLogin),
   };

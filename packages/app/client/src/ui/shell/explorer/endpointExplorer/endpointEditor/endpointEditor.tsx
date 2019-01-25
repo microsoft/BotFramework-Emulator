@@ -31,15 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import {
-  Checkbox,
-  DefaultButton,
-  Dialog,
-  DialogFooter,
-  PrimaryButton,
-  Row,
-  TextField,
-} from '@bfemulator/ui-react';
+import { Checkbox, DefaultButton, Dialog, DialogFooter, PrimaryButton, Row, TextField } from '@bfemulator/ui-react';
 import { BotService, EndpointService } from 'botframework-config/lib/models';
 import { IBotService, IEndpointService } from 'botframework-config/lib/schema';
 import * as React from 'react';
@@ -47,8 +39,7 @@ import { ChangeEvent, Component, MouseEvent } from 'react';
 
 import * as styles from './endpointEditor.scss';
 
-export interface UpdatedServicesPayload
-  extends Array<IEndpointService | IBotService> {
+export interface UpdatedServicesPayload extends Array<IEndpointService | IBotService> {
   '0': IEndpointService;
   '1'?: IBotService;
   length: 1 | 2;
@@ -72,14 +63,10 @@ export interface EndpointEditorState {
 }
 
 const title = 'Add an Endpoint for your bot';
-const detailedDescription =
-  'You can add an endpoint that you use to communicate to an instance of your bot';
+const detailedDescription = 'You can add an endpoint that you use to communicate to an instance of your bot';
 const usGovernmentAzureChannelService = 'https://botframework.azure.us';
 
-export class EndpointEditor extends Component<
-  EndpointEditorProps,
-  EndpointEditorState
-> {
+export class EndpointEditor extends Component<EndpointEditorProps, EndpointEditorState> {
   public state: EndpointEditorState = {} as EndpointEditorState;
   private endpointWarningDelay: any;
   private absContent: HTMLDivElement;
@@ -111,9 +98,7 @@ export class EndpointEditor extends Component<
 
   private static validateEndpoint(endpoint: string): string {
     const controllerRegEx = /api\/messages\/?$/;
-    return controllerRegEx.test(endpoint)
-      ? ''
-      : `Please include route if necessary: "/api/messages"`;
+    return controllerRegEx.test(endpoint) ? '' : `Please include route if necessary: "/api/messages"`;
   }
 
   private static isUsGov(channelService: string): boolean {
@@ -148,30 +133,13 @@ export class EndpointEditor extends Component<
       nameError,
       botService = {} as IBotService,
     } = this.state;
-    const {
-      name = '',
-      endpoint = '',
-      appId = '',
-      appPassword = '',
-    } = endpointService;
-    const {
-      tenantId = '',
-      subscriptionId = '',
-      resourceGroup = '',
-      serviceName = '',
-    } = botService;
-    const hasBotService =
-      tenantId || subscriptionId || resourceGroup || serviceName;
+    const { name = '', endpoint = '', appId = '', appPassword = '' } = endpointService;
+    const { tenantId = '', subscriptionId = '', resourceGroup = '', serviceName = '' } = botService;
+    const hasBotService = tenantId || subscriptionId || resourceGroup || serviceName;
     const valid = !!endpoint && !!name;
-    const isUsGov = EndpointEditor.isUsGov(
-      (endpointService as any).channelService
-    );
+    const isUsGov = EndpointEditor.isUsGov((endpointService as any).channelService);
     return (
-      <Dialog
-        title={title}
-        detailedDescription={detailedDescription}
-        cancel={this.onCancelClick}
-      >
+      <Dialog title={title} detailedDescription={detailedDescription} cancel={this.onCancelClick}>
         <TextField
           placeholder="https://"
           errorMessage={endpointError}
@@ -181,9 +149,7 @@ export class EndpointEditor extends Component<
           label="Endpoint url"
           required={true}
         />
-        {!endpointError && endpointWarning && (
-          <span className={styles.endpointWarning}>{endpointWarning}</span>
-        )}
+        {!endpointError && endpointWarning && <span className={styles.endpointWarning}>{endpointWarning}</span>}
         <TextField
           placeholder="Create name for your endpoint"
           errorMessage={nameError}
@@ -211,16 +177,10 @@ export class EndpointEditor extends Component<
           label="Application Password"
           required={false}
         />
-        <Checkbox
-          label="Azure for US Government"
-          checked={isUsGov}
-          onChange={this.onChannelServiceChange}
-        />
+        <Checkbox label="Azure for US Government" checked={isUsGov} onChange={this.onChannelServiceChange} />
         <a
           href="javascript:void(0)"
-          className={`${styles.arrow} ${
-            hasBotService ? styles.arrowExpanded : ''
-          }`}
+          className={`${styles.arrow} ${hasBotService ? styles.arrowExpanded : ''}`}
           onClick={this.onABSLinkClick}
         >
           Azure Bot Service configuration
@@ -259,26 +219,18 @@ export class EndpointEditor extends Component<
         </div>
         <DialogFooter>
           <DefaultButton text="Cancel" onClick={this.onCancelClick} />
-          <PrimaryButton
-            disabled={!this.isDirty || !valid}
-            text="Submit"
-            onClick={this.onSubmitClick}
-          />
+          <PrimaryButton disabled={!this.isDirty || !valid} text="Submit" onClick={this.onSubmitClick} />
         </DialogFooter>
       </Dialog>
     );
   }
 
   private get isDirty(): boolean {
-    const {
-      endpointService: originalEndpointService,
-      botService: originalBotService = {},
-    } = this.props;
+    const { endpointService: originalEndpointService, botService: originalBotService = {} } = this.props;
     const { endpointService, botService = {} } = this.state;
 
     return (
-      JSON.stringify(originalEndpointService) !==
-        JSON.stringify(endpointService) ||
+      JSON.stringify(originalEndpointService) !== JSON.stringify(endpointService) ||
       JSON.stringify(originalBotService) !== JSON.stringify(botService)
     );
   }
@@ -297,16 +249,13 @@ export class EndpointEditor extends Component<
     this.props.updateEndpointService(servicesToUpdate);
   };
 
-  private onEndpointInputChange = (
-    event: ChangeEvent<HTMLInputElement>
-  ): void => {
+  private onEndpointInputChange = (event: ChangeEvent<HTMLInputElement>): void => {
     const { value } = event.target;
     const required = !!event.target.hasAttribute('required');
     const { prop } = event.target.dataset;
 
     const trimmedValue = value.trim();
-    const errorMessage =
-      required && !trimmedValue ? `The field cannot be empty` : '';
+    const errorMessage = required && !trimmedValue ? `The field cannot be empty` : '';
     const { endpointService } = this.state;
     endpointService[prop] = value;
     this.setState({ endpointService, [`${prop}Error`]: errorMessage } as any);
@@ -326,9 +275,7 @@ export class EndpointEditor extends Component<
   private onChannelServiceChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { checked } = event.target;
     const { endpointService } = this.state;
-    (endpointService as any).channelService = checked
-      ? usGovernmentAzureChannelService
-      : '';
+    (endpointService as any).channelService = checked ? usGovernmentAzureChannelService : '';
     this.setState({ endpointService } as any);
   };
 
@@ -359,16 +306,8 @@ export class EndpointEditor extends Component<
     if (!ref) {
       return;
     }
-    const {
-      tenantId = '',
-      subscriptionId = '',
-      resourceGroup = '',
-      serviceName = '',
-    } = this.props.botService || {};
-    const hasBotService =
-      tenantId || subscriptionId || resourceGroup || serviceName;
-    ref.style.height = hasBotService
-      ? `${ref.firstElementChild.clientHeight}px`
-      : '0';
+    const { tenantId = '', subscriptionId = '', resourceGroup = '', serviceName = '' } = this.props.botService || {};
+    const hasBotService = tenantId || subscriptionId || resourceGroup || serviceName;
+    ref.style.height = hasBotService ? `${ref.firstElementChild.clientHeight}px` : '0';
   };
 }

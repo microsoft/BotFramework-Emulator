@@ -45,13 +45,7 @@ import {
 import { beginAdd } from '../action/notificationActions';
 import { generateBotHash } from '../botHelpers';
 
-import {
-  botSagas,
-  browseForBot,
-  generateHashForActiveBot,
-  openBotViaFilePath,
-  openBotViaUrl,
-} from './botSagas';
+import { botSagas, browseForBot, generateHashForActiveBot, openBotViaFilePath, openBotViaUrl } from './botSagas';
 import { refreshConversationMenu } from './sharedSagas';
 
 import { call, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
@@ -97,25 +91,14 @@ describe('The botSagas', () => {
   it('should initialize the root saga', () => {
     const gen = botSagas();
 
-    expect(gen.next().value).toEqual(
-      takeEvery(BotActionType.browse, browseForBot)
-    );
+    expect(gen.next().value).toEqual(takeEvery(BotActionType.browse, browseForBot));
+
+    expect(gen.next().value).toEqual(takeEvery(BotActionType.openViaUrl, openBotViaUrl));
+    expect(gen.next().value).toEqual(takeEvery(BotActionType.openViaFilePath, openBotViaFilePath));
+    expect(gen.next().value).toEqual(takeEvery(BotActionType.setActive, generateHashForActiveBot));
 
     expect(gen.next().value).toEqual(
-      takeEvery(BotActionType.openViaUrl, openBotViaUrl)
-    );
-    expect(gen.next().value).toEqual(
-      takeEvery(BotActionType.openViaFilePath, openBotViaFilePath)
-    );
-    expect(gen.next().value).toEqual(
-      takeEvery(BotActionType.setActive, generateHashForActiveBot)
-    );
-
-    expect(gen.next().value).toEqual(
-      takeLatest(
-        [BotActionType.setActive, BotActionType.load, BotActionType.close],
-        refreshConversationMenu
-      )
+      takeLatest([BotActionType.setActive, BotActionType.load, BotActionType.close], refreshConversationMenu)
     );
 
     expect(gen.next().done).toBe(true);
@@ -149,9 +132,7 @@ describe('The botSagas', () => {
 
   it('should open native open file dialog to browse for .bot file', () => {
     const gen = browseForBot();
-    expect(gen.next().value).toEqual(
-      call([ActiveBotHelper, ActiveBotHelper.confirmAndOpenBotFromFile])
-    );
+    expect(gen.next().value).toEqual(call([ActiveBotHelper, ActiveBotHelper.confirmAndOpenBotFromFile]));
     expect(gen.next().done).toBe(true);
   });
 
@@ -178,16 +159,11 @@ describe('The botSagas', () => {
     const selectServerUrl = gen.next().value as any;
     expect(selectServerUrl).toEqual(io);
     // select user
-    const selectUser = gen.next(selectServerUrl.SELECT.selector(mockState))
-      .value as any;
+    const selectUser = gen.next(selectServerUrl.SELECT.selector(mockState)).value as any;
     expect(selectUser).toEqual(io);
     // call ConversationService.startConversation
-    jest
-      .spyOn(ConversationService, 'startConversation')
-      .mockResolvedValue({ ok: true });
-    expect(
-      gen.next(selectUser.SELECT.selector(mockState)).value
-    ).not.toBeNull();
+    jest.spyOn(ConversationService, 'startConversation').mockResolvedValue({ ok: true });
+    expect(gen.next(selectUser.SELECT.selector(mockState)).value).not.toBeNull();
   });
 
   it('should send a notification if opening a bot from a URL fails', () => {
@@ -206,9 +182,7 @@ describe('The botSagas', () => {
     const selectUser = gen.next().value as any;
     expect(selectUser).toEqual(io);
     // call ConversationService.startConversation
-    jest
-      .spyOn(ConversationService, 'startConversation')
-      .mockResolvedValue(true);
+    jest.spyOn(ConversationService, 'startConversation').mockResolvedValue(true);
     expect(
       gen.next(
         selectUser.SELECT.selector({
@@ -222,9 +196,7 @@ describe('The botSagas', () => {
       ).value
     ).not.toBeNull();
     const errorNotification = beginAdd(
-      newNotification(
-        'An Error occurred opening the bot at http://localhost/api/messages: oh noes!'
-      )
+      newNotification('An Error occurred opening the bot at http://localhost/api/messages: oh noes!')
     );
     errorNotification.payload.notification.timestamp = jasmine.any(Number);
     errorNotification.payload.notification.id = jasmine.any(String);
@@ -239,31 +211,19 @@ describe('The botSagas', () => {
   it('should open a bot from a file path', () => {
     const gen = openBotViaFilePath(openBotViaFilePathAction('/some/path.bot'));
 
-    jest
-      .spyOn(ActiveBotHelper, 'confirmAndOpenBotFromFile')
-      .mockResolvedValue(true);
+    jest.spyOn(ActiveBotHelper, 'confirmAndOpenBotFromFile').mockResolvedValue(true);
     expect(gen.next().value).toEqual(
-      call(
-        [ActiveBotHelper, ActiveBotHelper.confirmAndOpenBotFromFile],
-        '/some/path.bot'
-      )
+      call([ActiveBotHelper, ActiveBotHelper.confirmAndOpenBotFromFile], '/some/path.bot')
     );
   });
 
   it('should send a notification when opening a bot from a file path fails', () => {
     const gen = openBotViaFilePath(openBotViaFilePathAction('/some/path.bot'));
     const callOpenBot = gen.next().value;
-    expect(callOpenBot).toEqual(
-      call(
-        [ActiveBotHelper, ActiveBotHelper.confirmAndOpenBotFromFile],
-        '/some/path.bot'
-      )
-    );
+    expect(callOpenBot).toEqual(call([ActiveBotHelper, ActiveBotHelper.confirmAndOpenBotFromFile], '/some/path.bot'));
     const putNotification = gen.throw(new Error('oh noes!'));
     const errorNotification = beginAdd(
-      newNotification(
-        'An Error occurred opening the bot at /some/path.bot: Error: oh noes!'
-      )
+      newNotification('An Error occurred opening the bot at /some/path.bot: Error: oh noes!')
     );
     errorNotification.payload.notification.timestamp = jasmine.any(Number);
     errorNotification.payload.notification.id = jasmine.any(String);

@@ -36,10 +36,7 @@ import '../fetchProxy';
 import * as path from 'path';
 
 import { combineReducers, createStore } from 'redux';
-import {
-  BotConfigWithPathImpl,
-  CommandRegistryImpl,
-} from '@bfemulator/sdk-shared';
+import { BotConfigWithPathImpl, CommandRegistryImpl } from '@bfemulator/sdk-shared';
 import { BotConfiguration } from 'botframework-config';
 import { newBot, newEndpoint, SharedConstants } from '@bfemulator/app-shared';
 import { Conversation } from '@bfemulator/emulator-core';
@@ -113,13 +110,7 @@ jest.mock('../emulator', () => ({
             },
             conversations: {
               conversationById: () => mockConversation,
-              newConversation: (...args: any[]) =>
-                new mockConversationConstructor(
-                  args[0],
-                  args[1],
-                  args[3],
-                  args[2]
-                ),
+              newConversation: (...args: any[]) => new mockConversationConstructor(args[0], args[1], args[3], args[2]),
             },
             endpoints: {
               reset: () => null,
@@ -336,8 +327,7 @@ const mockConversation = emulator.framework.server.botEmulator.facilities.conver
                       {
                         type: 'TextBlock',
                         size: 'Medium',
-                        text:
-                          "Hello, I'm the Cafe bot! How can I be of help today?",
+                        text: "Hello, I'm the Cafe bot! How can I be of help today?",
                         wrap: true,
                       },
                     ],
@@ -349,8 +339,7 @@ const mockConversation = emulator.framework.server.botEmulator.facilities.conver
                       {
                         type: 'Image',
                         horizontalAlignment: 'center',
-                        url:
-                          'http://contosocafeontheweb.azurewebsites.net/assets/contoso_logo_black.png',
+                        url: 'http://contosocafeontheweb.azurewebsites.net/assets/contoso_logo_black.png',
                         size: 'medium',
                       },
                     ],
@@ -406,32 +395,19 @@ describe('The emulatorCommands', () => {
   });
 
   it('should save a transcript to file based on the transcripts path in the botInfo', async () => {
-    const getActiveBotSpy = jest
-      .spyOn((botHelpers as any).default, 'getActiveBot')
-      .mockReturnValue(mockBot);
+    const getActiveBotSpy = jest.spyOn((botHelpers as any).default, 'getActiveBot').mockReturnValue(mockBot);
     const conversationByIdSpy = jest
-      .spyOn(
-        emulator.framework.server.botEmulator.facilities.conversations,
-        'conversationById'
-      )
+      .spyOn(emulator.framework.server.botEmulator.facilities.conversations, 'conversationById')
       .mockReturnValue(mockConversation);
-    const showSaveDialogSpy = jest
-      .spyOn((utils as any).default, 'showSaveDialog')
-      .mockReturnValue('chosen/path');
+    const showSaveDialogSpy = jest.spyOn((utils as any).default, 'showSaveDialog').mockReturnValue('chosen/path');
 
-    const getBotInfoByPathSpy = jest
-      .spyOn((botHelpers as any).default, 'getBotInfoByPath')
-      .mockReturnValue(mockInfo);
+    const getBotInfoByPathSpy = jest.spyOn((botHelpers as any).default, 'getBotInfoByPath').mockReturnValue(mockInfo);
     const toSavableBotSpy = jest
       .spyOn((botHelpers as any).default, 'toSavableBot')
       .mockReturnValue({ save: async () => ({}) });
-    const patchBotJsonSpy = jest
-      .spyOn((botHelpers as any).default, 'patchBotsJson')
-      .mockResolvedValue(true);
+    const patchBotJsonSpy = jest.spyOn((botHelpers as any).default, 'patchBotsJson').mockResolvedValue(true);
 
-    const command = mockCommandRegistry.getCommand(
-      Emulator.SaveTranscriptToFile
-    );
+    const command = mockCommandRegistry.getCommand(Emulator.SaveTranscriptToFile);
     await command.handler('1234');
 
     expect(getActiveBotSpy).toHaveBeenCalled();
@@ -446,9 +422,7 @@ describe('The emulatorCommands', () => {
             extensions: ['transcript'],
           },
         ],
-        defaultPath: path.normalize(
-          'Users/blerg/Documents/testbot/transcripts'
-        ),
+        defaultPath: path.normalize('Users/blerg/Documents/testbot/transcripts'),
         showsTagField: false,
         title: 'Save conversation transcript',
         buttonLabel: 'Save',
@@ -457,19 +431,14 @@ describe('The emulatorCommands', () => {
     const newPath = path.normalize('chosen/AuthBot.bot');
     expect(getBotInfoByPathSpy).toHaveBeenCalledWith('some/path');
     expect(toSavableBotSpy).toHaveBeenCalledWith(mockBot, mockInfo.secret);
-    expect(patchBotJsonSpy).toHaveBeenCalledWith(
-      newPath,
-      Object.assign({}, mockInfo, { path: newPath })
-    );
+    expect(patchBotJsonSpy).toHaveBeenCalledWith(newPath, Object.assign({}, mockInfo, { path: newPath }));
     expect(mockTrackEvent).toHaveBeenCalledWith('transcript_save');
   });
 
   it('should feed a transcript from disk to a conversation', async () => {
     const commandServiceSpy = jest.spyOn(mainWindow.commandService, 'call');
 
-    const command = mockCommandRegistry.getCommand(
-      SharedConstants.Commands.Emulator.FeedTranscriptFromDisk
-    );
+    const command = mockCommandRegistry.getCommand(SharedConstants.Commands.Emulator.FeedTranscriptFromDisk);
     const result = await command.handler('12', '12', '12', 'file/path');
 
     expect(commandServiceSpy).toHaveBeenCalledWith(
@@ -491,40 +460,27 @@ describe('The emulatorCommands', () => {
     const id = 'http://localhost:3978/api/messages';
     mockCommandRegistry
       .getCommand(SharedConstants.Commands.Emulator.FeedTranscriptFromMemory)
-      .handler(
-        '0a441b55-d1d6-4015-bbb4-2e7f44fa9f4',
-        id,
-        '0a441b55-d1d6-4015-bbb4-2e7f44fa9f42',
-        activities
-      );
+      .handler('0a441b55-d1d6-4015-bbb4-2e7f44fa9f4', id, '0a441b55-d1d6-4015-bbb4-2e7f44fa9f42', activities);
 
     expect(feedActivitiesSpy).toHaveBeenCalledWith(activities);
   });
 
   it('should create a new conversation object for transcript', async () => {
-    const getActiveBotSpy = jest
-      .spyOn((botHelpers as any).default, 'getActiveBot')
-      .mockReturnValue(null);
+    const getActiveBotSpy = jest.spyOn((botHelpers as any).default, 'getActiveBot').mockReturnValue(null);
     const dispatchSpy = jest.spyOn(store.getStore(), 'dispatch');
-    const { handler } = mockCommandRegistry.getCommand(
-      SharedConstants.Commands.Emulator.NewTranscript
-    );
+    const { handler } = mockCommandRegistry.getCommand(SharedConstants.Commands.Emulator.NewTranscript);
     const conversation = await handler('1234');
 
     const newbot = newBot();
     newbot.services.push(newEndpoint());
     (newbot.services[0] as any).id = jasmine.any(String);
     expect(getActiveBotSpy).toHaveBeenCalled();
-    expect(dispatchSpy).toHaveBeenCalledWith(
-      BotActions.mockAndSetActive(newbot)
-    );
+    expect(dispatchSpy).toHaveBeenCalledWith(BotActions.mockAndSetActive(newbot));
     expect(conversation).not.toBeNull();
   });
 
   it('should set current user', async () => {
-    await mockCommandRegistry
-      .getCommand(SharedConstants.Commands.Emulator.SetCurrentUser)
-      .handler('userId123');
+    await mockCommandRegistry.getCommand(SharedConstants.Commands.Emulator.SetCurrentUser).handler('userId123');
     expect(mockUsers.currentUserId).toBe('userId123');
     expect(mockUsers.users.userId123).toEqual({
       id: 'userId123',

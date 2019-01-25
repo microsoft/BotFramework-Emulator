@@ -44,23 +44,16 @@ import { RootState } from '../../../../data/store';
 
 import { ResourceExplorer, ResourceExplorerProps } from './resourceExplorer';
 
-const mapStateToProps = (
-  state: RootState,
-  ownProps: ResourceExplorerProps
-): ResourceExplorerProps => ({
+const mapStateToProps = (state: RootState, ownProps: ResourceExplorerProps): ResourceExplorerProps => ({
   fileToRename: state.resources.resourceToRename,
   ...ownProps,
 });
 
-const mapDispatchToProps = (
-  dispatch: (...args: any[]) => void
-): ResourceExplorerProps => ({
-  openContextMenuForService: (resource: IFileService) =>
-    dispatch(openContextMenuForResource(resource)),
+const mapDispatchToProps = (dispatch: (...args: any[]) => void): ResourceExplorerProps => ({
+  openContextMenuForService: (resource: IFileService) => dispatch(openContextMenuForResource(resource)),
   renameResource: resource => dispatch(renameResource(resource)),
   openResource: resource => dispatch(openResource(resource)),
-  openResourcesSettings: (dialog: ComponentClass<any>) =>
-    dispatch(openResourcesSettings({ dialog })),
+  openResourcesSettings: (dialog: ComponentClass<any>) => dispatch(openResourcesSettings({ dialog })),
   window,
 });
 

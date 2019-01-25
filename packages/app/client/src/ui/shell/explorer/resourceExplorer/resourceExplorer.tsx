@@ -35,11 +35,7 @@ import * as React from 'react';
 import { ChangeEvent, ComponentClass, KeyboardEvent, MouseEvent } from 'react';
 
 import { ResourcesSettingsContainer } from '../../../dialogs';
-import {
-  ServicePane,
-  ServicePaneProps,
-  ServicePaneState,
-} from '../servicePane/servicePane';
+import { ServicePane, ServicePaneProps, ServicePaneState } from '../servicePane/servicePane';
 
 import * as styles from './resourceExplorer.scss';
 
@@ -57,9 +53,7 @@ export interface ResourceExplorerState extends ServicePaneState {
   fileToRename?: IFileService;
 }
 
-export interface ResourceExplorerProps
-  extends ServicePaneProps,
-    ResourceExplorerState {
+export interface ResourceExplorerProps extends ServicePaneProps, ResourceExplorerState {
   files?: IFileService[];
   renameResource: (resource: IFileService) => void;
   openResource: (resource: IFileService) => void;
@@ -67,10 +61,7 @@ export interface ResourceExplorerProps
   openResourcesSettings?: (dialog: ComponentClass<any>) => void;
 }
 
-export class ResourceExplorer extends ServicePane<
-  ResourceExplorerProps,
-  ResourceExplorerState
-> {
+export class ResourceExplorer extends ServicePane<ResourceExplorerProps, ResourceExplorerState> {
   public static getDerivedStateFromProps(newProps: ResourceExplorerProps) {
     const { fileToRename = {} } = newProps;
     return { fileToRename: { ...fileToRename } }; // Copies only
@@ -144,8 +135,7 @@ export class ResourceExplorer extends ServicePane<
     return (
       <>
         <p className={styles.emptyContent}>
-          You do not have any {this.props.title} in{' '}
-          <strong>{this.props.resourcesPath}.</strong>
+          You do not have any {this.props.title} in <strong>{this.props.resourcesPath}.</strong>
         </p>
         {this.additionalContent}
       </>

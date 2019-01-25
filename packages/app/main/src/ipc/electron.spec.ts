@@ -64,11 +64,7 @@ describe('The ElectronIPC', () => {
   it('should send messages via the webContents', () => {
     const spy = jest.spyOn(mockWebContents, 'send');
     ipc.send('some-message-argument', {});
-    expect(spy).toHaveBeenCalledWith(
-      'ipc:message',
-      'some-message-argument',
-      {}
-    );
+    expect(spy).toHaveBeenCalledWith('ipc:message', 'some-message-argument', {});
   });
 
   it('should register a channel', () => {
@@ -118,10 +114,7 @@ describe('The ElectronIPCServer', () => {
   it('should route messages from the main ipc to the registered ipc', () => {
     (ElectronIPCServer as any).initialized = false;
     let cb: any;
-    (ipcMain as any).on = (
-      type: string,
-      callback: (event: Event, ...args: any[]) => void
-    ) => {
+    (ipcMain as any).on = (type: string, callback: (event: Event, ...args: any[]) => void) => {
       cb = callback;
     };
     const spy = jest.spyOn(ipc, 'onMessage');

@@ -33,20 +33,10 @@
 import { SharedConstants } from '@bfemulator/app-shared';
 import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 
-import {
-  CONTENT_TYPE_APP_SETTINGS,
-  DOCUMENT_ID_APP_SETTINGS,
-} from '../constants';
-import {
-  AzureAuthAction,
-  AzureAuthWorkflow,
-  invalidateArmToken,
-} from '../data/action/azureAuthActions';
+import { CONTENT_TYPE_APP_SETTINGS, DOCUMENT_ID_APP_SETTINGS } from '../constants';
+import { AzureAuthAction, AzureAuthWorkflow, invalidateArmToken } from '../data/action/azureAuthActions';
 import { EditorActions, OpenEditorAction } from '../data/action/editorActions';
-import {
-  NavBarActions,
-  SelectNavBarAction,
-} from '../data/action/navBarActions';
+import { NavBarActions, SelectNavBarAction } from '../data/action/navBarActions';
 import * as editorHelpers from '../data/editorHelpers';
 import { store } from '../data/store';
 import {
@@ -86,27 +76,21 @@ describe('the uiCommands', () => {
 
   it('should call DialogService.showDialog when the ShowBotCreationDialog command is dispatched', async () => {
     const spy = jest.spyOn(DialogService, 'showDialog');
-    const result = await registry
-      .getCommand(Commands.ShowBotCreationDialog)
-      .handler();
+    const result = await registry.getCommand(Commands.ShowBotCreationDialog).handler();
     expect(spy).toHaveBeenCalledWith(BotCreationDialog);
     expect(result).toBe(true);
   });
 
   it('should call DialogService.showDialog when the ShowSecretPromptDialog command is dispatched', async () => {
     const spy = jest.spyOn(DialogService, 'showDialog');
-    const result = await registry
-      .getCommand(Commands.ShowSecretPromptDialog)
-      .handler();
+    const result = await registry.getCommand(Commands.ShowSecretPromptDialog).handler();
     expect(spy).toHaveBeenCalledWith(SecretPromptDialogContainer);
     expect(result).toBe(true);
   });
 
   it('should call DialogService.showDialog when the ShowOpenBotDialog command is dispatched', async () => {
     const spy = jest.spyOn(DialogService, 'showDialog');
-    const result = await registry
-      .getCommand(Commands.ShowOpenBotDialog)
-      .handler();
+    const result = await registry.getCommand(Commands.ShowOpenBotDialog).handler();
     expect(spy).toHaveBeenCalledWith(OpenBotDialogContainer);
     expect(result).toBe(true);
   });
@@ -134,14 +118,10 @@ describe('the uiCommands', () => {
 
     it('when the SignInToAzure command is dispatched', async () => {
       // eslint-disable-next-line prefer-const
-      let arg: AzureAuthAction<AzureAuthWorkflow> = {} as AzureAuthAction<
-        AzureAuthWorkflow
-      >;
+      let arg: AzureAuthAction<AzureAuthWorkflow> = {} as AzureAuthAction<AzureAuthWorkflow>;
       store.dispatch = action => ((arg as any) = action);
       registry.getCommand(Commands.SignInToAzure).handler();
-      expect(arg.payload.loginSuccessDialog).toBe(
-        AzureLoginSuccessDialogContainer
-      );
+      expect(arg.payload.loginSuccessDialog).toBe(AzureLoginSuccessDialogContainer);
       expect(arg.payload.promptDialog).toBe(AzureLoginPromptDialogContainer);
     });
 
@@ -161,10 +141,8 @@ describe('the uiCommands', () => {
     document.querySelector('head').appendChild(link);
     registry.getCommand(Commands.SwitchTheme).handler('light', './light.css');
     expect(link.href).toBe('http://localhost/light.css');
-    expect(remoteCallSpy).toHaveBeenCalledWith(
-      SharedConstants.Commands.Telemetry.TrackEvent,
-      'app_chooseTheme',
-      { themeName: 'light' }
-    );
+    expect(remoteCallSpy).toHaveBeenCalledWith(SharedConstants.Commands.Telemetry.TrackEvent, 'app_chooseTheme', {
+      themeName: 'light',
+    });
   });
 });

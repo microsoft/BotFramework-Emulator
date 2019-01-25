@@ -46,10 +46,7 @@ interface Version {
 
 export class VersionManager {
   public static hasChecked: boolean = false;
-  public static SDKTypes: string[] = [
-    '(BotBuilder .Net/',
-    '(BotBuilder Node.js/',
-  ];
+  public static SDKTypes: string[] = ['(BotBuilder .Net/', '(BotBuilder Node.js/'];
   public static currentSdkVersion: Version = null;
 
   public static checkVersion(conversationId: string, userAgent: string) {
@@ -60,10 +57,7 @@ export class VersionManager {
     }
   }
 
-  public static checkCurrentSdkVersion(
-    conversationId: string,
-    version: Version
-  ) {
+  public static checkCurrentSdkVersion(conversationId: string, version: Version) {
     if (!version || version.type === 'node') {
       VersionManager.checkNodeSdkVersion(conversationId, version);
     } else {
@@ -86,15 +80,9 @@ export class VersionManager {
         try {
           const verObj = JSON.parse(resp.body);
           if (verObj.latest) {
-            const latestVersion: Version = VersionManager.parseVersion(
-              verObj.latest
-            );
+            const latestVersion: Version = VersionManager.parseVersion(verObj.latest);
             if (!version || VersionManager.isLess(version, latestVersion)) {
-              VersionManager.warnAboutNewSdkVersion(
-                conversationId,
-                version,
-                latestVersion
-              );
+              VersionManager.warnAboutNewSdkVersion(conversationId, version, latestVersion);
             }
           }
         } catch (err) {
@@ -109,10 +97,7 @@ export class VersionManager {
       });
   }
 
-  public static checkDotNetSdkVersion(
-    conversationId: string,
-    version: Version
-  ) {
+  public static checkDotNetSdkVersion(conversationId: string, version: Version) {
     const options = {
       url:
         'https://www.nuget.org/api/v2/Packages?' +
@@ -125,23 +110,13 @@ export class VersionManager {
       if (resp.body) {
         try {
           const doc = new DOMParser().parseFromString(resp.body, 'text/xml');
-          const entryElem = doc.documentElement.getElementsByTagName(
-            'entry'
-          )[0];
+          const entryElem = doc.documentElement.getElementsByTagName('entry')[0];
           const properties = entryElem.getElementsByTagName('m:properties')[0];
-          const versionElem = properties.getElementsByTagName(
-            'd:NormalizedVersion'
-          )[0];
+          const versionElem = properties.getElementsByTagName('d:NormalizedVersion')[0];
           if (versionElem.textContent) {
-            const latestVersion: Version = VersionManager.parseVersion(
-              versionElem.textContent
-            );
+            const latestVersion: Version = VersionManager.parseVersion(versionElem.textContent);
             if (!version || VersionManager.isLess(version, latestVersion)) {
-              VersionManager.warnAboutNewSdkVersion(
-                conversationId,
-                version,
-                latestVersion
-              );
+              VersionManager.warnAboutNewSdkVersion(conversationId, version, latestVersion);
             }
           }
         } catch (err) {
@@ -156,21 +131,14 @@ export class VersionManager {
       });
   }
 
-  private static warnAboutNewSdkVersion(
-    conversationId: string,
-    botVersion: Version,
-    latestVersion: Version
-  ) {
+  private static warnAboutNewSdkVersion(conversationId: string, botVersion: Version, latestVersion: Version) {
     mainWindow.logService.logToChat(
       conversationId,
       textItem(
         LogLevel.Warn,
         'Warning: The latest bot SDK version is ' +
           VersionManager.toString(latestVersion) +
-          (botVersion
-            ? ' but the bot is running SDK version ' +
-              VersionManager.toString(botVersion)
-            : '') +
+          (botVersion ? ' but the bot is running SDK version ' + VersionManager.toString(botVersion) : '') +
           '. Consider upgrading the bot to the latest SDK.'
       )
     );

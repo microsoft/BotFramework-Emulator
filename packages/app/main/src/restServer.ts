@@ -33,12 +33,7 @@
 
 import { SharedConstants } from '@bfemulator/app-shared';
 import { BotEmulator, Conversation } from '@bfemulator/emulator-core';
-import {
-  LogLevel,
-  networkRequestItem,
-  networkResponseItem,
-  textItem,
-} from '@bfemulator/sdk-shared';
+import { LogLevel, networkRequestItem, networkResponseItem, textItem } from '@bfemulator/sdk-shared';
 import { IEndpointService } from 'botframework-config';
 import { createServer, Request, Response, Route, Server } from 'restify';
 import CORS from 'restify-cors-middleware';
@@ -59,17 +54,11 @@ export class RestServer {
   private _botEmulator: BotEmulator;
   public get botEmulator(): BotEmulator {
     if (!this._botEmulator) {
-      this._botEmulator = new BotEmulator(
-        botUrl => emulator.ngrok.getServiceUrl(botUrl),
-        {
-          fetch,
-          loggerOrLogService: mainWindow.logService,
-        }
-      );
-      this._botEmulator.facilities.conversations.on(
-        'new',
-        this.onNewConversation
-      );
+      this._botEmulator = new BotEmulator(botUrl => emulator.ngrok.getServiceUrl(botUrl), {
+        fetch,
+        loggerOrLogService: mainWindow.logService,
+      });
+      this._botEmulator.facilities.conversations.on('new', this.onNewConversation);
     }
     return this._botEmulator;
   }
@@ -129,27 +118,13 @@ export class RestServer {
 
     mainWindow.logService.logToChat(
       conversationId,
-      networkRequestItem(
-        facility,
-        (req as any)._body,
-        req.headers,
-        req.method,
-        req.url
-      ),
-      networkResponseItem(
-        (res as any)._data,
-        res.headers,
-        res.statusCode,
-        res.statusMessage,
-        req.url
-      ),
+      networkRequestItem(facility, (req as any)._body, req.headers, req.method, req.url),
+      networkResponseItem((res as any)._data, res.headers, res.statusCode, res.statusMessage, req.url),
       textItem(level, `${facility}.${routeName}`)
     );
   };
 
-  private onNewConversation = async (
-    conversation: Conversation = {} as Conversation
-  ) => {
+  private onNewConversation = async (conversation: Conversation = {} as Conversation) => {
     const { conversationId = '' } = conversation;
     if (!conversationId || conversationId.includes('transcript')) {
       return;
@@ -157,46 +132,29 @@ export class RestServer {
     // Check for an existing livechat window
     // before creating a new one since "new"
     // can also mean "restart".
-    if (
-      !hasLiveChat(conversationId, this.botEmulator.facilities.conversations)
-    ) {
+    if (!hasLiveChat(conversationId, this.botEmulator.facilities.conversations)) {
       const {
         botEndpoint: { id, botUrl },
       } = conversation;
-      await mainWindow.commandService.remoteCall(
-        SharedConstants.Commands.Emulator.NewLiveChat,
-        {
-          id,
-          endpoint: botUrl,
-        } as IEndpointService
-      );
+      await mainWindow.commandService.remoteCall(SharedConstants.Commands.Emulator.NewLiveChat, {
+        id,
+        endpoint: botUrl,
+      } as IEndpointService);
     }
     emulator.report(conversationId);
   };
 }
 
-function shouldPostToChat(
-  conversationId: string,
-  method: string,
-  route: Route
-): boolean {
-  const isDLine =
-    method === 'GET' &&
-    route.spec.path ===
-      '/v3/directline/conversations/:conversationId/activities';
+function shouldPostToChat(conversationId: string, method: string, route: Route): boolean {
+  const isDLine = method === 'GET' && route.spec.path === '/v3/directline/conversations/:conversationId/activities';
   return !isDLine && !!conversationId && !conversationId.includes('transcript');
 }
 
 function getConversationId(req: ConversationAwareRequest): string {
-  return req.conversation
-    ? req.conversation.conversationId
-    : req.params.conversationId;
+  return req.conversation ? req.conversation.conversationId : req.params.conversationId;
 }
 
-function hasLiveChat(
-  conversationId: string,
-  conversationSet: ConversationSet
-): boolean {
+function hasLiveChat(conversationId: string, conversationSet: ConversationSet): boolean {
   if (conversationId.endsWith('|livechat')) {
     return !!conversationSet.conversationById(conversationId);
   }

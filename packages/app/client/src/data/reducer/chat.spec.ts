@@ -201,9 +201,7 @@ describe('Chat reducer tests', () => {
       },
     };
     const endingState = chat(startingState, action);
-    expect(
-      endingState.chats[testChatId].inspectorObjects.length
-    ).toBeGreaterThan(0);
+    expect(endingState.chats[testChatId].inspectorObjects.length).toBeGreaterThan(0);
     expect(endingState.chats[testChatId].inspectorObjects[0]).toEqual({
       testing: true,
     });

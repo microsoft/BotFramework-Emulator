@@ -47,10 +47,7 @@ export interface CommandRegistry {
 export class CommandRegistryImpl implements CommandRegistry {
   private _commands: CommandMap = {};
 
-  public registerCommand(
-    idOrCommand: string | Command,
-    handler?: CommandHandler
-  ): Disposable {
+  public registerCommand(idOrCommand: string | Command, handler?: CommandHandler): Disposable {
     if (!idOrCommand) {
       throw new Error('invalid command');
     }

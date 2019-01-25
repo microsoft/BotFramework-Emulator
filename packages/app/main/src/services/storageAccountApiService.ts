@@ -33,12 +33,7 @@
 import { ServiceCodes } from '@bfemulator/app-shared';
 import { BlobStorageService } from 'botframework-config/lib/models';
 
-import {
-  AccountIdentifier,
-  AzureManagementApiService,
-  AzureResource,
-  Provider,
-} from './azureManagementApiService';
+import { AccountIdentifier, AzureManagementApiService, AzureResource, Provider } from './azureManagementApiService';
 
 interface KeyEntry {
   keyName: string;
@@ -46,11 +41,7 @@ interface KeyEntry {
   permission: string;
 }
 
-function buildServiceModel(
-  key: KeyEntry,
-  account: AzureResource,
-  container: AzureResource
-): BlobStorageService {
+function buildServiceModel(key: KeyEntry, account: AzureResource, container: AzureResource): BlobStorageService {
   const { tenantId, subscriptionId, name: serviceName } = account;
   const { id, name } = container;
   // TODO - review the connectionString for accuracy
@@ -60,18 +51,15 @@ function buildServiceModel(
     subscriptionId,
     name,
     connectionString:
-      `DefaultEndpointsProtocol=https;AccountName=${serviceName};AccountKey=${
-        key.value
-      }` + ';EndpointSuffix=core.windows.net',
+      `DefaultEndpointsProtocol=https;AccountName=${serviceName};AccountKey=${key.value}` +
+      ';EndpointSuffix=core.windows.net',
     resourceGroup: id.split('/')[3],
     serviceName,
   });
 }
 
 export class StorageAccountApiService {
-  public static *getBlobStorageServices(
-    armToken: string
-  ): IterableIterator<any> {
+  public static *getBlobStorageServices(armToken: string): IterableIterator<any> {
     const payload = { services: [], code: ServiceCodes.OK };
     // 1. get a list of subscriptions for the user
     yield { label: 'Retrieving subscriptions from Azure…', progress: 25 };
@@ -98,11 +86,8 @@ export class StorageAccountApiService {
     // their respective accounts.
     yield { label: 'Retrieving Blob Containers from Azure…', progress: 75 };
     const req = AzureManagementApiService.getRequestInit(armToken);
-    const url =
-      'https://management.azure.com{id}/blobServices/default/containers?api-version=2018-07-01';
-    const requests = accounts.map(account =>
-      fetch(url.replace('{id}', account.id), req)
-    );
+    const url = 'https://management.azure.com{id}/blobServices/default/containers?api-version=2018-07-01';
+    const requests = accounts.map(account => fetch(url.replace('{id}', account.id), req));
     const blobContainerResponses: Response[] = yield Promise.all(requests);
     const blobContainerInfos: {
       account: AzureResource;
@@ -144,9 +129,7 @@ export class StorageAccountApiService {
       }
       const firstKey = keysEntry[0];
       const { account, containers } = blobContainerInfos[i];
-      const blobStorageServices = containers.map(container =>
-        buildServiceModel(firstKey, account, container)
-      );
+      const blobStorageServices = containers.map(container => buildServiceModel(firstKey, account, container));
       payload.services.push(...blobStorageServices);
     }
     return payload;

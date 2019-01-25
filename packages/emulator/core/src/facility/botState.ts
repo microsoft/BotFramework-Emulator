@@ -31,13 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import {
-  BotData,
-  ErrorCodes,
-  externalLinkItem,
-  LogLevel,
-  textItem,
-} from '@bfemulator/sdk-shared';
+import { BotData, ErrorCodes, externalLinkItem, LogLevel, textItem } from '@bfemulator/sdk-shared';
 import * as HttpStatus from 'http-status-codes';
 
 import approximateObjectSize from '../utils/approximateObjectSize';
@@ -50,16 +44,9 @@ import botDataKey from './botDataKey';
 export default class BotState {
   private botDataStore: { [key: string]: BotData } = {};
 
-  constructor(
-    public botEmulator: BotEmulator,
-    public stateSizeLimitKB: number
-  ) {}
+  constructor(public botEmulator: BotEmulator, public stateSizeLimitKB: number) {}
 
-  public getBotData(
-    channelId: string,
-    conversationId: string,
-    userId: string
-  ): BotData {
+  public getBotData(channelId: string, conversationId: string, userId: string): BotData {
     this.logBotStateApiDeprecationWarning(conversationId);
 
     const key = botDataKey(channelId, conversationId, userId);
@@ -72,12 +59,7 @@ export default class BotState {
     );
   }
 
-  public setBotData(
-    channelId: string,
-    conversationId: string,
-    userId: string,
-    incomingData: BotData
-  ): BotData {
+  public setBotData(channelId: string, conversationId: string, userId: string, incomingData: BotData): BotData {
     this.logBotStateApiDeprecationWarning(conversationId);
 
     const key = botDataKey(channelId, conversationId, userId);
@@ -90,17 +72,10 @@ export default class BotState {
       incomingData.eTag !== '*' &&
       oldData.eTag !== incomingData.eTag
     ) {
-      throw createAPIException(
-        HttpStatus.PRECONDITION_FAILED,
-        ErrorCodes.BadArgument,
-        'The data is changed'
-      );
+      throw createAPIException(HttpStatus.PRECONDITION_FAILED, ErrorCodes.BadArgument, 'The data is changed');
     }
 
-    if (
-      this.stateSizeLimitKB > 0 &&
-      approximateObjectSize(incomingData) > this.stateSizeLimitKB * 1024
-    ) {
+    if (this.stateSizeLimitKB > 0 && approximateObjectSize(incomingData) > this.stateSizeLimitKB * 1024) {
       throw createAPIException(
         HttpStatus.BAD_REQUEST,
         ErrorCodes.MessageSizeTooBig,
@@ -136,9 +111,7 @@ export default class BotState {
   }
 
   private logBotStateApiDeprecationWarning(conversationId: string) {
-    const conversation: Conversation = this.botEmulator.facilities.conversations.conversationById(
-      conversationId
-    );
+    const conversation: Conversation = this.botEmulator.facilities.conversations.conversationById(conversationId);
 
     if (conversation && !conversation.stateApiDeprecationWarningShown) {
       conversation.stateApiDeprecationWarningShown = true;

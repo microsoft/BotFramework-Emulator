@@ -31,11 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import {
-  FrameworkSettings,
-  newNotification,
-  SharedConstants,
-} from '@bfemulator/app-shared';
+import { FrameworkSettings, newNotification, SharedConstants } from '@bfemulator/app-shared';
 import {
   Checkbox,
   Column,
@@ -84,19 +80,12 @@ const defaultAppSettings: FrameworkSettings = {
 };
 
 function shallowEqual(x: any, y: any) {
-  return (
-    Object.keys(x).length === Object.keys(y).length &&
-    Object.keys(x).every(key => key in y && x[key] === y[key])
-  );
+  return Object.keys(x).length === Object.keys(y).length && Object.keys(x).every(key => key in y && x[key] === y[key]);
 }
 
-export class AppSettingsEditor extends React.Component<
-  AppSettingsEditorProps,
-  AppSettingsEditorState
-> {
+export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, AppSettingsEditorState> {
   public setDirtyFlag = debounce(
-    dirty =>
-      store.dispatch(EditorActions.setDirtyFlag(this.props.documentId, dirty)),
+    dirty => store.dispatch(EditorActions.setDirtyFlag(this.props.documentId, dirty)),
     300
   );
 
@@ -147,15 +136,11 @@ export class AppSettingsEditor extends React.Component<
           <Column className={styles.spacing}>
             <SmallHeader>Service</SmallHeader>
             <p>
-              <a
-                href="https://ngrok.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <a href="https://ngrok.com/" target="_blank" rel="noopener noreferrer">
                 ngrok
               </a>{' '}
-              is network tunneling software. The Bot Framework Emulator works
-              with ngrok to communicate with bots hosted remotely. Read the{' '}
+              is network tunneling software. The Bot Framework Emulator works with ngrok to communicate with bots hosted
+              remotely. Read the{' '}
               <a
                 href="https://github.com/Microsoft/BotFramework-Emulator/wiki/Tunneling-(ngrok)"
                 target="_blank"
@@ -175,11 +160,7 @@ export class AppSettingsEditor extends React.Component<
                 data-prop="ngrokPath"
                 label={'Path to ngrok'}
               />
-              <PrimaryButton
-                onClick={this.onClickBrowse}
-                text="Browse"
-                className={styles.browseButton}
-              />
+              <PrimaryButton onClick={this.onClickBrowse} text="Browse" className={styles.browseButton} />
             </Row>
             <Checkbox
               className={styles.checkboxOverrides}
@@ -254,27 +235,14 @@ export class AppSettingsEditor extends React.Component<
               label="Help improve the Emulator by allowing us to collect usage data."
               name="collectUsageData"
             />
-            <a
-              target="_blank"
-              href="https://aka.ms/bot-framework-emulator-data-collection"
-              rel="noopener noreferrer"
-            >
+            <a target="_blank" href="https://aka.ms/bot-framework-emulator-data-collection" rel="noopener noreferrer">
               Learn more.
             </a>
           </Column>
         </Row>
         <Row className={styles.buttonRow} justify={RowJustification.Right}>
-          <PrimaryButton
-            text="Cancel"
-            onClick={this.onClickDiscard}
-            className={styles.cancelButton}
-          />
-          <PrimaryButton
-            text="Save"
-            onClick={this.onClickSave}
-            className={styles.saveButton}
-            disabled={clean}
-          />
+          <PrimaryButton text="Cancel" onClick={this.onClickDiscard} className={styles.cancelButton} />
+          <PrimaryButton text="Save" onClick={this.onClickSave} className={styles.saveButton} disabled={clean} />
         </Row>
       </GenericDocument>
     );
@@ -321,10 +289,7 @@ export class AppSettingsEditor extends React.Component<
       properties: ['openFile'],
     };
 
-    CommandServiceImpl.remoteCall(
-      Commands.Electron.ShowOpenDialog,
-      dialogOptions
-    )
+    CommandServiceImpl.remoteCall(Commands.Electron.ShowOpenDialog, dialogOptions)
       .then(ngrokPath => this.setUncommittedState({ ngrokPath }))
       .catch(err => {
         const errMsg = `Error while browsing for ngrok: ${err}`;
@@ -366,11 +331,6 @@ export class AppSettingsEditor extends React.Component<
 
   private onClickDiscard = (): void => {
     const { DOCUMENT_ID_APP_SETTINGS } = Constants;
-    store.dispatch(
-      EditorActions.close(
-        getTabGroupForDocument(this.props.documentId),
-        DOCUMENT_ID_APP_SETTINGS
-      )
-    );
+    store.dispatch(EditorActions.close(getTabGroupForDocument(this.props.documentId), DOCUMENT_ID_APP_SETTINGS));
   };
 }

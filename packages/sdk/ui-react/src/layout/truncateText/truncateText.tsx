@@ -45,10 +45,7 @@ export interface TruncateTextProps {
 //       This is because this component is named "truncateText", it should not accept
 //       something that is not a text. It also help with eliminating the "title" props.
 export const TruncateText = (props: TruncateTextProps): JSX.Element => (
-  <span
-    className={`${styles.truncateText} ${props.className || ''}`}
-    title={props.title}
-  >
+  <span className={`${styles.truncateText} ${props.className || ''}`} title={props.title}>
     {props.children}
   </span>
 );

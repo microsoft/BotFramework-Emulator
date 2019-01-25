@@ -53,10 +53,7 @@ interface RightContentOverlayState {
   draggedOver: boolean;
 }
 
-class RightContentOverlayComponent extends React.Component<
-  RightContentOverlayProps,
-  RightContentOverlayState
-> {
+class RightContentOverlayComponent extends React.Component<RightContentOverlayProps, RightContentOverlayState> {
   constructor(props: RightContentOverlayProps) {
     super(props);
 
@@ -66,16 +63,12 @@ class RightContentOverlayComponent extends React.Component<
   }
 
   public render() {
-    let overlayClassName = this.state.draggedOver
-      ? overlay.draggedOverOverlay
-      : '';
+    let overlayClassName = this.state.draggedOver ? overlay.draggedOverOverlay : '';
     overlayClassName += this.props.draggingTab ? overlay.enabledForDrop : '';
 
     return (
       <div
-        className={`${overlay.overlay} ${
-          styles.rightContentOverlay
-        } ${overlayClassName}`}
+        className={`${overlay.overlay} ${styles.rightContentOverlay} ${overlayClassName}`}
         onDragEnterCapture={this.onDragEnter}
         onDragLeave={this.onDragLeave}
         onDragOverCapture={this.onDragOver}
@@ -118,14 +111,7 @@ const mapStateToProps = (state: RootState): RightContentOverlayProps => ({
 
 const mapDispatchToProps = (dispatch): RightContentOverlayProps => ({
   splitTab: (contentType: string, tabId: string) =>
-    dispatch(
-      EditorActions.splitTab(
-        contentType,
-        tabId,
-        Constants.EDITOR_KEY_PRIMARY,
-        Constants.EDITOR_KEY_SECONDARY
-      )
-    ),
+    dispatch(EditorActions.splitTab(contentType, tabId, Constants.EDITOR_KEY_PRIMARY, Constants.EDITOR_KEY_SECONDARY)),
 });
 
 export const RightContentOverlay = connect(

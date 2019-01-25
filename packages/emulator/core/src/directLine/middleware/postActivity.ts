@@ -43,11 +43,7 @@ import statusCodeFamily from '../../utils/statusCodeFamily';
 export default function postActivity(botEmulator: BotEmulator) {
   const { logMessage } = botEmulator.facilities.logger;
 
-  return async (
-    req: Restify.Request,
-    res: Restify.Response,
-    next: Restify.Next
-  ) => {
+  return async (req: Restify.Request, res: Restify.Response, next: Restify.Next) => {
     // const conversation = botEmulator.facilities.conversations.conversationById(req.params.conversationId);
     const conversation: Conversation = (req as any).conversation;
 
@@ -55,39 +51,20 @@ export default function postActivity(botEmulator: BotEmulator) {
       res.send(HttpStatus.NOT_FOUND, 'conversation not found');
       res.end();
 
-      logMessage(
-        req.params.conversationId,
-        textItem(
-          LogLevel.Error,
-          'Cannot post activity. Conversation not found.'
-        )
-      );
+      logMessage(req.params.conversationId, textItem(LogLevel.Error, 'Cannot post activity. Conversation not found.'));
       return;
     }
 
     const activity = req.body as GenericActivity;
 
     try {
-      const {
-        activityId,
-        response,
-        statusCode,
-      } = await conversation.postActivityToBot(activity, true);
+      const { activityId, response, statusCode } = await conversation.postActivityToBot(activity, true);
 
       if (!statusCodeFamily(statusCode, 200)) {
-        if (
-          statusCode === HttpStatus.UNAUTHORIZED ||
-          statusCode === HttpStatus.FORBIDDEN
-        ) {
-          logMessage(
-            req.params.conversationId,
-            textItem(LogLevel.Error, 'Cannot post activity. Unauthorized.')
-          );
+        if (statusCode === HttpStatus.UNAUTHORIZED || statusCode === HttpStatus.FORBIDDEN) {
+          logMessage(req.params.conversationId, textItem(LogLevel.Error, 'Cannot post activity. Unauthorized.'));
         }
-        res.send(
-          statusCode || HttpStatus.INTERNAL_SERVER_ERROR,
-          await response.text()
-        );
+        res.send(statusCode || HttpStatus.INTERNAL_SERVER_ERROR, await response.text());
       } else {
         res.send(statusCode, { id: activityId });
       }

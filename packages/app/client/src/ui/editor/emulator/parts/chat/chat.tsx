@@ -34,9 +34,7 @@ import * as React from 'react';
 import { Component } from 'react';
 import { Activity } from '@bfemulator/sdk-shared';
 import { IEndpointService } from 'botframework-config/lib/schema';
-import ReactWebChat, {
-  createCognitiveServicesBingSpeechPonyfillFactory,
-} from 'botframework-webchat';
+import ReactWebChat, { createCognitiveServicesBingSpeechPonyfillFactory } from 'botframework-webchat';
 
 import { CommandServiceImpl } from '../../../../../platform/commands/commandServiceImpl';
 import { EmulatorMode } from '../../emulator';
@@ -61,23 +59,15 @@ interface ChatState {
   webSpeechPonyfillFactory: any;
 }
 
-function isCardSelected(
-  selectedActivity: Activity | null,
-  activity: Activity
-): boolean {
-  return Boolean(
-    selectedActivity && activity.id && selectedActivity.id === activity.id
-  );
+function isCardSelected(selectedActivity: Activity | null, activity: Activity): boolean {
+  return Boolean(selectedActivity && activity.id && selectedActivity.id === activity.id);
 }
 
 function isSpeechEnabled(endpoint: IEndpointService | null): boolean {
   return Boolean(endpoint && endpoint.appId && endpoint.appPassword);
 }
 
-export async function getSpeechToken(
-  endpoint: IEndpointService,
-  refresh: boolean = false
-): Promise<string | void> {
+export async function getSpeechToken(endpoint: IEndpointService, refresh: boolean = false): Promise<string | void> {
   if (!endpoint) {
     // eslint-disable-next-line no-console
     console.warn('No endpoint for this chat, cannot fetch speech token.');
@@ -109,11 +99,9 @@ export class Chat extends Component<ChatProps, ChatState> {
       const speechToken = await getSpeechToken(this.props.endpoint);
 
       if (speechToken) {
-        const webSpeechPonyfillFactory = await createCognitiveServicesBingSpeechPonyfillFactory(
-          {
-            authorizationToken: speechToken,
-          }
-        );
+        const webSpeechPonyfillFactory = await createCognitiveServicesBingSpeechPonyfillFactory({
+          authorizationToken: speechToken,
+        });
 
         this.setState({ webSpeechPonyfillFactory, waitForSpeechToken: false });
       } else {

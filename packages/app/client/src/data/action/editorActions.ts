@@ -170,11 +170,7 @@ export type EditorAction =
   | RemoveDocPendingChangeAction
   | DropTabOnLeftOverlayAction;
 
-export function appendTab(
-  srcEditorKey: string,
-  destEditorKey: string,
-  documentId: string
-): AppendTabAction {
+export function appendTab(srcEditorKey: string, destEditorKey: string, documentId: string): AppendTabAction {
   return {
     type: EditorActions.appendTab,
     payload: {
@@ -185,9 +181,7 @@ export function appendTab(
   };
 }
 
-export function addDocPendingChange(
-  documentId: string
-): AddDocPendingChangeAction {
+export function addDocPendingChange(documentId: string): AddDocPendingChangeAction {
   return {
     type: EditorActions.addDocPendingChange,
     payload: {
@@ -196,9 +190,7 @@ export function addDocPendingChange(
   };
 }
 
-export function removeDocPendingChange(
-  documentId: string
-): RemoveDocPendingChangeAction {
+export function removeDocPendingChange(documentId: string): RemoveDocPendingChangeAction {
   return {
     type: EditorActions.removeDocPendingChange,
     payload: {
@@ -207,10 +199,7 @@ export function removeDocPendingChange(
   };
 }
 
-export function close(
-  editorKey: string,
-  documentId: string
-): CloseEditorAction {
+export function close(editorKey: string, documentId: string): CloseEditorAction {
   return {
     type: EditorActions.close,
     payload: {
@@ -229,10 +218,7 @@ export function closeNonGlobalTabs(): CloseAllEditorAction {
   };
 }
 
-export function setDirtyFlag(
-  documentId: string,
-  dirty: boolean
-): SetDirtyFlagAction {
+export function setDirtyFlag(documentId: string, dirty: boolean): SetDirtyFlagAction {
   return {
     type: EditorActions.setDirtyFlag,
     payload: {
@@ -249,10 +235,7 @@ export function open(document: Document): OpenEditorAction {
   };
 }
 
-export function updateDocument(
-  documentId: string,
-  updatedDocument: Partial<Document>
-): UpdateDocumentAction {
+export function updateDocument(documentId: string, updatedDocument: Partial<Document>): UpdateDocumentAction {
   return {
     type: EditorActions.updateDocument,
     payload: { documentId, ...updatedDocument },
@@ -311,9 +294,7 @@ export function swapTabs(
   };
 }
 
-export function toggleDraggingTab(
-  draggingTab: boolean
-): ToggleDraggingTabAction {
+export function toggleDraggingTab(draggingTab: boolean): ToggleDraggingTabAction {
   return {
     type: EditorActions.toggleDraggingTab,
     payload: {
@@ -322,9 +303,7 @@ export function toggleDraggingTab(
   };
 }
 
-export function dropTabOnLeftOverlay(
-  tabId: string
-): DropTabOnLeftOverlayAction {
+export function dropTabOnLeftOverlay(tabId: string): DropTabOnLeftOverlayAction {
   return {
     type: EditorActions.dropTabOnLeftOverlay,
     payload: {

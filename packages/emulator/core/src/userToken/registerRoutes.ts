@@ -45,15 +45,9 @@ import getToken from './middleware/getToken';
 import signOut from './middleware/signOut';
 import tokenResponse from './middleware/tokenResponse';
 
-export default function registerRoutes(
-  botEmulator: BotEmulator,
-  server: Server,
-  uses: RequestHandler[]
-) {
+export default function registerRoutes(botEmulator: BotEmulator, server: Server, uses: RequestHandler[]) {
   const jsonBodyParser = createJsonBodyParserMiddleware();
-  const verifyBotFramework = createBotFrameworkAuthenticationMiddleware(
-    botEmulator.options.fetch
-  );
+  const verifyBotFramework = createBotFrameworkAuthenticationMiddleware(botEmulator.options.fetch);
   const botEndpoint = getBotEndpoint(botEmulator);
   const facility = getFacility('api');
 

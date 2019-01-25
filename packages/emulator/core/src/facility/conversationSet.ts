@@ -54,12 +54,7 @@ export default class ConversationSet extends EventEmitter {
     user: User,
     conversationId: string = uniqueId()
   ): Conversation {
-    const conversation = new Conversation(
-      botEmulator,
-      botEndpoint,
-      conversationId,
-      user
-    );
+    const conversation = new Conversation(botEmulator, botEndpoint, conversationId, user);
 
     this.conversations.push(conversation);
     this.emit('new', conversation);
@@ -68,9 +63,7 @@ export default class ConversationSet extends EventEmitter {
   }
 
   public conversationById(conversationId: string): Conversation {
-    return this.conversations.find(
-      value => value.conversationId === conversationId
-    );
+    return this.conversations.find(value => value.conversationId === conversationId);
   }
 
   public getConversationIds(): string[] {

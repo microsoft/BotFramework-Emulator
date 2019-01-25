@@ -50,30 +50,23 @@ const mockState = {
         activeDocumentId: '1234',
         documents: {
           'e7985c20-b059-11e8-8bf1-69211e6350d9': {
-            contentType:
-              'application/vnd.microsoft.bfemulator.document.livechat',
+            contentType: 'application/vnd.microsoft.bfemulator.document.livechat',
             documentId: 'e7985c20-b059-11e8-8bf1-69211e6350d9',
             isGlobal: false,
           },
           '12345678': {
-            contentType:
-              'application/vnd.microsoft.bfemulator.document.transcript',
+            contentType: 'application/vnd.microsoft.bfemulator.document.transcript',
             documentId: '12345678',
             isGlobal: false,
             fileName: 'CardExamples.transcript',
           },
           '1234': {
-            contentType:
-              'application/vnd.microsoft.bfemulator.document.transcript',
+            contentType: 'application/vnd.microsoft.bfemulator.document.transcript',
             documentId: '1234',
             isGlobal: false,
           },
         },
-        recentTabs: [
-          '1234',
-          '12345678',
-          'e7985c20-b059-11e8-8bf1-69211e6350d9',
-        ],
+        recentTabs: ['1234', '12345678', 'e7985c20-b059-11e8-8bf1-69211e6350d9'],
         tabOrder: ['e7985c20-b059-11e8-8bf1-69211e6350d9', '12345678', '1234'],
       },
       secondary: {

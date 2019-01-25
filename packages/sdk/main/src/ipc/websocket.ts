@@ -58,11 +58,7 @@ export class WebSocketIPC extends IPC {
     }
     this._ws.on('message', s => {
       const message = JSON.parse(s as string);
-      if (
-        isObject(message) &&
-        message.type === 'ipc:message' &&
-        Array.isArray(message.args)
-      ) {
+      if (isObject(message) && message.type === 'ipc:message' && Array.isArray(message.args)) {
         const channelName = message.args.shift();
         const channel = super.getChannel(channelName);
         if (channel) {

@@ -49,15 +49,11 @@ export function navigate(url: string) {
     } else if (parsed.protocol.startsWith('oauthlink:')) {
       navigateOAuthUrl(url.substring(12));
     } else {
-      CommandServiceImpl.remoteCall(TrackEvent, 'app_openLink', { url }).catch(
-        _e => void 0
-      );
+      CommandServiceImpl.remoteCall(TrackEvent, 'app_openLink', { url }).catch(_e => void 0);
       shell.openExternal(url, { activate: true });
     }
   } catch (e) {
-    CommandServiceImpl.remoteCall(TrackEvent, 'app_openLink', { url }).catch(
-      _e => void 0
-    );
+    CommandServiceImpl.remoteCall(TrackEvent, 'app_openLink', { url }).catch(_e => void 0);
     shell.openExternal(url, { activate: true });
   }
 }
@@ -76,9 +72,5 @@ function navigateEmulatedOAuthUrl(oauthParam: string) {
 function navigateOAuthUrl(oauthParam: string) {
   const { Commands } = SharedConstants;
   const parts = oauthParam.split('&&&');
-  CommandServiceImpl.remoteCall(
-    Commands.OAuth.CreateOAuthWindow,
-    parts[0],
-    parts[1]
-  ).catch();
+  CommandServiceImpl.remoteCall(Commands.OAuth.CreateOAuthWindow, parts[0], parts[1]).catch();
 }

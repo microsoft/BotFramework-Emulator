@@ -57,11 +57,7 @@ export class Row extends React.Component<RowProps, {}> {
   public render(): JSX.Element {
     const { className = '' } = this.props;
     return (
-      <div
-        className={`${
-          styles.row
-        } ${this.getRowAlignment()} ${this.getRowAlignment()} ${className}`}
-      >
+      <div className={`${styles.row} ${this.getRowAlignment()} ${this.getRowAlignment()} ${className}`}>
         {this.props.children}
       </div>
     );

@@ -40,9 +40,7 @@ export interface PostMigrationDialogProps {
   close: () => void;
 }
 
-export class PostMigrationDialog extends React.Component<
-  PostMigrationDialogProps
-> {
+export class PostMigrationDialog extends React.Component<PostMigrationDialogProps> {
   public constructor(props: PostMigrationDialogProps) {
     super(props);
   }
@@ -54,17 +52,13 @@ export class PostMigrationDialog extends React.Component<
           We’ve copied your bot endpoints from Emulator v3 and saved them as
           <strong className={styles.boldText}> .bot files</strong>. A
           <strong className={styles.boldText}> .bot file </strong>
-          stores metadata about different services your bot consumes and enables
-          you to edit these services directly from the Emulator v4.
-          <a href="https://aka.ms/about-bot-file">
-            {' '}
-            Learn more about bot configuration files.
-          </a>
+          stores metadata about different services your bot consumes and enables you to edit these services directly
+          from the Emulator v4.
+          <a href="https://aka.ms/about-bot-file"> Learn more about bot configuration files.</a>
         </p>
         <p>
           {/* eslint-disable-next-line react/no-unescaped-entities */}
-          You can move a bot to any location by right-clicking the bot's name
-          under My Bots.
+          You can move a bot to any location by right-clicking the bot's name under My Bots.
         </p>
         <p>
           <a href="https://aka.ms/bot-framework-emulator-v4-overview">

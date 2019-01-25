@@ -96,10 +96,7 @@ export interface FinishClearNotificationAction {
   payload: {};
 }
 
-export function beginAdd(
-  notification: Notification,
-  read: boolean = false
-): BeginAddNotificationAction {
+export function beginAdd(notification: Notification, read: boolean = false): BeginAddNotificationAction {
   return {
     type: NotificationActions.beginAdd,
     payload: {
@@ -109,9 +106,7 @@ export function beginAdd(
   };
 }
 
-export function finishAdd(
-  notification: Notification
-): FinishAddNotificationAction {
+export function finishAdd(notification: Notification): FinishAddNotificationAction {
   return {
     type: NotificationActions.finishAdd,
     payload: {

@@ -90,9 +90,7 @@ describe('The RecentBotsList', () => {
       },
     } as any);
 
-    expect(mockDispatch).toHaveBeenCalledWith(
-      openContextMenuForBot((mockStore.getState() as any).bot.botFiles[0])
-    );
+    expect(mockDispatch).toHaveBeenCalledWith(openContextMenuForBot((mockStore.getState() as any).bot.botFiles[0]));
   });
 
   it('should send a notification when a bot fails to delete', async () => {
@@ -111,9 +109,7 @@ describe('The RecentBotsList', () => {
   });
 
   it('should call the appropriate command when a bot from the list is deleted', async () => {
-    const spy = jest
-      .spyOn(CommandServiceImpl, 'remoteCall')
-      .mockResolvedValue(true);
+    const spy = jest.spyOn(CommandServiceImpl, 'remoteCall').mockResolvedValue(true);
     await instance.onDeleteBotClick({
       currentTarget: {
         dataset: {

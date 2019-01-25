@@ -31,13 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import { BotInfo } from '@bfemulator/app-shared';
-import {
-  DefaultButton,
-  Dialog,
-  DialogFooter,
-  PrimaryButton,
-  TextField,
-} from '@bfemulator/ui-react';
+import { DefaultButton, Dialog, DialogFooter, PrimaryButton, TextField } from '@bfemulator/ui-react';
 import * as React from 'react';
 import { ChangeEvent, Component, MouseEvent } from 'react';
 
@@ -60,10 +54,7 @@ export interface ResourcesSettingsProps extends ResourcesSettingsState {
   showOpenDialog: () => Promise<any>;
 }
 
-export class ResourcesSettings extends Component<
-  ResourcesSettingsProps,
-  ResourcesSettingsState
-> {
+export class ResourcesSettings extends Component<ResourcesSettingsProps, ResourcesSettingsState> {
   constructor(props: ResourcesSettingsProps, context: ResourcesSettingsState) {
     super(props, context);
     const { transcriptsPath, chatsPath } = props;
@@ -71,19 +62,10 @@ export class ResourcesSettings extends Component<
   }
 
   public render(): JSX.Element {
-    const {
-      transcriptsInputError,
-      dirty,
-      transcriptsPath,
-      chatsPath,
-    } = this.state;
+    const { transcriptsInputError, dirty, transcriptsPath, chatsPath } = this.state;
     const saveDisabled = !dirty || !transcriptsPath;
     return (
-      <Dialog
-        title="Resource settings for this bot"
-        cancel={this.props.cancel}
-        className={dialogStyles.dialogLarge}
-      >
+      <Dialog title="Resource settings for this bot" cancel={this.props.cancel} className={dialogStyles.dialogLarge}>
         <div className={styles.container}>
           <TextField
             inputContainerClassName={styles.inputContainer}

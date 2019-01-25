@@ -30,12 +30,9 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import {
-  AttachmentData,
-  ConversationParameters,
-  GenericActivity,
-} from '@bfemulator/sdk-shared';
+import { AttachmentData, ConversationParameters, GenericActivity } from '@bfemulator/sdk-shared';
 import * as HttpStatus from 'http-status-codes';
+
 import { BotEmulator } from '../../botEmulator';
 import Attachments from '../../facility/attachments';
 import BotEndpoint from '../../facility/botEndpoint';
@@ -70,16 +67,7 @@ describe('The conversations middleware', () => {
   it('should create a new conversation', () => {
     const bot = { role: 'bot', name: 'thebot', id: '456' };
     const req = {
-      botEndpoint: new BotEndpoint(
-        '12',
-        '456',
-        'http://localhost:12345',
-        '',
-        '',
-        false,
-        '',
-        {}
-      ),
+      botEndpoint: new BotEndpoint('12', '456', 'http://localhost:12345', '', '', false, '', {}),
       body: {
         members: [{ id: '456', name: 'emulator', role: 'user' }],
         bot,
@@ -100,32 +88,18 @@ describe('The conversations middleware', () => {
       id: '007',
     });
 
-    const newConversation = emulator.facilities.conversations.conversationById(
-      '007'
-    );
+    const newConversation = emulator.facilities.conversations.conversationById('007');
     expect(newConversation).toBeTruthy();
     expect(newConversation.botEndpoint).toEqual(req.botEndpoint);
     expect(newConversation.user).toEqual({ id: '456', name: 'emulator' });
-    expect(newConversation.members).toEqual([
-      { id: '456', name: 'Bot' },
-      { id: '456', name: 'emulator' },
-    ]);
+    expect(newConversation.members).toEqual([{ id: '456', name: 'Bot' }, { id: '456', name: 'emulator' }]);
   });
 
   it('should delete an activity', () => {
     // create the conversation with an activity
     const bot = { role: 'bot', name: 'thebot', id: '456' };
     let req: any = {
-      botEndpoint: new BotEndpoint(
-        '12',
-        '456',
-        'http://localhost:12345',
-        '',
-        '',
-        false,
-        '',
-        {}
-      ),
+      botEndpoint: new BotEndpoint('12', '456', 'http://localhost:12345', '', '', false, '', {}),
       body: {
         members: [{ id: '456', name: 'emulator', role: 'user' }],
         bot,
@@ -139,9 +113,7 @@ describe('The conversations middleware', () => {
     let activity = { activityId: '' };
     res.send = (_, actvty) => (activity = actvty);
     createConversationMiddleware(req as any, res, (() => null) as any);
-    const conversation = emulator.facilities.conversations.conversationById(
-      '007'
-    );
+    const conversation = emulator.facilities.conversations.conversationById('007');
     req = {
       params: {
         activityId: activity.activityId,
@@ -422,8 +394,7 @@ describe('The conversations middleware', () => {
                         {
                           type: 'TextBlock',
                           size: 'Medium',
-                          text:
-                            "Hello, I'm the Cafe bot! How can I be of help today?",
+                          text: "Hello, I'm the Cafe bot! How can I be of help today?",
                           wrap: true,
                         },
                       ],
@@ -435,8 +406,7 @@ describe('The conversations middleware', () => {
                         {
                           type: 'Image',
                           horizontalAlignment: 'center',
-                          url:
-                            'http://contosocafeontheweb.azurewebsites.net/assets/contoso_logo_black.png',
+                          url: 'http://contosocafeontheweb.azurewebsites.net/assets/contoso_logo_black.png',
                           size: 'medium',
                         },
                       ],
@@ -477,9 +447,7 @@ describe('The conversations middleware', () => {
       conversation,
       body: { activities: mockActivities },
     };
-    const sendHistoryToConversationMiddleware = sendHistoryToConversation(
-      emulator
-    );
+    const sendHistoryToConversationMiddleware = sendHistoryToConversation(emulator);
     const sendSpy = jest.spyOn(res, 'send');
     sendHistoryToConversationMiddleware(req as any, res, (() => null) as any);
     const { activities } = conversation.getActivitiesSince(0);
@@ -547,9 +515,7 @@ describe('The conversations middleware', () => {
     expect(sendSpy).toHaveBeenCalledWith(HttpStatus.OK, {
       id: jasmine.any(String),
     });
-    expect(
-      (conversation.getActivitiesSince(0).activities[0] as GenericActivity).text
-    ).toBe('Hi there!');
+    expect((conversation.getActivitiesSince(0).activities[0] as GenericActivity).text).toBe('Hi there!');
   });
 
   it('should upload an attachment', () => {
@@ -569,9 +535,7 @@ describe('The conversations middleware', () => {
     expect(sendSpy).toHaveBeenCalledWith(HttpStatus.OK, {
       id: jasmine.any(String),
     });
-    expect(
-      Object.keys((emulator.facilities.attachments as any).attachments).length
-    ).toBe(1);
+    expect(Object.keys((emulator.facilities.attachments as any).attachments).length).toBe(1);
   });
 });
 
@@ -604,9 +568,7 @@ describe('The getBotEndpoint middleware', () => {
     } as any;
     getBotEndpointMiddleware(req as any, res, (() => null) as any);
 
-    expect(
-      emulator.facilities.endpoints.get('http://localhost:5050/api/messages')
-    ).not.toBeNull();
+    expect(emulator.facilities.endpoints.get('http://localhost:5050/api/messages')).not.toBeNull();
   });
 
   it('should retrieve the endpoint from the jwt when one exists', () => {
@@ -651,16 +613,7 @@ function createConversationUtil(emulator: BotEmulator): Conversation {
   // create the conversation with an activity
   const bot = { role: 'bot', name: 'thebot', id: '456' };
   const req: any = {
-    botEndpoint: new BotEndpoint(
-      '12',
-      '456',
-      'http://localhost:12345',
-      '',
-      '',
-      false,
-      '',
-      {}
-    ),
+    botEndpoint: new BotEndpoint('12', '456', 'http://localhost:12345', '', '', false, '', {}),
     body: {
       members: [{ id: '456', name: 'emulator', role: 'user' }],
       bot,
@@ -670,11 +623,7 @@ function createConversationUtil(emulator: BotEmulator): Conversation {
   const createConversationMiddleware = createConversation.bind({
     botId: bot.id,
   })(emulator);
-  createConversationMiddleware(
-    req as any,
-    { send: () => null, end: () => null },
-    (() => null) as any
-  );
+  createConversationMiddleware(req as any, { send: () => null, end: () => null }, (() => null) as any);
 
   return emulator.facilities.conversations.conversationById('007');
 }

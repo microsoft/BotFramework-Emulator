@@ -35,10 +35,7 @@ import { connect } from 'react-redux';
 
 import { DialogService } from '../service';
 
-import {
-  ConnectServicePromptDialog,
-  ConnectServicePromptDialogProps,
-} from './connectServicePromptDialog';
+import { ConnectServicePromptDialog, ConnectServicePromptDialogProps } from './connectServicePromptDialog';
 
 const mapDispatchToProps = (
   _dispatch: () => void,

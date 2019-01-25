@@ -59,10 +59,7 @@ export class ElectronIPC extends IPC {
 }
 
 class ElectronIPCServerImpl {
-  private _ipcs: WeakMap<WebContents, ElectronIPC> = new WeakMap<
-    WebContents,
-    ElectronIPC
-  >();
+  private _ipcs: WeakMap<WebContents, ElectronIPC> = new WeakMap<WebContents, ElectronIPC>();
   private initialized = false;
 
   public registerIPC(ipc: ElectronIPC): Disposable {

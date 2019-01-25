@@ -30,12 +30,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import {
-  DefaultButton,
-  Dialog,
-  DialogFooter,
-  PrimaryButton,
-} from '@bfemulator/ui-react';
+import { DefaultButton, Dialog, DialogFooter, PrimaryButton } from '@bfemulator/ui-react';
 import { ServiceTypes } from 'botframework-config/lib/schema';
 import * as React from 'react';
 import { Component, ReactNode } from 'react';
@@ -53,30 +48,19 @@ const titleMap = {
   [ServiceTypes.Luis]: 'Connect your bot to a LUIS application',
   [ServiceTypes.Dispatch]: 'Connect your bot to a Dispatch model',
   [ServiceTypes.QnA]: 'Connect your bot to a QnA Maker knowledge base',
-  [ServiceTypes.AppInsights]:
-    'Connect to an Azure Application Insights resource',
+  [ServiceTypes.AppInsights]: 'Connect to an Azure Application Insights resource',
   [ServiceTypes.BlobStorage]: 'Connect your bot to an Azure Storage account',
   [ServiceTypes.CosmosDB]: 'Connect your bot to an Azure Cosmos DB account',
 };
 
-export class ConnectServicePromptDialog extends Component<
-  ConnectServicePromptDialogProps,
-  {}
-> {
+export class ConnectServicePromptDialog extends Component<ConnectServicePromptDialogProps, {}> {
   public render() {
     return (
-      <Dialog
-        className={styles.dialogMedium}
-        cancel={this.props.cancel}
-        title={titleMap[this.props.serviceType]}
-      >
+      <Dialog className={styles.dialogMedium} cancel={this.props.cancel} title={titleMap[this.props.serviceType]}>
         {this.dialogContent}
         <DialogFooter>
           <DefaultButton text="Cancel" onClick={this.props.cancel} />
-          <PrimaryButton
-            text="Sign in with Azure"
-            onClick={this.props.confirm}
-          />
+          <PrimaryButton text="Sign in with Azure" onClick={this.props.confirm} />
         </DialogFooter>
       </Dialog>
     );
@@ -150,9 +134,7 @@ export class ConnectServicePromptDialog extends Component<
       <>
         <p>
           {`Sign in to your Azure account to select the Dispatch model you'd like to associate with this bot. `}
-          <a href="https://aka.ms/bot-framework-emulator-create-dispatch">
-            Learn more about Dispatch models.
-          </a>
+          <a href="https://aka.ms/bot-framework-emulator-create-dispatch">Learn more about Dispatch models.</a>
         </p>
         <p>
           {`Alternatively, you can `}
@@ -192,9 +174,7 @@ export class ConnectServicePromptDialog extends Component<
         <p>
           {'Sign in to your Azure account to select the Azure Storage ' +
             "accounts you'd like to associate with this bot. "}
-          <a href="https://aka.ms/bot-framework-emulator-storage-docs">
-            Learn more about Azure Storage.
-          </a>
+          <a href="https://aka.ms/bot-framework-emulator-storage-docs">Learn more about Azure Storage.</a>
         </p>
         <p>
           {`Alternatively, you can `}
@@ -212,9 +192,7 @@ export class ConnectServicePromptDialog extends Component<
         <p>
           {'Sign in to your Azure account to select the Azure Cosmos DB ' +
             "accounts you'd like to associate with this bot. "}
-          <a href="https://aka.ms/bot-framework-emulator-cosmosdb-docs">
-            Learn more about Azure Cosmos DB.
-          </a>
+          <a href="https://aka.ms/bot-framework-emulator-cosmosdb-docs">Learn more about Azure Cosmos DB.</a>
         </p>
         <p>
           {`Alternatively, you can `}

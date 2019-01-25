@@ -40,8 +40,7 @@ const getPem = require('rsa-pem-from-mod-exp');
 
 const clientId = 'f3723d34-6ff5-4ceb-a148-d99dcd2511fc';
 const replyUrl = 'https://dev.botframework.com/cb';
-const authorizationEndpoint =
-  'https://login.microsoftonline.com/common/oauth2/authorize';
+const authorizationEndpoint = 'https://login.microsoftonline.com/common/oauth2/authorize';
 
 declare interface Config {
   authorization_endpoint: string;
@@ -63,9 +62,7 @@ export class AzureAuthWorkflowService {
   private static config: Config;
   private static jwks: Jwks;
 
-  public static *retrieveAuthToken(
-    renew: boolean = false
-  ): IterableIterator<any> {
+  public static *retrieveAuthToken(renew: boolean = false): IterableIterator<any> {
     const authWindow = yield this.launchAuthWindow(renew);
     authWindow.show();
     const result = yield this.waitForAuthResult(authWindow, replyUrl);
@@ -83,10 +80,7 @@ export class AzureAuthWorkflowService {
     yield result;
   }
 
-  private static async waitForAuthResult(
-    browserWindow: BrowserWindow,
-    redirectUri: string
-  ): Promise<AuthResponse> {
+  private static async waitForAuthResult(browserWindow: BrowserWindow, redirectUri: string): Promise<AuthResponse> {
     const response = await new Promise<AuthResponse>(resolve => {
       // eslint-disable-next-line prefer-const
       let interval;
@@ -95,9 +89,7 @@ export class AzureAuthWorkflowService {
         // eslint-disable-next-line typescript/no-object-literal-type-assertion
         const result: AuthResponse = {} as AuthResponse;
         try {
-          const {
-            history = [],
-          }: { history: string[] } = browserWindow.webContents as any;
+          const { history = [] }: { history: string[] } = browserWindow.webContents as any;
           uri = history[history.length - 1] || '';
         } catch (e) {
           clearInterval(interval);
@@ -136,9 +128,7 @@ export class AzureAuthWorkflowService {
     return response;
   }
 
-  private static async launchAuthWindow(
-    renew: boolean
-  ): Promise<BrowserWindow> {
+  private static async launchAuthWindow(renew: boolean): Promise<BrowserWindow> {
     const browserWindow = new BrowserWindow({
       modal: true,
       show: false,
@@ -181,8 +171,7 @@ export class AzureAuthWorkflowService {
     if (this.config) {
       return this.config;
     }
-    const configUrl =
-      'https://login.microsoftonline.com/common/.well-known/openid-configuration';
+    const configUrl = 'https://login.microsoftonline.com/common/.well-known/openid-configuration';
     const configResponse = await fetch(configUrl);
     this.config = await configResponse.json();
     return this.config;
@@ -201,9 +190,7 @@ export class AzureAuthWorkflowService {
 
   private static async validateJWT(token: string): Promise<boolean> {
     const [header] = token.split('.');
-    const headers: { alg: string; kid: string; x5t: string } = JSON.parse(
-      Buffer.from(header, 'base64').toString()
-    );
+    const headers: { alg: string; kid: string; x5t: string } = JSON.parse(Buffer.from(header, 'base64').toString());
 
     try {
       const jwks = await this.getJwks();

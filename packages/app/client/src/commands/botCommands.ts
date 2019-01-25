@@ -31,11 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import {
-  BotInfo,
-  getBotDisplayName,
-  SharedConstants,
-} from '@bfemulator/app-shared';
+import { BotInfo, getBotDisplayName, SharedConstants } from '@bfemulator/app-shared';
 import { BotConfigWithPath, CommandRegistryImpl } from '@bfemulator/sdk-shared';
 import { IFileService } from 'botframework-config/lib/schema';
 
@@ -58,32 +54,25 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
   // ---------------------------------------------------------------------------
   // Switches the current active bot
-  commandRegistry.registerCommand(
-    Commands.Bot.Switch,
-    (bot: BotConfigWithPath | string) => {
-      let numOfServices;
-      if (typeof bot !== 'string') {
-        numOfServices = bot.services && bot.services.length;
-      }
-      CommandServiceImpl.remoteCall(Commands.Telemetry.TrackEvent, 'bot_open', {
-        method: 'bots_list',
-        numOfServices,
-      }).catch(_e => void 0);
-      return ActiveBotHelper.confirmAndSwitchBots(bot);
+  commandRegistry.registerCommand(Commands.Bot.Switch, (bot: BotConfigWithPath | string) => {
+    let numOfServices;
+    if (typeof bot !== 'string') {
+      numOfServices = bot.services && bot.services.length;
     }
-  );
+    CommandServiceImpl.remoteCall(Commands.Telemetry.TrackEvent, 'bot_open', {
+      method: 'bots_list',
+      numOfServices,
+    }).catch(_e => void 0);
+    return ActiveBotHelper.confirmAndSwitchBots(bot);
+  });
 
   // ---------------------------------------------------------------------------
   // Closes the current active bot
-  commandRegistry.registerCommand(Commands.Bot.Close, () =>
-    ActiveBotHelper.confirmAndCloseBot()
-  );
+  commandRegistry.registerCommand(Commands.Bot.Close, () => ActiveBotHelper.confirmAndCloseBot());
 
   // ---------------------------------------------------------------------------
   // Browse for a .bot file and open it
-  commandRegistry.registerCommand(Commands.Bot.OpenBrowse, () =>
-    ActiveBotHelper.confirmAndOpenBotFromFile()
-  );
+  commandRegistry.registerCommand(Commands.Bot.OpenBrowse, () => ActiveBotHelper.confirmAndOpenBotFromFile());
 
   // ---------------------------------------------------------------------------
   // Loads the bot on the client side using the activeBotHelper
@@ -110,46 +99,28 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
   // ---------------------------------------------------------------------------
   // Sets a bot as active (called from server-side)
-  commandRegistry.registerCommand(
-    Commands.Bot.SetActive,
-    async (bot: BotConfigWithPath, botDirectory: string) => {
-      store.dispatch(BotActions.setActiveBot(bot));
-      store.dispatch(FileActions.setRoot(botDirectory));
-      await Promise.all([
-        CommandServiceImpl.remoteCall(Commands.Electron.UpdateFileMenu),
-        CommandServiceImpl.remoteCall(
-          Commands.Electron.SetTitleBar,
-          getBotDisplayName(bot)
-        ),
-      ]);
-    }
-  );
+  commandRegistry.registerCommand(Commands.Bot.SetActive, async (bot: BotConfigWithPath, botDirectory: string) => {
+    store.dispatch(BotActions.setActiveBot(bot));
+    store.dispatch(FileActions.setRoot(botDirectory));
+    await Promise.all([
+      CommandServiceImpl.remoteCall(Commands.Electron.UpdateFileMenu),
+      CommandServiceImpl.remoteCall(Commands.Electron.SetTitleBar, getBotDisplayName(bot)),
+    ]);
+  });
 
-  commandRegistry.registerCommand(
-    Commands.Bot.TranscriptFilesUpdated,
-    (transcripts: IFileService[]) => {
-      store.dispatch(transcriptsUpdated(transcripts));
-    }
-  );
+  commandRegistry.registerCommand(Commands.Bot.TranscriptFilesUpdated, (transcripts: IFileService[]) => {
+    store.dispatch(transcriptsUpdated(transcripts));
+  });
 
-  commandRegistry.registerCommand(
-    Commands.Bot.ChatFilesUpdated,
-    (chatFiles: IFileService[]) => {
-      store.dispatch(chatFilesUpdated(chatFiles));
-    }
-  );
+  commandRegistry.registerCommand(Commands.Bot.ChatFilesUpdated, (chatFiles: IFileService[]) => {
+    store.dispatch(chatFilesUpdated(chatFiles));
+  });
 
-  commandRegistry.registerCommand(
-    Commands.Bot.TranscriptsPathUpdated,
-    (path: string) => {
-      store.dispatch(transcriptDirectoryUpdated(path));
-    }
-  );
+  commandRegistry.registerCommand(Commands.Bot.TranscriptsPathUpdated, (path: string) => {
+    store.dispatch(transcriptDirectoryUpdated(path));
+  });
 
-  commandRegistry.registerCommand(
-    Commands.Bot.ChatsPathUpdated,
-    (path: string) => {
-      store.dispatch(chatsDirectoryUpdated(path));
-    }
-  );
+  commandRegistry.registerCommand(Commands.Bot.ChatsPathUpdated, (path: string) => {
+    store.dispatch(chatsDirectoryUpdated(path));
+  });
 }

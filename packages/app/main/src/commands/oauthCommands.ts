@@ -46,13 +46,9 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   commandRegistry.registerCommand(
     Commands.SendTokenResponse,
     async (connectionName: string, conversationId: string, token: string) => {
-      const convo = emulator.framework.server.botEmulator.facilities.conversations.conversationById(
-        conversationId
-      );
+      const convo = emulator.framework.server.botEmulator.facilities.conversations.conversationById(conversationId);
       if (!convo) {
-        throw new Error(
-          `oauth:send-token-response: Conversation ${conversationId} not found.`
-        );
+        throw new Error(`oauth:send-token-response: Conversation ${conversationId} not found.`);
       }
       await convo.sendTokenResponse(connectionName, conversationId, false);
     }
@@ -60,13 +56,8 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
   // ---------------------------------------------------------------------------
   // Opens an OAuth login window
-  commandRegistry.registerCommand(
-    Commands.CreateOAuthWindow,
-    async (url: string, conversationId: string) => {
-      const convo = emulator.framework.server.botEmulator.facilities.conversations.conversationById(
-        conversationId
-      );
-      windowManager.createOAuthWindow(url, convo.codeVerifier);
-    }
-  );
+  commandRegistry.registerCommand(Commands.CreateOAuthWindow, async (url: string, conversationId: string) => {
+    const convo = emulator.framework.server.botEmulator.facilities.conversations.conversationById(conversationId);
+    windowManager.createOAuthWindow(url, convo.codeVerifier);
+  });
 }

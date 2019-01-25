@@ -36,10 +36,7 @@ import * as React from 'react';
 import { Provider } from 'react-redux';
 import { combineReducers, createStore } from 'redux';
 
-import {
-  loadBotInfos,
-  setActiveBot,
-} from '../../../../../data/action/botActions';
+import { loadBotInfos, setActiveBot } from '../../../../../data/action/botActions';
 import { bot } from '../../../../../data/reducer/bot';
 import { DialogService } from '../../../../dialogs/service';
 
@@ -91,10 +88,7 @@ describe('The ConnectedServicePicker component', () => {
 
     parent = mount(
       <Provider store={mockStore}>
-        <ConnectedServicePickerContainer
-          availableServices={[mockService]}
-          authenticatedUser="bot@bot.com"
-        />
+        <ConnectedServicePickerContainer availableServices={[mockService]} authenticatedUser="bot@bot.com" />
       </Provider>
     );
     node = parent.find(ConnectedServicePicker);

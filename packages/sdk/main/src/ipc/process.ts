@@ -48,11 +48,7 @@ export class ProcessIPC extends IPC {
   constructor(private _process: Process) {
     super();
     this._process.on('message', message => {
-      if (
-        isObject(message) &&
-        message.type === 'ipc:message' &&
-        Array.isArray(message.args)
-      ) {
+      if (isObject(message) && message.type === 'ipc:message' && Array.isArray(message.args)) {
         const channelName = message.args.shift();
         const channel = super.getChannel(channelName);
         if (channel) {

@@ -48,10 +48,7 @@ interface KvPairState {
 }
 
 export class KvPair extends Component<KvPairProps, KvPairState> {
-  public static getDerivedStateFromProps(
-    nextProps: KvPairProps,
-    prevState: KvPairState
-  ): KvPairState {
+  public static getDerivedStateFromProps(nextProps: KvPairProps, prevState: KvPairState): KvPairState {
     if (!prevState) {
       prevState = { length: 0, kvPairs: [] };
     }
@@ -82,9 +79,7 @@ export class KvPair extends Component<KvPairProps, KvPairState> {
     const rows = [];
 
     kvPairs.forEach((kvPair, index) => {
-      rows.push(
-        <li key={index}>{this.getTextFieldPair(kvPair.key, kvPair.value)}</li>
-      );
+      rows.push(<li key={index}>{this.getTextFieldPair(kvPair.key, kvPair.value)}</li>);
     });
 
     for (let i = 0; i < numEmptyRows; i++) {
@@ -128,10 +123,7 @@ export class KvPair extends Component<KvPairProps, KvPairState> {
     const { target } = event;
     const { prop } = target.dataset;
     const targetLi = target.parentElement.parentElement as HTMLOListElement;
-    const index = Array.prototype.findIndex.call(
-      targetLi.parentElement.children,
-      li => li === targetLi
-    );
+    const index = Array.prototype.findIndex.call(targetLi.parentElement.children, li => li === targetLi);
     const { kvPairs } = this.state;
     if (!kvPairs[index]) {
       kvPairs[index] = { key: '', value: '' };

@@ -32,6 +32,7 @@
 //
 import { User } from '@bfemulator/sdk-shared';
 import * as HttpStatus from 'http-status-codes';
+
 import { BotEmulator } from '../../botEmulator';
 import BotEndpoint from '../../facility/botEndpoint';
 import BotState from '../../facility/botState';
@@ -63,21 +64,8 @@ describe('The botStateMiddleware', () => {
     emulator = { facilities: { logger: { logMessage: () => true } } } as any;
     emulator.facilities.conversations = new ConversationSet();
     user = { id: '321', name: 'a user' };
-    const endpoint = new BotEndpoint(
-      '12',
-      '123',
-      'http://localhost:12345',
-      '',
-      '',
-      false,
-      '',
-      {}
-    );
-    conversation = emulator.facilities.conversations.newConversation(
-      emulator,
-      endpoint,
-      user
-    );
+    const endpoint = new BotEndpoint('12', '123', 'http://localhost:12345', '', '', false, '', {});
+    conversation = emulator.facilities.conversations.newConversation(emulator, endpoint, user);
     botState = new BotState(emulator, 256);
     jest.spyOn(Date, 'now').mockReturnValue({ toString: () => '123456' });
     botState.setBotData(channelId, conversation.conversationId, user.id, {
@@ -99,13 +87,7 @@ describe('The botStateMiddleware', () => {
     const sendSpy = jest.spyOn(res, 'send');
     deleteStateMiddleware(req as any, res as any, (() => null) as any);
     expect(sendSpy).toHaveBeenCalledWith(HttpStatus.OK);
-    expect(
-      emulator.facilities.botState.getBotData(
-        channelId,
-        conversation.conversationId,
-        user.id
-      )
-    ).toEqual({
+    expect(emulator.facilities.botState.getBotData(channelId, conversation.conversationId, user.id)).toEqual({
       data: null,
       eTag: '*',
     });
@@ -171,22 +153,14 @@ describe('The botStateMiddleware', () => {
       data: req.body.data,
       eTag: '123456',
     });
-    expect(
-      emulator.facilities.botState.getBotData(
-        channelId,
-        conversation.conversationId,
-        user.id
-      )
-    ).toEqual({
+    expect(emulator.facilities.botState.getBotData(channelId, conversation.conversationId, user.id)).toEqual({
       data: { newBotData: true },
       eTag: '123456',
     });
   });
 
   it('should set private conversation data', () => {
-    const setPrivateConversationDataMiddleware = setPrivateConversationData(
-      emulator
-    );
+    const setPrivateConversationDataMiddleware = setPrivateConversationData(emulator);
     const req = {
       params: {
         channelId,
@@ -201,13 +175,7 @@ describe('The botStateMiddleware', () => {
       data: req.body.data,
       eTag: '123456',
     });
-    expect(
-      emulator.facilities.botState.getBotData(
-        channelId,
-        conversation.conversationId,
-        user.id
-      )
-    ).toEqual({
+    expect(emulator.facilities.botState.getBotData(channelId, conversation.conversationId, user.id)).toEqual({
       data: { newBotData: true },
       eTag: '123456',
     });
@@ -229,13 +197,7 @@ describe('The botStateMiddleware', () => {
       data: req.body.data,
       eTag: '123456',
     });
-    expect(
-      emulator.facilities.botState.getBotData(
-        channelId,
-        conversation.conversationId,
-        user.id
-      )
-    ).toEqual({
+    expect(emulator.facilities.botState.getBotData(channelId, conversation.conversationId, user.id)).toEqual({
       data: { newBotData: true },
       eTag: '123456',
     });

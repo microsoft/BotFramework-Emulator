@@ -100,8 +100,7 @@ export class SettingsImpl implements Settings {
   public azure: AzureSettings;
 
   public constructor(source?: Settings) {
-    const { framework, bots, windowState, users, azure }: Settings =
-      source || {};
+    const { framework, bots, windowState, users, azure }: Settings = source || {};
     Object.assign(this, { framework, bots, windowState, users, azure });
   }
 

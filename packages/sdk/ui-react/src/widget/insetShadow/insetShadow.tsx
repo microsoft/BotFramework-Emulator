@@ -45,9 +45,7 @@ export class InsetShadow extends React.Component<Props> {
   public render() {
     const { orientation } = this.props;
     if (!orientation) {
-      throw new Error(
-        '<InsetShadow /> requires an "orientation" prop to be passed in!'
-      );
+      throw new Error('<InsetShadow /> requires an "orientation" prop to be passed in!');
     }
 
     let shadowClassName = '';
@@ -72,11 +70,6 @@ export class InsetShadow extends React.Component<Props> {
         return null;
     }
 
-    return (
-      <div
-        className={[styles.insetShadow, shadowClassName].join(' ')}
-        aria-hidden="true"
-      />
-    );
+    return <div className={[styles.insetShadow, shadowClassName].join(' ')} aria-hidden="true" />;
   }
 }

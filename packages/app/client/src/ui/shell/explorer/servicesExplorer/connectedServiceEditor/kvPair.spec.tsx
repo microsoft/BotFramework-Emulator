@@ -49,9 +49,7 @@ describe('The KvPair component', () => {
       someKey: 'someValue',
     };
 
-    node = mount(
-      <KvPair onChange={mockOnChange.onKvPairChanged} kvPairs={mockKvs} />
-    );
+    node = mount(<KvPair onChange={mockOnChange.onKvPairChanged} kvPairs={mockKvs} />);
   });
 
   it('should render at least one empty row when at least one non-empty row exist in the data', () => {

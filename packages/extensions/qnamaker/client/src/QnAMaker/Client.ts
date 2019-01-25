@@ -39,10 +39,7 @@ const knowledgebase = require('qnamaker/lib/api/knowledgebase');
 /* eslint-enable typescript/no-var-requires */
 
 class QnAMakerClientError extends Error {
-  private static getMessage(
-    message: string,
-    statusCode: number | undefined
-  ): string {
+  private static getMessage(message: string, statusCode: number | undefined): string {
     let errorMessage = message;
     if (statusCode) {
       errorMessage += ' - HTTP Status Code: ' + statusCode;
@@ -75,23 +72,14 @@ export class QnAMakerClient {
     this.operations = new operations();
   }
 
-  public async updateKnowledgebase(
-    kbId: string,
-    requestBody: any
-  ): Promise<any> {
+  public async updateKnowledgebase(kbId: string, requestBody: any): Promise<any> {
     this.configureClient();
     const params = {
       kbId,
     };
-    let result = await this.knowledgebase.updateKnowledgebase(
-      params,
-      requestBody
-    );
+    let result = await this.knowledgebase.updateKnowledgebase(params, requestBody);
     if (result.status !== 202) {
-      throw new QnAMakerClientError(
-        'Failed to queue training.',
-        result.statusCode
-      );
+      throw new QnAMakerClientError('Failed to queue training.', result.statusCode);
     }
 
     const resultJson = await result.json();

@@ -71,13 +71,7 @@ export class SplitButtonPanel extends React.Component<SplitButtonPanelProps> {
   };
 
   private get panel(): JSX.Element {
-    const {
-      caretRef,
-      options = [],
-      expanded = false,
-      onKeyDown = () => null,
-      selected = 0,
-    } = this.props;
+    const { caretRef, options = [], expanded = false, onKeyDown = () => null, selected = 0 } = this.props;
     if (expanded) {
       const caretClientRect = caretRef.getBoundingClientRect();
       const inlineStyle = {
@@ -121,10 +115,7 @@ export class SplitButtonPanel extends React.Component<SplitButtonPanelProps> {
     return `split_button_option_${index}`;
   }
 
-  private onSelectOption = (
-    _e: React.SyntheticEvent<HTMLLIElement>,
-    index: number
-  ): void => {
+  private onSelectOption = (_e: React.SyntheticEvent<HTMLLIElement>, index: number): void => {
     if (this.props.onClick) {
       this.props.onClick(index);
     }

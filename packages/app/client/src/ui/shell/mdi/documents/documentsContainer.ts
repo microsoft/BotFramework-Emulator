@@ -37,10 +37,7 @@ import { RootState } from '../../../../data/store';
 
 import { Documents, DocumentsProps } from './documents';
 
-function mapStateToProps(
-  state: RootState,
-  ownProps: DocumentsProps
-): DocumentsProps {
+function mapStateToProps(state: RootState, ownProps: DocumentsProps): DocumentsProps {
   const { editors } = state.editor;
   return {
     ...ownProps,

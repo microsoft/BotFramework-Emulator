@@ -49,9 +49,7 @@ interface ControlBarProps {
 }
 
 class ControlBar extends Component<ControlBarProps, ControlBarState> {
-  public clickHandler: MouseEventHandler<HTMLAnchorElement> = (
-    e: React.MouseEvent<HTMLAnchorElement>
-  ) => {
+  public clickHandler: MouseEventHandler<HTMLAnchorElement> = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
     this.props.setButtonSelected(ButtonSelected[e.currentTarget.id]);
   };
@@ -68,11 +66,7 @@ class ControlBar extends Component<ControlBarProps, ControlBarState> {
             id={ButtonSelected[ButtonSelected.RecognizerResult]}
             href="#"
             onClick={this.clickHandler}
-            style={
-              this.props.buttonSelected === ButtonSelected.RecognizerResult
-                ? { textDecoration: 'underline' }
-                : {}
-            }
+            style={this.props.buttonSelected === ButtonSelected.RecognizerResult ? { textDecoration: 'underline' } : {}}
           >
             Recognizer Result
           </a>
@@ -82,11 +76,7 @@ class ControlBar extends Component<ControlBarProps, ControlBarState> {
             id={ButtonSelected[ButtonSelected.RawResponse]}
             href="#"
             onClick={this.clickHandler}
-            style={
-              this.props.buttonSelected === ButtonSelected.RawResponse
-                ? { textDecoration: 'underline' }
-                : {}
-            }
+            style={this.props.buttonSelected === ButtonSelected.RawResponse ? { textDecoration: 'underline' } : {}}
           >
             Raw Response
           </a>

@@ -49,9 +49,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
         await emulator.ngrok.recycle();
         emulator.ngrok.broadcastNgrokReconnected();
       } catch (e) {
-        throw new Error(
-          `There was an error while trying to reconnect ngrok: ${e}`
-        );
+        throw new Error(`There was an error while trying to reconnect ngrok: ${e}`);
       }
     }
   );

@@ -34,21 +34,12 @@
 import { connect } from 'react-redux';
 import { Action } from 'redux';
 
-import {
-  openBotViaFilePathAction,
-  openBotViaUrlAction,
-} from '../../../data/action/botActions';
+import { openBotViaFilePathAction, openBotViaUrlAction } from '../../../data/action/botActions';
 import { DialogService } from '../service';
 
-import {
-  OpenBotDialog,
-  OpenBotDialogProps,
-  OpenBotDialogState,
-} from './openBotDialog';
+import { OpenBotDialog, OpenBotDialogProps, OpenBotDialogState } from './openBotDialog';
 
-const mapDispatchToProps = (
-  dispatch: (action: Action) => void
-): OpenBotDialogProps => {
+const mapDispatchToProps = (dispatch: (action: Action) => void): OpenBotDialogProps => {
   return {
     openBot: (componentState: OpenBotDialogState) => {
       DialogService.hideDialog();

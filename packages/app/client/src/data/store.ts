@@ -46,10 +46,7 @@ import { explorer, ExplorerState } from './reducer/explorer';
 import { navBar, NavBarState } from './reducer/navBar';
 import { notification, NotificationState } from './reducer/notification';
 import { presentation, PresentationState } from './reducer/presentation';
-import {
-  progressIndicator,
-  ProgressIndicatorState,
-} from './reducer/progressIndicator';
+import { progressIndicator, ProgressIndicatorState } from './reducer/progressIndicator';
 import { resources, ResourcesState } from './reducer/resourcesReducer';
 import { theme, ThemeState } from './reducer/themeReducer';
 import { applicationSagas } from './sagas';
@@ -73,9 +70,7 @@ export interface RootState {
 const sagaMiddleWare = sagaMiddlewareFactory();
 const DEFAULT_STATE: RootState = {};
 
-const configureStore = (
-  initialState: RootState = DEFAULT_STATE
-): Store<RootState> =>
+const configureStore = (initialState: RootState = DEFAULT_STATE): Store<RootState> =>
   createStore<RootState>(
     combineReducers({
       azureAuth,

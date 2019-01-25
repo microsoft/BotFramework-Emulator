@@ -65,9 +65,7 @@ describe('The emulator commands', () => {
   });
 
   beforeEach(() => {
-    mockStore = createStore(
-      combineReducers({ bot, chat, clientAwareSettings, editor })
-    );
+    mockStore = createStore(combineReducers({ bot, chat, clientAwareSettings, editor }));
     mockStore.dispatch(
       clientAwareSettingsChanged({
         users: { currentUserId: '1234' },
@@ -79,9 +77,7 @@ describe('The emulator commands', () => {
   });
 
   it('Should open a new emulator tabbed document for an endpoint', () => {
-    const { handler } = registry.getCommand(
-      SharedConstants.Commands.Emulator.NewLiveChat
-    );
+    const { handler } = registry.getCommand(SharedConstants.Commands.Emulator.NewLiveChat);
     const documentId = handler(mockEndpoint, false);
     const state: RootState = mockStore.getState();
     const documentIds = Object.keys(state.chat.chats);
@@ -90,28 +86,20 @@ describe('The emulator commands', () => {
   });
 
   it('should set the active tab of an existing chat', () => {
-    const { handler } = registry.getCommand(
-      SharedConstants.Commands.Emulator.NewLiveChat
-    );
+    const { handler } = registry.getCommand(SharedConstants.Commands.Emulator.NewLiveChat);
     const documentId = handler(mockEndpoint, false);
     const secondDocumentId = handler({
       endpoint: 'https://localhost:8181/api/messages',
     });
     // At this point we should have 2 open documents
     // with the second on
-    expect(mockStore.getState().editor.editors.primary.activeDocumentId).toBe(
-      secondDocumentId
-    );
+    expect(mockStore.getState().editor.editors.primary.activeDocumentId).toBe(secondDocumentId);
     handler(mockEndpoint, true); // re-open the original document
-    expect(mockStore.getState().editor.editors.primary.activeDocumentId).toBe(
-      documentId
-    );
+    expect(mockStore.getState().editor.editors.primary.activeDocumentId).toBe(documentId);
   });
 
   it('should open a transcript', () => {
-    const { handler } = registry.getCommand(
-      SharedConstants.Commands.Emulator.OpenTranscript
-    );
+    const { handler } = registry.getCommand(SharedConstants.Commands.Emulator.OpenTranscript);
     const filePath = 'transcript.transcript';
     handler(filePath, filePath);
 
@@ -121,51 +109,31 @@ describe('The emulator commands', () => {
   });
 
   it('Should prompt to open a transcript', async () => {
-    const { handler } = registry.getCommand(
-      SharedConstants.Commands.Emulator.PromptToOpenTranscript
-    );
-    const remoteCallSpy = jest
-      .spyOn(CommandServiceImpl, 'remoteCall')
-      .mockResolvedValue('transcript.transcript');
-    const callSpy = jest
-      .spyOn(CommandServiceImpl, 'call')
-      .mockResolvedValue(null);
+    const { handler } = registry.getCommand(SharedConstants.Commands.Emulator.PromptToOpenTranscript);
+    const remoteCallSpy = jest.spyOn(CommandServiceImpl, 'remoteCall').mockResolvedValue('transcript.transcript');
+    const callSpy = jest.spyOn(CommandServiceImpl, 'call').mockResolvedValue(null);
 
     await handler();
 
-    expect(remoteCallSpy).toHaveBeenCalledWith(
-      'shell:showExplorer-open-dialog',
-      {
-        buttonLabel: 'Choose file',
-        filters: [{ extensions: ['transcript'], name: 'Transcript Files' }],
-        properties: ['openFile'],
-        title: 'Open transcript file',
-      }
-    );
-    expect(remoteCallSpy).toHaveBeenCalledWith(
-      SharedConstants.Commands.Telemetry.TrackEvent,
-      'transcriptFile_open',
-      { method: 'file_menu' }
-    );
+    expect(remoteCallSpy).toHaveBeenCalledWith('shell:showExplorer-open-dialog', {
+      buttonLabel: 'Choose file',
+      filters: [{ extensions: ['transcript'], name: 'Transcript Files' }],
+      properties: ['openFile'],
+      title: 'Open transcript file',
+    });
+    expect(remoteCallSpy).toHaveBeenCalledWith(SharedConstants.Commands.Telemetry.TrackEvent, 'transcriptFile_open', {
+      method: 'file_menu',
+    });
 
-    expect(callSpy).toHaveBeenCalledWith(
-      'transcript:open',
-      'transcript.transcript'
-    );
+    expect(callSpy).toHaveBeenCalledWith('transcript:open', 'transcript.transcript');
   });
 
   it('should dispatch a notification when opening a transcript fails', async () => {
-    const { handler } = registry.getCommand(
-      SharedConstants.Commands.Emulator.PromptToOpenTranscript
-    );
-    const remoteCallSpy = jest
-      .spyOn(CommandServiceImpl, 'remoteCall')
-      .mockResolvedValue('transcript.transcript');
-    const callSpy = jest
-      .spyOn(CommandServiceImpl, 'call')
-      .mockImplementationOnce(() => {
-        throw new Error('Oh noes!');
-      });
+    const { handler } = registry.getCommand(SharedConstants.Commands.Emulator.PromptToOpenTranscript);
+    const remoteCallSpy = jest.spyOn(CommandServiceImpl, 'remoteCall').mockResolvedValue('transcript.transcript');
+    const callSpy = jest.spyOn(CommandServiceImpl, 'call').mockImplementationOnce(() => {
+      throw new Error('Oh noes!');
+    });
     const dispatchSpy = jest.spyOn(mockStore, 'dispatch');
     const errMsg = `Error while opening transcript file: Error: Oh noes!`;
     const notification = newNotification(errMsg);
@@ -174,24 +142,17 @@ describe('The emulator commands', () => {
     action.payload.notification.id = jasmine.any(String) as any;
     await handler();
     expect(remoteCallSpy).toHaveBeenCalled();
-    expect(callSpy).toHaveBeenCalledWith(
-      'transcript:open',
-      'transcript.transcript'
-    );
+    expect(callSpy).toHaveBeenCalledWith('transcript:open', 'transcript.transcript');
     expect(dispatchSpy).toHaveBeenCalledWith(action);
     jest.restoreAllMocks();
   });
 
   it('should reload a transcript', async () => {
-    const { handler: openTranscriptHandler } = registry.getCommand(
-      SharedConstants.Commands.Emulator.OpenTranscript
-    );
+    const { handler: openTranscriptHandler } = registry.getCommand(SharedConstants.Commands.Emulator.OpenTranscript);
     await openTranscriptHandler('transcript.transcript');
     let state = mockStore.getState();
     expect(state.chat.changeKey).toBe(1);
-    const { handler } = registry.getCommand(
-      SharedConstants.Commands.Emulator.ReloadTranscript
-    );
+    const { handler } = registry.getCommand(SharedConstants.Commands.Emulator.ReloadTranscript);
     await handler('transcript.transcript');
     state = mockStore.getState();
     expect(state.chat.changeKey).toBe(3);

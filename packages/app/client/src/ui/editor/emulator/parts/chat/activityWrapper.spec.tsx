@@ -48,10 +48,7 @@ const defaultProps = {
   onClick: jest.fn(),
 };
 
-function render(
-  overrides: any = {},
-  children: ReactNode = <div className="child">child</div>
-): ReactWrapper {
+function render(overrides: any = {}, children: ReactNode = <div className="child">child</div>): ReactWrapper {
   const props = {
     ...defaultProps,
     ...overrides,

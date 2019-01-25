@@ -75,9 +75,7 @@ export class TranscriptsWatcher extends FileWatcher {
   };
 
   protected onFileChange = (file: string, fstats?: fs.Stats): void => {
-    mainWindow.commandService
-      .remoteCall(SharedConstants.Commands.File.Changed, file)
-      .catch();
+    mainWindow.commandService.remoteCall(SharedConstants.Commands.File.Changed, file).catch();
   };
 
   private invalidateTranscriptFiles() {
@@ -86,9 +84,7 @@ export class TranscriptsWatcher extends FileWatcher {
   }
 
   private validateChatFiles = () => {
-    const transcriptFiles: IFileService[] = Object.keys(
-      this.transcriptFiles
-    ).map(key => {
+    const transcriptFiles: IFileService[] = Object.keys(this.transcriptFiles).map(key => {
       const { name, ext } = path.parse(key);
       return {
         name: `${name}${ext}`,
@@ -97,12 +93,7 @@ export class TranscriptsWatcher extends FileWatcher {
         path: key,
       };
     });
-    mainWindow.commandService
-      .remoteCall(
-        SharedConstants.Commands.Bot.TranscriptFilesUpdated,
-        transcriptFiles
-      )
-      .catch();
+    mainWindow.commandService.remoteCall(SharedConstants.Commands.Bot.TranscriptFilesUpdated, transcriptFiles).catch();
     this.notificationPending = null;
   };
 }

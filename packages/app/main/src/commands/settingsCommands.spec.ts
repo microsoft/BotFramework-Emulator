@@ -66,9 +66,7 @@ describe('The settings commands', () => {
   });
 
   it('should save the global app settings', async () => {
-    const { handler } = mockRegistry.getCommand(
-      SharedConstants.Commands.Settings.SaveAppSettings
-    );
+    const { handler } = mockRegistry.getCommand(SharedConstants.Commands.Settings.SaveAppSettings);
     const mockSettings = { ngrokPath: 'other/path/to/ngrok.exe' };
     await handler(mockSettings);
 
@@ -77,9 +75,7 @@ describe('The settings commands', () => {
   });
 
   it('should load the app settings from the store', async () => {
-    const { handler } = mockRegistry.getCommand(
-      SharedConstants.Commands.Settings.LoadAppSettings
-    );
+    const { handler } = mockRegistry.getCommand(SharedConstants.Commands.Settings.LoadAppSettings);
     const appSettings = await handler();
 
     expect(appSettings).toBe(mockSettings.framework);

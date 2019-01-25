@@ -78,10 +78,7 @@ export function createResourceResponse(id: string): ResourceResponse {
   return { id };
 }
 
-export function createConversationResponse(
-  id: string,
-  activityId: string
-): ConversationResourceResponse {
+export function createConversationResponse(id: string, activityId: string): ConversationResourceResponse {
   const response: ConversationResourceResponse = { id };
   if (activityId != null) {
     response.activityId = activityId;
@@ -90,10 +87,7 @@ export function createConversationResponse(
 }
 
 // Create ErrorResponse object
-export function createErrorResponse(
-  code: string,
-  message: string
-): ErrorResponse {
+export function createErrorResponse(code: string, message: string): ErrorResponse {
   return {
     error: {
       code,
@@ -103,11 +97,7 @@ export function createErrorResponse(
 }
 
 // Create Exception
-export function createAPIException(
-  statusCode: number,
-  code: string,
-  message: string
-): APIException {
+export function createAPIException(statusCode: number, code: string, message: string): APIException {
   return {
     statusCode,
     error: createErrorResponse(code, message),

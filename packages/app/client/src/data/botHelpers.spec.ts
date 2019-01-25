@@ -31,11 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import {
-  getActiveBot,
-  getBotInfoByPath,
-  pathExistsInRecentBots,
-} from './botHelpers';
+import { getActiveBot, getBotInfoByPath, pathExistsInRecentBots } from './botHelpers';
 
 jest.mock('./store', () => ({
   store: {

@@ -39,9 +39,7 @@ export interface WelcomePageAction<T> extends Action {
   payload: T;
 }
 
-export function openContextMenuForBot(
-  bot: BotInfo
-): WelcomePageAction<BotInfo> {
+export function openContextMenuForBot(bot: BotInfo): WelcomePageAction<BotInfo> {
   return {
     type: OPEN_CONTEXT_MENU_FOR_BOT,
     payload: bot,

@@ -40,19 +40,10 @@ import getRouteName from '../middleware/getRouteName';
 
 import getSessionId from './middleware/getSessionId';
 
-export default function registerRoutes(
-  botEmulator: BotEmulator,
-  server: Server,
-  uses: RequestHandler[]
-) {
+export default function registerRoutes(botEmulator: BotEmulator, server: Server, uses: RequestHandler[]) {
   const facility = getFacility('directline');
 
-  server.get(
-    '/v3/directline/session/getsessionid',
-    facility,
-    getRouteName('getSessionId'),
-    getSessionId(botEmulator)
-  );
+  server.get('/v3/directline/session/getsessionid', facility, getRouteName('getSessionId'), getSessionId(botEmulator));
 
   server.get('v4/token', (req: Restify.Request, res: Restify.Response) => {
     const body =

@@ -33,10 +33,7 @@
 
 import * as Electron from 'electron';
 
-export function appendCustomUserAgent(
-  details: any,
-  callback: (...args: any[]) => any
-): void {
+export function appendCustomUserAgent(details: any, callback: (...args: any[]) => any): void {
   const { requestHeaders = {} } = details;
   const version = Electron.app.getVersion();
 

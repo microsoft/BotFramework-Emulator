@@ -98,10 +98,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   commandRegistry.registerCommand(
     SharedConstants.Commands.Settings.ReceiveGlobalSettings,
     (settings: { url: string; cwd: string }): any => {
-      SettingsService.emulator.url = (settings.url || '').replace(
-        '[::]',
-        'localhost'
-      );
+      SettingsService.emulator.url = (settings.url || '').replace('[::]', 'localhost');
       SettingsService.emulator.cwd = (settings.cwd || '').replace(/\\/g, '/');
     }
   );

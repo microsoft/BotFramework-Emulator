@@ -170,9 +170,7 @@ class EmulatorUpdater extends EventEmitter {
         prerelease: this.allowPrerelease,
       });
     } catch (e) {
-      throw new Error(
-        `There was an error while checking for the latest update: ${e}`
-      );
+      throw new Error(`There was an error while checking for the latest update: ${e}`);
     }
   }
 
@@ -182,9 +180,7 @@ class EmulatorUpdater extends EventEmitter {
     try {
       await electronUpdater.downloadUpdate();
     } catch (e) {
-      throw new Error(
-        `There was an error while trying to download the latest update: ${e}`
-      );
+      throw new Error(`There was an error while trying to download the latest update: ${e}`);
     }
   }
 
@@ -192,9 +188,7 @@ class EmulatorUpdater extends EventEmitter {
     try {
       electronUpdater.quitAndInstall(false, true);
     } catch (e) {
-      throw new Error(
-        `There was an error while trying to quit and install the latest update: ${e}`
-      );
+      throw new Error(`There was an error while trying to quit and install the latest update: ${e}`);
     }
   }
 }

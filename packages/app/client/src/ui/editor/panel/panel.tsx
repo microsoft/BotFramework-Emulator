@@ -55,15 +55,11 @@ export default class Panel extends React.Component<PanelProps, {}> {
         <div className={styles.panelHeader}>
           {this.props.title}
           <div className={styles.accessories}>
-            {filterChildren(this.props.children, child =>
-              hmrSafeNameComparison(child.type, PanelControls)
-            )}
+            {filterChildren(this.props.children, child => hmrSafeNameComparison(child.type, PanelControls))}
           </div>
         </div>
         <div className={styles.panelBody}>
-          {filterChildren(this.props.children, child =>
-            hmrSafeNameComparison(child.type, PanelContent)
-          )}
+          {filterChildren(this.props.children, child => hmrSafeNameComparison(child.type, PanelContent))}
         </div>
       </div>
     );

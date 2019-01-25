@@ -39,11 +39,7 @@ import sendErrorResponse from '../../utils/sendErrorResponse';
 
 // delete state for user
 export default function deleteStateForUser(botEmulator: BotEmulator) {
-  return (
-    req: Restify.Request,
-    res: Restify.Response,
-    next: Restify.Next
-  ): any => {
+  return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     try {
       botEmulator.facilities.botState.deleteBotData(req.params.userId);
 

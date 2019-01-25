@@ -31,17 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import {
-  BotInfo,
-  newNotification,
-  Notification,
-  NotificationType,
-  SharedConstants,
-} from '@bfemulator/app-shared';
-import {
-  BotConfigWithPath,
-  BotConfigWithPathImpl,
-} from '@bfemulator/sdk-shared';
+import { BotInfo, newNotification, Notification, NotificationType, SharedConstants } from '@bfemulator/app-shared';
+import { BotConfigWithPath, BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
 import {
   Checkbox,
   DefaultButton,
@@ -52,10 +43,7 @@ import {
   RowAlignment,
   TextField,
 } from '@bfemulator/ui-react';
-import {
-  IConnectedService,
-  ServiceTypes,
-} from 'botframework-config/lib/schema';
+import { IConnectedService, ServiceTypes } from 'botframework-config/lib/schema';
 import { ChangeEvent } from 'react';
 import * as React from 'react';
 
@@ -81,10 +69,7 @@ export interface BotSettingsEditorState extends BotConfigWithPath {
   encryptKey?: boolean;
 }
 
-export class BotSettingsEditor extends React.Component<
-  BotSettingsEditorProps,
-  BotSettingsEditorState
-> {
+export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, BotSettingsEditorState> {
   private _generatedSecret: string;
 
   constructor(props: BotSettingsEditorProps, context: BotSettingsEditorState) {
@@ -116,18 +101,8 @@ export class BotSettingsEditor extends React.Component<
     const disabled = !name || !dirty;
     const error = !name ? 'The bot name is required' : '';
     return (
-      <Dialog
-        cancel={this.onCancel}
-        title="Bot Settings"
-        className={styles.botSettingsEditor}
-      >
-        <TextField
-          label="Name"
-          value={name}
-          required={true}
-          onChange={this.onInputChange}
-          errorMessage={error}
-        />
+      <Dialog cancel={this.onCancel} title="Bot Settings" className={styles.botSettingsEditor}>
+        <TextField label="Name" value={name} required={true} onChange={this.onInputChange} errorMessage={error} />
 
         <Row align={RowAlignment.Bottom}>
           <Checkbox
@@ -136,10 +111,7 @@ export class BotSettingsEditor extends React.Component<
             checked={encryptKey}
             onChange={this.onEncryptKeyChange}
           />
-          <a
-            href="javascript:void(0);"
-            onClick={this.onLearnMoreEncryptionClick}
-          >
+          <a href="javascript:void(0);" onClick={this.onLearnMoreEncryptionClick}>
             &nbsp;Learn more.
           </a>
         </Row>
@@ -183,17 +155,8 @@ export class BotSettingsEditor extends React.Component<
         </ul>
 
         <DialogFooter>
-          <DefaultButton
-            text="Cancel"
-            onClick={this.onCancel}
-            className={styles.cancelButton}
-          />
-          <PrimaryButton
-            text="Save"
-            onClick={this.onSaveClick}
-            className={styles.saveButton}
-            disabled={disabled}
-          />
+          <DefaultButton text="Cancel" onClick={this.onCancel} className={styles.cancelButton} />
+          <PrimaryButton text="Save" onClick={this.onSaveClick} className={styles.saveButton} disabled={disabled} />
         </DialogFooter>
       </Dialog>
     );
@@ -219,20 +182,11 @@ export class BotSettingsEditor extends React.Component<
   };
 
   private onLearnMoreEncryptionClick = (): void => {
-    this.props.onAnchorClick(
-      'https://aka.ms/bot-framework-bot-file-encryption'
-    );
+    this.props.onAnchorClick('https://aka.ms/bot-framework-bot-file-encryption');
   };
 
   private onSaveClick = async () => {
-    const {
-      name: botName = '',
-      description = '',
-      path,
-      services,
-      padlock = '',
-      secret,
-    } = this.state;
+    const { name: botName = '', description = '', path, services, padlock = '', secret } = this.state;
     const bot: BotConfigWithPath = BotConfigWithPathImpl.fromJSON({
       name: botName.trim(),
       description: description.trim(),
@@ -241,9 +195,7 @@ export class BotSettingsEditor extends React.Component<
       services,
     });
 
-    const endpointService: IConnectedService = bot.services.find(
-      service => service.type === ServiceTypes.Endpoint
-    );
+    const endpointService: IConnectedService = bot.services.find(service => service.type === ServiceTypes.Endpoint);
 
     if (bot.path === SharedConstants.TEMP_BOT_IN_MEMORY_PATH) {
       // we are currently using a mocked bot for livechat opened via protocol URI
@@ -273,21 +225,14 @@ export class BotSettingsEditor extends React.Component<
       path: newPath,
       secret: this.state.secret,
     };
-    await CommandServiceImpl.remoteCall(
-      PatchBotList,
-      SharedConstants.TEMP_BOT_IN_MEMORY_PATH,
-      botInfo
-    );
+    await CommandServiceImpl.remoteCall(PatchBotList, SharedConstants.TEMP_BOT_IN_MEMORY_PATH, botInfo);
     await CommandServiceImpl.remoteCall(Save, bot);
     // need to set the new bot as active now that it is no longer a placeholder bot in memory
     await ActiveBotHelper.setActiveBot(bot);
     this.setState({ ...bot });
 
     if (connectArg && endpointService) {
-      await CommandServiceImpl.call(
-        SharedConstants.Commands.Emulator.NewLiveChat,
-        endpointService
-      );
+      await CommandServiceImpl.call(SharedConstants.Commands.Emulator.NewLiveChat, endpointService);
     }
     this.props.cancel();
   };
@@ -320,10 +265,7 @@ export class BotSettingsEditor extends React.Component<
     // get a safe bot file name
     // TODO - localization
     const { SanitizeString } = SharedConstants.Commands.File;
-    const botFileName = await CommandServiceImpl.remoteCall(
-      SanitizeString,
-      this.state.name
-    );
+    const botFileName = await CommandServiceImpl.remoteCall(SanitizeString, this.state.name);
     const dialogOptions = {
       filters: [
         {
@@ -336,10 +278,7 @@ export class BotSettingsEditor extends React.Component<
       title: 'Save as',
       buttonLabel: 'Save',
     };
-    return CommandServiceImpl.remoteCall(
-      SharedConstants.Commands.Electron.ShowSaveDialog,
-      dialogOptions
-    );
+    return CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.ShowSaveDialog, dialogOptions);
   };
 
   private onRevealSecretClick = (): void => {
@@ -354,9 +293,7 @@ export class BotSettingsEditor extends React.Component<
       return null;
     }
     const { window } = this.props;
-    const input: HTMLInputElement = window.document.getElementById(
-      'key-input'
-    ) as HTMLInputElement;
+    const input: HTMLInputElement = window.document.getElementById('key-input') as HTMLInputElement;
     input.removeAttribute('disabled');
     const { type } = input;
     input.type = 'text';

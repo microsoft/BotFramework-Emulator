@@ -55,10 +55,7 @@ export default class ConsoleLogService implements LogService {
     items.forEach(message => {
       switch (message.type) {
         case 'text': {
-          logLevel(message.payload.level)(
-            conversationId ? conversationId : '',
-            message.payload.text
-          );
+          logLevel(message.payload.level)(conversationId ? conversationId : '', message.payload.text);
           break;
         }
 

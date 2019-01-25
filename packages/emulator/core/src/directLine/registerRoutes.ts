@@ -48,23 +48,13 @@ import startConversation from './middleware/startConversation';
 import stream from './middleware/stream';
 import upload from './middleware/upload';
 
-export default function registerRoutes(
-  botEmulator: BotEmulator,
-  server: Server,
-  uses: RequestHandler[]
-) {
+export default function registerRoutes(botEmulator: BotEmulator, server: Server, uses: RequestHandler[]) {
   const jsonBodyParser = createJsonBodyParserMiddleware();
   const botEndpoint = getBotEndpoint(botEmulator);
   const conversation = getConversation(botEmulator);
   const facility = getFacility('directline');
 
-  server.opts(
-    '/v3/directline',
-    ...uses,
-    facility,
-    getRouteName('options'),
-    options(botEmulator)
-  );
+  server.opts('/v3/directline', ...uses, facility, getRouteName('options'), options(botEmulator));
 
   server.post(
     '/v3/directline/conversations',

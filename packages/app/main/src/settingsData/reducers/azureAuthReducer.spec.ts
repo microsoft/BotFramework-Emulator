@@ -33,10 +33,7 @@
 import { combineReducers, createStore, Store } from 'redux';
 import { Settings } from '@bfemulator/app-shared';
 
-import {
-  azureLoggedInUserChanged,
-  azurePersistLoginChanged,
-} from '../actions/azureAuthActions';
+import { azureLoggedInUserChanged, azurePersistLoginChanged } from '../actions/azureAuthActions';
 
 import { azureAuth } from './azureAuthReducer';
 describe('The azureAuth reducer', () => {

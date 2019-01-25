@@ -55,15 +55,9 @@ export class Checkbox extends React.Component<CheckboxProps, CheckboxState> {
   private readonly checkboxId = 'emulator-checkbox-' + id++;
   private inputRef: HTMLInputElement;
 
-  public static getDerivedStateFromProps(
-    newProps: CheckboxProps,
-    prevState: CheckboxState = {}
-  ): CheckboxState {
+  public static getDerivedStateFromProps(newProps: CheckboxProps, prevState: CheckboxState = {}): CheckboxState {
     const { checked = false, indeterminate = false } = newProps;
-    const {
-      checked: prevChecked,
-      indeterminate: prevIndeterminate,
-    } = prevState;
+    const { checked: prevChecked, indeterminate: prevIndeterminate } = prevState;
     if (prevChecked !== checked || prevIndeterminate !== indeterminate) {
       return { checked, indeterminate };
     }
@@ -90,19 +84,9 @@ export class Checkbox extends React.Component<CheckboxProps, CheckboxState> {
       checkMarkStyles += ` ${styles.focused}`;
     }
     return (
-      <label
-        id={this.checkboxId}
-        className={`${styles.label} ${className}`}
-        data-checked={checked}
-      >
+      <label id={this.checkboxId} className={`${styles.label} ${className}`} data-checked={checked}>
         <span className={`${styles.checkMark} ${checkMarkStyles}`} />
-        <input
-          type="checkbox"
-          {...inputProps}
-          className={styles.checkbox}
-          ref={this.checkboxRef}
-          readOnly={true}
-        />
+        <input type="checkbox" {...inputProps} className={styles.checkbox} ref={this.checkboxRef} readOnly={true} />
         {label}
         {this.props.children}
       </label>

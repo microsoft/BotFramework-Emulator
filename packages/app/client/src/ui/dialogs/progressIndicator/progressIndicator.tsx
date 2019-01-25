@@ -48,18 +48,12 @@ export interface ProgressIndicatorState {
   progress: number;
 }
 
-export class ProgressIndicator extends Component<
-  ProgressIndicatorProps,
-  ProgressIndicatorState
-> {
+export class ProgressIndicator extends Component<ProgressIndicatorProps, ProgressIndicatorState> {
   private hr: HTMLElement;
 
   public render() {
     if (this.hr) {
-      this.hr.style.setProperty(
-        '--progress-percentage',
-        `${this.props.progress}%`
-      );
+      this.hr.style.setProperty('--progress-percentage', `${this.props.progress}%`);
     }
     return (
       <Dialog cancel={this.props.close} className={dialogStyles.dialogMedium}>

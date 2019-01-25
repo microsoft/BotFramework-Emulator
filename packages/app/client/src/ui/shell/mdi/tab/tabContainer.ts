@@ -33,10 +33,7 @@
 
 import { connect } from 'react-redux';
 
-import {
-  swapTabs,
-  toggleDraggingTab,
-} from '../../../../data/action/editorActions';
+import { swapTabs, toggleDraggingTab } from '../../../../data/action/editorActions';
 
 import { Tab, TabProps } from './tab';
 

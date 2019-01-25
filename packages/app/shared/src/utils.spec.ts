@@ -34,14 +34,7 @@
 import { BotConfigWithPath } from '@bfemulator/sdk-shared';
 import { IEndpointService, ServiceTypes } from 'botframework-config/lib/schema';
 
-import {
-  isObject,
-  deepCopySlow,
-  newBot,
-  newEndpoint,
-  getFirstBotEndpoint,
-  newNotification,
-} from './utils';
+import { isObject, deepCopySlow, newBot, newEndpoint, getFirstBotEndpoint, newNotification } from './utils';
 import { NotificationType } from './types';
 
 describe('utility function tests', () => {

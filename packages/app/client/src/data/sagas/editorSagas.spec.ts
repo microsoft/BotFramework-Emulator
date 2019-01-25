@@ -35,11 +35,7 @@ import { SharedConstants } from '@bfemulator/app-shared';
 
 import { EditorActions, removeDocPendingChange } from '../action/editorActions';
 
-import {
-  checkActiveDocForPendingChanges,
-  editorSagas,
-  promptUserToReloadDocument,
-} from './editorSagas';
+import { checkActiveDocForPendingChanges, editorSagas, promptUserToReloadDocument } from './editorSagas';
 import { refreshConversationMenu, editorSelector } from './sharedSagas';
 
 import { call, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
@@ -113,8 +109,7 @@ describe('The Editor Sagas', () => {
     const options = {
       buttons: ['Cancel', 'Reload'],
       title: 'File change detected',
-      message:
-        'We have detected a change in this file on disk. Would you like to reload it in the Emulator?',
+      message: 'We have detected a change in this file on disk. Would you like to reload it in the Emulator?',
     };
     const gen = promptUserToReloadDocument(mockChatFileName);
 
@@ -124,9 +119,7 @@ describe('The Editor Sagas', () => {
     expect(mockRemoteCommandsCalled).toHaveLength(1);
     expect(mockRemoteCommandsCalled[0].commandName).toEqual(ShowMessageBox);
     expect(mockRemoteCommandsCalled[0].args[0]).toEqual(options);
-    expect(gen.next(true).value).toEqual(
-      put(removeDocPendingChange(mockChatFileName))
-    );
+    expect(gen.next(true).value).toEqual(put(removeDocPendingChange(mockChatFileName)));
 
     gen.next();
 
@@ -144,8 +137,7 @@ describe('The Editor Sagas', () => {
     const options = {
       buttons: ['Cancel', 'Reload'],
       title: 'File change detected',
-      message:
-        'We have detected a change in this file on disk. Would you like to reload it in the Emulator?',
+      message: 'We have detected a change in this file on disk. Would you like to reload it in the Emulator?',
     };
     const gen = promptUserToReloadDocument(mockTranscriptFile);
 
@@ -155,9 +147,7 @@ describe('The Editor Sagas', () => {
     expect(mockRemoteCommandsCalled).toHaveLength(1);
     expect(mockRemoteCommandsCalled[0].commandName).toEqual(ShowMessageBox);
     expect(mockRemoteCommandsCalled[0].args[0]).toEqual(options);
-    expect(gen.next(true).value).toEqual(
-      put(removeDocPendingChange(mockTranscriptFile))
-    );
+    expect(gen.next(true).value).toEqual(put(removeDocPendingChange(mockTranscriptFile)));
     gen.next();
 
     const { ReloadTranscript } = SharedConstants.Commands.Emulator;
@@ -189,12 +179,7 @@ describe('The Editor Sagas', () => {
 
     expect(refreshConversationMenuYield).toEqual(
       takeLatest(
-        [
-          EditorActions.close,
-          EditorActions.open,
-          EditorActions.setActiveEditor,
-          EditorActions.setActiveTab,
-        ],
+        [EditorActions.close, EditorActions.open, EditorActions.setActiveEditor, EditorActions.setActiveTab],
         refreshConversationMenu
       )
     );

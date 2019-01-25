@@ -31,12 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import {
-  Attachment,
-  AttachmentContentTypes,
-  GenericActivity,
-  OAuthCard,
-} from '@bfemulator/sdk-shared';
+import { Attachment, AttachmentContentTypes, GenericActivity, OAuthCard } from '@bfemulator/sdk-shared';
 
 import { BotEmulator } from '../botEmulator';
 import uniqueId from '../utils/uniqueId';
@@ -78,15 +73,8 @@ export default class OAuthLinkEncoder {
       const oauthCard: OAuthCard = attachment.content as OAuthCard;
       if (oauthCard.buttons && oauthCard.buttons.length === 1) {
         const cardAction = oauthCard.buttons[0];
-        if (
-          cardAction.type === 'signin' &&
-          !cardAction.value &&
-          !OAuthLinkEncoder.EmulateOAuthCards
-        ) {
-          const link = await this.getSignInLink(
-            oauthCard.connectionName,
-            codeChallenge
-          );
+        if (cardAction.type === 'signin' && !cardAction.value && !OAuthLinkEncoder.EmulateOAuthCards) {
+          const link = await this.getSignInLink(oauthCard.connectionName, codeChallenge);
           cardAction.value = link;
           cardAction.type = 'openUrl';
         }
@@ -100,9 +88,7 @@ export default class OAuthLinkEncoder {
   public generateCodeVerifier(conversationId: string): string {
     const codeVerifier = uniqueId();
 
-    const conversation = this.botEmulator.facilities.conversations.conversationById(
-      conversationId
-    );
+    const conversation = this.botEmulator.facilities.conversations.conversationById(conversationId);
     conversation.codeVerifier = codeVerifier;
 
     const codeChallenge: string = shajs('sha256')
@@ -112,21 +98,14 @@ export default class OAuthLinkEncoder {
     return codeChallenge;
   }
 
-  private async getSignInLink(
-    connectionName: string,
-    codeChallenge: string
-  ): Promise<string> {
+  private async getSignInLink(connectionName: string, codeChallenge: string): Promise<string> {
     const tokenExchangeState = {
       ConnectionName: connectionName,
       Conversation: {
         ActivityId: this.activity.id,
         Bot: this.activity.from, // Activity is from the bot to the user
-        ChannelId: this.activity.channelId
-          ? this.activity.channelId
-          : 'emulator',
-        Conversation: this.activity.conversation
-          ? this.activity.conversation
-          : { id: this.conversationId },
+        ChannelId: this.activity.channelId ? this.activity.channelId : 'emulator',
+        Conversation: this.activity.conversation ? this.activity.conversation : { id: this.conversationId },
         ServiceUrl: this.activity.serviceUrl,
         User: this.activity.recipient,
       },
@@ -137,12 +116,8 @@ export default class OAuthLinkEncoder {
     const headers = {
       Authorization: this.authorizationHeader,
     };
-    const conversation = this.botEmulator.facilities.conversations.conversationById(
-      this.conversationId
-    );
-    const emulatorUrl = await this.botEmulator.getServiceUrl(
-      conversation.botEndpoint.botUrl
-    );
+    const conversation = this.botEmulator.facilities.conversations.conversationById(this.conversationId);
+    const emulatorUrl = await this.botEmulator.getServiceUrl(conversation.botEndpoint.botUrl);
     const url =
       'https://api.botframework.com/api/botsignin/GetSignInUrl?state=' +
       state +
@@ -156,12 +131,6 @@ export default class OAuthLinkEncoder {
       method: 'GET',
     });
     const link = await response.text();
-    return (
-      OAuthLinkEncoder.OAuthUrlProtocol +
-      '//' +
-      link +
-      '&&&' +
-      this.conversationId
-    );
+    return OAuthLinkEncoder.OAuthUrlProtocol + '//' + link + '&&&' + this.conversationId;
   }
 }

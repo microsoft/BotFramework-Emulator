@@ -37,10 +37,7 @@ import { combineReducers, createStore } from 'redux';
 
 import { bot } from '../../../../../data/reducer/bot';
 import { DialogService } from '../../../../dialogs/service';
-import {
-  loadBotInfos,
-  setActiveBot,
-} from '../../../../../data/action/botActions';
+import { loadBotInfos, setActiveBot } from '../../../../../data/action/botActions';
 
 import { EndpointEditor } from './endpointEditor';
 import { EndpointEditorContainer } from './endpointEditorContainer';
@@ -127,17 +124,13 @@ describe('The EndpointExplorer component should', () => {
     const instance = node.instance();
 
     // initially undefined
-    expect((instance.state.endpointService as any).channelService).toBe(
-      undefined
-    );
+    expect((instance.state.endpointService as any).channelService).toBe(undefined);
 
     // checked
     const mockCheck = { target: { checked: true } };
     instance.onChannelServiceChange(mockCheck as any);
 
-    expect((instance.state.endpointService as any).channelService).toBe(
-      'https://botframework.azure.us'
-    );
+    expect((instance.state.endpointService as any).channelService).toBe('https://botframework.azure.us');
 
     // unchecked
     mockCheck.target.checked = false;
@@ -160,9 +153,7 @@ describe('The EndpointExplorer component should', () => {
   });
 
   it('should validate the endpoint when an endpoint is entered and display a message after 500ms', done => {
-    const endpointValidationSpy = jest
-      .spyOn(EndpointEditor as any, 'validateEndpoint')
-      .mockReturnValue(false);
+    const endpointValidationSpy = jest.spyOn(EndpointEditor as any, 'validateEndpoint').mockReturnValue(false);
     const instance = node.instance();
     const mockEvent = {
       target: {
@@ -198,11 +189,7 @@ describe('The EndpointExplorer component should', () => {
   it('should expand the ABS content when the abs link is clicked', () => {
     const instance = node.instance();
     expect(instance.absContent.style.height).toBe('0px');
-    Object.defineProperty(
-      instance.absContent.firstElementChild,
-      'clientHeight',
-      { get: () => 135 }
-    );
+    Object.defineProperty(instance.absContent.firstElementChild, 'clientHeight', { get: () => 135 });
     instance.onABSLinkClick({ currentTarget: document.createElement('a') });
     expect(instance.absContent.style.height).toEqual('135px');
   });

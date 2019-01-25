@@ -31,17 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import {
-  Notification,
-  NotificationType,
-  SharedConstants,
-} from '@bfemulator/app-shared';
+import { Notification, NotificationType, SharedConstants } from '@bfemulator/app-shared';
 
 import { CommandServiceImpl } from '../platform/commands/commandServiceImpl';
 
-export const globalHandlers: EventListener = async (
-  event: KeyboardEvent
-): Promise<any> => {
+export const globalHandlers: EventListener = async (event: KeyboardEvent): Promise<any> => {
   // Meta corresponds to 'Command' on Mac
   const ctrlOrCmdPressed = event.ctrlKey || event.metaKey;
   const key = event.key.toLowerCase();

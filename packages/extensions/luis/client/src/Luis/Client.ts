@@ -32,16 +32,8 @@
 //
 
 import * as LSCache from 'lscache';
-import {
-  ApplicationPublishRequest,
-  Apps,
-  Publish,
-} from 'luis-apis/lib/api/apps';
-import {
-  AddLabelParams,
-  Example,
-  ExampleLabelObject,
-} from 'luis-apis/lib/api/examples';
+import { ApplicationPublishRequest, Apps, Publish } from 'luis-apis/lib/api/apps';
+import { AddLabelParams, Example, ExampleLabelObject } from 'luis-apis/lib/api/examples';
 import Intents from 'luis-apis/lib/api/models/intents';
 import { ServiceBase } from 'luis-apis/lib/api/serviceBase';
 import { ModelTrainStatus, Train } from 'luis-apis/lib/api/train';
@@ -67,10 +59,7 @@ enum TrainStatus {
 }
 
 class LuisClientError extends Error {
-  private static getMessage(
-    message: string,
-    statusCode: number | undefined
-  ): string {
+  private static getMessage(message: string, statusCode: number | undefined): string {
     let errorMessage = message;
     if (statusCode) {
       errorMessage += ' - HTTP Status Code: ' + statusCode;
@@ -104,11 +93,7 @@ class LuisClient {
     return entityType;
   }
 
-  private static getCacheKey(
-    apiName: string,
-    appId: string,
-    versionId?: string
-  ): string {
+  private static getCacheKey(apiName: string, appId: string, versionId?: string): string {
     let key: string = apiName + '_' + appId;
     if (versionId) {
       key += '_';
@@ -132,10 +117,7 @@ class LuisClient {
   }
 
   public async getApplicationInfo(): Promise<AppInfo> {
-    const opCacheKey: string = LuisClient.getCacheKey(
-      'GetAppInfo',
-      this.luisAppInfo.appId
-    );
+    const opCacheKey: string = LuisClient.getCacheKey('GetAppInfo', this.luisAppInfo.appId);
     let cached: AppInfo;
     if ((cached = LSCache.get(opCacheKey)) != null) {
       return cached || ({} as AppInfo);
@@ -148,8 +130,7 @@ class LuisClient {
     if (
       r.status === 401 ||
       // Cortana Built in app (static, user cannot author it)
-      (r.status === 400 &&
-        this.luisAppInfo.appId.toLowerCase() === CortanaAppId)
+      (r.status === 400 && this.luisAppInfo.appId.toLowerCase() === CortanaAppId)
     ) {
       appInfo = {
         authorized: false,
@@ -165,20 +146,14 @@ class LuisClient {
       appInfo = await r.json();
       appInfo.authorized = true;
       appInfo.appId = this.luisAppInfo.appId;
-      appInfo.isDispatchApp = appInfo.activeVersion
-        .toLocaleLowerCase()
-        .startsWith('dispatch');
+      appInfo.isDispatchApp = appInfo.activeVersion.toLocaleLowerCase().startsWith('dispatch');
       LSCache.set(opCacheKey, appInfo, CacheTtlInMins);
     }
     return appInfo;
   }
 
   public async getApplicationIntents(appInfo: AppInfo): Promise<IntentInfo[]> {
-    const opCacheKey: string = LuisClient.getCacheKey(
-      'GetAppInfo',
-      appInfo.appId,
-      appInfo.activeVersion
-    );
+    const opCacheKey: string = LuisClient.getCacheKey('GetAppInfo', appInfo.appId, appInfo.activeVersion);
     let cached: IntentInfo[];
     if ((cached = LSCache.get(opCacheKey)) != null) {
       return cached || ([] as any);
@@ -194,11 +169,7 @@ class LuisClient {
     return intentInfo;
   }
 
-  public async reassignIntent(
-    appInfo: AppInfo,
-    luisResponse: LuisResponse,
-    newIntent: string
-  ): Promise<void> {
+  public async reassignIntent(appInfo: AppInfo, luisResponse: LuisResponse, newIntent: string): Promise<void> {
     this.configureClient();
     const exampleLabelObject: ExampleLabelObject = {
       text: luisResponse.query,
@@ -217,10 +188,7 @@ class LuisClient {
       versionId: appInfo.activeVersion || DefaultVersion,
     };
 
-    const r = await this.exampleService.addLabel(
-      addLabelParapms,
-      exampleLabelObject
-    );
+    const r = await this.exampleService.addLabel(addLabelParapms, exampleLabelObject);
     if (r.status !== 201) {
       throw new LuisClientError('Failed to add label', r.status);
     }
@@ -238,10 +206,7 @@ class LuisClient {
       region,
       versionId: appInfo.activeVersion,
     };
-    const r = await this.publishService.publishApplication(
-      { appId: appInfo.appId },
-      applicationPublishRequest
-    );
+    const r = await this.publishService.publishApplication({ appId: appInfo.appId }, applicationPublishRequest);
     if (r.status !== 201) {
       throw new LuisClientError('Publish Failed', r.status);
     }
@@ -277,9 +242,7 @@ class LuisClient {
         const appTrainingStatus: ModelTrainStatus[] = await r.json();
         if (
           appTrainingStatus.every(
-            s =>
-              s.details.statusId === TrainStatus.UpToDate ||
-              s.details.statusId === TrainStatus.Success
+            s => s.details.statusId === TrainStatus.UpToDate || s.details.statusId === TrainStatus.Success
           )
         ) {
           clearInterval(intervalId);

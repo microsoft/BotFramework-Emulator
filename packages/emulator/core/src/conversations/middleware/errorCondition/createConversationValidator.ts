@@ -30,12 +30,9 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import {
-  APIException,
-  ConversationParameters,
-  ErrorCodes,
-} from '@bfemulator/sdk-shared';
+import { APIException, ConversationParameters, ErrorCodes } from '@bfemulator/sdk-shared';
 import * as HttpStatus from 'http-status-codes';
+
 import BotEndpoint from '../../../facility/botEndpoint';
 import createAPIException from '../../../utils/createResponse/apiException';
 
@@ -64,11 +61,7 @@ class CreateConversationError {
   }
 
   public toAPIException(): APIException {
-    return createAPIException(
-      HttpStatus.BAD_REQUEST,
-      this.errorCode,
-      this.message
-    );
+    return createAPIException(HttpStatus.BAD_REQUEST, this.errorCode, this.message);
   }
 }
 

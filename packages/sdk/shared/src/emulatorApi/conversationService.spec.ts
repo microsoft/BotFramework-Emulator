@@ -31,10 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import {
-  ConversationService,
-  headers as headersInstance,
-} from './conversationService';
+import { ConversationService, headers as headersInstance } from './conversationService';
 let mockFetchArgs: MockFetch;
 
 (global as any).fetch = (function() {
@@ -169,9 +166,7 @@ describe('The ConversationService should call "fetch" with the expected paramete
       endpoint: 'http://endpoint',
     });
     const { url, opts } = mockFetchArgs;
-    expect(url).toBe(
-      'http://localhost/v3/conversations?botEndpoint=http://endpoint&msaAppId=123&msaPassword=321'
-    );
+    expect(url).toBe('http://localhost/v3/conversations?botEndpoint=http://endpoint&msaAppId=123&msaPassword=321');
 
     const { body, headers, method } = opts;
     expect(headers === headers).toBeTruthy();

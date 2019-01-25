@@ -39,11 +39,7 @@ import { BotEmulator } from '../../botEmulator';
 import sendErrorResponse from '../../utils/sendErrorResponse';
 
 export default function setUserData(botEmulator: BotEmulator) {
-  return (
-    req: Restify.Request,
-    res: Restify.Response,
-    next: Restify.Next
-  ): any => {
+  return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     try {
       const botData = botEmulator.facilities.botState.setBotData(
         req.params.channelId,

@@ -51,15 +51,9 @@ import sendHistoryToConversation from './middleware/sendHistoryToConversation';
 import updateActivity from './middleware/updateActivity';
 import uploadAttachment from './middleware/uploadAttachment';
 
-export default function registerRoutes(
-  botEmulator: BotEmulator,
-  server: Server,
-  uses: RequestHandler[]
-) {
+export default function registerRoutes(botEmulator: BotEmulator, server: Server, uses: RequestHandler[]) {
   // TODO: Check if it works without MSA App ID
-  const verifyBotFramework = createBotFrameworkAuthenticationMiddleware(
-    botEmulator.options.fetch
-  );
+  const verifyBotFramework = createBotFrameworkAuthenticationMiddleware(botEmulator.options.fetch);
   // const verifyBotFramework = botEmulator.msaAppId ?
   // createBotFrameworkAuthenticationMiddleware(botEmulator.options.fetch) : [];
   const botEndpoint = getBotEndpoint(botEmulator);

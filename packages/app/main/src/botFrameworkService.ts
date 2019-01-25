@@ -74,9 +74,6 @@ export class BotFrameworkService {
 
   public report(conversationId: string) {
     const serverUrl = this.serverUrl.replace('[::]', 'localhost');
-    mainWindow.logService.logToChat(
-      conversationId,
-      textItem(LogLevel.Debug, `Emulator listening on ${serverUrl}`)
-    );
+    mainWindow.logService.logToChat(conversationId, textItem(LogLevel.Debug, `Emulator listening on ${serverUrl}`));
   }
 }

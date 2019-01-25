@@ -104,12 +104,7 @@ export default class Conversation extends EventEmitter {
     return this.conversationId.includes('transcript');
   }
 
-  constructor(
-    botEmulator: BotEmulator,
-    botEndpoint: BotEndpoint,
-    conversationId: string,
-    user: User
-  ) {
+  constructor(botEmulator: BotEmulator, botEndpoint: BotEndpoint, conversationId: string, user: User) {
     super();
     Object.assign(this, { botEmulator, botEndpoint, conversationId, user });
     // We should consider hardcoding bot id because we don't really use it
@@ -123,17 +118,13 @@ export default class Conversation extends EventEmitter {
   /**
    * Sends the activity to the conversation's bot.
    */
-  public async postActivityToBot(
-    activity: Activity,
-    recordInConversation: boolean
-  ) {
+  public async postActivityToBot(activity: Activity, recordInConversation: boolean) {
     if (!this.botEndpoint) {
       return this.botEmulator.facilities.logger.logMessage(
         this.conversationId,
         textItem(
           LogLevel.Error,
-          `This conversation does not have an endpoint, cannot post "${activity &&
-            activity.type}" activity.`
+          `This conversation does not have an endpoint, cannot post "${activity && activity.type}" activity.`
         )
       );
     }
@@ -152,9 +143,7 @@ export default class Conversation extends EventEmitter {
       activity.recipient.role = 'bot';
     }
 
-    activity.serviceUrl = await this.botEmulator.getServiceUrl(
-      this.botEndpoint.botUrl
-    );
+    activity.serviceUrl = await this.botEmulator.getServiceUrl(this.botEndpoint.botUrl);
 
     if (
       !this.conversationIsTranscript &&
@@ -171,15 +160,9 @@ export default class Conversation extends EventEmitter {
       );
       this.botEmulator.facilities.logger.logMessage(
         this.conversationId,
-        externalLinkItem(
-          'Connecting to bots hosted remotely',
-          'https://aka.ms/cnjvpo'
-        )
+        externalLinkItem('Connecting to bots hosted remotely', 'https://aka.ms/cnjvpo')
       );
-      this.botEmulator.facilities.logger.logMessage(
-        this.conversationId,
-        appSettingsItem('Configure ngrok')
-      );
+      this.botEmulator.facilities.logger.logMessage(this.conversationId, appSettingsItem('Configure ngrok'));
     }
 
     const options = {
@@ -203,10 +186,7 @@ export default class Conversation extends EventEmitter {
     // If a message to the bot was triggered from a transcript, don't actually send it.
     // This can happen when clicking a button in an adaptive card, for instance.
     if (!this.conversationIsTranscript) {
-      resp = await this.botEndpoint.fetchWithAuth(
-        this.botEndpoint.botUrl,
-        options
-      );
+      resp = await this.botEndpoint.fetchWithAuth(this.botEndpoint.botUrl, options);
       status = resp.status;
     }
 
@@ -217,10 +197,7 @@ export default class Conversation extends EventEmitter {
     };
   }
 
-  public async sendConversationUpdate(
-    membersAdded: User[],
-    membersRemoved: User[]
-  ) {
+  public async sendConversationUpdate(membersAdded: User[], membersRemoved: User[]) {
     const activity: ConversationUpdateActivity = {
       type: 'conversationUpdate',
       membersAdded,
@@ -229,20 +206,14 @@ export default class Conversation extends EventEmitter {
 
     const result = await this.postActivityToBot(activity, false);
     if (!/2\d\d/.test('' + result.statusCode)) {
-      this.botEmulator.facilities.logger.logException(
-        this.conversationId,
-        result.response
-      );
+      this.botEmulator.facilities.logger.logException(this.conversationId, result.response);
     }
   }
 
   /**
    * Queues activity for delivery to user.
    */
-  public postActivityToUser(
-    activity: Activity,
-    isHistoric: boolean = false
-  ): ResourceResponse {
+  public postActivityToUser(activity: Activity, isHistoric: boolean = false): ResourceResponse {
     activity = this.processActivity(activity);
     activity = this.postage(this.user.id, activity, isHistoric);
 
@@ -282,9 +253,7 @@ export default class Conversation extends EventEmitter {
   }
 
   // This function turns local contentUrls into dataUrls://
-  public async processActivityForDataUrls(
-    activity: Activity
-  ): Promise<Activity> {
+  public async processActivityForDataUrls(activity: Activity): Promise<Activity> {
     const visitor = new DataUrlEncoder(this.botEmulator);
 
     activity = { ...activity };
@@ -301,25 +270,14 @@ export default class Conversation extends EventEmitter {
     if (index === -1) {
       // The activity may already flushed to the client, thus, not found anymore
       // TODO: Should we add a new activity with same ID, so the client will get the update?
-      throw createAPIException(
-        HttpStatus.NOT_FOUND,
-        ErrorCodes.BadArgument,
-        'not a known activity id'
-      );
+      throw createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, 'not a known activity id');
     }
 
-    this.activities = updateIn(
-      this.activities,
-      [index, 'activity'],
-      activity => ({ ...activity, ...updatedActivity })
-    );
+    this.activities = updateIn(this.activities, [index, 'activity'], activity => ({ ...activity, ...updatedActivity }));
     updatedActivity = this.activities[index].activity;
     this.emit('activitychange', { activity: updatedActivity });
 
-    this.transcript = [
-      ...this.transcript,
-      { type: 'activity update', activity: updatedActivity },
-    ];
+    this.transcript = [...this.transcript, { type: 'activity update', activity: updatedActivity }];
     this.emit('transcriptupdate');
 
     return createResourceResponse(id);
@@ -327,18 +285,12 @@ export default class Conversation extends EventEmitter {
 
   public deleteActivity(id: string) {
     // if we found the activity to reply to
-    const activityIndex = this.activities.findIndex(
-      entry => entry.activity.id === id
-    );
+    const activityIndex = this.activities.findIndex(entry => entry.activity.id === id);
 
     if (activityIndex === -1) {
       // The activity may already flushed to the client
       // TODO: Should we add a new empty activity with same ID to let the client know about the recall?
-      throw createAPIException(
-        HttpStatus.NOT_FOUND,
-        ErrorCodes.BadArgument,
-        'The activity id was not found'
-      );
+      throw createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, 'The activity id was not found');
     }
 
     const { activity } = this.activities[activityIndex];
@@ -346,10 +298,7 @@ export default class Conversation extends EventEmitter {
     this.activities = updateIn(this.activities, [activityIndex]);
     this.emit('deleteactivity', { activity });
 
-    this.transcript = [
-      ...this.transcript,
-      { type: 'activity delete', activity: { id } },
-    ];
+    this.transcript = [...this.transcript, { type: 'activity delete', activity: { id } }];
     this.emit('transcriptupdate');
   }
 
@@ -422,10 +371,7 @@ export default class Conversation extends EventEmitter {
       this.botEmulator.facilities.logger.logException(this.conversationId, err);
     }
 
-    this.transcript = [
-      ...this.transcript,
-      { type: 'contact update', activity },
-    ];
+    this.transcript = [...this.transcript, { type: 'contact update', activity }];
     this.emit('transcriptupdate');
   }
 
@@ -441,10 +387,7 @@ export default class Conversation extends EventEmitter {
       this.botEmulator.facilities.logger.logException(this.conversationId, err);
     }
 
-    this.transcript = [
-      ...this.transcript,
-      { type: 'contact remove', activity },
-    ];
+    this.transcript = [...this.transcript, { type: 'contact remove', activity }];
     this.emit('transcriptupdate');
   }
 
@@ -491,10 +434,7 @@ export default class Conversation extends EventEmitter {
       this.botEmulator.facilities.logger.logException(this.conversationId, err);
     }
 
-    this.transcript = [
-      ...this.transcript,
-      { type: 'user data delete', activity },
-    ];
+    this.transcript = [...this.transcript, { type: 'user data delete', activity }];
     this.emit('transcriptupdate');
   }
 
@@ -588,12 +528,8 @@ export default class Conversation extends EventEmitter {
         bot: { id: this.botEndpoint.botId },
         channelId: 'emulator',
         conversation: { id: this.conversationId },
-        serviceUrl: await this.botEmulator.getServiceUrl(
-          this.botEndpoint.botUrl
-        ),
-        user: this.botEmulator.facilities.users.usersById(
-          this.botEmulator.facilities.users.currentUserId
-        ),
+        serviceUrl: await this.botEmulator.getServiceUrl(this.botEndpoint.botUrl),
+        user: this.botEmulator.facilities.users.usersById(this.botEmulator.facilities.users.currentUserId),
       },
       value: updateValue,
     };
@@ -603,11 +539,7 @@ export default class Conversation extends EventEmitter {
     return response;
   }
 
-  public async sendTokenResponse(
-    connectionName: string,
-    token: string,
-    doNotCache?: boolean
-  ) {
+  public async sendTokenResponse(connectionName: string, token: string, doNotCache?: boolean) {
     const userId = this.botEmulator.facilities.users.currentUserId;
     const botId = this.botEndpoint.botId;
 
@@ -630,12 +562,8 @@ export default class Conversation extends EventEmitter {
   /**
    * Returns activities since the watermark.
    */
-  public getActivitiesSince(
-    watermark: number
-  ): { activities: Activity[]; watermark: number } {
-    this.activities = watermark
-      ? this.activities.filter(entry => entry.watermark >= watermark)
-      : this.activities;
+  public getActivitiesSince(watermark: number): { activities: Activity[]; watermark: number } {
+    this.activities = watermark ? this.activities.filter(entry => entry.watermark >= watermark) : this.activities;
 
     return {
       activities: this.activities.map(entry => entry.activity),
@@ -667,10 +595,7 @@ export default class Conversation extends EventEmitter {
 
       if (
         activity.recipient &&
-        (type === 'event' ||
-          type === 'message' ||
-          type === 'messageReaction' ||
-          type === 'typing')
+        (type === 'event' || type === 'message' || type === 'messageReaction' || type === 'typing')
       ) {
         if (!origBotId && activity.recipient.role === 'bot') {
           origBotId = activity.recipient.id;
@@ -716,9 +641,7 @@ export default class Conversation extends EventEmitter {
   public async getTranscript(): Promise<Activity[]> {
     // Currently, we only export transcript of activities
     // TODO: Think about "member join/left", "typing", "activity update/delete", etc.
-    const activities = this.transcript
-      .filter(record => record.type === 'activity add')
-      .map(record => record.activity);
+    const activities = this.transcript.filter(record => record.type === 'activity add').map(record => record.activity);
     for (let i = 0; i < activities.length; i++) {
       await this.processActivityForDataUrls(activities[i]);
     }
@@ -759,12 +682,8 @@ export default class Conversation extends EventEmitter {
         bot: { id: this.botEndpoint.botId },
         channelId: 'emulator',
         conversation: { id: this.conversationId },
-        serviceUrl: await this.botEmulator.getServiceUrl(
-          this.botEndpoint.botUrl
-        ),
-        user: this.botEmulator.facilities.users.usersById(
-          this.botEmulator.facilities.users.currentUserId
-        ),
+        serviceUrl: await this.botEmulator.getServiceUrl(this.botEndpoint.botUrl),
+        user: this.botEmulator.facilities.users.usersById(this.botEmulator.facilities.users.currentUserId),
       },
       value: updateValue,
     };
@@ -776,11 +695,7 @@ export default class Conversation extends EventEmitter {
     return response;
   }
 
-  private postage(
-    recipientId: string,
-    activity: Activity,
-    isHistoric: boolean = false
-  ): Activity {
+  private postage(recipientId: string, activity: Activity, isHistoric: boolean = false): Activity {
     const date = moment();
 
     const timestamp = isHistoric ? activity.timestamp : date.toISOString();
@@ -799,21 +714,14 @@ export default class Conversation extends EventEmitter {
 
   private addActivityToQueue(activity: Activity) {
     if (!(activity.channelData || {}).postback) {
-      this.activities = [
-        ...this.activities,
-        { activity, watermark: this.nextWatermark++ },
-      ];
+      this.activities = [...this.activities, { activity, watermark: this.nextWatermark++ }];
       this.emit('addactivity', { activity });
     }
 
     const genericActivity = activity as GenericActivity;
 
     if (genericActivity && activity.recipient) {
-      this.botEmulator.facilities.logger.logActivity(
-        this.conversationId,
-        genericActivity,
-        activity.recipient.role
-      );
+      this.botEmulator.facilities.logger.logActivity(this.conversationId, genericActivity, activity.recipient.role);
     }
   }
 }
@@ -853,9 +761,7 @@ class DataUrlEncoder {
   protected async makeDataUrl(url: string): Promise<string> {
     let resultUrl = url;
     const imported = await this.bot.options.fetch(url, {});
-    if (
-      parseInt(imported.headers.get('content-length'), 10) < maxDataUrlLength
-    ) {
+    if (parseInt(imported.headers.get('content-length'), 10) < maxDataUrlLength) {
       const buffer = await imported.buffer();
       const encoded = Buffer.from(buffer).toString('base64');
       const typeString = imported.headers.get('content-type');

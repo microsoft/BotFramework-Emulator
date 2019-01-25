@@ -41,19 +41,11 @@ import { TokenCache } from '../tokenCache';
 import { TokenParams } from '../TokenParams';
 
 export default function signOut(botEmulator: BotEmulator) {
-  return (
-    req: Restify.Request,
-    res: Restify.Response,
-    next: Restify.Next
-  ): any => {
+  return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     try {
       const params: TokenParams = req.params;
       const botEndpoint: BotEndpoint = (req as any).botEndpoint;
-      TokenCache.deleteTokenFromCache(
-        botEndpoint.botId,
-        params.userId,
-        params.connectionName
-      );
+      TokenCache.deleteTokenFromCache(botEndpoint.botId, params.userId, params.connectionName);
 
       res.send(HttpStatus.OK);
       res.end();

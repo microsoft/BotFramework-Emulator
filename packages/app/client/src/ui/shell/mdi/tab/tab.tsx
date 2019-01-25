@@ -66,9 +66,7 @@ export class Tab extends React.Component<TabProps, TabState> {
 
   public render() {
     const activeClassName = this.props.active ? styles.activeEditorTab : '';
-    const draggedOverClassName = this.state.draggedOver
-      ? styles.draggedOverEditorTab
-      : '';
+    const draggedOverClassName = this.state.draggedOver ? styles.draggedOverEditorTab : '';
     const { label } = this.props;
 
     return (
@@ -86,12 +84,7 @@ export class Tab extends React.Component<TabProps, TabState> {
         <TruncateText className={styles.truncatedTabText}>{label}</TruncateText>
         {this.props.dirty ? <span>*</span> : null}
         <div className={styles.tabSeparator} />
-        <div
-          className={styles.tabFocusTarget}
-          role="button"
-          tabIndex={0}
-          aria-label={`${label}, tab`}
-        >
+        <div className={styles.tabFocusTarget} role="button" tabIndex={0} aria-label={`${label}, tab`}>
           &nbsp;
         </div>
         <button
@@ -150,11 +143,7 @@ export class Tab extends React.Component<TabProps, TabState> {
 
     // only swap the tabs if they are different
     if (tabData.tabId !== this.props.documentId) {
-      this.props.swapTabs(
-        tabData.editorKey,
-        this.state.owningEditor,
-        tabData.tabId
-      );
+      this.props.swapTabs(tabData.editorKey, this.state.owningEditor, tabData.tabId);
     }
 
     this.setState({ draggedOver: false });

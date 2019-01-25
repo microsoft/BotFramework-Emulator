@@ -38,13 +38,7 @@ export default function interceptError() {
     // log.error('[err-client]', error.message, error.stack);
   });
 
-  window.onerror = (
-    _message: string,
-    _filename?: string,
-    _lineno?: number,
-    _colno?: number,
-    _error?: Error
-  ) => {
+  window.onerror = (_message: string, _filename?: string, _lineno?: number, _colno?: number, _error?: Error) => {
     // log.error('[err-client]', message, filename, lineno, colno, error);
 
     return true; // prevent default handler

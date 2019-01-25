@@ -36,10 +36,7 @@ import * as EditorActions from '../../../data/action/editorActions';
 import { RootState } from '../../../data/store';
 
 import { TabManager, TabManagerProps } from './tabManager';
-const mapStateToProps = (
-  state: RootState,
-  ownProps: { [propName: string]: any }
-): TabManagerProps => ({
+const mapStateToProps = (state: RootState, ownProps: { [propName: string]: any }): TabManagerProps => ({
   recentTabs: state.editor.editors[state.editor.activeEditor].recentTabs,
   window,
   ...ownProps,

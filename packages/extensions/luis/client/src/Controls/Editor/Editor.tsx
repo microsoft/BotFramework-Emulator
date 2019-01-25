@@ -37,10 +37,7 @@ import { Component } from 'react';
 import { AppInfo } from '../../Luis/AppInfo';
 import { IntentInfo } from '../../Luis/IntentInfo';
 import { Intent } from '../../Models/Intent';
-import {
-  RecognizerResult,
-  RecognizerResultIntent,
-} from '../../Models/RecognizerResults';
+import { RecognizerResult, RecognizerResultIntent } from '../../Models/RecognizerResults';
 import EntitiesViewer from '../EntitiesViewer/EntitiesViewer';
 import { IntentEditor, IntentEditorMode } from '../IntentEditor/IntentEditor';
 import IntentViewer from '../IntentViewer/IntentViewer';
@@ -68,8 +65,7 @@ class Editor extends Component<EditorProps, EditorState> {
     if (!this.props.recognizerResult || !this.props.recognizerResult.intents) {
       return { intent: NoneIntent, score: 0.0 };
     }
-    const intents: { [key: string]: RecognizerResultIntent } = this.props
-      .recognizerResult.intents;
+    const intents: { [key: string]: RecognizerResultIntent } = this.props.recognizerResult.intents;
     const topIntent = Object.keys(intents).reduce((a, b) => {
       return intents[a].score > intents[b].score ? a : b;
     });
@@ -79,9 +75,7 @@ class Editor extends Component<EditorProps, EditorState> {
   public render() {
     const topScoringIntent = this.getTopScoringIntent();
     let mode: IntentEditorMode;
-    const {
-      appInfo = { authorized: false, isDispatchApp: false },
-    } = this.props;
+    const { appInfo = { authorized: false, isDispatchApp: false } } = this.props;
     if (appInfo.authorized) {
       mode = IntentEditorMode.Enabled;
     } else if (appInfo.isDispatchApp) {

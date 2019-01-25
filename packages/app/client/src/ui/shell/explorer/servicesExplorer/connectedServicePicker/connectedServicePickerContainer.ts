@@ -38,15 +38,10 @@ import { DialogService } from '../../../../dialogs/service';
 
 import { ConnectedServicePicker } from './connectedServicePicker';
 
-const mapStateToProps = (
-  state: RootState,
-  ownProps: { [propName: string]: any }
-) => {
+const mapStateToProps = (state: RootState, ownProps: { [propName: string]: any }) => {
   const { services } = state.bot.activeBot;
   return {
-    connectedServices: services.filter(
-      service => service.type !== ServiceTypes.Endpoint
-    ),
+    connectedServices: services.filter(service => service.type !== ServiceTypes.Endpoint),
     ...ownProps,
   };
 };
@@ -54,8 +49,7 @@ const mapStateToProps = (
 const mapDispatchToProps = (_dispatch: () => void) => {
   return {
     launchServiceEditor: () => DialogService.hideDialog(1),
-    connectServices: servicesToConnect =>
-      DialogService.hideDialog(servicesToConnect),
+    connectServices: servicesToConnect => DialogService.hideDialog(servicesToConnect),
     cancel: () => DialogService.hideDialog(0),
   };
 };

@@ -34,30 +34,15 @@
 import * as jwt from 'jsonwebtoken';
 import * as Restify from 'restify';
 
-import {
-  authentication,
-  usGovernmentAuthentication,
-  v31Authentication,
-  v32Authentication,
-} from '../authEndpoints';
+import { authentication, usGovernmentAuthentication, v31Authentication, v32Authentication } from '../authEndpoints';
 
 import OpenIdMetadata from './openIdMetadata';
 
 export default function createBotFrameworkAuthenticationMiddleware(fetch: any) {
-  const openIdMetadata = new OpenIdMetadata(
-    fetch,
-    authentication.openIdMetadata
-  );
-  const usGovOpenIdMetadata = new OpenIdMetadata(
-    fetch,
-    usGovernmentAuthentication.openIdMetadata
-  );
+  const openIdMetadata = new OpenIdMetadata(fetch, authentication.openIdMetadata);
+  const usGovOpenIdMetadata = new OpenIdMetadata(fetch, usGovernmentAuthentication.openIdMetadata);
 
-  return async (
-    req: Restify.Request,
-    res: Restify.Response,
-    next: Restify.Next
-  ) => {
+  return async (req: Restify.Request, res: Restify.Response, next: Restify.Next) => {
     const authorization = req.header('Authorization');
 
     if (!authorization) {
@@ -69,10 +54,7 @@ export default function createBotFrameworkAuthenticationMiddleware(fetch: any) {
     const [authMethod, token] = authorization.trim().split(' ');
 
     // Verify token
-    const decoded: any =
-      /^bearer$/i.test(authMethod) &&
-      token &&
-      jwt.decode(token, { complete: true });
+    const decoded: any = /^bearer$/i.test(authMethod) && token && jwt.decode(token, { complete: true });
 
     if (!decoded) {
       // Token not provided so

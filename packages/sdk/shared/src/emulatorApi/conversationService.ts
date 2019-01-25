@@ -39,12 +39,7 @@ export const headers = {
 };
 
 export class ConversationService {
-  public static addUser(
-    serviceUrl: string,
-    conversationId: string,
-    name?: string,
-    id?: string
-  ) {
+  public static addUser(serviceUrl: string, conversationId: string, name?: string, id?: string) {
     const url = `${serviceUrl}/emulator/${conversationId}/users`;
     return fetch(url, {
       headers,
@@ -53,11 +48,7 @@ export class ConversationService {
     });
   }
 
-  public static removeUser(
-    serviceUrl: string,
-    conversationId: string,
-    id: string
-  ) {
+  public static removeUser(serviceUrl: string, conversationId: string, id: string) {
     const url = `${serviceUrl}/emulator/${conversationId}/users`;
     return fetch(url, {
       headers,
@@ -114,14 +105,9 @@ export class ConversationService {
     });
   }
 
-  public static startConversation(
-    serverUrl: string,
-    payload: Partial<StartConversationParams>
-  ): Promise<Response> {
+  public static startConversation(serverUrl: string, payload: Partial<StartConversationParams>): Promise<Response> {
     const { endpoint, appId, appPassword, user, ...body } = payload;
-    const url =
-      serverUrl +
-      `/v3/conversations?botEndpoint=${endpoint}&msaAppId=${appId}&msaPassword=${appPassword}`;
+    const url = serverUrl + `/v3/conversations?botEndpoint=${endpoint}&msaAppId=${appId}&msaPassword=${appPassword}`;
     return fetch(url, {
       method: 'POST',
       headers: {

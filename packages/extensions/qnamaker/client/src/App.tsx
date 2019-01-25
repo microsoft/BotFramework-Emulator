@@ -33,11 +33,7 @@
 
 import { InspectorHost } from '@bfemulator/sdk-client';
 import { Splitter } from '@bfemulator/ui-react';
-import {
-  IBotConfiguration,
-  IQnAService,
-  ServiceTypes,
-} from 'botframework-config/lib/schema';
+import { IBotConfiguration, IQnAService, ServiceTypes } from 'botframework-config/lib/schema';
 import * as React from 'react';
 
 import * as styles from './App.scss';
@@ -50,8 +46,7 @@ import PhrasingsView from './Views/PhrasingsView/PhrasingsView';
 import QnAMakerHeader from './Views/QnAMakerHeader/QnAMakerHeader';
 
 const $host: InspectorHost = (window as any).host;
-const QnAApiBasePath =
-  'https://westus.api.cognitive.microsoft.com/qnamaker/v4.0';
+const QnAApiBasePath = 'https://westus.api.cognitive.microsoft.com/qnamaker/v4.0';
 const TrainAccessoryId = 'train';
 const PublishAccessoryId = 'publish';
 const AccessoryDefaultState = 'default';
@@ -78,18 +73,13 @@ export interface PersistentAppState {
 export class App extends React.Component<any, AppState> {
   public client: QnAMakerClient;
 
-  public static getQnAServiceFromBot(
-    bot: IBotConfiguration,
-    kbId: string
-  ): IQnAService | null {
+  public static getQnAServiceFromBot(bot: IBotConfiguration, kbId: string): IQnAService | null {
     if (!bot || !bot.services || !kbId) {
       return null;
     }
 
     kbId = kbId.toLowerCase();
-    const qnaServices = bot.services.filter(
-      s => s.type === ServiceTypes.QnA
-    ) as IQnAService[];
+    const qnaServices = bot.services.filter(s => s.type === ServiceTypes.QnA) as IQnAService[];
     const qnaService = qnaServices.find(ls => ls.kbId.toLowerCase() === kbId);
     if (qnaService) {
       return qnaService;
@@ -124,10 +114,7 @@ export class App extends React.Component<any, AppState> {
     if (!this.runningDetached()) {
       $host.on('inspect', async (obj: any) => {
         const appState = new AppStateAdapter(obj);
-        appState.qnaService = App.getQnAServiceFromBot(
-          $host.bot,
-          appState.traceInfo.knowledgeBaseId
-        );
+        appState.qnaService = App.getQnAServiceFromBot($host.bot, appState.traceInfo.knowledgeBaseId);
         this.setState(appState);
         if (appState.qnaService !== null) {
           this.client = new QnAMakerClient({
@@ -147,8 +134,7 @@ export class App extends React.Component<any, AppState> {
         );
         $host.enableAccessory(
           PublishAccessoryId,
-          this.state.persistentState[this.state.id] &&
-            this.state.persistentState[this.state.id].pendingPublish
+          this.state.persistentState[this.state.id] && this.state.persistentState[this.state.id].pendingPublish
         );
       });
 
@@ -167,51 +153,38 @@ export class App extends React.Component<any, AppState> {
 
       $host.on('bot-updated', (bot: IBotConfiguration) => {
         this.setState({
-          qnaService: App.getQnAServiceFromBot(
-            bot,
-            this.state.traceInfo.knowledgeBaseId
-          ),
+          qnaService: App.getQnAServiceFromBot(bot, this.state.traceInfo.knowledgeBaseId),
         });
       });
 
-      $host.on(
-        'theme',
-        async (themeInfo: { themeName: string; themeComponents: string[] }) => {
-          const oldThemeComponents = document.querySelectorAll<HTMLLinkElement>(
-            '[data-theme-component="true"]'
+      $host.on('theme', async (themeInfo: { themeName: string; themeComponents: string[] }) => {
+        const oldThemeComponents = document.querySelectorAll<HTMLLinkElement>('[data-theme-component="true"]');
+        const head = document.querySelector<HTMLHeadElement>('head') as HTMLHeadElement;
+        const fragment = document.createDocumentFragment();
+        const promises: Promise<any>[] = [];
+        // Create the new links for each theme component
+        themeInfo.themeComponents.forEach(themeComponent => {
+          const link = document.createElement<'link'>('link');
+          promises.push(
+            new Promise(resolve => {
+              link.addEventListener('load', resolve);
+            })
           );
-          const head = document.querySelector<HTMLHeadElement>(
-            'head'
-          ) as HTMLHeadElement;
-          const fragment = document.createDocumentFragment();
-          const promises: Promise<any>[] = [];
-          // Create the new links for each theme component
-          themeInfo.themeComponents.forEach(themeComponent => {
-            const link = document.createElement<'link'>('link');
-            promises.push(
-              new Promise(resolve => {
-                link.addEventListener('load', resolve);
-              })
-            );
-            link.href = themeComponent;
-            link.rel = 'stylesheet';
-            link.setAttribute('data-theme-component', 'true');
-            fragment.appendChild(link);
-          });
-          head.insertBefore(fragment, head.firstElementChild);
-          // Wait for all the links to load their css
-          await Promise.all(promises);
-          // Remove the old links
-          Array.prototype.forEach.call(
-            oldThemeComponents,
-            (themeComponent: HTMLLinkElement) => {
-              if (themeComponent.parentElement) {
-                themeComponent.parentElement.removeChild(themeComponent);
-              }
-            }
-          );
-        }
-      );
+          link.href = themeComponent;
+          link.rel = 'stylesheet';
+          link.setAttribute('data-theme-component', 'true');
+          fragment.appendChild(link);
+        });
+        head.insertBefore(fragment, head.firstElementChild);
+        // Wait for all the links to load their css
+        await Promise.all(promises);
+        // Remove the old links
+        Array.prototype.forEach.call(oldThemeComponents, (themeComponent: HTMLLinkElement) => {
+          if (themeComponent.parentElement) {
+            themeComponent.parentElement.removeChild(themeComponent);
+          }
+        });
+      });
     }
   }
 
@@ -233,12 +206,7 @@ export class App extends React.Component<any, AppState> {
           knowledgeBaseId={this.state.traceInfo.knowledgeBaseId}
           knowledgeBaseName={this.state.qnaService.name}
         />
-        <Splitter
-          orientation={'vertical'}
-          primaryPaneIndex={0}
-          minSizes={{ 0: 306, 1: 306 }}
-          initialSizes={{ 0: 306 }}
-        >
+        <Splitter orientation={'vertical'} primaryPaneIndex={0} minSizes={{ 0: 306, 1: 306 }} initialSizes={{ 0: 306 }}>
           <PhrasingsView
             phrasings={this.state.phrasings}
             addPhrasing={this.addPhrasing()}
@@ -262,9 +230,7 @@ export class App extends React.Component<any, AppState> {
       if (this.state.qnaService !== null) {
         if (this.state.selectedAnswer) {
           const newQuestion = this.state.selectedAnswer.id === 0;
-          const questions = newQuestion
-            ? this.state.phrasings
-            : { add: this.state.phrasings };
+          const questions = newQuestion ? this.state.phrasings : { add: this.state.phrasings };
           const metadata = newQuestion ? [] : { add: [], delete: [] };
           const qnaList = {
             qnaList: [
@@ -278,10 +244,7 @@ export class App extends React.Component<any, AppState> {
             ],
           };
           const body = newQuestion ? { add: qnaList } : { update: qnaList };
-          const response = await this.client.updateKnowledgebase(
-            this.state.traceInfo.knowledgeBaseId,
-            body
-          );
+          const response = await this.client.updateKnowledgebase(this.state.traceInfo.knowledgeBaseId, body);
           success = response.status === 200;
           $host.logger.log('Successfully trained Knowledge Base ' + this.state.traceInfo.knowledgeBaseId);
           $host.trackEvent('qna_trainSuccess');
@@ -307,9 +270,7 @@ export class App extends React.Component<any, AppState> {
     try {
       if (this.state.qnaService !== null) {
         $host.logger.log('Publishing...');
-        const response = await this.client.publish(
-          this.state.traceInfo.knowledgeBaseId
-        );
+        const response = await this.client.publish(this.state.traceInfo.knowledgeBaseId);
         success = response.status === 204;
         if (success) {
           $host.logger.log('Successfully published Knowledge Base ' + this.state.traceInfo.knowledgeBaseId);
@@ -401,10 +362,7 @@ export class App extends React.Component<any, AppState> {
     // eslint-disable-next-line react/no-direct-mutation-state
     this.state.persistentState[this.state.id] = persistentState;
     this.setState({ persistentState: this.state.persistentState });
-    localStorage.setItem(
-      persistentStateKey,
-      JSON.stringify(this.state.persistentState)
-    );
+    localStorage.setItem(persistentStateKey, JSON.stringify(this.state.persistentState));
     $host.enableAccessory(TrainAccessoryId, persistentState.pendingTrain);
     $host.enableAccessory(PublishAccessoryId, persistentState.pendingPublish);
   }

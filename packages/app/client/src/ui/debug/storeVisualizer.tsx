@@ -61,10 +61,7 @@ interface StoreVisualizerState {
 }
 
 /** Transparent overlay that helps visualize a selected slice of the state */
-class StoreVisualizerComponent extends React.Component<
-  StoreVisualizerProps,
-  StoreVisualizerState
-> {
+class StoreVisualizerComponent extends React.Component<StoreVisualizerProps, StoreVisualizerState> {
   constructor(props: StoreVisualizerProps) {
     super(props);
 
@@ -105,28 +102,16 @@ class StoreVisualizerComponent extends React.Component<
             <option value="server">Server</option>
           </select>
           <pre>{prettyState}</pre>
-          <PrimaryButton
-            text="Hide Visualizer"
-            className={styles.visualizerButton}
-            onClick={this.toggleShowing}
-          />
+          <PrimaryButton text="Hide Visualizer" className={styles.visualizerButton} onClick={this.toggleShowing} />
         </>
       );
     } else {
-      return (
-        <PrimaryButton
-          text="Show visualizer"
-          className={styles.visualizerButton}
-          onClick={this.toggleShowing}
-        />
-      );
+      return <PrimaryButton text="Show visualizer" className={styles.visualizerButton} onClick={this.toggleShowing} />;
     }
   }
 
   public render(): JSX.Element {
-    return this.props.enabled ? (
-      <div className={styles.storeVisualizer}> {this.content}</div>
-    ) : null;
+    return this.props.enabled ? <div className={styles.storeVisualizer}> {this.content}</div> : null;
   }
 }
 
@@ -134,6 +119,4 @@ const mapStateToProps = (state: RootState): StoreVisualizerProps => ({
   rootState: state,
 });
 
-export const StoreVisualizer = connect(mapStateToProps)(
-  StoreVisualizerComponent
-) as any;
+export const StoreVisualizer = connect(mapStateToProps)(StoreVisualizerComponent) as any;

@@ -83,9 +83,7 @@ export default class AppStateAdapter implements AppState {
       : ButtonSelected.RawResponse;
     if (!this.traceInfo.recognizerResult) {
       // Polyfill the Recognizer Result object
-      this.traceInfo.recognizerResult = new RecognizerResultAdapter(
-        this.traceInfo.luisResult
-      );
+      this.traceInfo.recognizerResult = new RecognizerResultAdapter(this.traceInfo.luisResult);
     }
     this.id = traceActivity.id || '';
   }

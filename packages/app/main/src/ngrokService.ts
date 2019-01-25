@@ -66,8 +66,7 @@ export class NgrokService {
   }
 
   public async getServiceUrl(botUrl: string): Promise<string> {
-    const bypassNgrokLocalhost = getStore().getState().framework
-      .bypassNgrokLocalhost;
+    const bypassNgrokLocalhost = getStore().getState().framework.bypassNgrokLocalhost;
     if (botUrl && isLocalHostUrl(botUrl) && bypassNgrokLocalhost) {
       // Do not use ngrok
       const port = emulator.framework.serverPort;
@@ -143,21 +142,16 @@ export class NgrokService {
 
   /** Logs messages signifying that ngrok has reconnected in all active conversations */
   public broadcastNgrokReconnected(): void {
-    const bypassNgrokLocalhost = getStore().getState().framework
-      .bypassNgrokLocalhost;
+    const bypassNgrokLocalhost = getStore().getState().framework.bypassNgrokLocalhost;
     const { broadcast } = this;
     broadcast(textItem(LogLevel.Debug, 'ngrok reconnected.'));
-    broadcast(
-      textItem(LogLevel.Debug, `ngrok listening on ${this._serviceUrl}`)
-    );
+    broadcast(textItem(LogLevel.Debug, `ngrok listening on ${this._serviceUrl}`));
     broadcast(
       textItem(LogLevel.Debug, 'ngrok traffic inspector:'),
       externalLinkItem(this._inspectUrl, this._inspectUrl)
     );
     if (bypassNgrokLocalhost) {
-      broadcast(
-        textItem(LogLevel.Debug, 'Will bypass ngrok for local addresses')
-      );
+      broadcast(textItem(LogLevel.Debug, 'Will bypass ngrok for local addresses'));
     } else {
       broadcast(textItem(LogLevel.Debug, 'Will use ngrok for local addresses'));
     }
@@ -186,10 +180,7 @@ export class NgrokService {
     } else if (ngrok.running()) {
       this.reportRunning(conversationId);
     } else {
-      mainWindow.logService.logToChat(
-        conversationId,
-        textItem(LogLevel.Debug, 'ngrok configured but not running')
-      );
+      mainWindow.logService.logToChat(conversationId, textItem(LogLevel.Debug, 'ngrok configured but not running'));
     }
   }
 
@@ -202,32 +193,19 @@ export class NgrokService {
   private reportNotConfigured(conversationId: string): void {
     mainWindow.logService.logToChat(
       conversationId,
-      textItem(
-        LogLevel.Debug,
-        'ngrok not configured (only needed when connecting to remotely hosted bots)'
-      )
+      textItem(LogLevel.Debug, 'ngrok not configured (only needed when connecting to remotely hosted bots)')
     );
     mainWindow.logService.logToChat(
       conversationId,
-      externalLinkItem(
-        'Connecting to bots hosted remotely',
-        'https://aka.ms/cnjvpo'
-      )
+      externalLinkItem('Connecting to bots hosted remotely', 'https://aka.ms/cnjvpo')
     );
-    mainWindow.logService.logToChat(
-      conversationId,
-      appSettingsItem('Edit ngrok settings')
-    );
+    mainWindow.logService.logToChat(conversationId, appSettingsItem('Edit ngrok settings'));
   }
 
   /** Logs messages that tell the user about ngrok's current running status */
   private reportRunning(conversationId: string): void {
-    const bypassNgrokLocalhost = getStore().getState().framework
-      .bypassNgrokLocalhost;
-    mainWindow.logService.logToChat(
-      conversationId,
-      textItem(LogLevel.Debug, `ngrok listening on ${this._serviceUrl}`)
-    );
+    const bypassNgrokLocalhost = getStore().getState().framework.bypassNgrokLocalhost;
+    mainWindow.logService.logToChat(conversationId, textItem(LogLevel.Debug, `ngrok listening on ${this._serviceUrl}`));
     mainWindow.logService.logToChat(
       conversationId,
       textItem(LogLevel.Debug, 'ngrok traffic inspector:'),
@@ -239,10 +217,7 @@ export class NgrokService {
         textItem(LogLevel.Debug, 'Will bypass ngrok for local addresses')
       );
     } else {
-      mainWindow.logService.logToChat(
-        conversationId,
-        textItem(LogLevel.Debug, 'Will use ngrok for local addresses')
-      );
+      mainWindow.logService.logToChat(conversationId, textItem(LogLevel.Debug, 'Will use ngrok for local addresses'));
     }
   }
 
@@ -265,13 +240,7 @@ export class NgrokService {
   }
 }
 
-function ngrokConnect({
-  path,
-  port,
-}: {
-  path: string;
-  port: number;
-}): Promise<{ inspectUrl: string; url: string }> {
+function ngrokConnect({ path, port }: { path: string; port: number }): Promise<{ inspectUrl: string; url: string }> {
   return new Promise((resolve, reject) => {
     ngrok.connect(
       { path, port },

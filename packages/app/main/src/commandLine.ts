@@ -39,9 +39,6 @@ import * as globals from './globals';
 const optionDefinitions = [{ name: 'storagepath', alias: 'p', type: String }];
 
 export function parseArgs(): void {
-  const parsedCommandLineArgs: CommandLineArgs = commandLineArgs(
-    optionDefinitions,
-    { partial: true }
-  );
+  const parsedCommandLineArgs: CommandLineArgs = commandLineArgs(optionDefinitions, { partial: true });
   globals.setGlobal('commandlineargs', parsedCommandLineArgs);
 }

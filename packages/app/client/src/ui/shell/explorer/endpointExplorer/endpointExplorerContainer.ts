@@ -48,9 +48,7 @@ import { EndpointExplorer } from './endpointExplorer';
 const mapStateToProps = (state: RootState, ...ownProps: any[]) => {
   const { services } = state.bot.activeBot;
   return {
-    endpointServices: services.filter(
-      service => service.type === ServiceTypes.Endpoint
-    ),
+    endpointServices: services.filter(service => service.type === ServiceTypes.Endpoint),
     window,
     ...ownProps,
   };
@@ -58,19 +56,12 @@ const mapStateToProps = (state: RootState, ...ownProps: any[]) => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    launchEndpointEditor: (
-      endpointEditor: ComponentClass<EndpointEditor>,
-      endpointService: IEndpointService
-    ) => dispatch(launchEndpointEditor(endpointEditor, endpointService)),
+    launchEndpointEditor: (endpointEditor: ComponentClass<EndpointEditor>, endpointService: IEndpointService) =>
+      dispatch(launchEndpointEditor(endpointEditor, endpointService)),
     openEndpointInEmulator: (endpointService: IEndpointService) =>
       dispatch(openEndpointInEmulator(endpointService, true)),
-    openContextMenuForService: (
-      endpointService: IEndpointService,
-      endpointEditor: ComponentClass<EndpointEditor>
-    ) =>
-      dispatch(
-        openEndpointExplorerContextMenu(endpointEditor, endpointService)
-      ),
+    openContextMenuForService: (endpointService: IEndpointService, endpointEditor: ComponentClass<EndpointEditor>) =>
+      dispatch(openEndpointExplorerContextMenu(endpointEditor, endpointService)),
   };
 };
 

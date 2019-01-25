@@ -39,11 +39,7 @@ import { existsSync, readFileSync, Stats } from 'fs-extra';
 
 import * as BotActions from '../botData/actions/botActions';
 import { getStore } from '../botData/store';
-import {
-  getActiveBot,
-  getBotInfoByPath,
-  loadBotWithRetry,
-} from '../botHelpers';
+import { getActiveBot, getBotInfoByPath, loadBotWithRetry } from '../botHelpers';
 import { mainWindow } from '../main';
 
 import { FileWatcher } from './fileWatcher';
@@ -81,10 +77,7 @@ export class BotProjectFileWatcher extends FileWatcher {
     // TODO - wipe this?
   };
 
-  protected onFileChange = async (
-    file: string,
-    fstats?: Stats
-  ): Promise<any> => {
+  protected onFileChange = async (file: string, fstats?: Stats): Promise<any> => {
     if (file !== this.botFilePath || !getActiveBot()) {
       return;
     }
@@ -100,23 +93,15 @@ export class BotProjectFileWatcher extends FileWatcher {
     const botDir = path.dirname(this.botFilePath);
     getStore().dispatch(BotActions.setActive(bot));
     return Promise.all([
-      mainWindow.commandService.remoteCall(
-        SharedConstants.Commands.Bot.SetActive,
-        bot,
-        botDir
-      ),
-      mainWindow.commandService.call(
-        SharedConstants.Commands.Bot.RestartEndpointService
-      ),
+      mainWindow.commandService.remoteCall(SharedConstants.Commands.Bot.SetActive, bot, botDir),
+      mainWindow.commandService.call(SharedConstants.Commands.Bot.RestartEndpointService),
     ]);
   };
 
   public async watch(botFilePath: string): Promise<true> {
     this.botFilePath = botFilePath;
     // wipe the transcript explorer store
-    await mainWindow.commandService.remoteCall(
-      SharedConstants.Commands.File.Clear
-    );
+    await mainWindow.commandService.remoteCall(SharedConstants.Commands.File.Clear);
     if (botFilePath) {
       return super.watch(botFilePath);
     }

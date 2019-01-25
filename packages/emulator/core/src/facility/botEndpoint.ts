@@ -36,11 +36,7 @@ import { URL, URLSearchParams } from 'url';
 import { BotEndpointOptions, SpeechTokenInfo } from '@bfemulator/sdk-shared';
 import * as HttpStatus from 'http-status-codes';
 
-import {
-  authentication,
-  speech as speechEndpoint,
-  usGovernmentAuthentication,
-} from '../authEndpoints';
+import { authentication, speech as speechEndpoint, usGovernmentAuthentication } from '../authEndpoints';
 import statusCodeFamily from '../utils/statusCodeFamily';
 
 // We will refresh if the token is going to expire within 5 minutes
@@ -72,9 +68,7 @@ export default class BotEndpoint {
     }
 
     const query = new URLSearchParams({ goodForInMinutes: duration } as any);
-    const res = await this.fetchWithAuth(
-      new URL(`?${query.toString()}`, speechEndpoint.tokenEndpoint).toString()
-    );
+    const res = await this.fetchWithAuth(new URL(`?${query.toString()}`, speechEndpoint.tokenEndpoint).toString());
 
     if (statusCodeFamily(res.status, 200)) {
       const body = (await res.json()) as SpeechTokenInfo;
@@ -93,11 +87,7 @@ export default class BotEndpoint {
     }
   }
 
-  public async fetchWithAuth(
-    url: string,
-    fetchOptions: any = {},
-    forceRefresh: boolean = false
-  ) {
+  public async fetchWithAuth(url: string, fetchOptions: any = {}, forceRefresh: boolean = false) {
     if (this.msaAppId) {
       fetchOptions.headers = {
         ...fetchOptions.headers,
@@ -108,8 +98,7 @@ export default class BotEndpoint {
     const response = await this._options.fetch(url, fetchOptions);
 
     if (
-      (response.status === HttpStatus.UNAUTHORIZED ||
-        response.status === HttpStatus.FORBIDDEN) &&
+      (response.status === HttpStatus.UNAUTHORIZED || response.status === HttpStatus.FORBIDDEN) &&
       (!forceRefresh && this.msaAppId)
     ) {
       return this.fetchWithAuth(url, fetchOptions, true);
@@ -119,11 +108,7 @@ export default class BotEndpoint {
   }
 
   private async getAccessToken(forceRefresh: boolean = false): Promise<string> {
-    if (
-      !forceRefresh &&
-      this.accessToken &&
-      Date.now() < this.accessTokenExpires - TIME_TO_REFRESH
-    ) {
+    if (!forceRefresh && this.accessToken && Date.now() < this.accessTokenExpires - TIME_TO_REFRESH) {
       return this.accessToken;
     }
 
@@ -162,9 +147,7 @@ export default class BotEndpoint {
       // this.facilities.logger.logError(this.conversationId, 'Error: The bot\'s MSA appId or password is incorrect.');
       // this.facilities.logger.logError(this.conversationId, makeBotSettingsLink('Edit your bot\'s MSA info'));
 
-      throw new Error(
-        'Refresh access token failed with status code: ' + resp.status
-      );
+      throw new Error('Refresh access token failed with status code: ' + resp.status);
     }
   }
 }

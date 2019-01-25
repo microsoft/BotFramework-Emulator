@@ -35,11 +35,7 @@ import * as Restify from 'restify';
 import { BotEmulator } from '../../botEmulator';
 
 export default function getBotEndpoint(botEmulator: BotEmulator) {
-  return (
-    req: Restify.Request,
-    res: Restify.Response,
-    next: Restify.Next
-  ): any => {
+  return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     const request = req as any;
     const { endpoints } = botEmulator.facilities;
     /**
@@ -47,11 +43,7 @@ export default function getBotEndpoint(botEmulator: BotEmulator) {
      * conversation independent from a bot file.
      */
     if (req.query && 'botEndpoint' in req.query) {
-      const {
-        botEndpoint: botUrl,
-        msaAppId = '',
-        msaPassword = '',
-      } = req.query;
+      const { botEndpoint: botUrl, msaAppId = '', msaPassword = '' } = req.query;
       let endpoint = endpoints.get(botUrl);
       if (!endpoint) {
         const params = req.body as any;
