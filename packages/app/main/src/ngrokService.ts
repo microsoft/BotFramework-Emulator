@@ -36,6 +36,7 @@ import { promisify } from 'util';
 import { FrameworkSettings } from '@bfemulator/app-shared';
 import { ILogItem } from '@bfemulator/sdk-shared';
 import { LogLevel } from '@bfemulator/sdk-shared';
+import { isLocalHostUrl } from '@bfemulator/sdk-shared';
 import {
   appSettingsItem,
   exceptionItem,
@@ -48,7 +49,6 @@ import { emulator } from './emulator';
 import { mainWindow } from './main';
 import * as ngrok from './ngrok';
 import { getStore } from './settingsData/store';
-import { isLocalhostUrl } from './utils';
 
 let ngrokInstance: NgrokService;
 
@@ -68,7 +68,7 @@ export class NgrokService {
   public async getServiceUrl(botUrl: string): Promise<string> {
     const bypassNgrokLocalhost = getStore().getState().framework
       .bypassNgrokLocalhost;
-    if (botUrl && isLocalhostUrl(botUrl) && bypassNgrokLocalhost) {
+    if (botUrl && isLocalHostUrl(botUrl) && bypassNgrokLocalhost) {
       // Do not use ngrok
       const port = emulator.framework.serverPort;
 

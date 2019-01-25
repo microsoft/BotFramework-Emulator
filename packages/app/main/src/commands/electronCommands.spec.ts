@@ -39,6 +39,7 @@ import * as Electron from 'electron';
 import { load } from '../botData/actions/botActions';
 import { getStore } from '../botData/store';
 import { mainWindow } from '../main';
+import { TelemetryService } from '../telemetry';
 
 import { registerCommands } from './electronCommands';
 
@@ -50,6 +51,7 @@ jest.mock('fs-extra', () => ({
   rename: async (...args: any[]) => (renameArgs = args),
 }));
 
+let mockOpenExternal;
 jest.mock('electron', () => ({
   app: {
     getName: () => 'BotFramework Emulator',
@@ -64,6 +66,11 @@ jest.mock('electron', () => ({
     showMessageBox: () => void 0,
     showOpenDialog: () => void 0,
     showSaveDialog: () => void 0,
+  },
+  shell: {
+    get openExternal() {
+      return mockOpenExternal;
+    },
   },
 }));
 
@@ -140,6 +147,18 @@ const mockCommandRegistry = new CommandRegistryImpl();
 registerCommands(mockCommandRegistry);
 
 describe('the electron commands', () => {
+  let mockTrackEvent;
+  const trackEventBackup = TelemetryService.trackEvent;
+
+  beforeEach(() => {
+    mockTrackEvent = jest.fn(() => Promise.resolve());
+    TelemetryService.trackEvent = mockTrackEvent;
+  });
+
+  afterAll(() => {
+    TelemetryService.trackEvent = trackEventBackup;
+  });
+
   it('should show a message box', async () => {
     const { handler } = mockCommandRegistry.getCommand(
       SharedConstants.Commands.Electron.ShowMessageBox
@@ -293,5 +312,17 @@ describe('the electron commands', () => {
       threw = true;
     }
     expect(threw).toBeTruthy();
+  });
+
+  it('should open an external link', async () => {
+    mockOpenExternal = jest.fn(() => null);
+    const { handler } = mockCommandRegistry.getCommand(
+      SharedConstants.Commands.Electron.OpenExternal
+    );
+    const url = 'https://aka.ms/bf-emulator-testing';
+    await handler(url);
+
+    expect(mockTrackEvent).toHaveBeenCalledWith('app_openLink', { url });
+    expect(mockOpenExternal).toHaveBeenCalledWith(url, { activate: true });
   });
 });

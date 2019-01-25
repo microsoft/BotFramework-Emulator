@@ -41,14 +41,14 @@ import {
   newNotification,
   SharedConstants,
 } from '@bfemulator/app-shared';
+import got from 'got';
+import { IEndpointService } from 'botframework-config/lib/schema';
 import {
   applyBotConfigOverrides,
   BotConfigOverrides,
   BotConfigWithPath,
   BotConfigWithPathImpl,
 } from '@bfemulator/sdk-shared';
-import { IEndpointService } from 'botframework-config/lib/schema';
-import got from 'got';
 
 import * as BotActions from './botData/actions/botActions';
 import { getStore } from './botData/store';
@@ -58,6 +58,7 @@ import { mainWindow } from './main';
 import { ngrokEmitter, running } from './ngrok';
 import { getSettings } from './settingsData/store';
 import { sendNotificationToClient } from './utils/sendNotificationToClient';
+import { TelemetryService } from './telemetry';
 
 enum ProtocolDomains {
   livechat,
@@ -262,7 +263,7 @@ export const ProtocolHandler = new class ProtocolHandlerImpl
     const { url } = protocol.parsedArgs;
     const options = { url };
 
-    got(options)
+    return got(options)
       .then(res => {
         if (/^2\d\d$/.test(res.statusCode)) {
           if (res.body) {
@@ -334,12 +335,12 @@ export const ProtocolHandler = new class ProtocolHandlerImpl
       );
       if (!bot) {
         throw new Error(
-          `Error occurred while trying to open bot at: ${path} inside of protocol handler.`
+          `Error occurred while trying to open bot at ${path} inside of protocol handler: Bot is invalid.`
         );
       }
     } catch (e) {
       throw new Error(
-        `Error occurred while trying to open bot at: ${path} inside of protocol handler.`
+        `Error occurred while trying to open bot at ${path} inside of protocol handler: ${e}`
       );
     }
 
@@ -373,7 +374,7 @@ export const ProtocolHandler = new class ProtocolHandlerImpl
           );
         } catch (e) {
           throw new Error(
-            `(ngrok running) Error occurred while trying to deep link to bot project at: ${path}.`
+            `(ngrok running) Error occurred while trying to deep link to bot project at ${path}: ${e}`
           );
         }
       } else {
@@ -392,7 +393,8 @@ export const ProtocolHandler = new class ProtocolHandlerImpl
               );
             } catch (e) {
               throw new Error(
-                `(ngrok running but not connected) Error occurred while trying to deep link to bot project at: ${path}.`
+                `(ngrok running but not connected) Error occurred while ` +
+                  `trying to deep link to bot project at ${path}: ${e}`
               );
             }
           }
@@ -410,10 +412,15 @@ export const ProtocolHandler = new class ProtocolHandlerImpl
         );
       } catch (e) {
         throw new Error(
-          `(ngrok not configured) Error occurred while trying to deep link to bot project at: ${path}`
+          `(ngrok not configured) Error occurred while trying to deep link to bot project at ${path}: ${e}`
         );
       }
     }
+    const numOfServices = bot.services && bot.services.length;
+    TelemetryService.trackEvent('bot_open', {
+      method: 'protocol',
+      numOfServices,
+    });
   }
 }();
 

@@ -74,7 +74,11 @@ describe('The directLine middleware', () => {
     };
     emulator = {
       facilities: {
-        logger: { logMessage: () => true, logActivity: () => true },
+        logger: {
+          logMessage: () => true,
+          logActivity: () => true,
+          logException: () => null,
+        },
       },
     } as any;
     emulator.facilities.conversations = new ConversationSet();

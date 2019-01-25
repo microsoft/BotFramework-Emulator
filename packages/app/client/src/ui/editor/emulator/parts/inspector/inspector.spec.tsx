@@ -31,6 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import { logEntry, LogLevel, textItem } from '@bfemulator/sdk-shared';
+import { SharedConstants } from '@bfemulator/app-shared';
 import { mount } from 'enzyme';
 import * as React from 'react';
 import { Provider } from 'react-redux';
@@ -60,6 +61,16 @@ jest.mock('../../../panel/panel.scss', () => ({}));
 jest.mock('../../../../../data/store', () => ({
   get store() {
     return mockStore;
+  },
+}));
+
+let mockRemoteCallsMade;
+jest.mock('../../../../../platform/commands/commandServiceImpl', () => ({
+  CommandServiceImpl: {
+    remoteCall: (commandName, ...args) => {
+      mockRemoteCallsMade.push({ commandName, args });
+      return Promise.resolve();
+    },
   },
 }));
 
@@ -267,6 +278,7 @@ describe('The Inspector component', () => {
     mockStore.dispatch(switchTheme('light', ['vars.css', 'light.css']));
     mockStore.dispatch(loadBotInfos([mockState.bot]));
     mockStore.dispatch(setActiveBot(mockState.bot as any));
+    mockRemoteCallsMade = [];
 
     parent = mount(
       <Provider store={mockStore}>
@@ -382,6 +394,27 @@ describe('The Inspector component', () => {
         mockState.document.documentId,
         logEntry(textItem(LogLevel.Info, text))
       );
+    });
+
+    it('"track-event"', () => {
+      event.channel = 'track-event';
+      event.args[0] = 'someEvent';
+      event.args[1] = { some: 'data' };
+      instance.ipcMessageEventHandler(event);
+
+      expect(mockRemoteCallsMade).toHaveLength(1);
+      expect(mockRemoteCallsMade[0]).toEqual({
+        commandName: SharedConstants.Commands.Telemetry.TrackEvent,
+        args: ['someEvent', { some: 'data' }],
+      });
+
+      event.args[1] = undefined;
+      instance.ipcMessageEventHandler(event);
+      expect(mockRemoteCallsMade).toHaveLength(2);
+      expect(mockRemoteCallsMade[1]).toEqual({
+        commandName: SharedConstants.Commands.Telemetry.TrackEvent,
+        args: ['someEvent', {}],
+      });
     });
   });
 });

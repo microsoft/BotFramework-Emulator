@@ -43,6 +43,7 @@ import { getStore } from '../botData/store';
 import { mainWindow } from '../main';
 import { ContextMenuService } from '../services/contextMenuService';
 import { showOpenDialog, showSaveDialog } from '../utils';
+import { TelemetryService } from '../telemetry';
 
 const { shell } = Electron;
 
@@ -164,6 +165,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // ---------------------------------------------------------------------------
   // Opens an external link
   commandRegistry.registerCommand(Commands.OpenExternal, (url: string) => {
+    TelemetryService.trackEvent('app_openLink', { url });
     shell.openExternal(url, { activate: true });
   });
 

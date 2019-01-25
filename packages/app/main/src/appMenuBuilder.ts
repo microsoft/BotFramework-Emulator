@@ -35,6 +35,7 @@ import { BotInfo, SharedConstants } from '@bfemulator/app-shared';
 import { ConversationService } from '@bfemulator/sdk-shared';
 import * as Electron from 'electron';
 
+import { TelemetryService } from './telemetry';
 import { AppUpdater, UpdateStatus } from './appUpdater';
 import { getActiveBot } from './botHelpers';
 import { emulator } from './emulator';
@@ -318,10 +319,13 @@ export class AppMenuBuilder {
 
     const getServiceUrl = () =>
       emulator.framework.serverUrl.replace('[::]', 'localhost');
-    const createClickHandler = serviceFunction => async () => {
+    const createClickHandler = (serviceFunction, callback?) => async () => {
       const conversationId = await getConversationId();
 
-      return serviceFunction(getServiceUrl(), conversationId);
+      serviceFunction(getServiceUrl(), conversationId);
+      if (callback) {
+        callback();
+      }
     };
 
     const enabled =
@@ -338,37 +342,56 @@ export class AppMenuBuilder {
           submenu: [
             {
               label: 'conversationUpdate ( user added )',
-              click: createClickHandler(ConversationService.addUser),
+              click: createClickHandler(ConversationService.addUser, () =>
+                TelemetryService.trackEvent('sendActivity_addUser')
+              ),
               enabled,
             },
             {
               label: 'conversationUpdate ( user removed )',
-              click: createClickHandler(ConversationService.removeUser),
+              click: createClickHandler(ConversationService.removeUser, () =>
+                TelemetryService.trackEvent('sendActivity_removeUser')
+              ),
               enabled,
             },
             {
               label: 'contactRelationUpdate ( bot added )',
-              click: createClickHandler(ConversationService.botContactAdded),
+              click: createClickHandler(
+                ConversationService.botContactAdded,
+                () =>
+                  TelemetryService.trackEvent('sendActivity_botContactAdded')
+              ),
               enabled,
             },
             {
               label: 'contactRelationUpdate ( bot removed )',
-              click: createClickHandler(ConversationService.botContactRemoved),
+              click: createClickHandler(
+                ConversationService.botContactRemoved,
+                () =>
+                  TelemetryService.trackEvent('sendActivity_botContactRemoved')
+              ),
               enabled,
             },
             {
               label: 'typing',
-              click: createClickHandler(ConversationService.typing),
+              click: createClickHandler(ConversationService.typing, () =>
+                TelemetryService.trackEvent('sendActivity_typing')
+              ),
               enabled,
             },
             {
               label: 'ping',
-              click: createClickHandler(ConversationService.ping),
+              click: createClickHandler(ConversationService.ping, () =>
+                TelemetryService.trackEvent('sendActivity_ping')
+              ),
               enabled,
             },
             {
               label: 'deleteUserData',
-              click: createClickHandler(ConversationService.deleteUserData),
+              click: createClickHandler(
+                ConversationService.deleteUserData,
+                () => TelemetryService.trackEvent('sendActivity_deleteUserData')
+              ),
               enabled,
             },
           ],

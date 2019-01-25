@@ -283,16 +283,15 @@ export class App extends React.Component<any, AppState> {
             body
           );
           success = response.status === 200;
-          $host.logger.log(
-            'Successfully trained Knowledge Base ' +
-              this.state.traceInfo.knowledgeBaseId
-          );
+          $host.logger.log('Successfully trained Knowledge Base ' + this.state.traceInfo.knowledgeBaseId);
+          $host.trackEvent('qna_trainSuccess');
         } else {
           $host.logger.error('Select an answer before trying to train.');
         }
       }
     } catch (err) {
       $host.logger.error(err.message);
+      $host.trackEvent('qna_trainFailure', { error: err.message });
     } finally {
       $host.setAccessoryState(TrainAccessoryId, AccessoryDefaultState);
       this.setAppPersistentState({
@@ -313,18 +312,16 @@ export class App extends React.Component<any, AppState> {
         );
         success = response.status === 204;
         if (success) {
-          $host.logger.log(
-            'Successfully published Knowledge Base ' +
-              this.state.traceInfo.knowledgeBaseId
-          );
+          $host.logger.log('Successfully published Knowledge Base ' + this.state.traceInfo.knowledgeBaseId);
+          $host.trackEvent('qna_publishSuccess');
         } else {
-          $host.logger.error(
-            'Request to QnA Maker failed. ' + response.statusText
-          );
+          $host.logger.error('Request to QnA Maker failed. ' + response.statusText);
+          $host.trackEvent('qna_publishFailure', { error: response.statusText });
         }
       }
     } catch (err) {
       $host.logger.error(err.message);
+      $host.trackEvent('qna_publishFailure', { error: err.message });
     } finally {
       $host.setAccessoryState(PublishAccessoryId, AccessoryDefaultState);
     }

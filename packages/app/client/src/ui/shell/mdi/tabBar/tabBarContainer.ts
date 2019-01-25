@@ -32,6 +32,7 @@
 //
 
 import { connect } from 'react-redux';
+import { SharedConstants } from '@bfemulator/app-shared';
 
 import { closeDocument } from '../../../../data/action/chatActions';
 import {
@@ -43,6 +44,7 @@ import {
 import { enable as enablePresentationMode } from '../../../../data/action/presentationActions';
 import { getTabGroupForDocument } from '../../../../data/editorHelpers';
 import { RootState } from '../../../../data/store';
+import { CommandServiceImpl } from '../../../../platform/commands/commandServiceImpl';
 
 import { TabBar, TabBarProps } from './tabBar';
 
@@ -67,10 +69,22 @@ const mapDispatchToProps = (dispatch): TabBarProps => ({
     documentId: string,
     srcEditorKey: string,
     destEditorKey: string
-  ) => dispatch(splitTab(contentType, documentId, srcEditorKey, destEditorKey)),
+  ) => {
+    CommandServiceImpl.remoteCall(
+      SharedConstants.Commands.Telemetry.TrackEvent,
+      'tabBar_splitTab'
+    ).catch(_e => void 0);
+    dispatch(splitTab(contentType, documentId, srcEditorKey, destEditorKey));
+  },
   appendTab: (srcEditorKey: string, destEditorKey: string, tabId: string) =>
     dispatch(appendTab(srcEditorKey, destEditorKey, tabId)),
-  enablePresentationMode: () => dispatch(enablePresentationMode()),
+  enablePresentationMode: () => {
+    CommandServiceImpl.remoteCall(
+      SharedConstants.Commands.Telemetry.TrackEvent,
+      'tabBar_presentationMode'
+    ).catch(_e => void 0);
+    dispatch(enablePresentationMode());
+  },
   setActiveTab: (documentId: string) => dispatch(setActiveTab(documentId)),
   closeTab: (documentId: string) => {
     dispatch(close(getTabGroupForDocument(documentId), documentId));

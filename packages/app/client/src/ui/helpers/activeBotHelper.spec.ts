@@ -295,6 +295,11 @@ describe('ActiveBotHelper tests', () => {
       SharedConstants.Commands.Bot.SetActive,
       bot
     );
+    expect(mockRemoteCall).toHaveBeenCalledWith(
+      SharedConstants.Commands.Telemetry.TrackEvent,
+      'bot_open',
+      { method: 'file_browse', numOfServices: 0 }
+    );
 
     ActiveBotHelper.browseForBotFile = backupBrowseForBotFile;
     ActiveBotHelper.botAlreadyOpen = backupBotAlreadyOpen;

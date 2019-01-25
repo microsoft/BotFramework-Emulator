@@ -45,3 +45,14 @@ export function uniqueId(): string {
 export function isObject(item: any): boolean {
   return item && typeof item === 'object' && !Array.isArray(item);
 }
+
+export function isLocalHostUrl(url: string): boolean {
+  try {
+    const parsedUrl = new URL(url);
+    const localhostNames = ['localhost', '127.0.0.1', '::1'];
+    return localhostNames.some(name => parsedUrl.hostname === name);
+  } catch (e) {
+    // invalid url was passed in
+    return false;
+  }
+}

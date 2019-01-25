@@ -39,7 +39,6 @@ export * from './getDirectories';
 export * from './getFilesInDir';
 export * from './getSafeBotName';
 export * from './isDev';
-export * from './isLocalhostUrl';
 export * from './loadSettings';
 export * from './parseActivitiesFromChatFile';
 export * from './readFileSync';

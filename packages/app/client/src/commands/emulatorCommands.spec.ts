@@ -127,7 +127,9 @@ describe('The emulator commands', () => {
     const remoteCallSpy = jest
       .spyOn(CommandServiceImpl, 'remoteCall')
       .mockResolvedValue('transcript.transcript');
-    const callSpy = jest.spyOn(CommandServiceImpl, 'call');
+    const callSpy = jest
+      .spyOn(CommandServiceImpl, 'call')
+      .mockResolvedValue(null);
 
     await handler();
 
@@ -139,6 +141,11 @@ describe('The emulator commands', () => {
         properties: ['openFile'],
         title: 'Open transcript file',
       }
+    );
+    expect(remoteCallSpy).toHaveBeenCalledWith(
+      SharedConstants.Commands.Telemetry.TrackEvent,
+      'transcriptFile_open',
+      { method: 'file_menu' }
     );
 
     expect(callSpy).toHaveBeenCalledWith(

@@ -55,6 +55,7 @@ import {
   chatWatcher,
   transcriptsWatcher,
 } from '../watchers';
+import { TelemetryService } from '../telemetry';
 
 import { registerCommands } from './botCommands';
 
@@ -133,6 +134,18 @@ jest.mock('chokidar', () => ({
 
 const { Bot } = SharedConstants.Commands;
 describe('The botCommands', () => {
+  let mockTrackEvent;
+  const trackEventBackup = TelemetryService.trackEvent;
+
+  beforeEach(() => {
+    mockTrackEvent = jest.fn(() => Promise.resolve());
+    TelemetryService.trackEvent = mockTrackEvent;
+  });
+
+  afterAll(() => {
+    TelemetryService.trackEvent = trackEventBackup;
+  });
+
   it('should create/save a new bot', async () => {
     const botToSave = BotConfigWithPathImpl.fromJSON(mockBot as any);
     const patchBotInfoSpy = jest.spyOn(
@@ -153,6 +166,10 @@ describe('The botCommands', () => {
     expect(patchBotInfoSpy).toHaveBeenCalledWith(botToSave.path, mockBotInfo);
     expect(saveBotSpy).toHaveBeenCalledWith(botToSave);
     expect(result).toEqual(botToSave);
+    expect(mockTrackEvent).toHaveBeenCalledWith('bot_create', {
+      path: mockBotInfo.path,
+      hasSecret: true,
+    });
   });
 
   it('should open a bot and set the default transcript and chat path if none exists', async () => {

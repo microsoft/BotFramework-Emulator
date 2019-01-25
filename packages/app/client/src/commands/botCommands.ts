@@ -60,8 +60,17 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // Switches the current active bot
   commandRegistry.registerCommand(
     Commands.Bot.Switch,
-    (bot: BotConfigWithPath | string) =>
-      ActiveBotHelper.confirmAndSwitchBots(bot)
+    (bot: BotConfigWithPath | string) => {
+      let numOfServices;
+      if (typeof bot !== 'string') {
+        numOfServices = bot.services && bot.services.length;
+      }
+      CommandServiceImpl.remoteCall(Commands.Telemetry.TrackEvent, 'bot_open', {
+        method: 'bots_list',
+        numOfServices,
+      }).catch(_e => void 0);
+      return ActiveBotHelper.confirmAndSwitchBots(bot);
+    }
   );
 
   // ---------------------------------------------------------------------------

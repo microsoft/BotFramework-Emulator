@@ -32,6 +32,7 @@
 //
 
 import { AppUpdater } from './appUpdater';
+import { TelemetryService } from './telemetry';
 
 let mockAutoUpdater: any = {
   quitAndInstall: null,
@@ -59,9 +60,18 @@ jest.mock('./settingsData/store', () => ({
 }));
 
 describe('AppUpdater', () => {
+  let mockTrackEvent;
+  const trackEventBackup = TelemetryService.trackEvent;
+
   beforeEach(() => {
     mockAutoUpdater = {};
     mockSettings = { ...defaultSettings };
+    mockTrackEvent = jest.fn(() => Promise.resolve());
+    TelemetryService.trackEvent = mockTrackEvent;
+  });
+
+  afterAll(() => {
+    TelemetryService.trackEvent = trackEventBackup;
   });
 
   it('should get userInitiated', () => {
@@ -171,15 +181,13 @@ describe('AppUpdater', () => {
     AppUpdater.checkForUpdates = tmp;
   });
 
-  it('should check for updates from the stable release repo', () => {
+  it('should check for updates from the stable release repo', async () => {
     const mockSetFeedURL = jest.fn((_options: any) => null);
-    const mockCheckForUpdates = jest.fn((_userInitiated: boolean) =>
-      Promise.resolve()
-    );
+    const mockCheckForUpdates = jest.fn(() => Promise.resolve());
     mockAutoUpdater.setFeedURL = mockSetFeedURL;
     mockAutoUpdater.checkForUpdates = mockCheckForUpdates;
 
-    AppUpdater.checkForUpdates(true);
+    await AppUpdater.checkForUpdates(true);
 
     expect(AppUpdater.userInitiated).toBe(true);
 
@@ -190,18 +198,20 @@ describe('AppUpdater', () => {
     });
 
     expect(mockCheckForUpdates).toHaveBeenCalledTimes(1);
+    expect(mockTrackEvent).toHaveBeenCalledWith('update_check', {
+      auto: !AppUpdater.userInitiated,
+      prerelease: false,
+    });
   });
 
-  it('should check for updates from the nightly release repo', () => {
+  it('should check for updates from the nightly release repo', async () => {
     mockSettings.usePrereleases = true;
     const mockSetFeedURL = jest.fn((_options: any) => null);
-    const mockCheckForUpdates = jest.fn((_userInitiated: boolean) =>
-      Promise.resolve()
-    );
+    const mockCheckForUpdates = jest.fn(() => Promise.resolve());
     mockAutoUpdater.setFeedURL = mockSetFeedURL;
     mockAutoUpdater.checkForUpdates = mockCheckForUpdates;
 
-    AppUpdater.checkForUpdates(false);
+    await AppUpdater.checkForUpdates(false);
 
     expect(mockSetFeedURL).toHaveBeenCalledWith({
       repo: 'BotFramework-Emulator-Nightlies',
@@ -210,12 +220,14 @@ describe('AppUpdater', () => {
     });
 
     expect(mockCheckForUpdates).toHaveBeenCalledTimes(1);
+    expect(mockTrackEvent).toHaveBeenCalledWith('update_check', {
+      auto: !AppUpdater.userInitiated,
+      prerelease: true,
+    });
   });
 
   it('should throw if there is an error while trying to check for updates', async () => {
-    const mockCheckForUpdates = jest.fn((_userInitiated: boolean) =>
-      Promise.reject('ERROR')
-    );
+    const mockCheckForUpdates = jest.fn(() => Promise.reject('ERROR'));
     mockAutoUpdater.checkForUpdates = mockCheckForUpdates;
     mockAutoUpdater.setFeedURL = () => null;
 

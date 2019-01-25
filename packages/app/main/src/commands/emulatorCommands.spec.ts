@@ -50,6 +50,7 @@ import * as utils from '../utils';
 import * as botHelpers from '../botHelpers';
 import { bot } from '../botData/reducers/bot';
 import * as BotActions from '../botData/actions/botActions';
+import { TelemetryService } from '../telemetry';
 import { mainWindow } from '../main';
 
 import { registerCommands } from './emulatorCommands';
@@ -391,8 +392,17 @@ registerCommands(mockCommandRegistry);
 
 const { Emulator } = SharedConstants.Commands;
 describe('The emulatorCommands', () => {
+  let mockTrackEvent;
+  const trackEventBackup = TelemetryService.trackEvent;
+
   beforeEach(() => {
     mockUsers = { users: {} };
+    mockTrackEvent = jest.fn(() => Promise.resolve());
+    TelemetryService.trackEvent = mockTrackEvent;
+  });
+
+  beforeAll(() => {
+    TelemetryService.trackEvent = trackEventBackup;
   });
 
   it('should save a transcript to file based on the transcripts path in the botInfo', async () => {
@@ -451,6 +461,7 @@ describe('The emulatorCommands', () => {
       newPath,
       Object.assign({}, mockInfo, { path: newPath })
     );
+    expect(mockTrackEvent).toHaveBeenCalledWith('transcript_save');
   });
 
   it('should feed a transcript from disk to a conversation', async () => {

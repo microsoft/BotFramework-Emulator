@@ -31,6 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { EventEmitter } from 'events';
+
+import * as HttpStatus from 'http-status-codes';
+import updateIn from 'simple-update-in';
 import {
   Activity,
   appSettingsItem,
@@ -43,6 +47,7 @@ import {
   externalLinkItem,
   GenericActivity,
   InvokeActivity,
+  isLocalHostUrl,
   LogLevel,
   MessageActivity,
   PaymentOperations,
@@ -54,15 +59,11 @@ import {
   TranscriptRecord,
   User,
 } from '@bfemulator/sdk-shared';
-import { EventEmitter } from 'events';
-import * as HttpStatus from 'http-status-codes';
-import updateIn from 'simple-update-in';
 
 import { BotEmulator } from '../botEmulator';
 import { TokenCache } from '../userToken/tokenCache';
 import createAPIException from '../utils/createResponse/apiException';
 import createResourceResponse from '../utils/createResponse/resource';
-import isLocalhostUrl from '../utils/isLocalhostUrl';
 import OAuthClientEncoder from '../utils/oauthClientEncoder';
 import PaymentEncoder from '../utils/paymentEncoder';
 import uniqueId from '../utils/uniqueId';
@@ -157,8 +158,8 @@ export default class Conversation extends EventEmitter {
 
     if (
       !this.conversationIsTranscript &&
-      !isLocalhostUrl(this.botEndpoint.botUrl) &&
-      isLocalhostUrl(activity.serviceUrl)
+      !isLocalHostUrl(this.botEndpoint.botUrl) &&
+      isLocalHostUrl(activity.serviceUrl)
     ) {
       this.botEmulator.facilities.logger.logMessage(
         this.conversationId,
@@ -864,6 +865,6 @@ class DataUrlEncoder {
   }
 
   protected shouldBeDataUrl(url: string): boolean {
-    return url && (isLocalhostUrl(url) || url.indexOf('ngrok') !== -1);
+    return url && (isLocalHostUrl(url) || url.indexOf('ngrok') !== -1);
   }
 }
