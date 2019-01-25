@@ -31,9 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { EmulatorComponent } from './emulator';
+import { endConversation } from './emulator';
 
-describe('#endConversation', () => {
+describe('endConversation', () => {
   let directLine;
 
   beforeEach(() => {
@@ -43,14 +43,12 @@ describe('#endConversation', () => {
   });
 
   it('ends the direct line conversation', () => {
-    // @ts-ignore
-    EmulatorComponent.prototype.endConversation(directLine);
+    endConversation(directLine);
     expect(directLine.end).toHaveBeenCalled();
   });
 
   it('is a no-op when there is no direct line', () => {
-    // @ts-ignore
-    EmulatorComponent.prototype.endConversation(null);
+    endConversation(null);
     expect(directLine.end).not.toHaveBeenCalled();
   });
 
@@ -59,8 +57,7 @@ describe('#endConversation', () => {
       throw new Error('conversation ended');
     });
     expect(() => {
-      // @ts-ignore
-      EmulatorComponent.prototype.endConversation(directLine);
+      endConversation(directLine);
     }).not.toThrow();
   });
 
@@ -69,8 +66,7 @@ describe('#endConversation', () => {
       throw new Error('another error');
     });
     expect(() => {
-      // @ts-ignore
-      EmulatorComponent.prototype.endConversation(directLine);
+      endConversation(directLine);
     }).toThrow('another error');
   });
 });
