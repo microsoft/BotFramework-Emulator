@@ -38,21 +38,13 @@ import uuidv4 from 'uuid/v4';
 import { ensureStoragePath } from './ensureStoragePath';
 
 /** Load JSON object from file. */
-export const loadSettings = (
-  filename: string,
-  defaultSettings: Partial<Settings>
-): Settings => {
+export const loadSettings = (filename: string, defaultSettings: Partial<Settings>): Settings => {
   try {
     filename = `${ensureStoragePath()}/${filename}`;
     const stat = fs.statSync(filename);
     if (stat.isFile()) {
-      const settingsJson = JSON.parse(
-        fs.readFileSync(filename, 'utf8')
-      ) as Settings;
-      const settings = mergeDeep<Settings, Settings>(
-        defaultSettings,
-        settingsJson
-      );
+      const settingsJson = JSON.parse(fs.readFileSync(filename, 'utf8')) as Settings;
+      const settings = mergeDeep<Settings, Settings>(defaultSettings, settingsJson);
       if (enforceNoDefaultUser(settings)) {
         fs.writeFileSync(filename, JSON.stringify(settings, null, 2));
       }

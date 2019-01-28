@@ -129,8 +129,7 @@ describe('The EndpointExplorer component should', () => {
 
     node.instance().onContextMenuOverLiElement(mockLi);
     expect(mockDispatch).toHaveBeenCalledWith(
-      openEndpointExplorerContextMenu(EndpointEditorContainer, mockBot
-        .services[0] as any)
+      openEndpointExplorerContextMenu(EndpointEditorContainer, mockBot.services[0] as any)
     );
   });
 
@@ -139,8 +138,6 @@ describe('The EndpointExplorer component should', () => {
     mockLi.setAttribute('data-index', '0');
     node.instance().onLinkClick({ currentTarget: mockLi } as any);
 
-    expect(mockDispatch).toHaveBeenCalledWith(
-      openEndpointInEmulator(mockBot.services[0] as any, true)
-    );
+    expect(mockDispatch).toHaveBeenCalledWith(openEndpointInEmulator(mockBot.services[0] as any, true));
   });
 });

@@ -45,17 +45,10 @@ import uniqueId from '../../utils/uniqueId';
 import { validateCreateConversationRequest } from './errorCondition/createConversationValidator';
 
 export default function createConversation(botEmulator: BotEmulator) {
-  return (
-    req: Restify.Request,
-    res: Restify.Response,
-    next: Restify.Next
-  ): any => {
+  return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     const botEndpoint: BotEndpoint = (req as any).botEndpoint;
     const conversationParameters = req.body as ConversationParameters;
-    const error = validateCreateConversationRequest(
-      conversationParameters,
-      botEndpoint
-    );
+    const error = validateCreateConversationRequest(conversationParameters, botEndpoint);
 
     if (error) {
       sendErrorResponse(req, res, next, error.toAPIException());
@@ -63,20 +56,9 @@ export default function createConversation(botEmulator: BotEmulator) {
       return;
     }
 
-    const newConversation: Conversation = getConversation(
-      conversationParameters,
-      botEmulator,
-      botEndpoint
-    );
-    const activityId = getActivityId(
-      conversationParameters,
-      botEndpoint,
-      newConversation
-    );
-    const response = createConversationResponse(
-      newConversation.conversationId,
-      activityId
-    );
+    const newConversation: Conversation = getConversation(conversationParameters, botEmulator, botEndpoint);
+    const activityId = getActivityId(conversationParameters, botEndpoint, newConversation);
+    const response = createConversationResponse(newConversation.conversationId, activityId);
 
     res.send(HttpStatus.OK, response);
     res.end();
@@ -84,17 +66,11 @@ export default function createConversation(botEmulator: BotEmulator) {
   };
 }
 
-function getConversation(
-  params: ConversationParameters,
-  emulator: BotEmulator,
-  endpoint: BotEndpoint
-): Conversation {
+function getConversation(params: ConversationParameters, emulator: BotEmulator, endpoint: BotEndpoint): Conversation {
   let conversation: Conversation;
 
   if (params.conversationId) {
-    conversation = emulator.facilities.conversations.conversationById(
-      params.conversationId
-    );
+    conversation = emulator.facilities.conversations.conversationById(params.conversationId);
   }
 
   if (!conversation) {

@@ -62,15 +62,10 @@ import { bot } from '../reducer/bot';
 import { servicesExplorerSagas } from './servicesExplorerSagas';
 
 const sagaMiddleWare = sagaMiddlewareFactory();
-const mockStore = createStore(
-  combineReducers({ azureAuth, bot }),
-  {},
-  applyMiddleware(sagaMiddleWare)
-);
+const mockStore = createStore(combineReducers({ azureAuth, bot }), {}, applyMiddleware(sagaMiddleWare));
 sagaMiddleWare.run(servicesExplorerSagas);
 
-const mockArmToken =
-  'bm90aGluZw==.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds';
+const mockArmToken = 'bm90aGluZw==.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds';
 
 jest.mock('../../ui/dialogs', () => ({
   AzureLoginPromptDialogContainer: function mock() {
@@ -90,14 +85,11 @@ jest.mock('../../ui/dialogs', () => ({
   },
 }));
 
-jest.mock(
-  '../../ui/shell/explorer/servicesExplorer/connectedServiceEditor',
-  () => ({
-    ConnectedServiceEditorContainer: function mock() {
-      return undefined;
-    },
-  })
-);
+jest.mock('../../ui/shell/explorer/servicesExplorer/connectedServiceEditor', () => ({
+  ConnectedServiceEditorContainer: function mock() {
+    return undefined;
+  },
+}));
 
 jest.mock('../../ui/shell/explorer/servicesExplorer', () => ({
   ConnectedServicePicker: function mock() {
@@ -144,8 +136,7 @@ describe('The ServiceExplorerSagas', () => {
         editorComponent: ConnectedServiceEditorContainer,
         pickerComponent: ConnectedServicePickerContainer,
       };
-      launchConnectedServicePickerGen = servicesExplorerSagas().next().value
-        .FORK.args[1];
+      launchConnectedServicePickerGen = servicesExplorerSagas().next().value.FORK.args[1];
       mockStore.dispatch(azureArmTokenDataChanged(mockArmToken));
     });
 
@@ -158,9 +149,7 @@ describe('The ServiceExplorerSagas', () => {
 
     it('should prompt the user to login if the armToken does not exist in the store', () => {
       mockStore.dispatch(azureArmTokenDataChanged(''));
-      const it = launchConnectedServicePickerGen(
-        launchConnectedServicePicker(payload)
-      );
+      const it = launchConnectedServicePickerGen(launchConnectedServicePicker(payload));
       let token = it.next().value.SELECT.selector(mockStore.getState());
       expect(token.access_token).toBe('');
       token = it.next().value;
@@ -180,8 +169,7 @@ describe('The ServiceExplorerSagas', () => {
     });
 
     it('should launch the luis models picklist after the luis models are retrieved', async () => {
-      DialogService.showDialog = () =>
-        Promise.resolve([{ id: 'a new service to add' }]) as any;
+      DialogService.showDialog = () => Promise.resolve([{ id: 'a new service to add' }]) as any;
       const action = launchConnectedServicePicker(payload);
       const it = launchConnectedServicePickerGen(action);
       let token = it.next().value.SELECT.selector(mockStore.getState());
@@ -210,8 +198,7 @@ describe('The ServiceExplorerSagas', () => {
       mockStore.dispatch(loadBotInfos([mockBot]));
       mockStore.dispatch(setActiveBot(mockBot));
 
-      DialogService.showDialog = () =>
-        Promise.resolve([{ id: 'a new service to add' }]) as any;
+      DialogService.showDialog = () => Promise.resolve([{ id: 'a new service to add' }]) as any;
       const action = launchConnectedServicePicker(payload);
       const it = launchConnectedServicePickerGen(action);
       let token = it.next().value.SELECT.selector(mockStore.getState());
@@ -220,9 +207,7 @@ describe('The ServiceExplorerSagas', () => {
       const luisModels = await it.next(token).value;
 
       const newModels = await it.next(luisModels).value;
-      const botConfig = it
-        .next(newModels)
-        .value.SELECT.selector(mockStore.getState());
+      const botConfig = it.next(newModels).value.SELECT.selector(mockStore.getState());
       let _type;
       let _args;
       CommandServiceImpl.remoteCall = function(type: string, ...args: any[]) {
@@ -253,9 +238,10 @@ describe('The ServiceExplorerSagas', () => {
 
     beforeEach(() => {
       const sagaIt = servicesExplorerSagas();
-      action = openContextMenuForConnectedService<
-        ConnectedServiceAction<ConnectedServicePayload>
-      >(ConnectedServiceEditorContainer, mockService);
+      action = openContextMenuForConnectedService<ConnectedServiceAction<ConnectedServicePayload>>(
+        ConnectedServiceEditorContainer,
+        mockService
+      );
       let i = 4;
       while (i--) {
         contextMenuGen = sagaIt.next().value.FORK.args[1];
@@ -274,9 +260,7 @@ describe('The ServiceExplorerSagas', () => {
       await it.next(result).value;
 
       expect(window.open).toHaveBeenCalledWith(
-        `https://luis.ai/applications/${mockService.appId}/versions/${
-          mockService.version
-        }/build`
+        `https://luis.ai/applications/${mockService.appId}/versions/${mockService.version}/build`
       );
     });
 
@@ -564,9 +548,7 @@ describe('The ServiceExplorerSagas', () => {
 
       const action = openServiceDeepLink(mockModel as any);
       openConnectedServiceGen(action).next();
-      expect(window.open).toHaveBeenCalledWith(
-        'https://qnamaker.ai/Edit/KnowledgeBase?kbid=45432'
-      );
+      expect(window.open).toHaveBeenCalledWith('https://qnamaker.ai/Edit/KnowledgeBase?kbid=45432');
     });
   });
 });

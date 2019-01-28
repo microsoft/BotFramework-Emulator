@@ -47,9 +47,7 @@ export interface ProgressIndicatorPayload {
 export function updateProgressIndicator({
   label,
   progress,
-}: ProgressIndicatorPayload): ProgressIndicatorAction<
-  ProgressIndicatorPayload
-> {
+}: ProgressIndicatorPayload): ProgressIndicatorAction<ProgressIndicatorPayload> {
   return {
     type: UPDATE_PROGRESS_INDICATOR,
     payload: { label, progress },

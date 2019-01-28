@@ -40,33 +40,12 @@ import sendErrorResponse from '../../utils/sendErrorResponse';
 import { ConversationAware } from './fetchConversation';
 
 export default function paymentComplete(_botEmulator: BotEmulator) {
-  return async (
-    req: ConversationAware,
-    res: Restify.Response,
-    next: Restify.Next
-  ): Promise<any> => {
-    const {
-      checkoutSession,
-      request,
-      shippingAddress,
-      shippingOptionId,
-      payerPhone,
-      payerEmail,
-    } = req.body[0];
-    const args = [
-      checkoutSession,
-      request,
-      shippingAddress,
-      shippingOptionId,
-      payerEmail,
-      payerPhone,
-    ];
+  return async (req: ConversationAware, res: Restify.Response, next: Restify.Next): Promise<any> => {
+    const { checkoutSession, request, shippingAddress, shippingOptionId, payerPhone, payerEmail } = req.body[0];
+    const args = [checkoutSession, request, shippingAddress, shippingOptionId, payerEmail, payerPhone];
 
     try {
-      const response = await req.conversation.sendPaymentCompleteOperation.apply(
-        req.conversation,
-        args
-      );
+      const response = await req.conversation.sendPaymentCompleteOperation.apply(req.conversation, args);
       res.send(HttpStatus.OK, response);
     } catch (err) {
       sendErrorResponse(req, res, next, err);

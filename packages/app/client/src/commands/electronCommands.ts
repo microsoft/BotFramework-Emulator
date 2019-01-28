@@ -45,14 +45,11 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
   // ---------------------------------------------------------------------------
   // An update is ready to install
-  commandRegistry.registerCommand(
-    Electron.UpdateAvailable,
-    (...args: any[]) => {
-      // TODO: Show a notification
-      // eslint-disable-next-line no-console
-      console.log('Update available', ...args);
-    }
-  );
+  commandRegistry.registerCommand(Electron.UpdateAvailable, (...args: any[]) => {
+    // TODO: Show a notification
+    // eslint-disable-next-line no-console
+    console.log('Update available', ...args);
+  });
 
   // ---------------------------------------------------------------------------
   // Application is up to date

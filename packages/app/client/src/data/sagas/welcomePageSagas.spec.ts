@@ -181,10 +181,7 @@ describe('The WelcomePageSagas', () => {
 
       await mockStore.dispatch(openContextMenuForBot(mockBot));
       await Promise.resolve(true);
-      expect(openFileLocationArgs).toEqual([
-        'shell:open-file-location',
-        'this/is/a/new/location.bot',
-      ]);
+      expect(openFileLocationArgs).toEqual(['shell:open-file-location', 'this/is/a/new/location.bot']);
     });
 
     it('should call the appropriate command when removing a bot from the list', async () => {
@@ -203,10 +200,7 @@ describe('The WelcomePageSagas', () => {
       };
       await mockStore.dispatch(openContextMenuForBot(mockBot));
       await Promise.resolve(true);
-      expect(removeBotFromListArgs).toEqual([
-        'bot:list:remove',
-        'this/is/a/new/location.bot',
-      ]);
+      expect(removeBotFromListArgs).toEqual(['bot:list:remove', 'this/is/a/new/location.bot']);
     });
   });
 });

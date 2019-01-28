@@ -58,9 +58,7 @@ export class QnaApiService {
     const payload = { services: [], code: ServiceCodes.OK };
     // 1. We need to get a list of all subscriptions from this user.
     yield { label: 'Retrieving subscriptions from Azure…', progress: 12.5 };
-    const subs: Subscription[] = yield AzureManagementApiService.getSubscriptions(
-      armToken
-    );
+    const subs: Subscription[] = yield AzureManagementApiService.getSubscriptions(armToken);
     if (!subs) {
       payload.code = ServiceCodes.AccountNotFound;
       return payload;
@@ -83,12 +81,7 @@ export class QnaApiService {
 
     // 3. Retrieve the keys for each account
     yield { label: 'Retrieving keys from Azure…', progress: 65 };
-    const keys: string[] = yield AzureManagementApiService.getKeysForAccounts(
-      armToken,
-      accounts,
-      '2017-04-18',
-      'key1'
-    );
+    const keys: string[] = yield AzureManagementApiService.getKeysForAccounts(armToken, accounts, '2017-04-18', 'key1');
     if (!keys) {
       payload.code = ServiceCodes.Error;
       return payload;
@@ -96,8 +89,7 @@ export class QnaApiService {
 
     // 4. Finally get the knowledge bases and mutate them into IQnAService[]
     yield { label: 'Checking for knowledge bases…', progress: 80 };
-    const url =
-      'https://westus.api.cognitive.microsoft.com/qnamaker/v4.0/knowledgebases/';
+    const url = 'https://westus.api.cognitive.microsoft.com/qnamaker/v4.0/knowledgebases/';
     const calls = keys.map(key => {
       const qnaReq: RequestInit = {
         headers: {
@@ -118,9 +110,7 @@ export class QnaApiService {
         knowledgebases: KnowledgeBase[];
       } = yield kbResponse.json();
       const key = keys[i];
-      const qnas = kbResponseJson.knowledgebases.map(kb =>
-        knowledgeBaseToQnaService(kb, key)
-      );
+      const qnas = kbResponseJson.knowledgebases.map(kb => knowledgeBaseToQnaService(kb, key));
       payload.services.push(...qnas);
     }
 
@@ -128,10 +118,7 @@ export class QnaApiService {
   }
 }
 
-function knowledgeBaseToQnaService(
-  kb: KnowledgeBase,
-  endpointKey: string
-): QnaMakerService {
+function knowledgeBaseToQnaService(kb: KnowledgeBase, endpointKey: string): QnaMakerService {
   const qna = new QnaMakerService({ hostname: '' } as any); // defect workaround
   qna.id = qna.kbId = kb.id;
   qna.endpointKey = endpointKey;

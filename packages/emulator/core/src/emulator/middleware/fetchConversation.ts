@@ -45,16 +45,10 @@ export interface ConversationAware extends Request {
 
 export default function fetchConversation(botEmulator: BotEmulator) {
   return (req: ConversationAware, res: Response, next: Next): any => {
-    const conversation = botEmulator.facilities.conversations.conversationById(
-      req.params.conversationId
-    );
+    const conversation = botEmulator.facilities.conversations.conversationById(req.params.conversationId);
 
     if (!conversation) {
-      throw createAPIException(
-        HttpStatus.NOT_FOUND,
-        ErrorCodes.BadArgument,
-        'conversation not found'
-      );
+      throw createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, 'conversation not found');
     }
 
     req.conversation = conversation;

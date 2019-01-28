@@ -39,17 +39,11 @@ import { BotEmulator } from '../../botEmulator';
 import sendErrorResponse from '../../utils/sendErrorResponse';
 
 export default function uploadAttachment(botEmulator: BotEmulator) {
-  return (
-    req: Restify.Request,
-    res: Restify.Response,
-    next: Restify.Next
-  ): any => {
+  return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     const attachmentData = req.body as AttachmentData;
 
     try {
-      const resourceId = botEmulator.facilities.attachments.uploadAttachment(
-        attachmentData
-      );
+      const resourceId = botEmulator.facilities.attachments.uploadAttachment(attachmentData);
       const resourceResponse: ResourceResponse = { id: resourceId };
 
       res.send(HttpStatus.OK, resourceResponse);

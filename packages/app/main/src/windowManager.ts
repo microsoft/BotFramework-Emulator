@@ -96,11 +96,7 @@ export class WindowManager {
     dispatch(rememberZoomLevel({ zoomLevel }));
   }
 
-  public createCheckoutWindow(
-    payload: string,
-    settings: any,
-    serviceUrl: string
-  ) {
+  public createCheckoutWindow(payload: string, settings: any, serviceUrl: string) {
     let page = URL.format({
       protocol: 'file',
       slashes: true,
@@ -128,9 +124,7 @@ export class WindowManager {
     // Load a remote URL
     checkoutWindow.loadURL(page);
 
-    checkoutWindow.webContents.setZoomLevel(
-      getSettings().windowState.zoomLevel
-    );
+    checkoutWindow.webContents.setZoomLevel(getSettings().windowState.zoomLevel);
   }
 
   public createOAuthWindow(url: string, codeVerifier: string) {
@@ -152,10 +146,7 @@ export class WindowManager {
     const ses = webContents.session;
     ses.webRequest.onBeforeRequest((details, callback) => {
       const url1 = details.url.toLowerCase();
-      if (
-        url1.indexOf('/postsignincallback?') !== -1 &&
-        url1.indexOf('&code_verifier=') === -1
-      ) {
+      if (url1.indexOf('/postsignincallback?') !== -1 && url1.indexOf('&code_verifier=') === -1) {
         if (getSettings().framework.useCodeValidation) {
           codeVerifier = 'emulated';
         }

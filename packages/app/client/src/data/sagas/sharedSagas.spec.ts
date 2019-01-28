@@ -70,9 +70,7 @@ describe('The sharedSagas', () => {
     gen.next(editorState);
     expect(mockRemoteCommandsCalled).toHaveLength(1);
     const refreshConversationCall = mockRemoteCommandsCalled[0];
-    expect(refreshConversationCall.commandName).toBe(
-      SharedConstants.Commands.Electron.UpdateConversationMenu
-    );
+    expect(refreshConversationCall.commandName).toBe(SharedConstants.Commands.Electron.UpdateConversationMenu);
     expect(refreshConversationCall.args).toHaveLength(1);
     expect(refreshConversationCall.args[0]).toEqual(editorState);
 

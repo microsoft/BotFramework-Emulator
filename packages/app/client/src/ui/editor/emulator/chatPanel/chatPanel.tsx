@@ -53,10 +53,7 @@ interface ChatPanelState {
   selectedActivity: any | null;
 }
 
-export default class ChatPanel extends React.Component<
-  ChatPanelProps,
-  ChatPanelState
-> {
+export default class ChatPanel extends React.Component<ChatPanelProps, ChatPanelState> {
   state = {
     selectedActivity: null,
   };
@@ -67,8 +64,8 @@ export default class ChatPanel extends React.Component<
     const { document } = this.props;
 
     if (document && document.selectedActivity$ && !this.selectedActivitySub) {
-      this.selectedActivitySub = document.selectedActivity$.subscribe(
-        selectedActivity => this.setState({ selectedActivity })
+      this.selectedActivitySub = document.selectedActivity$.subscribe(selectedActivity =>
+        this.setState({ selectedActivity })
       );
     }
   }
@@ -79,9 +76,7 @@ export default class ChatPanel extends React.Component<
     }
   }
 
-  updateSelectedActivityObservable = (
-    observable: BehaviorSubject<Activity>
-  ) => {
+  updateSelectedActivityObservable = (observable: BehaviorSubject<Activity>) => {
     return (activity: Activity) => {
       if (observable) {
         observable.next({
@@ -104,9 +99,7 @@ export default class ChatPanel extends React.Component<
           mode={mode}
           onStartConversation={onStartConversation}
           selectedActivity={this.state.selectedActivity}
-          updateSelectedActivity={this.updateSelectedActivityObservable(
-            document && document.selectedActivity$
-          )}
+          updateSelectedActivity={this.updateSelectedActivityObservable(document && document.selectedActivity$)}
         />
       </div>
     );

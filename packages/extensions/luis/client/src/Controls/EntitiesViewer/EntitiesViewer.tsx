@@ -46,10 +46,7 @@ interface EntitiesViewerProps {
   entities: any;
 }
 
-class EntitiesViewer extends Component<
-  EntitiesViewerProps,
-  EntitiesViewerState
-> {
+class EntitiesViewer extends Component<EntitiesViewerProps, EntitiesViewerState> {
   constructor(props: any, context: any) {
     super(props, context);
     this.state = {};
@@ -57,11 +54,9 @@ class EntitiesViewer extends Component<
 
   public render() {
     let entities: any[];
-    const filteredEntityKeys = Object.keys(this.props.entities || {}).filter(
-      entityKey => {
-        return entityKey !== INSTANCE_KEY;
-      }
-    );
+    const filteredEntityKeys = Object.keys(this.props.entities || {}).filter(entityKey => {
+      return entityKey !== INSTANCE_KEY;
+    });
     if (filteredEntityKeys.length > 0) {
       entities = filteredEntityKeys.map(entityKey => {
         const entity: EntityInfo = {

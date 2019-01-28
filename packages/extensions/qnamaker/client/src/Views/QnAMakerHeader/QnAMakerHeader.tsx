@@ -43,10 +43,7 @@ interface QnAMakerHeaderProps {
   knowledgeBaseId: string;
 }
 
-export default class QnAMakerHeader extends Component<
-  QnAMakerHeaderProps,
-  QnAMakerHeaderState
-> {
+export default class QnAMakerHeader extends Component<QnAMakerHeaderProps, QnAMakerHeaderState> {
   constructor(props: QnAMakerHeaderProps, context: any) {
     super(props, context);
   }
@@ -54,12 +51,8 @@ export default class QnAMakerHeader extends Component<
   public render() {
     return (
       <div className={styles.qnaMakerHeader}>
-        <span className={styles.knowledgebaseName}>
-          {this.props.knowledgeBaseName}
-        </span>
-        <span className="appid">
-          Knowledgebase Id: {this.props.knowledgeBaseId}
-        </span>
+        <span className={styles.knowledgebaseName}>{this.props.knowledgeBaseName}</span>
+        <span className="appid">Knowledgebase Id: {this.props.knowledgeBaseId}</span>
       </div>
     );
   }

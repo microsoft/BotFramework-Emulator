@@ -40,11 +40,7 @@ import BotEndpoint from '../../facility/botEndpoint';
 import uniqueId from '../../utils/uniqueId';
 
 export default function startConversation(botEmulator: BotEmulator) {
-  return (
-    req: Restify.Request,
-    res: Restify.Response,
-    next: Restify.Next
-  ): any => {
+  return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     const auth = req.header('Authorization');
 
     // TODO: We should not use token as conversation ID
@@ -52,9 +48,7 @@ export default function startConversation(botEmulator: BotEmulator) {
     const botEndpoint: BotEndpoint = (req as any).botEndpoint;
     const conversationId =
       onErrorResumeNext(() => {
-        const optionsJson = new Buffer(tokenMatch[1], 'base64').toString(
-          'utf8'
-        );
+        const optionsJson = new Buffer(tokenMatch[1], 'base64').toString('utf8');
 
         return JSON.parse(optionsJson).conversationId;
       }) || uniqueId();
@@ -65,35 +59,19 @@ export default function startConversation(botEmulator: BotEmulator) {
     let conversation = conversations.conversationById(conversationId);
 
     if (!conversation) {
-      conversation = conversations.newConversation(
-        botEmulator,
-        botEndpoint,
-        currentUser,
-        conversationId
-      );
+      conversation = conversations.newConversation(botEmulator, botEndpoint, currentUser, conversationId);
       // Send "bot added to conversation"
-      conversation.sendConversationUpdate(
-        [{ id: botEndpoint.botId, name: 'Bot' }],
-        undefined
-      );
+      conversation.sendConversationUpdate([{ id: botEndpoint.botId, name: 'Bot' }], undefined);
       // Send "user added to conversation"
       conversation.sendConversationUpdate([currentUser], undefined);
       created = true;
     } else {
-      if (
-        botEndpoint &&
-        conversation.members.findIndex(
-          user => user.id === botEndpoint.botId
-        ) === -1
-      ) {
+      if (botEndpoint && conversation.members.findIndex(user => user.id === botEndpoint.botId) === -1) {
         // Sends "bot added to conversation"
         conversation.addMember(botEndpoint.botId, 'Bot');
       }
 
-      if (
-        conversation.members.findIndex(user => user.id === currentUser.id) ===
-        -1
-      ) {
+      if (conversation.members.findIndex(user => user.id === currentUser.id) === -1) {
         // Sends "user added to conversation"
         conversation.addMember(currentUser.id, currentUser.name);
       }

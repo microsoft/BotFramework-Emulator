@@ -67,11 +67,7 @@ export interface CloseBotAction {
   payload: {};
 }
 
-export type BotAction =
-  | LoadBotAction
-  | SetActiveBotAction
-  | SetDirectoryBotAction
-  | CloseBotAction;
+export type BotAction = LoadBotAction | SetActiveBotAction | SetDirectoryBotAction | CloseBotAction;
 
 export function load(bots: BotInfo[]): LoadBotAction {
   // prune bad bots

@@ -32,10 +32,7 @@
 //
 
 import { BotInfo } from '@bfemulator/app-shared';
-import {
-  BotConfigWithPath,
-  StartConversationParams,
-} from '@bfemulator/sdk-shared';
+import { BotConfigWithPath, StartConversationParams } from '@bfemulator/sdk-shared';
 
 export enum BotActionType {
   close = 'BOT/CLOSE',
@@ -114,9 +111,7 @@ export function openBotViaUrlAction(
   };
 }
 
-export function setActiveBot(
-  bot: BotConfigWithPath
-): BotAction<BotConfigWithPathPayload> {
+export function setActiveBot(bot: BotConfigWithPath): BotAction<BotConfigWithPathPayload> {
   return {
     type: BotActionType.setActive,
     payload: {

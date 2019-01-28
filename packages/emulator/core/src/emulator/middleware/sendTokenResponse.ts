@@ -39,21 +39,13 @@ import { BotEmulator } from '../../botEmulator';
 import { ConversationAware } from './fetchConversation';
 
 export default function sendTokenResponse(_botEmulator: BotEmulator) {
-  return async (
-    req: ConversationAware,
-    res: Restify.Response,
-    next: Restify.Next
-  ): Promise<any> => {
+  return async (req: ConversationAware, res: Restify.Response, next: Restify.Next): Promise<any> => {
     const body: {
       token: string;
       connectionName: string;
     } = req.body[0];
 
-    const { statusCode } = await req.conversation.sendTokenResponse(
-      body.connectionName,
-      body.token,
-      !!1
-    );
+    const { statusCode } = await req.conversation.sendTokenResponse(body.connectionName, body.token, !!1);
 
     if (statusCode === HttpStatus.OK) {
       res.send(HttpStatus.OK, body);

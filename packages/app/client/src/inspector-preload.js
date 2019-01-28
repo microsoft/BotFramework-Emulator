@@ -73,17 +73,11 @@ window.host = {
   },
 
   on: function(event, handler) {
-    if (
-      handler &&
-      Array.isArray(this.handlers[event]) &&
-      !this.handlers[event].includes(handler)
-    ) {
+    if (handler && Array.isArray(this.handlers[event]) && !this.handlers[event].includes(handler)) {
       this.handlers[event].push(handler);
     }
     return () => {
-      this.handlers[event] = this.handlers[event].filter(
-        item => item !== handler
-      );
+      this.handlers[event] = this.handlers[event].filter(item => item !== handler);
     };
   },
 

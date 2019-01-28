@@ -74,10 +74,7 @@ export class BotEmulator {
   public options: BotEmulatorOptions;
   public facilities: Facilities;
 
-  constructor(
-    getServiceUrl: (botUrl: string) => Promise<string>,
-    options: BotEmulatorOptions = DEFAULT_OPTIONS
-  ) {
+  constructor(getServiceUrl: (botUrl: string) => Promise<string>, options: BotEmulatorOptions = DEFAULT_OPTIONS) {
     this.getServiceUrl = getServiceUrl;
 
     this.options = { ...DEFAULT_OPTIONS, ...options };

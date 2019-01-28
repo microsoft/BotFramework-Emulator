@@ -62,24 +62,14 @@ export class RecentBotsList extends Component<RecentBotsListProps, {}> {
                     key={bot.path}
                     onContextMenu={this.onBotContextMenu}
                   >
-                    <button
-                      data-index={index}
-                      onClick={this.onBotClick}
-                      title={bot.path}
-                    >
+                    <button data-index={index} onClick={this.onBotClick} title={bot.path}>
                       <TruncateText>{bot.displayName}</TruncateText>
                     </button>
-                    <TruncateText
-                      className={styles.recentBotPath}
-                      title={bot.path}
-                    >
+                    <TruncateText className={styles.recentBotPath} title={bot.path}>
                       {bot.path}
                     </TruncateText>
                     <div className={styles.recentBotActionBar}>
-                      <button
-                        data-index={index}
-                        onClick={this.onDeleteBotClick}
-                      />
+                      <button data-index={index} onClick={this.onDeleteBotClick} />
                     </div>
                   </li>
                 )
@@ -108,9 +98,7 @@ export class RecentBotsList extends Component<RecentBotsListProps, {}> {
     this.props.showContextMenuForBot(bot);
   };
 
-  private onDeleteBotClick = async (
-    event: React.MouseEvent<HTMLButtonElement>
-  ) => {
+  private onDeleteBotClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
     const { index } = event.currentTarget.dataset;
     const bot = this.props.recentBots[index];
     try {

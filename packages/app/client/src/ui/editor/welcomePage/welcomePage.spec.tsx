@@ -58,8 +58,7 @@ jest.mock('../../../data/store', () => ({
   },
 }));
 
-const mockArmToken =
-  'bm90aGluZw==.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds';
+const mockArmToken = 'bm90aGluZw==.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds';
 const bots = [
   {
     path: '/Users/microsoft/Documents/testbot/contoso-cafe-bot.bot',
@@ -99,17 +98,12 @@ describe('The AzureLoginFailedDialogContainer component should', () => {
     const spy = jest.spyOn(CommandServiceImpl, 'call');
     instance.onBotSelected(bots[1]);
     const { Switch } = SharedConstants.Commands.Bot;
-    expect(spy).toHaveBeenCalledWith(
-      Switch,
-      '/Users/microsoft/Documents/testbot/TestBot.bot'
-    );
+    expect(spy).toHaveBeenCalledWith(Switch, '/Users/microsoft/Documents/testbot/TestBot.bot');
   });
 
   it('should call the appropriate command when onOpenBotClick is called', async () => {
     const spy = jest.spyOn(CommandServiceImpl, 'call');
     await instance.onOpenBotClick();
-    expect(spy).toHaveBeenCalledWith(
-      SharedConstants.Commands.UI.ShowOpenBotDialog
-    );
+    expect(spy).toHaveBeenCalledWith(SharedConstants.Commands.UI.ShowOpenBotDialog);
   });
 });

@@ -39,17 +39,11 @@ import sendErrorResponse from '../../utils/sendErrorResponse';
 import ConversationAPIPathParameters from '../conversationAPIPathParameters';
 
 export default function deleteActivity(botEmulator: BotEmulator) {
-  return (
-    req: Restify.Request,
-    res: Restify.Response,
-    next: Restify.Next
-  ): any => {
+  return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     const conversationParameters: ConversationAPIPathParameters = req.params;
 
     try {
-      (req as any).conversation.deleteActivity(
-        conversationParameters.activityId
-      );
+      (req as any).conversation.deleteActivity(conversationParameters.activityId);
 
       res.send(HttpStatus.OK);
       res.end();

@@ -35,12 +35,7 @@ import { connect } from 'react-redux';
 import { SharedConstants } from '@bfemulator/app-shared';
 
 import { closeDocument } from '../../../../data/action/chatActions';
-import {
-  appendTab,
-  close,
-  setActiveTab,
-  splitTab,
-} from '../../../../data/action/editorActions';
+import { appendTab, close, setActiveTab, splitTab } from '../../../../data/action/editorActions';
 import { enable as enablePresentationMode } from '../../../../data/action/presentationActions';
 import { getTabGroupForDocument } from '../../../../data/editorHelpers';
 import { RootState } from '../../../../data/store';
@@ -48,14 +43,10 @@ import { CommandServiceImpl } from '../../../../platform/commands/commandService
 
 import { TabBar, TabBarProps } from './tabBar';
 
-const mapStateToProps = (
-  state: RootState,
-  ownProps: TabBarProps
-): TabBarProps => ({
+const mapStateToProps = (state: RootState, ownProps: TabBarProps): TabBarProps => ({
   ...ownProps,
   activeBot: state.bot.activeBot,
-  activeDocumentId:
-    state.editor.editors[ownProps.owningEditor].activeDocumentId,
+  activeDocumentId: state.editor.editors[ownProps.owningEditor].activeDocumentId,
   activeEditor: state.editor.activeEditor,
   chats: state.chat.chats,
   editors: state.editor.editors,
@@ -64,25 +55,16 @@ const mapStateToProps = (
 });
 
 const mapDispatchToProps = (dispatch): TabBarProps => ({
-  splitTab: (
-    contentType: string,
-    documentId: string,
-    srcEditorKey: string,
-    destEditorKey: string
-  ) => {
-    CommandServiceImpl.remoteCall(
-      SharedConstants.Commands.Telemetry.TrackEvent,
-      'tabBar_splitTab'
-    ).catch(_e => void 0);
+  splitTab: (contentType: string, documentId: string, srcEditorKey: string, destEditorKey: string) => {
+    CommandServiceImpl.remoteCall(SharedConstants.Commands.Telemetry.TrackEvent, 'tabBar_splitTab').catch(_e => void 0);
     dispatch(splitTab(contentType, documentId, srcEditorKey, destEditorKey));
   },
   appendTab: (srcEditorKey: string, destEditorKey: string, tabId: string) =>
     dispatch(appendTab(srcEditorKey, destEditorKey, tabId)),
   enablePresentationMode: () => {
-    CommandServiceImpl.remoteCall(
-      SharedConstants.Commands.Telemetry.TrackEvent,
-      'tabBar_presentationMode'
-    ).catch(_e => void 0);
+    CommandServiceImpl.remoteCall(SharedConstants.Commands.Telemetry.TrackEvent, 'tabBar_presentationMode').catch(
+      _e => void 0
+    );
     dispatch(enablePresentationMode());
   },
   setActiveTab: (documentId: string) => dispatch(setActiveTab(documentId)),

@@ -36,10 +36,7 @@ export function json2HTML(obj: { [key: string]: any }): string {
   }
   let json = JSON.stringify(obj, null, 2);
   // Hide ampersands we don't want replaced
-  json = json.replace(
-    /&(amp|apos|copy|gt|lt|nbsp|quot|#x?\d+|[\w\d]+);/g,
-    '\x01'
-  );
+  json = json.replace(/&(amp|apos|copy|gt|lt|nbsp|quot|#x?\d+|[\w\d]+);/g, '\x01');
   // Escape remaining ampersands and other HTML special characters
   json = json
     .replace(/&/g, '&amp;')

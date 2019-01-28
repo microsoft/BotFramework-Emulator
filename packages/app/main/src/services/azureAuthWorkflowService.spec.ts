@@ -66,10 +66,7 @@ jest.mock('electron', () => ({
     public static reporters = [];
     public listeners = [] as any;
     public webContents = {
-      history: [
-        'http://someotherUrl',
-        `https://dev.botframework.com/cb/#t=13&access_token=${mockArmToken}`,
-      ],
+      history: ['http://someotherUrl', `https://dev.botframework.com/cb/#t=13&access_token=${mockArmToken}`],
     };
 
     private static report(...args: any[]) {
@@ -88,10 +85,7 @@ jest.mock('electron', () => ({
       this.listeners.push({ type, handler });
       MockBrowserWindow.report('addListener', type, handler);
       if (type === 'page-title-updated') {
-        [
-          ['http://someotherUrl'],
-          [`http://localhost/#t=13&id_token=${mockArmToken}`],
-        ].forEach((url, index) => {
+        [['http://someotherUrl'], [`http://localhost/#t=13&id_token=${mockArmToken}`]].forEach((url, index) => {
           const evt = new mockEvent('page-title-updated');
           (evt as any).sender = {
             history: [`http://localhost/#t=13&access_token=${mockArmToken}`],

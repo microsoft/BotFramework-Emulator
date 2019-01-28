@@ -55,9 +55,7 @@ export abstract class ActivityVisitor {
   public traverseMessageActivity(messageActivity: MessageActivity) {
     if (messageActivity) {
       if (messageActivity.attachments) {
-        messageActivity.attachments.forEach(attachment =>
-          this.traverseAttachment(attachment)
-        );
+        messageActivity.attachments.forEach(attachment => this.traverseAttachment(attachment));
       }
     }
   }

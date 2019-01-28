@@ -51,9 +51,7 @@ export default class AnswersView extends Component<AnswersViewProps, {}> {
   }
 
   public render(): JSX.Element {
-    const answersRendered: JSX.Element[] = this.props.answers.map(answer =>
-      this.renderAnswer(answer)
-    );
+    const answersRendered: JSX.Element[] = this.props.answers.map(answer => this.renderAnswer(answer));
     return (
       <div className={`${styles.answersColumn} answers-column`}>
         <h3>Answer</h3>
@@ -70,9 +68,7 @@ export default class AnswersView extends Component<AnswersViewProps, {}> {
   }
 
   private renderAnswer(answer: Answer) {
-    const selected =
-      this.props.selectedAnswer !== null &&
-      answer.text === this.props.selectedAnswer.text;
+    const selected = this.props.selectedAnswer !== null && answer.text === this.props.selectedAnswer.text;
     let blockClass = 'answer-block';
     if (selected) {
       blockClass += ' selected';
@@ -85,10 +81,7 @@ export default class AnswersView extends Component<AnswersViewProps, {}> {
     ) : null;
     return (
       <div className="qna-answer" key={answer.text}>
-        <button
-          className={`${styles.answersBlock} ${blockClass}`}
-          onClick={() => this.props.selectAnswer(answer)}
-        >
+        <button className={`${styles.answersBlock} ${blockClass}`} onClick={() => this.props.selectAnswer(answer)}>
           {answer.text}
         </button>
         {selectedBlock}

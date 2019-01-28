@@ -34,14 +34,7 @@
 import { BotInfo } from '@bfemulator/app-shared';
 import { BotConfigWithPath } from '@bfemulator/sdk-shared';
 
-import {
-  BotAction,
-  load,
-  setActive,
-  setDirectory,
-  close,
-  mockAndSetActive,
-} from '../actions/botActions';
+import { BotAction, load, setActive, setDirectory, close, mockAndSetActive } from '../actions/botActions';
 
 import { BotState, bot } from './bot';
 

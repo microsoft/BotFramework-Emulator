@@ -49,11 +49,7 @@ export default class LoggerAdapter implements Logger {
     this.logException = this.logException.bind(this);
   }
 
-  public logActivity(
-    conversationId: string,
-    activity: GenericActivity,
-    role: string
-  ) {
+  public logActivity(conversationId: string, activity: GenericActivity, role: string) {
     let direction: ILogItem;
     if (role === 'user') {
       direction = textItem(LogLevel.Debug, '<-');

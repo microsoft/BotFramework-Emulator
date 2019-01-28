@@ -55,11 +55,7 @@ class CServiceImpl extends DisposableImpl implements CommandService {
 
   constructor() {
     super();
-    this._service = new InternalSharedService(
-      ElectronIPC,
-      'command-service',
-      CommandRegistry
-    );
+    this._service = new InternalSharedService(ElectronIPC, 'command-service', CommandRegistry);
     super.toDispose(this._service);
   }
 
@@ -72,10 +68,7 @@ class CServiceImpl extends DisposableImpl implements CommandService {
   }
 
   public on(event: string, handler?: CommandHandler): Disposable;
-  public on(
-    event: 'command-not-found',
-    handler?: (commandName: string, ...args: any[]) => any
-  ) {
+  public on(event: 'command-not-found', handler?: (commandName: string, ...args: any[]) => any) {
     return this._service.on(event, handler);
   }
 }

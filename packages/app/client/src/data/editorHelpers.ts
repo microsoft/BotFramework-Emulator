@@ -37,9 +37,7 @@ import * as EditorActions from './action/editorActions';
 import { Editor } from './reducer/editor';
 import { store } from './store';
 
-export function hasNonGlobalTabs(tabGroups?: {
-  [editorKey: string]: Editor;
-}): number {
+export function hasNonGlobalTabs(tabGroups?: { [editorKey: string]: Editor }): number {
   tabGroups = tabGroups || store.getState().editor.editors;
   let count = 0;
   for (const key in tabGroups) {
@@ -55,10 +53,7 @@ export function hasNonGlobalTabs(tabGroups?: {
 /**
  * Returns name of editor group, or undefined if doc is not open
  */
-export function getTabGroupForDocument(
-  documentId: string,
-  tabGroups?: { [editorKey: string]: Editor }
-): string {
+export function getTabGroupForDocument(documentId: string, tabGroups?: { [editorKey: string]: Editor }): string {
   tabGroups = tabGroups || store.getState().editor.editors;
   for (const key in tabGroups) {
     if (tabGroups[key] && tabGroups[key].documents) {
@@ -72,9 +67,7 @@ export function getTabGroupForDocument(
 
 /** Takes a tab group key and returns the key of the other tab group */
 export function getOtherTabGroup(tabGroup: string): string {
-  return tabGroup === Constants.EDITOR_KEY_PRIMARY
-    ? Constants.EDITOR_KEY_SECONDARY
-    : Constants.EDITOR_KEY_PRIMARY;
+  return tabGroup === Constants.EDITOR_KEY_PRIMARY ? Constants.EDITOR_KEY_SECONDARY : Constants.EDITOR_KEY_PRIMARY;
 }
 
 export function showWelcomePage(): void {

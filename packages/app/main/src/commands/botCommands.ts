@@ -33,23 +33,10 @@
 
 import * as path from 'path';
 
-import {
-  BotInfo,
-  getBotDisplayName,
-  SharedConstants,
-} from '@bfemulator/app-shared';
-import {
-  BotConfigWithPath,
-  CommandRegistryImpl,
-  mergeEndpoints,
-  uniqueId,
-} from '@bfemulator/sdk-shared';
+import { BotInfo, getBotDisplayName, SharedConstants } from '@bfemulator/app-shared';
+import { BotConfigWithPath, CommandRegistryImpl, mergeEndpoints, uniqueId } from '@bfemulator/sdk-shared';
 import { BotConfigurationBase } from 'botframework-config/lib';
-import {
-  IConnectedService,
-  IEndpointService,
-  ServiceTypes,
-} from 'botframework-config/lib/schema';
+import { IConnectedService, IEndpointService, ServiceTypes } from 'botframework-config/lib/schema';
 
 import * as BotActions from '../botData/actions/botActions';
 import { setActive } from '../botData/actions/botActions';
@@ -66,11 +53,7 @@ import {
 } from '../botHelpers';
 import { emulator } from '../emulator';
 import { mainWindow } from '../main';
-import {
-  botProjectFileWatcher,
-  chatWatcher,
-  transcriptsWatcher,
-} from '../watchers';
+import { botProjectFileWatcher, chatWatcher, transcriptsWatcher } from '../watchers';
 import { TelemetryService } from '../telemetry';
 
 /** Registers bot commands */
@@ -81,10 +64,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // Create a bot
   commandRegistry.registerCommand(
     Bot.Create,
-    async (
-      bot: BotConfigWithPath,
-      secret: string
-    ): Promise<BotConfigWithPath> => {
+    async (bot: BotConfigWithPath, secret: string): Promise<BotConfigWithPath> => {
       // getStore and add bot entry to bots.json
       const dirName = path.dirname(bot.path);
       const botsJsonEntry: BotInfo = {
@@ -124,9 +104,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
     Bot.Open,
     async (botPath: string, secret?: string): Promise<BotConfigWithPath> => {
       // try to get the bot secret from bots.json
-      const botInfo = pathExistsInRecentBots(botPath)
-        ? getBotInfoByPath(botPath)
-        : null;
+      const botInfo = pathExistsInRecentBots(botPath) ? getBotInfoByPath(botPath) : null;
       if (botInfo) {
         secret = botInfo.secret;
         const dirName = path.dirname(botPath);
@@ -191,31 +169,17 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
       } = botInfo;
       const botFilePath = path.parse(botInfo.path || '').dir;
       const relativeChatsPath = path.relative(botFilePath, chatsPath);
-      const relativeTranscriptsPath = path.relative(
-        botFilePath,
-        transcriptsPath
-      );
-      const displayedChatsPath = relativeChatsPath.includes('..')
-        ? chatsPath
-        : relativeChatsPath;
+      const relativeTranscriptsPath = path.relative(botFilePath, transcriptsPath);
+      const displayedChatsPath = relativeChatsPath.includes('..') ? chatsPath : relativeChatsPath;
       const displayedTranscriptsPath = relativeTranscriptsPath.includes('..')
         ? transcriptsPath
         : relativeTranscriptsPath;
-      const sep =
-        process.platform === 'darwin'
-          ? path.posix.sep
-          : (path.posix as any).win32.sep;
+      const sep = process.platform === 'darwin' ? path.posix.sep : (path.posix as any).win32.sep;
       await Promise.all([
         chatWatcher.watch(chatsPath),
         transcriptsWatcher.watch(transcriptsPath),
-        mainWindow.commandService.remoteCall(
-          Bot.ChatsPathUpdated,
-          `${displayedChatsPath}${sep}**`
-        ),
-        mainWindow.commandService.remoteCall(
-          Bot.TranscriptsPathUpdated,
-          `${displayedTranscriptsPath}${sep}`
-        ),
+        mainWindow.commandService.remoteCall(Bot.ChatsPathUpdated, `${displayedChatsPath}${sep}**`),
+        mainWindow.commandService.remoteCall(Bot.TranscriptsPathUpdated, `${displayedTranscriptsPath}${sep}`),
         mainWindow.commandService.call(Bot.RestartEndpointService),
       ]);
       // Workaround for a JSON serialization issue in bot.services where they're an array
@@ -251,16 +215,13 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
           }
         }
 
-        emulator.framework.server.botEmulator.facilities.endpoints.push(
-          endpoint.id,
-          {
-            botId: endpoint.id,
-            botUrl: endpoint.endpoint,
-            msaAppId: endpoint.appId,
-            msaPassword: endpoint.appPassword,
-            channelService: (endpoint as any).channelService,
-          }
-        );
+        emulator.framework.server.botEmulator.facilities.endpoints.push(endpoint.id, {
+          botId: endpoint.id,
+          botUrl: endpoint.endpoint,
+          msaAppId: endpoint.appId,
+          msaPassword: endpoint.appPassword,
+          channelService: (endpoint as any).channelService,
+        });
       });
   });
 
@@ -287,9 +248,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
       const botInfo = activeBot && getBotInfoByPath(activeBot.path);
       if (botInfo) {
         const botConfig = toSavableBot(activeBot, botInfo.secret);
-        const index = botConfig.services.findIndex(
-          s => s.id === service.id && s.type === service.type
-        );
+        const index = botConfig.services.findIndex(s => s.id === service.id && s.type === service.type);
         const existing = botConfig.services[index];
         if (existing) {
           // Patch existing service
@@ -318,9 +277,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
           );
         } catch (e) {
           // eslint-disable-next-line no-console
-          console.error(
-            `bot:add-or-update-service: Error trying to save bot: ${e}`
-          );
+          console.error(`bot:add-or-update-service: Error trying to save bot: ${e}`);
           throw e;
         }
       }
@@ -329,32 +286,28 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
   // ---------------------------------------------------------------------------
   // Removes an msbot service entry.
-  commandRegistry.registerCommand(
-    Bot.RemoveService,
-    async (serviceType: ServiceTypes, serviceOrId: any) => {
-      const activeBot = getActiveBot();
-      const botInfo = activeBot && getBotInfoByPath(activeBot.path);
-      if (botInfo) {
-        const botConfig = toSavableBot(activeBot, botInfo.secret);
-        const id =
-          typeof serviceOrId === 'string' ? serviceOrId : serviceOrId.id;
-        botConfig.disconnectService(id);
-        try {
-          await saveBot(botConfig);
-          getStore().dispatch(setActive(botConfig));
-          await mainWindow.commandService.remoteCall(
-            SharedConstants.Commands.Bot.SetActive,
-            botConfig,
-            botConfig.getPath()
-          );
-        } catch (e) {
-          // eslint-disable-next-line no-console
-          console.error(`bot:remove-service: Error trying to save bot: ${e}`);
-          throw e;
-        }
+  commandRegistry.registerCommand(Bot.RemoveService, async (serviceType: ServiceTypes, serviceOrId: any) => {
+    const activeBot = getActiveBot();
+    const botInfo = activeBot && getBotInfoByPath(activeBot.path);
+    if (botInfo) {
+      const botConfig = toSavableBot(activeBot, botInfo.secret);
+      const id = typeof serviceOrId === 'string' ? serviceOrId : serviceOrId.id;
+      botConfig.disconnectService(id);
+      try {
+        await saveBot(botConfig);
+        getStore().dispatch(setActive(botConfig));
+        await mainWindow.commandService.remoteCall(
+          SharedConstants.Commands.Bot.SetActive,
+          botConfig,
+          botConfig.getPath()
+        );
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.error(`bot:remove-service: Error trying to save bot: ${e}`);
+        throw e;
       }
     }
-  );
+  });
 
   // ---------------------------------------------------------------------------
   // Patches a bot record in bots.json
@@ -371,10 +324,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
         transcriptsPath = path.join(dirName, './transcripts'),
       } = botInfo;
 
-      await Promise.all([
-        chatWatcher.watch(chatsPath),
-        transcriptsWatcher.watch(transcriptsPath),
-      ]);
+      await Promise.all([chatWatcher.watch(chatsPath), transcriptsWatcher.watch(transcriptsPath)]);
 
       return true;
     }
@@ -386,17 +336,13 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
     Bot.RemoveFromBotList,
     async (botPath: string): Promise<void> => {
       const { ShowMessageBox } = SharedConstants.Commands.Electron;
-      const result = await mainWindow.commandService.call(
-        ShowMessageBox,
-        true,
-        {
-          type: 'question',
-          buttons: ['Cancel', 'OK'],
-          defaultId: 1,
-          message: `Remove Bot ${botPath} from bots list. Are you sure?`,
-          cancelId: 0,
-        }
-      );
+      const result = await mainWindow.commandService.call(ShowMessageBox, true, {
+        type: 'question',
+        buttons: ['Cancel', 'OK'],
+        defaultId: 1,
+        message: `Remove Bot ${botPath} from bots list. Are you sure?`,
+        cancelId: 0,
+      });
       if (result) {
         await removeBotFromList(botPath).catch();
       }

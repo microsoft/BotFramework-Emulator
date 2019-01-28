@@ -55,18 +55,15 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
   // ---------------------------------------------------------------------------
   // Show OS-native messsage box
-  commandRegistry.registerCommand(
-    Commands.ShowMessageBox,
-    (modal: boolean, options: MessageBoxOptions) => {
-      options = {
-        message: '',
-        title: app.getName(),
-        ...options,
-      };
-      const args = modal ? [mainWindow.browserWindow, options] : [options];
-      return Electron.dialog.showMessageBox.apply(Electron.dialog, args);
-    }
-  );
+  commandRegistry.registerCommand(Commands.ShowMessageBox, (modal: boolean, options: MessageBoxOptions) => {
+    options = {
+      message: '',
+      title: app.getName(),
+      ...options,
+    };
+    const args = modal ? [mainWindow.browserWindow, options] : [options];
+    return Electron.dialog.showMessageBox.apply(Electron.dialog, args);
+  });
 
   // ---------------------------------------------------------------------------
   // Shows an open dialog and returns a path
@@ -93,8 +90,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
     async (): Promise<void> => {
       AppMenuBuilder.refreshFileMenu();
       const state = store.getState();
-      const recentBots =
-        state.bot && state.bot.botFiles ? state.bot.botFiles : [];
+      const recentBots = state.bot && state.bot.botFiles ? state.bot.botFiles : [];
       AppMenuBuilder.updateRecentBotsList(recentBots);
     }
   );
@@ -112,17 +108,10 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
       const { editors = {}, activeEditor = '' } = clientEditorState;
       const { activeDocumentId = '' } = editors[activeEditor] || {};
 
-      if (
-        activeDocumentId &&
-        editors[activeEditor] &&
-        editors[activeEditor].documents
-      ) {
-        const activeDocument =
-          editors[activeEditor].documents[activeDocumentId];
+      if (activeDocumentId && editors[activeEditor] && editors[activeEditor].documents) {
+        const activeDocument = editors[activeEditor].documents[activeDocumentId];
         const { contentType = '' } = activeDocument;
-        enabled =
-          contentType &&
-          contentType === SharedConstants.ContentTypes.CONTENT_TYPE_LIVE_CHAT;
+        enabled = contentType && contentType === SharedConstants.ContentTypes.CONTENT_TYPE_LIVE_CHAT;
       }
 
       sendActivityMenuItems.forEach(item => {
@@ -157,10 +146,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
   // ---------------------------------------------------------------------------
   // Displays the context menu for a given element
-  commandRegistry.registerCommand(
-    Commands.DisplayContextMenu,
-    ContextMenuService.showMenuAndWaitForInput
-  );
+  commandRegistry.registerCommand(Commands.DisplayContextMenu, ContextMenuService.showMenuAndWaitForInput);
 
   // ---------------------------------------------------------------------------
   // Opens an external link
@@ -198,9 +184,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
       let { name } = info;
       const exists = await fs.pathExists(existingPath);
       if (!exists) {
-        throw new ReferenceError(
-          `Cannot rename File: ${existingPath} does not exist`
-        );
+        throw new ReferenceError(`Cannot rename File: ${existingPath} does not exist`);
       }
       const parts = path.parse(newPath || existingPath);
       if (!name) {

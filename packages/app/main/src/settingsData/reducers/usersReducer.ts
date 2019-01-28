@@ -33,17 +33,9 @@
 
 import { UserSettings } from '@bfemulator/app-shared';
 
-import {
-  ADD_USERS,
-  SET_CURRENT_USER,
-  UserAction,
-  UserPayload,
-} from '../actions/userActions';
+import { ADD_USERS, SET_CURRENT_USER, UserAction, UserPayload } from '../actions/userActions';
 
-export function usersReducer(
-  state: UserSettings = {},
-  action: UserAction<UserPayload>
-) {
+export function usersReducer(state: UserSettings = {}, action: UserAction<UserPayload>) {
   switch (action.type) {
     case SET_CURRENT_USER: {
       const usersById = { ...state.usersById };

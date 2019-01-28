@@ -33,12 +33,7 @@
 
 import { newNotification } from '@bfemulator/app-shared';
 
-import {
-  finishAdd,
-  finishRemove,
-  finishClear,
-  NotificationAction,
-} from '../action/notificationActions';
+import { finishAdd, finishRemove, finishClear, NotificationAction } from '../action/notificationActions';
 
 import notification, { NotificationState } from './notification';
 

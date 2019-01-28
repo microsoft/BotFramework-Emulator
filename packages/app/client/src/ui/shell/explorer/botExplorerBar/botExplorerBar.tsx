@@ -47,10 +47,7 @@ interface BotExplorerBarProps {
   openBotSettings: () => void;
 }
 
-export default class BotExplorerBar extends React.Component<
-  BotExplorerBarProps,
-  {}
-> {
+export default class BotExplorerBar extends React.Component<BotExplorerBarProps, {}> {
   private static get activeBotJsx(): JSX.Element {
     return (
       <>
@@ -62,11 +59,7 @@ export default class BotExplorerBar extends React.Component<
 
   public render() {
     const className = this.props.hidden ? styles.explorerOffScreen : '';
-    const explorerBody = this.props.activeBot ? (
-      BotExplorerBar.activeBotJsx
-    ) : (
-      <BotNotOpenExplorerContainer />
-    );
+    const explorerBody = this.props.activeBot ? BotExplorerBar.activeBotJsx : <BotNotOpenExplorerContainer />;
     return (
       <div className={`${styles.botExplorerBar} ${className}`}>
         <div className={explorerStyles.explorerBarHeader}>

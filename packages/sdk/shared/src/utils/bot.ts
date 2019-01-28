@@ -33,11 +33,7 @@
 
 import { IEndpointService } from 'botframework-config/lib/schema';
 
-import {
-  BotConfigOverrides,
-  BotConfigWithPath,
-  BotConfigWithPathImpl,
-} from '../types';
+import { BotConfigOverrides, BotConfigWithPath, BotConfigWithPathImpl } from '../types';
 
 /**
  * Takes bot config overrides and applies them to the target bot
@@ -60,10 +56,7 @@ export function applyBotConfigOverrides(
  * @param bot1 First bot to be compared
  * @param bot2 Second bot to be compared
  */
-export function botsAreTheSame(
-  bot1: BotConfigWithPath,
-  bot2: BotConfigWithPath
-): boolean {
+export function botsAreTheSame(bot1: BotConfigWithPath, bot2: BotConfigWithPath): boolean {
   if (bot1 && bot2) {
     return bot1.path === bot2.path;
   }
@@ -77,9 +70,6 @@ export function botsAreTheSame(
  * @param endpoint2 Second endpoint (will overwrite properties from first endpoint)
  * @returns The result of the merge
  */
-export function mergeEndpoints(
-  endpoint1: IEndpointService,
-  endpoint2: Partial<IEndpointService>
-): IEndpointService {
+export function mergeEndpoints(endpoint1: IEndpointService, endpoint2: Partial<IEndpointService>): IEndpointService {
   return { ...endpoint1, ...endpoint2 };
 }

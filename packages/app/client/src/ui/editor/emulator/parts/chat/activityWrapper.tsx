@@ -83,9 +83,7 @@ class ActivityWrapper extends Component<ActivityWrapperProps> {
     );
   }
 
-  private setSelectedActivity = (activity: Activity) => (
-    e: React.SyntheticEvent
-  ) => {
+  private setSelectedActivity = (activity: Activity) => (e: React.SyntheticEvent) => {
     if (shouldSelectActivity(e)) {
       this.props.onClick(activity);
     }

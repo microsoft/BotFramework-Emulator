@@ -31,11 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import {
-  ILogItem,
-  LogEntry as ILogEntry,
-  LogLevel,
-} from '@bfemulator/sdk-shared';
+import { ILogItem, LogEntry as ILogEntry, LogLevel } from '@bfemulator/sdk-shared';
 import * as React from 'react';
 
 import { ExtensionManager, InspectorAPI } from '../../../../../extensions';
@@ -123,9 +119,7 @@ export class LogEntry extends React.Component<LogEntryProps> {
     const innerJsx = (
       <>
         {this.renderTimestamp(this.props.entry.timestamp)}
-        {this.props.entry.items.map((item, key) =>
-          this.renderItem(item, '' + key)
-        )}
+        {this.props.entry.items.map((item, key) => this.renderItem(item, '' + key))}
       </>
     );
 
@@ -140,10 +134,7 @@ export class LogEntry extends React.Component<LogEntryProps> {
     }
 
     return (
-      <div
-        key="entry"
-        className={[styles.entry, inspectedActivityClass].join(' ')}
-      >
+      <div key="entry" className={[styles.entry, inspectedActivityClass].join(' ')}>
         {innerJsx}
       </div>
     );
@@ -181,31 +172,11 @@ export class LogEntry extends React.Component<LogEntryProps> {
       }
       case 'network-request': {
         const { facility, body, headers, method, url } = item.payload;
-        return this.renderNetworkRequestItem(
-          facility,
-          body,
-          headers,
-          method,
-          url,
-          key
-        );
+        return this.renderNetworkRequestItem(facility, body, headers, method, url, key);
       }
       case 'network-response': {
-        const {
-          body,
-          headers,
-          statusCode,
-          statusMessage,
-          srcUrl,
-        } = item.payload;
-        return this.renderNetworkResponseItem(
-          body,
-          headers,
-          statusCode,
-          statusMessage,
-          srcUrl,
-          key
-        );
+        const { body, headers, statusCode, statusMessage, srcUrl } = item.payload;
+        return this.renderNetworkResponseItem(body, headers, statusCode, statusMessage, srcUrl, key);
       }
       case 'ngrok-expiration': {
         const { text } = item.payload;
@@ -218,10 +189,7 @@ export class LogEntry extends React.Component<LogEntryProps> {
 
   renderTextItem(level: LogLevel, text: string, key: string) {
     return (
-      <span
-        key={key}
-        className={`text-item ${styles.spaced} ${logLevelToClassName(level)}`}
-      >
+      <span key={key} className={`text-item ${styles.spaced} ${logLevelToClassName(level)}`}>
         {text}
       </span>
     );
@@ -230,10 +198,7 @@ export class LogEntry extends React.Component<LogEntryProps> {
   renderExternalLinkItem(text: string, hyperlink: string, key: string) {
     return (
       <span key={key} className={styles.spaced}>
-        <button
-          className={styles.link}
-          onClick={() => window.open(hyperlink, '_blank')}
-        >
+        <button className={styles.link} onClick={() => window.open(hyperlink, '_blank')}>
           {text}
         </button>
       </span>
@@ -243,10 +208,7 @@ export class LogEntry extends React.Component<LogEntryProps> {
   renderAppSettingsItem(text: string, key: string) {
     return (
       <span key={key} className={styles.spaced}>
-        <button
-          className={styles.link}
-          onClick={() => this.props.showAppSettings()}
-        >
+        <button className={styles.link} onClick={() => this.props.showAppSettings()}>
           {text}
         </button>
       </span>
@@ -279,28 +241,16 @@ export class LogEntry extends React.Component<LogEntryProps> {
         onMouseLeave={() => this.removeHighlightInWebchat(obj)}
       >
         <span className={`${styles.spaced} ${styles.level0}`}>
-          <button
-            className={styles.link}
-            onClick={() => this.inspectAndHighlightInWebchat(obj)}
-          >
+          <button className={styles.link} onClick={() => this.inspectAndHighlightInWebchat(obj)}>
             {title}
           </button>
         </span>
-        <span className={`${styles.spaced} ${styles.level0}`}>
-          {summaryText}
-        </span>
+        <span className={`${styles.spaced} ${styles.level0}`}>{summaryText}</span>
       </span>
     );
   }
 
-  renderNetworkRequestItem(
-    _facility: any,
-    body: any,
-    _headers: any,
-    method: any,
-    _url: string,
-    key: string
-  ) {
+  renderNetworkRequestItem(_facility: any, body: any, _headers: any, method: any, _url: string, key: string) {
     let obj;
     if (typeof body === 'string') {
       try {
@@ -367,10 +317,7 @@ export class LogEntry extends React.Component<LogEntryProps> {
     return (
       <span key={key} className={`${styles.spaced} ${styles.level3}`}>
         {text + ' '}
-        <button
-          className={styles.link}
-          onClick={() => this.props.reconnectNgrok()}
-        >
+        <button className={styles.link} onClick={() => this.props.reconnectNgrok()}>
           Please reconnect.
         </button>
       </span>

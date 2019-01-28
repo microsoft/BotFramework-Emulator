@@ -52,10 +52,7 @@ export interface ExpandCollapseState {
 export const ExpandCollapseControls = props => props.children;
 export const ExpandCollapseContent = props => props.children;
 
-export class ExpandCollapse extends React.Component<
-  ExpandCollapseProps,
-  ExpandCollapseState
-> {
+export class ExpandCollapse extends React.Component<ExpandCollapseProps, ExpandCollapseState> {
   public constructor(props: ExpandCollapseProps) {
     super(props);
     this.state = { expanded: !!props.expanded };
@@ -67,11 +64,7 @@ export class ExpandCollapse extends React.Component<
     const { toggleIcon, onHeaderKeyPress, onToggleExpandedButtonClick } = this;
 
     return (
-      <div
-        className={`${styles.expandCollapse} ${className} ${
-          expanded ? 'expanded' : ''
-        }`}
-      >
+      <div className={`${styles.expandCollapse} ${className} ${expanded ? 'expanded' : ''}`}>
         <div
           aria-expanded={expanded}
           aria-label={ariaLabel}
@@ -85,16 +78,11 @@ export class ExpandCollapse extends React.Component<
             {title}
           </h3>
           <div className={styles.accessories}>
-            {filterChildren(children, child =>
-              hmrSafeNameComparison(child.type, ExpandCollapseControls)
-            )}
+            {filterChildren(children, child => hmrSafeNameComparison(child.type, ExpandCollapseControls))}
           </div>
         </div>
         <div className={styles.body}>
-          {expanded &&
-            filterChildren(children, child =>
-              hmrSafeNameComparison(child.type, ExpandCollapseContent)
-            )}
+          {expanded && filterChildren(children, child => hmrSafeNameComparison(child.type, ExpandCollapseContent))}
         </div>
       </div>
     );
@@ -103,23 +91,13 @@ export class ExpandCollapse extends React.Component<
   private get toggleIcon(): JSX.Element {
     if (this.state.expanded) {
       return (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          aria-hidden={true}
-        >
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" aria-hidden={true}>
           <path d="M11 10.07H5.344L11 4.414v5.656z" />
         </svg>
       );
     }
     return (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="16"
-        height="16"
-        aria-hidden={true}
-      >
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" aria-hidden={true}>
         <path d="M6 4v8l4-4-4-4zm1 2.414L8.586 8 7 9.586V6.414z" />
       </svg>
     );

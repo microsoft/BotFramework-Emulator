@@ -56,11 +56,9 @@ const mapStateToProps = (state: RootState, ownProps: any) => {
 const mapDispatchToProps = _dispatch => {
   return {
     trackEvent: (name: string, properties?: { [key: string]: any }) => {
-      CommandServiceImpl.remoteCall(
-        SharedConstants.Commands.Telemetry.TrackEvent,
-        name,
-        properties
-      ).catch(_e => void 0);
+      CommandServiceImpl.remoteCall(SharedConstants.Commands.Telemetry.TrackEvent, name, properties).catch(
+        _e => void 0
+      );
     },
   };
 };

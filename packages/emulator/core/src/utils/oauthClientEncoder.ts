@@ -42,30 +42,16 @@ export default class OAuthClientEncoder extends ActivityVisitor {
 
   constructor(activity: Activity) {
     super();
-    this._conversationId =
-      activity && activity.conversation ? activity.conversation.id : undefined;
+    this._conversationId = activity && activity.conversation ? activity.conversation.id : undefined;
   }
 
   protected visitCardAction(cardAction: CardAction) {
     return null;
   }
 
-  protected visitOAuthCardAction(
-    connectionName: string,
-    cardAction: CardAction
-  ) {
-    if (
-      this._conversationId &&
-      cardAction &&
-      cardAction.type === 'signin' &&
-      !cardAction.value
-    ) {
-      const url =
-        OAuthClientEncoder.OAuthEmulatorUrlProtocol +
-        '//' +
-        connectionName +
-        '&&&' +
-        this._conversationId;
+  protected visitOAuthCardAction(connectionName: string, cardAction: CardAction) {
+    if (this._conversationId && cardAction && cardAction.type === 'signin' && !cardAction.value) {
+      const url = OAuthClientEncoder.OAuthEmulatorUrlProtocol + '//' + connectionName + '&&&' + this._conversationId;
 
       // change the card action to a special URL for the emulator
       cardAction.type = 'openUrl';

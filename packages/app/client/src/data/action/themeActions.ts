@@ -43,10 +43,7 @@ export interface SwitchThemePayload {
   themeComponents: string[];
 }
 
-export function switchTheme(
-  themeName: string,
-  themeComponents: string[]
-): ThemeAction<SwitchThemePayload> {
+export function switchTheme(themeName: string, themeComponents: string[]): ThemeAction<SwitchThemePayload> {
   return {
     type: SWITCH_THEME,
     payload: { themeName, themeComponents },

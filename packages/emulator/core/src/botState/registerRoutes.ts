@@ -48,15 +48,9 @@ import setConversationData from './middleware/setConversationData';
 import setPrivateConversationData from './middleware/setPrivateConversationData';
 import setUserData from './middleware/setUserData';
 
-export default function registerRoutes(
-  botEmulator: BotEmulator,
-  server: Server,
-  uses: RequestHandler[]
-) {
+export default function registerRoutes(botEmulator: BotEmulator, server: Server, uses: RequestHandler[]) {
   // TODO: Check if it works without MSA App ID
-  const verifyBotFramework = createBotFrameworkAuthenticationMiddleware(
-    botEmulator.options.fetch
-  );
+  const verifyBotFramework = createBotFrameworkAuthenticationMiddleware(botEmulator.options.fetch);
   // const verifyBotFramework = botEmulator.msaAppId ?
   // createBotFrameworkAuthenticationMiddleware(botEmulator.botId, botEmulator.options.fetch) : [];
   const fetchBotDataMiddleware = createFetchBotDataMiddleware(botEmulator);

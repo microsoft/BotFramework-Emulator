@@ -32,11 +32,7 @@
 //
 /* eslint-disable react/prop-types */
 
-import {
-  ExpandCollapse,
-  ExpandCollapseContent,
-  ExpandCollapseControls,
-} from '@bfemulator/ui-react';
+import { ExpandCollapse, ExpandCollapseContent, ExpandCollapseControls } from '@bfemulator/ui-react';
 import { IConnectedService } from 'botframework-config/lib/schema';
 import * as React from 'react';
 import { Component, SyntheticEvent } from 'react';
@@ -44,10 +40,7 @@ import { Component, SyntheticEvent } from 'react';
 import * as styles from './servicePane.scss';
 
 export interface ServicePaneProps extends ServicePaneState {
-  openContextMenuForService: (
-    service: IConnectedService,
-    ...rest: any[]
-  ) => void;
+  openContextMenuForService: (service: IConnectedService, ...rest: any[]) => void;
   window: Window;
   title?: string;
   ariaLabel?: string;
@@ -62,12 +55,8 @@ export abstract class ServicePane<
   T extends ServicePaneProps,
   S extends ServicePaneState = ServicePaneState
 > extends Component<T, S> {
-  protected abstract onLinkClick: (
-    event: SyntheticEvent<HTMLLIElement>
-  ) => void; // bound
-  protected abstract onSortClick: (
-    event: SyntheticEvent<HTMLButtonElement>
-  ) => void; // bound
+  protected abstract onLinkClick: (event: SyntheticEvent<HTMLLIElement>) => void; // bound
+  protected abstract onSortClick: (event: SyntheticEvent<HTMLButtonElement>) => void; // bound
   protected onAddIconClick: (event: SyntheticEvent<HTMLButtonElement>) => void; // bound
 
   public state = {} as Readonly<S>;
@@ -86,12 +75,7 @@ export abstract class ServicePane<
           onClick={this.onSortClick}
           className={`${styles.sortIconButton} ${styles.serviceIcon}`}
         >
-          <svg
-            viewBox="0 0 34.761 26.892"
-            xmlns="http://www.w3.org/2000/svg"
-            width="100%"
-            height="100%"
-          >
+          <svg viewBox="0 0 34.761 26.892" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
             <g>
               <path d="M15.359 9.478l-6.226-6.21v17.557H7.426V3.268L1.2 9.478 0 8.281 8.279 0l8.279 8.281z" />
               <path d="M34.761 18.612l-8.279 8.281-8.282-8.281 1.2-1.2 6.226 6.21V6.068h1.707v17.557l6.226-6.21z" />
@@ -132,11 +116,7 @@ export abstract class ServicePane<
   }
 
   protected get emptyContent(): JSX.Element {
-    return (
-      <p className={styles.emptyContent}>
-        You have not saved any {this.props.title} apps to this bot.
-      </p>
-    );
+    return <p className={styles.emptyContent}>You have not saved any {this.props.title} apps to this bot.</p>;
   }
 
   protected get additionalContent(): JSX.Element {

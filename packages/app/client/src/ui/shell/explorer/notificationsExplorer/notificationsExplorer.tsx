@@ -46,19 +46,14 @@ interface NotificationExplorerProps {
   clearNotifications?: () => void;
 }
 
-class NotificationsExplorerComp extends React.Component<
-  NotificationExplorerProps,
-  {}
-> {
+class NotificationsExplorerComp extends React.Component<NotificationExplorerProps, {}> {
   constructor(props: NotificationExplorerProps) {
     super(props);
   }
 
   public render() {
     const { notifications = [] } = this.props;
-    const clearAllButton = notifications.length
-      ? this.renderClearAllButton()
-      : null;
+    const clearAllButton = notifications.length ? this.renderClearAllButton() : null;
 
     // max-height: 100% of explorer pane - 20px (Clear all button height) - 40px (Explorer title height)
     return (
@@ -68,12 +63,7 @@ class NotificationsExplorerComp extends React.Component<
           {notifications.length ? (
             notifications.map(n => {
               const notification = NotificationManager.get(n);
-              return (
-                <Notification
-                  key={notification.id}
-                  notification={notification}
-                />
-              );
+              return <Notification key={notification.id} notification={notification} />;
             })
           ) : (
             <p className={styles.noNotificationsMsg}>No new notifications.</p>

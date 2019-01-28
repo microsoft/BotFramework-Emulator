@@ -148,8 +148,7 @@ describe('The BotSettingsEditor dialog should', () => {
     const instance = node.instance();
     instance.setState({
       encryptKey: true,
-      secret:
-        'MsKgJGZJw7Vqw51YwpZhw7LCk2MzwpZZwoLDkMKPIWfCq8K7wobDp8OvwqvCmsO+EAY=',
+      secret: 'MsKgJGZJw7Vqw51YwpZhw7LCk2MzwpZZwoLDkMKPIWfCq8K7wobDp8OvwqvCmsO+EAY=',
     });
     const elementSpies = {
       select: jest.spyOn(mockElement, 'select'),
@@ -184,8 +183,7 @@ describe('The BotSettingsEditor dialog should', () => {
       const instance = node.instance();
       instance.setState({
         path: SharedConstants.TEMP_BOT_IN_MEMORY_PATH,
-        secret:
-          'MsKgJGZJw7Vqw51YwpZhw7LCk2MzwpZZwoLDkMKPIWfCq8K7wobDp8OvwqvCmsO+EAY=',
+        secret: 'MsKgJGZJw7Vqw51YwpZhw7LCk2MzwpZZwoLDkMKPIWfCq8K7wobDp8OvwqvCmsO+EAY=',
       });
       await instance.onSaveClick();
       expect(mockRemoteCommandsCalled.length).toBe(7);
@@ -217,8 +215,7 @@ describe('The BotSettingsEditor dialog should', () => {
             {
               displayName: '',
               path: '/test/path',
-              secret:
-                'MsKgJGZJw7Vqw51YwpZhw7LCk2MzwpZZwoLDkMKPIWfCq8K7wobDp8OvwqvCmsO+EAY=',
+              secret: 'MsKgJGZJw7Vqw51YwpZhw7LCk2MzwpZZwoLDkMKPIWfCq8K7wobDp8OvwqvCmsO+EAY=',
             },
           ],
           commandName: 'bot:list:patch',
@@ -259,17 +256,14 @@ describe('The BotSettingsEditor dialog should', () => {
           commandName: 'electron:set-title-bar',
           args: ['/test/path'],
         },
-      ].forEach((command, index) =>
-        expect(mockRemoteCommandsCalled[index]).toEqual(command)
-      );
+      ].forEach((command, index) => expect(mockRemoteCommandsCalled[index]).toEqual(command));
     });
 
     it('should make the expected calls when saving a bot', async () => {
       const instance = node.instance();
       instance.setState({
         path: 'a/test/path',
-        secret:
-          'MsKgJGZJw7Vqw51YwpZhw7LCk2MzwpZZwoLDkMKPIWfCq8K7wobDp8OvwqvCmsO+EAY=',
+        secret: 'MsKgJGZJw7Vqw51YwpZhw7LCk2MzwpZZwoLDkMKPIWfCq8K7wobDp8OvwqvCmsO+EAY=',
       });
       await instance.onSaveClick();
       expect(mockRemoteCommandsCalled.length).toBe(3);
@@ -279,8 +273,7 @@ describe('The BotSettingsEditor dialog should', () => {
           args: [
             'a/test/path',
             {
-              secret:
-                'MsKgJGZJw7Vqw51YwpZhw7LCk2MzwpZZwoLDkMKPIWfCq8K7wobDp8OvwqvCmsO+EAY=',
+              secret: 'MsKgJGZJw7Vqw51YwpZhw7LCk2MzwpZZwoLDkMKPIWfCq8K7wobDp8OvwqvCmsO+EAY=',
             },
           ],
         },

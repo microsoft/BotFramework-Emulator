@@ -31,12 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import {
-  CommandService,
-  CommandServiceImpl,
-  DisposableImpl,
-  LogService as ILogService,
-} from '@bfemulator/sdk-shared';
+import { CommandService, CommandServiceImpl, DisposableImpl, LogService as ILogService } from '@bfemulator/sdk-shared';
 import { BrowserWindow, WebContents } from 'electron';
 
 import { CommandRegistry } from '../../commands';

@@ -31,11 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import {
-  Settings,
-  settingsDefault,
-  SettingsImpl,
-} from '@bfemulator/app-shared';
+import { Settings, settingsDefault, SettingsImpl } from '@bfemulator/app-shared';
 import * as Electron from 'electron';
 import { Action, applyMiddleware, createStore, Store } from 'redux';
 import sagaMiddlewareFactory from 'redux-saga';
@@ -57,17 +53,12 @@ export const getStore = (): Store<Settings> => {
     const initialSettings = loadSettings('server.json', settingsDefault);
     initialSettings.windowState.availableThemes = getThemes();
 
-    store = createStore(
-      reducers,
-      initialSettings,
-      applyMiddleware(sagaMiddleWare)
-    );
+    store = createStore(reducers, initialSettings, applyMiddleware(sagaMiddleWare));
     sagaMiddleWare.run(settingsSagas);
   }
   return store;
 };
-export const dispatch = <T extends Action>(obj: any) =>
-  getStore().dispatch<T>(obj);
+export const dispatch = <T extends Action>(obj: any) => getStore().dispatch<T>(obj);
 
 export const getSettings = () => {
   return new SettingsImpl(getStore().getState());

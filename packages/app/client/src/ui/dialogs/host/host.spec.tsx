@@ -84,16 +84,10 @@ describe('<DialogHost>', () => {
     };
 
     instance.componentDidMount();
-    expect(mockAddEventListener).toHaveBeenCalledWith(
-      'dialogRendered',
-      instance.initFocusTrap
-    );
+    expect(mockAddEventListener).toHaveBeenCalledWith('dialogRendered', instance.initFocusTrap);
 
     instance.componentWillUnmount();
-    expect(mockRemoveEventLister).toHaveBeenCalledWith(
-      'dialogRendered',
-      instance.initFocusTrap
-    );
+    expect(mockRemoveEventLister).toHaveBeenCalledWith('dialogRendered', instance.initFocusTrap);
   });
 
   it('should handle an overlay click', () => {

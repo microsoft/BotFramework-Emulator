@@ -31,20 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import {
-  DefaultButton,
-  Dialog,
-  DialogFooter,
-  PrimaryButton,
-  TextField,
-} from '@bfemulator/ui-react';
+import { DefaultButton, Dialog, DialogFooter, PrimaryButton, TextField } from '@bfemulator/ui-react';
 import { BotConfigurationBase } from 'botframework-config/lib/botConfigurationBase';
 import { ConnectedService } from 'botframework-config/lib/models';
-import {
-  IConnectedService,
-  IGenericService,
-  ServiceTypes,
-} from 'botframework-config/lib/schema';
+import { IConnectedService, IGenericService, ServiceTypes } from 'botframework-config/lib/schema';
 import * as React from 'react';
 import { ChangeEvent, Component, ReactNode } from 'react';
 
@@ -107,16 +97,10 @@ const portalMap = {
   [ServiceTypes.QnA]: 'QnaMaker.ai',
 };
 
-export class ConnectedServiceEditor extends Component<
-  ConnectedServiceEditorProps,
-  ConnectedServiceEditorState
-> {
+export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProps, ConnectedServiceEditorState> {
   public state: ConnectedServiceEditorState = {} as ConnectedServiceEditorState;
 
-  public static getDerivedStateFromProps(
-    props: ConnectedServiceEditorProps,
-    state: ConnectedServiceEditorState
-  ) {
+  public static getDerivedStateFromProps(props: ConnectedServiceEditorProps, state: ConnectedServiceEditorState) {
     const connectedServiceCopy = BotConfigurationBase.serviceFromJSON(
       props.connectedService || {
         type: props.serviceType,
@@ -124,25 +108,16 @@ export class ConnectedServiceEditor extends Component<
       }
     );
 
-    if (
-      JSON.stringify(connectedServiceCopy) !==
-      JSON.stringify(state.connectedServiceCopy)
-    ) {
+    if (JSON.stringify(connectedServiceCopy) !== JSON.stringify(state.connectedServiceCopy)) {
       return { connectedServiceCopy };
     }
 
     return state;
   }
 
-  constructor(
-    props: ConnectedServiceEditorProps,
-    state: ConnectedServiceEditorState
-  ) {
+  constructor(props: ConnectedServiceEditorProps, state: ConnectedServiceEditorState) {
     super(props, state);
-    this.state = ConnectedServiceEditor.getDerivedStateFromProps(
-      props,
-      state || ({} as ConnectedServiceEditorState)
-    );
+    this.state = ConnectedServiceEditor.getDerivedStateFromProps(props, state || ({} as ConnectedServiceEditorState));
   }
 
   public render(): JSX.Element {
@@ -151,9 +126,7 @@ export class ConnectedServiceEditor extends Component<
     const { type } = connectedServiceCopy;
     const fields = this.editableFields;
     const textInputs: JSX.Element[] = [];
-    const isDirty =
-      JSON.stringify(connectedServiceCopy) !==
-      JSON.stringify(this.props.connectedService);
+    const isDirty = JSON.stringify(connectedServiceCopy) !== JSON.stringify(this.props.connectedService);
     let valid = true;
     // Build the editable inputs from the enumerable properties
     // in the data model. This assumes all enumerable fields are editable
@@ -175,21 +148,13 @@ export class ConnectedServiceEditor extends Component<
     });
 
     return (
-      <Dialog
-        title={titleMap[type]}
-        cancel={props.cancel}
-        className={styles.connectedServiceEditor}
-      >
+      <Dialog title={titleMap[type]} cancel={props.cancel} className={styles.connectedServiceEditor}>
         {this.headerContent}
         {textInputs}
         {this.supplementalContent}
         <DialogFooter>
           <DefaultButton text="Cancel" onClick={props.cancel} />
-          <PrimaryButton
-            disabled={!isDirty || !valid}
-            text="Submit"
-            onClick={onSubmitClick}
-          />
+          <PrimaryButton disabled={!isDirty || !valid} text="Submit" onClick={onSubmitClick} />
         </DialogFooter>
       </Dialog>
     );
@@ -200,14 +165,7 @@ export class ConnectedServiceEditor extends Component<
     switch (serviceType) {
       case ServiceTypes.Luis:
       case ServiceTypes.Dispatch:
-        return [
-          'name',
-          'appId',
-          'authoringKey',
-          'version',
-          'region',
-          'subscriptionKey',
-        ];
+        return ['name', 'appId', 'authoringKey', 'version', 'region', 'subscriptionKey'];
 
       case ServiceTypes.QnA:
         return ['name', 'kbId', 'hostname', 'subscriptionKey', 'endpointKey'];
@@ -224,15 +182,7 @@ export class ConnectedServiceEditor extends Component<
         ];
 
       case ServiceTypes.BlobStorage:
-        return [
-          'name',
-          'tenantId',
-          'subscriptionId',
-          'resourceGroup',
-          'serviceName',
-          'connectionString',
-          'container',
-        ];
+        return ['name', 'tenantId', 'subscriptionId', 'resourceGroup', 'serviceName', 'connectionString', 'container'];
 
       case ServiceTypes.CosmosDB:
         return [
@@ -318,12 +268,8 @@ export class ConnectedServiceEditor extends Component<
     const { serviceType } = this.props;
     return (
       <p>
-        {`You can find your LUIS app ID and subscription key in ${
-          portalMap[serviceType]
-        }. `}
-        <a href={this.learnMoreLink}>
-          Learn more about keys in {labelMap[serviceType]}
-        </a>
+        {`You can find your LUIS app ID and subscription key in ${portalMap[serviceType]}. `}
+        <a href={this.learnMoreLink}>Learn more about keys in {labelMap[serviceType]}</a>
       </p>
     );
   }
@@ -332,12 +278,8 @@ export class ConnectedServiceEditor extends Component<
     const { serviceType } = this.props;
     return (
       <p>
-        {`You can find your knowledge base ID and subscription key in ${
-          portalMap[serviceType]
-        }. `}
-        <a href={this.learnMoreLink}>
-          Learn more about keys in {labelMap[serviceType]}
-        </a>
+        {`You can find your knowledge base ID and subscription key in ${portalMap[serviceType]}. `}
+        <a href={this.learnMoreLink}>Learn more about keys in {labelMap[serviceType]}</a>
       </p>
     );
   }
@@ -349,9 +291,7 @@ export class ConnectedServiceEditor extends Component<
         {`You can find your knowledge base ID and subscription key in the `}
         <a href="https://portal.azure.com">Azure Portal.</a>
         <br />
-        <a href={this.learnMoreLink}>
-          Learn more about {labelMap[serviceType]} keys.
-        </a>
+        <a href={this.learnMoreLink}>Learn more about {labelMap[serviceType]} keys.</a>
       </p>
     );
   }
@@ -363,17 +303,13 @@ export class ConnectedServiceEditor extends Component<
         {`You can find the information below in the `}
         <a href="https://portal.azure.com">Azure Portal.</a>
         <br />
-        <a href={this.learnMoreLink}>
-          Learn more about {labelMap[serviceType]} keys.
-        </a>
+        <a href={this.learnMoreLink}>Learn more about {labelMap[serviceType]} keys.</a>
       </p>
     );
   }
 
   private get genericHeader(): ReactNode {
-    return (
-      <p>You can connect your bot to a generic service with key-value pairs.</p>
-    );
+    return <p>You can connect your bot to a generic service with key-value pairs.</p>;
   }
 
   private isRequired(key: string): boolean {
@@ -404,8 +340,7 @@ export class ConnectedServiceEditor extends Component<
     const { prop } = event.target.dataset;
 
     const trimmedValue = value.trim();
-    const errorMessage =
-      this.isRequired(prop) && !trimmedValue ? `The field cannot be empty` : '';
+    const errorMessage = this.isRequired(prop) && !trimmedValue ? `The field cannot be empty` : '';
     const { connectedServiceCopy } = this.state;
     connectedServiceCopy[prop] = value;
 
@@ -415,13 +350,9 @@ export class ConnectedServiceEditor extends Component<
     } as any);
   };
 
-  private onKvPairChange = (configuration: {
-    [propName: string]: string;
-  }): void => {
+  private onKvPairChange = (configuration: { [propName: string]: string }): void => {
     const { connectedServiceCopy } = this.state;
-    (connectedServiceCopy as Partial<
-      IGenericService
-    >).configuration = configuration;
+    (connectedServiceCopy as Partial<IGenericService>).configuration = configuration;
     this.setState({ connectedServiceCopy });
   };
 }

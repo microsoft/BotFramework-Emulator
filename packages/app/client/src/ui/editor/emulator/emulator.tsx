@@ -39,11 +39,7 @@ import { IEndpointService } from 'botframework-config/lib/schema';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { BehaviorSubject } from 'rxjs';
-import {
-  newNotification,
-  Notification,
-  SharedConstants,
-} from '@bfemulator/app-shared';
+import { newNotification, Notification, SharedConstants } from '@bfemulator/app-shared';
 
 import * as ChatActions from '../../../data/action/chatActions';
 import { updateDocument } from '../../../data/action/editorActions';
@@ -87,10 +83,7 @@ interface EmulatorProps {
   setInspectorObjects?: (documentId: string, objects: any) => void;
   trackEvent?: (name: string, properties?: { [key: string]: any }) => void;
   updateChat?: (documentId: string, updatedValues: any) => void;
-  updateDocument?: (
-    documentId: string,
-    updatedValues: Partial<Document>
-  ) => void;
+  updateDocument?: (documentId: string, updatedValues: Partial<Document>) => void;
   url?: string;
 }
 
@@ -114,10 +107,7 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
   }
 
   shouldStartNewConversation(props: EmulatorProps = this.props): boolean {
-    return (
-      !props.document.directLine ||
-      props.document.conversationId !== props.document.directLine.conversationId
-    );
+    return !props.document.directLine || props.document.conversationId !== props.document.directLine.conversationId;
   }
 
   componentWillMount() {
@@ -137,18 +127,15 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
     const { document: nextDocument = {} } = nextProps;
 
     const documentOrUserIdChanged =
-      (!nextDocument.directLine &&
-        document.documentId !== nextDocument.documentId) ||
+      (!nextDocument.directLine && document.documentId !== nextDocument.documentId) ||
       document.userId !== nextDocument.userId;
 
     if (documentOrUserIdChanged) {
       startNewConversation(nextProps).catch();
     }
 
-    const switchedDocuments =
-      props.activeDocumentId !== nextProps.activeDocumentId;
-    const switchedToThisDocument =
-      nextProps.activeDocumentId === props.documentId;
+    const switchedDocuments = props.activeDocumentId !== nextProps.activeDocumentId;
+    const switchedToThisDocument = nextProps.activeDocumentId === props.documentId;
 
     if (switchedDocuments) {
       if (switchedToThisDocument) {
@@ -160,9 +147,7 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
     }
   }
 
-  startNewConversation = async (
-    props: EmulatorProps = this.props
-  ): Promise<any> => {
+  startNewConversation = async (props: EmulatorProps = this.props): Promise<any> => {
     if (props.document.subscription) {
       props.document.subscription.unsubscribe();
     }
@@ -194,11 +179,7 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
           conversationId
         );
 
-        if (
-          props.document &&
-          props.document.inMemory &&
-          props.document.activities
-        ) {
+        if (props.document && props.document.inMemory && props.document.activities) {
           try {
             // transcript was deep linked via protocol or is generated in-memory via chatdown,
             // and should just be fed its own activities attached to the document
@@ -210,9 +191,7 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
               props.document.activities
             );
           } catch (err) {
-            throw new Error(
-              `Error while feeding deep-linked transcript to conversation: ${err}`
-            );
+            throw new Error(`Error while feeding deep-linked transcript to conversation: ${err}`);
           }
         } else {
           try {
@@ -230,9 +209,7 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
 
             this.props.updateDocument(props.documentId, fileInfo);
           } catch (err) {
-            throw new Error(
-              `Error while feeding transcript on disk to conversation: ${err}`
-            );
+            throw new Error(`Error while feeding transcript on disk to conversation: ${err}`);
           }
         }
       } catch (err) {
@@ -243,12 +220,7 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
     }
   };
 
-  initConversation(
-    props: EmulatorProps,
-    options: any,
-    selectedActivity$: any,
-    subscription: any
-  ): void {
+  initConversation(props: EmulatorProps, options: any, selectedActivity$: any, subscription: any): void {
     const encodedOptions = encode(JSON.stringify(options));
 
     // TODO: We need to use encoded token because we need to pass both endpoint ID and conversation ID
@@ -269,9 +241,7 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
   }
 
   render(): JSX.Element {
-    return this.props.presentationModeEnabled
-      ? this.renderPresentationView()
-      : this.renderDefaultView();
+    return this.props.presentationModeEnabled ? this.renderPresentationView() : this.renderDefaultView();
   }
 
   renderPresentationView(): JSX.Element {
@@ -291,10 +261,7 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
           />
           {chatPanelChild}
         </div>
-        <span
-          className={styles.closePresentationIcon}
-          onClick={() => this.onPresentationClick(false)}
-        />
+        <span className={styles.closePresentationIcon} onClick={() => this.onPresentationClick(false)} />
       </div>
     );
   }
@@ -314,8 +281,7 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
                 onClick={this.onStartOverClick}
               />
               <button
-                className={`${styles.saveTranscriptIcon} ${styles.toolbarIcon ||
-                  ''}`}
+                className={`${styles.saveTranscriptIcon} ${styles.toolbarIcon || ''}`}
                 onClick={this.onExportClick}
               >
                 Save transcript
@@ -373,9 +339,7 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
     this.props.enablePresentationMode(enabled);
   };
 
-  private onStartOverClick = async (
-    option: string = RestartConversationOptions.NewUserId
-  ): Promise<void> => {
+  private onStartOverClick = async (option: string = RestartConversationOptions.NewUserId): Promise<void> => {
     const { NewUserId, SameUserId } = RestartConversationOptions;
     this.props.clearLog(this.props.document.documentId);
     this.props.setInspectorObjects(this.props.document.documentId, []);
@@ -387,10 +351,7 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
         });
         const newUserId = uniqueIdv4();
         // set new user as current on emulator facilities side
-        await CommandServiceImpl.remoteCall(
-          SharedConstants.Commands.Emulator.SetCurrentUser,
-          newUserId
-        );
+        await CommandServiceImpl.remoteCall(SharedConstants.Commands.Emulator.SetCurrentUser, newUserId);
         this.props.updateChat(this.props.documentId, { userId: newUserId });
         break;
       }
@@ -416,12 +377,9 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
     }
   };
 
-  private readonly keyboardEventListener: EventListener = (
-    event: KeyboardEvent
-  ): void => {
+  private readonly keyboardEventListener: EventListener = (event: KeyboardEvent): void => {
     // Meta corresponds to 'Command' on Mac
-    const ctrlOrCmdPressed =
-      event.getModifierState('Control') || event.getModifierState('Meta');
+    const ctrlOrCmdPressed = event.getModifierState('Control') || event.getModifierState('Meta');
     const shiftPressed = ctrlOrCmdPressed && event.getModifierState('Shift');
     const key = event.key.toLowerCase();
     if (ctrlOrCmdPressed && shiftPressed && key === 'r') {
@@ -430,12 +388,8 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
   };
 }
 
-const mapStateToProps = (
-  state: RootState,
-  { documentId }: { documentId: string }
-): EmulatorProps => ({
-  activeDocumentId:
-    state.editor.editors[state.editor.activeEditor].activeDocumentId,
+const mapStateToProps = (state: RootState, { documentId }: { documentId: string }): EmulatorProps => ({
+  activeDocumentId: state.editor.editors[state.editor.activeEditor].activeDocumentId,
   conversationId: state.chat.chats[documentId].conversationId,
   document: state.chat.chats[documentId],
   endpointId: state.chat.chats[documentId].endpointId,
@@ -444,26 +398,15 @@ const mapStateToProps = (
 
 const mapDispatchToProps = (dispatch): EmulatorProps => ({
   enablePresentationMode: enable =>
-    enable
-      ? dispatch(PresentationActions.enable())
-      : dispatch(PresentationActions.disable()),
-  setInspectorObjects: (documentId, objects) =>
-    dispatch(ChatActions.setInspectorObjects(documentId, objects)),
+    enable ? dispatch(PresentationActions.enable()) : dispatch(PresentationActions.disable()),
+  setInspectorObjects: (documentId, objects) => dispatch(ChatActions.setInspectorObjects(documentId, objects)),
   clearLog: documentId => dispatch(ChatActions.clearLog(documentId)),
-  newConversation: (documentId, options) =>
-    dispatch(ChatActions.newConversation(documentId, options)),
-  updateChat: (documentId: string, updatedValues: any) =>
-    dispatch(ChatActions.updateChat(documentId, updatedValues)),
-  updateDocument: (documentId, updatedValues: Partial<Document>) =>
-    dispatch(updateDocument(documentId, updatedValues)),
-  createErrorNotification: (notification: Notification) =>
-    dispatch(beginAdd(notification)),
+  newConversation: (documentId, options) => dispatch(ChatActions.newConversation(documentId, options)),
+  updateChat: (documentId: string, updatedValues: any) => dispatch(ChatActions.updateChat(documentId, updatedValues)),
+  updateDocument: (documentId, updatedValues: Partial<Document>) => dispatch(updateDocument(documentId, updatedValues)),
+  createErrorNotification: (notification: Notification) => dispatch(beginAdd(notification)),
   trackEvent: (name: string, properties?: { [key: string]: any }) =>
-    CommandServiceImpl.remoteCall(
-      SharedConstants.Commands.Telemetry.TrackEvent,
-      name,
-      properties
-    ).catch(_e => void 0),
+    CommandServiceImpl.remoteCall(SharedConstants.Commands.Telemetry.TrackEvent, name, properties).catch(_e => void 0),
 });
 
 export const Emulator = connect(

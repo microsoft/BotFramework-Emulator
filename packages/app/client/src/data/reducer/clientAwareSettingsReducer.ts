@@ -32,10 +32,7 @@
 //
 import { ClientAwareSettings } from '@bfemulator/app-shared';
 
-import {
-  CLIENT_AWARE_SETTINGS_CHANGED,
-  ClientAwareSettingsActions,
-} from '../action/clientAwareSettingsActions';
+import { CLIENT_AWARE_SETTINGS_CHANGED, ClientAwareSettingsActions } from '../action/clientAwareSettingsActions';
 
 export function clientAwareSettings(
   state: ClientAwareSettings = {} as any,

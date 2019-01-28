@@ -172,7 +172,6 @@ export const SharedConstants = {
     },
   },
   ContentTypes: {
-    CONTENT_TYPE_LIVE_CHAT:
-      'application/vnd.microsoft.bfemulator.document.livechat',
+    CONTENT_TYPE_LIVE_CHAT: 'application/vnd.microsoft.bfemulator.document.livechat',
   },
 };

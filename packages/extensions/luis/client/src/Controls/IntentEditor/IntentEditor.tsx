@@ -33,18 +33,16 @@
 
 import * as React from 'react';
 import { Component } from 'react';
+import { InspectorHost } from '@bfemulator/sdk-client';
 
 import { IntentInfo } from '../../Luis/IntentInfo';
 import { Intent } from '../../Models/Intent';
 
 import * as styles from './IntentEditor.scss';
-import { InspectorHost } from '@bfemulator/sdk-client';
 
-let $host: InspectorHost = (window as any).host;
+const $host: InspectorHost = (window as any).host;
 
-const TraceIntentStatesKey: string = Symbol(
-  'PersistedTraceIntentStates'
-).toString();
+const TraceIntentStatesKey: string = Symbol('PersistedTraceIntentStates').toString();
 
 enum IntentEditorMode {
   Enabled,
@@ -70,14 +68,10 @@ interface IntentEditorProps {
 }
 
 class IntentEditor extends Component<IntentEditorProps, IntentEditorState> {
-  public static getDerivedStateFromProps(
-    nextProps: IntentEditorProps,
-    prevState: IntentEditorState
-  ) {
+  public static getDerivedStateFromProps(nextProps: IntentEditorProps, prevState: IntentEditorState) {
     const currentTraceIntentStates = prevState.traceIntentStates;
     if (nextProps.traceId in currentTraceIntentStates) {
-      currentTraceIntentStates[nextProps.traceId].originalIntent =
-        nextProps.currentIntent.intent;
+      currentTraceIntentStates[nextProps.traceId].originalIntent = nextProps.currentIntent.intent;
     } else {
       currentTraceIntentStates[nextProps.traceId] = {
         originalIntent: nextProps.currentIntent.intent,
@@ -106,11 +100,7 @@ class IntentEditor extends Component<IntentEditorProps, IntentEditorState> {
     if (!this.props.intentInfo || this.props.mode === IntentEditorMode.Hidden) {
       return <div id="hidden" className={styles.hidden} />;
     } else if (this.props.mode === IntentEditorMode.Disabled) {
-      return (
-        <div className={styles.disabled}>
-          Please add your LUIS service to enable reassigning.
-        </div>
-      );
+      return <div className={styles.disabled}>Please add your LUIS service to enable reassigning.</div>;
     }
     const options = this.props.intentInfo.map(i => {
       return (
@@ -127,11 +117,7 @@ class IntentEditor extends Component<IntentEditorProps, IntentEditorState> {
       <div className={styles.intentEditor}>
         <form>
           <label>Reassign Intent</label>
-          <select
-            className={styles.selector}
-            value={currentIntent}
-            onChange={this.handleChange}
-          >
+          <select className={styles.selector} value={currentIntent} onChange={this.handleChange}>
             {options}
           </select>
         </form>
@@ -159,9 +145,7 @@ class IntentEditor extends Component<IntentEditorProps, IntentEditorState> {
     }
   };
 
-  private setAndPersistTraceIntentStates(states: {
-    [key: string]: TraceIntentState;
-  }) {
+  private setAndPersistTraceIntentStates(states: { [key: string]: TraceIntentState }) {
     this.setState({
       traceIntentStates: states,
     });

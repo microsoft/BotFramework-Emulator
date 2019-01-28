@@ -34,10 +34,7 @@
 import { SharedConstants } from '@bfemulator/app-shared';
 
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
-import {
-  PresentationAction,
-  PresentationActions,
-} from '../action/presentationActions';
+import { PresentationAction, PresentationActions } from '../action/presentationActions';
 
 export interface PresentationState {
   enabled: boolean;
@@ -67,17 +64,11 @@ export const presentation = (
   return state;
 };
 
-function setEnabled(
-  enabled: boolean,
-  state: PresentationState
-): PresentationState {
+function setEnabled(enabled: boolean, state: PresentationState): PresentationState {
   const newState = { ...state };
   newState.enabled = enabled;
 
-  CommandServiceImpl.remoteCall(
-    SharedConstants.Commands.Electron.SetFullscreen,
-    enabled
-  );
+  CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.SetFullscreen, enabled);
 
   return newState;
 }

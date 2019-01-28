@@ -31,10 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export default function botDataKey(
-  channelId: string,
-  conversationId: string,
-  userId: string
-) {
+export default function botDataKey(channelId: string, conversationId: string, userId: string) {
   return `${channelId || '*'}!${conversationId || '*'}!${userId || '*'}`;
 }

@@ -75,9 +75,7 @@ export class ChatWatcher extends FileWatcher {
   };
 
   protected onFileChange = (file: string, fstats?: fs.Stats): void => {
-    mainWindow.commandService
-      .remoteCall(SharedConstants.Commands.File.Changed, file)
-      .catch();
+    mainWindow.commandService.remoteCall(SharedConstants.Commands.File.Changed, file).catch();
   };
 
   /**
@@ -98,9 +96,7 @@ export class ChatWatcher extends FileWatcher {
         path: key,
       };
     });
-    mainWindow.commandService
-      .remoteCall(SharedConstants.Commands.Bot.ChatFilesUpdated, chatFiles)
-      .catch();
+    mainWindow.commandService.remoteCall(SharedConstants.Commands.Bot.ChatFilesUpdated, chatFiles).catch();
     this.notificationPending = null;
   };
 }

@@ -48,23 +48,15 @@ export default class PhrasingsView extends Component<PhrasingsViewProps, {}> {
   }
 
   public render(): JSX.Element {
-    const phrasingsElems: JSX.Element[] = this.props.phrasings.map(
-      (phrasing, index) => this.renderPhrasing(phrasing, index !== 0)
+    const phrasingsElems: JSX.Element[] = this.props.phrasings.map((phrasing, index) =>
+      this.renderPhrasing(phrasing, index !== 0)
     );
     return (
       <div className={styles.questionColumn}>
         <h3>Alternative phrasing</h3>
         {phrasingsElems}
-        <input
-          id="phrasing-input"
-          placeholder="Add alternative here"
-          onKeyPress={e => this.phraseInputKeyPress(e)}
-        />
-        <button
-          id="add-phrase-btn"
-          className={styles.plusBtn}
-          onClick={() => this.handleAddPhraseClick()}
-        />
+        <input id="phrasing-input" placeholder="Add alternative here" onKeyPress={e => this.phraseInputKeyPress(e)} />
+        <button id="add-phrase-btn" className={styles.plusBtn} onClick={() => this.handleAddPhraseClick()} />
       </div>
     );
   }
@@ -73,12 +65,7 @@ export default class PhrasingsView extends Component<PhrasingsViewProps, {}> {
     return (
       <div className={styles.phrasingBlock} key={phrasing}>
         {phrasing}
-        {allowRemove ? (
-          <button
-            className={styles.closeBtn}
-            onClick={() => this.removePhrasing(phrasing)}
-          />
-        ) : null}
+        {allowRemove ? <button className={styles.closeBtn} onClick={() => this.removePhrasing(phrasing)} /> : null}
       </div>
     );
   }
@@ -90,13 +77,10 @@ export default class PhrasingsView extends Component<PhrasingsViewProps, {}> {
   }
 
   private handleAddPhraseClick() {
-    const newPhrase = (document.getElementById(
-      'phrasing-input'
-    ) as HTMLInputElement).value;
+    const newPhrase = (document.getElementById('phrasing-input') as HTMLInputElement).value;
     if (newPhrase) {
       this.props.addPhrasing(newPhrase);
-      (document.getElementById('phrasing-input') as HTMLInputElement).value =
-        '';
+      (document.getElementById('phrasing-input') as HTMLInputElement).value = '';
     }
   }
 

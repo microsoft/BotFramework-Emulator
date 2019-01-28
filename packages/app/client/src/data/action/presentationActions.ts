@@ -46,9 +46,7 @@ export interface DisablePresentationAction {
   payload: {};
 }
 
-export type PresentationAction =
-  | EnablePresentationAction
-  | DisablePresentationAction;
+export type PresentationAction = EnablePresentationAction | DisablePresentationAction;
 
 export function enable(): EnablePresentationAction {
   return {

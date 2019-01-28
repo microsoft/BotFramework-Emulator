@@ -31,11 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import {
-  isChatFile,
-  isTranscriptFile,
-  SharedConstants,
-} from '@bfemulator/app-shared';
+import { isChatFile, isTranscriptFile, SharedConstants } from '@bfemulator/app-shared';
 import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 
 import * as EditorActions from '../data/action/editorActions';

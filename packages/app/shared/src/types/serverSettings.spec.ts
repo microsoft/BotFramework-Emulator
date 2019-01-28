@@ -38,8 +38,6 @@ describe('The SettingsImpl', () => {
       azure: { armToken: 'a valid arm token' },
     });
     expect(JSON.stringify(settings)).toBe(JSON.stringify({ azure: {} }));
-    expect(JSON.stringify(settings.toJSON())).toBe(
-      JSON.stringify({ azure: {} })
-    );
+    expect(JSON.stringify(settings.toJSON())).toBe(JSON.stringify({ azure: {} }));
   });
 });

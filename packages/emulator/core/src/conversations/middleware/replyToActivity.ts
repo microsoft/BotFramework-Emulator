@@ -41,11 +41,7 @@ import sendErrorResponse from '../../utils/sendErrorResponse';
 import ConversationAPIPathParameters from '../conversationAPIPathParameters';
 
 export default function replyToActivity(botEmulator: BotEmulator) {
-  return (
-    req: Restify.Request,
-    res: Restify.Response,
-    next: Restify.Next
-  ): any => {
+  return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     const activity = req.body as GenericActivity;
     const conversationParameters: ConversationAPIPathParameters = req.params;
 
@@ -61,9 +57,7 @@ export default function replyToActivity(botEmulator: BotEmulator) {
       // throw createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "replyToId is not a known activity id");
 
       const continuation = function(): void {
-        const response: ResourceResponse = (req as any).conversation.postActivityToUser(
-          activity
-        );
+        const response: ResourceResponse = (req as any).conversation.postActivityToUser(activity);
 
         res.send(HttpStatus.OK, response);
         res.end();

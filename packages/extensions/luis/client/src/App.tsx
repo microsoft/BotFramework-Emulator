@@ -56,8 +56,7 @@ import { LuisAppInfo } from './Models/LuisAppInfo';
 import { LuisTraceInfo } from './Models/LuisTraceInfo';
 
 const $host: InspectorHost = (window as any).host;
-const LuisApiBasePath =
-  'https://westus.api.cognitive.microsoft.com/luis/api/v2.0';
+const LuisApiBasePath = 'https://westus.api.cognitive.microsoft.com/luis/api/v2.0';
 const TrainAccessoryId = 'train';
 const PublichAccessoryId = 'publish';
 const AccessoryDefaultState = 'default';
@@ -83,10 +82,7 @@ export interface PersistentAppState {
 export class App extends Component<any, AppState> {
   public luisclient: LuisClient;
 
-  public static getLuisAuthoringKey(
-    bot: IBotConfiguration,
-    appId: string
-  ): string {
+  public static getLuisAuthoringKey(bot: IBotConfiguration, appId: string): string {
     if (!bot || !bot.services || !appId) {
       return '';
     }
@@ -95,19 +91,13 @@ export class App extends Component<any, AppState> {
     const dispatchServices = bot.services.filter(
       (s: IConnectedService) => s.type === ServiceTypes.Dispatch
     ) as IDispatchService[];
-    const dispatchService = dispatchServices.find(
-      ds => ds.appId.toLowerCase() === lcAppId
-    );
+    const dispatchService = dispatchServices.find(ds => ds.appId.toLowerCase() === lcAppId);
     if (dispatchService) {
       return dispatchService.authoringKey;
     }
 
-    const luisServices = bot.services.filter(
-      (s: IConnectedService) => s.type === ServiceTypes.Luis
-    ) as ILuisService[];
-    const luisService = luisServices.find(
-      ls => ls.appId.toLowerCase() === lcAppId
-    );
+    const luisServices = bot.services.filter((s: IConnectedService) => s.type === ServiceTypes.Luis) as ILuisService[];
+    const luisService = luisServices.find(ls => ls.appId.toLowerCase() === lcAppId);
     if (luisService) {
       return luisService.authoringKey;
     }
@@ -151,26 +141,19 @@ export class App extends Component<any, AppState> {
     $host.on('inspect', async (obj: any) => {
       const appState = new AppStateAdapter(obj);
       appState.persistentState = this.loadAppPersistentState();
-      appState.authoringKey = App.getLuisAuthoringKey(
-        $host.bot,
-        appState.traceInfo.luisModel.ModelID
-      );
+      appState.authoringKey = App.getLuisAuthoringKey($host.bot, appState.traceInfo.luisModel.ModelID);
       this.setState(appState);
       await this.populateLuisInfo();
-      $host.setInspectorTitle(
-        this.state.appInfo.isDispatchApp ? 'Dispatch' : 'LUIS'
-      );
+      $host.setInspectorTitle(this.state.appInfo.isDispatchApp ? 'Dispatch' : 'LUIS');
       $host.setAccessoryState(TrainAccessoryId, AccessoryDefaultState);
       $host.setAccessoryState(PublichAccessoryId, AccessoryDefaultState);
       $host.enableAccessory(
         TrainAccessoryId,
-        this.state.persistentState[this.state.id] &&
-          this.state.persistentState[this.state.id].pendingTrain
+        this.state.persistentState[this.state.id] && this.state.persistentState[this.state.id].pendingTrain
       );
       $host.enableAccessory(
         PublichAccessoryId,
-        this.state.persistentState[this.state.id] &&
-          this.state.persistentState[this.state.id].pendingPublish
+        this.state.persistentState[this.state.id] && this.state.persistentState[this.state.id].pendingPublish
       );
     });
 
@@ -195,61 +178,41 @@ export class App extends Component<any, AppState> {
       });
     });
 
-    $host.on(
-      'theme',
-      async (themeInfo: { themeName: string; themeComponents: string[] }) => {
-        const oldThemeComponents = document.querySelectorAll<HTMLLinkElement>(
-          '[data-theme-component="true"]'
+    $host.on('theme', async (themeInfo: { themeName: string; themeComponents: string[] }) => {
+      const oldThemeComponents = document.querySelectorAll<HTMLLinkElement>('[data-theme-component="true"]');
+      const head = document.querySelector<HTMLHeadElement>('head') as HTMLHeadElement;
+      const fragment = document.createDocumentFragment();
+      const promises: Promise<any>[] = [];
+      // Create the new links for each theme component
+      themeInfo.themeComponents.forEach(themeComponent => {
+        const link = document.createElement<'link'>('link');
+        promises.push(
+          new Promise(resolve => {
+            link.addEventListener('load', resolve);
+          })
         );
-        const head = document.querySelector<HTMLHeadElement>(
-          'head'
-        ) as HTMLHeadElement;
-        const fragment = document.createDocumentFragment();
-        const promises: Promise<any>[] = [];
-        // Create the new links for each theme component
-        themeInfo.themeComponents.forEach(themeComponent => {
-          const link = document.createElement<'link'>('link');
-          promises.push(
-            new Promise(resolve => {
-              link.addEventListener('load', resolve);
-            })
-          );
-          link.href = themeComponent;
-          link.rel = 'stylesheet';
-          link.setAttribute('data-theme-component', 'true');
-          fragment.appendChild(link);
-        });
-        head.insertBefore(fragment, head.firstElementChild);
-        // Wait for all the links to load their css
-        await Promise.all(promises);
-        // Remove the old links
-        Array.prototype.forEach.call(
-          oldThemeComponents,
-          (themeComponent: HTMLLinkElement) => {
-            if (themeComponent.parentElement) {
-              themeComponent.parentElement.removeChild(themeComponent);
-            }
-          }
-        );
-      }
-    );
+        link.href = themeComponent;
+        link.rel = 'stylesheet';
+        link.setAttribute('data-theme-component', 'true');
+        fragment.appendChild(link);
+      });
+      head.insertBefore(fragment, head.firstElementChild);
+      // Wait for all the links to load their css
+      await Promise.all(promises);
+      // Remove the old links
+      Array.prototype.forEach.call(oldThemeComponents, (themeComponent: HTMLLinkElement) => {
+        if (themeComponent.parentElement) {
+          themeComponent.parentElement.removeChild(themeComponent);
+        }
+      });
+    });
   }
 
   public render() {
-    const {
-      traceInfo = {} as any,
-      appInfo = {} as AppInfo,
-      controlBarButtonSelected,
-    } = this.state;
+    const { traceInfo = {} as any, appInfo = {} as AppInfo, controlBarButtonSelected } = this.state;
     const { recognizerResult = {}, luisResult = {} } = traceInfo;
-    const name =
-      controlBarButtonSelected === ButtonSelected.RecognizerResult
-        ? 'recognizerResult'
-        : 'luisResponse';
-    const result =
-      controlBarButtonSelected === ButtonSelected.RecognizerResult
-        ? recognizerResult
-        : luisResult;
+    const name = controlBarButtonSelected === ButtonSelected.RecognizerResult ? 'recognizerResult' : 'luisResponse';
+    const result = controlBarButtonSelected === ButtonSelected.RecognizerResult ? recognizerResult : luisResult;
     const data = { [name]: result };
     return (
       <div className={styles.app}>
@@ -259,20 +222,9 @@ export class App extends Component<any, AppState> {
           slot={traceInfo.luisOptions.Staging ? 'Staging' : 'Production'}
           version={appInfo.activeVersion}
         />
-        <ControlBar
-          setButtonSelected={this.setControlButtonSelected}
-          buttonSelected={controlBarButtonSelected}
-        />
-        <Splitter
-          orientation={'vertical'}
-          primaryPaneIndex={0}
-          minSizes={{ 0: 306, 1: 306 }}
-          initialSizes={{ 0: 306 }}
-        >
-          <div
-            className={styles.json}
-            dangerouslySetInnerHTML={{ __html: json2HTML(data) }}
-          />
+        <ControlBar setButtonSelected={this.setControlButtonSelected} buttonSelected={controlBarButtonSelected} />
+        <Splitter orientation={'vertical'} primaryPaneIndex={0} minSizes={{ 0: 306, 1: 306 }} initialSizes={{ 0: 306 }}>
+          <div className={styles.json} dangerouslySetInnerHTML={{ __html: json2HTML(data) }} />
           <Editor
             recognizerResult={this.state.traceInfo.recognizerResult}
             intentInfo={this.state.intentInfo}
@@ -304,16 +256,9 @@ export class App extends Component<any, AppState> {
     }
   }
 
-  private reassignIntent = async (
-    newIntent: string,
-    needsRetrain: boolean
-  ): Promise<void> => {
+  private reassignIntent = async (newIntent: string, needsRetrain: boolean): Promise<void> => {
     try {
-      await this.luisclient.reassignIntent(
-        this.state.appInfo,
-        this.state.traceInfo.luisResult,
-        newIntent
-      );
+      await this.luisclient.reassignIntent(this.state.appInfo, this.state.traceInfo.luisResult, newIntent);
       $host.logger.log('Intent reassigned successfully');
       this.setAppPersistentState({
         pendingTrain: needsRetrain,
@@ -345,10 +290,7 @@ export class App extends Component<any, AppState> {
   private publish = async (): Promise<void> => {
     $host.setAccessoryState(PublichAccessoryId, AccessoryWorkingState);
     try {
-      await this.luisclient.publish(
-        this.state.appInfo,
-        this.state.traceInfo.luisOptions.Staging || false
-      );
+      await this.luisclient.publish(this.state.appInfo, this.state.traceInfo.luisOptions.Staging || false);
       $host.logger.log('Application published successfully');
       this.setAppPersistentState({
         pendingPublish: false,
@@ -367,10 +309,7 @@ export class App extends Component<any, AppState> {
     // eslint-disable-next-line react/no-direct-mutation-state
     this.state.persistentState[this.state.id] = persistentState;
     this.setState({ persistentState: this.state.persistentState });
-    localStorage.setItem(
-      persistentStateKey,
-      JSON.stringify(this.state.persistentState)
-    );
+    localStorage.setItem(persistentStateKey, JSON.stringify(this.state.persistentState));
     $host.enableAccessory(TrainAccessoryId, persistentState.pendingTrain);
     $host.enableAccessory(PublichAccessoryId, persistentState.pendingPublish);
   }

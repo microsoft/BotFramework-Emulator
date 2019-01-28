@@ -31,26 +31,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import {
-  IConnectedService,
-  ServiceTypes,
-} from 'botframework-config/lib/schema';
+import { IConnectedService, ServiceTypes } from 'botframework-config/lib/schema';
 import { ComponentClass } from 'react';
 import { Action } from 'redux';
 
 import { CONNECTED_SERVICES_PANEL_ID } from './explorerActions';
 
 export const OPEN_SERVICE_DEEP_LINK = 'OPEN_SERVICE_DEEP_LINK';
-export const OPEN_CONTEXT_MENU_FOR_CONNECTED_SERVICE =
-  'OPEN_CONTEXT_MENU_FOR_CONNECTED_SERVICE';
-export const OPEN_ADD_CONNECTED_SERVICE_CONTEXT_MENU =
-  'OPEN_ADD_CONNECTED_SERVICE_CONTEXT_MENU';
-export const OPEN_CONNECTED_SERVICE_SORT_CONTEXT_MENU =
-  'OPEN_CONNECTED_SERVICE_SORT_CONTEXT_MENU';
-export const LAUNCH_CONNECTED_SERVICE_EDITOR =
-  'LAUNCH_CONNECTED_SERVICE_EDITOR';
-export const LAUNCH_CONNECTED_SERVICE_PICKER =
-  'LAUNCH_CONNECTED_SERVICE_PICKER';
+export const OPEN_CONTEXT_MENU_FOR_CONNECTED_SERVICE = 'OPEN_CONTEXT_MENU_FOR_CONNECTED_SERVICE';
+export const OPEN_ADD_CONNECTED_SERVICE_CONTEXT_MENU = 'OPEN_ADD_CONNECTED_SERVICE_CONTEXT_MENU';
+export const OPEN_CONNECTED_SERVICE_SORT_CONTEXT_MENU = 'OPEN_CONNECTED_SERVICE_SORT_CONTEXT_MENU';
+export const LAUNCH_CONNECTED_SERVICE_EDITOR = 'LAUNCH_CONNECTED_SERVICE_EDITOR';
+export const LAUNCH_CONNECTED_SERVICE_PICKER = 'LAUNCH_CONNECTED_SERVICE_PICKER';
 
 export interface ConnectedServiceAction<T> extends Action {
   payload: T;
@@ -123,9 +115,7 @@ export function openAddServiceContextMenu(
   };
 }
 
-export function openSortContextMenu(): ConnectedServiceAction<
-  ConnectedServicePayload
-> {
+export function openSortContextMenu(): ConnectedServiceAction<ConnectedServicePayload> {
   return {
     type: OPEN_CONNECTED_SERVICE_SORT_CONTEXT_MENU,
     payload: { panelId: CONNECTED_SERVICES_PANEL_ID },

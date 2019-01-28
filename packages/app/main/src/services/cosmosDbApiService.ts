@@ -35,12 +35,7 @@ import * as crypto from 'crypto';
 import { ServiceCodes } from '@bfemulator/app-shared/built';
 import { CosmosDbService } from 'botframework-config';
 
-import {
-  AccountIdentifier,
-  AzureManagementApiService,
-  AzureResource,
-  Provider,
-} from './azureManagementApiService';
+import { AccountIdentifier, AzureManagementApiService, AzureResource, Provider } from './azureManagementApiService';
 
 export class CosmosDbApiService {
   public static *getCosmosDbServices(armToken: string): IterableIterator<any> {
@@ -85,9 +80,7 @@ export class CosmosDbApiService {
     const cosmosDbRequests = databaseAccounts.map((account, index) => {
       const req = AzureManagementApiService.getRequestInit(armToken);
       req.headers['x-ms-version'] = '2017-02-22';
-      (req.headers as any).Authorization = getAuthorizationTokenUsingMasterKey(
-        keys[index]
-      );
+      (req.headers as any).Authorization = getAuthorizationTokenUsingMasterKey(keys[index]);
       return fetch(`https://${account.name}.documents.azure.com/dbs`, req);
     });
     const cosmosDbResponses: Response[] = yield Promise.all(cosmosDbRequests);
@@ -100,9 +93,7 @@ export class CosmosDbApiService {
       }
       const responseJson = yield response.json();
       if (responseJson.Databases || [].length) {
-        responseJson.Databases.forEach(db =>
-          cosmosDbs.push({ db, account: databaseAccounts[i] })
-        );
+        responseJson.Databases.forEach(db => cosmosDbs.push({ db, account: databaseAccounts[i] }));
       }
     }
 
@@ -125,9 +116,7 @@ export class CosmosDbApiService {
         `rg=${resourceGroup}`,
         `dba=${name}`,
       ];
-      const proxyUrl = `https://main.documentdb.ext.azure.com/api/RuntimeProxy?${params.join(
-        '&'
-      )}`;
+      const proxyUrl = `https://main.documentdb.ext.azure.com/api/RuntimeProxy?${params.join('&')}`;
       return fetch(proxyUrl, req);
     });
 
@@ -165,20 +154,9 @@ function buildServiceModel(
   return service;
 }
 
-function getAuthorizationTokenUsingMasterKey(
-  masterKey: string = '',
-  resourceId: string = ''
-): string {
+function getAuthorizationTokenUsingMasterKey(masterKey: string = '', resourceId: string = ''): string {
   const key = Buffer.from(masterKey, 'base64');
-  const text =
-    'get\n' +
-    'dbs\n' +
-    resourceId +
-    '\n' +
-    new Date().toUTCString().toLowerCase() +
-    '\n' +
-    '' +
-    '\n';
+  const text = 'get\n' + 'dbs\n' + resourceId + '\n' + new Date().toUTCString().toLowerCase() + '\n' + '' + '\n';
 
   const body = Buffer.from(text);
   const signature = crypto

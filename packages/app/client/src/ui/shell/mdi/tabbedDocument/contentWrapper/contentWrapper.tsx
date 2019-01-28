@@ -37,17 +37,10 @@ import { connect } from 'react-redux';
 
 import * as Constants from '../../../../../constants';
 import * as EditorActions from '../../../../../data/action/editorActions';
-import {
-  getTabGroupForDocument,
-  tabGroupHasDocuments,
-} from '../../../../../data/editorHelpers';
+import { getTabGroupForDocument, tabGroupHasDocuments } from '../../../../../data/editorHelpers';
 import { Editor } from '../../../../../data/reducer/editor';
 import { RootState } from '../../../../../data/store';
-import {
-  ContentOverlay,
-  LeftContentOverlay,
-  RightContentOverlay,
-} from '../index';
+import { ContentOverlay, LeftContentOverlay, RightContentOverlay } from '../index';
 
 import * as styles from './contentWrapper.scss';
 
@@ -64,10 +57,7 @@ interface TabbedDocumentContentState {
   owningEditor: string;
 }
 
-class TabbedDocumentContentWrapperComponent extends Component<
-  TabbedDocumentContentProps,
-  TabbedDocumentContentState
-> {
+class TabbedDocumentContentWrapperComponent extends Component<TabbedDocumentContentProps, TabbedDocumentContentState> {
   constructor(props: TabbedDocumentContentProps) {
     super(props);
 
@@ -78,8 +68,7 @@ class TabbedDocumentContentWrapperComponent extends Component<
 
   public render() {
     const onlyOneEditorActive =
-      tabGroupHasDocuments(this.props.primaryEditor) &&
-      !tabGroupHasDocuments(this.props.secondaryEditor);
+      tabGroupHasDocuments(this.props.primaryEditor) && !tabGroupHasDocuments(this.props.secondaryEditor);
 
     const splittingEnabled =
       onlyOneEditorActive &&
@@ -87,11 +76,7 @@ class TabbedDocumentContentWrapperComponent extends Component<
       Object.keys(this.props.primaryEditor.documents).length > 1;
 
     return (
-      <div
-        className={styles.contentWrapper}
-        hidden={this.props.hidden}
-        onClickCapture={this.onClick}
-      >
+      <div className={styles.contentWrapper} hidden={this.props.hidden} onClickCapture={this.onClick}>
         {this.props.children}
         <ContentOverlay documentId={this.props.documentId} />
         {splittingEnabled ? (
@@ -125,8 +110,7 @@ const mapStateToProps = (state: RootState): TabbedDocumentContentProps => ({
 });
 
 const mapDispatchToProps = (dispatch): TabbedDocumentContentProps => ({
-  setActiveEditor: (editor: string) =>
-    dispatch(EditorActions.setActiveEditor(editor)),
+  setActiveEditor: (editor: string) => dispatch(EditorActions.setActiveEditor(editor)),
 });
 
 export const TabbedDocumentContentWrapper = connect(

@@ -90,9 +90,7 @@ describe('BotConfigWithPathTypes tests', () => {
         extraneousProp: true,
       };
 
-      const constructedBotConfig = BotConfigWithPathImpl.fromJSON(
-        botConfigVariable
-      );
+      const constructedBotConfig = BotConfigWithPathImpl.fromJSON(botConfigVariable);
 
       expect(constructedBotConfig.name).toBe('someBotName');
       expect(constructedBotConfig.description).toBe('some bot description');

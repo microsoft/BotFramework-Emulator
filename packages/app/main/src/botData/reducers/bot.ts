@@ -32,11 +32,7 @@
 //
 
 import { BotInfo } from '@bfemulator/app-shared';
-import {
-  applyBotConfigOverrides,
-  BotConfigWithPath,
-  botsAreTheSame,
-} from '@bfemulator/sdk-shared';
+import { applyBotConfigOverrides, BotConfigWithPath, botsAreTheSame } from '@bfemulator/sdk-shared';
 
 import { BotAction, BotActions } from '../actions/botActions';
 
@@ -52,10 +48,7 @@ const DEFAULT_STATE: BotState = {
   currentBotDirectory: '',
 };
 
-export const bot = (
-  state: BotState = DEFAULT_STATE,
-  action: BotAction
-): BotState => {
+export const bot = (state: BotState = DEFAULT_STATE, action: BotAction): BotState => {
   switch (action.type) {
     case BotActions.load: {
       state = setBotFilesState(action.payload.bots, state);
@@ -64,21 +57,14 @@ export const bot = (
 
     case BotActions.setActive: {
       // move active bot up to the top of the recent bots list
-      const mostRecentBot = state.botFiles.find(
-        bot2 => bot2 && bot2.path === action.payload.bot.path
-      );
-      const recentBots = state.botFiles.filter(
-        bot3 => bot3 && bot3.path !== action.payload.bot.path
-      );
+      const mostRecentBot = state.botFiles.find(bot2 => bot2 && bot2.path === action.payload.bot.path);
+      const recentBots = state.botFiles.filter(bot3 => bot3 && bot3.path !== action.payload.bot.path);
       if (mostRecentBot) {
         recentBots.unshift(mostRecentBot);
       }
       let newActiveBot = action.payload.bot;
       if (botsAreTheSame(state.activeBot, newActiveBot)) {
-        newActiveBot = applyBotConfigOverrides(
-          newActiveBot,
-          state.activeBot.overrides
-        );
+        newActiveBot = applyBotConfigOverrides(newActiveBot, state.activeBot.overrides);
       }
       state = setBotFilesState(recentBots, state);
       state = setActiveBot(newActiveBot, state);
@@ -119,10 +105,7 @@ function setBotFilesState(botFilesState: BotInfo[], state: BotState): BotState {
   return newState;
 }
 
-function setCurrentBotDirectory(
-  botDirectory: string,
-  state: BotState
-): BotState {
+function setCurrentBotDirectory(botDirectory: string, state: BotState): BotState {
   const newState = { ...state };
 
   newState.currentBotDirectory = botDirectory;

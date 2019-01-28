@@ -44,10 +44,7 @@ export const initialState: ThemeState = {
   themeComponents: [],
 };
 
-export function theme(
-  state: ThemeState = initialState,
-  action: ThemeAction<SwitchThemePayload>
-): ThemeState {
+export function theme(state: ThemeState = initialState, action: ThemeAction<SwitchThemePayload>): ThemeState {
   switch (action.type) {
     case 'switchTheme':
       return { ...state, ...action.payload };

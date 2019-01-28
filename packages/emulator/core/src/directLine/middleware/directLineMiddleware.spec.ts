@@ -33,6 +33,7 @@
 /* eslint-disable typescript/camelcase */
 import * as HttpStatus from 'http-status-codes';
 import { ConversationParameters } from '@bfemulator/sdk-shared';
+
 import { BotEmulator } from '../../botEmulator';
 import Conversation from '../../facility/conversation';
 import BotEndpoint from '../../facility/botEndpoint';
@@ -240,8 +241,7 @@ describe('The directLine middleware', () => {
                         {
                           type: 'TextBlock',
                           size: 'Medium',
-                          text:
-                            "Hello, I'm the Cafe bot! How can I be of help today?",
+                          text: "Hello, I'm the Cafe bot! How can I be of help today?",
                           wrap: true,
                         },
                       ],
@@ -253,8 +253,7 @@ describe('The directLine middleware', () => {
                         {
                           type: 'Image',
                           horizontalAlignment: 'center',
-                          url:
-                            'http://contosocafeontheweb.azurewebsites.net/assets/contoso_logo_black.png',
+                          url: 'http://contosocafeontheweb.azurewebsites.net/assets/contoso_logo_black.png',
                           size: 'medium',
                         },
                       ],
@@ -403,20 +402,10 @@ describe('The directLine middleware', () => {
   describe('when starting a new conversation', () => {
     it('should create a new conversation if one does not already exist', async () => {
       const req = {
-        header: () =>
-          'bm90aGluZw.eyJjb252ZXJzYXRpb25JZCI6InRyYW5zY3JpcHQtMDA3In0=.7gjdshgfdsk98458205jfds9843fjds',
-        botEndpoint: new BotEndpoint(
-          '12',
-          '456',
-          'http://localhost:12345',
-          '',
-          '',
-          false,
-          '',
-          {
-            fetch: async () => true,
-          }
-        ),
+        header: () => 'bm90aGluZw.eyJjb252ZXJzYXRpb25JZCI6InRyYW5zY3JpcHQtMDA3In0=.7gjdshgfdsk98458205jfds9843fjds',
+        botEndpoint: new BotEndpoint('12', '456', 'http://localhost:12345', '', '', false, '', {
+          fetch: async () => true,
+        }),
         conversation: null,
       };
       const jsonSpy = jest.spyOn(res, 'json');
@@ -435,18 +424,9 @@ describe('The directLine middleware', () => {
       const conversation = createConversationUtil(emulator);
       const req = {
         header: () => 'Bearer eyJjb252ZXJzYXRpb25JZCI6InRyYW5zY3JpcHQtMDA3In0=',
-        botEndpoint: new BotEndpoint(
-          '456',
-          '1234',
-          'http://localhost:12345',
-          '',
-          '',
-          false,
-          '',
-          {
-            fetch: async () => true,
-          }
-        ),
+        botEndpoint: new BotEndpoint('456', '1234', 'http://localhost:12345', '', '', false, '', {
+          fetch: async () => true,
+        }),
         conversation: null,
       };
       const jsonSpy = jest.spyOn(res, 'json');
@@ -497,29 +477,17 @@ describe('The directLine middleware', () => {
   });
 });
 
-function createConversationUtil(
-  emulator: BotEmulator,
-  conversationId: string = 'transcript-007'
-): Conversation {
+function createConversationUtil(emulator: BotEmulator, conversationId: string = 'transcript-007'): Conversation {
   // create the conversation with an activity
   const bot = { role: 'bot', name: 'thebot', id: '456' };
   const req: any = {
-    botEndpoint: new BotEndpoint(
-      '12',
-      '456',
-      'http://localhost:12345',
-      '',
-      '',
-      false,
-      '',
-      {
-        fetch: async () => ({
-          json: async () => ({}),
-          text: async () => 'hello',
-          status: 200,
-        }),
-      }
-    ),
+    botEndpoint: new BotEndpoint('12', '456', 'http://localhost:12345', '', '', false, '', {
+      fetch: async () => ({
+        json: async () => ({}),
+        text: async () => 'hello',
+        status: 200,
+      }),
+    }),
     body: {
       members: [{ id: '456', name: 'emulator', role: 'user' }],
       bot,
@@ -529,11 +497,7 @@ function createConversationUtil(
   const createConversationMiddleware = createConversation.bind({
     botId: bot.id,
   })(emulator);
-  createConversationMiddleware(
-    req as any,
-    { send: () => null, end: () => null },
-    (() => null) as any
-  );
+  createConversationMiddleware(req as any, { send: () => null, end: () => null }, (() => null) as any);
 
   return emulator.facilities.conversations.conversationById(conversationId);
 }

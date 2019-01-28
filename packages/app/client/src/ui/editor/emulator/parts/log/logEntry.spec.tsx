@@ -109,11 +109,7 @@ describe('logEntry component', () => {
   it('should render a timestamped log entry with multiple items', () => {
     const entry = {
       timestamp: new Date(2018, 1, 1, 12, 34, 56).getTime(),
-      items: [
-        textItem(LogLevel.Debug, 'item1'),
-        textItem(LogLevel.Debug, 'item2'),
-        textItem(LogLevel.Debug, 'item3'),
-      ],
+      items: [textItem(LogLevel.Debug, 'item1'), textItem(LogLevel.Debug, 'item2'), textItem(LogLevel.Debug, 'item3')],
     };
     wrapper = mount(<LogEntry {...props} />);
     wrapper.setProps({ entry });
@@ -150,9 +146,7 @@ describe('logEntry component', () => {
     instance.inspect(mockInspectableObj);
 
     expect(mockNext).toHaveBeenCalledWith({ showInInspector: true });
-    expect(mockDispatch).toHaveBeenCalledWith(
-      setInspectorObjects('someDocId', mockInspectableObj)
-    );
+    expect(mockDispatch).toHaveBeenCalledWith(setInspectorObjects('someDocId', mockInspectableObj));
   });
 
   it('should inspect and highlight an object', () => {
@@ -164,21 +158,13 @@ describe('logEntry component', () => {
       showInInspector: true,
     });
     expect(mockRemoteCallsMade).toHaveLength(1);
-    expect(mockRemoteCallsMade[0].commandName).toBe(
-      SharedConstants.Commands.Telemetry.TrackEvent
-    );
-    expect(mockRemoteCallsMade[0].args).toEqual([
-      'log_inspectActivity',
-      { type: 'message' },
-    ]);
+    expect(mockRemoteCallsMade[0].commandName).toBe(SharedConstants.Commands.Telemetry.TrackEvent);
+    expect(mockRemoteCallsMade[0].args).toEqual(['log_inspectActivity', { type: 'message' }]);
 
     mockInspectableObj.type = undefined;
     instance.inspectAndHighlightInWebchat(mockInspectableObj);
 
-    expect(mockRemoteCallsMade[1].args).toEqual([
-      'log_inspectActivity',
-      { type: '' },
-    ]);
+    expect(mockRemoteCallsMade[1].args).toEqual(['log_inspectActivity', { type: '' }]);
   });
 
   it('should highlight an object', () => {
@@ -248,10 +234,7 @@ describe('logEntry component', () => {
   it('should render an exception item', () => {
     wrapper = mount(<LogEntry {...props} />);
     instance = wrapper.instance();
-    const exceptionItem = instance.renderItem(
-      { type: 'exception', payload: { err: 'some error' } },
-      'someKey'
-    );
+    const exceptionItem = instance.renderItem({ type: 'exception', payload: { err: 'some error' } }, 'someKey');
     expect(exceptionItem).not.toBeNull();
   });
 
@@ -310,10 +293,7 @@ describe('logEntry component', () => {
   it('should render an ngrok expiration item', () => {
     wrapper = mount(<LogEntry {...props} />);
     instance = wrapper.instance();
-    const ngrokitem = instance.renderItem(
-      { type: 'ngrok-expiration', payload: { text: 'some text' } },
-      'someKey'
-    );
+    const ngrokitem = instance.renderItem({ type: 'ngrok-expiration', payload: { text: 'some text' } }, 'someKey');
     expect(ngrokitem).not.toBeNull();
   });
 });

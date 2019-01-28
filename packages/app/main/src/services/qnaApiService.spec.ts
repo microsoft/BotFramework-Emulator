@@ -33,8 +33,7 @@
 import '../fetchProxy';
 import { QnaApiService } from './qnaApiService';
 
-const mockArmToken =
-  'bm90aGluZw.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds';
+const mockArmToken = 'bm90aGluZw.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds';
 const mockResponsesTemplate = [
   {
     value: [
@@ -164,9 +163,7 @@ jest.mock('node-fetch', () => {
 
 describe('The QnaApiService happy path', () => {
   let result;
-  beforeAll(
-    () => (mockResponses = JSON.parse(JSON.stringify(mockResponsesTemplate)))
-  );
+  beforeAll(() => (mockResponses = JSON.parse(JSON.stringify(mockResponsesTemplate))));
   beforeEach(async () => {
     mockArgsPassedToFetch.length = 0;
     result = await getResult();
@@ -180,8 +177,7 @@ describe('The QnaApiService happy path', () => {
         headers: {
           'x-ms-date': jasmine.any(String),
           Accept: 'application/json, text/plain, */*',
-          Authorization:
-            'Bearer bm90aGluZw.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds',
+          Authorization: 'Bearer bm90aGluZw.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds',
         },
       },
       url: 'https://management.azure.com/subscriptions?api-version=2018-07-01',
@@ -192,8 +188,7 @@ describe('The QnaApiService happy path', () => {
         headers: {
           'x-ms-date': jasmine.any(String),
           Accept: 'application/json, text/plain, */*',
-          Authorization:
-            'Bearer bm90aGluZw.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds',
+          Authorization: 'Bearer bm90aGluZw.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds',
         },
       },
       url:
@@ -206,8 +201,7 @@ describe('The QnaApiService happy path', () => {
         headers: {
           'x-ms-date': jasmine.any(String),
           Accept: 'application/json, text/plain, */*',
-          Authorization:
-            'Bearer bm90aGluZw.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds',
+          Authorization: 'Bearer bm90aGluZw.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds',
         },
       },
       url:
@@ -216,13 +210,11 @@ describe('The QnaApiService happy path', () => {
     });
 
     expect(mockArgsPassedToFetch[3]).toEqual({
-      url:
-        'https://management.azure.com//subscriptions/1234/listKeys?api-version=2017-04-18',
+      url: 'https://management.azure.com//subscriptions/1234/listKeys?api-version=2017-04-18',
       headers: {
         headers: {
           'x-ms-date': jasmine.any(String),
-          Authorization:
-            'Bearer bm90aGluZw.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds',
+          Authorization: 'Bearer bm90aGluZw.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds',
           Accept: 'application/json, text/plain, */*',
         },
         method: 'POST',
@@ -230,13 +222,11 @@ describe('The QnaApiService happy path', () => {
     });
 
     expect(mockArgsPassedToFetch[4]).toEqual({
-      url:
-        'https://management.azure.com//subscriptions/12324/listKeys?api-version=2017-04-18',
+      url: 'https://management.azure.com//subscriptions/12324/listKeys?api-version=2017-04-18',
       headers: {
         headers: {
           'x-ms-date': jasmine.any(String),
-          Authorization:
-            'Bearer bm90aGluZw.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds',
+          Authorization: 'Bearer bm90aGluZw.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds',
           Accept: 'application/json, text/plain, */*',
         },
         method: 'POST',
@@ -244,8 +234,7 @@ describe('The QnaApiService happy path', () => {
     });
 
     expect(mockArgsPassedToFetch[5]).toEqual({
-      url:
-        'https://westus.api.cognitive.microsoft.com/qnamaker/v4.0/knowledgebases/',
+      url: 'https://westus.api.cognitive.microsoft.com/qnamaker/v4.0/knowledgebases/',
       headers: {
         headers: {
           'Ocp-Apim-Subscription-Key': 5555,
@@ -255,8 +244,7 @@ describe('The QnaApiService happy path', () => {
     });
 
     expect(mockArgsPassedToFetch[6]).toEqual({
-      url:
-        'https://westus.api.cognitive.microsoft.com/qnamaker/v4.0/knowledgebases/',
+      url: 'https://westus.api.cognitive.microsoft.com/qnamaker/v4.0/knowledgebases/',
       headers: {
         headers: {
           'Ocp-Apim-Subscription-Key': 4444,
@@ -268,9 +256,7 @@ describe('The QnaApiService happy path', () => {
 });
 
 describe('The QnAMakerApi sad path', () => {
-  beforeEach(
-    () => (mockResponses = JSON.parse(JSON.stringify(mockResponsesTemplate)))
-  );
+  beforeEach(() => (mockResponses = JSON.parse(JSON.stringify(mockResponsesTemplate))));
 
   it('should return an empty payload with an error if no subscriptions are found', async () => {
     mockResponses = [{ value: [] }, { value: [] }];

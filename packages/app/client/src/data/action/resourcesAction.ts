@@ -48,72 +48,56 @@ export interface ResourcesAction<T> extends Action {
   payload: T;
 }
 
-export function transcriptsUpdated(
-  payload: IFileService[]
-): ResourcesAction<IFileService[]> {
+export function transcriptsUpdated(payload: IFileService[]): ResourcesAction<IFileService[]> {
   return {
     type: TRANSCRIPTS_UPDATED,
     payload,
   };
 }
 
-export function transcriptDirectoryUpdated(
-  payload: string
-): ResourcesAction<string> {
+export function transcriptDirectoryUpdated(payload: string): ResourcesAction<string> {
   return {
     type: TRANSCRIPTS_DIRECTORY_UPDATED,
     payload,
   };
 }
 
-export function chatsDirectoryUpdated(
-  payload: string
-): ResourcesAction<string> {
+export function chatsDirectoryUpdated(payload: string): ResourcesAction<string> {
   return {
     type: CHATS_DIRECTORY_UPDATED,
     payload,
   };
 }
 
-export function chatFilesUpdated(
-  payload: IFileService[]
-): ResourcesAction<IFileService[]> {
+export function chatFilesUpdated(payload: IFileService[]): ResourcesAction<IFileService[]> {
   return {
     type: CHAT_FILES_UPDATED,
     payload,
   };
 }
 
-export function openContextMenuForResource(
-  payload: IFileService
-): ResourcesAction<IFileService> {
+export function openContextMenuForResource(payload: IFileService): ResourcesAction<IFileService> {
   return {
     type: OPEN_CONTEXT_MENU_FOR_RESOURCE,
     payload,
   };
 }
 
-export function editResource(
-  payload: IFileService
-): ResourcesAction<IFileService> {
+export function editResource(payload: IFileService): ResourcesAction<IFileService> {
   return {
     type: EDIT_RESOURCE,
     payload,
   };
 }
 
-export function renameResource(
-  payload: IFileService
-): ResourcesAction<IFileService> {
+export function renameResource(payload: IFileService): ResourcesAction<IFileService> {
   return {
     type: RENAME_RESOURCE,
     payload,
   };
 }
 
-export function openResource(
-  payload: IFileService
-): ResourcesAction<IFileService> {
+export function openResource(payload: IFileService): ResourcesAction<IFileService> {
   return {
     type: OPEN_RESOURCE,
     payload,
@@ -124,9 +108,7 @@ declare interface ResourceSettingsPayload {
   dialog: ComponentClass<any>;
 }
 
-export function openResourcesSettings(
-  payload: ResourceSettingsPayload
-): ResourcesAction<ResourceSettingsPayload> {
+export function openResourcesSettings(payload: ResourceSettingsPayload): ResourcesAction<ResourceSettingsPayload> {
   return {
     type: OPEN_RESOURCE_SETTINGS,
     payload,

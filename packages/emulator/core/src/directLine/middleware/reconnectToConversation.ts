@@ -41,11 +41,7 @@ import Conversation from '../../facility/conversation';
 export default function reconnectToConversation(botEmulator: BotEmulator) {
   const { logMessage } = botEmulator.facilities.logger;
 
-  return (
-    req: Restify.Request,
-    res: Restify.Response,
-    next: Restify.Next
-  ): any => {
+  return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     const conversation: Conversation = (req as any).conversation;
 
     if (conversation) {
@@ -60,10 +56,7 @@ export default function reconnectToConversation(botEmulator: BotEmulator) {
       res.send(HttpStatus.NOT_FOUND, 'conversation not found');
       logMessage(
         req.params.conversationId,
-        textItem(
-          LogLevel.Error,
-          'Cannot reconnect to conversation. Conversation not found.'
-        )
+        textItem(LogLevel.Error, 'Cannot reconnect to conversation. Conversation not found.')
       );
     }
 

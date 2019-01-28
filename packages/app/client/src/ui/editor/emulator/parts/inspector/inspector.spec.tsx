@@ -37,10 +37,7 @@ import * as React from 'react';
 import { Provider } from 'react-redux';
 import { combineReducers, createStore } from 'redux';
 
-import {
-  loadBotInfos,
-  setActiveBot,
-} from '../../../../../data/action/botActions';
+import { loadBotInfos, setActiveBot } from '../../../../../data/action/botActions';
 import { switchTheme } from '../../../../../data/action/themeActions';
 import { bot } from '../../../../../data/reducer/bot';
 import { clientAwareSettings } from '../../../../../data/reducer/clientAwareSettingsReducer';
@@ -51,10 +48,7 @@ import { LogService } from '../../../../../platform/log/logService';
 import { Inspector } from './inspector';
 import { InspectorContainer } from './inspectorContainer';
 
-const mockStore = createStore(
-  combineReducers({ theme, bot, clientAwareSettings }),
-  {}
-);
+const mockStore = createStore(combineReducers({ theme, bot, clientAwareSettings }), {});
 
 jest.mock('../../../panel/panel.scss', () => ({}));
 
@@ -324,10 +318,7 @@ describe('The Inspector component', () => {
 
   it('should send the initialization stack to the inspector when the dom is ready', () => {
     const instance = node.instance();
-    const instanceSpy = jest.spyOn(
-      instance,
-      'sendInitializationStackToInspector'
-    );
+    const instanceSpy = jest.spyOn(instance, 'sendInitializationStackToInspector');
     const event = { currentTarget: { removeEventListener: () => true } };
     const eventSpy = jest.spyOn(event.currentTarget, 'removeEventListener');
 
@@ -390,10 +381,7 @@ describe('The Inspector component', () => {
       const text = `[${inspectorName}] ${event.args[0]}`;
       instance.ipcMessageEventHandler(event);
 
-      expect(logSpy).toHaveBeenCalledWith(
-        mockState.document.documentId,
-        logEntry(textItem(LogLevel.Info, text))
-      );
+      expect(logSpy).toHaveBeenCalledWith(mockState.document.documentId, logEntry(textItem(LogLevel.Info, text)));
     });
 
     it('"track-event"', () => {

@@ -72,10 +72,7 @@ export class Migrator {
       app
         .getPath('userData')
         // %appdata%/botframework-emulator/botframework-emulator
-        .replace(
-          Path.join('@bfemulator', 'main'),
-          Path.join('botframework-emulator', 'botframework-emulator')
-        );
+        .replace(Path.join('@bfemulator', 'main'), Path.join('botframework-emulator', 'botframework-emulator'));
     // %appdata%/botframework-emulator/botframework-emulator/migration
     botFilesDirectory = Path.join(botFilesDirectory, 'migration');
 
@@ -113,9 +110,7 @@ export class Migrator {
           };
           recentBotsList.unshift(botInfo);
         } catch (err) {
-          throw new Error(
-            `Error while trying to populate bots list with migrated V3 bots: ${err}`
-          );
+          throw new Error(`Error while trying to populate bots list with migrated V3 bots: ${err}`);
         }
       }
 
@@ -123,15 +118,11 @@ export class Migrator {
       const { SyncBotList } = SharedConstants.Commands.Bot;
       const store = getStore();
       store.dispatch(BotActions.load(recentBotsList));
-      await mainWindow.commandService
-        .remoteCall(SyncBotList, recentBotsList)
-        .catch();
+      await mainWindow.commandService.remoteCall(SyncBotList, recentBotsList).catch();
 
       // show post-migration page
       const { ShowPostMigrationDialog } = SharedConstants.Commands.UI;
-      await mainWindow.commandService
-        .remoteCall(ShowPostMigrationDialog)
-        .catch();
+      await mainWindow.commandService.remoteCall(ShowPostMigrationDialog).catch();
       return true;
     }
     return false;
@@ -144,8 +135,6 @@ export class Migrator {
 
   /** Checks for the migration marker to determine if it has already been performed */
   private static async migrationHasBeenPerformed(): Promise<boolean> {
-    return Fs.pathExists(
-      Path.join(ensureStoragePath(), this._migrationMarkerName)
-    );
+    return Fs.pathExists(Path.join(ensureStoragePath(), this._migrationMarkerName));
   }
 }

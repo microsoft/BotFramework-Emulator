@@ -31,11 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import {
-  APIException,
-  ErrorCodes,
-  ErrorResponse,
-} from '@bfemulator/sdk-shared';
+import { APIException, ErrorCodes, ErrorResponse } from '@bfemulator/sdk-shared';
 import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 

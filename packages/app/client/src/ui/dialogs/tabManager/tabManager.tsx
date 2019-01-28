@@ -49,10 +49,7 @@ export interface TabManagerState {
   showing: boolean;
 }
 
-export class TabManager extends React.Component<
-  TabManagerProps,
-  TabManagerState
-> {
+export class TabManager extends React.Component<TabManagerProps, TabManagerState> {
   private tabRefs: HTMLLIElement[] = [];
 
   constructor(props: TabManagerProps) {
@@ -85,15 +82,9 @@ export class TabManager extends React.Component<
           {this.props.recentTabs.map((tabId, index) => {
             // TODO: Come up with a simple way to retrieve document
             // name from store using documentId
-            const tabClassName =
-              index === this.state.selectedIndex ? styles.selectedTab : '';
+            const tabClassName = index === this.state.selectedIndex ? styles.selectedTab : '';
             return (
-              <li
-                className={tabClassName}
-                ref={x => this.saveTabRef(x, index)}
-                key={tabId}
-                tabIndex={0}
-              >
+              <li className={tabClassName} ref={x => this.saveTabRef(x, index)} key={tabId} tabIndex={0}>
                 {tabId}
               </li>
             );
@@ -159,9 +150,7 @@ export class TabManager extends React.Component<
       case 'Control':
         if (this.state.showing) {
           this.setState({ controlIsPressed: false, showing: false });
-          this.props.setActiveTab(
-            this.props.recentTabs[this.state.selectedIndex]
-          );
+          this.props.setActiveTab(this.props.recentTabs[this.state.selectedIndex]);
         } else {
           this.setState({ controlIsPressed: false });
         }
@@ -177,14 +166,10 @@ export class TabManager extends React.Component<
   };
 
   private moveIndexDown() {
-    return this.state.selectedIndex === this.props.recentTabs.length - 1
-      ? 0
-      : this.state.selectedIndex + 1;
+    return this.state.selectedIndex === this.props.recentTabs.length - 1 ? 0 : this.state.selectedIndex + 1;
   }
 
   private moveIndexUp() {
-    return this.state.selectedIndex === 0
-      ? this.props.recentTabs.length - 1
-      : this.state.selectedIndex - 1;
+    return this.state.selectedIndex === 0 ? this.props.recentTabs.length - 1 : this.state.selectedIndex - 1;
   }
 }

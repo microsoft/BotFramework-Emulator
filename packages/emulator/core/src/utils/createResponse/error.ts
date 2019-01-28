@@ -33,10 +33,7 @@
 
 import { ErrorResponse } from '@bfemulator/sdk-shared';
 
-export default function createErrorResponse(
-  code: string,
-  message: string
-): ErrorResponse {
+export default function createErrorResponse(code: string, message: string): ErrorResponse {
   return {
     error: {
       code,

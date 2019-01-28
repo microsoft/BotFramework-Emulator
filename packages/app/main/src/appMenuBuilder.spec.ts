@@ -42,11 +42,7 @@ jest.mock('./settingsData/store', () => ({
     getState: () => ({
       azure: { signedInUser: 'TheAmazingAuthLad@hotmail.com' },
       windowState: {
-        availableThemes: [
-          { name: 'light' },
-          { name: 'dark' },
-          { name: 'midnight' },
-        ],
+        availableThemes: [{ name: 'light' }, { name: 'dark' }, { name: 'midnight' }],
         theme: 'midnight',
       },
     }),
@@ -118,37 +114,25 @@ jest.mock('./main', () => ({
 describe('AppMenuBuilder', () => {
   const mockSendActivityMenu = {
     submenu: {
-      items: [
-        { label: 'userAdded' },
-        { label: 'userRemoved' },
-        { label: 'typing' },
-      ],
+      items: [{ label: 'userAdded' }, { label: 'userRemoved' }, { label: 'typing' }],
     },
   };
   const mockRecentBotsMenuClear = jest.fn(() => null);
   let mockAppendedBots;
-  const mockRecentBotsMenuAppend = jest.fn(botItem =>
-    mockAppendedBots.push(botItem)
-  );
+  const mockRecentBotsMenuAppend = jest.fn(botItem => mockAppendedBots.push(botItem));
   const mockRecentBotsMenu = {
     enabled: false,
     submenu: {
       append: mockRecentBotsMenuAppend,
       clear: mockRecentBotsMenuClear,
-      items: [
-        { label: 'localhost:3978' },
-        { label: 'echo-bot' },
-        { label: 'TestBotV4' },
-      ],
+      items: [{ label: 'localhost:3978' }, { label: 'echo-bot' }, { label: 'TestBotV4' }],
     },
   };
   const mockAutoUpdateRestartMenuItem = { visible: false };
   const mockAutoUpdateCheckMenuItem = { visible: false };
   const mockAutoUpdateDownloadingMenuItem = { visible: false };
   let appendedFileMenuItems;
-  const mockFileMenuAppend = jest.fn(fileMenuItem =>
-    appendedFileMenuItems.push(fileMenuItem)
-  );
+  const mockFileMenuAppend = jest.fn(fileMenuItem => appendedFileMenuItems.push(fileMenuItem));
   const mockFileMenuClear = jest.fn(() => null);
   const mockFileMenu = {
     submenu: {
@@ -202,9 +186,7 @@ describe('AppMenuBuilder', () => {
   });
 
   it('should get the send activity menu items', () => {
-    expect(AppMenuBuilder.sendActivityMenuItems).toEqual(
-      mockSendActivityMenu.submenu.items
-    );
+    expect(AppMenuBuilder.sendActivityMenuItems).toEqual(mockSendActivityMenu.submenu.items);
     expect(mockGetMenuItemById).toHaveBeenCalledWith('send-activity');
 
     // shouldn't return anything if menu is falsy
@@ -213,9 +195,7 @@ describe('AppMenuBuilder', () => {
   });
 
   it('should get the recent bots menu items', () => {
-    expect(AppMenuBuilder.recentBotsMenuItems).toEqual(
-      mockRecentBotsMenu.submenu.items
-    );
+    expect(AppMenuBuilder.recentBotsMenuItems).toEqual(mockRecentBotsMenu.submenu.items);
     expect(mockGetMenuItemById).toHaveBeenCalledWith('recent-bots');
 
     // shouldn't return anything if menu is falsy
@@ -264,18 +244,13 @@ describe('AppMenuBuilder', () => {
     AppMenuBuilder.updateRecentBotsList(mockRecentBots);
 
     expect(mockRecentBotsMenuClear).toHaveBeenCalled();
-    expect(mockRecentBotsMenuAppend).toHaveBeenCalledTimes(
-      mockRecentBots.length
-    );
+    expect(mockRecentBotsMenuAppend).toHaveBeenCalledTimes(mockRecentBots.length);
     expect(mockAppendedBots.some(bot => bot.label === 'bot1')).toBe(true);
     expect(mockAppendedBots.some(bot => bot.label === 'bot2')).toBe(true);
     expect(mockAppendedBots.some(bot => bot.label === 'bot3')).toBe(true);
     const botWithPath = mockAppendedBots.find(bot => bot.label === 'bot1');
     botWithPath.click();
-    expect(mockRemoteCall).toHaveBeenCalledWith(
-      SharedConstants.Commands.Bot.Switch,
-      mockBotPath
-    );
+    expect(mockRemoteCall).toHaveBeenCalledWith(SharedConstants.Commands.Bot.Switch, mockBotPath);
     expect(mockRecentBotsMenu.enabled).toBe(true);
   });
 
@@ -289,15 +264,9 @@ describe('AppMenuBuilder', () => {
 
     // should copy over the previous "Recent Bots" menu items
     expect(mockMenuClassAppend).toHaveBeenCalledTimes(3);
-    expect(mockMenuClassAppend).toHaveBeenCalledWith(
-      mockRecentBotsMenu.submenu.items[0]
-    );
-    expect(mockMenuClassAppend).toHaveBeenCalledWith(
-      mockRecentBotsMenu.submenu.items[1]
-    );
-    expect(mockMenuClassAppend).toHaveBeenCalledWith(
-      mockRecentBotsMenu.submenu.items[2]
-    );
+    expect(mockMenuClassAppend).toHaveBeenCalledWith(mockRecentBotsMenu.submenu.items[0]);
+    expect(mockMenuClassAppend).toHaveBeenCalledWith(mockRecentBotsMenu.submenu.items[1]);
+    expect(mockMenuClassAppend).toHaveBeenCalledWith(mockRecentBotsMenu.submenu.items[2]);
 
     // build the new file menu and copy all the items over
     expect(mockBuildFromTemplate).toHaveBeenCalledTimes(1);
@@ -331,8 +300,7 @@ describe('AppMenuBuilder', () => {
             activeDocumentId: 'someDocId',
             documents: {
               someDocId: {
-                contentType:
-                  SharedConstants.ContentTypes.CONTENT_TYPE_LIVE_CHAT,
+                contentType: SharedConstants.ContentTypes.CONTENT_TYPE_LIVE_CHAT,
               },
             },
           },
@@ -357,9 +325,7 @@ describe('AppMenuBuilder', () => {
 
     // should show the currently signed in user
     const azureSignInItem = fileMenuTemplate[9];
-    expect(azureSignInItem.label).toBe(
-      'Sign out (TheAmazingAuthLad@hotmail.com)'
-    );
+    expect(azureSignInItem.label).toBe('Sign out (TheAmazingAuthLad@hotmail.com)');
 
     // should list all available themes and selected theme (midnight) as checked
     const themeMenu = fileMenuTemplate[11];
@@ -408,8 +374,7 @@ describe('AppMenuBuilder', () => {
             activeDocumentId: 'someDocId',
             documents: {
               someDocId: {
-                contentType:
-                  SharedConstants.ContentTypes.CONTENT_TYPE_LIVE_CHAT,
+                contentType: SharedConstants.ContentTypes.CONTENT_TYPE_LIVE_CHAT,
               },
             },
           },

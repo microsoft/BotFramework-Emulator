@@ -32,10 +32,7 @@
 //
 /* eslint-disable typescript/camelcase */
 
-import {
-  azureArmTokenDataChanged,
-  invalidateArmToken,
-} from '../action/azureAuthActions';
+import { azureArmTokenDataChanged, invalidateArmToken } from '../action/azureAuthActions';
 
 import { azureAuth, AzureAuthState } from './azureAuthReducer';
 

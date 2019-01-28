@@ -38,10 +38,7 @@ import { DialogService } from '../service';
 
 import { AzureLoginFailedDialog } from './azureLoginFailedDialog';
 
-const mapStateToProps = (
-  state: RootState,
-  ownProps: { [propName: string]: any }
-) => {
+const mapStateToProps = (state: RootState, ownProps: { [propName: string]: any }) => {
   return {
     ...ownProps,
   };

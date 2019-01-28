@@ -102,9 +102,7 @@ describe('#globalHandlers', () => {
 
   it('should send a notification if a command fails', async () => {
     const event = new KeyboardEvent('keydown', { ctrlKey: true, key: 'N' });
-    const spy = jest
-      .spyOn(CommandServiceImpl, 'call')
-      .mockRejectedValueOnce('oh noes!');
+    const spy = jest.spyOn(CommandServiceImpl, 'call').mockRejectedValueOnce('oh noes!');
 
     await globalHandlers(event);
     expect(spy).toHaveBeenLastCalledWith('notification:add', {

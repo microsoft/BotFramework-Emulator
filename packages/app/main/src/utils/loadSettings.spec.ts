@@ -92,9 +92,7 @@ describe('the loadSettings utility', () => {
     const settings = loadSettings('pathToFile', mockSettings);
     expect(settings.users).not.toBeUndefined();
     expect(settings.users.currentUserId).not.toBe('default-user');
-    expect(Object.keys(settings.users.usersById)[0]).toBe(
-      settings.users.currentUserId
-    );
+    expect(Object.keys(settings.users.usersById)[0]).toBe(settings.users.currentUserId);
   });
 
   it('should convert users with an ID of "default-user" to use a uuid instead', () => {
@@ -109,8 +107,6 @@ describe('the loadSettings utility', () => {
     };
     const settings = loadSettings('pathToFile', mockSettings);
     expect(settings.users.currentUserId).not.toBe('default-user');
-    expect(Object.keys(settings.users.usersById)[0]).toBe(
-      settings.users.currentUserId
-    );
+    expect(Object.keys(settings.users.usersById)[0]).toBe(settings.users.currentUserId);
   });
 });

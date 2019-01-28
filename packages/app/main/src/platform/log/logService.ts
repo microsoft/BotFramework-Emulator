@@ -32,12 +32,7 @@
 //
 
 import { SharedConstants } from '@bfemulator/app-shared';
-import {
-  DisposableImpl,
-  ILogItem,
-  LogService as ILogService,
-  logEntry,
-} from '@bfemulator/sdk-shared';
+import { DisposableImpl, ILogItem, LogService as ILogService, logEntry } from '@bfemulator/sdk-shared';
 
 import { Window } from '../window';
 

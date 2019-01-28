@@ -41,11 +41,7 @@ import sendErrorResponse from '../../utils/sendErrorResponse';
 import { ConversationAware } from './fetchConversation';
 
 export default function addUsers(_botEmulator: BotEmulator) {
-  return async (
-    req: ConversationAware,
-    res: Restify.Response,
-    next: Restify.Next
-  ): Promise<any> => {
+  return async (req: ConversationAware, res: Restify.Response, next: Restify.Next): Promise<any> => {
     try {
       const members: ChannelAccount[] = JSON.parse(req.body || '[]');
       const it = members[Symbol.iterator](); // Node does not support array.values() :(

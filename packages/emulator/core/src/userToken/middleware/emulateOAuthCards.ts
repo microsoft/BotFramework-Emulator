@@ -39,11 +39,7 @@ import OAuthLinkEncoder from '../../utils/oauthLinkEncoder';
 import sendErrorResponse from '../../utils/sendErrorResponse';
 
 export default function emulateOAuthCards(botEmulator: BotEmulator) {
-  return (
-    req: Restify.Request,
-    res: Restify.Response,
-    next: Restify.Next
-  ): any => {
+  return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     try {
       const emulate: string = req.params.emulate;
       if (emulate) {

@@ -36,14 +36,9 @@ import { connect } from 'react-redux';
 import { RootState } from '../../../data/store';
 import { DialogService } from '../service';
 
-import {
-  GetStartedWithCSDialog,
-  GetStartedWithCSDialogProps,
-} from './getStartedWithCSDialog';
+import { GetStartedWithCSDialog, GetStartedWithCSDialogProps } from './getStartedWithCSDialog';
 
-const mapDispatchToProps = (
-  _dispatch: () => void
-): GetStartedWithCSDialogProps => ({
+const mapDispatchToProps = (_dispatch: () => void): GetStartedWithCSDialogProps => ({
   cancel: () => DialogService.hideDialog(0),
   confirm: () => DialogService.hideDialog(1),
   launchConnectedServiceEditor: () => {

@@ -33,8 +33,7 @@
 import '../fetchProxy';
 import { LuisApi } from './luisApiService';
 
-const mockArmToken =
-  'bm90aGluZw.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds';
+const mockArmToken = 'bm90aGluZw.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds';
 const mockReq: RequestInit = {
   headers: { Authorization: `Bearer ${mockArmToken}` },
 };
@@ -124,15 +123,13 @@ describe('The LuisApiService class', () => {
       url: 'https://api.luis.ai/api/v2.0/bots/programmatickey',
       headers: {
         headers: {
-          Authorization:
-            'Bearer bm90aGluZw.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds',
+          Authorization: 'Bearer bm90aGluZw.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds',
         },
       },
     });
 
     expect(mockArgsPassedToFetch[1]).toEqual({
-      url:
-        'https://australiaeast.api.cognitive.microsoft.com/luis/api/v2.0/apps/',
+      url: 'https://australiaeast.api.cognitive.microsoft.com/luis/api/v2.0/apps/',
       headers: jasmine.any(Object),
     });
 

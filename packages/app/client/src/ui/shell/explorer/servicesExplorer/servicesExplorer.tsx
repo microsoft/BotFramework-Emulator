@@ -31,10 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import {
-  IConnectedService,
-  ServiceTypes,
-} from 'botframework-config/lib/schema';
+import { IConnectedService, ServiceTypes } from 'botframework-config/lib/schema';
 import * as React from 'react';
 import { MouseEventHandler, SyntheticEvent } from 'react';
 
@@ -89,10 +86,7 @@ export class ServicesExplorer extends ServicePane<ServicesExplorerProps> {
     if (newServices.length > services.length) {
       state.expanded = true;
       state.toAnimate = {};
-      const servicesMap = services.reduce(
-        (map, service) => ((map[service.id] = true), map),
-        {}
-      );
+      const servicesMap = services.reduce((map, service) => ((map[service.id] = true), map), {});
       newServices.forEach(service => {
         if (!servicesMap[service.id]) {
           state.toAnimate[service.id] = true;
@@ -118,21 +112,12 @@ export class ServicesExplorer extends ServicePane<ServicesExplorerProps> {
       <div>
         <p className={styles.emptyContent}>
           {'You can connect your bot to services such as '}
-          <a href="https://aka.ms/bot-framework-emulator-LUIS-docs-home">
-            {'Language Understanding (LUIS), '}
-          </a>
-          <a href="https://aka.ms/bot-framework-emulator-qna-docs-home">
-            {'QnA Maker, '}
-          </a>{' '}
-          {'and '}
-          <a href="https://aka.ms/bot-framework-emulator-create-dispatch">
-            Dispatch.
-          </a>
+          <a href="https://aka.ms/bot-framework-emulator-LUIS-docs-home">{'Language Understanding (LUIS), '}</a>
+          <a href="https://aka.ms/bot-framework-emulator-qna-docs-home">{'QnA Maker, '}</a> {'and '}
+          <a href="https://aka.ms/bot-framework-emulator-create-dispatch">Dispatch.</a>
         </p>
         <p className={styles.emptyContent}>
-          <a href="https://aka.ms/bot-framework-emulator-services">
-            Learn more about using services.
-          </a>
+          <a href="https://aka.ms/bot-framework-emulator-services">Learn more about using services.</a>
         </p>
       </div>
     );
@@ -152,9 +137,7 @@ export class ServicesExplorer extends ServicePane<ServicesExplorerProps> {
       return (
         <li
           key={index}
-          className={`${styles.link} ${
-            toAnimate[service.id] ? styles.animateHighlight : ''
-          } `}
+          className={`${styles.link} ${toAnimate[service.id] ? styles.animateHighlight : ''} `}
           onDoubleClick={this.onLinkClick}
           onKeyPress={this.onKeyPress}
           data-index={index}
@@ -172,10 +155,7 @@ export class ServicesExplorer extends ServicePane<ServicesExplorerProps> {
     super.onContextMenuOverLiElement(li);
     const { index } = li.dataset;
     const { [+index]: connectedService } = this.props.services;
-    this.props.openContextMenuForService(
-      connectedService,
-      ConnectedServiceEditorContainer
-    );
+    this.props.openContextMenuForService(connectedService, ConnectedServiceEditorContainer);
   }
 
   protected onKeyPress = (e): void => {
@@ -184,9 +164,7 @@ export class ServicesExplorer extends ServicePane<ServicesExplorerProps> {
     }
   };
 
-  protected onLinkClick: MouseEventHandler<HTMLLIElement> = (
-    event: SyntheticEvent<HTMLLIElement>
-  ): void => {
+  protected onLinkClick: MouseEventHandler<HTMLLIElement> = (event: SyntheticEvent<HTMLLIElement>): void => {
     const { currentTarget } = event;
     const { index } = currentTarget.dataset;
     const { [+index]: connectedService } = this.props.services;
@@ -197,9 +175,7 @@ export class ServicesExplorer extends ServicePane<ServicesExplorerProps> {
     this.props.openSortContextMenu();
   };
 
-  protected onAddIconClick = (
-    _event: SyntheticEvent<HTMLButtonElement>
-  ): void => {
+  protected onAddIconClick = (_event: SyntheticEvent<HTMLButtonElement>): void => {
     this.props.openAddServiceContextMenu({
       azureAuthWorkflowComponents: {
         loginFailedDialog: AzureLoginFailedDialogContainer,

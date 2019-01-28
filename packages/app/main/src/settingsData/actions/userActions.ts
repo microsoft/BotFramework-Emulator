@@ -47,10 +47,7 @@ export interface UserPayload {
   users?: User[];
 }
 
-export declare type UserActionType =
-  | 'SET_CURRENT_USER'
-  | 'ADD_USERS'
-  | 'REMOVE_USERS';
+export declare type UserActionType = 'SET_CURRENT_USER' | 'ADD_USERS' | 'REMOVE_USERS';
 
 export function addUsers(users: User[]): UserAction<UserPayload> {
   return {

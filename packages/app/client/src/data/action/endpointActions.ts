@@ -34,8 +34,7 @@
 import { IEndpointService } from 'botframework-config/lib/schema';
 import { Action } from 'redux';
 
-export const OPEN_ENDPOINT_EXPLORER_CONTEXT_MENU =
-  'OPEN_ENDPOINT_EXPLORER_CONTEXT_MENU';
+export const OPEN_ENDPOINT_EXPLORER_CONTEXT_MENU = 'OPEN_ENDPOINT_EXPLORER_CONTEXT_MENU';
 
 export interface EndpointServiceAction<T> extends Action {
   payload: T;

@@ -32,13 +32,7 @@
 //
 
 import { BotInfo } from '@bfemulator/app-shared';
-import {
-  Column,
-  LargeHeader,
-  PrimaryButton,
-  Row,
-  SmallHeader,
-} from '@bfemulator/ui-react';
+import { Column, LargeHeader, PrimaryButton, Row, SmallHeader } from '@bfemulator/ui-react';
 import * as React from 'react';
 
 import { GenericDocument } from '../../layout';
@@ -86,26 +80,16 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
   private get startSection(): JSX.Element {
     return (
       <div className={styles.section}>
-        <SmallHeader className={styles.marginFix}>
-          Start by testing your bot
-        </SmallHeader>
+        <SmallHeader className={styles.marginFix}>Start by testing your bot</SmallHeader>
         <span>
-          Start talking to your bot by connecting to an endpoint or by opening a
-          bot saved locally.
+          Start talking to your bot by connecting to an endpoint or by opening a bot saved locally.
           <br />
-          <a
-            className={styles.ctaLink}
-            href="https://aka.ms/bot-framework-emulator-create-bot-locally"
-          >
+          <a className={styles.ctaLink} href="https://aka.ms/bot-framework-emulator-create-bot-locally">
             More about working locally with a bot.
           </a>
         </span>
         <Row>
-          <PrimaryButton
-            className={styles.openBot}
-            text="Open Bot"
-            onClick={this.onOpenBotClick}
-          />
+          <PrimaryButton className={styles.openBot} text="Open Bot" onClick={this.onOpenBotClick} />
         </Row>
         <span>
           If you don’t have a bot configuration,&nbsp;

@@ -47,48 +47,26 @@ import { call, ForkEffect, put, select, takeEvery } from 'redux-saga/effects';
 
 const getArmTokenFromState = (state: RootState) => state.azureAuth;
 
-export function* getArmToken(
-  action: AzureAuthAction<AzureAuthWorkflow>
-): IterableIterator<any> {
+export function* getArmToken(action: AzureAuthAction<AzureAuthWorkflow>): IterableIterator<any> {
   let azureAuth: AzureAuthState = yield select(getArmTokenFromState);
   if (azureAuth.access_token) {
     return azureAuth;
   }
-  const result = yield DialogService.showDialog(
-    action.payload.promptDialog,
-    action.payload.promptDialogProps
-  );
+  const result = yield DialogService.showDialog(action.payload.promptDialog, action.payload.promptDialogProps);
   if (result !== 1) {
     // Result must be 1 which is a confirmation to sign in to Azure
     return result;
   }
-  const {
-    RetrieveArmToken,
-    PersistAzureLoginChanged,
-  } = SharedConstants.Commands.Azure;
+  const { RetrieveArmToken, PersistAzureLoginChanged } = SharedConstants.Commands.Azure;
   const { TrackEvent } = SharedConstants.Commands.Telemetry;
-  azureAuth = yield call(
-    CommandServiceImpl.remoteCall.bind(CommandServiceImpl),
-    RetrieveArmToken
-  );
+  azureAuth = yield call(CommandServiceImpl.remoteCall.bind(CommandServiceImpl), RetrieveArmToken);
   if (azureAuth && !('error' in azureAuth)) {
-    const persistLogin = yield DialogService.showDialog(
-      action.payload.loginSuccessDialog,
-      azureAuth
-    );
-    yield call(
-      CommandServiceImpl.remoteCall.bind(CommandServiceImpl),
-      PersistAzureLoginChanged,
-      persistLogin
-    );
-    CommandServiceImpl.remoteCall(TrackEvent, 'signIn_success').catch(
-      _e => void 0
-    );
+    const persistLogin = yield DialogService.showDialog(action.payload.loginSuccessDialog, azureAuth);
+    yield call(CommandServiceImpl.remoteCall.bind(CommandServiceImpl), PersistAzureLoginChanged, persistLogin);
+    CommandServiceImpl.remoteCall(TrackEvent, 'signIn_success').catch(_e => void 0);
   } else {
     yield DialogService.showDialog(action.payload.loginFailedDialog);
-    CommandServiceImpl.remoteCall(TrackEvent, 'signIn_failure').catch(
-      _e => void 0
-    );
+    CommandServiceImpl.remoteCall(TrackEvent, 'signIn_failure').catch(_e => void 0);
   }
   yield put(azureArmTokenDataChanged(azureAuth.access_token));
   return azureAuth;

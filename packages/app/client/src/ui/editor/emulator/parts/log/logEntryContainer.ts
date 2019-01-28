@@ -58,11 +58,9 @@ function mapDispatchToProps(dispatch: any): Partial<LogEntryProps> {
       CommandServiceImpl.call(UI.ShowAppSettings);
     },
     trackEvent: (name: string, properties?: { [key: string]: any }) => {
-      CommandServiceImpl.remoteCall(
-        SharedConstants.Commands.Telemetry.TrackEvent,
-        name,
-        properties
-      ).catch(_e => void 0);
+      CommandServiceImpl.remoteCall(SharedConstants.Commands.Telemetry.TrackEvent, name, properties).catch(
+        _e => void 0
+      );
     },
   };
 }

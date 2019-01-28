@@ -110,9 +110,7 @@ describe('The restServer', () => {
   });
 
   it('should create a new conversation and open a new livechat window', async () => {
-    const remoteCallSpy = jest
-      .spyOn(mainWindow.commandService, 'remoteCall')
-      .mockResolvedValue(true);
+    const remoteCallSpy = jest.spyOn(mainWindow.commandService, 'remoteCall').mockResolvedValue(true);
     const reportSpy = jest.spyOn(emulator, 'report');
     const mockConversation = {
       conversationId: '123',
@@ -130,9 +128,7 @@ describe('The restServer', () => {
   });
 
   it('should not create a new conversation when the conversationId contains "transcript"', async () => {
-    const remoteCallSpy = jest
-      .spyOn(mainWindow.commandService, 'remoteCall')
-      .mockResolvedValue(true);
+    const remoteCallSpy = jest.spyOn(mainWindow.commandService, 'remoteCall').mockResolvedValue(true);
     const reportSpy = jest.spyOn(emulator, 'report');
     const mockConversation = {
       conversationId: 'transcript',

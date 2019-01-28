@@ -51,25 +51,18 @@ interface LeftContentOverlayState {
   draggedOver: boolean;
 }
 
-class LeftContentOverlayComponent extends React.Component<
-  LeftContentOverlayProps,
-  LeftContentOverlayState
-> {
+class LeftContentOverlayComponent extends React.Component<LeftContentOverlayProps, LeftContentOverlayState> {
   public state = {
     draggedOver: false,
   };
 
   public render() {
-    let overlayClassName = this.state.draggedOver
-      ? overlay.draggedOverOverlay
-      : '';
+    let overlayClassName = this.state.draggedOver ? overlay.draggedOverOverlay : '';
     overlayClassName += this.props.draggingTab ? overlay.enabledForDrop : '';
 
     return (
       <div
-        className={`${overlay.overlay} ${
-          styles.leftContentOverlay
-        } ${overlayClassName}`}
+        className={`${overlay.overlay} ${styles.leftContentOverlay} ${overlayClassName}`}
         onDragEnterCapture={this.onDragEnter}
         onDragLeave={this.onDragLeave}
         onDragOverCapture={this.onDragOver}

@@ -41,10 +41,7 @@ import BotEndpoint from './botEndpoint';
 
 const { decode } = base64Url;
 
-function mapMap<T, U>(
-  map: { [key: string]: T },
-  mapper: (arg: T, val: string) => U
-): { [key: string]: U } {
+function mapMap<T, U>(map: { [key: string]: T }, mapper: (arg: T, val: string) => U): { [key: string]: U } {
   return Object.keys(map).reduce(
     (nextMap, key) => ({
       ...nextMap,
@@ -106,11 +103,7 @@ export default class Endpoints {
 
   // TODO: Check if this can be deprecated, try to deprecate this
   public getByAppId(msaAppId: string): BotEndpoint {
-    return this._endpoints[
-      Object.keys(this._endpoints).find(
-        id => this._endpoints[id].msaAppId === msaAppId
-      )
-    ];
+    return this._endpoints[Object.keys(this._endpoints).find(id => this._endpoints[id].msaAppId === msaAppId)];
   }
 
   public getAll(): { [key: string]: BotEndpoint } {

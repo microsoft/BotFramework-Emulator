@@ -41,32 +41,22 @@ import { CommandServiceImpl } from '../../../platform/commands/commandServiceImp
 
 import { WelcomePage, WelcomePageProps } from './welcomePage';
 
-function mapStateToProps(
-  state: RootState,
-  ownProps: WelcomePageProps
-): WelcomePageProps {
+function mapStateToProps(state: RootState, ownProps: WelcomePageProps): WelcomePageProps {
   return {
     ...ownProps,
     accessToken: state.azureAuth.access_token,
   };
 }
 
-function mapDispatchToProps(
-  dispatch: (action: Action) => void
-): WelcomePageProps {
+function mapDispatchToProps(dispatch: (action: Action) => void): WelcomePageProps {
   const { Commands } = SharedConstants;
   return {
     onNewBotClick: () => {
       CommandServiceImpl.call(Commands.UI.ShowBotCreationDialog).catch();
     },
-    showOpenBotDialog: (): Promise<any> =>
-      CommandServiceImpl.call(SharedConstants.Commands.UI.ShowOpenBotDialog),
+    showOpenBotDialog: (): Promise<any> => CommandServiceImpl.call(SharedConstants.Commands.UI.ShowOpenBotDialog),
     sendNotification: (error: Error) =>
-      dispatch(
-        beginAdd(
-          newNotification(`An Error occurred on the Welcome page: ${error}`)
-        )
-      ),
+      dispatch(beginAdd(newNotification(`An Error occurred on the Welcome page: ${error}`))),
     signInWithAzure: () => {
       CommandServiceImpl.call(Commands.UI.SignInToAzure).catch();
     },
@@ -74,8 +64,7 @@ function mapDispatchToProps(
       CommandServiceImpl.remoteCall(Commands.Azure.SignUserOutOfAzure).catch();
       CommandServiceImpl.call(Commands.UI.InvalidateAzureArmToken).catch();
     },
-    switchToBot: (path: string) =>
-      CommandServiceImpl.call(Commands.Bot.Switch, path),
+    switchToBot: (path: string) => CommandServiceImpl.call(Commands.Bot.Switch, path),
   };
 }
 

@@ -35,9 +35,7 @@ import * as Restify from 'restify';
 
 const { bodyReader, jsonBodyParser: restifyJsonBodyParser } = Restify.plugins;
 
-export default function jsonBodyParser(
-  options?: any
-): Restify.RequestHandler[] {
+export default function jsonBodyParser(options?: any): Restify.RequestHandler[] {
   options = options || { mapParams: false };
   options.bodyReader = true;
 

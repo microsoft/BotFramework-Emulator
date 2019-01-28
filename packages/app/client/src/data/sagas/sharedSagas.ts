@@ -44,8 +44,5 @@ export function editorSelector(state: RootState) {
 
 export function* refreshConversationMenu(): IterableIterator<any> {
   const stateData = yield select(editorSelector);
-  yield CommandServiceImpl.remoteCall(
-    SharedConstants.Commands.Electron.UpdateConversationMenu,
-    stateData
-  );
+  yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.UpdateConversationMenu, stateData);
 }

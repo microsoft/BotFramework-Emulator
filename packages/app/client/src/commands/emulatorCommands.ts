@@ -32,12 +32,7 @@
 //
 
 import { newNotification, SharedConstants } from '@bfemulator/app-shared';
-import {
-  Activity,
-  CommandRegistryImpl,
-  isLocalHostUrl,
-  uniqueId,
-} from '@bfemulator/sdk-shared';
+import { Activity, CommandRegistryImpl, isLocalHostUrl, uniqueId } from '@bfemulator/sdk-shared';
 import { IEndpointService } from 'botframework-config/lib/schema';
 
 import * as Constants from '../constants';
@@ -65,9 +60,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
       if (focusExistingChat && state.chat.chats) {
         const { chats } = state.chat;
-        documentId = Object.keys(chats).find(
-          docId => chats[docId].endpointUrl === endpoint.endpoint
-        );
+        documentId = Object.keys(chats).find(docId => chats[docId].endpointUrl === endpoint.endpoint);
       }
 
       if (!documentId) {
@@ -84,9 +77,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
       }
 
       if (!isLocalHostUrl(endpoint.endpoint)) {
-        CommandServiceImpl.remoteCall(TrackEvent, 'livechat_openRemote').catch(
-          _e => void 0
-        );
+        CommandServiceImpl.remoteCall(TrackEvent, 'livechat_openRemote').catch(_e => void 0);
       }
 
       store.dispatch(
@@ -145,10 +136,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
     };
     try {
       const { ShowOpenDialog } = SharedConstants.Commands.Electron;
-      const filename = await CommandServiceImpl.remoteCall(
-        ShowOpenDialog,
-        dialogOptions
-      );
+      const filename = await CommandServiceImpl.remoteCall(ShowOpenDialog, dialogOptions);
       await CommandServiceImpl.call(Emulator.OpenTranscript, filename);
       CommandServiceImpl.remoteCall(TrackEvent, 'transcriptFile_open', {
         method: 'file_menu',
@@ -168,9 +156,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
       const tabGroup = getTabGroupForDocument(filePath);
       const { currentUserId } = store.getState().clientAwareSettings.users;
       if (tabGroup) {
-        store.dispatch(
-          EditorActions.close(getTabGroupForDocument(filePath), filePath)
-        );
+        store.dispatch(EditorActions.close(getTabGroupForDocument(filePath), filePath));
         store.dispatch(ChatActions.closeDocument(filePath));
       }
       store.dispatch(
@@ -194,43 +180,25 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
   // ---------------------------------------------------------------------------
   // Open the chat file in a tabbed document as a transcript
-  commandRegistry.registerCommand(
-    Emulator.OpenChatFile,
-    async (filePath: string, reload?: boolean) => {
-      try {
-        // wait for the main side to use the chatdown library to parse the activities (transcript) out of the .chat file
-        const {
-          activities,
-          fileName,
-        }: {
-          activities: Activity[];
-          fileName: string;
-        } = await CommandServiceImpl.remoteCall(
-          Emulator.OpenChatFile,
-          filePath
-        );
+  commandRegistry.registerCommand(Emulator.OpenChatFile, async (filePath: string, reload?: boolean) => {
+    try {
+      // wait for the main side to use the chatdown library to parse the activities (transcript) out of the .chat file
+      const {
+        activities,
+        fileName,
+      }: {
+        activities: Activity[];
+        fileName: string;
+      } = await CommandServiceImpl.remoteCall(Emulator.OpenChatFile, filePath);
 
-        // open or reload the transcript
-        if (reload) {
-          await CommandServiceImpl.call(
-            Emulator.ReloadTranscript,
-            filePath,
-            fileName,
-            { activities, inMemory: true }
-          );
-        } else {
-          await CommandServiceImpl.call(
-            Emulator.OpenTranscript,
-            filePath,
-            fileName,
-            { activities, inMemory: true }
-          );
-        }
-      } catch (err) {
-        throw new Error(
-          `Error while retrieving activities from main side: ${err}`
-        );
+      // open or reload the transcript
+      if (reload) {
+        await CommandServiceImpl.call(Emulator.ReloadTranscript, filePath, fileName, { activities, inMemory: true });
+      } else {
+        await CommandServiceImpl.call(Emulator.OpenTranscript, filePath, fileName, { activities, inMemory: true });
       }
+    } catch (err) {
+      throw new Error(`Error while retrieving activities from main side: ${err}`);
     }
-  );
+  });
 }

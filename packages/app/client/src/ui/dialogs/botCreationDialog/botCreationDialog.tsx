@@ -32,11 +32,7 @@
 //
 
 import { newNotification, SharedConstants } from '@bfemulator/app-shared';
-import {
-  BotConfigWithPath,
-  BotConfigWithPathImpl,
-  uniqueId,
-} from '@bfemulator/sdk-shared';
+import { BotConfigWithPath, BotConfigWithPathImpl, uniqueId } from '@bfemulator/sdk-shared';
 import {
   Checkbox,
   DefaultButton,
@@ -69,10 +65,7 @@ export interface BotCreationDialogState {
   revealSecret: boolean;
 }
 
-export class BotCreationDialog extends React.Component<
-  {},
-  BotCreationDialogState
-> {
+export class BotCreationDialog extends React.Component<{}, BotCreationDialogState> {
   public constructor(props: {}, context: BotCreationDialogState) {
     super(props, context);
 
@@ -102,21 +95,14 @@ export class BotCreationDialog extends React.Component<
     const { secret, bot, endpoint, encryptKey, revealSecret } = this.state;
     const secretCriteria = encryptKey ? secret : true;
 
-    const requiredFieldsCompleted =
-      bot && endpoint.endpoint && bot.name && secretCriteria;
+    const requiredFieldsCompleted = bot && endpoint.endpoint && bot.name && secretCriteria;
 
     const endpointWarning = this.validateEndpoint(endpoint.endpoint);
-    const endpointPlaceholder =
-      "Your bot's endpoint (ex: http://localhost:3978/api/messages)";
+    const endpointPlaceholder = "Your bot's endpoint (ex: http://localhost:3978/api/messages)";
 
     // TODO - localization
     return (
-      <Dialog
-        className={styles.main}
-        title="New bot configuration"
-        cancel={this.onCancel}
-        maxWidth={648}
-      >
+      <Dialog className={styles.main} title="New bot configuration" cancel={this.onCancel} maxWidth={648}>
         <div className={styles.botCreateForm}>
           <TextField
             value={this.state.bot.name}
@@ -133,9 +119,7 @@ export class BotCreationDialog extends React.Component<
             required={true}
             value={this.state.endpoint.endpoint}
           />
-          {endpointWarning && (
-            <span className={styles.endpointWarning}>{endpointWarning}</span>
-          )}
+          {endpointWarning && <span className={styles.endpointWarning}>{endpointWarning}</span>}
           <Row className={styles.multiInputRow}>
             <TextField
               inputContainerClassName={styles.inputContainer}
@@ -155,10 +139,7 @@ export class BotCreationDialog extends React.Component<
               value={endpoint.appPassword}
             />
           </Row>
-          <Checkbox
-            label="Azure for US Government"
-            onChange={this.onChannelServiceChange}
-          />
+          <Checkbox label="Azure for US Government" onChange={this.onChannelServiceChange} />
           <Row align={RowAlignment.Bottom}>
             <Checkbox
               className={styles.encryptKeyCheckBox}
@@ -166,9 +147,7 @@ export class BotCreationDialog extends React.Component<
               checked={encryptKey}
               onChange={this.onEncryptKeyChange}
             />
-            <a href="https://aka.ms/bot-framework-bot-file-encryption">
-              &nbsp;Learn more.
-            </a>
+            <a href="https://aka.ms/bot-framework-bot-file-encryption">&nbsp;Learn more.</a>
           </Row>
 
           <TextField
@@ -212,11 +191,7 @@ export class BotCreationDialog extends React.Component<
 
         <DialogFooter>
           <DefaultButton text="Cancel" onClick={this.onCancel} />
-          <PrimaryButton
-            text="Save and connect"
-            onClick={this.onSaveAndConnect}
-            disabled={!requiredFieldsCompleted}
-          />
+          <PrimaryButton text="Save and connect" onClick={this.onSaveAndConnect} disabled={!requiredFieldsCompleted} />
         </DialogFooter>
       </Dialog>
     );
@@ -267,9 +242,7 @@ export class BotCreationDialog extends React.Component<
     if (!this.state.encryptKey) {
       return null;
     }
-    const input: HTMLInputElement = window.document.getElementById(
-      'key-input'
-    ) as HTMLInputElement;
+    const input: HTMLInputElement = window.document.getElementById('key-input') as HTMLInputElement;
     input.removeAttribute('disabled');
     const { type } = input;
     input.type = 'text';
@@ -316,8 +289,7 @@ export class BotCreationDialog extends React.Component<
       appPassword: this.state.endpoint.appPassword.trim(),
       endpoint: this.state.endpoint.endpoint.trim(),
     };
-    (endpoint as any).channelService = (this.state
-      .endpoint as any).channelService;
+    (endpoint as any).channelService = (this.state.endpoint as any).channelService;
 
     const bot: BotConfigWithPath = BotConfigWithPathImpl.fromJSON({
       ...this.state.bot,
@@ -327,8 +299,7 @@ export class BotCreationDialog extends React.Component<
       path: botPath.trim(),
     });
 
-    const secret =
-      this.state.encryptKey && this.state.secret ? this.state.secret : null;
+    const secret = this.state.encryptKey && this.state.secret ? this.state.secret : null;
 
     try {
       await ActiveBotHelper.confirmAndCreateBot(bot, secret);
@@ -344,10 +315,7 @@ export class BotCreationDialog extends React.Component<
   private showBotSaveDialog = async (): Promise<any> => {
     const { Commands } = SharedConstants;
     // get a safe bot file name
-    const botFileName = await CommandServiceImpl.remoteCall(
-      Commands.File.SanitizeString,
-      this.state.bot.name
-    );
+    const botFileName = await CommandServiceImpl.remoteCall(Commands.File.SanitizeString, this.state.bot.name);
     // TODO - Localization
     const dialogOptions = {
       filters: [
@@ -362,17 +330,12 @@ export class BotCreationDialog extends React.Component<
       buttonLabel: 'Save',
     };
 
-    return CommandServiceImpl.remoteCall(
-      Commands.Electron.ShowSaveDialog,
-      dialogOptions
-    );
+    return CommandServiceImpl.remoteCall(Commands.Electron.ShowSaveDialog, dialogOptions);
   };
 
   /** Checks the endpoint to see if it has the correct route syntax at the end (/api/messages) */
   private validateEndpoint(endpoint: string): string {
     const controllerRegEx = /api\/messages\/?$/;
-    return controllerRegEx.test(endpoint)
-      ? ''
-      : `Please include route if necessary: "/api/messages"`;
+    return controllerRegEx.test(endpoint) ? '' : `Please include route if necessary: "/api/messages"`;
   }
 }

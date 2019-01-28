@@ -31,11 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import {
-  AttachmentData,
-  AttachmentInfo,
-  ErrorCodes,
-} from '@bfemulator/sdk-shared';
+import { AttachmentData, AttachmentInfo, ErrorCodes } from '@bfemulator/sdk-shared';
 import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 
@@ -45,16 +41,10 @@ import AttachmentParams from '../attachmentParams';
 import sendErrorResponse from '../../utils/sendErrorResponse';
 
 export default function getAttachmentInfo(botEmulator: BotEmulator) {
-  return (
-    req: Restify.Request,
-    res: Restify.Response,
-    next: Restify.Next
-  ): any => {
+  return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     try {
       const parms: AttachmentParams = req.params;
-      const attachment: AttachmentData = botEmulator.facilities.attachments.getAttachmentData(
-        parms.attachmentId
-      );
+      const attachment: AttachmentData = botEmulator.facilities.attachments.getAttachmentData(parms.attachmentId);
 
       if (attachment) {
         const attachmentInfo: AttachmentInfo = {
@@ -96,11 +86,7 @@ export default function getAttachmentInfo(botEmulator: BotEmulator) {
         req,
         res,
         next,
-        createAPIException(
-          HttpStatus.INTERNAL_SERVER_ERROR,
-          ErrorCodes.ServiceError,
-          err.message
-        )
+        createAPIException(HttpStatus.INTERNAL_SERVER_ERROR, ErrorCodes.ServiceError, err.message)
       );
     }
 

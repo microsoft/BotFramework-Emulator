@@ -41,10 +41,7 @@ import { store } from '../data/store';
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
   const { Settings } = SharedConstants.Commands;
 
-  commandRegistry.registerCommand(
-    Settings.ReceiveGlobalSettings,
-    (settings: ClientAwareSettings) => {
-      store.dispatch(clientAwareSettingsChanged(settings));
-    }
-  );
+  commandRegistry.registerCommand(Settings.ReceiveGlobalSettings, (settings: ClientAwareSettings) => {
+    store.dispatch(clientAwareSettingsChanged(settings));
+  });
 }

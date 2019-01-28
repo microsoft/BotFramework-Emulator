@@ -35,10 +35,7 @@ import { CompositeEntity } from '../Luis/CompositeEntity';
 import { Entity } from '../Luis/Entity';
 import { LuisResponse } from '../Luis/LuisResponse';
 import { Intent } from '../Models/Intent';
-import {
-  RecognizerResult,
-  RecognizerResultIntent,
-} from '../Models/RecognizerResults';
+import { RecognizerResult, RecognizerResultIntent } from '../Models/RecognizerResults';
 
 // This adapter adapts the old LUIS Response schema to the the new schema
 // since v3 of the BotBuilder SDKs don't support the new schemas, so this
@@ -51,29 +48,20 @@ export class RecognizerResultAdapter implements RecognizerResult {
   constructor(luisResult: LuisResponse) {
     this.text = luisResult.query;
     this.intents = this.getIntents(luisResult);
-    this.entities = this.getEntitiesAndMetadata(
-      luisResult.entities,
-      luisResult.compositeEntities,
-      true
-    );
+    this.entities = this.getEntitiesAndMetadata(luisResult.entities, luisResult.compositeEntities, true);
   }
 
   private normalizeName(name: string): string {
     return name.replace(/\./g, '_');
   }
 
-  private getIntents(
-    luisResult: LuisResponse
-  ): { [key: string]: RecognizerResultIntent } {
+  private getIntents(luisResult: LuisResponse): { [key: string]: RecognizerResultIntent } {
     const intents: { [name: string]: RecognizerResultIntent } = {};
     if (luisResult.intents) {
-      luisResult.intents.reduce(
-        (prev: { [key: string]: RecognizerResultIntent }, curr: Intent) => {
-          prev[curr.intent] = { score: curr.score };
-          return prev;
-        },
-        intents
-      );
+      luisResult.intents.reduce((prev: { [key: string]: RecognizerResultIntent }, curr: Intent) => {
+        prev[curr.intent] = { score: curr.score };
+        return prev;
+      }, intents);
     } else {
       const topScoringIntent = luisResult.topScoringIntent;
       intents[this.normalizeName(topScoringIntent.intent)] = {
@@ -93,16 +81,9 @@ export class RecognizerResultAdapter implements RecognizerResult {
 
     // We start by populating composite entities so that entities covered by them are removed from the entities list
     if (compositeEntities) {
-      compositeEntityTypes = compositeEntities.map(
-        compositeEntity => compositeEntity.parentType
-      );
+      compositeEntityTypes = compositeEntities.map(compositeEntity => compositeEntity.parentType);
       compositeEntities.forEach(compositeEntity => {
-        entities = this.populateCompositeEntity(
-          compositeEntity,
-          entities,
-          entitiesAndMetadata,
-          verbose
-        );
+        entities = this.populateCompositeEntity(compositeEntity, entities, entitiesAndMetadata, verbose);
       });
     }
 
@@ -112,11 +93,7 @@ export class RecognizerResultAdapter implements RecognizerResult {
         return;
       }
 
-      this.addProperty(
-        entitiesAndMetadata,
-        this.getNormalizedEntityType(entity),
-        this.getEntityValue(entity)
-      );
+      this.addProperty(entitiesAndMetadata, this.getNormalizedEntityType(entity), this.getEntityValue(entity));
       if (verbose) {
         this.addProperty(
           entitiesAndMetadata.$instance,
@@ -142,9 +119,7 @@ export class RecognizerResultAdapter implements RecognizerResult {
       const vals = entity.resolution.values;
       const type = vals[0].type;
       const timexes = vals.map((t: any) => t.timex);
-      const distinct = timexes.filter(
-        (v: any, i: any, a: any) => a.indexOf(v) === i
-      );
+      const distinct = timexes.filter((v: any, i: any, a: any) => a.indexOf(v) === i);
       return { type, timex: distinct };
     } else {
       const res = entity.resolution;
@@ -215,23 +190,16 @@ export class RecognizerResultAdapter implements RecognizerResult {
     let childrenEntitiesMetadata: any = {};
 
     // This is now implemented as O(n^2) search and can be reduced to O(2n) using a map as an optimization if n grows
-    const compositeEntityMetadata: Entity | undefined = entities.find(
-      entity => {
-        // For now we are matching by value, which can be ambiguous if the same composite entity
-        // shows up with the same text multiple times within an utterance, but this is just a
-        // stop gap solution till the indices are included in composite entities
-        return (
-          entity.type === compositeEntity.parentType &&
-          entity.entity === compositeEntity.value
-        );
-      }
-    );
+    const compositeEntityMetadata: Entity | undefined = entities.find(entity => {
+      // For now we are matching by value, which can be ambiguous if the same composite entity
+      // shows up with the same text multiple times within an utterance, but this is just a
+      // stop gap solution till the indices are included in composite entities
+      return entity.type === compositeEntity.parentType && entity.entity === compositeEntity.value;
+    });
 
     const filteredEntities: Entity[] = [];
     if (verbose && compositeEntityMetadata) {
-      childrenEntitiesMetadata = this.getEntityMetadata(
-        compositeEntityMetadata
-      );
+      childrenEntitiesMetadata = this.getEntityMetadata(compositeEntityMetadata);
       childrenEntitiesMetadata.$instance = {};
     }
 
@@ -254,11 +222,7 @@ export class RecognizerResultAdapter implements RecognizerResult {
         ) {
           // Add to the set to ensure that we don't consider the same child entity more than once per composite
           coveredSet.add(i);
-          this.addProperty(
-            childrenEntites,
-            this.getNormalizedEntityType(entity),
-            this.getEntityValue(entity)
-          );
+          this.addProperty(childrenEntites, this.getNormalizedEntityType(entity), this.getEntityValue(entity));
 
           if (verbose) {
             this.addProperty(
@@ -278,17 +242,9 @@ export class RecognizerResultAdapter implements RecognizerResult {
       }
     }
 
-    this.addProperty(
-      entitiesAndMetadata,
-      compositeEntity.parentType,
-      childrenEntites
-    );
+    this.addProperty(entitiesAndMetadata, compositeEntity.parentType, childrenEntites);
     if (verbose) {
-      this.addProperty(
-        entitiesAndMetadata.$instance,
-        compositeEntity.parentType,
-        childrenEntitiesMetadata
-      );
+      this.addProperty(entitiesAndMetadata.$instance, compositeEntity.parentType, childrenEntitiesMetadata);
     }
 
     return filteredEntities;

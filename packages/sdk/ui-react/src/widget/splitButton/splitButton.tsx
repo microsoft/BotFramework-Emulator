@@ -51,10 +51,7 @@ export interface SplitButtonState {
   selected?: number;
 }
 
-export class SplitButton extends React.Component<
-  SplitButtonProps,
-  SplitButtonState
-> {
+export class SplitButton extends React.Component<SplitButtonProps, SplitButtonState> {
   private caretRef: HTMLButtonElement;
 
   constructor(props: SplitButtonProps) {
@@ -67,32 +64,15 @@ export class SplitButton extends React.Component<
   }
 
   public render(): JSX.Element {
-    const {
-      buttonClass = '',
-      defaultLabel = '',
-      disabled = false,
-      options = [],
-    } = this.props;
+    const { buttonClass = '', defaultLabel = '', disabled = false, options = [] } = this.props;
     const { expanded, selected } = this.state;
-    const {
-      caretRef,
-      hidePanel,
-      onClickOption,
-      onClickDefault,
-      onClickCaret,
-      onKeyDown,
-      setCaretRef,
-    } = this;
+    const { caretRef, hidePanel, onClickOption, onClickDefault, onClickCaret, onKeyDown, setCaretRef } = this;
     const expandedClass = expanded ? ` ${styles.expanded}` : '';
 
     return (
       <>
         <div className={styles.container}>
-          <button
-            className={`${styles.defaultButton} ${buttonClass}`}
-            disabled={disabled}
-            onClick={onClickDefault}
-          >
+          <button className={`${styles.defaultButton} ${buttonClass}`} disabled={disabled} onClick={onClickDefault}>
             <span>{defaultLabel}</span>
           </button>
           <div className={styles.separator} />
@@ -127,9 +107,7 @@ export class SplitButton extends React.Component<
     this.setState({ expanded: !expanded, selected: 0 });
   };
 
-  private onClickDefault = (
-    e: React.SyntheticEvent<HTMLButtonElement>
-  ): void => {
+  private onClickDefault = (e: React.SyntheticEvent<HTMLButtonElement>): void => {
     const { onClick, options = [] } = this.props;
     if (onClick && options.length) {
       onClick(options[0]);

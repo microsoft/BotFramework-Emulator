@@ -111,9 +111,7 @@ describe('The ServicesExplorer component should', () => {
     mockLi.setAttribute('data-index', '0');
 
     instance.onContextMenuOverLiElement(mockLi);
-    expect(mockDispatch).toHaveBeenCalledWith(
-      openContextMenuForResource(mockChat)
-    );
+    expect(mockDispatch).toHaveBeenCalledWith(openContextMenuForResource(mockChat));
   });
 
   it('should dispatch to rename the resource when the enter key is pressed while focused in an input field', () => {
@@ -135,8 +133,6 @@ describe('The ServicesExplorer component should', () => {
     const instance = node.instance();
     const spy = jest.spyOn(mockStore, 'dispatch');
     instance.onChooseLocationClick();
-    expect(spy).toHaveBeenCalledWith(
-      openResourcesSettings({ dialog: ResourcesSettingsContainer })
-    );
+    expect(spy).toHaveBeenCalledWith(openResourcesSettings({ dialog: ResourcesSettingsContainer }));
   });
 });

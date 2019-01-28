@@ -32,11 +32,7 @@
 //
 
 import { BotInfo } from '@bfemulator/app-shared';
-import {
-  applyBotConfigOverrides,
-  BotConfigWithPath,
-  botsAreTheSame,
-} from '@bfemulator/sdk-shared';
+import { applyBotConfigOverrides, BotConfigWithPath, botsAreTheSame } from '@bfemulator/sdk-shared';
 
 import { BotAction, BotActionType } from '../action/botActions';
 
@@ -61,21 +57,14 @@ export function bot(state: BotState = DEFAULT_STATE, action: BotAction) {
 
     case BotActionType.setActive: {
       // move active bot up to the top of the recent bots list
-      const mostRecentBot = state.botFiles.find(
-        botArg => botArg && botArg.path === action.payload.bot.path
-      );
-      const recentBots = state.botFiles.filter(
-        botArg => botArg && botArg.path !== action.payload.bot.path
-      );
+      const mostRecentBot = state.botFiles.find(botArg => botArg && botArg.path === action.payload.bot.path);
+      const recentBots = state.botFiles.filter(botArg => botArg && botArg.path !== action.payload.bot.path);
       if (mostRecentBot) {
         recentBots.unshift(mostRecentBot);
       }
       let newActiveBot = action.payload.bot;
       if (botsAreTheSame(state.activeBot, newActiveBot)) {
-        newActiveBot = applyBotConfigOverrides(
-          newActiveBot,
-          state.activeBot.overrides
-        );
+        newActiveBot = applyBotConfigOverrides(newActiveBot, state.activeBot.overrides);
       }
       state = setBotFilesState(recentBots, state);
       state = setActiveBot(newActiveBot, state);

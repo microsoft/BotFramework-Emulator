@@ -42,10 +42,7 @@ export class TelemetryService {
   private static _client: AppInsights.TelemetryClient;
   private static _hasStarted: boolean = false;
 
-  public static trackEvent(
-    name: string,
-    properties?: { [key: string]: any }
-  ): void {
+  public static trackEvent(name: string, properties?: { [key: string]: any }): void {
     if (!this.enabled || !name) {
       return;
     }
@@ -78,9 +75,7 @@ export class TelemetryService {
         // Fix for zonejs / restify conflict (https://github.com/Microsoft/ApplicationInsights-node.js/issues/460)
         .setAutoDependencyCorrelation(false);
       // do not collect the user's machine name
-      AppInsights.defaultClient.context.tags[
-        AppInsights.defaultClient.context.keys.cloudRoleInstance
-      ] = '';
+      AppInsights.defaultClient.context.tags[AppInsights.defaultClient.context.keys.cloudRoleInstance] = '';
       AppInsights.start();
 
       this._client = AppInsights.defaultClient;

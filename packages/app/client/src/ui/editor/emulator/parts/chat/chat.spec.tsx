@@ -141,9 +141,7 @@ describe('<Chat />', () => {
       });
 
       await new Promise(resolve => setTimeout(resolve, 250));
-      expect(
-        component.find(ReactWebChat).prop('webSpeechPonyfillFactory')
-      ).toBeTruthy();
+      expect(component.find(ReactWebChat).prop('webSpeechPonyfillFactory')).toBeTruthy();
     });
   });
 });

@@ -31,11 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import {
-  disable,
-  enable,
-  PresentationAction,
-} from '../action/presentationActions';
+import { disable, enable, PresentationAction } from '../action/presentationActions';
 
 import { presentation, PresentationState } from './presentation';
 jest.mock('../../ui/dialogs', () => ({

@@ -48,14 +48,10 @@ export interface CommandService extends DisposableImpl {
 
   on(commandName: string, handler?: CommandHandler): Disposable;
 
-  on(
-    event: 'command-not-found',
-    notFoundHandler?: (commandName: string, ...args: any[]) => any
-  );
+  on(event: 'command-not-found', notFoundHandler?: (commandName: string, ...args: any[]) => any);
 }
 
-export class CommandServiceImpl extends DisposableImpl
-  implements CommandService {
+export class CommandServiceImpl extends DisposableImpl implements CommandService {
   private readonly _channel: Channel;
   private readonly _registry: CommandRegistry;
   private readonly _channelName: string;
@@ -79,28 +75,22 @@ export class CommandServiceImpl extends DisposableImpl
     this._channel = new Channel(this._channelName, this._ipc);
     this.toDispose(this._ipc.registerChannel(this._channel));
     this.toDispose(
-      this._channel.setListener(
-        'call',
-        (commandName: string, transactionId: string, ...args: any[]) => {
-          this.call(commandName, ...args)
-            .then(result => {
-              result = Array.isArray(result) ? result : [result];
-              this._channel.send(transactionId, true, ...result);
-            })
-            .catch(err => {
-              err = err.message ? err.message : err;
-              this._channel.send(transactionId, false, err);
-            });
-        }
-      )
+      this._channel.setListener('call', (commandName: string, transactionId: string, ...args: any[]) => {
+        this.call(commandName, ...args)
+          .then(result => {
+            result = Array.isArray(result) ? result : [result];
+            this._channel.send(transactionId, true, ...result);
+          })
+          .catch(err => {
+            err = err.message ? err.message : err;
+            this._channel.send(transactionId, false, err);
+          });
+      })
     );
   }
 
   public on(event: string, handler?: CommandHandler): Disposable;
-  public on(
-    event: 'command-not-found',
-    handler?: (commandName: string, ...args: any[]) => any
-  ) {
+  public on(event: 'command-not-found', handler?: (commandName: string, ...args: any[]) => any) {
     if (event === 'command-not-found') {
       this._notFoundHandler = handler;
       return undefined;
@@ -132,20 +122,15 @@ export class CommandServiceImpl extends DisposableImpl
     const transactionId = uniqueId();
     this._channel.send('call', commandName, transactionId, ...args);
     return new Promise<any>((resolve, reject) => {
-      this._channel.setListener(
-        transactionId,
-        (success: boolean, ...responseArgs: any[]) => {
-          this._channel.clearListener(transactionId);
-          if (success) {
-            const result = responseArgs.length
-              ? responseArgs.shift()
-              : undefined;
-            resolve(result);
-          } else {
-            reject(responseArgs.shift());
-          }
+      this._channel.setListener(transactionId, (success: boolean, ...responseArgs: any[]) => {
+        this._channel.clearListener(transactionId);
+        if (success) {
+          const result = responseArgs.length ? responseArgs.shift() : undefined;
+          resolve(result);
+        } else {
+          reject(responseArgs.shift());
         }
-      );
+      });
     });
   }
 }

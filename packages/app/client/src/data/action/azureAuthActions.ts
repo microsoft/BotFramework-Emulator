@@ -70,9 +70,7 @@ export function beginAzureAuthWorkflow(
   };
 }
 
-export function azureArmTokenDataChanged(
-  armToken: string
-): AzureAuthAction<ArmTokenData> {
+export function azureArmTokenDataChanged(armToken: string): AzureAuthAction<ArmTokenData> {
   return {
     type: AZURE_ARM_TOKEN_DATA_CHANGED,
     // eslint-disable-next-line typescript/camelcase

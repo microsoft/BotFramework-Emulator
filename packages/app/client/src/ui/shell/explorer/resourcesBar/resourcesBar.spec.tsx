@@ -39,20 +39,14 @@ import { BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
 
 import { resources } from '../../../../data/reducer/resourcesReducer';
 import { bot } from '../../../../data/reducer/bot';
-import {
-  chatFilesUpdated,
-  transcriptsUpdated,
-} from '../../../../data/action/resourcesAction';
+import { chatFilesUpdated, transcriptsUpdated } from '../../../../data/action/resourcesAction';
 import { loadBotInfos, setActiveBot } from '../../../../data/action/botActions'; // important
 
 import { ResourcesBar } from './resourcesBar';
 import { ResourcesBarContainer } from './resourcesBarContainer';
 const mockClass = class {};
 const mockStore = createStore(combineReducers({ resources, bot }), {});
-jest.mock(
-  '../../../dialogs/resourcesSettings/resourcesSettings.scss',
-  () => ({})
-);
+jest.mock('../../../dialogs/resourcesSettings/resourcesSettings.scss', () => ({}));
 jest.mock('./resourcesBar.scss', () => ({}));
 jest.mock('../explorerStyles.scss', () => ({}));
 jest.mock('../servicePane/servicePane.scss', () => ({}));

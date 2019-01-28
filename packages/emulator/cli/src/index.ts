@@ -55,25 +55,13 @@ program
   // .command('bfemulator')
   .version(packageJSON.version)
   .option('-p, --port <port>', 'port number for Direct Line service', 5000)
-  .option(
-    '-I, --app-id <id>',
-    'Microsoft Application ID, will override environment "MICROSOFT_APP_ID"'
-  )
+  .option('-I, --app-id <id>', 'Microsoft Application ID, will override environment "MICROSOFT_APP_ID"')
   .option(
     '-P, --app-password <password>',
-    'Microsoft Application Password, will override environment ' +
-      '"MICROSOFT_APP_PASSWORD"'
+    'Microsoft Application Password, will override environment ' + '"MICROSOFT_APP_PASSWORD"'
   )
-  .option(
-    '-s, --service-url <url>',
-    'URL for the bot to callback',
-    'http://localhost:5000'
-  )
-  .option(
-    '-u, --bot-url <url>',
-    'URL to connect to bot',
-    'http://localhost:3978/api/messages/'
-  )
+  .option('-s, --service-url <url>', 'URL for the bot to callback', 'http://localhost:5000')
+  .option('-u, --bot-url <url>', 'URL to connect to bot', 'http://localhost:3978/api/messages/')
   .option('--bot-id <id>', 'bot ID', 'bot-1')
   .option('--use-10-tokens', 'use version 1.0 authentication tokens', false)
   .option('-f, --file <bots.json>', 'read endpoints from file')
@@ -86,9 +74,7 @@ program
         ' point to different bots.'
     );
     console.log();
-    console.log(
-      '    Using bots.json file will override endpoint defined thru --port and --bot-url.'
-    );
+    console.log('    Using bots.json file will override endpoint defined thru --port and --bot-url.');
     console.log();
   })
   .parse(process.argv);
@@ -119,25 +105,18 @@ async function main() {
   const port = program.port || (await getPort(5000));
 
   // Create a bot entry
-  const bot = new BotEmulator(
-    async () => program.serviceUrl || `http://localhost:${port}`,
-    {
-      loggerOrLogService: new NpmLogger(),
-    }
-  );
+  const bot = new BotEmulator(async () => program.serviceUrl || `http://localhost:${port}`, {
+    loggerOrLogService: new NpmLogger(),
+  });
 
   if (program.file) {
     const botsJSON = await new Promise<string>((resolve, reject) => {
-      readFile(program.file, { encoding: 'utf8' }, (err, result) =>
-        err ? reject(err) : resolve(result)
-      );
+      readFile(program.file, { encoding: 'utf8' }, (err, result) => (err ? reject(err) : resolve(result)));
     });
 
     const botEndpoints = JSON.parse(botsJSON);
 
-    botEndpoints.forEach(endpoint =>
-      bot.facilities.endpoints.push(endpoint.botUrl, endpoint)
-    );
+    botEndpoints.forEach(endpoint => bot.facilities.endpoints.push(endpoint.botUrl, endpoint));
   } else {
     bot.facilities.endpoints.push(program.botUrl, {
       botId: program.botId,
@@ -158,9 +137,7 @@ async function main() {
 
   // Start listening
   server.listen(port, () => {
-    console.log(
-      `${server.name} listening on ${server.url} with bot on ${urls.join(', ')}`
-    );
+    console.log(`${server.name} listening on ${server.url} with bot on ${urls.join(', ')}`);
     console.log(`The bot will callback on ${program.serviceUrl}`);
   });
 }

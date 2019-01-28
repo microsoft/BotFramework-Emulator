@@ -35,6 +35,4 @@ import * as React from 'react';
 
 import * as styles from './toolbar.scss';
 
-export const ToolBar = (props: { children: React.ReactNode }) => (
-  <div className={styles.toolbar}>{props.children}</div>
-);
+export const ToolBar = (props: { children: React.ReactNode }) => <div className={styles.toolbar}>{props.children}</div>;

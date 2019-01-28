@@ -36,9 +36,7 @@ import { Menu, MenuItemConstructorOptions } from 'electron';
 export class ContextMenuService {
   private static currentMenu: Menu;
 
-  public static showMenuAndWaitForInput(
-    options: Partial<MenuItemConstructorOptions>[] = []
-  ): Promise<any> {
+  public static showMenuAndWaitForInput(options: Partial<MenuItemConstructorOptions>[] = []): Promise<any> {
     if (ContextMenuService.currentMenu) {
       ContextMenuService.currentMenu.closePopup();
     }
@@ -52,9 +50,7 @@ export class ContextMenuService {
         option.click = clickHandler;
         return option;
       });
-      const menu = (ContextMenuService.currentMenu = Menu.buildFromTemplate(
-        template
-      ));
+      const menu = (ContextMenuService.currentMenu = Menu.buildFromTemplate(template));
 
       menu.popup({});
     });

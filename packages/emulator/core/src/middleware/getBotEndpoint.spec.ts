@@ -51,8 +51,7 @@ describe('The getBotEndpoint', () => {
   });
 
   it('should append the bot endpoint to the request when an Authorization header is present', () => {
-    const mockToken =
-      'bm90aGluZw.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds';
+    const mockToken = 'bm90aGluZw.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds';
     const mockEndpoint = { id: mockToken } as any;
     const mockReq = {
       header: () => `Bearer ${mockToken}`,

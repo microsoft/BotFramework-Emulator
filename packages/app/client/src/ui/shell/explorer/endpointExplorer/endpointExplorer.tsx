@@ -95,9 +95,7 @@ export class EndpointExplorer extends ServicePane<EndpointProps> {
     }
   };
 
-  protected onLinkClick: MouseEventHandler<HTMLLIElement> = (
-    event: SyntheticEvent<HTMLLIElement>
-  ): void => {
+  protected onLinkClick: MouseEventHandler<HTMLLIElement> = (event: SyntheticEvent<HTMLLIElement>): void => {
     const { currentTarget } = event;
     const { index } = currentTarget.dataset;
     const { [+index]: endpointService } = this.props.endpointServices;
@@ -108,15 +106,10 @@ export class EndpointExplorer extends ServicePane<EndpointProps> {
     super.onContextMenuOverLiElement(li);
     const { index } = li.dataset;
     const { [+index]: endpointService } = this.props.endpointServices;
-    this.props.openContextMenuForService(
-      new EndpointService(endpointService),
-      EndpointEditorContainer
-    );
+    this.props.openContextMenuForService(new EndpointService(endpointService), EndpointEditorContainer);
   }
 
-  protected onAddIconClick = (
-    _event: SyntheticEvent<HTMLButtonElement>
-  ): void => {
+  protected onAddIconClick = (_event: SyntheticEvent<HTMLButtonElement>): void => {
     this.props.launchEndpointEditor(EndpointEditorContainer);
   };
 

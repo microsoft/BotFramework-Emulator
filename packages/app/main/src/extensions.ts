@@ -63,8 +63,7 @@ export interface Extension {
 }
 
 // =============================================================================
-export abstract class ExtensionImpl extends DisposableImpl
-  implements Extension {
+export abstract class ExtensionImpl extends DisposableImpl implements Extension {
   protected _ext: CommandService;
   protected _cli: CommandService;
 
@@ -78,14 +77,8 @@ export abstract class ExtensionImpl extends DisposableImpl
 
   protected constructor(private _config: ExtensionConfig, protected _ipc: IPC) {
     super();
-    this._ext = new CommandServiceImpl(
-      this._ipc,
-      `ext-${this._config.location}`
-    );
-    this._cli = new CommandServiceImpl(
-      mainWindow.ipc,
-      `ext-${this._config.location}`
-    );
+    this._ext = new CommandServiceImpl(this._ipc, `ext-${this._config.location}`);
+    this._cli = new CommandServiceImpl(mainWindow.ipc, `ext-${this._config.location}`);
     this.toDispose(this._ipc);
     this.toDispose(this._ext);
 
@@ -227,9 +220,7 @@ class ExtManagerImpl extends DisposableImpl implements ExtensionManager {
     let folders = [];
     try {
       // Get all subdirectories under ../extensions
-      const folder = this.unpackedFolder(
-        path.resolve(path.join(__dirname, '..', 'extensions'))
-      );
+      const folder = this.unpackedFolder(path.resolve(path.join(__dirname, '..', 'extensions')));
       folders = getDirectories(folder);
     } catch {
       // do nothing
@@ -259,10 +250,7 @@ class ExtManagerImpl extends DisposableImpl implements ExtensionManager {
       // Disconnect from the extension process
       extension.disconnect();
       // Notify the client that the extension is gone.
-      mainWindow.commandService.remoteCall(
-        SharedConstants.Commands.Extension.Disconnect,
-        extension.config.location
-      );
+      mainWindow.commandService.remoteCall(SharedConstants.Commands.Extension.Disconnect, extension.config.location);
       // Cleanup
       this.extensions.delete(ipc);
     }
@@ -285,9 +273,7 @@ class ExtManagerImpl extends DisposableImpl implements ExtensionManager {
     extension.config.client = extension.config.client || {};
     extension.config.node = extension.config.node || {};
     // Cleanup basePath (root of webpack-dev-server, where index.html would live)
-    extension.config.client.basePath = (
-      extension.config.client.basePath || ''
-    ).replace(/\\/g, '/');
+    extension.config.client.basePath = (extension.config.client.basePath || '').replace(/\\/g, '/');
     // Get the list of inspectors
     const inspectors = extension.config.client.inspectors || [];
     // Cleanup inspector paths
@@ -303,10 +289,7 @@ class ExtManagerImpl extends DisposableImpl implements ExtensionManager {
       const port = extension.config.client.debug.webpack.port || 3030;
       const host = extension.config.client.debug.webpack.host || 'localhost';
       inspectors.forEach(inspector => {
-        inspector.src = `http://${host}:${port}/${inspector.src}`.replace(
-          extension.config.client.basePath,
-          ''
-        );
+        inspector.src = `http://${host}:${port}/${inspector.src}`.replace(extension.config.client.basePath, '');
       });
     } else {
       // If not in debug mode, rewrite paths as file path URLs.
@@ -321,10 +304,7 @@ class ExtManagerImpl extends DisposableImpl implements ExtensionManager {
     // Connect to the extension's node process (if any).
     extension.connect();
     // Notify the client of the new extension.
-    mainWindow.commandService.remoteCall(
-      SharedConstants.Commands.Extension.Connect,
-      extension.config
-    );
+    mainWindow.commandService.remoteCall(SharedConstants.Commands.Extension.Connect, extension.config);
   }
 
   // Check whether we're running from an 'app.asar' packfile. If so, it means we were installed
@@ -360,31 +340,21 @@ class ExtManagerImpl extends DisposableImpl implements ExtensionManager {
         folder = this.unpackedFolder(path.resolve(config.location));
       }
       try {
-        Object.assign(
-          config,
-          JSON.parse(readFileSync(`${folder}/bf-extension.json`))
-        );
+        Object.assign(config, JSON.parse(readFileSync(`${folder}/bf-extension.json`)));
       } catch (ex) {
         config = null;
       }
       if (config && config.name) {
         if (config.node) {
           if (config.node.debug && config.node.debug.enabled) {
-            if (
-              config.node.debug.websocket &&
-              config.node.debug.websocket.port
-            ) {
+            if (config.node.debug.websocket && config.node.debug.websocket.port) {
               const port = +config.node.debug.websocket.port;
               try {
                 // This extension is going to connect to us over websocket. Once that
                 // connection is established we'll add the extension.
                 // const wss = new ExtensionServer(port);
                 // eslint-disable-next-line no-console
-                console.log(
-                  `Waiting for extension ${
-                    config.name
-                  } to connect on port ${port}`
-                );
+                console.log(`Waiting for extension ${config.name} to connect on port ${port}`);
               } catch (err) {
                 const msg = `Failed to spawn WebSocketServer on port ${port}.
                 Extension ${config.name} will be unable to connect.`;
@@ -394,9 +364,7 @@ class ExtManagerImpl extends DisposableImpl implements ExtensionManager {
             }
           } else if (config.node.main) {
             // Launch node process as a child of this one.
-            const file = this.unpackedFolder(
-              path.resolve(folder, config.node.main)
-            );
+            const file = this.unpackedFolder(path.resolve(folder, config.node.main));
             // Start the extension in a child process.
             child = fork(file, [], {
               cwd: path.dirname(file),

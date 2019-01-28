@@ -41,10 +41,6 @@ export interface DialogFooterProps {
 export class DialogFooter extends React.Component<DialogFooterProps, {}> {
   public render(): JSX.Element {
     const { className = '' } = this.props;
-    return (
-      <div className={`${styles.footer} ${className}`}>
-        {this.props.children}
-      </div>
-    );
+    return <div className={`${styles.footer} ${className}`}>{this.props.children}</div>;
   }
 }

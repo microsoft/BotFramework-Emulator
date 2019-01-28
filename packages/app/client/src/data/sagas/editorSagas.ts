@@ -31,40 +31,23 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import {
-  isChatFile,
-  isTranscriptFile,
-  SharedConstants,
-} from '@bfemulator/app-shared';
+import { isChatFile, isTranscriptFile, SharedConstants } from '@bfemulator/app-shared';
 
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { EditorActions, removeDocPendingChange } from '../action/editorActions';
 
 import { editorSelector, refreshConversationMenu } from './sharedSagas';
 
-import {
-  call,
-  ForkEffect,
-  put,
-  select,
-  takeEvery,
-  takeLatest,
-} from 'redux-saga/effects';
+import { call, ForkEffect, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
 
-export function* promptUserToReloadDocument(
-  filename: string
-): IterableIterator<any> {
+export function* promptUserToReloadDocument(filename: string): IterableIterator<any> {
   const { Commands } = SharedConstants;
   const options = {
     buttons: ['Cancel', 'Reload'],
     title: 'File change detected',
-    message:
-      'We have detected a change in this file on disk. Would you like to reload it in the Emulator?',
+    message: 'We have detected a change in this file on disk. Would you like to reload it in the Emulator?',
   };
-  const confirmation = yield CommandServiceImpl.remoteCall(
-    Commands.Electron.ShowMessageBox,
-    options
-  );
+  const confirmation = yield CommandServiceImpl.remoteCall(Commands.Electron.ShowMessageBox, options);
 
   // clear the doc of pending changes
   yield put(removeDocPendingChange(filename));
@@ -85,8 +68,7 @@ export function* checkActiveDocForPendingChanges(): IterableIterator<any> {
   const stateData = yield select(editorSelector);
 
   // if currently active document has pending changes, prompt the user to reload it
-  const activeDocId =
-    stateData.editors[stateData.activeEditor].activeDocumentId;
+  const activeDocId = stateData.editors[stateData.activeEditor].activeDocumentId;
   if (stateData.docsWithPendingChanges.some(doc => doc === activeDocId)) {
     // TODO: active document ID is not always the filename
     yield call(promptUserToReloadDocument, activeDocId);
@@ -98,22 +80,12 @@ export function* editorSagas(): IterableIterator<ForkEffect> {
   // Whenever a doc is added to the list of docs pending changes, or and editor / tab
   // is focused, check to see if the active document has pending changes
   yield takeEvery(
-    [
-      EditorActions.addDocPendingChange,
-      EditorActions.setActiveEditor,
-      EditorActions.setActiveTab,
-      EditorActions.open,
-    ],
+    [EditorActions.addDocPendingChange, EditorActions.setActiveEditor, EditorActions.setActiveTab, EditorActions.open],
     checkActiveDocForPendingChanges
   );
 
   yield takeLatest(
-    [
-      EditorActions.close,
-      EditorActions.open,
-      EditorActions.setActiveEditor,
-      EditorActions.setActiveTab,
-    ],
+    [EditorActions.close, EditorActions.open, EditorActions.setActiveEditor, EditorActions.setActiveTab],
     refreshConversationMenu
   );
 }

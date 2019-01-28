@@ -50,10 +50,7 @@ const DEFAULT_STATE: ExplorerState = {
   sortSelectionByPanelId: { [CONNECTED_SERVICES_PANEL_ID]: 'name' },
 };
 
-export function explorer(
-  state: ExplorerState = DEFAULT_STATE,
-  action: ExplorerAction<ExplorerPayload>
-): ExplorerState {
+export function explorer(state: ExplorerState = DEFAULT_STATE, action: ExplorerAction<ExplorerPayload>): ExplorerState {
   switch (action.type) {
     case ExplorerActions.Show:
       state = { ...state, showing: action.payload.show };

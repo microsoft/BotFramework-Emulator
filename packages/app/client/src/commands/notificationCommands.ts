@@ -43,16 +43,13 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   const Commands = SharedConstants.Commands.Notifications;
   // ---------------------------------------------------------------------------
   // Adds a notification from the main side to the store / notification manager
-  commandRegistry.registerCommand(
-    Commands.Add,
-    (notification: Notification) => {
-      if (!notification) {
-        notification = getGlobal(SharedConstants.NOTIFICATION_FROM_MAIN);
-      }
-
-      store.dispatch(NotificationActions.beginAdd(notification));
+  commandRegistry.registerCommand(Commands.Add, (notification: Notification) => {
+    if (!notification) {
+      notification = getGlobal(SharedConstants.NOTIFICATION_FROM_MAIN);
     }
-  );
+
+    store.dispatch(NotificationActions.beginAdd(notification));
+  });
 
   // ---------------------------------------------------------------------------
   // Removes a notification from the store / notification manager

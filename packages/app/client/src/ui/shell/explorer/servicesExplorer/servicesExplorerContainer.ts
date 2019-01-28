@@ -31,10 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import {
-  IConnectedService,
-  ServiceTypes,
-} from 'botframework-config/lib/schema';
+import { IConnectedService, ServiceTypes } from 'botframework-config/lib/schema';
 import { ComponentClass } from 'react';
 import { connect } from 'react-redux';
 
@@ -53,9 +50,7 @@ import { ServicesExplorer, ServicesExplorerProps } from './servicesExplorer';
 
 const mapStateToProps = (state: RootState): Partial<ServicesExplorerProps> => {
   const { services = [] } = state.bot.activeBot;
-  const {
-    [CONNECTED_SERVICES_PANEL_ID]: sortCriteria,
-  } = state.explorer.sortSelectionByPanelId;
+  const { [CONNECTED_SERVICES_PANEL_ID]: sortCriteria } = state.explorer.sortSelectionByPanelId;
   return {
     services: services.filter(
       service =>
@@ -74,19 +69,14 @@ const mapStateToProps = (state: RootState): Partial<ServicesExplorerProps> => {
 
 const mapDispatchToProps = (dispatch): Partial<ServicesExplorerProps> => {
   return {
-    openAddServiceContextMenu: (payload: ConnectedServicePickerPayload) =>
-      dispatch(openAddServiceContextMenu(payload)),
+    openAddServiceContextMenu: (payload: ConnectedServicePickerPayload) => dispatch(openAddServiceContextMenu(payload)),
 
-    openServiceDeepLink: (connectedService: IConnectedService) =>
-      dispatch(openServiceDeepLink(connectedService)),
+    openServiceDeepLink: (connectedService: IConnectedService) => dispatch(openServiceDeepLink(connectedService)),
 
     openContextMenuForService: (
       connectedService: IConnectedService,
       editorComponent: ComponentClass<ConnectedServiceEditor>
-    ) =>
-      dispatch(
-        openContextMenuForConnectedService(editorComponent, connectedService)
-      ),
+    ) => dispatch(openContextMenuForConnectedService(editorComponent, connectedService)),
 
     openSortContextMenu: () => dispatch(openSortContextMenu()),
   };

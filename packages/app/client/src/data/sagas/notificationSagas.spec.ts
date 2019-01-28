@@ -34,20 +34,9 @@
 import { newNotification, NotificationType } from '@bfemulator/app-shared';
 
 import { NotificationManager } from '../../notificationManager';
-import {
-  beginAdd,
-  finishAdd,
-  finishClear,
-  beginRemove,
-  finishRemove,
-} from '../action/notificationActions';
+import { beginAdd, finishAdd, finishClear, beginRemove, finishRemove } from '../action/notificationActions';
 
-import {
-  addNotification,
-  clearNotifications,
-  removeNotification,
-  markAllAsRead,
-} from './notificationSagas';
+import { addNotification, clearNotifications, removeNotification, markAllAsRead } from './notificationSagas';
 
 import { put } from 'redux-saga/effects';
 

@@ -40,23 +40,11 @@ import sendErrorResponse from '../../utils/sendErrorResponse';
 import { ConversationAware } from './fetchConversation';
 
 export default function updateShippingOption(_botEmulator: BotEmulator) {
-  return async (
-    req: ConversationAware,
-    res: Restify.Response,
-    next: Restify.Next
-  ): Promise<any> => {
-    const {
-      checkoutSession,
-      request,
-      shippingAddress,
-      shippingOptionId,
-    } = req.body[0];
+  return async (req: ConversationAware, res: Restify.Response, next: Restify.Next): Promise<any> => {
+    const { checkoutSession, request, shippingAddress, shippingOptionId } = req.body[0];
     const args = [checkoutSession, request, shippingAddress, shippingOptionId];
     try {
-      const response = await req.conversation.sendUpdateShippingOptionOperation.apply(
-        req.conversation,
-        args
-      );
+      const response = await req.conversation.sendUpdateShippingOptionOperation.apply(req.conversation, args);
       const json = await response.json();
       res.send(HttpStatus.OK, json);
     } catch (err) {

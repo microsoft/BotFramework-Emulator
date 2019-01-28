@@ -35,10 +35,7 @@ import { connect } from 'react-redux';
 
 import { DialogService } from '../service';
 
-import {
-  UpdateAvailableDialog,
-  UpdateAvailableDialogProps,
-} from './updateAvailableDialog';
+import { UpdateAvailableDialog, UpdateAvailableDialogProps } from './updateAvailableDialog';
 
 function mapDispatchToProps(_dispatch: any): UpdateAvailableDialogProps {
   return {

@@ -41,16 +41,9 @@
 
 import './fetchProxy';
 import { SharedConstants, newBot, newEndpoint } from '@bfemulator/app-shared';
-import {
-  applyBotConfigOverrides,
-  BotConfigWithPathImpl,
-} from '@bfemulator/sdk-shared';
+import { applyBotConfigOverrides, BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
 
-import {
-  Protocol,
-  ProtocolHandler,
-  parseEndpointOverrides,
-} from './protocolHandler';
+import { Protocol, ProtocolHandler, parseEndpointOverrides } from './protocolHandler';
 import { TelemetryService } from './telemetry';
 
 let mockCallsMade, mockRemoteCallsMade;
@@ -146,9 +139,7 @@ describe('Protocol handler tests', () => {
 
   describe('parseProtocolUrl() functionality', () => {
     it('should return an info object about the parsed URL', () => {
-      const info: Protocol = ProtocolHandler.parseProtocolUrl(
-        'bfemulator://bot.open?path=somePath'
-      );
+      const info: Protocol = ProtocolHandler.parseProtocolUrl('bfemulator://bot.open?path=somePath');
       expect(info.domain).toBe('bot');
       expect(info.action).toBe('open');
       expect(info.args).toEqual('path=somePath');
@@ -156,9 +147,7 @@ describe('Protocol handler tests', () => {
     });
 
     it('should throw on an invalid protocol url', () => {
-      expect(() =>
-        ProtocolHandler.parseProtocolUrl('invalidProtocolUrl://blah')
-      ).toThrow();
+      expect(() => ProtocolHandler.parseProtocolUrl('invalidProtocolUrl://blah')).toThrow();
     });
   });
 
@@ -294,18 +283,12 @@ describe('Protocol handler tests', () => {
     await ProtocolHandler.openBot(protocol);
 
     expect(mockCallsMade).toHaveLength(2);
-    expect(mockCallsMade[0].commandName).toBe(
-      SharedConstants.Commands.Bot.Open
-    );
+    expect(mockCallsMade[0].commandName).toBe(SharedConstants.Commands.Bot.Open);
     expect(mockCallsMade[0].args).toEqual(['path/to/bot.bot', 'someSecret']);
-    expect(mockCallsMade[1].commandName).toBe(
-      SharedConstants.Commands.Bot.SetActive
-    );
+    expect(mockCallsMade[1].commandName).toBe(SharedConstants.Commands.Bot.SetActive);
     expect(mockCallsMade[1].args).toEqual([overriddenBot]);
     expect(mockRemoteCallsMade).toHaveLength(1);
-    expect(mockRemoteCallsMade[0].commandName).toBe(
-      SharedConstants.Commands.Bot.Load
-    );
+    expect(mockRemoteCallsMade[0].commandName).toBe(SharedConstants.Commands.Bot.Load);
     expect(mockRemoteCallsMade[0].args).toEqual([overriddenBot]);
     expect(mockTrackEvent).toHaveBeenCalledWith('bot_open', {
       method: 'protocol',
@@ -328,18 +311,12 @@ describe('Protocol handler tests', () => {
     await ProtocolHandler.openBot(protocol);
 
     expect(mockCallsMade).toHaveLength(2);
-    expect(mockCallsMade[0].commandName).toBe(
-      SharedConstants.Commands.Bot.Open
-    );
+    expect(mockCallsMade[0].commandName).toBe(SharedConstants.Commands.Bot.Open);
     expect(mockCallsMade[0].args).toEqual(['path/to/bot.bot', 'someSecret']);
-    expect(mockCallsMade[1].commandName).toBe(
-      SharedConstants.Commands.Bot.SetActive
-    );
+    expect(mockCallsMade[1].commandName).toBe(SharedConstants.Commands.Bot.SetActive);
     expect(mockCallsMade[1].args).toEqual([overriddenBot]);
     expect(mockRemoteCallsMade).toHaveLength(1);
-    expect(mockRemoteCallsMade[0].commandName).toBe(
-      SharedConstants.Commands.Bot.Load
-    );
+    expect(mockRemoteCallsMade[0].commandName).toBe(SharedConstants.Commands.Bot.Load);
     expect(mockRemoteCallsMade[0].args).toEqual([overriddenBot]);
     expect(mockTrackEvent).toHaveBeenCalledWith('bot_open', {
       method: 'protocol',
@@ -362,18 +339,12 @@ describe('Protocol handler tests', () => {
     await ProtocolHandler.openBot(protocol);
 
     expect(mockCallsMade).toHaveLength(2);
-    expect(mockCallsMade[0].commandName).toBe(
-      SharedConstants.Commands.Bot.Open
-    );
+    expect(mockCallsMade[0].commandName).toBe(SharedConstants.Commands.Bot.Open);
     expect(mockCallsMade[0].args).toEqual(['path/to/bot.bot', 'someSecret']);
-    expect(mockCallsMade[1].commandName).toBe(
-      SharedConstants.Commands.Bot.SetActive
-    );
+    expect(mockCallsMade[1].commandName).toBe(SharedConstants.Commands.Bot.SetActive);
     expect(mockCallsMade[1].args).toEqual([overriddenBot]);
     expect(mockRemoteCallsMade).toHaveLength(1);
-    expect(mockRemoteCallsMade[0].commandName).toBe(
-      SharedConstants.Commands.Bot.Load
-    );
+    expect(mockRemoteCallsMade[0].commandName).toBe(SharedConstants.Commands.Bot.Load);
     expect(mockRemoteCallsMade[0].args).toEqual([overriddenBot]);
     expect(mockTrackEvent).toHaveBeenCalledWith('bot_open', {
       method: 'protocol',
@@ -403,18 +374,12 @@ describe('Protocol handler tests', () => {
     await ProtocolHandler.openLiveChat(protocol);
 
     expect(mockCallsMade).toHaveLength(1);
-    expect(mockCallsMade[0].commandName).toBe(
-      SharedConstants.Commands.Bot.RestartEndpointService
-    );
+    expect(mockCallsMade[0].commandName).toBe(SharedConstants.Commands.Bot.RestartEndpointService);
     expect(mockCallsMade[0].args).toEqual([]);
     expect(mockRemoteCallsMade).toHaveLength(2);
-    expect(mockRemoteCallsMade[0].commandName).toBe(
-      SharedConstants.Commands.Bot.SetActive
-    );
+    expect(mockRemoteCallsMade[0].commandName).toBe(SharedConstants.Commands.Bot.SetActive);
     expect(mockRemoteCallsMade[0].args).toEqual([mockedBot, '']);
-    expect(mockRemoteCallsMade[1].commandName).toBe(
-      SharedConstants.Commands.Emulator.NewLiveChat
-    );
+    expect(mockRemoteCallsMade[1].commandName).toBe(SharedConstants.Commands.Emulator.NewLiveChat);
     expect(mockRemoteCallsMade[1].args).toEqual([mockEndpoint]);
   });
 
@@ -441,18 +406,12 @@ describe('Protocol handler tests', () => {
     await ProtocolHandler.openLiveChat(protocol);
 
     expect(mockCallsMade).toHaveLength(1);
-    expect(mockCallsMade[0].commandName).toBe(
-      SharedConstants.Commands.Bot.RestartEndpointService
-    );
+    expect(mockCallsMade[0].commandName).toBe(SharedConstants.Commands.Bot.RestartEndpointService);
     expect(mockCallsMade[0].args).toEqual([]);
     expect(mockRemoteCallsMade).toHaveLength(2);
-    expect(mockRemoteCallsMade[0].commandName).toBe(
-      SharedConstants.Commands.Bot.SetActive
-    );
+    expect(mockRemoteCallsMade[0].commandName).toBe(SharedConstants.Commands.Bot.SetActive);
     expect(mockRemoteCallsMade[0].args).toEqual([mockedBot, '']);
-    expect(mockRemoteCallsMade[1].commandName).toBe(
-      SharedConstants.Commands.Emulator.NewLiveChat
-    );
+    expect(mockRemoteCallsMade[1].commandName).toBe(SharedConstants.Commands.Emulator.NewLiveChat);
     expect(mockRemoteCallsMade[1].args).toEqual([mockEndpoint]);
   });
 
@@ -480,9 +439,7 @@ describe('Protocol handler tests', () => {
 
     expect(mockCallsMade).toHaveLength(0);
     expect(mockRemoteCallsMade).toHaveLength(1);
-    expect(mockRemoteCallsMade[0].commandName).toBe(
-      SharedConstants.Commands.Emulator.NewLiveChat
-    );
+    expect(mockRemoteCallsMade[0].commandName).toBe(SharedConstants.Commands.Emulator.NewLiveChat);
     expect(mockRemoteCallsMade[0].args).toEqual([mockEndpoint]);
   });
 
@@ -494,9 +451,7 @@ describe('Protocol handler tests', () => {
     await ProtocolHandler.openTranscript(protocol);
 
     expect(mockRemoteCallsMade).toHaveLength(1);
-    expect(mockRemoteCallsMade[0].commandName).toBe(
-      SharedConstants.Commands.Emulator.OpenTranscript
-    );
+    expect(mockRemoteCallsMade[0].commandName).toBe(SharedConstants.Commands.Emulator.OpenTranscript);
     expect(mockRemoteCallsMade[0].args).toEqual([
       'deepLinkedTranscript',
       {

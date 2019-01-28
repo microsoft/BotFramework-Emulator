@@ -53,10 +53,7 @@ interface ContentOverlayState {
   owningEditor: string;
 }
 
-class ContentOverlayComponent extends React.Component<
-  ContentOverlayProps,
-  ContentOverlayState
-> {
+class ContentOverlayComponent extends React.Component<ContentOverlayProps, ContentOverlayState> {
   constructor(props: ContentOverlayProps) {
     super(props);
 
@@ -96,11 +93,7 @@ class ContentOverlayComponent extends React.Component<
   public onDrop(e: DragEvent<HTMLDivElement>) {
     const tabData = JSON.parse(e.dataTransfer.getData('application/json'));
     if (tabData.editorKey !== this.state.owningEditor) {
-      this.props.appendTab(
-        tabData.editorKey,
-        this.state.owningEditor,
-        tabData.tabId
-      );
+      this.props.appendTab(tabData.editorKey, this.state.owningEditor, tabData.tabId);
     }
 
     this.setState({ draggedOver: false });
@@ -109,16 +102,12 @@ class ContentOverlayComponent extends React.Component<
   }
 
   public render() {
-    let overlayClassName = this.state.draggedOver
-      ? overlay.draggedOverOverlay
-      : '';
+    let overlayClassName = this.state.draggedOver ? overlay.draggedOverOverlay : '';
     overlayClassName += this.props.draggingTab ? overlay.enabledForDrop : '';
 
     return (
       <div
-        className={`${overlay.overlay} ${
-          styles.contentOverlay
-        } ${overlayClassName}`}
+        className={`${overlay.overlay} ${styles.contentOverlay} ${overlayClassName}`}
         onDragEnterCapture={this.onDragEnter}
         onDragLeave={this.onDragLeave}
         onDragOverCapture={this.onDragOver}

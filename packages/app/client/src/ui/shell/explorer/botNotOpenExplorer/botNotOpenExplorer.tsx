@@ -43,10 +43,7 @@ export interface BotNotOpenExplorerProps {
   sendNotification: (error: Error) => void;
 }
 
-export class BotNotOpenExplorer extends React.Component<
-  BotNotOpenExplorerProps,
-  {}
-> {
+export class BotNotOpenExplorer extends React.Component<BotNotOpenExplorerProps, {}> {
   public render() {
     const label = 'Services Not Available';
     return (

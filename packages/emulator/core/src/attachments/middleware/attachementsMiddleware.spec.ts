@@ -79,10 +79,7 @@ describe('The getAttachment middleware', () => {
       } as any
     );
 
-    expect(sendSpy).toHaveBeenCalledWith(
-      HttpStatus.OK,
-      Buffer.from('aGk=', 'base64')
-    );
+    expect(sendSpy).toHaveBeenCalledWith(HttpStatus.OK, Buffer.from('aGk=', 'base64'));
     expect(res.contentType).toBe('application/text');
   });
 
@@ -169,10 +166,7 @@ describe('the getAttachmentInfo middleware', () => {
     expect(sendSpy).toHaveBeenCalledWith(HttpStatus.OK, {
       name: 'an attachment',
       type: 'application/text',
-      views: [
-        { size: 2, viewId: 'original' },
-        { size: 2, viewId: 'thumbnail' },
-      ],
+      views: [{ size: 2, viewId: 'original' }, { size: 2, viewId: 'thumbnail' }],
     });
   });
 

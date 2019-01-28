@@ -30,12 +30,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import {
-  Checkbox,
-  Dialog,
-  DialogFooter,
-  PrimaryButton,
-} from '@bfemulator/ui-react';
+import { Checkbox, Dialog, DialogFooter, PrimaryButton } from '@bfemulator/ui-react';
 import * as React from 'react';
 import { ChangeEvent, Component } from 'react';
 
@@ -52,25 +47,15 @@ export interface AzureLoginSuccessDialogProps {
   [propName: string]: any;
 }
 
-export class AzureLoginSuccessDialog extends Component<
-  AzureLoginSuccessDialogProps,
-  AzureLoginSuccessDialogState
-> {
-  constructor(
-    props: AzureLoginSuccessDialogProps = {} as any,
-    state: AzureLoginSuccessDialogState
-  ) {
+export class AzureLoginSuccessDialog extends Component<AzureLoginSuccessDialogProps, AzureLoginSuccessDialogState> {
+  constructor(props: AzureLoginSuccessDialogProps = {} as any, state: AzureLoginSuccessDialogState) {
     super(props, state);
     this.state = { rememberMeChecked: !!props.persistLogin };
   }
 
   public render() {
     return (
-      <Dialog
-        title="Success!"
-        cancel={this.onDialogCancel}
-        className={styles.dialogMedium}
-      >
+      <Dialog title="Success!" cancel={this.onDialogCancel} className={styles.dialogMedium}>
         <p>You are now signed in with your Azure account</p>
         <Checkbox
           checked={this.state.rememberMeChecked}

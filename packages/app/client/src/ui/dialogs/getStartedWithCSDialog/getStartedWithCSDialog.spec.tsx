@@ -62,8 +62,7 @@ jest.mock('../../dialogs/', () => ({
 
 describe('The GetStartedWithCSDialog component should', () => {
   let mockStore;
-  const mockArmToken =
-    'bm90aGluZw==.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds';
+  const mockArmToken = 'bm90aGluZw==.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds';
   beforeEach(() => {
     mockStore = createStore(combineReducers({ azureAuth }));
     mockStore.dispatch(azureArmTokenDataChanged(mockArmToken));
@@ -87,9 +86,7 @@ describe('The GetStartedWithCSDialog component should', () => {
     const prompt = parent.find(GetStartedWithCSDialog);
     expect(typeof (prompt.props() as any).cancel).toEqual('function');
     expect(typeof (prompt.props() as any).confirm).toEqual('function');
-    expect(typeof (prompt.props() as any).launchConnectedServiceEditor).toEqual(
-      'function'
-    );
+    expect(typeof (prompt.props() as any).launchConnectedServiceEditor).toEqual('function');
   });
 
   it(
@@ -118,16 +115,11 @@ describe('The GetStartedWithCSDialog component should', () => {
     () => {
       const parent: any = mount(
         <Provider store={mockStore}>
-          <GetStartedWithCSDialogContainer
-            showNoModelsFoundContent={true}
-            serviceType={ServiceTypes.Luis}
-          />
+          <GetStartedWithCSDialogContainer showNoModelsFoundContent={true} serviceType={ServiceTypes.Luis} />
         </Provider>
       );
       const prompt = parent.find(GetStartedWithCSDialog);
-      expect(prompt.instance().content).toEqual(
-        prompt.instance().luisNoModelsFoundContent
-      );
+      expect(prompt.instance().content).toEqual(prompt.instance().luisNoModelsFoundContent);
     }
   );
 
@@ -148,9 +140,7 @@ describe('The GetStartedWithCSDialog component should', () => {
       </Provider>
     );
     const prompt = parent.find(GetStartedWithCSDialog);
-    expect(prompt.instance().content).toEqual(
-      prompt.instance().dispatchContent
-    );
+    expect(prompt.instance().content).toEqual(prompt.instance().dispatchContent);
   });
 
   it(
@@ -159,16 +149,11 @@ describe('The GetStartedWithCSDialog component should', () => {
     () => {
       const parent: any = mount(
         <Provider store={mockStore}>
-          <GetStartedWithCSDialogContainer
-            showNoModelsFoundContent={true}
-            serviceType={ServiceTypes.Dispatch}
-          />
+          <GetStartedWithCSDialogContainer showNoModelsFoundContent={true} serviceType={ServiceTypes.Dispatch} />
         </Provider>
       );
       const prompt = parent.find(GetStartedWithCSDialog);
-      expect(prompt.instance().content).toEqual(
-        prompt.instance().dispatchNoModelsFoundContent
-      );
+      expect(prompt.instance().content).toEqual(prompt.instance().dispatchNoModelsFoundContent);
     }
   );
 
@@ -185,9 +170,7 @@ describe('The GetStartedWithCSDialog component should', () => {
   it('should display blobContent when the ServiceTypes.BlobStorage is provided in the props', () => {
     const parent: any = mount(
       <Provider store={mockStore}>
-        <GetStartedWithCSDialogContainer
-          serviceType={ServiceTypes.BlobStorage}
-        />
+        <GetStartedWithCSDialogContainer serviceType={ServiceTypes.BlobStorage} />
       </Provider>
     );
     const prompt = parent.find(GetStartedWithCSDialog);
@@ -201,9 +184,7 @@ describe('The GetStartedWithCSDialog component should', () => {
       </Provider>
     );
     const prompt = parent.find(GetStartedWithCSDialog);
-    expect(prompt.instance().content).toEqual(
-      prompt.instance().cosmosDbContent
-    );
+    expect(prompt.instance().content).toEqual(prompt.instance().cosmosDbContent);
   });
 
   it('should display no when no service type provided in the props', () => {

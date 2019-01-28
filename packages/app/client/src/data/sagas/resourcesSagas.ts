@@ -30,13 +30,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import {
-  BotInfo,
-  isChatFile,
-  isTranscriptFile,
-  NotificationType,
-  SharedConstants,
-} from '@bfemulator/app-shared';
+import { BotInfo, isChatFile, isTranscriptFile, NotificationType, SharedConstants } from '@bfemulator/app-shared';
 import { newNotification } from '@bfemulator/app-shared/built';
 import { IFileService } from 'botframework-config/lib/schema';
 import { ComponentClass } from 'react';
@@ -55,25 +49,13 @@ import {
 
 import { ForkEffect, put, takeEvery } from 'redux-saga/effects';
 
-function* openContextMenuForResource(
-  action: ResourcesAction<IFileService>
-): IterableIterator<any> {
-  const menuItems = [
-    { label: 'Open file location', id: 0 },
-    { label: 'Rename', id: 1 },
-    { label: 'Delete', id: 2 },
-  ];
+function* openContextMenuForResource(action: ResourcesAction<IFileService>): IterableIterator<any> {
+  const menuItems = [{ label: 'Open file location', id: 0 }, { label: 'Rename', id: 1 }, { label: 'Delete', id: 2 }];
 
-  const result = yield CommandServiceImpl.remoteCall(
-    SharedConstants.Commands.Electron.DisplayContextMenu,
-    menuItems
-  );
+  const result = yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.DisplayContextMenu, menuItems);
   switch (result.id) {
     case 0:
-      yield CommandServiceImpl.remoteCall(
-        SharedConstants.Commands.Electron.OpenFileLocation,
-        action.payload.path
-      );
+      yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.OpenFileLocation, action.payload.path);
       break;
 
     case 1:
@@ -90,9 +72,7 @@ function* openContextMenuForResource(
   }
 }
 
-function* deleteFile(
-  action: ResourcesAction<IFileService>
-): IterableIterator<any> {
+function* deleteFile(action: ResourcesAction<IFileService>): IterableIterator<any> {
   const { name, path } = action.payload;
   const { ShowMessageBox, UnlinkFile } = SharedConstants.Commands.Electron;
   const result = yield CommandServiceImpl.remoteCall(ShowMessageBox, true, {
@@ -125,17 +105,13 @@ function* doRename(action: ResourcesAction<IFileService>) {
   yield put(editResource(null));
 }
 
-function* doOpenResource(
-  action: ResourcesAction<IFileService>
-): IterableIterator<any> {
+function* doOpenResource(action: ResourcesAction<IFileService>): IterableIterator<any> {
   const { OpenChatFile, OpenTranscript } = SharedConstants.Commands.Emulator;
   const { TrackEvent } = SharedConstants.Commands.Telemetry;
   const { path } = action.payload;
   if (isChatFile(path)) {
     yield CommandServiceImpl.call(OpenChatFile, path, true);
-    CommandServiceImpl.remoteCall(TrackEvent, 'chatFile_open').catch(
-      _e => void 0
-    );
+    CommandServiceImpl.remoteCall(TrackEvent, 'chatFile_open').catch(_e => void 0);
   } else if (isTranscriptFile(path)) {
     yield CommandServiceImpl.call(OpenTranscript, path);
     CommandServiceImpl.remoteCall(TrackEvent, 'transcriptFile_open', {
@@ -145,24 +121,13 @@ function* doOpenResource(
   // unknown types just fall into the abyss
 }
 
-function* launchResourcesSettingsModal(
-  action: ResourcesAction<{ dialog: ComponentClass<any> }>
-) {
-  const result: Partial<BotInfo> = yield DialogService.showDialog(
-    action.payload.dialog
-  );
+function* launchResourcesSettingsModal(action: ResourcesAction<{ dialog: ComponentClass<any> }>) {
+  const result: Partial<BotInfo> = yield DialogService.showDialog(action.payload.dialog);
   if (result) {
     try {
-      yield CommandServiceImpl.remoteCall(
-        SharedConstants.Commands.Bot.PatchBotList,
-        result.path,
-        result
-      );
+      yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.PatchBotList, result.path, result);
     } catch (e) {
-      const notification = newNotification(
-        'Unable to save resource settings',
-        NotificationType.Error
-      );
+      const notification = newNotification('Unable to save resource settings', NotificationType.Error);
       yield put(beginAdd(notification));
     }
   }

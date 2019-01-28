@@ -57,17 +57,8 @@ export interface TabBarProps {
   editors?: { [editorKey: string]: Editor };
   owningEditor?: string;
   tabOrder?: string[];
-  splitTab?: (
-    contentType: string,
-    documentId: string,
-    srcEditorKey: string,
-    destEditorKey: string
-  ) => void;
-  appendTab?: (
-    srcEditorKey: string,
-    destEditorKey: string,
-    tabId: string
-  ) => void;
+  splitTab?: (contentType: string, documentId: string, srcEditorKey: string, destEditorKey: string) => void;
+  appendTab?: (srcEditorKey: string, destEditorKey: string, tabId: string) => void;
   enablePresentationMode?: () => void;
   setActiveTab?: (documentId: string) => void;
   closeTab?: (documentId: string) => void;
@@ -85,9 +76,7 @@ export class TabBar extends React.Component<TabBarProps, TabBarState> {
   constructor(props: TabBarProps) {
     super(props);
 
-    const activeIndex = props.tabOrder.findIndex(
-      docId => docId === props.activeDocumentId
-    );
+    const activeIndex = props.tabOrder.findIndex(docId => docId === props.activeDocumentId);
     this.activeIndex = activeIndex === -1 ? 0 : activeIndex;
 
     this.state = {
@@ -105,16 +94,11 @@ export class TabBar extends React.Component<TabBarProps, TabBarState> {
 
   public componentDidUpdate(prevProps: TabBarProps) {
     const scrollable = this._scrollable;
-    const activeIndex = this.props.tabOrder.findIndex(
-      docId => docId === this.props.activeDocumentId
-    );
+    const activeIndex = this.props.tabOrder.findIndex(docId => docId === this.props.activeDocumentId);
     this.activeIndex = activeIndex === -1 ? 0 : activeIndex;
 
     if (scrollable) {
-      if (
-        this.props.tabOrder.length > prevProps.tabOrder.length &&
-        scrollable.scrollWidth > scrollable.clientWidth
-      ) {
+      if (this.props.tabOrder.length > prevProps.tabOrder.length && scrollable.scrollWidth > scrollable.clientWidth) {
         let leftOffset = 0;
         for (let i = 0; i <= this.activeIndex; i++) {
           const ref = this.childRefs[i];
@@ -170,22 +154,14 @@ export class TabBar extends React.Component<TabBarProps, TabBarState> {
 
     if (presentationEnabled) {
       widgets.push(
-        <button
-          key={'presentation-widget'}
-          title="Presentation Mode"
-          onClick={() => this.onPresentationModeClick()}
-        >
+        <button key={'presentation-widget'} title="Presentation Mode" onClick={() => this.onPresentationModeClick()}>
           <div className={`${styles.widget} ${styles.presentationWidget}`} />
         </button>
       );
     }
     if (splitEnabled) {
       widgets.push(
-        <button
-          key={'split-widget'}
-          title="Split Editor"
-          onClick={this.onSplitClick}
-        >
+        <button key={'split-widget'} title="Split Editor" onClick={this.onSplitClick}>
           <div className={`${styles.widget} ${styles.splitWidget}`} />
         </button>
       );
@@ -223,10 +199,7 @@ export class TabBar extends React.Component<TabBarProps, TabBarState> {
     this.props.setActiveTab(this.props.tabOrder[tabIndex]);
   };
 
-  private handleKeyDown = (
-    event: React.KeyboardEvent<HTMLDivElement>,
-    tabIndex: number
-  ): void => {
+  private handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>, tabIndex: number): void => {
     let { key = '' } = event;
     key = key.toLowerCase();
     if (key === ' ' || key === 'enter') {
@@ -239,12 +212,7 @@ export class TabBar extends React.Component<TabBarProps, TabBarState> {
     const docIdToSplit = owningEditor.activeDocumentId;
     const docToSplit = owningEditor.documents[docIdToSplit];
     const destEditorKey = getOtherTabGroup(this.props.owningEditor);
-    this.props.splitTab(
-      docToSplit.contentType,
-      docToSplit.documentId,
-      this.props.owningEditor,
-      destEditorKey
-    );
+    this.props.splitTab(docToSplit.contentType, docToSplit.documentId, this.props.owningEditor, destEditorKey);
   };
 
   private onDragEnter = (e: DragEvent<HTMLDivElement>) => {
@@ -296,8 +264,7 @@ export class TabBar extends React.Component<TabBarProps, TabBarState> {
       case CONTENT_TYPE_LIVE_CHAT: {
         let label = 'Live Chat';
         const { services = [] } = this.props.activeBot || {};
-        const { endpointId = null } =
-          this.props.chats[document.documentId] || {};
+        const { endpointId = null } = this.props.chats[document.documentId] || {};
         const botEndpoint = services.find(s => s.id === endpointId);
 
         if (botEndpoint) {

@@ -52,11 +52,7 @@ import typing from './middleware/typing';
 import updateShippingAddress from './middleware/updateShippingAddress';
 import updateShippingOption from './middleware/updateShippingOption';
 
-export default function registerRoutes(
-  botEmulator: BotEmulator,
-  server: Server,
-  uses: RequestHandler[]
-) {
+export default function registerRoutes(botEmulator: BotEmulator, server: Server, uses: RequestHandler[]) {
   const fetchConversation = createFetchConversationMiddleware(botEmulator);
   const jsonBodyParser = createJsonBodyParserMiddleware();
   const facility = getFacility('emulator');
@@ -110,13 +106,7 @@ export default function registerRoutes(
     typing(botEmulator)
   );
 
-  server.post(
-    '/emulator/:conversationId/ping',
-    fetchConversation,
-    facility,
-    getRouteName('ping'),
-    ping(botEmulator)
-  );
+  server.post('/emulator/:conversationId/ping', fetchConversation, facility, getRouteName('ping'), ping(botEmulator));
 
   server.del(
     '/emulator/:conversationId/userdata',
