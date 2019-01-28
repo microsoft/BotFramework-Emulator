@@ -107,7 +107,8 @@ describe('The openFileFromCommandLine util', () => {
     expect(commandService.remoteCalls).toEqual([
       [
         'transcript:open',
-        'deepLinkedTranscript',
+        'some/path.transcript',
+        'path.transcript',
         {
           activities: [],
           inMemory: true,

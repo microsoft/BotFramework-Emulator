@@ -57,9 +57,8 @@ export async function openFileFromCommandLine(fileToBeOpened: string, commandSer
       throw new Error('Invalid transcript file contents; should be an array of conversation activities.');
     }
 
-    // open a transcript on the client side and pass in
-    // some extra info to differentiate it from a transcript on disk
-    await commandService.remoteCall(Emulator.OpenTranscript, 'deepLinkedTranscript', {
+    const transcriptName = path.basename(fileToBeOpened);
+    await commandService.remoteCall(Emulator.OpenTranscript, fileToBeOpened, transcriptName, {
       activities: conversationActivities,
       inMemory: true,
     });
