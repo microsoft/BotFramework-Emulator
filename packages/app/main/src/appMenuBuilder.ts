@@ -257,6 +257,14 @@ export class AppMenuBuilder {
       },
     ]);
     subMenu.push({ type: 'separator' });
+    subMenu.push({
+      label: 'Copy emulator server url',
+      click: async () => {
+        const url = await emulator.ngrok.getServiceUrl('');
+        Electron.clipboard.writeText(url);
+      },
+    });
+    subMenu.push({ type: 'separator' });
     subMenu.push({ role: 'quit' });
 
     return subMenu;

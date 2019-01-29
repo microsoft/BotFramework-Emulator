@@ -30,27 +30,34 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+import { FrameworkSettings } from '@bfemulator/app-shared';
+import { Action } from 'redux';
 
-import { azureAuthSagas } from './azureAuthSaga';
-import { botSagas } from './botSagas';
-import { editorSagas } from './editorSagas';
-import { endpointSagas } from './endpointSagas';
-import { frameworkSettingsSagas } from './frameworkSettingsSagas';
-import { navBarSagas } from './navBarSagas';
-import { notificationSagas } from './notificationSagas';
-import { resourceSagas } from './resourcesSagas';
-import { servicesExplorerSagas } from './servicesExplorerSagas';
-import { welcomePageSagas } from './welcomePageSagas';
+export const FRAMEWORK_SETTINGS_CHANGED = 'FRAMEWORK_SETTINGS_CHANGED';
+export const GET_FRAMEWORK_SETTINGS = 'GET_FRAMEWORK_SETTINGS';
+export const SAVE_FRAMEWORK_SETTINGS = 'SAVE_FRAMEWORK_SETTINGS';
 
-export const applicationSagas = [
-  azureAuthSagas,
-  botSagas,
-  editorSagas,
-  endpointSagas,
-  frameworkSettingsSagas,
-  navBarSagas,
-  notificationSagas,
-  resourceSagas,
-  servicesExplorerSagas,
-  welcomePageSagas,
-];
+export interface FrameworkSettingsAction<T = void> extends Action {
+  payload: T;
+}
+
+export function frameworkSettingsChanged(payload: FrameworkSettings): FrameworkSettingsAction<FrameworkSettings> {
+  return {
+    type: FRAMEWORK_SETTINGS_CHANGED,
+    payload,
+  };
+}
+
+export function getFrameworkSettings(): FrameworkSettingsAction {
+  return {
+    type: GET_FRAMEWORK_SETTINGS,
+    payload: void 0,
+  };
+}
+
+export function saveFrameworkSettings(payload: FrameworkSettings): FrameworkSettingsAction<FrameworkSettings> {
+  return {
+    type: SAVE_FRAMEWORK_SETTINGS,
+    payload,
+  };
+}

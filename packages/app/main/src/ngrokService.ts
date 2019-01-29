@@ -66,19 +66,20 @@ export class NgrokService {
   }
 
   public async getServiceUrl(botUrl: string): Promise<string> {
-    const bypassNgrokLocalhost = getStore().getState().framework.bypassNgrokLocalhost;
-    if (botUrl && isLocalHostUrl(botUrl) && bypassNgrokLocalhost) {
-      // Do not use ngrok
-      const port = emulator.framework.serverPort;
-
-      return `http://${this._localhost}:${port}`;
-    } else {
+    if (ngrok.running()) {
+      return this._serviceUrl;
+    }
+    const { bypassNgrokLocalhost, runNgrokAtStartup } = getStore().getState().framework;
+    // Use ngrok
+    if ((!isLocalHostUrl(botUrl || '') && !bypassNgrokLocalhost) || runNgrokAtStartup) {
       if (!ngrok.running()) {
         await this.startup();
       }
-      // Use ngrok if ngrok is up
+
       return this._serviceUrl;
     }
+    // Do not use ngrok
+    return `http://${this._localhost}:${emulator.framework.serverPort}`;
   }
 
   public getSpawnStatus = (): { triedToSpawn: boolean; err: any } => ({
