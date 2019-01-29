@@ -71,7 +71,8 @@ export class NgrokService {
     }
     const { bypassNgrokLocalhost, runNgrokAtStartup } = getStore().getState().framework;
     // Use ngrok
-    if ((!isLocalHostUrl(botUrl || '') && !bypassNgrokLocalhost) || runNgrokAtStartup) {
+    const local = !botUrl || isLocalHostUrl(botUrl);
+    if (runNgrokAtStartup || !local || (local && !bypassNgrokLocalhost)) {
       if (!ngrok.running()) {
         await this.startup();
       }
