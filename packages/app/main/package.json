@@ -186,7 +186,7 @@
       "!**/node_modules/.bin",
       "!**/*.{o,hprof,orig,pyc,pyo,rbc}",
       "!**/._*",
-      "!**/{.DS_Store,.git,.hg,.svn,CVS,RCS,SCCS,__pycache__,thumbs.db,.gitignore,.gitattributes,.editorconfig,.idea,appveyor.yml,.travis.yml,circle.yml}",
+      "!**/{.DS_Store,.git,.hg,.svn,CVS,RCS,SCCS,__pycache__,thumbs.db,.gitignore,.gitattributes,.editorconfig,.idea,appveyor.yml,.travis.yml,circle.yml,.babelrc,.eslintignore,.eslintrc.js,.prettierrc,.eslintrc.react.js,.node-version}",
       "!.vscode${/*}",
       "!doc${/*}",
       "!**/{tsconfig.json,README.md,getlicenses.cmd}",
@@ -229,12 +229,6 @@
       "target": [
         {
           "target": "dmg",
-          "arch": [
-            "x64"
-          ]
-        },
-        {
-          "target": "zip",
           "arch": [
             "x64"
           ]
