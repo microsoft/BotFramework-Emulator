@@ -44,7 +44,7 @@
   }
 
   // the user-agent stylesheet sets background color to white.
-  input {
+  & > div > div[role=form] input {
     background-color: transparent;
   }
 
@@ -86,9 +86,10 @@
 
 
 .selected-activity :global .bubble,
-.selected-activity :global .ac-container {
+.selected-activity :global .ac-container,
+.selected-activity :global .ac-textBlock {
   background: var(--webchat-selected-activity-bg);
-  color: var(--webchat-selected-activity-text);
+  color: var(--webchat-selected-activity-text) !important;
 }
 
 .disconnected {
