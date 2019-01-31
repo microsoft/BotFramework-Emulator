@@ -30,27 +30,30 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+import { FrameworkSettings as FS } from '@bfemulator/app-shared';
 
-import { azureAuthSagas } from './azureAuthSaga';
-import { botSagas } from './botSagas';
-import { editorSagas } from './editorSagas';
-import { endpointSagas } from './endpointSagas';
-import { frameworkSettingsSagas } from './frameworkSettingsSagas';
-import { navBarSagas } from './navBarSagas';
-import { notificationSagas } from './notificationSagas';
-import { resourceSagas } from './resourcesSagas';
-import { servicesExplorerSagas } from './servicesExplorerSagas';
-import { welcomePageSagas } from './welcomePageSagas';
+import { FRAMEWORK_SETTINGS_CHANGED, FrameworkSettingsAction } from '../action/frameworkSettingsActions';
 
-export const applicationSagas = [
-  azureAuthSagas,
-  botSagas,
-  editorSagas,
-  endpointSagas,
-  frameworkSettingsSagas,
-  navBarSagas,
-  notificationSagas,
-  resourceSagas,
-  servicesExplorerSagas,
-  welcomePageSagas,
-];
+const defaults: FS = {
+  autoUpdate: true,
+  bypassNgrokLocalhost: true,
+  runNgrokAtStartup: false,
+  collectUsageData: true,
+  locale: '',
+  localhost: '',
+  ngrokPath: '',
+  stateSizeLimit: 64,
+  use10Tokens: false,
+  useCodeValidation: false,
+  usePrereleases: false,
+};
+
+export function framework(state: FS = defaults, action: FrameworkSettingsAction<FS>): FS {
+  switch (action.type) {
+    case FRAMEWORK_SETTINGS_CHANGED:
+      return { ...state, ...action.payload };
+
+    default:
+      return state;
+  }
+}

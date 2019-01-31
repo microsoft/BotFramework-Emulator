@@ -233,7 +233,8 @@ describe('The clientInitCommands', () => {
     expect(remoteCommandArgs).toEqual([
       [
         'transcript:open',
-        'deepLinkedTranscript',
+        '/path/to/transcript.transcript',
+        'transcript.transcript',
         {
           activities: [],
           inMemory: true,

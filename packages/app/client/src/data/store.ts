@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ClientAwareSettings } from '@bfemulator/app-shared';
+import { ClientAwareSettings, FrameworkSettings } from '@bfemulator/app-shared';
 import { applyMiddleware, combineReducers, createStore, Store } from 'redux';
 import promiseMiddleware from 'redux-promise-middleware';
 import sagaMiddlewareFactory from 'redux-saga';
@@ -43,6 +43,7 @@ import { clientAwareSettings } from './reducer/clientAwareSettingsReducer';
 import { dialog, DialogState } from './reducer/dialog';
 import { editor, EditorState } from './reducer/editor';
 import { explorer, ExplorerState } from './reducer/explorer';
+import { framework } from './reducer/frameworkSettingsReducer';
 import { navBar, NavBarState } from './reducer/navBar';
 import { notification, NotificationState } from './reducer/notification';
 import { presentation, PresentationState } from './reducer/presentation';
@@ -59,6 +60,7 @@ export interface RootState {
   dialog?: DialogState;
   editor?: EditorState;
   explorer?: ExplorerState;
+  framework?: FrameworkSettings;
   navBar?: NavBarState;
   notification?: NotificationState;
   presentation?: PresentationState;
@@ -80,6 +82,7 @@ const configureStore = (initialState: RootState = DEFAULT_STATE): Store<RootStat
       dialog,
       editor,
       explorer,
+      framework,
       navBar,
       notification,
       presentation,

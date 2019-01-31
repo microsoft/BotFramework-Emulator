@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { FrameworkSettings, newNotification, SharedConstants } from '@bfemulator/app-shared';
+import { FrameworkSettings as FS } from '@bfemulator/app-shared';
 import {
   Checkbox,
   Column,
@@ -45,90 +45,41 @@ import {
 import * as React from 'react';
 import { ChangeEvent } from 'react';
 
-import * as Constants from '../../../constants';
-import * as EditorActions from '../../../data/action/editorActions';
-import { beginAdd } from '../../../data/action/notificationActions';
-import { getTabGroupForDocument } from '../../../data/editorHelpers';
-import { store } from '../../../data/store';
-import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
-import { debounce } from '../../../utils';
 import { GenericDocument } from '../../layout';
 
 import * as styles from './appSettingsEditor.scss';
 
-interface AppSettingsEditorProps {
+export interface AppSettingsEditorProps {
   documentId?: string;
   dirty?: boolean;
-}
+  framework?: FS;
 
-interface AppSettingsEditorState {
-  committed: FrameworkSettings;
-  uncommitted: FrameworkSettings;
+  discardChanges?: () => void;
+  getFrameworkSettings?: () => void;
+  openBrowseForNgrok: () => Promise<string>;
+  saveFrameworkSettings?: (framework: FS) => void;
+  setDirtyFlag?: (dirty: boolean) => void;
 }
-
-const defaultAppSettings: FrameworkSettings = {
-  autoUpdate: true,
-  bypassNgrokLocalhost: true,
-  collectUsageData: true,
-  locale: '',
-  localhost: '',
-  ngrokPath: '',
-  stateSizeLimit: 64,
-  use10Tokens: false,
-  useCodeValidation: false,
-  usePrereleases: false,
-};
 
 function shallowEqual(x: any, y: any) {
   return Object.keys(x).length === Object.keys(y).length && Object.keys(x).every(key => key in y && x[key] === y[key]);
 }
 
-export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, AppSettingsEditorState> {
-  public setDirtyFlag = debounce(
-    dirty => store.dispatch(EditorActions.setDirtyFlag(this.props.documentId, dirty)),
-    300
-  );
-
-  public constructor(props: AppSettingsEditorProps, context: any) {
-    super(props, context);
-
-    this.state = {
-      committed: { ...defaultAppSettings },
-      uncommitted: { ...defaultAppSettings },
+export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, FS> {
+  public static getDerivedStateFromProps(newProps: AppSettingsEditorProps, prevState: FS = {}): FS {
+    return {
+      ...prevState,
+      ...newProps.framework,
     };
   }
 
-  public componentWillMount(): void {
-    const { Commands } = SharedConstants;
-    // load settings from main and populate form
-    CommandServiceImpl.remoteCall(Commands.Settings.LoadAppSettings)
-      .then(settings => {
-        this.setState(() => ({
-          committed: settings,
-          uncommitted: settings,
-        }));
-      })
-      .catch(err => {
-        const errMsg = `Error while loading emulator settings: ${err}`;
-        const notification = newNotification(errMsg);
-        store.dispatch(beginAdd(notification));
-      });
-  }
-
-  public commit(committed: any) {
-    this.setState(() => {
-      this.setDirtyFlag(false);
-
-      return {
-        committed: { ...committed },
-        uncommitted: { ...committed },
-      };
-    });
+  public componentDidMount(): void {
+    this.props.getFrameworkSettings();
   }
 
   public render(): JSX.Element {
-    const { uncommitted } = this.state;
-    const clean = shallowEqual(this.state.committed, uncommitted);
+    const { state, props } = this;
+    const clean = shallowEqual(state, props.framework);
 
     return (
       <GenericDocument className={styles.appSettingsEditor}>
@@ -155,29 +106,37 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
                 className={styles.appSettingsInput}
                 inputContainerClassName={styles.inputContainer}
                 readOnly={false}
-                value={uncommitted.ngrokPath}
+                value={state.ngrokPath}
                 onChange={this.onInputChange}
-                data-prop="ngrokPath"
+                name="ngrokPath"
                 label={'Path to ngrok'}
               />
               <PrimaryButton onClick={this.onClickBrowse} text="Browse" className={styles.browseButton} />
             </Row>
             <Checkbox
               className={styles.checkboxOverrides}
-              checked={uncommitted.bypassNgrokLocalhost}
+              checked={state.bypassNgrokLocalhost}
               onChange={this.onChangeCheckBox}
               id="ngrok-bypass"
               label="Bypass ngrok for local addresses"
               name="bypassNgrokLocalhost"
+            />
+            <Checkbox
+              className={styles.checkboxOverrides}
+              checked={state.runNgrokAtStartup}
+              onChange={this.onChangeCheckBox}
+              id="ngrok-startup"
+              label="Run ngrok when the Emulator starts up"
+              name="runNgrokAtStartup"
             />
             <Row align={RowAlignment.Center} className={styles.marginBottomRow}>
               <TextField
                 className={styles.appSettingsInput}
                 inputContainerClassName={styles.inputContainer}
                 readOnly={false}
-                value={uncommitted.localhost}
+                value={state.localhost}
                 onChange={this.onInputChange}
-                data-prop="localhost"
+                name="localhost"
                 label="localhost override"
               />
             </Row>
@@ -186,8 +145,8 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
                 className={styles.appSettingsInput}
                 inputContainerClassName={styles.inputContainer}
                 readOnly={false}
-                value={uncommitted.locale}
-                data-prop="locale"
+                value={state.locale}
+                name="locale"
                 onChange={this.onInputChange}
                 label="Locale"
               />
@@ -197,7 +156,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
             <SmallHeader>Auth</SmallHeader>
             <Checkbox
               className={styles.checkboxOverrides}
-              checked={uncommitted.use10Tokens}
+              checked={state.use10Tokens}
               onChange={this.onChangeCheckBox}
               id="auth-token-version"
               label="Use version 1.0 authentication tokens"
@@ -206,7 +165,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
             <SmallHeader>Sign-in</SmallHeader>
             <Checkbox
               className={styles.checkboxOverrides}
-              checked={uncommitted.useCodeValidation}
+              checked={state.useCodeValidation}
               onChange={this.onChangeCheckBox}
               id="use-validation-code"
               label="Use a sign-in verification code for OAuthCards"
@@ -215,14 +174,14 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
             <SmallHeader>Application Updates</SmallHeader>
             <Checkbox
               className={styles.checkboxOverrides}
-              checked={uncommitted.autoUpdate}
+              checked={state.autoUpdate}
               onChange={this.onChangeCheckBox}
               label="Automatically download and install updates"
               name="autoUpdate"
             />
             <Checkbox
               className={styles.checkboxOverrides}
-              checked={uncommitted.usePrereleases}
+              checked={state.usePrereleases}
               onChange={this.onChangeCheckBox}
               label="Use pre-release versions"
               name="usePrereleases"
@@ -230,7 +189,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
             <SmallHeader>Data Collection</SmallHeader>
             <Checkbox
               className={styles.checkboxOverrides}
-              checked={uncommitted.collectUsageData}
+              checked={state.collectUsageData}
               onChange={this.onChangeCheckBox}
               label="Help improve the Emulator by allowing us to collect usage data."
               name="collectUsageData"
@@ -241,96 +200,31 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
           </Column>
         </Row>
         <Row className={styles.buttonRow} justify={RowJustification.Right}>
-          <PrimaryButton text="Cancel" onClick={this.onClickDiscard} className={styles.cancelButton} />
-          <PrimaryButton text="Save" onClick={this.onClickSave} className={styles.saveButton} disabled={clean} />
+          <PrimaryButton text="Cancel" onClick={this.props.discardChanges} className={styles.cancelButton} />
+          <PrimaryButton text="Save" onClick={this.onSaveClick} className={styles.saveButton} disabled={clean} />
         </Row>
       </GenericDocument>
     );
   }
 
   private onChangeCheckBox = (event: ChangeEvent<HTMLInputElement>) => {
-    const { target } = event;
-    const settingsProperty = target.getAttribute('name');
-    const uncommittedState = Object.create(
-      {},
-      {
-        [settingsProperty]: {
-          get: () => !this.state.uncommitted[settingsProperty],
-          enumerable: true, // important since rest spread is used.
-        },
-      }
-    );
-    this.setUncommittedState(uncommittedState);
+    const { name, checked } = event.target;
+    this.setState({ [name]: checked });
   };
 
-  private setUncommittedState(patch: any) {
-    this.setState(state => {
-      const nextUncommitted = {
-        ...state.uncommitted,
-        ...patch,
-      };
-
-      const clean = shallowEqual(state.uncommitted, state.committed);
-      const nextClean = shallowEqual(nextUncommitted, state.committed);
-
-      if (nextClean !== clean) {
-        this.setDirtyFlag(!nextClean);
-      }
-
-      return { uncommitted: nextUncommitted };
-    });
-  }
-
-  private onClickBrowse = (): void => {
-    const { Commands } = SharedConstants;
-    const dialogOptions = {
-      title: 'Browse for ngrok',
-      buttonLabel: 'Select ngrok',
-      properties: ['openFile'],
-    };
-
-    CommandServiceImpl.remoteCall(Commands.Electron.ShowOpenDialog, dialogOptions)
-      .then(ngrokPath => this.setUncommittedState({ ngrokPath }))
-      .catch(err => {
-        const errMsg = `Error while browsing for ngrok: ${err}`;
-        const notification = newNotification(errMsg);
-        store.dispatch(beginAdd(notification));
-      });
-  };
-
-  private onClickSave = (): void => {
-    const { Commands } = SharedConstants;
-    const { uncommitted } = this.state;
-    const settings: FrameworkSettings = {
-      ngrokPath: uncommitted.ngrokPath.trim(),
-      bypassNgrokLocalhost: uncommitted.bypassNgrokLocalhost,
-      stateSizeLimit: +uncommitted.stateSizeLimit,
-      use10Tokens: uncommitted.use10Tokens,
-      useCodeValidation: uncommitted.useCodeValidation,
-      localhost: uncommitted.localhost.trim(),
-      locale: uncommitted.locale.trim(),
-      usePrereleases: uncommitted.usePrereleases,
-      autoUpdate: uncommitted.autoUpdate,
-      collectUsageData: uncommitted.collectUsageData,
-    };
-
-    CommandServiceImpl.remoteCall(Commands.Settings.SaveAppSettings, settings)
-      .then(() => this.commit(settings))
-      .catch(err => {
-        const errMsg = `Error while saving emulator settings: ${err}`;
-        const notification = newNotification(errMsg);
-        store.dispatch(beginAdd(notification));
-      });
+  private onClickBrowse = async (): Promise<void> => {
+    const ngrokPath = await this.props.openBrowseForNgrok();
+    this.setState({ ngrokPath });
+    this.props.setDirtyFlag(!shallowEqual(this.state, this.props.framework));
   };
 
   private onInputChange = (event: ChangeEvent<HTMLInputElement>): void => {
-    const { value } = event.target;
-    const { prop } = event.target.dataset;
-    this.setUncommittedState({ [prop]: value });
+    const { value, name } = event.target;
+    this.setState({ [name]: value });
+    this.props.setDirtyFlag(!shallowEqual(this.state, this.props.framework));
   };
 
-  private onClickDiscard = (): void => {
-    const { DOCUMENT_ID_APP_SETTINGS } = Constants;
-    store.dispatch(EditorActions.close(getTabGroupForDocument(this.props.documentId), DOCUMENT_ID_APP_SETTINGS));
+  private onSaveClick = () => {
+    this.props.saveFrameworkSettings(this.state);
   };
 }

@@ -36,17 +36,13 @@ import * as React from 'react';
 import * as Constants from '../../constants';
 import { Document } from '../../data/reducer/editor';
 
-import { AppSettingsEditor, EmulatorContainer, WelcomePageContainer } from './index';
+import { AppSettingsEditorContainer, EmulatorContainer, WelcomePageContainer } from './index';
 
 interface EditorFactoryProps {
   document?: Document;
 }
 
 export class EditorFactory extends React.Component<EditorFactoryProps> {
-  constructor(props: EditorFactoryProps) {
-    super(props);
-  }
-
   public render() {
     const { document } = this.props;
     const { contentType } = document;
@@ -61,7 +57,7 @@ export class EditorFactory extends React.Component<EditorFactoryProps> {
         );
 
       case Constants.CONTENT_TYPE_APP_SETTINGS:
-        return <AppSettingsEditor documentId={document.documentId} dirty={this.props.document.dirty} />;
+        return <AppSettingsEditorContainer documentId={document.documentId} dirty={this.props.document.dirty} />;
 
       case Constants.CONTENT_TYPE_WELCOME_PAGE:
         return <WelcomePageContainer documentId={document.documentId} />;

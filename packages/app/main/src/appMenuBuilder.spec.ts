@@ -321,7 +321,7 @@ describe('AppMenuBuilder', () => {
     expect(appMenuTemplate).toHaveLength(5); // file, edit, view, convo, help
 
     const fileMenuTemplate = appMenuTemplate[0].submenu;
-    expect(fileMenuTemplate).toHaveLength(14);
+    expect(fileMenuTemplate).toHaveLength(16);
 
     // should show the currently signed in user
     const azureSignInItem = fileMenuTemplate[9];
