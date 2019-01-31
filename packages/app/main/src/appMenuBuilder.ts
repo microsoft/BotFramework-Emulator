@@ -258,7 +258,7 @@ export class AppMenuBuilder {
     ]);
     subMenu.push({ type: 'separator' });
     subMenu.push({
-      label: 'Copy emulator server url',
+      label: 'Copy Emulator service URL',
       click: async () => {
         const url = await emulator.ngrok.getServiceUrl('');
         Electron.clipboard.writeText(url);
