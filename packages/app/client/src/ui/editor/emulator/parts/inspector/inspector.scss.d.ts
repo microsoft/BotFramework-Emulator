@@ -5,3 +5,4 @@ export const accessoryButton: string;
 export const accessories: string;
 export const accessoryButtonIcon: string;
 export const inspectorContainer: string;
+export const nothingInspected: string;

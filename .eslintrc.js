@@ -1,9 +1,5 @@
 module.exports = {
-  extends: [
-    'eslint:recommended',
-    'plugin:typescript/recommended',
-    'plugin:prettier/recommended',
-  ],
+  extends: ['eslint:recommended', 'plugin:typescript/recommended', 'plugin:prettier/recommended'],
   plugins: ['import', 'notice'],
   env: {
     browser: true,
@@ -39,10 +35,7 @@ module.exports = {
     'typescript/no-empty-interface': 'warn',
     'typescript/no-object-literal-type-assertion': 'off',
     'typescript/no-parameter-properties': 'off',
-    'typescript/no-use-before-define': [
-      'error',
-      { functions: false, classes: false },
-    ],
+    'typescript/no-use-before-define': ['error', { functions: false, classes: false }],
   },
   overrides: [
     {
@@ -56,6 +49,7 @@ module.exports = {
       },
       rules: {
         'typescript/class-name-casing': 'off',
+        'typescript/no-explicit-any': 'off',
       },
     },
   ],
