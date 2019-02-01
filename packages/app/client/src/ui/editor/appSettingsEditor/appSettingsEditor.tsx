@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { FrameworkSettings as FS } from '@bfemulator/app-shared';
+import { FrameworkSettings } from '@bfemulator/app-shared';
 import {
   Checkbox,
   Column,
@@ -52,34 +52,49 @@ import * as styles from './appSettingsEditor.scss';
 export interface AppSettingsEditorProps {
   documentId?: string;
   dirty?: boolean;
-  framework?: FS;
+  framework?: FrameworkSettings;
 
   discardChanges?: () => void;
   getFrameworkSettings?: () => void;
   openBrowseForNgrok: () => Promise<string>;
-  saveFrameworkSettings?: (framework: FS) => void;
+  saveFrameworkSettings?: (framework: FrameworkSettings) => void;
   setDirtyFlag?: (dirty: boolean) => void;
+}
+
+export interface AppSettingsEditorState extends Partial<FrameworkSettings> {
+  dirty?: boolean;
+  pendingUpdate?: boolean;
 }
 
 function shallowEqual(x: any, y: any) {
   return Object.keys(x).length === Object.keys(y).length && Object.keys(x).every(key => key in y && x[key] === y[key]);
 }
 
-export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, FS> {
-  public static getDerivedStateFromProps(newProps: AppSettingsEditorProps, prevState: FS = {}): FS {
+export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, AppSettingsEditorState> {
+  public state = {} as AppSettingsEditorState;
+
+  public static getDerivedStateFromProps(
+    newProps: AppSettingsEditorProps,
+    prevState: AppSettingsEditorState
+  ): AppSettingsEditorState {
+    if (!prevState.pendingUpdate) {
+      return prevState;
+    }
+
     return {
-      ...prevState,
       ...newProps.framework,
+      dirty: newProps.dirty,
+      pendingUpdate: false,
     };
   }
 
   public componentDidMount(): void {
+    this.setState({ pendingUpdate: true });
     this.props.getFrameworkSettings();
   }
 
   public render(): JSX.Element {
-    const { state, props } = this;
-    const clean = shallowEqual(state, props.framework);
+    const { state } = this;
 
     return (
       <GenericDocument className={styles.appSettingsEditor}>
@@ -201,7 +216,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, F
         </Row>
         <Row className={styles.buttonRow} justify={RowJustification.Right}>
           <PrimaryButton text="Cancel" onClick={this.props.discardChanges} className={styles.cancelButton} />
-          <PrimaryButton text="Save" onClick={this.onSaveClick} className={styles.saveButton} disabled={clean} />
+          <PrimaryButton text="Save" onClick={this.onSaveClick} className={styles.saveButton} disabled={!state.dirty} />
         </Row>
       </GenericDocument>
     );
@@ -209,22 +224,33 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, F
 
   private onChangeCheckBox = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = event.target;
-    this.setState({ [name]: checked });
+    const change = { [name]: checked };
+    this.setState(change);
+    this.updateDirtyFlag(change);
   };
 
   private onClickBrowse = async (): Promise<void> => {
     const ngrokPath = await this.props.openBrowseForNgrok();
     this.setState({ ngrokPath });
-    this.props.setDirtyFlag(!shallowEqual(this.state, this.props.framework));
   };
 
   private onInputChange = (event: ChangeEvent<HTMLInputElement>): void => {
     const { value, name } = event.target;
-    this.setState({ [name]: value });
-    this.props.setDirtyFlag(!shallowEqual(this.state, this.props.framework));
+    const change = { [name]: value };
+    this.setState(change);
+    this.updateDirtyFlag(change);
   };
 
   private onSaveClick = () => {
-    this.props.saveFrameworkSettings(this.state);
+    this.setState({ pendingUpdate: true });
+    const { dirty: _, pendingUpdate: __, ...state } = this.state;
+    requestAnimationFrame(() => this.props.saveFrameworkSettings(state));
   };
+
+  private updateDirtyFlag(change: { [prop: string]: any }) {
+    const { dirty: _, pendingUpdate: __, ...state } = this.state;
+    const dirty = !shallowEqual({ ...state, ...change }, this.props.framework);
+    this.setState({ dirty });
+    this.props.setDirtyFlag(dirty);
+  }
 }
