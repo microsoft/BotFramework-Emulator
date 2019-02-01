@@ -31,7 +31,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Checkbox, DefaultButton, Dialog, DialogFooter, PrimaryButton, Row, TextField } from '@bfemulator/ui-react';
+import {
+  Checkbox,
+  DefaultButton,
+  Dialog,
+  DialogFooter,
+  PrimaryButton,
+  Row,
+  RowAlignment,
+  TextField,
+} from '@bfemulator/ui-react';
 import { BotService, EndpointService } from 'botframework-config/lib/models';
 import { IBotService, IEndpointService } from 'botframework-config/lib/schema';
 import * as React from 'react';
@@ -177,7 +186,10 @@ export class EndpointEditor extends Component<EndpointEditorProps, EndpointEdito
           label="Application Password"
           required={false}
         />
-        <Checkbox label="Azure for US Government" checked={isUsGov} onChange={this.onChannelServiceChange} />
+        <Row align={RowAlignment.Center}>
+          <Checkbox label="Azure for US Government" checked={isUsGov} onChange={this.onChannelServiceChange} />
+          <a href="https://aka.ms/bot-framework-emulator-azuregov">&nbsp;Learn more.</a>
+        </Row>
         <a
           href="javascript:void(0)"
           className={`${styles.arrow} ${hasBotService ? styles.arrowExpanded : ''}`}
