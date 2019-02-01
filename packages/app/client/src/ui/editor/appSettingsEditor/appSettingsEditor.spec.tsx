@@ -36,11 +36,7 @@ import * as React from 'react';
 import { combineReducers, createStore } from 'redux';
 
 import * as EditorActions from '../../../data/action/editorActions';
-import {
-  frameworkSettingsChanged,
-  getFrameworkSettings,
-  saveFrameworkSettings,
-} from '../../../data/action/frameworkSettingsActions';
+import { frameworkSettingsChanged, getFrameworkSettings } from '../../../data/action/frameworkSettingsActions';
 import { getTabGroupForDocument } from '../../../data/editorHelpers';
 import { framework } from '../../../data/reducer/frameworkSettingsReducer';
 
