@@ -55,7 +55,7 @@ import { Window } from './platform/window';
 import { azureLoggedInUserChanged } from './settingsData/actions/azureAuthActions';
 import { rememberBounds, rememberTheme } from './settingsData/actions/windowStateActions';
 import { dispatch, getSettings, getStore as getSettingsStore } from './settingsData/store';
-import { botListsAreDifferent, ensureStoragePath, saveSettings, writeFile } from './utils';
+import { botListsAreDifferent, ensureStoragePath, saveSettings, writeFile, isMac } from './utils';
 import { openFileFromCommandLine } from './utils/openFileFromCommandLine';
 import { sendNotificationToClient } from './utils/sendNotificationToClient';
 import { WindowManager } from './windowManager';
@@ -220,7 +220,7 @@ ngrokEmitter.on('expired', () => {
 let openUrls = [];
 const onOpenUrl = function(event: any, url1: any) {
   event.preventDefault();
-  if (process.platform === 'darwin') {
+  if (isMac()) {
     if (mainWindow && mainWindow.webContents) {
       // the app is already running, send a message containing the url to the renderer process
       mainWindow.webContents.send('botemulator', url1);

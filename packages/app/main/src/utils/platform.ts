@@ -31,21 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './botListsAreDifferent';
-export * from './ensureStoragePath';
-export * from './exceptionToAPIException';
-export * from './getBotsFromDisk';
-export * from './getDirectories';
-export * from './getFilesInDir';
-export * from './getSafeBotName';
-export * from './isDev';
-export * from './loadSettings';
-export * from './parseActivitiesFromChatFile';
-export * from './platform';
-export * from './readFileSync';
-export * from './saveSettings';
-export * from './sendErrorResponse';
-export * from './showOpenDialog';
-export * from './showSaveDialog';
-export * from './writeFile';
-export * from './getThemes';
+export function isMac() {
+  return process.platform === 'darwin';
+}

@@ -55,6 +55,7 @@ import { emulator } from '../emulator';
 import { mainWindow } from '../main';
 import { botProjectFileWatcher, chatWatcher, transcriptsWatcher } from '../watchers';
 import { TelemetryService } from '../telemetry';
+import { isMac } from '../utils';
 
 /** Registers bot commands */
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
@@ -174,7 +175,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
       const displayedTranscriptsPath = relativeTranscriptsPath.includes('..')
         ? transcriptsPath
         : relativeTranscriptsPath;
-      const sep = process.platform === 'darwin' ? path.posix.sep : (path.posix as any).win32.sep;
+      const sep = isMac() ? path.posix.sep : (path.posix as any).win32.sep;
       await Promise.all([
         chatWatcher.watch(chatsPath),
         transcriptsWatcher.watch(transcriptsPath),
