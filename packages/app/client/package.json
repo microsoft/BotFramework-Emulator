@@ -102,7 +102,7 @@
     "@uifabric/styling": "^5.20.0",
     "base64url": "2.0.0",
     "botframework-config": "4.0.0-preview1.3.4",
-    "botframework-webchat": "4.2.1-master.164a155",
+    "botframework-webchat": "4.2.1-master.17b253d",
     "eslint-plugin-react": "7.12.3",
     "react": "~16.3.2",
     "react-dom": "~16.3.2",
