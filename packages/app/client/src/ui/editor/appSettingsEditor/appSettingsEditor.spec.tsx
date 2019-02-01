@@ -36,10 +36,13 @@ import * as React from 'react';
 import { combineReducers, createStore } from 'redux';
 
 import * as EditorActions from '../../../data/action/editorActions';
-import { frameworkSettingsChanged, getFrameworkSettings } from '../../../data/action/frameworkSettingsActions';
+import {
+  frameworkSettingsChanged,
+  getFrameworkSettings,
+  saveFrameworkSettings,
+} from '../../../data/action/frameworkSettingsActions';
 import { getTabGroupForDocument } from '../../../data/editorHelpers';
 import { framework } from '../../../data/reducer/frameworkSettingsReducer';
-import { saveFrameworkSettings } from '../../../data/action/frameworkSettingsActions';
 
 import { AppSettingsEditor } from './appSettingsEditor';
 import { AppSettingsEditorContainer } from './appSettingsEditorConainer';
@@ -147,8 +150,8 @@ describe('The AppSettingsEditorContainer', () => {
     );
   });
 
-  it('should save the framework settings when the "onSaveClick" handler is called', () => {
-    (instance as any).onSaveClick();
-    expect(mockDispatch).toHaveBeenCalledWith(saveFrameworkSettings(instance.state));
+  it('should save the framework settings then get them again from main when the "onSaveClick" handler is called', async () => {
+    await (instance as any).onSaveClick();
+    expect(mockDispatch).toHaveBeenLastCalledWith(getFrameworkSettings());
   });
 });

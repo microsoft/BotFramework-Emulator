@@ -101,8 +101,8 @@ jest.mock('./ngrok', () => {
   let connected = false;
   return {
     running: () => connected,
-    connect: (opts, cb) => ((connected = true), cb(null, 'http://fdsfds.ngrok.io', 'http://fdsfds.ngrok.io')),
-    kill: cb => ((connected = false), cb(null, !connected)),
+    connect: async opts => ({ url: 'http://fdsfds.ngrok.io', inspectUrl: 'http://fdsfds.ngrok.io' }),
+    kill: () => true,
   };
 });
 
@@ -136,13 +136,13 @@ describe('The ngrokService', () => {
 
   it('should report its status to the specified conversation when "report()" is called', async () => {
     await ngrokService.getServiceUrl('http://myBot.someorg:3030/v3/messages');
-    ngrokService.report('12');
-    expect(mockCallsToLog.length).toBe(3);
+    await ngrokService.report('12', '');
+    expect(mockCallsToLog.length).toBe(1);
   });
 
   it('should reportNotConfigured() when no ngrokPath is specified', async () => {
-    (ngrokService as any)._ngrokPath = '';
-    ngrokService.report('12');
+    (ngrokService as any).ngrokPath = '';
+    await ngrokService.report('12', '');
     expect(mockCallsToLog.length).toBe(3);
     expect(mockCallsToLog[0].args[1].payload.text).toBe(
       'ngrok not configured (only needed when connecting to remotely hosted bots)'

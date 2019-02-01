@@ -1,8 +1,5 @@
 //
 import { uniqueId } from '@bfemulator/sdk-shared';
-import { ChildProcess } from 'child_process';
-import * as path from 'path';
-import { clearTimeout, setTimeout } from 'timers';
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license.
 //
@@ -34,9 +31,11 @@ import { clearTimeout, setTimeout } from 'timers';
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-const Emitter = require('events').EventEmitter;
-const platform = require('os').platform();
-const spawn = require('child_process').spawn;
+import { ChildProcess, spawn } from 'child_process';
+import { EventEmitter } from 'events';
+import { platform } from 'os';
+import * as path from 'path';
+import { clearTimeout, setTimeout } from 'timers';
 
 /* eslint-enable typescript/no-var-requires */
 export interface NgrokOptions {
@@ -44,7 +43,7 @@ export interface NgrokOptions {
   name: string;
   path: string;
   port: number;
-  proto: 'http' | 'tcp' | 'tls';
+  proto: 'http' | 'https' | 'tcp' | 'tls';
   region: 'us' | 'eu' | 'au' | 'ap';
   inspect: boolean;
   host_header?: string;
@@ -60,26 +59,23 @@ export interface NgrokOptions {
 const defaultOptions: Partial<NgrokOptions> = {
   addr: 80,
   name: uniqueId(),
-  port: 80,
   proto: 'http',
   region: 'us',
   inspect: true,
 };
 
-const bin = 'ngrok' + (platform === 'win32' ? '.exe' : '');
+const bin = 'ngrok' + (platform() === 'win32' ? '.exe' : '');
 const ready = /starting web service.*addr=(\d+\.\d+\.\d+\.\d+:\d+)/;
-
-const NGROK_EXPIRATION_TIME = 1000 * 60 * 60 * 8; // 8 hours in ms
-const NGROK_EXPIRATION_POLLING_INTERVAL = 1000 * 60 * 5; // 5 minutes
 
 let ngrokStartTime: number;
 let ngrokExpirationTimer: NodeJS.Timer;
 let pendingConnection: Promise<{ url; inspectUrl }>;
+export const intervals = { retry: 200, expirationPoll: 1000 * 60 * 5, expirationTime: 1000 * 60 * 60 * 8 };
 
 // Errors should result in the immediate termination of ngrok
 // since we have no visibility into the internal state of
 // ngrok after the error is received.
-export const ngrokEmitter = new Emitter().on('error', kill);
+export const ngrokEmitter = new EventEmitter().on('error', kill);
 let ngrok: ChildProcess;
 let tunnels = {};
 let inspectUrl = '';
@@ -114,7 +110,7 @@ async function getNgrokInspectUrl(opts: NgrokOptions): Promise<{ inspectUrl: str
 
     ngrok.stdout.on('data', (data: Buffer) => {
       const addr = data.toString().match(ready);
-      if (addr) {
+      if (!addr) {
         return;
       }
       clearTimeout(timeout);
@@ -128,11 +124,11 @@ async function getNgrokInspectUrl(opts: NgrokOptions): Promise<{ inspectUrl: str
 function checkForNgrokExpiration(): void {
   const currentTime = Date.now();
   const timeElapsed = currentTime - ngrokStartTime;
-  if (timeElapsed >= NGROK_EXPIRATION_TIME) {
+  if (timeElapsed >= intervals.expirationTime) {
     cleanUpNgrokExpirationTimer();
     ngrokEmitter.emit('expired');
   } else {
-    ngrokExpirationTimer = setTimeout(checkForNgrokExpiration, NGROK_EXPIRATION_POLLING_INTERVAL);
+    ngrokExpirationTimer = setTimeout(checkForNgrokExpiration, intervals.expirationPoll);
   }
 }
 
@@ -145,10 +141,12 @@ function cleanUpNgrokExpirationTimer(): void {
 async function runTunnel(opts: NgrokOptions): Promise<{ url; inspectUrl }> {
   let retries = 100;
   const url = `${inspectUrl}/api/tunnels`;
+  const body = JSON.stringify(opts);
+  // eslint-disable-next-line no-constant-condition
   while (true) {
     const resp = await fetch(url, {
       method: 'POST',
-      body: JSON.stringify(opts),
+      body,
       headers: {
         'Content-Type': 'application/json',
       },
@@ -156,7 +154,7 @@ async function runTunnel(opts: NgrokOptions): Promise<{ url; inspectUrl }> {
 
     if (!resp.ok) {
       const error = await resp.text();
-      await new Promise(resolve => setTimeout(resolve, 200));
+      await new Promise(resolve => setTimeout(resolve, ~~intervals.retry));
       if (!retries) {
         throw new Error(error);
       }
@@ -164,25 +162,25 @@ async function runTunnel(opts: NgrokOptions): Promise<{ url; inspectUrl }> {
       continue;
     }
 
-    const body = await resp.json();
-    const { public_url } = body;
-    if (!public_url) {
-      throw Object.assign(new Error(body.msg || 'failed to start tunnel'), body);
+    const result = await resp.json();
+    const { public_url: publicUrl, uri, msg } = result;
+    if (!publicUrl) {
+      throw Object.assign(new Error(msg || 'failed to start tunnel'), result);
     }
-    tunnels[public_url] = body.uri;
-    if (opts.proto === 'http' && opts.bind_tls !== false) {
-      tunnels[public_url.replace('https', 'http')] = body.uri + ' (http)';
+    tunnels[publicUrl] = uri;
+    if (opts.proto === 'http' && opts.bind_tls) {
+      tunnels[publicUrl.replace('https', 'http')] = uri + ' (http)';
     }
     ngrokStartTime = Date.now();
-    ngrokExpirationTimer = setTimeout(checkForNgrokExpiration, NGROK_EXPIRATION_POLLING_INTERVAL);
+    ngrokExpirationTimer = setTimeout(checkForNgrokExpiration, intervals.expirationPoll);
 
-    ngrokEmitter.emit('connect', public_url, inspectUrl);
+    ngrokEmitter.emit('connect', publicUrl, inspectUrl);
     pendingConnection = null;
-    return { url: public_url, inspectUrl };
+    return { url: publicUrl, inspectUrl };
   }
 }
 
-export async function disconnect(url: string) {
+export async function disconnect(url?: string) {
   const tunnelsToDisconnect = url ? [tunnels[url]] : Object.keys(tunnels);
   const requests = tunnelsToDisconnect.map(tunnel => fetch(tunnel, { method: 'DELETE' }));
   const responses: Response[] = await Promise.all(requests);
@@ -192,7 +190,7 @@ export async function disconnect(url: string) {
       return;
     }
     delete tunnels[response.url];
-    ngrokEmitter.emit('disconnect', url);
+    ngrokEmitter.emit('disconnect', response.url);
   });
 }
 

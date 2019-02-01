@@ -111,7 +111,7 @@ export class NgrokService {
         try {
           this.triedToSpawn = true;
           const { inspectUrl, url } = await ngrok.connect({
-            port,
+            addr: port,
             path: this.ngrokPath,
           });
 
@@ -167,7 +167,7 @@ export class NgrokService {
         textItem(LogLevel.Error, 'Failed to spawn ngrok'),
         exceptionItem(this.spawnErr)
       );
-    } else if (!this.ngrokPath || !this.ngrokPath.length) {
+    } else if (!this.ngrokPath) {
       this.reportNotConfigured(conversationId);
     } else if (ngrok.running()) {
       this.reportRunning(conversationId);

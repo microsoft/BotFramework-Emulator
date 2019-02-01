@@ -121,7 +121,7 @@ describe('The restServer', () => {
       endpoint: undefined,
       id: '456',
     });
-    expect(reportSpy).toHaveBeenCalledWith('123');
+    expect(reportSpy).toHaveBeenCalledWith('123', undefined);
 
     remoteCallSpy.mockReset();
     reportSpy.mockReset();
