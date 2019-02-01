@@ -63,6 +63,7 @@ export interface BotCreationDialogState {
   secret: string;
   encryptKey: boolean;
   revealSecret: boolean;
+  isAzureGov: boolean;
 }
 
 export class BotCreationDialog extends React.Component<{}, BotCreationDialogState> {
@@ -85,6 +86,7 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
         appPassword: '',
         endpoint: '',
       }),
+      isAzureGov: false,
       secret: '',
       encryptKey: false,
       revealSecret: true,
@@ -92,7 +94,7 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
   }
 
   public render(): JSX.Element {
-    const { secret, bot, endpoint, encryptKey, revealSecret } = this.state;
+    const { secret, bot, endpoint, encryptKey, isAzureGov, revealSecret } = this.state;
     const secretCriteria = encryptKey ? secret : true;
 
     const requiredFieldsCompleted = bot && endpoint.endpoint && bot.name && secretCriteria;
@@ -139,7 +141,10 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
               value={endpoint.appPassword}
             />
           </Row>
-          <Checkbox label="Azure for US Government" onChange={this.onChannelServiceChange} />
+          <Row align={RowAlignment.Bottom}>
+            <Checkbox label="Azure for US Government" checked={isAzureGov} onChange={this.onChannelServiceChange} />
+            <a href="https://aka.ms/bot-framework-emulator-azuregov">&nbsp;Learn more.</a>
+          </Row>
           <Row align={RowAlignment.Bottom}>
             <Checkbox
               className={styles.encryptKeyCheckBox}
@@ -218,6 +223,7 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
         ...this.state.endpoint,
         ...{ channelService },
       },
+      isAzureGov: checked,
     } as any);
   };
 
