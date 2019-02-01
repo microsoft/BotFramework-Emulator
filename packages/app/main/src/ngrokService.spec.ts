@@ -98,7 +98,7 @@ jest.mock('./main', () => ({
 }));
 
 jest.mock('./ngrok', () => {
-  let connected = false;
+  const connected = false;
   return {
     running: () => connected,
     connect: async opts => ({ url: 'http://fdsfds.ngrok.io', inspectUrl: 'http://fdsfds.ngrok.io' }),

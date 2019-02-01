@@ -1,5 +1,4 @@
 //
-import { uniqueId } from '@bfemulator/sdk-shared';
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license.
 //
@@ -36,6 +35,8 @@ import { EventEmitter } from 'events';
 import { platform } from 'os';
 import * as path from 'path';
 import { clearTimeout, setTimeout } from 'timers';
+
+import { uniqueId } from '@bfemulator/sdk-shared';
 
 /* eslint-enable typescript/no-var-requires */
 export interface NgrokOptions {
