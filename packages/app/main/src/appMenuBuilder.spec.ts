@@ -234,7 +234,7 @@ describe('AppMenuBuilder', () => {
   });
 
   it('should update the recent bots list', () => {
-    mockRemoteCall = jest.fn((..._args) => Promise.resolve(null));
+    mockRemoteCall = jest.fn(() => Promise.resolve(null));
     const mockBotPath = join('path', 'to', 'bot');
     const mockRecentBots = [
       { displayName: 'bot1', path: mockBotPath },
@@ -308,7 +308,7 @@ describe('AppMenuBuilder', () => {
       },
     };
     mockRemoteCall = jest.fn(commandName => {
-      if ((commandName = SharedConstants.Commands.Misc.GetStoreState)) {
+      if (commandName === SharedConstants.Commands.Misc.GetStoreState) {
         return Promise.resolve(mockState);
       } else {
         return Promise.resolve({});
@@ -331,6 +331,7 @@ describe('AppMenuBuilder', () => {
     const themeMenu = fileMenuTemplate[11];
     expect(themeMenu.label).toBe('Themes');
     expect(themeMenu.submenu).toHaveLength(3); // light, dark, midnight
+    expect(themeMenu.submenu[2].type).toBe('checkbox');
     expect(themeMenu.submenu[2].label).toBe('midnight');
     expect(themeMenu.submenu[2].checked).toBe(true);
 
@@ -382,7 +383,7 @@ describe('AppMenuBuilder', () => {
       },
     };
     mockRemoteCall = jest.fn(commandName => {
-      if ((commandName = SharedConstants.Commands.Misc.GetStoreState)) {
+      if (commandName === SharedConstants.Commands.Misc.GetStoreState) {
         return Promise.resolve(mockState);
       } else {
         return Promise.resolve({});
@@ -399,5 +400,10 @@ describe('AppMenuBuilder', () => {
 
     const windowMenuTemplate = appMenuTemplate[4].submenu;
     expect(windowMenuTemplate).toHaveLength(5);
+
+    // should set the theme menu type to radio
+    const fileMenuTemplate = appMenuTemplate[1].submenu;
+    const themeMenu = fileMenuTemplate[11];
+    expect(themeMenu.submenu[0].type).toBe('radio');
   });
 });

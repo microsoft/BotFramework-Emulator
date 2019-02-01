@@ -42,6 +42,7 @@ import { emulator } from './emulator';
 import { mainWindow } from './main';
 import { rememberTheme } from './settingsData/actions/windowStateActions';
 import { getStore as getSettingsStore } from './settingsData/store';
+import { isMac } from './utils';
 
 declare type MenuOpts = Electron.MenuItemConstructorOptions;
 
@@ -76,7 +77,7 @@ export class AppMenuBuilder {
       await this.initHelpMenu(),
     ];
 
-    if (process.platform === 'darwin') {
+    if (isMac()) {
       template.unshift(await this.initAppMenuMac());
       // Window menu
       template.splice(4, 0, {
@@ -246,7 +247,7 @@ export class AppMenuBuilder {
         label: 'Themes',
         submenu: availableThemes.map(t => ({
           label: t.name,
-          type: 'checkbox',
+          type: isMac() ? 'radio' : 'checkbox',
           checked: theme === t.name,
           click: async () => {
             settingsStore.dispatch(rememberTheme(t.name));

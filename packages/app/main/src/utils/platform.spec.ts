@@ -30,22 +30,26 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+import { isMac } from './platform';
 
-export * from './botListsAreDifferent';
-export * from './ensureStoragePath';
-export * from './exceptionToAPIException';
-export * from './getBotsFromDisk';
-export * from './getDirectories';
-export * from './getFilesInDir';
-export * from './getSafeBotName';
-export * from './isDev';
-export * from './loadSettings';
-export * from './parseActivitiesFromChatFile';
-export * from './platform';
-export * from './readFileSync';
-export * from './saveSettings';
-export * from './sendErrorResponse';
-export * from './showOpenDialog';
-export * from './showSaveDialog';
-export * from './writeFile';
-export * from './getThemes';
+describe('#isMac', () => {
+  let originalPlatform;
+
+  beforeEach(() => {
+    originalPlatform = process.platform;
+  });
+
+  afterEach(() => {
+    Object.defineProperty(process, 'platform', { value: originalPlatform });
+  });
+
+  it('returns true when platform is darwin', () => {
+    Object.defineProperty(process, 'platform', { value: 'darwin' });
+    expect(isMac()).toBe(true);
+  });
+
+  it('returns false when platform is not darwin', () => {
+    Object.defineProperty(process, 'platform', { value: 'something-else' });
+    expect(isMac()).toBe(false);
+  });
+});
