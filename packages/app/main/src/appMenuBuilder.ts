@@ -247,7 +247,7 @@ export class AppMenuBuilder {
         label: 'Themes',
         submenu: availableThemes.map(t => ({
           label: t.name,
-          type: 'checkbox',
+          type: isMac() ? 'radio' : 'checkbox',
           checked: theme === t.name,
           click: async () => {
             settingsStore.dispatch(rememberTheme(t.name));
