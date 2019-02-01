@@ -45,9 +45,13 @@ import Panel, { PanelContent, PanelControls } from '../../../panel/panel';
 
 import * as styles from './inspector.scss';
 
+interface InspectObject {
+  [key: string]: any;
+}
+
 interface GetInspectorResultInternal {
   response: GetInspectorResult;
-  inspectObj: any;
+  inspectObj: InspectObject;
 }
 
 interface AccessoryButton {
@@ -75,11 +79,12 @@ interface InspectorState {
   activeBot?: IBotConfiguration;
   botHash?: string;
   inspectorSrc?: string;
-  inspectObj: { [propName: string]: any };
+  inspectObj: InspectObject;
   themeInfo: { themeName: string; themeComponents: string[] };
   inspector: ExtensionInspector;
   buttons: AccessoryButton[];
   title: string;
+  containerRef: HTMLDivElement;
 }
 
 declare type ElectronHTMLWebViewElement = HTMLWebViewElement & {
@@ -98,7 +103,6 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
   }
 
   private _state = {} as InspectorState;
-  private containerRef: HTMLDivElement;
   private webViewByLocation: {
     [location: string]: ElectronHTMLWebViewElement;
   } = {};
@@ -129,7 +133,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     return null;
   }
 
-  private static getInspector(inspectorObjects: any[] = []): GetInspectorResultInternal {
+  private static getInspector(inspectorObjects: InspectObject[] = []): GetInspectorResultInternal {
     const obj = inspectorObjects[0];
 
     return {
@@ -166,7 +170,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
   }
 
   public render() {
-    if (this.state.inspector) {
+    if (this.state.inspector && this.state.inspectObj) {
       return (
         <div className={styles.detailPanel}>
           <Panel title={['inspector', this.state.title].filter(s => s && s.length).join(' - ')}>
@@ -185,7 +189,21 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
       return (
         // No inspector was found.
         <div className={styles.detailPanel}>
-          <Panel title={`inspector`} />
+          <Panel title={`inspector`}>
+            <PanelContent>
+              <div className={styles.nothingInspected}>
+                Click on a log item in the panel below to inspect activity.
+                <br />
+                <br />
+                {
+                  'You can also inspect the JSON responses from your LUIS and QnA Maker services by selecting a "trace" activity. '
+                }
+                <a href="https://docs.microsoft.com/en-us/azure/bot-service/bot-service-debug-emulator?view=azure-bot-service-4.0">
+                  Learn More.
+                </a>
+              </div>
+            </PanelContent>
+          </Panel>
         </div>
       );
     }
@@ -212,6 +230,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     );
   }
 
+  // eslint-disable-next-line typescript/no-unused-vars
   private renderAccessoryButtons(_inspector: ExtensionInspector) {
     return (
       <PanelControls>
@@ -224,7 +243,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     if (oldState.botHash !== newState.botHash) {
       this.botUpdated(newState.activeBot);
     }
-    if (oldState.inspectorSrc !== newState.inspectorSrc) {
+    if (oldState.inspectorSrc !== newState.inspectorSrc || oldState.containerRef !== newState.containerRef) {
       this.updateInspector(this.state);
     }
     if (JSON.stringify(oldState.inspectObj) !== JSON.stringify(newState.inspectObj)) {
@@ -240,16 +259,17 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     if (!src) {
       return;
     }
-    const { webViewByLocation: webViews, containerRef } = this;
+    const { webViewByLocation: webViews } = this;
     const nextInspector = webViews[src] || (webViews[src] = this.createWebView(state));
     nextInspector.style.display = '';
     this.sendInitializationStackToInspector();
 
+    const { containerRef } = this.state;
     if (!containerRef) {
       return;
     }
-    if (!this.containerRef.contains(nextInspector)) {
-      this.containerRef.appendChild(nextInspector);
+    if (!containerRef.contains(nextInspector)) {
+      containerRef.appendChild(nextInspector);
     }
     Array.prototype.forEach.call(containerRef.children, child => {
       if (child !== nextInspector) {
@@ -276,7 +296,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
   }
 
   private webViewContainer = (ref: HTMLDivElement): void => {
-    this.containerRef = ref;
+    this.setState({ containerRef: ref });
   };
 
   private enableAccessory = (id: string, enable: boolean) => {
@@ -314,7 +334,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     this.sendToInspector('toggle-dev-tools');
   };
 
-  private canInspect(inspectObj: any): boolean {
+  private canInspect(inspectObj: InspectObject): boolean {
     return this.state.inspector.name === 'JSON' || InspectorAPI.canInspect(this.state.inspector, inspectObj);
   }
 
@@ -370,7 +390,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     this.sendToInspector('theme', this.state.themeInfo);
   }
 
-  private inspect(obj: any) {
+  private inspect(obj: InspectObject) {
     if (this.canInspect(obj)) {
       this.sendToInspector('inspect', obj);
     }
@@ -380,7 +400,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     this.sendToInspector('bot-updated', bot);
   }
 
-  private sendToInspector(channel: any, ...args: any[]) {
+  private sendToInspector(channel: string, ...args: any[]) {
     const inspector = this.webViewByLocation[this.state.inspectorSrc];
     if (!inspector) {
       return;
