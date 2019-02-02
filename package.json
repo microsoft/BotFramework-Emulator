@@ -36,14 +36,15 @@
     "@types/jsonwebtoken": "7.2.0",
     "@types/mkdirp": "0.3.29",
     "@types/node": "6.0.60",
-    "@types/react": "15.0.38",
+    "@types/react": "15.6.0",
     "@types/react-dom": "0.14.23",
     "@types/react-split-pane": "0.1.5",
     "@types/request": "0.0.31",
     "@types/restify": "2.0.38",
     "del": "2.2.2",
-    "electron": "1.7.2",
-    "electron-builder": "8.7.0",
+    "electron": "1.7.5",
+    "electron-builder": "19.18.0",
+    "electron-builder-squirrel-windows": "19.18.0",
     "electron-packager": "8.6.0",
     "electron-react-devtools": "0.4.0",
     "electron-winstaller": "2.5.2",
@@ -93,8 +94,6 @@
     "xtend": "4.0.1"
   },
   "build": {
-    "asar": false,
-    "nutsServer": "emulator.botframework.com",
     "appId": "com.electron.botframework-emulator",
     "copyright": "Copyright © 2017 Microsoft",
     "mac": {
@@ -107,6 +106,9 @@
     "squirrelWindows": {
       "loadingGif": "build/bf-splash.gif",
       "remoteReleases": "https://github.com/Microsoft/BotFramework-Emulator"
+    },
+    "directories": {
+      "output": "install"
     },
     "files": [
       "**/*",
@@ -121,8 +123,5 @@
       "!**/{tsconfig.json,gulpfile.js,index.tsx,README.md,getlicenses.cmd}",
       "!**/node_modules/@types"
     ]
-  },
-  "directories": {
-    "output": "install"
   }
 }

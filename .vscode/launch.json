@@ -5,15 +5,24 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Launch",
             "type": "node",
             "request": "launch",
-            "name": "Electron Main",
+            "program": "${workspaceRoot}/app/server/main.js",
+            "stopOnEntry": false,
+            "args": [],
             "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
             "windows": {
                 "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron.cmd"
             },
-            "program": "${workspaceRoot}/app/server/main.js",
-            "protocol": "inspector"
+            "runtimeArgs": [
+                "--nolazy"
+            ],
+            "env": {
+                "NODE_ENV": "development"
+            },
+            "sourceMaps": true,
+            "protocol": "legacy"
         }
     ]
 }
