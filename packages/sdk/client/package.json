@@ -1,0 +1,47 @@
+{
+  "name": "@bfemulator/sdk-client",
+  "version": "1.0.0",
+  "description": "",
+  "main": "built/index.js",
+  "types": "built/index.d.ts",
+  "scripts": {
+    "build": "npm run lint && npm run clean && npm run build:prod && tsc --emitDeclarationOnly --declaration",
+    "build:prod": "babel ./src --out-dir built --extensions \".ts,.tsx\" --ignore \"**/*.spec.ts\"",
+    "clean": "rimraf ./built",
+    "lint": "eslint --color --quiet --ext .js,.jsx,.ts,.tsx ./src",
+    "lint:fix": "npm run lint -- --fix",
+    "prepare": "npm run clean",
+    "test": "jest"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/cli": "^7.1.0",
+    "@babel/core": "^7.1.0",
+    "@babel/plugin-proposal-class-properties": "^7.1.0",
+    "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
+    "@babel/plugin-transform-react-jsx": "^7.0.0",
+    "@babel/plugin-transform-runtime": "^7.1.0",
+    "@babel/preset-env": "^7.1.0",
+    "@babel/preset-typescript": "^7.1.0",
+    "@types/jest": "^22.2.3",
+    "babel-jest": "23.6.0",
+    "eslint": "^5.12.0",
+    "eslint-config-prettier": "^3.5.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-notice": "^0.7.7",
+    "eslint-plugin-prettier": "^3.0.1",
+    "eslint-plugin-typescript": "^1.0.0-rc.3",
+    "jest": "^23.0.0",
+    "prettier-eslint": "^8.8.2",
+    "prettier-eslint-cli": "^4.7.1",
+    "rimraf": "^2.6.2",
+    "typescript": "3.1.1"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.1.5",
+    "@bfemulator/sdk-shared": "^1.0.0",
+    "botframework-config": "4.0.0-preview1.3.4",
+    "tslib": "^1.9.0"
+  }
+}

@@ -1,0 +1,77 @@
+//
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license.
+//
+// Microsoft Bot Framework: http://botframework.com
+//
+// Bot Framework Emulator Github:
+// https://github.com/Microsoft/BotFramwork-Emulator
+//
+// Copyright (c) Microsoft Corporation
+// All rights reserved.
+//
+// MIT License:
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+//
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED ""AS IS"", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
+
+.browse-button {
+  overflow: hidden;
+  position: absolute;
+  right: 4px;
+  bottom: 11.5px;
+}
+
+.input-container {
+  margin-top: 10px;
+  padding-right: 115px;
+}
+
+.input-container-row {
+  width: 100%;
+
+  & + div {
+    margin-left: 8px;
+  }
+}
+
+.file-input {
+  position: absolute;
+  left: 0;
+  height: 100%;
+  z-index: 2;
+  opacity: 0;
+}
+
+.multi-input-row {
+  justify-content: space-between;
+}
+
+/* maintains "light" theme for the recent bots list since it's in a modal */
+.theme-overrides {
+  --my-bots-entry-bg: var(--neutral-4);
+  --my-bots-entry-border: 1px solid transparent;
+  --tab-icon-color: var(--neutral-12);
+  --my-bots-path-color: var(--neutral-12);
+  --focused-selected-list-item-bg: #006AB1;
+  --my-bots-well-bg: var(--neutral-3);
+  --my-bots-well-border: 0;
+  --my-bots-scrollbar-color: rgba(136, 136, 136, 0.5);
+  --my-bots-entry-color: var(--neutral-12);
+}

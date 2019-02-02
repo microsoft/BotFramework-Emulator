@@ -1,0 +1,40 @@
+{
+  "name": "@bfemulator/extension-debug-main",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "npm run clean && babel ./src --out-dir built --extensions \".ts,.tsx\" --ignore \"**/*.spec.ts\"",
+    "clean": "rimraf ./built",
+    "prepare": "npm run clean",
+    "test": "jest"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/cli": "^7.1.0",
+    "@babel/core": "^7.1.0",
+    "@babel/plugin-proposal-class-properties": "^7.1.0",
+    "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
+    "@babel/plugin-transform-react-jsx": "^7.0.0",
+    "@babel/plugin-transform-runtime": "^7.1.0",
+    "@babel/preset-env": "^7.1.0",
+    "@babel/preset-typescript": "^7.1.0",
+    "@babel/runtime": "^7.1.5",
+    "@types/jest": "^22.2.3",
+    "@types/node": "8.9.3",
+    "@types/react": "~16.3.2",
+    "@types/react-dom": "^16.0.4",
+    "babel-jest": "23.6.0",
+    "jest": "^23.0.0",
+    "rimraf": "^2.6.2",
+    "typescript": "3.1.1"
+  },
+  "dependencies": {
+    "@bfemulator/sdk-main": "^1.0.0",
+    "@bfemulator/sdk-shared": "^1.0.0",
+    "react": "~16.3.2",
+    "react-dom": "~16.3.2",
+    "tslib": "^1.9.0"
+  }
+}

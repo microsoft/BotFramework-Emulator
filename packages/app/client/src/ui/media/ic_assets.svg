@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 12">
+  <path d="M11,2V1A1,1,0,0,0,10.92.61,1,1,0,0,0,10.71.29,1,1,0,0,0,10,0H6a1,1,0,0,0-.71.29,1,1,0,0,0-.21.32A1,1,0,0,0,5,1V2H0V12H16V2H11ZM6,1h4V2H6V1Zm9,10H1V6H6V8h4V6h5v5ZM9,7H7V6H9V7Zm6-2H1V3H15V5Z"/>
+</svg>

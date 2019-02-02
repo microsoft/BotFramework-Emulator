@@ -1,0 +1,65 @@
+ul > li.link::before {
+  position: relative;
+  width: 16px;
+  height: 16px;
+  top: 4px;
+}
+
+@keyframes highlight {
+  0% {
+    background-color: transparent;
+  }
+
+  40%, 60% {
+    background-color: var(--focused-list-item);
+    color: var(--input-label-color);
+  }
+
+  100% {
+    background-color: transparent;
+  }
+}
+
+ul > li > svg {
+  position: relative;
+  width: 12px;
+  height: 12px;
+  padding-right: 5px;
+  top: 2px;
+}
+
+.animate-highlight {
+  animation: highlight 1s;
+}
+
+.cosmos-db-icon {
+  & g > path:nth-child(5) {
+    fill: var(--cosmos-db-contrast);
+  }
+}
+
+.empty-content {
+  margin: 15px 13px;
+  font-size: 13px;
+  color: var(--explorer-panel-group-title-color);
+  line-height: 18px;
+
+  > a {
+    background-color: transparent;
+    border: 1px solid transparent;
+    color: var(--focused-selected-list-item-bg);
+    cursor: pointer;
+    font-weight: 600;
+    padding: 0;
+    text-decoration: none;
+    white-space: normal;
+
+    &:focus {
+      outline: var(--p-button-border-focus);
+    }
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

@@ -1,0 +1,54 @@
+.connected-service-picker {
+  width: 400px;
+}
+
+.padded-link {
+  padding: 16px 0;
+  display: inline-block;
+}
+
+.checkbox-override {
+  display: inline-block;
+}
+
+.select-all {
+  height: 24px;
+  padding: 5px 10px;
+}
+
+.list-container {
+  & > p {
+    font-size: 13px;
+    margin: 0;
+    padding-bottom: 20px;
+    &:last-child {
+      padding: 0 0 48px 0;
+    }
+  }
+
+  & > ul {
+    list-style: none;
+    margin: 0;
+    padding: 5px 0 0 0;
+    max-height: 96px;
+    overflow: auto;
+    > li {
+      padding: 0 10px;
+      background-color: #efefef;
+      height: 24px;
+      & > span {
+        color: #777;
+        width: 50%;
+        &:last-child {
+          width: 25px;
+          text-align: left;
+          padding-right: 10px;
+          float: right;
+        }
+      }
+      &:nth-child(odd) {
+        background-color: white;
+      }
+    }
+  }
+}

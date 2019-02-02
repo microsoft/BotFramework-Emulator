@@ -1,0 +1,21 @@
+.generic-document {
+  background-color: var(--welcome-page-bg);
+  box-sizing: border-box;
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  justify-content: center;
+  overflow-x: hidden;
+  overflow-y: auto;
+  height: 100%;
+  width: 100%;
+  min-width: 480px;
+  padding-top: 32px;
+  padding-bottom: 32px;
+
+  & > .generic-doc-content {
+    max-width: 90%;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+}

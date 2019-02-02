@@ -1,0 +1,44 @@
+.panel {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  height: 100%;
+  position: relative;
+  background-color: var(--dialog-bg);
+  color: var(--input-label-color);
+}
+
+.panel-header {
+  background-color: var(--toolbar-bg);
+  color: var(--tab-color);
+  line-height: 36px;
+  min-height: 36px;
+  text-transform: uppercase;
+  padding-left: 16px;
+  display: flex;
+  white-space: nowrap;
+
+  & > .accessories {
+    margin: 0 0 0 auto;
+    height: 100%;
+    width: auto;
+    display: flex;
+    align-items: center;
+
+    & > button {
+      background-color: transparent;
+      color: var(--neutral-5);
+      border: 0;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+  }
+}
+
+.panel-body {
+  background-color: var(--toolbar-bg);
+  color: inherit;
+  flex: 1;
+  overflow: auto;
+  padding: 0;
+}

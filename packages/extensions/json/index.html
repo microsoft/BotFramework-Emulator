@@ -1,0 +1,167 @@
+<html>
+<head>
+  <title>JSON Viewer</title>
+</head>
+<style>
+  body {
+    padding: 0;
+    margin: 0;
+    height: 100%;
+    color: #d4d4d4;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #5E5E5E;
+  }
+
+  .json {
+    color: var(--log-panel-item-info);
+    padding: 8px 16px 0 16px;
+    font-family: var(--monospace-font-family);
+    font-size: 13px;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+    overflow-y: auto;
+    user-select: text;
+  }
+
+  .json-key {
+    color: var(--log-panel-link);
+  }
+
+  .json-string {
+    color: var(--log-panel-item-error);
+  }
+
+  .json-number {
+    color: var(--log-panel-timestamp);
+  }
+
+  .json-boolean {
+    color: var(--log-panel-link);
+  }
+
+  .json-null {
+    color: var(--log-panel-link);
+  }
+
+  .devtools {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+  }
+
+  .tool-button {
+    background-color: transparent;
+    color: var(--log-panel-link);
+    border: 1px solid var(--log-panel-link);
+    padding: 6px;
+  }
+
+  .tool-button:hover {
+    color: var(--log-panel-link);
+  }
+
+</style>
+
+<body>
+<div class="json" id="main"></div>
+</body>
+
+<script>
+
+  window.host.on('inspect', (...args) => {
+    let contentNode = document.getElementById("main");
+    contentNode.innerHTML = '';
+
+    for (let i = 0; i < args.length; ++i) {
+      let node = document.createElement('div');
+      let str;
+      if (typeof args[i] === 'string' && args[i].startsWith('<!DOCTYPE html>')) {
+        str = args[i];
+      } else {
+        str = formatJSON(args[i]);
+      }
+      node.innerHTML = str;
+      contentNode.appendChild(node);
+    }
+  });
+
+  window.host.on('theme', async themeInfo => {
+    const oldThemeComponents = document.querySelectorAll('[data-theme-component="true"]');
+    const head = document.querySelector('head');
+    const fragment = document.createDocumentFragment();
+    const promises = [];
+    // Create the new links for each theme component
+    themeInfo.themeComponents.forEach(themeComponent => {
+      const link = document.createElement('link');
+      promises.push(new Promise(resolve => {
+        link.addEventListener('load', resolve);
+      }));
+      link.href = themeComponent;
+      link.rel = 'stylesheet';
+      link.setAttribute('data-theme-component', 'true');
+      fragment.appendChild(link);
+    });
+    head.insertBefore(fragment, head.firstElementChild);
+    // Wait for all the links to load their css
+    await Promise.all(promises);
+    // Remove the old links
+    Array.prototype.forEach.call(oldThemeComponents,
+      themeComponent => {
+        if (themeComponent.parentElement) {
+          themeComponent.parentElement.removeChild(themeComponent);
+        }
+      });
+  });
+
+  function formatJSON(obj) {
+    if (!obj) return null;
+    let json = JSON.stringify(obj, null, 2);
+    // Hide ampersands we don't want replaced
+    json = json.replace(/&(amp|apos|copy|gt|lt|nbsp|quot|#x?\d+|[\w\d]+);/g, '\x01');
+    // Escape remaining ampersands and other HTML special characters
+    json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    // Restore hidden ampersands
+    json = json.replace(/\x01/g, '&');
+    // Match all the JSON parts and add theming markup
+    json = json.replace(/"(\\u[a-fA-F0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,
+      (match) => {
+        // Default to "number"
+        let cls = 'number';
+        // Detect the type of the JSON part
+        if (/^"/.test(match)) {
+          if (/:$/.test(match)) {
+            cls = 'key';
+          } else {
+            cls = 'string';
+          }
+        } else if (/true|false/.test(match)) {
+          cls = 'boolean';
+        } else if (/null/.test(match)) {
+          cls = 'null';
+        }
+        if (cls === 'key') {
+          // Don't color the : character after the key
+          let exec = /"(.*)":\s*/.exec(match);
+          return `<span class="json-${cls}">"${exec[1]}"</span>:`;
+        } else {
+          return `<span class="json-${cls}">${match}</span>`;
+        }
+      });
+
+    return json;
+  }
+
+</script>
+
+</html>

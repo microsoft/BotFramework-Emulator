@@ -1,0 +1,52 @@
+{
+  "name": "LUIS",
+  "client": {
+    "inspectors": [
+      {
+        "name": "LUIS",
+        "src": "client/public/index.html",
+        "criteria": [
+          {
+            "path": "type",
+            "value": "trace"
+          },
+          {
+            "path": "valueType",
+            "value": "https://www.luis.ai/schemas/trace"
+          }
+        ],
+        "summaryText": [
+          "label"
+        ],
+        "accessories": [
+          {
+            "id": "train",
+            "states": {
+              "default": {
+                "label": "Train",
+                "icon": "Refresh"
+              },
+              "working": {
+                "label": "Training",
+                "icon": "Spinner"
+              }
+            }
+          },
+          {
+            "id": "publish",
+            "states": {
+              "default": {
+                "label": "Publish",
+                "icon": "Share"
+              },
+              "working": {
+                "label": "Publishing",
+                "icon": "Spinner"
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

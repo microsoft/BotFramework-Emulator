@@ -1,0 +1,42 @@
+{
+  "name": "Debug",
+  "node": {
+    "main": "main/built/index.js",
+    "debug": {
+      "enabled": false,
+      "websocket": {
+        "port": 8081
+      }
+    }
+  },
+  "client": {
+    "basePath": "client/build/",
+    "debug": {
+      "enabled": false,
+      "webpack": {
+        "port": 3031
+      }
+    },
+    "deeplink": "",
+    "filetypes": [],
+    "inspectors": [
+      {
+        "name": "Debug",
+        "src": "client/build/index.html",
+        "criteria": [
+          {
+            "path": "type",
+            "value": "event"
+          },
+          {
+            "path": "name",
+            "value": "debug"
+          }
+        ],
+        "summaryText": [
+          "text"
+        ]
+      }
+    ]
+  }
+}

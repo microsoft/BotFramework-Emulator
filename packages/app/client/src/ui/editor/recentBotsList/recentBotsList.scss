@@ -1,0 +1,164 @@
+//
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license.
+//
+// Microsoft Bot Framework: http://botframework.com
+//
+// Bot Framework Emulator Github:
+// https://github.com/Microsoft/BotFramwork-Emulator
+//
+// Copyright (c) Microsoft Corporation
+// All rights reserved.
+//
+// MIT License:
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+//
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED ""AS IS"", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
+
+.margin-fix {
+  margin-left: 0;
+}
+
+.no-bots {
+  font-style: italic;
+  padding: 0 10px;
+}
+
+.recent-bot {
+  border: 1px solid transparent;
+  padding: 0 16px;
+  position: relative;
+
+  button {
+    font-size: 13px;
+  }
+
+  &:hover {
+    background-color: var(--my-bots-entry-bg);
+    border: var(--my-bots-entry-border);
+
+    .recent-bot-action-bar {
+      display: block;
+    }
+  }
+
+  > button {
+    background-color: transparent;
+    border: 1px solid transparent;
+    color: var(--my-bots-entry-color);
+    cursor: pointer;
+
+    > span {
+      font-weight: 600;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+
+.recent-bot-action-bar {
+  background-color: transparent;
+  display: none;
+  height: 100%;
+  min-width: 16px;
+  position: absolute;
+  right: 0;
+  top: 2px;
+  width: auto;
+
+  > button {
+    border: 0;
+    cursor: pointer;
+    height: 0;
+    padding: 0;
+    width: 0;
+
+    &:after {
+      color: var(--tab-icon-color);
+      content: "\2716";
+      font-size: 12px;
+      height: 16px;
+      width: 8px;
+      margin-right: 8px;
+    }
+  }
+}
+
+.recent-bots-list {
+  max-height: 100px;
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  & > li {
+    display: flex;
+  }
+
+  a {
+    flex-shrink: 0;
+  }
+}
+
+.recent-bot-path {
+  color: var(--my-bots-path-color);
+  cursor: text;
+  display: inline-block;
+  line-height: 22px;
+  margin-left: 8px;
+  opacity: 0.5;
+  user-select: text;
+}
+
+.section {
+  margin-bottom: 34px;
+  max-width: 100%;
+  width: auto;
+
+  a {
+    color: var(--focused-selected-list-item-bg);
+    min-width: 0;
+  }
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    &.well {
+      padding: 10px 0;
+    }
+  }
+}
+
+.well {
+  background-color: var(--my-bots-well-bg);
+  border: var(--my-bots-well-border);
+
+  &::-webkit-scrollbar-thumb {
+    background-color: transparent;
+  }
+
+  &:hover {
+    &::-webkit-scrollbar-thumb {
+      background-color: var(--my-bots-scrollbar-color);
+    }
+  }
+}

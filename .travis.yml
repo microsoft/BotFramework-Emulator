@@ -1,0 +1,25 @@
+language: node_js
+sudo: required
+dist: trusty
+services: docker
+
+node_js:
+- "lts/*"
+
+notifications:
+  email: false
+
+before_install:
+- npm cache verify
+- npm prune
+- npm i -g lerna
+- lerna clean --yes
+
+install:
+- lerna bootstrap --hoist
+
+script:
+- npm run build
+- npm run test:coveralls
+
+cache: false

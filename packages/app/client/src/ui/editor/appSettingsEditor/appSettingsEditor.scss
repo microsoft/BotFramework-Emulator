@@ -1,0 +1,72 @@
+.app-settings-editor {
+  :global {
+    input {
+      font-family: var(--default-font-family);
+    }
+  }
+  p {
+    margin: 0 0 16px 0;
+  }
+
+  a {
+    border: 1px solid transparent;
+    color: var(--focused-selected-list-item-bg);
+    cursor: pointer;
+    font-weight: 600;
+    white-space: normal;
+    text-decoration: none;
+
+    &:focus {
+      outline: var(--p-button-border-focus);
+    }
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+}
+
+.margin-bottom-row {
+  margin-bottom: 16px;
+}
+
+.right-column {
+  margin-left: 48px;
+}
+
+.button-row {
+  margin-top: 48px;
+}
+
+.browse-button, .save-button {
+  margin-left: 8px;
+  margin-top: auto;
+}
+
+.browse-button, .save-button, .cancel-button {
+  width: 180px;
+  height: 26px;
+}
+
+.size-limit-suffix {
+  display: inline-block;
+  line-height: 32px;
+  margin-left: 8px;
+}
+
+.checkbox-overrides {
+  margin-bottom: 16px;
+}
+
+.input-container {
+  padding-bottom: 0;
+  width: 180px;
+}
+
+.app-settings-input {
+  height: 26px;
+}
+
+.spacing {
+  padding: 0 0 2px 3px;
+}

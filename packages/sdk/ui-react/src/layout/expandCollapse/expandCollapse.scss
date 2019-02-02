@@ -1,0 +1,64 @@
+.expand-collapse {
+  display: flex;
+  flex-flow: column nowrap;
+  height: 100%;
+  min-height: 22px;
+  overflow: hidden;
+
+  &.expanded {
+    margin-bottom: 15px;
+  }
+
+  & > .header {
+    background-color: var(--explorer-panel-group-title-bg);
+    color: var(--explorer-panel-group-title-color);
+    cursor: pointer;
+    display: flex;
+    flex-shrink: 0;
+    font-size: 11px;
+    font-weight: 700;
+    height: 22px;
+    line-height: 22px;
+    position: relative;
+    text-transform: uppercase;
+    white-space: nowrap;
+
+    & > h3 {
+      margin: 0;
+      padding: 0 0 0 32px;
+      text-decoration: none;
+      width: 100%;
+    }
+
+    & > svg {
+      fill: var(--explorer-panel-group-title-color);
+      height: 12px;
+      left: 8px;
+      pointer-events: none;
+      top: 4px;
+      width: 12px;
+      position: absolute;
+    }
+
+    & .accessories {
+      height: 100%;
+      margin: 0 0 0 auto;
+      width: auto;
+
+      & > button {
+        background-color: transparent;
+        color: var(--neutral-5);
+        border: 0;
+        cursor: pointer;
+      }
+    }
+  }
+
+  & .body {
+    display: flex;
+    flex-flow: column nowrap;
+    overflow: auto;
+    position: relative;
+    height: 100%;
+  }
+}

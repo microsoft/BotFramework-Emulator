@@ -1,26 +1,42 @@
 {
-    "compilerOptions": {
-        "importHelpers": true,
-        "module": "commonjs",
-        "moduleResolution": "node",
-        "preserveConstEnums": true,
-        "target": "es6",
-        "jsx": "react",
-        "sourceMap": true,
-        "noImplicitAny": false,
-        "noImplicitThis": true,
-        "noEmitOnError": true,
-        "noImplicitReturns": true,
-        "noFallthroughCasesInSwitch": true,
-        "noUnusedLocals": true,
-        "outDir": "app",
-        "removeComments": true
+  "compilerOptions": {
+    "baseUrl": ".",
+    "outDir": "build/dist",
+    "module": "esnext",
+    "target": "es2017",
+    "lib": ["es6", "dom", "es2015", "esnext"],
+    "sourceMap": true,
+    // "allowJs": true,
+    "jsx": "react",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "moduleResolution": "node",
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": false,
+    "noImplicitAny": false,
+    // "strictNullChecks": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "noUnusedLocals": true,
+    "skipLibCheck": true,
+    "declaration": true,
+    "paths": {
+      "@bfemulator/sdk-shared": ["./packages/sdk/shared/build"],
+      "@bfemulator/sdk-main": ["./packages/sdk/main/build"]
     },
-    "exclude": [
-        "node_modules",
-        "app",
-        "build",
-        "install"
-    ],
-    "compileOnSave": false
+    "types": ["react", "react-dom", "node", "jest"]
+  },
+  "include": ["packages/**/src"],
+  "exclude": [
+    "node_modules",
+    "packages/**/src/**/*.test.tsx",
+    "packages/**/src/**/*.spec.tsx",
+    "packages/**/src/**/*.test.ts",
+    "packages/**/src/**/*.spec.ts",
+    "packages/**/build",
+    "packages/**/built",
+    "packages/**/scripts",
+    "packages/**/node_modules",
+    "packages/**/public"
+  ]
 }

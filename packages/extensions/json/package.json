@@ -1,0 +1,11 @@
+{
+  "name": "@bfemulator/extension-json",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@babel/runtime": "^7.1.5"
+  }
+}

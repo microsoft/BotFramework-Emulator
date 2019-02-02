@@ -1,0 +1,54 @@
+.bot-settings-editor {
+  min-width: 600px;
+  width: 600px;
+  max-height: 314px;
+}
+
+.cancel-button {
+  margin-left: auto;
+}
+
+.save-button {
+  margin-left: 4px;
+}
+
+.key {
+  width: 240px;
+  margin: 16px 145px 0 32px;
+}
+
+.encrypt-key-check-box {
+  margin-top: 30px;
+  
+  span {
+    margin-right: 3px;
+  }
+}
+
+a {
+  color: var(--link-color);
+  line-height: 20px;
+  text-decoration: none;
+}
+
+.actions-list {
+  list-style: none;
+  position: absolute;
+  right: 199px; // when re-enabling 'Generate new secret' link, original value: 85px;
+  bottom: 71px;
+
+  li {
+    display: inline;
+    padding: 2px 12px;
+    font-weight: 400;
+  }
+
+  li + li {
+    border-left: 1px solid var(--neutral-11);
+  }
+
+  .disabled-action {
+    color: var(--link-color-disabled);
+    cursor: default;
+  }
+}

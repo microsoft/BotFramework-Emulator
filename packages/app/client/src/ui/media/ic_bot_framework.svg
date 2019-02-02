@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+  <circle class="cls-1" cx="6.55" cy="8" r="0.73"/>
+  <circle class="cls-1" cx="9.45" cy="8" r="0.73"/>
+  <polygon class="cls-1" points="6.97 11.77 3.2 8 6.97 4.23 6.29 3.54 1.83 8 6.29 12.46 6.97 11.77"/>
+  <polygon class="cls-1" points="9.03 11.77 9.71 12.46 14.17 8 9.71 3.54 9.03 4.23 12.8 8 9.03 11.77"/>
+  <path class="cls-1" d="M8,0a8,8,0,1,0,8,8A8,8,0,0,0,8,0ZM8,15a7,7,0,1,1,7-7A7,7,0,0,1,8,15Z"/>
+</svg>

@@ -1,0 +1,221 @@
+html {
+  /* Highlight colors */
+  --list-item-color: var(--neutral-1);
+  --list-item-selected-color: var(--neutral-2);
+  --list-item-hover-bg: transparent;
+  --list-item-hover-border: 1px dashed #F38518;
+  --selected-list-item: #CCCEDB;
+  --focused-list-item: transparent;
+  --focused-outline: var(--list-item-hover-border);
+  --focused-selected-highlighted-list-item: #3062D6;
+  --focused-selected-list-item-bg: #3794FF;
+
+  /* Alert colors */
+  --info-bg: #D6ECF2;
+  --info-outline: #007ACC;
+
+  --warning-bg: #F6F5D2;
+  --warning-outline: #B89500;
+
+  --error-text: #F48771;
+  --error-bg: #F2DEDE;
+  --error-outline: #BE1100;
+
+  /* webchat overridden colors */
+  /* activity bubbles */
+  --webchat-bg: var(--tab-active-tab-bg);
+  --webchat-bubble-bg: var(--neutral-15);
+  --webchat-bubble-text: var(--neutral-1);
+  --webchat-bubble-text-weight: 600;
+  --webchat-user-bubble-bg: var(--neutral-1);
+  --webchat-user-bubble-text: var(--neutral-15);
+  --webchat-selected-activity-bg: #B89500;
+  --webchat-selected-actvity-border: #F38518;
+  --webchat-selected-activity-text: var(--neutral-1);
+  --webchat-timestamp-text: var(--neutral-1);
+
+  /* sendbox */
+  --webchat-sendbox-bg: var(--tab-active-tab-bg);
+  --webchat-sendbox-text: var(--neutral-1);
+  --webchat-buttons-color: var(--neutral-1);
+  --webchat-buttons-color-focus: var(--neutral-4);
+  --webchat-buttons-dictate: #BE1100;
+
+  /* transcript overlays */
+  --webchat-transcript-overlay-bg: var(--neutral-1);
+  --webchat-transcript-overlay-bg-focus: var(--neutral-5);
+  --webchat-transcript-overlay-text: var(--neutral-15);
+  --webchat-transcript-overlay-text-focus: var(--neutral-15);
+
+  /* suggested actions */
+  --webchat-sa-bg: var(--webchat-bubble-bg);
+  --webchat-sa-border: solid 1px var(--neutral-4);
+  --webchat-sa-text: #3794FF;
+
+  /* Log panel custom colors */
+  --log-panel-timestamp: #47B07F;
+  --log-panel-link: #9CDCFE;
+  --log-panel-entry-hover-bg: var(--neutral-10);
+  --log-panel-entry-inspected-bg: var(--neutral-8);
+  --log-panel-item-info: var(--neutral-1);
+  --log-panel-item-debug: var(--neutral-6);
+  --log-panel-item-warn: var(--warning-outline);
+  --log-panel-item-error: var(--error-text);
+
+  /* nav bar custom colors */
+  --nav-bar-bg: var(--neutral-16);
+  --nav-icon-color: var(--neutral-1);
+  --nav-icon-opacity: 1;
+  --nav-icon-color-hover-opacity: 1;
+  --nav-focused-tag-bg: #F38518;
+  --nav-focused-tag-bg-opacity: .6;
+  --nav-border-focus: 1px solid #F38518;
+  --nav-link-selected-border: 1px solid #F38518;
+  --nav-link-selected-focus: 2px solid #F38518;
+  --nav-link-hover-border: var(--list-item-hover-border);
+  --nav-link-badge-color: var(--neutral-1);
+  --nav-link-badge-bg: #FF0000;
+
+  /* input[type="text"] */
+  --input-color: var(--neutral-1);
+  --input-bg: transparent;
+  --input-label-color: #C8C8C8;
+  --input-label-color-disabled: var(--neutral-7);
+  --input-border: 1px solid #C8C8C8;
+  --input-border-focus: var(--p-button-border-focus);
+  --input-border-error: 1px solid #D02E00;
+  --input-placeholder-color: var(--neutral-7);
+  --input-border-disabled: 1px solid var(--neutral-7);
+
+  /* input[type="checkbox"] */
+  --checkbox-checkmark-color: var(--neutral-1);
+  --checkbox-checkmark-disabled-color: var(--neutral-8);
+  --checkbox-border: 1px solid #72C3DF;
+  --checkbox-border-disabled: 1px solid var(--neutral-7);
+  --checkbox-bg-disabled: var(--neutral-5);
+  --checkbox-bg-checked: #72C3DF;
+
+  /* primary button */
+  --p-button-color: var(--neutral-2);
+  --p-button-border: 1px solid #72C3DF;
+  --p-button-border-focus: 1px solid #F38518;
+  --p-button-border-hover: 1px solid #72C3DF;
+  --p-button-border-active: var(--p-button-border);
+  --p-button-border-disabled: var(--p-button-border);
+  --p-button-opacity-disabled: .4;
+  --p-button-bg: transparent;
+  --p-button-bg-focus: transparent;
+  --p-button-bg-hover: transparent;
+  --p-button-bg-active: transparent;
+  --p-button-bg-disabled: transparent;
+
+  /* secondary button */
+  --s-button-color: var(--p-button-color);
+  --s-button-color-disabled: var(--p-button-color);
+  --s-button-border: var(--p-button-border);
+  --s-button-border-focused: var(--p-button-border-focus);
+  --s-button-border-hover: var(--p-button-border-hover);
+  --s-button-border-active: var(--s-button-border-active);
+  --s-button-border-disabled: var(--p-button-border-disabled);
+  --s-button-opacity-disabled: var(--p-button-border-disabled);
+  --s-button-bg: transparent;
+  --s-button-bg-focus: transparent;
+  --s-button-bg-hover: transparent;
+  --s-button-bg-active: transparent;
+  --s-button-bg-disabled: transparent;
+
+  /* Dialog a.k.a. Modal and panels */
+  --dialog-bg: var(--neutral-16);
+
+  /* Services Explorer */
+  --explorer-panel-bg: var(--neutral-16);
+  --explorer-panel-name-color: var(--neutral-1);
+  --explorer-panel-icon-color: var(--neutral-1);
+  --explorer-panel-group-title-bg: var(--neutral-16);
+  --explorer-panel-group-title-color: var(--neutral-1);
+  --explorer-panel-group-border: 1px solid #72C3DF;
+  --explorer-panel-empty-message-color: var(--neutral-4);
+
+  /* Explorer Bar */
+  --explorer-bar-header-bg: var(--neutral-16);
+
+  /* Tabs */
+  --tab-color: var(--p-button-color);
+  --tab-bar-bg: var(--neutral-16);
+  --tab-bg: var(--neutral-16);
+  --tab-border: 1px solid transparent;
+  --tab-hover-border: var(--list-item-hover-border);
+  --tab-active-tab-inner-border: 1px solid #F38518;
+  --tab-active-tab-bg: var(--neutral-16);
+  --tab-focus-border: var(--p-button-border-focus);
+  --tab-separator-bg: #72C3DF;
+  --tab-icon-color: var(--explorer-panel-group-title-color);
+  --tab-icon-hover-color: var(--neutral-4);
+
+  /* Notifications */
+  --notification-bg: var(--neutral-16);
+  --notification-message-color: var(--neutral-1);
+  --notification-timestamp-color: var(--neutral-1);
+  --notification-close-icon-color: var(--neutral-1);
+  --notification-border: 1px solid #72C3DF;
+  --notifications-clear-all-btn-color: var(--neutral-1);
+  --notification-inner-border-display: block;
+  --notification-inner-border: 1px dashed #F38518;
+
+  /* toolbar */
+  --toolbar-bg: var(--neutral-16);
+  --toolbar-border: var(--explorer-panel-group-border);
+  --toolbar-border-bottom: var(--explorer-panel-group-border);
+  --toolbar-icon-color: #72C3DF;
+  --toolbar-text-color: var(--neutral-1);
+  --toolbar-text-active: var(--neutral-1);
+  --toolbar-button-hover-border: 1px dashed #F38518;
+  --splitter-border: var(--explorer-panel-group-border);
+
+  /* Welcome page */
+  --welcome-page-bg: var(--tab-active-tab-bg);
+  --welcome-page-ver: var(--neutral-2);
+  --welcome-how-to-border: var(--neutral-6);
+  --welcome-how-to-test: #3062D6;
+  --my-bots-well-bg: transparent;
+  --my-bots-well-border: 1px solid #72C3DF;
+  --my-bots-entry-bg: transparent;
+  --my-bots-entry-border: 1px dashed #F38518;
+  --my-bots-entry-color: var(--neutral-1);
+  --my-bots-path-color: var(--neutral-1);
+  --my-bots-scrollbar-color: var(--neutral-1);
+
+  /* Status Bar */
+  --status-bar-bg: #007ACC;
+  --status-bar-color: #FFFFFF;
+
+  /* Links */
+  --link-color: #4080D0;
+  --link-color-disabled: #C8C8C8;
+
+  /* Split Button */
+  --split-button-color: var(--neutral-5);
+  --split-button-pressed-color: var(--neutral-1);
+  --split-button-disabled-color: var(--neutral-7);
+  --split-button-icon-color: #00BCF2;
+  --split-button-hover-bg-color: transparent;
+  --split-button-hover-outline: 1px dashed #F38518;
+  --split-button-focus-outline: 1px dashed #F38518;
+  --split-button-selected-bg-color: transparent;
+  --split-button-selected-outline: 1px solid #F38518;
+  --split-button-expanded-outline: 1px solid #F38518;
+  --split-button-separator-bg-color: #C8C8C8;
+  --split-button-panel-color: var(--neutral-16);
+  --split-button-panel-bg-color: var(--neutral-1);
+  --split-button-selected-item-bg-color: var(--neutral-3);
+
+  /* Icons */
+  --cosmos-db-contrast: var(--neutral-1);
+}
+
+.dialog {
+  --dialog-bg: var(--neutral-1);
+}
+.dialog .ms-Button-label {
+  color: var(--neutral-15);
+}

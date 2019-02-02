@@ -1,0 +1,59 @@
+.horizontal-splitter {
+  position: relative;
+  height: 0;
+  width: 100%;
+  background-color: transparent;
+  flex-shrink: 0;
+  z-index: 1;
+  // inivisible hit target floating on top of splitter
+  & > div {
+    position: absolute;
+    height: 8px;
+    width: 100%;
+    top: -4px;
+    left: 0;
+    background-color: transparent;
+    cursor: ns-resize;
+  }
+}
+
+.vertical-splitter {
+  position: relative;
+  height: 100%;
+  width: 0;
+  background-color: transparent;
+  flex-shrink: 0;
+  z-index: 1;
+  & > div {
+    position: absolute;
+    height: 100%;
+    width: 8px;
+    top: 0;
+    left: -4px;
+    background-color: transparent;
+    cursor: ew-resize;
+  }
+}
+
+.floating-canvas {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  display: flex;
+
+  &.canvas-col {
+    flex-flow: column nowrap;
+  }
+
+  &.canvas-row {
+    flex-flow: row nowrap;
+  }
+}
+
+.container {
+  height: 100%;
+  width: 100%;
+  position: relative;
+}

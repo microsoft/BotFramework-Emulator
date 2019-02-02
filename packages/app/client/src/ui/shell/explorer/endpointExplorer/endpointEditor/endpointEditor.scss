@@ -1,0 +1,99 @@
+//
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license.
+//
+// Microsoft Bot Framework: http://botframework.com
+//
+// Bot Framework Emulator Github:
+// https://github.com/Microsoft/BotFramwork-Emulator
+//
+// Copyright (c) Microsoft Corporation
+// All rights reserved.
+//
+// MIT License:
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+//
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED ""AS IS"", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
+
+.endpoint-warning {
+  height: 11px;
+  color: var(--warning-outline);
+  font-family: var(--default-font-family);
+  font-size: 11px;
+  line-height: 11px;
+}
+
+.arrow {
+  position: relative;
+  padding-right: 20px;
+  margin-top: 28px;
+  display: block;
+  text-decoration: none;
+  &::before {
+    content: '';
+    position: absolute;
+    border-left: 1px solid blue;
+    width: 1px;
+    right: 0;
+    bottom: 3px;
+    height: 8px;
+    transform: skewX(-45deg);
+    transition: transform .25s ease-out;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    height: 8px;
+    border-right: 1px solid blue;
+    transform: skewX(45deg);
+    width: 1px;
+    right: 9.5px;
+    bottom: 3px;
+    transition: transform .25s ease-out;
+  }
+}
+
+.arrow-expanded {
+  &::before {
+    transform: skewX(45deg);
+  }
+
+  &::after {
+    transform: skewX(-45deg);
+  }
+}
+
+.abs-content {
+  height: 0;
+  transition: height .25s ease-out;
+  overflow: hidden;
+}
+
+.abs-text-field-row {
+  width: 100%;
+  > div:first-child {
+    width: 100%;
+    margin-right: 5px;
+  }
+  > div:last-child {
+    width: 100%;
+    margin-left: 5px;
+  }
+}

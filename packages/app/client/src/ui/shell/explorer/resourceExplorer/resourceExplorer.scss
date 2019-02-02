@@ -1,0 +1,21 @@
+ul > li.link::before {
+  -webkit-mask: url(../../../media/ic_file.svg);
+  -webkit-mask-size: 12px;
+}
+ul > li > input[type="text"] {
+  background: var(--input-bg);
+  outline: none;
+  width: 100%;
+  display: inline-block;
+  color: inherit;
+  border: none;
+  font: inherit;
+  height: 100%;
+  line-height: inherit;
+}
+
+.empty-content {
+  margin: 12px 25px;
+  font-size: 13px;
+  color: var(--neutral-7);
+}

@@ -1,8 +1,11 @@
+.DS_Store
+lerna-debug.log*
+node_modules
 npm-debug.log
 Thumbs.db
-.DS_Store
-node_modules/
-app/
-.vscode/settings.json
-install/
-.npmrc
+.idea
+generated
+custom-botframework-webchat/dist
+coverage
+build/
+.vscode/*

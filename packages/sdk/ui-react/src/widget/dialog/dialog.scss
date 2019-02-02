@@ -1,0 +1,63 @@
+.modal {
+  position: absolute;
+  background: var(--neutral-1);
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  opacity: 0.4;
+}
+
+.dialog {
+  --error-text: #A1260D;
+  --input-color: var(--neutral-12);
+  --input-bg: var(--neutral-1);
+  background: var(--dialog-bg);
+  position: fixed;
+  transform: translate(-50%, -50%);
+  color: var(--neutral-14);
+  top: 50%;
+  left: 50%;
+  min-width: 400px;
+  min-height: 200px;
+  font: var(--default-font-family);
+  padding: 24px 24px 32px 24px;
+  header {
+    font-size: 21px;
+    font-weight: 100;
+  }
+}
+
+.footer {
+  height: 21px;
+  min-width: 240px;
+  float: right;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+  button {
+    height: 21px;
+    flex-grow: 1;
+    &:only-child {
+      flex-grow: 0;
+    }
+    &:not(first-child) {
+      margin-left: 4px;
+    }
+    margin-right: 4px;
+  }
+}
+
+.cancel-button {
+  position: absolute;
+  width: 21px;
+  height: 21px;
+  border: none;
+  top: 12px;
+  right: 12px;
+  font: initial;
+  -webkit-mask: url('../../media/ic_cancel.svg');
+  display: block;
+  background-color: var(--neutral-14);
+  cursor: pointer;
+}

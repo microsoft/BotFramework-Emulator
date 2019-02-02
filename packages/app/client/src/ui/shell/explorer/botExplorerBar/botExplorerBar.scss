@@ -1,0 +1,10 @@
+.bot-explorer-bar {
+  height: 100%;
+  width: 100%;
+
+  &.explorer-off-screen {
+    position: absolute;
+    top: 5000px;
+    display: none;
+  }
+}

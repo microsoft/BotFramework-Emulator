@@ -1,0 +1,20 @@
+{
+  "name": "@bfemulator/extension-qnamaker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "build:client": "cd ./client && npm run build"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/jest": "^22.2.3",
+    "babel-jest": "23.6.0",
+    "jest": "^23.0.0"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.1.5"
+  }
+}

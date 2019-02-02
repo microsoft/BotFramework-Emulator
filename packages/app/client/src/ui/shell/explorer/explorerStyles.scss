@@ -1,0 +1,89 @@
+.explorer-bar-header {
+  align-items: center;
+  background-color: var(--explorer-bar-header-bg);
+  color: var(--input-label-color);
+  display: flex;
+  flex-flow: row nowrap;
+  flex-shrink: 0;
+  padding: 8px 16px;
+
+  & > header {
+    font-size: 13px;
+    height: 24px;
+    line-height: 24px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  & > span.accessory {
+    cursor: pointer;
+    display: inline-block;
+    height: 24px;
+    margin-left: auto;
+    width: 24px;
+  }
+}
+
+.bot-settings {
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  height: 20px;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  right: 10px;
+  width: 20px;
+
+  &:focus {
+    > span {
+      outline: var(--p-button-border-focus);
+    }
+  }
+
+  &:hover {
+    > span {
+      background: var(--p-button-bg-hover);
+    }
+  }
+
+  &[disabled] {
+    > span {
+      &:hover {
+        background: var(--input-label-color);
+      }
+
+      cursor: not-allowed;
+      background: var(--input-label-color);
+    }
+  }
+
+  > span {
+    background: var(--input-label-color);
+    display: inline-block;
+    height: 20px;
+    width: 20px;
+    -webkit-mask: url("../../media/ic_settings.svg") no-repeat 50% 50%;
+    -webkit-mask-size: 16px;
+  }
+}
+
+.explorer-set {
+  background-color: var(--dialog-bg);
+  color: var(--input-label-color);
+  display: flex;
+  flex-flow: column nowrap;
+  height: 100%;
+  list-style-type: none;
+  margin: 0;
+  overflow: hidden;
+  padding: 0;
+
+  & > li {
+    display: flex;
+    flex-direction: column;
+    flex: 0 1 auto;
+    max-height: 100%;
+    overflow: hidden;
+  }
+}

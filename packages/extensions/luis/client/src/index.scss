@@ -1,0 +1,61 @@
+:global {
+  * {
+    box-sizing: border-box;
+  }
+  html, body, #root {
+    margin: 0;
+    font-family: sans-serif;
+    width: 100%;
+    height: 100%;
+
+    ::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #5E5E5E;
+    }
+  }
+
+  .json-key {
+    color: var(--log-panel-link);
+  }
+
+  .json-string {
+    color: var(--log-panel-item-error);
+  }
+
+  .json-number {
+    color: var(--log-panel-timestamp);
+  }
+
+  .json-boolean {
+    color: var(--log-panel-link);
+  }
+
+  .json-null {
+    color: var(--log-panel-link);
+  }
+
+  .devtools {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+  }
+
+  .tool-button {
+    background-color: transparent;
+    color: var(--log-panel-link);
+    border: 1px solid var(--log-panel-link);
+    padding: 6px;
+  }
+
+  .tool-button:hover {
+    color: var(--log-panel-link);
+  }
+}
