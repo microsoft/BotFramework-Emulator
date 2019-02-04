@@ -116,20 +116,20 @@ describe('The ConnectedServiceEditor component ', () => {
     expect(instance.state.nameError).not.toBeNull();
   });
 
-  it('should exit with the newly edited model when clicking submit', () => {
+  it('should exit with the newly edited model when clicking save', () => {
     const spy = jest.spyOn(DialogService, 'hideDialog');
     const instance = node.instance();
     const mockEvent = {
       target: { value: 'renamed model', dataset: { prop: 'name' } },
     };
     instance.onInputChange(mockEvent as any);
-    instance.onSubmitClick();
+    instance.onSaveClick();
     const mockMock = { ...mockService };
     mockMock.name = 'renamed model';
     expect(spy).toHaveBeenCalledWith([new LuisService(mockMock)]);
   });
 
-  it('should enable the submit button when all required fields have non-null values', () => {
+  it('should enable the save button when all required fields have non-null values', () => {
     const instance = node.instance();
     const mockEvent = {
       target: { value: 'renamed model', dataset: { prop: 'name' } },
@@ -139,8 +139,8 @@ describe('The ConnectedServiceEditor component ', () => {
     mockEvent.target.value = '';
     instance.onInputChange(mockEvent as any); // non-required field
     instance.render();
-    const submitBtn = node.find(PrimaryButton);
-    expect(submitBtn.props.disabled).toBeFalsy();
+    const saveBtn = node.find(PrimaryButton);
+    expect(saveBtn.props.disabled).toBeFalsy();
   });
 
   it('should update the connectedServiceCopy.configuration when the "onKvPairChange()" handler is called', () => {

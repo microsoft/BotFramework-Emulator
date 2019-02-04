@@ -194,7 +194,7 @@ describe('The EndpointExplorer component should', () => {
     expect(instance.absContent.style.height).toEqual('135px');
   });
 
-  it('should update the endpoint service when onSubmitClick is called', () => {
+  it('should update the endpoint service when onSaveClick is called', () => {
     const instance = node.instance();
     instance.state.botService = {
       tenantId: '1234',
@@ -203,7 +203,7 @@ describe('The EndpointExplorer component should', () => {
       serviceName: '321',
     };
     const hideDialogSpy = jest.spyOn(DialogService, 'hideDialog');
-    instance.onSubmitClick();
+    instance.onSaveClick();
 
     expect(hideDialogSpy).toHaveBeenCalledWith([
       {
