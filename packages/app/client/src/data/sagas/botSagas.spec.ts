@@ -43,7 +43,7 @@ import {
   openBotViaUrlAction,
 } from '../action/botActions';
 import { beginAdd } from '../action/notificationActions';
-import { generateBotHash } from '../botHelpers';
+import { generateHash } from '../botHelpers';
 
 import { botSagas, browseForBot, generateHashForActiveBot, openBotViaFilePath, openBotViaUrl } from './botSagas';
 import { refreshConversationMenu } from './sharedSagas';
@@ -123,7 +123,7 @@ describe('The botSagas', () => {
     const gen = generateHashForActiveBot(setActiveBotAction);
     const generatedHash = gen.next().value;
 
-    expect(generatedHash).toEqual(call(generateBotHash, botConfigPath));
+    expect(generatedHash).toEqual(call(generateHash, botConfigPath));
 
     const putGeneratedHash = gen.next(generatedHash).value;
     expect(putGeneratedHash).toEqual(put(botHashGenerated(generatedHash)));

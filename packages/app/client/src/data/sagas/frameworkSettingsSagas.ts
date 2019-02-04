@@ -46,7 +46,15 @@ import { generateHash } from '../botHelpers';
 import { Document } from '../reducer/editor';
 import { RootState } from '../store';
 
-import { ForkEffect, put, select, takeEvery } from 'redux-saga/effects';
+import { call, ForkEffect, put, select, takeEvery } from 'redux-saga/effects';
+
+export const normalizeSettingsData = async (settings: FrameworkSettings): FrameworkSettings => {
+  // trim keys that do not belong and generate a hash
+  const keys = Object.keys(frameworkDefault).sort();
+  const newState = keys.reduce((s, key) => ((s[key] = settings[key]), s), {}) as FrameworkSettings;
+  newState.hash = await generateHash(newState);
+  return newState;
+};
 
 export const activeDocumentSelector = (state: RootState) => {
   const { editors, activeEditor } = state.editor;
@@ -57,7 +65,8 @@ export const activeDocumentSelector = (state: RootState) => {
 export function* getFrameworkSettings(): IterableIterator<any> {
   try {
     const framework = yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Settings.LoadAppSettings);
-    yield put(frameworkSettingsChanged(framework));
+    const normalized = yield call(normalizeSettingsData, framework);
+    yield put(frameworkSettingsChanged(normalized));
   } catch (e) {
     const errMsg = `Error while loading emulator settings: ${e}`;
     const notification = newNotification(errMsg);
@@ -68,10 +77,8 @@ export function* getFrameworkSettings(): IterableIterator<any> {
 export function* saveFrameworkSettings(action: FrameworkSettingsAction<FrameworkSettings>): IterableIterator<any> {
   try {
     // trim keys that do not belong and generate a hash
-    const keys = Object.keys(frameworkDefault).sort();
-    const newState = keys.reduce((s, key) => ((s[key] = action.payload[key]), s), {}) as FrameworkSettings;
-    newState.hash = generateHash(newState);
-    yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Settings.SaveAppSettings, action.payload);
+    const normalized = yield call(normalizeSettingsData, action.payload);
+    yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Settings.SaveAppSettings, normalized);
     yield put(getFrameworkSettingsAction()); // sync with main - do not assume main hasn't processed this in some way
     const activeDoc: Document = yield select(activeDocumentSelector);
     yield put(EditorActions.setDirtyFlag(activeDoc.documentId, false)); // mark as clean

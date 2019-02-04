@@ -36,7 +36,11 @@ import * as React from 'react';
 import { combineReducers, createStore } from 'redux';
 
 import * as EditorActions from '../../../data/action/editorActions';
-import { frameworkSettingsChanged, getFrameworkSettings } from '../../../data/action/frameworkSettingsActions';
+import {
+  frameworkSettingsChanged,
+  getFrameworkSettings,
+  saveFrameworkSettings,
+} from '../../../data/action/frameworkSettingsActions';
 import { getTabGroupForDocument } from '../../../data/editorHelpers';
 import { framework } from '../../../data/reducer/frameworkSettingsReducer';
 
@@ -148,6 +152,6 @@ describe('The AppSettingsEditorContainer', () => {
 
   it('should save the framework settings then get them again from main when the "onSaveClick" handler is called', async () => {
     await (instance as any).onSaveClick();
-    expect(mockDispatch).toHaveBeenLastCalledWith(getFrameworkSettings());
+    expect(mockDispatch).toHaveBeenLastCalledWith(saveFrameworkSettings(instance.state));
   });
 });

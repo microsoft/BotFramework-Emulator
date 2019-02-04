@@ -76,7 +76,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
     newProps: AppSettingsEditorProps,
     prevState: AppSettingsEditorState
   ): AppSettingsEditorState {
-    if (!newProps.framework.hash === prevState.hash) {
+    if (newProps.framework.hash === prevState.hash) {
       return prevState;
     }
 
@@ -88,7 +88,6 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
   }
 
   public componentDidMount(): void {
-    this.setState({ pendingUpdate: true });
     this.props.getFrameworkSettings();
   }
 
