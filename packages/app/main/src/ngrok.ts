@@ -66,7 +66,7 @@ const defaultOptions: Partial<NgrokOptions> = {
 };
 
 const bin = 'ngrok' + (platform() === 'win32' ? '.exe' : '');
-const ready = /starting web service.*addr=(\d+\.\d+\.\d+\.\d+:\d+)/;
+const addrRegExp = /starting web service.*addr=(\d+\.\d+\.\d+\.\d+:\d+)/;
 
 let ngrokStartTime: number;
 let ngrokExpirationTimer: NodeJS.Timer;
@@ -109,14 +109,22 @@ async function getNgrokInspectUrl(opts: NgrokOptions): Promise<{ inspectUrl: str
       reject(message);
     }, 3000);
 
-    ngrok.stdout.on('data', (data: Buffer) => {
-      const addr = data.toString().match(ready);
+    /**
+     * Look for an address in the many messages
+     * sent by ngrok or fail if one does not arrive
+     * in 3 seconds.
+     */
+    const onNgrokData = (data: Buffer) => {
+      const addr = data.toString().match(addrRegExp);
       if (!addr) {
         return;
       }
       clearTimeout(timeout);
+      ngrok.stdout.removeListener('data', onNgrokData);
       resolve(`http://${addr[1]}`);
-    });
+    };
+
+    ngrok.stdout.on('data', onNgrokData);
   });
   return { inspectUrl };
 }
