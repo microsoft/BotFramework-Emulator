@@ -30,7 +30,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { FrameworkSettings, newNotification, SharedConstants } from '@bfemulator/app-shared';
+import { frameworkDefault, FrameworkSettings, newNotification, SharedConstants } from '@bfemulator/app-shared';
 
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import * as EditorActions from '../action/editorActions';
@@ -42,6 +42,7 @@ import {
   SAVE_FRAMEWORK_SETTINGS,
 } from '../action/frameworkSettingsActions';
 import { beginAdd } from '../action/notificationActions';
+import { generateHash } from '../botHelpers';
 import { Document } from '../reducer/editor';
 import { RootState } from '../store';
 
@@ -66,10 +67,14 @@ export function* getFrameworkSettings(): IterableIterator<any> {
 
 export function* saveFrameworkSettings(action: FrameworkSettingsAction<FrameworkSettings>): IterableIterator<any> {
   try {
+    // trim keys that do not belong and generate a hash
+    const keys = Object.keys(frameworkDefault).sort();
+    const newState = keys.reduce((s, key) => ((s[key] = action.payload[key]), s), {}) as FrameworkSettings;
+    newState.hash = generateHash(newState);
     yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Settings.SaveAppSettings, action.payload);
+    yield put(getFrameworkSettingsAction()); // sync with main - do not assume main hasn't processed this in some way
     const activeDoc: Document = yield select(activeDocumentSelector);
     yield put(EditorActions.setDirtyFlag(activeDoc.documentId, false)); // mark as clean
-    yield put(getFrameworkSettingsAction()); // sync with main - do not assume main hasn't processed this in some way
   } catch (e) {
     const errMsg = `Error while saving emulator settings: ${e}`;
     const notification = newNotification(errMsg);

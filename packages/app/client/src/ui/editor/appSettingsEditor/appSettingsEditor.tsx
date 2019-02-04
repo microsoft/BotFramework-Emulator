@@ -63,7 +63,6 @@ export interface AppSettingsEditorProps {
 
 export interface AppSettingsEditorState extends Partial<FrameworkSettings> {
   dirty?: boolean;
-  pendingUpdate?: boolean;
 }
 
 function shallowEqual(x: any, y: any) {
@@ -77,7 +76,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
     newProps: AppSettingsEditorProps,
     prevState: AppSettingsEditorState
   ): AppSettingsEditorState {
-    if (!prevState.pendingUpdate) {
+    if (!newProps.framework.hash === prevState.hash) {
       return prevState;
     }
 
@@ -242,14 +241,11 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
   };
 
   private onSaveClick = () => {
-    this.setState({ pendingUpdate: true });
-    const { dirty: _, pendingUpdate: __, ...state } = this.state;
-    requestAnimationFrame(() => this.props.saveFrameworkSettings(state));
+    this.props.saveFrameworkSettings(this.state);
   };
 
   private updateDirtyFlag(change: { [prop: string]: any }) {
-    const { dirty: _, pendingUpdate: __, ...state } = this.state;
-    const dirty = !shallowEqual({ ...state, ...change }, this.props.framework);
+    const dirty = !shallowEqual({ ...this.state, ...change }, this.props.framework);
     this.setState({ dirty });
     this.props.setDirtyFlag(dirty);
   }

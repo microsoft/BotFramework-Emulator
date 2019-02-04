@@ -58,6 +58,8 @@ export interface FrameworkSettings {
   usePrereleases?: boolean;
   // enables instrumentation
   collectUsageData?: boolean;
+  // Digest of k/v pairs for integrity
+  hash?: string;
 }
 
 export interface WindowStateSettings {

@@ -37,7 +37,7 @@ import { ConversationService, StartConversationParams } from '@bfemulator/sdk-sh
 import { ActiveBotHelper } from '../../ui/helpers/activeBotHelper';
 import { BotAction, BotActionType, BotConfigWithPathPayload, botHashGenerated } from '../action/botActions';
 import { beginAdd } from '../action/notificationActions';
-import { generateBotHash } from '../botHelpers';
+import { generateHash } from '../botHelpers';
 import { RootState } from '../store';
 
 import { refreshConversationMenu } from './sharedSagas';
@@ -51,7 +51,7 @@ export function* browseForBot(): IterableIterator<any> {
 
 export function* generateHashForActiveBot(action: BotAction<BotConfigWithPathPayload>): IterableIterator<any> {
   const { bot } = action.payload;
-  const generatedHash = yield call(generateBotHash, bot);
+  const generatedHash = yield call(generateHash, bot);
   yield put(botHashGenerated(generatedHash));
 }
 

@@ -122,14 +122,14 @@ describe('The frameworkSettingsSagas', () => {
     expect(it.next().value).toEqual(
       CommandServiceImpl.remoteCall(SharedConstants.Commands.Settings.SaveAppSettings, {})
     );
-    const selector = it.next().value;
+    // get the settings from the main side again
+    expect(it.next().value).toEqual(put(getFrameworkSettingsAction()));
     // selector to get the active document from the state
+    const selector = it.next().value;
     expect(selector).toEqual(select(activeDocumentSelector));
     const value = selector.SELECT.selector(mockStore.getState());
     // put the dirty state to false
     expect(it.next(value).value).toEqual(put(EditorActions.setDirtyFlag(value.documentId, false)));
-    // get the settings from the main side again
-    expect(it.next().value).toEqual(put(getFrameworkSettingsAction()));
   });
 
   it('should send a notification when saving the settings fails', () => {

@@ -43,8 +43,8 @@ export function getActiveBot(): BotConfigWithPath {
 const encoder = new (window as any).TextEncoder();
 const decoder = new (window as any).TextDecoder();
 
-export const generateBotHash = async (bot: BotConfigWithPath): Promise<string> => {
-  const buffer = encoder.encode(JSON.stringify(bot));
+export const generateHash = async (obj: { [key: string]: any }): Promise<string> => {
+  const buffer = encoder.encode(JSON.stringify(obj));
   const digest = await window.crypto.subtle.digest('SHA-256', buffer);
   return btoa(encoder.encode(decoder.decode(digest)));
 };
