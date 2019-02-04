@@ -219,7 +219,7 @@ export class EndpointEditor extends Component<EndpointEditorProps, EndpointEdito
         </div>
         <DialogFooter>
           <DefaultButton text="Cancel" onClick={this.onCancelClick} />
-          <PrimaryButton disabled={!this.isDirty || !valid} text="Submit" onClick={this.onSubmitClick} />
+          <PrimaryButton disabled={!this.isDirty || !valid} text="Save" onClick={this.onSaveClick} />
         </DialogFooter>
       </Dialog>
     );
@@ -239,7 +239,7 @@ export class EndpointEditor extends Component<EndpointEditorProps, EndpointEdito
     this.props.cancel();
   };
 
-  private onSubmitClick = (): void => {
+  private onSaveClick = (): void => {
     const { endpointService, botService } = this.state;
     const servicesToUpdate: UpdatedServicesPayload = [endpointService];
     if (botService) {
