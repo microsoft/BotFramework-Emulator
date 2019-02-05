@@ -270,7 +270,7 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
     const { NewUserId, SameUserId } = RestartConversationOptions;
 
     return (
-      <div className={styles.emulator}>
+      <div className={styles.emulator} key={this.getConversationId()}>
         {this.props.mode === 'livechat' && (
           <div className={styles.header}>
             <ToolBar>
@@ -334,6 +334,16 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
       0: `${this.props.document.ui.horizontalSplitter[0].percentage}`,
     };
   };
+
+  private getConversationId() {
+    const { document } = this.props;
+
+    if (document && document.conversationId) {
+      return document.conversationId;
+    }
+
+    return 'default-conversation';
+  }
 
   private onPresentationClick = (enabled: boolean): void => {
     this.props.enablePresentationMode(enabled);
