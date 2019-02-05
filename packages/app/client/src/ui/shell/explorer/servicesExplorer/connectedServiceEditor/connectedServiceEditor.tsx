@@ -121,7 +121,7 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
   }
 
   public render(): JSX.Element {
-    const { state, onInputChange, props, onSubmitClick } = this;
+    const { state, onInputChange, props, onSaveClick } = this;
     const { connectedServiceCopy } = state;
     const { type } = connectedServiceCopy;
     const fields = this.editableFields;
@@ -154,7 +154,7 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
         {this.supplementalContent}
         <DialogFooter>
           <DefaultButton text="Cancel" onClick={props.cancel} />
-          <PrimaryButton disabled={!isDirty || !valid} text="Submit" onClick={onSubmitClick} />
+          <PrimaryButton disabled={!isDirty || !valid} text="Save" onClick={onSaveClick} />
         </DialogFooter>
       </Dialog>
     );
@@ -331,7 +331,7 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
     }
   }
 
-  private onSubmitClick = (): void => {
+  private onSaveClick = (): void => {
     this.props.updateConnectedService(this.state.connectedServiceCopy);
   };
 
