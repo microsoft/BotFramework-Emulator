@@ -66,7 +66,7 @@ export class RestServer {
   constructor() {
     const cors = CORS({
       origins: ['*'],
-      allowHeaders: ['authorization', 'x-requested-with'],
+      allowHeaders: ['authorization', 'x-requested-with', 'x-ms-bot-agent'],
       exposeHeaders: [],
     });
 
