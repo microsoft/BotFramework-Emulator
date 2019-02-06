@@ -45,6 +45,7 @@ const mockSpawn = {
         );
       }
     },
+    removeListener: () => void 0,
   },
   stderr: { on: (type, cb) => void 0 },
   kill: () => void 0,
