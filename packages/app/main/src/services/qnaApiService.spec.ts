@@ -155,23 +155,23 @@ const mockResponsesTemplate = [
 
 const mockArgsPassedToFetch = [];
 let mockResponses;
-jest.mock('node-fetch', () => {
-  const fetch = (url, headers) => {
-    mockArgsPassedToFetch.push({ url, headers });
-    return {
-      ok: true,
-      json: async () => mockResponses.shift(),
-      text: async () => mockResponses.shift(),
-    };
+
+(global as any).fetch = jest.fn();
+(fetch as any).mockImplementation((url, headers) => {
+  mockArgsPassedToFetch.push({ url, headers });
+
+  return {
+    ok: true,
+    json: async () => mockResponses.shift(),
+    text: async () => mockResponses.shift(),
   };
-  (fetch as any).Headers = class {};
-  (fetch as any).Response = class {};
-  return fetch;
 });
 
 describe('The QnaApiService happy path', () => {
   let result;
+
   beforeAll(() => (mockResponses = JSON.parse(JSON.stringify(mockResponsesTemplate))));
+
   beforeEach(async () => {
     mockArgsPassedToFetch.length = 0;
     result = await getResult();
@@ -305,7 +305,9 @@ describe('The QnaApiService happy path', () => {
 });
 
 describe('The QnAMakerApi sad path', () => {
-  beforeEach(() => (mockResponses = JSON.parse(JSON.stringify(mockResponsesTemplate))));
+  beforeEach(() => {
+    mockResponses = JSON.parse(JSON.stringify(mockResponsesTemplate));
+  });
 
   it('should return an empty payload with an error if no subscriptions are found', async () => {
     mockResponses = [{ value: [] }, { value: [] }];
@@ -323,6 +325,46 @@ describe('The QnAMakerApi sad path', () => {
     mockResponses[3] = mockResponses[4] = { value: [] };
     const result = await getResult();
     expect(result).toEqual({ services: [], code: 2 });
+  });
+
+  it('should return an empty payload if endpointKey request fails', async () => {
+    (fetch as any).mockImplementation(url => {
+      let ok = true;
+
+      if (url.includes('endpointkeys')) {
+        ok = false;
+        mockResponses.shift();
+      }
+
+      return {
+        ok,
+        json: async () => mockResponses.shift(),
+        text: async () => mockResponses.shift(),
+      };
+    });
+
+    const result = await getResult();
+    expect(result).toEqual({ services: [], code: 0 });
+  });
+
+  it('should return an empty payload if knowledgebase request fails', async () => {
+    (fetch as any).mockImplementation(url => {
+      let ok = true;
+
+      if (url.includes('knowledgebases')) {
+        ok = false;
+        mockResponses.shift();
+      }
+
+      return {
+        ok,
+        json: async () => mockResponses.shift(),
+        text: async () => mockResponses.shift(),
+      };
+    });
+
+    const result = await getResult();
+    expect(result).toEqual({ services: [], code: 0 });
   });
 });
 
