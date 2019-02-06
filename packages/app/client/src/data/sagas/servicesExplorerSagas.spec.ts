@@ -548,7 +548,7 @@ describe('The ServiceExplorerSagas', () => {
 
       const action = openServiceDeepLink(mockModel as any);
       openConnectedServiceGen(action).next();
-      expect(window.open).toHaveBeenCalledWith('https://qnamaker.ai/Edit/KnowledgeBase?kbid=45432');
+      expect(window.open).toHaveBeenCalledWith('https://www.qnamaker.ai/Edit/KnowledgeBase?kbId=45432');
     });
   });
 });

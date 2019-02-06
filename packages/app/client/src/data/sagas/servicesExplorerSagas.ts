@@ -353,7 +353,7 @@ function openLuisDeepLink(luisService: ILuisService) {
 
 function openQnaMakerDeepLink(service: IQnAService) {
   const { kbId } = service;
-  const link = `https://qnamaker.ai/Edit/KnowledgeBase?kbid=${encodeURIComponent(kbId)}`;
+  const link = `https://www.qnamaker.ai/Edit/KnowledgeBase?kbId=${encodeURIComponent(kbId)}`;
   window.open(link);
 }
 
