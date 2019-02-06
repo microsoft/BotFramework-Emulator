@@ -116,6 +116,10 @@ const mockResponsesTemplate = [
   { key1: 4444 },
   { key1: 5555 },
   {
+    primaryEndpointKey: 'primary-endpoint-key-1',
+    secondaryEndpointKey: 'secondary-endpoint-key-1',
+  },
+  {
     knowledgebases: [
       {
         id: '1234',
@@ -128,6 +132,10 @@ const mockResponsesTemplate = [
         sources: [],
       },
     ],
+  },
+  {
+    primaryEndpointKey: 'primary-endpoint-key-2',
+    secondaryEndpointKey: 'secondary-endpoint-key-2',
   },
   {
     knowledgebases: [
@@ -147,23 +155,23 @@ const mockResponsesTemplate = [
 
 const mockArgsPassedToFetch = [];
 let mockResponses;
-jest.mock('node-fetch', () => {
-  const fetch = (url, headers) => {
-    mockArgsPassedToFetch.push({ url, headers });
-    return {
-      ok: true,
-      json: async () => mockResponses.shift(),
-      text: async () => mockResponses.shift(),
-    };
+
+(global as any).fetch = jest.fn();
+(fetch as any).mockImplementation((url, headers) => {
+  mockArgsPassedToFetch.push({ url, headers });
+
+  return {
+    ok: true,
+    json: async () => mockResponses.shift(),
+    text: async () => mockResponses.shift(),
   };
-  (fetch as any).Headers = class {};
-  (fetch as any).Response = class {};
-  return fetch;
 });
 
 describe('The QnaApiService happy path', () => {
   let result;
+
   beforeAll(() => (mockResponses = JSON.parse(JSON.stringify(mockResponsesTemplate))));
+
   beforeEach(async () => {
     mockArgsPassedToFetch.length = 0;
     result = await getResult();
@@ -171,7 +179,7 @@ describe('The QnaApiService happy path', () => {
 
   it('should retrieve the QnA Kbs when given an arm token', async () => {
     expect(result.services.length).toBe(2);
-    expect(mockArgsPassedToFetch.length).toBe(7);
+    expect(mockArgsPassedToFetch.length).toBe(9);
     expect(mockArgsPassedToFetch[0]).toEqual({
       headers: {
         headers: {
@@ -234,7 +242,7 @@ describe('The QnaApiService happy path', () => {
     });
 
     expect(mockArgsPassedToFetch[5]).toEqual({
-      url: 'https://westus.api.cognitive.microsoft.com/qnamaker/v4.0/knowledgebases/',
+      url: 'https://westus.api.cognitive.microsoft.com/qnamaker/v4.0/endpointkeys/',
       headers: {
         headers: {
           'Ocp-Apim-Subscription-Key': 5555,
@@ -247,16 +255,59 @@ describe('The QnaApiService happy path', () => {
       url: 'https://westus.api.cognitive.microsoft.com/qnamaker/v4.0/knowledgebases/',
       headers: {
         headers: {
+          'Ocp-Apim-Subscription-Key': 5555,
+          'Content-Type': 'application/json; charset=utf-8',
+        },
+      },
+    });
+
+    expect(mockArgsPassedToFetch[7]).toEqual({
+      url: 'https://westus.api.cognitive.microsoft.com/qnamaker/v4.0/endpointkeys/',
+      headers: {
+        headers: {
           'Ocp-Apim-Subscription-Key': 4444,
           'Content-Type': 'application/json; charset=utf-8',
         },
       },
     });
+
+    expect(mockArgsPassedToFetch[8]).toEqual({
+      url: 'https://westus.api.cognitive.microsoft.com/qnamaker/v4.0/knowledgebases/',
+      headers: {
+        headers: {
+          'Ocp-Apim-Subscription-Key': 4444,
+          'Content-Type': 'application/json; charset=utf-8',
+        },
+      },
+    });
+
+    expect(result.services).toEqual([
+      {
+        endpointKey: 'primary-endpoint-key-1',
+        hostname: 'https://localhost',
+        id: '1234',
+        kbId: '1234',
+        name: 'HIThere#1',
+        subscriptionKey: 4444,
+        type: 'qna',
+      },
+      {
+        endpointKey: 'primary-endpoint-key-2',
+        hostname: 'https://localhost',
+        id: '9876543',
+        kbId: '9876543',
+        name: 'HIThere#2',
+        subscriptionKey: 5555,
+        type: 'qna',
+      },
+    ]);
   });
 });
 
 describe('The QnAMakerApi sad path', () => {
-  beforeEach(() => (mockResponses = JSON.parse(JSON.stringify(mockResponsesTemplate))));
+  beforeEach(() => {
+    mockResponses = JSON.parse(JSON.stringify(mockResponsesTemplate));
+  });
 
   it('should return an empty payload with an error if no subscriptions are found', async () => {
     mockResponses = [{ value: [] }, { value: [] }];
@@ -274,6 +325,46 @@ describe('The QnAMakerApi sad path', () => {
     mockResponses[3] = mockResponses[4] = { value: [] };
     const result = await getResult();
     expect(result).toEqual({ services: [], code: 2 });
+  });
+
+  it('should return an empty payload if endpointKey request fails', async () => {
+    (fetch as any).mockImplementation(url => {
+      let ok = true;
+
+      if (url.includes('endpointkeys')) {
+        ok = false;
+        mockResponses.shift();
+      }
+
+      return {
+        ok,
+        json: async () => mockResponses.shift(),
+        text: async () => mockResponses.shift(),
+      };
+    });
+
+    const result = await getResult();
+    expect(result).toEqual({ services: [], code: 0 });
+  });
+
+  it('should return an empty payload if knowledgebase request fails', async () => {
+    (fetch as any).mockImplementation(url => {
+      let ok = true;
+
+      if (url.includes('knowledgebases')) {
+        ok = false;
+        mockResponses.shift();
+      }
+
+      return {
+        ok,
+        json: async () => mockResponses.shift(),
+        text: async () => mockResponses.shift(),
+      };
+    });
+
+    const result = await getResult();
+    expect(result).toEqual({ services: [], code: 0 });
   });
 });
 
