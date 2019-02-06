@@ -81,36 +81,51 @@ export class QnaApiService {
 
     // 3. Retrieve the keys for each account
     yield { label: 'Retrieving keys from Azure…', progress: 65 };
-    const keys: string[] = yield AzureManagementApiService.getKeysForAccounts(armToken, accounts, '2017-04-18', 'key1');
-    if (!keys) {
+    const subscriptionKeys: string[] = yield AzureManagementApiService.getKeysForAccounts(
+      armToken,
+      accounts,
+      '2017-04-18',
+      'key1'
+    );
+    if (!subscriptionKeys) {
       payload.code = ServiceCodes.Error;
       return payload;
     }
 
     // 4. Finally get the knowledge bases and mutate them into IQnAService[]
     yield { label: 'Checking for knowledge bases…', progress: 80 };
-    const url = 'https://westus.api.cognitive.microsoft.com/qnamaker/v4.0/knowledgebases/';
-    const calls = keys.map(key => {
+    const endpointKeyUrl = 'https://westus.api.cognitive.microsoft.com/qnamaker/v4.0/endpointkeys/';
+    const kbUrl = 'https://westus.api.cognitive.microsoft.com/qnamaker/v4.0/knowledgebases/';
+    const calls = subscriptionKeys.map(key => {
       const qnaReq: RequestInit = {
         headers: {
           'Ocp-Apim-Subscription-Key': key,
           'Content-Type': 'application/json; charset=utf-8',
         },
       };
-      return fetch(url, qnaReq);
+
+      return Promise.all<Response>([fetch(endpointKeyUrl, qnaReq), fetch(kbUrl, qnaReq)]);
     });
-    const kbResponses = yield Promise.all(calls);
+    const kbResponses: [Response, Response][] = yield Promise.all<Response[]>(calls);
     let i = kbResponses.length;
     while (i--) {
-      const kbResponse: Response = kbResponses[i];
-      if (!kbResponse.ok) {
+      const [endpointKeyResponse, kbResponse] = kbResponses[i];
+      if (!endpointKeyResponse.ok || !kbResponse.ok) {
         continue;
       }
-      const kbResponseJson: {
+      const {
+        primaryEndpointKey,
+      }: {
+        primaryEndpointKey: string;
+      } = yield endpointKeyResponse.json();
+      const {
+        knowledgebases,
+      }: {
         knowledgebases: KnowledgeBase[];
       } = yield kbResponse.json();
-      const key = keys[i];
-      const qnas = kbResponseJson.knowledgebases.map(kb => knowledgeBaseToQnaService(kb, key));
+
+      const subscriptionKey = subscriptionKeys[i];
+      const qnas = knowledgebases.map(kb => knowledgeBaseToQnaService(kb, subscriptionKey, primaryEndpointKey));
       payload.services.push(...qnas);
     }
 
@@ -118,11 +133,13 @@ export class QnaApiService {
   }
 }
 
-function knowledgeBaseToQnaService(kb: KnowledgeBase, endpointKey: string): QnaMakerService {
-  const qna = new QnaMakerService({ hostname: '' } as any); // defect workaround
-  qna.id = qna.kbId = kb.id;
-  qna.endpointKey = endpointKey;
-  qna.name = kb.name;
-  qna.hostname = kb.hostName || '';
-  return qna;
+function knowledgeBaseToQnaService(kb: KnowledgeBase, subscriptionKey: string, endpointKey: string): QnaMakerService {
+  return new QnaMakerService({
+    id: kb.id,
+    kbId: kb.id,
+    name: kb.name,
+    subscriptionKey,
+    endpointKey,
+    hostname: kb.hostName || '',
+  });
 }

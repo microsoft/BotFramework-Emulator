@@ -116,6 +116,10 @@ const mockResponsesTemplate = [
   { key1: 4444 },
   { key1: 5555 },
   {
+    primaryEndpointKey: 'primary-endpoint-key-1',
+    secondaryEndpointKey: 'secondary-endpoint-key-1',
+  },
+  {
     knowledgebases: [
       {
         id: '1234',
@@ -128,6 +132,10 @@ const mockResponsesTemplate = [
         sources: [],
       },
     ],
+  },
+  {
+    primaryEndpointKey: 'primary-endpoint-key-2',
+    secondaryEndpointKey: 'secondary-endpoint-key-2',
   },
   {
     knowledgebases: [
@@ -171,7 +179,7 @@ describe('The QnaApiService happy path', () => {
 
   it('should retrieve the QnA Kbs when given an arm token', async () => {
     expect(result.services.length).toBe(2);
-    expect(mockArgsPassedToFetch.length).toBe(7);
+    expect(mockArgsPassedToFetch.length).toBe(9);
     expect(mockArgsPassedToFetch[0]).toEqual({
       headers: {
         headers: {
@@ -234,7 +242,7 @@ describe('The QnaApiService happy path', () => {
     });
 
     expect(mockArgsPassedToFetch[5]).toEqual({
-      url: 'https://westus.api.cognitive.microsoft.com/qnamaker/v4.0/knowledgebases/',
+      url: 'https://westus.api.cognitive.microsoft.com/qnamaker/v4.0/endpointkeys/',
       headers: {
         headers: {
           'Ocp-Apim-Subscription-Key': 5555,
@@ -247,11 +255,52 @@ describe('The QnaApiService happy path', () => {
       url: 'https://westus.api.cognitive.microsoft.com/qnamaker/v4.0/knowledgebases/',
       headers: {
         headers: {
+          'Ocp-Apim-Subscription-Key': 5555,
+          'Content-Type': 'application/json; charset=utf-8',
+        },
+      },
+    });
+
+    expect(mockArgsPassedToFetch[7]).toEqual({
+      url: 'https://westus.api.cognitive.microsoft.com/qnamaker/v4.0/endpointkeys/',
+      headers: {
+        headers: {
           'Ocp-Apim-Subscription-Key': 4444,
           'Content-Type': 'application/json; charset=utf-8',
         },
       },
     });
+
+    expect(mockArgsPassedToFetch[8]).toEqual({
+      url: 'https://westus.api.cognitive.microsoft.com/qnamaker/v4.0/knowledgebases/',
+      headers: {
+        headers: {
+          'Ocp-Apim-Subscription-Key': 4444,
+          'Content-Type': 'application/json; charset=utf-8',
+        },
+      },
+    });
+
+    expect(result.services).toEqual([
+      {
+        endpointKey: 'primary-endpoint-key-1',
+        hostname: 'https://localhost',
+        id: '1234',
+        kbId: '1234',
+        name: 'HIThere#1',
+        subscriptionKey: 4444,
+        type: 'qna',
+      },
+      {
+        endpointKey: 'primary-endpoint-key-2',
+        hostname: 'https://localhost',
+        id: '9876543',
+        kbId: '9876543',
+        name: 'HIThere#2',
+        subscriptionKey: 5555,
+        type: 'qna',
+      },
+    ]);
   });
 });
 
