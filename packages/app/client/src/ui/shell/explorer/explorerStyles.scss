@@ -73,7 +73,7 @@
   color: var(--input-label-color);
   display: flex;
   flex-flow: column nowrap;
-  height: 100%;
+  height: auto;
   list-style-type: none;
   margin: 0;
   overflow: hidden;
@@ -81,9 +81,7 @@
 
   & > li {
     display: flex;
-    flex-direction: column;
-    flex: 0 1 auto;
-    max-height: 100%;
-    overflow: hidden;
+    flex-flow: column nowrap;
+    height: 100%;
   }
 }

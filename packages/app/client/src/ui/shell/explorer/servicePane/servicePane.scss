@@ -1,6 +1,5 @@
 .service-pane {
   border-bottom: var(--explorer-panel-group-border);
-  display: inline-block;
   height: 100%;
   padding: 2px;
   position: relative;
@@ -62,6 +61,15 @@
   margin: 0;
   max-height: 400px;
   padding: 2px 0 2px 0;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-color);
+  }
 
   & > li {
     border: 1px solid transparent;
