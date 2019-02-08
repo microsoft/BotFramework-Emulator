@@ -95,7 +95,7 @@ describe('TelemetryService', () => {
     (TelemetryService as any).startup();
 
     expect(mockSetup).toHaveBeenCalledTimes(1);
-    expect(mockSetup).toHaveBeenCalledWith('631faf57-1d84-40b4-9a71-fce28a3934a8');
+    expect(mockSetup).toHaveBeenCalledWith('cc91f74a-1abd-4be0-8a96-fddedbc08dd7');
     expect(mockAutoCollect).toHaveBeenCalledTimes(6);
     expect(mockStart).toHaveBeenCalledTimes(1);
     expect(mockDefaultClient.context.tags.cloudRoleInstance).toBe('');
