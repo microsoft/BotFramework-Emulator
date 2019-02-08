@@ -38,6 +38,7 @@ const mockSpawn = {
   on: () => {},
   stdin: { on: (type, cb) => void 0 },
   stdout: {
+    pause: () => void 0,
     on: (type, cb) => {
       if (type === 'data') {
         setTimeout(() =>
@@ -47,7 +48,7 @@ const mockSpawn = {
     },
     removeListener: () => void 0,
   },
-  stderr: { on: (type, cb) => void 0 },
+  stderr: { on: (type, cb) => void 0, pause: () => void 0 },
   kill: () => void 0,
 };
 

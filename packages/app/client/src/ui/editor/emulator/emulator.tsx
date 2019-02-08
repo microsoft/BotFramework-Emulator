@@ -160,7 +160,7 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
 
     // Look for an existing conversation ID and use that,
     // otherwise, create a new one
-    const conversationId = this.props.document.conversationId || `${uniqueId()}|${props.mode}`;
+    const conversationId = props.document.conversationId || `${uniqueId()}|${props.mode}`;
     const options = {
       conversationId,
       conversationMode: props.mode,

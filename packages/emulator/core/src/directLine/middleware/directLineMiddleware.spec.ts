@@ -392,10 +392,10 @@ describe('The directLine middleware', () => {
     reconnectToConversationMiddleware(req as any, res, (() => null) as any);
 
     expect(jsonSpy).toHaveBeenCalledWith(HttpStatus.OK, {
-      conversationId: 'transcript-007',
+      conversationId: 'transcript-007|livechat',
       expires_in: 2147483647,
       streamUrl: '',
-      token: 'transcript-007',
+      token: 'transcript-007|livechat',
     });
   });
 
@@ -432,14 +432,14 @@ describe('The directLine middleware', () => {
       const jsonSpy = jest.spyOn(res, 'json');
       await startConversation(emulator)(req as any, res, (() => null) as any);
 
-      expect(jsonSpy).toHaveBeenCalledWith(HttpStatus.OK, {
-        conversationId: 'transcript-007',
+      expect(jsonSpy).toHaveBeenCalledWith(HttpStatus.CREATED, {
+        conversationId: 'transcript-007|livechat',
         expires_in: 2147483647,
         streamUrl: '',
         token: '456',
       });
       expect(req.conversation).toBeTruthy();
-      expect(conversation.members.length).toBe(3);
+      expect(conversation.members.length).toBe(2);
     });
   });
 
@@ -499,5 +499,5 @@ function createConversationUtil(emulator: BotEmulator, conversationId: string = 
   })(emulator);
   createConversationMiddleware(req as any, { send: () => null, end: () => null }, (() => null) as any);
 
-  return emulator.facilities.conversations.conversationById(conversationId);
+  return emulator.facilities.conversations.conversationById(conversationId + '|livechat');
 }

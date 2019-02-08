@@ -85,10 +85,10 @@ describe('The conversations middleware', () => {
 
     expect(sendSpy).toHaveBeenCalledWith(HttpStatus.OK, {
       activityId: jasmine.any(String),
-      id: '007',
+      id: '007|livechat',
     });
 
-    const newConversation = emulator.facilities.conversations.conversationById('007');
+    const newConversation = emulator.facilities.conversations.conversationById('007|livechat');
     expect(newConversation).toBeTruthy();
     expect(newConversation.botEndpoint).toEqual(req.botEndpoint);
     expect(newConversation.user).toEqual({ id: '456', name: 'emulator' });
@@ -113,7 +113,7 @@ describe('The conversations middleware', () => {
     let activity = { activityId: '' };
     res.send = (_, actvty) => (activity = actvty);
     createConversationMiddleware(req as any, res, (() => null) as any);
-    const conversation = emulator.facilities.conversations.conversationById('007');
+    const conversation = emulator.facilities.conversations.conversationById('007|livechat');
     req = {
       params: {
         activityId: activity.activityId,
@@ -134,7 +134,7 @@ describe('The conversations middleware', () => {
 
     const req = {
       params: {
-        conversationId: '007',
+        conversationId: '007|livechat',
       },
       conversation: null,
     };
@@ -625,7 +625,7 @@ function createConversationUtil(emulator: BotEmulator): Conversation {
   })(emulator);
   createConversationMiddleware(req as any, { send: () => null, end: () => null }, (() => null) as any);
 
-  return emulator.facilities.conversations.conversationById('007');
+  return emulator.facilities.conversations.conversationById('007|livechat');
 }
 
 function createEmulatorUtil(): BotEmulator {
