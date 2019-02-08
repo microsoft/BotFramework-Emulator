@@ -42,7 +42,7 @@ export interface FrameworkSettings {
   // option for deciding whether to bypass ngrok for bots on localhost
   bypassNgrokLocalhost?: boolean;
   // option to run ngrok when the emulator starts
-  runNgrokAtStartup: boolean;
+  runNgrokAtStartup?: boolean;
   stateSizeLimit?: number;
   // option for using 2.0 or 1.0 tokens
   use10Tokens?: boolean;
@@ -58,6 +58,8 @@ export interface FrameworkSettings {
   usePrereleases?: boolean;
   // enables instrumentation
   collectUsageData?: boolean;
+  // Digest of k/v pairs for integrity
+  hash?: string;
 }
 
 export interface WindowStateSettings {

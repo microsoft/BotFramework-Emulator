@@ -72,7 +72,6 @@ export class RestServer {
 
     const router = createServer({
       name: 'Emulator',
-      handleUncaughtExceptions: true,
     });
 
     router.on('after', this.onRouterAfter);
@@ -132,16 +131,20 @@ export class RestServer {
     // Check for an existing livechat window
     // before creating a new one since "new"
     // can also mean "restart".
-    if (!hasLiveChat(conversationId, this.botEmulator.facilities.conversations)) {
-      const {
-        botEndpoint: { id, botUrl },
-      } = conversation;
-      await mainWindow.commandService.remoteCall(SharedConstants.Commands.Emulator.NewLiveChat, {
+    const {
+      botEndpoint: { id, botUrl },
+    } = conversation;
+
+    await mainWindow.commandService.remoteCall(
+      SharedConstants.Commands.Emulator.NewLiveChat,
+      {
         id,
         endpoint: botUrl,
-      } as IEndpointService);
-    }
-    emulator.report(conversationId);
+      } as IEndpointService,
+      hasLiveChat(conversationId, this.botEmulator.facilities.conversations),
+      conversationId
+    );
+    await emulator.report(conversationId, botUrl);
   };
 }
 

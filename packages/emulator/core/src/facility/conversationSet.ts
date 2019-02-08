@@ -52,10 +52,16 @@ export default class ConversationSet extends EventEmitter {
     botEmulator: BotEmulator,
     botEndpoint: BotEndpoint,
     user: User,
-    conversationId: string = uniqueId()
+    conversationId = uniqueId()
   ): Conversation {
     const conversation = new Conversation(botEmulator, botEndpoint, conversationId, user);
-
+    // This should always result in a livechat being opened
+    // unless there is already a livechat or transcript queued
+    // we add the "|livechat" string to the end of the conversationId
+    // so the emulator knows to open a new tab in the UI
+    if (!/(\|livechat|\transcript)/.test(conversation.conversationId)) {
+      conversation.conversationId += '|livechat';
+    }
     this.conversations.push(conversation);
     this.emit('new', conversation);
 

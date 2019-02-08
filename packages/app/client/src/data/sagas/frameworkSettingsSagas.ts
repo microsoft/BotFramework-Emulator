@@ -30,7 +30,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { FrameworkSettings, newNotification, SharedConstants } from '@bfemulator/app-shared';
+import { frameworkDefault, FrameworkSettings, newNotification, SharedConstants } from '@bfemulator/app-shared';
 
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import * as EditorActions from '../action/editorActions';
@@ -42,10 +42,19 @@ import {
   SAVE_FRAMEWORK_SETTINGS,
 } from '../action/frameworkSettingsActions';
 import { beginAdd } from '../action/notificationActions';
+import { generateHash } from '../botHelpers';
 import { Document } from '../reducer/editor';
 import { RootState } from '../store';
 
-import { ForkEffect, put, select, takeEvery } from 'redux-saga/effects';
+import { call, ForkEffect, put, select, takeEvery } from 'redux-saga/effects';
+
+export const normalizeSettingsData = async (settings: FrameworkSettings): FrameworkSettings => {
+  // trim keys that do not belong and generate a hash
+  const keys = Object.keys(frameworkDefault).sort();
+  const newState = keys.reduce((s, key) => ((s[key] = settings[key]), s), {}) as FrameworkSettings;
+  newState.hash = await generateHash(newState);
+  return newState;
+};
 
 export const activeDocumentSelector = (state: RootState) => {
   const { editors, activeEditor } = state.editor;
@@ -56,7 +65,8 @@ export const activeDocumentSelector = (state: RootState) => {
 export function* getFrameworkSettings(): IterableIterator<any> {
   try {
     const framework = yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Settings.LoadAppSettings);
-    yield put(frameworkSettingsChanged(framework));
+    const normalized = yield call(normalizeSettingsData, framework);
+    yield put(frameworkSettingsChanged(normalized));
   } catch (e) {
     const errMsg = `Error while loading emulator settings: ${e}`;
     const notification = newNotification(errMsg);
@@ -66,10 +76,12 @@ export function* getFrameworkSettings(): IterableIterator<any> {
 
 export function* saveFrameworkSettings(action: FrameworkSettingsAction<FrameworkSettings>): IterableIterator<any> {
   try {
-    yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Settings.SaveAppSettings, action.payload);
+    // trim keys that do not belong and generate a hash
+    const normalized = yield call(normalizeSettingsData, action.payload);
+    yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Settings.SaveAppSettings, normalized);
+    yield put(getFrameworkSettingsAction()); // sync with main - do not assume main hasn't processed this in some way
     const activeDoc: Document = yield select(activeDocumentSelector);
     yield put(EditorActions.setDirtyFlag(activeDoc.documentId, false)); // mark as clean
-    yield put(getFrameworkSettingsAction()); // sync with main - do not assume main hasn't processed this in some way
   } catch (e) {
     const errMsg = `Error while saving emulator settings: ${e}`;
     const notification = newNotification(errMsg);

@@ -30,171 +30,115 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
+import { ChildProcess, spawn } from 'child_process';
+import { EventEmitter } from 'events';
+import { platform } from 'os';
 import * as path from 'path';
 import { clearTimeout, setTimeout } from 'timers';
 
-import got from 'got';
+import { uniqueId } from '@bfemulator/sdk-shared';
 
-const spawn = require('child_process').spawn;
-const Emitter = require('events').EventEmitter;
-const platform = require('os').platform();
-
-const lock = require('lock')();
-/* eslint-disable typescript/no-var-requires */
-const async = require('async');
-const uuid = require('node-uuid');
-const xtend = require('xtend');
 /* eslint-enable typescript/no-var-requires */
+export interface NgrokOptions {
+  addr: number;
+  name: string;
+  path: string;
+  port: number;
+  proto: 'http' | 'https' | 'tcp' | 'tls';
+  region: 'us' | 'eu' | 'au' | 'ap';
+  inspect: boolean;
+  host_header?: string;
+  bind_tls?: boolean | 'both';
+  subdomain?: string;
+  hostname?: string;
+  crt?: string;
+  key?: string;
+  client_cas?: string;
+  remote_addr?: string;
+}
 
-const bin = 'ngrok' + (platform === 'win32' ? '.exe' : '');
-const ready = /starting web service.*addr=(\d+\.\d+\.\d+\.\d+:\d+)/;
+const defaultOptions: Partial<NgrokOptions> = {
+  addr: 80,
+  name: uniqueId(),
+  proto: 'http',
+  region: 'us',
+  inspect: true,
+};
 
-const NGROK_EXPIRATION_TIME = 1000 * 60 * 60 * 8; // 8 hours in ms
-const NGROK_EXPIRATION_POLLING_INTERVAL = 1000 * 60 * 5; // 5 minutes
+const bin = 'ngrok' + (platform() === 'win32' ? '.exe' : '');
+const addrRegExp = /starting web service.*addr=(\d+\.\d+\.\d+\.\d+:\d+)/;
 
 let ngrokStartTime: number;
 let ngrokExpirationTimer: NodeJS.Timer;
+let pendingConnection: Promise<{ url; inspectUrl }>;
+export const intervals = { retry: 200, expirationPoll: 1000 * 60 * 5, expirationTime: 1000 * 60 * 60 * 8 };
 
-const noop = function() {
-  return null;
-};
-export const ngrokEmitter = new Emitter().on('error', noop);
-let api: (opts: any) => Promise<any>;
-let ngrok;
+// Errors should result in the immediate termination of ngrok
+// since we have no visibility into the internal state of
+// ngrok after the error is received.
+export const ngrokEmitter = new EventEmitter().on('error', kill);
+let ngrok: ChildProcess;
 let tunnels = {};
 let inspectUrl = '';
 
-export function running() {
-  return ngrok && ngrok.pid;
+export function running(): boolean {
+  return ngrok && !!ngrok.pid;
 }
 
-export function connect(opts: any, cb: any) {
-  if (typeof opts === 'function') {
-    cb = opts;
+export async function connect(opts: Partial<NgrokOptions>): Promise<{ url; inspectUrl }> {
+  const options = { ...defaultOptions, ...opts } as NgrokOptions;
+  if (pendingConnection) {
+    return pendingConnection;
   }
+  await getNgrokInspectUrl(options);
+  pendingConnection = runTunnel(options);
 
-  cb = cb || noop;
-  opts = defaults(opts);
+  return pendingConnection;
+}
 
-  if (api) {
-    return runTunnel(opts, cb);
+async function getNgrokInspectUrl(opts: NgrokOptions): Promise<{ inspectUrl: string }> {
+  if (running()) {
+    return { inspectUrl };
   }
+  ngrok = spawnNgrok(opts);
+  // If we do not receive a ready state from ngrok within 3 seconds, emit and reject
+  inspectUrl = await new Promise<string>((resolve, reject) => {
+    const timeout = setTimeout(() => {
+      const message = 'Failed to receive a ready state from ngrok within 3 seconds.';
+      ngrokEmitter.emit('error', message);
+      reject(message);
+    }, 3000);
 
-  lock('ngrok', function(release: any) {
-    function run(err: any) {
-      if (err) {
-        ngrokEmitter.emit('error', err);
-        return cb(err);
+    /**
+     * Look for an address in the many messages
+     * sent by ngrok or fail if one does not arrive
+     * in 3 seconds.
+     */
+    const onNgrokData = (data: Buffer) => {
+      const addr = data.toString().match(addrRegExp);
+      if (!addr) {
+        return;
       }
-      runNgrok(
-        opts,
-        release(function(err1: any) {
-          if (err1) {
-            ngrokEmitter.emit('error', err1);
-            return cb(err1);
-          }
-          runTunnel(opts, cb);
-        })
-      );
-    }
+      clearTimeout(timeout);
+      ngrok.stdout.removeListener('data', onNgrokData);
+      resolve(`http://${addr[1]}`);
+    };
 
-    opts.authtoken ? authtoken(opts.authtoken, run) : run(null);
+    ngrok.stdout.on('data', onNgrokData);
+    process.on('exit', kill);
   });
-}
-
-function defaults(opts: any) {
-  opts = opts || { proto: 'http', addr: 80 };
-
-  if (typeof opts === 'function') {
-    opts = { proto: 'http', addr: 80 };
-  }
-
-  if (typeof opts !== 'object') {
-    opts = { proto: 'http', addr: opts };
-  }
-
-  if (!opts.proto) {
-    opts.proto = 'http';
-  }
-
-  if (!opts.addr) {
-    opts.addr = opts.port || opts.host || 80;
-  }
-
-  if (opts.httpauth) {
-    opts.auth = opts.httpauth;
-  }
-
-  if (['us', 'eu', 'au', 'ap'].indexOf(opts.region) === -1) {
-    opts.region = 'us';
-  }
-
-  return opts;
-}
-
-function runNgrok(opts: any, cb: any) {
-  if (api) {
-    return cb();
-  }
-  const filename = `${opts.path ? path.basename(opts.path) : bin}`;
-  const folder = opts.path ? path.dirname(opts.path) : path.join(__dirname, 'bin');
-
-  ngrok = spawn(path.join(folder, filename), ['start', '--none', '--log=stdout', '--region=' + opts.region], {
-    cwd: folder,
-  }).on('error', err => {
-    cb(err);
-  });
-
-  ngrok.stdout.on('data', function(data: any) {
-    const addr = data.toString().match(ready);
-    if (addr) {
-      inspectUrl = `http://${addr[1]}`;
-      api = options => {
-        const urlCombined = `${inspectUrl}/${options.url}`;
-        options = {
-          ...options,
-          json: true,
-          url: urlCombined,
-          useElectronNet: true,
-        };
-        return got(options);
-      };
-
-      cb();
-    }
-  });
-
-  ngrok.stderr.on('data', function(data: any) {
-    const info = data.toString().substring(0, 10000);
-    return cb(new Error(info));
-  });
-
-  ngrok.on('exit', function() {
-    api = null;
-    tunnels = {};
-    cleanUpNgrokExpirationTimer();
-    ngrokEmitter.emit('disconnect');
-  });
-
-  ngrok.on('close', function() {
-    cleanUpNgrokExpirationTimer();
-    return ngrokEmitter.emit('close');
-  });
-  (process as NodeJS.EventEmitter).on('exit', function() {
-    kill(null);
-  });
+  return { inspectUrl };
 }
 
 /** Checks if the ngrok tunnel is due for expiration */
 function checkForNgrokExpiration(): void {
   const currentTime = Date.now();
   const timeElapsed = currentTime - ngrokStartTime;
-  if (timeElapsed >= NGROK_EXPIRATION_TIME) {
+  if (timeElapsed >= intervals.expirationTime) {
     cleanUpNgrokExpirationTimer();
     ngrokEmitter.emit('expired');
   } else {
-    ngrokExpirationTimer = setTimeout(checkForNgrokExpiration, NGROK_EXPIRATION_POLLING_INTERVAL);
+    ngrokExpirationTimer = setTimeout(checkForNgrokExpiration, intervals.expirationPoll);
   }
 }
 
@@ -204,132 +148,95 @@ function cleanUpNgrokExpirationTimer(): void {
   clearTimeout(ngrokExpirationTimer);
 }
 
-function runTunnel(opts: any, cb: any) {
-  _runTunnel(opts, function(err: any, url: any, inspectPort: any) {
-    if (err) {
-      ngrokEmitter.emit('error', err);
-      return cb(err);
-    }
-
-    // start polling for ngrok expiration
-    ngrokStartTime = Date.now();
-    ngrokExpirationTimer = setTimeout(checkForNgrokExpiration, NGROK_EXPIRATION_POLLING_INTERVAL);
-
-    ngrokEmitter.emit('connect', url, inspectPort);
-    return cb(null, url, inspectPort);
-  });
-}
-
-function _runTunnel(opts: any, cb: any) {
+async function runTunnel(opts: NgrokOptions): Promise<{ url; inspectUrl }> {
   let retries = 100;
-  opts.name = String(opts.name || uuid.v4());
-  const retry = function() {
-    const options = {
+  const url = `${inspectUrl}/api/tunnels`;
+  const body = JSON.stringify(opts);
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    const resp = await fetch(url, {
       method: 'POST',
-      url: 'api/tunnels',
-      body: opts,
-    };
-    api(options)
-      .then(resp => {
-        const url = resp.body && resp.body.public_url;
-        if (!url) {
-          return cb(xtend(new Error(resp.body.msg || 'failed to start tunnel'), resp.body));
-        }
-        tunnels[url] = resp.body.uri;
-        if (opts.proto === 'http' && opts.bind_tls !== false) {
-          tunnels[url.replace('https', 'http')] = resp.body.uri + ' (http)';
-        }
-        return cb(null, url, inspectUrl);
-      })
-      .catch(err => {
-        const notReady =
-          (err.statusCode === 500 && /panic/.test(err.response.body)) ||
-          (err.statusCode === 502 &&
-            err.response.body.details &&
-            err.response.body.details.err === 'tunnel session not ready yet');
-        if (notReady) {
-          return retries-- ? setTimeout(retry, 200) : cb(new Error(err.response.body));
-        }
-        return cb(err);
-      });
-  };
+      body,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
 
-  retry();
-}
-
-export function authtoken(_token: any, _cb: any) {
-  // 	cb = cb || noop;
-  // 	const a = spawn(
-  // 		opts.path || bin,
-  // 		['authtoken', token],
-  // 		{cwd: __dirname + '/bin'});
-  // 	a.stdout.once('data', done.bind(null, null, token));
-  // 	a.stderr.once('data', done.bind(null, new Error('cant set authtoken')));
-  // 	function done(err, token) {
-  // 		cb(err, token);
-  // 		a.kill();
-  // 	}
-}
-
-export function disconnect(url: any, cb: any) {
-  cb = cb || noop;
-  if (typeof url === 'function') {
-    cb = url;
-    url = null;
-  }
-  if (!api) {
-    return cb();
-  }
-  if (url) {
-    const options = {
-      method: 'DELETE',
-      url: tunnels[url],
-    };
-    return api(options)
-      .then(resp => {
-        if (resp.statusCode !== 204) {
-          return cb(new Error(resp.body));
-        }
-        delete tunnels[url];
-        ngrokEmitter.emit('disconnect', url);
-        return cb();
-      })
-      .catch(err => {
-        return cb(err);
-      });
-  }
-
-  return async.each(Object.keys(tunnels), disconnect, function(err: any) {
-    if (err) {
-      ngrokEmitter.emit('error', err);
-      return cb(err);
+    if (!resp.ok) {
+      const error = await resp.text();
+      await new Promise(resolve => setTimeout(resolve, ~~intervals.retry));
+      if (!retries) {
+        throw new Error(error);
+      }
+      retries--;
+      continue;
     }
-    ngrokEmitter.emit('disconnect');
-    return cb();
+
+    const result = await resp.json();
+    const { public_url: publicUrl, uri, msg } = result;
+    if (!publicUrl) {
+      throw Object.assign(new Error(msg || 'failed to start tunnel'), result);
+    }
+    tunnels[publicUrl] = uri;
+    if (opts.proto === 'http' && opts.bind_tls) {
+      tunnels[publicUrl.replace('https', 'http')] = uri + ' (http)';
+    }
+    ngrokStartTime = Date.now();
+    ngrokExpirationTimer = setTimeout(checkForNgrokExpiration, intervals.expirationPoll);
+
+    ngrokEmitter.emit('connect', publicUrl, inspectUrl);
+    pendingConnection = null;
+    return { url: publicUrl, inspectUrl };
+  }
+}
+
+export async function disconnect(url?: string) {
+  const tunnelsToDisconnect = url ? [tunnels[url]] : Object.keys(tunnels);
+  const requests = tunnelsToDisconnect.map(tunnel => fetch(tunnel, { method: 'DELETE' }));
+  const responses: Response[] = await Promise.all(requests);
+  responses.forEach(response => {
+    if (!response.ok || response.status === 204) {
+      // Not sure why a 204 is a failure
+      return;
+    }
+    delete tunnels[response.url];
+    ngrokEmitter.emit('disconnect', response.url);
   });
 }
 
-export function kill(cb: any) {
-  cb = cb || noop;
+export function kill() {
   if (!ngrok) {
-    cb(false);
     return;
   }
-  ngrok.on('exit', function() {
-    // api = null;
-    // tunnels = {};
-    // ngrokEmitter.emit('disconnect');
-    cb(true);
-  });
-  try {
-    if (!ngrok.kill()) {
-      throw new Error('err-cleanup');
-    }
-  } catch (e) {
-    api = null;
-    ngrok = null;
+  ngrok.stdout.pause();
+  ngrok.stderr.pause();
+
+  ngrok.kill();
+  ngrok = null;
+  tunnels = {};
+  cleanUpNgrokExpirationTimer();
+}
+
+function spawnNgrok(opts: NgrokOptions): ChildProcess {
+  const filename = `${opts.path ? path.basename(opts.path) : bin}`;
+  const folder = opts.path ? path.dirname(opts.path) : path.join(__dirname, 'bin');
+  const args = ['start', '--none', '--log=stdout', `--region=${opts.region}`];
+  const ngrokPath = path.join(folder, filename);
+  const ngrok = spawn(ngrokPath, args, { cwd: folder });
+  // Errors are emitted instead of throwing since ngrok is a long running process
+  ngrok.on('error', e => ngrokEmitter.emit('error', e));
+
+  ngrok.on('exit', () => {
     tunnels = {};
     cleanUpNgrokExpirationTimer();
-    cb(false);
-  }
+    ngrokEmitter.emit('disconnect');
+  });
+
+  ngrok.on('close', () => {
+    cleanUpNgrokExpirationTimer();
+    ngrokEmitter.emit('close');
+  });
+
+  ngrok.stderr.on('data', (data: Buffer) => ngrokEmitter.emit('error', data.toString()));
+  return ngrok;
 }
