@@ -54,13 +54,17 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // Open a new emulator tabbed document
   commandRegistry.registerCommand(
     Emulator.NewLiveChat,
-    (endpoint: IEndpointService, focusExistingChat: boolean = false) => {
+    (endpoint: IEndpointService, focusExistingChat: boolean = false, conversationId: string) => {
       const state = store.getState();
       let documentId: string;
 
       if (focusExistingChat && state.chat.chats) {
         const { chats } = state.chat;
-        documentId = Object.keys(chats).find(docId => chats[docId].endpointUrl === endpoint.endpoint);
+        documentId = Object.keys(chats).find(docId => {
+          const { [docId]: chat } = chats;
+          // If we have a conversationId, the match must include it.
+          return chat.endpointUrl === endpoint.endpoint && (!conversationId || chat.conversationId === conversationId);
+        });
       }
 
       if (!documentId) {
@@ -72,6 +76,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
             endpointId: endpoint.id,
             endpointUrl: endpoint.endpoint,
             userId: currentUserId,
+            conversationId,
           })
         );
       }

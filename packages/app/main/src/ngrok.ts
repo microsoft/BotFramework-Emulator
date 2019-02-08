@@ -125,6 +125,7 @@ async function getNgrokInspectUrl(opts: NgrokOptions): Promise<{ inspectUrl: str
     };
 
     ngrok.stdout.on('data', onNgrokData);
+    process.on('exit', kill);
   });
   return { inspectUrl };
 }
@@ -207,6 +208,9 @@ export function kill() {
   if (!ngrok) {
     return;
   }
+  ngrok.stdout.pause();
+  ngrok.stderr.pause();
+
   ngrok.kill();
   ngrok = null;
   tunnels = {};

@@ -88,7 +88,6 @@ async function main() {
   // Create a Restify server
   const server = Restify.createServer({
     name: 'localmode',
-    handleUncaughtExceptions: true,
   });
 
   // Setup CORS middleware for the whole server
