@@ -34,10 +34,9 @@
 import { Attachment, AttachmentContentTypes, GenericActivity, OAuthCard } from '@bfemulator/sdk-shared';
 
 import { BotEmulator } from '../botEmulator';
-import uniqueId from '../utils/uniqueId';
+import uniqueId from './uniqueId';
 
-// eslint-disable-next-line typescript/no-var-requires
-const shajs = require('sha.js');
+import * as crypto from 'crypto';
 
 export default class OAuthLinkEncoder {
   public static OAuthUrlProtocol: string = 'oauthlink:';
@@ -91,11 +90,10 @@ export default class OAuthLinkEncoder {
     const conversation = this.botEmulator.facilities.conversations.conversationById(conversationId);
     conversation.codeVerifier = codeVerifier;
 
-    const codeChallenge: string = shajs('sha256')
+    return crypto
+      .createHash('sha256')
       .update(codeVerifier)
       .digest('hex');
-
-    return codeChallenge;
   }
 
   private async getSignInLink(connectionName: string, codeChallenge: string): Promise<string> {
@@ -125,12 +123,21 @@ export default class OAuthLinkEncoder {
       emulatorUrl +
       '&code_challenge=' +
       codeChallenge;
+    let errorMessage: string;
+    try {
+      const response = await fetch(url, {
+        headers,
+        method: 'GET',
+      });
+      if (response.ok) {
+        const link = await response.text();
+        return OAuthLinkEncoder.OAuthUrlProtocol + '//' + link + '&&&' + this.conversationId;
+      }
+      errorMessage = response.statusText;
+    } catch (e) {
+      errorMessage = e.message;
+    }
 
-    const response = await fetch(url, {
-      headers,
-      method: 'GET',
-    });
-    const link = await response.text();
-    return OAuthLinkEncoder.OAuthUrlProtocol + '//' + link + '&&&' + this.conversationId;
+    throw new Error(errorMessage);
   }
 }

@@ -63,7 +63,6 @@
     "npmlog": "^4.1.2",
     "on-error-resume-next": "^1.0.0",
     "rsa-pem-from-mod-exp": "^0.8.4",
-    "sha.js": "2.4.11",
     "simple-update-in": "^1.1.1",
     "uuid": "^3.3.2"
   },

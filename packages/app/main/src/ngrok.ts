@@ -91,9 +91,7 @@ export async function connect(opts: Partial<NgrokOptions>): Promise<{ url; inspe
     return pendingConnection;
   }
   await getNgrokInspectUrl(options);
-  pendingConnection = runTunnel(options);
-
-  return pendingConnection;
+  return runTunnel(options);
 }
 
 async function getNgrokInspectUrl(opts: NgrokOptions): Promise<{ inspectUrl: string }> {
