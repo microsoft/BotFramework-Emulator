@@ -32,6 +32,10 @@
 //
 export default {
   backgroundColor: 'var(--webchat-bg)',
+  accent: '#3062D6',
+  subtle: 'var(--webchat-bubble-text)',
+
+  primaryFont: 'var(--default-font-family)',
 
   bubbleBackground: 'var(--webchat-bubble-bg)',
   bubbleFromUserBackground: 'var(--webchat-user-bubble-bg)',

@@ -260,11 +260,12 @@ describe('The ResourceSagas', () => {
 
     it('should open a transcript file', async () => {
       mockResource.path = 'the/file/path/transcript.transcript';
+      mockResource.name = 'transcript.transcript';
       await mockStore.dispatch(openResource(mockResource as any));
       expect(mockLocalCommandsCalled).toEqual([
         {
           commandName: 'transcript:open',
-          args: ['the/file/path/transcript.transcript'],
+          args: ['the/file/path/transcript.transcript', 'transcript.transcript'],
         },
       ]);
       expect(mockRemoteCommandsCalled).toEqual([

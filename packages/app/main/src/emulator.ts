@@ -58,8 +58,8 @@ export class Emulator {
     await this.framework.startup();
   }
 
-  public report(conversationId: string) {
+  public async report(conversationId: string, botUrl: string): Promise<void> {
     this.framework.report(conversationId);
-    this.ngrok.report(conversationId);
+    await this.ngrok.report(conversationId, botUrl);
   }
 }

@@ -12,28 +12,28 @@
       "port": 7777,
     },
     {
-      "name": "Launch app/main",
+      "name": "Electron: Main",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceRoot}/packages/app/main/app/server/main.js",
-      "stopOnEntry": false,
-      "args": [],
+      "runtimeArgs": [
+        "--inspect=7777",
+        "--remote-debugging-port=7778",
+        "."
+      ],
       "runtimeExecutable": "${workspaceRoot}/packages/app/main/node_modules/.bin/electron",
       "windows": {
         "runtimeExecutable": "${workspaceRoot}/packages/app/main/node_modules/.bin/electron.cmd"
       },
-      "runtimeArgs": [
-        "--nolazy",
-        "--vscode-debugger"
-      ],
       "env": {
-        "NODE_ENV": "development"
+        "NODE_ENV": "development",
+        "ELECTRON_TARGET_URL": "http://localhost:3000/"
       },
       "sourceMaps": true,
       "protocol": "inspector",
       "outputCapture": "std",
       "internalConsoleOptions": "openOnSessionStart",
-      "cwd": "${workspaceFolder}/packages/app/main"
-    }
+      "cwd": "${workspaceFolder}/packages/app/main",
+      "outFiles": [ "${workspaceRoot}/packages/app/main/app/server/*" ]
+    },
   ]
 }

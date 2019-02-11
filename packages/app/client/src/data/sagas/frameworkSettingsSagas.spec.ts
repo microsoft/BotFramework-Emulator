@@ -54,10 +54,11 @@ import {
   activeDocumentSelector,
   frameworkSettingsSagas,
   getFrameworkSettings,
+  normalizeSettingsData,
   saveFrameworkSettings,
 } from './frameworkSettingsSagas';
 
-import { put, takeEvery, select } from 'redux-saga/effects';
+import { call, put, takeEvery, select } from 'redux-saga/effects';
 
 jest.mock(
   '../../ui/dialogs/',
@@ -97,13 +98,14 @@ describe('The frameworkSettingsSagas', () => {
     expect(it.next().value).toEqual(takeEvery(SAVE_FRAMEWORK_SETTINGS, saveFrameworkSettings));
   });
 
-  it('should get the framework settings when using the happy path', () => {
+  it('should get the framework settings when using the happy path', async () => {
     const it = getFrameworkSettings();
     let next = it.next();
     expect(next.value).toEqual(CommandServiceImpl.remoteCall(SharedConstants.Commands.Settings.LoadAppSettings));
 
     next = it.next({});
-    expect(next.value).toEqual(put(frameworkSettingsChanged({})));
+    const normalized = await next.value.CALL.fn({});
+    expect(it.next(normalized).value).toEqual(put(frameworkSettingsChanged(normalized)));
   });
 
   it('should send a notification when something goes wrong while getting the framework settings', () => {
@@ -116,20 +118,23 @@ describe('The frameworkSettingsSagas', () => {
     expect(it.throw('oh noes!').value).toEqual(put(beginAdd(notification)));
   });
 
-  it('should save the framework settings', () => {
+  it('should save the framework settings', async () => {
     const it = saveFrameworkSettings(saveFrameworkSettingsAction({}));
+    const normalize = it.next().value;
+    expect(normalize).toEqual(call(normalizeSettingsData, {}));
+    const normalized = await normalize.CALL.fn({});
     // remote call to save the settings
-    expect(it.next().value).toEqual(
-      CommandServiceImpl.remoteCall(SharedConstants.Commands.Settings.SaveAppSettings, {})
+    expect(it.next(normalized).value).toEqual(
+      CommandServiceImpl.remoteCall(SharedConstants.Commands.Settings.SaveAppSettings, normalized)
     );
-    const selector = it.next().value;
+    // get the settings from the main side again
+    expect(it.next().value).toEqual(put(getFrameworkSettingsAction()));
     // selector to get the active document from the state
+    const selector = it.next().value;
     expect(selector).toEqual(select(activeDocumentSelector));
     const value = selector.SELECT.selector(mockStore.getState());
     // put the dirty state to false
     expect(it.next(value).value).toEqual(put(EditorActions.setDirtyFlag(value.documentId, false)));
-    // get the settings from the main side again
-    expect(it.next().value).toEqual(put(getFrameworkSettingsAction()));
   });
 
   it('should send a notification when saving the settings fails', () => {

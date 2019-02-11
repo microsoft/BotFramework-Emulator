@@ -136,6 +136,7 @@ html {
   --explorer-panel-group-title-color: var(--neutral-12);
   --explorer-panel-group-border: 1px solid transparent;
   --explorer-panel-empty-message-color: var(--neutral-15);
+  --service-panescrollbar-color: var(--neutral-13);
 
   /* Explorer Bar */
   --explorer-bar-header-bg: var(--neutral-3);
@@ -212,6 +213,9 @@ html {
 
   /* Icons */
   --cosmos-db-contrast: var(--neutral-16);
+
+  /* Scrollbar */
+  --scrollbar-color: var(--neutral-6);
 }
 
 .dialog {

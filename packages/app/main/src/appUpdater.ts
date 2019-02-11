@@ -115,7 +115,7 @@ class EmulatorUpdater extends EventEmitter {
       }
       // if this was initiated on startup, download in the background
       if (!this.userInitiated) {
-        this.downloadUpdate(false);
+        this.downloadUpdate(false).catch(e => this.emit('error', e, e.toString()));
       }
     });
     electronUpdater.on('update-not-available', (updateInfo: UpdateInfo) => {

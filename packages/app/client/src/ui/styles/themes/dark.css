@@ -212,6 +212,9 @@ html {
 
   /* Icons */
   --cosmos-db-contrast: var(--neutral-1);
+
+  /* Scrollbar */
+  --scrollbar-color: var(--neutral-6);
 }
 
 .dialog {

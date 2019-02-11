@@ -36,7 +36,7 @@ import { SettingsImpl } from '@bfemulator/app-shared';
 
 import { getSettings } from '../settingsData/store';
 
-const INSTRUMENTATION_KEY = '631faf57-1d84-40b4-9a71-fce28a3934a8';
+const INSTRUMENTATION_KEY = 'cc91f74a-1abd-4be0-8a96-fddedbc08dd7';
 
 export class TelemetryService {
   private static _client: AppInsights.TelemetryClient;
