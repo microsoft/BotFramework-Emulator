@@ -40,7 +40,7 @@ import { CommandServiceImpl } from './platform/commands/commandServiceImpl';
 const Electron = (window as any).require('electron');
 const { shell } = Electron;
 
-export function navigate(url: string) {
+export function navigate(url: string = '') {
   const { TrackEvent } = SharedConstants.Commands.Telemetry;
   try {
     const parsed = URL.parse(url) || { protocol: '' };
@@ -50,7 +50,16 @@ export function navigate(url: string) {
       navigateOAuthUrl(url.substring(12));
     } else {
       CommandServiceImpl.remoteCall(TrackEvent, 'app_openLink', { url }).catch(_e => void 0);
-      shell.openExternal(url, { activate: true });
+      // manually create and click a download link for data url's
+      if (url.startsWith('data:')) {
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = '';
+        a.click();
+        a.remove();
+      } else {
+        shell.openExternal(url, { activate: true });
+      }
     }
   } catch (e) {
     CommandServiceImpl.remoteCall(TrackEvent, 'app_openLink', { url }).catch(_e => void 0);
