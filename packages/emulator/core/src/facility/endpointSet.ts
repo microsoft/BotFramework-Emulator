@@ -41,16 +41,6 @@ import BotEndpoint from './botEndpoint';
 
 const { decode } = base64Url;
 
-function mapMap<T, U>(map: { [key: string]: T }, mapper: (arg: T, val: string) => U): { [key: string]: U } {
-  return Object.keys(map).reduce(
-    (nextMap, key) => ({
-      ...nextMap,
-      [key]: mapper.call(map, map[key], key),
-    }),
-    {}
-  );
-}
-
 export default class Endpoints {
   private _endpoints: { [key: string]: BotEndpoint } = {};
   constructor(private _options: BotEmulatorOptions) {}
@@ -107,16 +97,6 @@ export default class Endpoints {
   }
 
   public getAll(): { [key: string]: BotEndpoint } {
-    return mapMap<BotEndpoint, BotEndpoint>(
-      this._endpoints,
-      value =>
-        ({
-          botId: value.botId,
-          botUrl: value.botUrl,
-          msaAppId: value.msaAppId,
-          msaPassword: value.msaPassword,
-          use10Tokens: value.use10Tokens,
-        } as any)
-    );
+    return this._endpoints;
   }
 }
