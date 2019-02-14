@@ -56,7 +56,6 @@ export function navigate(url: string = '') {
         a.href = url;
         a.download = '';
         a.click();
-        a.remove();
       } else {
         shell.openExternal(url, { activate: true });
       }
