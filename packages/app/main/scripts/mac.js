@@ -50,10 +50,10 @@ async function writeLatestYmlFile() {
   const ymlInfo = {
     version,
     releaseDate,
-    githubArtifactName: releaseFilename,
-    path: releaseFilename,
-    sha512
+    githubArtifactName: releaseFileName,
+    path: releaseFileName,
+    sha512,
   };
   const ymlStr = yaml.safeDump(ymlInfo);
   fsp.writeFileSync(path.normalize(`./dist/latest-mac.yml`), ymlStr);
-};
+}
