@@ -119,9 +119,9 @@ export function HowToBuildABot() {
             <dd>
               Publish directly to Azure or
               <br />
-              Use
+              Use&nbsp;
               <a className={styles.ctaLink} href="https://aka.ms/bot-framework-emulator-publish-continuous-deployment">
-                &nbsp; Continuous Deployment
+                Continuous Deployment
               </a>
               &nbsp;
             </dd>
