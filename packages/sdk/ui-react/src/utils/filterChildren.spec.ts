@@ -30,30 +30,36 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { FrameworkSettings as FS } from '@bfemulator/app-shared';
 
-import { FRAMEWORK_SETTINGS_CHANGED, FrameworkSettingsAction } from '../action/frameworkSettingsActions';
+import { filterChildren, hmrSafeNameComparison } from './filterChildren';
 
-const defaults: FS = {
-  autoUpdate: true,
-  bypassNgrokLocalhost: true,
-  runNgrokAtStartup: false,
-  collectUsageData: false,
-  locale: '',
-  localhost: '',
-  ngrokPath: '',
-  stateSizeLimit: 64,
-  use10Tokens: false,
-  useCodeValidation: false,
-  usePrereleases: false,
-};
+jest.mock('react', () => ({
+  Children: {
+    map: (array, fn) => array.map(fn),
+  },
+}));
 
-export function framework(state: FS = defaults, action: FrameworkSettingsAction<FS>): FS {
-  switch (action.type) {
-    case FRAMEWORK_SETTINGS_CHANGED:
-      return { ...state, ...action.payload };
+describe('filterChildren', () => {
+  it('should compare element names safely', () => {
+    // test all cases of || operator (no matching names or display names)
+    const child1 = { name: 'name1', displayName: 'dispalyName1' };
+    const child2 = { name: 'name2', displayName: 'displayName2' };
 
-    default:
-      return state;
-  }
-}
+    expect(hmrSafeNameComparison(child1, child2)).toBe(false);
+
+    // invert result
+    expect(hmrSafeNameComparison(child1, child2, true)).toBe(true);
+  });
+
+  it('should filterChildren according to a predicate', () => {
+    const child1 = { name: 'someChild' };
+    const child2 = { name: 'otherChild' };
+    const predicate = child => child.name.startsWith('some');
+
+    const filteredChildren = filterChildren([child1, child2], predicate);
+
+    expect(filteredChildren).toHaveLength(2);
+    expect(filteredChildren[0]).toBe(child1);
+    expect(filteredChildren[1]).toBe(false);
+  });
+});

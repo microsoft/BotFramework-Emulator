@@ -203,10 +203,11 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
             <SmallHeader>Data Collection</SmallHeader>
             <Checkbox
               className={styles.checkboxOverrides}
-              checked={state.collectUsageData}
+              checked={false}
               onChange={this.onChangeCheckBox}
               label="Help improve the Emulator by allowing us to collect usage data."
               name="collectUsageData"
+              disabled={true}
             />
             <a target="_blank" href="https://aka.ms/bot-framework-emulator-data-collection" rel="noopener noreferrer">
               Learn more.
