@@ -39,6 +39,7 @@ export interface CheckboxProps extends React.HTMLAttributes<HTMLInputElement> {
   label?: string;
   checkboxContainerClassName?: string;
   checked?: boolean;
+  disabled?: boolean;
   indeterminate?: boolean;
   name?: string;
   onChange?: (event: React.FormEvent<HTMLInputElement>) => void;

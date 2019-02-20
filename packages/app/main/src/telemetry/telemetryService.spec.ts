@@ -124,6 +124,8 @@ describe('TelemetryService', () => {
     expect(mockAITrackEvent).not.toHaveBeenCalled();
   });
 
+  // NOTE: Disabled for v4.3
+  /*
   it('should track events', () => {
     const mockStartup = jest.fn(() => null);
     (TelemetryService as any).startup = mockStartup;
@@ -145,4 +147,5 @@ describe('TelemetryService', () => {
       properties: { some: 'property' },
     });
   });
+  */
 });
