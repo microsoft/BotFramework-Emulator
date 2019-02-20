@@ -42,6 +42,15 @@ export class TelemetryService {
   private static _client: AppInsights.TelemetryClient;
   private static _hasStarted: boolean = false;
 
+  public static trackEvent(..._args: any[]): void {
+    // no-op until telemetry is re-enabled
+    if (this._client || this.enabled || this.startup) {
+      return;
+    }
+  }
+
+  // NOTE: Disabled for v4.3
+  /*
   public static trackEvent(name: string, properties?: { [key: string]: any }): void {
     if (!this.enabled || !name) {
       return;
@@ -55,7 +64,7 @@ export class TelemetryService {
       // swallow the exception; we don't want to crash the app
       // on a failed attempt to collect usage data
     }
-  }
+  }*/
 
   private static get enabled(): boolean {
     const settings: SettingsImpl = getSettings() || ({} as SettingsImpl);
