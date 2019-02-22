@@ -147,7 +147,11 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
     }
   }
 
-  startNewConversation = async (props: EmulatorProps = this.props): Promise<any> => {
+  startNewConversation = async (
+    props: EmulatorProps = this.props,
+    requireNewConvoId: boolean = false,
+    requireNewUserId: boolean = false
+  ): Promise<any> => {
     if (props.document.subscription) {
       props.document.subscription.unsubscribe();
     }
@@ -160,11 +164,20 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
 
     // Look for an existing conversation ID and use that,
     // otherwise, create a new one
-    const conversationId = props.document.conversationId || `${uniqueId()}|${props.mode}`;
+    const conversationId = requireNewConvoId
+      ? `${uniqueId()}|${props.mode}`
+      : props.document.conversationId || `${uniqueId()}|${props.mode}`;
+
+    const userId = requireNewUserId ? uniqueIdv4() : props.document.userId;
+    if (requireNewUserId) {
+      await CommandServiceImpl.remoteCall(SharedConstants.Commands.Emulator.SetCurrentUser, userId);
+    }
+
     const options = {
       conversationId,
       conversationMode: props.mode,
       endpointId: props.endpointId,
+      userId,
     };
 
     if (props.document.directLine) {
@@ -238,6 +251,7 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
       directLine,
       selectedActivity$,
       subscription,
+      userId: options.userId,
     });
   }
 
@@ -360,10 +374,8 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
         this.props.trackEvent('conversation_restart', {
           userId: 'new',
         });
-        const newUserId = uniqueIdv4();
-        // set new user as current on emulator facilities side
-        await CommandServiceImpl.remoteCall(SharedConstants.Commands.Emulator.SetCurrentUser, newUserId);
-        this.props.updateChat(this.props.documentId, { userId: newUserId });
+        // start conversation with new convo id & user id
+        this.startNewConversation(undefined, true, true);
         break;
       }
 
@@ -371,7 +383,8 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
         this.props.trackEvent('conversation_restart', {
           userId: 'same',
         });
-        this.startNewConversation();
+        // start conversation with new convo id
+        this.startNewConversation(undefined, true, false);
         break;
 
       default:
