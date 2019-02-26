@@ -128,7 +128,7 @@ export const frameworkDefault: FrameworkSettings = {
   use10Tokens: false,
   useCodeValidation: false,
   localhost: 'localhost',
-  locale: '',
+  locale: 'en-US',
   usePrereleases: false,
   autoUpdate: true,
   collectUsageData: true,
