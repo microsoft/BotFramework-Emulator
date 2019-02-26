@@ -96,10 +96,10 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
             name="botUrl"
             errorMessage={errorMessage}
             inputContainerClassName={openBotStyles.inputContainer}
-            label="Bot URL or file location"
+            label="Bot URL or .bot file location"
             onChange={this.onInputChange}
             onFocus={this.onFocus}
-            placeholder="bot url or .bot file location"
+            placeholder="Bot URL or .bot file location"
             value={botUrl}
           >
             <PrimaryButton className={openBotStyles.browseButton}>
