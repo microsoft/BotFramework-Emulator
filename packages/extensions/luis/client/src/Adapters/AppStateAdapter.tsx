@@ -31,7 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { TraceActivity } from '@bfemulator/sdk-shared';
+// TODO: Revert import to `@bfemulator/sdk-shared` once issue #1333 (https://github.com/Microsoft/BotFramework-Emulator/issues/1333) is resolved.
+import { TraceActivity } from '@bfemulator/sdk-shared/build/types';
 
 import { RecognizerResultAdapter } from '../Adapters/RecognizerResultAdapter';
 import { AppState, PersistentAppState } from '../App';
