@@ -32,7 +32,8 @@
 //
 
 import { InspectorHost } from '@bfemulator/sdk-client';
-import { json2HTML } from '@bfemulator/sdk-shared';
+// TODO: Revert import to `@bfemulator/sdk-shared` once issue #1333 (https://github.com/Microsoft/BotFramework-Emulator/issues/1333) is resolved.
+import { json2HTML } from '@bfemulator/sdk-shared/build/utils/json2HTML';
 import { Splitter } from '@bfemulator/ui-react';
 import {
   IBotConfiguration,
