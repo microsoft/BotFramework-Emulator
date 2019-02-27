@@ -34,6 +34,7 @@
 import * as React from 'react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { mount, shallow } from 'enzyme';
 import { SharedConstants } from '@bfemulator/app-shared';
 import base64Url from 'base64url';
@@ -88,7 +89,7 @@ jest.mock('@bfemulator/sdk-shared', () => ({
 }));
 
 jest.mock('botframework-webchat', () => ({
-  createDirectLine: (...args) => ({ args }),
+  createDirectLine: args => ({ ...args }),
 }));
 
 describe('<Emulator/>', () => {
@@ -97,8 +98,10 @@ describe('<Emulator/>', () => {
   let instance;
   let mockDispatch;
   let mockStoreState;
+  const mockUnsubscribe = jest.fn(() => null);
 
   beforeEach(() => {
+    mockUnsubscribe.mockClear();
     mockCallsMade = [];
     mockRemoteCallsMade = [];
     mockStoreState = {
@@ -108,6 +111,8 @@ describe('<Emulator/>', () => {
             conversationId: 'convo1',
             documentId: 'doc1',
             endpointId: 'endpoint1',
+            userId: 'someUserId',
+            subscription: { unsubscribe: mockUnsubscribe },
           },
         },
       },
@@ -125,7 +130,7 @@ describe('<Emulator/>', () => {
     mockDispatch = jest.spyOn(mockStore, 'dispatch');
     wrapper = mount(
       <Provider store={mockStore}>
-        <Emulator documentId={'doc1'} url={'someUrl'} />
+        <Emulator documentId={'doc1'} url={'someUrl'} mode={'livechat'} />
       </Provider>
     );
     node = wrapper.find(EmulatorComponent);
@@ -293,23 +298,85 @@ describe('<Emulator/>', () => {
     expect(mockRemoteCallsMade[0].args).toEqual(['convo1']);
   });
 
-  it('should start over a conversation with a new user id', async () => {
+  it('should start a new conversation', async () => {
+    const mockInitConversation = jest.fn(() => null);
+    instance.initConversation = mockInitConversation;
+    const options = {
+      conversationId: 'convo1',
+      conversationMode: instance.props.mode,
+      endpointId: instance.props.endpointId,
+      userId: 'someUserId',
+    };
+    await instance.startNewConversation(undefined, false, false);
+
+    expect(mockUnsubscribe).toHaveBeenCalled();
+    expect(mockRemoteCallsMade).toHaveLength(0);
+    expect(mockInitConversation).toHaveBeenCalledWith(
+      instance.props,
+      options,
+      jasmine.any(BehaviorSubject),
+      jasmine.any(Subscription)
+    );
+  });
+
+  it('should start a new conversation with a new conversation id', async () => {
+    const mockInitConversation = jest.fn(() => null);
+    instance.initConversation = mockInitConversation;
+    const options = {
+      conversationId: 'someUniqueId|livechat',
+      conversationMode: instance.props.mode,
+      endpointId: instance.props.endpointId,
+      userId: 'someUserId',
+    };
+    await instance.startNewConversation(undefined, true, false);
+
+    expect(mockInitConversation).toHaveBeenCalledWith(
+      instance.props,
+      options,
+      jasmine.any(BehaviorSubject),
+      jasmine.any(Subscription)
+    );
+  });
+
+  it('should start a new conversation with a new user id', async () => {
+    const mockInitConversation = jest.fn(() => null);
+    instance.initConversation = mockInitConversation;
+    instance.props.document.conversationId = undefined;
+    const options = {
+      conversationId: 'someUniqueId|livechat',
+      conversationMode: instance.props.mode,
+      endpointId: instance.props.endpointId,
+      userId: 'newUserId',
+    };
+    await instance.startNewConversation(undefined, false, true);
+
+    expect(mockRemoteCallsMade).toHaveLength(1);
+    expect(mockRemoteCallsMade[0].commandName).toBe(SharedConstants.Commands.Emulator.SetCurrentUser);
+    expect(mockRemoteCallsMade[0].args).toEqual([options.userId]);
+    expect(mockInitConversation).toHaveBeenCalledWith(
+      instance.props,
+      options,
+      jasmine.any(BehaviorSubject),
+      jasmine.any(Subscription)
+    );
+  });
+
+  it('should start over a conversation with a new user id on click', async () => {
+    const mockStartNewConversation = jest.fn(async () => Promise.resolve(true));
+    instance.startNewConversation = mockStartNewConversation;
     await instance.onStartOverClick();
 
     expect(mockDispatch).toHaveBeenCalledWith(clearLog('doc1'));
     expect(mockDispatch).toHaveBeenCalledWith(setInspectorObjects('doc1', []));
-    expect(mockDispatch).toHaveBeenCalledWith(updateChat('doc1', { userId: 'newUserId' }));
-    expect(mockRemoteCallsMade).toHaveLength(2);
+    expect(mockRemoteCallsMade).toHaveLength(1);
     expect(mockRemoteCallsMade[0].commandName).toBe(SharedConstants.Commands.Telemetry.TrackEvent);
     expect(mockRemoteCallsMade[0].args).toEqual(['conversation_restart', { userId: 'new' }]);
-    expect(mockRemoteCallsMade[1].commandName).toBe(SharedConstants.Commands.Emulator.SetCurrentUser);
-    expect(mockRemoteCallsMade[1].args).toEqual(['newUserId']);
+    expect(mockStartNewConversation).toHaveBeenCalledWith(undefined, true, true);
   });
 
-  it('should start over a conversation with the same user id', async () => {
-    const mockStartNewConversation = jest.fn(() => null);
+  it('should start over a conversation with the same user id on click', async () => {
+    const mockStartNewConversation = jest.fn(async () => Promise.resolve(true));
     instance.startNewConversation = mockStartNewConversation;
-
     await instance.onStartOverClick(RestartConversationOptions.SameUserId);
 
     expect(mockDispatch).toHaveBeenCalledWith(clearLog('doc1'));
@@ -317,7 +384,7 @@ describe('<Emulator/>', () => {
     expect(mockRemoteCallsMade).toHaveLength(1);
     expect(mockRemoteCallsMade[0].commandName).toBe(SharedConstants.Commands.Telemetry.TrackEvent);
     expect(mockRemoteCallsMade[0].args).toEqual(['conversation_restart', { userId: 'same' }]);
-    expect(mockStartNewConversation).toHaveBeenCalledTimes(1);
+    expect(mockStartNewConversation).toHaveBeenCalledWith(undefined, true, false);
   });
 
   it('should init a conversation', () => {
@@ -333,13 +400,9 @@ describe('<Emulator/>', () => {
       newConversation('doc1', {
         conversationId: 'convo1',
         directLine: {
-          args: [
-            {
-              secret: encodedOptions,
-              domain: 'someUrl/v3/directline',
-              webSocket: false,
-            },
-          ],
+          secret: encodedOptions,
+          domain: 'someUrl/v3/directline',
+          webSocket: false,
         },
         selectedActivity$: {},
         subscription: {},
