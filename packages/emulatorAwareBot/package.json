@@ -1,0 +1,21 @@
+{
+  "name": "emulatorawarebot",
+  "version": "1.0.0",
+  "description": "A bot that looks for inbound emulator connections",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Justin Wilaby",
+  "license": "MIT",
+  "dependencies": {
+    "botbuilder": "^4.2.1",
+    "botbuilder-core": "^4.2.1",
+    "botframework-connector": "^4.2.1",
+    "restify": "^8.0.0",
+    "dotenv": "^6.2.0",
+    "botframework-config": "^4.2.1",
+    "node-fetch": "^2.3.0",
+    "chalk": "^2.4.2"
+  }
+}

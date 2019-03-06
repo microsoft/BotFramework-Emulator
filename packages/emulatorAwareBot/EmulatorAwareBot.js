@@ -30,50 +30,34 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+class EmulatorAwareBot {
+  /**
+   * @property {MemoryStorage} memoryStorage
+   */
 
-import { LogLevel, textItem } from '@bfemulator/sdk-shared';
+  /**
+   * @property {MemoryStorage} memoryStorage
+   */
 
-import { mainWindow } from './main';
-import { RestServer } from './restServer';
-
-/**
- * Communicates with the bot.
- */
-export class BotFrameworkService {
-  public server: RestServer;
-  private _serverUrl: string;
-  private _serverPort: number;
-
-  public get serverUrl() {
-    return this._serverUrl;
-  }
-
-  public get serverPort() {
-    return this._serverPort;
-  }
-
-  public async startup() {
-    await this.recycle();
+  /**
+   *
+   * @param {MemoryStorage} memoryStorage
+   */
+  constructor(memoryStorage) {
+    this.memoryStorage = memoryStorage;
   }
 
   /**
-   * Applies configuration changes.
+   * Processes the current turn containing the activity from the user
+   *
+   * @param {TurnContext} context The context of the current conversation turn.
    */
-  public async recycle() {
-    if (this.server) {
-      await this.server.close();
+  async processTurnContext(context) {
+    const { activity } = context;
+    if (activity.recipient.role !== 'Bot' && activity.text) {
+      await context.sendActivity(`I heard: ${activity.text}`);
     }
-
-    this.server = new RestServer();
-
-    const { url, port } = await this.server.listen(9000);
-
-    this._serverUrl = url;
-    this._serverPort = port;
-  }
-
-  public report(conversationId: string) {
-    const serverUrl = this.serverUrl.replace('[::]', 'localhost');
-    mainWindow.logService.logToChat(conversationId, textItem(LogLevel.Debug, `Emulator listening on ${serverUrl}`));
   }
 }
+
+module.exports = { EmulatorAwareBot };
