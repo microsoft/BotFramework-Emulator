@@ -93,6 +93,7 @@ describe('<Chat />', () => {
         locale: 'en-US',
         styleOptions: webChatStyleOptions,
         userId: '123',
+        username: 'User',
       });
     });
   });

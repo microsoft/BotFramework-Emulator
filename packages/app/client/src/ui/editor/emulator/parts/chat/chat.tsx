@@ -135,6 +135,7 @@ export class Chat extends Component<ChatProps, ChatState> {
             locale={locale}
             styleOptions={{ ...webChatStyleOptions, hideSendBox: isDisabled }}
             userId={currentUserId}
+            username="User"
             webSpeechPonyfillFactory={this.state.webSpeechPonyfillFactory}
           />
         </div>
