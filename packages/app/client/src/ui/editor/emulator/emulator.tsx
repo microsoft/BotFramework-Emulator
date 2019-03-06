@@ -117,6 +117,12 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
     }
   }
 
+  componentDidMount() {
+    // WebChat v3 vs v4 behavior indie the Emulator has diverted in behavior such that
+    // no activity gets to the bot under the conversation is restarted.
+    this.onStartOverClick(RestartConversationOptions.SameUserId);
+  }
+
   componentWillUnmount() {
     window.removeEventListener('keydown', this.keyboardEventListener);
   }
