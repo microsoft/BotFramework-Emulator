@@ -130,6 +130,7 @@ describe('The AppSettingsEditorContainer', () => {
   });
 
   it('should call a remote command to open a browse window when "onClickBrowse" is called', async () => {
+    const dispatchSpy = jest.spyOn(mockStore, 'dispatch');
     await (instance as any).onClickBrowse();
     expect(mockRemoteCallsMade[0]).toEqual({
       args: [
@@ -140,6 +141,11 @@ describe('The AppSettingsEditorContainer', () => {
         },
       ],
       commandName: 'shell:showExplorer-open-dialog',
+    });
+
+    expect(dispatchSpy).toHaveBeenCalledWith({
+      payload: { dirty: true, documentId: undefined },
+      type: 'EDITOR/SET_DIRTY_FLAG',
     });
   });
 
