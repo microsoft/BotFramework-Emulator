@@ -229,7 +229,9 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
 
   private onClickBrowse = async (): Promise<void> => {
     const ngrokPath = await this.props.openBrowseForNgrok();
-    this.setState({ ngrokPath });
+    const change = { ngrokPath };
+    this.setState(change);
+    this.updateDirtyFlag(change);
   };
 
   private onInputChange = (event: ChangeEvent<HTMLInputElement>): void => {
