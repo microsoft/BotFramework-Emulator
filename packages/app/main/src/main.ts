@@ -1,4 +1,9 @@
 //
+import { newNotification, Notification, PersistentSettings, Settings, SharedConstants } from '@bfemulator/app-shared';
+import { Users } from '@bfemulator/emulator-core';
+import { ProgressInfo } from 'builder-util-runtime';
+import { app, dialog, systemPreferences } from 'electron';
+import { UpdateInfo } from 'electron-updater';
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license.
 //
@@ -31,16 +36,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import * as path from 'path';
+import { Store } from 'redux';
 import { setTimeout } from 'timers';
 import * as url from 'url';
-
-import { newNotification, Notification, PersistentSettings, Settings, SharedConstants } from '@bfemulator/app-shared';
-import { Users } from '@bfemulator/emulator-core';
-import { ProgressInfo } from 'builder-util-runtime';
-import * as Electron from 'electron';
-import { app, systemPreferences } from 'electron';
-import { UpdateInfo } from 'electron-updater';
-import { Store } from 'redux';
 
 import { appendCustomUserAgent } from './appendCustomUserAgent';
 import { AppMenuBuilder } from './appMenuBuilder';
@@ -48,6 +46,7 @@ import { AppUpdater } from './appUpdater';
 import { getStore } from './botData/store';
 import * as commandLine from './commandLine';
 import { CommandRegistry, registerAllCommands } from './commands';
+import { Protocol } from './constants';
 import { Emulator, emulator } from './emulator';
 import './fetchProxy';
 import { ngrokEmitter } from './ngrok';
@@ -55,12 +54,11 @@ import { Window } from './platform/window';
 import { azureLoggedInUserChanged } from './settingsData/actions/azureAuthActions';
 import { rememberBounds, rememberTheme } from './settingsData/actions/windowStateActions';
 import { dispatch, getSettings, getStore as getSettingsStore } from './settingsData/store';
-import { botListsAreDifferent, ensureStoragePath, saveSettings, writeFile, isMac } from './utils';
+import { TelemetryService } from './telemetry';
+import { botListsAreDifferent, ensureStoragePath, isMac, saveSettings, writeFile } from './utils';
 import { openFileFromCommandLine } from './utils/openFileFromCommandLine';
 import { sendNotificationToClient } from './utils/sendNotificationToClient';
 import { WindowManager } from './windowManager';
-import { Protocol } from './constants';
-import { TelemetryService } from './telemetry';
 
 export let mainWindow: Window;
 export let windowManager: WindowManager;
@@ -341,10 +339,7 @@ const createMainWindow = async () => {
   windowManager = new WindowManager();
 
   AppMenuBuilder.initAppMenu().catch(err => {
-    Electron.dialog.showErrorBox(
-      'Bot Framework Emulator',
-      `An error occurred while initializing the application menu: ${err}`
-    );
+    dialog.showErrorBox('Bot Framework Emulator', `An error occurred while initializing the application menu: ${err}`);
   });
 
   const rememberCurrentBounds = () => {

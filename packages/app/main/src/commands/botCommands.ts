@@ -32,7 +32,7 @@
 //
 
 import * as path from 'path';
-
+import { dialog } from 'electron';
 import { BotInfo, getBotDisplayName, SharedConstants } from '@bfemulator/app-shared';
 import { BotConfigWithPath, CommandRegistryImpl, mergeEndpoints, uniqueId } from '@bfemulator/sdk-shared';
 import { BotConfigurationBase } from 'botframework-config/lib';
@@ -132,12 +132,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
       try {
         bot = await loadBotWithRetry(botPath, secret);
       } catch (e) {
-        const errMessage = `Failed to open the bot with error: ${e.message}`;
-        await Electron.dialog.showMessageBox(mainWindow.browserWindow, {
-          type: 'error',
-          message: errMessage,
-        });
-        throw new Error(errMessage);
+        await dialog.showErrorBox('Failed to open the bot', e.message);
       }
       if (!bot) {
         // user couldn't provide correct secret, abort

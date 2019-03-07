@@ -1,4 +1,9 @@
 //
+import { SharedConstants } from '@bfemulator/app-shared';
+import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
+import * as Electron from 'electron';
+import { app, dialog, Menu, MessageBoxOptions } from 'electron';
+import * as fs from 'fs-extra';
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license.
 //
@@ -32,18 +37,12 @@
 //
 import * as path from 'path';
 
-import { SharedConstants } from '@bfemulator/app-shared';
-import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
-import * as Electron from 'electron';
-import { app, Menu, MessageBoxOptions } from 'electron';
-import * as fs from 'fs-extra';
-
 import { AppMenuBuilder } from '../appMenuBuilder';
 import { getStore } from '../botData/store';
 import { mainWindow } from '../main';
 import { ContextMenuService } from '../services/contextMenuService';
-import { showOpenDialog, showSaveDialog } from '../utils';
 import { TelemetryService } from '../telemetry';
+import { showOpenDialog, showSaveDialog } from '../utils';
 
 const { shell } = Electron;
 
@@ -62,7 +61,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
       ...options,
     };
     const args = modal ? [mainWindow.browserWindow, options] : [options];
-    return Electron.dialog.showMessageBox.apply(Electron.dialog, args);
+    return dialog.showMessageBox.apply(dialog, args);
   });
 
   // ---------------------------------------------------------------------------
