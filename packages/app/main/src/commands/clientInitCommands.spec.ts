@@ -141,7 +141,7 @@ describe('The clientInitCommands', () => {
         'receive-global-settings',
         {
           cwd: jasmine.any(String),
-          locale: '',
+          locale: 'en-US',
           serverUrl: 'http://localhost:3000',
           users: {},
         },
@@ -161,7 +161,7 @@ describe('The clientInitCommands', () => {
         'receive-global-settings',
         {
           cwd: jasmine.any(String),
-          locale: '',
+          locale: 'en-US',
           serverUrl: 'http://localhost:3000',
           users: {},
         },
