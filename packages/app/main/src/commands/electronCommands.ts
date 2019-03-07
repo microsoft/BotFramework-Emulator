@@ -1,4 +1,6 @@
 //
+import * as path from 'path';
+
 import { SharedConstants } from '@bfemulator/app-shared';
 import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 import * as Electron from 'electron';
@@ -35,7 +37,6 @@ import * as fs from 'fs-extra';
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import * as path from 'path';
 
 import { AppMenuBuilder } from '../appMenuBuilder';
 import { getStore } from '../botData/store';

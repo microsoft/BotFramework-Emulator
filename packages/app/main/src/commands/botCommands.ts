@@ -32,6 +32,7 @@
 //
 
 import * as path from 'path';
+
 import { dialog } from 'electron';
 import { BotInfo, getBotDisplayName, SharedConstants } from '@bfemulator/app-shared';
 import { BotConfigWithPath, CommandRegistryImpl, mergeEndpoints, uniqueId } from '@bfemulator/sdk-shared';

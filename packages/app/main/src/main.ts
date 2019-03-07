@@ -1,4 +1,8 @@
 //
+import * as path from 'path';
+import { setTimeout } from 'timers';
+import * as url from 'url';
+
 import { newNotification, Notification, PersistentSettings, Settings, SharedConstants } from '@bfemulator/app-shared';
 import { Users } from '@bfemulator/emulator-core';
 import { ProgressInfo } from 'builder-util-runtime';
@@ -35,10 +39,7 @@ import { UpdateInfo } from 'electron-updater';
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import * as path from 'path';
 import { Store } from 'redux';
-import { setTimeout } from 'timers';
-import * as url from 'url';
 
 import { appendCustomUserAgent } from './appendCustomUserAgent';
 import { AppMenuBuilder } from './appMenuBuilder';
