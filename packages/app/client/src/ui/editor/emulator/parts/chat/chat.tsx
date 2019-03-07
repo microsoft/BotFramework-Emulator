@@ -32,7 +32,7 @@
 //
 import * as React from 'react';
 import { Component } from 'react';
-import { Activity } from '@bfemulator/sdk-shared';
+import { Activity, User } from '@bfemulator/sdk-shared';
 import { IEndpointService } from 'botframework-config/lib/schema';
 import ReactWebChat, { createCognitiveServicesBingSpeechPonyfillFactory } from 'botframework-webchat';
 
@@ -48,6 +48,7 @@ export interface ChatProps {
   endpoint: IEndpointService;
   mode: EmulatorMode;
   onStartConversation: any;
+  currentUser: User;
   currentUserId: string;
   locale: string;
   selectedActivity: Activity | null;
@@ -111,7 +112,7 @@ export class Chat extends Component<ChatProps, ChatState> {
   }
 
   public render() {
-    const { currentUserId, document, locale, mode } = this.props;
+    const { currentUser, currentUserId, document, locale, mode } = this.props;
 
     if (this.state.waitForSpeechToken) {
       return <div className={styles.disconnected}>Connecting...</div>;
@@ -135,7 +136,7 @@ export class Chat extends Component<ChatProps, ChatState> {
             locale={locale}
             styleOptions={{ ...webChatStyleOptions, hideSendBox: isDisabled }}
             userId={currentUserId}
-            username="User"
+            username={currentUser.name || 'User'}
             webSpeechPonyfillFactory={this.state.webSpeechPonyfillFactory}
           />
         </div>

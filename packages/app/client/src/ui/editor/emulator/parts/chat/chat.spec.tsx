@@ -63,6 +63,7 @@ function render(overrides: any = {}): ShallowWrapper {
     endpoint: {},
     mode: 'livechat',
     onStartConversation: jest.fn(),
+    currentUser: { id: '123', name: 'Current User' },
     currentUserId: '123',
     locale: 'en-US',
     selectedActivity: null,
@@ -93,7 +94,7 @@ describe('<Chat />', () => {
         locale: 'en-US',
         styleOptions: webChatStyleOptions,
         userId: '123',
-        username: 'User',
+        username: 'Current User',
       });
     });
   });
