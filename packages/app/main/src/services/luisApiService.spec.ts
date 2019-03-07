@@ -34,9 +34,6 @@ import '../fetchProxy';
 import { LuisApi } from './luisApiService';
 
 const mockArmToken = 'bm90aGluZw.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds';
-const mockReq: RequestInit = {
-  headers: { Authorization: `Bearer ${mockArmToken}` },
-};
 const mockResponses = [
   'hfdjg459846gjfdhgfdshjg',
   { error: { statusCode: 401, message: 'Oh Noes!' } },
@@ -129,12 +126,12 @@ describe('The LuisApiService class', () => {
     });
 
     expect(mockArgsPassedToFetch[1]).toEqual({
-      url: 'https://australiaeast.api.cognitive.microsoft.com/luis/api/v2.0/apps/',
+      url: 'https://api.eu.luis.ai/api/v2.0/bots/programmatickey',
       headers: jasmine.any(Object),
     });
 
     expect(mockArgsPassedToFetch[2]).toEqual({
-      url: 'https://westeurope.api.cognitive.microsoft.com/luis/api/v2.0/apps/',
+      url: 'https://api.au.luis.ai/api/v2.0/bots/programmatickey',
       headers: jasmine.any(Object),
     });
 
