@@ -43,13 +43,17 @@ export class LuisApi {
     const req: RequestInit = {
       headers: { Authorization: `Bearer ${armToken}` },
     };
-    let authoringKey: string;
+    let authoringKeys: string[];
     try {
       yield { label: 'Retrieving key from LUIS…', progress: 25 };
-      const url = 'https://api.luis.ai/api/v2.0/bots/programmatickey';
-      const authoringKeyResponse = yield fetch(url, req);
-      authoringKey = yield authoringKeyResponse.text();
-      authoringKey = authoringKey.replace(/["]/g, '');
+      const urls = [
+        'https://api.luis.ai/api/v2.0/bots/programmatickey',
+        'https://api.eu.luis.ai/api/v2.0/bots/programmatickey',
+        'https://api.au.luis.ai/api/v2.0/bots/programmatickey',
+      ];
+      const requests = urls.map(url => fetch(url, req));
+      const authoringKeyResponses: Response[] = yield Promise.all(requests);
+      authoringKeys = yield Promise.all(authoringKeyResponses.map(async response => await response.json()));
     } catch (e) {
       payload.code = ServiceCodes.AccountNotFound;
       return payload;
@@ -61,7 +65,10 @@ export class LuisApi {
     const regions: LuisRegion[] = ['westus', 'westeurope', 'australiaeast'];
     let i = regions.length;
     while (i--) {
-      luisApiPromises.push(LuisApi.getApplicationsForRegion(regions[i], authoringKey));
+      if (typeof authoringKeys[i] === 'object') {
+        continue;
+      }
+      luisApiPromises.push(LuisApi.getApplicationsForRegion(regions[i], authoringKeys[i]));
     }
     const results = yield Promise.all(luisApiPromises);
     // 3.
@@ -73,16 +80,19 @@ export class LuisApi {
     // 4.
     // Mutate the list into an array of ILuisService[]
     payload.services = luisModels.map(
-      (luisModel: LuisModel): ILuisService => ({
-        authoringKey,
-        appId: luisModel.id,
-        id: luisModel.id,
-        name: luisModel.name,
-        subscriptionKey: authoringKey,
-        type: luisModel.activeVersion === 'Dispatch' ? ServiceTypes.Dispatch : ServiceTypes.Luis,
-        version: luisModel.activeVersion,
-        region: luisModel.region,
-      })
+      (luisModel: LuisModel): ILuisService => {
+        const authoringKey = authoringKeys[regions.indexOf(luisModel.region)];
+        return {
+          authoringKey,
+          appId: luisModel.id,
+          id: luisModel.id,
+          name: luisModel.name,
+          subscriptionKey: authoringKey,
+          type: luisModel.activeVersion === 'Dispatch' ? ServiceTypes.Dispatch : ServiceTypes.Luis,
+          version: luisModel.activeVersion,
+          region: luisModel.region,
+        };
+      }
     ) as ILuisService[];
 
     return payload;
