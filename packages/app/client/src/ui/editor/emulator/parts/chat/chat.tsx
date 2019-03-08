@@ -146,13 +146,19 @@ export class Chat extends Component<ChatProps, ChatState> {
     return <div className={styles.disconnected}>Not Connected</div>;
   }
 
-  private createActivityMiddleware = () => next => card => children => (
-    <ActivityWrapper
-      activity={card.activity}
-      onClick={this.props.updateSelectedActivity}
-      isSelected={isCardSelected(this.props.selectedActivity, card.activity)}
-    >
-      {next(card)(children)}
-    </ActivityWrapper>
-  );
+  private createActivityMiddleware = () => next => card => children => {
+    if (/(trace|endOfConversation)/.test(card.activity.type)) {
+      return null;
+    }
+
+    return (
+      <ActivityWrapper
+        activity={card.activity}
+        onClick={this.props.updateSelectedActivity}
+        isSelected={isCardSelected(this.props.selectedActivity, card.activity)}
+      >
+        {next(card)(children)}
+      </ActivityWrapper>
+    );
+  };
 }
