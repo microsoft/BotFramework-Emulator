@@ -1,11 +1,4 @@
 //
-import * as path from 'path';
-
-import { SharedConstants } from '@bfemulator/app-shared';
-import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
-import * as Electron from 'electron';
-import { app, dialog, Menu, MessageBoxOptions } from 'electron';
-import * as fs from 'fs-extra';
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license.
 //
@@ -37,6 +30,13 @@ import * as fs from 'fs-extra';
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+import * as path from 'path';
+
+import { SharedConstants } from '@bfemulator/app-shared';
+import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
+import * as Electron from 'electron';
+import { app, dialog, Menu, MessageBoxOptions } from 'electron';
+import * as fs from 'fs-extra';
 
 import { AppMenuBuilder } from '../appMenuBuilder';
 import { getStore } from '../botData/store';
