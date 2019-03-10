@@ -117,6 +117,20 @@ describe('<Chat />', () => {
       });
       expect(activityWrapper.text()).toEqual('a child node');
     });
+
+    ['trace', 'endOfConversation'].forEach((type: string) => {
+      it(`does not render ${type} activities`, () => {
+        const next = (contents: any) => (kids: any) => kids;
+        const card = { activity: { id: 'activity-id', type } };
+        const children = 'a child node';
+        const webChat = render().find(ReactWebChat);
+
+        const middleware = webChat.prop('activityMiddleware') as any;
+        const activityWrapper = middleware()(next)(card)(children);
+
+        expect(activityWrapper).toBeNull();
+      });
+    });
   });
 
   describe('speech services', () => {
