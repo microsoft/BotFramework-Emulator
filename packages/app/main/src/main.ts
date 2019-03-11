@@ -37,7 +37,7 @@ import * as url from 'url';
 import { newNotification, Notification, PersistentSettings, Settings, SharedConstants } from '@bfemulator/app-shared';
 import { Users } from '@bfemulator/emulator-core';
 import { ProgressInfo } from 'builder-util-runtime';
-import { app, dialog, systemPreferences } from 'electron';
+import { app, BrowserWindow, dialog, ipcMain, Rectangle, screen, systemPreferences } from 'electron';
 import { UpdateInfo } from 'electron-updater';
 import { Store } from 'redux';
 
@@ -236,18 +236,18 @@ registerAllCommands(CommandRegistry);
 // Parse command line
 commandLine.parseArgs();
 
-Electron.app.on('will-finish-launching', () => {
-  Electron.ipcMain.on('getUrls', () => {
+app.on('will-finish-launching', () => {
+  ipcMain.on('getUrls', () => {
     openUrls.forEach(url2 => mainWindow.webContents.send('botemulator', url2));
     openUrls = [];
   });
 
   // On Mac, a protocol handler invocation sends urls via this event
-  Electron.app.on('open-url', onOpenUrl);
+  app.on('open-url', onOpenUrl);
 });
 
 let fileToOpen: string;
-Electron.app.on('open-file', async (event: Event, file: string) => {
+app.on('open-file', async (event: Event, file: string) => {
   if (!mainWindow || !mainWindow.commandService) {
     fileToOpen = file;
   } else {
@@ -255,8 +255,8 @@ Electron.app.on('open-file', async (event: Event, file: string) => {
   }
 });
 
-const windowIsOffScreen = function(windowBounds: Electron.Rectangle): boolean {
-  const nearestDisplay = Electron.screen.getDisplayMatching(windowBounds).workArea;
+const windowIsOffScreen = function(windowBounds: Rectangle): boolean {
+  const nearestDisplay = screen.getDisplayMatching(windowBounds).workArea;
   return (
     windowBounds.x > nearestDisplay.x + nearestDisplay.width ||
     windowBounds.x + windowBounds.width < nearestDisplay.x ||
@@ -269,22 +269,22 @@ const createMainWindow = async () => {
   /*
   // TODO: Read window size AFTER store is initialized (how did this ever work?)
   const settings = getSettings();
-  let initBounds: Electron.Rectangle = {
+  let initBounds: Rectangle = {
     width: settings.windowState.width || 0,
     height: settings.windowState.height || 0,
     x: settings.windowState.left || 0,
     y: settings.windowState.top || 0,
   }
   if (windowIsOffScreen(initBounds)) {
-    let display = Electron.screen.getAllDisplays().find(display => display.id === settings.windowState.displayId);
-    display = display || Electron.screen.getDisplayMatching(initBounds);
+    let display = screen.getAllDisplays().find(display => display.id === settings.windowState.displayId);
+    display = display || screen.getDisplayMatching(initBounds);
     initBounds.x = display.workArea.x;
     initBounds.y = display.workArea.y;
   }
   */
 
   mainWindow = new Window(
-    new Electron.BrowserWindow({
+    new BrowserWindow({
       show: false,
       backgroundColor: '#f7f7f7',
       /*
@@ -346,7 +346,7 @@ const createMainWindow = async () => {
   const rememberCurrentBounds = () => {
     const currentBounds = mainWindow.browserWindow.getBounds();
     const bounds = {
-      displayId: Electron.screen.getDisplayMatching(currentBounds).id,
+      displayId: screen.getDisplayMatching(currentBounds).id,
       width: currentBounds.width,
       height: currentBounds.height,
       left: currentBounds.x,
@@ -372,10 +372,8 @@ const createMainWindow = async () => {
   mainWindow.browserWindow.on('restore', () => {
     if (windowIsOffScreen(mainWindow.browserWindow.getBounds())) {
       const currentBounds = mainWindow.browserWindow.getBounds();
-      let display = Electron.screen
-        .getAllDisplays()
-        .find(displayArg => displayArg.id === getSettings().windowState.displayId);
-      display = display || Electron.screen.getDisplayMatching(currentBounds);
+      let display = screen.getAllDisplays().find(displayArg => displayArg.id === getSettings().windowState.displayId);
+      display = display || screen.getDisplayMatching(currentBounds);
       mainWindow.browserWindow.setPosition(display.workArea.x, display.workArea.y);
       const bounds = {
         displayId: display.id,
@@ -410,7 +408,7 @@ const createMainWindow = async () => {
         await mainWindow.commandService.remoteCall(SharedConstants.Commands.UI.ArmTokenReceivedOnStartup, result);
       } else if (!result) {
         settingsStore.dispatch(azureLoggedInUserChanged(''));
-        await mainWindow.commandService.call(SharedConstants.Commands.Electron.UpdateFileMenu);
+        await mainWindow.commandService.call(SharedConstants.Commands.UpdateFileMenu);
       }
     }
 
@@ -436,7 +434,7 @@ const createMainWindow = async () => {
       await mainWindow.commandService.call(SharedConstants.Commands.Azure.SignUserOutOfAzure, false);
     }
     saveSettings<PersistentSettings>('server.json', getSettings());
-    Electron.app.quit();
+    app.quit();
   });
 };
 
@@ -466,7 +464,7 @@ function loadMainPage() {
   mainWindow.browserWindow.loadURL(page);
 }
 
-Electron.app.on('ready', function() {
+app.on('ready', function() {
   if (!mainWindow) {
     if (process.argv.find(val => val.includes('--vscode-debugger'))) {
       // workaround for delay in vscode debugger attach
@@ -478,7 +476,7 @@ Electron.app.on('ready', function() {
   }
 });
 
-Electron.app.on('activate', async function() {
+app.on('activate', async function() {
   if (!mainWindow) {
     await createMainWindow();
   }
