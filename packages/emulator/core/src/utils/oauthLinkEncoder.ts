@@ -31,12 +31,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import * as crypto from 'crypto';
+
 import { Attachment, AttachmentContentTypes, GenericActivity, OAuthCard } from '@bfemulator/sdk-shared';
 
 import { BotEmulator } from '../botEmulator';
-import uniqueId from './uniqueId';
 
-import * as crypto from 'crypto';
+import uniqueId from './uniqueId';
 
 export default class OAuthLinkEncoder {
   public static OAuthUrlProtocol: string = 'oauthlink:';
