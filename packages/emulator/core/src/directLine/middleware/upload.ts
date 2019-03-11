@@ -81,6 +81,7 @@ export default function upload(botEmulator: BotEmulator) {
           uploads = [uploads];
         }
         if (uploads && uploads.length) {
+          const serviceUrl = await botEmulator.getServiceUrl(botEndpoint.botUrl);
           activity.attachments = [];
           uploads.forEach(upload1 => {
             const name = (upload1 as any).name || 'file.dat';
@@ -95,7 +96,6 @@ export default function upload(botEmulator: BotEmulator) {
               thumbnailBase64: contentBase64,
             };
             const attachmentId = botEmulator.facilities.attachments.uploadAttachment(attachmentData);
-            const serviceUrl = botEmulator.getServiceUrl(botEndpoint.botUrl);
             const attachment: Attachment = {
               name,
               contentType: type,
