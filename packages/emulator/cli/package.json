@@ -11,7 +11,7 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
-    "build": "babel ./src --out-dir lib --extensions \".ts,.tsx\" --ignore \"**/*.spec.ts\"",
+    "build": "babel ./src --out-dir lib --extensions \".ts,.tsx\" --ignore \"**/*.spec.ts\" && tsc --emitDeclarationOnly",
     "clean": "rimraf lib",
     "lint": "eslint --color --quiet --ext .js,.jsx,.ts,.tsx ./src",
     "lint:fix": "npm run lint -- --fix",

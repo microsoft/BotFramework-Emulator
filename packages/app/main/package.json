@@ -7,7 +7,7 @@
   "main": "./app/server/main.js",
   "homepage": "https://github.com/Microsoft/BotFramework-Emulator",
   "scripts": {
-    "build": "run-s lint build:electron",
+    "build": "run-s typecheck lint build:electron",
     "build:electron": "babel ./src --out-dir app/server --extensions \".ts,.tsx\" --ignore \"**/*.spec.ts\" && npm run copy:extension:stubs",
     "copy:extension:stubs": "ncp src/extensions app/extensions",
     "dist": "electron-builder",
@@ -18,7 +18,8 @@
     "start:electron": "./node_modules/.bin/electron --inspect=7777 --remote-debugging-port=7778 .",
     "start:electron:dev": "cross-env ELECTRON_TARGET_URL=http://localhost:3000/ npm run start:electron",
     "start:react-app": "cd ../client && npm start",
-    "test": "jest"
+    "test": "jest",
+    "typecheck": "tsc --noEmit"
   },
   "keywords": [
     "microsoft",
