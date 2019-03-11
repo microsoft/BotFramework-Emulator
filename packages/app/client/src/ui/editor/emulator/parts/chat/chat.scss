@@ -60,6 +60,14 @@
       margin-bottom: 8px;
     }
   }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--webchat-scrollbar-color);
+  }
 }
 
 .chat-activity {
