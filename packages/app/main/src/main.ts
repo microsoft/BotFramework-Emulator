@@ -39,7 +39,6 @@ import { Users } from '@bfemulator/emulator-core';
 import { ProgressInfo } from 'builder-util-runtime';
 import { app, dialog, systemPreferences } from 'electron';
 import { UpdateInfo } from 'electron-updater';
-
 import { Store } from 'redux';
 
 import { appendCustomUserAgent } from './appendCustomUserAgent';
