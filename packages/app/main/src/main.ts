@@ -408,7 +408,7 @@ const createMainWindow = async () => {
         await mainWindow.commandService.remoteCall(SharedConstants.Commands.UI.ArmTokenReceivedOnStartup, result);
       } else if (!result) {
         settingsStore.dispatch(azureLoggedInUserChanged(''));
-        await mainWindow.commandService.call(SharedConstants.Commands.UpdateFileMenu);
+        await mainWindow.commandService.call(SharedConstants.Commands.Electron.UpdateFileMenu);
       }
     }
 
