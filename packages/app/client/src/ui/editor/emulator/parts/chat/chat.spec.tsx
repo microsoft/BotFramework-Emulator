@@ -93,7 +93,7 @@ describe('<Chat />', () => {
         directLine: defaultDocument.directLine,
         locale: 'en-US',
         styleOptions: webChatStyleOptions,
-        userId: '123',
+        userID: '123',
         username: 'Current User',
       });
     });
