@@ -42,7 +42,7 @@ export interface TextFieldProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   errorMessage?: string;
   inputContainerClassName?: string;
-  inputRef: React.Ref<HTMLInputElement>;
+  inputRef?: React.Ref<HTMLInputElement>;
 }
 
 export class TextField extends Component<TextFieldProps, {}> {
