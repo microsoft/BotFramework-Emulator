@@ -63,6 +63,7 @@ export interface AppSettingsEditorProps {
 
 export interface AppSettingsEditorState extends Partial<FrameworkSettings> {
   dirty?: boolean;
+  pendingUpdate?: boolean;
 }
 
 function shallowEqual(x: any, y: any) {

@@ -48,7 +48,7 @@ import { RootState } from '../store';
 
 import { call, ForkEffect, put, select, takeEvery } from 'redux-saga/effects';
 
-export const normalizeSettingsData = async (settings: FrameworkSettings): FrameworkSettings => {
+export const normalizeSettingsData = async (settings: FrameworkSettings): Promise<FrameworkSettings> => {
   // trim keys that do not belong and generate a hash
   const keys = Object.keys(frameworkDefault).sort();
   const newState = keys.reduce((s, key) => ((s[key] = settings[key]), s), {}) as FrameworkSettings;
