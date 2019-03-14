@@ -42,6 +42,7 @@ import { newBot, newEndpoint, SharedConstants } from '@bfemulator/app-shared';
 import { Conversation } from '@bfemulator/emulator-core';
 
 import * as store from '../botData/store';
+import { getStore as getSettingsStore } from '../settingsData/store';
 import { emulator } from '../emulator';
 import * as utils from '../utils';
 import * as botHelpers from '../botHelpers';
@@ -49,6 +50,7 @@ import { bot } from '../botData/reducers/bot';
 import * as BotActions from '../botData/actions/botActions';
 import { TelemetryService } from '../telemetry';
 import { mainWindow } from '../main';
+import { setCurrentUser } from '../settingsData/actions/userActions';
 
 import { registerCommands } from './emulatorCommands';
 
@@ -129,10 +131,14 @@ jest.mock('../emulator', () => ({
   },
 }));
 
+let mockCallsMade = [];
 jest.mock('../main', () => ({
   mainWindow: {
     commandService: {
-      call: async () => true,
+      call: async (commandName, ...args) => {
+        mockCallsMade.push({ commandName, args });
+        return Promise.resolve(true);
+      },
       remoteCall: async () => true,
     },
     browserWindow: {},
@@ -388,6 +394,7 @@ describe('The emulatorCommands', () => {
     mockUsers = { users: {} };
     mockTrackEvent = jest.fn(() => Promise.resolve());
     TelemetryService.trackEvent = mockTrackEvent;
+    mockCallsMade = [];
   });
 
   beforeAll(() => {
@@ -480,11 +487,16 @@ describe('The emulatorCommands', () => {
   });
 
   it('should set current user', async () => {
+    const dispatchSpy = jest.spyOn(getSettingsStore(), 'dispatch');
     await mockCommandRegistry.getCommand(SharedConstants.Commands.Emulator.SetCurrentUser).handler('userId123');
+
     expect(mockUsers.currentUserId).toBe('userId123');
     expect(mockUsers.users.userId123).toEqual({
       id: 'userId123',
       name: 'User',
     });
+    expect(dispatchSpy).toHaveBeenCalledWith(setCurrentUser({ id: 'userId123', name: 'User' }));
+    expect(mockCallsMade).toHaveLength(1);
+    expect(mockCallsMade[0].commandName).toBe(SharedConstants.Commands.Settings.PushClientAwareSettings);
   });
 });
