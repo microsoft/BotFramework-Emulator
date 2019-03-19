@@ -44,11 +44,12 @@ import { getStore } from '../botData/store';
 import { getActiveBot, getBotInfoByPath, patchBotsJson, toSavableBot } from '../botHelpers';
 import { emulator } from '../emulator';
 import { mainWindow } from '../main';
-import { getStore as getSettingsStore } from '../settingsData/store';
+import { dispatch, getStore as getSettingsStore } from '../settingsData/store';
 import { parseActivitiesFromChatFile, showSaveDialog, writeFile } from '../utils';
 import { cleanupId as cleanupActivityChannelAccountId, CustomActivity } from '../utils/conversation';
 import { botProjectFileWatcher } from '../watchers';
 import { TelemetryService } from '../telemetry';
+import { setCurrentUser } from '../settingsData/actions/userActions';
 
 /** Registers emulator (actual conversation emulation logic) commands */
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
@@ -217,11 +218,16 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
   // ---------------------------------------------------------------------------
   // Sets the current user id (in memory)
-  commandRegistry.registerCommand(Commands.SetCurrentUser, (userId: string) => {
+  commandRegistry.registerCommand(Commands.SetCurrentUser, async (userId: string) => {
     const { facilities } = emulator.framework.server.botEmulator;
     const { users } = facilities;
+    const user = { id: userId, name: 'User' };
     users.currentUserId = userId;
-    users.users[userId] = { id: userId, name: 'User' };
+    users.users[userId] = user;
     facilities.users = users;
+
+    // update the settings state on both main and client
+    dispatch(setCurrentUser(user));
+    await mainWindow.commandService.call(SharedConstants.Commands.Settings.PushClientAwareSettings);
   });
 }
