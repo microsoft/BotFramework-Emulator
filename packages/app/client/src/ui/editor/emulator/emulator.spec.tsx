@@ -38,9 +38,9 @@ import * as React from 'react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import { BehaviorSubject, Subscription } from 'rxjs';
+
 import { clearLog, newConversation, setInspectorObjects } from '../../../data/action/chatActions';
 import { updateDocument } from '../../../data/action/editorActions';
-
 import { disable, enable } from '../../../data/action/presentationActions';
 
 import { Emulator, EmulatorComponent, RestartConversationOptions } from './emulator';
