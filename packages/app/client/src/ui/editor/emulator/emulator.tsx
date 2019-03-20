@@ -116,13 +116,6 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
       this.startNewConversation();
     }
   }
-
-  componentDidMount() {
-    // WebChat v3 vs v4 behavior indie the Emulator has diverted in behavior such that
-    // no activity gets to the bot under the conversation is restarted.
-    this.onStartOverClick(RestartConversationOptions.SameUserId);
-  }
-
   componentWillUnmount() {
     window.removeEventListener('keydown', this.keyboardEventListener);
   }
@@ -381,7 +374,7 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
           userId: 'new',
         });
         // start conversation with new convo id & user id
-        this.startNewConversation(undefined, true, true);
+        await this.startNewConversation(undefined, true, true);
         break;
       }
 
@@ -390,7 +383,7 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
           userId: 'same',
         });
         // start conversation with new convo id
-        this.startNewConversation(undefined, true, false);
+        await this.startNewConversation(undefined, true, false);
         break;
 
       default:
