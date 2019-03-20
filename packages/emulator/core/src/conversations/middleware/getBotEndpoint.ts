@@ -42,8 +42,13 @@ export default function getBotEndpoint(botEmulator: BotEmulator) {
      * IF query params exist, the call is creating a
      * conversation independent from a bot file.
      */
-    if (req.query && 'botEndpoint' in req.query) {
-      const { botEndpoint: botUrl, msaAppId = '', msaPassword = '' } = req.query;
+    if (req.headers && 'x-emulator-botendpoint' in req.headers) {
+      const {
+        'x-emulator-botendpoint': botUrl,
+        'x-emulator-appid': msaAppId = '',
+        'x-emulator-apppassword': msaPassword = '',
+      } = req.headers as { [prop: string]: string };
+
       let endpoint = endpoints.get(botUrl);
       if (!endpoint) {
         const params = req.body as any;
