@@ -33,7 +33,7 @@
 
 // Cheating here and pulling in a module from node. Can be easily replaced if we ever move the emulator to the web.
 import { LogLevel } from '@bfemulator/sdk-shared';
-import { logEntry, textItem } from '@bfemulator/sdk-shared';
+import { logEntry, luisEditorDeepLinkItem, textItem } from '@bfemulator/sdk-shared';
 import { ExtensionInspector, InspectorAccessory, InspectorAccessoryState } from '@bfemulator/sdk-shared';
 import { Spinner } from '@bfemulator/ui-react';
 import { IBotConfiguration } from 'botframework-config/lib/schema';
@@ -177,9 +177,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
             {this.renderAccessoryButtons(this.state.inspector)}
             <PanelContent>
               <div className={styles.inspectorContainer} tabIndex={0}>
-                <div ref={this.webViewContainer} className={styles.webViewContainer}>
-                  &nbsp;
-                </div>
+                <div ref={this.webViewContainer} className={styles.webViewContainer} />
               </div>
             </PanelContent>
           </Panel>
@@ -367,6 +365,14 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
         const inspectorName = this._state.titleOverride || this.state.inspector.name || 'inspector';
         const text = `[${inspectorName}] ${event.args[0]}`;
         LogService.logToDocument(documentId, logEntry(textItem(logLevel, text)));
+        break;
+      }
+
+      case 'logger.luis-editor-deep-link': {
+        const { documentId } = this.props.document;
+        const inspectorName = this._state.titleOverride || this.state.inspector.name || 'inspector';
+        const text = `[${inspectorName}] ${event.args[0]}`;
+        LogService.logToDocument(documentId, logEntry(luisEditorDeepLinkItem(text)));
         break;
       }
 

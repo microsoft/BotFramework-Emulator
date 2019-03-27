@@ -1,22 +1,4 @@
 .entity-viewer {
-  display: block;
-}
-
-:global {
-  #entity-name {
-    display: inline-block;
-    overflow: hidden
-  }
-
-  #arrow {
-    display: inline-block;
-    overflow: hidden
-  }
-
-  #entity-value {
-    display: inline-block;
-    max-width: 150px;
-    text-overflow: ellipsis;
-    overflow: hidden;
-  }
+  display: flex;
+  flex-wrap: wrap;
 }

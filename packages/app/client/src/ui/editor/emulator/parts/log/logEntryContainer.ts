@@ -33,10 +33,21 @@
 
 import { SharedConstants } from '@bfemulator/app-shared';
 import { connect } from 'react-redux';
+import { ServiceTypes } from 'botframework-config/lib/schema';
 
 import * as ChatActions from '../../../../../data/action/chatActions';
+import * as ConnectedServiceActions from '../../../../../data/action/connectedServiceActions';
 import { RootState } from '../../../../../data/store';
 import { CommandServiceImpl } from '../../../../../platform/commands/commandServiceImpl';
+import {
+  ConnectServicePromptDialogContainer,
+  AzureLoginSuccessDialogContainer,
+  AzureLoginFailedDialogContainer,
+  GetStartedWithCSDialogContainer,
+  ProgressIndicatorContainer,
+} from '../../../../dialogs';
+import { ConnectedServicePickerContainer } from '../../../../shell/explorer/servicesExplorer';
+import { ConnectedServiceEditorContainer } from '../../../../shell/explorer/servicesExplorer/connectedServiceEditor';
 
 import { LogEntry as LogEntryComponent, LogEntryProps } from './logEntry';
 
@@ -46,6 +57,22 @@ function mapStateToProps(_state: RootState): Partial<LogEntryProps> {
 
 function mapDispatchToProps(dispatch: any): Partial<LogEntryProps> {
   return {
+    launchLuisEditor: () => {
+      dispatch(
+        ConnectedServiceActions.launchConnectedServicePicker({
+          azureAuthWorkflowComponents: {
+            promptDialog: ConnectServicePromptDialogContainer,
+            loginSuccessDialog: AzureLoginSuccessDialogContainer,
+            loginFailedDialog: AzureLoginFailedDialogContainer,
+          },
+          pickerComponent: ConnectedServicePickerContainer,
+          getStartedDialog: GetStartedWithCSDialogContainer,
+          editorComponent: ConnectedServiceEditorContainer,
+          progressIndicatorComponent: ProgressIndicatorContainer,
+          serviceType: ServiceTypes.Luis,
+        })
+      );
+    },
     setInspectorObjects: (documentId: string, obj: any) => {
       dispatch(ChatActions.setInspectorObjects(documentId, obj));
     },

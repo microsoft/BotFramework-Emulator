@@ -15,7 +15,7 @@
     }
 
     ::-webkit-scrollbar-thumb {
-      background: #5E5E5E;
+      background: var(--webchat-scrollbar-color);
     }
   }
   body {

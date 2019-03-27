@@ -63,20 +63,20 @@ class ControlBar extends Component<ControlBarProps, ControlBarState> {
       <div className={styles.controlBar}>
         <span id="recognizerResultButton">
           <a
+            className={this.props.buttonSelected === ButtonSelected.RecognizerResult ? styles.selected : ''}
             id={ButtonSelected[ButtonSelected.RecognizerResult]}
             href="#"
             onClick={this.clickHandler}
-            style={this.props.buttonSelected === ButtonSelected.RecognizerResult ? { textDecoration: 'underline' } : {}}
           >
             Recognizer Result
           </a>
         </span>
         <span id="rawResponseButton">
           <a
+            className={this.props.buttonSelected === ButtonSelected.RawResponse ? styles.selected : ''}
             id={ButtonSelected[ButtonSelected.RawResponse]}
             href="#"
             onClick={this.clickHandler}
-            style={this.props.buttonSelected === ButtonSelected.RawResponse ? { textDecoration: 'underline' } : {}}
           >
             Raw Response
           </a>

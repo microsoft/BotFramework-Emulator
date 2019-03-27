@@ -98,4 +98,10 @@ export type ILogItem =
       payload: {
         text: string;
       };
+    }
+  | {
+      type: 'luis-editor-deep-link';
+      payload: {
+        text: string;
+      };
     };

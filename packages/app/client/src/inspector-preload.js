@@ -70,6 +70,9 @@ window.host = {
     log: function(message) {
       ipcRenderer.sendToHost('logger.log', message);
     },
+    logLuisEditorDeepLink: function(message) {
+      ipcRenderer.sendToHost('logger.luis-editor-deep-link', message);
+    },
   },
 
   on: function(event, handler) {

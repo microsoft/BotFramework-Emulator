@@ -31,36 +31,4 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Activity } from '@bfemulator/sdk-shared';
-import { IBotConfiguration } from 'botframework-config/lib/schema';
-
-export interface InspectorHost {
-  // The current bot (msbot schema)
-  readonly bot: IBotConfiguration;
-  readonly logger: {
-    log(message: string): () => void;
-    error(message: string): () => void;
-    logLuisEditorDeepLink(message: string): () => void;
-  };
-
-  // Each "on" function returns a method that when called, will unregister the handler.
-  on(event: 'inspect', handler: (activity: Activity) => void): () => void;
-
-  on(event: 'bot-updated', handler: (bot: IBotConfiguration) => void): () => void;
-
-  on(event: 'accessory-click', handler: (id: string) => void): () => void;
-
-  on(event: 'theme', handler: (themeInfo: { themeName: string; themeComponents: string[] }) => void): void;
-
-  // Enable/disable an accessory button
-  enableAccessory(id: string, enabled: boolean): void;
-
-  // Set the state of an accessory button
-  setAccessoryState(id: string, state: string): void;
-
-  // Set inspector title
-  setInspectorTitle(title: string): void;
-
-  // Tracks a telemetry event to App Insights
-  trackEvent(name: string, properties?: { [key: string]: any }): void;
-}
+module.exports = {};

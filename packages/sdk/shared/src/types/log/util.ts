@@ -146,6 +146,15 @@ export function ngrokExpirationItem(text: string): ILogItem {
   };
 }
 
+export function luisEditorDeepLinkItem(text: string): ILogItem {
+  return {
+    type: 'luis-editor-deep-link',
+    payload: {
+      text,
+    },
+  };
+}
+
 export function logEntry(...items: ILogItem[]): LogEntry {
   return {
     timestamp: Date.now(),

@@ -51,6 +51,7 @@ export interface LogEntryProps {
   entry: ILogEntry;
   selectedActivity?: any;
   currentlyInspectedActivity?: any;
+  launchLuisEditor?: () => void;
   setInspectorObjects?: (...args: any[]) => void;
   reconnectNgrok?: () => void;
   showAppSettings?: () => void;
@@ -169,6 +170,10 @@ export class LogEntry extends React.Component<LogEntryProps> {
       case 'inspectable-object': {
         const { obj } = item.payload;
         return this.renderInspectableItem(obj, key);
+      }
+      case 'luis-editor-deep-link': {
+        const { text } = item.payload;
+        return this.renderLuisEditorDeepLinkItem(text, key);
       }
       case 'network-request': {
         const { facility, body, headers, method, url } = item.payload;
@@ -320,6 +325,18 @@ export class LogEntry extends React.Component<LogEntryProps> {
         <button className={styles.link} onClick={() => this.props.reconnectNgrok()}>
           Please reconnect.
         </button>
+      </span>
+    );
+  }
+
+  renderLuisEditorDeepLinkItem(text: string, key: string): JSX.Element {
+    return (
+      <span key={key} className={`text-item ${styles.spaced} ${styles.level3}`}>
+        {`${text} Please `}
+        <a className={styles.link} onClick={() => this.props.launchLuisEditor()}>
+          connect your bot to LUIS
+        </a>
+        {` using the services pane.`}
       </span>
     );
   }

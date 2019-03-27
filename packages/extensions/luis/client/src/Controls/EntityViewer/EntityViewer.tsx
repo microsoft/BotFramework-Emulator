@@ -88,7 +88,7 @@ export class EntityViewer extends Component<EntityViwerProps, {}> {
     return (
       <div className={styles.entityViewer}>
         <div id="entityName">{this.props.entity.name}</div>
-        <div id="arrow">{'&nbsp; -->&nbsp; '}</div>
+        <div id="arrow">&nbsp;{'-->'}&nbsp;</div>
         <div id="entityValue">{EntityViewer.renderEntityValue(this.props.entity.value)}</div>
       </div>
     );
