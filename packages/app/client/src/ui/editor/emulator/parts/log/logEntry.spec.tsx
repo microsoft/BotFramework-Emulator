@@ -37,8 +37,19 @@ import * as React from 'react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import { SharedConstants } from '@bfemulator/app-shared';
+import { ServiceTypes } from 'botframework-config/lib/schema';
 
 import { setInspectorObjects } from '../../../../../data/action/chatActions';
+import { launchConnectedServicePicker } from '../../../../../data/action/connectedServiceActions';
+import {
+  ConnectServicePromptDialogContainer,
+  AzureLoginSuccessDialogContainer,
+  AzureLoginFailedDialogContainer,
+  GetStartedWithCSDialogContainer,
+  ProgressIndicatorContainer,
+} from '../../../../dialogs';
+import { ConnectedServicePickerContainer } from '../../../../shell/explorer/servicesExplorer';
+import { ConnectedServiceEditorContainer } from '../../../../shell/explorer/servicesExplorer/connectedServiceEditor';
 
 import { LogEntry, LogEntryProps, number2, timestamp } from './logEntry';
 import { LogEntry as LogEntryContainer } from './logEntryContainer';
@@ -295,5 +306,34 @@ describe('logEntry component', () => {
     instance = wrapper.instance();
     const ngrokitem = instance.renderItem({ type: 'ngrok-expiration', payload: { text: 'some text' } }, 'someKey');
     expect(ngrokitem).not.toBeNull();
+  });
+
+  it('should render a luis editor deep link item', () => {
+    wrapper = mount(<LogEntry {...props} />);
+    instance = wrapper.instance();
+    const luisDeepLinkItem = instance.renderItem(
+      { type: 'luis-editor-deep-link', payload: { text: 'some text' } },
+      'someKey'
+    );
+    expect(luisDeepLinkItem).not.toBeNull();
+  });
+
+  it('should launch a luis service editor', () => {
+    instance.props.launchLuisEditor();
+
+    expect(mockDispatch).toHaveBeenCalledWith(
+      launchConnectedServicePicker({
+        azureAuthWorkflowComponents: {
+          promptDialog: ConnectServicePromptDialogContainer,
+          loginSuccessDialog: AzureLoginSuccessDialogContainer,
+          loginFailedDialog: AzureLoginFailedDialogContainer,
+        },
+        pickerComponent: ConnectedServicePickerContainer,
+        getStartedDialog: GetStartedWithCSDialogContainer,
+        editorComponent: ConnectedServiceEditorContainer,
+        progressIndicatorComponent: ProgressIndicatorContainer,
+        serviceType: ServiceTypes.Luis,
+      })
+    );
   });
 });

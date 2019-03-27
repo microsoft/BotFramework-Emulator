@@ -30,7 +30,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { logEntry, LogLevel, textItem } from '@bfemulator/sdk-shared';
+import { logEntry, LogLevel, textItem, luisEditorDeepLinkItem } from '@bfemulator/sdk-shared';
 import { SharedConstants } from '@bfemulator/app-shared';
 import { mount } from 'enzyme';
 import * as React from 'react';
@@ -413,6 +413,16 @@ describe('The Inspector component', () => {
         instance.ipcMessageEventHandler(event);
 
         expect(logSpy).toHaveBeenCalledWith(mockState.document.documentId, logEntry(textItem(LogLevel.Info, text)));
+      });
+
+      it('"logger.luis-editor-deep-link"', () => {
+        event.channel = 'logger.luis-editor-deep-link';
+        const logSpy = jest.spyOn(LogService, 'logToDocument');
+        const inspectorName = mockExtensions[0].name;
+        const text = `[${inspectorName}] ${event.args[0]}`;
+        instance.ipcMessageEventHandler(event);
+
+        expect(logSpy).toHaveBeenCalledWith(mockState.document.documentId, logEntry(luisEditorDeepLinkItem(text)));
       });
 
       it('"track-event"', () => {

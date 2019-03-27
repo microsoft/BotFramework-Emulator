@@ -46,7 +46,10 @@
       "jsx",
       "json",
       "node"
-    ]
+    ],
+    "moduleNameMapper": {
+      ".\\.scss$": "<rootDir>/jestMocks/styleMock.js"
+    }
   },
   "husky": {
     "hooks": {

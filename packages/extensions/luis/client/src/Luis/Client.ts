@@ -48,7 +48,6 @@ const DefaultVersion = '0.1';
 const TrainStatusRetryCount = 30;
 const WaitIntervalInMs = 500;
 const CacheTtlInMins = 30;
-const Unauthorized = 'Unauthorized';
 const CortanaAppId = 'c413b2ef-382c-45bd-8ff0-f76d60e2a821';
 
 enum TrainStatus {
@@ -134,8 +133,8 @@ class LuisClient {
     ) {
       appInfo = {
         authorized: false,
-        activeVersion: Unauthorized,
-        name: Unauthorized,
+        activeVersion: 'Unknown',
+        name: null,
         appId: this.luisAppInfo.appId,
         endpoints: {},
         isDispatchApp: false,

@@ -47,14 +47,20 @@ class Header extends Component<HeaderProps, {}> {
   public render() {
     return (
       <div className={styles.header}>
-        <span>
-          <strong>{this.props.appName}</strong>
-        </span>
+        {this.appName}
         <span className={styles.appId}>App ID: {this.props.appId}</span>
         <span>Version: {this.props.version}</span>
         <span>Slot: {this.props.slot}</span>
       </div>
     );
+  }
+
+  private get appName(): React.ReactNode {
+    return this.props.appName ? (
+      <span>
+        <strong>{this.props.appName}</strong>
+      </span>
+    ) : null;
   }
 }
 
