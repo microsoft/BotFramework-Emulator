@@ -9,19 +9,20 @@
 }
 
 .dialog {
-  --error-text: #A1260D;
+  --error-text: var(--dialog-error-color);
   --input-color: var(--neutral-12);
   --input-bg: var(--neutral-1);
   background: var(--dialog-bg);
   position: fixed;
   transform: translate(-50%, -50%);
-  color: var(--neutral-14);
+  color: var(--dialog-color);
   top: 50%;
   left: 50%;
   min-width: 400px;
   min-height: 200px;
   font: var(--default-font-family);
   padding: 24px 24px 32px 24px;
+
   header {
     font-size: 21px;
     font-weight: 100;
@@ -35,16 +36,19 @@
   display: flex;
   justify-content: flex-end;
   margin-top: 20px;
+
   button {
     height: 21px;
     flex-grow: 1;
+    margin-right: 4px;
+
     &:only-child {
       flex-grow: 0;
     }
+
     &:not(first-child) {
       margin-left: 4px;
     }
-    margin-right: 4px;
   }
 }
 

@@ -125,8 +125,10 @@ html {
   --s-button-bg-active: transparent;
   --s-button-bg-disabled: transparent;
 
-  /* Dialog a.k.a. Modal and panels */
+  /* Dialogs & Modals */
   --dialog-bg: var(--neutral-16);
+  --dialog-color: var(--neutral-4);
+  --dialog-error-color: #F38518;
 
   /* Services Explorer */
   --explorer-panel-bg: var(--neutral-16);
@@ -215,13 +217,6 @@ html {
 
   /* Scrollbar */
   --scrollbar-color: var(--neutral-1);
-}
-
-.dialog {
-  --dialog-bg: var(--neutral-16);
-  color: var(--neutral-4) !important;
-  --error-text: #F38518 !important;
-
 }
 
 .dialog .ms-Button-label {
