@@ -218,8 +218,10 @@ html {
 }
 
 .dialog {
-  --dialog-bg: var(--neutral-1);
+  --dialog-bg: var(--neutral-16);
+  color: var(--neutral-4) !important;
 }
+
 .dialog .ms-Button-label {
   color: var(--neutral-15);
 }
