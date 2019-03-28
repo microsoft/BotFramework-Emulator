@@ -126,8 +126,10 @@ html {
   --s-button-bg-active: var(--neutral-5);
   --s-button-bg-disabled: var(--neutral-2);
 
-  /* Dialog a.k.a. Modal and panels */
+  /* Dialogs & Modals */
   --dialog-bg: var(--neutral-2);
+  --dialog-color: var(--neutral-14);
+  --dialog-error-color: var(--error-text);
 
   /* Services Explorer */
   --explorer-panel-bg: var(--neutral-3);
@@ -217,8 +219,4 @@ html {
 
   /* Scrollbar */
   --scrollbar-color: var(--neutral-6);
-}
-
-.dialog {
-  --dialog-bg: var(--neutral-2);
 }
