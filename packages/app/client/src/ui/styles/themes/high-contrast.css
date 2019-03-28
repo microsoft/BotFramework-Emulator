@@ -84,7 +84,7 @@ html {
   --input-label-color-disabled: var(--neutral-7);
   --input-border: 1px solid #C8C8C8;
   --input-border-focus: var(--p-button-border-focus);
-  --input-border-error: 1px solid #D02E00;
+  --input-border-error: 1px solid #F38518;
   --input-placeholder-color: var(--neutral-7);
   --input-border-disabled: 1px solid var(--neutral-7);
 
@@ -220,6 +220,8 @@ html {
 .dialog {
   --dialog-bg: var(--neutral-16);
   color: var(--neutral-4) !important;
+  --error-text: #F38518 !important;
+
 }
 
 .dialog .ms-Button-label {
