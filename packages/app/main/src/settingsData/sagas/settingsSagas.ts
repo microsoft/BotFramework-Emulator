@@ -38,7 +38,7 @@ import { mainWindow } from '../../main';
 import { NgrokService } from '../../ngrokService';
 import { FrameworkAction, SET_FRAMEWORK } from '../actions/frameworkActions';
 import {
-  REMEMBER_DEBUG_MODE,
+  DEBUG_MODE_CHANGED,
   REMEMBER_THEME,
   RememberDebugModePayload,
   RememberThemePayload,
@@ -116,6 +116,6 @@ export function* setFramework(action: FrameworkAction<FrameworkSettings>): Itera
 
 export function* settingsSagas(): IterableIterator<ForkEffect> {
   yield takeEvery(REMEMBER_THEME, rememberThemeSaga);
-  yield takeEvery(REMEMBER_DEBUG_MODE, rememberDebugModeSaga);
+  yield takeEvery(DEBUG_MODE_CHANGED, rememberDebugModeSaga);
   yield takeEvery(SET_FRAMEWORK, setFramework);
 }

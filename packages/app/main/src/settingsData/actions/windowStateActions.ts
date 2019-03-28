@@ -36,7 +36,7 @@ import { Action } from 'redux';
 export const REMEMBER_THEME = 'REMEMBER_THEME';
 export const REMEMBER_BOUNDS = 'REMEMBER_BOUNDS';
 export const REMEMBER_ZOOM_LEVEL = 'REMEMBER_ZOOM_LEVEL';
-export const REMEMBER_DEBUG_MODE = 'REMEMBER_DEBUG_MODE';
+export const DEBUG_MODE_CHANGED = 'DEBUG_MODE_CHANGED';
 
 export interface WindowStateAction<P> extends Action {
   type: WindowStateActionType;
@@ -48,7 +48,7 @@ export declare type WindowStateActionType =
   | 'REMEMBER_THEME'
   | 'REMEMBER_BOUNDS'
   | 'REMEMBER_ZOOM_LEVEL'
-  | 'REMEMBER_DEBUG_MODE';
+  | 'DEBUG_MODE_CHANGED';
 export declare type WindowStatePayload = RememberZoomLevelPayload | RememberBoundsPayload | RememberThemePayload;
 
 export interface RememberThemePayload {
@@ -94,9 +94,9 @@ export function rememberZoomLevel(state: WindowStateSettings): WindowStateAction
   };
 }
 
-export function rememberDebugMode(debugMode: DebugMode): WindowStateAction<RememberDebugModePayload> {
+export function debugModeChanged(debugMode: DebugMode): WindowStateAction<RememberDebugModePayload> {
   return {
-    type: REMEMBER_DEBUG_MODE,
+    type: DEBUG_MODE_CHANGED,
     payload: {
       debugMode,
     },

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="theme-color" content="#000000">
+  <title>Bot State Viewer</title>
+  <style>
+    html {
+      width: 100%;
+      height: 100%;
+    }
+
+    body {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      color: #d4d4d4;
+    }
+
+    ::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #5E5E5E;
+    }
+
+    #bot-state-visualizer {
+      padding: 10px;
+      font-family: var(--monospace-font-family);
+      font-size: 13px;
+      user-select: text;
+    }
+
+    .key {
+      fill: var(--log-panel-link);
+    }
+
+    .string {
+      fill: var(--log-panel-item-error);
+    }
+
+    .number {
+      fill: var(--log-panel-timestamp);
+    }
+
+    .boolean {
+      fill: var(--log-panel-link);
+    }
+
+    .null {
+      fill: var(--log-panel-link);
+    }
+
+    .default {
+      fill: var(--log-panel-item-info);
+    }
+  </style>
+</head>
+<svg id="bot-state-visualizer"></svg>
+<script type="application/javascript" src="botstate.js"></script>
+</body>
+</html>

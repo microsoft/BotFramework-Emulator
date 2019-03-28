@@ -46,6 +46,7 @@ import { ProtocolHandler } from '../protocolHandler';
 import { getStore as getSettingsStore } from '../settingsData/store';
 import { getBotsFromDisk } from '../utils';
 import { openFileFromCommandLine } from '../utils/openFileFromCommandLine';
+import { debugModeChanged } from '../settingsData/actions/windowStateActions';
 
 /** Registers client initialization commands */
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
@@ -84,6 +85,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
       locale: settingsState.framework.locale,
       debugMode: settingsState.windowState.debugMode || DebugMode.Normal,
     } as ClientAwareSettings);
+    settingsStore.dispatch(debugModeChanged(settingsState.windowState.debugMode));
   });
 
   // ---------------------------------------------------------------------------

@@ -108,6 +108,7 @@
     "@bfemulator/client": "^1.0.0",
     "@bfemulator/emulator-core": "^1.0.0-0",
     "@bfemulator/extension-debug": "^1.0.0",
+    "@bfemulator/extension-bot-state-visualizer": "^1.0.0",
     "@bfemulator/extension-json": "^1.0.0",
     "@bfemulator/extension-luis": "^1.0.0",
     "@bfemulator/extension-qnamaker": "^1.0.0",

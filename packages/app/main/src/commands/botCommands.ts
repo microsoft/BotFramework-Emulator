@@ -55,7 +55,7 @@ import {
 } from '../botHelpers';
 import { emulator } from '../emulator';
 import { mainWindow } from '../main';
-import { rememberDebugMode } from '../settingsData/actions/windowStateActions';
+import { debugModeChanged } from '../settingsData/actions/windowStateActions';
 import { TelemetryService } from '../telemetry';
 import { isMac } from '../utils';
 import { botProjectFileWatcher, chatWatcher, transcriptsWatcher } from '../watchers';
@@ -108,7 +108,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
     Bot.Open,
     async (botPath: string, secret?: string): Promise<BotConfigWithPath> => {
       // Make sure we're not in Sidecar debug mode
-      getSettingsStore().dispatch(rememberDebugMode(DebugMode.Normal));
+      getSettingsStore().dispatch(debugModeChanged(DebugMode.Normal));
       // try to get the bot secret from bots.json
       const botInfo = pathExistsInRecentBots(botPath) ? getBotInfoByPath(botPath) : null;
       if (botInfo) {

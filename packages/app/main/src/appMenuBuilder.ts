@@ -39,7 +39,7 @@ import { AppUpdater, UpdateStatus } from './appUpdater';
 import { getActiveBot } from './botHelpers';
 import { emulator } from './emulator';
 import { mainWindow } from './main';
-import { rememberDebugMode, rememberTheme } from './settingsData/actions/windowStateActions';
+import { debugModeChanged, rememberTheme } from './settingsData/actions/windowStateActions';
 import { getStore as getSettingsStore } from './settingsData/store';
 import { TelemetryService } from './telemetry';
 import { isMac } from './utils';
@@ -445,7 +445,7 @@ export class AppMenuBuilder {
           id: 'debugMode',
           click: (menuItem: Electron.MenuItem) => {
             const debugMode = menuItem.checked ? DebugMode.Sidecar : DebugMode.Normal;
-            settingsStore.dispatch(rememberDebugMode(debugMode));
+            settingsStore.dispatch(debugModeChanged(debugMode));
           },
         },
       ],

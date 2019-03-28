@@ -1,0 +1,19 @@
+{
+  "name": "Bot State Visualizer",
+  "client": {
+    "inspectors": [
+      {
+        "name": "Bot State Visualizer",
+        "src": "public/index.html",
+        "criteria": {
+          "path": "valueType",
+          "value": "https://www.botframework.com/schemas/botState"
+        },
+        "summaryText": [
+          "attachments.0.contentType",
+          "text"
+        ]
+      }
+    ]
+  }
+}

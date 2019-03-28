@@ -43,7 +43,7 @@ import * as EditorActions from '../data/action/editorActions';
 import * as NavBarActions from '../data/action/navBarActions';
 import { ProgressIndicatorPayload, updateProgressIndicator } from '../data/action/progressIndicatorActions';
 import { switchTheme } from '../data/action/themeActions';
-import { showWaitingForConnectionPage, showWelcomePage } from '../data/editorHelpers';
+import { showWelcomePage } from '../data/editorHelpers';
 import { AzureAuthState } from '../data/reducer/azureAuthReducer';
 import { store } from '../data/store';
 import { CommandServiceImpl } from '../platform/commands/commandServiceImpl';
@@ -136,7 +136,6 @@ export function registerCommands(commandRegistry: CommandRegistry) {
     if (debugMode === DebugMode.Sidecar) {
       store.dispatch(EditorActions.closeNonGlobalTabs());
       store.dispatch(closeBot());
-      showWaitingForConnectionPage();
     }
     store.dispatch(switchDebugMode(debugMode));
   });

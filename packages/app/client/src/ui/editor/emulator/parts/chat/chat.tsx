@@ -37,6 +37,7 @@ import { Activity, ActivityTypes } from 'botframework-schema';
 import ReactWebChat, { createCognitiveServicesBingSpeechPonyfillFactory } from 'botframework-webchat';
 import * as React from 'react';
 import { Component, ReactNode } from 'react';
+
 import { CommandServiceImpl } from '../../../../../platform/commands/commandServiceImpl';
 import { EmulatorMode } from '../../emulator';
 
@@ -174,6 +175,9 @@ export class Chat extends Component<ChatProps, ChatState> {
   };
 
   private renderTraceActivity(next, card, children): ReactNode {
+    if (this.props.debugMode !== DebugMode.Sidecar) {
+      return null;
+    }
     let { value: activity = {} } = card.activity; // activities are nested
     if (activity.type !== ActivityTypes.Message) {
       // determine if this is a bot state

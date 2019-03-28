@@ -80,19 +80,6 @@ export function showWelcomePage(): void {
   );
 }
 
-export function showWaitingForConnectionPage(): void {
-  store.dispatch(
-    EditorActions.open({
-      contentType: Constants.WAITING_FOR_CONNECTION,
-      documentId: Constants.WAITING_FOR_CONNECTION,
-      isGlobal: false,
-      meta: {
-        serviceUrl: store.getState().clientAwareSettings.serverUrl,
-      },
-    })
-  );
-}
-
 export function tabGroupHasDocuments(tabGroup: Editor): boolean {
   return !!Object.keys(tabGroup.documents).length;
 }

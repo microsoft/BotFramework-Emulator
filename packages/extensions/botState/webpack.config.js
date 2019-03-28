@@ -1,8 +1,9 @@
 const { HotModuleReplacementPlugin, WatchIgnorePlugin } = require('webpack');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const path = require('path');
 module.exports = {
   entry: {
-    qna: path.resolve('./src/index.tsx'),
+    botstate: path.resolve('./src/index.ts'),
   },
 
   target: 'electron-renderer',
@@ -34,7 +35,7 @@ module.exports = {
         use: ['file-loader'],
       },
       {
-        test: /\.(tsx?)|(jsx)$/,
+        test: /\.(tsx?)|(jsx?)$/,
         exclude: [/node_modules/],
         use: {
           loader: 'babel-loader',
@@ -71,5 +72,6 @@ module.exports = {
   plugins: [
     new HotModuleReplacementPlugin(),
     new WatchIgnorePlugin(['./build/**/*.*', './public/**/*.*', './src/**/*.d.ts']),
+    new CopyWebpackPlugin([{ from: './src/index.html', to: './index.html' }]),
   ],
 };
