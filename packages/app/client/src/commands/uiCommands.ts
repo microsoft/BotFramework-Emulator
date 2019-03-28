@@ -31,17 +31,19 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { SharedConstants } from '@bfemulator/app-shared';
+import { DebugMode, SharedConstants } from '@bfemulator/app-shared';
 import { CommandRegistry } from '@bfemulator/sdk-shared';
 import { ServiceTypes } from 'botframework-config/lib/schema';
 
 import * as Constants from '../constants';
 import { azureArmTokenDataChanged, beginAzureAuthWorkflow, invalidateArmToken } from '../data/action/azureAuthActions';
+import { closeBot } from '../data/action/botActions';
+import { switchDebugMode } from '../data/action/debugModeAction';
 import * as EditorActions from '../data/action/editorActions';
 import * as NavBarActions from '../data/action/navBarActions';
 import { ProgressIndicatorPayload, updateProgressIndicator } from '../data/action/progressIndicatorActions';
 import { switchTheme } from '../data/action/themeActions';
-import { showWelcomePage } from '../data/editorHelpers';
+import { showWaitingForConnectionPage, showWelcomePage } from '../data/editorHelpers';
 import { AzureAuthState } from '../data/reducer/azureAuthReducer';
 import { store } from '../data/store';
 import { CommandServiceImpl } from '../platform/commands/commandServiceImpl';
@@ -126,6 +128,17 @@ export function registerCommands(commandRegistry: CommandRegistry) {
     CommandServiceImpl.remoteCall(Telemetry.TrackEvent, 'app_chooseTheme', {
       themeName,
     }).catch(_e => void 0);
+  });
+
+  // ---------------------------------------------------------------------------
+  // Debug mode from main
+  commandRegistry.registerCommand(UI.SwitchDebugMode, (debugMode: DebugMode) => {
+    if (debugMode === DebugMode.Sidecar) {
+      store.dispatch(EditorActions.closeNonGlobalTabs());
+      store.dispatch(closeBot());
+      showWaitingForConnectionPage();
+    }
+    store.dispatch(switchDebugMode(debugMode));
   });
 
   // ---------------------------------------------------------------------------

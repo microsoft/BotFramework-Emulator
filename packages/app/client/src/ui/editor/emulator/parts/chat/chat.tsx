@@ -30,29 +30,31 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import * as React from 'react';
-import { Component } from 'react';
-import { Activity, User } from '@bfemulator/sdk-shared';
+import { DebugMode } from '@bfemulator/app-shared';
+import { User } from '@bfemulator/sdk-shared';
 import { IEndpointService } from 'botframework-config/lib/schema';
+import { Activity, ActivityTypes } from 'botframework-schema';
 import ReactWebChat, { createCognitiveServicesBingSpeechPonyfillFactory } from 'botframework-webchat';
-
+import * as React from 'react';
+import { Component, ReactNode } from 'react';
 import { CommandServiceImpl } from '../../../../../platform/commands/commandServiceImpl';
 import { EmulatorMode } from '../../emulator';
 
-import * as styles from './chat.scss';
 import ActivityWrapper from './activityWrapper';
+import * as styles from './chat.scss';
 import webChatStyleOptions from './webChatTheme';
 
 export interface ChatProps {
   document: any;
   endpoint: IEndpointService;
   mode: EmulatorMode;
+  debugMode: DebugMode;
   onStartConversation: any;
   currentUser: User;
   currentUserId: string;
   locale: string;
   selectedActivity: Activity | null;
-  updateSelectedActivity: (activity: Activity) => void;
+  updateSelectedActivity: (activity: Partial<Activity>) => void;
 }
 
 interface ChatState {
@@ -112,7 +114,7 @@ export class Chat extends Component<ChatProps, ChatState> {
   }
 
   public render() {
-    const { currentUser, currentUserId, document, locale, mode } = this.props;
+    const { currentUser, currentUserId, document, locale, mode, debugMode } = this.props;
 
     if (this.state.waitForSpeechToken) {
       return <div className={styles.disconnected}>Connecting...</div>;
@@ -123,7 +125,7 @@ export class Chat extends Component<ChatProps, ChatState> {
         id: document.botId || 'bot',
         name: 'Bot',
       };
-      const isDisabled = mode === 'transcript';
+      const isDisabled = mode === 'transcript' || debugMode === DebugMode.Sidecar;
 
       return (
         <div className={styles.chat}>
@@ -146,11 +148,7 @@ export class Chat extends Component<ChatProps, ChatState> {
     return <div className={styles.disconnected}>Not Connected</div>;
   }
 
-  private createActivityMiddleware = () => next => card => children => {
-    if (/(trace|endOfConversation)/.test(card.activity.type)) {
-      return null;
-    }
-
+  private activityWrapper(next, card, children): ReactNode {
     return (
       <ActivityWrapper
         activity={card.activity}
@@ -160,5 +158,46 @@ export class Chat extends Component<ChatProps, ChatState> {
         {next(card)(children)}
       </ActivityWrapper>
     );
+  }
+
+  private createActivityMiddleware = () => next => card => children => {
+    switch (card.activity.type) {
+      case ActivityTypes.Trace:
+        return this.renderTraceActivity(next, card, children);
+
+      case ActivityTypes.EndOfConversation:
+        return null;
+
+      default:
+        return this.activityWrapper(next, card, children);
+    }
   };
+
+  private renderTraceActivity(next, card, children): ReactNode {
+    let { value: activity = {} } = card.activity; // activities are nested
+    if (activity.type !== ActivityTypes.Message) {
+      // determine if this is a bot state
+      const valueType = 'https://www.botframework.com/schemas/botState';
+      if (card.activity.valueType === valueType) {
+        activity = {
+          type: ActivityTypes.Message,
+          text: '<Bot State Object>',
+          from: { role: 'bot' },
+          value: activity,
+          valueType,
+        } as Activity;
+      } else {
+        return null;
+      }
+    }
+    return (
+      <ActivityWrapper
+        activity={activity}
+        onClick={this.props.updateSelectedActivity}
+        isSelected={isCardSelected(this.props.selectedActivity, activity)}
+      >
+        {next({ activity, timestampClassName: 'transcript-timestamp' })(children)}
+      </ActivityWrapper>
+    );
+  }
 }

@@ -30,12 +30,13 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { WindowStateSettings } from '@bfemulator/app-shared';
+import { DebugMode, WindowStateSettings } from '@bfemulator/app-shared';
 import { Action } from 'redux';
 
 export const REMEMBER_THEME = 'REMEMBER_THEME';
 export const REMEMBER_BOUNDS = 'REMEMBER_BOUNDS';
 export const REMEMBER_ZOOM_LEVEL = 'REMEMBER_ZOOM_LEVEL';
+export const REMEMBER_DEBUG_MODE = 'REMEMBER_DEBUG_MODE';
 
 export interface WindowStateAction<P> extends Action {
   type: WindowStateActionType;
@@ -43,7 +44,11 @@ export interface WindowStateAction<P> extends Action {
   state?: P;
 }
 
-export declare type WindowStateActionType = 'REMEMBER_THEME' | 'REMEMBER_BOUNDS' | 'REMEMBER_ZOOM_LEVEL';
+export declare type WindowStateActionType =
+  | 'REMEMBER_THEME'
+  | 'REMEMBER_BOUNDS'
+  | 'REMEMBER_ZOOM_LEVEL'
+  | 'REMEMBER_DEBUG_MODE';
 export declare type WindowStatePayload = RememberZoomLevelPayload | RememberBoundsPayload | RememberThemePayload;
 
 export interface RememberThemePayload {
@@ -60,6 +65,10 @@ export interface RememberBoundsPayload {
 
 export interface RememberZoomLevelPayload {
   zoomLevel?: number;
+}
+
+export interface RememberDebugModePayload {
+  debugMode?: DebugMode;
 }
 
 export function rememberTheme(theme: string): WindowStateAction<RememberThemePayload> {
@@ -82,5 +91,14 @@ export function rememberZoomLevel(state: WindowStateSettings): WindowStateAction
   return {
     type: REMEMBER_ZOOM_LEVEL,
     state,
+  };
+}
+
+export function rememberDebugMode(debugMode: DebugMode): WindowStateAction<RememberDebugModePayload> {
+  return {
+    type: REMEMBER_DEBUG_MODE,
+    payload: {
+      debugMode,
+    },
   };
 }

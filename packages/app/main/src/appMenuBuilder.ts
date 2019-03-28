@@ -31,17 +31,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { BotInfo, SharedConstants } from '@bfemulator/app-shared';
+import { BotInfo, DebugMode, SharedConstants } from '@bfemulator/app-shared';
 import { ConversationService } from '@bfemulator/sdk-shared';
 import * as Electron from 'electron';
 
-import { TelemetryService } from './telemetry';
 import { AppUpdater, UpdateStatus } from './appUpdater';
 import { getActiveBot } from './botHelpers';
 import { emulator } from './emulator';
 import { mainWindow } from './main';
-import { rememberTheme } from './settingsData/actions/windowStateActions';
+import { rememberDebugMode, rememberTheme } from './settingsData/actions/windowStateActions';
 import { getStore as getSettingsStore } from './settingsData/store';
+import { TelemetryService } from './telemetry';
 import { isMac } from './utils';
 
 declare type MenuOpts = Electron.MenuItemConstructorOptions;
@@ -111,6 +111,17 @@ export class AppMenuBuilder {
           fileMenu.submenu.append(item);
         });
       }
+    }
+  }
+
+  public static updateDebugModeViewMenuItem(debugMode: DebugMode): void {
+    const menu = Electron.Menu.getApplicationMenu();
+    if (!menu) {
+      return;
+    }
+    const debugMenuItem = menu.getMenuItemById('debugMode');
+    if (debugMenuItem) {
+      debugMenuItem.checked = debugMode === DebugMode.Sidecar;
     }
   }
 
@@ -413,14 +424,30 @@ export class AppMenuBuilder {
 
   private static async initViewMenu(): Promise<MenuOpts> {
     // TODO - localization
+    const settingsStore = getSettingsStore();
+    const {
+      windowState: { debugMode },
+    } = settingsStore.getState();
+
     return {
       label: 'View',
+      id: 'view',
       submenu: [
         { role: 'resetzoom', label: 'Reset Zoom' },
         { role: 'zoomin' },
         { role: 'zoomout' },
         { type: 'separator' },
         { role: 'togglefullscreen' },
+        {
+          type: 'checkbox',
+          checked: debugMode === DebugMode.Sidecar,
+          label: 'Sidecar Debug Mode',
+          id: 'debugMode',
+          click: (menuItem: Electron.MenuItem) => {
+            const debugMode = menuItem.checked ? DebugMode.Sidecar : DebugMode.Normal;
+            settingsStore.dispatch(rememberDebugMode(debugMode));
+          },
+        },
       ],
     };
   }

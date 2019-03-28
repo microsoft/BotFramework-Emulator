@@ -44,6 +44,7 @@ const mapStateToProps = (state: RootState, { document }) => {
     currentUserId,
     currentUser: state.clientAwareSettings.users.usersById[currentUserId] || {},
     locale: state.clientAwareSettings.locale || 'en-us',
+    debugMode: state.debugMode.debugMode,
     endpoint: ((state.bot.activeBot && state.bot.activeBot.services) || []).find(
       s => s.id === document.endpointId
     ) as IEndpointService,

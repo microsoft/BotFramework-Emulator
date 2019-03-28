@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Settings, SharedConstants } from '@bfemulator/app-shared';
+import { ClientAwareSettings, DebugMode, Settings, SharedConstants } from '@bfemulator/app-shared';
 import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 import { Store } from 'redux';
 
@@ -82,7 +82,8 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
       cwd: (__dirname || '').replace(/\\/g, '/'),
       users: settingsState.users,
       locale: settingsState.framework.locale,
-    });
+      debugMode: settingsState.windowState.debugMode || DebugMode.Normal,
+    } as ClientAwareSettings);
   });
 
   // ---------------------------------------------------------------------------

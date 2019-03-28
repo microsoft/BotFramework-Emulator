@@ -30,53 +30,25 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+import { DebugMode } from '@bfemulator/app-shared';
 
-import { windowStateDefault, WindowStateSettings } from '@bfemulator/app-shared';
+import { DebugModeAction, SWITCH_DEBUG_MODE, SwitchDebugModePayload } from '../action/debugModeAction';
 
-import {
-  REMEMBER_BOUNDS,
-  REMEMBER_DEBUG_MODE,
-  REMEMBER_THEME,
-  REMEMBER_ZOOM_LEVEL,
-  RememberBoundsPayload,
-  RememberDebugModePayload,
-  RememberThemePayload,
-  RememberZoomLevelPayload,
-  WindowStateAction,
-  WindowStatePayload,
-} from '../actions/windowStateActions';
+export interface DebugModeState {
+  debugMode?: DebugMode;
+}
 
-export function windowStateReducer(
-  state: WindowStateSettings = windowStateDefault,
-  action: WindowStateAction<WindowStatePayload>
-) {
+export const initialState = {
+  debugMode: DebugMode.Normal,
+};
+
+export function debugMode(
+  state: DebugModeState = initialState,
+  action: DebugModeAction<SwitchDebugModePayload>
+): DebugModeState {
   switch (action.type) {
-    case REMEMBER_BOUNDS: {
-      const bounds = action.state as RememberBoundsPayload;
-      return {
-        ...state,
-        displayId: bounds.displayId,
-        top: bounds.top,
-        left: bounds.left,
-        width: bounds.width,
-        height: bounds.height,
-      };
-    }
-
-    case REMEMBER_ZOOM_LEVEL: {
-      const { zoomLevel } = action.state as RememberZoomLevelPayload;
-      return { ...state, zoomLevel };
-    }
-
-    case REMEMBER_THEME: {
-      const { theme } = action.payload as RememberThemePayload;
-      return { ...state, theme };
-    }
-
-    case REMEMBER_DEBUG_MODE: {
-      const { debugMode } = action.payload as RememberDebugModePayload;
-      return { ...state, debugMode };
-    }
+    case SWITCH_DEBUG_MODE:
+      return { ...state, ...action.payload };
 
     default:
       return state;

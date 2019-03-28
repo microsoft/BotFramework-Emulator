@@ -30,13 +30,20 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { FrameworkSettings, Settings, SharedConstants } from '@bfemulator/app-shared';
+import { DebugMode, FrameworkSettings, Settings, SharedConstants } from '@bfemulator/app-shared';
 
+import { getActiveBot } from '../../botHelpers';
 import { emulator } from '../../emulator';
 import { mainWindow } from '../../main';
 import { NgrokService } from '../../ngrokService';
 import { FrameworkAction, SET_FRAMEWORK } from '../actions/frameworkActions';
-import { REMEMBER_THEME, RememberThemePayload, WindowStateAction } from '../actions/windowStateActions';
+import {
+  REMEMBER_DEBUG_MODE,
+  REMEMBER_THEME,
+  RememberDebugModePayload,
+  RememberThemePayload,
+  WindowStateAction,
+} from '../actions/windowStateActions';
 
 import { call, ForkEffect, select, takeEvery } from 'redux-saga/effects';
 
@@ -53,6 +60,51 @@ export function* rememberThemeSaga(_action: WindowStateAction<RememberThemePaylo
   yield call(commandService.remoteCall.bind(commandService), SwitchTheme, themeInfo.name, themeInfo.href);
 }
 
+export function* rememberDebugModeSaga(action: WindowStateAction<RememberDebugModePayload>) {
+  const { debugMode } = action.payload;
+  const activeBot = getActiveBot();
+  // If the user has an open botfile, confirm before switching
+  // Note that once this propagates to the client,
+  // it's assumed the user has confirmed that all
+  // tabs will be closed.
+  const { commandService } = mainWindow;
+  if (debugMode === DebugMode.Sidecar && activeBot) {
+    const confirmation = yield call(
+      commandService.call.bind(commandService),
+      SharedConstants.Commands.Electron.ShowMessageBox,
+      true,
+      {
+        buttons: ['Cancel', 'OK'],
+        cancelId: 0,
+        defaultId: 1,
+        message: 'Switch debug modes? All tabs will be closed.',
+        type: 'question',
+      }
+    );
+
+    // User canceled the switch - reset the view menu
+    // since it will already show a checked state when
+    // we get here.
+    if (!confirmation) {
+      yield call(
+        commandService.call.bind(commandService),
+        SharedConstants.Commands.Electron.UpdateDebugModeMenuItem,
+        false
+      );
+      return;
+    } else {
+      // Make sure ngrok is shutdown since the free service does not allow
+      // more than 1 instance running at a time and an externally running
+      // ngrok instance is required for sidecar debugging.
+      yield call(commandService.call.bind(commandService), SharedConstants.Commands.Ngrok.KillProcess);
+    }
+  }
+
+  // If we get here, the user has confirmed to close an open
+  // bot or there is not open bot.
+  yield call(commandService.remoteCall.bind(commandService), SharedConstants.Commands.UI.SwitchDebugMode, debugMode);
+}
+
 export function* setFramework(action: FrameworkAction<FrameworkSettings>): IterableIterator<any> {
   const ngrokService = new NgrokService();
   const { commandService } = mainWindow;
@@ -64,5 +116,6 @@ export function* setFramework(action: FrameworkAction<FrameworkSettings>): Itera
 
 export function* settingsSagas(): IterableIterator<ForkEffect> {
   yield takeEvery(REMEMBER_THEME, rememberThemeSaga);
+  yield takeEvery(REMEMBER_DEBUG_MODE, rememberDebugModeSaga);
   yield takeEvery(SET_FRAMEWORK, setFramework);
 }

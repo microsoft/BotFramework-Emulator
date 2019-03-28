@@ -40,6 +40,7 @@ import { azureAuth, AzureAuthState } from './reducer/azureAuthReducer';
 import { bot, BotState } from './reducer/bot';
 import { chat, ChatState } from './reducer/chat';
 import { clientAwareSettings } from './reducer/clientAwareSettingsReducer';
+import { debugMode, DebugModeState } from './reducer/debugModeReducer';
 import { dialog, DialogState } from './reducer/dialog';
 import { editor, EditorState } from './reducer/editor';
 import { explorer, ExplorerState } from './reducer/explorer';
@@ -67,6 +68,7 @@ export interface RootState {
   progressIndicator?: ProgressIndicatorState;
   resources?: ResourcesState;
   theme?: ThemeState;
+  debugMode?: DebugModeState;
 }
 
 const sagaMiddleWare = sagaMiddlewareFactory();
@@ -79,6 +81,7 @@ const configureStore = (initialState: RootState = DEFAULT_STATE): Store<RootStat
       bot,
       chat,
       clientAwareSettings,
+      debugMode,
       dialog,
       editor,
       explorer,

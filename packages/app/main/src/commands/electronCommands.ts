@@ -32,11 +32,11 @@
 //
 import * as path from 'path';
 
-import { SharedConstants } from '@bfemulator/app-shared';
-import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
-import * as Electron from 'electron';
-import { app, dialog, Menu, MessageBoxOptions } from 'electron';
 import * as fs from 'fs-extra';
+import * as Electron from 'electron';
+import { DebugMode, SharedConstants } from '@bfemulator/app-shared';
+import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
+import { app, dialog, Menu, MessageBoxOptions } from 'electron';
 
 import { AppMenuBuilder } from '../appMenuBuilder';
 import { getStore } from '../botData/store';
@@ -94,6 +94,10 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
       AppMenuBuilder.updateRecentBotsList(recentBots);
     }
   );
+
+  commandRegistry.registerCommand(Commands.UpdateDebugModeMenuItem, async (debugMode: DebugMode) => {
+    AppMenuBuilder.updateDebugModeViewMenuItem(debugMode);
+  });
 
   // ---------------------------------------------------------------------------
   // Builds a new app menu to reflect the updated conversation send activity list

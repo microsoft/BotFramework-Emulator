@@ -41,6 +41,7 @@ import {
   CONTENT_TYPE_LIVE_CHAT,
   CONTENT_TYPE_TRANSCRIPT,
   CONTENT_TYPE_WELCOME_PAGE,
+  WAITING_FOR_CONNECTION,
 } from '../../../../constants';
 import { getOtherTabGroup } from '../../../../data/editorHelpers';
 import { Document, Editor } from '../../../../data/reducer/editor';
@@ -257,6 +258,9 @@ export class TabBar extends React.Component<TabBarProps, TabBarState> {
 
       case CONTENT_TYPE_WELCOME_PAGE:
         return 'Welcome';
+
+      case WAITING_FOR_CONNECTION:
+        return 'Waiting';
 
       case CONTENT_TYPE_TRANSCRIPT:
         return document.fileName || 'Transcript';

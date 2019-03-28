@@ -76,7 +76,8 @@ export const SharedConstants = {
       ShowOpenDialog: 'shell:showExplorer-open-dialog',
       ShowSaveDialog: 'shell:showExplorer-save-dialog',
       UpdateFileMenu: 'menu:update-file-menu',
-      UpdateConversationMenu: 'menu:update-converation-menu',
+      UpdateDebugModeMenuItem: 'menu:update-debug-mode-menu-item',
+      UpdateConversationMenu: 'menu:update-conversation-menu',
       SetFullscreen: 'electron:set-fullscreen',
       SetTitleBar: 'electron:set-title-bar',
       DisplayContextMenu: 'electron:display-context-menu',
@@ -130,6 +131,7 @@ export const SharedConstants = {
 
     Ngrok: {
       Reconnect: 'ngrok:reconnect',
+      KillProcess: 'ngrok:killProcess',
     },
 
     Notifications: {
@@ -160,6 +162,7 @@ export const SharedConstants = {
       ShowSecretPromptDialog: 'secret-prompt:showExplorer',
       SwitchNavBarTab: 'navbar:switch-tab',
       ShowAppSettings: 'shell:showExplorer-app-settings',
+      SwitchDebugMode: 'shell:switchDebugMode',
       SwitchTheme: 'shell:switchTheme',
       SignInToAzure: 'shell:signInToAzure',
       ArmTokenReceivedOnStartup: 'shell:armTokenReceivedOnStartup',

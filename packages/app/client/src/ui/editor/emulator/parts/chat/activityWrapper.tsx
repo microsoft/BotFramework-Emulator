@@ -33,7 +33,7 @@
 
 import * as React from 'react';
 import { Component, ReactNode } from 'react';
-import { Activity } from '@bfemulator/sdk-shared';
+import { Activity } from 'botframework-schema';
 
 import * as styles from './chat.scss';
 
