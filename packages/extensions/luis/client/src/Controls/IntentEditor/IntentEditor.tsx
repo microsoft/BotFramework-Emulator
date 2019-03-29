@@ -44,7 +44,7 @@ const $host: InspectorHost = (window as any).host;
 
 const TraceIntentStatesKey: string = Symbol('PersistedTraceIntentStates').toString();
 
-enum IntentEditorMode {
+export enum IntentEditorMode {
   Enabled,
   Disabled,
   Hidden,
@@ -67,7 +67,7 @@ interface IntentEditorProps {
   intentReassigner: (newIntent: string, needsRetrain: boolean) => Promise<void>;
 }
 
-class IntentEditor extends Component<IntentEditorProps, IntentEditorState> {
+export class IntentEditor extends Component<IntentEditorProps, IntentEditorState> {
   public static getDerivedStateFromProps(nextProps: IntentEditorProps, prevState: IntentEditorState) {
     const currentTraceIntentStates = prevState.traceIntentStates;
     if (nextProps.traceId in currentTraceIntentStates) {
@@ -152,5 +152,3 @@ class IntentEditor extends Component<IntentEditorProps, IntentEditorState> {
     localStorage.setItem(TraceIntentStatesKey, JSON.stringify(states));
   }
 }
-
-export { IntentEditor, IntentEditorMode };

@@ -53,7 +53,8 @@ import upload from './upload';
 
 jest.mock('formidable', () => ({
   IncomingForm: class {
-    parse(req: any, callback: (err: any, fields: any, files: any) => any) {
+    // jest won't allow the use of args in this callback signature unless they are prefaced with 'mock'
+    parse(req: any, callback: (mockErr: any, mockFields: any, mockFiles: any) => any) {
       return callback(null, null, { activity: req.activity, file: req.file });
     }
   },

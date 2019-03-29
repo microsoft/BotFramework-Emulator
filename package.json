@@ -5,7 +5,7 @@
     "lint": "lerna run lint --no-bail",
     "lint:fix": "lerna run lint:fix --no-bail",
     "start": "cd packages\\app\\client && npm run start",
-    "test": "jest --no-cache",
+    "test": "jest --no-cache --runInBand",
     "test:coveralls": "jest --runInBand --coverage --coverageReporters=text-lcov | coveralls"
   },
   "devDependencies": {

@@ -36,7 +36,7 @@ import { Component, MouseEventHandler } from 'react';
 
 import * as styles from './ControlBar.scss';
 
-enum ButtonSelected {
+export enum ButtonSelected {
   RecognizerResult,
   RawResponse,
 }
@@ -48,7 +48,7 @@ interface ControlBarProps {
   buttonSelected: ButtonSelected;
 }
 
-class ControlBar extends Component<ControlBarProps, ControlBarState> {
+export class ControlBar extends Component<ControlBarProps, ControlBarState> {
   public clickHandler: MouseEventHandler<HTMLAnchorElement> = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
     this.props.setButtonSelected(ButtonSelected[e.currentTarget.id]);
@@ -85,5 +85,3 @@ class ControlBar extends Component<ControlBarProps, ControlBarState> {
     );
   }
 }
-
-export { ControlBar, ButtonSelected };

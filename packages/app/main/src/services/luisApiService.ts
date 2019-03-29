@@ -76,7 +76,7 @@ export class LuisApi {
     // a single array of LuisModel[]
     const luisModels = results
       .filter(result => !('error' in result))
-      .reduce((agg: LuisModel[], models) => (agg.push(...models as LuisModel[]), agg), []) as LuisModel[];
+      .reduce((agg: LuisModel[], models) => (agg.push(...(models as LuisModel[])), agg), []) as LuisModel[];
     // 4.
     // Mutate the list into an array of ILuisService[]
     payload.services = luisModels.map(

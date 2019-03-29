@@ -1,0 +1,7 @@
+html {
+  --luis-default-color: var(--neutral-6);
+  --luis-header-bold-color: var(--neutral-1);
+  --luis-control-bar-color: var(--log-panel-link);
+  --luis-json-color: var(--neutral-1);
+  --luis-intent-editor-warning-color: var(--error-text);
+}
