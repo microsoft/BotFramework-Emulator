@@ -218,13 +218,6 @@ html {
 
   /* Scrollbar */
   --scrollbar-color: var(--neutral-6);
-
-  /* Luis Inspector */
-  --luis-default-color: var(--neutral-6);
-  --luis-header-bold-color: var(--neutral-2);
-  --luis-control-bar-color: var(--log-panel-link);
-  --luis-json-color: var(--neutral-2);
-  --luis-intent-editor-warning-color: var(--error-text);
 }
 
 .dialog {

@@ -180,6 +180,7 @@ export class App extends Component<any, AppState> {
     });
 
     $host.on('theme', async (themeInfo: { themeName: string; themeComponents: string[] }) => {
+      const { themeName = '' } = themeInfo;
       const oldThemeComponents = document.querySelectorAll<HTMLLinkElement>('[data-theme-component="true"]');
       const head = document.querySelector<HTMLHeadElement>('head') as HTMLHeadElement;
       const fragment = document.createDocumentFragment();
@@ -197,6 +198,18 @@ export class App extends Component<any, AppState> {
         link.setAttribute('data-theme-component', 'true');
         fragment.appendChild(link);
       });
+      // Create the link for luis-specific themed styles
+      const luisStyleLink = document.createElement<'link'>('link');
+      promises.push(
+        new Promise(resolve => {
+          luisStyleLink.addEventListener('load', resolve);
+        })
+      );
+      luisStyleLink.href = `./themes/${themeName.toLowerCase()}-luis.css`;
+      luisStyleLink.rel = 'stylesheet';
+      luisStyleLink.setAttribute('data-theme-component', 'true');
+      fragment.appendChild(luisStyleLink);
+      // insert links into document
       head.insertBefore(fragment, head.firstElementChild);
       // Wait for all the links to load their css
       await Promise.all(promises);

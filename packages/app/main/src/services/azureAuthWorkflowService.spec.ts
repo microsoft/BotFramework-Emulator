@@ -81,7 +81,7 @@ jest.mock('electron', () => ({
       // no-op
     }
 
-    addListener(type: string, handler: (event: any) => void) {
+    addListener(type: string, handler: () => void) {
       this.listeners.push({ type, handler });
       MockBrowserWindow.report('addListener', type, handler);
       if (type === 'page-title-updated') {
@@ -97,7 +97,7 @@ jest.mock('electron', () => ({
       }
     }
 
-    once(type: string, handler: (event: any) => void) {
+    once(type: string, handler: () => void) {
       this.listeners.push({ type, handler });
       MockBrowserWindow.report('once', type, handler);
     }
