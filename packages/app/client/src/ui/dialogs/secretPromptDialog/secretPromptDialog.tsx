@@ -58,12 +58,7 @@ export class SecretPromptDialog extends React.Component<SecretPromptDialogProps,
 
   public render(): JSX.Element {
     return (
-      <Dialog
-        title="Your bot file is encrypted"
-        className={dialogStyles.dialogMedium}
-        modalStyle={styles.secretPromptDialogModal}
-        cancel={this.onDismissClick}
-      >
+      <Dialog title="Your bot file is encrypted" className={dialogStyles.dialogMedium} cancel={this.onDismissClick}>
         <p>
           {' If you created your bot through the Azure Bot Service, you can find your bot file secret in the Azure ' +
             'portal under Application settings.'}
