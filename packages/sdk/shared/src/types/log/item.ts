@@ -33,75 +33,76 @@
 
 import { LogLevel } from './level';
 
-export type ILogItem =
-  | {
-      type: 'text';
-      payload: {
-        level: LogLevel;
-        text: string;
-      };
-    }
-  | {
-      type: 'external-link';
-      payload: {
-        text: string;
-        hyperlink: string;
-      };
-    }
-  | {
-      type: 'inspectable-object';
-      payload: {
-        text: string;
-        obj: any;
-      };
-    }
-  | {
-      type: 'network-request';
-      payload: {
-        facility?: string;
-        body?: string;
-        headers?: { [header: string]: number | string | string[] };
-        method?: string;
-        url?: string;
-      };
-    }
-  | {
-      type: 'network-response';
-      payload: {
-        body?: string;
-        headers?: { [header: string]: number | string | string[] };
-        statusCode?: number;
-        statusMessage?: string;
-        srcUrl?: string;
-      };
-    }
-  | {
-      type: 'summary-text';
-      payload: {
-        obj: any;
-      };
-    }
-  | {
-      type: 'open-app-settings';
-      payload: {
-        text: string;
-      };
-    }
-  | {
-      type: 'exception';
-      payload: {
-        err: any; // Shape of `Error`, but enumerable
-      };
-    }
-  | {
-      type: 'ngrok-expiration';
-      payload: {
-        text: string;
-      };
-    }
-  | {
-      type: 'luis-editor-deep-link';
-      payload: {
-        text: string;
-      };
-    };
+export enum LogItemType {
+  Text = 'text',
+  ExternalLink = 'external-link',
+  InspectableObject = 'inspectable-object',
+  NetworkRequest = 'network-request',
+  NetworkResponse = 'network-response',
+  SummaryText = 'summary-text',
+  OpenAppSettings = 'open-app-settings',
+  Exception = 'exception',
+  NgrokExpiration = 'ngrok-expiration',
+}
+export type LogItemPayload =
+  | TextLogItem
+  | ExternalLinkLogItem
+  | InspectableObjectLogItem
+  | NetworkRequestLogItem
+  | NetworkResponseLogItem
+  | SummaryTextLogItem
+  | OpenAppSettingsLogItem
+  | ExceptionLogItem
+  | NgrokExpirationLogItem;
+
+export interface LogItem<T = LogItemPayload> {
+  type: LogItemType;
+  payload: T;
+}
+
+export interface TextLogItem {
+  level: LogLevel;
+  text: string;
+}
+
+export interface ExternalLinkLogItem {
+  text: string;
+  hyperlink: string;
+}
+
+export interface InspectableObjectLogItem {
+  text: string;
+  obj: any;
+}
+
+export interface NetworkRequestLogItem {
+  facility?: string;
+  body?: string;
+  headers?: { [header: string]: number | string | string[] };
+  method?: string;
+  url?: string;
+}
+
+export interface NetworkResponseLogItem {
+  body?: string;
+  headers?: { [header: string]: number | string | string[] };
+  statusCode?: number;
+  statusMessage?: string;
+  srcUrl?: string;
+}
+
+export interface SummaryTextLogItem {
+  obj: any;
+}
+
+export interface OpenAppSettingsLogItem {
+  text: string;
+}
+
+export interface ExceptionLogItem {
+  err: any; // Shape of `Error`, but enumerable
+}
+
+export interface NgrokExpirationLogItem {
+  text: string;
+}

@@ -31,14 +31,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { LogEntry } from '@bfemulator/sdk-shared';
+import { Activity, LogEntry } from '@bfemulator/sdk-shared';
 import { Action } from 'redux';
 
 export enum ChatActions {
   activeInspectorChanged = 'CHAT/INSPECTOR/CHANGED',
   newChat = 'CHAT/DOCUMENT/NEW',
   openChat = 'CHAT/DOCUMENT/OPEN',
-  closeChat = 'CHAT/DOCUMENT/CLOSE',
+  closeConversation = 'CHAT/CLOSE',
+  closeDocument = 'CHAT/DOCUMENT/CLOSE',
   newConversation = 'CHAT/CONVERSATION/NEW',
   appendLog = 'CHAT/LOG/APPEND',
   clearLog = 'CHAT/LOG/CLEAR',
@@ -47,6 +48,7 @@ export enum ChatActions {
   clearTranscripts = 'CHAT/TRANSCRIPT/CLEAR',
   removeTranscript = 'CHAT/TRANSCRIPT/REMOVE',
   updateChat = 'CHAT/DOCUMENT/UPDATE',
+  showContextMenuForActivity = 'CHAT/CONTEXT_MENU/SHOW',
 }
 
 export interface ActiveInspectorChangedPayload {
@@ -62,7 +64,7 @@ export interface NewChatAction {
   };
 }
 
-export interface CloseChatPayload {
+export interface DocumentIdPayload {
   documentId: string;
 }
 
@@ -173,9 +175,18 @@ export function newDocument(documentId: string, mode: ChatMode, additionalData?:
   };
 }
 
-export function closeDocument(documentId: string): ChatAction<CloseChatPayload> {
+export function closeDocument(documentId: string): ChatAction<DocumentIdPayload> {
   return {
-    type: ChatActions.closeChat,
+    type: ChatActions.closeDocument,
+    payload: {
+      documentId,
+    },
+  };
+}
+
+export function closeConversation(documentId: string): ChatAction<DocumentIdPayload> {
+  return {
+    type: ChatActions.closeConversation,
     payload: {
       documentId,
     },
@@ -229,5 +240,12 @@ export function updateChat(documentId: string, updatedValues: any): ChatAction<U
       documentId,
       updatedValues,
     },
+  };
+}
+
+export function showContextMenuForActivity(activity: Activity): ChatAction<Activity> {
+  return {
+    type: ChatActions.showContextMenuForActivity,
+    payload: activity,
   };
 }

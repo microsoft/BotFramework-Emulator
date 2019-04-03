@@ -45,7 +45,7 @@ import Conversation from './conversation';
  * A set of conversations with a bot.
  */
 export default class ConversationSet extends EventEmitter {
-  private conversations: Conversation[] = [];
+  private conversations: { [conversationId: string]: Conversation } = {};
 
   // TODO: May be we want to move "bot" back to the constructor
   public newConversation(
@@ -62,17 +62,21 @@ export default class ConversationSet extends EventEmitter {
     if (!/(\|livechat|\|transcript)/.test(conversation.conversationId)) {
       conversation.conversationId += '|livechat';
     }
-    this.conversations.push(conversation);
+    this.conversations[conversation.conversationId] = conversation;
     this.emit('new', conversation);
 
     return conversation;
   }
 
   public conversationById(conversationId: string): Conversation {
-    return this.conversations.find(value => value.conversationId === conversationId);
+    return this.conversations[conversationId];
   }
 
   public getConversationIds(): string[] {
-    return this.conversations.map(conversation => conversation.conversationId);
+    return Object.keys(this.conversations);
+  }
+
+  public deleteConversation(conversationId: string): boolean {
+    return delete this.conversations[conversationId];
   }
 }

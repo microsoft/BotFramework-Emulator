@@ -31,12 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Menu, MenuItemConstructorOptions } from 'electron';
+import { Menu, MenuItem, MenuItemConstructorOptions } from 'electron';
 
 export class ContextMenuService {
   private static currentMenu: Menu;
 
-  public static showMenuAndWaitForInput(options: Partial<MenuItemConstructorOptions>[] = []): Promise<any> {
+  public static showMenuAndWaitForInput(options: Partial<MenuItemConstructorOptions>[] = []): Promise<MenuItem> {
     if (ContextMenuService.currentMenu) {
       ContextMenuService.currentMenu.closePopup();
     }

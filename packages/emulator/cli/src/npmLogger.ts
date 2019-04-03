@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { GenericActivity, Logger, ILogItem, LogLevel } from '@bfemulator/sdk-shared';
+import { GenericActivity, Logger, LogItem, LogItemType, LogLevel, TextLogItem } from '@bfemulator/sdk-shared';
 import * as log from 'npmlog';
 
 function shortId(id: string) {
@@ -59,15 +59,10 @@ export default class NpmLogger implements Logger {
     log.verbose(shortId(conversationId), `Activity to ${role}`, activity);
   }
 
-  public logMessage(conversationId: string, ...items: ILogItem[]) {
+  public logMessage(conversationId: string, ...items: LogItem<TextLogItem>[]) {
     items.forEach(message => {
-      switch (message.type) {
-        case 'text':
-          logLevel(message.payload.level)(shortId(conversationId), message.payload.text);
-          break;
-
-        default:
-          return null;
+      if (message.type === LogItemType.Text) {
+        logLevel(message.payload.level)(shortId(conversationId), message.payload.text);
       }
     });
   }

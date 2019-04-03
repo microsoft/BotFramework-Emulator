@@ -33,7 +33,7 @@
 import {
   exceptionItem,
   GenericActivity,
-  ILogItem,
+  LogItem,
   inspectableObjectItem,
   Logger,
   LogLevel,
@@ -50,7 +50,7 @@ export default class LoggerAdapter implements Logger {
   }
 
   public logActivity(conversationId: string, activity: GenericActivity, role: string) {
-    let direction: ILogItem;
+    let direction: LogItem;
     if (role === 'user') {
       direction = textItem(LogLevel.Debug, '<-');
     } else {
@@ -64,7 +64,7 @@ export default class LoggerAdapter implements Logger {
     );
   }
 
-  public logMessage(conversationId: string, ...items: ILogItem[]) {
+  public logMessage(conversationId: string, ...items: LogItem[]) {
     this.logService.logToChat(conversationId, ...items);
   }
 

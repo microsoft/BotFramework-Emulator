@@ -84,14 +84,14 @@ export function chat(state: ChatState = DEFAULT_STATE, action: ChatAction | Edit
       break;
     }
 
-    case ChatActions.closeChat: {
-      const { payload } = action;
+    case ChatActions.closeDocument: {
+      const { documentId } = action.payload;
       // can't use the JSON.parse(JSON.stringify())
       // trick with chats because Subscribers are circular
-      if (payload.documentId in state.chats) {
+      if (documentId in state.chats) {
         const copy = { ...state };
         copy.changeKey += 1;
-        delete copy.chats[payload.documentId];
+        delete copy.chats[documentId];
         state = { ...copy };
       }
       break;

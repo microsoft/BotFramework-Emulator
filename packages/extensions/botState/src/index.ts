@@ -36,8 +36,7 @@ import { HierarchyPointNode } from 'd3';
 export class BotStateVisualizer {
   private readonly selector: string;
   private dataProvider: HierarchicalData;
-  private dx: number = 0;
-  private dy: number = 0;
+  private isDiff: boolean;
 
   private static getDataProvider(botState: BotState): HierarchicalData {
     const dataProvider = { name: 'botState', children: [] };
@@ -46,23 +45,10 @@ export class BotStateVisualizer {
     return dataProvider;
   }
 
-  private static getClassNameFromValueType(data: HierarchyPointNode<HierarchicalData>): string {
-    const type = data.data.value ? typeof data.data.value : null;
-    switch (type) {
-      case 'string':
-      case 'number':
-      case 'boolean':
-        return type;
-
-      default:
-        return 'null';
-    }
-  }
-
   private static getNodeText(data: HierarchyPointNode<HierarchicalData>): string {
     let { name } = data.data;
+    // filter out undefined only
     if (data.data.value !== undefined) {
-      // filter out undefined only
       name += ': ' + data.data.value;
     }
     return name;
@@ -81,13 +67,30 @@ export class BotStateVisualizer {
     });
   }
 
+  private static buildTree(data: HierarchicalData) {
+    const root = d3.hierarchy<any>(data).sort((a, b) => {
+      if (!isNaN(+a.data.name) && !isNaN(+b.data.name)) {
+        if (a.data.name < b.data.name) {
+          return -1;
+        }
+        if (a.data.name > b.data.name) {
+          return 1;
+        }
+        return 0;
+      } else {
+        return a.height - b.height;
+      }
+    });
+    return d3.cluster().nodeSize([15, (document.body.clientWidth - 250) / root.height])(root);
+  }
+
   constructor(selector: string) {
     this.selector = selector;
     this.listen();
   }
 
   public renderTree() {
-    const root = this.tree(this.dataProvider);
+    const root = BotStateVisualizer.buildTree(this.dataProvider);
 
     const svg = d3.select(this.selector);
 
@@ -96,8 +99,7 @@ export class BotStateVisualizer {
     const g = svg
       .append('g')
       .attr('font-family', 'Menlo')
-      .attr('font-size', 10)
-      .attr('transform', `translate(70, 35)`);
+      .attr('font-size', 10);
 
     g.append('g')
       .attr('fill', 'none')
@@ -111,8 +113,8 @@ export class BotStateVisualizer {
         'd',
         d => `
         M${d.target.y},${d.target.x}
-        C${d.source.y + this.dy / 2},${d.target.x}
-         ${d.source.y + this.dy / 2},${d.source.x}
+        C${d.source.y + 5},${d.target.x}
+         ${d.source.y + 5},${d.source.x}
          ${d.source.y},${d.source.x}
       `
       );
@@ -136,21 +138,52 @@ export class BotStateVisualizer {
       .attr('dy', '0.31em')
       .attr('x', d => (d.children ? -6 : 6))
       .text(BotStateVisualizer.getNodeText)
-      .attr('class', BotStateVisualizer.getClassNameFromValueType)
+      .attr('class', this.getClassNameFromValueType)
       .filter((d: any) => d.children)
       .attr('text-anchor', 'end')
       .lower();
 
-    svg.style('height', (g.node() as SVGElement).getBoundingClientRect().height);
-    svg.style('width', (g.node() as SVGElement).getBoundingClientRect().width);
+    const gRect = (g.node() as SVGElement).getBoundingClientRect();
+    const svgRect = (svg.node() as SVGElement).getBoundingClientRect();
+    svg.style('height', gRect.height);
+    svg.style('width', gRect.width);
+
+    // Center the svg within the window
+    svg.attr('transform', `translate(0, ${(document.body.clientHeight - gRect.height) / 2})`);
+    // center the graphic tag within the svg
+    g.attr('transform', `translate(70, ${Math.abs(gRect.top - svgRect.top)})`);
     return svg.node();
   }
+
+  private getClassNameFromValueType = (data: HierarchyPointNode<HierarchicalData>): string => {
+    let { name } = data.data;
+    if (this.isDiff) {
+      if (name.startsWith('+')) {
+        return 'added';
+      }
+      if (name.startsWith('-')) {
+        return 'removed';
+      }
+      return 'subtle';
+    }
+    const type = data.data.value ? typeof data.data.value : null;
+    switch (type) {
+      case 'string':
+      case 'number':
+      case 'boolean':
+        return type;
+
+      default:
+        return 'null';
+    }
+  };
 
   private listen() {
     if (!window.hasOwnProperty('host')) {
       return;
     }
-    (window as any).host.on('inspect', (data: { value: BotState }) => {
+    (window as any).host.on('inspect', (data: { value: BotState; valueType: string }) => {
+      this.isDiff = data.valueType.endsWith('diff');
       this.dataProvider = BotStateVisualizer.getDataProvider(data.value);
       this.renderTree();
     });
@@ -183,15 +216,6 @@ export class BotStateVisualizer {
         }
       });
     });
-  }
-
-  private tree(data: any) {
-    const root = d3.hierarchy<any>(data).sort((a, b) => {
-      return a.height - b.height || a.data.name.localeCompare(b.data.name);
-    });
-    this.dx = 10;
-    this.dy = document.body.clientHeight / (root.height + 1);
-    return d3.cluster().nodeSize([15, document.body.clientWidth / (root.height + 9)])(root);
   }
 }
 

@@ -230,4 +230,10 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
     dispatch(setCurrentUser(user));
     await mainWindow.commandService.call(SharedConstants.Commands.Settings.PushClientAwareSettings);
   });
+
+  // ---------------------------------------------------------------------------
+  // Removes the conversation from the conversation set
+  commandRegistry.registerCommand(Commands.DeleteConversation, (conversationId: string) => {
+    return emulator.framework.server.botEmulator.facilities.conversations.deleteConversation(conversationId);
+  });
 }

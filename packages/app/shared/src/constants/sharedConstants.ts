@@ -104,6 +104,7 @@ export const SharedConstants = {
       OpenChatFile: 'chat:open',
       AppendToLog: 'log:append',
       SetCurrentUser: 'emulator:set-current-user',
+      DeleteConversation: 'emulator:delete-conversation',
     },
 
     Extension: {

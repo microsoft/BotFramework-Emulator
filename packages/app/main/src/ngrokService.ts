@@ -32,7 +32,7 @@
 //
 
 import { FrameworkSettings } from '@bfemulator/app-shared';
-import { ILogItem } from '@bfemulator/sdk-shared';
+import { LogItem } from '@bfemulator/sdk-shared';
 import { LogLevel } from '@bfemulator/sdk-shared';
 import { isLocalHostUrl } from '@bfemulator/sdk-shared';
 import {
@@ -149,7 +149,7 @@ export class NgrokService {
   }
 
   /** Logs an item to all open conversations */
-  public broadcast(...logItems: ILogItem[]): void {
+  public broadcast(...logItems: LogItem[]): void {
     const { conversations } = emulator.framework.server.botEmulator.facilities;
     const conversationIds: string[] = conversations.getConversationIds();
     conversationIds.forEach(id => {

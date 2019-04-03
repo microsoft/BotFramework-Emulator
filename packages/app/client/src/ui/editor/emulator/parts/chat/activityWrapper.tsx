@@ -32,26 +32,25 @@
 //
 
 import * as React from 'react';
-import { Component, ReactNode } from 'react';
+import { Component, HTMLAttributes, KeyboardEvent, MouseEvent, ReactNode } from 'react';
 import { Activity } from 'botframework-schema';
 
 import * as styles from './chat.scss';
 
-interface ActivityWrapperProps {
+interface ActivityWrapperProps extends HTMLAttributes<HTMLDivElement> {
   activity: Activity;
   children: ReactNode;
   isSelected: boolean;
-  onClick: (activity: Activity) => void;
 }
 
 // Returns false if the event target is normally an interactive element.
 function shouldSelectActivity(e: React.SyntheticEvent): boolean {
   // recurse on currentNode.parentElement until chatActivity is reached
   let currentNode = e.target as HTMLElement;
-  const interactiveElements = ['button', 'a'];
+  const interactiveElements = { BUTTON: true, A: true };
 
   while (!currentNode.classList.contains(styles.chatActivity)) {
-    if (interactiveElements.includes(currentNode.tagName.toLowerCase())) {
+    if (interactiveElements[currentNode.tagName]) {
       return false;
     }
 
@@ -63,7 +62,7 @@ function shouldSelectActivity(e: React.SyntheticEvent): boolean {
 
 class ActivityWrapper extends Component<ActivityWrapperProps> {
   render() {
-    const { activity, children, isSelected } = this.props;
+    const { activity: _, children, isSelected, ...divProps } = this.props;
     let classes = styles.chatActivity;
 
     if (isSelected) {
@@ -72,9 +71,10 @@ class ActivityWrapper extends Component<ActivityWrapperProps> {
 
     return (
       <div
+        {...divProps}
         className={classes}
-        onClick={this.setSelectedActivity(activity)}
-        onKeyDown={this.onKeyDown(activity)}
+        onClick={this.setSelectedActivity}
+        onKeyDown={this.onKeyDown}
         role="button"
         tabIndex={0}
       >
@@ -83,15 +83,15 @@ class ActivityWrapper extends Component<ActivityWrapperProps> {
     );
   }
 
-  private setSelectedActivity = (activity: Activity) => (e: React.SyntheticEvent) => {
+  private setSelectedActivity = (e: MouseEvent<HTMLDivElement>) => {
     if (shouldSelectActivity(e)) {
-      this.props.onClick(activity);
+      this.props.onClick(e);
     }
   };
 
-  private onKeyDown = (activity: Activity) => (e: React.KeyboardEvent) => {
+  private onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (shouldSelectActivity(e) && [' ', 'Enter'].includes(e.key)) {
-      this.props.onClick(activity);
+      this.props.onKeyDown(e);
     }
   };
 }

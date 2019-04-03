@@ -36,7 +36,7 @@ import { IEndpointService } from 'botframework-config/lib/schema';
 import { Activity, ActivityTypes } from 'botframework-schema';
 import ReactWebChat, { createCognitiveServicesBingSpeechPonyfillFactory } from 'botframework-webchat';
 import * as React from 'react';
-import { Component, ReactNode } from 'react';
+import { Component, KeyboardEvent, MouseEvent, ReactNode } from 'react';
 
 import { CommandServiceImpl } from '../../../../../platform/commands/commandServiceImpl';
 import { EmulatorMode } from '../../emulator';
@@ -56,6 +56,7 @@ export interface ChatProps {
   locale: string;
   selectedActivity: Activity | null;
   updateSelectedActivity: (activity: Partial<Activity>) => void;
+  showContextMenuForActivity: (activity: Partial<Activity>) => void;
 }
 
 interface ChatState {
@@ -89,6 +90,8 @@ export async function getSpeechToken(endpoint: IEndpointService, refresh: boolea
 }
 
 export class Chat extends Component<ChatProps, ChatState> {
+  private activityMap: { [activityId: string]: Activity };
+
   constructor(props: ChatProps, context: {}) {
     super(props, context);
 
@@ -115,6 +118,7 @@ export class Chat extends Component<ChatProps, ChatState> {
   }
 
   public render() {
+    this.activityMap = {};
     const { currentUser, currentUserId, document, locale, mode, debugMode } = this.props;
 
     if (this.state.waitForSpeechToken) {
@@ -153,7 +157,9 @@ export class Chat extends Component<ChatProps, ChatState> {
     return (
       <ActivityWrapper
         activity={card.activity}
-        onClick={this.props.updateSelectedActivity}
+        data-activity-id={card.activity.id}
+        onClick={this.onActivityWrapperClick}
+        onKeyDown={this.onActivityWrapperKeyDown}
         isSelected={isCardSelected(this.props.selectedActivity, card.activity)}
       >
         {next(card)(children)}
@@ -162,6 +168,8 @@ export class Chat extends Component<ChatProps, ChatState> {
   }
 
   private createActivityMiddleware = () => next => card => children => {
+    this.activityMap[card.activity.id] = card.activity;
+
     switch (card.activity.type) {
       case ActivityTypes.Trace:
         return this.renderTraceActivity(next, card, children);
@@ -185,6 +193,7 @@ export class Chat extends Component<ChatProps, ChatState> {
       if (card.activity.valueType === valueType) {
         activity = {
           type: ActivityTypes.Message,
+          id: card.activity.id,
           text: '<Bot State Object>',
           from: { role: 'bot' },
           value: activity,
@@ -197,11 +206,32 @@ export class Chat extends Component<ChatProps, ChatState> {
     return (
       <ActivityWrapper
         activity={activity}
-        onClick={this.props.updateSelectedActivity}
+        data-activity-id={card.activity.id}
+        onKeyDown={this.onActivityWrapperKeyDown}
+        onClick={this.onActivityWrapperClick}
+        onContextMenu={this.onContextMenu}
         isSelected={isCardSelected(this.props.selectedActivity, activity)}
       >
         {next({ activity, timestampClassName: 'transcript-timestamp' })(children)}
       </ActivityWrapper>
     );
   }
+
+  private onActivityWrapperClick = (event: MouseEvent<HTMLDivElement>): void => {
+    const { activityId } = (event.currentTarget as any).dataset;
+    this.props.updateSelectedActivity(this.activityMap[activityId]);
+  };
+
+  private onActivityWrapperKeyDown = (event: KeyboardEvent<HTMLDivElement>): void => {
+    const { activityId } = (event.currentTarget as any).dataset;
+    this.props.updateSelectedActivity(this.activityMap[activityId]);
+  };
+
+  private onContextMenu = (event: MouseEvent<HTMLDivElement>): void => {
+    const { activityId } = (event.currentTarget as any).dataset;
+    const activity = this.activityMap[activityId];
+
+    this.props.updateSelectedActivity(activity);
+    this.props.showContextMenuForActivity(activity);
+  };
 }

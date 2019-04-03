@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { newNotification, SharedConstants } from '@bfemulator/app-shared';
+import { DebugMode, newNotification, SharedConstants } from '@bfemulator/app-shared';
 import { Activity, CommandRegistryImpl, isLocalHostUrl, uniqueId } from '@bfemulator/sdk-shared';
 import { IEndpointService } from 'botframework-config/lib/schema';
 
@@ -70,15 +70,18 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
       if (!documentId) {
         documentId = uniqueId();
         const { currentUserId } = state.clientAwareSettings.users;
-        store.dispatch(
-          ChatActions.newDocument(documentId, 'livechat', {
-            botId: 'bot',
-            endpointId: endpoint.id,
-            endpointUrl: endpoint.endpoint,
-            userId: currentUserId,
-            conversationId,
-          })
-        );
+        const action = ChatActions.newDocument(documentId, 'livechat', {
+          botId: 'bot',
+          endpointId: endpoint.id,
+          endpointUrl: endpoint.endpoint,
+          userId: currentUserId,
+          conversationId,
+        });
+        if (state.debugMode.debugMode === DebugMode.Sidecar) {
+          action.payload.ui.horizontalSplitter[0].percentage = 75;
+          action.payload.ui.verticalSplitter[0].percentage = 25;
+        }
+        store.dispatch(action);
       }
 
       if (!isLocalHostUrl(endpoint.endpoint)) {

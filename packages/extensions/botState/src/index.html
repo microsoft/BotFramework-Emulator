@@ -42,11 +42,11 @@
       fill: var(--log-panel-link);
     }
 
-    .string {
+    .string, .removed {
       fill: var(--log-panel-item-error);
     }
 
-    .number {
+    .number, .added {
       fill: var(--log-panel-timestamp);
     }
 
@@ -61,8 +61,13 @@
     .default {
       fill: var(--log-panel-item-info);
     }
+
+    .empty, .subtle {
+      fill: var(--input-label-color-disabled);
+    }
   </style>
 </head>
+<body>
 <svg id="bot-state-visualizer"></svg>
 <script type="application/javascript" src="botstate.js"></script>
 </body>

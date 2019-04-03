@@ -32,7 +32,7 @@
 //
 
 import { SharedConstants } from '@bfemulator/app-shared';
-import { DisposableImpl, ILogItem, LogService as ILogService, logEntry } from '@bfemulator/sdk-shared';
+import { DisposableImpl, LogItem, LogService as ILogService, logEntry } from '@bfemulator/sdk-shared';
 
 import { Window } from '../window';
 
@@ -41,7 +41,7 @@ export class LogService extends DisposableImpl implements ILogService {
     super();
   }
 
-  public logToChat(conversationId: string, ...items: ILogItem[]): void {
+  public logToChat(conversationId: string, ...items: LogItem[]): void {
     this._window.commandService.remoteCall(
       SharedConstants.Commands.Emulator.AppendToLog,
       conversationId,

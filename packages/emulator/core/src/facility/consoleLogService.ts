@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ILogItem, LogLevel, LogService } from '@bfemulator/sdk-shared';
+import { LogItem, LogItemType, LogLevel, LogService, TextLogItem } from '@bfemulator/sdk-shared';
 import log from 'npmlog';
 
 function logLevel(logLevelArg: LogLevel) {
@@ -51,16 +51,10 @@ function logLevel(logLevelArg: LogLevel) {
 }
 
 export default class ConsoleLogService implements LogService {
-  public logToChat(conversationId: string, ...items: ILogItem[]) {
+  public logToChat(conversationId: string, ...items: LogItem<TextLogItem>[]) {
     items.forEach(message => {
-      switch (message.type) {
-        case 'text': {
-          logLevel(message.payload.level)(conversationId ? conversationId : '', message.payload.text);
-          break;
-        }
-
-        default:
-          break;
+      if (message.type === LogItemType.Text) {
+        logLevel(message.payload.level)(conversationId ? conversationId : '', message.payload.text);
       }
     });
   }

@@ -31,7 +31,20 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ILogItem, LogEntry as ILogEntry, LogLevel } from '@bfemulator/sdk-shared';
+import {
+  ExceptionLogItem,
+  ExternalLinkLogItem,
+  InspectableObjectLogItem,
+  LogEntry as ILogEntry,
+  LogItem,
+  LogItemType,
+  LogLevel,
+  NetworkRequestLogItem,
+  NetworkResponseLogItem,
+  NgrokExpirationLogItem,
+  OpenAppSettingsLogItem,
+  TextLogItem,
+} from '@bfemulator/sdk-shared';
 import * as React from 'react';
 
 import { ExtensionManager, InspectorAPI } from '../../../../../extensions';
@@ -149,42 +162,42 @@ export class LogEntry extends React.Component<LogEntryProps> {
     );
   }
 
-  renderItem(item: ILogItem, key: string) {
+  renderItem(item: LogItem, key: string) {
     switch (item.type) {
-      case 'text': {
-        const { level, text } = item.payload;
+      case LogItemType.Text: {
+        const { level, text } = item.payload as TextLogItem;
         return this.renderTextItem(level, text, key);
       }
-      case 'external-link': {
-        const { text, hyperlink } = item.payload;
+      case LogItemType.ExternalLink: {
+        const { text, hyperlink } = item.payload as ExternalLinkLogItem;
         return this.renderExternalLinkItem(text, hyperlink, key);
       }
-      case 'open-app-settings': {
-        const { text } = item.payload;
+      case LogItemType.OpenAppSettings: {
+        const { text } = item.payload as OpenAppSettingsLogItem;
         return this.renderAppSettingsItem(text, key);
       }
-      case 'exception': {
-        const { err } = item.payload;
+      case LogItemType.Exception: {
+        const { err } = item.payload as ExceptionLogItem;
         return this.renderExceptionItem(err, key);
       }
-      case 'inspectable-object': {
-        const { obj } = item.payload;
+      case LogItemType.InspectableObject: {
+        const { obj } = item.payload as InspectableObjectLogItem;
         return this.renderInspectableItem(obj, key);
+      }
+      case LogItemType.NetworkRequest: {
+        const { facility, body, headers, method, url } = item.payload as NetworkRequestLogItem;
+        return this.renderNetworkRequestItem(facility, body, headers, method, url, key);
       }
       case 'luis-editor-deep-link': {
         const { text } = item.payload;
         return this.renderLuisEditorDeepLinkItem(text, key);
       }
-      case 'network-request': {
-        const { facility, body, headers, method, url } = item.payload;
-        return this.renderNetworkRequestItem(facility, body, headers, method, url, key);
-      }
-      case 'network-response': {
-        const { body, headers, statusCode, statusMessage, srcUrl } = item.payload;
+      case LogItemType.NetworkResponse: {
+        const { body, headers, statusCode, statusMessage, srcUrl } = item.payload as NetworkResponseLogItem;
         return this.renderNetworkResponseItem(body, headers, statusCode, statusMessage, srcUrl, key);
       }
-      case 'ngrok-expiration': {
-        const { text } = item.payload;
+      case LogItemType.NgrokExpiration: {
+        const { text } = item.payload as NgrokExpirationLogItem;
         return this.renderNgrokExpirationItem(text, key);
       }
       default:

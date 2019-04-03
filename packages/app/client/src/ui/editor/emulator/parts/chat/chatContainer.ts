@@ -32,17 +32,19 @@
 //
 import { IEndpointService } from 'botframework-config/lib/schema';
 import { connect } from 'react-redux';
+import { Activity, User } from '@bfemulator/sdk-shared';
 
 import { RootState } from '../../../../../data/store';
+import { showContextMenuForActivity } from '../../../../../data/action/chatActions';
 
-import { Chat } from './chat';
+import { Chat, ChatProps } from './chat';
 
-const mapStateToProps = (state: RootState, { document }) => {
+const mapStateToProps = (state: RootState, { document }): Partial<ChatProps> => {
   const currentUserId = state.clientAwareSettings.users.currentUserId;
 
   return {
     currentUserId,
-    currentUser: state.clientAwareSettings.users.usersById[currentUserId] || {},
+    currentUser: state.clientAwareSettings.users.usersById[currentUserId] || ({} as User),
     locale: state.clientAwareSettings.locale || 'en-us',
     debugMode: state.debugMode.debugMode,
     endpoint: ((state.bot.activeBot && state.bot.activeBot.services) || []).find(
@@ -51,7 +53,14 @@ const mapStateToProps = (state: RootState, { document }) => {
   };
 };
 
+const mapDispatchToProps = (dispatch, ownProps: ChatProps): Partial<ChatProps> => {
+  return {
+    showContextMenuForActivity: (activity: Activity) => dispatch(showContextMenuForActivity(activity)),
+    ...ownProps,
+  };
+};
+
 export const ChatContainer = connect(
   mapStateToProps,
-  null
+  mapDispatchToProps
 )(Chat);

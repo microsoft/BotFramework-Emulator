@@ -32,10 +32,10 @@
 //
 
 import { GenericActivity } from './activity';
-import { ILogItem } from './log';
+import { LogItem } from './log';
 
 export interface Logger {
   logActivity(conversationId: string, activity: GenericActivity, role: string);
-  logMessage(conversationId: string, ...items: ILogItem[]);
+  logMessage(conversationId: string, ...items: LogItem[]);
   logException(conversationId: string, err: Error);
 }
