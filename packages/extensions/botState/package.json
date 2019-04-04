@@ -48,5 +48,24 @@
     "webpack": "4.16.4",
     "webpack-cli": "^3.1.1",
     "webpack-dev-server": "^3.1.4"
+  },
+  "jest": {
+    "setupTestFrameworkScriptFile": "../../../../testSetup.js",
+    "transform": {
+      "^.+\\.(tsx?|jsx?)$": "babel-jest"
+    },
+    "testURL": "http://localhost",
+    "rootDir": "./src",
+    "testMatch": [
+      "**/?(*.)(spec|test).(ts)?(x)"
+    ],
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ]
   }
 }

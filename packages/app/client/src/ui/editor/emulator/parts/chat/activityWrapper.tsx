@@ -49,7 +49,7 @@ function shouldSelectActivity(e: React.SyntheticEvent): boolean {
   let currentNode = e.target as HTMLElement;
   const interactiveElements = { BUTTON: true, A: true };
 
-  while (!currentNode.classList.contains(styles.chatActivity)) {
+  while (currentNode.parentElement && !currentNode.classList.contains(styles.chatActivity)) {
     if (interactiveElements[currentNode.tagName]) {
       return false;
     }

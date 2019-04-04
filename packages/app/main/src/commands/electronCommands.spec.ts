@@ -32,7 +32,7 @@
 //
 
 import '../fetchProxy';
-import { SharedConstants } from '@bfemulator/app-shared';
+import { DebugMode, SharedConstants } from '@bfemulator/app-shared';
 import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 import * as Electron from 'electron';
 
@@ -42,6 +42,7 @@ import { mainWindow } from '../main';
 import { TelemetryService } from '../telemetry';
 
 import { registerCommands } from './electronCommands';
+import { AppMenuBuilder } from '../appMenuBuilder';
 
 let renameArgs;
 jest.mock('fs-extra', () => ({
@@ -125,18 +126,26 @@ let mockRefreshFileMenu;
 let mockUpdateRecentBotsList;
 let mockInitAppMenu;
 let mockSendActivityMenuItems;
+let mockUpdateDebugModeViewMenuItem;
 jest.mock('../appMenuBuilder', () => ({
   get AppMenuBuilder() {
     return class {
       static sendActivityMenuItems = mockSendActivityMenuItems;
+
       static get initAppMenu() {
         return mockInitAppMenu;
       }
+
       static get refreshFileMenu() {
         return mockRefreshFileMenu;
       }
+
       static get updateRecentBotsList() {
         return mockUpdateRecentBotsList;
+      }
+
+      static get updateDebugModeViewMenuItem() {
+        return mockUpdateDebugModeViewMenuItem;
       }
     };
   },
@@ -288,5 +297,12 @@ describe('the electron commands', () => {
 
     expect(mockTrackEvent).toHaveBeenCalledWith('app_openLink', { url });
     expect(mockOpenExternal).toHaveBeenCalledWith(url, { activate: true });
+  });
+
+  it('should update the debug menu item', async () => {
+    mockUpdateDebugModeViewMenuItem = jest.fn();
+    const { handler } = mockCommandRegistry.getCommand(SharedConstants.Commands.Electron.UpdateDebugModeMenuItem);
+    handler(DebugMode.Sidecar);
+    expect(mockUpdateDebugModeViewMenuItem).toHaveBeenCalled();
   });
 });

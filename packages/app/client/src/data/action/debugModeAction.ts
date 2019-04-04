@@ -33,7 +33,7 @@
 import { DebugMode } from '@bfemulator/app-shared';
 
 export const SWITCH_DEBUG_MODE = 'switchDebugMode';
-export declare type DebugType = 'switchDebugMode';
+export type DebugType = 'switchDebugMode';
 
 export interface DebugModeAction<T> {
   type: DebugType;

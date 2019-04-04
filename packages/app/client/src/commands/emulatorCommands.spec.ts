@@ -30,7 +30,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { newNotification, SharedConstants } from '@bfemulator/app-shared';
+import { DebugMode, newNotification, SharedConstants } from '@bfemulator/app-shared';
 import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 import { combineReducers, createStore } from 'redux';
 
@@ -40,7 +40,7 @@ import { bot } from '../data/reducer/bot';
 import { chat } from '../data/reducer/chat';
 import { clientAwareSettings } from '../data/reducer/clientAwareSettingsReducer';
 import { editor } from '../data/reducer/editor';
-import { RootState, store } from '../data/store';
+import { RootState } from '../data/store';
 import { CommandServiceImpl } from '../platform/commands/commandServiceImpl';
 
 import { registerCommands } from './emulatorCommands';
@@ -72,6 +72,7 @@ describe('The emulator commands', () => {
         cwd: 'path',
         locale: 'en-us',
         serverUrl: 'https://localhost',
+        debugMode: 1,
       })
     );
   });

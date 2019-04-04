@@ -422,7 +422,7 @@ export class AppMenuBuilder {
     return template;
   }
 
-  private static async initViewMenu(): Promise<MenuOpts> {
+  public static async initViewMenu(): Promise<MenuOpts> {
     // TODO - localization
     const settingsStore = getSettingsStore();
     const {

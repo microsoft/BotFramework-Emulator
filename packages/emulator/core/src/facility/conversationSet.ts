@@ -45,7 +45,7 @@ import Conversation from './conversation';
  * A set of conversations with a bot.
  */
 export default class ConversationSet extends EventEmitter {
-  private conversations: { [conversationId: string]: Conversation } = {};
+  public conversations: { [conversationId: string]: Conversation } = {};
 
   // TODO: May be we want to move "bot" back to the constructor
   public newConversation(
@@ -78,5 +78,9 @@ export default class ConversationSet extends EventEmitter {
 
   public deleteConversation(conversationId: string): boolean {
     return delete this.conversations[conversationId];
+  }
+
+  public getConversations(): Conversation[] {
+    return Object.keys(this.conversations).map(id => this.conversations[id]);
   }
 }

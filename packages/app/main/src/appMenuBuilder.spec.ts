@@ -33,7 +33,7 @@
 
 import { join } from 'path';
 
-import { SharedConstants } from '@bfemulator/app-shared';
+import { DebugMode, SharedConstants } from '@bfemulator/app-shared';
 
 import { AppMenuBuilder } from './appMenuBuilder';
 
@@ -61,12 +61,15 @@ jest.mock('electron', () => ({
   Menu: class {
     append = mockMenuClassAppend;
     items: any[] = [];
+
     static get buildFromTemplate() {
       return mockBuildFromTemplate;
     }
+
     static get getApplicationMenu() {
       return mockGetApplicationMenu;
     }
+
     static get setApplicationMenu() {
       return mockSetApplicationMenu;
     }
@@ -74,6 +77,7 @@ jest.mock('electron', () => ({
   MenuItem: class {
     label: string;
     click: () => any;
+
     constructor(options: any) {
       this.label = options.label;
       this.click = options.click;
@@ -169,7 +173,7 @@ describe('AppMenuBuilder', () => {
           return mockFileMenu;
 
         default:
-          return;
+          return null;
       }
     });
     mockBuildFromTemplate = jest.fn(() => null);
@@ -339,7 +343,7 @@ describe('AppMenuBuilder', () => {
     expect(editMenuTemplate).toHaveLength(7);
 
     const viewMenuTemplate = appMenuTemplate[2].submenu;
-    expect(viewMenuTemplate).toHaveLength(5);
+    expect(viewMenuTemplate).toHaveLength(6);
 
     const convoMenuTemplate = appMenuTemplate[3].submenu;
     expect(convoMenuTemplate).toHaveLength(1);
@@ -405,5 +409,29 @@ describe('AppMenuBuilder', () => {
     const fileMenuTemplate = appMenuTemplate[1].submenu;
     const themeMenu = fileMenuTemplate[11];
     expect(themeMenu.submenu[0].type).toBe('radio');
+  });
+
+  it('should initialize and update the debugMenu item', async () => {
+    const viewMenu = await AppMenuBuilder.initViewMenu();
+    expect(viewMenu.submenu[5]).toEqual({
+      checked: false,
+      click: jasmine.any(Function),
+      id: 'debugMode',
+      label: 'Sidecar Debug Mode',
+      type: 'checkbox',
+    });
+
+    mockGetApplicationMenu = () => ({
+      getMenuItemById: () => viewMenu.submenu[5],
+    });
+
+    AppMenuBuilder.updateDebugModeViewMenuItem(DebugMode.Sidecar);
+    expect(viewMenu.submenu[5]).toEqual({
+      checked: true,
+      click: jasmine.any(Function),
+      id: 'debugMode',
+      label: 'Sidecar Debug Mode',
+      type: 'checkbox',
+    });
   });
 });

@@ -77,7 +77,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
           userId: currentUserId,
           conversationId,
         });
-        if (state.debugMode.debugMode === DebugMode.Sidecar) {
+        if (state.clientAwareSettings.debugMode === DebugMode.Sidecar) {
           action.payload.ui.horizontalSplitter[0].percentage = 75;
           action.payload.ui.verticalSplitter[0].percentage = 25;
         }

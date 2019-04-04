@@ -55,12 +55,12 @@ const skipWhileExpression = <T>(expression: (item: T) => boolean) => {
   };
 };
 
-export default function fetchConversation(botEmulator: BotEmulator) {
+export default function fetchConversations(botEmulator: BotEmulator) {
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): void => {
     const conversationParameters: ConversationsGetConversationsOptionalParams = req.params;
     const { continuationToken } = conversationParameters;
     const { conversations: api } = botEmulator.facilities;
-    const conversations = api.getConversationIds().map(id => api.conversationById(id));
+    const conversations = api.getConversations();
     const response = {} as ConversationsGetConversationsResponse;
 
     if (continuationToken) {

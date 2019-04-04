@@ -140,7 +140,8 @@ describe('The clientInitCommands', () => {
       [
         'receive-global-settings',
         {
-          cwd: jasmine.any(String),
+          cwd: '/Users/microsoft/Documents/dev/BotFramework-Emulator/packages/app/main/src/commands',
+          debugMode: 0,
           locale: 'en-US',
           serverUrl: 'http://localhost:3000',
           users: {},
@@ -160,7 +161,8 @@ describe('The clientInitCommands', () => {
       [
         'receive-global-settings',
         {
-          cwd: jasmine.any(String),
+          cwd: '/Users/microsoft/Documents/dev/BotFramework-Emulator/packages/app/main/src/commands',
+          debugMode: 0,
           locale: 'en-US',
           serverUrl: 'http://localhost:3000',
           users: {},

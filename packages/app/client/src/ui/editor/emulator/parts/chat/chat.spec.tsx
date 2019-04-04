@@ -34,11 +34,12 @@
 import * as React from 'react';
 import { mount, shallow, ShallowWrapper } from 'enzyme';
 import ReactWebChat from 'botframework-webchat';
-
+import { ActivityTypes } from 'botframework-schema';
 import { CommandServiceImpl } from '../../../../../platform/commands/commandServiceImpl';
 
 import { Chat, getSpeechToken } from './chat';
 import webChatStyleOptions from './webChatTheme';
+import { DebugMode } from '@bfemulator/app-shared';
 
 jest.mock('../../../../dialogs', () => ({
   AzureLoginPromptDialogContainer: () => ({}),
@@ -101,7 +102,7 @@ describe('<Chat />', () => {
 
   describe('activity middleware', () => {
     it('renders an ActivityWrapper with the contents as children', () => {
-      const next = (contents: any) => (kids: any) => kids;
+      const next = () => (kids: any) => kids;
       const card = { activity: { id: 'activity-id' } };
       const children = 'a child node';
       const updateSelectedActivity = jest.fn();
@@ -111,16 +112,81 @@ describe('<Chat />', () => {
       const activityWrapper = mount(middleware()(next)(card)(children));
 
       expect(activityWrapper.props()).toMatchObject({
-        activity: card.activity,
-        onClick: updateSelectedActivity,
+        activity: { id: 'activity-id' },
+        children: 'a child node',
+        'data-activity-id': 'activity-id',
         isSelected: false,
+        onClick: jasmine.any(Function),
+        onKeyDown: jasmine.any(Function),
+      });
+      expect(activityWrapper.text()).toEqual('a child node');
+    });
+
+    it('should render a trace activity as a message when the debugMode is set to "sidecar"', () => {
+      const next = () => (kids: any) => kids;
+      const webChat = render({ debugMode: DebugMode.Sidecar }).find(ReactWebChat);
+      const card = {
+        activity: {
+          id: 'activity-id',
+          type: ActivityTypes.Trace,
+          value: { type: ActivityTypes.Message },
+        },
+      };
+      const middleware = webChat.prop('activityMiddleware') as any;
+      const children = 'a child node';
+      const activityWrapper = mount(middleware()(next)(card)(children));
+      expect(activityWrapper.props()).toMatchObject({
+        activity: { type: 'message' },
+        children: 'a child node',
+        'data-activity-id': 'activity-id',
+        isSelected: false,
+        onClick: jasmine.any(Function),
+        onContextMenu: jasmine.any(Function),
+        onKeyDown: jasmine.any(Function),
+      });
+      expect(activityWrapper.text()).toEqual('a child node');
+    });
+
+    it('should render a trace activity as a bot state when the debugMode is set to "sidecar"', () => {
+      const next = () => (kids: any) => kids;
+      const webChat = render({ debugMode: DebugMode.Sidecar }).find(ReactWebChat);
+      const card = {
+        activity: {
+          valueType: 'https://www.botframework.com/schemas/botState',
+          id: 'activity-id',
+          type: ActivityTypes.Trace,
+          value: { type: ActivityTypes.Event },
+        },
+      };
+      const middleware = webChat.prop('activityMiddleware') as any;
+      const children = 'a child node';
+      const activityWrapper = mount(middleware()(next)(card)(children));
+      expect(activityWrapper.props()).toMatchObject({
+        activity: {
+          type: 'message',
+          id: 'activity-id',
+          text: '<Bot State Object>',
+          from: {
+            role: 'bot',
+          },
+          value: {
+            type: 'event',
+          },
+          valueType: 'https://www.botframework.com/schemas/botState',
+        },
+        children: 'a child node',
+        'data-activity-id': 'activity-id',
+        isSelected: false,
+        onClick: jasmine.any(Function),
+        onContextMenu: jasmine.any(Function),
+        onKeyDown: jasmine.any(Function),
       });
       expect(activityWrapper.text()).toEqual('a child node');
     });
 
     ['trace', 'endOfConversation'].forEach((type: string) => {
       it(`does not render ${type} activities`, () => {
-        const next = (contents: any) => (kids: any) => kids;
+        const next = () => (kids: any) => kids;
         const card = { activity: { id: 'activity-id', type } };
         const children = 'a child node';
         const webChat = render().find(ReactWebChat);
@@ -162,7 +228,7 @@ describe('<Chat />', () => {
   });
 });
 
-describe('getSpeechToken', () => {
+describe('getSpeechToken', async () => {
   it('should get speech token by calling remotely', async () => {
     const mockRemoteCall = jest.fn().mockResolvedValue('1A2B3C4');
 
@@ -179,7 +245,37 @@ describe('getSpeechToken', () => {
       true
     );
 
-    expect(speechToken).resolves.toBe('1A2B3C4');
+    await expect(speechToken).resolves.toBe('1A2B3C4');
     expect(mockRemoteCall).toHaveBeenCalledTimes(1);
+  });
+
+  describe('event handlers', () => {
+    it('should invoke the appropriate functions defined in the props', () => {
+      const next = () => (kids: any) => kids;
+      const showContextMenuForActivity = jest.fn();
+      const updateSelectedActivity = jest.fn();
+      const chat = render({
+        debugMode: DebugMode.Sidecar,
+        showContextMenuForActivity,
+        updateSelectedActivity,
+      });
+      const card = {
+        activity: {
+          valueType: 'https://www.botframework.com/schemas/botState',
+          id: 'activity-id',
+          type: ActivityTypes.Trace,
+          value: { type: ActivityTypes.Event },
+        },
+      };
+      const webChat = chat.find(ReactWebChat);
+      const middleware = webChat.prop('activityMiddleware') as any;
+      const children = 'a child node';
+      const activityWrapper = mount(middleware()(next)(card)(children));
+      activityWrapper.simulate('keyDown', { key: ' ', target: { tagName: 'DIV', classList: [] } });
+      activityWrapper.simulate('click', { target: { tagName: 'DIV', classList: [] } });
+      activityWrapper.simulate('contextmenu', { target: { tagName: 'DIV', classList: [] } });
+      expect(updateSelectedActivity).toHaveBeenCalled();
+      expect(showContextMenuForActivity).toHaveBeenCalled();
+    });
   });
 });

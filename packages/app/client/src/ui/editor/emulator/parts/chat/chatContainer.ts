@@ -46,7 +46,7 @@ const mapStateToProps = (state: RootState, { document }): Partial<ChatProps> => 
     currentUserId,
     currentUser: state.clientAwareSettings.users.usersById[currentUserId] || ({} as User),
     locale: state.clientAwareSettings.locale || 'en-us',
-    debugMode: state.debugMode.debugMode,
+    debugMode: state.clientAwareSettings.debugMode,
     endpoint: ((state.bot.activeBot && state.bot.activeBot.services) || []).find(
       s => s.id === document.endpointId
     ) as IEndpointService,
