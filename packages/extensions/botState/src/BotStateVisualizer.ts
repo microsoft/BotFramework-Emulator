@@ -154,7 +154,7 @@ export class BotStateVisualizer {
   };
 
   private getClassNameFromValueType = (data: HierarchyPointNode<HierarchicalData>): string => {
-    let { name } = data.data;
+    const { name } = data.data;
     if (this.isDiff) {
       if (name.startsWith('+')) {
         return 'added';

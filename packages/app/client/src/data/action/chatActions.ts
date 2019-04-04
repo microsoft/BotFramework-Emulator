@@ -31,8 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Activity, LogEntry } from '@bfemulator/sdk-shared';
+import { LogEntry } from '@bfemulator/sdk-shared';
 import { Action } from 'redux';
+import { Activity } from 'botframework-schema';
 
 export enum ChatActions {
   activeInspectorChanged = 'CHAT/INSPECTOR/CHANGED',
@@ -243,7 +244,7 @@ export function updateChat(documentId: string, updatedValues: any): ChatAction<U
   };
 }
 
-export function showContextMenuForActivity(activity: Activity): ChatAction<Activity> {
+export function showContextMenuForActivity(activity: Partial<Activity>): ChatAction<Partial<Activity>> {
   return {
     type: ChatActions.showContextMenuForActivity,
     payload: activity,

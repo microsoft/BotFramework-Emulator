@@ -35,11 +35,12 @@ import * as React from 'react';
 import { mount, shallow, ShallowWrapper } from 'enzyme';
 import ReactWebChat from 'botframework-webchat';
 import { ActivityTypes } from 'botframework-schema';
+import { DebugMode } from '@bfemulator/app-shared';
+
 import { CommandServiceImpl } from '../../../../../platform/commands/commandServiceImpl';
 
 import { Chat, getSpeechToken } from './chat';
 import webChatStyleOptions from './webChatTheme';
-import { DebugMode } from '@bfemulator/app-shared';
 
 jest.mock('../../../../dialogs', () => ({
   AzureLoginPromptDialogContainer: () => ({}),

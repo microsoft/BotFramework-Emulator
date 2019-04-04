@@ -40,9 +40,9 @@ import { load } from '../botData/actions/botActions';
 import { getStore } from '../botData/store';
 import { mainWindow } from '../main';
 import { TelemetryService } from '../telemetry';
+import { AppMenuBuilder } from '../appMenuBuilder';
 
 import { registerCommands } from './electronCommands';
-import { AppMenuBuilder } from '../appMenuBuilder';
 
 let renameArgs;
 jest.mock('fs-extra', () => ({
