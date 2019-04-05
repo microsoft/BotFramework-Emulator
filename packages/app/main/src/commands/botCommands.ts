@@ -51,6 +51,7 @@ import {
   removeBotFromList,
   saveBot,
   toSavableBot,
+  getInfoByUrl,
 } from '../botHelpers';
 import { emulator } from '../emulator';
 import { mainWindow } from '../main';
@@ -157,12 +158,11 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
       store.dispatch(BotActions.setActive(bot));
       store.dispatch(BotActions.setDirectory(botDirectory));
 
-      const botInfo = getBotInfoByPath(bot.path) || {};
-      const dirName = path.dirname(bot.path);
+      const botInfo = getInfoByUrl(bot) || getBotInfoByPath(bot.path);
 
       const {
-        chatsPath = path.join(dirName, './dialogs'),
-        transcriptsPath = path.join(dirName, './transcripts'),
+        chatsPath = path.join(botDirectory, './dialogs'),
+        transcriptsPath = path.join(botDirectory, './transcripts'),
       } = botInfo;
       const botFilePath = path.parse(botInfo.path || '').dir;
       const relativeChatsPath = path.relative(botFilePath, chatsPath);

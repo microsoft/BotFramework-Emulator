@@ -41,7 +41,7 @@ import { sync as mkdirpSync } from 'mkdirp';
 
 import * as BotActions from '../botData/actions/botActions';
 import { getStore } from '../botData/store';
-import { getActiveBot, getBotInfoByPath, patchBotsJson, toSavableBot } from '../botHelpers';
+import { getActiveBot, getBotInfoByPath, patchBotsJson, toSavableBot, getInfoByUrl } from '../botHelpers';
 import { emulator } from '../emulator';
 import { mainWindow } from '../main';
 import { dispatch, getStore as getSettingsStore } from '../settingsData/store';
@@ -68,8 +68,8 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
       if (!convo) {
         throw new Error(`${Commands.SaveTranscriptToFile}: Conversation ${conversationId} not found.`);
       }
-      let botInfo = getBotInfoByPath(activeBot.path);
       const dirName = path.dirname(activeBot.path);
+      let botInfo = getInfoByUrl(activeBot) || getBotInfoByPath(activeBot.path);
 
       const { transcriptsPath = path.join(dirName, './transcripts') } = botInfo;
 

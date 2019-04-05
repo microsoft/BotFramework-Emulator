@@ -32,7 +32,7 @@
 //
 
 import { getBotDisplayName, newNotification, SharedConstants } from '@bfemulator/app-shared';
-import { BotConfigWithPath, mergeEndpoints } from '@bfemulator/sdk-shared';
+import { BotConfigWithPath, mergeEndpoints, BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
 import { IEndpointService, ServiceTypes } from 'botframework-config/lib/schema';
 
 import * as Constants from '../../constants';
@@ -179,6 +179,12 @@ export const ActiveBotHelper = new class {
       properties: ['openFile'],
       title: 'Open bot file',
     });
+  }
+
+  async confirmAndOpenBotFromURL(): Promise<any> {
+    const bot: BotConfigWithPathImpl = new BotConfigWithPathImpl();
+    bot.path = 'C:\\Users\\Micaela\\Desktop';
+    await CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.SetActive, bot);
   }
 
   async confirmAndOpenBotFromFile(filename?: string): Promise<any> {

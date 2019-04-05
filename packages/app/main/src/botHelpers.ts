@@ -49,6 +49,12 @@ export function getBotInfoByPath(path: string): BotInfo {
   return store.getState().bot.botFiles.find(bot => bot && bot.path === path);
 }
 
+export function getInfoByUrl(bot: BotConfigWithPath): BotInfo {
+  return {
+    path: bot.path,
+  };
+}
+
 export function pathExistsInRecentBots(path: string): boolean {
   return store.getState().bot.botFiles.some(bot => bot && bot.path === path);
 }

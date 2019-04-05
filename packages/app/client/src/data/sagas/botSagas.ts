@@ -71,6 +71,9 @@ export function* openBotViaUrl(action: BotAction<Partial<StartConversationParams
     const users: UserSettings = yield select((state: RootState) => state.clientAwareSettings.users);
     action.payload.user = users.usersById[users.currentUserId];
   }
+
+  yield call([ActiveBotHelper, ActiveBotHelper.confirmAndOpenBotFromURL]);
+
   const response = yield ConversationService.startConversation(serverUrl, action.payload);
   if (!response.ok) {
     const errorNotification = beginAdd(
