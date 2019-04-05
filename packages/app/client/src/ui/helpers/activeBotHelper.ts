@@ -181,9 +181,9 @@ export const ActiveBotHelper = new class {
     });
   }
 
-  async confirmAndOpenBotFromURL(): Promise<any> {
+  async confirmAndOpenBotFromURL(path?: string): Promise<any> {
     const bot: BotConfigWithPathImpl = new BotConfigWithPathImpl();
-    bot.path = 'C:\\Users\\Micaela\\Desktop';
+    bot.path = path;
     await CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.SetActive, bot);
   }
 

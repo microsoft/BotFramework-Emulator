@@ -48,6 +48,7 @@ export interface OpenBotDialogState {
   botUrl?: string;
   appId?: string;
   appPassword?: string;
+  botTranscriptPath?: string;
 }
 
 enum ValidationResult {
@@ -58,7 +59,7 @@ enum ValidationResult {
 }
 
 export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogState> {
-  public state = { botUrl: '', appId: '', appPassword: '' };
+  public state = { botUrl: '', appId: '', appPassword: '', botTranscriptPath: '' };
 
   private static getErrorMessage(result: ValidationResult): string {
     if (result === ValidationResult.Empty || result === ValidationResult.Valid) {
@@ -83,11 +84,12 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
   }
 
   public render(): ReactNode {
-    const { botUrl, appId, appPassword } = this.state;
+    const { botUrl, appId, appPassword, botTranscriptPath } = this.state;
     const validationResult = OpenBotDialog.validateEndpoint(botUrl);
     const errorMessage = OpenBotDialog.getErrorMessage(validationResult);
-    const shouldBeDisabled =
+    const buttonShouldBeDisabled =
       validationResult === ValidationResult.Invalid || validationResult === ValidationResult.Empty;
+    // const fieldShouldBeDisabled = !(botUrl.startsWith('http'));
     return (
       <Dialog cancel={this.props.onDialogCancel} className={openBotStyles.themeOverrides} title="Open a bot">
         <form onSubmit={this.onSubmit}>
@@ -108,6 +110,27 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
                 accept=".bot"
                 className={openBotStyles.fileInput}
                 name="botUrl"
+                onChange={this.onInputChange}
+                type="file"
+              />
+            </PrimaryButton>
+          </TextField>
+          <TextField
+            autoFocus={true}
+            name="botTranscriptPath"
+            inputContainerClassName={openBotStyles.inputContainer}
+            label="Path to save dialogs or transcripts when using URL"
+            onChange={this.onInputChange}
+            onFocus={this.onFocus}
+            placeholder="Path to save dialogs or transcripts"
+            value={botTranscriptPath}
+          >
+            <PrimaryButton className={openBotStyles.browseButton}>
+              Browse
+              <input
+                accept=".bot"
+                className={openBotStyles.fileInput}
+                name="botTranscriptPath"
                 onChange={this.onInputChange}
                 type="file"
               />
@@ -134,7 +157,7 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
           </Row>
           <DialogFooter>
             <DefaultButton onClick={this.props.onDialogCancel}>Cancel</DefaultButton>
-            <PrimaryButton type="submit" disabled={shouldBeDisabled}>
+            <PrimaryButton type="submit" disabled={buttonShouldBeDisabled}>
               Connect
             </PrimaryButton>
           </DialogFooter>
