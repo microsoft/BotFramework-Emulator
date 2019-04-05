@@ -43,6 +43,7 @@ import {
   NetworkResponseLogItem,
   NgrokExpirationLogItem,
   OpenAppSettingsLogItem,
+  LuisEditorDeepLinkLogItem,
   TextLogItem,
 } from '@bfemulator/sdk-shared';
 import * as React from 'react';
@@ -188,8 +189,8 @@ export class LogEntry extends React.Component<LogEntryProps> {
         const { facility, body, headers, method, url } = item.payload as NetworkRequestLogItem;
         return this.renderNetworkRequestItem(facility, body, headers, method, url, key);
       }
-      case 'luis-editor-deep-link': {
-        const { text } = item.payload;
+      case LogItemType.LuisEditorDeepLink: {
+        const { text } = item.payload as LuisEditorDeepLinkLogItem;
         return this.renderLuisEditorDeepLinkItem(text, key);
       }
       case LogItemType.NetworkResponse: {

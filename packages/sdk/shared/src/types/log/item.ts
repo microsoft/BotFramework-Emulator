@@ -43,6 +43,7 @@ export enum LogItemType {
   OpenAppSettings = 'open-app-settings',
   Exception = 'exception',
   NgrokExpiration = 'ngrok-expiration',
+  LuisEditorDeepLink = 'luis-editor-deep-link',
 }
 export type LogItemPayload =
   | TextLogItem
@@ -53,7 +54,8 @@ export type LogItemPayload =
   | SummaryTextLogItem
   | OpenAppSettingsLogItem
   | ExceptionLogItem
-  | NgrokExpirationLogItem;
+  | NgrokExpirationLogItem
+  | LuisEditorDeepLinkLogItem;
 
 export interface LogItem<T = LogItemPayload> {
   type: LogItemType;
@@ -96,6 +98,10 @@ export interface SummaryTextLogItem {
 }
 
 export interface OpenAppSettingsLogItem {
+  text: string;
+}
+
+export interface LuisEditorDeepLinkLogItem {
   text: string;
 }
 

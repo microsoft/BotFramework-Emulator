@@ -39,6 +39,7 @@ import {
   LogItem,
   LogItemPayload,
   LogItemType,
+  LuisEditorDeepLinkLogItem,
   NetworkRequestLogItem,
   NetworkResponseLogItem,
   NgrokExpirationLogItem,
@@ -171,9 +172,10 @@ export function logEntry(...items: LogItem<LogItemPayload>[]): LogEntry {
     items: [...items],
   };
 }
-export function luisEditorDeepLinkItem(text: string): ILogItem {
+
+export function luisEditorDeepLinkItem(text: string): LogItem<LuisEditorDeepLinkLogItem> {
   return {
-    type: 'luis-editor-deep-link',
+    type: LogItemType.LuisEditorDeepLink,
     payload: {
       text,
     },
