@@ -72,7 +72,7 @@ export function* openBotViaUrl(action: BotAction<Partial<StartConversationParams
     action.payload.user = users.usersById[users.currentUserId];
   }
 
-  yield call([ActiveBotHelper, ActiveBotHelper.confirmAndOpenBotFromURL]), action.payload.transcriptPath;
+  yield call([ActiveBotHelper, ActiveBotHelper.confirmAndOpenBotFromURL], action.payload.transcriptPath);
 
   const response = yield ConversationService.startConversation(serverUrl, action.payload);
   if (!response.ok) {

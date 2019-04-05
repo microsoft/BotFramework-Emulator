@@ -83,13 +83,19 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
     return endpoint.endsWith('.bot') ? ValidationResult.Valid : ValidationResult.Invalid;
   }
 
+  private static validatePath(path: string): ValidationResult {
+    return path ? ValidationResult.Valid : ValidationResult.Invalid;
+  }
+
   public render(): ReactNode {
     const { botUrl, appId, appPassword, botTranscriptPath } = this.state;
-    const validationResult = OpenBotDialog.validateEndpoint(botUrl);
-    const errorMessage = OpenBotDialog.getErrorMessage(validationResult);
+    const urlValidationResult = OpenBotDialog.validateEndpoint(botUrl);
+    const pathValidationResult = OpenBotDialog.validatePath(botTranscriptPath);
+    const errorMessage = OpenBotDialog.getErrorMessage(urlValidationResult);
     const buttonShouldBeDisabled =
-      validationResult === ValidationResult.Invalid || validationResult === ValidationResult.Empty;
-    // const fieldShouldBeDisabled = !(botUrl.startsWith('http'));
+      (urlValidationResult === ValidationResult.Invalid || urlValidationResult === ValidationResult.Empty) &&
+      pathValidationResult === ValidationResult.Invalid;
+    const fieldShouldBeDisabled = !botUrl.startsWith('http');
     return (
       <Dialog cancel={this.props.onDialogCancel} className={openBotStyles.themeOverrides} title="Open a bot">
         <form onSubmit={this.onSubmit}>
@@ -124,8 +130,9 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
             onFocus={this.onFocus}
             placeholder="Path to save dialogs or transcripts"
             value={botTranscriptPath}
+            disabled={fieldShouldBeDisabled}
           >
-            <PrimaryButton className={openBotStyles.browseButton}>
+            <PrimaryButton className={openBotStyles.browseButton} disabled={fieldShouldBeDisabled}>
               Browse
               <input
                 accept=".bot"
@@ -174,7 +181,7 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
   private onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { type, files, value, name } = event.target;
     let newValue = value;
-    if (name === 'botUrl') {
+    if (name === 'botUrl' || name === 'botTranscriptPath') {
       newValue = type === 'file' ? files.item(0).path : value;
     }
     this.setState({ [name]: newValue });

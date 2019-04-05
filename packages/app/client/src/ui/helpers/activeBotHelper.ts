@@ -181,7 +181,7 @@ export const ActiveBotHelper = new class {
     });
   }
 
-  async confirmAndOpenBotFromURL(path?: string): Promise<any> {
+  async confirmAndOpenBotFromURL(path: string): Promise<any> {
     const bot: BotConfigWithPathImpl = new BotConfigWithPathImpl();
     bot.path = path;
     await CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.SetActive, bot);
