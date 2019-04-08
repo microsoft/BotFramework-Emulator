@@ -73,16 +73,18 @@ const getPreviousBotState = (state: RootState, selectedTrace: Activity): Activit
     }
   );
   const targetLogEntry = filteredLogItems.pop();
-  return targetLogEntry.payload.obj as Activity;
+  return targetLogEntry && (targetLogEntry.payload.obj as Activity);
 };
 
 export function* showContextMenuForActivity(action: ChatAction<Activity>): Iterable<any> {
   const { payload: activity } = action;
+  const previousBotState = yield select(getPreviousBotState, activity);
+  const diffEnabled = activity.valueType.endsWith('botState') && !!previousBotState;
   const menuItems = [
     { label: 'Copy text', id: 'copy' },
     { label: 'Copy json', id: 'json' },
     { type: 'separator' },
-    { label: 'Compare with previous', id: 'diff', enabled: activity.valueType.endsWith('botState') },
+    { label: 'Compare with previous', id: 'diff', enabled: diffEnabled },
   ] as MenuItemConstructorOptions[];
 
   const { DisplayContextMenu } = SharedConstants.Commands.Electron;

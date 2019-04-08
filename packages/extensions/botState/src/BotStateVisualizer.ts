@@ -32,18 +32,35 @@
 //
 import * as d3 from 'd3';
 import { HierarchyPointNode } from 'd3';
+// TODO: Revert import to `@bfemulator/sdk-shared` once issue #1333 (https://github.com/Microsoft/BotFramework-Emulator/issues/1333) is resolved.
+import { json2HTML } from '@bfemulator/sdk-shared/build/utils/json2HTML';
+
+import { BotState, HierarchicalData } from './types';
+import { ViewState } from './ViewState';
+import { buildHierarchicalData } from './utils';
 
 export class BotStateVisualizer {
-  private readonly selector: string;
-  private dataProvider: HierarchicalData;
-  private isDiff: boolean;
-
-  private static getDataProvider(botState: BotState): HierarchicalData {
-    const dataProvider = { name: 'botState', children: [] };
-    BotStateVisualizer.generateHierarchicalData(botState, dataProvider);
-
-    return dataProvider;
+  get dataProvider(): BotState {
+    return this._dataProvider;
   }
+
+  set dataProvider(value: BotState) {
+    if (this._dataProvider === value) {
+      return;
+    }
+    this._dataProvider = value;
+    if (value) {
+      this.rebuildRootHierarchy();
+    }
+    this.render();
+  }
+
+  private readonly visualizerSelector: string;
+  private readonly jsonSelector: string;
+  private rootHierarchy: d3.HierarchyNode<{}>;
+  private _viewState: ViewState;
+  private _dataProvider: BotState;
+  public isDiff: boolean;
 
   private static getNodeText(data: HierarchyPointNode<HierarchicalData>): string {
     let { name } = data.data;
@@ -54,45 +71,48 @@ export class BotStateVisualizer {
     return name;
   }
 
-  public static generateHierarchicalData(data: any, parent: HierarchicalData) {
-    Object.keys(data).forEach(key => {
-      const child = { name: key } as HierarchicalData;
-      if (data[key] !== null && typeof data[key] === 'object') {
-        child.children = [];
-        BotStateVisualizer.generateHierarchicalData(data[key], child);
-      } else {
-        child.value = data[key];
-      }
-      parent.children.push(child);
-    });
-  }
-
-  private static buildTree(data: HierarchicalData) {
-    const root = d3.hierarchy<any>(data).sort((a, b) => {
-      if (!isNaN(+a.data.name) && !isNaN(+b.data.name)) {
-        if (a.data.name < b.data.name) {
-          return -1;
-        }
-        if (a.data.name > b.data.name) {
-          return 1;
-        }
-        return 0;
-      } else {
-        return a.height - b.height;
-      }
-    });
+  private resizeNodes(): d3.HierarchyPointNode<{}> {
+    const root = this.rootHierarchy;
     return d3.cluster().nodeSize([15, (document.body.clientWidth - 250) / root.height])(root);
   }
 
-  constructor(selector: string) {
-    this.selector = selector;
-    this.listen();
+  constructor(visualizerSelector: string, jsonSelector: string) {
+    this.visualizerSelector = visualizerSelector;
+    this.jsonSelector = jsonSelector;
+    window.addEventListener('resize', () => this.render());
   }
 
-  public renderTree = () => {
-    const root = BotStateVisualizer.buildTree(this.dataProvider);
-    const svg = d3.select(this.selector);
+  public get viewState(): ViewState {
+    return this._viewState;
+  }
+
+  public set viewState(viewState: ViewState) {
+    if (this._viewState === viewState) {
+      return;
+    }
+    this._viewState = viewState;
+    this.render();
+  }
+
+  public render = (): void => {
+    const svg = d3.select(this.visualizerSelector);
     svg.selectAll('g').remove();
+
+    const div = document.querySelector(this.jsonSelector);
+    div.innerHTML = '';
+
+    if (!this._dataProvider) {
+      return;
+    }
+
+    // Rendering JSON
+    if (this.viewState === ViewState.Json) {
+      div.innerHTML = json2HTML(this._dataProvider);
+      return;
+    }
+
+    // Rendering Dendrogram
+    const root = this.resizeNodes();
 
     const g = svg
       .append('g')
@@ -146,11 +166,11 @@ export class BotStateVisualizer {
     svg.style('height', gRect.height);
     svg.style('width', gRect.width);
 
-    // Center the svg within the window
-    svg.attr('transform', `translate(0, ${(document.body.clientHeight - gRect.height) / 2})`);
+    // attempt to center the svg within the window
+    const deltaY = (document.body.clientHeight - gRect.height) / 2;
+    svg.attr('transform', `translate(0, ${Math.max(deltaY, 0)})`);
     // center the graphic tag within the svg
     g.attr('transform', `translate(70, ${Math.abs(gRect.top - svgRect.top)})`);
-    return svg.node();
   };
 
   private getClassNameFromValueType = (data: HierarchyPointNode<HierarchicalData>): string => {
@@ -176,55 +196,20 @@ export class BotStateVisualizer {
     }
   };
 
-  private listen() {
-    window.addEventListener('resize', () => this.renderTree());
-    if (!window.hasOwnProperty('host')) {
-      return;
-    }
-    (window as any).host.on('inspect', (data: { value: BotState; valueType: string }) => {
-      this.isDiff = data.valueType.endsWith('diff');
-      this.dataProvider = BotStateVisualizer.getDataProvider(data.value);
-      this.renderTree();
-    });
-
-    (window as any).host.on('theme', async themeInfo => {
-      const oldThemeComponents = document.querySelectorAll('[data-theme-component="true"]');
-      const head = document.querySelector('head');
-      const fragment = document.createDocumentFragment();
-      const promises = [];
-      // Create the new links for each theme component
-      themeInfo.themeComponents.forEach(themeComponent => {
-        const link = document.createElement('link');
-        promises.push(
-          new Promise(resolve => {
-            link.addEventListener('load', resolve);
-          })
-        );
-        link.href = themeComponent;
-        link.rel = 'stylesheet';
-        link.setAttribute('data-theme-component', 'true');
-        fragment.appendChild(link);
-      });
-      head.insertBefore(fragment, head.firstElementChild);
-      // Wait for all the links to load their css
-      await Promise.all(promises);
-      // Remove the old links
-      oldThemeComponents.forEach(themeComponent => {
-        if (themeComponent.parentElement) {
-          themeComponent.parentElement.removeChild(themeComponent);
+  private rebuildRootHierarchy() {
+    const hierarchicalData = buildHierarchicalData(this._dataProvider);
+    this.rootHierarchy = d3.hierarchy<any>(hierarchicalData).sort((a, b) => {
+      if (!isNaN(+a.data.name) && !isNaN(+b.data.name)) {
+        if (a.data.name < b.data.name) {
+          return -1;
         }
-      });
+        if (a.data.name > b.data.name) {
+          return 1;
+        }
+        return 0;
+      } else {
+        return a.height - b.height;
+      }
     });
   }
-}
-
-interface HierarchicalData {
-  name: string;
-  children?: HierarchicalData[];
-  value?: string | boolean | number | null;
-}
-
-export interface BotState {
-  conversationState: { [prop: string]: any };
-  userState: { [prop: string]: any };
 }

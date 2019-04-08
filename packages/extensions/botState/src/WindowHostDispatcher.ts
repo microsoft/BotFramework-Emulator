@@ -30,8 +30,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { BotStateVisualizer } from './BotStateVisualizer';
-import { WindowHostReceiver } from './WindowHostReceiver';
-
-const botStateVisualizer = new BotStateVisualizer('#bot-state-visualizer', '#json-visualizer');
-new WindowHostReceiver(botStateVisualizer);
+export class WindowHostDispatcher {
+  constructor(private window: Window) {}
+}

@@ -31,6 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import { BotState, BotStateVisualizer } from './BotStateVisualizer';
+import { ViewState } from './ViewState';
+import { WindowHostReceiver } from './WindowHostReceiver';
 
 (window as any).host = {
   bot: {},
@@ -68,29 +70,36 @@ const botState: BotState = {
 
 describe('The BotStateVisualizer', () => {
   let svg;
+  let div;
+  let visualizer;
   beforeAll(() => {
     svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svg.id = 'bot-state-visualizer';
+
+    div = document.createElement('div');
+    div.id = 'json-visualizer';
     document.body.appendChild(svg);
+    document.body.appendChild(div);
+
+    visualizer = new BotStateVisualizer('#bot-state-visualizer', '#json-visualizer');
+    visualizer.viewState = ViewState.Graph;
+    new WindowHostReceiver(visualizer);
   });
 
   it('should render with data', () => {
-    const visualizer = new BotStateVisualizer('#bot-state-visualizer');
     (window as any).host.handlers.inspect.forEach(callback => callback({ valueType: '', value: botState }));
     (window as any).host.handlers.theme.forEach(callback => callback({ themeComponents: ['dark.css'] }));
     expect(svg.children[0].children.length).toBe(2);
   });
 
   it('should re-render when the window resizes', () => {
-    const visualizer = new BotStateVisualizer('#bot-state-visualizer');
     (window as any).host.handlers.inspect.forEach(callback => callback({ valueType: '', value: botState }));
-    const spy = jest.spyOn(visualizer, 'renderTree');
+    const spy = jest.spyOn(visualizer, 'render');
     window.dispatchEvent(new Event('resize'));
     expect(spy).toHaveBeenCalled();
   });
 
   it('should switch themes', () => {
-    const visualizer = new BotStateVisualizer('#bot-state-visualizer');
     (window as any).host.handlers.theme.forEach(callback => callback({ themeComponents: ['light.css'] }));
     let link: HTMLLinkElement = document.querySelector('[data-theme-component="true"]');
     expect(link.href).toBe('http://localhost/light.css');

@@ -16,8 +16,33 @@
           }
         ],
         "summaryText": [
-          "attachments.0.contentType",
-          "text"
+          "label"
+        ],
+        "accessories": [
+          {
+            "id": "graph",
+            "states": {
+              "default": {
+                "label": "STATE GRAPH"
+              },
+              "selected": {
+                "label": "STATE GRAPH",
+                "aria-selected": true
+              }
+            }
+          },
+          {
+            "id": "json",
+            "states": {
+              "default": {
+                "label": "STATE JSON"
+              },
+              "selected": {
+                "label": "STATE JSON",
+                "aria-selected": true
+              }
+            }
+          }
         ]
       }
     ]

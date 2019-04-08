@@ -30,8 +30,13 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { BotStateVisualizer } from './BotStateVisualizer';
-import { WindowHostReceiver } from './WindowHostReceiver';
+export interface HierarchicalData {
+  name: string;
+  children?: HierarchicalData[];
+  value?: string | boolean | number | null;
+}
 
-const botStateVisualizer = new BotStateVisualizer('#bot-state-visualizer', '#json-visualizer');
-new WindowHostReceiver(botStateVisualizer);
+export interface BotState {
+  conversationState: { [prop: string]: any };
+  userState: { [prop: string]: any };
+}

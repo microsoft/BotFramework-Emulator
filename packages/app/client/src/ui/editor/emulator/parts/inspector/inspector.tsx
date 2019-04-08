@@ -32,10 +32,15 @@
 //
 
 // Cheating here and pulling in a module from node. Can be easily replaced if we ever move the emulator to the web.
-import { LogLevel } from '@bfemulator/sdk-shared';
-import { logEntry, luisEditorDeepLinkItem, textItem } from '@bfemulator/sdk-shared';
-import { ExtensionInspector, InspectorAccessory, InspectorAccessoryState } from '@bfemulator/sdk-shared';
-import { Spinner } from '@bfemulator/ui-react';
+import {
+  ExtensionInspector,
+  InspectorAccessory,
+  logEntry,
+  LogLevel,
+  luisEditorDeepLinkItem,
+  textItem,
+} from '@bfemulator/sdk-shared';
+import { PrimaryButton, Spinner } from '@bfemulator/ui-react';
 import { IBotConfiguration } from 'botframework-config/lib/schema';
 import * as React from 'react';
 
@@ -92,6 +97,16 @@ declare type ElectronHTMLWebViewElement = HTMLWebViewElement & {
 };
 
 export class Inspector extends React.Component<InspectorProps, InspectorState> {
+  private static renderAccessoryIcon(icon: string) {
+    if (icon === 'Spinner') {
+      return <Spinner segmentRadius={2} width={25} height={25} />;
+    } else if (icon) {
+      return <i className={`${styles.accessoryButtonIcon} ms-Icon ms-Icon--${icon}`} aria-hidden="true" />;
+    } else {
+      return false;
+    }
+  }
+
   public get state(): InspectorState {
     return this._state;
   }
@@ -174,7 +189,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
       return (
         <div className={styles.detailPanel}>
           <Panel title={['inspector', this.state.title].filter(s => s && s.length).join(' - ')}>
-            {this.renderAccessoryButtons(this.state.inspector)}
+            {this.renderAccessoryButtons()}
             <PanelContent>
               <div className={styles.inspectorContainer} tabIndex={0}>
                 <div ref={this.webViewContainer} className={styles.webViewContainer} />
@@ -207,29 +222,26 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     }
   }
 
-  private renderAccessoryIcon(config: InspectorAccessoryState) {
-    if (config.icon === 'Spinner') {
-      return <Spinner segmentRadius={2} width={25} height={25} />;
-    } else if (config.icon) {
-      return <i className={`${styles.accessoryButtonIcon} ms-Icon ms-Icon--${config.icon}`} aria-hidden="true" />;
-    } else {
-      return false;
-    }
-  }
-
-  private renderAccessoryButton(button: AccessoryButton, handler: (id: string) => void) {
+  private renderAccessoryButton(button: AccessoryButton, onClickHandler: (id: string) => void) {
     const { config, state, enabled } = button;
     const currentState = config.states[state] || {};
+    const { icon, ...buttonAttrs } = currentState;
     return (
-      <button className={styles.accessoryButton} key={config.id} disabled={!enabled} onClick={() => handler(config.id)}>
-        {this.renderAccessoryIcon(currentState)}
+      <PrimaryButton
+        {...buttonAttrs}
+        className={styles.accessoryButton}
+        key={config.id}
+        disabled={!enabled}
+        onClick={() => onClickHandler(config.id)}
+      >
+        {Inspector.renderAccessoryIcon(icon)}
         {currentState.label}
-      </button>
+      </PrimaryButton>
     );
   }
 
   // eslint-disable-next-line typescript/no-unused-vars
-  private renderAccessoryButtons(_inspector: ExtensionInspector) {
+  private renderAccessoryButtons() {
     return (
       <PanelControls>
         {this.state.buttons.map(accessoryButton => this.renderAccessoryButton(accessoryButton, this.accessoryClick))}

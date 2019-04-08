@@ -11,6 +11,10 @@
       height: 100%;
     }
 
+    div:empty, svg:empty {
+      display: none;
+    }
+
     body {
       padding: 0;
       margin: 0;
@@ -31,7 +35,55 @@
       background: #5E5E5E;
     }
 
-    #bot-state-visualizer {
+    #json-visualizer {
+      color: var(--log-panel-item-info);
+      padding: 8px 16px 0 16px;
+      font-family: var(--monospace-font-family);
+      font-size: 13px;
+      word-wrap: break-word;
+      white-space: pre-wrap;
+      overflow-y: auto;
+      user-select: text;
+    }
+
+    .json-key {
+      color: var(--log-panel-link);
+    }
+
+    .json-string {
+      color: var(--log-panel-item-error);
+    }
+
+    .json-number {
+      color: var(--log-panel-timestamp);
+    }
+
+    .json-boolean {
+      color: var(--log-panel-link);
+    }
+
+    .json-null {
+      color: var(--log-panel-link);
+    }
+
+    .devtools {
+      position: fixed;
+      bottom: 0;
+      right: 0;
+    }
+
+    .tool-button {
+      background-color: transparent;
+      color: var(--log-panel-link);
+      border: 1px solid var(--log-panel-link);
+      padding: 6px;
+    }
+
+    .tool-button:hover {
+      color: var(--log-panel-link);
+    }
+
+    #bot-state-visualizer, #json-visualizer {
       padding: 10px;
       font-family: var(--monospace-font-family);
       font-size: 13px;
@@ -69,6 +121,7 @@
 </head>
 <body>
 <svg id="bot-state-visualizer"></svg>
+<div id="json-visualizer"></div>
 <script type="application/javascript" src="botstate.js"></script>
 </body>
 </html>
