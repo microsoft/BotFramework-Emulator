@@ -50,6 +50,8 @@ import {
   isLocalHostUrl,
   LogLevel,
   MessageActivity,
+  networkRequestItem,
+  networkResponseItem,
   PaymentOperations,
   PaymentRequest,
   PaymentRequestComplete,
@@ -208,6 +210,27 @@ export default class Conversation extends EventEmitter {
     if (!/2\d\d/.test('' + result.statusCode)) {
       this.botEmulator.facilities.logger.logException(this.conversationId, result.response);
     }
+
+    this.botEmulator.facilities.logger.logMessage(
+      this.conversationId,
+      networkRequestItem(
+        'directline',
+        activity,
+        {
+          'Content-Type': 'application/json',
+        },
+        'POST',
+        '/v3/directline/conversations'
+      ),
+      networkResponseItem(
+        { id: result.activityId },
+        result.response.headers,
+        result.statusCode,
+        result.status,
+        '/v3/directline/conversations'
+      ),
+      textItem(LogLevel.Debug, `directline.conversationUpdate`)
+    );
   }
 
   /**
