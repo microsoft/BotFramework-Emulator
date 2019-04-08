@@ -64,10 +64,10 @@ ReactDOM.render(
 
 // Tell the main process we're loaded
 CommandServiceImpl.remoteCall(SharedConstants.Commands.ClientInit.Loaded)
-  .then(() => {
+  .then(async () => {
     showWelcomePage();
     // do actions on main side that might open a document, so that they will be active over the welcome screen
-    CommandServiceImpl.remoteCall(SharedConstants.Commands.ClientInit.PostWelcomeScreen);
+    await CommandServiceImpl.remoteCall(SharedConstants.Commands.ClientInit.PostWelcomeScreen);
     window.addEventListener('keydown', globalHandlers, true);
   })
   .catch(err => {

@@ -321,13 +321,12 @@ const createMainWindow = async () => {
     }
   });
   const emulatorInstance = await Emulator.startup();
-  const { facilities } = emulatorInstance.framework.server.botEmulator;
   const { users: userSettings, framework } = getSettingsStore().getState();
-
   const users = new Users();
   users.currentUserId = userSettings.currentUserId;
   users.users = userSettings.usersById;
 
+  const { facilities } = emulatorInstance.framework.server.botEmulator;
   facilities.locale = framework.locale;
   facilities.users = users;
   loadMainPage();

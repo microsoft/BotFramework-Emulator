@@ -65,15 +65,19 @@ export const getSettings = () => {
 };
 
 export const startup = () => {
+  if (started) {
+    return;
+  }
   // Listen for settings change requests from the client.
-  Electron.ipcMain.on('serverChangeSetting', (event, ...args) => {
-    // Apply change requests to the settings store.
-    getStore().dispatch({
-      type: args[0],
-      state: args[1],
-    });
-  });
-
+  Electron.ipcMain.on('serverChangeSetting', onServerChangeSettings);
   // Guard against calling getSettings before startup.
   started = true;
 };
+
+function onServerChangeSettings(event, ...args) {
+  // Apply change requests to the settings store.
+  getStore().dispatch({
+    type: args[0],
+    state: args[1],
+  });
+}

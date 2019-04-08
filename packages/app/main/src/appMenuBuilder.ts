@@ -37,7 +37,7 @@ import * as Electron from 'electron';
 
 import { AppUpdater, UpdateStatus } from './appUpdater';
 import { getActiveBot } from './botHelpers';
-import { emulator } from './emulator';
+import { Emulator, emulator } from './emulator';
 import { mainWindow } from './main';
 import { debugModeChanged, rememberTheme } from './settingsData/actions/windowStateActions';
 import { getStore as getSettingsStore } from './settingsData/store';
@@ -446,6 +446,7 @@ export class AppMenuBuilder {
           click: (menuItem: Electron.MenuItem) => {
             const debugMode = menuItem.checked ? DebugMode.Sidecar : DebugMode.Normal;
             settingsStore.dispatch(debugModeChanged(debugMode));
+            Emulator.startup().catch();
           },
         },
       ],

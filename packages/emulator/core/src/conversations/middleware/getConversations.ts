@@ -34,26 +34,14 @@
 import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 import {
+  ConversationMembers,
   ConversationsGetConversationsOptionalParams,
   ConversationsGetConversationsResponse,
 } from 'botframework-connector/lib/connectorApi/models';
 
 import { BotEmulator } from '../../botEmulator';
-import { Conversation } from '../../index';
 import sendErrorResponse from '../../utils/sendErrorResponse';
-
-const skipWhileExpression = <T>(expression: (item: T) => boolean) => {
-  let skipping = true;
-  return item => {
-    if (!skipping) {
-      return true;
-    }
-    if (!expression(item)) {
-      skipping = false;
-    }
-    return !skipping;
-  };
-};
+import { Conversation } from '../../index';
 
 export default function fetchConversations(botEmulator: BotEmulator) {
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): void => {
@@ -64,9 +52,17 @@ export default function fetchConversations(botEmulator: BotEmulator) {
     const response = {} as ConversationsGetConversationsResponse;
 
     if (continuationToken) {
-      response.conversations = conversations
-        .filter(skipWhileExpression<Conversation>(a => a.conversationId !== continuationToken))
-        .map(convo => ({ id: convo.conversationId, members: convo.members }));
+      let tokenFound = false;
+      response.conversations = conversations.reduce(
+        (continued: ConversationMembers[], convo: Conversation): ConversationMembers[] => {
+          tokenFound = tokenFound || convo.conversationId === continuationToken;
+          if (tokenFound) {
+            continued.push({ id: convo.conversationId, members: convo.members });
+          }
+          return continued;
+        },
+        []
+      );
     } else {
       response.conversations = conversations.map(convo => ({ id: convo.conversationId, members: convo.members }));
     }

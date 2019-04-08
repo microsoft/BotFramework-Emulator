@@ -35,6 +35,7 @@ import { MenuItemConstructorOptions } from 'electron';
 import { Activity, ActivityTypes } from 'botframework-schema';
 import { SharedConstants } from '@bfemulator/app-shared';
 import { InspectableObjectLogItem, LogItem, LogItemType } from '@bfemulator/sdk-shared';
+import { diff } from 'deep-diff';
 
 import { ChatAction, ChatActions, closeDocument, DocumentIdPayload, setInspectorObjects } from '../action/chatActions';
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
@@ -115,29 +116,65 @@ export function* closeConversation(action: ChatAction<DocumentIdPayload>): Itera
 
 export function* diffWithPreviousBotState(currentBotState: Activity): Iterable<any> {
   const previousBotState: Activity = yield select(getPreviousBotState, currentBotState);
-  // Remove unchanged paths from the path maps
-  const previousStatePaths = createPathMap(previousBotState.value);
-  const currentStatePaths = createPathMap(currentBotState.value);
-  Object.keys(currentStatePaths).forEach(path => {
-    if (path in previousStatePaths && previousStatePaths[path] === currentStatePaths[path]) {
-      delete currentStatePaths[path];
-      delete previousStatePaths[path];
+
+  const lhs = [];
+  const rhs = [];
+  const deltas = diff(previousBotState.value, currentBotState.value);
+  (deltas || []).forEach(diff => {
+    switch (diff.kind) {
+      case 'A':
+        {
+          const { item, path } = diff;
+          path.push(diff.index);
+          if (item.kind === 'D') {
+            lhs.push(path);
+          } else if (item.kind === 'E') {
+            rhs.push(path);
+            lhs.push(path);
+          } else {
+            rhs.push(path);
+          }
+        }
+        break;
+
+      case 'D':
+        lhs.push(diff.path);
+        break;
+
+      case 'E':
+        rhs.push(diff.path);
+        lhs.push(diff.path);
+        break;
+
+      case 'N':
+        rhs.push(diff.path);
+        break;
     }
   });
 
   // Clone the bot state and update the keys to show changes
-  const diff: Activity = JSON.parse(JSON.stringify(currentBotState));
-  diff.valueType = 'https://www.botframework.com/schemas/diff';
+  const botStateClone: Activity = JSON.parse(
+    JSON.stringify(currentBotState, (key: string, value: any) => {
+      if (value instanceof Array) {
+        return Object.keys(value).reduce((conversion: any, key) => {
+          conversion['' + key] = value[key];
+          return conversion;
+        }, {});
+      }
+      return value;
+    })
+  );
+  botStateClone.valueType = 'https://www.botframework.com/schemas/diff';
   // values that were added
-  Object.keys(currentStatePaths).forEach(path => {
-    buildDiff('+', path, diff.value, diff.value);
+  rhs.forEach(path => {
+    buildDiff('+', path, botStateClone.value, botStateClone.value);
   });
   // values that were removed
-  Object.keys(previousStatePaths).forEach(path => {
-    buildDiff('-', path, diff.value, previousBotState.value);
+  lhs.forEach(path => {
+    buildDiff('-', path, botStateClone.value, previousBotState.value);
   });
   const documentId = yield select(getCurrentDocumentId);
-  yield put(setInspectorObjects(documentId, diff));
+  yield put(setInspectorObjects(documentId, botStateClone));
 }
 
 function getTextFromActivity(activity: Activity): string {
@@ -147,28 +184,10 @@ function getTextFromActivity(activity: Activity): string {
   return activity.text;
 }
 
-function createPathMap(obj, paths = {}, parent: string = '') {
-  const keys = Object.keys(obj);
-  if (!keys.length && parent) {
-    paths[parent] = null;
-  }
-  for (let i = 0; i < keys.length; i++) {
-    const key = keys[i];
-    const path = parent ? parent + '.' + key : key;
-    if (obj[key] !== null && typeof obj[key] === 'object') {
-      createPathMap(obj[key], paths, path);
-    } else {
-      paths[path] = obj[key];
-    }
-  }
-  return paths;
-}
-
-function buildDiff(prependWith: string, path: string, target: any, source: any): void {
-  const parts = path.split('.');
+function buildDiff(prependWith: string, path: (string | number)[], target: any, source: any): void {
   let key;
-  for (let i = 0; i < parts.length; i++) {
-    key = parts[i];
+  for (let i = 0; i < path.length; i++) {
+    key = path[i];
     if (key in target && target[key] !== null && typeof target[key] === 'object') {
       target = target[key];
       source = source[key];

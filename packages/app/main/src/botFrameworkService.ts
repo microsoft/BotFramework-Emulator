@@ -32,6 +32,7 @@
 //
 
 import { LogLevel, textItem } from '@bfemulator/sdk-shared';
+import { newNotification, SharedConstants } from '@bfemulator/app-shared';
 
 import { mainWindow } from './main';
 import { RestServer } from './restServer';
@@ -42,7 +43,7 @@ import { RestServer } from './restServer';
 export class BotFrameworkService {
   public server: RestServer;
   private _serverUrl: string;
-  private _serverPort: number;
+  private _serverPort: number = 9000;
 
   public get serverUrl() {
     return this._serverUrl;
@@ -52,24 +53,28 @@ export class BotFrameworkService {
     return this._serverPort;
   }
 
-  public async startup() {
-    await this.recycle();
-  }
-
   /**
    * Applies configuration changes.
    */
-  public async recycle() {
+  public async recycle(port: number) {
     if (this.server) {
       await this.server.close();
     }
 
     this.server = new RestServer();
+    try {
+      const { url } = await this.server.listen(port);
 
-    const { url, port } = await this.server.listen(9000);
-
-    this._serverUrl = url;
-    this._serverPort = port;
+      this._serverUrl = url;
+      this._serverPort = port;
+    } catch (e) {
+      if (e.code === 'EADDRINUSE') {
+        const notification = newNotification(
+          `Port ${port} is in use and the Emulator cannot start. Please free this port so the emulator can use it.`
+        );
+        await mainWindow.commandService.remoteCall(SharedConstants.Commands.Notifications.Add, notification);
+      }
+    }
   }
 
   public report(conversationId: string) {
