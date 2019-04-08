@@ -40,7 +40,7 @@ import BotEndpoint from '../../facility/botEndpoint';
 import uniqueId from '../../utils/uniqueId';
 
 export default function startConversation(botEmulator: BotEmulator) {
-  return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+  return async (req: Restify.Request, res: Restify.Response, next: Restify.Next): Promise<any> => {
     const auth = req.header('Authorization');
 
     // TODO: We should not use token as conversation ID
@@ -61,9 +61,9 @@ export default function startConversation(botEmulator: BotEmulator) {
     if (!conversation) {
       conversation = conversations.newConversation(botEmulator, botEndpoint, currentUser, conversationId);
       // Send "bot added to conversation"
-      conversation.sendConversationUpdate([{ id: botEndpoint.botId, name: 'Bot' }], undefined);
+      await conversation.sendConversationUpdate([{ id: botEndpoint.botId, name: 'Bot' }], undefined);
       // Send "user added to conversation"
-      conversation.sendConversationUpdate([currentUser], undefined);
+      await conversation.sendConversationUpdate([currentUser], undefined);
       created = true;
     } else {
       if (botEndpoint && conversation.members.findIndex(user => user.id === botEndpoint.botId) === -1) {
