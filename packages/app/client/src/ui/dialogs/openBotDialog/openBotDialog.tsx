@@ -83,19 +83,32 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
     return endpoint.endsWith('.bot') ? ValidationResult.Valid : ValidationResult.Invalid;
   }
 
-  private static validatePath(path: string): ValidationResult {
-    return path ? ValidationResult.Valid : ValidationResult.Invalid;
+  private static validateEndpointResult(urlValidationResult: ValidationResult) {
+    return (
+      urlValidationResult === ValidationResult.Empty ||
+      urlValidationResult === ValidationResult.Invalid ||
+      urlValidationResult === ValidationResult.RouteMissing
+    );
+  }
+
+  private static disableButton(botUrl, botTranscriptPath) {
+    if (OpenBotDialog.validateEndpointResult(this.validateEndpoint(botUrl))) {
+      return true;
+    } else {
+      if (botTranscriptPath.length == 0 && botUrl.startsWith('http')) {
+        return true;
+      } else {
+        return false;
+      }
+    }
   }
 
   public render(): ReactNode {
     const { botUrl, appId, appPassword, botTranscriptPath } = this.state;
-    const urlValidationResult = OpenBotDialog.validateEndpoint(botUrl);
-    const pathValidationResult = OpenBotDialog.validatePath(botTranscriptPath);
-    const errorMessage = OpenBotDialog.getErrorMessage(urlValidationResult);
-    const buttonShouldBeDisabled =
-      (urlValidationResult === ValidationResult.Invalid || urlValidationResult === ValidationResult.Empty) &&
-      pathValidationResult === ValidationResult.Invalid;
+
+    const errorMessage = OpenBotDialog.getErrorMessage(OpenBotDialog.validateEndpoint(botUrl));
     const fieldShouldBeDisabled = !botUrl.startsWith('http');
+    const buttonShouldBeDisabled = OpenBotDialog.disableButton(botUrl, botTranscriptPath);
     return (
       <Dialog cancel={this.props.onDialogCancel} className={openBotStyles.themeOverrides} title="Open a bot">
         <form onSubmit={this.onSubmit}>
@@ -123,6 +136,7 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
           </TextField>
           <TextField
             autoFocus={true}
+            disabled={fieldShouldBeDisabled}
             name="botTranscriptPath"
             inputContainerClassName={openBotStyles.inputContainer}
             label="Path to save dialogs or transcripts when using URL"
@@ -130,19 +144,8 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
             onFocus={this.onFocus}
             placeholder="Path to save dialogs or transcripts"
             value={botTranscriptPath}
-            disabled={fieldShouldBeDisabled}
-          >
-            <PrimaryButton className={openBotStyles.browseButton} disabled={fieldShouldBeDisabled}>
-              Browse
-              <input
-                accept=".bot"
-                className={openBotStyles.fileInput}
-                name="botTranscriptPath"
-                onChange={this.onInputChange}
-                type="file"
-              />
-            </PrimaryButton>
-          </TextField>
+            required={!fieldShouldBeDisabled}
+          />
           <Row className={openBotStyles.multiInputRow}>
             <TextField
               inputContainerClassName={openBotStyles.inputContainerRow}
