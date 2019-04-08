@@ -51,7 +51,6 @@ import {
   removeBotFromList,
   saveBot,
   toSavableBot,
-  getInfoByUrl,
 } from '../botHelpers';
 import { emulator } from '../emulator';
 import { mainWindow } from '../main';
@@ -158,7 +157,9 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
       store.dispatch(BotActions.setActive(bot));
       store.dispatch(BotActions.setDirectory(botDirectory));
 
-      const botInfo = getInfoByUrl(bot) || getBotInfoByPath(bot.path);
+      const botInfo: BotInfo = {
+        path: bot.path,
+      };
 
       const {
         chatsPath = path.join(botDirectory, './dialogs'),
