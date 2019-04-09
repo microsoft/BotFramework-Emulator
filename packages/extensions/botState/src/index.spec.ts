@@ -30,9 +30,10 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { BotState, BotStateVisualizer } from './BotStateVisualizer';
+import { BotStateVisualizer } from './BotStateVisualizer';
 import { ViewState } from './ViewState';
 import { WindowHostReceiver } from './WindowHostReceiver';
+import { BotState } from './types';
 
 (window as any).host = {
   bot: {},
