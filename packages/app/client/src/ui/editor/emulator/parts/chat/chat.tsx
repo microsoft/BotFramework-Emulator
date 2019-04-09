@@ -90,6 +90,7 @@ export async function getSpeechToken(endpoint: IEndpointService, refresh: boolea
 }
 
 export class Chat extends Component<ChatProps, ChatState> {
+  private static BotStateValueType = 'https://www.botframework.com/schemas/botState';
   private activityMap: { [activityId: string]: Activity };
 
   constructor(props: ChatProps, context: {}) {
@@ -189,15 +190,14 @@ export class Chat extends Component<ChatProps, ChatState> {
     let { value: activity = {} } = card.activity; // activities are nested
     if (activity.type !== ActivityTypes.Message) {
       // determine if this is a bot state
-      const valueType = 'https://www.botframework.com/schemas/botState';
-      if (card.activity.valueType === valueType) {
+      if (card.activity.valueType === Chat.BotStateValueType) {
         activity = {
           type: ActivityTypes.Message,
           id: card.activity.id,
           text: '<Bot State Object>',
           from: { role: 'bot' },
           value: activity,
-          valueType,
+          valueType: Chat.BotStateValueType,
         } as Activity;
       } else {
         return null;
