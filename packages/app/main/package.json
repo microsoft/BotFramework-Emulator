@@ -82,7 +82,7 @@
     "concurrently": "^3.5.1",
     "cross-env": "^5.1.3",
     "del": "^3.0.0",
-    "electron": "2.0.12",
+    "electron": "4.1.1",
     "electron-builder": "20.29.0",
     "electron-builder-http": "19.27.5",
     "electron-builder-lib": "20.23.1",
@@ -151,6 +151,10 @@
     "appId": "F3C061A6-FE81-4548-82ED-C1171D9856BB",
     "productName": "Bot Framework Emulator",
     "copyright": "Copyright © 2018 Microsoft Corporation",
+    "electronDownload": {
+      "version": "4.1.1",
+      "mirror": "${env.ELECTRON_MIRROR}"
+    },
     "protocols": [
       {
         "name": "Bot Framework Emulator",
@@ -255,10 +259,7 @@
       "target": [
         {
           "target": "AppImage",
-          "arch": [
-            "x64",
-            "ia32"
-          ]
+          "arch": ["x64"]
         }
       ]
     },
