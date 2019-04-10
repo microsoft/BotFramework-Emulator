@@ -165,6 +165,17 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
                 label="Locale"
               />
             </Row>
+            <Row align={RowAlignment.Center}>
+              <TextField
+                className={styles.appSettingsInput}
+                inputContainerClassName={styles.inputContainer}
+                readOnly={false}
+                value={state.userGUID}
+                name="userGUID"
+                onChange={this.onInputChange}
+                label="GUID"
+              />
+            </Row>
           </Column>
           <Column className={[styles.rightColumn, styles.spacing].join(' ')}>
             <SmallHeader>Auth</SmallHeader>
