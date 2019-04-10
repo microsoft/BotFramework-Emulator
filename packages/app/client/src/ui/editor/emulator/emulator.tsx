@@ -39,7 +39,7 @@ import { IEndpointService } from 'botframework-config/lib/schema';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { BehaviorSubject } from 'rxjs';
-import { newNotification, Notification, SharedConstants } from '@bfemulator/app-shared';
+import { newNotification, Notification, SharedConstants, FrameworkSettings } from '@bfemulator/app-shared';
 
 import * as ChatActions from '../../../data/action/chatActions';
 import { updateDocument } from '../../../data/action/editorActions';
@@ -113,7 +113,7 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
   componentWillMount() {
     window.addEventListener('keydown', this.keyboardEventListener);
     if (this.shouldStartNewConversation()) {
-      this.startNewConversation();
+      // this.startNewConversation();
     }
   }
 
@@ -174,10 +174,15 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
       ? `${uniqueId()}|${props.mode}`
       : props.document.conversationId || `${uniqueId()}|${props.mode}`;
 
-    const userId = requireNewUserId ? uniqueIdv4() : props.document.userId;
-    if (requireNewUserId) {
-      await CommandServiceImpl.remoteCall(SharedConstants.Commands.Emulator.SetCurrentUser, userId);
-    }
+    const framework: FrameworkSettings = await CommandServiceImpl.remoteCall(
+      SharedConstants.Commands.Settings.LoadAppSettings
+    );
+
+    const stableId = framework.userGUID; // framework.userGUID.toString() || props.document.userId;
+
+    const userId = requireNewUserId ? uniqueIdv4() : stableId || props.document.userId;
+
+    await CommandServiceImpl.remoteCall(SharedConstants.Commands.Emulator.SetCurrentUser, userId);
 
     const options = {
       conversationId,

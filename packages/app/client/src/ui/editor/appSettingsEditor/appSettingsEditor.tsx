@@ -165,20 +165,9 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
                 label="Locale"
               />
             </Row>
-            <Row align={RowAlignment.Center}>
-              <TextField
-                className={styles.appSettingsInput}
-                inputContainerClassName={styles.inputContainer}
-                readOnly={false}
-                value={state.userGUID}
-                name="userGUID"
-                onChange={this.onInputChange}
-                label="GUID"
-              />
-            </Row>
           </Column>
           <Column className={[styles.rightColumn, styles.spacing].join(' ')}>
-            <SmallHeader>Auth</SmallHeader>
+            <SmallHeader>User settings</SmallHeader>
             <Checkbox
               className={styles.checkboxOverrides}
               checked={state.use10Tokens}
@@ -187,7 +176,6 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
               label="Use version 1.0 authentication tokens"
               name="use10Tokens"
             />
-            <SmallHeader>Sign-in</SmallHeader>
             <Checkbox
               className={styles.checkboxOverrides}
               checked={state.useCodeValidation}
@@ -195,6 +183,25 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
               id="use-validation-code"
               label="Use a sign-in verification code for OAuthCards"
               name="useCodeValidation"
+            />
+            <Checkbox
+              className={styles.checkboxOverrides}
+              checked={state.useCustomId}
+              onChange={this.onChangeCheckBox}
+              id="use-custom-id"
+              label="Use your own ID to communicate with the bot"
+              name="useCustomId"
+            />
+            <TextField
+              className={styles.appSettingsInput}
+              inputContainerClassName={styles.inputContainer}
+              readOnly={false}
+              value={state.userGUID}
+              name="userGUID"
+              onChange={this.onInputChange}
+              label="GUID"
+              disabled={!state.useCustomId}
+              required={state.useCustomId}
             />
             <SmallHeader>Application Updates</SmallHeader>
             <Checkbox
@@ -238,6 +245,8 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
     const change = { [name]: checked };
     this.setState(change);
     this.updateDirtyFlag(change);
+
+    if (name === 'useCustomId' && checked == false) this.state.userGUID = '';
   };
 
   private onClickBrowse = async (): Promise<void> => {

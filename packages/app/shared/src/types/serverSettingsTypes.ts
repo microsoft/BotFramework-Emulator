@@ -62,6 +62,8 @@ export interface FrameworkSettings {
   hash?: string;
   // GUID set by the user
   userGUID?: string;
+  // use custom user id
+  useCustomId?: boolean;
 }
 
 export interface WindowStateSettings {
