@@ -30,7 +30,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { IEndpointService } from 'botframework-config/lib/schema';
 import { connect } from 'react-redux';
 import { User } from '@bfemulator/sdk-shared';
 import { Activity } from 'botframework-schema';
@@ -44,13 +43,11 @@ const mapStateToProps = (state: RootState, { document }): Partial<ChatProps> => 
   const currentUserId = state.clientAwareSettings.users.currentUserId;
 
   return {
-    currentUserId,
     currentUser: state.clientAwareSettings.users.usersById[currentUserId] || ({} as User),
     locale: state.clientAwareSettings.locale || 'en-us',
     debugMode: state.clientAwareSettings.debugMode,
-    endpoint: ((state.bot.activeBot && state.bot.activeBot.services) || []).find(
-      s => s.id === document.endpointId
-    ) as IEndpointService,
+    webSpeechPonyfillFactory: state.chat.webSpeechFactories[document.documentId],
+    pendingSpeechTokenRetrieval: state.chat.pendingSpeechTokenRetrieval,
   };
 };
 

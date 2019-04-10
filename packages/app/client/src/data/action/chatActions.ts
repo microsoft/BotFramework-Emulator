@@ -50,19 +50,28 @@ export enum ChatActions {
   removeTranscript = 'CHAT/TRANSCRIPT/REMOVE',
   updateChat = 'CHAT/DOCUMENT/UPDATE',
   showContextMenuForActivity = 'CHAT/CONTEXT_MENU/SHOW',
+  webSpeechFactoryUpdated = 'CHAT/SPEECH/TOKEN/RETRIEVED',
+  updatePendingSpeechTokenRetrieval = 'CHAT/SPEECH/TOKEN/PENDING/UPDATE',
 }
 
 export interface ActiveInspectorChangedPayload {
   inspectorWebView: HTMLWebViewElement;
 }
 
-export interface NewChatAction {
-  type: ChatActions.newChat;
-  payload: {
-    [propName: string]: any;
-    documentId: string;
-    mode: ChatMode;
-  };
+export interface NewChatPayload {
+  [propName: string]: any;
+
+  documentId: string;
+  mode: ChatMode;
+}
+
+export interface WebSpeechFactoryPayload {
+  documentId: string;
+  factory: () => any;
+}
+
+export interface PendingSpeechTokenRetrievalPayload {
+  pending: boolean;
 }
 
 export interface DocumentIdPayload {
@@ -137,7 +146,21 @@ export function removeTranscript(filename: string): ChatAction<RemoveTranscriptP
   };
 }
 
-export function newDocument(documentId: string, mode: ChatMode, additionalData?: object): NewChatAction {
+export function webSpeechFactoryUpdated(documentId: string, factory: () => any): ChatAction<WebSpeechFactoryPayload> {
+  return {
+    type: ChatActions.webSpeechFactoryUpdated,
+    payload: { documentId, factory },
+  };
+}
+
+export function updatePendingSpeechTokenRetrieval(pending: boolean): ChatAction<PendingSpeechTokenRetrievalPayload> {
+  return {
+    type: ChatActions.updatePendingSpeechTokenRetrieval,
+    payload: { pending },
+  };
+}
+
+export function newDocument(documentId: string, mode: ChatMode, additionalData?: object): ChatAction<NewChatPayload> {
   return {
     type: ChatActions.newChat,
     payload: {

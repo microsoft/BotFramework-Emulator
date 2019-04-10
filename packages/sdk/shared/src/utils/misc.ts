@@ -31,6 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import * as nodeUrl from 'url';
+
 import { v4 as uuidv4 } from 'uuid';
 import uuidv1 from 'uuid/v1';
 
@@ -47,12 +49,22 @@ export function isObject(item: any): boolean {
 }
 
 export function isLocalHostUrl(url: string): boolean {
-  try {
-    const parsedUrl = new URL(url);
-    const localhostNames = ['localhost', '127.0.0.1', '::1'];
-    return localhostNames.some(name => parsedUrl.hostname === name);
-  } catch (e) {
-    // invalid url was passed in
-    return false;
+  const localhostNames = ['localhost', '127.0.0.1', '::1'];
+  let parsedUrl;
+  //  Node 8 - may be removed when upgrading to Electron 4
+  if (nodeUrl) {
+    try {
+      parsedUrl = nodeUrl.parse(url);
+    } catch (e) {
+      return false;
+    }
+  } else {
+    try {
+      parsedUrl = new URL(url);
+    } catch (e) {
+      // invalid url was passed in
+      return false;
+    }
   }
+  return localhostNames.some(name => parsedUrl.hostname === name);
 }

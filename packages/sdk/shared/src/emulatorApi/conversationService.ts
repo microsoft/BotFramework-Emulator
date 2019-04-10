@@ -106,12 +106,15 @@ export class ConversationService {
   }
 
   public static startConversation(serverUrl: string, payload: Partial<StartConversationParams>): Promise<Response> {
-    const { endpoint, appId, appPassword, user, ...body } = payload;
-    const url = serverUrl + `/v3/conversations?botEndpoint=${endpoint}&msaAppId=${appId}&msaPassword=${appPassword}`;
+    const { endpoint, appId = '', appPassword = '', user, ...body } = payload;
+    const url = serverUrl + `/v3/conversations`;
     return fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'X-Emulator-BotEndpoint': endpoint,
+        'X-Emulator-AppId': appId,
+        'X-Emulator-AppPassword': appPassword,
       },
       body: JSON.stringify({
         bot: {

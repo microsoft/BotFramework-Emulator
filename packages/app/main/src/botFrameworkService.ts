@@ -63,10 +63,10 @@ export class BotFrameworkService {
 
     this.server = new RestServer();
     try {
-      const { url } = await this.server.listen(port);
+      const { url, port: serverChosenPort } = await this.server.listen(port);
 
       this._serverUrl = url;
-      this._serverPort = port;
+      this._serverPort = serverChosenPort;
     } catch (e) {
       if (e.code === 'EADDRINUSE') {
         const notification = newNotification(

@@ -30,6 +30,21 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-export class WindowHostDispatcher {
-  constructor(private window: Window) {}
+import { IEndpointService } from 'botframework-config/lib/schema';
+import { Activity } from 'botframework-schema';
+
+export function isCardSelected(selectedActivity: Activity, activity: Activity): boolean {
+  if (!selectedActivity) {
+    return false;
+  }
+  return (
+    selectedActivity.id === activity.id ||
+    // Activity Ids are optional according to the spec so we need a
+    // last resort when the bot did not provide an id for the activity.
+    JSON.stringify(selectedActivity) === JSON.stringify(activity)
+  );
+}
+
+export function isSpeechEnabled(endpoint: IEndpointService): boolean {
+  return !!(endpoint && endpoint.appId && endpoint.appPassword);
 }

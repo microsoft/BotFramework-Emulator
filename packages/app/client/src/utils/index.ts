@@ -35,3 +35,4 @@ export * from './debounce';
 export * from './expandFlatTree';
 export * from './getGlobal';
 export * from './generateBotSecret';
+export * from './chatUtils';

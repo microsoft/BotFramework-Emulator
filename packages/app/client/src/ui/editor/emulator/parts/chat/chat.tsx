@@ -30,99 +30,67 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { DebugMode } from '@bfemulator/app-shared';
+import { BehaviorSubject } from 'rxjs';
+import { DebugMode, ValueTypes } from '@bfemulator/app-shared';
 import { User } from '@bfemulator/sdk-shared';
-import { IEndpointService } from 'botframework-config/lib/schema';
 import { Activity, ActivityTypes } from 'botframework-schema';
-import ReactWebChat, { createCognitiveServicesBingSpeechPonyfillFactory } from 'botframework-webchat';
+import ReactWebChat from 'botframework-webchat';
 import * as React from 'react';
 import { Component, KeyboardEvent, MouseEvent, ReactNode } from 'react';
+import { PrimaryButton } from '@bfemulator/ui-react';
 
-import { CommandServiceImpl } from '../../../../../platform/commands/commandServiceImpl';
 import { EmulatorMode } from '../../emulator';
+import { isCardSelected } from '../../../../../utils';
 
 import ActivityWrapper from './activityWrapper';
 import * as styles from './chat.scss';
 import webChatStyleOptions from './webChatTheme';
 
+interface PartialDocument {
+  selectedActivity$?: BehaviorSubject<Activity & { showInInspector?: boolean }>;
+  directLine: any;
+  botId: string;
+}
+
 export interface ChatProps {
-  document: any;
-  endpoint: IEndpointService;
+  document: PartialDocument;
   mode: EmulatorMode;
   debugMode: DebugMode;
   onStartConversation: any;
   currentUser: User;
-  currentUserId: string;
   locale: string;
-  selectedActivity: Activity | null;
-  updateSelectedActivity: (activity: Partial<Activity>) => void;
+  webSpeechPonyfillFactory?: () => any;
+  pendingSpeechTokenRetrieval?: boolean;
   showContextMenuForActivity: (activity: Partial<Activity>) => void;
 }
 
 interface ChatState {
-  waitForSpeechToken: boolean;
-  webSpeechPonyfillFactory: any;
-}
-
-function isCardSelected(selectedActivity: Activity | null, activity: Activity): boolean {
-  return Boolean(selectedActivity && activity.id && selectedActivity.id === activity.id);
-}
-
-function isSpeechEnabled(endpoint: IEndpointService | null): boolean {
-  return Boolean(endpoint && endpoint.appId && endpoint.appPassword);
-}
-
-export async function getSpeechToken(endpoint: IEndpointService, refresh: boolean = false): Promise<string | void> {
-  if (!endpoint) {
-    // eslint-disable-next-line no-console
-    console.warn('No endpoint for this chat, cannot fetch speech token.');
-    return;
-  }
-
-  const command = refresh ? 'speech-token:refresh' : 'speech-token:get';
-
-  try {
-    return await CommandServiceImpl.remoteCall(command, endpoint.id);
-  } catch (err) {
-    // eslint-disable-next-line no-console
-    console.error(err);
-  }
+  selectedActivity?: Activity;
+  document?: PartialDocument;
 }
 
 export class Chat extends Component<ChatProps, ChatState> {
-  private static BotStateValueType = 'https://www.botframework.com/schemas/botState';
+  public state = { waitForSpeechToken: false } as ChatState;
   private activityMap: { [activityId: string]: Activity };
 
-  constructor(props: ChatProps, context: {}) {
-    super(props, context);
-
-    this.state = {
-      waitForSpeechToken: isSpeechEnabled(props.endpoint),
-      webSpeechPonyfillFactory: null,
-    };
-  }
-
-  public async componentDidMount() {
-    if (this.state.waitForSpeechToken) {
-      const speechToken = await getSpeechToken(this.props.endpoint);
-
-      if (speechToken) {
-        const webSpeechPonyfillFactory = await createCognitiveServicesBingSpeechPonyfillFactory({
-          authorizationToken: speechToken,
-        });
-
-        this.setState({ webSpeechPonyfillFactory, waitForSpeechToken: false });
-      } else {
-        this.setState({ waitForSpeechToken: false });
-      }
+  public static getDerivedStateFromProps(newProps: ChatProps, prevState?: ChatState): ChatState {
+    const selectedActivity = newProps.document.selectedActivity$
+      ? newProps.document.selectedActivity$.getValue()
+      : null;
+    if (prevState && prevState.selectedActivity === selectedActivity && prevState.document === newProps.document) {
+      return prevState;
     }
+    return {
+      document: newProps.document,
+      selectedActivity,
+    };
   }
 
   public render() {
     this.activityMap = {};
-    const { currentUser, currentUserId, document, locale, mode, debugMode } = this.props;
+    const { currentUser, document, locale, mode, debugMode } = this.props;
 
-    if (this.state.waitForSpeechToken) {
+    if (this.props.pendingSpeechTokenRetrieval) {
       return <div className={styles.disconnected}>Connecting...</div>;
     }
 
@@ -143,9 +111,9 @@ export class Chat extends Component<ChatProps, ChatState> {
             key={document.directLine.token}
             locale={locale}
             styleOptions={{ ...webChatStyleOptions, hideSendBox: isDisabled }}
-            userID={currentUserId}
+            userID={currentUser.id}
             username={currentUser.name || 'User'}
-            webSpeechPonyfillFactory={this.state.webSpeechPonyfillFactory}
+            webSpeechPonyfillFactory={this.props.webSpeechPonyfillFactory}
           />
         </div>
       );
@@ -159,9 +127,9 @@ export class Chat extends Component<ChatProps, ChatState> {
       <ActivityWrapper
         activity={card.activity}
         data-activity-id={card.activity.id}
-        onClick={this.onActivityWrapperClick}
-        onKeyDown={this.onActivityWrapperKeyDown}
-        isSelected={isCardSelected(this.props.selectedActivity, card.activity)}
+        onClick={this.onItemRendererClick}
+        onKeyDown={this.onItemRendererKeyDown}
+        isSelected={isCardSelected(this.state.selectedActivity, card.activity)}
       >
         {next(card)(children)}
       </ActivityWrapper>
@@ -169,7 +137,11 @@ export class Chat extends Component<ChatProps, ChatState> {
   }
 
   private createActivityMiddleware = () => next => card => children => {
-    this.activityMap[card.activity.id] = card.activity;
+    if (card.activity.valueType === ValueTypes.Activity) {
+      this.activityMap[card.activity.id] = card.activity.value;
+    } else {
+      this.activityMap[card.activity.id] = card.activity;
+    }
 
     switch (card.activity.type) {
       case ActivityTypes.Trace:
@@ -187,18 +159,23 @@ export class Chat extends Component<ChatProps, ChatState> {
     if (this.props.debugMode !== DebugMode.Sidecar) {
       return null;
     }
-    let { value: activity = {} } = card.activity; // activities are nested
+    const selectedActivity = this.state.selectedActivity || ({} as Activity);
+    const { value: activity = {}, valueType } = card.activity; // activities are nested
     if (activity.type !== ActivityTypes.Message) {
       // determine if this is a bot state
-      if (card.activity.valueType === Chat.BotStateValueType) {
-        activity = {
-          type: ActivityTypes.Message,
-          id: card.activity.id,
-          text: '<Bot State Object>',
-          from: { role: 'bot' },
-          value: activity,
-          valueType: Chat.BotStateValueType,
-        } as Activity;
+      if (valueType === ValueTypes.BotState) {
+        return (
+          <PrimaryButton
+            className={styles.botStateObject}
+            data-activity-id={card.activity.id}
+            onKeyDown={this.onItemRendererKeyDown}
+            onClick={this.onItemRendererClick}
+            onContextMenu={this.onContextMenu}
+            aria-selected={isCardSelected(selectedActivity, card.activity)}
+          >
+            Bot State
+          </PrimaryButton>
+        );
       } else {
         return null;
       }
@@ -207,31 +184,39 @@ export class Chat extends Component<ChatProps, ChatState> {
       <ActivityWrapper
         activity={activity}
         data-activity-id={card.activity.id}
-        onKeyDown={this.onActivityWrapperKeyDown}
-        onClick={this.onActivityWrapperClick}
+        onKeyDown={this.onItemRendererKeyDown}
+        onClick={this.onItemRendererClick}
         onContextMenu={this.onContextMenu}
-        isSelected={isCardSelected(this.props.selectedActivity, activity)}
+        isSelected={isCardSelected(this.activityMap[selectedActivity.id], activity)}
       >
         {next({ activity, timestampClassName: 'transcript-timestamp' })(children)}
       </ActivityWrapper>
     );
   }
 
-  private onActivityWrapperClick = (event: MouseEvent<HTMLDivElement>): void => {
+  protected updateSelectedActivity(id: string): void {
+    const selectedActivity: Activity & { showInInspector?: boolean } = this.activityMap[id];
+    this.setState({ selectedActivity });
+    if (this.props.document && this.props.document.selectedActivity$) {
+      this.props.document.selectedActivity$.next({ ...selectedActivity, showInInspector: true });
+    }
+  }
+
+  private onItemRendererClick = (event: MouseEvent<HTMLDivElement | HTMLButtonElement>): void => {
     const { activityId } = (event.currentTarget as any).dataset;
-    this.props.updateSelectedActivity(this.activityMap[activityId]);
+    this.updateSelectedActivity(activityId);
   };
 
-  private onActivityWrapperKeyDown = (event: KeyboardEvent<HTMLDivElement>): void => {
+  private onItemRendererKeyDown = (event: KeyboardEvent<HTMLDivElement | HTMLButtonElement>): void => {
     const { activityId } = (event.currentTarget as any).dataset;
-    this.props.updateSelectedActivity(this.activityMap[activityId]);
+    this.updateSelectedActivity(activityId);
   };
 
-  private onContextMenu = (event: MouseEvent<HTMLDivElement>): void => {
+  private onContextMenu = (event: MouseEvent<HTMLDivElement | HTMLButtonElement>): void => {
     const { activityId } = (event.currentTarget as any).dataset;
     const activity = this.activityMap[activityId];
 
-    this.props.updateSelectedActivity(activity);
+    this.updateSelectedActivity(activityId);
     this.props.showContextMenuForActivity(activity);
   };
 }

@@ -626,10 +626,7 @@ describe('The ChatSagas,', () => {
         JSON.stringify([
           {
             channelId: 'emulator',
-            conversation: {
-              conversationType: 'personal',
-              id: '9fb93120-5713-11e9-a20f-e185020ba18b|livechat',
-            },
+            conversation: { conversationType: 'personal', id: '9fb93120-5713-11e9-a20f-e185020ba18b|livechat' },
             from: {
               aadObjectId: '8d81b1c4-a057-4d27-a41d-e40b3105e6ee',
               id: '29:1roELw8-HUdxuNSlGwtGqacHW_y-tsmLhvs42duabIDv0JFovw3WX7QC-syrrAYRt0RHBqoS1i0Mt18un1YZmyw',
@@ -641,10 +638,7 @@ describe('The ChatSagas,', () => {
             localTimestamp: '2019-04-04T12:55:51-07:00',
             locale: 'en',
             name: 'BotState',
-            recipient: {
-              id: '28:825059e1-0dd5-4a90-9136-121a702c18ca',
-              role: 'user',
-            },
+            recipient: { id: '28:825059e1-0dd5-4a90-9136-121a702c18ca', role: 'user' },
             serviceUrl: 'http://localhost:9000',
             timestamp: '2019-04-04T19:55:51.863Z',
             type: 'trace',
@@ -652,48 +646,43 @@ describe('The ChatSagas,', () => {
               conversationState: {
                 dialogState: {
                   conversationState: {},
-                  dialogStack: [
-                    {
+                  dialogStack: {
+                    '0': {
                       id: 'root',
                       state: {
                         options: {},
                         stepIndex: 0,
-                        values: {
-                          instanceId: '6938f312-523a-2db2-92ba-9680f559dd2d',
-                        },
+                        values: { instanceId: '6938f312-523a-2db2-92ba-9680f559dd2d' },
                       },
                     },
-                    {
+                    '1': {
                       id: 'slot-dialog',
                       state: {
                         values: {
                           fullname: {
-                            values: {
-                              '+first': 'Justin ',
-                              '+last': 'Wilaby',
-                            },
-                            '+slot': 'last',
+                            slot: 'last',
+                            values: { first: 'Justin ', last: 'Wilaby' },
                           },
                         },
                         '+slot': 'age',
                         '-slot': 'fullname',
                       },
                     },
-                    {
+                    '2': {
                       state: {
-                        options: {
-                          '+prompt': 'Please enter your age.',
-                        },
+                        options: { prompt: 'Please enter your age.' },
                         state: {},
                         '-slot': 'last',
-                        '-values': {
-                          first: 'Justin ',
-                        },
+                        '-values': { first: 'Justin ' },
                       },
                       '+id': 'number',
                       '-id': 'fullname',
                     },
-                  ],
+                    '-3': {
+                      id: 'text',
+                      state: { options: { prompt: 'Please enter your last name.' }, state: {} },
+                    },
+                  },
                   userState: {},
                 },
                 '+eTag': '4',

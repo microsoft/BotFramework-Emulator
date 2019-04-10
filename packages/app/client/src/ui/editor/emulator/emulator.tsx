@@ -157,6 +157,7 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
     const selectedActivity$ = new BehaviorSubject<Activity | null>({});
     const subscription = selectedActivity$.subscribe(activity => {
       if (activity && activity.showInInspector) {
+        delete activity.showInInspector; // legacy transient field - we don't want this to show up in the inspector
         this.props.setInspectorObjects(props.document.documentId, activity);
       }
     });

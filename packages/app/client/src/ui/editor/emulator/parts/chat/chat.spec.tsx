@@ -35,11 +35,11 @@ import * as React from 'react';
 import { mount, shallow, ShallowWrapper } from 'enzyme';
 import ReactWebChat from 'botframework-webchat';
 import { ActivityTypes } from 'botframework-schema';
-import { DebugMode } from '@bfemulator/app-shared';
+import { DebugMode, ValueTypes } from '@bfemulator/app-shared';
 
 import { CommandServiceImpl } from '../../../../../platform/commands/commandServiceImpl';
 
-import { Chat, getSpeechToken } from './chat';
+import { Chat } from './chat';
 import webChatStyleOptions from './webChatTheme';
 
 jest.mock('../../../../dialogs', () => ({
@@ -66,10 +66,8 @@ function render(overrides: any = {}): ShallowWrapper {
     mode: 'livechat',
     onStartConversation: jest.fn(),
     currentUser: { id: '123', name: 'Current User' },
-    currentUserId: '123',
     locale: 'en-US',
-    selectedActivity: null,
-    updateSelectedActivity: jest.fn(),
+    selectedActivity: {},
     ...overrides,
   };
 
@@ -153,36 +151,24 @@ describe('<Chat />', () => {
       const webChat = render({ debugMode: DebugMode.Sidecar }).find(ReactWebChat);
       const card = {
         activity: {
-          valueType: 'https://www.botframework.com/schemas/botState',
+          valueType: ValueTypes.BotState,
           id: 'activity-id',
           type: ActivityTypes.Trace,
           value: { type: ActivityTypes.Event },
         },
       };
       const middleware = webChat.prop('activityMiddleware') as any;
-      const children = 'a child node';
-      const activityWrapper = mount(middleware()(next)(card)(children));
+      const activityWrapper = mount(middleware()(next)(card)(null));
       expect(activityWrapper.props()).toMatchObject({
-        activity: {
-          type: 'message',
-          id: 'activity-id',
-          text: '<Bot State Object>',
-          from: {
-            role: 'bot',
-          },
-          value: {
-            type: 'event',
-          },
-          valueType: 'https://www.botframework.com/schemas/botState',
-        },
-        children: 'a child node',
+        'aria-selected': false,
+        children: 'Bot State',
+        className: undefined,
         'data-activity-id': 'activity-id',
-        isSelected: false,
         onClick: jasmine.any(Function),
         onContextMenu: jasmine.any(Function),
         onKeyDown: jasmine.any(Function),
       });
-      expect(activityWrapper.text()).toEqual('a child node');
+      expect(activityWrapper.text()).toEqual('Bot State');
     });
 
     ['trace', 'endOfConversation'].forEach((type: string) => {
@@ -203,80 +189,37 @@ describe('<Chat />', () => {
   describe('speech services', () => {
     it('displays a message when fetching the speech token', () => {
       (CommandServiceImpl as any).remoteCall = jest.fn();
-      const component = render({
-        endpoint: {
-          appId: 'some-app-id',
-          appPassword: 'some-password',
-        },
-      });
-
-      expect(component.text()).toEqual('Connecting...');
-    });
-
-    it('passes a web speech ponyfill factory to web chat', async () => {
-      (CommandServiceImpl as any).remoteCall = () => 'speech-token';
-
-      const component = render({
-        endpoint: {
-          appId: 'some-app-id',
-          appPassword: 'some-password',
-        },
-      });
-
-      await new Promise(resolve => setTimeout(resolve, 250));
-      expect(component.find(ReactWebChat).prop('webSpeechPonyfillFactory')).toBeTruthy();
+      const component = render({ pendingSpeechTokenRetrieval: true });
+      expect(component.find('div').text()).toEqual('Connecting...');
     });
   });
 });
 
-describe('getSpeechToken', async () => {
-  it('should get speech token by calling remotely', async () => {
-    const mockRemoteCall = jest.fn().mockResolvedValue('1A2B3C4');
-
-    (CommandServiceImpl as any).remoteCall = mockRemoteCall;
-
-    const speechToken = getSpeechToken(
-      {
-        appId: 'APP_ID',
-        appPassword: 'APP_PASSWORD',
-        endpoint: 'http://example.com/',
-        id: '123',
-        name: 'bot endpoint',
-      },
-      true
-    );
-
-    await expect(speechToken).resolves.toBe('1A2B3C4');
-    expect(mockRemoteCall).toHaveBeenCalledTimes(1);
-  });
-
-  describe('event handlers', () => {
-    it('should invoke the appropriate functions defined in the props', () => {
-      const next = () => (kids: any) => kids;
-      const showContextMenuForActivity = jest.fn();
-      const updateSelectedActivity = jest.fn();
-      const chat = render({
-        debugMode: DebugMode.Sidecar,
-        showContextMenuForActivity,
-        updateSelectedActivity,
-      });
-      const card = {
-        activity: {
-          valueType: 'https://www.botframework.com/schemas/botState',
-          id: 'activity-id',
-          type: ActivityTypes.Trace,
-          value: { type: ActivityTypes.Event },
-        },
-      };
-      const webChat = chat.find(ReactWebChat);
-      const middleware = webChat.prop('activityMiddleware') as any;
-      const children = 'a child node';
-      const activityWrapper = mount(middleware()(next)(card)(children));
-      activityWrapper.simulate('keyDown', { key: ' ', target: { tagName: 'DIV', classList: [] } });
-      activityWrapper.simulate('click', { target: { tagName: 'DIV', classList: [] } });
-      activityWrapper.simulate('contextmenu', { target: { tagName: 'DIV', classList: [] } });
-      expect(updateSelectedActivity).toHaveBeenCalled();
-      expect(showContextMenuForActivity).toHaveBeenCalled();
+describe('event handlers', () => {
+  it('should invoke the appropriate functions defined in the props', () => {
+    const next = () => (kids: any) => kids;
+    const showContextMenuForActivity = jest.fn();
+    const chat = render({
+      debugMode: DebugMode.Sidecar,
+      showContextMenuForActivity,
     });
+    const card = {
+      activity: {
+        valueType: ValueTypes.BotState,
+        id: 'activity-id',
+        type: ActivityTypes.Trace,
+        value: { type: ActivityTypes.Event },
+      },
+    };
+    const webChat = chat.find(ReactWebChat);
+    const middleware = webChat.prop('activityMiddleware') as any;
+    const children = 'a child node';
+    const updateSelectedActivitySpy = jest.spyOn(chat.instance() as any, 'updateSelectedActivity');
+    const activityWrapper = mount(middleware()(next)(card)(children));
+    activityWrapper.simulate('keyDown', { key: ' ', target: { tagName: 'DIV', classList: [] } });
+    activityWrapper.simulate('click', { target: { tagName: 'DIV', classList: [] } });
+    activityWrapper.simulate('contextmenu', { target: { tagName: 'DIV', classList: [] } });
+    expect(updateSelectedActivitySpy).toHaveBeenCalled();
+    expect(showContextMenuForActivity).toHaveBeenCalled();
   });
 });

@@ -32,12 +32,11 @@
 //
 
 import { SharedConstants } from '@bfemulator/app-shared';
-import { BotEmulator, Conversation } from '@bfemulator/emulator-core';
+import { BotEmulator, Conversation, ConversationSet } from '@bfemulator/emulator-core';
 import { LogLevel, networkRequestItem, networkResponseItem, textItem } from '@bfemulator/sdk-shared';
 import { IEndpointService } from 'botframework-config';
 import { createServer, Request, Response, Route, Server } from 'restify';
 import CORS from 'restify-cors-middleware';
-import { ConversationSet } from '@bfemulator/emulator-core';
 
 import { emulator } from './emulator';
 import { mainWindow } from './main';
@@ -66,7 +65,14 @@ export class RestServer {
   constructor() {
     const cors = CORS({
       origins: ['*'],
-      allowHeaders: ['authorization', 'x-requested-with', 'x-ms-bot-agent'],
+      allowHeaders: [
+        'authorization',
+        'x-requested-with',
+        'x-ms-bot-agent',
+        'x-emulator-botendpoint',
+        'x-emulator-appid',
+        'x-emulator-apppassword',
+      ],
       exposeHeaders: [],
     });
 

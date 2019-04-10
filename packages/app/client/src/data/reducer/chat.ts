@@ -31,20 +31,29 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ChatAction, ChatActions } from '../action/chatActions';
+import {
+  ChatAction,
+  ChatActions,
+  PendingSpeechTokenRetrievalPayload,
+  WebSpeechFactoryPayload,
+} from '../action/chatActions';
 import { EditorAction, EditorActions } from '../action/editorActions';
 
 export interface ChatState {
   changeKey?: number;
   // TODO: keys should map to an Chat
   chats?: { [chatId: string]: any };
+  webSpeechFactories?: { [documentId: string]: () => any };
   transcripts?: string[];
+  pendingSpeechTokenRetrieval: boolean;
 }
 
 const DEFAULT_STATE: ChatState = {
   changeKey: 0,
   chats: {},
   transcripts: [],
+  webSpeechFactories: {},
+  pendingSpeechTokenRetrieval: false,
 };
 
 export function chat(state: ChatState = DEFAULT_STATE, action: ChatAction | EditorAction): ChatState {
@@ -83,6 +92,24 @@ export function chat(state: ChatState = DEFAULT_STATE, action: ChatAction | Edit
       };
       break;
     }
+
+    case ChatActions.webSpeechFactoryUpdated:
+      {
+        const { documentId, factory } = action.payload as WebSpeechFactoryPayload;
+        const { webSpeechFactories } = state;
+        state = {
+          ...state,
+          webSpeechFactories: { ...webSpeechFactories, [documentId]: factory },
+        };
+      }
+      break;
+
+    case ChatActions.updatePendingSpeechTokenRetrieval:
+      state = {
+        ...state,
+        pendingSpeechTokenRetrieval: (action.payload as PendingSpeechTokenRetrievalPayload).pending,
+      };
+      break;
 
     case ChatActions.closeDocument: {
       const { documentId } = action.payload;

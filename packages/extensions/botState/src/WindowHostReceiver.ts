@@ -30,6 +30,8 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+import { ValueTypes } from '@bfemulator/app-shared/built/enums';
+
 import { BotStateVisualizer } from './BotStateVisualizer';
 import { IpcHandler } from './utils';
 import { BotState } from './types';
@@ -45,8 +47,9 @@ export class WindowHostReceiver {
   @IpcHandler('inspect')
   protected inspectHandler(data: { value: BotState; valueType: string }): void {
     const { visualizer } = this;
-    visualizer.isDiff = data.valueType.endsWith('diff');
+    visualizer.isDiff = data.valueType === ValueTypes.Diff;
     visualizer.dataProvider = data.value;
+    // Initialize the default and sync accessory state
     if (!visualizer.viewState) {
       this.accessoryClick(ViewState.Graph);
     }

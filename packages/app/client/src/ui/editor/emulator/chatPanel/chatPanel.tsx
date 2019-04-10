@@ -31,8 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import * as React from 'react';
-import { BehaviorSubject, Subscription } from 'rxjs';
-import { Activity } from '@bfemulator/sdk-shared';
 
 import { ChatContainer } from '../parts/chat/chatContainer';
 import { EmulatorMode } from '../emulator';
@@ -42,51 +40,13 @@ import * as styles from './chatPanel.scss';
 interface ChatPanelProps {
   document?: {
     endpointUrl: string;
-    selectedActivity$?: BehaviorSubject<Activity | null>;
   };
   mode?: EmulatorMode;
   onStartConversation?: () => any;
   className?: string;
 }
 
-interface ChatPanelState {
-  selectedActivity: any | null;
-}
-
-export default class ChatPanel extends React.Component<ChatPanelProps, ChatPanelState> {
-  state = {
-    selectedActivity: null,
-  };
-
-  selectedActivitySub: Subscription;
-
-  componentDidUpdate() {
-    const { document } = this.props;
-
-    if (document && document.selectedActivity$ && !this.selectedActivitySub) {
-      this.selectedActivitySub = document.selectedActivity$.subscribe(selectedActivity =>
-        this.setState({ selectedActivity })
-      );
-    }
-  }
-
-  componentWillUnmount() {
-    if (this.selectedActivitySub) {
-      this.selectedActivitySub.unsubscribe();
-    }
-  }
-
-  updateSelectedActivityObservable = (observable: BehaviorSubject<Activity>) => {
-    return (activity: Activity) => {
-      if (observable) {
-        observable.next({
-          ...activity,
-          showInInspector: true,
-        });
-      }
-    };
-  };
-
+export default class ChatPanel extends React.Component<ChatPanelProps, {}> {
   render() {
     const { document, mode, onStartConversation } = this.props;
     const { endpointUrl } = document || { endpointUrl: '' };
@@ -94,13 +54,7 @@ export default class ChatPanel extends React.Component<ChatPanelProps, ChatPanel
     return (
       <div className={`${styles.chatPanel} ${this.props.className || ''}`}>
         <header>{endpointUrl}</header>
-        <ChatContainer
-          document={document}
-          mode={mode}
-          onStartConversation={onStartConversation}
-          selectedActivity={this.state.selectedActivity}
-          updateSelectedActivity={this.updateSelectedActivityObservable(document && document.selectedActivity$)}
-        />
+        <ChatContainer document={document} mode={mode} onStartConversation={onStartConversation} />
       </div>
     );
   }

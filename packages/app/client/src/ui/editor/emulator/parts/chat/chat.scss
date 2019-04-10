@@ -73,8 +73,7 @@
 .chat-activity {
   border: 1px solid transparent;
   cursor: pointer;
-  margin-left: 4px;
-  margin-right: 4px;
+  margin: 0 16px;
   padding: 4px;
   transition: color .1s linear, background .1s linear;
 
@@ -113,5 +112,22 @@
     flex-grow: 1;
     flex-shrink: 1;
     flex-basis: 0;
+  }
+}
+
+.bot-state-object {
+  cursor: pointer;
+  margin: 5px 16px;
+  min-width: initial;
+  background: transparent;
+  color: var(--p-button-color-disabled);
+
+  &:active {
+    color: var(--p-button-color);
+  }
+
+  &:hover:not([disabled]), &[aria-selected] {
+    background: transparent;
+    color: var(--p-button-color);
   }
 }

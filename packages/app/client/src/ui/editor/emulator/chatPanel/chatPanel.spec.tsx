@@ -34,8 +34,6 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 
-import { ChatContainer } from '../parts/chat/chatContainer';
-
 import ChatPanel from './chatPanel';
 
 jest.mock('./chatPanel.scss', () => ({}));
@@ -79,50 +77,8 @@ function render() {
 }
 
 describe('<ChatPanel />', () => {
-  beforeEach(() => {
-    document.selectedActivity$._listeners = [];
-  });
-
-  it('subscribes to selected activity changes only once', () => {
+  it('should render', () => {
     const component = render();
-    expect(document.selectedActivity$._listeners).toHaveLength(1);
-
-    component.setProps({ document });
-
-    expect(document.selectedActivity$._listeners).toHaveLength(1);
-  });
-
-  it('unsubscribes from the observable when unmounting', () => {
-    const component = render();
-
-    expect(document.selectedActivity$._listeners).toHaveLength(1);
-
-    component.unmount();
-
-    expect(document.selectedActivity$._listeners).toHaveLength(0);
-  });
-
-  describe('updating the selected actvity', () => {
-    it('responds to observable changes', () => {
-      const component = render();
-
-      expect(component.state('selectedActivity')).toEqual(null);
-
-      document.selectedActivity$.next({ new: 'activity' });
-
-      expect(component.state('selectedActivity')).toEqual({ new: 'activity' });
-    });
-
-    it('passes an updater to the chat container', () => {
-      const component = render();
-      const container = component.find(ChatContainer);
-
-      (container.prop('updateSelectedActivity') as any)({ new: 'activity' });
-
-      expect(component.state('selectedActivity')).toEqual({
-        new: 'activity',
-        showInInspector: true,
-      });
-    });
+    expect(component).not.toBeFalsy();
   });
 });

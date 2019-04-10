@@ -60,16 +60,12 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
     Commands.SaveTranscriptToFile,
     async (conversationId: string): Promise<void> => {
       const activeBot: BotConfigWithPath = getActiveBot();
-      if (!activeBot) {
-        throw new Error(`${Commands.SaveTranscriptToFile}: No active bot.`);
-      }
-
       const convo = emulator.framework.server.botEmulator.facilities.conversations.conversationById(conversationId);
       if (!convo) {
         throw new Error(`${Commands.SaveTranscriptToFile}: Conversation ${conversationId} not found.`);
       }
-      let botInfo = getBotInfoByPath(activeBot.path);
-      const dirName = path.dirname(activeBot.path);
+      let botInfo = activeBot ? getBotInfoByPath(activeBot.path) : {};
+      const dirName = path.dirname(activeBot ? activeBot.path : '/');
 
       const { transcriptsPath = path.join(dirName, './transcripts') } = botInfo;
 
@@ -87,6 +83,17 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
         buttonLabel: 'Save',
       });
 
+      if (filename && filename.length) {
+        mkdirpSync(path.dirname(filename));
+        const transcripts = await convo.getTranscript();
+        writeFile(filename, transcripts);
+        TelemetryService.trackEvent('transcript_save');
+      }
+
+      if (!activeBot) {
+        return;
+      }
+
       // If there is no current bot directory, we should set the directory
       // that the transcript is saved in as the bot directory, copy the botfile over,
       // change the bots.json entry, and watch the directory.
@@ -102,13 +109,6 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
         await patchBotsJson(botPath, botInfo);
         await botProjectFileWatcher.watch(botPath);
         store.dispatch(BotActions.setDirectory(botDirectory));
-      }
-
-      if (filename && filename.length) {
-        mkdirpSync(path.dirname(filename));
-        const transcripts = await convo.getTranscript();
-        writeFile(filename, transcripts);
-        TelemetryService.trackEvent('transcript_save');
       }
     }
   );

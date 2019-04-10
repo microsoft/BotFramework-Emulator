@@ -36,15 +36,38 @@ import { Activity, ActivityTypes } from 'botframework-schema';
 import { SharedConstants } from '@bfemulator/app-shared';
 import { InspectableObjectLogItem, LogItem, LogItemType } from '@bfemulator/sdk-shared';
 import { diff } from 'deep-diff';
+import { IEndpointService } from 'botframework-config/lib/schema';
+import { createCognitiveServicesBingSpeechPonyfillFactory } from 'botframework-webchat';
 
-import { ChatAction, ChatActions, closeDocument, DocumentIdPayload, setInspectorObjects } from '../action/chatActions';
+import {
+  ChatAction,
+  ChatActions,
+  closeDocument,
+  DocumentIdPayload,
+  NewChatPayload,
+  setInspectorObjects,
+  updatePendingSpeechTokenRetrieval,
+  webSpeechFactoryUpdated,
+} from '../action/chatActions';
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { RootState } from '../store';
+import { isSpeechEnabled } from '../../utils';
 
 import { call, ForkEffect, put, select, takeEvery } from 'redux-saga/effects';
 
 const getConversationIdFromDocumentId = (state: RootState, documentId: string) => {
-  return state.chat.chats[documentId].conversationId;
+  return (state.chat.chats[documentId] || {}).conversationId;
+};
+
+const getWebSpeechFactoryForDocumentId = (state: RootState, documentId: string): (() => any) => {
+  return state.chat.webSpeechFactories[documentId];
+};
+
+const getEndpointServiceByDocumentId = (state: RootState, documentId: string): IEndpointService => {
+  const chat = state.chat.chats[documentId];
+  return ((state.bot.activeBot && state.bot.activeBot.services) || []).find(
+    s => s.id === chat.endpointId
+  ) as IEndpointService;
 };
 
 const getCurrentDocumentId = (state: RootState): string => {
@@ -114,6 +137,35 @@ export function* closeConversation(action: ChatAction<DocumentIdPayload>): Itera
   const { DeleteConversation } = SharedConstants.Commands.Emulator;
   yield call(CommandServiceImpl.remoteCall.bind(CommandServiceImpl), DeleteConversation, conversationId);
   yield put(closeDocument(action.payload.documentId));
+}
+
+export function* newChat(action: ChatAction<NewChatPayload>): Iterable<any> {
+  // Each time a new chat is open, retrieve the speech token
+  // if the endpoint is speech enabled and create a bind speech
+  // pony fill factory. This is consumed by WebChat...
+  const { documentId } = action.payload;
+  yield put(webSpeechFactoryUpdated(documentId, null)); // remove the old factory
+  const endpoint: IEndpointService = yield select(getEndpointServiceByDocumentId, documentId);
+  if (!isSpeechEnabled(endpoint)) {
+    return;
+  }
+  yield put(updatePendingSpeechTokenRetrieval(true));
+  // If an existing factory is found, refresh the token
+  const existingFactory: string = yield select(getWebSpeechFactoryForDocumentId, documentId);
+  const { GetSpeechToken: command } = SharedConstants.Commands.Emulator;
+  const token = yield call(
+    [CommandServiceImpl, CommandServiceImpl.remoteCall],
+    command,
+    endpoint.id,
+    !!existingFactory
+  );
+  if (token) {
+    const factory = yield call(createCognitiveServicesBingSpeechPonyfillFactory, {
+      authorizationToken: token,
+    });
+    yield put(webSpeechFactoryUpdated(documentId, factory)); // Provide the new factory to the store
+  }
+  yield put(updatePendingSpeechTokenRetrieval(false));
 }
 
 export function* diffWithPreviousBotState(currentBotState: Activity): Iterable<any> {
@@ -205,4 +257,5 @@ function buildDiff(prependWith: string, path: (string | number)[], target: any, 
 export function* chatSagas(): IterableIterator<ForkEffect> {
   yield takeEvery(ChatActions.showContextMenuForActivity, showContextMenuForActivity);
   yield takeEvery(ChatActions.closeConversation, closeConversation);
+  yield takeEvery(ChatActions.newChat, newChat);
 }
