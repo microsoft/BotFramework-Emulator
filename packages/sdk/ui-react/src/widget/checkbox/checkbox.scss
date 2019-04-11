@@ -9,8 +9,12 @@
   flex-flow: row nowrap;
   color: var(--input-label-color);
 
-  &[disabled], &[aria-disabled] {
+  &.disabled, &[aria-disabled] {
     color: var(--input-label-color-disabled);
+
+    .check-mark {
+      border: var(--checkbox-border-disabled);
+    }
   }
 }
 
@@ -21,10 +25,6 @@
   border: var(--checkbox-border);
   background: transparent;
   transition: background 75ms ease-in, border 75ms ease-in;
-
-  &[disabled], &[aria-disabled] {
-    border: var(--checkbox-border-disabled);
-  }
 
   &::before {
     content: '';
