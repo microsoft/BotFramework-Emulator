@@ -192,17 +192,19 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
               label="Use your own ID to communicate with the bot"
               name="useCustomId"
             />
-            <TextField
-              className={styles.appSettingsInput}
-              inputContainerClassName={styles.inputContainer}
-              readOnly={false}
-              value={state.userGUID}
-              name="userGUID"
-              onChange={this.onInputChange}
-              label="GUID"
-              disabled={!state.useCustomId}
-              required={state.useCustomId}
-            />
+            <Row align={RowAlignment.Top}>
+              <TextField
+                className={styles.appSettingsInput}
+                inputContainerClassName={styles.inputContainer}
+                readOnly={false}
+                value={state.userGUID}
+                name="userGUID"
+                onChange={this.onInputChange}
+                disabled={!state.useCustomId}
+                required={state.useCustomId}
+                label="User ID"
+              />
+            </Row>
             <SmallHeader>Application Updates</SmallHeader>
             <Checkbox
               className={styles.checkboxOverrides}
@@ -246,7 +248,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
     this.setState(change);
     this.updateDirtyFlag(change);
 
-    if (name === 'useCustomId' && checked == false) this.state.userGUID = '';
+    if (name === 'useCustomId' && checked === false) this.setState({ ['userGUID']: '' });
   };
 
   private onClickBrowse = async (): Promise<void> => {

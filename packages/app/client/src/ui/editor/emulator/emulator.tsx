@@ -112,9 +112,6 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
 
   componentWillMount() {
     window.addEventListener('keydown', this.keyboardEventListener);
-    if (this.shouldStartNewConversation()) {
-      // this.startNewConversation();
-    }
   }
 
   componentDidMount() {
@@ -128,17 +125,7 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
   }
 
   componentWillReceiveProps(nextProps: EmulatorProps) {
-    const { props, keyboardEventListener, startNewConversation } = this;
-    const { document = {} } = props;
-    const { document: nextDocument = {} } = nextProps;
-
-    const documentOrUserIdChanged =
-      (!nextDocument.directLine && document.documentId !== nextDocument.documentId) ||
-      document.userId !== nextDocument.userId;
-
-    if (documentOrUserIdChanged) {
-      startNewConversation(nextProps).catch();
-    }
+    const { props, keyboardEventListener } = this;
 
     const switchedDocuments = props.activeDocumentId !== nextProps.activeDocumentId;
     const switchedToThisDocument = nextProps.activeDocumentId === props.documentId;
@@ -155,11 +142,17 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
 
   startNewConversation = async (
     props: EmulatorProps = this.props,
-    requireNewConvoId: boolean = false,
-    requireNewUserId: boolean = false
+    requireNewConvoId?: boolean,
+    requireNewUserId?: boolean
   ): Promise<any> => {
     if (props.document.subscription) {
       props.document.subscription.unsubscribe();
+    }
+    if (!requireNewUserId) {
+      requireNewUserId == false;
+    }
+    if (!requireNewConvoId) {
+      requireNewUserId == false;
     }
     const selectedActivity$ = new BehaviorSubject<Activity | null>({});
     const subscription = selectedActivity$.subscribe(activity => {
@@ -178,9 +171,9 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
       SharedConstants.Commands.Settings.LoadAppSettings
     );
 
-    const stableId = framework.userGUID; // framework.userGUID.toString() || props.document.userId;
+    const stableId = framework.userGUID || props.document.userId;
 
-    const userId = requireNewUserId ? uniqueIdv4() : stableId || props.document.userId;
+    const userId = requireNewUserId ? uniqueIdv4() : stableId;
 
     await CommandServiceImpl.remoteCall(SharedConstants.Commands.Emulator.SetCurrentUser, userId);
 
@@ -379,7 +372,6 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
     const { NewUserId, SameUserId } = RestartConversationOptions;
     this.props.clearLog(this.props.document.documentId);
     this.props.setInspectorObjects(this.props.document.documentId, []);
-
     switch (option) {
       case NewUserId: {
         this.props.trackEvent('conversation_restart', {
