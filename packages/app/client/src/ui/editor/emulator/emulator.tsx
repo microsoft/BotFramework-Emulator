@@ -126,7 +126,6 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
 
   componentWillReceiveProps(nextProps: EmulatorProps) {
     const { props, keyboardEventListener } = this;
-
     const switchedDocuments = props.activeDocumentId !== nextProps.activeDocumentId;
     const switchedToThisDocument = nextProps.activeDocumentId === props.documentId;
 
