@@ -98,6 +98,11 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
 
   public render(): JSX.Element {
     const { state } = this;
+    const charSec = n => `[a-z\\d]{${n}}`;
+    const validationResult = RegExp([charSec(8), charSec(4), charSec(4), charSec(4), charSec(12)].join('-')).test(
+      state.userGUID
+    );
+    const errorMessage = validationResult ? '' : 'Please enter a valid user ID';
 
     return (
       <GenericDocument className={styles.appSettingsEditor}>
@@ -207,6 +212,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
                 disabled={!this.usingCustomId()}
                 required={this.usingCustomId()}
                 label="User ID"
+                errorMessage={errorMessage}
               />
             </Row>
             <SmallHeader>Application Updates</SmallHeader>
