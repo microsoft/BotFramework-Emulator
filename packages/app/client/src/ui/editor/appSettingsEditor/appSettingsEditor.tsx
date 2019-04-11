@@ -91,9 +91,11 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
   public componentDidMount(): void {
     this.props.getFrameworkSettings();
   }
+
   private usingCustomId() {
     return this.state.userGUID ? true : this.state.useCustomId;
   }
+
   public render(): JSX.Element {
     const { state } = this;
 

@@ -149,10 +149,10 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
       props.document.subscription.unsubscribe();
     }
     if (!requireNewUserId) {
-      requireNewUserId == false;
+      requireNewUserId = false;
     }
     if (!requireNewConvoId) {
-      requireNewUserId == false;
+      requireNewConvoId = false;
     }
     const selectedActivity$ = new BehaviorSubject<Activity | null>({});
     const subscription = selectedActivity$.subscribe(activity => {
@@ -166,13 +166,10 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
     const conversationId = requireNewConvoId
       ? `${uniqueId()}|${props.mode}`
       : props.document.conversationId || `${uniqueId()}|${props.mode}`;
-
     const framework: FrameworkSettings = await CommandServiceImpl.remoteCall(
       SharedConstants.Commands.Settings.LoadAppSettings
     );
-
     const stableId = framework.userGUID || props.document.userId;
-
     const userId = requireNewUserId ? uniqueIdv4() : stableId;
 
     await CommandServiceImpl.remoteCall(SharedConstants.Commands.Emulator.SetCurrentUser, userId);
