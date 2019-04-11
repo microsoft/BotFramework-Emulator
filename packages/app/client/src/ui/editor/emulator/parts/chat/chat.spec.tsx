@@ -38,8 +38,9 @@ import { ActivityTypes } from 'botframework-schema';
 import { DebugMode, ValueTypes } from '@bfemulator/app-shared';
 
 import { CommandServiceImpl } from '../../../../../platform/commands/commandServiceImpl';
+import { EmulatorMode } from '../../emulator';
 
-import { Chat } from './chat';
+import { Chat, ChatProps } from './chat';
 import webChatStyleOptions from './webChatTheme';
 
 jest.mock('../../../../dialogs', () => ({
@@ -59,17 +60,17 @@ const defaultDocument = {
   botId: '456',
 };
 
-function render(overrides: any = {}): ShallowWrapper {
+function render(overrides: Partial<ChatProps> = {}): ShallowWrapper {
   const props = {
     document: defaultDocument,
     endpoint: {},
-    mode: 'livechat',
+    mode: 'livechat' as EmulatorMode,
     onStartConversation: jest.fn(),
     currentUser: { id: '123', name: 'Current User' },
     locale: 'en-US',
     selectedActivity: {},
     ...overrides,
-  };
+  } as ChatProps;
 
   return shallow(<Chat {...props} />);
 }
@@ -77,7 +78,7 @@ function render(overrides: any = {}): ShallowWrapper {
 describe('<Chat />', () => {
   describe('when there is no direct line client', () => {
     it('renders a `not connected` message', () => {
-      const component = render({ document: {} });
+      const component = render({ document: {} } as any);
 
       expect(component.text()).toEqual('Not Connected');
     });
@@ -104,8 +105,7 @@ describe('<Chat />', () => {
       const next = () => (kids: any) => kids;
       const card = { activity: { id: 'activity-id' } };
       const children = 'a child node';
-      const updateSelectedActivity = jest.fn();
-      const webChat = render({ updateSelectedActivity }).find(ReactWebChat);
+      const webChat = render({} as any).find(ReactWebChat);
 
       const middleware = webChat.prop('activityMiddleware') as any;
       const activityWrapper = mount(middleware()(next)(card)(children));
@@ -129,6 +129,7 @@ describe('<Chat />', () => {
           id: 'activity-id',
           type: ActivityTypes.Trace,
           value: { type: ActivityTypes.Message },
+          valueType: ValueTypes.Activity,
         },
       };
       const middleware = webChat.prop('activityMiddleware') as any;

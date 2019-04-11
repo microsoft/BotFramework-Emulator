@@ -74,9 +74,14 @@ export class Chat extends Component<ChatProps, ChatState> {
   private activityMap: { [activityId: string]: Activity };
 
   public static getDerivedStateFromProps(newProps: ChatProps, prevState?: ChatState): ChatState {
-    const selectedActivity = newProps.document.selectedActivity$
-      ? newProps.document.selectedActivity$.getValue()
-      : null;
+    let selectedActivity = newProps.document.selectedActivity$ ? newProps.document.selectedActivity$.getValue() : null;
+    // The log panel gives us the entire trace while
+    // WebChat gives us the nested activity. Determine
+    // if we should be targeting the nested activity
+    // within the selected activity.
+    if (selectedActivity && selectedActivity.valueType === ValueTypes.Activity) {
+      selectedActivity = selectedActivity.value;
+    }
     if (prevState && prevState.selectedActivity === selectedActivity && prevState.document === newProps.document) {
       return prevState;
     }
@@ -137,11 +142,9 @@ export class Chat extends Component<ChatProps, ChatState> {
   }
 
   private createActivityMiddleware = () => next => card => children => {
-    if (card.activity.valueType === ValueTypes.Activity) {
-      this.activityMap[card.activity.id] = card.activity.value;
-    } else {
-      this.activityMap[card.activity.id] = card.activity;
-    }
+    const { valueType } = card.activity;
+
+    this.activityMap[card.activity.id] = valueType === ValueTypes.Activity ? card.activity.value : card.activity;
 
     switch (card.activity.type) {
       case ActivityTypes.Trace:
@@ -160,38 +163,37 @@ export class Chat extends Component<ChatProps, ChatState> {
       return null;
     }
     const selectedActivity = this.state.selectedActivity || ({} as Activity);
-    const { value: activity = {}, valueType } = card.activity; // activities are nested
-    if (activity.type !== ActivityTypes.Message) {
-      // determine if this is a bot state
-      if (valueType === ValueTypes.BotState) {
-        return (
-          <PrimaryButton
-            className={styles.botStateObject}
-            data-activity-id={card.activity.id}
-            onKeyDown={this.onItemRendererKeyDown}
-            onClick={this.onItemRendererClick}
-            onContextMenu={this.onContextMenu}
-            aria-selected={isCardSelected(selectedActivity, card.activity)}
-          >
-            Bot State
-          </PrimaryButton>
-        );
-      } else {
-        return null;
-      }
+    const { valueType } = card.activity; // activities are nested
+
+    if (valueType === ValueTypes.Activity) {
+      const messageActivity = card.activity.value;
+      return (
+        <ActivityWrapper
+          activity={messageActivity}
+          data-activity-id={card.activity.id}
+          onKeyDown={this.onItemRendererKeyDown}
+          onClick={this.onItemRendererClick}
+          onContextMenu={this.onContextMenu}
+          isSelected={isCardSelected(selectedActivity, messageActivity)}
+        >
+          {next({ activity: messageActivity, timestampClassName: 'transcript-timestamp' })(children)}
+        </ActivityWrapper>
+      );
+    } else if (valueType === ValueTypes.BotState) {
+      return (
+        <PrimaryButton
+          className={styles.botStateObject}
+          data-activity-id={card.activity.id}
+          onKeyDown={this.onItemRendererKeyDown}
+          onClick={this.onItemRendererClick}
+          onContextMenu={this.onContextMenu}
+          aria-selected={isCardSelected(selectedActivity, card.activity)}
+        >
+          Bot State
+        </PrimaryButton>
+      );
     }
-    return (
-      <ActivityWrapper
-        activity={activity}
-        data-activity-id={card.activity.id}
-        onKeyDown={this.onItemRendererKeyDown}
-        onClick={this.onItemRendererClick}
-        onContextMenu={this.onContextMenu}
-        isSelected={isCardSelected(this.activityMap[selectedActivity.id], activity)}
-      >
-        {next({ activity, timestampClassName: 'transcript-timestamp' })(children)}
-      </ActivityWrapper>
-    );
+    return null;
   }
 
   protected updateSelectedActivity(id: string): void {

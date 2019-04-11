@@ -182,7 +182,7 @@ export class BotStateVisualizer {
       if (name.startsWith('-')) {
         return 'removed';
       }
-      return 'subtle';
+      return 'key';
     }
     const type = data.data.value ? typeof data.data.value : null;
     switch (type) {

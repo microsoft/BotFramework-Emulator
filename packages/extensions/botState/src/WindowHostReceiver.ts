@@ -49,10 +49,7 @@ export class WindowHostReceiver {
     const { visualizer } = this;
     visualizer.isDiff = data.valueType === ValueTypes.Diff;
     visualizer.dataProvider = data.value;
-    // Initialize the default and sync accessory state
-    if (!visualizer.viewState) {
-      this.accessoryClick(ViewState.Graph);
-    }
+    this.accessoryClick(visualizer.viewState || ViewState.Graph);
   }
 
   @IpcHandler('theme')

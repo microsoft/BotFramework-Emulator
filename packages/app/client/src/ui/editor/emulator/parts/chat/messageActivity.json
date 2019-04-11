@@ -1,0 +1,45 @@
+[{
+  "text": "Please enter your age.",
+  "inputHint": "expectingInput",
+  "channelId": "msteams",
+  "serviceUrl": "https://smba.trafficmanager.net/amer/",
+  "conversation": {
+    "conversationType": "personal",
+    "id": "a:15G1vCfuekWwyt5mZlYCndJq8mlV_FXDWFqiN7X2Zn8cjwz-OPEsjSJ688RpqVLTgcmx0hum3t_HdRTRNtnYvmoSAFFCCBGz8TGHIOZB6NrqBnATSdxGukuiJHDWS3Bg_"
+  },
+  "from": {
+    "id": "28:825059e1-0dd5-4a90-9136-121a702c18ca",
+    "name": "Jwilaby_test_delete_this_please"
+  },
+  "recipient": {
+    "id": "29:1roELw8-HUdxuNSlGwtGqacHW_y-tsmLhvs42duabIDv0JFovw3WX7QC-syrrAYRt0RHBqoS1i0Mt18un1YZmyw",
+    "name": "Justin Wilaby",
+    "aadObjectId": "8d81b1c4-a057-4d27-a41d-e40b3105e6ee",
+    "role": "user"
+  },
+  "replyToId": "1554935833403",
+  "type": "message"
+},
+
+{
+  "channelId": "msteams",
+  "conversation": {
+    "conversationType": "personal",
+    "id": "a:15G1vCfuekWwyt5mZlYCndJq8mlV_FXDWFqiN7X2Zn8cjwz-OPEsjSJ688RpqVLTgcmx0hum3t_HdRTRNtnYvmoSAFFCCBGz8TGHIOZB6NrqBnATSdxGukuiJHDWS3Bg_"
+  },
+  "from": {
+    "id": "28:825059e1-0dd5-4a90-9136-121a702c18ca",
+    "name": "Jwilaby_test_delete_this_please"
+  },
+  "inputHint": "expectingInput",
+  "recipient": {
+    "aadObjectId": "8d81b1c4-a057-4d27-a41d-e40b3105e6ee",
+    "id": "29:1roELw8-HUdxuNSlGwtGqacHW_y-tsmLhvs42duabIDv0JFovw3WX7QC-syrrAYRt0RHBqoS1i0Mt18un1YZmyw",
+    "name": "Justin Wilaby",
+    "role": "user"
+  },
+  "replyToId": "1554935833403",
+  "serviceUrl": "https://smba.trafficmanager.net/amer/",
+  "text": "Please enter your age.",
+  "type": "message"
+}]

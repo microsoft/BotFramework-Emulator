@@ -52,6 +52,7 @@ import { BotState } from './types';
       this.handlers[event] = this.handlers[event].filter(item => item !== handler);
     };
   },
+  setAccessoryState: () => void 0,
 };
 
 const botState: BotState = {

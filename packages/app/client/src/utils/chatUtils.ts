@@ -34,14 +34,14 @@ import { IEndpointService } from 'botframework-config/lib/schema';
 import { Activity } from 'botframework-schema';
 
 export function isCardSelected(selectedActivity: Activity, activity: Activity): boolean {
-  if (!selectedActivity) {
+  if (!selectedActivity || !activity) {
     return false;
   }
+  const containsIds = 'id' in selectedActivity && 'id' in activity;
+  const containsReplyToId = 'replyToId' in selectedActivity && 'replyToId' in activity;
   return (
-    selectedActivity.id === activity.id ||
-    // Activity Ids are optional according to the spec so we need a
-    // last resort when the bot did not provide an id for the activity.
-    JSON.stringify(selectedActivity) === JSON.stringify(activity)
+    (containsIds && selectedActivity.id === activity.id) ||
+    (containsReplyToId && selectedActivity.replyToId === activity.replyToId)
   );
 }
 
