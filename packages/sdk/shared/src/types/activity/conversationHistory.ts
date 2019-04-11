@@ -31,7 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Activity } from './activity';
+import { Activity } from 'botframework-schema';
+
 import { ETagObject } from './etagObject';
 
 export interface ConversationHistory extends ETagObject {

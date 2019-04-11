@@ -33,7 +33,8 @@
 
 import * as fs from 'fs';
 
-import { Attachment, AttachmentData, LogLevel, textItem } from '@bfemulator/sdk-shared';
+import { LogLevel, textItem } from '@bfemulator/sdk-shared';
+import { Attachment, AttachmentData } from 'botframework-schema';
 import * as Formidable from 'formidable';
 import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
@@ -88,12 +89,12 @@ export default function upload(botEmulator: BotEmulator) {
             const type = upload1.type;
             const path = upload1.path;
             const buf: Buffer = fs.readFileSync(path);
-            const contentBase64 = buf.toString('base64');
+            const base64Buffer = Buffer.from(buf.toString('base64'));
             const attachmentData: AttachmentData = {
               type,
               name,
-              originalBase64: contentBase64,
-              thumbnailBase64: contentBase64,
+              originalBase64: new Uint8Array(base64Buffer.buffer),
+              thumbnailBase64: new Uint8Array(base64Buffer.buffer),
             };
             const attachmentId = botEmulator.facilities.attachments.uploadAttachment(attachmentData);
             const attachment: Attachment = {

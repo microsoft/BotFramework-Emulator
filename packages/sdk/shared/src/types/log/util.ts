@@ -31,6 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { Activity } from 'botframework-schema';
+
 import { LogEntry } from './entry';
 import {
   ExceptionLogItem,
@@ -82,7 +84,7 @@ export function externalLinkItem(text: string, hyperlink: string): LogItem<Exter
   };
 }
 
-export function inspectableObjectItem(text: string, obj: any): LogItem<InspectableObjectLogItem> {
+export function inspectableObjectItem(text: string, obj: Activity): LogItem<InspectableObjectLogItem> {
   return {
     type: LogItemType.InspectableObject,
     payload: {
@@ -92,7 +94,7 @@ export function inspectableObjectItem(text: string, obj: any): LogItem<Inspectab
   };
 }
 
-export function summaryTextItem(obj: any): LogItem<SummaryTextLogItem> {
+export function summaryTextItem(obj: Activity): LogItem<SummaryTextLogItem> {
   return {
     type: LogItemType.SummaryText,
     payload: {

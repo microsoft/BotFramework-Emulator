@@ -30,8 +30,9 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { APIException, ConversationParameters, ErrorCodes } from '@bfemulator/sdk-shared';
+import { APIException, ErrorCodes } from '@bfemulator/sdk-shared';
 import * as HttpStatus from 'http-status-codes';
+import { ConversationParameters } from 'botframework-schema';
 
 import BotEndpoint from '../../../facility/botEndpoint';
 import createAPIException from '../../../utils/createResponse/apiException';

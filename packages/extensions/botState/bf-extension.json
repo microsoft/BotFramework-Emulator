@@ -23,10 +23,10 @@
             "id": "graph",
             "states": {
               "default": {
-                "label": "STATE GRAPH"
+                "label": "Graph"
               },
               "selected": {
-                "label": "STATE GRAPH",
+                "label": "Graph",
                 "aria-selected": true
               }
             }
@@ -35,10 +35,10 @@
             "id": "json",
             "states": {
               "default": {
-                "label": "STATE JSON"
+                "label": "Json"
               },
               "selected": {
-                "label": "STATE JSON",
+                "label": "Json",
                 "aria-selected": true
               }
             }

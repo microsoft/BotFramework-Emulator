@@ -31,7 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ErrorCodes, GenericActivity, ResourceResponse } from '@bfemulator/sdk-shared';
+import { ErrorCodes, ResourceResponse } from '@bfemulator/sdk-shared';
+import { Activity } from 'botframework-schema';
 import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 
@@ -42,7 +43,7 @@ import sendErrorResponse from '../../utils/sendErrorResponse';
 
 export default function updateActivity(botEmulator: BotEmulator) {
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-    const activity = req.body as GenericActivity;
+    const activity = req.body as Activity;
     const conversationParameters: ConversationAPIPathParameters = req.params;
 
     try {

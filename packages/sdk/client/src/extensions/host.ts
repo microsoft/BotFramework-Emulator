@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Activity } from '@bfemulator/sdk-shared';
+import { Activity } from 'botframework-schema';
 import { IBotConfiguration } from 'botframework-config/lib/schema';
 
 export interface InspectorHost {

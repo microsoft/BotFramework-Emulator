@@ -118,6 +118,7 @@
     "applicationinsights": "^1.0.8",
     "base64url": "2.0.0",
     "botframework-config": "4.0.0-preview1.3.4",
+    "botframework-schema": "^4.3.4",
     "chatdown": "^1.0.10",
     "chokidar": "^2.0.2",
     "command-line-args": "^5.0.2",

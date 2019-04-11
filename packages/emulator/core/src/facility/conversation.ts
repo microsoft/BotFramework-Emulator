@@ -36,22 +36,12 @@ import { EventEmitter } from 'events';
 import * as HttpStatus from 'http-status-codes';
 import updateIn from 'simple-update-in';
 import {
-  Activity,
   appSettingsItem,
-  Attachment,
   CheckoutConversationSession,
-  ContactRelationUpdateActivity,
-  ConversationUpdateActivity,
   ErrorCodes,
-  EventActivity,
   externalLinkItem,
-  GenericActivity,
-  InvokeActivity,
   isLocalHostUrl,
   LogLevel,
-  MessageActivity,
-  networkRequestItem,
-  networkResponseItem,
   PaymentOperations,
   PaymentRequest,
   PaymentRequestComplete,
@@ -61,6 +51,15 @@ import {
   TranscriptRecord,
   User,
 } from '@bfemulator/sdk-shared';
+import {
+  Activity,
+  Attachment,
+  ConversationAccount,
+  IContactRelationUpdateActivity,
+  IInvokeActivity,
+  IMessageActivity,
+  ChannelAccount,
+} from 'botframework-schema';
 
 import { BotEmulator } from '../botEmulator';
 import { TokenCache } from '../userToken/tokenCache';
@@ -71,6 +70,7 @@ import PaymentEncoder from '../utils/paymentEncoder';
 import uniqueId from '../utils/uniqueId';
 
 import BotEndpoint from './botEndpoint';
+import { networkRequestItem, networkResponseItem } from '@bfemulator/sdk-shared/build/src';
 
 // moment currently does not export callable function
 // eslint-disable-next-line typescript/no-var-requires
@@ -176,7 +176,7 @@ export default class Conversation extends EventEmitter {
     };
 
     if (recordInConversation) {
-      this.addActivityToQueue({ ...activity });
+      this.addActivityToQueue({ ...activity } as Activity);
     }
 
     this.transcript = [...this.transcript, { type: 'activity add', activity }];
@@ -200,13 +200,13 @@ export default class Conversation extends EventEmitter {
   }
 
   public async sendConversationUpdate(membersAdded: User[], membersRemoved: User[]) {
-    const activity: ConversationUpdateActivity = {
+    const activity = {
       type: 'conversationUpdate',
       membersAdded,
       membersRemoved,
     };
 
-    const result = await this.postActivityToBot(activity, false);
+    const result = await this.postActivityToBot(activity as Activity, false);
     if (!/2\d\d/.test('' + result.statusCode)) {
       this.botEmulator.facilities.logger.logException(this.conversationId, result.response);
     }
@@ -321,7 +321,7 @@ export default class Conversation extends EventEmitter {
     this.activities = updateIn(this.activities, [activityIndex]);
     this.emit('deleteactivity', { activity });
 
-    this.transcript = [...this.transcript, { type: 'activity delete', activity: { id } }];
+    this.transcript = [...this.transcript, { type: 'activity delete', activity: { id } } as TranscriptRecord];
     this.emit('transcriptupdate');
   }
 
@@ -347,7 +347,7 @@ export default class Conversation extends EventEmitter {
         activity: {
           type: 'conversationUpdate',
           membersAdded: [user],
-        } as ConversationUpdateActivity,
+        } as Activity,
       },
     ];
 
@@ -375,7 +375,7 @@ export default class Conversation extends EventEmitter {
         activity: {
           type: 'conversationUpdate',
           membersRemoved: [{ id }],
-        } as ConversationUpdateActivity,
+        } as Activity,
       },
     ];
 
@@ -383,42 +383,42 @@ export default class Conversation extends EventEmitter {
   }
 
   public async sendContactAdded() {
-    const activity: ContactRelationUpdateActivity = {
+    const activity = {
       type: 'contactRelationUpdate',
       action: 'add',
-    };
+    } as IContactRelationUpdateActivity;
 
     try {
-      await this.postActivityToBot(activity, false);
+      await this.postActivityToBot(activity as Activity, false);
     } catch (err) {
       this.botEmulator.facilities.logger.logException(this.conversationId, err);
     }
 
-    this.transcript = [...this.transcript, { type: 'contact update', activity }];
+    this.transcript = [...this.transcript, { type: 'contact update', activity } as TranscriptRecord];
     this.emit('transcriptupdate');
   }
 
   public async sendContactRemoved() {
-    const activity: ContactRelationUpdateActivity = {
+    const activity = {
       type: 'contactRelationUpdate',
       action: 'remove',
-    };
+    } as IContactRelationUpdateActivity;
 
     try {
-      await this.postActivityToBot(activity, false);
+      await this.postActivityToBot(activity as Activity, false);
     } catch (err) {
       this.botEmulator.facilities.logger.logException(this.conversationId, err);
     }
 
-    this.transcript = [...this.transcript, { type: 'contact remove', activity }];
+    this.transcript = [...this.transcript, { type: 'contact remove', activity } as TranscriptRecord];
     this.emit('transcriptupdate');
   }
 
   public async sendTyping() {
     // TODO: Which side is sending the typing activity?
-    const activity: Activity = {
+    const activity = {
       type: 'typing',
-    };
+    } as Activity;
 
     try {
       await this.postActivityToBot(activity, false);
@@ -432,9 +432,9 @@ export default class Conversation extends EventEmitter {
 
   public async sendPing() {
     // TODO: Which side is sending the ping activity?
-    const activity: Activity = {
+    const activity = {
       type: 'ping',
-    };
+    } as Activity;
 
     try {
       await this.postActivityToBot(activity, false);
@@ -447,9 +447,9 @@ export default class Conversation extends EventEmitter {
   }
 
   public async sendDeleteUserData() {
-    const activity: Activity = {
+    const activity = {
       type: 'deleteUserData',
-    };
+    } as Activity;
 
     try {
       await this.postActivityToBot(activity, false);
@@ -541,45 +541,44 @@ export default class Conversation extends EventEmitter {
       },
     };
 
-    const activity: InvokeActivity = {
+    const activity = {
       type: 'invoke',
       name: PaymentOperations.PaymentCompleteOperationName,
-      from: { id: checkoutSession.checkoutFromId },
-      conversation: { id: checkoutSession.checkoutConversationId },
+      from: { id: checkoutSession.checkoutFromId } as ChannelAccount,
+      conversation: { id: checkoutSession.checkoutConversationId } as ConversationAccount,
       relatesTo: {
         activityId: checkoutSession.paymentActivityId,
-        bot: { id: this.botEndpoint.botId },
+        bot: { id: this.botEndpoint.botId } as ChannelAccount,
         channelId: 'emulator',
-        conversation: { id: this.conversationId },
+        conversation: { id: this.conversationId } as ConversationAccount,
         serviceUrl: await this.botEmulator.getServiceUrl(this.botEndpoint.botUrl),
         user: this.botEmulator.facilities.users.usersById(this.botEmulator.facilities.users.currentUserId),
       },
       value: updateValue,
-    };
+    } as IInvokeActivity;
 
-    const { response } = await this.postActivityToBot(activity, false);
+    const { response } = await this.postActivityToBot(activity as Activity, false);
 
     return response;
   }
 
   public async sendTokenResponse(connectionName: string, token: string, doNotCache?: boolean) {
     const userId = this.botEmulator.facilities.users.currentUserId;
-    const botId = this.botEndpoint.botId;
 
     if (!doNotCache) {
-      TokenCache.addTokenToCache(botId, userId, connectionName, token);
+      TokenCache.addTokenToCache(this.botEndpoint.botId, userId, connectionName, token);
     }
 
-    const activity: EventActivity = {
+    const activity = {
       type: 'event',
       name: 'tokens/response',
       value: {
         connectionName,
         token,
       },
-    };
+    } as Activity;
 
-    return this.postActivityToBot(activity, false);
+    return this.postActivityToBot(activity as Activity, false);
   }
 
   /**
@@ -695,7 +694,7 @@ export default class Conversation extends EventEmitter {
       details: request.details,
     };
 
-    const activity: InvokeActivity = {
+    const activity = {
       type: 'invoke',
       name: operation,
       from: { id: checkoutSession.checkoutFromId },
@@ -709,30 +708,30 @@ export default class Conversation extends EventEmitter {
         user: this.botEmulator.facilities.users.usersById(this.botEmulator.facilities.users.currentUserId),
       },
       value: updateValue,
-    };
+    } as IInvokeActivity;
 
-    const { response } = await this.postActivityToBot(activity, false);
+    const { response } = await this.postActivityToBot(activity as Activity, false);
 
-    // TODO: Should we record this in transcript? It looks like normal InvokeActivity
+    // TODO: Should we record this in transcript? It looks like normal IInvokeActivity
 
     return response;
   }
 
-  private postage(recipientId: string, activity: Activity, isHistoric: boolean = false): Activity {
+  private postage(recipientId: string, activity: Partial<Activity>, isHistoric: boolean = false): Activity {
     const date = moment();
 
     const timestamp = isHistoric ? activity.timestamp : date.toISOString();
-    const recipient = isHistoric ? activity.recipient : { id: recipientId };
+    const recipient = isHistoric ? activity.recipient : ({ id: recipientId } as ChannelAccount);
 
     return {
       ...activity,
       channelId: 'emulator',
-      conversation: activity.conversation || { id: this.conversationId },
+      conversation: activity.conversation || ({ id: this.conversationId } as ConversationAccount),
       id: activity.id || uniqueId(),
       localTimestamp: date.format(),
       recipient,
       timestamp,
-    };
+    } as Activity;
   }
 
   private addActivityToQueue(activity: Activity) {
@@ -741,10 +740,8 @@ export default class Conversation extends EventEmitter {
       this.emit('addactivity', { activity });
     }
 
-    const genericActivity = activity as GenericActivity;
-
-    if (genericActivity && activity.recipient) {
-      this.botEmulator.facilities.logger.logActivity(this.conversationId, genericActivity, activity.recipient.role);
+    if (activity && activity.recipient) {
+      this.botEmulator.facilities.logger.logActivity(this.conversationId, activity, activity.recipient.role);
     }
   }
 }
@@ -755,16 +752,16 @@ class DataUrlEncoder {
   }
 
   public async traverseActivity(activity: Activity) {
-    const messageActivity = activity as MessageActivity;
-    if (messageActivity) {
-      await this.traverseMessageActivity(messageActivity);
+    const IMessageActivity = activity as IMessageActivity;
+    if (IMessageActivity) {
+      await this.traverseIMessageActivity(IMessageActivity);
     }
   }
 
-  public async traverseMessageActivity(messageActivity: MessageActivity) {
-    if (messageActivity && messageActivity.attachments) {
-      for (let i = 0; i < messageActivity.attachments.length; i++) {
-        await this.traverseAttachment(messageActivity.attachments[i]);
+  public async traverseIMessageActivity(IMessageActivity: IMessageActivity) {
+    if (IMessageActivity && IMessageActivity.attachments) {
+      for (let i = 0; i < IMessageActivity.attachments.length; i++) {
+        await this.traverseAttachment(IMessageActivity.attachments[i]);
       }
     }
   }

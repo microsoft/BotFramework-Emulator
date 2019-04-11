@@ -33,7 +33,7 @@
 
 import * as React from 'react';
 import { Subscription } from 'rxjs';
-import { Activity } from '@bfemulator/sdk-shared';
+import { Activity } from 'botframework-schema';
 
 import * as styles from './log.scss';
 import { LogEntry } from './logEntryContainer';

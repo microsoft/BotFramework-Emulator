@@ -30,9 +30,9 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { User } from '../user';
+import { ConversationParameters } from 'botframework-schema';
 
-import { ConversationParameters } from './conversationParameters';
+import { User } from '../user';
 
 export interface StartConversationParams extends ConversationParameters {
   endpoint?: string;

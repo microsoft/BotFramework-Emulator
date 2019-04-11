@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ChannelAccount } from '@bfemulator/sdk-shared';
+import { ChannelAccount } from 'botframework-schema';
 import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 

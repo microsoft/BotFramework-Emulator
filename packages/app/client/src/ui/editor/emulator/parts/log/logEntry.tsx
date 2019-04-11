@@ -39,11 +39,11 @@ import {
   LogItem,
   LogItemType,
   LogLevel,
+  LuisEditorDeepLinkLogItem,
   NetworkRequestLogItem,
   NetworkResponseLogItem,
   NgrokExpirationLogItem,
   OpenAppSettingsLogItem,
-  LuisEditorDeepLinkLogItem,
   TextLogItem,
 } from '@bfemulator/sdk-shared';
 import * as React from 'react';
@@ -201,6 +201,7 @@ export class LogEntry extends React.Component<LogEntryProps> {
         const { text } = item.payload as NgrokExpirationLogItem;
         return this.renderNgrokExpirationItem(text, key);
       }
+
       default:
         return false;
     }

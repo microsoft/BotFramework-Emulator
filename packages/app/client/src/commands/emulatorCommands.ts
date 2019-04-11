@@ -32,8 +32,9 @@
 //
 
 import { DebugMode, newNotification, SharedConstants } from '@bfemulator/app-shared';
-import { Activity, CommandRegistryImpl, isLocalHostUrl, uniqueId } from '@bfemulator/sdk-shared';
+import { CommandRegistryImpl, isLocalHostUrl, uniqueId } from '@bfemulator/sdk-shared';
 import { IEndpointService } from 'botframework-config/lib/schema';
+import { Activity } from 'botframework-schema';
 
 import * as Constants from '../constants';
 import * as ChatActions from '../data/action/chatActions';

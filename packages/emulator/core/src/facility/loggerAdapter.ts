@@ -32,15 +32,16 @@
 //
 import {
   exceptionItem,
-  GenericActivity,
-  LogItem,
   inspectableObjectItem,
   Logger,
+  LogItem,
   LogLevel,
   LogService,
   summaryTextItem,
   textItem,
+  TextLogItem,
 } from '@bfemulator/sdk-shared';
+import { Activity, ActivityTypes } from 'botframework-schema';
 
 export default class LoggerAdapter implements Logger {
   constructor(public logService: LogService) {
@@ -49,19 +50,21 @@ export default class LoggerAdapter implements Logger {
     this.logException = this.logException.bind(this);
   }
 
-  public logActivity(conversationId: string, activity: GenericActivity, role: string) {
-    let direction: LogItem;
+  public logActivity(conversationId: string, activity: Activity, role: string) {
+    let direction: LogItem<TextLogItem>;
     if (role === 'user') {
       direction = textItem(LogLevel.Debug, '<-');
     } else {
       direction = textItem(LogLevel.Debug, '->');
     }
-    this.logService.logToChat(
-      conversationId,
-      direction,
-      inspectableObjectItem(activity.type, activity),
-      summaryTextItem(activity)
-    );
+    const logItems: LogItem[] = [direction, inspectableObjectItem(activity.type, activity), summaryTextItem(activity)];
+    // Check if there is a nested message that can be inspected
+    if (activity.value && activity.value.type === ActivityTypes.Message) {
+      const nestedActivity = activity.value as Activity;
+      logItems.push(inspectableObjectItem(nestedActivity.type, nestedActivity), summaryTextItem(nestedActivity));
+    }
+
+    this.logService.logToChat(conversationId, ...logItems);
   }
 
   public logMessage(conversationId: string, ...items: LogItem[]) {

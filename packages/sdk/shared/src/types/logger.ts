@@ -31,11 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { GenericActivity } from './activity';
+import { Activity } from 'botframework-schema';
+
 import { LogItem } from './log';
 
 export interface Logger {
-  logActivity(conversationId: string, activity: GenericActivity, role: string);
+  logActivity(conversationId: string, activity: Activity, role: string);
   logMessage(conversationId: string, ...items: LogItem[]);
   logException(conversationId: string, err: Error);
 }

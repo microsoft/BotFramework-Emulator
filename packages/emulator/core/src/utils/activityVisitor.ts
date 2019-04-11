@@ -34,27 +34,21 @@
 import {
   Activity,
   Attachment,
-  AttachmentContentTypes,
   CardAction,
   CardImage,
   MediaCard,
-  MessageActivity,
   OAuthCard,
   ReceiptCard,
   SigninCard,
   ThumbnailCard,
-} from '@bfemulator/sdk-shared';
+} from 'botframework-schema';
+import { AttachmentContentTypes } from '@bfemulator/sdk-shared';
 
 export default abstract class ActivityVisitor {
-  public traverseActivity(activity: Activity) {
-    const messageActivity = activity as MessageActivity;
-
-    if (messageActivity) {
-      this.traverseMessageActivity(messageActivity);
+  public traverseActivity(messageActivity: Activity) {
+    if (!messageActivity) {
+      return;
     }
-  }
-
-  public traverseMessageActivity(messageActivity: MessageActivity) {
     if (messageActivity && messageActivity.attachments) {
       messageActivity.attachments.forEach(attachment => {
         this.traverseAttachment(attachment);

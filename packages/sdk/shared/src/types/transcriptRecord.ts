@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Activity } from './activity';
+import { Activity } from 'botframework-schema';
 
 export interface TranscriptRecord {
   type: string;

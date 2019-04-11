@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Activity, CardAction } from '@bfemulator/sdk-shared';
+import { Activity, CardAction } from 'botframework-schema';
 
 import ActivityVisitor from './activityVisitor';
 

@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { CardAction, PaymentRequest } from '@bfemulator/sdk-shared';
+import { CardAction, PaymentRequest } from 'botframework-schema';
 
 import { ActivityVisitor } from './activityVisitor';
 
