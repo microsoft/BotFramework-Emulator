@@ -91,7 +91,9 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
   public componentDidMount(): void {
     this.props.getFrameworkSettings();
   }
-
+  private usingCustomId() {
+    return this.state.userGUID ? true : this.state.useCustomId;
+  }
   public render(): JSX.Element {
     const { state } = this;
 
@@ -186,7 +188,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
             />
             <Checkbox
               className={styles.checkboxOverrides}
-              checked={state.useCustomId}
+              checked={this.usingCustomId()}
               onChange={this.onChangeCheckBox}
               id="use-custom-id"
               label="Use your own ID to communicate with the bot"
@@ -200,8 +202,8 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
                 value={state.userGUID}
                 name="userGUID"
                 onChange={this.onInputChange}
-                disabled={!state.useCustomId}
-                required={state.useCustomId}
+                disabled={!this.usingCustomId()}
+                required={this.usingCustomId()}
                 label="User ID"
               />
             </Row>
