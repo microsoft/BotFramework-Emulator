@@ -369,6 +369,7 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
     const { NewUserId, SameUserId } = RestartConversationOptions;
     this.props.clearLog(this.props.document.documentId);
     this.props.setInspectorObjects(this.props.document.documentId, []);
+
     switch (option) {
       case NewUserId: {
         this.props.trackEvent('conversation_restart', {

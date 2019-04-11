@@ -193,7 +193,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
               checked={this.usingCustomId()}
               onChange={this.onChangeCheckBox}
               id="use-custom-id"
-              label="Use your own ID to communicate with the bot"
+              label="Use your own user ID to communicate with the bot"
               name="useCustomId"
             />
             <Row align={RowAlignment.Top}>
