@@ -70,7 +70,7 @@ import PaymentEncoder from '../utils/paymentEncoder';
 import uniqueId from '../utils/uniqueId';
 
 import BotEndpoint from './botEndpoint';
-import { networkRequestItem, networkResponseItem } from '@bfemulator/sdk-shared/build/src';
+import { networkRequestItem, networkResponseItem } from '@bfemulator/sdk-shared';
 
 // moment currently does not export callable function
 // eslint-disable-next-line typescript/no-var-requires
