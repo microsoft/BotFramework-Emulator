@@ -95,13 +95,14 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
   private usingCustomId() {
     return this.state.userGUID ? true : this.state.useCustomId;
   }
+  public GUIDValidator(guid: string) {
+    const charSec = n => `[a-z\\d]{${n}}`;
+    return RegExp([charSec(8), charSec(4), charSec(4), charSec(4), charSec(12)].join('-')).test(guid);
+  }
 
   public render(): JSX.Element {
     const { state } = this;
-    const charSec = n => `[a-z\\d]{${n}}`;
-    const validationResult = RegExp([charSec(8), charSec(4), charSec(4), charSec(4), charSec(12)].join('-')).test(
-      state.userGUID
-    );
+    const validationResult = this.GUIDValidator(state.userGUID);
     const errorMessage = validationResult ? '' : 'Please enter a valid user ID';
 
     return (
