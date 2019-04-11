@@ -67,23 +67,25 @@ export class Log extends React.Component<LogProps, LogState> {
     const { props, scrollMe, state } = this;
     // set up selected activity subscription once it's available
     if (props.document && props.document.selectedActivity$ && !this.selectedActivitySubscription) {
-      this.selectedActivitySubscription = props.document.selectedActivity$.subscribe((selectedActivity: Activity) => {
-        if (selectedActivity) {
-          const { showInInspector } = selectedActivity;
-          const currentlyInspectedActivity = showInInspector ? selectedActivity : null;
+      this.selectedActivitySubscription = props.document.selectedActivity$.subscribe(
+        (selectedActivity: Activity & { showInInspector: boolean }) => {
+          if (selectedActivity) {
+            const { showInInspector } = selectedActivity;
+            const currentlyInspectedActivity = showInInspector ? selectedActivity : null;
 
-          this.setState(
-            (prevState): any => {
-              if (
-                prevState.selectedActivity !== selectedActivity ||
-                prevState.currentlyInspectedActivity !== currentlyInspectedActivity
-              ) {
-                return { currentlyInspectedActivity, selectedActivity };
+            this.setState(
+              (prevState): any => {
+                if (
+                  prevState.selectedActivity !== selectedActivity ||
+                  prevState.currentlyInspectedActivity !== currentlyInspectedActivity
+                ) {
+                  return { currentlyInspectedActivity, selectedActivity };
+                }
               }
-            }
-          );
+            );
+          }
         }
-      });
+      );
     }
     if (props.document.log.entries.length !== state.count) {
       scrollMe.scrollTop = scrollMe.scrollHeight;
