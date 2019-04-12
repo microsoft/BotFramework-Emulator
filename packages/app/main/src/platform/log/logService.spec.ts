@@ -31,13 +31,31 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as Electron from 'electron';
+import { SharedConstants } from '@bfemulator/app-shared';
+import { logEntry, LogLevel, textItem } from '@bfemulator/sdk-shared';
 
-export function appendCustomUserAgent(details: any, callback: (...args: any[]) => any): void {
-  const { requestHeaders = {} } = details;
-  const version = Electron.app.getVersion();
+import { LogService } from './logService';
 
-  requestHeaders['User-Agent'] += ` botbuilder/emulator/${version}`;
+describe('LogService', () => {
+  it('should log items to chat', () => {
+    // lock down the time so that the timestamp doesn't break the test
+    Date.now = () => 123;
 
-  callback({ cancel: false, requestHeaders });
-}
+    const mockRemoteCall = jest.fn(() => null);
+    const window: any = {
+      commandService: {
+        remoteCall: mockRemoteCall,
+      },
+    };
+    const logService = new LogService(window);
+    const item1 = textItem(LogLevel.Debug, 'someText');
+    const item2 = textItem(LogLevel.Info, 'someOtherText');
+    logService.logToChat('someConvoId', item1, item2);
+
+    expect(mockRemoteCall).toHaveBeenCalledWith(
+      SharedConstants.Commands.Emulator.AppendToLog,
+      'someConvoId',
+      logEntry(item1, item2)
+    );
+  });
+});
