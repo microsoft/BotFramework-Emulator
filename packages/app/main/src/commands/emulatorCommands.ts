@@ -45,7 +45,7 @@ import { getActiveBot, getBotInfoByPath, patchBotsJson, toSavableBot } from '../
 import { emulator } from '../emulator';
 import { mainWindow } from '../main';
 import { dispatch, getStore as getSettingsStore } from '../settingsData/store';
-import { parseActivitiesFromChatFile, showSaveDialog, writeFile } from '../utils';
+import { parseActivitiesFromChatFile, showSaveDialog, writeFile, readFileSync } from '../utils';
 import { cleanupId as cleanupActivityChannelAccountId, CustomActivity } from '../utils/conversation';
 import { botProjectFileWatcher } from '../watchers';
 import { TelemetryService } from '../telemetry';
@@ -125,7 +125,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
         throw new Error(`${Commands.FeedTranscriptFromDisk}: File ${filePath} not found.`);
       }
 
-      const activities = JSON.parse(await fs.readFile(transcriptPath, 'utf-8'));
+      const activities = JSON.parse(readFileSync(transcriptPath));
 
       await mainWindow.commandService.call(
         Commands.FeedTranscriptFromMemory,
