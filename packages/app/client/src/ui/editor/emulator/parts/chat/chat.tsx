@@ -217,6 +217,9 @@ export class Chat extends Component<ChatProps, ChatState> {
   };
 
   private onItemRendererKeyDown = (event: KeyboardEvent<HTMLDivElement | HTMLButtonElement>): void => {
+    if (event.key !== ' ' && event.key !== 'Enter') {
+      return;
+    }
     const { activityId } = (event.currentTarget as any).dataset;
     this.updateSelectedActivity(activityId);
   };

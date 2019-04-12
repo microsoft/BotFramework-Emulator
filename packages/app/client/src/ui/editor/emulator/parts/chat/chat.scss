@@ -127,7 +127,11 @@ button.bot-state-object {
     color: var(--p-button-color);
   }
 
-  &:hover:not([disabled]), &[aria-selected="false"] {
+  &[aria-selected="false"] {
+    color: var(--p-button-color-disabled);
+  }
+
+  &:hover:not([disabled]), &:focus {
     background: transparent;
     color: var(--p-button-color);
   }

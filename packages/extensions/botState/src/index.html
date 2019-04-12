@@ -94,11 +94,13 @@
       fill: var(--log-panel-link);
     }
 
-    .string, .removed {
+    .string, .removed, .json-removed {
+      color: var(--log-panel-item-error);
       fill: var(--log-panel-item-error);
     }
 
-    .number, .added {
+    .number, .added, .json-added {
+      color: var(--log-panel-timestamp);
       fill: var(--log-panel-timestamp);
     }
 
@@ -110,7 +112,8 @@
       fill: var(--log-panel-link);
     }
 
-    .default {
+    .default, .json-default {
+      color: var(--log-panel-item-info);
       fill: var(--log-panel-item-info);
     }
   </style>

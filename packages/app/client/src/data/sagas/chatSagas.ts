@@ -46,6 +46,7 @@ import {
   closeDocument,
   DocumentIdPayload,
   NewChatPayload,
+  setHighlightedObjects,
   setInspectorObjects,
   updatePendingSpeechTokenRetrieval,
   webSpeechFactoryUpdated,
@@ -230,6 +231,7 @@ export function* diffWithPreviousBotState(currentBotState: Activity): Iterable<a
     buildDiff('-', path, botStateClone.value, previousBotState.value);
   });
   const documentId = yield select(getCurrentDocumentId);
+  yield put(setHighlightedObjects(documentId, [previousBotState, currentBotState]));
   yield put(setInspectorObjects(documentId, botStateClone));
 }
 

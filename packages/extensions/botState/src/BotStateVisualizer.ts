@@ -107,7 +107,7 @@ export class BotStateVisualizer {
 
     // Rendering JSON
     if (this.viewState === ViewState.Json) {
-      div.innerHTML = json2HTML(this._dataProvider);
+      div.innerHTML = json2HTML(this._dataProvider, this.isDiff);
       return;
     }
 
