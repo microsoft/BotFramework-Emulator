@@ -40,7 +40,7 @@ import { SharedConstants } from '@bfemulator/app-shared';
 import base64Url from 'base64url';
 
 import { disable, enable } from '../../../data/action/presentationActions';
-import { clearLog, newConversation, setInspectorObjects, updateChat } from '../../../data/action/chatActions';
+import { clearLog, newConversation, setInspectorObjects } from '../../../data/action/chatActions';
 import { updateDocument } from '../../../data/action/editorActions';
 
 import { Emulator, EmulatorComponent, RestartConversationOptions } from './emulator';
@@ -64,7 +64,7 @@ jest.mock('../../../platform/commands/commandServiceImpl', () => ({
         return Promise.resolve({ meta: 'some file info' });
       }
       if (commandName === mockSharedConstants.Commands.Settings.LoadAppSettings) {
-        return Promise.resolve({ meta: 'some file info' });
+        return Promise.resolve({ framework: { userGUID: '' } });
       }
 
       return Promise.resolve();
