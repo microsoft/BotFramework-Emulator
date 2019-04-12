@@ -289,12 +289,18 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
         {this.props.mode === 'livechat' && (
           <div className={styles.header}>
             <ToolBar>
-              <SplitButton
-                defaultLabel="Restart conversation"
-                buttonClass={styles.restartIcon}
-                options={[NewUserId, SameUserId]}
-                onClick={this.onStartOverClick}
-              />
+              <button
+                className={`${styles.restartIcon} ${styles.toolbarIcon || ''}`}
+                onClick={() => this.onStartOverClick(SameUserId)}
+              >
+                Restart with Same User Id
+              </button>
+              <button
+                className={`${styles.restartIcon} ${styles.toolbarIcon || ''}`}
+                onClick={() => this.onStartOverClick(NewUserId)}
+              >
+                Restart with New User Id
+              </button>
               <button
                 className={`${styles.saveTranscriptIcon} ${styles.toolbarIcon || ''}`}
                 onClick={this.onExportClick}
