@@ -41,7 +41,6 @@ import { app, BrowserWindow, dialog, ipcMain, Rectangle, screen, systemPreferenc
 import { UpdateInfo } from 'electron-updater';
 import { Store } from 'redux';
 
-import { appendCustomUserAgent } from './appendCustomUserAgent';
 import { AppMenuBuilder } from './appMenuBuilder';
 import { AppUpdater } from './appUpdater';
 import { getStore } from './botData/store';
@@ -297,9 +296,6 @@ const createMainWindow = async () => {
       height: 920,
     })
   );
-
-  // attach custom user agent string
-  mainWindow.webContents.session.webRequest.onBeforeSendHeaders(appendCustomUserAgent);
 
   // get reference to bots list in state for comparison against state changes
   let botsRef = store.getState().bot.botFiles;
