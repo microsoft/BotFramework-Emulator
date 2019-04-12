@@ -71,7 +71,6 @@ jest.mock('chokidar', () => ({
 
 jest.mock('fs-extra', () => ({
   stat: async () => ({ isFile: () => true }),
-  readFile: async () => JSON.stringify((mockConversation as any).transcript),
 }));
 
 jest.mock('mkdirp', () => ({
@@ -94,6 +93,7 @@ jest.mock('../utils', () => ({
   writeFile: async () => true,
   loadSettings: () => ({ windowState: {} }),
   getThemes: async () => [],
+  readFileSync: () => JSON.stringify((mockConversation as any).transcript),
 }));
 
 jest.mock('../utils/ensureStoragePath', () => ({
