@@ -81,6 +81,6 @@ export default class ConversationSet extends EventEmitter {
   }
 
   public getConversations(): Conversation[] {
-    return Object.keys(this.conversations).map(id => this.conversations[id]);
+    return Object.values(this.conversations);
   }
 }
