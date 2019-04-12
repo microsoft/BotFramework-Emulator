@@ -45,9 +45,9 @@ import { Activity, ActivityTypes } from 'botframework-schema';
 export default class LoggerAdapter implements Logger {
   private static getDirectionalArrowFromRole(role: string): string {
     if (role === 'user') {
-      return '<-';
+      return '<- ';
     }
-    return '->';
+    return '-> ';
   }
 
   constructor(public logService: LogService) {
@@ -65,8 +65,15 @@ export default class LoggerAdapter implements Logger {
     // Check if there is a nested message that can be inspected
     if (activity.value && activity.value.type === ActivityTypes.Message) {
       const nestedActivity = activity.value as Activity;
+      // Ids are optional fields on Activity objects
+      // however, the debug adapter always places an id
+      // on the trace. If the nested message activity does not have
+      // an id, we inherit from the parent.
+      if (!nestedActivity.id) {
+        nestedActivity.id = 'emulator-required-id-' + activity.id;
+      }
       logItems.push(
-        textItem(LogLevel.Debug, `${LoggerAdapter.getDirectionalArrowFromRole(nestedActivity.from.role)}`),
+        textItem(LogLevel.Debug, LoggerAdapter.getDirectionalArrowFromRole(nestedActivity.from.role)),
         inspectableObjectItem(nestedActivity.type, nestedActivity),
         summaryTextItem(nestedActivity)
       );

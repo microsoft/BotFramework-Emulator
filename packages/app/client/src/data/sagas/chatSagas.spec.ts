@@ -41,14 +41,14 @@ import { editor } from '../reducer/editor';
 import { presentation } from '../reducer/presentation';
 import * as Constants from '../../constants';
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
-import { showContextMenuForActivity } from '../action/chatActions';
+import { closeConversation, newDocument, showContextMenuForActivity } from '../action/chatActions';
 
 import { chatSagas } from './chatSagas';
+import { SharedConstants } from '@bfemulator/app-shared';
 
 const sagaMiddleWare = sagaMiddlewareFactory();
 let mockStore;
 let mockStoreState;
-const mockUnsubscribe = jest.fn(() => null);
 jest.mock('../../ui/dialogs', () => ({}));
 jest.mock('../store', () => ({
   get store() {
@@ -59,6 +59,12 @@ jest.mock('../store', () => ({
 jest.mock('electron', () => {
   return {
     clipboard: { writeText: () => true },
+  };
+});
+
+jest.mock('botframework-webchat', () => {
+  return {
+    createCognitiveServicesBingSpeechPonyfillFactory: () => () => 'Yay! ponyfill!',
   };
 });
 
@@ -550,6 +556,11 @@ const log = {
 describe('The ChatSagas,', () => {
   beforeEach(() => {
     mockStoreState = {
+      bot: {
+        activeBot: {
+          services: [{ id: 'endpoint2', appId: 'anAppId', appPassword: 'anAppPassword' }],
+        },
+      },
       chat: {
         chats: {
           doc1: {
@@ -558,7 +569,6 @@ describe('The ChatSagas,', () => {
             documentId: 'doc1',
             endpointId: 'endpoint1',
             userId: 'someUserId',
-            subscription: { unsubscribe: mockUnsubscribe },
           },
         },
       },
@@ -695,5 +705,36 @@ describe('The ChatSagas,', () => {
         ])
       );
     });
+  });
+
+  it('when closing a document it should notify the main process so it can remove the conversation', async () => {
+    const commandServiceSpy = jest.spyOn(CommandServiceImpl, 'remoteCall').mockResolvedValue(true);
+    mockStore.dispatch(closeConversation('doc1'));
+    expect(commandServiceSpy).toHaveBeenCalledWith(SharedConstants.Commands.Emulator.DeleteConversation, 'convo1');
+    await Promise.resolve(); // wait for the comand service call to complete
+    expect(mockStore.getState().chat.chats.doc1).toBeUndefined();
+  });
+
+  it('when starting a new conversation, should create a speech token ponyfill factory', async () => {
+    const commandServiceSpy = jest.spyOn(CommandServiceImpl, 'remoteCall').mockResolvedValue('mockSpeechToken');
+
+    mockStore.dispatch(
+      newDocument('doc2', 'livechat', {
+        conversationId: 'convo2',
+        endpointId: 'endpoint2',
+        userId: 'someUserId2',
+      })
+    );
+
+    await Promise.resolve();
+    const state = mockStore.getState();
+    expect(state.chat.chats.doc2).not.toBeUndefined();
+    expect(state.chat.webSpeechFactories.doc2).not.toBeUndefined();
+    expect(state.chat.webSpeechFactories.doc2()).toBe('Yay! ponyfill!');
+    expect(commandServiceSpy).toHaveBeenCalledWith(
+      SharedConstants.Commands.Emulator.GetSpeechToken,
+      'endpoint2',
+      false
+    );
   });
 });

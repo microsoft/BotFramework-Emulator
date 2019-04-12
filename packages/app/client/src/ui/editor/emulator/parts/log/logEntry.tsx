@@ -52,21 +52,13 @@ import { ExtensionManager, InspectorAPI } from '../../../../../extensions';
 
 import * as styles from './log.scss';
 
-/** One of these will always be "nexted" to the selectedActivity$
- *  subscription when called from within the log
- */
-export interface ActivitySelectionFromLog {
-  /** Differentiates between just hovering an activity or clicking to inspect */
-  clicked: boolean;
-}
-
 export interface LogEntryProps {
   document: any;
   entry: ILogEntry;
-  selectedActivity?: any;
   currentlyInspectedActivity?: any;
   launchLuisEditor?: () => void;
-  setInspectorObjects?: (...args: any[]) => void;
+  setInspectorObjects?: (documentId: string, objs: any) => void;
+  setHighlightedObjects?: (documentId: string, objs: any) => void;
   reconnectNgrok?: () => void;
   showAppSettings?: () => void;
   trackEvent?: (name: string, properties?: { [key: string]: any }) => void;
@@ -79,9 +71,12 @@ export class LogEntry extends React.Component<LogEntryProps> {
   /** Sends obj to the inspector panel
    * @param obj Can be a conversation activity or network request
    */
-  inspect(obj: {}) {
-    this.props.document.selectedActivity$.next({ showInInspector: true });
-    this.props.setInspectorObjects(this.props.document.documentId, obj);
+  inspect(obj: {} = {}) {
+    this.props.setInspectorObjects(this.props.document.documentId, { ...obj, showInInspector: true });
+  }
+
+  highlight(obj: {} = {}) {
+    this.props.setHighlightedObjects(this.props.document.documentId, obj);
   }
 
   /** Sends obj to the inspector panel and highlights the activity in Webchat
@@ -90,39 +85,7 @@ export class LogEntry extends React.Component<LogEntryProps> {
    */
   inspectAndHighlightInWebchat(obj: any) {
     this.inspect(obj);
-    if (obj.id) {
-      this.props.document.selectedActivity$.next({
-        ...obj,
-        showInInspector: true,
-      });
-    }
     this.props.trackEvent('log_inspectActivity', { type: obj.type || '' });
-  }
-
-  /** Highlights an activity in webchat (triggered by hover in log) */
-  highlightInWebchat(obj: any) {
-    if (obj.id) {
-      this.props.document.selectedActivity$.next({
-        ...obj,
-        showInInspector: false,
-      });
-    }
-  }
-
-  /** Removes an activity's highlighting in webchat */
-  removeHighlightInWebchat(obj: any) {
-    if (obj.id) {
-      // re-highlight last-inspected activity if possible
-      const { currentlyInspectedActivity } = this.props;
-      if (currentlyInspectedActivity && currentlyInspectedActivity.id) {
-        this.props.document.selectedActivity$.next({
-          ...currentlyInspectedActivity,
-          showInInspector: true,
-        });
-      } else {
-        this.props.document.selectedActivity$.next({ showInInspector: false });
-      }
-    }
   }
 
   render() {
@@ -140,12 +103,11 @@ export class LogEntry extends React.Component<LogEntryProps> {
 
     // if the currently inspected activity matches any of this item's inner inspectable
     // objects, append an 'inspected' class name to the log entry to highlight it
-    const { currentlyInspectedActivity } = this.props;
+    const currentlyInspectedActivity = this.props.currentlyInspectedActivity || {};
     let inspectedActivityClass = '';
-    if (currentlyInspectedActivity && currentlyInspectedActivity.id) {
-      if (this.inspectableObjects[currentlyInspectedActivity.id]) {
-        inspectedActivityClass = styles.inspected;
-      }
+    const targetId = currentlyInspectedActivity.id;
+    if (this.inspectableObjects[targetId]) {
+      inspectedActivityClass = styles.inspected;
     }
 
     return (
@@ -255,11 +217,7 @@ export class LogEntry extends React.Component<LogEntryProps> {
     }
     const summaryText = this.summaryText(obj) || '';
     return (
-      <span
-        key={key}
-        onMouseOver={() => this.highlightInWebchat(obj)}
-        onMouseLeave={() => this.removeHighlightInWebchat(obj)}
-      >
+      <span key={key} onMouseOver={() => this.highlight(obj)} onMouseLeave={() => this.highlight({})}>
         <span className={`${styles.spaced} ${styles.level0}`}>
           <button className={styles.link} onClick={() => this.inspectAndHighlightInWebchat(obj)}>
             {title}

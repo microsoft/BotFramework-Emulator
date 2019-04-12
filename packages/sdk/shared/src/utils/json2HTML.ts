@@ -51,25 +51,25 @@ export function json2HTML(obj: { [key: string]: any }): string {
     /"(\\u[a-fA-F0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,
     match => {
       // Default to "number"
-      let cls = 'number';
+      let className = 'number';
       // Detect the type of the JSON part
       if (/^"/.test(match)) {
         if (/:$/.test(match)) {
-          cls = 'key';
+          className = 'key';
         } else {
-          cls = 'string';
+          className = 'string';
         }
       } else if (/true|false/.test(match)) {
-        cls = 'boolean';
+        className = 'boolean';
       } else if (/null/.test(match)) {
-        cls = 'null';
+        className = 'null';
       }
-      if (cls === 'key') {
+      if (className === 'key') {
         // Don't color the : character after the key
         const exec = /"(.*)":\s*/.exec(match);
-        return `<span class="json-${cls}">"${exec[1]}"</span>:`;
+        return `<span class="json-${className}">"${exec[1]}"</span>:`;
       } else {
-        return `<span class="json-${cls}">${match}</span>`;
+        return `<span class="json-${className}">${match}</span>`;
       }
     }
   );

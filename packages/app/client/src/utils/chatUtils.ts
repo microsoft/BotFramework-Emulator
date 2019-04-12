@@ -32,17 +32,29 @@
 //
 import { IEndpointService } from 'botframework-config/lib/schema';
 import { Activity } from 'botframework-schema';
+import { ValueTypes } from '@bfemulator/app-shared';
 
-export function isCardSelected(selectedActivity: Activity, activity: Activity): boolean {
-  if (!selectedActivity || !activity) {
+export function areActivitiesEqual(a: Activity, b: Activity): boolean {
+  if (!a || !b) {
     return false;
   }
-  const containsIds = 'id' in selectedActivity && 'id' in activity;
-  const containsReplyToId = 'replyToId' in selectedActivity && 'replyToId' in activity;
-  return (
-    (containsIds && selectedActivity.id === activity.id) ||
-    (containsReplyToId && selectedActivity.replyToId === activity.replyToId)
-  );
+  return a.id === b.id;
+}
+
+export function getActivityTargets(activities: Activity[]): Activity[] {
+  return activities.reduce((targets: Activity[], activity: Activity) => {
+    // In the case of trace activities with valueType === ValueTypes.Activity,
+    // the log panel gives us the entire trace while
+    // WebChat gives us the nested message activity.
+    // Determine if we should be targeting the nested
+    // activity within the selected activity.
+    if (activity && activity.valueType === ValueTypes.Activity) {
+      targets.push(activity.value as Activity);
+    } else {
+      targets.push(activity);
+    }
+    return targets;
+  }, []);
 }
 
 export function isSpeechEnabled(endpoint: IEndpointService): boolean {

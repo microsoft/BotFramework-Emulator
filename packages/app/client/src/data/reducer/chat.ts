@@ -192,6 +192,28 @@ export function chat(state: ChatState = DEFAULT_STATE, action: ChatAction | Edit
       break;
     }
 
+    case ChatActions.setHighlightedObjects:
+      {
+        const { payload } = action;
+        let document = state.chats[payload.documentId];
+        if (document) {
+          document = {
+            ...document,
+            highlightedObjects: payload.objs,
+          };
+        }
+        state = {
+          ...state,
+          chats: {
+            ...state.chats,
+            [payload.documentId]: {
+              ...document,
+            },
+          },
+        };
+      }
+      break;
+
     case ChatActions.setInspectorObjects: {
       const { payload } = action;
       let document = state.chats[payload.documentId];

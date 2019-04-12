@@ -30,7 +30,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { BehaviorSubject } from 'rxjs';
 import { DebugMode, ValueTypes } from '@bfemulator/app-shared';
 import { User } from '@bfemulator/sdk-shared';
 import { Activity, ActivityTypes } from 'botframework-schema';
@@ -40,16 +39,18 @@ import { Component, KeyboardEvent, MouseEvent, ReactNode } from 'react';
 import { PrimaryButton } from '@bfemulator/ui-react';
 
 import { EmulatorMode } from '../../emulator';
-import { isCardSelected } from '../../../../../utils';
+import { areActivitiesEqual, getActivityTargets } from '../../../../../utils';
 
 import ActivityWrapper from './activityWrapper';
 import * as styles from './chat.scss';
 import webChatStyleOptions from './webChatTheme';
 
 interface PartialDocument {
-  selectedActivity$?: BehaviorSubject<Activity & { showInInspector?: boolean }>;
   directLine: any;
   botId: string;
+  inspectorObjects: Activity[];
+  highlightedObjects: Activity[];
+  documentId: string;
 }
 
 export interface ChatProps {
@@ -62,10 +63,12 @@ export interface ChatProps {
   webSpeechPonyfillFactory?: () => any;
   pendingSpeechTokenRetrieval?: boolean;
   showContextMenuForActivity: (activity: Partial<Activity>) => void;
+  setInspectorObject: (documentId: string, activity: Partial<Activity & { showInInspector: true }>) => void;
 }
 
 interface ChatState {
   selectedActivity?: Activity;
+  highlightedActivities?: Activity[];
   document?: PartialDocument;
 }
 
@@ -73,8 +76,9 @@ export class Chat extends Component<ChatProps, ChatState> {
   public state = { waitForSpeechToken: false } as ChatState;
   private activityMap: { [activityId: string]: Activity };
 
-  public static getDerivedStateFromProps(newProps: ChatProps, prevState?: ChatState): ChatState {
-    let selectedActivity = newProps.document.selectedActivity$ ? newProps.document.selectedActivity$.getValue() : null;
+  public static getDerivedStateFromProps(newProps: ChatProps): ChatState {
+    let selectedActivity =
+      'inspectorObjects' in newProps.document ? newProps.document.inspectorObjects[0] : ({} as Activity);
     // The log panel gives us the entire trace while
     // WebChat gives us the nested activity. Determine
     // if we should be targeting the nested activity
@@ -82,12 +86,14 @@ export class Chat extends Component<ChatProps, ChatState> {
     if (selectedActivity && selectedActivity.valueType === ValueTypes.Activity) {
       selectedActivity = selectedActivity.value;
     }
-    if (prevState && prevState.selectedActivity === selectedActivity && prevState.document === newProps.document) {
-      return prevState;
-    }
+    const highlightedActivities = getActivityTargets([
+      ...(newProps.document.highlightedObjects || []),
+      selectedActivity,
+    ]);
     return {
       document: newProps.document,
       selectedActivity,
+      highlightedActivities,
     };
   }
 
@@ -134,7 +140,7 @@ export class Chat extends Component<ChatProps, ChatState> {
         data-activity-id={card.activity.id}
         onClick={this.onItemRendererClick}
         onKeyDown={this.onItemRendererKeyDown}
-        isSelected={isCardSelected(this.state.selectedActivity, card.activity)}
+        isSelected={this.shouldBeSelected(card.activity)}
       >
         {next(card)(children)}
       </ActivityWrapper>
@@ -162,7 +168,6 @@ export class Chat extends Component<ChatProps, ChatState> {
     if (this.props.debugMode !== DebugMode.Sidecar) {
       return null;
     }
-    const selectedActivity = this.state.selectedActivity || ({} as Activity);
     const { valueType } = card.activity; // activities are nested
 
     if (valueType === ValueTypes.Activity) {
@@ -174,7 +179,7 @@ export class Chat extends Component<ChatProps, ChatState> {
           onKeyDown={this.onItemRendererKeyDown}
           onClick={this.onItemRendererClick}
           onContextMenu={this.onContextMenu}
-          isSelected={isCardSelected(selectedActivity, messageActivity)}
+          isSelected={this.shouldBeSelected(messageActivity)}
         >
           {next({ activity: messageActivity, timestampClassName: 'transcript-timestamp' })(children)}
         </ActivityWrapper>
@@ -187,7 +192,7 @@ export class Chat extends Component<ChatProps, ChatState> {
           onKeyDown={this.onItemRendererKeyDown}
           onClick={this.onItemRendererClick}
           onContextMenu={this.onContextMenu}
-          aria-selected={isCardSelected(selectedActivity, card.activity)}
+          aria-selected={this.shouldBeSelected(card.activity)}
         >
           Bot State
         </PrimaryButton>
@@ -199,9 +204,11 @@ export class Chat extends Component<ChatProps, ChatState> {
   protected updateSelectedActivity(id: string): void {
     const selectedActivity: Activity & { showInInspector?: boolean } = this.activityMap[id];
     this.setState({ selectedActivity });
-    if (this.props.document && this.props.document.selectedActivity$) {
-      this.props.document.selectedActivity$.next({ ...selectedActivity, showInInspector: true });
-    }
+    this.props.setInspectorObject(this.props.document.documentId, { ...selectedActivity, showInInspector: true });
+  }
+
+  private shouldBeSelected(subject: Activity): boolean {
+    return this.state.highlightedActivities.some(activity => areActivitiesEqual(activity, subject));
   }
 
   private onItemRendererClick = (event: MouseEvent<HTMLDivElement | HTMLButtonElement>): void => {

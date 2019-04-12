@@ -36,10 +36,8 @@ import { uniqueId, uniqueIdv4 } from '@bfemulator/sdk-shared';
 import { Splitter, SplitButton } from '@bfemulator/ui-react';
 import base64Url from 'base64url';
 import { IEndpointService } from 'botframework-config/lib/schema';
-import { Activity } from 'botframework-schema';
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { BehaviorSubject } from 'rxjs';
 import { newNotification, Notification, SharedConstants } from '@bfemulator/app-shared';
 
 import * as ChatActions from '../../../data/action/chatActions';
@@ -155,13 +153,6 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
     if (props.document.subscription) {
       props.document.subscription.unsubscribe();
     }
-    const selectedActivity$ = new BehaviorSubject<Activity | null>({});
-    const subscription = selectedActivity$.subscribe(activity => {
-      if (activity && activity.showInInspector) {
-        delete activity.showInInspector; // legacy transient field - we don't want this to show up in the inspector
-        this.props.setInspectorObjects(props.document.documentId, activity);
-      }
-    });
 
     // Look for an existing conversation ID and use that,
     // otherwise, create a new one
@@ -185,7 +176,7 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
       props.document.directLine.end();
     }
 
-    this.initConversation(props, options, selectedActivity$, subscription);
+    this.initConversation(props, options);
 
     if (props.mode === 'transcript') {
       try {
@@ -235,7 +226,7 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
     }
   };
 
-  initConversation(props: EmulatorProps, options: any, selectedActivity$: any, subscription: any): void {
+  initConversation(props: EmulatorProps, options: any): void {
     const encodedOptions = encode(JSON.stringify(options));
 
     // TODO: We need to use encoded token because we need to pass both endpoint ID and conversation ID
@@ -250,8 +241,6 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
       conversationId: options.conversationId,
       // webChatStore,
       directLine,
-      selectedActivity$,
-      subscription,
       userId: options.userId,
     });
   }
@@ -402,13 +391,13 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
     }
   };
 
-  private readonly keyboardEventListener: EventListener = (event: KeyboardEvent): void => {
+  private readonly keyboardEventListener: EventListener = async (event: KeyboardEvent): Promise<void> => {
     // Meta corresponds to 'Command' on Mac
     const ctrlOrCmdPressed = event.getModifierState('Control') || event.getModifierState('Meta');
     const shiftPressed = ctrlOrCmdPressed && event.getModifierState('Shift');
     const key = event.key.toLowerCase();
     if (ctrlOrCmdPressed && shiftPressed && key === 'r') {
-      this.onStartOverClick();
+      await this.onStartOverClick();
     }
   };
 }

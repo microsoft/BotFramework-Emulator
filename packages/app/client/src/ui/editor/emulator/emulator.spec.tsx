@@ -34,7 +34,6 @@
 import * as React from 'react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
-import { BehaviorSubject, Subscription } from 'rxjs';
 import { mount, shallow } from 'enzyme';
 import { SharedConstants } from '@bfemulator/app-shared';
 import base64Url from 'base64url';
@@ -313,9 +312,7 @@ describe('<Emulator/>', () => {
     expect(mockRemoteCallsMade).toHaveLength(1);
     expect(mockInitConversation).toHaveBeenCalledWith(
       instance.props,
-      options,
-      jasmine.any(BehaviorSubject),
-      jasmine.any(Subscription)
+      options
     );
   });
 
@@ -330,12 +327,7 @@ describe('<Emulator/>', () => {
     };
     await instance.startNewConversation(undefined, true, false);
 
-    expect(mockInitConversation).toHaveBeenCalledWith(
-      instance.props,
-      options,
-      jasmine.any(BehaviorSubject),
-      jasmine.any(Subscription)
-    );
+    expect(mockInitConversation).toHaveBeenCalledWith(instance.props, options);
   });
 
   it('should start a new conversation with a new user id', async () => {
@@ -355,9 +347,7 @@ describe('<Emulator/>', () => {
     expect(mockRemoteCallsMade[1].args).toEqual([options.userId]);
     expect(mockInitConversation).toHaveBeenCalledWith(
       instance.props,
-      options,
-      jasmine.any(BehaviorSubject),
-      jasmine.any(Subscription)
+      options
     );
   });
 
@@ -404,8 +394,6 @@ describe('<Emulator/>', () => {
           domain: 'someUrl/v3/directline',
           webSocket: false,
         },
-        selectedActivity$: {},
-        subscription: {},
       })
     );
   });

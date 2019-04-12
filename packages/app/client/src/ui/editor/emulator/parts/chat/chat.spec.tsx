@@ -57,6 +57,7 @@ const defaultDocument = {
   directLine: {
     token: 'direct line token',
   },
+  inspectorObjects: [],
   botId: '456',
 };
 
@@ -203,6 +204,7 @@ describe('event handlers', () => {
     const chat = render({
       debugMode: DebugMode.Sidecar,
       showContextMenuForActivity,
+      setInspectorObject: () => void 0,
     });
     const card = {
       activity: {

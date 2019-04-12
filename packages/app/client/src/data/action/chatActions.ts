@@ -45,6 +45,7 @@ export enum ChatActions {
   appendLog = 'CHAT/LOG/APPEND',
   clearLog = 'CHAT/LOG/CLEAR',
   setInspectorObjects = 'CHAT/INSPECTOR/OBJECTS/SET',
+  setHighlightedObjects = 'CHAT/HIGHLIGHTED/OBJECTS/SET',
   addTranscript = 'CHAT/TRANSCRIPT/ADD',
   clearTranscripts = 'CHAT/TRANSCRIPT/CLEAR',
   removeTranscript = 'CHAT/TRANSCRIPT/REMOVE',
@@ -95,6 +96,11 @@ export interface ClearLogPayload {
 export interface SetInspectorObjectsPayload {
   documentId: string;
   objs: any;
+}
+
+export interface SetHighlightedObjectsPayload {
+  documentId: string;
+  objs: Activity[];
 }
 
 export interface AddTranscriptPayload extends RemoveTranscriptPayload {}
@@ -250,6 +256,20 @@ export function setInspectorObjects(documentId: string, objs: any): ChatAction<S
   objs = Array.isArray(objs) ? objs : [objs];
   return {
     type: ChatActions.setInspectorObjects,
+    payload: {
+      documentId,
+      objs,
+    },
+  };
+}
+
+export function setHighlightedObjects(
+  documentId: string,
+  objs: Activity | Activity[]
+): ChatAction<SetHighlightedObjectsPayload> {
+  objs = Array.isArray(objs) ? objs : [objs];
+  return {
+    type: ChatActions.setHighlightedObjects,
     payload: {
       documentId,
       objs,

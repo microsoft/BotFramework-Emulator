@@ -32,7 +32,6 @@
 //
 
 import * as React from 'react';
-import { Subscription } from 'rxjs';
 import { Activity } from 'botframework-schema';
 
 import * as styles from './log.scss';
@@ -50,9 +49,6 @@ export interface LogState {
 
 export class Log extends React.Component<LogProps, LogState> {
   public scrollMe: Element;
-  public selectedActivitySubscription: Subscription;
-  public selectedActivity: any;
-  public currentlyInspectedActivity: any;
 
   constructor(props: LogProps, context: LogState) {
     super(props, context);
@@ -65,24 +61,19 @@ export class Log extends React.Component<LogProps, LogState> {
 
   componentDidUpdate(): void {
     const { props, scrollMe, state } = this;
+    const selectedActivity = this.props.document.inspectorObjects[0];
     // set up selected activity subscription once it's available
-    if (props.document && props.document.selectedActivity$ && !this.selectedActivitySubscription) {
-      this.selectedActivitySubscription = props.document.selectedActivity$.subscribe(
-        (selectedActivity: Activity & { showInInspector: boolean }) => {
-          if (selectedActivity) {
-            const { showInInspector } = selectedActivity;
-            const currentlyInspectedActivity = showInInspector ? selectedActivity : null;
+    if (selectedActivity) {
+      const { showInInspector } = selectedActivity;
+      const currentlyInspectedActivity = showInInspector ? selectedActivity : null;
 
-            this.setState(
-              (prevState): any => {
-                if (
-                  prevState.selectedActivity !== selectedActivity ||
-                  prevState.currentlyInspectedActivity !== currentlyInspectedActivity
-                ) {
-                  return { currentlyInspectedActivity, selectedActivity };
-                }
-              }
-            );
+      this.setState(
+        (prevState): any => {
+          if (
+            prevState.selectedActivity !== selectedActivity ||
+            prevState.currentlyInspectedActivity !== currentlyInspectedActivity
+          ) {
+            return { currentlyInspectedActivity, selectedActivity };
           }
         }
       );
@@ -92,13 +83,6 @@ export class Log extends React.Component<LogProps, LogState> {
       this.setState({
         count: props.document.log.entries.length,
       });
-    }
-  }
-
-  componentWillUnmount(): void {
-    // clean up activity subscription
-    if (this.selectedActivitySubscription) {
-      this.selectedActivitySubscription.unsubscribe();
     }
   }
 
@@ -112,7 +96,6 @@ export class Log extends React.Component<LogProps, LogState> {
             document={this.props.document}
             entry={entry}
             key={`entry-${key++}`}
-            selectedActivity={this.state.selectedActivity}
           />
         ))}
       </div>

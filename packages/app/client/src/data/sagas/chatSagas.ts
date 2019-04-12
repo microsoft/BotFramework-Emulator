@@ -35,6 +35,7 @@ import { MenuItemConstructorOptions } from 'electron';
 import { Activity, ActivityTypes } from 'botframework-schema';
 import { SharedConstants } from '@bfemulator/app-shared';
 import { InspectableObjectLogItem, LogItem, LogItemType } from '@bfemulator/sdk-shared';
+import { ValueTypes } from '@bfemulator/app-shared';
 import { diff } from 'deep-diff';
 import { IEndpointService } from 'botframework-config/lib/schema';
 import { createCognitiveServicesBingSpeechPonyfillFactory } from 'botframework-webchat';
@@ -88,10 +89,11 @@ const getPreviousBotState = (state: RootState, selectedTrace: Activity): Activit
   );
   const filteredLogItems: LogItem<InspectableObjectLogItem>[] = allEntries.filter(
     (item: LogItem<InspectableObjectLogItem>) => {
+      const activity = item.payload.obj as Activity;
       return (
         item.type === LogItemType.InspectableObject &&
-        (item.payload.obj as Activity).valueType.includes('botState') &&
-        (item.payload.obj as Activity).id !== selectedTrace.id
+        activity.valueType === ValueTypes.BotState &&
+        activity.id !== selectedTrace.id
       );
     }
   );
@@ -135,7 +137,7 @@ export function* showContextMenuForActivity(action: ChatAction<Activity>): Itera
 export function* closeConversation(action: ChatAction<DocumentIdPayload>): Iterable<any> {
   const conversationId = yield select(getConversationIdFromDocumentId, action.payload.documentId);
   const { DeleteConversation } = SharedConstants.Commands.Emulator;
-  yield call(CommandServiceImpl.remoteCall.bind(CommandServiceImpl), DeleteConversation, conversationId);
+  yield call([CommandServiceImpl, CommandServiceImpl.remoteCall], DeleteConversation, conversationId);
   yield put(closeDocument(action.payload.documentId));
 }
 

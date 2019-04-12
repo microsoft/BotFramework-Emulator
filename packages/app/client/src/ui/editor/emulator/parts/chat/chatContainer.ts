@@ -35,7 +35,7 @@ import { User } from '@bfemulator/sdk-shared';
 import { Activity } from 'botframework-schema';
 
 import { RootState } from '../../../../../data/store';
-import { showContextMenuForActivity } from '../../../../../data/action/chatActions';
+import { setInspectorObjects, showContextMenuForActivity } from '../../../../../data/action/chatActions';
 
 import { Chat, ChatProps } from './chat';
 
@@ -53,6 +53,8 @@ const mapStateToProps = (state: RootState, { document }): Partial<ChatProps> => 
 
 const mapDispatchToProps = (dispatch, ownProps: ChatProps): Partial<ChatProps> => {
   return {
+    setInspectorObject: (documentId: string, activity: Partial<Activity>) =>
+      dispatch(setInspectorObjects(documentId, activity)),
     showContextMenuForActivity: (activity: Partial<Activity>) => dispatch(showContextMenuForActivity(activity)),
     ...ownProps,
   };
