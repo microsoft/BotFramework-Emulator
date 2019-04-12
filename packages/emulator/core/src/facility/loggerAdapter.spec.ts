@@ -33,8 +33,9 @@
 
 import { exceptionItem, inspectableObjectItem, LogLevel, summaryTextItem, textItem } from '@bfemulator/sdk-shared';
 import { Activity, ActivityTypes } from 'botframework-schema';
-import LoggerAdapter from './loggerAdapter';
 import { LogItem } from '@bfemulator/sdk-shared/build/src';
+
+import LoggerAdapter from './loggerAdapter';
 
 describe('LoggerAdapter', () => {
   const mockLogToChat = jest.fn(() => null);

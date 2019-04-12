@@ -34,6 +34,7 @@ import { applyMiddleware, combineReducers, createStore } from 'redux';
 import sagaMiddlewareFactory from 'redux-saga';
 import { ActivityTypes } from 'botframework-schema';
 import * as Electron from 'electron';
+import { SharedConstants } from '@bfemulator/app-shared';
 
 import { bot } from '../reducer/bot';
 import { chat } from '../reducer/chat';
@@ -44,7 +45,6 @@ import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { closeConversation, newDocument, showContextMenuForActivity } from '../action/chatActions';
 
 import { chatSagas } from './chatSagas';
-import { SharedConstants } from '@bfemulator/app-shared';
 
 const sagaMiddleWare = sagaMiddlewareFactory();
 let mockStore;

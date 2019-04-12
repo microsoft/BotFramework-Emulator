@@ -41,9 +41,6 @@ import { ServiceTypes } from 'botframework-config/lib/schema';
 
 import { setHighlightedObjects, setInspectorObjects } from '../../../../../data/action/chatActions';
 import { launchConnectedServicePicker } from '../../../../../data/action/connectedServiceActions';
-
-import { LogEntry, LogEntryProps, number2, timestamp } from './logEntry';
-import { LogEntry as LogEntryContainer } from './logEntryContainer';
 import {
   AzureLoginFailedDialogContainer,
   AzureLoginSuccessDialogContainer,
@@ -53,6 +50,9 @@ import {
 } from '../../../../dialogs';
 import { ConnectedServiceEditorContainer } from '../../../../shell/explorer/servicesExplorer/connectedServiceEditor';
 import { ConnectedServicePickerContainer } from '../../../../shell/explorer/servicesExplorer';
+
+import { LogEntry as LogEntryContainer } from './logEntryContainer';
+import { LogEntry, LogEntryProps, number2, timestamp } from './logEntry';
 
 jest.mock('../../../../dialogs', () => ({
   BotCreationDialog: () => ({}),
