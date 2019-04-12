@@ -197,6 +197,9 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
               name="useCustomId"
             />
             <Row align={RowAlignment.Top}>
+              <label>User ID</label>
+            </Row>
+            <Row align={RowAlignment.Top}>
               <TextField
                 className={styles.appSettingsInput}
                 inputContainerClassName={styles.inputContainer}
@@ -206,7 +209,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
                 onChange={this.onInputChange}
                 disabled={!this.usingCustomId()}
                 required={this.usingCustomId()}
-                label="User ID"
+                errorMessage={state.userGUID ? '' : 'Enter a user ID'}
               />
             </Row>
             <SmallHeader>Application Updates</SmallHeader>
