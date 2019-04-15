@@ -68,6 +68,7 @@ export class Tab extends React.Component<TabProps, TabState> {
     const activeClassName = this.props.active ? styles.activeEditorTab : '';
     const draggedOverClassName = this.state.draggedOver ? styles.draggedOverEditorTab : '';
     const { label } = this.props;
+    const iconClass = this.iconClass;
 
     return (
       <div
@@ -80,7 +81,7 @@ export class Tab extends React.Component<TabProps, TabState> {
         onDragLeave={this.onDragLeave}
         onDragEnd={this.onDragEnd}
       >
-        <span className={styles.editorTabIcon} />
+        <span className={`${styles.editorTabIcon} ${iconClass}`} />
         <TruncateText className={styles.truncatedTabText}>{label}</TruncateText>
         {this.props.dirty ? <span>*</span> : null}
         <div className={styles.tabSeparator} />
@@ -150,4 +151,17 @@ export class Tab extends React.Component<TabProps, TabState> {
     e.preventDefault();
     e.stopPropagation();
   };
+
+  private get iconClass(): string {
+    switch (this.props.documentId) {
+      case 'welcome-page':
+        return styles.generic;
+
+      case 'app:settings':
+        return styles.settings;
+
+      default:
+        return styles.livechat;
+    }
+  }
 }

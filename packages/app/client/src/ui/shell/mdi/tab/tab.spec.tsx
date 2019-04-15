@@ -41,7 +41,11 @@ import { toggleDraggingTab } from '../../../../data/action/editorActions';
 import { TabContainer } from './tabContainer';
 import { Tab } from './tab';
 
-jest.mock('./tab.scss', () => ({}));
+jest.mock('./tab.scss', () => ({
+  generic: 'generic',
+  livechat: 'livechat',
+  settings: 'settings',
+}));
 jest.mock('../../../dialogs', () => ({}));
 
 describe('Tab', () => {
@@ -186,5 +190,22 @@ describe('Tab', () => {
     instance.onDrop(mockDragEvent);
 
     expect(mockDispatch).toHaveBeenCalled();
+  });
+
+  it('should get an icon class', () => {
+    wrapper = mount(<Tab documentId={'welcome-page'} />);
+    instance = wrapper.find(Tab).instance();
+
+    expect(instance.iconClass).toBe('generic');
+
+    wrapper = mount(<Tab documentId={'app:settings'} />);
+    instance = wrapper.find(Tab).instance();
+
+    expect(instance.iconClass).toBe('settings');
+
+    wrapper = mount(<Tab documentId={'some-conversation-hash'} />);
+    instance = wrapper.find(Tab).instance();
+
+    expect(instance.iconClass).toBe('livechat');
   });
 });
