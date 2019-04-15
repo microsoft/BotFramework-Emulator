@@ -35,6 +35,7 @@ import {
   ChatAction,
   ChatActions,
   PendingSpeechTokenRetrievalPayload,
+  WebChatStorePayload,
   WebSpeechFactoryPayload,
 } from '../action/chatActions';
 import { EditorAction, EditorActions } from '../action/editorActions';
@@ -44,6 +45,7 @@ export interface ChatState {
   // TODO: keys should map to an Chat
   chats?: { [chatId: string]: any };
   webSpeechFactories?: { [documentId: string]: () => any };
+  webChatStores: { [documentId: string]: any };
   transcripts?: string[];
   pendingSpeechTokenRetrieval: boolean;
 }
@@ -53,6 +55,7 @@ const DEFAULT_STATE: ChatState = {
   chats: {},
   transcripts: [],
   webSpeechFactories: {},
+  webChatStores: {},
   pendingSpeechTokenRetrieval: false,
 };
 
@@ -100,6 +103,17 @@ export function chat(state: ChatState = DEFAULT_STATE, action: ChatAction | Edit
         state = {
           ...state,
           webSpeechFactories: { ...webSpeechFactories, [documentId]: factory },
+        };
+      }
+      break;
+
+    case ChatActions.webChatStoreUpdated:
+      {
+        const { documentId, store } = action.payload as WebChatStorePayload;
+        const { webChatStores } = state;
+        state = {
+          ...state,
+          webChatStores: { ...webChatStores, [documentId]: store },
         };
       }
       break;

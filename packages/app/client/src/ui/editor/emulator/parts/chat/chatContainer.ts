@@ -45,13 +45,14 @@ import { Chat, ChatProps } from './chat';
 
 const mapStateToProps = (state: RootState, { document }): Partial<ChatProps> => {
   const currentUserId = state.clientAwareSettings.users.currentUserId;
-
+  const { documentId } = document;
   return {
     currentUser: state.clientAwareSettings.users.usersById[currentUserId] || ({} as User),
     locale: state.clientAwareSettings.locale || 'en-us',
     debugMode: state.clientAwareSettings.debugMode,
-    webSpeechPonyfillFactory: state.chat.webSpeechFactories[document.documentId],
+    webSpeechPonyfillFactory: state.chat.webSpeechFactories[documentId],
     pendingSpeechTokenRetrieval: state.chat.pendingSpeechTokenRetrieval,
+    webchatStore: state.chat.webChatStores[documentId],
   };
 };
 

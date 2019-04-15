@@ -52,6 +52,7 @@ export enum ChatActions {
   updateChat = 'CHAT/DOCUMENT/UPDATE',
   showContextMenuForActivity = 'CHAT/CONTEXT_MENU/SHOW',
   webSpeechFactoryUpdated = 'CHAT/SPEECH/TOKEN/RETRIEVED',
+  webChatStoreUpdated = 'CHAT/STORE/UPDATED',
   updatePendingSpeechTokenRetrieval = 'CHAT/SPEECH/TOKEN/PENDING/UPDATE',
 }
 
@@ -69,6 +70,11 @@ export interface NewChatPayload {
 export interface WebSpeechFactoryPayload {
   documentId: string;
   factory: () => any;
+}
+
+export interface WebChatStorePayload {
+  documentId: string;
+  store: any;
 }
 
 export interface PendingSpeechTokenRetrievalPayload {
@@ -156,6 +162,13 @@ export function webSpeechFactoryUpdated(documentId: string, factory: () => any):
   return {
     type: ChatActions.webSpeechFactoryUpdated,
     payload: { documentId, factory },
+  };
+}
+
+export function webChatStoreUpdated(documentId: string, store: any): ChatAction<WebChatStorePayload> {
+  return {
+    type: ChatActions.webChatStoreUpdated,
+    payload: { documentId, store },
   };
 }
 

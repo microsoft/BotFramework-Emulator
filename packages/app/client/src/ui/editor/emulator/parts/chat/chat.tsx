@@ -64,6 +64,7 @@ export interface ChatProps {
   pendingSpeechTokenRetrieval?: boolean;
   showContextMenuForActivity: (activity: Partial<Activity>) => void;
   setInspectorObject: (documentId: string, activity: Partial<Activity & { showInInspector: true }>) => void;
+  webchatStore: any;
 }
 
 interface ChatState {
@@ -99,7 +100,7 @@ export class Chat extends Component<ChatProps, ChatState> {
 
   public render() {
     this.activityMap = {};
-    const { currentUser, document, locale, mode, debugMode } = this.props;
+    const { currentUser, document, locale, mode, debugMode, webchatStore } = this.props;
 
     if (this.props.pendingSpeechTokenRetrieval) {
       return <div className={styles.disconnected}>Connecting...</div>;
@@ -115,6 +116,7 @@ export class Chat extends Component<ChatProps, ChatState> {
       return (
         <div className={styles.chat}>
           <ReactWebChat
+            store={webchatStore}
             activityMiddleware={this.createActivityMiddleware}
             bot={bot}
             directLine={document.directLine}

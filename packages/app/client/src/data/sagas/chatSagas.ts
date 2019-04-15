@@ -33,12 +33,12 @@
 import * as Electron from 'electron';
 import { MenuItemConstructorOptions } from 'electron';
 import { Activity, ActivityTypes } from 'botframework-schema';
-import { SharedConstants } from '@bfemulator/app-shared';
+import { SharedConstants, ValueTypes } from '@bfemulator/app-shared';
 import { InspectableObjectLogItem, LogItem, LogItemType } from '@bfemulator/sdk-shared';
-import { ValueTypes } from '@bfemulator/app-shared';
 import { diff } from 'deep-diff';
 import { IEndpointService } from 'botframework-config/lib/schema';
 import { createCognitiveServicesBingSpeechPonyfillFactory } from 'botframework-webchat';
+import { createStore as createWebChatStore } from 'botframework-webchat-core';
 
 import {
   ChatAction,
@@ -49,13 +49,14 @@ import {
   setHighlightedObjects,
   setInspectorObjects,
   updatePendingSpeechTokenRetrieval,
+  webChatStoreUpdated,
   webSpeechFactoryUpdated,
 } from '../action/chatActions';
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { RootState } from '../store';
 import { isSpeechEnabled } from '../../utils';
 
-import { call, ForkEffect, put, select, takeEvery } from 'redux-saga/effects';
+import { call, ForkEffect, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
 
 const getConversationIdFromDocumentId = (state: RootState, documentId: string) => {
   return (state.chat.chats[documentId] || {}).conversationId;
@@ -138,15 +139,20 @@ export function* showContextMenuForActivity(action: ChatAction<Activity>): Itera
 export function* closeConversation(action: ChatAction<DocumentIdPayload>): Iterable<any> {
   const conversationId = yield select(getConversationIdFromDocumentId, action.payload.documentId);
   const { DeleteConversation } = SharedConstants.Commands.Emulator;
+  const { documentId } = action.payload;
   yield call([CommandServiceImpl, CommandServiceImpl.remoteCall], DeleteConversation, conversationId);
-  yield put(closeDocument(action.payload.documentId));
+  yield put(closeDocument(documentId));
+  // remove the webchat store when the document is closed
+  yield put(webChatStoreUpdated(documentId, null));
 }
 
 export function* newChat(action: ChatAction<NewChatPayload>): Iterable<any> {
+  const { documentId } = action.payload;
+  // Create a new webchat store for this documentId
+  yield put(webChatStoreUpdated(documentId, createWebChatStore()));
   // Each time a new chat is open, retrieve the speech token
   // if the endpoint is speech enabled and create a bind speech
   // pony fill factory. This is consumed by WebChat...
-  const { documentId } = action.payload;
   yield put(webSpeechFactoryUpdated(documentId, null)); // remove the old factory
   const endpoint: IEndpointService = yield select(getEndpointServiceByDocumentId, documentId);
   if (!isSpeechEnabled(endpoint)) {
@@ -261,5 +267,5 @@ function buildDiff(prependWith: string, path: (string | number)[], target: any, 
 export function* chatSagas(): IterableIterator<ForkEffect> {
   yield takeEvery(ChatActions.showContextMenuForActivity, showContextMenuForActivity);
   yield takeEvery(ChatActions.closeConversation, closeConversation);
-  yield takeEvery(ChatActions.newChat, newChat);
+  yield takeLatest([ChatActions.newChat, ChatActions.clearLog], newChat);
 }

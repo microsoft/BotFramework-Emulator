@@ -60,6 +60,7 @@ import {
   UpdateAvailableDialogContainer,
   UpdateUnavailableDialogContainer,
 } from '../ui/dialogs';
+import * as ExplorerActions from '../data/action/explorerActions';
 
 /** Register UI commands (toggling UI) */
 export function registerCommands(commandRegistry: CommandRegistry) {
@@ -136,6 +137,7 @@ export function registerCommands(commandRegistry: CommandRegistry) {
     if (debugMode === DebugMode.Sidecar) {
       store.dispatch(EditorActions.closeNonGlobalTabs());
       store.dispatch(closeBot());
+      store.dispatch(ExplorerActions.showExplorer(false));
     }
     store.dispatch(switchDebugMode(debugMode));
   });
