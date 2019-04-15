@@ -30,7 +30,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { DebugMode, newNotification, SharedConstants } from '@bfemulator/app-shared';
+import { newNotification, SharedConstants } from '@bfemulator/app-shared';
 import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 import { combineReducers, createStore } from 'redux';
 
@@ -157,5 +157,23 @@ describe('The emulator commands', () => {
     await handler('transcript.transcript');
     state = mockStore.getState();
     expect(state.chat.changeKey).toBe(3);
+  });
+
+  it('should open a chat file', async () => {
+    const callSpy = jest.spyOn(CommandServiceImpl, 'call').mockResolvedValue(true);
+    const remoteCallSpy = jest.spyOn(CommandServiceImpl, 'remoteCall').mockResolvedValue(true);
+
+    const { handler: openChatFileHandler } = registry.getCommand(SharedConstants.Commands.Emulator.OpenChatFile);
+    await openChatFileHandler('some/path.chat', true);
+    expect(remoteCallSpy).toHaveBeenCalledWith(SharedConstants.Commands.Emulator.OpenChatFile, 'some/path.chat');
+    expect(callSpy).toHaveBeenCalledWith(
+      SharedConstants.Commands.Emulator.ReloadTranscript,
+      'some/path.chat',
+      undefined,
+      {
+        activities: undefined,
+        inMemory: true,
+      }
+    );
   });
 });

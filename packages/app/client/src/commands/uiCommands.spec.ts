@@ -50,6 +50,10 @@ import {
 import { CommandServiceImpl } from '../platform/commands/commandServiceImpl';
 
 import { registerCommands } from './uiCommands';
+import { DebugMode } from '@bfemulator/app-shared';
+import { BotActionType } from '../data/action/botActions';
+import { ExplorerActions } from '../data/action/explorerActions';
+import { SWITCH_DEBUG_MODE } from '../data/action/debugModeAction';
 
 jest.mock('../ui/dialogs', () => ({
   AzureLoginPromptDialogContainer: class {},
@@ -144,5 +148,18 @@ describe('the uiCommands', () => {
     expect(remoteCallSpy).toHaveBeenCalledWith(SharedConstants.Commands.Telemetry.TrackEvent, 'app_chooseTheme', {
       themeName: 'light',
     });
+  });
+
+  it('should orchestrate the switch to sidecar debug mode', async () => {
+    const dispatchedActions = [];
+    store.dispatch = action => {
+      dispatchedActions.push(action);
+      return action;
+    };
+    registry.getCommand(Commands.SwitchDebugMode).handler(DebugMode.Sidecar);
+    expect(dispatchedActions.length).toBe(4);
+    [EditorActions.closeAll, BotActionType.close, ExplorerActions.Show, SWITCH_DEBUG_MODE].forEach((type, index) =>
+      expect(type).toEqual(dispatchedActions[index].type)
+    );
   });
 });

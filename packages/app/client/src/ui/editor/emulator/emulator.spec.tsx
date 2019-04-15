@@ -39,7 +39,7 @@ import { SharedConstants } from '@bfemulator/app-shared';
 import base64Url from 'base64url';
 
 import { disable, enable } from '../../../data/action/presentationActions';
-import { clearLog, newConversation, setInspectorObjects, updateChat } from '../../../data/action/chatActions';
+import { clearLog, newConversation, setInspectorObjects } from '../../../data/action/chatActions';
 import { updateDocument } from '../../../data/action/editorActions';
 
 import { Emulator, EmulatorComponent, RestartConversationOptions } from './emulator';
@@ -298,8 +298,7 @@ describe('<Emulator/>', () => {
   });
 
   it('should start a new conversation', async () => {
-    const mockInitConversation = jest.fn(() => null);
-    instance.initConversation = mockInitConversation;
+    const initConversationSpy = jest.spyOn(instance, 'initConversation');
     const options = {
       conversationId: 'convo1',
       conversationMode: instance.props.mode,
@@ -309,11 +308,15 @@ describe('<Emulator/>', () => {
     await instance.startNewConversation(undefined, false, false);
 
     expect(mockUnsubscribe).toHaveBeenCalled();
-    expect(mockRemoteCallsMade).toHaveLength(1);
-    expect(mockInitConversation).toHaveBeenCalledWith(
-      instance.props,
-      options
-    );
+    expect(mockRemoteCallsMade).toHaveLength(5);
+    expect(initConversationSpy).toHaveBeenCalledWith(instance.props, options);
+  });
+
+  it('should start a new conversation when a new document is given as props', async () => {
+    const startNewConversationSpy = jest.spyOn(instance, 'startNewConversation');
+    const nextProps = { document: { documentId: 'newDoc' } };
+    instance.componentWillReceiveProps(nextProps);
+    expect(startNewConversationSpy).toHaveBeenCalledWith(nextProps);
   });
 
   it('should start a new conversation with a new conversation id', async () => {

@@ -32,51 +32,68 @@
 //
 
 import * as React from 'react';
-import { mount, shallow, ShallowWrapper } from 'enzyme';
-import ReactWebChat from 'botframework-webchat';
+import { mount, ReactWrapper } from 'enzyme';
+import { Provider } from 'react-redux';
+import ReactWebChat, { createDirectLine } from 'botframework-webchat';
 import { ActivityTypes } from 'botframework-schema';
 import { DebugMode, ValueTypes } from '@bfemulator/app-shared';
-
 import { CommandServiceImpl } from '../../../../../platform/commands/commandServiceImpl';
 import { EmulatorMode } from '../../emulator';
 
-import { Chat, ChatProps } from './chat';
+import { ChatProps } from './chat';
+import { ChatContainer } from './chatContainer';
 import webChatStyleOptions from './webChatTheme';
+import { bot } from '../../../../../data/reducer/bot';
+import { chat } from '../../../../../data/reducer/chat';
+import { editor } from '../../../../../data/reducer/editor';
+import { combineReducers, createStore } from 'redux';
+import { clientAwareSettings } from '../../../../../data/reducer/clientAwareSettingsReducer';
 
-jest.mock('../../../../dialogs', () => ({
-  AzureLoginPromptDialogContainer: () => ({}),
-  AzureLoginSuccessDialogContainer: () => ({}),
-  BotCreationDialog: () => ({}),
-  DialogService: { showDialog: () => Promise.resolve(true) },
-  SecretPromptDialog: () => ({}),
+const mockStore = createStore(combineReducers({ bot, chat, clientAwareSettings, editor }), {
+  clientAwareSettings: {
+    currentUser: { id: '123', name: 'Current User' },
+    users: {
+      currentUserId: '123',
+      usersById: { '123': { id: '123', name: 'Current User' } },
+    },
+  },
+});
+
+jest.mock('../../../../../data/store', () => ({
+  get store() {
+    return mockStore;
+  },
 }));
 
-jest.mock('./chat.scss', () => ({}));
-
 const defaultDocument = {
-  directLine: {
-    token: 'direct line token',
-  },
+  directLine: createDirectLine({
+    secret: '1234',
+    domain: 'http://localhost/v3/directline',
+    webSocket: false,
+  }),
   inspectorObjects: [],
   botId: '456',
 };
 
-function render(overrides: Partial<ChatProps> = {}): ShallowWrapper {
+function render(overrides: Partial<ChatProps> = {}): ReactWrapper {
   const props = {
     document: defaultDocument,
     endpoint: {},
     mode: 'livechat' as EmulatorMode,
     onStartConversation: jest.fn(),
-    currentUser: { id: '123', name: 'Current User' },
     locale: 'en-US',
     selectedActivity: {},
     ...overrides,
   } as ChatProps;
 
-  return shallow(<Chat {...props} />);
+  return mount(
+    <Provider store={mockStore}>
+      <ChatContainer {...props} />
+    </Provider>
+  );
 }
 
-describe('<Chat />', () => {
+describe('<ChatContainer />', () => {
   describe('when there is no direct line client', () => {
     it('renders a `not connected` message', () => {
       const component = render({ document: {} } as any);
@@ -198,13 +215,14 @@ describe('<Chat />', () => {
 });
 
 describe('event handlers', () => {
+  let dispatchSpy;
+  beforeEach(() => {
+    dispatchSpy = jest.spyOn(mockStore, 'dispatch').mockReturnValue(true);
+  });
   it('should invoke the appropriate functions defined in the props', () => {
     const next = () => (kids: any) => kids;
-    const showContextMenuForActivity = jest.fn();
     const chat = render({
       debugMode: DebugMode.Sidecar,
-      showContextMenuForActivity,
-      setInspectorObject: () => void 0,
     });
     const card = {
       activity: {
@@ -217,12 +235,32 @@ describe('event handlers', () => {
     const webChat = chat.find(ReactWebChat);
     const middleware = webChat.prop('activityMiddleware') as any;
     const children = 'a child node';
-    const updateSelectedActivitySpy = jest.spyOn(chat.instance() as any, 'updateSelectedActivity');
     const activityWrapper = mount(middleware()(next)(card)(children));
     activityWrapper.simulate('keyDown', { key: ' ', target: { tagName: 'DIV', classList: [] } });
+    expect(dispatchSpy).toHaveBeenCalledWith({
+      payload: {
+        documentId: undefined,
+        objs: [
+          {
+            id: 'activity-id',
+            showInInspector: true,
+            type: 'trace',
+            value: { type: 'event' },
+            valueType: 'https://www.botframework.com/schemas/botState',
+          },
+        ],
+      },
+      type: 'CHAT/INSPECTOR/OBJECTS/SET',
+    });
     activityWrapper.simulate('click', { target: { tagName: 'DIV', classList: [] } });
+    expect(dispatchSpy).toHaveBeenCalledWith({
+      payload: {
+        documentId: undefined,
+        objs: [{ showInInspector: true }],
+      },
+      type: 'CHAT/INSPECTOR/OBJECTS/SET',
+    });
     activityWrapper.simulate('contextmenu', { target: { tagName: 'DIV', classList: [] } });
-    expect(updateSelectedActivitySpy).toHaveBeenCalled();
-    expect(showContextMenuForActivity).toHaveBeenCalled();
+    expect(dispatchSpy).toHaveBeenCalledWith({ payload: undefined, type: 'CHAT/CONTEXT_MENU/SHOW' });
   });
 });

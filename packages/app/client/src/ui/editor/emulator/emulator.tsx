@@ -137,7 +137,6 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
 
     if (switchedDocuments) {
       if (switchedToThisDocument) {
-        window.removeEventListener('keydown', keyboardEventListener);
         window.addEventListener('keydown', keyboardEventListener);
       } else {
         window.removeEventListener('keydown', keyboardEventListener);
