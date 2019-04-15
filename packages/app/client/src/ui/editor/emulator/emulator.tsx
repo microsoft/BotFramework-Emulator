@@ -33,13 +33,13 @@
 
 import { createDirectLine } from 'botframework-webchat';
 import { Activity, uniqueId, uniqueIdv4 } from '@bfemulator/sdk-shared';
-import { Splitter, SplitButton } from '@bfemulator/ui-react';
+import { Splitter } from '@bfemulator/ui-react';
 import base64Url from 'base64url';
 import { IEndpointService } from 'botframework-config/lib/schema';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { BehaviorSubject } from 'rxjs';
-import { newNotification, Notification, SharedConstants } from '@bfemulator/app-shared';
+import { newNotification, Notification, SharedConstants, FrameworkSettings } from '@bfemulator/app-shared';
 
 import * as ChatActions from '../../../data/action/chatActions';
 import { updateDocument } from '../../../data/action/editorActions';
@@ -112,9 +112,6 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
 
   componentWillMount() {
     window.addEventListener('keydown', this.keyboardEventListener);
-    if (this.shouldStartNewConversation()) {
-      this.startNewConversation();
-    }
   }
 
   componentDidMount() {
@@ -128,18 +125,7 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
   }
 
   componentWillReceiveProps(nextProps: EmulatorProps) {
-    const { props, keyboardEventListener, startNewConversation } = this;
-    const { document = {} } = props;
-    const { document: nextDocument = {} } = nextProps;
-
-    const documentOrUserIdChanged =
-      (!nextDocument.directLine && document.documentId !== nextDocument.documentId) ||
-      document.userId !== nextDocument.userId;
-
-    if (documentOrUserIdChanged) {
-      startNewConversation(nextProps).catch();
-    }
-
+    const { props, keyboardEventListener } = this;
     const switchedDocuments = props.activeDocumentId !== nextProps.activeDocumentId;
     const switchedToThisDocument = nextProps.activeDocumentId === props.documentId;
 
@@ -155,11 +141,17 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
 
   startNewConversation = async (
     props: EmulatorProps = this.props,
-    requireNewConvoId: boolean = false,
-    requireNewUserId: boolean = false
+    requireNewConvoId?: boolean,
+    requireNewUserId?: boolean
   ): Promise<any> => {
     if (props.document.subscription) {
       props.document.subscription.unsubscribe();
+    }
+    if (!requireNewUserId) {
+      requireNewUserId = false;
+    }
+    if (!requireNewConvoId) {
+      requireNewConvoId = false;
     }
     const selectedActivity$ = new BehaviorSubject<Activity | null>({});
     const subscription = selectedActivity$.subscribe(activity => {
@@ -173,11 +165,13 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
     const conversationId = requireNewConvoId
       ? `${uniqueId()}|${props.mode}`
       : props.document.conversationId || `${uniqueId()}|${props.mode}`;
+    const framework: FrameworkSettings = await CommandServiceImpl.remoteCall(
+      SharedConstants.Commands.Settings.LoadAppSettings
+    );
+    const stableId = framework.userGUID || props.document.userId;
+    const userId = requireNewUserId ? uniqueIdv4() : stableId;
 
-    const userId = requireNewUserId ? uniqueIdv4() : props.document.userId;
-    if (requireNewUserId) {
-      await CommandServiceImpl.remoteCall(SharedConstants.Commands.Emulator.SetCurrentUser, userId);
-    }
+    await CommandServiceImpl.remoteCall(SharedConstants.Commands.Emulator.SetCurrentUser, userId);
 
     const options = {
       conversationId,
@@ -295,12 +289,18 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
         {this.props.mode === 'livechat' && (
           <div className={styles.header}>
             <ToolBar>
-              <SplitButton
-                defaultLabel="Restart conversation"
-                buttonClass={styles.restartIcon}
-                options={[NewUserId, SameUserId]}
-                onClick={this.onStartOverClick}
-              />
+              <button
+                className={`${styles.restartIcon} ${styles.toolbarIcon || ''}`}
+                onClick={() => this.onStartOverClick(SameUserId)}
+              >
+                Restart with Same User Id
+              </button>
+              <button
+                className={`${styles.restartIcon} ${styles.toolbarIcon || ''}`}
+                onClick={() => this.onStartOverClick(NewUserId)}
+              >
+                Restart with New User Id
+              </button>
               <button
                 className={`${styles.saveTranscriptIcon} ${styles.toolbarIcon || ''}`}
                 onClick={this.onExportClick}

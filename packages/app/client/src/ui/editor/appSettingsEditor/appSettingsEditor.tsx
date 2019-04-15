@@ -92,6 +92,10 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
     this.props.getFrameworkSettings();
   }
 
+  private usingCustomId() {
+    return this.state.userGUID ? true : this.state.useCustomId;
+  }
+
   public render(): JSX.Element {
     const { state } = this;
 
@@ -167,7 +171,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
             </Row>
           </Column>
           <Column className={[styles.rightColumn, styles.spacing].join(' ')}>
-            <SmallHeader>Auth</SmallHeader>
+            <SmallHeader>User settings</SmallHeader>
             <Checkbox
               className={styles.checkboxOverrides}
               checked={state.use10Tokens}
@@ -176,7 +180,6 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
               label="Use version 1.0 authentication tokens"
               name="use10Tokens"
             />
-            <SmallHeader>Sign-in</SmallHeader>
             <Checkbox
               className={styles.checkboxOverrides}
               checked={state.useCodeValidation}
@@ -185,6 +188,30 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
               label="Use a sign-in verification code for OAuthCards"
               name="useCodeValidation"
             />
+            <Checkbox
+              className={styles.checkboxOverrides}
+              checked={this.usingCustomId()}
+              onChange={this.onChangeCheckBox}
+              id="use-custom-id"
+              label="Use your own user ID to communicate with the bot"
+              name="useCustomId"
+            />
+            <Row align={RowAlignment.Top}>
+              <label>User ID</label>
+            </Row>
+            <Row align={RowAlignment.Top}>
+              <TextField
+                className={styles.appSettingsInput}
+                inputContainerClassName={styles.inputContainer}
+                readOnly={false}
+                value={state.userGUID}
+                name="userGUID"
+                onChange={this.onInputChange}
+                disabled={!this.usingCustomId()}
+                required={this.usingCustomId()}
+                errorMessage={state.userGUID ? '' : 'Enter a user ID'}
+              />
+            </Row>
             <SmallHeader>Application Updates</SmallHeader>
             <Checkbox
               className={styles.checkboxOverrides}
@@ -227,6 +254,8 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
     const change = { [name]: checked };
     this.setState(change);
     this.updateDirtyFlag(change);
+
+    if (name === 'useCustomId' && checked === false) this.setState({ ['userGUID']: '' });
   };
 
   private onClickBrowse = async (): Promise<void> => {
