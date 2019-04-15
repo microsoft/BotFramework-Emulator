@@ -61,6 +61,7 @@ import { WindowManager } from './windowManager';
 
 export let mainWindow: Window;
 export let windowManager: WindowManager;
+let splashWindow: Window;
 
 // start app startup timer
 const beginStartupTime = Date.now();
@@ -264,33 +265,10 @@ const windowIsOffScreen = function(windowBounds: Rectangle): boolean {
 };
 
 const createMainWindow = async () => {
-  /*
-  // TODO: Read window size AFTER store is initialized (how did this ever work?)
-  const settings = getSettings();
-  let initBounds: Rectangle = {
-    width: settings.windowState.width || 0,
-    height: settings.windowState.height || 0,
-    x: settings.windowState.left || 0,
-    y: settings.windowState.top || 0,
-  }
-  if (windowIsOffScreen(initBounds)) {
-    let display = screen.getAllDisplays().find(display => display.id === settings.windowState.displayId);
-    display = display || screen.getDisplayMatching(initBounds);
-    initBounds.x = display.workArea.x;
-    initBounds.y = display.workArea.y;
-  }
-  */
-
   mainWindow = new Window(
     new BrowserWindow({
       show: false,
       backgroundColor: '#f7f7f7',
-      /*
-        width: initBounds.width,
-        height: initBounds.height,
-        x: initBounds.x,
-        y: initBounds.y
-        */
       width: 1400,
       height: 920,
     })
@@ -380,6 +358,7 @@ const createMainWindow = async () => {
       settingsStore.dispatch(rememberTheme(isHighContrast ? 'high-contrast' : themeInfo.name));
     }
     mainWindow.webContents.setZoomLevel(zoomLevel);
+    splashWindow.browserWindow.close();
     mainWindow.browserWindow.show();
 
     // Start auto-updater
@@ -449,12 +428,42 @@ function loadMainPage() {
   mainWindow.browserWindow.loadURL(page);
 }
 
+function createSplashScreen(): void {
+  // create the splash window
+  splashWindow = new Window(
+    new BrowserWindow({
+      show: false,
+      width: 400,
+      height: 300,
+      center: true,
+      frame: false,
+    })
+  );
+  // dereference on close
+  splashWindow.browserWindow.once('closed', () => {
+    splashWindow = null;
+  });
+  const splashPage = process.env.ELECTRON_TARGET_URL
+    ? `${process.env.ELECTRON_TARGET_URL}splash.html`
+    : url.format({
+        protocol: 'file',
+        slashes: true,
+        pathname: require.resolve('@bfemulator/client/public/splash.html'),
+      });
+  splashWindow.browserWindow.loadURL(splashPage);
+  splashWindow.browserWindow.once('ready-to-show', () => {
+    // only show if the main window still hasn't loaded
+    const showSplashScreen = !mainWindow || (mainWindow.browserWindow && !mainWindow.browserWindow.isVisible());
+    showSplashScreen && splashWindow.browserWindow.show();
+  });
+}
+
 app.on('ready', function() {
   if (!mainWindow) {
+    createSplashScreen();
     if (process.argv.find(val => val.includes('--vscode-debugger'))) {
       // workaround for delay in vscode debugger attach
       setTimeout(createMainWindow, 5000);
-      // createMainWindow();
     } else {
       createMainWindow();
     }
