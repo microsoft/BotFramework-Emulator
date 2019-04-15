@@ -62,6 +62,10 @@ jest.mock('../../../platform/commands/commandServiceImpl', () => ({
       if (commandName === mockSharedConstants.Commands.Emulator.FeedTranscriptFromDisk) {
         return Promise.resolve({ meta: 'some file info' });
       }
+      if (commandName === mockSharedConstants.Commands.Settings.LoadAppSettings) {
+        return Promise.resolve({ framework: { userGUID: '' } });
+      }
+
       return Promise.resolve();
     },
   },
@@ -308,7 +312,7 @@ describe('<Emulator/>', () => {
     await instance.startNewConversation(undefined, false, false);
 
     expect(mockUnsubscribe).toHaveBeenCalled();
-    expect(mockRemoteCallsMade).toHaveLength(5);
+    expect(mockRemoteCallsMade).toHaveLength(2);
     expect(initConversationSpy).toHaveBeenCalledWith(instance.props, options);
   });
 

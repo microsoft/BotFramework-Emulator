@@ -37,17 +37,18 @@ import { Provider } from 'react-redux';
 import ReactWebChat, { createDirectLine } from 'botframework-webchat';
 import { ActivityTypes } from 'botframework-schema';
 import { DebugMode, ValueTypes } from '@bfemulator/app-shared';
+import { combineReducers, createStore } from 'redux';
+
 import { CommandServiceImpl } from '../../../../../platform/commands/commandServiceImpl';
 import { EmulatorMode } from '../../emulator';
-
-import { ChatProps } from './chat';
-import { ChatContainer } from './chatContainer';
-import webChatStyleOptions from './webChatTheme';
 import { bot } from '../../../../../data/reducer/bot';
 import { chat } from '../../../../../data/reducer/chat';
 import { editor } from '../../../../../data/reducer/editor';
-import { combineReducers, createStore } from 'redux';
 import { clientAwareSettings } from '../../../../../data/reducer/clientAwareSettingsReducer';
+
+import webChatStyleOptions from './webChatTheme';
+import { ChatContainer } from './chatContainer';
+import { ChatProps } from './chat';
 
 const mockStore = createStore(combineReducers({ bot, chat, clientAwareSettings, editor }), {
   clientAwareSettings: {
