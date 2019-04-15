@@ -39,7 +39,7 @@ import { setFramework } from '../settingsData/actions/frameworkActions';
 
 import { registerCommands } from './settingsCommands';
 
-const mockSettings = { framework: { ngrokPath: 'path/to/ngrok.exe', userGUID: 'aRandomUser', useCustomId: true } };
+const mockSettings = { framework: { ngrokPath: 'path/to/ngrok.exe' } };
 let mockDispatch;
 jest.mock('../settingsData/store', () => ({
   get dispatch() {
@@ -78,14 +78,6 @@ describe('The settings commands', () => {
     const { handler } = mockRegistry.getCommand(SharedConstants.Commands.Settings.LoadAppSettings);
     const appSettings = await handler();
 
-    expect(appSettings.ngrokPath).toBe(mockSettings.framework.ngrokPath);
-  });
-
-  it('should load the app settings from the store', async () => {
-    const { handler } = mockRegistry.getCommand(SharedConstants.Commands.Settings.LoadAppSettings);
-    const appSettings = await handler();
-
-    expect(appSettings.userGUID).toBe(mockSettings.framework.userGUID);
-    expect(appSettings.useCustomId).toBe(mockSettings.framework.useCustomId);
+    expect(appSettings).toBe(mockSettings.framework);
   });
 });
