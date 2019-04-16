@@ -201,11 +201,11 @@ export default class Conversation extends EventEmitter {
     };
   }
 
-  hasSentConversationUpdate = (currentUser, { conversationId }) => {
+  hasSentConversationUpdate = (currentUser: User, { conversationId }: Conversation) => {
     return this.conversationUpdates.get(`${currentUser.id}:${conversationId}`);
   };
 
-  setConversationUpdate = (currentUser, { conversationId }) => {
+  setConversationUpdate = (currentUser: User, { conversationId }: Conversation) => {
     this.conversationUpdates.set(`${currentUser.id}:${conversationId}`, true);
   };
 
