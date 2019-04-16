@@ -101,6 +101,7 @@ export default class Conversation extends EventEmitter {
   // the list of activities in this conversation
   private activities: ActivityBucket[] = [];
   private transcript: TranscriptRecord[] = [];
+  private conversationUpdates: Map<string, boolean>;
 
   private get conversationIsTranscript() {
     return this.conversationId.includes('transcript');
@@ -115,6 +116,7 @@ export default class Conversation extends EventEmitter {
       name: 'Bot',
     });
     this.members.push({ id: user.id, name: user.name });
+    this.conversationUpdates = new Map();
   }
 
   /**
@@ -198,6 +200,14 @@ export default class Conversation extends EventEmitter {
       statusCode: status,
     };
   }
+
+  hasSentConversationUpdate = (currentUser, { conversationId }) => {
+    return this.conversationUpdates.get(`${currentUser.id}:${conversationId}`);
+  };
+
+  setConversationUpdate = (currentUser, { conversationId }) => {
+    this.conversationUpdates.set(`${currentUser.id}:${conversationId}`, true);
+  };
 
   public async sendConversationUpdate(membersAdded: User[], membersRemoved: User[]) {
     const activity: ConversationUpdateActivity = {

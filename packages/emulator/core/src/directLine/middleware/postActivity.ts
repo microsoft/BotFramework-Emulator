@@ -66,6 +66,12 @@ export default function postActivity(botEmulator: BotEmulator) {
         }
         res.send(statusCode || HttpStatus.INTERNAL_SERVER_ERROR, await response.text());
       } else {
+        const { users } = botEmulator.facilities;
+        const currentUser = users.usersById(users.currentUserId);
+        if (!conversation.hasSentConversationUpdate(currentUser, conversation)) {
+          await conversation.sendConversationUpdate([currentUser], undefined);
+          conversation.setConversationUpdate(currentUser, conversation);
+        }
         res.send(statusCode, { id: activityId });
       }
     } catch (err) {
