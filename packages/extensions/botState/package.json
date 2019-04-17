@@ -51,7 +51,7 @@
     "typings-for-css-modules-loader": "^1.7.0",
     "webpack": "4.16.4",
     "webpack-cli": "^3.1.1",
-    "webpack-dev-server": "^3.1.4"
+    "webpack-dev-server": "3.2.1"
   },
   "jest": {
     "setupTestFrameworkScriptFile": "../../../../testSetup.js",

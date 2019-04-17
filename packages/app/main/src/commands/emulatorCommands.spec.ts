@@ -43,7 +43,6 @@ import { Conversation } from '@bfemulator/emulator-core';
 
 import * as store from '../botData/store';
 import { getStore as getSettingsStore } from '../settingsData/store';
-import { emulator } from '../emulator';
 import * as utils from '../utils';
 import * as botHelpers from '../botHelpers';
 import { bot } from '../botData/reducers/bot';
@@ -51,6 +50,7 @@ import * as BotActions from '../botData/actions/botActions';
 import { TelemetryService } from '../telemetry';
 import { mainWindow } from '../main';
 import { setCurrentUser } from '../settingsData/actions/userActions';
+import { pushClientAwareSettings } from '../settingsData/actions/frameworkActions';
 
 import { registerCommands } from './emulatorCommands';
 
@@ -101,33 +101,38 @@ jest.mock('../utils/ensureStoragePath', () => ({
 }));
 
 let mockUsers;
-jest.mock('../emulator', () => ({
-  emulator: {
-    framework: {
-      server: {
-        botEmulator: {
-          facilities: {
-            logger: {
-              logActivity: () => true,
-            },
-            conversations: {
-              conversationById: () => mockConversation,
-              newConversation: (...args: any[]) => new mockConversationConstructor(args[0], args[1], args[3], args[2]),
-            },
-            endpoints: {
-              reset: () => null,
-              push: () => null,
-            },
-            get users() {
-              return mockUsers;
-            },
-            set users(users: any) {
-              mockUsers = users;
-            },
+const mockEmulator = {
+  startup: () => ({}),
+  framework: {
+    server: {
+      botEmulator: {
+        facilities: {
+          logger: {
+            logActivity: () => true,
+          },
+          conversations: {
+            conversationById: () => mockConversation,
+            newConversation: (...args: any[]) => new mockConversationConstructor(args[0], args[1], args[3], args[2]),
+            deleteConversation: () => true,
+          },
+          endpoints: {
+            reset: () => null,
+            push: () => null,
+          },
+          get users() {
+            return mockUsers;
+          },
+          set users(users: any) {
+            mockUsers = users;
           },
         },
       },
     },
+  },
+};
+jest.mock('../emulator', () => ({
+  Emulator: {
+    getInstance: () => mockEmulator,
   },
 }));
 
@@ -170,8 +175,8 @@ const mockInfo = {
   chatsPath: path.normalize('Users/blerg/Documents/testbot/dialogs'),
 };
 
-const mockConversation = emulator.framework.server.botEmulator.facilities.conversations.newConversation(
-  emulator.framework.server.botEmulator,
+const mockConversation = mockEmulator.framework.server.botEmulator.facilities.conversations.newConversation(
+  mockEmulator.framework.server.botEmulator,
   null,
   { id: '1234', name: 'User' },
   '1234'
@@ -385,7 +390,6 @@ const mockConversation = emulator.framework.server.botEmulator.facilities.conver
 const mockCommandRegistry = new CommandRegistryImpl();
 registerCommands(mockCommandRegistry);
 
-const { Emulator } = SharedConstants.Commands;
 describe('The emulatorCommands', () => {
   let mockTrackEvent;
   const trackEventBackup = TelemetryService.trackEvent;
@@ -404,7 +408,7 @@ describe('The emulatorCommands', () => {
   it('should save a transcript to file based on the transcripts path in the botInfo', async () => {
     const getActiveBotSpy = jest.spyOn((botHelpers as any).default, 'getActiveBot').mockReturnValue(mockBot);
     const conversationByIdSpy = jest
-      .spyOn(emulator.framework.server.botEmulator.facilities.conversations, 'conversationById')
+      .spyOn(mockEmulator.framework.server.botEmulator.facilities.conversations, 'conversationById')
       .mockReturnValue(mockConversation);
     const showSaveDialogSpy = jest.spyOn((utils as any).default, 'showSaveDialog').mockReturnValue('chosen/path');
 
@@ -414,7 +418,7 @@ describe('The emulatorCommands', () => {
       .mockReturnValue({ save: async () => ({}) });
     const patchBotJsonSpy = jest.spyOn((botHelpers as any).default, 'patchBotsJson').mockResolvedValue(true);
 
-    const command = mockCommandRegistry.getCommand(Emulator.SaveTranscriptToFile);
+    const command = mockCommandRegistry.getCommand(SharedConstants.Commands.Emulator.SaveTranscriptToFile);
     await command.handler('1234');
 
     expect(getActiveBotSpy).toHaveBeenCalled();
@@ -496,7 +500,22 @@ describe('The emulatorCommands', () => {
       name: 'User',
     });
     expect(dispatchSpy).toHaveBeenCalledWith(setCurrentUser({ id: 'userId123', name: 'User' }));
-    expect(mockCallsMade).toHaveLength(1);
-    expect(mockCallsMade[0].commandName).toBe(SharedConstants.Commands.Settings.PushClientAwareSettings);
+    expect(dispatchSpy).toHaveBeenCalledWith(pushClientAwareSettings());
+  });
+
+  it('should delete a conversation', () => {
+    const deleteSpy = jest.spyOn(
+      mockEmulator.framework.server.botEmulator.facilities.conversations,
+      'deleteConversation'
+    );
+    mockCommandRegistry.getCommand(SharedConstants.Commands.Emulator.DeleteConversation).handler('convo1');
+    expect(deleteSpy).toHaveBeenCalledWith('convo1');
+  });
+
+  it('shouold open a chat file', async () => {
+    const result = await mockCommandRegistry
+      .getCommand(SharedConstants.Commands.Emulator.OpenChatFile)
+      .handler('chats/myChat.chat');
+    expect(result).toEqual({ activities: [], fileName: 'myChat.chat' });
   });
 });

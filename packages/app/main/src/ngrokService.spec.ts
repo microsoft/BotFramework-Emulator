@@ -35,34 +35,37 @@ import { combineReducers, createStore } from 'redux';
 
 import { bot } from './botData/reducers/bot';
 import * as store from './botData/store';
-import { emulator } from './emulator';
+import { Emulator } from './emulator';
 import { NgrokService } from './ngrokService';
 import { setFramework } from './settingsData/actions/frameworkActions';
 import reducers from './settingsData/reducers';
 import { getStore } from './settingsData/store';
 
-jest.mock('./emulator', () => ({
-  emulator: {
-    framework: {
-      serverUrl: 'http://localhost:3000',
-      locale: 'en-us',
-      bypassNgrokLocalhost: true,
-      serverPort: 8080,
-      ngrokPath: '/usr/bin/ngrok',
-      server: {
-        botEmulator: {
-          facilities: {
-            conversations: {
-              getConversationIds: () => ['12', '123'],
-            },
-            endpoints: {
-              reset: () => null,
-              push: () => null,
-            },
+const mockEmulator = {
+  framework: {
+    serverUrl: 'http://localhost:3000',
+    locale: 'en-us',
+    bypassNgrokLocalhost: true,
+    serverPort: 8080,
+    ngrokPath: '/usr/bin/ngrok',
+    server: {
+      botEmulator: {
+        facilities: {
+          conversations: {
+            getConversationIds: () => ['12', '123'],
+          },
+          endpoints: {
+            reset: () => null,
+            push: () => null,
           },
         },
       },
     },
+  },
+};
+jest.mock('./emulator', () => ({
+  Emulator: {
+    getInstance: () => mockEmulator,
   },
 }));
 
@@ -110,7 +113,7 @@ describe('The ngrokService', () => {
   const ngrokService = new NgrokService();
 
   beforeEach(() => {
-    getStore().dispatch(setFramework(emulator.framework as any));
+    getStore().dispatch(setFramework(Emulator.getInstance().framework as any));
     mockCallsToLog.length = 0;
   });
 

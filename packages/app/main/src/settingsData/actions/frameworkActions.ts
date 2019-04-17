@@ -34,7 +34,8 @@ import { FrameworkSettings } from '@bfemulator/app-shared';
 import { Action } from 'redux';
 
 export const SET_FRAMEWORK = 'SET_FRAMEWORK';
-export declare type SetFrameworkType = 'SET_FRAMEWORK';
+export const PUSH_CLIENT_AWARE_SETTINGS = 'PUSH_CLIENT_AWARE_SETTINGS';
+export declare type SetFrameworkType = 'SET_FRAMEWORK' | 'PUSH_CLIENT_AWARE_SETTINGS';
 
 export interface FrameworkAction<P> extends Action {
   type: SetFrameworkType;
@@ -45,5 +46,12 @@ export function setFramework(frameworkSettings: FrameworkSettings): FrameworkAct
   return {
     type: SET_FRAMEWORK,
     state: frameworkSettings,
+  };
+}
+
+export function pushClientAwareSettings(): FrameworkAction<void> {
+  return {
+    type: PUSH_CLIENT_AWARE_SETTINGS,
+    state: void 0,
   };
 }

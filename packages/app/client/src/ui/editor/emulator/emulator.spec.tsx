@@ -311,7 +311,6 @@ describe('<Emulator/>', () => {
     };
     await instance.startNewConversation(undefined, true, true);
 
-    expect(mockUnsubscribe).toHaveBeenCalled();
     expect(mockRemoteCallsMade).toHaveLength(1);
     expect(initConversationSpy).toHaveBeenCalledWith(instance.props, options);
   });

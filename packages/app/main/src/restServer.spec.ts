@@ -30,7 +30,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { emulator } from './emulator';
+import { Emulator } from './emulator';
 import './fetchProxy';
 import { mainWindow } from './main';
 import { RestServer } from './restServer';
@@ -46,13 +46,17 @@ jest.mock('./main', () => ({
     },
   },
 }));
-
+const mockEmulator = {
+  report() {
+    return null;
+  },
+};
 jest.mock('./emulator', () => ({
-  emulator: new class {
-    report() {
-      return null;
-    }
-  }(),
+  Emulator: {
+    getInstance: () => {
+      return mockEmulator;
+    },
+  },
 }));
 
 describe('The restServer', () => {
@@ -111,7 +115,7 @@ describe('The restServer', () => {
 
   it('should create a new conversation and open a new livechat window', async () => {
     const remoteCallSpy = jest.spyOn(mainWindow.commandService, 'remoteCall').mockResolvedValue(true);
-    const reportSpy = jest.spyOn(emulator, 'report');
+    const reportSpy = jest.spyOn(Emulator.getInstance(), 'report');
     const mockConversation = {
       conversationId: '123',
       botEndpoint: { id: '456', url: 'https://localhost' },
@@ -134,7 +138,7 @@ describe('The restServer', () => {
 
   it('should not create a new conversation when the conversationId contains "transcript"', async () => {
     const remoteCallSpy = jest.spyOn(mainWindow.commandService, 'remoteCall').mockResolvedValue(true);
-    const reportSpy = jest.spyOn(emulator, 'report');
+    const reportSpy = jest.spyOn(Emulator.getInstance(), 'report');
     const mockConversation = {
       conversationId: 'transcript',
       botEndpoint: { id: '456', url: 'https://localhost' },

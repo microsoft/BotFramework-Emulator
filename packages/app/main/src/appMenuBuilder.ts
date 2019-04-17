@@ -37,7 +37,7 @@ import * as Electron from 'electron';
 
 import { AppUpdater, UpdateStatus } from './appUpdater';
 import { getActiveBot } from './botHelpers';
-import { Emulator, emulator } from './emulator';
+import { Emulator } from './emulator';
 import { mainWindow } from './main';
 import { debugModeChanged, rememberTheme } from './settingsData/actions/windowStateActions';
 import { getStore as getSettingsStore } from './settingsData/store';
@@ -45,7 +45,6 @@ import { TelemetryService } from './telemetry';
 import { isMac } from './utils';
 
 declare type MenuOpts = Electron.MenuItemConstructorOptions;
-
 export class AppMenuBuilder {
   public static get sendActivityMenuItems(): Electron.MenuItem[] {
     const menu = Electron.Menu.getApplicationMenu();
@@ -183,7 +182,7 @@ export class AppMenuBuilder {
 
   /** Returns the template to construct a file menu that reflects updated state */
   private static getUpdatedFileMenuContent(recentBotsMenu: Electron.Menu = new Electron.Menu()): MenuOpts[] {
-    const { Azure, UI, Bot, Emulator } = SharedConstants.Commands;
+    const { Azure, UI, Bot, Emulator: EmulatorCommands } = SharedConstants.Commands;
 
     // TODO - localization
     const subMenu: MenuOpts[] = [
@@ -211,7 +210,7 @@ export class AppMenuBuilder {
         label: 'Open Transcript...',
         click: async () => {
           try {
-            mainWindow.commandService.remoteCall(Emulator.PromptToOpenTranscript);
+            mainWindow.commandService.remoteCall(EmulatorCommands.PromptToOpenTranscript);
           } catch (err) {
             // eslint-disable-next-line no-console
             console.error('Error opening transcript file from menu: ', err);
@@ -272,7 +271,7 @@ export class AppMenuBuilder {
     subMenu.push({
       label: 'Copy Emulator service URL',
       click: async () => {
-        const url = await emulator.ngrok.getServiceUrl('');
+        const url = await Emulator.getInstance().ngrok.getServiceUrl('');
         Electron.clipboard.writeText(url);
       },
     });
@@ -304,7 +303,7 @@ export class AppMenuBuilder {
       }
     };
 
-    const getServiceUrl = () => emulator.framework.serverUrl.replace('[::]', 'localhost');
+    const getServiceUrl = () => Emulator.getInstance().framework.serverUrl.replace('[::]', 'localhost');
     const createClickHandler = (serviceFunction, callback?) => async () => {
       const conversationId = await getConversationId();
 
@@ -443,10 +442,9 @@ export class AppMenuBuilder {
           checked: debugMode === DebugMode.Sidecar,
           label: 'Sidecar Debug Mode',
           id: 'debugMode',
-          click: (menuItem: Electron.MenuItem) => {
+          click: async (menuItem: Electron.MenuItem) => {
             const debugMode = menuItem.checked ? DebugMode.Sidecar : DebugMode.Normal;
             settingsStore.dispatch(debugModeChanged(debugMode));
-            Emulator.startup().catch();
           },
         },
       ],

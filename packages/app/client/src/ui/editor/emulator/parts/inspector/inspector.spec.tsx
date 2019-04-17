@@ -350,7 +350,7 @@ describe('The Inspector component', () => {
     it('should send the initialization stack to the inspector when the dom is ready', () => {
       const instance = node.instance();
       const instanceSpy = jest.spyOn(instance, 'sendInitializationStackToInspector');
-      const event = { currentTarget: { removeEventListener: () => true } };
+      const event = { currentTarget: { removeEventListener: () => true, getAttribute: () => 'attrValue' } };
       const eventSpy = jest.spyOn(event.currentTarget, 'removeEventListener');
 
       instance.onWebViewDOMReady(event as any);

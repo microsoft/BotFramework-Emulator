@@ -43,7 +43,7 @@ import {
   textItem,
 } from '@bfemulator/sdk-shared';
 
-import { emulator } from './emulator';
+import { Emulator } from './emulator';
 import { mainWindow } from './main';
 import * as ngrok from './ngrok';
 import { getStore } from './settingsData/store';
@@ -78,7 +78,7 @@ export class NgrokService {
       return this.serviceUrl;
     }
     // Do not use ngrok
-    return `http://${this.localhost}:${emulator.framework.serverPort}`;
+    return `http://${this.localhost}:${Emulator.getInstance().framework.serverPort}`;
   }
 
   public getSpawnStatus = (): { triedToSpawn: boolean; err: any } => ({
@@ -99,7 +99,7 @@ export class NgrokService {
     }
     this.pendingRecycle = new Promise(async resolve => {
       ngrok.kill();
-      const port = emulator.framework.serverPort;
+      const port = Emulator.getInstance().framework.serverPort;
 
       this.ngrokPath = getStore().getState().framework.ngrokPath;
       this.serviceUrl = `http://${this.localhost}:${port}`;
@@ -150,7 +150,7 @@ export class NgrokService {
 
   /** Logs an item to all open conversations */
   public broadcast(...logItems: LogItem[]): void {
-    const { conversations } = emulator.framework.server.botEmulator.facilities;
+    const { conversations } = Emulator.getInstance().framework.server.botEmulator.facilities;
     const conversationIds: string[] = conversations.getConversationIds();
     conversationIds.forEach(id => {
       mainWindow.logService.logToChat(id, ...logItems);

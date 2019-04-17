@@ -110,7 +110,7 @@
     "botframework-webchat": "^4.3.0",
     "botframework-webchat-core": "^4.3.0",
     "deep-diff": "^1.0.2",
-    "eslint-plugin-react": "7.12.3",
+    "eslint-plugin-react": "^7.12.3",
     "react": "~16.3.2",
     "react-dom": "~16.3.2",
     "react-redux": "^5.0.7",

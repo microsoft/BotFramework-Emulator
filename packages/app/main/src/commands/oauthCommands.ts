@@ -34,7 +34,7 @@
 import { SharedConstants } from '@bfemulator/app-shared';
 import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 
-import { emulator } from '../emulator';
+import { Emulator } from '../emulator';
 import { windowManager } from '../main';
 
 /** Registers OAuth commands */
@@ -46,7 +46,9 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   commandRegistry.registerCommand(
     Commands.SendTokenResponse,
     async (connectionName: string, conversationId: string, token: string) => {
-      const convo = emulator.framework.server.botEmulator.facilities.conversations.conversationById(conversationId);
+      const convo = Emulator.getInstance().framework.server.botEmulator.facilities.conversations.conversationById(
+        conversationId
+      );
       if (!convo) {
         throw new Error(`oauth:send-token-response: Conversation ${conversationId} not found.`);
       }
@@ -57,7 +59,9 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // ---------------------------------------------------------------------------
   // Opens an OAuth login window
   commandRegistry.registerCommand(Commands.CreateOAuthWindow, async (url: string, conversationId: string) => {
-    const convo = emulator.framework.server.botEmulator.facilities.conversations.conversationById(conversationId);
+    const convo = Emulator.getInstance().framework.server.botEmulator.facilities.conversations.conversationById(
+      conversationId
+    );
     windowManager.createOAuthWindow(url, convo.codeVerifier);
   });
 }

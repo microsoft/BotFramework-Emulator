@@ -53,7 +53,7 @@ import {
   saveBot,
   toSavableBot,
 } from '../botHelpers';
-import { emulator } from '../emulator';
+import { Emulator } from '../emulator';
 import { mainWindow } from '../main';
 import { debugModeChanged } from '../settingsData/actions/windowStateActions';
 import { TelemetryService } from '../telemetry';
@@ -194,7 +194,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   commandRegistry.registerCommand(Bot.RestartEndpointService, async () => {
     const bot = getActiveBot();
 
-    emulator.framework.server.botEmulator.facilities.endpoints.reset();
+    Emulator.getInstance().framework.server.botEmulator.facilities.endpoints.reset();
 
     const overridesArePresent = bot.overrides && bot.overrides.endpoint;
     let appliedOverrides = false;
@@ -216,7 +216,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
           }
         }
 
-        emulator.framework.server.botEmulator.facilities.endpoints.push(endpoint.id, {
+        Emulator.getInstance().framework.server.botEmulator.facilities.endpoints.push(endpoint.id, {
           botId: endpoint.id,
           botUrl: endpoint.endpoint,
           msaAppId: endpoint.appId,

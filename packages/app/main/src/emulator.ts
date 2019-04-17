@@ -31,14 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { DebugMode } from '@bfemulator/app-shared';
-
 import { BotFrameworkService } from './botFrameworkService';
 import { NgrokService } from './ngrokService';
-import * as Settings from './settingsData/store';
 
-export let emulator: Emulator;
-
+let emulator: Emulator;
+class SingletonEnforcer {}
 /**
  * Top-level state container for the Node process.
  */
@@ -46,19 +43,20 @@ export class Emulator {
   public ngrok = new NgrokService();
   public framework = new BotFrameworkService();
 
-  public constructor() {
-    return emulator || (emulator = this);
+  private constructor(enforcer: SingletonEnforcer) {
+    if (!(enforcer instanceof SingletonEnforcer)) {
+      throw new Error('Emulator is a singleton. Please use Emulator.getInstance()');
+    }
+  }
+
+  public static getInstance() {
+    return emulator || (emulator = new Emulator(new SingletonEnforcer()));
   }
   /**
    * Loads settings from disk and then creates the emulator.
    */
-  public static async startup() {
-    Settings.startup();
-    const settings = Settings.getSettings();
-    const port = settings.windowState.debugMode === DebugMode.Sidecar ? 9000 : undefined;
-    const emulator = new Emulator();
-    await emulator.framework.recycle(port);
-    return emulator;
+  public async startup(port) {
+    await this.framework.recycle(port);
   }
 
   public async report(conversationId: string, botUrl: string): Promise<void> {

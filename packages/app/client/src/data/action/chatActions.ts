@@ -179,7 +179,7 @@ export function updatePendingSpeechTokenRetrieval(pending: boolean): ChatAction<
   };
 }
 
-export function newDocument(documentId: string, mode: ChatMode, additionalData?: object): ChatAction<NewChatPayload> {
+export function newChat(documentId: string, mode: ChatMode, additionalData?: object): ChatAction<NewChatPayload> {
   return {
     type: ChatActions.newChat,
     payload: {

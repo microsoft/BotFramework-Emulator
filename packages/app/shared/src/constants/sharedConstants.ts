@@ -149,7 +149,6 @@ export const SharedConstants = {
       SaveAppSettings: 'app:settings:save',
       LoadAppSettings: 'app:settings:load',
       ReceiveGlobalSettings: 'receive-global-settings',
-      PushClientAwareSettings: 'push-client-aware-settings',
     },
 
     Telemetry: {

@@ -41,7 +41,7 @@ import {
   clearTranscripts,
   closeDocument,
   newConversation,
-  newDocument,
+  newChat,
   removeTranscript,
   setInspectorObjects,
   updateChat,
@@ -99,14 +99,14 @@ describe('Chat reducer tests', () => {
 
   it('should create a new chat', () => {
     const newChatName = 'newChat';
-    const action = newDocument(newChatName, 'livechat');
+    const action = newChat(newChatName, 'livechat');
     const state = chat(DEFAULT_STATE, action);
     expect(state.changeKey).toBe(1);
     expect(state.chats[newChatName]).toBeTruthy();
   });
 
   it('should close a chat', () => {
-    let state = chat(DEFAULT_STATE, newDocument(testChatId, 'livechat'));
+    let state = chat(DEFAULT_STATE, newChat(testChatId, 'livechat'));
     const action = closeDocument(testChatId);
     state = chat(DEFAULT_STATE, action);
     expect(state.chats[testChatId]).toBeFalsy();

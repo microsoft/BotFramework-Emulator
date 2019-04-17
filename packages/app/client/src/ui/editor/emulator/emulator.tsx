@@ -149,10 +149,6 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
     requireNewConvoId: boolean = false,
     requireNewUserId: boolean = false
   ): Promise<any> => {
-    if (props.document.subscription) {
-      props.document.subscription.unsubscribe();
-    }
-
     // Look for an existing conversation ID and use that,
     // otherwise, create a new one
     const conversationId = requireNewConvoId

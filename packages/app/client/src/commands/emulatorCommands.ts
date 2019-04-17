@@ -30,7 +30,8 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
+// import base64Url from 'base64url';
+// import { createDirectLine } from 'botframework-webchat';
 import { DebugMode, newNotification, SharedConstants } from '@bfemulator/app-shared';
 import { CommandRegistryImpl, isLocalHostUrl, uniqueId } from '@bfemulator/sdk-shared';
 import { IEndpointService } from 'botframework-config/lib/schema';
@@ -71,12 +72,17 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
       if (!documentId) {
         documentId = uniqueId();
         const { currentUserId } = state.clientAwareSettings.users;
-        const action = ChatActions.newDocument(documentId, 'livechat', {
+        const action = ChatActions.newChat(documentId, 'livechat', {
           botId: 'bot',
           endpointId: endpoint.id,
           endpointUrl: endpoint.endpoint,
           userId: currentUserId,
           conversationId,
+          // directLine: createDirectLine({
+          //   secret: base64Url.encode(JSON.stringify({ conversationId, endpointId: endpoint.id })),
+          //   domain: `${ state.clientAwareSettings.serverUrl }/v3/directline`,
+          //   webSocket: false,
+          // })
         });
         if (state.clientAwareSettings.debugMode === DebugMode.Sidecar) {
           action.payload.ui.horizontalSplitter[0].percentage = 75;
@@ -109,7 +115,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
       const { currentUserId } = store.getState().clientAwareSettings.users;
       if (!tabGroup) {
         store.dispatch(
-          ChatActions.newDocument(filePath, 'transcript', {
+          ChatActions.newChat(filePath, 'transcript', {
             ...additionalData,
             botId: 'bot',
             userId: currentUserId,
@@ -169,7 +175,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
         store.dispatch(ChatActions.closeDocument(filePath));
       }
       store.dispatch(
-        ChatActions.newDocument(filePath, 'transcript', {
+        ChatActions.newChat(filePath, 'transcript', {
           ...additionalData,
           botId: 'bot',
           userId: currentUserId,

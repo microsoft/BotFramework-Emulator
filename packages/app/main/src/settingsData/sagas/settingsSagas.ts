@@ -31,17 +31,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import { DebugMode, FrameworkSettings, Settings, SharedConstants } from '@bfemulator/app-shared';
+import { Users } from '@bfemulator/emulator-core';
+import { ClientAwareSettings } from '@bfemulator/app-shared/src';
 
 import { getActiveBot } from '../../botHelpers';
-import { emulator } from '../../emulator';
+import { Emulator } from '../../emulator';
 import { mainWindow } from '../../main';
-import { NgrokService } from '../../ngrokService';
-import { FrameworkAction, SET_FRAMEWORK } from '../actions/frameworkActions';
+import { FrameworkAction, PUSH_CLIENT_AWARE_SETTINGS, SET_FRAMEWORK } from '../actions/frameworkActions';
 import {
   DEBUG_MODE_CHANGED,
   REMEMBER_THEME,
   RememberDebugModePayload,
-  RememberThemePayload,
   WindowStateAction,
 } from '../actions/windowStateActions';
 
@@ -49,18 +49,20 @@ import { call, ForkEffect, select, takeEvery } from 'redux-saga/effects';
 
 const getAvailableThemes = (state: Settings) => state.windowState.availableThemes;
 const getCurrentTheme = (state: Settings) => state.windowState.theme;
+const getState = (state: Settings) => state;
+const getDebugMode = (state: Settings) => state.windowState.debugMode;
 
-export function* rememberThemeSaga(_action: WindowStateAction<RememberThemePayload>): IterableIterator<any> {
+export function* rememberThemeSaga(): IterableIterator<any> {
   const availableThemes = yield select(getAvailableThemes);
   const theme = yield select(getCurrentTheme);
 
   const themeInfo = availableThemes.find(availableTheme => availableTheme.name === theme);
   const { commandService } = mainWindow;
   const { SwitchTheme } = SharedConstants.Commands.UI;
-  yield call(commandService.remoteCall.bind(commandService), SwitchTheme, themeInfo.name, themeInfo.href);
+  yield call([commandService, commandService.remoteCall], SwitchTheme, themeInfo.name, themeInfo.href);
 }
 
-export function* rememberDebugModeSaga(action: WindowStateAction<RememberDebugModePayload>) {
+export function* debugModeChanged(action: WindowStateAction<RememberDebugModePayload>) {
   const { debugMode } = action.payload;
   const activeBot = getActiveBot();
   // If the user has an open botfile, confirm before switching
@@ -70,7 +72,7 @@ export function* rememberDebugModeSaga(action: WindowStateAction<RememberDebugMo
   const { commandService } = mainWindow;
   if (debugMode === DebugMode.Sidecar && activeBot) {
     const confirmation = yield call(
-      commandService.call.bind(commandService),
+      [commandService, commandService.call],
       SharedConstants.Commands.Electron.ShowMessageBox,
       true,
       {
@@ -87,7 +89,7 @@ export function* rememberDebugModeSaga(action: WindowStateAction<RememberDebugMo
     // we get here.
     if (!confirmation) {
       yield call(
-        commandService.call.bind(commandService),
+        [commandService, commandService.call],
         SharedConstants.Commands.Electron.UpdateDebugModeMenuItem,
         false
       );
@@ -96,26 +98,60 @@ export function* rememberDebugModeSaga(action: WindowStateAction<RememberDebugMo
       // Make sure ngrok is shutdown since the free service does not allow
       // more than 1 instance running at a time and an externally running
       // ngrok instance is required for sidecar debugging.
-      yield call(commandService.call.bind(commandService), SharedConstants.Commands.Ngrok.KillProcess);
+      yield call([commandService, commandService.call], SharedConstants.Commands.Ngrok.KillProcess);
     }
   }
-
   // If we get here, the user has confirmed to close an open
   // bot or there is not open bot.
-  yield call(commandService.remoteCall.bind(commandService), SharedConstants.Commands.UI.SwitchDebugMode, debugMode);
+  yield call([commandService, commandService.remoteCall], SharedConstants.Commands.UI.SwitchDebugMode, debugMode);
+  // finally, push the new settings to the client
+  yield pushClientAwareSettings();
+}
+
+export function* startEmulator(forceRestart: boolean = false) {
+  const debugMode = yield select(getDebugMode);
+  const port = debugMode === DebugMode.Sidecar ? 9000 : null;
+  const emulator = Emulator.getInstance();
+  if (!forceRestart && emulator.framework.serverPort === port) {
+    return;
+  }
+  yield emulator.startup(port);
+  const { users: userSettings, framework } = yield select(getState);
+  const users = new Users();
+  users.currentUserId = userSettings.currentUserId;
+  users.users = userSettings.usersById;
+
+  const { facilities } = emulator.framework.server.botEmulator;
+  facilities.locale = framework.locale;
+  facilities.users = users;
 }
 
 export function* setFramework(action: FrameworkAction<FrameworkSettings>): IterableIterator<any> {
-  const ngrokService = new NgrokService();
-  const { commandService } = mainWindow;
-  const { PushClientAwareSettings } = SharedConstants.Commands.Settings;
+  const emulator = Emulator.getInstance();
+  yield emulator.ngrok.updateNgrokFromSettings(action.state);
   emulator.framework.server.botEmulator.facilities.locale = action.state.locale;
-  yield ngrokService.updateNgrokFromSettings(action.state);
-  yield call(commandService.call.bind(commandService, PushClientAwareSettings));
+  yield* pushClientAwareSettings();
+}
+
+function* pushClientAwareSettings() {
+  yield* startEmulator(); // Start the emulator to get the serverUrl
+  const settingsState = yield select(getState);
+  yield call(
+    [mainWindow.commandService, mainWindow.commandService.remoteCall],
+    SharedConstants.Commands.Settings.ReceiveGlobalSettings,
+    {
+      serverUrl: (Emulator.getInstance().framework.serverUrl || '').replace('[::]', 'localhost'),
+      cwd: (process.cwd() || '').replace(/\\/g, '/'),
+      users: settingsState.users,
+      locale: settingsState.framework.locale,
+      debugMode: settingsState.windowState.debugMode || DebugMode.Normal,
+    } as ClientAwareSettings
+  );
 }
 
 export function* settingsSagas(): IterableIterator<ForkEffect> {
   yield takeEvery(REMEMBER_THEME, rememberThemeSaga);
-  yield takeEvery(DEBUG_MODE_CHANGED, rememberDebugModeSaga);
+  yield takeEvery(DEBUG_MODE_CHANGED, debugModeChanged);
   yield takeEvery(SET_FRAMEWORK, setFramework);
+  yield takeEvery(PUSH_CLIENT_AWARE_SETTINGS, pushClientAwareSettings);
 }

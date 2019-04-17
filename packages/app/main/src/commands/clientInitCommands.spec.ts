@@ -122,53 +122,16 @@ describe('The clientInitCommands', () => {
     registerCommands(registry);
   });
 
-  it('should retrieve the bots from disk and do other things when the client is done loading', async () => {
+  it('should retrieve the bots from disk when the client is done loading', async () => {
     const command = registry.getCommand(SharedConstants.Commands.ClientInit.Loaded).handler;
 
-    const remoteCommandArgs = [];
     const localCommandArgs = [];
-    (mainWindow.commandService as any).remoteCall = (...args) => {
-      remoteCommandArgs.push(args);
-    };
     (mainWindow.commandService as any).call = (...args) => {
       localCommandArgs.push(args);
     };
 
     await command();
     expect(localCommandArgs).toEqual([['electron:set-title-bar'], ['electron:set-fullscreen', false]]);
-    expect(remoteCommandArgs).toEqual([
-      [
-        'receive-global-settings',
-        {
-          cwd: '/Users/microsoft/Documents/dev/BotFramework-Emulator/packages/app/main/src/commands',
-          debugMode: 0,
-          locale: 'en-US',
-          serverUrl: 'http://localhost:3000',
-          users: {},
-        },
-      ],
-    ]);
-  });
-
-  it('should push client aware settings', async () => {
-    const command = registry.getCommand(SharedConstants.Commands.Settings.PushClientAwareSettings).handler;
-    const remoteCommandArgs = [];
-    (mainWindow.commandService as any).remoteCall = (...args) => {
-      remoteCommandArgs.push(args);
-    };
-    await command();
-    expect(remoteCommandArgs).toEqual([
-      [
-        'receive-global-settings',
-        {
-          cwd: '/Users/microsoft/Documents/dev/BotFramework-Emulator/packages/app/main/src/commands',
-          debugMode: 0,
-          locale: 'en-US',
-          serverUrl: 'http://localhost:3000',
-          users: {},
-        },
-      ],
-    ]);
   });
 
   it('should open a bot and/or transcript file from the command line when the welcome screen is rendered', async () => {

@@ -38,7 +38,7 @@ import { IEndpointService } from 'botframework-config';
 import { createServer, Request, Response, Route, Server } from 'restify';
 import CORS from 'restify-cors-middleware';
 
-import { emulator } from './emulator';
+import { Emulator } from './emulator';
 import { mainWindow } from './main';
 
 interface ConversationAwareRequest extends Request {
@@ -53,7 +53,7 @@ export class RestServer {
   private _botEmulator: BotEmulator;
   public get botEmulator(): BotEmulator {
     if (!this._botEmulator) {
-      this._botEmulator = new BotEmulator(botUrl => emulator.ngrok.getServiceUrl(botUrl), {
+      this._botEmulator = new BotEmulator(botUrl => Emulator.getInstance().ngrok.getServiceUrl(botUrl), {
         fetch,
         loggerOrLogService: mainWindow.logService,
       });
@@ -150,7 +150,7 @@ export class RestServer {
       hasLiveChat(conversationId, this.botEmulator.facilities.conversations),
       conversationId
     );
-    await emulator.report(conversationId, botUrl);
+    await Emulator.getInstance().report(conversationId, botUrl);
   };
 }
 

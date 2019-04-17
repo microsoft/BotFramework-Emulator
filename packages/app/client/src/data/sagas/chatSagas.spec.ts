@@ -42,7 +42,7 @@ import { editor } from '../reducer/editor';
 import { presentation } from '../reducer/presentation';
 import * as Constants from '../../constants';
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
-import { closeConversation, newDocument, showContextMenuForActivity } from '../action/chatActions';
+import { closeConversation, newChat, showContextMenuForActivity } from '../action/chatActions';
 
 import { chatSagas } from './chatSagas';
 
@@ -719,7 +719,7 @@ describe('The ChatSagas,', () => {
     const commandServiceSpy = jest.spyOn(CommandServiceImpl, 'remoteCall').mockResolvedValue('mockSpeechToken');
 
     mockStore.dispatch(
-      newDocument('doc2', 'livechat', {
+      newChat('doc2', 'livechat', {
         conversationId: 'convo2',
         endpointId: 'endpoint2',
         userId: 'someUserId2',

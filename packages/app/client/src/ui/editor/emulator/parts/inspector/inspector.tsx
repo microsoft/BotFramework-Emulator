@@ -122,6 +122,8 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     [location: string]: ElectronHTMLWebViewElement;
   } = {};
 
+  private domReadyByLocation = {};
+
   public static getDerivedStateFromProps(newProps: InspectorProps, prevState: InspectorState): InspectorState {
     const { document = {} } = newProps;
     const inspectorResult = Inspector.getInspector(document.inspectorObjects);
@@ -177,7 +179,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
 
   public componentDidMount() {
     window.addEventListener('toggle-inspector-devtools', this.toggleDevTools);
-    this.updateInspector(this.state);
+    this.updateInspector(this.state).catch();
   }
 
   public componentWillUnmount() {
@@ -254,7 +256,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
       this.botUpdated(newState.activeBot);
     }
     if (oldState.inspectorSrc !== newState.inspectorSrc || oldState.containerRef !== newState.containerRef) {
-      this.updateInspector(this.state);
+      this.updateInspector(this.state).catch();
     }
     if (JSON.stringify(oldState.inspectObj) !== JSON.stringify(newState.inspectObj)) {
       this.inspect(newState.inspectObj);
@@ -264,15 +266,19 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     }
   }
 
-  private updateInspector(state: InspectorState): void {
+  private async updateInspector(state: InspectorState): Promise<void> {
     const { src } = state.inspector || { src: '' };
     if (!src) {
       return;
     }
     const { webViewByLocation: webViews } = this;
+    if (!webViews[src]) {
+      webViews[src] = this.createWebView(state);
+    } else {
+      this.sendInitializationStackToInspector();
+    }
     const nextInspector = webViews[src] || (webViews[src] = this.createWebView(state));
     nextInspector.style.display = '';
-    this.sendInitializationStackToInspector();
 
     const { containerRef } = this.state;
     if (!containerRef) {
@@ -280,6 +286,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     }
     if (!containerRef.contains(nextInspector)) {
       containerRef.appendChild(nextInspector);
+      nextInspector.addEventListener('dom-ready', this.onWebViewDOMReady);
     }
     Array.prototype.forEach.call(containerRef.children, child => {
       if (child !== nextInspector) {
@@ -290,18 +297,16 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
 
   private createWebView(state: InspectorState): ElectronHTMLWebViewElement {
     const { cwdAsBase } = this.props;
-    const preload = `file://${cwdAsBase}/../../../node_modules/@bfemulator/client/public/inspector-preload.js`;
-
+    const preload = `file://${cwdAsBase}/node_modules/@bfemulator/client/public/inspector-preload.js`;
     const webView: ElectronHTMLWebViewElement = document.createElement('webview');
+
     webView.className = styles.webViewContainer;
+    webView.addEventListener('dragenter', this.onInspectorDrag, true);
+    webView.addEventListener('dragover', this.onInspectorDrag, true);
+    webView.addEventListener('ipc-message', this.ipcMessageEventHandler);
     webView.setAttribute('partition', `persist:${state.botHash}`);
     webView.setAttribute('preload', preload);
     webView.setAttribute('src', state.inspector.src);
-    webView.addEventListener('dragenter', this.onInspectorDrag, true);
-    webView.addEventListener('dragover', this.onInspectorDrag, true);
-    webView.addEventListener('dom-ready', this.onWebViewDOMReady);
-    webView.addEventListener('ipc-message', this.ipcMessageEventHandler);
-
     return webView;
   }
 
@@ -349,7 +354,9 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
   }
 
   private onWebViewDOMReady = (event: Event) => {
-    event.currentTarget.removeEventListener('domready', this.onWebViewDOMReady);
+    const webView = event.currentTarget as ElectronHTMLWebViewElement;
+    this.domReadyByLocation[webView.getAttribute('src')] = true;
+    webView.removeEventListener('dom-ready', this.onWebViewDOMReady);
     this.sendInitializationStackToInspector();
   };
 
@@ -419,8 +426,9 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
   }
 
   private sendToInspector(channel: string, ...args: any[]) {
-    const inspector = this.webViewByLocation[this.state.inspectorSrc];
-    if (!inspector) {
+    const { inspectorSrc } = this.state;
+    const inspector = this.webViewByLocation[inspectorSrc];
+    if (!inspector || !this.domReadyByLocation[inspectorSrc]) {
       return;
     }
     try {
