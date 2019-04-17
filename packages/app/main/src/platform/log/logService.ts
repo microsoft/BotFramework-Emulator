@@ -32,13 +32,16 @@
 //
 
 import { SharedConstants } from '@bfemulator/app-shared';
-import { DisposableImpl, LogItem, LogService as ILogService, logEntry } from '@bfemulator/sdk-shared';
+import { DisposableImpl, logEntry, LogItem, LogService as ILogService } from '@bfemulator/sdk-shared';
 
 import { Window } from '../window';
 
 export class LogService extends DisposableImpl implements ILogService {
-  constructor(private _window: Window) {
+  private _window: Window;
+
+  constructor(window: Window) {
     super();
+    this._window = window;
   }
 
   public logToChat(conversationId: string, ...items: LogItem[]): void {

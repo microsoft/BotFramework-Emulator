@@ -41,6 +41,19 @@ import { mainWindow } from '../../main';
 
 import { settingsSagas } from './settingsSagas';
 
+const mockEmulator = {
+  startup: async () => true,
+  framework: {
+    serverPort: 9000,
+  },
+};
+
+jest.mock('../../emulator', () => ({
+  Emulator: {
+    getInstance: () => mockEmulator,
+  },
+}));
+
 jest.mock('../../botHelpers', () => ({
   getActiveBot: () => ({}),
 }));
