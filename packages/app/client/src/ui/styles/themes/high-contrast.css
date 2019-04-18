@@ -33,7 +33,7 @@ html {
   --webchat-selected-actvity-border: #F38518;
   --webchat-selected-activity-text: var(--neutral-1);
   --webchat-timestamp-text: var(--neutral-1);
-  --webchat-scrollbar-color: var(--neutral-6);
+  --webchat-scrollbar-color: var(--scrollbar-color);
 
   /* sendbox */
   --webchat-sendbox-bg: var(--tab-active-tab-bg);

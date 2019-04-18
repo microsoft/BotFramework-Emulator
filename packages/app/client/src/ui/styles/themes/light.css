@@ -13,10 +13,8 @@ html {
   /* Alert colors */
   --info-bg: #D6ECF2;
   --info-outline: #007ACC;
-
   --warning-bg: #F6F5D2;
   --warning-outline: #B89500;
-
   --error-text: #A1260D;
   --error-bg: #F2DEDE;
   --error-outline: #BE1100;
@@ -33,7 +31,7 @@ html {
   --webchat-selected-actvity-border: #00BCF2;
   --webchat-selected-activity-text: var(--neutral-1);
   --webchat-timestamp-text: var(--neutral-6);
-  --webchat-scrollbar-color: var(--neutral-5);
+  --webchat-scrollbar-color: var(--scrollbar-color);
 
   /* sendbox */
   --webchat-sendbox-bg: var(--neutral-1);
