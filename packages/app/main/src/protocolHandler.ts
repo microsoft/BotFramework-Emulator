@@ -202,8 +202,13 @@ export const ProtocolHandler = new class ProtocolHandlerImpl implements Protocol
     const appSettings: FrameworkSettings = getSettings().framework;
 
     if (appSettings.ngrokPath) {
-      const ngrokSpawnStatus = Emulator.getInstance().ngrok.getSpawnStatus();
-      if (!ngrokSpawnStatus.triedToSpawn || (ngrokSpawnStatus.triedToSpawn && ngrokSpawnStatus.err)) {
+      let ngrokSpawnStatus = Emulator.getInstance().ngrok.getSpawnStatus();
+      // if ngrok hasn't spawned yet, we need to start it up
+      if (!ngrokSpawnStatus.triedToSpawn) {
+        await Emulator.getInstance().ngrok.recycle();
+      }
+      ngrokSpawnStatus = Emulator.getInstance().ngrok.getSpawnStatus();
+      if (ngrokSpawnStatus.triedToSpawn && ngrokSpawnStatus.err) {
         throw new Error(`Error while trying to spawn ngrok instance: ${ngrokSpawnStatus.err || ''}`);
       }
 
@@ -304,8 +309,13 @@ export const ProtocolHandler = new class ProtocolHandlerImpl implements Protocol
 
     const appSettings: FrameworkSettings = getSettings().framework;
     if (appSettings.ngrokPath) {
-      const ngrokSpawnStatus = Emulator.getInstance().ngrok.getSpawnStatus();
-      if (!ngrokSpawnStatus.triedToSpawn || (ngrokSpawnStatus.triedToSpawn && ngrokSpawnStatus.err)) {
+      let ngrokSpawnStatus = Emulator.getInstance().ngrok.getSpawnStatus();
+      // if ngrok hasn't spawned yet, we need to start it up
+      if (!ngrokSpawnStatus.triedToSpawn) {
+        await Emulator.getInstance().ngrok.recycle();
+      }
+      ngrokSpawnStatus = Emulator.getInstance().ngrok.getSpawnStatus();
+      if (ngrokSpawnStatus.triedToSpawn && ngrokSpawnStatus.err) {
         throw new Error(`Error while trying to spawn ngrok instance: ${ngrokSpawnStatus.err || ''}`);
       }
 
