@@ -49,7 +49,7 @@ import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 
 const { Bot, Electron, Telemetry } = SharedConstants.Commands;
 
-export const ActiveBotHelper = new class {
+export const ActiveBotHelper = new (class {
   async confirmSwitchBot(): Promise<any> {
     if (hasNonGlobalTabs()) {
       return await CommandServiceImpl.remoteCall(Electron.ShowMessageBox, true, {
@@ -316,4 +316,4 @@ export const ActiveBotHelper = new class {
         throw new Error(errMsg);
       });
   }
-}();
+})();

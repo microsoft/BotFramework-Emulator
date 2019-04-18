@@ -32,12 +32,11 @@
 //
 
 import { SharedConstants } from '@bfemulator/app-shared';
+import { select } from 'redux-saga/effects';
 
 import { RootState } from '../store';
 
 import { editorSelector, refreshConversationMenu } from './sharedSagas';
-
-import { select } from 'redux-saga/effects';
 
 let mockRemoteCommandsCalled = [];
 jest.mock('../../platform/commands/commandServiceImpl', () => ({

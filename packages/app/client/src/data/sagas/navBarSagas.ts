@@ -31,11 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { ForkEffect, put, takeEvery } from 'redux-saga/effects';
+
 import * as Constants from '../../constants';
 import { NavBarActions, SelectNavBarAction } from '../action/navBarActions';
 import { markAllAsRead } from '../action/notificationActions';
-
-import { ForkEffect, put, takeEvery } from 'redux-saga/effects';
 
 /** Marks all notifications as read if the notifications pane is opened */
 export function* markNotificationsAsRead(action: SelectNavBarAction): IterableIterator<any> {

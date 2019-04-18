@@ -42,6 +42,7 @@ import {
   IQnAService,
   ServiceTypes,
 } from 'botframework-config/lib/schema';
+import { ForkEffect, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
 
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { DialogService } from '../../ui/dialogs/service';
@@ -63,8 +64,6 @@ import { SortCriteria } from '../reducer/explorer';
 import { RootState } from '../store';
 
 import { getArmToken } from './azureAuthSaga';
-
-import { ForkEffect, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
 
 declare interface ServicesPayload {
   services: IConnectedService[];

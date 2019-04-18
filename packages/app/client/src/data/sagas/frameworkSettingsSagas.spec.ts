@@ -33,6 +33,7 @@
 import { SharedConstants, newNotification } from '@bfemulator/app-shared';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import sagaMiddlewareFactory from 'redux-saga';
+import { call, put, takeEvery, select } from 'redux-saga/effects';
 
 import { CONTENT_TYPE_APP_SETTINGS, DOCUMENT_ID_APP_SETTINGS } from '../../constants';
 import * as EditorActions from '../action/editorActions';
@@ -57,8 +58,6 @@ import {
   normalizeSettingsData,
   saveFrameworkSettings,
 } from './frameworkSettingsSagas';
-
-import { call, put, takeEvery, select } from 'redux-saga/effects';
 
 jest.mock(
   '../../ui/dialogs/',
