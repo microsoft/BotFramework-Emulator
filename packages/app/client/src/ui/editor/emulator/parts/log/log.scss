@@ -1,6 +1,7 @@
 .log {
   height: 100%;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
   user-select: text;
   padding: 0;
   box-sizing: border-box;
@@ -68,5 +69,9 @@
     & .spaced:first-child {
       margin-left: 0;
     }
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbar-color);
   }
 }
