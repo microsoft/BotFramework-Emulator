@@ -77,9 +77,13 @@ jest.mock('./settingsData/store', () => ({
     },
   }),
 }));
+
+let mockGetSpawnStatus: any = jest.fn(() => ({ triedToSpawn: true }));
+const mockRecycle = jest.fn(() => null);
 const mockEmulator = {
   ngrok: {
-    getSpawnStatus: () => ({ triedToSpawn: true }),
+    getSpawnStatus: () => mockGetSpawnStatus(),
+    recycle: () => mockRecycle(),
   },
 };
 jest.mock('./emulator', () => ({
@@ -134,6 +138,8 @@ describe('Protocol handler tests', () => {
       statusCode: 200,
       body: '["activity1", "activity2", "activity3"]',
     };
+    mockRecycle.mockClear();
+    mockGetSpawnStatus.mockClear();
   });
 
   afterAll(() => {
@@ -283,8 +289,12 @@ describe('Protocol handler tests', () => {
     const overrides = { endpoint: parseEndpointOverrides(protocol.parsedArgs) };
     const overriddenBot = applyBotConfigOverrides(mockOpenedBot, overrides);
 
+    // ngrok should be kick-started if it hasn't tried to spawn yet
+    mockGetSpawnStatus = jest.fn(() => ({ triedToSpawn: false }));
+
     await ProtocolHandler.openBot(protocol);
 
+    expect(mockRecycle).toHaveBeenCalled();
     expect(mockCallsMade).toHaveLength(2);
     expect(mockCallsMade[0].commandName).toBe(SharedConstants.Commands.Bot.Open);
     expect(mockCallsMade[0].args).toEqual(['path/to/bot.bot', 'someSecret']);
@@ -355,6 +365,22 @@ describe('Protocol handler tests', () => {
     });
   });
 
+  it('should throw if ngrok failed to spawn while opening a bot', async () => {
+    try {
+      const protocol = {
+        parsedArgs: {
+          id: 'someIdOverride',
+          path: 'path/to/bot.bot',
+          secret: 'someSecret',
+        },
+      };
+      mockGetSpawnStatus = jest.fn(() => ({ triedToSpawn: true, err: 'Some ngrok error' }));
+      await ProtocolHandler.openBot(protocol);
+    } catch (e) {
+      expect(e).toEqual(new Error('Error while trying to spawn ngrok instance: Some ngrok error'));
+    }
+  });
+
   it('should open a livechat if ngrok is running', async () => {
     const protocol = {
       parsedArgs: {
@@ -374,8 +400,12 @@ describe('Protocol handler tests', () => {
     mockEndpoint.name = 'New livechat';
     mockedBot.services.push(mockEndpoint);
 
+    // ngrok should be kick-started if it hasn't tried to spawn yet
+    mockGetSpawnStatus = jest.fn(() => ({ triedToSpawn: false }));
+
     await ProtocolHandler.openLiveChat(protocol);
 
+    expect(mockRecycle).toHaveBeenCalled();
     expect(mockCallsMade).toHaveLength(1);
     expect(mockCallsMade[0].commandName).toBe(SharedConstants.Commands.Bot.RestartEndpointService);
     expect(mockCallsMade[0].args).toEqual([]);
@@ -444,6 +474,22 @@ describe('Protocol handler tests', () => {
     expect(mockRemoteCallsMade).toHaveLength(1);
     expect(mockRemoteCallsMade[0].commandName).toBe(SharedConstants.Commands.Emulator.NewLiveChat);
     expect(mockRemoteCallsMade[0].args).toEqual([mockEndpoint]);
+  });
+
+  it('should throw if ngrok failed to spawn while opening a livechat', async () => {
+    try {
+      const protocol = {
+        parsedArgs: {
+          botUrl: 'someUrl',
+          msaAppId: 'someAppId',
+          msaPassword: 'somePw',
+        },
+      };
+      mockGetSpawnStatus = jest.fn(() => ({ triedToSpawn: true, err: 'Some ngrok error' }));
+      await ProtocolHandler.openBot(protocol);
+    } catch (e) {
+      expect(e).toEqual(new Error('Error while trying to spawn ngrok instance: Some ngrok error'));
+    }
   });
 
   it('should open a transcript from a url', async () => {
