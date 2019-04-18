@@ -91,7 +91,7 @@ export interface ProtocolHandler {
   performBotAction: (protocol: Protocol) => void;
 }
 
-export const ProtocolHandler = new class ProtocolHandlerImpl implements ProtocolHandler {
+export const ProtocolHandler = new (class ProtocolHandlerImpl implements ProtocolHandler {
   /** Extracts useful information out of a protocol URL */
   public parseProtocolUrl(url: string): Protocol {
     const validProtocol = /^bfemulator:\/\//;
@@ -359,7 +359,7 @@ export const ProtocolHandler = new class ProtocolHandlerImpl implements Protocol
       numOfServices,
     });
   }
-}();
+})();
 
 /**
  * Takes the list of parsed protocol URI query params and constructs an endpoint service

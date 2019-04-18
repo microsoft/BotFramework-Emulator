@@ -32,13 +32,12 @@
 //
 
 import { isChatFile, isTranscriptFile, SharedConstants } from '@bfemulator/app-shared';
+import { call, ForkEffect, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
 
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { EditorActions, removeDocPendingChange } from '../action/editorActions';
 
 import { editorSelector, refreshConversationMenu } from './sharedSagas';
-
-import { call, ForkEffect, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
 
 export function* promptUserToReloadDocument(filename: string): IterableIterator<any> {
   const { Commands } = SharedConstants;

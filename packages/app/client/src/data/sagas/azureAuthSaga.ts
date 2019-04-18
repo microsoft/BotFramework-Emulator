@@ -31,6 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import { SharedConstants } from '@bfemulator/app-shared';
+import { call, ForkEffect, put, select, takeEvery } from 'redux-saga/effects';
 
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { DialogService } from '../../ui/dialogs';
@@ -42,8 +43,6 @@ import {
 } from '../action/azureAuthActions';
 import { AzureAuthState } from '../reducer/azureAuthReducer';
 import { RootState } from '../store';
-
-import { call, ForkEffect, put, select, takeEvery } from 'redux-saga/effects';
 
 const getArmTokenFromState = (state: RootState) => state.azureAuth;
 

@@ -72,14 +72,13 @@ Open 2 terminals:
    `packages/app/shared` and rebuild the `shared` package
 
  - One in `packages/app/main` (will be responsible for the node process)
-   - run `npm run start:electron:dev`
-   - this starts a new instance of the electron app with the most recently compiled `packages/app/main` files
-   - **To see app/main file changes:** `Ctrl + C` to kill the electron app, `npm run build` to rebuild the main side, and then `npm start:electron:dev` to restart it with your reflected changes
+   - run `npm run start:watch`
+   - this starts a new instance of the electron app with the most recently compiled `packages/app/main` files, and will continue to watch for any changes before recompiling and restarting the electron instance
 
 ### Debugging
 
 #### The Main Process
-Running `npm run start:electron:dev` opens up port 7777 for debugging the main node process. Startup is non-blocking
+Running `npm run start:watch` opens up port 7777 for debugging the main node process. Startup is non-blocking
 by default which means code could be executed before you have time to attach your debugger and set breakpoints. To prevent this,
 change `--inspect=7777` to `--inspect-brk=7777` in the `start:electron` script in the `package.json` located in `packages\app\main`. 
 This will prevent code from running until after a debug process has been attached and will require you to start 

@@ -31,13 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { put } from 'redux-saga/effects';
+
 import { select } from '../action/navBarActions';
 import * as Constants from '../../constants';
 import { markAllAsRead } from '../action/notificationActions';
 
 import { markNotificationsAsRead } from './navBarSagas';
 
-import { put } from 'redux-saga/effects';
 jest.mock('../../ui/dialogs', () => ({
   AzureLoginPromptDialogContainer: function mock() {
     return undefined;

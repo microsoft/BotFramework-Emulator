@@ -33,7 +33,7 @@
 /* eslint-disable typescript/no-use-before-define */
 
 import '../fetchProxy';
-import * as path from 'path';
+import { normalize as mockNormalize } from 'path';
 
 import { combineReducers, createStore } from 'redux';
 import { BotConfigWithPathImpl, CommandRegistryImpl } from '@bfemulator/sdk-shared';
@@ -85,7 +85,7 @@ jest.mock('../botHelpers', () => ({
   getBotInfoByPath: () => ({ secret: 'secret' }),
   loadBotWithRetry: () => mockBot,
   getActiveBot: () => mockBot,
-  getTranscriptsPath: () => 'Users/blerg/Documents/testbot/transcripts',
+  getTranscriptsPath: () => mockNormalize('Users/blerg/Documents/testbot/transcripts'),
 }));
 
 jest.mock('../utils', () => ({
@@ -171,10 +171,10 @@ const mockBot = BotConfigWithPathImpl.fromJSON({
 
 const mockInfo = {
   secret: 'shhh!',
-  path: path.normalize('Users/blerg/Documents/testbot/contoso-cafe-bot.bot'),
+  path: mockNormalize('Users/blerg/Documents/testbot/contoso-cafe-bot.bot'),
   displayName: 'contoso-cafe-bot',
-  transcriptsPath: path.normalize('Users/blerg/Documents/testbot/transcripts'),
-  chatsPath: path.normalize('Users/blerg/Documents/testbot/dialogs'),
+  transcriptsPath: mockNormalize('Users/blerg/Documents/testbot/transcripts'),
+  chatsPath: mockNormalize('Users/blerg/Documents/testbot/dialogs'),
 };
 
 const mockConversation = mockEmulator.framework.server.botEmulator.facilities.conversations.newConversation(
@@ -436,13 +436,13 @@ describe('The emulatorCommands', () => {
             extensions: ['transcript'],
           },
         ],
-        defaultPath: path.normalize('Users/blerg/Documents/testbot/transcripts'),
+        defaultPath: mockNormalize('Users/blerg/Documents/testbot/transcripts'),
         showsTagField: false,
         title: 'Save conversation transcript',
         buttonLabel: 'Save',
       }
     );
-    const newPath = path.normalize('chosen/AuthBot.bot');
+    const newPath = mockNormalize('chosen/AuthBot.bot');
     expect(getBotInfoByPathSpy).toHaveBeenCalledWith('some/path');
     expect(toSavableBotSpy).toHaveBeenCalledWith(mockBot, mockInfo.secret);
     expect(patchBotJsonSpy).toHaveBeenCalledWith(newPath, Object.assign({}, mockInfo, { path: newPath }));

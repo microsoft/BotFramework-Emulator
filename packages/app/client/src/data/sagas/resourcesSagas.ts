@@ -34,6 +34,7 @@ import { BotInfo, isChatFile, isTranscriptFile, NotificationType, SharedConstant
 import { newNotification } from '@bfemulator/app-shared/built';
 import { IFileService } from 'botframework-config/lib/schema';
 import { ComponentClass } from 'react';
+import { ForkEffect, put, takeEvery } from 'redux-saga/effects';
 
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { DialogService } from '../../ui/dialogs/service';
@@ -46,8 +47,6 @@ import {
   RENAME_RESOURCE,
   ResourcesAction,
 } from '../action/resourcesAction';
-
-import { ForkEffect, put, takeEvery } from 'redux-saga/effects';
 
 function* openContextMenuForResource(action: ResourcesAction<IFileService>): IterableIterator<any> {
   const menuItems = [{ label: 'Open file location', id: 0 }, { label: 'Rename', id: 1 }, { label: 'Delete', id: 2 }];

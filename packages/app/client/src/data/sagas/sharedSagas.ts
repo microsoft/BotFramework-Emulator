@@ -32,11 +32,10 @@
 //
 
 import { SharedConstants } from '@bfemulator/app-shared';
+import { select } from 'redux-saga/effects';
 
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { RootState } from '../store';
-
-import { select } from 'redux-saga/effects';
 
 export function editorSelector(state: RootState) {
   return state.editor;

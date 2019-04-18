@@ -32,13 +32,12 @@
 //
 
 import { newNotification, NotificationType } from '@bfemulator/app-shared';
+import { put } from 'redux-saga/effects';
 
 import { NotificationManager } from '../../notificationManager';
 import { beginAdd, finishAdd, finishClear, beginRemove, finishRemove } from '../action/notificationActions';
 
 import { addNotification, clearNotifications, removeNotification, markAllAsRead } from './notificationSagas';
-
-import { put } from 'redux-saga/effects';
 
 describe('Notification sagas', () => {
   test('addNotification()', () => {
