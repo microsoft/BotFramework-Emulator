@@ -206,6 +206,11 @@ export default class Conversation extends EventEmitter {
       membersRemoved,
     };
 
+    // don't send if it has already been sent
+    if (this.activities.some(act => act.activity == activity)) {
+      return;
+    }
+
     const result = await this.postActivityToBot(activity as Activity, false);
     if (!/2\d\d/.test('' + result.statusCode)) {
       this.botEmulator.facilities.logger.logException(this.conversationId, result.response);
