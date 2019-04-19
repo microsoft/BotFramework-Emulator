@@ -110,8 +110,9 @@ export function* debugModeChanged(action: WindowStateAction<RememberDebugModePay
 
 export function* startEmulator(forceRestart: boolean = false) {
   const debugMode = yield select(getDebugMode);
-  const port = debugMode === DebugMode.Sidecar ? 9000 : null;
   const emulator = Emulator.getInstance();
+  const emulatorModePort = emulator.framework.serverPort || null;
+  const port = debugMode === DebugMode.Sidecar ? 9000 : emulatorModePort;
   if (!forceRestart && emulator.framework.serverPort === port) {
     return;
   }
