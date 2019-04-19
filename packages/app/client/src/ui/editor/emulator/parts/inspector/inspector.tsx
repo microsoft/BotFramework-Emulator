@@ -417,6 +417,9 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
 
   private inspect(obj: InspectObject) {
     if (this.canInspect(obj)) {
+      // showInInspector is for internal bookkeeping and shouldn't make it to the view
+      // remove before rendering
+      delete obj.showInInspector;
       this.sendToInspector('inspect', obj);
     }
   }
