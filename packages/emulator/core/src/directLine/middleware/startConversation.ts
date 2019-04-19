@@ -60,20 +60,28 @@ export default function startConversation(botEmulator: BotEmulator) {
 
     if (!conversation) {
       conversation = conversations.newConversation(botEmulator, botEndpoint, currentUser, conversationId);
-      // Send "bot added to conversation"
+      // Sends "bot added to conversation"
       await conversation.sendConversationUpdate([{ id: botEndpoint.botId, name: 'Bot' }], undefined);
-      // Send "user added to conversation"
+      // Sends "user added to conversation"
       await conversation.sendConversationUpdate([currentUser], undefined);
       created = true;
     } else {
-      if (botEndpoint && conversation.members.findIndex(user => user.id === botEndpoint.botId) === -1) {
-        // Sends "bot added to conversation"
+      const botIsNotInConversation = conversation.members.findIndex(user => user.id === botEndpoint.botId) === -1;
+      if (botEndpoint && botIsNotInConversation) {
+        // Adds bot to conversation and sends "bot added to conversation"
         conversation.addMember(botEndpoint.botId, 'Bot');
+      } else {
+        // Sends "bot added to conversation"
+        await conversation.sendConversationUpdate([{ id: botEndpoint.botId, name: 'Bot' }], undefined);
       }
 
-      if (conversation.members.findIndex(user => user.id === currentUser.id) === -1) {
-        // Sends "user added to conversation"
+      const userIsNotInConversation = conversation.members.findIndex(user => user.id === currentUser.id) === -1;
+      if (userIsNotInConversation) {
+        // Adds user to conversation and sends "user added to conversation"
         conversation.addMember(currentUser.id, currentUser.name);
+      } else {
+        // Sends "user added to conversation"
+        await conversation.sendConversationUpdate([currentUser], undefined);
       }
     }
 
