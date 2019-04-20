@@ -67,7 +67,7 @@ export default function createConversation(botEmulator: BotEmulator) {
 }
 
 function getConversation(
-  params: { conversationId: string; members: any[] },
+  params: { conversationId: string; members: any[]; mode: string },
   emulator: BotEmulator,
   endpoint: BotEndpoint
 ): Conversation {
@@ -85,7 +85,8 @@ function getConversation(
       emulator,
       endpoint,
       { id, name },
-      params.conversationId
+      params.conversationId,
+      params.mode
     );
   }
 

@@ -39,4 +39,5 @@ export interface StartConversationParams extends ConversationParameters {
   appId?: string;
   appPassword?: string;
   user?: User;
+  mode?: string;
 }

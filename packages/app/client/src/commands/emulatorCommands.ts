@@ -56,7 +56,12 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // Open a new emulator tabbed document
   commandRegistry.registerCommand(
     Emulator.NewLiveChat,
-    (endpoint: IEndpointService, focusExistingChat: boolean = false, conversationId: string) => {
+    (
+      endpoint: IEndpointService,
+      focusExistingChat: boolean = false,
+      conversationId: string,
+      mode: ChatActions.ChatMode = 'livechat'
+    ) => {
       const state = store.getState();
       let documentId: string;
 
@@ -72,7 +77,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
       if (!documentId) {
         documentId = uniqueId();
         const { currentUserId } = state.clientAwareSettings.users;
-        const action = ChatActions.newChat(documentId, 'livechat', {
+        const action = ChatActions.newChat(documentId, mode, {
           botId: 'bot',
           endpointId: endpoint.id,
           endpointUrl: endpoint.endpoint,

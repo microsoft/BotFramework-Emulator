@@ -40,7 +40,6 @@ import uniqueId from '../utils/uniqueId';
 
 import BotEndpoint from './botEndpoint';
 import Conversation from './conversation';
-
 /**
  * A set of conversations with a bot.
  */
@@ -52,9 +51,10 @@ export default class ConversationSet extends EventEmitter {
     botEmulator: BotEmulator,
     botEndpoint: BotEndpoint,
     user: User,
-    conversationId = uniqueId()
+    conversationId = uniqueId(),
+    mode: string = 'livechat'
   ): Conversation {
-    const conversation = new Conversation(botEmulator, botEndpoint, conversationId, user);
+    const conversation = new Conversation(botEmulator, botEndpoint, conversationId, user, mode);
     // This should always result in a livechat being opened
     // unless there is already a livechat or transcript queued
     // we add the "|livechat" string to the end of the conversationId
