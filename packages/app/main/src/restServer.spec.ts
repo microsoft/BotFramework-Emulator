@@ -119,6 +119,7 @@ describe('The restServer', () => {
     const mockConversation = {
       conversationId: '123',
       botEndpoint: { id: '456', url: 'https://localhost' },
+      mode: 'livechat',
     };
     await (restServer as any).onNewConversation(mockConversation);
     expect(remoteCallSpy).toHaveBeenCalledWith(
@@ -128,7 +129,8 @@ describe('The restServer', () => {
         id: '456',
       },
       false,
-      '123'
+      '123',
+      'livechat'
     );
     expect(reportSpy).toHaveBeenCalledWith('123', undefined);
 
