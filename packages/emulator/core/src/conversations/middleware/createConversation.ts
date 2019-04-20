@@ -35,6 +35,7 @@ import { ConversationParameters, ChannelAccount, ConversationAccount } from 'bot
 import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 
+import { ChatMode } from '@bfemulator/app-shared';
 import { BotEmulator } from '../../botEmulator';
 import BotEndpoint from '../../facility/botEndpoint';
 import Conversation from '../../facility/conversation';
@@ -67,7 +68,7 @@ export default function createConversation(botEmulator: BotEmulator) {
 }
 
 function getConversation(
-  params: { conversationId: string; members: any[]; mode: string },
+  params: { conversationId: string; members: any[]; mode: ChatMode },
   emulator: BotEmulator,
   endpoint: BotEndpoint
 ): Conversation {

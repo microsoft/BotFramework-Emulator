@@ -55,6 +55,7 @@
   "dependencies": {
     "@babel/runtime": "^7.1.5",
     "@bfemulator/sdk-shared": "^1.0.0",
+    "@bfemulator/app-shared": "^1.0.0",
     "botframework-connector": "^4.3.4",
     "botframework-schema": "^4.3.4",
     "debug": "^3.1.0",

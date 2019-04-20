@@ -34,6 +34,7 @@
 import { EventEmitter } from 'events';
 
 import { User } from '@bfemulator/sdk-shared';
+import { ChatMode } from '@bfemulator/app-shared';
 
 import { BotEmulator } from '../botEmulator';
 import uniqueId from '../utils/uniqueId';
@@ -52,7 +53,7 @@ export default class ConversationSet extends EventEmitter {
     botEndpoint: BotEndpoint,
     user: User,
     conversationId = uniqueId(),
-    mode: string = 'livechat'
+    mode: ChatMode = 'livechat'
   ): Conversation {
     const conversation = new Conversation(botEmulator, botEndpoint, conversationId, user, mode);
     // This should always result in a livechat being opened
