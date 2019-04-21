@@ -30,7 +30,9 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+import * as path from 'path';
 
+import * as electron from 'electron';
 import { BotInfo, getBotDisplayName, SharedConstants } from '@bfemulator/app-shared';
 import { BotConfigWithPath, BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
 import { BotConfiguration } from 'botframework-config';
@@ -180,4 +182,17 @@ export async function removeBotFromList(botPath: string): Promise<void> {
   store.dispatch(BotActions.load(bots));
   const { Commands } = SharedConstants;
   await mainWindow.commandService.remoteCall(Commands.Bot.SyncBotList, bots).catch();
+}
+
+export function getTranscriptsPath(activeBot, conversation): string {
+  if (conversation.mode === 'livechat-url') {
+    return path.join(electron.app.getPath('downloads'), './transcripts');
+  }
+
+  if (activeBot) {
+    const dirName = path.dirname(activeBot.path);
+    return path.join(dirName, './transcripts');
+  }
+
+  return '/';
 }
