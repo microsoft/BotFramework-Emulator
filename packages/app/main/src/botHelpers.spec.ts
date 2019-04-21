@@ -30,8 +30,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import * as electron from 'electron';
-
 import { BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
 import { SharedConstants } from '@bfemulator/app-shared';
 import { BotConfigWithPath } from '@bfemulator/sdk-shared';
