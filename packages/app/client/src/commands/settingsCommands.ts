@@ -43,6 +43,9 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
   commandRegistry.registerCommand(Settings.ReceiveGlobalSettings, async (settings: ClientAwareSettings) => {
     store.dispatch(clientAwareSettingsChanged(settings));
-    await commandRegistry.getCommand(SharedConstants.Commands.UI.SwitchDebugMode).handler(settings.debugMode);
+    const state = store.getState();
+    if (state.clientAwareSettings.debugMode !== settings.debugMode) {
+      await commandRegistry.getCommand(SharedConstants.Commands.UI.SwitchDebugMode).handler(settings.debugMode);
+    }
   });
 }
