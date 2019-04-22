@@ -30,7 +30,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
 import { BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
 import { SharedConstants } from '@bfemulator/app-shared';
 import { BotConfigWithPath } from '@bfemulator/sdk-shared';
@@ -47,6 +46,7 @@ import {
   promptForSecretAndRetry,
   loadBotWithRetry,
   saveBot,
+  getTranscriptsPath,
 } from './botHelpers';
 
 jest.mock('./botData/store', () => ({
@@ -77,6 +77,12 @@ jest.mock('./main', () => ({
     commandService: {
       remoteCall: () => Promise.resolve(true),
     },
+  },
+}));
+
+jest.mock('electron', () => ({
+  app: {
+    getPath: () => '/downloads',
   },
 }));
 
@@ -227,6 +233,18 @@ describe('The botHelpers', () => {
         { displayName: 'name3', path: 'path3', secret: '' },
         { path: 'path4', displayName: 'name4', secret: 'ffsafsdfdsa' },
       ]);
+    });
+  });
+
+  describe('getTranscriptsPath()', async () => {
+    it('should return a value directory path with an active bot', async () => {
+      const result = getTranscriptsPath({ path: '/foo/bar' }, { mode: 'livechat' });
+      expect(result).toBe('/foo/transcripts');
+    });
+
+    it('should return a value directory path with a bot opened via url', async () => {
+      const result = getTranscriptsPath({ path: '/foo/bar' }, { mode: 'livechat-url' });
+      expect(result).toBe('/downloads/transcripts');
     });
   });
 });
