@@ -33,6 +33,8 @@
 import * as path from 'path';
 
 import * as electron from 'electron';
+
+import { Conversation } from '@bfemulator/emulator-core';
 import { BotInfo, getBotDisplayName, SharedConstants } from '@bfemulator/app-shared';
 import { BotConfigWithPath, BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
 import { BotConfiguration } from 'botframework-config';
@@ -184,7 +186,7 @@ export async function removeBotFromList(botPath: string): Promise<void> {
   await mainWindow.commandService.remoteCall(Commands.Bot.SyncBotList, bots).catch();
 }
 
-export function getTranscriptsPath(activeBot, conversation): string {
+export function getTranscriptsPath(activeBot: BotConfigWithPath, conversation: Conversation): string {
   if (conversation.mode === 'livechat-url') {
     return path.join(electron.app.getPath('downloads'), './transcripts');
   }
