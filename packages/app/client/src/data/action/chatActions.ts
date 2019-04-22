@@ -124,7 +124,7 @@ export interface ChatAction<T = any> extends Action {
   payload: T;
 }
 
-type ChatMode = 'livechat' | 'transcript';
+export type ChatMode = 'livechat' | 'transcript' | 'livechat-url';
 
 export function inspectorChanged(inspectorWebView: HTMLWebViewElement): ChatAction<ActiveInspectorChangedPayload> {
   return {
