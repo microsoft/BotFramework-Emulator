@@ -218,6 +218,9 @@ html {
 
   /* Scrollbar */
   --scrollbar-color: var(--neutral-6);
+
+  /* accessory buttons */
+  --accessory-button-color: var(--neutral-5);
 }
 
 .dialog {

@@ -217,4 +217,7 @@ html {
 
   /* Scrollbar */
   --scrollbar-color: var(--neutral-6);
+
+  /* Inspector accessory buttons */
+  --accessory-button-color: var(--s-button-color);
 }
