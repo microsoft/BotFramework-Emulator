@@ -6,10 +6,10 @@
 .detail-panel {
   height: 100%;
 
-  .accessory-button {
-    height: 100%;
+  button.accessory-button {
+    height: calc(100% - 5px);
     white-space: nowrap;
-    color: var(--neutral-5);
+    color: var(--accessory-button-color);
     background-color: transparent;
     font-weight: normal;
 
@@ -27,7 +27,7 @@
     }
 
     &:active {
-      color: var(--neutral-1);
+      color: var(--accessory-button-color);
     }
 
     &:disabled {

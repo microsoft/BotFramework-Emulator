@@ -217,6 +217,9 @@ html {
 
   /* Scrollbar */
   --scrollbar-color: var(--neutral-1);
+
+  /* Inspector accessory buttons */
+  --accessory-button-color: var(--neutral-5);
 }
 
 .dialog .ms-Button-label {
