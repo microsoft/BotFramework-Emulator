@@ -34,7 +34,8 @@
 import { SharedConstants } from '@bfemulator/app-shared';
 import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 
-import { emulator } from '../emulator';
+import { Emulator } from '../emulator';
+import { kill } from '../ngrok';
 
 /** Registers ngrok commands */
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
@@ -45,6 +46,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   commandRegistry.registerCommand(
     Commands.Reconnect,
     async (): Promise<any> => {
+      const emulator = Emulator.getInstance();
       try {
         await emulator.ngrok.recycle();
         emulator.ngrok.broadcastNgrokReconnected();
@@ -53,4 +55,6 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
       }
     }
   );
+
+  commandRegistry.registerCommand(Commands.KillProcess, kill);
 }

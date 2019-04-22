@@ -32,6 +32,7 @@
 //
 
 import { ConversationService, headers as headersInstance } from './conversationService';
+
 let mockFetchArgs: MockFetch;
 
 (global as any).fetch = (function() {
@@ -166,7 +167,7 @@ describe('The ConversationService should call "fetch" with the expected paramete
       endpoint: 'http://endpoint',
     });
     const { url, opts } = mockFetchArgs;
-    expect(url).toBe('http://localhost/v3/conversations?botEndpoint=http://endpoint&msaAppId=123&msaPassword=321');
+    expect(url).toBe('http://localhost/v3/conversations');
 
     const { body, headers, method } = opts;
     expect(headers === headers).toBeTruthy();
@@ -174,6 +175,9 @@ describe('The ConversationService should call "fetch" with the expected paramete
     expect(body).toBeTruthy();
     expect(headers).toEqual({
       'Content-Type': 'application/json',
+      'X-Emulator-AppId': '123',
+      'X-Emulator-AppPassword': '321',
+      'X-Emulator-BotEndpoint': 'http://endpoint',
     });
   });
 });

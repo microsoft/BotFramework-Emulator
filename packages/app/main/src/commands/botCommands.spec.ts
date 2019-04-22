@@ -45,7 +45,7 @@ import { State } from '../botData/state';
 import * as store from '../botData/store';
 import { getStore } from '../botData/store';
 import * as helpers from '../botHelpers';
-import { emulator } from '../emulator';
+import { Emulator } from '../emulator';
 import { mainWindow } from '../main';
 import { botProjectFileWatcher, chatWatcher, transcriptsWatcher } from '../watchers';
 import { TelemetryService } from '../telemetry';
@@ -89,21 +89,23 @@ jest.mock('../botHelpers', () => ({
 jest.mock('../utils/ensureStoragePath', () => ({
   ensureStoragePath: () => '',
 }));
-
-jest.mock('../emulator', () => ({
-  emulator: {
-    framework: {
-      server: {
-        botEmulator: {
-          facilities: {
-            endpoints: {
-              reset: () => null,
-              push: () => null,
-            },
+const mockEmulator = {
+  framework: {
+    server: {
+      botEmulator: {
+        facilities: {
+          endpoints: {
+            reset: () => null,
+            push: () => null,
           },
         },
       },
     },
+  },
+};
+jest.mock('../emulator', () => ({
+  Emulator: {
+    getInstance: () => mockEmulator,
   },
 }));
 const mockCommandRegistry = new CommandRegistryImpl();
@@ -201,6 +203,7 @@ describe('The botCommands', () => {
   });
 
   it('should restart the endpoint service', async () => {
+    const emulator = Emulator.getInstance();
     store.getStore().dispatch(setActive(mockBot));
     const resetSpy = jest.spyOn(emulator.framework.server.botEmulator.facilities.endpoints, 'reset');
     const pushSpy = jest.spyOn(emulator.framework.server.botEmulator.facilities.endpoints, 'push');

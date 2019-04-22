@@ -32,14 +32,13 @@
 //
 
 import { SharedConstants } from '@bfemulator/app-shared';
-import { BotEmulator, Conversation } from '@bfemulator/emulator-core';
+import { BotEmulator, Conversation, ConversationSet } from '@bfemulator/emulator-core';
 import { LogLevel, networkRequestItem, networkResponseItem, textItem } from '@bfemulator/sdk-shared';
 import { IEndpointService } from 'botframework-config';
 import { createServer, Request, Response, Route, Server } from 'restify';
 import CORS from 'restify-cors-middleware';
-import { ConversationSet } from '@bfemulator/emulator-core';
 
-import { emulator } from './emulator';
+import { Emulator } from './emulator';
 import { mainWindow } from './main';
 
 interface ConversationAwareRequest extends Request {
@@ -54,7 +53,7 @@ export class RestServer {
   private _botEmulator: BotEmulator;
   public get botEmulator(): BotEmulator {
     if (!this._botEmulator) {
-      this._botEmulator = new BotEmulator(botUrl => emulator.ngrok.getServiceUrl(botUrl), {
+      this._botEmulator = new BotEmulator(botUrl => Emulator.getInstance().ngrok.getServiceUrl(botUrl), {
         fetch,
         loggerOrLogService: mainWindow.logService,
       });
@@ -66,7 +65,14 @@ export class RestServer {
   constructor() {
     const cors = CORS({
       origins: ['*'],
-      allowHeaders: ['authorization', 'x-requested-with', 'x-ms-bot-agent'],
+      allowHeaders: [
+        'authorization',
+        'x-requested-with',
+        'x-ms-bot-agent',
+        'x-emulator-botendpoint',
+        'x-emulator-appid',
+        'x-emulator-apppassword',
+      ],
       exposeHeaders: [],
     });
 
@@ -133,6 +139,7 @@ export class RestServer {
     // can also mean "restart".
     const {
       botEndpoint: { id, botUrl },
+      mode,
     } = conversation;
 
     await mainWindow.commandService.remoteCall(
@@ -142,9 +149,10 @@ export class RestServer {
         endpoint: botUrl,
       } as IEndpointService,
       hasLiveChat(conversationId, this.botEmulator.facilities.conversations),
-      conversationId
+      conversationId,
+      mode
     );
-    await emulator.report(conversationId, botUrl);
+    await Emulator.getInstance().report(conversationId, botUrl);
   };
 }
 

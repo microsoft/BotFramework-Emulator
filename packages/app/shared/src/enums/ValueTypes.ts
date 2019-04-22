@@ -30,12 +30,10 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
-import { Activity } from './activity';
-
-export interface TraceActivity extends Activity {
-  name?: string;
-  value?: any;
-  label?: string;
-  valueType?: string;
+export enum ValueTypes {
+  BotState = 'https://www.botframework.com/schemas/botState',
+  Debug = 'https://www.botframework.com/schemas/debug',
+  Diff = 'https://www.botframework.com/schemas/diff',
+  Error = 'https://www.botframework.com/schemas/error',
+  Activity = 'https://www.botframework.com/schemas/activity',
 }

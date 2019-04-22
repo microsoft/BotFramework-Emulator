@@ -30,15 +30,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-export * from './activity';
-export * from './contactRelationUpdate';
 export * from './conversationHistory';
-export * from './conversationParameters';
-export * from './conversationUpdate';
 export * from './etagObject';
-export * from './event';
-export * from './generic';
-export * from './invoke';
-export * from './message';
 export * from './startConversationParams';
-export * from './trace';

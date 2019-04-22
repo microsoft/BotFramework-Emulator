@@ -6,25 +6,37 @@
 .detail-panel {
   height: 100%;
 
-  & .accessory-button:disabled {
-    cursor: default;
-    color: var(--neutral-7);
-  }
+  .accessory-button {
+    height: 100%;
+    white-space: nowrap;
+    color: var(--neutral-5);
+    background-color: transparent;
+    font-weight: normal;
 
-  & .accessory-button:active {
-    color: var(--neutral-1);
-  }
-
-  & .accessories {
-    & .accessory-button {
-      height: 30px;
-      white-space: nowrap;
-      display: flex;
-      color: var(--neutral-5);
+    &:hover:not([disabled]), &[selected], &[aria-selected] {
       background-color: transparent;
-      & .accessory-button-icon {
-        width: 30px;
+      position: relative;
+      &:after {
+        content:'';
+        border: 1px solid var(--p-button-bg);
+        position: absolute;
+        top: 100%;
+        right: 12px;
+        left: 12px;
       }
+    }
+
+    &:active {
+      color: var(--neutral-1);
+    }
+
+    &:disabled {
+      cursor: default;
+      color: var(--neutral-7);
+    }
+
+    .accessory-button-icon {
+      width: 30px;
     }
   }
 }

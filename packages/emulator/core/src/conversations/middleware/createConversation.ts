@@ -31,9 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ConversationParameters } from '@bfemulator/sdk-shared';
+import { ConversationParameters, ChannelAccount, ConversationAccount } from 'botframework-schema';
 import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
+import { ChatMode } from '@bfemulator/app-shared';
 
 import { BotEmulator } from '../../botEmulator';
 import BotEndpoint from '../../facility/botEndpoint';
@@ -47,7 +48,7 @@ import { validateCreateConversationRequest } from './errorCondition/createConver
 export default function createConversation(botEmulator: BotEmulator) {
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     const botEndpoint: BotEndpoint = (req as any).botEndpoint;
-    const conversationParameters = req.body as ConversationParameters;
+    const conversationParameters = req.body;
     const error = validateCreateConversationRequest(conversationParameters, botEndpoint);
 
     if (error) {
@@ -66,7 +67,11 @@ export default function createConversation(botEmulator: BotEmulator) {
   };
 }
 
-function getConversation(params: ConversationParameters, emulator: BotEmulator, endpoint: BotEndpoint): Conversation {
+function getConversation(
+  params: { conversationId: string; members: any[]; mode: ChatMode },
+  emulator: BotEmulator,
+  endpoint: BotEndpoint
+): Conversation {
   let conversation: Conversation;
 
   if (params.conversationId) {
@@ -81,7 +86,8 @@ function getConversation(params: ConversationParameters, emulator: BotEmulator, 
       emulator,
       endpoint,
       { id, name },
-      params.conversationId
+      params.conversationId,
+      params.mode
     );
   }
 
@@ -96,9 +102,9 @@ function getActivityId(
   const { activity, members } = params;
   if (activity) {
     // set routing information for new conversation
-    activity.conversation = { id: conversation.conversationId };
-    activity.from = { id: endpoint.botId };
-    activity.recipient = { id: members[0].id };
+    activity.conversation = { id: conversation.conversationId } as ConversationAccount;
+    activity.from = { id: endpoint.botId } as ChannelAccount;
+    activity.recipient = { id: members[0].id } as ChannelAccount;
 
     const response = conversation.postActivityToUser(activity);
 

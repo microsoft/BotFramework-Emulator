@@ -33,36 +33,55 @@
 
 import { LogEntry } from '@bfemulator/sdk-shared';
 import { Action } from 'redux';
+import { Activity } from 'botframework-schema';
 
 export enum ChatActions {
   activeInspectorChanged = 'CHAT/INSPECTOR/CHANGED',
   newChat = 'CHAT/DOCUMENT/NEW',
   openChat = 'CHAT/DOCUMENT/OPEN',
-  closeChat = 'CHAT/DOCUMENT/CLOSE',
+  closeConversation = 'CHAT/CLOSE',
+  closeDocument = 'CHAT/DOCUMENT/CLOSE',
   newConversation = 'CHAT/CONVERSATION/NEW',
   appendLog = 'CHAT/LOG/APPEND',
   clearLog = 'CHAT/LOG/CLEAR',
   setInspectorObjects = 'CHAT/INSPECTOR/OBJECTS/SET',
+  setHighlightedObjects = 'CHAT/HIGHLIGHTED/OBJECTS/SET',
   addTranscript = 'CHAT/TRANSCRIPT/ADD',
   clearTranscripts = 'CHAT/TRANSCRIPT/CLEAR',
   removeTranscript = 'CHAT/TRANSCRIPT/REMOVE',
   updateChat = 'CHAT/DOCUMENT/UPDATE',
+  showContextMenuForActivity = 'CHAT/CONTEXT_MENU/SHOW',
+  webSpeechFactoryUpdated = 'CHAT/SPEECH/TOKEN/RETRIEVED',
+  webChatStoreUpdated = 'CHAT/STORE/UPDATED',
+  updatePendingSpeechTokenRetrieval = 'CHAT/SPEECH/TOKEN/PENDING/UPDATE',
 }
 
 export interface ActiveInspectorChangedPayload {
   inspectorWebView: HTMLWebViewElement;
 }
 
-export interface NewChatAction {
-  type: ChatActions.newChat;
-  payload: {
-    [propName: string]: any;
-    documentId: string;
-    mode: ChatMode;
-  };
+export interface NewChatPayload {
+  [propName: string]: any;
+
+  documentId: string;
+  mode: ChatMode;
 }
 
-export interface CloseChatPayload {
+export interface WebSpeechFactoryPayload {
+  documentId: string;
+  factory: () => any;
+}
+
+export interface WebChatStorePayload {
+  documentId: string;
+  store: any;
+}
+
+export interface PendingSpeechTokenRetrievalPayload {
+  pending: boolean;
+}
+
+export interface DocumentIdPayload {
   documentId: string;
 }
 
@@ -85,6 +104,11 @@ export interface SetInspectorObjectsPayload {
   objs: any;
 }
 
+export interface SetHighlightedObjectsPayload {
+  documentId: string;
+  objs: Activity[];
+}
+
 export interface AddTranscriptPayload extends RemoveTranscriptPayload {}
 
 export interface RemoveTranscriptPayload {
@@ -100,7 +124,7 @@ export interface ChatAction<T = any> extends Action {
   payload: T;
 }
 
-type ChatMode = 'livechat' | 'transcript';
+export type ChatMode = 'livechat' | 'transcript' | 'livechat-url';
 
 export function inspectorChanged(inspectorWebView: HTMLWebViewElement): ChatAction<ActiveInspectorChangedPayload> {
   return {
@@ -134,7 +158,28 @@ export function removeTranscript(filename: string): ChatAction<RemoveTranscriptP
   };
 }
 
-export function newDocument(documentId: string, mode: ChatMode, additionalData?: object): NewChatAction {
+export function webSpeechFactoryUpdated(documentId: string, factory: () => any): ChatAction<WebSpeechFactoryPayload> {
+  return {
+    type: ChatActions.webSpeechFactoryUpdated,
+    payload: { documentId, factory },
+  };
+}
+
+export function webChatStoreUpdated(documentId: string, store: any): ChatAction<WebChatStorePayload> {
+  return {
+    type: ChatActions.webChatStoreUpdated,
+    payload: { documentId, store },
+  };
+}
+
+export function updatePendingSpeechTokenRetrieval(pending: boolean): ChatAction<PendingSpeechTokenRetrievalPayload> {
+  return {
+    type: ChatActions.updatePendingSpeechTokenRetrieval,
+    payload: { pending },
+  };
+}
+
+export function newChat(documentId: string, mode: ChatMode, additionalData?: object): ChatAction<NewChatPayload> {
   return {
     type: ChatActions.newChat,
     payload: {
@@ -173,9 +218,18 @@ export function newDocument(documentId: string, mode: ChatMode, additionalData?:
   };
 }
 
-export function closeDocument(documentId: string): ChatAction<CloseChatPayload> {
+export function closeDocument(documentId: string): ChatAction<DocumentIdPayload> {
   return {
-    type: ChatActions.closeChat,
+    type: ChatActions.closeDocument,
+    payload: {
+      documentId,
+    },
+  };
+}
+
+export function closeConversation(documentId: string): ChatAction<DocumentIdPayload> {
+  return {
+    type: ChatActions.closeConversation,
     payload: {
       documentId,
     },
@@ -222,6 +276,20 @@ export function setInspectorObjects(documentId: string, objs: any): ChatAction<S
   };
 }
 
+export function setHighlightedObjects(
+  documentId: string,
+  objs: Activity | Activity[]
+): ChatAction<SetHighlightedObjectsPayload> {
+  objs = Array.isArray(objs) ? objs : [objs];
+  return {
+    type: ChatActions.setHighlightedObjects,
+    payload: {
+      documentId,
+      objs,
+    },
+  };
+}
+
 export function updateChat(documentId: string, updatedValues: any): ChatAction<UpdateChatPayload> {
   return {
     type: ChatActions.updateChat,
@@ -229,5 +297,12 @@ export function updateChat(documentId: string, updatedValues: any): ChatAction<U
       documentId,
       updatedValues,
     },
+  };
+}
+
+export function showContextMenuForActivity(activity: Partial<Activity>): ChatAction<Partial<Activity>> {
+  return {
+    type: ChatActions.showContextMenuForActivity,
+    payload: activity,
   };
 }

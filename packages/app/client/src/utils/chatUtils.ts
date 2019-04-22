@@ -30,14 +30,33 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+import { IEndpointService } from 'botframework-config/lib/schema';
+import { Activity } from 'botframework-schema';
+import { ValueTypes } from '@bfemulator/app-shared';
 
-import { ChannelAccount } from '../account';
+export function areActivitiesEqual(a: Activity, b: Activity): boolean {
+  if (!a || !b) {
+    return false;
+  }
+  return a.id === b.id;
+}
 
-import { Activity } from './activity';
+export function getActivityTargets(activities: Activity[]): Activity[] {
+  return activities.reduce((targets: Activity[], activity: Activity) => {
+    // In the case of trace activities with valueType === ValueTypes.Activity,
+    // the log panel gives us the entire trace while
+    // WebChat gives us the nested message activity.
+    // Determine if we should be targeting the nested
+    // activity within the selected activity.
+    if (activity && activity.valueType === ValueTypes.Activity) {
+      targets.push(activity.value as Activity);
+    } else {
+      targets.push(activity);
+    }
+    return targets;
+  }, []);
+}
 
-export interface ConversationUpdateActivity extends Activity {
-  historyDisclosed?: boolean;
-  membersAdded?: ChannelAccount[];
-  membersRemoved?: ChannelAccount[];
-  topicName?: string;
+export function isSpeechEnabled(endpoint: IEndpointService): boolean {
+  return !!(endpoint && endpoint.appId && endpoint.appPassword);
 }

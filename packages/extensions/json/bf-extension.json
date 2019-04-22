@@ -11,7 +11,8 @@
         },
         "summaryText": [
           "attachments.0.contentType",
-          "text"
+          "text",
+          "label"
         ]
       }
     ]

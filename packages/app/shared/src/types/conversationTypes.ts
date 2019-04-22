@@ -39,3 +39,5 @@ export interface Conversation extends ETagObject {
   expires_in?: number;
   streamUrl?: string;
 }
+
+export declare type ChatMode = 'livechat' | 'livechat-url' | 'transcript';

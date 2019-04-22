@@ -30,10 +30,12 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
-import { newNotification, SharedConstants } from '@bfemulator/app-shared';
-import { Activity, CommandRegistryImpl, isLocalHostUrl, uniqueId } from '@bfemulator/sdk-shared';
+// import base64Url from 'base64url';
+// import { createDirectLine } from 'botframework-webchat';
+import { DebugMode, newNotification, SharedConstants } from '@bfemulator/app-shared';
+import { CommandRegistryImpl, isLocalHostUrl, uniqueId } from '@bfemulator/sdk-shared';
 import { IEndpointService } from 'botframework-config/lib/schema';
+import { Activity } from 'botframework-schema';
 
 import * as Constants from '../constants';
 import * as ChatActions from '../data/action/chatActions';
@@ -54,7 +56,12 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // Open a new emulator tabbed document
   commandRegistry.registerCommand(
     Emulator.NewLiveChat,
-    (endpoint: IEndpointService, focusExistingChat: boolean = false, conversationId: string) => {
+    (
+      endpoint: IEndpointService,
+      focusExistingChat: boolean = false,
+      conversationId: string,
+      mode: ChatActions.ChatMode = 'livechat'
+    ) => {
       const state = store.getState();
       let documentId: string;
 
@@ -70,15 +77,23 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
       if (!documentId) {
         documentId = uniqueId();
         const { currentUserId } = state.clientAwareSettings.users;
-        store.dispatch(
-          ChatActions.newDocument(documentId, 'livechat', {
-            botId: 'bot',
-            endpointId: endpoint.id,
-            endpointUrl: endpoint.endpoint,
-            userId: currentUserId,
-            conversationId,
-          })
-        );
+        const action = ChatActions.newChat(documentId, mode, {
+          botId: 'bot',
+          endpointId: endpoint.id,
+          endpointUrl: endpoint.endpoint,
+          userId: currentUserId,
+          conversationId,
+          // directLine: createDirectLine({
+          //   secret: base64Url.encode(JSON.stringify({ conversationId, endpointId: endpoint.id })),
+          //   domain: `${ state.clientAwareSettings.serverUrl }/v3/directline`,
+          //   webSocket: false,
+          // })
+        });
+        if (state.clientAwareSettings.debugMode === DebugMode.Sidecar) {
+          action.payload.ui.horizontalSplitter[0].percentage = 75;
+          action.payload.ui.verticalSplitter[0].percentage = 25;
+        }
+        store.dispatch(action);
       }
 
       if (!isLocalHostUrl(endpoint.endpoint)) {
@@ -105,7 +120,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
       const { currentUserId } = store.getState().clientAwareSettings.users;
       if (!tabGroup) {
         store.dispatch(
-          ChatActions.newDocument(filePath, 'transcript', {
+          ChatActions.newChat(filePath, 'transcript', {
             ...additionalData,
             botId: 'bot',
             userId: currentUserId,
@@ -165,7 +180,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
         store.dispatch(ChatActions.closeDocument(filePath));
       }
       store.dispatch(
-        ChatActions.newDocument(filePath, 'transcript', {
+        ChatActions.newChat(filePath, 'transcript', {
           ...additionalData,
           botId: 'bot',
           userId: currentUserId,

@@ -46,6 +46,7 @@ const defaultProps = {
   activity: { text: 'Cool message' },
   isSelected: false,
   onClick: jest.fn(),
+  onKeyDown: jest.fn(),
 };
 
 function render(overrides: any = {}, children: ReactNode = <div className="child">child</div>): ReactWrapper {
@@ -59,9 +60,11 @@ function render(overrides: any = {}, children: ReactNode = <div className="child
 
 describe('<ActivityWrapper />', () => {
   let onClick;
+  let onKeyDown;
 
   beforeEach(() => {
     onClick = jest.fn();
+    onKeyDown = jest.fn();
   });
 
   it('adds selected class', () => {
@@ -74,7 +77,7 @@ describe('<ActivityWrapper />', () => {
       const component = render({ onClick });
       component.find('.child').simulate('click');
 
-      expect(onClick).toHaveBeenCalledWith(defaultProps.activity);
+      expect(onClick).toHaveBeenCalled();
     });
 
     it('does not invoke onClick when nested in an interactive element', () => {
@@ -94,13 +97,12 @@ describe('<ActivityWrapper />', () => {
 
   describe('using the keyboard to select an activity', () => {
     it('invokes onClick when not nested in an interactive element', () => {
-      const component = render({ onClick });
+      const component = render({ onKeyDown });
       component.find('.child').simulate('keyDown', { key: ' ' });
       component.find('.child').simulate('keyDown', { key: 'Enter' });
       component.find('.child').simulate('keyDown', { key: 'Backspace' });
 
-      expect(onClick).toHaveBeenCalledWith(defaultProps.activity);
-      expect(onClick).toHaveBeenCalledTimes(2);
+      expect(onKeyDown).toHaveBeenCalledTimes(2);
     });
 
     it('does not invoke onClick when nested in an interactive element', () => {

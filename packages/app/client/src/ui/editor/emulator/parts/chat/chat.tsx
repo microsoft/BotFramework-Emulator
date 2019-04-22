@@ -30,91 +30,78 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+import { DebugMode, ValueTypes } from '@bfemulator/app-shared';
+import { User } from '@bfemulator/sdk-shared';
+import { Activity, ActivityTypes } from 'botframework-schema';
+import ReactWebChat from 'botframework-webchat';
 import * as React from 'react';
-import { Component } from 'react';
-import { Activity, User } from '@bfemulator/sdk-shared';
-import { IEndpointService } from 'botframework-config/lib/schema';
-import ReactWebChat, { createCognitiveServicesBingSpeechPonyfillFactory } from 'botframework-webchat';
+import { Component, KeyboardEvent, MouseEvent, ReactNode } from 'react';
+import { PrimaryButton } from '@bfemulator/ui-react';
 
-import { CommandServiceImpl } from '../../../../../platform/commands/commandServiceImpl';
 import { EmulatorMode } from '../../emulator';
+import { areActivitiesEqual, getActivityTargets } from '../../../../../utils';
 
-import * as styles from './chat.scss';
 import ActivityWrapper from './activityWrapper';
+import * as styles from './chat.scss';
 import webChatStyleOptions from './webChatTheme';
 
+interface PartialDocument {
+  directLine: any;
+  botId: string;
+  inspectorObjects: Activity[];
+  highlightedObjects: Activity[];
+  documentId: string;
+}
+
 export interface ChatProps {
-  document: any;
-  endpoint: IEndpointService;
+  document: PartialDocument;
   mode: EmulatorMode;
-  onStartConversation: any;
+  debugMode: DebugMode;
   currentUser: User;
-  currentUserId: string;
   locale: string;
-  selectedActivity: Activity | null;
-  updateSelectedActivity: (activity: Activity) => void;
+  webSpeechPonyfillFactory?: () => any;
+  pendingSpeechTokenRetrieval?: boolean;
+  showContextMenuForActivity: (activity: Partial<Activity>) => void;
+  setInspectorObject: (documentId: string, activity: Partial<Activity & { showInInspector: true }>) => void;
+  webchatStore: any;
 }
 
 interface ChatState {
-  waitForSpeechToken: boolean;
-  webSpeechPonyfillFactory: any;
-}
-
-function isCardSelected(selectedActivity: Activity | null, activity: Activity): boolean {
-  return Boolean(selectedActivity && activity.id && selectedActivity.id === activity.id);
-}
-
-function isSpeechEnabled(endpoint: IEndpointService | null): boolean {
-  return Boolean(endpoint && endpoint.appId && endpoint.appPassword);
-}
-
-export async function getSpeechToken(endpoint: IEndpointService, refresh: boolean = false): Promise<string | void> {
-  if (!endpoint) {
-    // eslint-disable-next-line no-console
-    console.warn('No endpoint for this chat, cannot fetch speech token.');
-    return;
-  }
-
-  const command = refresh ? 'speech-token:refresh' : 'speech-token:get';
-
-  try {
-    return await CommandServiceImpl.remoteCall(command, endpoint.id);
-  } catch (err) {
-    // eslint-disable-next-line no-console
-    console.error(err);
-  }
+  selectedActivity?: Activity;
+  highlightedActivities?: Activity[];
+  document?: PartialDocument;
 }
 
 export class Chat extends Component<ChatProps, ChatState> {
-  constructor(props: ChatProps, context: {}) {
-    super(props, context);
+  public state = { waitForSpeechToken: false } as ChatState;
+  private activityMap: { [activityId: string]: Activity };
 
-    this.state = {
-      waitForSpeechToken: isSpeechEnabled(props.endpoint),
-      webSpeechPonyfillFactory: null,
+  public static getDerivedStateFromProps(newProps: ChatProps): ChatState {
+    let selectedActivity =
+      'inspectorObjects' in newProps.document ? newProps.document.inspectorObjects[0] : ({} as Activity);
+    // The log panel gives us the entire trace while
+    // WebChat gives us the nested activity. Determine
+    // if we should be targeting the nested activity
+    // within the selected activity.
+    if (selectedActivity && selectedActivity.valueType === ValueTypes.Activity) {
+      selectedActivity = selectedActivity.value;
+    }
+    const highlightedActivities = getActivityTargets([
+      ...(newProps.document.highlightedObjects || []),
+      selectedActivity,
+    ]);
+    return {
+      document: newProps.document,
+      selectedActivity,
+      highlightedActivities,
     };
   }
 
-  public async componentDidMount() {
-    if (this.state.waitForSpeechToken) {
-      const speechToken = await getSpeechToken(this.props.endpoint);
-
-      if (speechToken) {
-        const webSpeechPonyfillFactory = await createCognitiveServicesBingSpeechPonyfillFactory({
-          authorizationToken: speechToken,
-        });
-
-        this.setState({ webSpeechPonyfillFactory, waitForSpeechToken: false });
-      } else {
-        this.setState({ waitForSpeechToken: false });
-      }
-    }
-  }
-
   public render() {
-    const { currentUser, currentUserId, document, locale, mode } = this.props;
+    this.activityMap = {};
+    const { currentUser, document, locale, mode, debugMode, webchatStore } = this.props;
 
-    if (this.state.waitForSpeechToken) {
+    if (this.props.pendingSpeechTokenRetrieval) {
       return <div className={styles.disconnected}>Connecting...</div>;
     }
 
@@ -123,11 +110,12 @@ export class Chat extends Component<ChatProps, ChatState> {
         id: document.botId || 'bot',
         name: 'Bot',
       };
-      const isDisabled = mode === 'transcript';
+      const isDisabled = mode === 'transcript' || debugMode === DebugMode.Sidecar;
 
       return (
         <div className={styles.chat}>
           <ReactWebChat
+            store={webchatStore}
             activityMiddleware={this.createActivityMiddleware}
             bot={bot}
             directLine={document.directLine}
@@ -135,9 +123,9 @@ export class Chat extends Component<ChatProps, ChatState> {
             key={document.directLine.token}
             locale={locale}
             styleOptions={{ ...webChatStyleOptions, hideSendBox: isDisabled }}
-            userID={currentUserId}
+            userID={currentUser.id}
             username={currentUser.name || 'User'}
-            webSpeechPonyfillFactory={this.state.webSpeechPonyfillFactory}
+            webSpeechPonyfillFactory={this.props.webSpeechPonyfillFactory}
           />
         </div>
       );
@@ -146,19 +134,102 @@ export class Chat extends Component<ChatProps, ChatState> {
     return <div className={styles.disconnected}>Not Connected</div>;
   }
 
-  private createActivityMiddleware = () => next => card => children => {
-    if (/(trace|endOfConversation)/.test(card.activity.type)) {
-      return null;
-    }
-
+  private activityWrapper(next, card, children): ReactNode {
     return (
       <ActivityWrapper
         activity={card.activity}
-        onClick={this.props.updateSelectedActivity}
-        isSelected={isCardSelected(this.props.selectedActivity, card.activity)}
+        data-activity-id={card.activity.id}
+        onClick={this.onItemRendererClick}
+        onKeyDown={this.onItemRendererKeyDown}
+        isSelected={this.shouldBeSelected(card.activity)}
       >
         {next(card)(children)}
       </ActivityWrapper>
     );
+  }
+
+  private createActivityMiddleware = () => next => card => children => {
+    const { valueType } = card.activity;
+
+    this.activityMap[card.activity.id] = valueType === ValueTypes.Activity ? card.activity.value : card.activity;
+
+    switch (card.activity.type) {
+      case ActivityTypes.Trace:
+        return this.renderTraceActivity(next, card, children);
+
+      case ActivityTypes.EndOfConversation:
+        return null;
+
+      default:
+        return this.activityWrapper(next, card, children);
+    }
+  };
+
+  private renderTraceActivity(next, card, children): ReactNode {
+    if (this.props.debugMode !== DebugMode.Sidecar) {
+      return null;
+    }
+    const { valueType } = card.activity; // activities are nested
+
+    if (valueType === ValueTypes.Activity) {
+      const messageActivity = card.activity.value;
+      return (
+        <ActivityWrapper
+          activity={messageActivity}
+          data-activity-id={card.activity.id}
+          onKeyDown={this.onItemRendererKeyDown}
+          onClick={this.onItemRendererClick}
+          onContextMenu={this.onContextMenu}
+          isSelected={this.shouldBeSelected(messageActivity)}
+        >
+          {next({ activity: messageActivity, timestampClassName: 'transcript-timestamp' })(children)}
+        </ActivityWrapper>
+      );
+    } else if (valueType === ValueTypes.BotState) {
+      return (
+        <PrimaryButton
+          className={styles.botStateObject}
+          data-activity-id={card.activity.id}
+          onKeyDown={this.onItemRendererKeyDown}
+          onClick={this.onItemRendererClick}
+          onContextMenu={this.onContextMenu}
+          aria-selected={this.shouldBeSelected(card.activity)}
+        >
+          Bot State
+        </PrimaryButton>
+      );
+    }
+    return null;
+  }
+
+  protected updateSelectedActivity(id: string): void {
+    const selectedActivity: Activity & { showInInspector?: boolean } = this.activityMap[id];
+    this.setState({ selectedActivity });
+    this.props.setInspectorObject(this.props.document.documentId, { ...selectedActivity, showInInspector: true });
+  }
+
+  private shouldBeSelected(subject: Activity): boolean {
+    return this.state.highlightedActivities.some(activity => areActivitiesEqual(activity, subject));
+  }
+
+  private onItemRendererClick = (event: MouseEvent<HTMLDivElement | HTMLButtonElement>): void => {
+    const { activityId } = (event.currentTarget as any).dataset;
+    this.updateSelectedActivity(activityId);
+  };
+
+  private onItemRendererKeyDown = (event: KeyboardEvent<HTMLDivElement | HTMLButtonElement>): void => {
+    if (event.key !== ' ' && event.key !== 'Enter') {
+      return;
+    }
+    const { activityId } = (event.currentTarget as any).dataset;
+    this.updateSelectedActivity(activityId);
+  };
+
+  private onContextMenu = (event: MouseEvent<HTMLDivElement | HTMLButtonElement>): void => {
+    const { activityId } = (event.currentTarget as any).dataset;
+    const activity = this.activityMap[activityId];
+
+    this.updateSelectedActivity(activityId);
+    this.props.showContextMenuForActivity(activity);
   };
 }

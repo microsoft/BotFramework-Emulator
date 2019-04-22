@@ -34,27 +34,28 @@
 import { EventEmitter } from 'events';
 
 import { User } from '@bfemulator/sdk-shared';
+import { ChatMode } from '@bfemulator/app-shared';
 
 import { BotEmulator } from '../botEmulator';
 import uniqueId from '../utils/uniqueId';
 
 import BotEndpoint from './botEndpoint';
 import Conversation from './conversation';
-
 /**
  * A set of conversations with a bot.
  */
 export default class ConversationSet extends EventEmitter {
-  private conversations: Conversation[] = [];
+  public conversations: { [conversationId: string]: Conversation } = {};
 
   // TODO: May be we want to move "bot" back to the constructor
   public newConversation(
     botEmulator: BotEmulator,
     botEndpoint: BotEndpoint,
     user: User,
-    conversationId = uniqueId()
+    conversationId = uniqueId(),
+    mode: ChatMode = 'livechat'
   ): Conversation {
-    const conversation = new Conversation(botEmulator, botEndpoint, conversationId, user);
+    const conversation = new Conversation(botEmulator, botEndpoint, conversationId, user, mode);
     // This should always result in a livechat being opened
     // unless there is already a livechat or transcript queued
     // we add the "|livechat" string to the end of the conversationId
@@ -62,17 +63,25 @@ export default class ConversationSet extends EventEmitter {
     if (!/(\|livechat|\|transcript)/.test(conversation.conversationId)) {
       conversation.conversationId += '|livechat';
     }
-    this.conversations.push(conversation);
+    this.conversations[conversation.conversationId] = conversation;
     this.emit('new', conversation);
 
     return conversation;
   }
 
   public conversationById(conversationId: string): Conversation {
-    return this.conversations.find(value => value.conversationId === conversationId);
+    return this.conversations[conversationId];
   }
 
   public getConversationIds(): string[] {
-    return this.conversations.map(conversation => conversation.conversationId);
+    return Object.keys(this.conversations);
+  }
+
+  public deleteConversation(conversationId: string): boolean {
+    return delete this.conversations[conversationId];
+  }
+
+  public getConversations(): Conversation[] {
+    return Object.values(this.conversations);
   }
 }

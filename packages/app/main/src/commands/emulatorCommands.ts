@@ -41,15 +41,16 @@ import { sync as mkdirpSync } from 'mkdirp';
 
 import * as BotActions from '../botData/actions/botActions';
 import { getStore } from '../botData/store';
-import { getActiveBot, getBotInfoByPath, patchBotsJson, toSavableBot } from '../botHelpers';
-import { emulator } from '../emulator';
+import { getActiveBot, getBotInfoByPath, patchBotsJson, toSavableBot, getTranscriptsPath } from '../botHelpers';
+import { Emulator } from '../emulator';
 import { mainWindow } from '../main';
 import { dispatch, getStore as getSettingsStore } from '../settingsData/store';
-import { parseActivitiesFromChatFile, showSaveDialog, writeFile, readFileSync } from '../utils';
+import { parseActivitiesFromChatFile, readFileSync, showSaveDialog, writeFile } from '../utils';
 import { cleanupId as cleanupActivityChannelAccountId, CustomActivity } from '../utils/conversation';
 import { botProjectFileWatcher } from '../watchers';
 import { TelemetryService } from '../telemetry';
 import { setCurrentUser } from '../settingsData/actions/userActions';
+import { pushClientAwareSettings } from '../settingsData/actions/frameworkActions';
 
 /** Registers emulator (actual conversation emulation logic) commands */
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
@@ -60,18 +61,13 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
     Commands.SaveTranscriptToFile,
     async (conversationId: string): Promise<void> => {
       const activeBot: BotConfigWithPath = getActiveBot();
-      if (!activeBot) {
-        throw new Error(`${Commands.SaveTranscriptToFile}: No active bot.`);
-      }
-
-      const convo = emulator.framework.server.botEmulator.facilities.conversations.conversationById(conversationId);
-      if (!convo) {
+      const conversation = Emulator.getInstance().framework.server.botEmulator.facilities.conversations.conversationById(
+        conversationId
+      );
+      if (!conversation) {
         throw new Error(`${Commands.SaveTranscriptToFile}: Conversation ${conversationId} not found.`);
       }
-      let botInfo = getBotInfoByPath(activeBot.path);
-      const dirName = path.dirname(activeBot.path);
-
-      const { transcriptsPath = path.join(dirName, './transcripts') } = botInfo;
+      let botInfo = activeBot ? getBotInfoByPath(activeBot.path) : {};
 
       const filename = showSaveDialog(mainWindow.browserWindow, {
         // TODO - Localization
@@ -81,11 +77,22 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
             extensions: ['transcript'],
           },
         ],
-        defaultPath: transcriptsPath,
+        defaultPath: getTranscriptsPath(activeBot, conversation),
         showsTagField: false,
         title: 'Save conversation transcript',
         buttonLabel: 'Save',
       });
+
+      if (filename && filename.length) {
+        mkdirpSync(path.dirname(filename));
+        const transcripts = await conversation.getTranscript();
+        writeFile(filename, transcripts);
+        TelemetryService.trackEvent('transcript_save');
+      }
+
+      if (!activeBot) {
+        return;
+      }
 
       // If there is no current bot directory, we should set the directory
       // that the transcript is saved in as the bot directory, copy the botfile over,
@@ -102,13 +109,6 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
         await patchBotsJson(botPath, botInfo);
         await botProjectFileWatcher.watch(botPath);
         store.dispatch(BotActions.setDirectory(botDirectory));
-      }
-
-      if (filename && filename.length) {
-        mkdirpSync(path.dirname(filename));
-        const transcripts = await convo.getTranscript();
-        writeFile(filename, transcripts);
-        TelemetryService.trackEvent('transcript_save');
       }
     }
   );
@@ -156,7 +156,9 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
         throw new Error('emulator:feed-transcript:deep-link: No active bot.');
       }
 
-      const convo = emulator.framework.server.botEmulator.facilities.conversations.conversationById(conversationId);
+      const convo = Emulator.getInstance().framework.server.botEmulator.facilities.conversations.conversationById(
+        conversationId
+      );
       if (!convo) {
         throw new Error(`emulator:feed-transcript:deep-link: Conversation ${conversationId} not found.`);
       }
@@ -169,7 +171,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // ---------------------------------------------------------------------------
   // Get a speech token
   commandRegistry.registerCommand(Commands.GetSpeechToken, (endpointId: string, refresh: boolean) => {
-    const endpoint = emulator.framework.server.botEmulator.facilities.endpoints.get(endpointId);
+    const endpoint = Emulator.getInstance().framework.server.botEmulator.facilities.endpoints.get(endpointId);
 
     return endpoint && endpoint.getSpeechToken(refresh);
   });
@@ -187,7 +189,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
         bot.services.push(newEndpoint());
         getStore().dispatch(BotActions.mockAndSetActive(bot));
       }
-
+      const emulator = Emulator.getInstance();
       // TODO: Move away from the .users state on legacy emulator settings, and towards per-conversation users
       const conversation = emulator.framework.server.botEmulator.facilities.conversations.newConversation(
         emulator.framework.server.botEmulator,
@@ -219,7 +221,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // ---------------------------------------------------------------------------
   // Sets the current user id (in memory)
   commandRegistry.registerCommand(Commands.SetCurrentUser, async (userId: string) => {
-    const { facilities } = emulator.framework.server.botEmulator;
+    const { facilities } = Emulator.getInstance().framework.server.botEmulator;
     const { users } = facilities;
     const user = { id: userId, name: 'User' };
     users.currentUserId = userId;
@@ -228,6 +230,14 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
     // update the settings state on both main and client
     dispatch(setCurrentUser(user));
-    await mainWindow.commandService.call(SharedConstants.Commands.Settings.PushClientAwareSettings);
+    dispatch(pushClientAwareSettings());
+  });
+
+  // ---------------------------------------------------------------------------
+  // Removes the conversation from the conversation set
+  commandRegistry.registerCommand(Commands.DeleteConversation, (conversationId: string) => {
+    return Emulator.getInstance().framework.server.botEmulator.facilities.conversations.deleteConversation(
+      conversationId
+    );
   });
 }

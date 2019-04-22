@@ -71,11 +71,17 @@ export function* openBotViaUrl(action: BotAction<Partial<StartConversationParams
     const users: UserSettings = yield select((state: RootState) => state.clientAwareSettings.users);
     action.payload.user = users.usersById[users.currentUserId];
   }
-  const response = yield ConversationService.startConversation(serverUrl, action.payload);
-  if (!response.ok) {
-    const errorNotification = beginAdd(
-      newNotification(`An Error occurred opening the bot at ${action.payload.endpoint}: ${response.statusText}`)
-    );
+  let error;
+  try {
+    const response = yield ConversationService.startConversation(serverUrl, action.payload);
+    if (!response.ok) {
+      error = `An Error occurred opening the bot at ${action.payload.endpoint}: ${response.statusText}`;
+    }
+  } catch (e) {
+    error = e.message;
+  }
+  if (error) {
+    const errorNotification = beginAdd(newNotification(error));
     yield put(errorNotification);
   }
 }

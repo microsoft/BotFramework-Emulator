@@ -47,7 +47,7 @@ import {
 import * as BotActions from './botData/actions/botActions';
 import { getStore } from './botData/store';
 import { Protocol } from './constants';
-import { emulator } from './emulator';
+import { Emulator } from './emulator';
 import { mainWindow } from './main';
 import { ngrokEmitter, running } from './ngrok';
 import { getSettings } from './settingsData/store';
@@ -202,7 +202,7 @@ export const ProtocolHandler = new class ProtocolHandlerImpl implements Protocol
     const appSettings: FrameworkSettings = getSettings().framework;
 
     if (appSettings.ngrokPath) {
-      const ngrokSpawnStatus = emulator.ngrok.getSpawnStatus();
+      const ngrokSpawnStatus = Emulator.getInstance().ngrok.getSpawnStatus();
       if (!ngrokSpawnStatus.triedToSpawn || (ngrokSpawnStatus.triedToSpawn && ngrokSpawnStatus.err)) {
         throw new Error(`Error while trying to spawn ngrok instance: ${ngrokSpawnStatus.err || ''}`);
       }
@@ -304,7 +304,7 @@ export const ProtocolHandler = new class ProtocolHandlerImpl implements Protocol
 
     const appSettings: FrameworkSettings = getSettings().framework;
     if (appSettings.ngrokPath) {
-      const ngrokSpawnStatus = emulator.ngrok.getSpawnStatus();
+      const ngrokSpawnStatus = Emulator.getInstance().ngrok.getSpawnStatus();
       if (!ngrokSpawnStatus.triedToSpawn || (ngrokSpawnStatus.triedToSpawn && ngrokSpawnStatus.err)) {
         throw new Error(`Error while trying to spawn ngrok instance: ${ngrokSpawnStatus.err || ''}`);
       }

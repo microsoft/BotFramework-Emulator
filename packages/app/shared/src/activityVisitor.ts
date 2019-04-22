@@ -31,28 +31,26 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { AttachmentContentTypes } from '@bfemulator/sdk-shared';
 import {
   Activity,
   Attachment,
-  AttachmentContentTypes,
   CardAction,
   CardImage,
   MediaCard,
-  MessageActivity,
   ReceiptCard,
   SigninCard,
   ThumbnailCard,
-} from '@bfemulator/sdk-shared';
+} from 'botframework-schema';
 
 export abstract class ActivityVisitor {
   public traverseActivity(activity: Activity) {
-    const messageActivity = activity as MessageActivity;
-    if (messageActivity) {
-      this.traverseMessageActivity(messageActivity);
+    if (activity) {
+      this.traverseMessageActivity(activity);
     }
   }
 
-  public traverseMessageActivity(messageActivity: MessageActivity) {
+  public traverseMessageActivity(messageActivity: Activity) {
     if (messageActivity) {
       if (messageActivity.attachments) {
         messageActivity.attachments.forEach(attachment => this.traverseAttachment(attachment));

@@ -31,14 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Settings, SharedConstants } from '@bfemulator/app-shared';
+import { SharedConstants } from '@bfemulator/app-shared';
 import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
-import { Store } from 'redux';
 
 import * as BotActions from '../botData/actions/botActions';
 import { getStore } from '../botData/store';
 import { Protocol } from '../constants';
-import { emulator } from '../emulator';
 import { ExtensionManagerImpl } from '../extensions';
 import { mainWindow } from '../main';
 import { Migrator } from '../migrator';
@@ -46,6 +44,7 @@ import { ProtocolHandler } from '../protocolHandler';
 import { getStore as getSettingsStore } from '../settingsData/store';
 import { getBotsFromDisk } from '../utils';
 import { openFileFromCommandLine } from '../utils/openFileFromCommandLine';
+import { pushClientAwareSettings } from '../settingsData/actions/frameworkActions';
 
 /** Registers client initialization commands */
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
@@ -55,6 +54,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // Client notifying us it's initialized and has rendered
   commandRegistry.registerCommand(Commands.ClientInit.Loaded, async () => {
     const store = getStore();
+    const settingsStore = getSettingsStore();
     // Load bots from disk and sync list with client
     const bots = getBotsFromDisk();
     if (bots.length) {
@@ -68,21 +68,10 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
     // Un-fullscreen the screen
     await mainWindow.commandService.call(Commands.Electron.SetFullscreen, false);
     // Send app settings to client
-    await commandRegistry.getCommand(Commands.Settings.PushClientAwareSettings).handler();
+    settingsStore.dispatch(pushClientAwareSettings());
     // Load extensions
     ExtensionManagerImpl.unloadExtensions();
     ExtensionManagerImpl.loadExtensions();
-  });
-
-  commandRegistry.registerCommand(Commands.Settings.PushClientAwareSettings, async () => {
-    const settingsStore: Store<Settings> = getSettingsStore();
-    const settingsState = settingsStore.getState();
-    await mainWindow.commandService.remoteCall(Commands.Settings.ReceiveGlobalSettings, {
-      serverUrl: (emulator.framework.serverUrl || '').replace('[::]', 'localhost'),
-      cwd: (__dirname || '').replace(/\\/g, '/'),
-      users: settingsState.users,
-      locale: settingsState.framework.locale,
-    });
   });
 
   // ---------------------------------------------------------------------------

@@ -45,9 +45,9 @@ describe('The getAttachment middleware', () => {
     attachments = new Attachments();
     attachmentId = attachments.uploadAttachment({
       name: 'an attachment',
-      originalBase64: 'aGk=',
+      originalBase64: new Uint8Array(Buffer.from('aGk=')),
       type: 'application/text',
-      thumbnailBase64: 'aGk=',
+      thumbnailBase64: new Uint8Array(Buffer.from('aGk=')),
     });
     facilities = {
       attachments,
@@ -66,6 +66,7 @@ describe('The getAttachment middleware', () => {
 
     const res = {
       send: () => null,
+      end: () => void 0,
       contentType: '',
     };
 
@@ -128,9 +129,9 @@ describe('the getAttachmentInfo middleware', () => {
     attachments = new Attachments();
     attachmentId = attachments.uploadAttachment({
       name: 'an attachment',
-      originalBase64: 'aGk=',
+      originalBase64: new Uint8Array(Buffer.from('aGk=')),
       type: 'application/text',
-      thumbnailBase64: 'aGk=',
+      thumbnailBase64: new Uint8Array(Buffer.from('aGk=')),
     });
     facilities = {
       attachments,

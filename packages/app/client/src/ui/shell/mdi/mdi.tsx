@@ -33,10 +33,10 @@
 
 import * as React from 'react';
 
-import { DocumentsContainer } from './documents/documentsContainer';
+import { DocumentsContainer } from './documents';
 import * as styles from './mdi.scss';
 import { MDIProps } from './mdiContainer';
-import { TabBarContainer } from './tabBar/tabBarContainer';
+import { TabBarContainer } from './tabBar';
 
 export class MDIComponent extends React.Component<MDIProps> {
   public render(): React.ReactNode {

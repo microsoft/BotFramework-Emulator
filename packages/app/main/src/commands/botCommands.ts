@@ -33,15 +33,16 @@
 
 import * as path from 'path';
 
-import { dialog } from 'electron';
-import { BotInfo, getBotDisplayName, SharedConstants } from '@bfemulator/app-shared';
+import { BotInfo, DebugMode, getBotDisplayName, SharedConstants } from '@bfemulator/app-shared';
 import { BotConfigWithPath, CommandRegistryImpl, mergeEndpoints, uniqueId } from '@bfemulator/sdk-shared';
 import { BotConfigurationBase } from 'botframework-config/lib';
 import { IConnectedService, IEndpointService, ServiceTypes } from 'botframework-config/lib/schema';
+import { dialog } from 'electron';
 
 import * as BotActions from '../botData/actions/botActions';
 import { setActive } from '../botData/actions/botActions';
 import { getStore } from '../botData/store';
+import { getStore as getSettingsStore } from '../settingsData/store';
 import {
   getActiveBot,
   getBotInfoByPath,
@@ -52,11 +53,12 @@ import {
   saveBot,
   toSavableBot,
 } from '../botHelpers';
-import { emulator } from '../emulator';
+import { Emulator } from '../emulator';
 import { mainWindow } from '../main';
-import { botProjectFileWatcher, chatWatcher, transcriptsWatcher } from '../watchers';
+import { debugModeChanged } from '../settingsData/actions/windowStateActions';
 import { TelemetryService } from '../telemetry';
 import { isMac } from '../utils';
+import { botProjectFileWatcher, chatWatcher, transcriptsWatcher } from '../watchers';
 
 /** Registers bot commands */
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
@@ -105,6 +107,8 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   commandRegistry.registerCommand(
     Bot.Open,
     async (botPath: string, secret?: string): Promise<BotConfigWithPath> => {
+      // Make sure we're not in Sidecar debug mode
+      getSettingsStore().dispatch(debugModeChanged(DebugMode.Normal));
       // try to get the bot secret from bots.json
       const botInfo = pathExistsInRecentBots(botPath) ? getBotInfoByPath(botPath) : null;
       if (botInfo) {
@@ -190,7 +194,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   commandRegistry.registerCommand(Bot.RestartEndpointService, async () => {
     const bot = getActiveBot();
 
-    emulator.framework.server.botEmulator.facilities.endpoints.reset();
+    Emulator.getInstance().framework.server.botEmulator.facilities.endpoints.reset();
 
     const overridesArePresent = bot.overrides && bot.overrides.endpoint;
     let appliedOverrides = false;
@@ -212,7 +216,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
           }
         }
 
-        emulator.framework.server.botEmulator.facilities.endpoints.push(endpoint.id, {
+        Emulator.getInstance().framework.server.botEmulator.facilities.endpoints.push(endpoint.id, {
           botId: endpoint.id,
           botUrl: endpoint.endpoint,
           msaAppId: endpoint.appId,

@@ -30,10 +30,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
-import { Activity } from './activity';
-
-export interface GenericActivity extends Activity {
-  attachments: { contentType: string }[];
-  text: string;
+export enum ViewState {
+  Graph = 'graph',
+  Json = 'json',
 }

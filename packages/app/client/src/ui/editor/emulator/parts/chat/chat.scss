@@ -73,8 +73,7 @@
 .chat-activity {
   border: 1px solid transparent;
   cursor: pointer;
-  margin-left: 4px;
-  margin-right: 4px;
+  margin: 0 16px;
   padding: 4px;
   transition: color .1s linear, background .1s linear;
 
@@ -113,5 +112,44 @@
     flex-grow: 1;
     flex-shrink: 1;
     flex-basis: 0;
+  }
+}
+
+button.bot-state-object {
+  cursor: pointer;
+  margin: 5px 16px;
+  min-width: initial;
+  background: transparent;
+  color: var(--p-button-color-disabled);
+  font-weight: bold;
+
+  &:active {
+    color: var(--p-button-color);
+  }
+
+  &[aria-selected="false"] {
+    color: var(--p-button-color-disabled);
+  }
+
+  &:hover:not([disabled]), &:focus {
+    background: transparent;
+    color: var(--p-button-color);
+  }
+
+  &[aria-selected="true"] {
+    color: var(--p-button-color);
+
+    &:before {
+      content: '';
+      position: absolute;
+      background: var(--split-button-icon-color);
+      border-radius: 7px;
+      width: 7px;
+      height: 7px;
+      z-index: 2;
+      top: 50%;
+      transform: translateY(-50%);
+      left: -10px;
+    }
   }
 }

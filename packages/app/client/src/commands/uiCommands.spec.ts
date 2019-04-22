@@ -32,6 +32,7 @@
 //
 import { SharedConstants } from '@bfemulator/app-shared';
 import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
+import { DebugMode } from '@bfemulator/app-shared';
 
 import { CONTENT_TYPE_APP_SETTINGS, DOCUMENT_ID_APP_SETTINGS } from '../constants';
 import { AzureAuthAction, AzureAuthWorkflow, invalidateArmToken } from '../data/action/azureAuthActions';
@@ -48,6 +49,9 @@ import {
   SecretPromptDialogContainer,
 } from '../ui/dialogs';
 import { CommandServiceImpl } from '../platform/commands/commandServiceImpl';
+import { BotActionType } from '../data/action/botActions';
+import { ExplorerActions } from '../data/action/explorerActions';
+import { SWITCH_DEBUG_MODE } from '../data/action/debugModeAction';
 
 import { registerCommands } from './uiCommands';
 
@@ -144,5 +148,18 @@ describe('the uiCommands', () => {
     expect(remoteCallSpy).toHaveBeenCalledWith(SharedConstants.Commands.Telemetry.TrackEvent, 'app_chooseTheme', {
       themeName: 'light',
     });
+  });
+
+  it('should orchestrate the switch to sidecar debug mode', async () => {
+    const dispatchedActions = [];
+    store.dispatch = action => {
+      dispatchedActions.push(action);
+      return action;
+    };
+    registry.getCommand(Commands.SwitchDebugMode).handler(DebugMode.Sidecar);
+    expect(dispatchedActions.length).toBe(3);
+    [BotActionType.close, ExplorerActions.Show, SWITCH_DEBUG_MODE].forEach((type, index) =>
+      expect(type).toEqual(dispatchedActions[index].type)
+    );
   });
 });

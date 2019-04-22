@@ -33,10 +33,9 @@
 
 import { BotFrameworkService } from './botFrameworkService';
 import { NgrokService } from './ngrokService';
-import * as Settings from './settingsData/store';
 
-export let emulator: Emulator;
-
+let emulator: Emulator;
+class SingletonEnforcer {}
 /**
  * Top-level state container for the Node process.
  */
@@ -44,18 +43,20 @@ export class Emulator {
   public ngrok = new NgrokService();
   public framework = new BotFrameworkService();
 
+  private constructor(enforcer: SingletonEnforcer) {
+    if (!(enforcer instanceof SingletonEnforcer)) {
+      throw new Error('Emulator is a singleton. Please use Emulator.getInstance()');
+    }
+  }
+
+  public static getInstance() {
+    return emulator || (emulator = new Emulator(new SingletonEnforcer()));
+  }
   /**
    * Loads settings from disk and then creates the emulator.
    */
-  public static async startup() {
-    Settings.startup();
-    emulator = new Emulator();
-    await emulator.startup();
-    return emulator;
-  }
-
-  public async startup() {
-    await this.framework.startup();
+  public async startup(port) {
+    await this.framework.recycle(port);
   }
 
   public async report(conversationId: string, botUrl: string): Promise<void> {

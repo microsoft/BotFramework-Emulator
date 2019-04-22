@@ -39,20 +39,20 @@ import { createStore } from 'redux';
 import { SharedConstants } from '@bfemulator/app-shared';
 import { ServiceTypes } from 'botframework-config/lib/schema';
 
-import { setInspectorObjects } from '../../../../../data/action/chatActions';
+import { setHighlightedObjects, setInspectorObjects } from '../../../../../data/action/chatActions';
 import { launchConnectedServicePicker } from '../../../../../data/action/connectedServiceActions';
 import {
-  ConnectServicePromptDialogContainer,
-  AzureLoginSuccessDialogContainer,
   AzureLoginFailedDialogContainer,
+  AzureLoginSuccessDialogContainer,
+  ConnectServicePromptDialogContainer,
   GetStartedWithCSDialogContainer,
   ProgressIndicatorContainer,
 } from '../../../../dialogs';
-import { ConnectedServicePickerContainer } from '../../../../shell/explorer/servicesExplorer';
 import { ConnectedServiceEditorContainer } from '../../../../shell/explorer/servicesExplorer/connectedServiceEditor';
+import { ConnectedServicePickerContainer } from '../../../../shell/explorer/servicesExplorer';
 
-import { LogEntry, LogEntryProps, number2, timestamp } from './logEntry';
 import { LogEntry as LogEntryContainer } from './logEntryContainer';
+import { LogEntry, LogEntryProps, number2, timestamp } from './logEntry';
 
 jest.mock('../../../../dialogs', () => ({
   BotCreationDialog: () => ({}),
@@ -80,27 +80,19 @@ describe('logEntry component', () => {
   let node;
   let instance;
   let props: LogEntryProps;
-  let mockNext;
-  let mockSelectedActivity;
-  let mockSetInspectorObjects;
   let mockDispatch;
 
   beforeEach(() => {
-    mockNext = jest.fn(() => null);
-    mockSelectedActivity = { next: mockNext };
-    mockSetInspectorObjects = jest.fn(() => null);
     mockRemoteCallsMade = [];
     mockCallsMade = [];
     props = {
       document: {
         documentId: 'someDocId',
-        selectedActivity$: mockSelectedActivity,
       },
       entry: {
         timestamp: 0,
         items: [],
       },
-      setInspectorObjects: mockSetInspectorObjects,
     };
     const mockStore = createStore((_state, _action) => ({}));
     mockDispatch = jest.spyOn(mockStore, 'dispatch');
@@ -155,19 +147,18 @@ describe('logEntry component', () => {
   it('should inspect an object', () => {
     const mockInspectableObj = { some: 'data' };
     instance.inspect(mockInspectableObj);
-
-    expect(mockNext).toHaveBeenCalledWith({ showInInspector: true });
-    expect(mockDispatch).toHaveBeenCalledWith(setInspectorObjects('someDocId', mockInspectableObj));
+    expect(mockDispatch).toHaveBeenCalledWith(
+      setInspectorObjects('someDocId', {
+        ...mockInspectableObj,
+        showInInspector: true,
+      })
+    );
   });
 
   it('should inspect and highlight an object', () => {
     const mockInspectableObj = { some: 'data', type: 'message', id: 'someId' };
     instance.inspectAndHighlightInWebchat(mockInspectableObj);
 
-    expect(mockNext).toHaveBeenCalledWith({
-      ...mockInspectableObj,
-      showInInspector: true,
-    });
     expect(mockRemoteCallsMade).toHaveLength(1);
     expect(mockRemoteCallsMade[0].commandName).toBe(SharedConstants.Commands.Telemetry.TrackEvent);
     expect(mockRemoteCallsMade[0].args).toEqual(['log_inspectActivity', { type: 'message' }]);
@@ -179,34 +170,21 @@ describe('logEntry component', () => {
   });
 
   it('should highlight an object', () => {
-    const mockInspectableObj = { some: 'data', type: 'message', id: 'someId' };
-    instance.highlightInWebchat(mockInspectableObj);
+    const mockInspectableObj = { some: 'data', type: 'message', id: 'someId' } as any;
+    instance.highlight(mockInspectableObj);
 
-    expect(mockNext).toHaveBeenCalledWith({
-      ...mockInspectableObj,
-      showInInspector: false,
-    });
+    expect(mockDispatch).toHaveBeenCalledWith(setHighlightedObjects('someDocId', mockInspectableObj));
   });
 
   it('should remove highlighting from an object', () => {
-    const mockInspectableObj = { id: 'activity1' };
-    wrapper = mount(<LogEntry {...props} />);
     const mockCurrentlyInspectedActivity = { id: 'activity2' };
     wrapper.setProps({
       currentlyInspectedActivity: mockCurrentlyInspectedActivity,
     });
-    instance = wrapper.instance();
-    instance.removeHighlightInWebchat(mockInspectableObj);
+    instance = wrapper.find(LogEntry).instance();
+    instance.highlight();
 
-    expect(mockNext).toHaveBeenCalledWith({
-      ...mockCurrentlyInspectedActivity,
-      showInInspector: true,
-    });
-
-    mockCurrentlyInspectedActivity.id = undefined;
-    instance.removeHighlightInWebchat(mockInspectableObj);
-
-    expect(mockNext).toHaveBeenCalledWith({ showInInspector: false });
+    expect(mockDispatch).toHaveBeenCalledWith(setHighlightedObjects('someDocId', {} as any));
   });
 
   it('should render a text item', () => {
@@ -226,7 +204,7 @@ describe('logEntry component', () => {
       {
         type: 'external-link',
         payload: { hyperlink: 'https://aka.ms/bf-emulator', text: 'some text' },
-      },
+      } as any,
       'someKey'
     );
     expect(linkItem).not.toBeNull();
@@ -236,7 +214,7 @@ describe('logEntry component', () => {
     wrapper = mount(<LogEntry {...props} />);
     instance = wrapper.instance();
     const appSettingsItem = instance.renderItem(
-      { type: 'open-app-settings', payload: { text: 'some text' } },
+      { type: 'open-app-settings', payload: { text: 'some text' } } as any,
       'someKey'
     );
     expect(appSettingsItem).not.toBeNull();

@@ -32,23 +32,17 @@
 //
 
 import { createDirectLine } from 'botframework-webchat';
-import { Activity, uniqueId, uniqueIdv4 } from '@bfemulator/sdk-shared';
-import { Splitter, SplitButton } from '@bfemulator/ui-react';
+import { uniqueId, uniqueIdv4 } from '@bfemulator/sdk-shared';
+import { SplitButton, Splitter } from '@bfemulator/ui-react';
 import base64Url from 'base64url';
 import { IEndpointService } from 'botframework-config/lib/schema';
 import * as React from 'react';
-import { connect } from 'react-redux';
-import { BehaviorSubject } from 'rxjs';
 import { newNotification, Notification, SharedConstants } from '@bfemulator/app-shared';
+import { DebugMode } from '@bfemulator/app-shared';
 
-import * as ChatActions from '../../../data/action/chatActions';
-import { updateDocument } from '../../../data/action/editorActions';
-import * as PresentationActions from '../../../data/action/presentationActions';
 import { Document } from '../../../data/reducer/editor';
-import { RootState } from '../../../data/store';
 import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
 import { debounce } from '../../../utils';
-import { beginAdd } from '../../../data/action/notificationActions';
 
 import ChatPanel from './chatPanel/chatPanel';
 import LogPanel from './logPanel/logPanel';
@@ -66,11 +60,12 @@ export const RestartConversationOptions = {
 
 export type EmulatorMode = 'transcript' | 'livechat';
 
-interface EmulatorProps {
+export interface EmulatorProps {
   activeDocumentId?: string;
   clearLog?: (documentId: string) => void;
   conversationId?: string;
   createErrorNotification?: (notification: Notification) => void;
+  debugMode?: DebugMode;
   dirty?: boolean;
   document?: any;
   documentId?: string;
@@ -87,7 +82,7 @@ interface EmulatorProps {
   url?: string;
 }
 
-export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
+export class Emulator extends React.Component<EmulatorProps, {}> {
   private readonly onVerticalSizeChange = debounce(sizes => {
     this.props.document.ui = {
       ...this.props.document.ui,
@@ -117,12 +112,6 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
     }
   }
 
-  componentDidMount() {
-    // WebChat v3 vs v4 behavior indie the Emulator has diverted in behavior such that
-    // no activity gets to the bot under the conversation is restarted.
-    this.onStartOverClick(RestartConversationOptions.SameUserId);
-  }
-
   componentWillUnmount() {
     window.removeEventListener('keydown', this.keyboardEventListener);
   }
@@ -145,7 +134,6 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
 
     if (switchedDocuments) {
       if (switchedToThisDocument) {
-        window.removeEventListener('keydown', keyboardEventListener);
         window.addEventListener('keydown', keyboardEventListener);
       } else {
         window.removeEventListener('keydown', keyboardEventListener);
@@ -158,16 +146,6 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
     requireNewConvoId: boolean = false,
     requireNewUserId: boolean = false
   ): Promise<any> => {
-    if (props.document.subscription) {
-      props.document.subscription.unsubscribe();
-    }
-    const selectedActivity$ = new BehaviorSubject<Activity | null>({});
-    const subscription = selectedActivity$.subscribe(activity => {
-      if (activity && activity.showInInspector) {
-        this.props.setInspectorObjects(props.document.documentId, activity);
-      }
-    });
-
     // Look for an existing conversation ID and use that,
     // otherwise, create a new one
     const conversationId = requireNewConvoId
@@ -190,7 +168,7 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
       props.document.directLine.end();
     }
 
-    this.initConversation(props, options, selectedActivity$, subscription);
+    this.initConversation(props, options);
 
     if (props.mode === 'transcript') {
       try {
@@ -240,7 +218,7 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
     }
   };
 
-  initConversation(props: EmulatorProps, options: any, selectedActivity$: any, subscription: any): void {
+  initConversation(props: EmulatorProps, options: any): void {
     const encodedOptions = encode(JSON.stringify(options));
 
     // TODO: We need to use encoded token because we need to pass both endpoint ID and conversation ID
@@ -255,8 +233,6 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
       conversationId: options.conversationId,
       // webChatStore,
       directLine,
-      selectedActivity$,
-      subscription,
       userId: options.userId,
     });
   }
@@ -275,11 +251,7 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
     return (
       <div className={styles.presentation}>
         <div className={styles.presentationContent}>
-          <ChatPanel
-            mode={this.props.mode}
-            document={this.props.document}
-            onStartConversation={this.onStartOverClick}
-          />
+          <ChatPanel mode={this.props.mode} document={this.props.document} />
           {chatPanelChild}
         </div>
         <span className={styles.closePresentationIcon} onClick={() => this.onPresentationClick(false)} />
@@ -299,6 +271,7 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
                 defaultLabel="Restart conversation"
                 buttonClass={styles.restartIcon}
                 options={[NewUserId, SameUserId]}
+                disabled={this.props.debugMode === DebugMode.Sidecar}
                 onClick={this.onStartOverClick}
               />
               <button
@@ -381,7 +354,7 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
           userId: 'new',
         });
         // start conversation with new convo id & user id
-        this.startNewConversation(undefined, true, true);
+        await this.startNewConversation(undefined, true, true);
         break;
       }
 
@@ -390,7 +363,7 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
           userId: 'same',
         });
         // start conversation with new convo id
-        this.startNewConversation(undefined, true, false);
+        await this.startNewConversation(undefined, true, false);
         break;
 
       default:
@@ -407,39 +380,13 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
     }
   };
 
-  private readonly keyboardEventListener: EventListener = (event: KeyboardEvent): void => {
+  private readonly keyboardEventListener: EventListener = async (event: KeyboardEvent): Promise<void> => {
     // Meta corresponds to 'Command' on Mac
     const ctrlOrCmdPressed = event.getModifierState('Control') || event.getModifierState('Meta');
     const shiftPressed = ctrlOrCmdPressed && event.getModifierState('Shift');
     const key = event.key.toLowerCase();
     if (ctrlOrCmdPressed && shiftPressed && key === 'r') {
-      this.onStartOverClick();
+      await this.onStartOverClick();
     }
   };
 }
-
-const mapStateToProps = (state: RootState, { documentId }: { documentId: string }): EmulatorProps => ({
-  activeDocumentId: state.editor.editors[state.editor.activeEditor].activeDocumentId,
-  conversationId: state.chat.chats[documentId].conversationId,
-  document: state.chat.chats[documentId],
-  endpointId: state.chat.chats[documentId].endpointId,
-  presentationModeEnabled: state.presentation.enabled,
-});
-
-const mapDispatchToProps = (dispatch): EmulatorProps => ({
-  enablePresentationMode: enable =>
-    enable ? dispatch(PresentationActions.enable()) : dispatch(PresentationActions.disable()),
-  setInspectorObjects: (documentId, objects) => dispatch(ChatActions.setInspectorObjects(documentId, objects)),
-  clearLog: documentId => dispatch(ChatActions.clearLog(documentId)),
-  newConversation: (documentId, options) => dispatch(ChatActions.newConversation(documentId, options)),
-  updateChat: (documentId: string, updatedValues: any) => dispatch(ChatActions.updateChat(documentId, updatedValues)),
-  updateDocument: (documentId, updatedValues: Partial<Document>) => dispatch(updateDocument(documentId, updatedValues)),
-  createErrorNotification: (notification: Notification) => dispatch(beginAdd(notification)),
-  trackEvent: (name: string, properties?: { [key: string]: any }) =>
-    CommandServiceImpl.remoteCall(SharedConstants.Commands.Telemetry.TrackEvent, name, properties).catch(_e => void 0),
-});
-
-export const Emulator = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(EmulatorComponent as any) as any;

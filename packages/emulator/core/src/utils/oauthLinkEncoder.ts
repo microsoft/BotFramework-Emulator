@@ -33,7 +33,9 @@
 
 import * as crypto from 'crypto';
 
-import { Attachment, AttachmentContentTypes, GenericActivity, OAuthCard } from '@bfemulator/sdk-shared';
+import { Attachment, OAuthCard } from 'botframework-schema';
+import { AttachmentContentTypes } from '@bfemulator/sdk-shared';
+import { Activity } from 'botframework-schema';
 
 import { BotEmulator } from '../botEmulator';
 
@@ -46,21 +48,16 @@ export default class OAuthLinkEncoder {
   private readonly authorizationHeader: string;
   private readonly conversationId: string;
   private botEmulator: BotEmulator;
-  private activity: GenericActivity;
+  private activity: Activity;
 
-  constructor(
-    botEmulator: BotEmulator,
-    authorizationHeader: string,
-    activity: GenericActivity,
-    conversationId: string
-  ) {
+  constructor(botEmulator: BotEmulator, authorizationHeader: string, activity: Activity, conversationId: string) {
     this.authorizationHeader = authorizationHeader;
     this.activity = activity;
     this.conversationId = conversationId;
     this.botEmulator = botEmulator;
   }
 
-  public async resolveOAuthCards(activity: GenericActivity): Promise<boolean> {
+  public async resolveOAuthCards(activity: Activity): Promise<boolean> {
     if (
       this.conversationId &&
       activity &&

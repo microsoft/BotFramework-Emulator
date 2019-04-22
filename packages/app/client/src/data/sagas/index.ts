@@ -41,10 +41,12 @@ import { notificationSagas } from './notificationSagas';
 import { resourceSagas } from './resourcesSagas';
 import { servicesExplorerSagas } from './servicesExplorerSagas';
 import { welcomePageSagas } from './welcomePageSagas';
+import { chatSagas } from './chatSagas';
 
 export const applicationSagas = [
   azureAuthSagas,
   botSagas,
+  chatSagas,
   editorSagas,
   endpointSagas,
   frameworkSettingsSagas,

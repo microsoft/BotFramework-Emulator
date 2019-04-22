@@ -31,9 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ILogItem } from './item';
+import { LogItem } from './item';
 
 export interface LogEntry {
   timestamp: number;
-  items: ILogItem[];
+  items: LogItem[];
 }

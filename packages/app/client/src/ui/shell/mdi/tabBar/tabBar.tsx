@@ -178,7 +178,7 @@ export class TabBar extends React.Component<TabBarProps, TabBarState> {
         <div
           key={documentId}
           className="tab-container"
-          onClick={_ev => this.handleTabClick(index)}
+          onClick={() => this.handleTabClick(index)}
           onKeyDown={ev => this.handleKeyDown(ev, index)}
           ref={this.setRef}
           role="presentation"
@@ -225,7 +225,7 @@ export class TabBar extends React.Component<TabBarProps, TabBarState> {
     e.stopPropagation();
   };
 
-  private onDragLeave = (_e: DragEvent<HTMLDivElement>) => {
+  private onDragLeave = () => {
     this.setState({ draggedOver: false });
   };
 

@@ -35,7 +35,6 @@ import { setTimeout } from 'timers';
 import * as url from 'url';
 
 import { newNotification, Notification, PersistentSettings, Settings, SharedConstants } from '@bfemulator/app-shared';
-import { Users } from '@bfemulator/emulator-core';
 import { ProgressInfo } from 'builder-util-runtime';
 import { app, BrowserWindow, dialog, ipcMain, Rectangle, screen, systemPreferences } from 'electron';
 import { UpdateInfo } from 'electron-updater';
@@ -47,7 +46,7 @@ import { getStore } from './botData/store';
 import * as commandLine from './commandLine';
 import { CommandRegistry, registerAllCommands } from './commands';
 import { Protocol } from './constants';
-import { Emulator, emulator } from './emulator';
+import { Emulator } from './emulator';
 import './fetchProxy';
 import { ngrokEmitter } from './ngrok';
 import { Window } from './platform/window';
@@ -210,7 +209,7 @@ ngrokEmitter.on('expired', () => {
     }
   });
   sendNotificationToClient(ngrokNotification, mainWindow.commandService);
-  emulator.ngrok.broadcastNgrokExpired();
+  Emulator.getInstance().ngrok.broadcastNgrokExpired();
 });
 
 // -----------------------------------------------------------------------------
@@ -320,16 +319,6 @@ const createMainWindow = async () => {
       }
     }
   });
-  const emulatorInstance = await Emulator.startup();
-  const { facilities } = emulatorInstance.framework.server.botEmulator;
-  const { users: userSettings, framework } = getSettingsStore().getState();
-
-  const users = new Users();
-  users.currentUserId = userSettings.currentUserId;
-  users.users = userSettings.usersById;
-
-  facilities.locale = framework.locale;
-  facilities.users = users;
   loadMainPage();
 
   mainWindow.browserWindow.setTitle(app.getName());

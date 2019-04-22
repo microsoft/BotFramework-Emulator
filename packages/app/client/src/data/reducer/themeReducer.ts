@@ -30,7 +30,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { SwitchThemePayload, ThemeAction } from '../action/themeActions';
+import { SWITCH_THEME, SwitchThemePayload, ThemeAction } from '../action/themeActions';
 
 export interface ThemeState {
   themeName: string;
@@ -46,7 +46,7 @@ export const initialState: ThemeState = {
 
 export function theme(state: ThemeState = initialState, action: ThemeAction<SwitchThemePayload>): ThemeState {
   switch (action.type) {
-    case 'switchTheme':
+    case SWITCH_THEME:
       return { ...state, ...action.payload };
 
     default:

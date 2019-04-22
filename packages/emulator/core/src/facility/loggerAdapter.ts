@@ -32,39 +32,57 @@
 //
 import {
   exceptionItem,
-  GenericActivity,
-  ILogItem,
   inspectableObjectItem,
   Logger,
+  LogItem,
   LogLevel,
   LogService,
   summaryTextItem,
   textItem,
 } from '@bfemulator/sdk-shared';
+import { Activity, ActivityTypes } from 'botframework-schema';
 
 export default class LoggerAdapter implements Logger {
+  private static getDirectionalArrowFromRole(role: string): string {
+    if (role === 'user') {
+      return '<- ';
+    }
+    return '-> ';
+  }
+
   constructor(public logService: LogService) {
     this.logActivity = this.logActivity.bind(this);
     this.logMessage = this.logMessage.bind(this);
     this.logException = this.logException.bind(this);
   }
 
-  public logActivity(conversationId: string, activity: GenericActivity, role: string) {
-    let direction: ILogItem;
-    if (role === 'user') {
-      direction = textItem(LogLevel.Debug, '<-');
-    } else {
-      direction = textItem(LogLevel.Debug, '->');
-    }
-    this.logService.logToChat(
-      conversationId,
-      direction,
+  public logActivity(conversationId: string, activity: Activity, role: string) {
+    const logItems: LogItem[] = [
+      textItem(LogLevel.Debug, LoggerAdapter.getDirectionalArrowFromRole(role)),
       inspectableObjectItem(activity.type, activity),
-      summaryTextItem(activity)
-    );
+      summaryTextItem(activity),
+    ];
+    // Check if there is a nested message that can be inspected
+    if (activity.value && activity.value.type === ActivityTypes.Message) {
+      const nestedActivity = activity.value as Activity;
+      // Ids are optional fields on Activity objects
+      // however, the debug adapter always places an id
+      // on the trace. If the nested message activity does not have
+      // an id, we inherit from the parent.
+      if (!nestedActivity.id) {
+        nestedActivity.id = 'emulator-required-id-' + activity.id;
+      }
+      logItems.push(
+        textItem(LogLevel.Debug, LoggerAdapter.getDirectionalArrowFromRole(nestedActivity.from.role)),
+        inspectableObjectItem(nestedActivity.type, nestedActivity),
+        summaryTextItem(nestedActivity)
+      );
+    }
+
+    this.logService.logToChat(conversationId, ...logItems);
   }
 
-  public logMessage(conversationId: string, ...items: ILogItem[]) {
+  public logMessage(conversationId: string, ...items: LogItem[]) {
     this.logService.logToChat(conversationId, ...items);
   }
 

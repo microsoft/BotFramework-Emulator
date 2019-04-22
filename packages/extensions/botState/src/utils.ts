@@ -30,18 +30,46 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+import { BotState, HierarchicalData } from './types';
 
-import { Attachment } from '../attachment/attachment';
-import { Entity } from '../entity';
+export function IpcHandler(type: string): MethodDecorator {
+  return function(elementDescriptor: any) {
+    const { key, descriptor } = elementDescriptor;
+    const initializer = function() {
+      const bound = this[key].bind(this);
+      (window as any).host.on(type, bound);
+      return bound;
+    };
 
-import { Activity } from './activity';
+    elementDescriptor.extras = [
+      {
+        kind: 'field',
+        key,
+        placement: 'own',
+        initializer,
+        descriptor: { ...descriptor, value: undefined },
+      },
+    ];
+    return elementDescriptor;
+  };
+}
 
-export interface MessageActivity extends Activity {
-  locale?: string;
-  text?: string;
-  summary?: string;
-  textFormat?: string;
-  attachmentLayout?: string;
-  attachments?: Attachment[];
-  entities?: Entity[];
+export function hydrateWithChildren(data: any, parent: HierarchicalData) {
+  Object.keys(data).forEach(key => {
+    const child = { name: key } as HierarchicalData;
+    if (data[key] !== null && typeof data[key] === 'object') {
+      child.children = [];
+      hydrateWithChildren(data[key], child);
+    } else {
+      child.value = data[key];
+    }
+    parent.children.push(child);
+  });
+}
+
+export function buildHierarchicalData(botState: BotState): HierarchicalData {
+  const dataProvider = { name: 'botState', children: [] };
+  hydrateWithChildren(botState, dataProvider);
+
+  return dataProvider;
 }

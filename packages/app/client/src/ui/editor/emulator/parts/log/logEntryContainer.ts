@@ -35,9 +35,7 @@ import { SharedConstants } from '@bfemulator/app-shared';
 import { connect } from 'react-redux';
 import { ServiceTypes } from 'botframework-config/lib/schema';
 
-import * as ChatActions from '../../../../../data/action/chatActions';
 import * as ConnectedServiceActions from '../../../../../data/action/connectedServiceActions';
-import { RootState } from '../../../../../data/store';
 import { CommandServiceImpl } from '../../../../../platform/commands/commandServiceImpl';
 import {
   ConnectServicePromptDialogContainer,
@@ -48,12 +46,9 @@ import {
 } from '../../../../dialogs';
 import { ConnectedServicePickerContainer } from '../../../../shell/explorer/servicesExplorer';
 import { ConnectedServiceEditorContainer } from '../../../../shell/explorer/servicesExplorer/connectedServiceEditor';
+import { setHighlightedObjects, setInspectorObjects } from '../../../../../data/action/chatActions';
 
 import { LogEntry as LogEntryComponent, LogEntryProps } from './logEntry';
-
-function mapStateToProps(_state: RootState): Partial<LogEntryProps> {
-  return {};
-}
 
 function mapDispatchToProps(dispatch: any): Partial<LogEntryProps> {
   return {
@@ -73,16 +68,15 @@ function mapDispatchToProps(dispatch: any): Partial<LogEntryProps> {
         })
       );
     },
-    setInspectorObjects: (documentId: string, obj: any) => {
-      dispatch(ChatActions.setInspectorObjects(documentId, obj));
-    },
+    setInspectorObjects: (documentId: string, obj: any) => dispatch(setInspectorObjects(documentId, obj)),
+    setHighlightedObjects: (documentId: string, obj: any) => dispatch(setHighlightedObjects(documentId, obj)),
     reconnectNgrok: () => {
       const { Ngrok } = SharedConstants.Commands;
-      CommandServiceImpl.remoteCall(Ngrok.Reconnect);
+      return CommandServiceImpl.remoteCall(Ngrok.Reconnect);
     },
     showAppSettings: () => {
       const { UI } = SharedConstants.Commands;
-      CommandServiceImpl.call(UI.ShowAppSettings);
+      return CommandServiceImpl.call(UI.ShowAppSettings);
     },
     trackEvent: (name: string, properties?: { [key: string]: any }) => {
       CommandServiceImpl.remoteCall(SharedConstants.Commands.Telemetry.TrackEvent, name, properties).catch(
@@ -93,6 +87,6 @@ function mapDispatchToProps(dispatch: any): Partial<LogEntryProps> {
 }
 
 export const LogEntry = connect(
-  mapStateToProps,
+  null,
   mapDispatchToProps
 )(LogEntryComponent);

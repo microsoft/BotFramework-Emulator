@@ -32,6 +32,8 @@
 //
 
 import { exceptionItem, inspectableObjectItem, LogLevel, summaryTextItem, textItem } from '@bfemulator/sdk-shared';
+import { Activity, ActivityTypes } from 'botframework-schema';
+import { LogItem } from '@bfemulator/sdk-shared/build/src';
 
 import LoggerAdapter from './loggerAdapter';
 
@@ -57,7 +59,7 @@ describe('LoggerAdapter', () => {
 
     expect(mockLogToChat).toHaveBeenCalledWith(
       conversationId,
-      textItem(LogLevel.Debug, '<-'),
+      textItem(LogLevel.Debug, '<- '),
       inspectableObjectItem(activity.type, activity),
       summaryTextItem(activity)
     );
@@ -73,7 +75,7 @@ describe('LoggerAdapter', () => {
 
     expect(mockLogToChat).toHaveBeenCalledWith(
       conversationId,
-      textItem(LogLevel.Debug, '->'),
+      textItem(LogLevel.Debug, '-> '),
       inspectableObjectItem(activity.type, activity),
       summaryTextItem(activity)
     );
@@ -93,5 +95,31 @@ describe('LoggerAdapter', () => {
     loggerAdapter.logException(conversationId, error);
 
     expect(mockLogToChat).toHaveBeenCalledWith(conversationId, exceptionItem(error));
+  });
+
+  it('should log a nested message in a trace activity', () => {
+    const conversationId = 'convo1';
+    const activity = {
+      id: 'someId',
+      label: 'Message sent',
+      type: ActivityTypes.Trace,
+      value: {
+        type: ActivityTypes.Message,
+        from: { role: 'bot' },
+        text: 'Hello',
+      },
+    } as Activity;
+
+    const logItems: LogItem[] = [
+      textItem(LogLevel.Debug, '<- '),
+      inspectableObjectItem(activity.type, activity),
+      summaryTextItem(activity),
+      textItem(LogLevel.Debug, '-> '),
+      inspectableObjectItem(activity.value.type, activity.value),
+      summaryTextItem(activity.value),
+    ];
+
+    loggerAdapter.logActivity(conversationId, activity, 'user');
+    expect(mockLogToChat).toHaveBeenCalledWith(conversationId, ...logItems);
   });
 });

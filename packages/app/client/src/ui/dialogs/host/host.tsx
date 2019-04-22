@@ -46,10 +46,6 @@ export interface DialogHostProps {
 export class DialogHost extends React.Component<DialogHostProps, {}> {
   private _hostRef: HTMLElement;
 
-  constructor(props: DialogHostProps) {
-    super(props);
-  }
-
   public componentDidMount() {
     this._hostRef.addEventListener('dialogRendered', this.initFocusTrap);
   }

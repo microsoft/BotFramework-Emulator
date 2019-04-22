@@ -31,7 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { AttachmentData, ErrorCodes } from '@bfemulator/sdk-shared';
+import { ErrorCodes } from '@bfemulator/sdk-shared';
+import { AttachmentData } from 'botframework-schema';
 import * as HttpStatus from 'http-status-codes';
 
 import createAPIException from '../utils/createResponse/apiException';

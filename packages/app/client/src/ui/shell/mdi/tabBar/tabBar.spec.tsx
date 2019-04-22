@@ -128,8 +128,8 @@ describe('TabBar', () => {
     instance = node.instance();
   });
 
-  it('should enable presentation mode', () => {
-    instance.onPresentationModeClick();
+  it('should enable presentation mode', async () => {
+    await instance.onPresentationModeClick();
 
     expect(mockDispatch).toHaveBeenCalledWith(enable());
     expect(mockRemoteCallsMade).toHaveLength(1);

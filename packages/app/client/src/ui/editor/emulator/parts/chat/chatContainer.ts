@@ -30,27 +30,44 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { IEndpointService } from 'botframework-config/lib/schema';
 import { connect } from 'react-redux';
+import { User } from '@bfemulator/sdk-shared';
+import { Activity } from 'botframework-schema';
 
 import { RootState } from '../../../../../data/store';
+import {
+  setHighlightedObjects,
+  setInspectorObjects,
+  showContextMenuForActivity,
+} from '../../../../../data/action/chatActions';
 
-import { Chat } from './chat';
+import { Chat, ChatProps } from './chat';
 
-const mapStateToProps = (state: RootState, { document }) => {
+const mapStateToProps = (state: RootState, { document }): Partial<ChatProps> => {
   const currentUserId = state.clientAwareSettings.users.currentUserId;
-
+  const { documentId } = document;
   return {
-    currentUserId,
-    currentUser: state.clientAwareSettings.users.usersById[currentUserId] || {},
+    currentUser: state.clientAwareSettings.users.usersById[currentUserId] || ({} as User),
     locale: state.clientAwareSettings.locale || 'en-us',
-    endpoint: ((state.bot.activeBot && state.bot.activeBot.services) || []).find(
-      s => s.id === document.endpointId
-    ) as IEndpointService,
+    debugMode: state.clientAwareSettings.debugMode,
+    webSpeechPonyfillFactory: state.chat.webSpeechFactories[documentId],
+    pendingSpeechTokenRetrieval: state.chat.pendingSpeechTokenRetrieval,
+    webchatStore: state.chat.webChatStores[documentId],
+  };
+};
+
+const mapDispatchToProps = (dispatch, ownProps: ChatProps): Partial<ChatProps> => {
+  return {
+    setInspectorObject: (documentId: string, activity: Partial<Activity>) => {
+      dispatch(setHighlightedObjects(documentId, []));
+      dispatch(setInspectorObjects(documentId, activity));
+    },
+    showContextMenuForActivity: (activity: Partial<Activity>) => dispatch(showContextMenuForActivity(activity)),
+    ...ownProps,
   };
 };
 
 export const ChatContainer = connect(
   mapStateToProps,
-  null
+  mapDispatchToProps
 )(Chat);

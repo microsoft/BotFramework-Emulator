@@ -35,9 +35,11 @@ import { windowStateDefault, WindowStateSettings } from '@bfemulator/app-shared'
 
 import {
   REMEMBER_BOUNDS,
+  DEBUG_MODE_CHANGED,
   REMEMBER_THEME,
   REMEMBER_ZOOM_LEVEL,
   RememberBoundsPayload,
+  RememberDebugModePayload,
   RememberThemePayload,
   RememberZoomLevelPayload,
   WindowStateAction,
@@ -69,6 +71,11 @@ export function windowStateReducer(
     case REMEMBER_THEME: {
       const { theme } = action.payload as RememberThemePayload;
       return { ...state, theme };
+    }
+
+    case DEBUG_MODE_CHANGED: {
+      const { debugMode } = action.payload as RememberDebugModePayload;
+      return { ...state, debugMode };
     }
 
     default:

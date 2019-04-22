@@ -34,16 +34,16 @@
 import * as React from 'react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
-import { BehaviorSubject, Subscription } from 'rxjs';
 import { mount, shallow } from 'enzyme';
-import { SharedConstants } from '@bfemulator/app-shared';
+import { DebugMode, SharedConstants } from '@bfemulator/app-shared';
 import base64Url from 'base64url';
 
 import { disable, enable } from '../../../data/action/presentationActions';
-import { clearLog, newConversation, setInspectorObjects, updateChat } from '../../../data/action/chatActions';
+import { clearLog, newConversation, setInspectorObjects } from '../../../data/action/chatActions';
 import { updateDocument } from '../../../data/action/editorActions';
 
-import { Emulator, EmulatorComponent, RestartConversationOptions } from './emulator';
+import { Emulator, RestartConversationOptions } from './emulator';
+import { EmulatorContainer } from './emulatorContainer';
 
 const { encode } = base64Url;
 
@@ -63,6 +63,10 @@ jest.mock('../../../platform/commands/commandServiceImpl', () => ({
       if (commandName === mockSharedConstants.Commands.Emulator.FeedTranscriptFromDisk) {
         return Promise.resolve({ meta: 'some file info' });
       }
+      if (commandName === mockSharedConstants.Commands.Settings.LoadAppSettings) {
+        return Promise.resolve({ framework: { userGUID: '' } });
+      }
+
       return Promise.resolve();
     },
   },
@@ -92,7 +96,7 @@ jest.mock('botframework-webchat', () => ({
   createDirectLine: args => ({ ...args }),
 }));
 
-describe('<Emulator/>', () => {
+describe('<EmulatorContainer/>', () => {
   let wrapper;
   let node;
   let instance;
@@ -125,15 +129,16 @@ describe('<Emulator/>', () => {
         },
       },
       presentation: { enabled: true },
+      clientAwareSettings: { debugMode: DebugMode.Normal },
     };
     const mockStore = createStore((_state, _action) => mockStoreState);
     mockDispatch = jest.spyOn(mockStore, 'dispatch');
     wrapper = mount(
       <Provider store={mockStore}>
-        <Emulator documentId={'doc1'} url={'someUrl'} mode={'livechat'} />
+        <EmulatorContainer documentId={'doc1'} url={'someUrl'} mode={'livechat'} />
       </Provider>
     );
-    node = wrapper.find(EmulatorComponent);
+    node = wrapper.find(Emulator);
     instance = node.instance();
   });
 
@@ -151,7 +156,7 @@ describe('<Emulator/>', () => {
 
   it('should render the presentation view', () => {
     wrapper = shallow(
-      <EmulatorComponent
+      <Emulator
         createErrorNotification={jest.fn(() => null)}
         newConversation={jest.fn(() => null)}
         mode={'transcript'}
@@ -166,7 +171,7 @@ describe('<Emulator/>', () => {
 
   it('should render the default view', () => {
     wrapper = shallow(
-      <EmulatorComponent
+      <Emulator
         createErrorNotification={jest.fn(() => null)}
         newConversation={jest.fn(() => null)}
         mode={'transcript'}
@@ -189,7 +194,7 @@ describe('<Emulator/>', () => {
       },
     };
     wrapper = shallow(
-      <EmulatorComponent
+      <Emulator
         createErrorNotification={jest.fn(() => null)}
         newConversation={jest.fn(() => null)}
         mode={'transcript'}
@@ -211,7 +216,7 @@ describe('<Emulator/>', () => {
       },
     };
     wrapper = shallow(
-      <EmulatorComponent
+      <Emulator
         createErrorNotification={jest.fn(() => null)}
         newConversation={jest.fn(() => null)}
         mode={'transcript'}
@@ -226,7 +231,7 @@ describe('<Emulator/>', () => {
 
   it('should restart the conversation on Ctrl/Cmd + Shift + R', () => {
     wrapper = shallow(
-      <EmulatorComponent
+      <Emulator
         createErrorNotification={jest.fn(() => null)}
         newConversation={jest.fn(() => null)}
         mode={'transcript'}
@@ -283,7 +288,7 @@ describe('<Emulator/>', () => {
       conversationId: 'convo1',
     };
     wrapper = shallow(
-      <EmulatorComponent
+      <Emulator
         createErrorNotification={jest.fn(() => null)}
         newConversation={jest.fn(() => null)}
         mode={'transcript'}
@@ -293,30 +298,30 @@ describe('<Emulator/>', () => {
     instance = wrapper.instance();
     instance.onExportClick();
 
-    expect(mockRemoteCallsMade).toHaveLength(2);
-    expect(mockRemoteCallsMade[1].commandName).toBe(SharedConstants.Commands.Emulator.SaveTranscriptToFile);
-    expect(mockRemoteCallsMade[1].args).toEqual(['convo1']);
+    expect(mockRemoteCallsMade).toHaveLength(1);
+    expect(mockRemoteCallsMade[0].commandName).toBe(SharedConstants.Commands.Emulator.SaveTranscriptToFile);
+    expect(mockRemoteCallsMade[0].args).toEqual(['convo1']);
   });
 
   it('should start a new conversation', async () => {
-    const mockInitConversation = jest.fn(() => null);
-    instance.initConversation = mockInitConversation;
+    const initConversationSpy = jest.spyOn(instance, 'initConversation');
     const options = {
-      conversationId: 'convo1',
-      conversationMode: instance.props.mode,
-      endpointId: instance.props.endpointId,
-      userId: 'someUserId',
+      conversationId: 'someUniqueId|livechat',
+      conversationMode: 'livechat',
+      endpointId: 'endpoint1',
+      userId: 'newUserId',
     };
-    await instance.startNewConversation(undefined, false, false);
+    await instance.startNewConversation(undefined, true, true);
 
-    expect(mockUnsubscribe).toHaveBeenCalled();
     expect(mockRemoteCallsMade).toHaveLength(1);
-    expect(mockInitConversation).toHaveBeenCalledWith(
-      instance.props,
-      options,
-      jasmine.any(BehaviorSubject),
-      jasmine.any(Subscription)
-    );
+    expect(initConversationSpy).toHaveBeenCalledWith(instance.props, options);
+  });
+
+  it('should start a new conversation when a new document is given as props', async () => {
+    const startNewConversationSpy = jest.spyOn(instance, 'startNewConversation');
+    const nextProps = { document: { documentId: 'newDoc' } };
+    instance.componentWillReceiveProps(nextProps);
+    expect(startNewConversationSpy).toHaveBeenCalledWith(nextProps);
   });
 
   it('should start a new conversation with a new conversation id', async () => {
@@ -330,12 +335,7 @@ describe('<Emulator/>', () => {
     };
     await instance.startNewConversation(undefined, true, false);
 
-    expect(mockInitConversation).toHaveBeenCalledWith(
-      instance.props,
-      options,
-      jasmine.any(BehaviorSubject),
-      jasmine.any(Subscription)
-    );
+    expect(mockInitConversation).toHaveBeenCalledWith(instance.props, options);
   });
 
   it('should start a new conversation with a new user id', async () => {
@@ -350,15 +350,10 @@ describe('<Emulator/>', () => {
     };
     await instance.startNewConversation(undefined, false, true);
 
-    expect(mockRemoteCallsMade).toHaveLength(2);
-    expect(mockRemoteCallsMade[1].commandName).toBe(SharedConstants.Commands.Emulator.SetCurrentUser);
-    expect(mockRemoteCallsMade[1].args).toEqual([options.userId]);
-    expect(mockInitConversation).toHaveBeenCalledWith(
-      instance.props,
-      options,
-      jasmine.any(BehaviorSubject),
-      jasmine.any(Subscription)
-    );
+    expect(mockRemoteCallsMade).toHaveLength(1);
+    expect(mockRemoteCallsMade[0].commandName).toBe(SharedConstants.Commands.Emulator.SetCurrentUser);
+    expect(mockRemoteCallsMade[0].args).toEqual([options.userId]);
+    expect(mockInitConversation).toHaveBeenCalledWith(instance.props, options);
   });
 
   it('should start over a conversation with a new user id on click', async () => {
@@ -368,9 +363,9 @@ describe('<Emulator/>', () => {
 
     expect(mockDispatch).toHaveBeenCalledWith(clearLog('doc1'));
     expect(mockDispatch).toHaveBeenCalledWith(setInspectorObjects('doc1', []));
-    expect(mockRemoteCallsMade).toHaveLength(2);
-    expect(mockRemoteCallsMade[1].commandName).toBe(SharedConstants.Commands.Telemetry.TrackEvent);
-    expect(mockRemoteCallsMade[1].args).toEqual(['conversation_restart', { userId: 'new' }]);
+    expect(mockRemoteCallsMade).toHaveLength(1);
+    expect(mockRemoteCallsMade[0].commandName).toBe(SharedConstants.Commands.Telemetry.TrackEvent);
+    expect(mockRemoteCallsMade[0].args).toEqual(['conversation_restart', { userId: 'new' }]);
     expect(mockStartNewConversation).toHaveBeenCalledWith(undefined, true, true);
   });
 
@@ -381,9 +376,9 @@ describe('<Emulator/>', () => {
 
     expect(mockDispatch).toHaveBeenCalledWith(clearLog('doc1'));
     expect(mockDispatch).toHaveBeenCalledWith(setInspectorObjects('doc1', []));
-    expect(mockRemoteCallsMade).toHaveLength(2);
-    expect(mockRemoteCallsMade[1].commandName).toBe(SharedConstants.Commands.Telemetry.TrackEvent);
-    expect(mockRemoteCallsMade[1].args).toEqual(['conversation_restart', { userId: 'same' }]);
+    expect(mockRemoteCallsMade).toHaveLength(1);
+    expect(mockRemoteCallsMade[0].commandName).toBe(SharedConstants.Commands.Telemetry.TrackEvent);
+    expect(mockRemoteCallsMade[0].args).toEqual(['conversation_restart', { userId: 'same' }]);
     expect(mockStartNewConversation).toHaveBeenCalledWith(undefined, true, false);
   });
 
@@ -404,8 +399,6 @@ describe('<Emulator/>', () => {
           domain: 'someUrl/v3/directline',
           webSocket: false,
         },
-        selectedActivity$: {},
-        subscription: {},
       })
     );
   });
@@ -425,11 +418,11 @@ describe('<Emulator/>', () => {
 
     await instance.startNewConversation(mockProps);
 
-    expect(mockRemoteCallsMade).toHaveLength(3);
-    expect(mockRemoteCallsMade[1].commandName).toBe(SharedConstants.Commands.Emulator.NewTranscript);
-    expect(mockRemoteCallsMade[1].args).toEqual(['someUniqueId|transcript']);
-    expect(mockRemoteCallsMade[2].commandName).toBe(SharedConstants.Commands.Emulator.FeedTranscriptFromMemory);
-    expect(mockRemoteCallsMade[2].args).toEqual(['someConvoId', 'someBotId', 'someUserId', []]);
+    expect(mockRemoteCallsMade).toHaveLength(2);
+    expect(mockRemoteCallsMade[0].commandName).toBe(SharedConstants.Commands.Emulator.NewTranscript);
+    expect(mockRemoteCallsMade[0].args).toEqual(['someUniqueId|transcript']);
+    expect(mockRemoteCallsMade[1].commandName).toBe(SharedConstants.Commands.Emulator.FeedTranscriptFromMemory);
+    expect(mockRemoteCallsMade[1].args).toEqual(['someConvoId', 'someBotId', 'someUserId', []]);
   });
 
   it('should start a new conversation from transcript on disk', async () => {
@@ -449,11 +442,11 @@ describe('<Emulator/>', () => {
 
     await instance.startNewConversation(mockProps);
 
-    expect(mockRemoteCallsMade).toHaveLength(3);
-    expect(mockRemoteCallsMade[1].commandName).toBe(SharedConstants.Commands.Emulator.NewTranscript);
-    expect(mockRemoteCallsMade[1].args).toEqual(['someUniqueId|transcript']);
-    expect(mockRemoteCallsMade[2].commandName).toBe(SharedConstants.Commands.Emulator.FeedTranscriptFromDisk);
-    expect(mockRemoteCallsMade[2].args).toEqual(['someConvoId', 'someBotId', 'someUserId', 'someDocId']);
+    expect(mockRemoteCallsMade).toHaveLength(2);
+    expect(mockRemoteCallsMade[0].commandName).toBe(SharedConstants.Commands.Emulator.NewTranscript);
+    expect(mockRemoteCallsMade[0].args).toEqual(['someUniqueId|transcript']);
+    expect(mockRemoteCallsMade[1].commandName).toBe(SharedConstants.Commands.Emulator.FeedTranscriptFromDisk);
+    expect(mockRemoteCallsMade[1].args).toEqual(['someConvoId', 'someBotId', 'someUserId', 'someDocId']);
     expect(mockDispatch).toHaveBeenCalledWith(updateDocument('someDocId', { meta: 'some file info' }));
   });
 });

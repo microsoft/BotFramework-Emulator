@@ -32,6 +32,8 @@
 //
 
 // =============================================================================
+import { HTMLAttributes } from 'react';
+
 export interface ExtensionPortal {
   title?: string;
   url?: string;
@@ -56,7 +58,7 @@ export interface InspectorAccessory {
 }
 
 // =============================================================================
-export interface InspectorAccessoryState {
+export interface InspectorAccessoryState extends HTMLAttributes<HTMLButtonElement> {
   label?: string;
   icon?: string;
 }

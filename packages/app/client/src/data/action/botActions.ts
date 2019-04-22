@@ -107,7 +107,7 @@ export function openBotViaUrlAction(
 ): BotAction<Partial<StartConversationParams>> {
   return {
     type: BotActionType.openViaUrl,
-    payload: params,
+    payload: { ...params, mode: 'livechat-url' },
   };
 }
 

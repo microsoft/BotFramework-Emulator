@@ -17,7 +17,8 @@
     "packages/extensions/debug/main",
     "packages/extensions/luis",
     "packages/extensions/luis/client",
-    "packages/extensions/json"
+    "packages/extensions/json",
+    "packages/extensions/botState"
   ],
   "version": "independent"
 }

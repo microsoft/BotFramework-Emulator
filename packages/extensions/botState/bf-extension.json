@@ -1,0 +1,50 @@
+{
+  "name": "Bot State Visualizer",
+  "client": {
+    "inspectors": [
+      {
+        "name": "Bot State Visualizer",
+        "src": "public/index.html",
+        "criteria": [
+          {
+            "path": "valueType",
+            "value": "https://www.botframework.com/schemas/botState"
+          },
+          {
+            "path": "valueType",
+            "value": "https://www.botframework.com/schemas/diff"
+          }
+        ],
+        "summaryText": [
+          "label"
+        ],
+        "accessories": [
+          {
+            "id": "graph",
+            "states": {
+              "default": {
+                "label": "Graph"
+              },
+              "selected": {
+                "label": "Graph",
+                "aria-selected": true
+              }
+            }
+          },
+          {
+            "id": "json",
+            "states": {
+              "default": {
+                "label": "Json"
+              },
+              "selected": {
+                "label": "Json",
+                "aria-selected": true
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

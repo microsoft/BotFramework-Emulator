@@ -77,11 +77,14 @@ jest.mock('./settingsData/store', () => ({
     },
   }),
 }));
+const mockEmulator = {
+  ngrok: {
+    getSpawnStatus: () => ({ triedToSpawn: true }),
+  },
+};
 jest.mock('./emulator', () => ({
-  emulator: {
-    ngrok: {
-      getSpawnStatus: () => ({ triedToSpawn: true }),
-    },
+  Emulator: {
+    getInstance: () => mockEmulator,
   },
 }));
 

@@ -38,11 +38,8 @@ export function clientAwareSettings(
   state: ClientAwareSettings = {} as any,
   action: ClientAwareSettingsActions
 ): ClientAwareSettings {
-  switch (action.type) {
-    case CLIENT_AWARE_SETTINGS_CHANGED:
-      return { ...state, ...action.payload };
-
-    default:
-      return state;
+  if (action.type === CLIENT_AWARE_SETTINGS_CHANGED) {
+    return { ...state, ...action.payload };
   }
+  return state;
 }

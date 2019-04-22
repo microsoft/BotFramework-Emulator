@@ -34,7 +34,7 @@
 import { connect } from 'react-redux';
 import { SharedConstants } from '@bfemulator/app-shared';
 
-import { closeDocument } from '../../../../data/action/chatActions';
+import { closeConversation } from '../../../../data/action/chatActions';
 import { appendTab, close, setActiveTab, splitTab } from '../../../../data/action/editorActions';
 import { enable as enablePresentationMode } from '../../../../data/action/presentationActions';
 import { getTabGroupForDocument } from '../../../../data/editorHelpers';
@@ -61,16 +61,14 @@ const mapDispatchToProps = (dispatch): TabBarProps => ({
   },
   appendTab: (srcEditorKey: string, destEditorKey: string, tabId: string) =>
     dispatch(appendTab(srcEditorKey, destEditorKey, tabId)),
-  enablePresentationMode: () => {
-    CommandServiceImpl.remoteCall(SharedConstants.Commands.Telemetry.TrackEvent, 'tabBar_presentationMode').catch(
-      _e => void 0
-    );
+  enablePresentationMode: async () => {
+    await CommandServiceImpl.remoteCall(SharedConstants.Commands.Telemetry.TrackEvent, 'tabBar_presentationMode');
     dispatch(enablePresentationMode());
   },
   setActiveTab: (documentId: string) => dispatch(setActiveTab(documentId)),
   closeTab: (documentId: string) => {
     dispatch(close(getTabGroupForDocument(documentId), documentId));
-    dispatch(closeDocument(documentId));
+    dispatch(closeConversation(documentId));
   },
 });
 

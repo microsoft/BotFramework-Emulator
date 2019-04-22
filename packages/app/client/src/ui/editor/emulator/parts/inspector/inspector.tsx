@@ -32,10 +32,15 @@
 //
 
 // Cheating here and pulling in a module from node. Can be easily replaced if we ever move the emulator to the web.
-import { LogLevel } from '@bfemulator/sdk-shared';
-import { logEntry, luisEditorDeepLinkItem, textItem } from '@bfemulator/sdk-shared';
-import { ExtensionInspector, InspectorAccessory, InspectorAccessoryState } from '@bfemulator/sdk-shared';
-import { Spinner } from '@bfemulator/ui-react';
+import {
+  ExtensionInspector,
+  InspectorAccessory,
+  logEntry,
+  LogLevel,
+  luisEditorDeepLinkItem,
+  textItem,
+} from '@bfemulator/sdk-shared';
+import { PrimaryButton, Spinner } from '@bfemulator/ui-react';
 import { IBotConfiguration } from 'botframework-config/lib/schema';
 import * as React from 'react';
 
@@ -92,6 +97,16 @@ declare type ElectronHTMLWebViewElement = HTMLWebViewElement & {
 };
 
 export class Inspector extends React.Component<InspectorProps, InspectorState> {
+  private static renderAccessoryIcon(icon: string) {
+    if (icon === 'Spinner') {
+      return <Spinner segmentRadius={2} width={25} height={25} />;
+    } else if (icon) {
+      return <i className={`${styles.accessoryButtonIcon} ms-Icon ms-Icon--${icon}`} aria-hidden="true" />;
+    } else {
+      return false;
+    }
+  }
+
   public get state(): InspectorState {
     return this._state;
   }
@@ -106,6 +121,8 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
   private webViewByLocation: {
     [location: string]: ElectronHTMLWebViewElement;
   } = {};
+
+  private domReadyByLocation = {};
 
   public static getDerivedStateFromProps(newProps: InspectorProps, prevState: InspectorState): InspectorState {
     const { document = {} } = newProps;
@@ -162,7 +179,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
 
   public componentDidMount() {
     window.addEventListener('toggle-inspector-devtools', this.toggleDevTools);
-    this.updateInspector(this.state);
+    this.updateInspector(this.state).catch();
   }
 
   public componentWillUnmount() {
@@ -174,7 +191,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
       return (
         <div className={styles.detailPanel}>
           <Panel title={['inspector', this.state.title].filter(s => s && s.length).join(' - ')}>
-            {this.renderAccessoryButtons(this.state.inspector)}
+            {this.renderAccessoryButtons()}
             <PanelContent>
               <div className={styles.inspectorContainer} tabIndex={0}>
                 <div ref={this.webViewContainer} className={styles.webViewContainer} />
@@ -207,29 +224,26 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     }
   }
 
-  private renderAccessoryIcon(config: InspectorAccessoryState) {
-    if (config.icon === 'Spinner') {
-      return <Spinner segmentRadius={2} width={25} height={25} />;
-    } else if (config.icon) {
-      return <i className={`${styles.accessoryButtonIcon} ms-Icon ms-Icon--${config.icon}`} aria-hidden="true" />;
-    } else {
-      return false;
-    }
-  }
-
-  private renderAccessoryButton(button: AccessoryButton, handler: (id: string) => void) {
+  private renderAccessoryButton(button: AccessoryButton, onClickHandler: (id: string) => void) {
     const { config, state, enabled } = button;
     const currentState = config.states[state] || {};
+    const { icon, ...buttonAttrs } = currentState;
     return (
-      <button className={styles.accessoryButton} key={config.id} disabled={!enabled} onClick={() => handler(config.id)}>
-        {this.renderAccessoryIcon(currentState)}
+      <PrimaryButton
+        {...buttonAttrs}
+        className={styles.accessoryButton}
+        key={config.id}
+        disabled={!enabled}
+        onClick={() => onClickHandler(config.id)}
+      >
+        {Inspector.renderAccessoryIcon(icon)}
         {currentState.label}
-      </button>
+      </PrimaryButton>
     );
   }
 
   // eslint-disable-next-line typescript/no-unused-vars
-  private renderAccessoryButtons(_inspector: ExtensionInspector) {
+  private renderAccessoryButtons() {
     return (
       <PanelControls>
         {this.state.buttons.map(accessoryButton => this.renderAccessoryButton(accessoryButton, this.accessoryClick))}
@@ -242,7 +256,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
       this.botUpdated(newState.activeBot);
     }
     if (oldState.inspectorSrc !== newState.inspectorSrc || oldState.containerRef !== newState.containerRef) {
-      this.updateInspector(this.state);
+      this.updateInspector(this.state).catch();
     }
     if (JSON.stringify(oldState.inspectObj) !== JSON.stringify(newState.inspectObj)) {
       this.inspect(newState.inspectObj);
@@ -252,15 +266,19 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     }
   }
 
-  private updateInspector(state: InspectorState): void {
+  private async updateInspector(state: InspectorState): Promise<void> {
     const { src } = state.inspector || { src: '' };
     if (!src) {
       return;
     }
     const { webViewByLocation: webViews } = this;
+    if (!webViews[src]) {
+      webViews[src] = this.createWebView(state);
+    } else {
+      this.sendInitializationStackToInspector();
+    }
     const nextInspector = webViews[src] || (webViews[src] = this.createWebView(state));
     nextInspector.style.display = '';
-    this.sendInitializationStackToInspector();
 
     const { containerRef } = this.state;
     if (!containerRef) {
@@ -268,6 +286,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     }
     if (!containerRef.contains(nextInspector)) {
       containerRef.appendChild(nextInspector);
+      nextInspector.addEventListener('dom-ready', this.onWebViewDOMReady);
     }
     Array.prototype.forEach.call(containerRef.children, child => {
       if (child !== nextInspector) {
@@ -278,18 +297,16 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
 
   private createWebView(state: InspectorState): ElectronHTMLWebViewElement {
     const { cwdAsBase } = this.props;
-    const preload = `file://${cwdAsBase}/../../../node_modules/@bfemulator/client/public/inspector-preload.js`;
-
+    const preload = `file://${cwdAsBase}/node_modules/@bfemulator/client/public/inspector-preload.js`;
     const webView: ElectronHTMLWebViewElement = document.createElement('webview');
+
     webView.className = styles.webViewContainer;
+    webView.addEventListener('dragenter', this.onInspectorDrag, true);
+    webView.addEventListener('dragover', this.onInspectorDrag, true);
+    webView.addEventListener('ipc-message', this.ipcMessageEventHandler);
     webView.setAttribute('partition', `persist:${state.botHash}`);
     webView.setAttribute('preload', preload);
     webView.setAttribute('src', state.inspector.src);
-    webView.addEventListener('dragenter', this.onInspectorDrag, true);
-    webView.addEventListener('dragover', this.onInspectorDrag, true);
-    webView.addEventListener('dom-ready', this.onWebViewDOMReady);
-    webView.addEventListener('ipc-message', this.ipcMessageEventHandler);
-
     return webView;
   }
 
@@ -337,7 +354,9 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
   }
 
   private onWebViewDOMReady = (event: Event) => {
-    event.currentTarget.removeEventListener('domready', this.onWebViewDOMReady);
+    const webView = event.currentTarget as ElectronHTMLWebViewElement;
+    this.domReadyByLocation[webView.getAttribute('src')] = true;
+    webView.removeEventListener('dom-ready', this.onWebViewDOMReady);
     this.sendInitializationStackToInspector();
   };
 
@@ -398,6 +417,9 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
 
   private inspect(obj: InspectObject) {
     if (this.canInspect(obj)) {
+      // showInInspector is for internal bookkeeping and shouldn't make it to the view
+      // remove before rendering
+      delete obj.showInInspector;
       this.sendToInspector('inspect', obj);
     }
   }
@@ -407,8 +429,9 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
   }
 
   private sendToInspector(channel: string, ...args: any[]) {
-    const inspector = this.webViewByLocation[this.state.inspectorSrc];
-    if (!inspector) {
+    const { inspectorSrc } = this.state;
+    const inspector = this.webViewByLocation[inspectorSrc];
+    if (!inspector || !this.domReadyByLocation[inspectorSrc]) {
       return;
     }
     try {

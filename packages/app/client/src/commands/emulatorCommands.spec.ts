@@ -40,7 +40,7 @@ import { bot } from '../data/reducer/bot';
 import { chat } from '../data/reducer/chat';
 import { clientAwareSettings } from '../data/reducer/clientAwareSettingsReducer';
 import { editor } from '../data/reducer/editor';
-import { RootState, store } from '../data/store';
+import { RootState } from '../data/store';
 import { CommandServiceImpl } from '../platform/commands/commandServiceImpl';
 
 import { registerCommands } from './emulatorCommands';
@@ -72,6 +72,7 @@ describe('The emulator commands', () => {
         cwd: 'path',
         locale: 'en-us',
         serverUrl: 'https://localhost',
+        debugMode: 1,
       })
     );
   });
@@ -156,5 +157,23 @@ describe('The emulator commands', () => {
     await handler('transcript.transcript');
     state = mockStore.getState();
     expect(state.chat.changeKey).toBe(3);
+  });
+
+  it('should open a chat file', async () => {
+    const callSpy = jest.spyOn(CommandServiceImpl, 'call').mockResolvedValue(true);
+    const remoteCallSpy = jest.spyOn(CommandServiceImpl, 'remoteCall').mockResolvedValue(true);
+
+    const { handler: openChatFileHandler } = registry.getCommand(SharedConstants.Commands.Emulator.OpenChatFile);
+    await openChatFileHandler('some/path.chat', true);
+    expect(remoteCallSpy).toHaveBeenCalledWith(SharedConstants.Commands.Emulator.OpenChatFile, 'some/path.chat');
+    expect(callSpy).toHaveBeenCalledWith(
+      SharedConstants.Commands.Emulator.ReloadTranscript,
+      'some/path.chat',
+      undefined,
+      {
+        activities: undefined,
+        inMemory: true,
+      }
+    );
   });
 });

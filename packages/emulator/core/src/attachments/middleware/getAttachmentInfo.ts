@@ -31,7 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { AttachmentData, AttachmentInfo, ErrorCodes } from '@bfemulator/sdk-shared';
+import { AttachmentData, AttachmentInfo } from 'botframework-schema';
+import { ErrorCodes } from '@bfemulator/sdk-shared';
 import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 
@@ -56,14 +57,15 @@ export default function getAttachmentInfo(botEmulator: BotEmulator) {
         if (attachment.originalBase64) {
           attachmentInfo.views.push({
             viewId: 'original',
-            size: new Buffer(attachment.originalBase64, 'base64').length,
+            size: Buffer.from(Buffer.from(attachment.originalBase64.buffer as ArrayBuffer).toString(), 'base64').length,
           });
         }
 
         if (attachment.thumbnailBase64) {
           attachmentInfo.views.push({
             viewId: 'thumbnail',
-            size: new Buffer(attachment.thumbnailBase64, 'base64').length,
+            size: Buffer.from(Buffer.from(attachment.thumbnailBase64.buffer as ArrayBuffer).toString(), 'base64')
+              .length,
           });
         }
 

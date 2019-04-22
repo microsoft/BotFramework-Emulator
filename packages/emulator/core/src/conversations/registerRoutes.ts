@@ -50,6 +50,7 @@ import sendActivityToConversation from './middleware/sendActivityToConversation'
 import sendHistoryToConversation from './middleware/sendHistoryToConversation';
 import updateActivity from './middleware/updateActivity';
 import uploadAttachment from './middleware/uploadAttachment';
+import getConversations from './middleware/getConversations';
 
 export default function registerRoutes(botEmulator: BotEmulator, server: Server, uses: RequestHandler[]) {
   // TODO: Check if it works without MSA App ID
@@ -124,6 +125,15 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     facility,
     getRouteName('deleteActivity'),
     deleteActivity(botEmulator)
+  );
+
+  server.get(
+    '/v3/conversations',
+    ...uses,
+    verifyBotFramework,
+    facility,
+    getRouteName('getConversations'),
+    getConversations(botEmulator)
   );
 
   server.get(

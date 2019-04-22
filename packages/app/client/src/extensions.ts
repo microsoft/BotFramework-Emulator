@@ -93,23 +93,21 @@ export class InspectorAPI {
     if (!Array.isArray(criterias)) {
       criterias = [criterias];
     }
-    let canInspect = true;
-    criterias.forEach(criteria => {
+    return criterias.some(criteria => {
       // Path is a json-path
       const value = getValueFromPath(obj, criteria.path);
       if (typeof value === 'undefined') {
-        canInspect = false;
+        return false;
       } else {
         // Value can be a regex or a string literal
         if ((criteria.value || '').startsWith('/')) {
           const regex = new RegExp(criteria.value);
-          canInspect = canInspect && regex.test(value);
+          return regex.test(value);
         } else {
-          canInspect = canInspect && criteria.value === value;
+          return criteria.value === value;
         }
       }
     });
-    return canInspect;
   }
 
   public static summaryText(inspector: ExtensionInspector, obj: any): string {

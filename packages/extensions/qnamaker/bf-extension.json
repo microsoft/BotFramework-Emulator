@@ -7,10 +7,6 @@
         "src": "client/public/index.html",
         "criteria": [
           {
-            "path": "type",
-            "value": "trace"
-          },
-          {
             "path": "valueType",
             "value": "https://www.qnamaker.ai/schemas/trace"
           }

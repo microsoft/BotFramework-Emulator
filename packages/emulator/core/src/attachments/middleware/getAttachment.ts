@@ -31,7 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { AttachmentData, ErrorCodes } from '@bfemulator/sdk-shared';
+import { ErrorCodes } from '@bfemulator/sdk-shared';
+import { AttachmentData } from 'botframework-schema';
 import * as HttpStatus from 'http-status-codes';
 import { Next, Request, Response } from 'restify';
 
@@ -51,7 +52,7 @@ export default function getAttachment(bot: BotEmulator) {
           const attachmentBase64 = parms.viewId === 'original' ? attachment.originalBase64 : attachment.thumbnailBase64;
 
           if (attachmentBase64) {
-            const buffer = Buffer.from(attachmentBase64, 'base64');
+            const buffer = Buffer.from(Buffer.from(attachmentBase64.buffer as ArrayBuffer).toString(), 'base64');
 
             res.contentType = attachment.type;
             res.send(HttpStatus.OK, buffer);

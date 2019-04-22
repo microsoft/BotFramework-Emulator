@@ -1,10 +1,5 @@
-const {
-  NamedModulesPlugin,
-  HotModuleReplacementPlugin,
-  WatchIgnorePlugin,
-} = require('webpack');
+const { HotModuleReplacementPlugin, WatchIgnorePlugin } = require('webpack');
 const path = require('path');
-const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 module.exports = {
   entry: {
     qna: path.resolve('./src/index.tsx'),
@@ -27,8 +22,7 @@ module.exports = {
               namedExport: true,
               camelCase: true,
               sourcemaps: true,
-              banner:
-                '// This is a generated file. Changes are likely to result in being overwritten',
+              banner: '// This is a generated file. Changes are likely to result in being overwritten',
             },
           },
           'resolve-url-loader',
@@ -76,10 +70,6 @@ module.exports = {
   externals: {},
   plugins: [
     new HotModuleReplacementPlugin(),
-    new WatchIgnorePlugin([
-      './build/**/*.*',
-      './public/**/*.*',
-      './src/**/*.d.ts',
-    ]),
+    new WatchIgnorePlugin(['./build/**/*.*', './public/**/*.*', './src/**/*.d.ts']),
   ],
 };

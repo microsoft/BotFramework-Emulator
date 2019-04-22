@@ -30,23 +30,8 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+import { BotStateVisualizer } from './BotStateVisualizer';
+import { WindowHostReceiver } from './WindowHostReceiver';
 
-import { ChannelAccount, ConversationAccount } from '../account';
-
-import { ETagObject } from './etagObject';
-
-export interface Activity extends ETagObject {
-  channelData?: any;
-  channelId?: string;
-  conversation?: ConversationAccount;
-  from?: ChannelAccount;
-  id?: string;
-  localTimestamp?: string;
-  recipient?: ChannelAccount;
-  replyToId?: string;
-  showInInspector?: boolean;
-  serviceUrl?: string;
-  timestamp?: string;
-  type?: string;
-  locale?: string;
-}
+const botStateVisualizer = new BotStateVisualizer('#bot-state-visualizer', '#json-visualizer');
+new WindowHostReceiver(botStateVisualizer);

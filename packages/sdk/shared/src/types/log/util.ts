@@ -31,8 +31,24 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { Activity } from 'botframework-schema';
+
 import { LogEntry } from './entry';
-import { ILogItem } from './item';
+import {
+  ExceptionLogItem,
+  ExternalLinkLogItem,
+  InspectableObjectLogItem,
+  LogItem,
+  LogItemPayload,
+  LogItemType,
+  LuisEditorDeepLinkLogItem,
+  NetworkRequestLogItem,
+  NetworkResponseLogItem,
+  NgrokExpirationLogItem,
+  OpenAppSettingsLogItem,
+  SummaryTextLogItem,
+  TextLogItem,
+} from './item';
 import { LogLevel } from './level';
 
 // TODO: Move this to a generally available location and export
@@ -48,9 +64,9 @@ export function makeEnumerableObject(src: any) {
 
 // TODO: Move this file to a utils location, not a types location
 
-export function textItem(level: LogLevel, text: string): ILogItem {
+export function textItem(level: LogLevel, text: string): LogItem<TextLogItem> {
   return {
-    type: 'text',
+    type: LogItemType.Text,
     payload: {
       level,
       text,
@@ -58,9 +74,9 @@ export function textItem(level: LogLevel, text: string): ILogItem {
   };
 }
 
-export function externalLinkItem(text: string, hyperlink: string): ILogItem {
+export function externalLinkItem(text: string, hyperlink: string): LogItem<ExternalLinkLogItem> {
   return {
-    type: 'external-link',
+    type: LogItemType.ExternalLink,
     payload: {
       text,
       hyperlink,
@@ -68,9 +84,9 @@ export function externalLinkItem(text: string, hyperlink: string): ILogItem {
   };
 }
 
-export function inspectableObjectItem(text: string, obj: any): ILogItem {
+export function inspectableObjectItem(text: string, obj: Activity): LogItem<InspectableObjectLogItem> {
   return {
-    type: 'inspectable-object',
+    type: LogItemType.InspectableObject,
     payload: {
       text,
       obj,
@@ -78,36 +94,42 @@ export function inspectableObjectItem(text: string, obj: any): ILogItem {
   };
 }
 
-export function summaryTextItem(obj: any): ILogItem {
+export function summaryTextItem(obj: Activity): LogItem<SummaryTextLogItem> {
   return {
-    type: 'summary-text',
+    type: LogItemType.SummaryText,
     payload: {
       obj,
     },
   };
 }
 
-export function appSettingsItem(text: string): ILogItem {
+export function appSettingsItem(text: string): LogItem<OpenAppSettingsLogItem> {
   return {
-    type: 'open-app-settings',
+    type: LogItemType.OpenAppSettings,
     payload: {
       text,
     },
   };
 }
 
-export function exceptionItem(err: any): ILogItem {
+export function exceptionItem(err: any): LogItem<ExceptionLogItem> {
   return {
-    type: 'exception',
+    type: LogItemType.Exception,
     payload: {
       err: makeEnumerableObject(err),
     },
   };
 }
 
-export function networkRequestItem(facility: any, body: any, headers: any, method: any, url: any): ILogItem {
+export function networkRequestItem(
+  facility: any,
+  body: any,
+  headers: any,
+  method: any,
+  url: any
+): LogItem<NetworkRequestLogItem> {
   return {
-    type: 'network-request',
+    type: LogItemType.NetworkRequest,
     payload: {
       facility,
       body,
@@ -124,9 +146,9 @@ export function networkResponseItem(
   statusCode: any,
   statusMessage: any,
   srcUrl: any
-): ILogItem {
+): LogItem<NetworkResponseLogItem> {
   return {
-    type: 'network-response',
+    type: LogItemType.NetworkResponse,
     payload: {
       body,
       headers,
@@ -137,27 +159,27 @@ export function networkResponseItem(
   };
 }
 
-export function ngrokExpirationItem(text: string): ILogItem {
+export function ngrokExpirationItem(text: string): LogItem<NgrokExpirationLogItem> {
   return {
-    type: 'ngrok-expiration',
+    type: LogItemType.NgrokExpiration,
     payload: {
       text,
     },
   };
 }
 
-export function luisEditorDeepLinkItem(text: string): ILogItem {
-  return {
-    type: 'luis-editor-deep-link',
-    payload: {
-      text,
-    },
-  };
-}
-
-export function logEntry(...items: ILogItem[]): LogEntry {
+export function logEntry(...items: LogItem<LogItemPayload>[]): LogEntry {
   return {
     timestamp: Date.now(),
     items: [...items],
+  };
+}
+
+export function luisEditorDeepLinkItem(text: string): LogItem<LuisEditorDeepLinkLogItem> {
+  return {
+    type: LogItemType.LuisEditorDeepLink,
+    payload: {
+      text,
+    },
   };
 }

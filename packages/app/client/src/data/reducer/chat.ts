@@ -31,20 +31,32 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ChatAction, ChatActions } from '../action/chatActions';
+import {
+  ChatAction,
+  ChatActions,
+  PendingSpeechTokenRetrievalPayload,
+  WebChatStorePayload,
+  WebSpeechFactoryPayload,
+} from '../action/chatActions';
 import { EditorAction, EditorActions } from '../action/editorActions';
 
 export interface ChatState {
   changeKey?: number;
   // TODO: keys should map to an Chat
   chats?: { [chatId: string]: any };
+  webSpeechFactories?: { [documentId: string]: () => any };
+  webChatStores: { [documentId: string]: any };
   transcripts?: string[];
+  pendingSpeechTokenRetrieval: boolean;
 }
 
 const DEFAULT_STATE: ChatState = {
   changeKey: 0,
   chats: {},
   transcripts: [],
+  webSpeechFactories: {},
+  webChatStores: {},
+  pendingSpeechTokenRetrieval: false,
 };
 
 export function chat(state: ChatState = DEFAULT_STATE, action: ChatAction | EditorAction): ChatState {
@@ -84,14 +96,43 @@ export function chat(state: ChatState = DEFAULT_STATE, action: ChatAction | Edit
       break;
     }
 
-    case ChatActions.closeChat: {
-      const { payload } = action;
+    case ChatActions.webSpeechFactoryUpdated:
+      {
+        const { documentId, factory } = action.payload as WebSpeechFactoryPayload;
+        const { webSpeechFactories } = state;
+        state = {
+          ...state,
+          webSpeechFactories: { ...webSpeechFactories, [documentId]: factory },
+        };
+      }
+      break;
+
+    case ChatActions.webChatStoreUpdated:
+      {
+        const { documentId, store } = action.payload as WebChatStorePayload;
+        const { webChatStores } = state;
+        state = {
+          ...state,
+          webChatStores: { ...webChatStores, [documentId]: store },
+        };
+      }
+      break;
+
+    case ChatActions.updatePendingSpeechTokenRetrieval:
+      state = {
+        ...state,
+        pendingSpeechTokenRetrieval: (action.payload as PendingSpeechTokenRetrievalPayload).pending,
+      };
+      break;
+
+    case ChatActions.closeDocument: {
+      const { documentId } = action.payload;
       // can't use the JSON.parse(JSON.stringify())
       // trick with chats because Subscribers are circular
-      if (payload.documentId in state.chats) {
+      if (documentId in state.chats) {
         const copy = { ...state };
         copy.changeKey += 1;
-        delete copy.chats[payload.documentId];
+        delete copy.chats[documentId];
         state = { ...copy };
       }
       break;
@@ -164,6 +205,28 @@ export function chat(state: ChatState = DEFAULT_STATE, action: ChatAction | Edit
       }
       break;
     }
+
+    case ChatActions.setHighlightedObjects:
+      {
+        const { payload } = action;
+        let document = state.chats[payload.documentId];
+        if (document) {
+          document = {
+            ...document,
+            highlightedObjects: payload.objs,
+          };
+        }
+        state = {
+          ...state,
+          chats: {
+            ...state.chats,
+            [payload.documentId]: {
+              ...document,
+            },
+          },
+        };
+      }
+      break;
 
     case ChatActions.setInspectorObjects: {
       const { payload } = action;

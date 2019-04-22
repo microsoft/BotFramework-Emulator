@@ -51,6 +51,7 @@ import sendActivityToConversation from './sendActivityToConversation';
 import sendHistoryToConversation from './sendHistoryToConversation';
 import updateActivity from './updateActivity';
 import uploadAttachment from './uploadAttachment';
+import createFetchConversationMiddleware from './getConversations';
 
 describe('The conversations middleware', () => {
   let emulator: BotEmulator;
@@ -543,9 +544,11 @@ describe('The getBotEndpoint middleware', () => {
   let emulator: BotEmulator;
   let res;
   let getBotEndpointMiddleware;
+  let sentResponses;
   beforeEach(() => {
+    sentResponses = [];
     res = {
-      send: () => null,
+      send: (...args) => sentResponses.push(args),
       end: () => null,
       contentType: '',
     };
@@ -560,10 +563,10 @@ describe('The getBotEndpoint middleware', () => {
           id: '1234',
         },
       },
-      query: {
-        botEndpoint: 'http://localhost:5050/api/messages',
-        msaAppId: '12e34',
-        msaPassword: '54543',
+      headers: {
+        'x-emulator-botendpoint': 'http://localhost:5050/api/messages',
+        'x-emulator-appid': '12e34',
+        'x-emulator-apppassword': '54543',
       },
     } as any;
     getBotEndpointMiddleware(req as any, res, (() => null) as any);
@@ -596,16 +599,46 @@ describe('The getBotEndpoint middleware', () => {
       msaAppId: 'oldAppId',
       msaPassword: 'oldPassword',
     });
+    const bot = { role: 'bot', name: 'thebot', id: '456' };
     const req = {
-      query: {
-        botEndpoint: 'http://localhost/api/messages',
-        msaAppId: 'newAppId',
-        msaPassword: 'newPassword',
+      headers: {
+        'x-emulator-botendpoint': 'http://localhost:5050/api/messages',
+        'x-emulator-appid': 'newAppId',
+        'x-emulator-apppassword': 'newPassword',
       },
+      body: {
+        members: [{ id: '456', name: 'emulator', role: 'user' }],
+        bot,
+        conversationId: '007',
+      } as ConversationParameters,
     } as any;
     getBotEndpointMiddleware(req as any, res, (() => null) as any);
     expect(req.botEndpoint.msaAppId).toBe('newAppId');
     expect(req.botEndpoint.msaPassword).toBe('newPassword');
+  });
+
+  it('should retrieve all conversations', () => {
+    const mockConversations = {
+      '1234abcd': { conversationId: '1234abcd', members: [] },
+      '1234abcde': { conversationId: '1234abcde', members: [] },
+      '1234abcdf': { conversationId: '1234abcdf', members: [] },
+    };
+    (emulator.facilities.conversations as any)['conversations'] = mockConversations;
+    const req = { params: { continuationToken: '1234abcde' } } as any;
+    const fetchConversationMiddleware = createFetchConversationMiddleware(emulator);
+    fetchConversationMiddleware(req as any, res, (() => null) as any);
+    expect(sentResponses[0][1]).toEqual({
+      conversations: [
+        {
+          id: '1234abcde',
+          members: [],
+        },
+        {
+          id: '1234abcdf',
+          members: [],
+        },
+      ],
+    });
   });
 });
 
