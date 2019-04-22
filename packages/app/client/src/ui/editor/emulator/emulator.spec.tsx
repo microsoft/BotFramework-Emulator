@@ -35,14 +35,15 @@ import * as React from 'react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import { mount, shallow } from 'enzyme';
-import { SharedConstants } from '@bfemulator/app-shared';
+import { DebugMode, SharedConstants } from '@bfemulator/app-shared';
 import base64Url from 'base64url';
 
 import { disable, enable } from '../../../data/action/presentationActions';
 import { clearLog, newConversation, setInspectorObjects } from '../../../data/action/chatActions';
 import { updateDocument } from '../../../data/action/editorActions';
 
-import { Emulator, EmulatorComponent, RestartConversationOptions } from './emulator';
+import { Emulator, RestartConversationOptions } from './emulator';
+import { EmulatorContainer } from './emulatorContainer';
 
 const { encode } = base64Url;
 
@@ -95,7 +96,7 @@ jest.mock('botframework-webchat', () => ({
   createDirectLine: args => ({ ...args }),
 }));
 
-describe('<Emulator/>', () => {
+describe('<EmulatorContainer/>', () => {
   let wrapper;
   let node;
   let instance;
@@ -128,15 +129,16 @@ describe('<Emulator/>', () => {
         },
       },
       presentation: { enabled: true },
+      clientAwareSettings: { debugMode: DebugMode.Normal },
     };
     const mockStore = createStore((_state, _action) => mockStoreState);
     mockDispatch = jest.spyOn(mockStore, 'dispatch');
     wrapper = mount(
       <Provider store={mockStore}>
-        <Emulator documentId={'doc1'} url={'someUrl'} mode={'livechat'} />
+        <EmulatorContainer documentId={'doc1'} url={'someUrl'} mode={'livechat'} />
       </Provider>
     );
-    node = wrapper.find(EmulatorComponent);
+    node = wrapper.find(Emulator);
     instance = node.instance();
   });
 
@@ -154,7 +156,7 @@ describe('<Emulator/>', () => {
 
   it('should render the presentation view', () => {
     wrapper = shallow(
-      <EmulatorComponent
+      <Emulator
         createErrorNotification={jest.fn(() => null)}
         newConversation={jest.fn(() => null)}
         mode={'transcript'}
@@ -169,7 +171,7 @@ describe('<Emulator/>', () => {
 
   it('should render the default view', () => {
     wrapper = shallow(
-      <EmulatorComponent
+      <Emulator
         createErrorNotification={jest.fn(() => null)}
         newConversation={jest.fn(() => null)}
         mode={'transcript'}
@@ -192,7 +194,7 @@ describe('<Emulator/>', () => {
       },
     };
     wrapper = shallow(
-      <EmulatorComponent
+      <Emulator
         createErrorNotification={jest.fn(() => null)}
         newConversation={jest.fn(() => null)}
         mode={'transcript'}
@@ -214,7 +216,7 @@ describe('<Emulator/>', () => {
       },
     };
     wrapper = shallow(
-      <EmulatorComponent
+      <Emulator
         createErrorNotification={jest.fn(() => null)}
         newConversation={jest.fn(() => null)}
         mode={'transcript'}
@@ -229,7 +231,7 @@ describe('<Emulator/>', () => {
 
   it('should restart the conversation on Ctrl/Cmd + Shift + R', () => {
     wrapper = shallow(
-      <EmulatorComponent
+      <Emulator
         createErrorNotification={jest.fn(() => null)}
         newConversation={jest.fn(() => null)}
         mode={'transcript'}
@@ -286,7 +288,7 @@ describe('<Emulator/>', () => {
       conversationId: 'convo1',
     };
     wrapper = shallow(
-      <EmulatorComponent
+      <Emulator
         createErrorNotification={jest.fn(() => null)}
         newConversation={jest.fn(() => null)}
         mode={'transcript'}

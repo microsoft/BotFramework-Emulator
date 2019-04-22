@@ -32,9 +32,8 @@
 //
 import { DebugMode, FrameworkSettings, Settings, SharedConstants } from '@bfemulator/app-shared';
 import { Users } from '@bfemulator/emulator-core';
-import { ClientAwareSettings } from '@bfemulator/app-shared/src';
+import { ClientAwareSettings } from '@bfemulator/app-shared';
 
-import { getActiveBot } from '../../botHelpers';
 import { Emulator } from '../../emulator';
 import { mainWindow } from '../../main';
 import { FrameworkAction, PUSH_CLIENT_AWARE_SETTINGS, SET_FRAMEWORK } from '../actions/frameworkActions';
@@ -64,13 +63,15 @@ export function* rememberThemeSaga(): IterableIterator<any> {
 
 export function* debugModeChanged(action: WindowStateAction<RememberDebugModePayload>) {
   const { debugMode } = action.payload;
-  const activeBot = getActiveBot();
+  const hasConversations = Object.keys(
+    Emulator.getInstance().framework.server.botEmulator.facilities.conversations.conversations
+  ).length;
   // If the user has an open botfile, confirm before switching
   // Note that once this propagates to the client,
   // it's assumed the user has confirmed that all
   // tabs will be closed.
   const { commandService } = mainWindow;
-  if (debugMode === DebugMode.Sidecar && activeBot) {
+  if (hasConversations) {
     const confirmation = yield call(
       [commandService, commandService.call],
       SharedConstants.Commands.Electron.ShowMessageBox,

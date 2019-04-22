@@ -40,7 +40,7 @@ import { IEndpointService, ServiceTypes } from 'botframework-config/lib/schema';
 import { Notification, NotificationImpl, NotificationType } from './types';
 
 export function isObject(item: any): boolean {
-  return !!(item && typeof item === 'object' && !Array.isArray(item) && item !== null);
+  return !!(item && typeof item === 'object' && !Array.isArray(item));
 }
 
 export function mergeDeep<T extends {}, R extends {}>(target: T, source: R): T & R {

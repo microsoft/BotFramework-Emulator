@@ -57,7 +57,6 @@ export interface ChatProps {
   document: PartialDocument;
   mode: EmulatorMode;
   debugMode: DebugMode;
-  onStartConversation: any;
   currentUser: User;
   locale: string;
   webSpeechPonyfillFactory?: () => any;

@@ -157,8 +157,8 @@ describe('the uiCommands', () => {
       return action;
     };
     registry.getCommand(Commands.SwitchDebugMode).handler(DebugMode.Sidecar);
-    expect(dispatchedActions.length).toBe(4);
-    [EditorActions.closeAll, BotActionType.close, ExplorerActions.Show, SWITCH_DEBUG_MODE].forEach((type, index) =>
+    expect(dispatchedActions.length).toBe(3);
+    [BotActionType.close, ExplorerActions.Show, SWITCH_DEBUG_MODE].forEach((type, index) =>
       expect(type).toEqual(dispatchedActions[index].type)
     );
   });

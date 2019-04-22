@@ -43,7 +43,7 @@ import * as EditorActions from '../data/action/editorActions';
 import * as NavBarActions from '../data/action/navBarActions';
 import { ProgressIndicatorPayload, updateProgressIndicator } from '../data/action/progressIndicatorActions';
 import { switchTheme } from '../data/action/themeActions';
-import { showWelcomePage } from '../data/editorHelpers';
+import { getTabGroupForDocument, showWelcomePage } from '../data/editorHelpers';
 import { AzureAuthState } from '../data/reducer/azureAuthReducer';
 import { store } from '../data/store';
 import { CommandServiceImpl } from '../platform/commands/commandServiceImpl';
@@ -61,6 +61,8 @@ import {
   UpdateUnavailableDialogContainer,
 } from '../ui/dialogs';
 import * as ExplorerActions from '../data/action/explorerActions';
+import { closeConversation } from '../data/action/chatActions';
+import { close } from '../data/action/editorActions';
 
 /** Register UI commands (toggling UI) */
 export function registerCommands(commandRegistry: CommandRegistry) {
@@ -128,18 +130,27 @@ export function registerCommands(commandRegistry: CommandRegistry) {
     store.dispatch(switchTheme(themeName, themeComponents));
     CommandServiceImpl.remoteCall(Telemetry.TrackEvent, 'app_chooseTheme', {
       themeName,
-    }).catch(_e => void 0);
+    }).catch();
   });
 
   // ---------------------------------------------------------------------------
   // Debug mode from main
   commandRegistry.registerCommand(UI.SwitchDebugMode, (debugMode: DebugMode) => {
-    if (debugMode === DebugMode.Sidecar) {
-      store.dispatch(EditorActions.closeNonGlobalTabs());
-      store.dispatch(closeBot());
-      store.dispatch(ExplorerActions.showExplorer(false));
-    }
+    const {
+      editor: { editors, activeEditor },
+    } = store.getState();
+    const { documents } = editors[activeEditor];
+    store.dispatch(closeBot());
+    store.dispatch(ExplorerActions.showExplorer(debugMode !== DebugMode.Sidecar));
     store.dispatch(switchDebugMode(debugMode));
+    // Close all active conversations - this is a clean wipe of all active conversations
+    Object.values(documents).forEach(document => {
+      if (!document.isGlobal) {
+        const { documentId } = document;
+        store.dispatch(close(getTabGroupForDocument(documentId), documentId));
+        store.dispatch(closeConversation(documentId));
+      }
+    });
   });
 
   // ---------------------------------------------------------------------------
@@ -166,7 +177,7 @@ export function registerCommands(commandRegistry: CommandRegistry) {
   // ---------------------------------------------------------------------------
   // Show post migration dialog on startup if the user has just been migrated
   commandRegistry.registerCommand(UI.ShowPostMigrationDialog, () => {
-    DialogService.showDialog(PostMigrationDialogContainer);
+    return DialogService.showDialog(PostMigrationDialogContainer);
   });
 
   // ---------------------------------------------------------------------------

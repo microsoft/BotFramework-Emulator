@@ -44,7 +44,8 @@ import { settingsSagas } from './settingsSagas';
 const mockEmulator = {
   startup: async () => true,
   framework: {
-    serverPort: 9000,
+    serverPort: null,
+    server: { botEmulator: { facilities: { conversations: { conversations: { convo: {} } } } } },
   },
 };
 
