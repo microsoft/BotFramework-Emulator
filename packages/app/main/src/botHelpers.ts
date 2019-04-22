@@ -33,7 +33,6 @@
 import * as path from 'path';
 
 import * as electron from 'electron';
-
 import { Conversation } from '@bfemulator/emulator-core';
 import { BotInfo, getBotDisplayName, SharedConstants } from '@bfemulator/app-shared';
 import { BotConfigWithPath, BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
