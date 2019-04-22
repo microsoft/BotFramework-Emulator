@@ -157,10 +157,12 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
     try {
       const { ShowOpenDialog } = SharedConstants.Commands.Electron;
       const filename = await CommandServiceImpl.remoteCall(ShowOpenDialog, dialogOptions);
-      await CommandServiceImpl.call(Emulator.OpenTranscript, filename);
-      CommandServiceImpl.remoteCall(TrackEvent, 'transcriptFile_open', {
-        method: 'file_menu',
-      }).catch(_e => void 0);
+      if (filename) {
+        await CommandServiceImpl.call(Emulator.OpenTranscript, filename);
+        CommandServiceImpl.remoteCall(TrackEvent, 'transcriptFile_open', {
+          method: 'file_menu',
+        }).catch(_e => void 0);
+      }
     } catch (e) {
       const errMsg = `Error while opening transcript file: ${e}`;
       const notification = newNotification(errMsg);
