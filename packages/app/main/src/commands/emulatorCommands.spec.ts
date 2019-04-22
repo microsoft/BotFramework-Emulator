@@ -85,6 +85,7 @@ jest.mock('../botHelpers', () => ({
   getBotInfoByPath: () => ({ secret: 'secret' }),
   loadBotWithRetry: () => mockBot,
   getActiveBot: () => mockBot,
+  getTranscriptsPath: () => 'Users/blerg/Documents/testbot/transcripts',
 }));
 
 jest.mock('../utils', () => ({
@@ -112,7 +113,8 @@ const mockEmulator = {
           },
           conversations: {
             conversationById: () => mockConversation,
-            newConversation: (...args: any[]) => new mockConversationConstructor(args[0], args[1], args[3], args[2]),
+            newConversation: (...args: any[]) =>
+              new mockConversationConstructor(args[0], args[1], args[3], args[2], 'livechat'),
             deleteConversation: () => true,
           },
           endpoints: {
@@ -407,6 +409,7 @@ describe('The emulatorCommands', () => {
 
   it('should save a transcript to file based on the transcripts path in the botInfo', async () => {
     const getActiveBotSpy = jest.spyOn((botHelpers as any).default, 'getActiveBot').mockReturnValue(mockBot);
+
     const conversationByIdSpy = jest
       .spyOn(mockEmulator.framework.server.botEmulator.facilities.conversations, 'conversationById')
       .mockReturnValue(mockConversation);

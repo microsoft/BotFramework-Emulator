@@ -41,7 +41,7 @@ import { sync as mkdirpSync } from 'mkdirp';
 
 import * as BotActions from '../botData/actions/botActions';
 import { getStore } from '../botData/store';
-import { getActiveBot, getBotInfoByPath, patchBotsJson, toSavableBot } from '../botHelpers';
+import { getActiveBot, getBotInfoByPath, patchBotsJson, toSavableBot, getTranscriptsPath } from '../botHelpers';
 import { Emulator } from '../emulator';
 import { mainWindow } from '../main';
 import { dispatch, getStore as getSettingsStore } from '../settingsData/store';
@@ -61,16 +61,13 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
     Commands.SaveTranscriptToFile,
     async (conversationId: string): Promise<void> => {
       const activeBot: BotConfigWithPath = getActiveBot();
-      const convo = Emulator.getInstance().framework.server.botEmulator.facilities.conversations.conversationById(
+      const conversation = Emulator.getInstance().framework.server.botEmulator.facilities.conversations.conversationById(
         conversationId
       );
-      if (!convo) {
+      if (!conversation) {
         throw new Error(`${Commands.SaveTranscriptToFile}: Conversation ${conversationId} not found.`);
       }
       let botInfo = activeBot ? getBotInfoByPath(activeBot.path) : {};
-      const dirName = path.dirname(activeBot ? activeBot.path : '/');
-
-      const { transcriptsPath = path.join(dirName, './transcripts') } = botInfo;
 
       const filename = showSaveDialog(mainWindow.browserWindow, {
         // TODO - Localization
@@ -80,7 +77,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
             extensions: ['transcript'],
           },
         ],
-        defaultPath: transcriptsPath,
+        defaultPath: getTranscriptsPath(activeBot, conversation),
         showsTagField: false,
         title: 'Save conversation transcript',
         buttonLabel: 'Save',
@@ -88,7 +85,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
       if (filename && filename.length) {
         mkdirpSync(path.dirname(filename));
-        const transcripts = await convo.getTranscript();
+        const transcripts = await conversation.getTranscript();
         writeFile(filename, transcripts);
         TelemetryService.trackEvent('transcript_save');
       }

@@ -139,6 +139,7 @@ export class RestServer {
     // can also mean "restart".
     const {
       botEndpoint: { id, botUrl },
+      mode,
     } = conversation;
 
     await mainWindow.commandService.remoteCall(
@@ -148,7 +149,8 @@ export class RestServer {
         endpoint: botUrl,
       } as IEndpointService,
       hasLiveChat(conversationId, this.botEmulator.facilities.conversations),
-      conversationId
+      conversationId,
+      mode
     );
     await Emulator.getInstance().report(conversationId, botUrl);
   };

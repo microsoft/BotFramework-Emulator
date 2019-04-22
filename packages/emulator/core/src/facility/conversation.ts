@@ -61,6 +61,7 @@ import {
   ChannelAccount,
 } from 'botframework-schema';
 import { networkRequestItem, networkResponseItem } from '@bfemulator/sdk-shared';
+import { ChatMode } from '@bfemulator/app-shared';
 
 import { BotEmulator } from '../botEmulator';
 import { TokenCache } from '../userToken/tokenCache';
@@ -90,6 +91,7 @@ export default class Conversation extends EventEmitter {
   public botEndpoint: BotEndpoint;
   public conversationId: string;
   public user: User;
+  public mode: ChatMode;
   // flag indicating if the user has been shown the
   // "please don't use default Bot State API" warning message
   // when they try to write bot state data
@@ -106,9 +108,9 @@ export default class Conversation extends EventEmitter {
     return this.conversationId.includes('transcript');
   }
 
-  constructor(botEmulator: BotEmulator, botEndpoint: BotEndpoint, conversationId: string, user: User) {
+  constructor(botEmulator: BotEmulator, botEndpoint: BotEndpoint, conversationId: string, user: User, mode: ChatMode) {
     super();
-    Object.assign(this, { botEmulator, botEndpoint, conversationId, user });
+    Object.assign(this, { botEmulator, botEndpoint, conversationId, user, mode });
     // We should consider hardcoding bot id because we don't really use it
     this.members.push({
       id: (botEndpoint && botEndpoint.botId) || 'bot-1',
