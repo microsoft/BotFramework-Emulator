@@ -35,7 +35,7 @@ import * as React from 'react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import { mount, shallow } from 'enzyme';
-import { DebugMode, SharedConstants } from '@bfemulator/app-shared';
+import { DebugMode, newNotification, SharedConstants } from '@bfemulator/app-shared';
 import base64Url from 'base64url';
 
 import { disable, enable } from '../../../data/action/presentationActions';
@@ -44,6 +44,8 @@ import { updateDocument } from '../../../data/action/editorActions';
 
 import { Emulator, RestartConversationOptions } from './emulator';
 import { EmulatorContainer } from './emulatorContainer';
+import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
+import { beginAdd } from '../../../data/action/notificationActions';
 
 const { encode } = base64Url;
 
@@ -135,7 +137,7 @@ describe('<EmulatorContainer/>', () => {
     mockDispatch = jest.spyOn(mockStore, 'dispatch');
     wrapper = mount(
       <Provider store={mockStore}>
-        <EmulatorContainer documentId={'doc1'} url={'someUrl'} mode={'livechat'} />
+        <EmulatorContainer documentId={'doc1'} url={'someUrl'} mode={'livechat'} conversationId={'convo1'} />
       </Provider>
     );
     node = wrapper.find(Emulator);
@@ -284,23 +286,20 @@ describe('<EmulatorContainer/>', () => {
   });
 
   it('should export a transcript', () => {
-    mockStoreState.chat.chats.doc1.directLine = {
-      conversationId: 'convo1',
-    };
-    wrapper = shallow(
-      <Emulator
-        createErrorNotification={jest.fn(() => null)}
-        newConversation={jest.fn(() => null)}
-        mode={'transcript'}
-        document={mockStoreState.chat.chats.doc1}
-      />
-    );
-    instance = wrapper.instance();
-    instance.onExportClick();
+    instance.onExportTranscriptClick();
 
     expect(mockRemoteCallsMade).toHaveLength(1);
     expect(mockRemoteCallsMade[0].commandName).toBe(SharedConstants.Commands.Emulator.SaveTranscriptToFile);
-    expect(mockRemoteCallsMade[0].args).toEqual(['convo1']);
+    expect(mockRemoteCallsMade[0].args).toEqual([16, 'convo1']);
+  });
+
+  it('should report a notification when exporting a transcript fails', async () => {
+    jest.spyOn(CommandServiceImpl, 'remoteCall').mockRejectedValueOnce({ message: 'oh noes!' });
+    await instance.onExportTranscriptClick();
+    const notification = newNotification('oh noes!');
+    notification.timestamp = jasmine.any(Number) as any;
+
+    expect(mockDispatch).toHaveBeenCalledWith(beginAdd(notification));
   });
 
   it('should start a new conversation', async () => {

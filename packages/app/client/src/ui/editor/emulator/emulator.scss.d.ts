@@ -4,7 +4,7 @@ export const vertical: string;
 export const header: string;
 export const toolbarIcon: string;
 export const restartIcon: string;
-export const saveTranscriptIcon: string;
+export const saveIcon: string;
 export const content: string;
 export const presentation: string;
 export const chatPanel: string;

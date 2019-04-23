@@ -53,6 +53,7 @@ import { setCurrentUser } from '../settingsData/actions/userActions';
 import { pushClientAwareSettings } from '../settingsData/actions/frameworkActions';
 
 import { registerCommands } from './emulatorCommands';
+import { ValueTypesMask } from '@bfemulator/app-shared';
 
 const mockBotConfig = BotConfiguration;
 const mockConversationConstructor = Conversation;
@@ -422,7 +423,7 @@ describe('The emulatorCommands', () => {
     const patchBotJsonSpy = jest.spyOn((botHelpers as any).default, 'patchBotsJson').mockResolvedValue(true);
 
     const command = mockCommandRegistry.getCommand(SharedConstants.Commands.Emulator.SaveTranscriptToFile);
-    await command.handler('1234');
+    await command.handler(ValueTypesMask.Activity, '1234');
 
     expect(getActiveBotSpy).toHaveBeenCalled();
     expect(conversationByIdSpy).toHaveBeenCalledWith('1234');

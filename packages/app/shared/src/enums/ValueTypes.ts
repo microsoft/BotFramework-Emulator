@@ -37,3 +37,17 @@ export enum ValueTypes {
   Error = 'https://www.botframework.com/schemas/error',
   Activity = 'https://www.botframework.com/schemas/activity',
 }
+
+export class ValueTypesMask {
+  public static [ValueTypes.BotState] = 0b1;
+  public static [ValueTypes.Debug] = 0b10;
+  public static [ValueTypes.Diff] = 0b100;
+  public static [ValueTypes.Error] = 0b1000;
+  public static [ValueTypes.Activity] = 0b10000;
+  public static BotState = 0b1;
+  public static Debug = 0b10;
+  public static Diff = 0b100;
+  public static Error = 0b1000;
+  public static Activity = 0b10000;
+  private constructor() {}
+}

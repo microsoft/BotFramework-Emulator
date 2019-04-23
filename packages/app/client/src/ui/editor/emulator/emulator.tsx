@@ -37,8 +37,7 @@ import { SplitButton, Splitter } from '@bfemulator/ui-react';
 import base64Url from 'base64url';
 import { IEndpointService } from 'botframework-config/lib/schema';
 import * as React from 'react';
-import { newNotification, Notification, SharedConstants } from '@bfemulator/app-shared';
-import { DebugMode } from '@bfemulator/app-shared';
+import { DebugMode, newNotification, Notification, SharedConstants, ValueTypesMask } from '@bfemulator/app-shared';
 
 import { Document } from '../../../data/reducer/editor';
 import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
@@ -72,6 +71,7 @@ export interface EmulatorProps {
   enablePresentationMode?: (enabled: boolean) => void;
   endpointId?: string;
   endpointService?: IEndpointService;
+  exportItems?: (types: ValueTypesMask, conversationId: string) => Promise<void>;
   mode?: EmulatorMode;
   newConversation?: (documentId: string, options: any) => void;
   presentationModeEnabled?: boolean;
@@ -262,24 +262,34 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
   renderDefaultView(): JSX.Element {
     const { NewUserId, SameUserId } = RestartConversationOptions;
 
+    const { mode, debugMode } = this.props;
     return (
       <div className={styles.emulator} key={this.getConversationId()}>
-        {this.props.mode === 'livechat' && (
+        {mode === 'livechat' && (
           <div className={styles.header}>
             <ToolBar>
-              <SplitButton
-                defaultLabel="Restart conversation"
-                buttonClass={styles.restartIcon}
-                options={[NewUserId, SameUserId]}
-                disabled={this.props.debugMode === DebugMode.Sidecar}
-                onClick={this.onStartOverClick}
-              />
+              {debugMode === DebugMode.Normal && (
+                <SplitButton
+                  defaultLabel="Restart conversation"
+                  buttonClass={styles.restartIcon}
+                  options={[NewUserId, SameUserId]}
+                  onClick={this.onStartOverClick}
+                />
+              )}
               <button
-                className={`${styles.saveTranscriptIcon} ${styles.toolbarIcon || ''}`}
-                onClick={this.onExportClick}
+                className={`${styles.saveIcon} ${styles.toolbarIcon || ''}`}
+                onClick={this.onExportTranscriptClick}
               >
                 Save transcript
               </button>
+              {/*{debugMode === DebugMode.Sidecar && (*/}
+              {/*  <button*/}
+              {/*    className={`${styles.saveIcon} ${styles.toolbarIcon || ''}`}*/}
+              {/*    onClick={this.onExportBotStateClick}*/}
+              {/*  >*/}
+              {/*    Save bot state*/}
+              {/*  </button>*/}
+              {/*)}*/}
             </ToolBar>
           </div>
         )}
@@ -370,13 +380,22 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
         break;
     }
   };
+  // Uncomment when ready to export bot state
+  // private onExportBotStateClick = async (): Promise<void> => {
+  //   try {
+  //     await this.props.exportItems(ValueTypesMask.BotState, this.props.conversationId);
+  //   } catch (e) {
+  //     const notification = newNotification(e.message);
+  //     this.props.createErrorNotification(notification);
+  //   }
+  // };
 
-  private onExportClick = (): void => {
-    if (this.props.document.directLine) {
-      CommandServiceImpl.remoteCall(
-        SharedConstants.Commands.Emulator.SaveTranscriptToFile,
-        this.props.document.directLine.conversationId
-      );
+  private onExportTranscriptClick = async (): Promise<void> => {
+    try {
+      await this.props.exportItems(ValueTypesMask.Activity, this.props.conversationId);
+    } catch (e) {
+      const notification = newNotification(e.message);
+      this.props.createErrorNotification(notification);
     }
   };
 

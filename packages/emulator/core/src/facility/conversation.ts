@@ -42,6 +42,8 @@ import {
   externalLinkItem,
   isLocalHostUrl,
   LogLevel,
+  networkRequestItem,
+  networkResponseItem,
   PaymentOperations,
   PaymentRequest,
   PaymentRequestComplete,
@@ -54,14 +56,14 @@ import {
 import {
   Activity,
   Attachment,
+  ChannelAccount,
   ConversationAccount,
   IContactRelationUpdateActivity,
   IInvokeActivity,
   IMessageActivity,
-  ChannelAccount,
 } from 'botframework-schema';
-import { networkRequestItem, networkResponseItem } from '@bfemulator/sdk-shared';
 import { ChatMode } from '@bfemulator/app-shared';
+import { ValueTypesMask } from '@bfemulator/app-shared';
 
 import { BotEmulator } from '../botEmulator';
 import { TokenCache } from '../userToken/tokenCache';
@@ -667,10 +669,23 @@ export default class Conversation extends EventEmitter {
     });
   }
 
-  public async getTranscript(): Promise<Activity[]> {
-    // Currently, we only export transcript of activities
-    // TODO: Think about "member join/left", "typing", "activity update/delete", etc.
-    const activities = this.transcript.filter(record => record.type === 'activity add').map(record => record.activity);
+  /**
+   * Gets the transcript, extracting values based on
+   * the (optional) valueTypesToExtract bitmask. If the valueTypesToExtract is
+   * not included in the bitmask, the entire activity is
+   * included. Otherwise, the value of the activity is extracted.
+   *
+   * @param valueTypesToExtract a bitmask representing the value Types to extract from the activity
+   */
+  public async getTranscript(valueTypesToExtract: number = 0): Promise<Activity[]> {
+    const activities = this.transcript
+      .filter(record => record.type === 'activity add')
+      .map(record => {
+        const { activity } = record;
+        const extractValue =
+          valueTypesToExtract && activity.valueType && !!(valueTypesToExtract & ValueTypesMask[activity.valueType]); // bitwise intentional
+        return extractValue ? activity.value : activity;
+      });
     for (let i = 0; i < activities.length; i++) {
       await this.processActivityForDataUrls(activities[i]);
     }
