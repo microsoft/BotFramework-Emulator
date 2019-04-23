@@ -92,14 +92,11 @@ const getPreviousBotState = (state: RootState, selectedTrace: Activity): Activit
   const filteredLogItems: LogItem<InspectableObjectLogItem>[] = allEntries.filter(
     (item: LogItem<InspectableObjectLogItem>) => {
       const activity = item.payload.obj as Activity;
-      return (
-        item.type === LogItemType.InspectableObject &&
-        activity.valueType === ValueTypes.BotState &&
-        activity.id !== selectedTrace.id
-      );
+      return item.type === LogItemType.InspectableObject && activity.valueType === ValueTypes.BotState;
     }
   );
-  const targetLogEntry = filteredLogItems.pop();
+  const index = filteredLogItems.findIndex(logItem => logItem.payload.obj.id === selectedTrace.id) - 1;
+  const targetLogEntry = filteredLogItems[index];
   return targetLogEntry && (targetLogEntry.payload.obj as Activity);
 };
 
