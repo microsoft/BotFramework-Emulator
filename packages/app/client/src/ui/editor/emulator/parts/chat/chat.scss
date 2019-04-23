@@ -120,24 +120,24 @@ button.bot-state-object {
   margin: 5px 16px;
   min-width: initial;
   background: transparent;
-  color: var(--p-button-color-disabled);
+  color: var(--webchat-buttons-color);
   font-weight: bold;
 
   &:active {
-    color: var(--p-button-color);
+    color: var(--webchat-buttons-color-focus);
   }
 
   &[aria-selected="false"] {
-    color: var(--p-button-color-disabled);
+    color: var(--webchat-buttons-color);
   }
 
   &:hover:not([disabled]), &:focus {
     background: transparent;
-    color: var(--p-button-color);
+    color: var(--webchat-buttons-color-focus);
   }
 
   &[aria-selected="true"] {
-    color: var(--p-button-color);
+    color: var(--webchat-buttons-color-focus);
 
     &:before {
       content: '';
