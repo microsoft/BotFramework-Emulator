@@ -34,13 +34,13 @@
 import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 import { SharedConstants } from '@bfemulator/app-shared';
 import { combineReducers, createStore } from 'redux';
+import { DebugMode } from '@bfemulator/app-shared';
 
 import { clientAwareSettings } from '../data/reducer/clientAwareSettingsReducer';
 import { store } from '../data/store';
 import { clientAwareSettingsChanged } from '../data/action/clientAwareSettingsActions';
 
 import { registerCommands } from './settingsCommands';
-import { DebugMode } from '@bfemulator/app-shared';
 
 const mockStore = createStore(combineReducers({ clientAwareSettings }));
 jest.mock('../data/store', () => ({
