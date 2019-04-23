@@ -40,6 +40,7 @@ import { store } from '../data/store';
 import { clientAwareSettingsChanged } from '../data/action/clientAwareSettingsActions';
 
 import { registerCommands } from './settingsCommands';
+import { DebugMode } from '@bfemulator/app-shared';
 
 const mockStore = createStore(combineReducers({ clientAwareSettings }));
 jest.mock('../data/store', () => ({
@@ -58,7 +59,7 @@ describe('the settings commands', () => {
   it('should dispatch to the store when settings are sent from the main side', () => {
     const command = registry.getCommand(SharedConstants.Commands.Settings.ReceiveGlobalSettings).handler;
     const dispatchSpy = jest.spyOn(store, 'dispatch');
-    command({});
-    expect(dispatchSpy).toHaveBeenCalledWith(clientAwareSettingsChanged({} as any));
+    command({ debugMode: DebugMode.Normal });
+    expect(dispatchSpy).toHaveBeenCalledWith(clientAwareSettingsChanged({ debugMode: DebugMode.Normal } as any));
   });
 });
