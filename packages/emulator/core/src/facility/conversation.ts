@@ -526,12 +526,12 @@ export default class Conversation extends EventEmitter {
     };
 
     const paymentTokenHeaderStr = JSON.stringify(paymentTokenHeader);
-    const pthBytes = new Buffer(paymentTokenHeaderStr).toString('base64');
+    const pthBytes = Buffer.from(paymentTokenHeaderStr).toString('base64');
 
     const paymentTokenSource = 'tok_18yWDMKVgMv7trmwyE21VqO';
-    const ptsBytes = new Buffer(paymentTokenSource).toString('base64');
+    const ptsBytes = Buffer.from(paymentTokenSource).toString('base64');
 
-    const ptsigBytes = new Buffer('Emulator').toString('base64');
+    const ptsigBytes = Buffer.from('Emulator').toString('base64');
 
     const updateValue: PaymentRequestComplete = {
       id: request.id,

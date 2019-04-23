@@ -48,7 +48,7 @@ export default function startConversation(botEmulator: BotEmulator) {
     const botEndpoint: BotEndpoint = (req as any).botEndpoint;
     const conversationId =
       onErrorResumeNext(() => {
-        const optionsJson = new Buffer(tokenMatch[1], 'base64').toString('utf8');
+        const optionsJson = Buffer.from(tokenMatch[1], 'base64').toString('utf8');
 
         return JSON.parse(optionsJson).conversationId;
       }) || uniqueId();
