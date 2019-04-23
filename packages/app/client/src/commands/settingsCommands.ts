@@ -42,7 +42,10 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   const { Settings } = SharedConstants.Commands;
 
   commandRegistry.registerCommand(Settings.ReceiveGlobalSettings, async (settings: ClientAwareSettings) => {
+    const state = store.getState();
     store.dispatch(clientAwareSettingsChanged(settings));
-    await commandRegistry.getCommand(SharedConstants.Commands.UI.SwitchDebugMode).handler(settings.debugMode);
+    if (state.clientAwareSettings.debugMode !== settings.debugMode) {
+      await commandRegistry.getCommand(SharedConstants.Commands.UI.SwitchDebugMode).handler(settings.debugMode);
+    }
   });
 }
