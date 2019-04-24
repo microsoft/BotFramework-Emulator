@@ -117,8 +117,15 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
   }
 
   componentWillReceiveProps(nextProps: EmulatorProps) {
-    const { props, keyboardEventListener } = this;
+    const { props, keyboardEventListener, startNewConversation } = this;
+    const { document = {} } = props;
+    const { document: nextDocument = {} } = nextProps;
 
+    const documentIdChanged = !nextDocument.directLine && document.documentId !== nextDocument.documentId;
+
+    if (documentIdChanged) {
+      startNewConversation(nextProps).catch();
+    }
     const switchedDocuments = props.activeDocumentId !== nextProps.activeDocumentId;
     const switchedToThisDocument = nextProps.activeDocumentId === props.documentId;
 
