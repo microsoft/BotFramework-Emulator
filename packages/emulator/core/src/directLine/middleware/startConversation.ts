@@ -65,9 +65,8 @@ export default function startConversation(botEmulator: BotEmulator) {
       // Sends "user added to conversation"
       await conversation.sendConversationUpdate([currentUser], undefined);
       created = true;
-    } else {
-      const botIsNotInConversation = conversation.members.findIndex(user => user.id === botEndpoint.botId) === -1;
-      if (botEndpoint && botIsNotInConversation) {
+    } else if (botEndpoint && !conversationId.endsWith('transcript')) {
+      if (conversation.members.findIndex(user => user.id === botEndpoint.botId) === -1) {
         // Adds bot to conversation and sends "bot added to conversation"
         conversation.addMember(botEndpoint.botId, 'Bot');
       } else {

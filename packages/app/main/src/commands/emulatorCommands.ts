@@ -59,7 +59,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // Saves the conversation to a transcript file, with user interaction to set filename.
   commandRegistry.registerCommand(
     Commands.SaveTranscriptToFile,
-    async (conversationId: string): Promise<void> => {
+    async (valueTypes: number, conversationId: string): Promise<void> => {
       const activeBot: BotConfigWithPath = getActiveBot();
       const conversation = Emulator.getInstance().framework.server.botEmulator.facilities.conversations.conversationById(
         conversationId
@@ -85,7 +85,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
       if (filename && filename.length) {
         mkdirpSync(path.dirname(filename));
-        const transcripts = await conversation.getTranscript();
+        const transcripts = await conversation.getTranscript(valueTypes);
         writeFile(filename, transcripts);
         TelemetryService.trackEvent('transcript_save');
       }

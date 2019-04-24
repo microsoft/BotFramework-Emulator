@@ -40,6 +40,7 @@ import { BotConfigWithPathImpl, CommandRegistryImpl } from '@bfemulator/sdk-shar
 import { BotConfiguration } from 'botframework-config';
 import { newBot, newEndpoint, SharedConstants } from '@bfemulator/app-shared';
 import { Conversation } from '@bfemulator/emulator-core';
+import { ValueTypesMask } from '@bfemulator/app-shared';
 
 import * as store from '../botData/store';
 import { getStore as getSettingsStore } from '../settingsData/store';
@@ -422,7 +423,7 @@ describe('The emulatorCommands', () => {
     const patchBotJsonSpy = jest.spyOn((botHelpers as any).default, 'patchBotsJson').mockResolvedValue(true);
 
     const command = mockCommandRegistry.getCommand(SharedConstants.Commands.Emulator.SaveTranscriptToFile);
-    await command.handler('1234');
+    await command.handler(ValueTypesMask.Activity, '1234');
 
     expect(getActiveBotSpy).toHaveBeenCalled();
     expect(conversationByIdSpy).toHaveBeenCalledWith('1234');

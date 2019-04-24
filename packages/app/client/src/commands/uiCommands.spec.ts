@@ -49,9 +49,9 @@ import {
   SecretPromptDialogContainer,
 } from '../ui/dialogs';
 import { CommandServiceImpl } from '../platform/commands/commandServiceImpl';
-import { BotActionType } from '../data/action/botActions';
 import { ExplorerActions } from '../data/action/explorerActions';
 import { SWITCH_DEBUG_MODE } from '../data/action/debugModeAction';
+import { ActiveBotHelper } from '../ui/helpers/activeBotHelper';
 
 import { registerCommands } from './uiCommands';
 
@@ -156,9 +156,11 @@ describe('the uiCommands', () => {
       dispatchedActions.push(action);
       return action;
     };
-    registry.getCommand(Commands.SwitchDebugMode).handler(DebugMode.Sidecar);
-    expect(dispatchedActions.length).toBe(3);
-    [BotActionType.close, ExplorerActions.Show, SWITCH_DEBUG_MODE].forEach((type, index) =>
+    const closeActiveBotSpy = jest.spyOn(ActiveBotHelper, 'closeActiveBot').mockResolvedValueOnce(true);
+    await registry.getCommand(Commands.SwitchDebugMode).handler(DebugMode.Sidecar);
+    expect(dispatchedActions.length).toBe(2);
+    expect(closeActiveBotSpy).toHaveBeenCalled();
+    [ExplorerActions.Show, SWITCH_DEBUG_MODE].forEach((type, index) =>
       expect(type).toEqual(dispatchedActions[index].type)
     );
   });
