@@ -186,10 +186,15 @@ export class Chat extends Component<ChatProps, ChatState> {
         </ActivityWrapper>
       );
     } else if (valueType === ValueTypes.BotState) {
+      const diffIndicatorIndex =
+        this.state.highlightedActivities.length > 1
+          ? this.state.highlightedActivities.findIndex(activity => areActivitiesEqual(activity, card.activity))
+          : -1;
       return (
         <PrimaryButton
           className={styles.botStateObject}
           data-activity-id={card.activity.id}
+          data-diff-indicator-index={diffIndicatorIndex}
           onKeyDown={this.onItemRendererKeyDown}
           onClick={this.onItemRendererClick}
           onContextMenu={this.onContextMenu}

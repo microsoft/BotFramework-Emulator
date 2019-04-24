@@ -223,7 +223,7 @@ export function* diffWithPreviousBotState(currentBotState: Activity): Iterable<a
       return value;
     })
   );
-  botStateClone.valueType = 'https://www.botframework.com/schemas/diff';
+  botStateClone.valueType = ValueTypes.Diff;
   // values that were added
   rhs.forEach(path => {
     buildDiff('+', path, botStateClone.value, botStateClone.value);
