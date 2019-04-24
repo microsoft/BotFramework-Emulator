@@ -39,13 +39,14 @@ import { combineReducers, createStore } from 'redux';
 import { azureArmTokenDataChanged } from '../../../data/action/azureAuthActions';
 import * as BotActions from '../../../data/action/botActions';
 import { azureAuth } from '../../../data/reducer/azureAuthReducer';
+import { clientAwareSettings } from '../../../data/reducer/clientAwareSettingsReducer';
 import { bot } from '../../../data/reducer/bot';
 import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
 
 import { WelcomePage } from './welcomePage';
 import { WelcomePageContainer } from './welcomePageContainer';
 
-const mockStore = createStore(combineReducers({ azureAuth, bot }));
+const mockStore = createStore(combineReducers({ azureAuth, bot, clientAwareSettings }));
 jest.mock('./welcomePage.scss', () => ({}));
 jest.mock('../../layout/genericDocument.scss', () => ({}));
 jest.mock('../recentBotsList/recentBotsList.scss', () => ({}));

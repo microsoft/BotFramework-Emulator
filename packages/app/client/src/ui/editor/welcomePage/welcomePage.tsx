@@ -32,8 +32,9 @@
 //
 
 import { BotInfo } from '@bfemulator/app-shared';
-import { Column, LargeHeader, PrimaryButton, Row, SmallHeader } from '@bfemulator/ui-react';
+import { Column, LargeHeader, PrimaryButton, Row, SmallHeader, MediumHeader } from '@bfemulator/ui-react';
 import * as React from 'react';
+import { DebugMode } from '@bfemulator/app-shared';
 
 import { GenericDocument } from '../../layout';
 import { RecentBotsListContainer } from '../recentBotsList/recentBotsListContainer';
@@ -49,6 +50,7 @@ export interface WelcomePageProps {
   signInWithAzure?: () => void;
   signOutWithAzure?: () => void;
   switchToBot?: (path: string) => Promise<any>;
+  debugMode?: number;
 }
 
 export class WelcomePage extends React.Component<WelcomePageProps, {}> {
@@ -57,17 +59,20 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
   }
 
   public render(): JSX.Element {
-    const { startSection, signInSection } = this;
+    const { startSection, signInSection, headerSection } = this;
 
     return (
       <GenericDocument>
         <Row>
           <Column className={styles.spacing}>
-            <LargeHeader>Bot Framework Emulator</LargeHeader>
-            <span className={styles.versionNumber}>Version 4</span>
+            {headerSection}
             {startSection}
-            <RecentBotsListContainer onBotSelected={this.onBotSelected} />
-            {signInSection}
+            {this.props.debugMode === DebugMode.Normal && (
+              <React.Fragment>
+                <RecentBotsListContainer onBotSelected={this.onBotSelected} />
+                {signInSection}
+              </React.Fragment>
+            )}
           </Column>
           <Column className={styles.rightColumn}>
             <HowToBuildABot />
@@ -77,12 +82,30 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
     );
   }
 
+  private get headerSection(): JSX.Element {
+    return (
+      <React.Fragment>
+        <LargeHeader>Bot Framework Emulator</LargeHeader>
+        {this.props.debugMode === DebugMode.Sidecar && (
+          <div style={{ marginBottom: '15px' }}>
+            <MediumHeader>
+              Bot Inspector <span className={styles.betaLabel}>(BETA)</span>
+            </MediumHeader>
+          </div>
+        )}
+        <span className={styles.versionNumber}>Version 4</span>
+      </React.Fragment>
+    );
+  }
+
   private get startSection(): JSX.Element {
     return (
       <div className={styles.section}>
         <SmallHeader className={styles.marginFix}>Start by testing your bot</SmallHeader>
         <span>
-          Start talking to your bot by connecting to an endpoint or by opening a bot saved locally.
+          {this.props.debugMode === DebugMode.Normal
+            ? 'Start talking to your bot by connecting to an endpoint or by opening a bot saved locally.'
+            : 'Start talking to your bot by connecting to an endpoint.'}
           <br />
           <a className={styles.ctaLink} href="https://aka.ms/bot-framework-emulator-create-bot-locally">
             More about working locally with a bot.
@@ -91,12 +114,14 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
         <Row>
           <PrimaryButton className={styles.openBot} text="Open Bot" onClick={this.onOpenBotClick} />
         </Row>
-        <span>
-          If you don’t have a bot configuration,&nbsp;
-          <button className={styles.ctaLink} onClick={this.props.onNewBotClick}>
-            create a new bot configuration.
-          </button>
-        </span>
+        {this.props.debugMode === DebugMode.Normal && (
+          <span>
+            If you don’t have a bot configuration,&nbsp;
+            <button className={styles.ctaLink} onClick={this.props.onNewBotClick}>
+              create a new bot configuration.
+            </button>
+          </span>
+        )}
       </div>
     );
   }
