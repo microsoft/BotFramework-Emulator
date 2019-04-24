@@ -37,7 +37,6 @@ import { ServiceTypes } from 'botframework-config/lib/schema';
 
 import * as Constants from '../constants';
 import { azureArmTokenDataChanged, beginAzureAuthWorkflow, invalidateArmToken } from '../data/action/azureAuthActions';
-import { closeBot } from '../data/action/botActions';
 import { switchDebugMode } from '../data/action/debugModeAction';
 import * as EditorActions from '../data/action/editorActions';
 import * as NavBarActions from '../data/action/navBarActions';
@@ -63,6 +62,7 @@ import {
 import * as ExplorerActions from '../data/action/explorerActions';
 import { closeConversation } from '../data/action/chatActions';
 import { close } from '../data/action/editorActions';
+import { ActiveBotHelper } from '../ui/helpers/activeBotHelper';
 
 /** Register UI commands (toggling UI) */
 export function registerCommands(commandRegistry: CommandRegistry) {
@@ -135,12 +135,12 @@ export function registerCommands(commandRegistry: CommandRegistry) {
 
   // ---------------------------------------------------------------------------
   // Debug mode from main
-  commandRegistry.registerCommand(UI.SwitchDebugMode, (debugMode: DebugMode) => {
+  commandRegistry.registerCommand(UI.SwitchDebugMode, async (debugMode: DebugMode) => {
     const {
       editor: { editors, activeEditor },
     } = store.getState();
     const { documents } = editors[activeEditor];
-    store.dispatch(closeBot());
+    await ActiveBotHelper.closeActiveBot();
     store.dispatch(ExplorerActions.showExplorer(debugMode !== DebugMode.Sidecar));
     store.dispatch(switchDebugMode(debugMode));
     // Close all active conversations - this is a clean wipe of all active conversations

@@ -30,24 +30,21 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-export enum ValueTypes {
-  BotState = 'https://www.botframework.com/schemas/botState',
-  Debug = 'https://www.botframework.com/schemas/debug',
-  Diff = 'https://www.botframework.com/schemas/diff',
-  Error = 'https://www.botframework.com/schemas/error',
-  Activity = 'https://www.botframework.com/schemas/activity',
-}
 
-export class ValueTypesMask {
-  public static [ValueTypes.BotState] = 0b1;
-  public static [ValueTypes.Debug] = 0b10;
-  public static [ValueTypes.Diff] = 0b100;
-  public static [ValueTypes.Error] = 0b1000;
-  public static [ValueTypes.Activity] = 0b10000;
-  public static BotState = 0b1;
-  public static Debug = 0b10;
-  public static Diff = 0b100;
-  public static Error = 0b1000;
-  public static Activity = 0b10000;
-  private constructor() {}
-}
+import * as azureAuthActions from './azureAuthActions';
+
+describe('Azure auth actions', () => {
+  test('azurePersistLoginChanged action', () => {
+    expect(azureAuthActions.azurePersistLoginChanged(true)).toEqual({
+      type: azureAuthActions.AZURE_PERSIST_LOGIN_CHANGED,
+      payload: true,
+    });
+  });
+
+  test('azureLoggedInUserChanged action', () => {
+    expect(azureAuthActions.azureLoggedInUserChanged('someUser')).toEqual({
+      type: azureAuthActions.AZURE_LOGGED_IN_USER_CHANGED,
+      payload: 'someUser',
+    });
+  });
+});

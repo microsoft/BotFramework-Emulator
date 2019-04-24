@@ -30,24 +30,36 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-export enum ValueTypes {
-  BotState = 'https://www.botframework.com/schemas/botState',
-  Debug = 'https://www.botframework.com/schemas/debug',
-  Diff = 'https://www.botframework.com/schemas/diff',
-  Error = 'https://www.botframework.com/schemas/error',
-  Activity = 'https://www.botframework.com/schemas/activity',
-}
 
-export class ValueTypesMask {
-  public static [ValueTypes.BotState] = 0b1;
-  public static [ValueTypes.Debug] = 0b10;
-  public static [ValueTypes.Diff] = 0b100;
-  public static [ValueTypes.Error] = 0b1000;
-  public static [ValueTypes.Activity] = 0b10000;
-  public static BotState = 0b1;
-  public static Debug = 0b10;
-  public static Diff = 0b100;
-  public static Error = 0b1000;
-  public static Activity = 0b10000;
-  private constructor() {}
-}
+import { User } from '@bfemulator/sdk-shared';
+
+import * as userActions from './userActions';
+
+describe('User actions', () => {
+  const user: User = {
+    id: 'someId',
+    name: 'someName',
+  };
+  const users = [user];
+
+  test('addUsers action', () => {
+    expect(userActions.addUsers(users)).toEqual({
+      type: userActions.ADD_USERS,
+      state: { users },
+    });
+  });
+
+  test('removeUsers action', () => {
+    expect(userActions.removeUsers(users)).toEqual({
+      type: userActions.REMOVE_USERS,
+      state: { users },
+    });
+  });
+
+  test('setCurrentUser action', () => {
+    expect(userActions.setCurrentUser(user)).toEqual({
+      type: userActions.SET_CURRENT_USER,
+      state: { user },
+    });
+  });
+});
