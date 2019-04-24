@@ -49,7 +49,7 @@ export class WindowHostReceiver {
     const { visualizer } = this;
     visualizer.isDiff = data.valueType === ValueTypes.Diff;
     visualizer.dataProvider = data.value;
-    this.accessoryClick(visualizer.viewState || ViewState.Graph);
+    this.accessoryClick(visualizer.viewState || ViewState.Json);
   }
 
   @IpcHandler('theme')
