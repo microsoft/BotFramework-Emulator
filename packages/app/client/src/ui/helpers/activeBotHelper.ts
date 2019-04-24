@@ -83,7 +83,7 @@ export const ActiveBotHelper = new class {
   /** Sets a bot as active
    *  @param bot Bot to set as active
    */
-  async setActiveBot(bot: BotConfigWithPath): Promise<any> {
+  async setActiveBot(bot: BotConfigWithPath): Promise<void> {
     try {
       // set the bot as active on the server side
       const botDirectory = await CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.SetActive, bot);
@@ -104,21 +104,19 @@ export const ActiveBotHelper = new class {
   }
 
   /** tell the server-side the active bot is now closed */
-  closeActiveBot(): Promise<any> {
-    return CommandServiceImpl.remoteCall(Bot.Close)
-      .then(() => {
-        store.dispatch(BotActions.closeBot());
-        CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.SetTitleBar, '');
-      })
-      .catch(err => {
-        const errMsg = `Error while closing active bot: ${err}`;
-        const notification = newNotification(errMsg);
-        store.dispatch(beginAdd(notification));
-        throw new Error(errMsg);
-      });
+  async closeActiveBot(): Promise<void> {
+    try {
+      await CommandServiceImpl.remoteCall(Bot.Close);
+      store.dispatch(BotActions.closeBot());
+      await CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.SetTitleBar, '');
+    } catch (err) {
+      const errMsg = `Error while closing active bot: ${err}`;
+      const notification = newNotification(errMsg);
+      store.dispatch(beginAdd(notification));
+    }
   }
 
-  async botAlreadyOpen(): Promise<any> {
+  async botAlreadyOpen(): Promise<void> {
     // TODO - localization
     return await CommandServiceImpl.remoteCall(Electron.ShowMessageBox, true, {
       buttons: ['OK'],
@@ -131,7 +129,7 @@ export const ActiveBotHelper = new class {
     });
   }
 
-  async confirmAndCreateBot(botToCreate: BotConfigWithPath, secret: string): Promise<any> {
+  async confirmAndCreateBot(botToCreate: BotConfigWithPath, secret: string): Promise<void> {
     // prompt the user to confirm the switch
     const result = await this.confirmSwitchBot();
 
