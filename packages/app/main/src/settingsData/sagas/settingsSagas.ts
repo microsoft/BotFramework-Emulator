@@ -33,7 +33,6 @@
 import { DebugMode, FrameworkSettings, Settings, SharedConstants } from '@bfemulator/app-shared';
 import { Users } from '@bfemulator/emulator-core';
 import { ClientAwareSettings } from '@bfemulator/app-shared';
-import { call, ForkEffect, select, takeEvery } from 'redux-saga/effects';
 
 import { Emulator } from '../../emulator';
 import { mainWindow } from '../../main';
@@ -44,6 +43,8 @@ import {
   RememberDebugModePayload,
   WindowStateAction,
 } from '../actions/windowStateActions';
+
+import { call, ForkEffect, select, takeEvery } from 'redux-saga/effects';
 
 const getAvailableThemes = (state: Settings) => state.windowState.availableThemes;
 const getCurrentTheme = (state: Settings) => state.windowState.theme;

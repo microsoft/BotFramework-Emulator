@@ -32,12 +32,13 @@
 //
 
 import { SharedConstants } from '@bfemulator/app-shared';
-import { call, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
 
 import { EditorActions, removeDocPendingChange } from '../action/editorActions';
 
 import { checkActiveDocForPendingChanges, editorSagas, promptUserToReloadDocument } from './editorSagas';
 import { refreshConversationMenu, editorSelector } from './sharedSagas';
+
+import { call, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
 
 jest.mock('../store', () => ({
   get store() {

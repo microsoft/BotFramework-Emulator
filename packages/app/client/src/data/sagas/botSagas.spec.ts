@@ -33,7 +33,6 @@
 
 import { newNotification, SharedConstants } from '@bfemulator/app-shared';
 import { BotConfigWithPath, ConversationService } from '@bfemulator/sdk-shared';
-import { call, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
 
 import { ActiveBotHelper } from '../../ui/helpers/activeBotHelper';
 import {
@@ -48,6 +47,8 @@ import { generateHash } from '../botHelpers';
 
 import { botSagas, browseForBot, generateHashForActiveBot, openBotViaFilePath, openBotViaUrl } from './botSagas';
 import { refreshConversationMenu } from './sharedSagas';
+
+import { call, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
 
 jest.mock('../../ui/dialogs', () => ({}));
 

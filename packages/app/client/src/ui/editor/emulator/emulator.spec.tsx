@@ -41,11 +41,11 @@ import base64Url from 'base64url';
 import { disable, enable } from '../../../data/action/presentationActions';
 import { clearLog, newConversation, setInspectorObjects } from '../../../data/action/chatActions';
 import { updateDocument } from '../../../data/action/editorActions';
+import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
+import { beginAdd } from '../../../data/action/notificationActions';
 
 import { Emulator, RestartConversationOptions } from './emulator';
 import { EmulatorContainer } from './emulatorContainer';
-import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
-import { beginAdd } from '../../../data/action/notificationActions';
 
 const { encode } = base64Url;
 

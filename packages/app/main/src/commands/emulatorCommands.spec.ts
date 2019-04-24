@@ -40,6 +40,7 @@ import { BotConfigWithPathImpl, CommandRegistryImpl } from '@bfemulator/sdk-shar
 import { BotConfiguration } from 'botframework-config';
 import { newBot, newEndpoint, SharedConstants } from '@bfemulator/app-shared';
 import { Conversation } from '@bfemulator/emulator-core';
+import { ValueTypesMask } from '@bfemulator/app-shared';
 
 import * as store from '../botData/store';
 import { getStore as getSettingsStore } from '../settingsData/store';
@@ -53,7 +54,6 @@ import { setCurrentUser } from '../settingsData/actions/userActions';
 import { pushClientAwareSettings } from '../settingsData/actions/frameworkActions';
 
 import { registerCommands } from './emulatorCommands';
-import { ValueTypesMask } from '@bfemulator/app-shared';
 
 const mockBotConfig = BotConfiguration;
 const mockConversationConstructor = Conversation;
