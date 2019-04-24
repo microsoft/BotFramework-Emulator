@@ -180,6 +180,7 @@ html {
   --welcome-page-ver: var(--neutral-2);
   --welcome-how-to-border: var(--neutral-6);
   --welcome-how-to-test: #3062D6;
+  --welcome-beta-label: var(--warning-outline);
   --my-bots-well-bg: transparent;
   --my-bots-well-border: 1px solid #72C3DF;
   --my-bots-entry-bg: transparent;
