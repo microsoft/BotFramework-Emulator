@@ -64,7 +64,9 @@ export class AzureAuthWorkflowService {
 
   public static *retrieveAuthToken(renew: boolean = false): IterableIterator<any> {
     const authWindow = yield this.launchAuthWindow(renew);
-    authWindow.show();
+    if (!renew) {
+      authWindow.show();
+    }
     const result = yield this.waitForAuthResult(authWindow, replyUrl);
     authWindow.close();
     if (result.error) {
