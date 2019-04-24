@@ -112,9 +112,9 @@ export class ConversationService {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-Emulator-BotEndpoint': endpoint,
-        'X-Emulator-AppId': appId,
-        'X-Emulator-AppPassword': appPassword,
+        'X-Emulator-BotEndpoint': (endpoint || '').trim(),
+        'X-Emulator-AppId': (appId || '').trim(),
+        'X-Emulator-AppPassword': (appPassword || '').trim(),
       },
       body: JSON.stringify({
         bot: {
