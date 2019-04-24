@@ -33,11 +33,11 @@
 
 import { createDirectLine } from 'botframework-webchat';
 import { uniqueId, uniqueIdv4 } from '@bfemulator/sdk-shared';
-import { SplitButton, Splitter } from '@bfemulator/ui-react';
+import { Splitter } from '@bfemulator/ui-react';
 import base64Url from 'base64url';
 import { IEndpointService } from 'botframework-config/lib/schema';
 import * as React from 'react';
-import { newNotification, Notification, SharedConstants } from '@bfemulator/app-shared';
+import { newNotification, Notification, SharedConstants, FrameworkSettings } from '@bfemulator/app-shared';
 import { DebugMode } from '@bfemulator/app-shared';
 
 import { Document } from '../../../data/reducer/editor';
@@ -117,17 +117,7 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
   }
 
   componentWillReceiveProps(nextProps: EmulatorProps) {
-    const { props, keyboardEventListener, startNewConversation } = this;
-    const { document = {} } = props;
-    const { document: nextDocument = {} } = nextProps;
-
-    const documentOrUserIdChanged =
-      (!nextDocument.directLine && document.documentId !== nextDocument.documentId) ||
-      document.userId !== nextDocument.userId;
-
-    if (documentOrUserIdChanged) {
-      startNewConversation(nextProps).catch();
-    }
+    const { props, keyboardEventListener } = this;
 
     const switchedDocuments = props.activeDocumentId !== nextProps.activeDocumentId;
     const switchedToThisDocument = nextProps.activeDocumentId === props.documentId;
@@ -143,19 +133,29 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
 
   startNewConversation = async (
     props: EmulatorProps = this.props,
-    requireNewConvoId: boolean = false,
-    requireNewUserId: boolean = false
+    requireNewConvoId?: boolean,
+    requireNewUserId?: boolean
   ): Promise<any> => {
+    if (requireNewUserId == null) {
+      requireNewUserId = false;
+    }
+    if (requireNewConvoId == null) {
+      requireNewConvoId = false;
+    }
+
     // Look for an existing conversation ID and use that,
     // otherwise, create a new one
     const conversationId = requireNewConvoId
       ? `${uniqueId()}|${props.mode}`
       : props.document.conversationId || `${uniqueId()}|${props.mode}`;
 
-    const userId = requireNewUserId ? uniqueIdv4() : props.document.userId;
-    if (requireNewUserId) {
-      await CommandServiceImpl.remoteCall(SharedConstants.Commands.Emulator.SetCurrentUser, userId);
-    }
+    const framework: FrameworkSettings = await CommandServiceImpl.remoteCall(
+      SharedConstants.Commands.Settings.LoadAppSettings
+    );
+    const stableId = framework.userGUID || props.document.userId;
+    const userId = requireNewUserId ? uniqueIdv4() : stableId;
+
+    await CommandServiceImpl.remoteCall(SharedConstants.Commands.Emulator.SetCurrentUser, userId);
 
     const options = {
       conversationId,
@@ -267,13 +267,18 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
         {this.props.mode === 'livechat' && (
           <div className={styles.header}>
             <ToolBar>
-              <SplitButton
-                defaultLabel="Restart conversation"
-                buttonClass={styles.restartIcon}
-                options={[NewUserId, SameUserId]}
-                disabled={this.props.debugMode === DebugMode.Sidecar}
-                onClick={this.onStartOverClick}
-              />
+              <button
+                className={`${styles.restartIcon} ${styles.toolbarIcon || ''}`}
+                onClick={() => this.onStartOverClick(SameUserId)}
+              >
+                Restart with Same User Id
+              </button>
+              <button
+                className={`${styles.restartIcon} ${styles.toolbarIcon || ''}`}
+                onClick={() => this.onStartOverClick(NewUserId)}
+              >
+                Restart with New User Id
+              </button>
               <button
                 className={`${styles.saveTranscriptIcon} ${styles.toolbarIcon || ''}`}
                 onClick={this.onExportClick}
@@ -358,13 +363,14 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
         break;
       }
 
-      case SameUserId:
+      case SameUserId: {
         this.props.trackEvent('conversation_restart', {
           userId: 'same',
         });
         // start conversation with new convo id
         await this.startNewConversation(undefined, true, false);
         break;
+      }
 
       default:
         break;

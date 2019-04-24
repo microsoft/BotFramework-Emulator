@@ -60,6 +60,10 @@ export interface FrameworkSettings {
   collectUsageData?: boolean;
   // Digest of k/v pairs for integrity
   hash?: string;
+  // GUID set by the user
+  userGUID?: string;
+  // use custom user id
+  useCustomId?: boolean;
 }
 
 export interface WindowStateSettings {
@@ -138,6 +142,8 @@ export const frameworkDefault: FrameworkSettings = {
   usePrereleases: false,
   autoUpdate: true,
   collectUsageData: false,
+  userGUID: '',
+  useCustomId: false,
 };
 
 export const windowStateDefault: WindowStateSettings = {
