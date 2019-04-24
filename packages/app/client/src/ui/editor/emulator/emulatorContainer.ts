@@ -32,6 +32,7 @@
 //
 import { connect } from 'react-redux';
 import { Notification, SharedConstants } from '@bfemulator/app-shared';
+import { ValueTypesMask } from '@bfemulator/app-shared/src';
 
 import { RootState } from '../../../data/store';
 import * as PresentationActions from '../../../data/action/presentationActions';
@@ -65,6 +66,8 @@ const mapDispatchToProps = (dispatch): EmulatorProps => ({
   createErrorNotification: (notification: Notification) => dispatch(beginAdd(notification)),
   trackEvent: (name: string, properties?: { [key: string]: any }) =>
     CommandServiceImpl.remoteCall(SharedConstants.Commands.Telemetry.TrackEvent, name, properties).catch(),
+  exportItems: (valueTypes: ValueTypesMask, conversationId: string) =>
+    CommandServiceImpl.remoteCall(SharedConstants.Commands.Emulator.SaveTranscriptToFile, valueTypes, conversationId),
 });
 
 export const EmulatorContainer = connect(

@@ -186,14 +186,9 @@ export async function removeBotFromList(botPath: string): Promise<void> {
 }
 
 export function getTranscriptsPath(activeBot: BotConfigWithPath, conversation: Conversation): string {
-  if (conversation.mode === 'livechat-url') {
+  if (!activeBot || conversation.mode === 'livechat-url') {
     return path.join(electron.app.getPath('downloads'), './transcripts');
   }
-
-  if (activeBot) {
-    const dirName = path.dirname(activeBot.path);
-    return path.join(dirName, './transcripts');
-  }
-
-  return '/';
+  const dirName = path.dirname(activeBot.path);
+  return path.join(dirName, './transcripts');
 }
