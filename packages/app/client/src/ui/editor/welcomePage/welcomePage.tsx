@@ -34,8 +34,8 @@
 import { BotInfo } from '@bfemulator/app-shared';
 import { Column, LargeHeader, PrimaryButton, Row, SmallHeader, MediumHeader } from '@bfemulator/ui-react';
 import * as React from 'react';
-
 import { DebugMode } from '@bfemulator/app-shared';
+
 import { GenericDocument } from '../../layout';
 import { RecentBotsListContainer } from '../recentBotsList/recentBotsListContainer';
 
