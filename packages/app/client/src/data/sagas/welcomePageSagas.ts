@@ -31,12 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import { BotInfo, newNotification, SharedConstants } from '@bfemulator/app-shared';
+import { ForkEffect, put, takeEvery } from 'redux-saga/effects';
 
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { beginAdd } from '../action/notificationActions';
 import { OPEN_CONTEXT_MENU_FOR_BOT, WelcomePageAction } from '../action/welcomePageActions';
-
-import { ForkEffect, put, takeEvery } from 'redux-saga/effects';
 
 function* openContextMenuForBot(action: WelcomePageAction<BotInfo>): IterableIterator<any> {
   const menuItems = [

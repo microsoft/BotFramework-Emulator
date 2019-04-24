@@ -33,6 +33,7 @@
 
 import { newNotification, UserSettings } from '@bfemulator/app-shared';
 import { ConversationService, StartConversationParams } from '@bfemulator/sdk-shared';
+import { call, ForkEffect, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
 
 import { ActiveBotHelper } from '../../ui/helpers/activeBotHelper';
 import { BotAction, BotActionType, BotConfigWithPathPayload, botHashGenerated } from '../action/botActions';
@@ -41,8 +42,6 @@ import { generateHash } from '../botHelpers';
 import { RootState } from '../store';
 
 import { refreshConversationMenu } from './sharedSagas';
-
-import { call, ForkEffect, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
 
 /** Opens up native open file dialog to browse for a .bot file */
 export function* browseForBot(): IterableIterator<any> {

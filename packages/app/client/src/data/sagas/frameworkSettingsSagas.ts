@@ -31,6 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import { frameworkDefault, FrameworkSettings, newNotification, SharedConstants } from '@bfemulator/app-shared';
+import { call, ForkEffect, put, select, takeEvery } from 'redux-saga/effects';
 
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import * as EditorActions from '../action/editorActions';
@@ -45,8 +46,6 @@ import { beginAdd } from '../action/notificationActions';
 import { generateHash } from '../botHelpers';
 import { Document } from '../reducer/editor';
 import { RootState } from '../store';
-
-import { call, ForkEffect, put, select, takeEvery } from 'redux-saga/effects';
 
 export const normalizeSettingsData = async (settings: FrameworkSettings): Promise<FrameworkSettings> => {
   // trim keys that do not belong and generate a hash
