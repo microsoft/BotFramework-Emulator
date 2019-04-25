@@ -351,7 +351,7 @@ describe('AppMenuBuilder', () => {
     expect(sendActivityMenu).toHaveLength(7);
 
     const helpMenuTemplate = appMenuTemplate[4].submenu;
-    expect(helpMenuTemplate).toHaveLength(13);
+    expect(helpMenuTemplate).toHaveLength(14);
 
     expect(mockSetApplicationMenu).toHaveBeenCalledWith('I am a menu');
   });
