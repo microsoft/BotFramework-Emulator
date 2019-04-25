@@ -194,10 +194,8 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
               name="useCustomId"
             />
             <Row align={RowAlignment.Top}>
-              <label>User ID</label>
-            </Row>
-            <Row align={RowAlignment.Top}>
               <TextField
+                label="User ID"
                 className={styles.appSettingsInput}
                 inputContainerClassName={styles.inputContainer}
                 readOnly={false}
@@ -251,7 +249,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
     const change = { [name]: checked };
     this.setState(change);
     this.updateDirtyFlag(change);
-    if (name === 'useCustomId' && checked === false) this.setState({ ['userGUID']: '' });
+    if (name === 'useCustomId' && checked === false) this.setState({ userGUID: '' });
   };
 
   private onClickBrowse = async (): Promise<void> => {

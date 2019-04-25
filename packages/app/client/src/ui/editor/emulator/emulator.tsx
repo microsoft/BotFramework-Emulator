@@ -33,7 +33,7 @@
 
 import { createDirectLine } from 'botframework-webchat';
 import { uniqueId, uniqueIdv4 } from '@bfemulator/sdk-shared';
-import { Splitter } from '@bfemulator/ui-react';
+import { Splitter, SplitButton } from '@bfemulator/ui-react';
 import base64Url from 'base64url';
 import { IEndpointService } from 'botframework-config/lib/schema';
 import * as React from 'react';
@@ -147,16 +147,9 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
 
   startNewConversation = async (
     props: EmulatorProps = this.props,
-    requireNewConvoId?: boolean,
-    requireNewUserId?: boolean
+    requireNewConvoId: boolean = false,
+    requireNewUserId: boolean = false
   ): Promise<any> => {
-    if (requireNewUserId == null) {
-      requireNewUserId = false;
-    }
-    if (requireNewConvoId == null) {
-      requireNewConvoId = false;
-    }
-
     // Look for an existing conversation ID and use that,
     // otherwise, create a new one
     const conversationId = requireNewConvoId
@@ -283,21 +276,14 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
           <div className={styles.header}>
             <ToolBar>
               {debugMode === DebugMode.Normal && (
-                <button
-                  className={`${styles.restartIcon} ${styles.toolbarIcon || ''}`}
-                  onClick={() => this.onStartOverClick(SameUserId)}
-                >
-                  Restart with Same User Id
-                </button>
+                <SplitButton
+                  defaultLabel="Restart conversation"
+                  buttonClass={styles.restartIcon}
+                  options={[NewUserId, SameUserId]}
+                  onClick={this.onStartOverClick}
+                />
               )}
-              {debugMode === DebugMode.Normal && (
-                <button
-                  className={`${styles.restartIcon} ${styles.toolbarIcon || ''}`}
-                  onClick={() => this.onStartOverClick(NewUserId)}
-                >
-                  Restart with New User Id
-                </button>
-              )}
+
               <button
                 className={`${styles.saveIcon} ${styles.toolbarIcon || ''}`}
                 onClick={this.onExportTranscriptClick}
