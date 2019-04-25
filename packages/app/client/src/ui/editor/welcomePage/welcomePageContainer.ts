@@ -44,6 +44,7 @@ import { WelcomePage, WelcomePageProps } from './welcomePage';
 function mapStateToProps(state: RootState, ownProps: WelcomePageProps): WelcomePageProps {
   return {
     ...ownProps,
+    debugMode: state.clientAwareSettings.debugMode,
     accessToken: state.azureAuth.access_token,
   };
 }

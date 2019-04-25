@@ -53,6 +53,11 @@ html {
   --webchat-sa-border: solid 1px var(--neutral-4);
   --webchat-sa-text: #3794FF;
 
+  /* bot state button */
+  --bot-state-button-color: var(--neutral-6);
+  --bot-state-button-color-focus: var(--neutral-1);
+  --bot-state-diff-indicator-color: #A1260D;
+
   /* Log panel custom colors */
   --log-panel-timestamp: #47B07F;
   --log-panel-link: #9CDCFE;
@@ -181,6 +186,7 @@ html {
   --welcome-page-ver: var(--neutral-8);
   --welcome-how-to-border: var(--neutral-6);
   --welcome-how-to-test: var(--p-button-bg);
+  --welcome-beta-label: var(--warning-outline);
   --my-bots-well-bg: var(--neutral-13);
   --my-bots-well-border: 0;
   --my-bots-entry-bg: var(--neutral-12);

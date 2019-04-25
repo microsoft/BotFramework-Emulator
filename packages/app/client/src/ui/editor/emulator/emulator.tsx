@@ -319,7 +319,7 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
           <Splitter
             orientation="vertical"
             primaryPaneIndex={0}
-            minSizes={{ 0: 80, 1: 80 }}
+            minSizes={{ 0: 200, 1: 80 }}
             initialSizes={this.getVerticalSplitterSizes}
             onSizeChange={this.onVerticalSizeChange}
           >
