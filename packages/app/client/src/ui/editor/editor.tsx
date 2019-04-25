@@ -36,6 +36,8 @@ import * as React from 'react';
 import * as Constants from '../../constants';
 import { Document } from '../../data/reducer/editor';
 
+import { MarkdownPage } from './markdownPage/markdownPage';
+
 import { AppSettingsEditorContainer, EmulatorContainer, WelcomePageContainer } from './index';
 
 interface EditorFactoryProps {
@@ -61,6 +63,9 @@ export class EditorFactory extends React.Component<EditorFactoryProps> {
 
       case Constants.CONTENT_TYPE_WELCOME_PAGE:
         return <WelcomePageContainer documentId={document.documentId} />;
+
+      case Constants.CONTENT_TYPE_MARKDOWN:
+        return <MarkdownPage markdown={document.meta.markdown} onLine={document.meta.onLine} />;
 
       default:
         return false;

@@ -39,10 +39,11 @@ import * as Constants from '../constants';
 import { azureArmTokenDataChanged, beginAzureAuthWorkflow, invalidateArmToken } from '../data/action/azureAuthActions';
 import { switchDebugMode } from '../data/action/debugModeAction';
 import * as EditorActions from '../data/action/editorActions';
+import { close } from '../data/action/editorActions';
 import * as NavBarActions from '../data/action/navBarActions';
 import { ProgressIndicatorPayload, updateProgressIndicator } from '../data/action/progressIndicatorActions';
 import { switchTheme } from '../data/action/themeActions';
-import { getTabGroupForDocument, showWelcomePage } from '../data/editorHelpers';
+import { getTabGroupForDocument, showMarkdownPage, showWelcomePage } from '../data/editorHelpers';
 import { AzureAuthState } from '../data/reducer/azureAuthReducer';
 import { store } from '../data/store';
 import { CommandServiceImpl } from '../platform/commands/commandServiceImpl';
@@ -61,7 +62,6 @@ import {
 } from '../ui/dialogs';
 import * as ExplorerActions from '../data/action/explorerActions';
 import { closeConversation } from '../data/action/chatActions';
-import { close } from '../data/action/editorActions';
 import { ActiveBotHelper } from '../ui/helpers/activeBotHelper';
 
 /** Register UI commands (toggling UI) */
@@ -73,6 +73,35 @@ export function registerCommands(commandRegistry: CommandRegistry) {
   commandRegistry.registerCommand(UI.ShowWelcomePage, () => {
     return showWelcomePage();
   });
+
+  // ---------------------------------------------------------------------------
+  // Shows the markdown page after retrieving the remote source
+  commandRegistry.registerCommand(
+    UI.ShowMarkdownPage,
+    async (urlOrMarkdown: string, label: string, windowRef = window) => {
+      let markdown = '';
+      let { onLine } = windowRef.navigator;
+      if (!onLine) {
+        return showMarkdownPage(markdown, label, onLine);
+      }
+      try {
+        new URL(urlOrMarkdown); // Is this a valid URL?
+        const bytes: ArrayBuffer = await CommandServiceImpl.remoteCall(
+          SharedConstants.Commands.Electron.FetchRemote,
+          urlOrMarkdown
+        );
+        markdown = new TextDecoder().decode(bytes);
+      } catch (e) {
+        if (typeof e === 'string' && ('' + e).includes('ENOTFOUND')) {
+          onLine = false;
+        } else {
+          // assume this is markdown text
+          markdown = urlOrMarkdown;
+        }
+      }
+      return showMarkdownPage(markdown, label, onLine);
+    }
+  );
 
   // ---------------------------------------------------------------------------
   // Shows a bot creation dialog

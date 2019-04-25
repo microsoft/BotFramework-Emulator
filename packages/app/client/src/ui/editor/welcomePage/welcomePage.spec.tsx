@@ -47,11 +47,6 @@ import { WelcomePage } from './welcomePage';
 import { WelcomePageContainer } from './welcomePageContainer';
 
 const mockStore = createStore(combineReducers({ azureAuth, bot, clientAwareSettings }));
-jest.mock('./welcomePage.scss', () => ({}));
-jest.mock('../../layout/genericDocument.scss', () => ({}));
-jest.mock('../recentBotsList/recentBotsList.scss', () => ({}));
-jest.mock('../../dialogs/dialogStyles.scss', () => ({}));
-jest.mock('../../dialogs/openBotDialog/openBotDialog.scss', () => ({}));
 jest.mock('../../dialogs', () => ({}));
 jest.mock('../../../data/store', () => ({
   get store() {
@@ -106,5 +101,15 @@ describe('The AzureLoginFailedDialogContainer component should', () => {
     const spy = jest.spyOn(CommandServiceImpl, 'call');
     await instance.onOpenBotClick();
     expect(spy).toHaveBeenCalledWith(SharedConstants.Commands.UI.ShowOpenBotDialog);
+  });
+
+  it('should call the appropriate command when openBotInspectorDocs is called', async () => {
+    const callSpy = jest.spyOn(CommandServiceImpl, 'call');
+    instance.props.openBotInspectorDocs();
+    expect(callSpy).toHaveBeenCalledWith(
+      SharedConstants.Commands.UI.ShowMarkdownPage,
+      SharedConstants.Channels.ReadmeUrl,
+      SharedConstants.Channels.HelpLabel
+    );
   });
 });

@@ -30,24 +30,54 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
 import * as React from 'react';
-import { HTMLAttributes } from 'react';
+import { Component } from 'react';
+import MarkdownIt from 'markdown-it';
 
-import { TruncateText } from '../../layout';
+import { GenericDocument } from '../../layout';
 
-import * as styles from './mediumHeader.scss';
+import * as styles from './markdownPage.scss';
 
-export interface MediumHeaderProps extends HTMLAttributes<HTMLHeadingElement> {
-  className?: string;
-  children?: any;
+export interface MarkdownPageProps {
+  markdown: string;
+  onLine: boolean;
 }
 
-export const MediumHeader = (props: MediumHeaderProps): JSX.Element => {
-  const { children, className, ...attrs } = props;
-  return (
-    <h2 className={`${styles.mediumHeader} ${props.className || ''}`} {...attrs}>
-      <TruncateText>{props.children}</TruncateText>
-    </h2>
-  );
-};
+export class MarkdownPage extends Component<MarkdownPageProps> {
+  private static markdownRenderer = new MarkdownIt();
+
+  private static renderMarkdown(markdown: string) {
+    try {
+      return this.markdownRenderer.render(markdown);
+    } catch (e) {
+      return '# Error - Invalid markdown document';
+    }
+  }
+
+  private static get offlineElement(): JSX.Element {
+    return (
+      <div className={styles.offline}>
+        <h1>No Internet Connection</h1>
+        try:
+        <ul>
+          <li>Checking the network cables, model or router</li>
+          <li>Reconnecting to Wi-Fi</li>
+        </ul>
+      </div>
+    );
+  }
+
+  public shouldComponentUpdate(nextProps: Readonly<MarkdownPageProps> = {} as MarkdownPageProps): boolean {
+    const props = this.props || ({} as MarkdownPageProps);
+    return props.markdown !== nextProps.markdown || props.onLine !== nextProps.onLine;
+  }
+
+  public render() {
+    const children = !this.props.onLine ? (
+      MarkdownPage.offlineElement
+    ) : (
+      <div dangerouslySetInnerHTML={{ __html: MarkdownPage.renderMarkdown(this.props.markdown) }} />
+    );
+    return <GenericDocument>{children}</GenericDocument>;
+  }
+}

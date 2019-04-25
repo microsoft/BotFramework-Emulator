@@ -30,9 +30,8 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { SharedConstants } from '@bfemulator/app-shared';
+import { DebugMode, SharedConstants } from '@bfemulator/app-shared';
 import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
-import { DebugMode } from '@bfemulator/app-shared';
 
 import { CONTENT_TYPE_APP_SETTINGS, DOCUMENT_ID_APP_SETTINGS } from '../constants';
 import { AzureAuthAction, AzureAuthWorkflow, invalidateArmToken } from '../data/action/azureAuthActions';
@@ -163,5 +162,65 @@ describe('the uiCommands', () => {
     [ExplorerActions.Show, SWITCH_DEBUG_MODE].forEach((type, index) =>
       expect(type).toEqual(dispatchedActions[index].type)
     );
+  });
+
+  describe('when showing the markdow page', () => {
+    it('should detect when the user is offline', async () => {
+      const dispatchedActions = [];
+      store.dispatch = action => {
+        dispatchedActions.push(action);
+        return action;
+      };
+      await registry
+        .getCommand(Commands.ShowMarkdownPage)
+        .handler('http://localhost', 'Yo!', { navigator: { onLine: false } });
+      expect(dispatchedActions.length).toBe(1);
+      expect(dispatchedActions[0].payload.meta).toEqual({
+        markdown: '',
+        label: 'Yo!',
+        onLine: false,
+      });
+    });
+
+    it('should detect when the user has no internet even though they are connected to a network', async () => {
+      const dispatchedActions = [];
+      store.dispatch = action => {
+        dispatchedActions.push(action);
+        return action;
+      };
+      jest.spyOn(CommandServiceImpl, 'remoteCall').mockRejectedValueOnce('oh noes! ENOTFOUND');
+      await registry
+        .getCommand(Commands.ShowMarkdownPage)
+        .handler('http://localhost', 'Yo!', { navigator: { onLine: true } });
+      expect(dispatchedActions.length).toBe(1);
+      expect(dispatchedActions[0].payload.meta).toEqual({
+        markdown: '',
+        label: 'Yo!',
+        onLine: false,
+      });
+    });
+
+    it('should attempt to fetch the markdown and decode it from a Uint8Array', async () => {
+      const dispatchedActions = [];
+      store.dispatch = action => {
+        dispatchedActions.push(action);
+        return action;
+      };
+      jest.spyOn(CommandServiceImpl, 'remoteCall').mockResolvedValueOnce(true);
+      await registry
+        .getCommand(Commands.ShowMarkdownPage)
+        .handler('http://localhost', 'Yo!', { navigator: { onLine: true } });
+      expect(dispatchedActions.length).toBe(1);
+      expect(dispatchedActions[0].payload).toEqual({
+        contentType: 'application/vnd.microsoft.bfemulator.document.markdown',
+        documentId: 'markdown-page',
+        isGlobal: true,
+        meta: {
+          markdown: 'Hi! I am in your decode',
+          label: 'Yo!',
+          onLine: true,
+        },
+      });
+    });
   });
 });

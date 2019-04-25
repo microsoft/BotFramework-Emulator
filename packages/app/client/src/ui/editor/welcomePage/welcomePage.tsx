@@ -50,6 +50,7 @@ export interface WelcomePageProps {
   signInWithAzure?: () => void;
   signOutWithAzure?: () => void;
   switchToBot?: (path: string) => Promise<any>;
+  openBotInspectorDocs: () => void;
   debugMode?: number;
 }
 
@@ -87,10 +88,16 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
       <React.Fragment>
         <LargeHeader>Bot Framework Emulator</LargeHeader>
         {this.props.debugMode === DebugMode.Sidecar && (
-          <div style={{ marginBottom: '15px' }}>
+          <div className={styles.botInspectorHeaderContainer}>
             <MediumHeader>
               Bot Inspector <span className={styles.betaLabel}>(BETA)</span>
             </MediumHeader>
+            &nbsp;
+            <span>
+              <a href="javascript: void(0)" onClick={this.props.openBotInspectorDocs}>
+                Get Started
+              </a>
+            </span>
           </div>
         )}
         <span className={styles.versionNumber}>Version 4</span>

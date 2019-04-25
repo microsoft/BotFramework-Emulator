@@ -7,7 +7,7 @@
   "main": "./app/server/main.js",
   "homepage": "https://github.com/Microsoft/BotFramework-Emulator",
   "scripts": {
-    "build": "run-s typecheck lint build:electron",
+    "build": "run-s typecheck build:electron",
     "build:electron": "babel ./src --out-dir app/server --extensions \".ts,.tsx\" --ignore \"**/*.spec.ts\" && npm run copy:extension:stubs",
     "copy:extension:stubs": "ncp src/extensions app/extensions",
     "dist": "electron-builder",
