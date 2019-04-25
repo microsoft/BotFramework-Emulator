@@ -50,7 +50,7 @@ function mapStateToProps(state: RootState, ownProps: WelcomePageProps): WelcomeP
 }
 
 function mapDispatchToProps(dispatch: (action: Action) => void): WelcomePageProps {
-  const { Commands } = SharedConstants;
+  const { Commands, Channels } = SharedConstants;
   return {
     onNewBotClick: () => {
       CommandServiceImpl.call(Commands.UI.ShowBotCreationDialog).catch();
@@ -67,11 +67,7 @@ function mapDispatchToProps(dispatch: (action: Action) => void): WelcomePageProp
     },
     switchToBot: (path: string) => CommandServiceImpl.call(Commands.Bot.Switch, path),
     openBotInspectorDocs: () =>
-      CommandServiceImpl.call(
-        Commands.UI.ShowMarkdownPage,
-        'https://raw.githubusercontent.com/Microsoft/BotFramework-Emulator/master/content/CHANNELS.md',
-        'Bot Inspector Help'
-      ),
+      CommandServiceImpl.call(Commands.UI.ShowMarkdownPage, Channels.ReadmeUrl, Channels.HelpLabel),
   };
 }
 

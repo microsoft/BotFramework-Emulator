@@ -179,4 +179,8 @@ export const SharedConstants = {
   ContentTypes: {
     CONTENT_TYPE_LIVE_CHAT: 'application/vnd.microsoft.bfemulator.document.livechat',
   },
+  Channels: {
+    ReadmeUrl: 'https://raw.githubusercontent.com/Microsoft/BotFramework-Emulator/master/content/CHANNELS.md',
+    HelpLabel: 'Get started with channels',
+  },
 };

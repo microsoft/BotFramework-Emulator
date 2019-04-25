@@ -35,6 +35,7 @@ import { Component } from 'react';
 import MarkdownIt from 'markdown-it';
 
 import { GenericDocument } from '../../layout';
+
 import * as styles from './markdownPage.scss';
 
 export interface MarkdownPageProps {

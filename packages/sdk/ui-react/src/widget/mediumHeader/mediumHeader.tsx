@@ -32,11 +32,11 @@
 //
 
 import * as React from 'react';
+import { HTMLAttributes } from 'react';
 
 import { TruncateText } from '../../layout';
 
 import * as styles from './mediumHeader.scss';
-import { HTMLAttributes } from 'react';
 
 export interface MediumHeaderProps extends HTMLAttributes<HTMLHeadingElement> {
   className?: string;
