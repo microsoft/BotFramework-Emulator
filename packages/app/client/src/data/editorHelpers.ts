@@ -80,13 +80,13 @@ export function showWelcomePage(): void {
   );
 }
 
-export function showMarkdownPage(markdown: string): void {
+export function showMarkdownPage(markdown: string, label: string, onLine: boolean): void {
   store.dispatch(
     EditorActions.open({
       contentType: Constants.CONTENT_TYPE_MARKDOWN,
       documentId: Constants.DOCUMENT_ID_MARKDOWN_PAGE,
       isGlobal: true,
-      meta: { markdown },
+      meta: { markdown, label, onLine },
     })
   );
 }

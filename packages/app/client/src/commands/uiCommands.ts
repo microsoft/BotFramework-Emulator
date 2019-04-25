@@ -39,6 +39,7 @@ import * as Constants from '../constants';
 import { azureArmTokenDataChanged, beginAzureAuthWorkflow, invalidateArmToken } from '../data/action/azureAuthActions';
 import { switchDebugMode } from '../data/action/debugModeAction';
 import * as EditorActions from '../data/action/editorActions';
+import { close } from '../data/action/editorActions';
 import * as NavBarActions from '../data/action/navBarActions';
 import { ProgressIndicatorPayload, updateProgressIndicator } from '../data/action/progressIndicatorActions';
 import { switchTheme } from '../data/action/themeActions';
@@ -61,7 +62,6 @@ import {
 } from '../ui/dialogs';
 import * as ExplorerActions from '../data/action/explorerActions';
 import { closeConversation } from '../data/action/chatActions';
-import { close } from '../data/action/editorActions';
 import { ActiveBotHelper } from '../ui/helpers/activeBotHelper';
 
 /** Register UI commands (toggling UI) */
@@ -76,8 +76,12 @@ export function registerCommands(commandRegistry: CommandRegistry) {
 
   // ---------------------------------------------------------------------------
   // Shows the markdown page after retrieving the remote source
-  commandRegistry.registerCommand(UI.ShowMarkdownPage, async (urlOrMarkdown: string) => {
+  commandRegistry.registerCommand(UI.ShowMarkdownPage, async (urlOrMarkdown: string, label: string) => {
     let markdown = '';
+    let { onLine } = navigator;
+    if (!onLine) {
+      return showMarkdownPage(markdown, label, onLine);
+    }
     try {
       new URL(urlOrMarkdown); // Is this a valid URL?
       const bytes: ArrayBuffer = await CommandServiceImpl.remoteCall(
@@ -86,10 +90,14 @@ export function registerCommands(commandRegistry: CommandRegistry) {
       );
       markdown = new TextDecoder().decode(bytes);
     } catch (e) {
-      // assume this is markdown text
-      markdown = urlOrMarkdown;
+      if (typeof e === 'string' && ('' + e).includes('ENOTFOUND')) {
+        onLine = false;
+      } else {
+        // assume this is markdown text
+        markdown = urlOrMarkdown;
+      }
     }
-    return showMarkdownPage(markdown);
+    return showMarkdownPage(markdown, label, onLine);
   });
 
   // ---------------------------------------------------------------------------

@@ -12,7 +12,7 @@
   top: -16px;
 }
 
-.beta-label  {
+.beta-label {
   color: var(--welcome-beta-label);
 }
 
@@ -69,14 +69,14 @@
   font-size: 13px;
   white-space: normal;
 
-    &:focus {
-      outline: var(--p-button-border-focus);
+  &:focus {
+    outline: var(--p-button-border-focus);
 
-    }
+  }
 
-    &:hover {
-      text-decoration: underline;
-    }
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 .how-to-build-section {
@@ -94,48 +94,49 @@
     display: flex;
     position: relative;
 
-      .step-icon {
-        display: flex;
-        height: 38px;
-        margin-right: 15px;
-        width: 38px;
-        flex-shrink: 0;
+    .step-icon {
+      display: flex;
+      height: 38px;
+      margin-right: 15px;
+      width: 38px;
+      flex-shrink: 0;
 
-        > div {
-          background-repeat: no-repeat;
-          height: 30px;
-          width: 30px;
-        }
-
-        > .build-plan01 {
-          background-image: url('../../media/build_plan/bp_ic_01.svg');
-        }
-
-        > .build-plan02 {
-          background-image: url('../../media/build_plan/bp_ic_02.svg');
-        }
-
-        > .build-plan03 {
-          background-image: url('../../media/build_plan/bp_ic_03.svg');
-        }
-
-        > .build-plan04 {
-          background-image: url('../../media/build_plan/bp_ic_04.svg');
-        }
-
-        > .build-plan05 {
-          background-image: url('../../media/build_plan/bp_ic_05.svg');
-        }
-
-        > .build-plan06 {
-          background-image: url('../../media/build_plan/bp_ic_06.svg');
-        }
+      > div {
+        background-repeat: no-repeat;
+        height: 30px;
+        width: 30px;
       }
-      dl {
-        border-left: 1px solid var(--welcome-how-to-border);
-        display: block;
-        margin: 0;
-        padding: 0 24px;
+
+      > .build-plan01 {
+        background-image: url('../../media/build_plan/bp_ic_01.svg');
+      }
+
+      > .build-plan02 {
+        background-image: url('../../media/build_plan/bp_ic_02.svg');
+      }
+
+      > .build-plan03 {
+        background-image: url('../../media/build_plan/bp_ic_03.svg');
+      }
+
+      > .build-plan04 {
+        background-image: url('../../media/build_plan/bp_ic_04.svg');
+      }
+
+      > .build-plan05 {
+        background-image: url('../../media/build_plan/bp_ic_05.svg');
+      }
+
+      > .build-plan06 {
+        background-image: url('../../media/build_plan/bp_ic_06.svg');
+      }
+    }
+
+    dl {
+      border-left: 1px solid var(--welcome-how-to-border);
+      display: block;
+      margin: 0;
+      padding: 0 24px;
 
       > dt::before {
         background-color: var(--welcome-page-bg);
@@ -180,4 +181,17 @@
 
 .margin-fix {
   margin-left: 0;
+}
+
+.bot-inspector-header-container {
+  margin: 15px;
+  display: flex;
+
+  > h1 {
+    display: inline-block;
+  }
+
+  > span {
+    line-height: 3;
+  }
 }

@@ -66,6 +66,12 @@ function mapDispatchToProps(dispatch: (action: Action) => void): WelcomePageProp
       CommandServiceImpl.call(Commands.UI.InvalidateAzureArmToken).catch();
     },
     switchToBot: (path: string) => CommandServiceImpl.call(Commands.Bot.Switch, path),
+    openBotInspectorDocs: () =>
+      CommandServiceImpl.call(
+        Commands.UI.ShowMarkdownPage,
+        'https://raw.githubusercontent.com/Microsoft/BotFramework-Emulator/master/content/CHANNELS.md',
+        'Bot Inspector Help'
+      ),
   };
 }
 

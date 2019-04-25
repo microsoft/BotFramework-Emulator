@@ -39,6 +39,7 @@ import * as Constants from '../../../../constants';
 import {
   CONTENT_TYPE_APP_SETTINGS,
   CONTENT_TYPE_LIVE_CHAT,
+  CONTENT_TYPE_MARKDOWN,
   CONTENT_TYPE_TRANSCRIPT,
   CONTENT_TYPE_WELCOME_PAGE,
 } from '../../../../constants';
@@ -272,6 +273,9 @@ export class TabBar extends React.Component<TabBarProps, TabBarState> {
         }
         return label;
       }
+
+      case CONTENT_TYPE_MARKDOWN:
+        return document.meta.label;
 
       default:
         return '';

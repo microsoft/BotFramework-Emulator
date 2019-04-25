@@ -36,14 +36,18 @@ import * as React from 'react';
 import { TruncateText } from '../../layout';
 
 import * as styles from './mediumHeader.scss';
+import { HTMLAttributes } from 'react';
 
-export interface MediumHeaderProps {
+export interface MediumHeaderProps extends HTMLAttributes<HTMLHeadingElement> {
   className?: string;
   children?: any;
 }
 
-export const MediumHeader = (props: MediumHeaderProps): JSX.Element => (
-  <h2 className={`${styles.mediumHeader} ${props.className || ''}`}>
-    <TruncateText>{props.children}</TruncateText>
-  </h2>
-);
+export const MediumHeader = (props: MediumHeaderProps): JSX.Element => {
+  const { children, className, ...attrs } = props;
+  return (
+    <h2 className={`${styles.mediumHeader} ${props.className || ''}`} {...attrs}>
+      <TruncateText>{props.children}</TruncateText>
+    </h2>
+  );
+};

@@ -18,3 +18,4 @@ export const buildPlan06: string;
 export const testBullet: string;
 export const spacing: string;
 export const marginFix: string;
+export const botInspectorHeaderContainer: string;

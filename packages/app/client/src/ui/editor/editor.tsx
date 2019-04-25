@@ -65,7 +65,7 @@ export class EditorFactory extends React.Component<EditorFactoryProps> {
         return <WelcomePageContainer documentId={document.documentId} />;
 
       case Constants.CONTENT_TYPE_MARKDOWN:
-        return <MarkdownPage markdown={document.meta.markdown} />;
+        return <MarkdownPage markdown={document.meta.markdown} onLine={document.meta.onLine} />;
 
       default:
         return false;

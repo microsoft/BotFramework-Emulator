@@ -158,7 +158,8 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   commandRegistry.registerCommand(Commands.FetchRemote, async (url: string, requestInit: RequestInit) => {
     const response = await fetch(url, requestInit);
     if (response.ok) {
-      return response.arrayBuffer();
+      const buffer = await response.arrayBuffer();
+      return new Uint8Array(buffer);
     }
     return null;
   });
