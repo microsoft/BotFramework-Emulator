@@ -153,6 +153,17 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   commandRegistry.registerCommand(Commands.DisplayContextMenu, ContextMenuService.showMenuAndWaitForInput);
 
   // ---------------------------------------------------------------------------
+  // fetches the resource using node-fetch - useful when CORS is enabled on the remote host
+  // Returns an array buffer since it's the most versatile data structure.
+  commandRegistry.registerCommand(Commands.FetchRemote, async (url: string, requestInit: RequestInit) => {
+    const response = await fetch(url, requestInit);
+    if (response.ok) {
+      return response.arrayBuffer();
+    }
+    return null;
+  });
+
+  // ---------------------------------------------------------------------------
   // Opens an external link
   commandRegistry.registerCommand(Commands.OpenExternal, (url: string) => {
     TelemetryService.trackEvent('app_openLink', { url });

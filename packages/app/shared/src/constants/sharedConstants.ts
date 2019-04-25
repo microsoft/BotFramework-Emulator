@@ -72,6 +72,7 @@ export const SharedConstants = {
     },
 
     Electron: {
+      FetchRemote: 'shell:fetch-remote',
       ShowMessageBox: 'shell:showExplorer-message-box',
       ShowOpenDialog: 'shell:showExplorer-open-dialog',
       ShowSaveDialog: 'shell:showExplorer-save-dialog',
@@ -156,6 +157,7 @@ export const SharedConstants = {
     },
 
     UI: {
+      ShowMarkdownPage: 'markdown-page:showExplorer',
       ShowWelcomePage: 'welcome-page:showExplorer',
       ShowBotCreationDialog: 'bot-creation:showExplorer',
       ShowOpenBotDialog: 'open-bot:show',

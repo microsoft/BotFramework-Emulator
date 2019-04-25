@@ -30,26 +30,35 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+import * as React from 'react';
+import { Component } from 'react';
+import MarkdownIt from 'markdown-it';
 
-import { SharedConstants } from '@bfemulator/app-shared';
+import { GenericDocument } from '../../layout';
 
-export const CONTENT_TYPE_MARKDOWN = 'application/vnd.microsoft.bfemulator.document.markdown';
-export const CONTENT_TYPE_APP_SETTINGS = 'application/vnd.microsoft.bfemulator.document.appsettings';
-export const CONTENT_TYPE_WELCOME_PAGE = 'application/vnd.microsoft.bfemulator.document.welcome';
-export const CONTENT_TYPE_TRANSCRIPT = 'application/vnd.microsoft.bfemulator.document.transcript';
-export const CONTENT_TYPE_LIVE_CHAT = SharedConstants.ContentTypes.CONTENT_TYPE_LIVE_CHAT;
+export interface MarkdownPageProps {
+  markdown: string;
+}
 
-export const NAVBAR_BOT_EXPLORER = 'navbar.botExplorer';
-export const NAVBAR_SETTINGS = 'navbar.settings';
-export const NAVBAR_NOTIFICATIONS = 'navbar.notifications';
-export const NAVBAR_RESOURCES = 'navbar:resources';
+export interface MarkdownPageState {}
 
-export const EDITOR_KEY_PRIMARY = 'primary';
-export const EDITOR_KEY_SECONDARY = 'secondary';
+export class MarkdownPage extends Component<MarkdownPageProps, MarkdownPageState> {
+  private static markdownRenderer = new MarkdownIt();
 
-export const EditorKeys = [EDITOR_KEY_PRIMARY, EDITOR_KEY_SECONDARY];
+  public shouldComponentUpdate(
+    nextProps: Readonly<MarkdownPageProps> = {} as MarkdownPageProps,
+    nextState: Readonly<MarkdownPageState>,
+    nextContext: any
+  ): boolean {
+    return (this.props || ({} as MarkdownPageProps)).markdown !== nextProps.markdown;
+  }
 
-export const DOCUMENT_ID_APP_SETTINGS = 'app:settings';
-export const DOCUMENT_ID_BOT_SETTINGS = 'bot:settings';
-export const DOCUMENT_ID_WELCOME_PAGE = 'welcome-page';
-export const DOCUMENT_ID_MARKDOWN_PAGE = 'markdown-page';
+  public render() {
+    const innerHTML = MarkdownPage.markdownRenderer.render(this.props.markdown);
+    return (
+      <GenericDocument>
+        <div dangerouslySetInnerHTML={innerHTML} />
+      </GenericDocument>
+    );
+  }
+}

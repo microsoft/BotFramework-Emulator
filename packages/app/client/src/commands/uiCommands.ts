@@ -42,7 +42,7 @@ import * as EditorActions from '../data/action/editorActions';
 import * as NavBarActions from '../data/action/navBarActions';
 import { ProgressIndicatorPayload, updateProgressIndicator } from '../data/action/progressIndicatorActions';
 import { switchTheme } from '../data/action/themeActions';
-import { getTabGroupForDocument, showWelcomePage } from '../data/editorHelpers';
+import { getTabGroupForDocument, showMarkdownPage, showWelcomePage } from '../data/editorHelpers';
 import { AzureAuthState } from '../data/reducer/azureAuthReducer';
 import { store } from '../data/store';
 import { CommandServiceImpl } from '../platform/commands/commandServiceImpl';
@@ -72,6 +72,24 @@ export function registerCommands(commandRegistry: CommandRegistry) {
   // Shows the welcome page
   commandRegistry.registerCommand(UI.ShowWelcomePage, () => {
     return showWelcomePage();
+  });
+
+  // ---------------------------------------------------------------------------
+  // Shows the markdown page after retrieving the remote source
+  commandRegistry.registerCommand(UI.ShowMarkdownPage, async (urlOrMarkdown: string) => {
+    let markdown = '';
+    try {
+      new URL(urlOrMarkdown); // Is this a valid URL?
+      const bytes: ArrayBuffer = await CommandServiceImpl.remoteCall(
+        SharedConstants.Commands.Electron.FetchRemote,
+        urlOrMarkdown
+      );
+      markdown = new TextDecoder().decode(bytes);
+    } catch (e) {
+      // assume this is markdown text
+      markdown = urlOrMarkdown;
+    }
+    return showMarkdownPage(markdown);
   });
 
   // ---------------------------------------------------------------------------
