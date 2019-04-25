@@ -33,7 +33,7 @@
 
 import { BotConfigWithPath } from '@bfemulator/sdk-shared';
 import * as React from 'react';
-import { DragEvent } from 'react';
+import { DragEvent, MouseEvent } from 'react';
 
 import * as Constants from '../../../../constants';
 import {
@@ -155,7 +155,7 @@ export class TabBar extends React.Component<TabBarProps, TabBarState> {
 
     if (presentationEnabled) {
       widgets.push(
-        <button key={'presentation-widget'} title="Presentation Mode" onClick={() => this.onPresentationModeClick()}>
+        <button key={'presentation-widget'} title="Presentation Mode" onClick={this.onPresentationModeClick}>
           <div className={`${styles.widget} ${styles.presentationWidget}`} />
         </button>
       );
@@ -178,9 +178,10 @@ export class TabBar extends React.Component<TabBarProps, TabBarState> {
       return (
         <div
           key={documentId}
+          data-index={index}
           className="tab-container"
-          onClick={() => this.handleTabClick(index)}
-          onKeyDown={ev => this.handleKeyDown(ev, index)}
+          onClick={this.handleTabClick}
+          onKeyDown={this.handleKeyDown}
           ref={this.setRef}
           role="presentation"
         >
@@ -196,15 +197,19 @@ export class TabBar extends React.Component<TabBarProps, TabBarState> {
     });
   }
 
-  private handleTabClick = (tabIndex: number) => {
-    this.props.setActiveTab(this.props.tabOrder[tabIndex]);
+  private handleTabClick = (event: MouseEvent<HTMLDivElement>) => {
+    const { currentTarget } = event;
+    const { index } = currentTarget.dataset;
+    this.props.setActiveTab(this.props.tabOrder[index]);
   };
 
-  private handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>, tabIndex: number): void => {
+  private handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>): void => {
+    const { currentTarget } = event;
+    const { index } = currentTarget.dataset;
     let { key = '' } = event;
     key = key.toLowerCase();
     if (key === ' ' || key === 'enter') {
-      this.handleTabClick(tabIndex);
+      this.props.setActiveTab(this.props.tabOrder[index]);
     }
   };
 

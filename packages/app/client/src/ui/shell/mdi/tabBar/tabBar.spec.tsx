@@ -36,12 +36,14 @@ import { mount } from 'enzyme';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import { SharedConstants } from '@bfemulator/app-shared';
+import { MouseEvent } from 'react';
 
 import { enable } from '../../../../data/action/presentationActions';
 import { setActiveTab, appendTab, splitTab } from '../../../../data/action/editorActions';
 import {
   CONTENT_TYPE_APP_SETTINGS,
   CONTENT_TYPE_LIVE_CHAT,
+  CONTENT_TYPE_MARKDOWN,
   CONTENT_TYPE_TRANSCRIPT,
   CONTENT_TYPE_WELCOME_PAGE,
 } from '../../../../constants';
@@ -181,26 +183,26 @@ describe('TabBar', () => {
   });
 
   it('should handle a tab click', () => {
-    instance.handleTabClick(0);
+    instance.handleTabClick({ currentTarget: { dataset: { index: 0 } } } as any);
 
     expect(mockDispatch).toHaveBeenCalledWith(setActiveTab('doc1'));
   });
 
   it('should handle a key press', () => {
-    const mockOtherKeyPress = { key: 'a' };
-    const mockSpaceKeyPress = { key: ' ' };
-    const mockEnterKeyPress = { key: 'enter' };
+    const mockOtherKeyPress = { key: 'a', currentTarget: { dataset: { index: 0 } } as any };
+    const mockSpaceKeyPress = { key: ' ', currentTarget: { dataset: { index: 0 } } as any };
+    const mockEnterKeyPress = { key: 'enter', currentTarget: { dataset: { index: 0 } } as any };
 
     // simulate neither key press
-    instance.handleKeyDown(mockOtherKeyPress, 0);
+    instance.handleKeyDown(mockOtherKeyPress);
     expect(mockDispatch).not.toHaveBeenCalled();
 
     // simulate space key press
-    instance.handleKeyDown(mockSpaceKeyPress, 0);
+    instance.handleKeyDown(mockSpaceKeyPress);
     expect(mockDispatch).toHaveBeenCalledWith(setActiveTab('doc1'));
 
     // simulate enter key press
-    instance.handleKeyDown(mockEnterKeyPress, 0);
+    instance.handleKeyDown(mockEnterKeyPress);
     expect(mockDispatch).toHaveBeenCalledTimes(2);
   });
 
@@ -297,6 +299,12 @@ describe('TabBar', () => {
       documentId: 'doc1',
     });
     expect(result).toBe(`Live Chat (myEndpoint)`);
+
+    result = instance.getTabLabel({
+      contentType: CONTENT_TYPE_MARKDOWN,
+      meta: { label: 'Hello' },
+    });
+    expect(result).toBe('Hello');
 
     result = instance.getTabLabel({});
     expect(result).toBe('');

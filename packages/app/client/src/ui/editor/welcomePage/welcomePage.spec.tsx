@@ -108,8 +108,8 @@ describe('The AzureLoginFailedDialogContainer component should', () => {
     instance.props.openBotInspectorDocs();
     expect(callSpy).toHaveBeenCalledWith(
       SharedConstants.Commands.UI.ShowMarkdownPage,
-      'https://raw.githubusercontent.com/Microsoft/BotFramework-Emulator/master/content/CHANNELS.md',
-      'Bot Inspector Help'
+      SharedConstants.Channels.ReadmeUrl,
+      SharedConstants.Channels.HelpLabel
     );
   });
 });

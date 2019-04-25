@@ -76,29 +76,32 @@ export function registerCommands(commandRegistry: CommandRegistry) {
 
   // ---------------------------------------------------------------------------
   // Shows the markdown page after retrieving the remote source
-  commandRegistry.registerCommand(UI.ShowMarkdownPage, async (urlOrMarkdown: string, label: string) => {
-    let markdown = '';
-    let { onLine } = navigator;
-    if (!onLine) {
+  commandRegistry.registerCommand(
+    UI.ShowMarkdownPage,
+    async (urlOrMarkdown: string, label: string, windowRef = window) => {
+      let markdown = '';
+      let { onLine } = windowRef.navigator;
+      if (!onLine) {
+        return showMarkdownPage(markdown, label, onLine);
+      }
+      try {
+        new URL(urlOrMarkdown); // Is this a valid URL?
+        const bytes: ArrayBuffer = await CommandServiceImpl.remoteCall(
+          SharedConstants.Commands.Electron.FetchRemote,
+          urlOrMarkdown
+        );
+        markdown = new TextDecoder().decode(bytes);
+      } catch (e) {
+        if (typeof e === 'string' && ('' + e).includes('ENOTFOUND')) {
+          onLine = false;
+        } else {
+          // assume this is markdown text
+          markdown = urlOrMarkdown;
+        }
+      }
       return showMarkdownPage(markdown, label, onLine);
     }
-    try {
-      new URL(urlOrMarkdown); // Is this a valid URL?
-      const bytes: ArrayBuffer = await CommandServiceImpl.remoteCall(
-        SharedConstants.Commands.Electron.FetchRemote,
-        urlOrMarkdown
-      );
-      markdown = new TextDecoder().decode(bytes);
-    } catch (e) {
-      if (typeof e === 'string' && ('' + e).includes('ENOTFOUND')) {
-        onLine = false;
-      } else {
-        // assume this is markdown text
-        markdown = urlOrMarkdown;
-      }
-    }
-    return showMarkdownPage(markdown, label, onLine);
-  });
+  );
 
   // ---------------------------------------------------------------------------
   // Shows a bot creation dialog
