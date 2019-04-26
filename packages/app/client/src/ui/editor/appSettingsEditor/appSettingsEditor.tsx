@@ -90,7 +90,6 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
 
   public componentDidMount(): void {
     this.props.getFrameworkSettings();
-    //   this.setState({ ['useCustomId']: this.props.framework.useCustomId });
   }
 
   public render(): JSX.Element {
@@ -194,8 +193,11 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
               name="useCustomId"
             />
             <Row align={RowAlignment.Top}>
+              <label>User ID</label>
+            </Row>
+            <Row align={RowAlignment.Top}>
               <TextField
-                label="User ID"
+                placeholder={state.useCustomId ? '' : 'There is no ID configured'}
                 className={styles.appSettingsInput}
                 inputContainerClassName={styles.inputContainer}
                 readOnly={false}
@@ -204,7 +206,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
                 onChange={this.onInputChange}
                 disabled={!state.useCustomId}
                 required={state.useCustomId}
-                errorMessage={state.userGUID ? '' : 'Enter a user ID'}
+                errorMessage={state.userGUID ? '' : 'Enter a User ID'}
               />
             </Row>
             <SmallHeader>Application Updates</SmallHeader>
@@ -249,7 +251,9 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
     const change = { [name]: checked };
     this.setState(change);
     this.updateDirtyFlag(change);
-    if (name === 'useCustomId' && checked === false) this.setState({ userGUID: '' });
+    if (name === 'useCustomId' && checked === false) {
+      this.setState({ userGUID: '' });
+    }
   };
 
   private onClickBrowse = async (): Promise<void> => {
