@@ -240,10 +240,19 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
         </Row>
         <Row className={styles.buttonRow} justify={RowJustification.Right}>
           <PrimaryButton text="Cancel" onClick={this.props.discardChanges} className={styles.cancelButton} />
-          <PrimaryButton text="Save" onClick={this.onSaveClick} className={styles.saveButton} disabled={!state.dirty} />
+          <PrimaryButton
+            text="Save"
+            onClick={this.onSaveClick}
+            className={styles.saveButton}
+            disabled={this.disableSaveButton()}
+          />
         </Row>
       </GenericDocument>
     );
+  }
+
+  private disableSaveButton(): boolean {
+    return this.state.useCustomId ? !this.state.userGUID : !this.state.dirty;
   }
 
   private onChangeCheckBox = (event: ChangeEvent<HTMLInputElement>) => {
@@ -252,7 +261,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
     this.setState(change);
     this.updateDirtyFlag(change);
     if (name === 'useCustomId' && checked === false) {
-      this.setState({ userGUID: '' });
+      this.setState({ userGUID: null });
     }
   };
 
