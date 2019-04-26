@@ -94,6 +94,9 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
 
   public render(): JSX.Element {
     const { state } = this;
+    const inputProps = {
+      disabled: !state.useCustomId,
+    };
 
     return (
       <GenericDocument className={styles.appSettingsEditor}>
@@ -192,11 +195,11 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
               label="Use your own user ID to communicate with the bot"
               name="useCustomId"
             />
-            <Row align={RowAlignment.Top}>
-              <label>User ID</label>
-            </Row>
+
             <Row align={RowAlignment.Top}>
               <TextField
+                {...inputProps}
+                label="User ID"
                 placeholder={state.useCustomId ? '' : 'There is no ID configured'}
                 className={styles.appSettingsInput}
                 inputContainerClassName={styles.inputContainer}
@@ -204,11 +207,11 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
                 value={state.userGUID}
                 name="userGUID"
                 onChange={this.onInputChange}
-                disabled={!state.useCustomId}
                 required={state.useCustomId}
                 errorMessage={state.userGUID ? '' : 'Enter a User ID'}
               />
             </Row>
+
             <SmallHeader>Application Updates</SmallHeader>
             <Checkbox
               className={styles.checkboxOverrides}
