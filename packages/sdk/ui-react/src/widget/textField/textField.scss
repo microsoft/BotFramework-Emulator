@@ -18,7 +18,7 @@
     border: var(--input-border-error);
   }
 
-  &[disabled], &[aria-disabled] {
+  &[disabled], &[aria-disabled="true"] {
     border: var(--input-border-disabled);
   }
 }
@@ -29,7 +29,7 @@
   color: var(--input-label-color);
   padding: 5px 0;
 
-  &[disabled], &[aria-disabled] {
+  &[disabled], &[aria-disabled="true"] {
     color: var(--input-label-color-disabled);
   }
 }

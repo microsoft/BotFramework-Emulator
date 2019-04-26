@@ -33,11 +33,18 @@
 
 import { createDirectLine } from 'botframework-webchat';
 import { uniqueId, uniqueIdv4 } from '@bfemulator/sdk-shared';
-import { SplitButton, Splitter } from '@bfemulator/ui-react';
+import { Splitter, SplitButton } from '@bfemulator/ui-react';
 import base64Url from 'base64url';
 import { IEndpointService } from 'botframework-config/lib/schema';
 import * as React from 'react';
-import { DebugMode, newNotification, Notification, SharedConstants, ValueTypesMask } from '@bfemulator/app-shared';
+import {
+  DebugMode,
+  FrameworkSettings,
+  newNotification,
+  Notification,
+  SharedConstants,
+  ValueTypesMask,
+} from '@bfemulator/app-shared';
 
 import { Document } from '../../../data/reducer/editor';
 import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
@@ -121,14 +128,11 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
     const { document = {} } = props;
     const { document: nextDocument = {} } = nextProps;
 
-    const documentOrUserIdChanged =
-      (!nextDocument.directLine && document.documentId !== nextDocument.documentId) ||
-      document.userId !== nextDocument.userId;
+    const documentIdChanged = !nextDocument.directLine && document.documentId !== nextDocument.documentId;
 
-    if (documentOrUserIdChanged) {
+    if (documentIdChanged) {
       startNewConversation(nextProps).catch();
     }
-
     const switchedDocuments = props.activeDocumentId !== nextProps.activeDocumentId;
     const switchedToThisDocument = nextProps.activeDocumentId === props.documentId;
 
@@ -152,10 +156,13 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
       ? `${uniqueId()}|${props.mode}`
       : props.document.conversationId || `${uniqueId()}|${props.mode}`;
 
-    const userId = requireNewUserId ? uniqueIdv4() : props.document.userId;
-    if (requireNewUserId) {
-      await CommandServiceImpl.remoteCall(SharedConstants.Commands.Emulator.SetCurrentUser, userId);
-    }
+    const framework: FrameworkSettings = await CommandServiceImpl.remoteCall(
+      SharedConstants.Commands.Settings.LoadAppSettings
+    );
+    const stableId = framework.userGUID || props.document.userId;
+    const userId = requireNewUserId ? uniqueIdv4() : stableId;
+
+    await CommandServiceImpl.remoteCall(SharedConstants.Commands.Emulator.SetCurrentUser, userId);
 
     const options = {
       conversationId,
@@ -276,6 +283,7 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
                   onClick={this.onStartOverClick}
                 />
               )}
+
               <button
                 className={`${styles.saveIcon} ${styles.toolbarIcon || ''}`}
                 onClick={this.onExportTranscriptClick}
@@ -368,13 +376,14 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
         break;
       }
 
-      case SameUserId:
+      case SameUserId: {
         this.props.trackEvent('conversation_restart', {
           userId: 'same',
         });
         // start conversation with new convo id
         await this.startNewConversation(undefined, true, false);
         break;
+      }
 
       default:
         break;
