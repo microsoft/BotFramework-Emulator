@@ -90,7 +90,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
 
   public componentDidMount(): void {
     this.props.getFrameworkSettings();
-    this.setState({ ['useCustomId']: this.props.framework.useCustomId });
+    //   this.setState({ ['useCustomId']: this.props.framework.useCustomId });
   }
 
   public render(): JSX.Element {
