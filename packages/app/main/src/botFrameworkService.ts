@@ -43,7 +43,7 @@ import { RestServer } from './restServer';
 export class BotFrameworkService {
   public server: RestServer;
   private _serverUrl: string;
-  private _serverPort;
+  private _serverPort: number;
 
   public get serverUrl() {
     return this._serverUrl;

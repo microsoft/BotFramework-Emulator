@@ -48,7 +48,6 @@ import {
 const getAvailableThemes = (state: Settings) => state.windowState.availableThemes;
 const getCurrentTheme = (state: Settings) => state.windowState.theme;
 const getState = (state: Settings) => state;
-const getDebugMode = (state: Settings) => state.windowState.debugMode;
 
 export function* rememberThemeSaga(): IterableIterator<any> {
   const availableThemes = yield select(getAvailableThemes);
@@ -109,10 +108,8 @@ export function* debugModeChanged(action: WindowStateAction<RememberDebugModePay
 }
 
 export function* startEmulator(forceRestart: boolean = false) {
-  const debugMode = yield select(getDebugMode);
   const emulator = Emulator.getInstance();
-  const emulatorModePort = emulator.framework.serverPort || null;
-  const port = debugMode === DebugMode.Sidecar ? 9000 : emulatorModePort;
+  const port = emulator.framework.serverPort || null;
   if (!forceRestart && emulator.framework.serverPort === port) {
     return;
   }
