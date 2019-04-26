@@ -458,14 +458,14 @@ export class AppMenuBuilder {
   private static async initHelpMenu(): Promise<MenuOpts> {
     const appName = Electron.app.getName();
     const version = Electron.app.getVersion();
-
+    const { Commands, Channels } = SharedConstants;
     // TODO - localization
     return {
       role: 'help',
       submenu: [
         {
           label: 'Welcome',
-          click: () => mainWindow.commandService.remoteCall(SharedConstants.Commands.UI.ShowWelcomePage),
+          click: () => mainWindow.commandService.remoteCall(Commands.UI.ShowWelcomePage),
         },
         { type: 'separator' },
         {
@@ -520,6 +520,11 @@ export class AppMenuBuilder {
           visible: AppUpdater.status === UpdateStatus.Idle || AppUpdater.status === UpdateStatus.UpdateAvailable,
         },
         { type: 'separator' },
+        {
+          label: Channels.HelpLabel,
+          click: () =>
+            mainWindow.commandService.remoteCall(Commands.UI.ShowMarkdownPage, Channels.ReadmeUrl, Channels.HelpLabel),
+        },
         {
           label: 'About',
           click: () =>

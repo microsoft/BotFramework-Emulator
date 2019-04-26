@@ -36,6 +36,7 @@ import * as React from 'react';
 import { DragEvent, KeyboardEvent, SyntheticEvent } from 'react';
 
 import { getTabGroupForDocument } from '../../../../data/editorHelpers';
+import { DOCUMENT_ID_APP_SETTINGS, DOCUMENT_ID_MARKDOWN_PAGE, DOCUMENT_ID_WELCOME_PAGE } from '../../../../constants';
 
 import * as styles from './tab.scss';
 
@@ -154,10 +155,11 @@ export class Tab extends React.Component<TabProps, TabState> {
 
   private get iconClass(): string {
     switch (this.props.documentId) {
-      case 'welcome-page':
+      case DOCUMENT_ID_WELCOME_PAGE:
+      case DOCUMENT_ID_MARKDOWN_PAGE:
         return styles.generic;
 
-      case 'app:settings':
+      case DOCUMENT_ID_APP_SETTINGS:
         return styles.settings;
 
       default:

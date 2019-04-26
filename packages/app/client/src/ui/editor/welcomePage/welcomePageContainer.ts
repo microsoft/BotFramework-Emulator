@@ -50,7 +50,7 @@ function mapStateToProps(state: RootState, ownProps: WelcomePageProps): WelcomeP
 }
 
 function mapDispatchToProps(dispatch: (action: Action) => void): WelcomePageProps {
-  const { Commands } = SharedConstants;
+  const { Commands, Channels } = SharedConstants;
   return {
     onNewBotClick: () => {
       CommandServiceImpl.call(Commands.UI.ShowBotCreationDialog).catch();
@@ -66,6 +66,8 @@ function mapDispatchToProps(dispatch: (action: Action) => void): WelcomePageProp
       CommandServiceImpl.call(Commands.UI.InvalidateAzureArmToken).catch();
     },
     switchToBot: (path: string) => CommandServiceImpl.call(Commands.Bot.Switch, path),
+    openBotInspectorDocs: () =>
+      CommandServiceImpl.call(Commands.UI.ShowMarkdownPage, Channels.ReadmeUrl, Channels.HelpLabel),
   };
 }
 

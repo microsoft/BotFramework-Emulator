@@ -72,6 +72,7 @@ export const SharedConstants = {
     },
 
     Electron: {
+      FetchRemote: 'shell:fetch-remote',
       ShowMessageBox: 'shell:showExplorer-message-box',
       ShowOpenDialog: 'shell:showExplorer-open-dialog',
       ShowSaveDialog: 'shell:showExplorer-save-dialog',
@@ -156,6 +157,7 @@ export const SharedConstants = {
     },
 
     UI: {
+      ShowMarkdownPage: 'markdown-page:showExplorer',
       ShowWelcomePage: 'welcome-page:showExplorer',
       ShowBotCreationDialog: 'bot-creation:showExplorer',
       ShowOpenBotDialog: 'open-bot:show',
@@ -176,5 +178,9 @@ export const SharedConstants = {
   },
   ContentTypes: {
     CONTENT_TYPE_LIVE_CHAT: 'application/vnd.microsoft.bfemulator.document.livechat',
+  },
+  Channels: {
+    ReadmeUrl: 'https://raw.githubusercontent.com/Microsoft/BotFramework-Emulator/master/content/CHANNELS.md',
+    HelpLabel: 'Get started with channels',
   },
 };

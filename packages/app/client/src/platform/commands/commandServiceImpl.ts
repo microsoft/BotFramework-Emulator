@@ -45,10 +45,6 @@ import { ElectronIPC } from '../../ipc';
 class CServiceImpl extends DisposableImpl implements CommandService {
   private readonly _service: InternalSharedService;
 
-  public init() {
-    return null;
-  }
-
   public get registry() {
     return this._service.registry;
   }

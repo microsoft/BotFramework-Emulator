@@ -1,0 +1,16 @@
+.offline {
+  padding: 175px 20px 20px;
+  position: relative;
+  min-height: 450px;
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 175px;
+    height: 175px;
+    -webkit-mask: url('../../media/ic_bot_framework.svg');
+    -webkit-mask-size: 175px;
+    background-color: #007ACC;
+  }
+}

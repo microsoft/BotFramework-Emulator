@@ -51,7 +51,6 @@ import './ui/styles/globals.scss';
 interceptError();
 interceptHyperlink();
 
-CommandServiceImpl.init();
 LogService.init();
 
 registerAllCommands(CommandRegistry);
