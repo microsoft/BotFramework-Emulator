@@ -91,7 +91,7 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
     const shouldBeDisabled =
       validationResult === ValidationResult.Invalid || validationResult === ValidationResult.Empty;
     let botUrlLabel = 'Bot URL';
-    if (this.props.debugMode === DebugMode.Sidecar) {
+    if (this.props.debugMode !== DebugMode.Sidecar) {
       botUrlLabel += ' or .bot file location';
     }
     return (
@@ -108,7 +108,7 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
             placeholder={botUrlLabel}
             value={botUrl}
           >
-            {this.props.debugMode === DebugMode.Sidecar && (
+            {this.props.debugMode !== DebugMode.Sidecar && (
               <PrimaryButton className={openBotStyles.browseButton}>
                 Browse
                 <input
