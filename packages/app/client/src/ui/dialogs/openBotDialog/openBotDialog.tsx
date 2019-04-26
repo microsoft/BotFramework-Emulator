@@ -90,8 +90,9 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
     const errorMessage = OpenBotDialog.getErrorMessage(validationResult);
     const shouldBeDisabled =
       validationResult === ValidationResult.Invalid || validationResult === ValidationResult.Empty;
+    const inSidecar = this.props.debugMode === DebugMode.Sidecar;
     let botUrlLabel = 'Bot URL';
-    if (this.props.debugMode !== DebugMode.Sidecar) {
+    if (!inSidecar) {
       botUrlLabel += ' or .bot file location';
     }
     return (
@@ -101,14 +102,14 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
             autoFocus={true}
             name="botUrl"
             errorMessage={errorMessage}
-            inputContainerClassName={openBotStyles.inputContainer}
+            inputContainerClassName={`${openBotStyles.inputContainer} ${!inSidecar ? openBotStyles.padded : ''}`}
             label={botUrlLabel}
             onChange={this.onInputChange}
             onFocus={this.onFocus}
             placeholder={botUrlLabel}
             value={botUrl}
           >
-            {this.props.debugMode !== DebugMode.Sidecar && (
+            {!inSidecar && (
               <PrimaryButton className={openBotStyles.browseButton}>
                 Browse
                 <input
