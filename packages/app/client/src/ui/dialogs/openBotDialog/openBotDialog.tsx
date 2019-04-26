@@ -34,6 +34,7 @@
 import { DefaultButton, Dialog, DialogFooter, PrimaryButton, Row, TextField } from '@bfemulator/ui-react';
 import * as React from 'react';
 import { ChangeEvent, Component, FocusEvent, ReactNode } from 'react';
+import { DebugMode } from '@bfemulator/app-shared';
 
 import * as openBotStyles from './openBotDialog.scss';
 
@@ -42,6 +43,7 @@ export interface OpenBotDialogProps {
   openBot?: (state: OpenBotDialogState) => void;
   sendNotification?: (error: Error) => void;
   switchToBot?: (path: string) => void;
+  debugMode?: DebugMode;
 }
 
 export interface OpenBotDialogState {
@@ -88,6 +90,10 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
     const errorMessage = OpenBotDialog.getErrorMessage(validationResult);
     const shouldBeDisabled =
       validationResult === ValidationResult.Invalid || validationResult === ValidationResult.Empty;
+    let botUrlLabel = 'Bot URL';
+    if (this.props.debugMode === DebugMode.Sidecar) {
+      botUrlLabel += ' or .bot file location';
+    }
     return (
       <Dialog cancel={this.props.onDialogCancel} className={openBotStyles.themeOverrides} title="Open a bot">
         <form onSubmit={this.onSubmit}>
@@ -96,22 +102,24 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
             name="botUrl"
             errorMessage={errorMessage}
             inputContainerClassName={openBotStyles.inputContainer}
-            label="Bot URL or .bot file location"
+            label={botUrlLabel}
             onChange={this.onInputChange}
             onFocus={this.onFocus}
-            placeholder="Bot URL or .bot file location"
+            placeholder={botUrlLabel}
             value={botUrl}
           >
-            <PrimaryButton className={openBotStyles.browseButton}>
-              Browse
-              <input
-                accept=".bot"
-                className={openBotStyles.fileInput}
-                name="botUrl"
-                onChange={this.onInputChange}
-                type="file"
-              />
-            </PrimaryButton>
+            {this.props.debugMode === DebugMode.Sidecar && (
+              <PrimaryButton className={openBotStyles.browseButton}>
+                Browse
+                <input
+                  accept=".bot"
+                  className={openBotStyles.fileInput}
+                  name="botUrl"
+                  onChange={this.onInputChange}
+                  type="file"
+                />
+              </PrimaryButton>
+            )}
           </TextField>
           <Row className={openBotStyles.multiInputRow}>
             <TextField
