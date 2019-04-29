@@ -40,7 +40,10 @@
 
 .input-container {
   margin-top: 10px;
-  padding-right: 115px;
+
+  &.padded {
+    padding-right: 115px;
+  }
 }
 
 .input-container-row {

@@ -36,6 +36,7 @@ import { Action } from 'redux';
 
 import { openBotViaFilePathAction, openBotViaUrlAction } from '../../../data/action/botActions';
 import { DialogService } from '../service';
+import { RootState } from '../../../data/store';
 
 import { OpenBotDialog, OpenBotDialogProps, OpenBotDialogState } from './openBotDialog';
 
@@ -60,7 +61,14 @@ const mapDispatchToProps = (dispatch: (action: Action) => void): OpenBotDialogPr
   };
 };
 
+const mapStateToProps = (state: RootState, ownProps: Partial<OpenBotDialogProps>): Partial<OpenBotDialogProps> => {
+  return {
+    debugMode: state.clientAwareSettings.debugMode,
+    ...ownProps,
+  };
+};
+
 export const OpenBotDialogContainer = connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(OpenBotDialog);
