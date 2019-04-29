@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { newNotification, SharedConstants } from '@bfemulator/app-shared';
+import { newNotification, SharedConstants, DebugMode } from '@bfemulator/app-shared';
 import { BotConfigWithPath, ConversationService } from '@bfemulator/sdk-shared';
 import { call, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
 
@@ -45,6 +45,7 @@ import {
 } from '../action/botActions';
 import { beginAdd } from '../action/notificationActions';
 import { generateHash } from '../botHelpers';
+import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 
 import { botSagas, browseForBot, generateHashForActiveBot, openBotViaFilePath, openBotViaUrl } from './botSagas';
 import { refreshConversationMenu } from './sharedSagas';
@@ -173,38 +174,120 @@ describe('The botSagas', () => {
         endpoint: 'http://localhost/api/messages',
       })
     );
-    const io = select(() => void 0);
-    io.SELECT.selector = jasmine.any(Function) as any;
+    gen.next();
     // select serverUrl
-    expect(gen.next().value).toEqual(io);
-    // select user
-    const selectUser = gen.next().value as any;
-    expect(selectUser).toEqual(io);
+    gen.next('www.serverurl.com');
+    // select users
+    const users = { currentUserId: 'user1', usersById: { user1: {} } };
+    gen.next(users);
     // call ConversationService.startConversation
-    jest.spyOn(ConversationService, 'startConversation').mockResolvedValue(true);
-    expect(
-      gen.next(
-        selectUser.SELECT.selector({
-          clientAwareSettings: {
-            users: {
-              currentUserId: '1',
-              usersById: { '1': {} },
-            },
-          },
-        })
-      ).value
-    ).not.toBeNull();
+    gen.next({ ok: false, statusText: 'oh noes!' });
     const errorNotification = beginAdd(
       newNotification('An Error occurred opening the bot at http://localhost/api/messages: oh noes!')
     );
-    errorNotification.payload.notification.timestamp = jasmine.any(Number);
-    errorNotification.payload.notification.id = jasmine.any(String);
+    (errorNotification as any).payload.notification.timestamp = jasmine.any(Number);
+    (errorNotification as any).payload.notification.id = jasmine.any(String);
     expect(
       gen.next({
         statusText: 'oh noes!',
         ok: false,
       }).value
     ).toEqual(put(errorNotification));
+  });
+
+  it('should send the "/INSPECT open" command when in debug mode and opening from url', () => {
+    const gen = openBotViaUrl(
+      openBotViaUrlAction({
+        appPassword: 'password',
+        appId: '1234abcd',
+        endpoint: 'http://localhost/api/messages',
+      })
+    );
+    gen.next();
+    // select serverUrl
+    gen.next('www.serverurl.com');
+    // select users
+    const users = { currentUserId: 'user1', usersById: { user1: {} } };
+    gen.next(users);
+    // startConversation
+    gen.next({ ok: true, json: async () => null });
+    // select debug mode
+    gen.next(DebugMode.Sidecar);
+    // response.json from starting conversation
+    const postActivityResponse = gen.next({ id: 'someConversationId' }).value;
+    // posting activity to conversation
+    const activity = {
+      type: 'message',
+      text: '/INSPECT open',
+    };
+    expect(postActivityResponse).toEqual(
+      call(
+        [CommandServiceImpl, CommandServiceImpl.remoteCall],
+        SharedConstants.Commands.Emulator.PostActivityToConversation,
+        'someConversationId',
+        activity
+      )
+    );
+    // the response from POSTing to the conversation should end the saga
+    expect(gen.next({ statusCode: 200 }).done).toBe(true);
+  });
+
+  it('should spawn a notification if posting the "/INSPECT open" command fails', () => {
+    const gen = openBotViaUrl(
+      openBotViaUrlAction({
+        appPassword: 'password',
+        appId: '1234abcd',
+        endpoint: 'http://localhost/api/messages',
+      })
+    );
+    gen.next();
+    // select serverUrl
+    gen.next('www.serverurl.com');
+    // select users
+    const users = { currentUserId: 'user1', usersById: { user1: {} } };
+    gen.next(users);
+    // startConversation
+    gen.next({ ok: true, json: async () => null });
+    // select debug mode
+    gen.next(DebugMode.Sidecar);
+    // response.json from starting conversation
+    gen.next({ id: 'someConversationId' });
+    // POSTing to the conversation should return a 400
+    const errorNotification = beginAdd(
+      newNotification('An error occurred while POSTing "/INSPECT open" command to conversation someConversationId')
+    );
+    (errorNotification as any).payload.notification.timestamp = jasmine.any(Number);
+    (errorNotification as any).payload.notification.id = jasmine.any(String);
+    expect(gen.next({ statusCode: 400 }).value).toEqual(put(errorNotification));
+  });
+
+  it('should spawn a notification if parsing the conversation id from the response fails', () => {
+    const gen = openBotViaUrl(
+      openBotViaUrlAction({
+        appPassword: 'password',
+        appId: '1234abcd',
+        endpoint: 'http://localhost/api/messages',
+      })
+    );
+    gen.next();
+    // select serverUrl
+    gen.next('www.serverurl.com');
+    // select users
+    const users = { currentUserId: 'user1', usersById: { user1: {} } };
+    gen.next(users);
+    // startConversation
+    gen.next({ ok: true, json: async () => null });
+    // select debug mode
+    gen.next(DebugMode.Sidecar);
+    // response.json from starting conversation
+    const startConversationResponse = gen.next({ id: undefined }).value;
+    // POSTing to the conversation should return a 400
+    const errorNotification = beginAdd(
+      newNotification('An error occurred while trying to grab conversation ID from new conversation.')
+    );
+    (errorNotification as any).payload.notification.timestamp = jasmine.any(Number);
+    (errorNotification as any).payload.notification.id = jasmine.any(String);
+    expect(startConversationResponse).toEqual(put(errorNotification));
   });
 
   it('should open a bot from a file path', () => {
@@ -224,8 +307,8 @@ describe('The botSagas', () => {
     const errorNotification = beginAdd(
       newNotification('An Error occurred opening the bot at /some/path.bot: Error: oh noes!')
     );
-    errorNotification.payload.notification.timestamp = jasmine.any(Number);
-    errorNotification.payload.notification.id = jasmine.any(String);
+    (errorNotification as any).payload.notification.timestamp = jasmine.any(Number);
+    (errorNotification as any).payload.notification.id = jasmine.any(String);
     expect(putNotification.value).toEqual(put(errorNotification));
   });
 });
