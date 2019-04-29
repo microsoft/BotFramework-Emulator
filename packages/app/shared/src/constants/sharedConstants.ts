@@ -106,6 +106,7 @@ export const SharedConstants = {
       AppendToLog: 'log:append',
       SetCurrentUser: 'emulator:set-current-user',
       DeleteConversation: 'emulator:delete-conversation',
+      PostActivityToConversation: 'emulator:post-activity',
     },
 
     Extension: {

@@ -240,4 +240,20 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
       conversationId
     );
   });
+
+  // ---------------------------------------------------------------------------
+  // Removes the conversation from the conversation set
+  commandRegistry.registerCommand(
+    Commands.PostActivityToConversation,
+    (conversationId: string, activity: any, toUser: boolean) => {
+      const conversation = Emulator.getInstance().framework.server.botEmulator.facilities.conversations.conversationById(
+        conversationId
+      );
+      if (toUser) {
+        return conversation.postActivityToUser(activity, false);
+      } else {
+        return conversation.postActivityToBot(activity, false);
+      }
+    }
+  );
 }
