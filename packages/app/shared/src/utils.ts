@@ -36,10 +36,10 @@
 // 2. To skip bundling, we can hack with window['require']
 import { BotConfigWithPath, uniqueId } from '@bfemulator/sdk-shared';
 import { IEndpointService, ServiceTypes } from 'botframework-config/lib/schema';
+import { Activity } from 'botframework-schema';
 
 import { Notification, NotificationImpl, NotificationType } from './types';
 import { ValueTypesMask } from './enums';
-import { Activity } from 'botframework-schema';
 
 export function isObject(item: any): boolean {
   return !!(item && typeof item === 'object' && !Array.isArray(item));

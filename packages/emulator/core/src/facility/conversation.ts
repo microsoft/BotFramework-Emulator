@@ -63,6 +63,7 @@ import {
   IMessageActivity,
 } from 'botframework-schema';
 import { ChatMode, DebugMode, ValueTypesMask } from '@bfemulator/app-shared';
+import { traceContainsDebugData } from '@bfemulator/app-shared';
 
 import { BotEmulator } from '../botEmulator';
 import { TokenCache } from '../userToken/tokenCache';
@@ -73,7 +74,6 @@ import PaymentEncoder from '../utils/paymentEncoder';
 import uniqueId from '../utils/uniqueId';
 
 import BotEndpoint from './botEndpoint';
-import { traceContainsDebugData } from '@bfemulator/app-shared';
 
 // moment currently does not export callable function
 // eslint-disable-next-line typescript/no-var-requires

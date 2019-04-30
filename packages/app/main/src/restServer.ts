@@ -38,11 +38,11 @@ import { IEndpointService } from 'botframework-config';
 import { Activity } from 'botframework-schema';
 import { createServer, Request, Response, Route, Server } from 'restify';
 import CORS from 'restify-cors-middleware';
+import { traceContainsDebugData } from '@bfemulator/app-shared';
 
 import { Emulator } from './emulator';
 import { mainWindow } from './main';
 import { getStore } from './settingsData/store';
-import { traceContainsDebugData } from '@bfemulator/app-shared';
 
 interface ConversationAwareRequest extends Request {
   conversation?: { conversationId?: string };
