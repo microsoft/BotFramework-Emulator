@@ -440,7 +440,7 @@ export class AppMenuBuilder {
         {
           type: 'checkbox',
           checked: debugMode === DebugMode.Sidecar,
-          label: 'Sidecar Debug Mode',
+          label: 'Bot Inspector Mode',
           id: 'debugMode',
           click: async (menuItem: Electron.MenuItem) => {
             const debugMode = menuItem.checked ? DebugMode.Sidecar : DebugMode.Normal;
