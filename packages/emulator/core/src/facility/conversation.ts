@@ -62,8 +62,7 @@ import {
   IInvokeActivity,
   IMessageActivity,
 } from 'botframework-schema';
-import { ChatMode } from '@bfemulator/app-shared';
-import { ValueTypesMask } from '@bfemulator/app-shared';
+import { ChatMode, DebugMode, ValueTypesMask } from '@bfemulator/app-shared';
 
 import { BotEmulator } from '../botEmulator';
 import { TokenCache } from '../userToken/tokenCache';
@@ -74,6 +73,7 @@ import PaymentEncoder from '../utils/paymentEncoder';
 import uniqueId from '../utils/uniqueId';
 
 import BotEndpoint from './botEndpoint';
+import { traceContainsDebugData } from '@bfemulator/app-shared';
 
 // moment currently does not export callable function
 // eslint-disable-next-line typescript/no-var-requires
@@ -94,6 +94,7 @@ export default class Conversation extends EventEmitter {
   public conversationId: string;
   public user: User;
   public mode: ChatMode;
+  public debugMode: DebugMode;
   // flag indicating if the user has been shown the
   // "please don't use default Bot State API" warning message
   // when they try to write bot state data
@@ -110,9 +111,16 @@ export default class Conversation extends EventEmitter {
     return this.conversationId.includes('transcript');
   }
 
-  constructor(botEmulator: BotEmulator, botEndpoint: BotEndpoint, conversationId: string, user: User, mode: ChatMode) {
+  constructor(
+    botEmulator: BotEmulator,
+    botEndpoint: BotEndpoint,
+    conversationId: string,
+    user: User,
+    mode: ChatMode,
+    debugMode: DebugMode = DebugMode.Normal
+  ) {
     super();
-    Object.assign(this, { botEmulator, botEndpoint, conversationId, user, mode });
+    Object.assign(this, { botEmulator, botEndpoint, conversationId, user, mode, debugMode });
     // We should consider hardcoding bot id because we don't really use it
     this.members.push({
       id: (botEndpoint && botEndpoint.botId) || 'bot-1',
@@ -763,9 +771,12 @@ export default class Conversation extends EventEmitter {
   }
 
   private addActivityToQueue(activity: Activity) {
+    if (this.debugMode === DebugMode.Sidecar && !traceContainsDebugData(activity)) {
+      return;
+    }
+
     if (!(activity.channelData || {}).postback) {
       this.activities = [...this.activities, { activity, watermark: this.nextWatermark++ }];
-      this.emit('addactivity', { activity });
     }
 
     if (activity && activity.recipient) {

@@ -56,7 +56,7 @@ export default class LoggerAdapter implements Logger {
     this.logException = this.logException.bind(this);
   }
 
-  public logActivity(conversationId: string, activity: Activity, role: string) {
+  public logActivity = (conversationId: string, activity: Activity, role: string) => {
     const logItems: LogItem[] = [
       textItem(LogLevel.Debug, LoggerAdapter.getDirectionalArrowFromRole(role)),
       inspectableObjectItem(activity.type, activity),
@@ -80,13 +80,13 @@ export default class LoggerAdapter implements Logger {
     }
 
     this.logService.logToChat(conversationId, ...logItems);
-  }
+  };
 
-  public logMessage(conversationId: string, ...items: LogItem[]) {
+  public logMessage = (conversationId: string, ...items: LogItem[]) => {
     this.logService.logToChat(conversationId, ...items);
-  }
+  };
 
-  public logException(conversationId: string, err: Error) {
+  public logException = (conversationId: string, err: Error) => {
     this.logService.logToChat(conversationId, exceptionItem(err));
-  }
+  };
 }
