@@ -253,6 +253,12 @@ export default class Conversation extends EventEmitter {
       activity.from.name = 'Bot';
     }
 
+    if (activity.name === 'ReceivedActivity') {
+      activity.value.from.role = 'user';
+    } else if (activity.name === 'SentActivity') {
+      activity.value.from.role = 'bot';
+    }
+
     if (!activity.locale) {
       activity.locale = this.botEmulator.facilities.locale;
     }
