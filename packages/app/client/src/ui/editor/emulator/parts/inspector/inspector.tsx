@@ -296,8 +296,13 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
   }
 
   private createWebView(state: InspectorState): ElectronHTMLWebViewElement {
-    const { cwdAsBase } = this.props;
-    const preload = `file://${cwdAsBase}/node_modules/@bfemulator/client/public/inspector-preload.js`;
+    // const { cwdAsBase } = this.props;
+    // const preload = `file://${cwdAsBase}/../../../node_modules/@bfemulator/client/public/inspector-preload.js`;
+    // const preload = `file://node_modules/@bfemulator/client/public/inspector-preload.js`;
+    // THIS IS A HACK!! WILL FIX LATER
+    const preload = state.inspector.src
+      .replace(/extension-.*/, 'client/public/inspector-preload.js')
+      .replace('asar.unpacked', 'asar');
     const webView: ElectronHTMLWebViewElement = document.createElement('webview');
 
     webView.className = styles.webViewContainer;
