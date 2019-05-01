@@ -417,7 +417,7 @@ describe('AppMenuBuilder', () => {
       checked: false,
       click: jasmine.any(Function),
       id: 'debugMode',
-      label: 'Sidecar Debug Mode',
+      label: 'Bot Inspector Mode',
       type: 'checkbox',
     });
 
@@ -430,7 +430,7 @@ describe('AppMenuBuilder', () => {
       checked: true,
       click: jasmine.any(Function),
       id: 'debugMode',
-      label: 'Sidecar Debug Mode',
+      label: 'Bot Inspector Mode',
       type: 'checkbox',
     });
   });
