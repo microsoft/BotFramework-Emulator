@@ -3,8 +3,8 @@
 [jump to Bot State Inspection](#bot-state-inspection)
 
 ## Prerequisites 
-To test your bot in bot deployed to Azure configured to use the Teams channel.
-[The latest Emulator](https://github.com/Microsoft/BotFramework-Emulator/releases)
+- A bot deployed to Azure configured to use the Teams channel.
+- [The latest Emulator](https://github.com/Microsoft/BotFramework-Emulator/releases)
 
 ## TL;DR
 1. Update your Emulator to be on version `4.4`. You can do this by selecting `Help` -> `Check for Update...`
