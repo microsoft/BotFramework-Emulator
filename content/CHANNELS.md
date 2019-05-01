@@ -37,7 +37,14 @@ If you haven't already, get the [latest Emulator](https://github.com/Microsoft/B
 ## 1. Update Your Bot's Code
 Your bot will need have the Bot Inspector middleware configured in order to connect to and send the conversation exchange to the Emulator. Include the [InspectionMiddleware](https://github.com/Microsoft/botbuilder-js/blob/1c790f4a4f0d761c215eb3841ff370f4b274f5d1/libraries/testbot/index.js#L21) in your Bot's middleware stack:
 
-<replace with image>
+```javascript
+let credentials = undefined;
+if (appId && appPassword) {
+  credentials = new MicrosoftAppCredentials(appId, appPassword);
+}
+
+adapter.use(new InspectionMiddleware(inspectionState, userState, conversationState, credentials))
+```
 
 ## 2. Run ngrok 
 Open a terminal and run ngrok with the following command to create a new tunnel:
@@ -52,8 +59,8 @@ In the azure portal, [navigate to your bot's settings](https://docs.microsoft.co
 
 ## 4. Set the appropiate environment variables in your Bot's running process & start the Bot
 ```bash
-MICROSOFT_APP_ID=<your app id>;
-MICROSOFT_APP_PASSWORD=<your bot's password>;
+MicrosoftAppId=<your app id>;
+MicrosoftAppPassword=<your bot's password>;
 ```
 ```bash
 npm start
@@ -73,7 +80,7 @@ Open the Emulator if it isn't open already. In the Emulator choose file > Bot In
 
 ## 7.  Copy the `/INSPECT connect <UUID>` command rendered in the Conversation window and paste it into the Microsoft Teams chat
 
-<replace with image>
+<img width="895" alt="Screen Shot 2019-04-30 at 8 38 47 PM" src="https://user-images.githubusercontent.com/1156704/57004973-ac2f0e00-6b88-11e9-8d05-e627d50b791b.png">
 
 ## 8. Have conversation in Microsoft Teams chat
 
@@ -85,8 +92,10 @@ Have a normal conversation with your Bot in Microsoft Teams. While doing do you 
 
 The Bot Inspector now renders the Bot State for each Turn Context executed in the Bot's runtime. You can view this by selecting the `Bot State` element rendered in the Conversation control in JSON or Graph form.
 
-<replace with image>
+<img width="991" alt="Screen Shot 2019-04-30 at 8 40 18 PM" src="https://user-images.githubusercontent.com/1156704/57004983-c1a43800-6b88-11e9-81ab-0ac412f4f96c.png">
 
 You can view the difference between Bot State's by right-clicking on one of these Bot State elements and selecting the "view diff with previous" item.
 
-<replace with image>
+<img width="509" alt="Screen Shot 2019-04-30 at 8 40 48 PM" src="https://user-images.githubusercontent.com/1156704/57004994-d41e7180-6b88-11e9-9cfe-18ddd4b53965.png">
+
+<img width="656" alt="Screen Shot 2019-04-30 at 8 40 38 PM" src="https://user-images.githubusercontent.com/1156704/57004998-e13b6080-6b88-11e9-8b6c-d23cb8879ea2.png">
