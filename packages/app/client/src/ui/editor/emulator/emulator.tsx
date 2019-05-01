@@ -121,6 +121,9 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
 
   componentWillUnmount() {
     window.removeEventListener('keydown', this.keyboardEventListener);
+    if (this.props.document.directLine) {
+      this.props.document.directLine.end();
+    }
   }
 
   componentWillReceiveProps(nextProps: EmulatorProps) {

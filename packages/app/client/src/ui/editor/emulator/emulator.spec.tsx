@@ -290,7 +290,7 @@ describe('<EmulatorContainer/>', () => {
 
     expect(mockRemoteCallsMade).toHaveLength(3);
     expect(mockRemoteCallsMade[2].commandName).toBe(SharedConstants.Commands.Emulator.SaveTranscriptToFile);
-    expect(mockRemoteCallsMade[2].args).toEqual([16, 'convo1']);
+    expect(mockRemoteCallsMade[2].args).toEqual([32, 'convo1']);
   });
 
   it('should report a notification when exporting a transcript fails', async () => {
