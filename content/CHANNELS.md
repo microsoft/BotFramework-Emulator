@@ -9,19 +9,20 @@
 ## TL;DR
 1. Update your Emulator to be on version `4.4`. You can do this by selecting `Help` -> `Check for Update...`
 1. Install [ngrok](https://ngrok.com/) and navigate to the ngrok executable's location in a terminal.
-2. Run ngrok `./ngrok http 3979 --host-header=localhost`
-3. Open your bot in the [Azure Portal](https://ms.portal.azure.com/), select the `Settings` blade and paste the ngrok url provided in the terminal into the *Messaging Endpoint* field then save. **note:** If necessary, don't forget to add the `/api/messages` endpoint.
-4. Set the appropriate environment variables (prefix with EXPORT for OSX/Linux, SET for Windows):
+1. [Update your bot's code](#1-update-your-bots-code)
+1. Run ngrok `./ngrok http 3979 --host-header=localhost`
+1. Open your bot in the [Azure Portal](https://ms.portal.azure.com/), select the `Settings` blade and paste the ngrok url provided in the terminal into the *Messaging Endpoint* field then save. **note:** If necessary, don't forget to add the `/api/messages` endpoint.
+1. Set the appropriate environment variables (prefix with EXPORT for OSX/Linux, SET for Windows):
 ```bash
 NODE_ENV=development;
 MicrosoftAppId=<your app id>;
 MicrosoftAppPassword=<your bot's password>;
 ```
-5. Run your bot: `npm start`
-6. Open the respective channel's chat link provided in the Azure Portal in the Channels blade.
-7. Open the Emulator and toggle to Bot Inspector mode via `View` -> `Bot Inspector Mode`
-8. Connect to your locally running Bot by pasting the URL to the Bot's endpoint in the connection modal. **note**: if configured with an external channel you may need to supply your Microsoft App Id & Microsoft App password.
-9. Copy the `/INSPECT connect <UUID>` command rendered in the Conversation window and paste it into your configured channel's chat.
+1. Run your bot: `npm start`
+1. Open the respective channel's chat link provided in the Azure Portal in the Channels blade.
+1. Open the Emulator and toggle to Bot Inspector mode via `View` -> `Bot Inspector Mode`
+1. Connect to your locally running Bot by pasting the URL to the Bot's endpoint in the connection modal. **note**: if configured with an external channel you may need to supply your Microsoft App Id & Microsoft App password.
+1. Copy the `/INSPECT attach <UUID>` command rendered in the Conversation window and paste it into your configured channel's chat.
 
 # Run Your Bot in an external Channel and observing with the Bot Framework Emulator
 If you have configured your bot to [run in 1 or more channels](https://docs.microsoft.com/en-us/azure/bot-service/bot-service-manage-channels?view=azure-bot-service-4.0) and would like to test a locally running bot using the Emulator while interacting with it in a communication app (Teams, Skype, Slack, WebChat, etc.), these instructions will show you how.
@@ -81,25 +82,25 @@ C#
 dotnet run
 ```
 
-## 4. Connect to a Channel & start a converstion in it
+## 5. Connect to a Channel & start a converstion in it
 If you haven't already done so, [connect your bot to a channel](https://docs.microsoft.com/en-us/azure/bot-service/bot-service-manage-channels?view=azure-bot-service-4.0). You may also need to download and install the app associated with the channel if you have't already. Afterwards, open the respective chat link provided in the Azure Portal in the Channels blade.
 
-## 5. Start up the Emulator
+## 6. Start up the Emulator
 Open the Emulator if it isn't open already. In the Emulator choose file > Bot Inspector Mode.
 
 <img width="444" alt="Screen Shot 2019-04-30 at 2 48 50 PM" src="https://user-images.githubusercontent.com/1156704/56995648-2d6dad00-6b57-11e9-85f0-d0128bf32d7a.png">
 
-## 6. Connect to your locally running Bot Open Bot -> Url
+## 7. Connect to your locally running Bot Open Bot -> Url
 
 <img width="889" alt="Screen Shot 2019-04-30 at 2 50 14 PM" src="https://user-images.githubusercontent.com/1156704/56995693-4a09e500-6b57-11e9-917b-0178ea504f90.png">
 
-## 7.  Copy the `/INSPECT connect <UUID>` command rendered in the Conversation window and paste it into the configured channel's chat
+## 8.  Copy the `/INSPECT attach <UUID>` command rendered in the Conversation window and paste it into the configured channel's chat
 
 You can do this few ways. The easiest is by right-clicking on the rendered message and selecting "Copy text" from the context menu.
 
 <img width="895" alt="Screen Shot 2019-04-30 at 8 38 47 PM" src="https://user-images.githubusercontent.com/1156704/57004973-ac2f0e00-6b88-11e9-8d05-e627d50b791b.png">
 
-## 8. Have conversation in external channel
+## 9. Have conversation in external channel
 
 Have a normal conversation with your Bot in your configured channel, and while doing do you will see information populating in your connected conversation in the Emulator.
 
