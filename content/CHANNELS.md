@@ -42,8 +42,8 @@ const { InspectionMiddleware } = require('botbuilder')
 const { MicrosoftAppCredentials } = require('boframework-connector')
 
 let credentials = undefined;
-if (process.env.MicrosoftAppId && process.env.MicrosftAppPassword) {
-  credentials = new MicrosoftAppCredentials(process.env.MicrosoftAppId, process.env.MicrosftAppPassword);
+if (process.env.MicrosoftAppId && process.env.MicrosoftAppPassword) {
+  credentials = new MicrosoftAppCredentials(process.env.MicrosoftAppId, process.env.MicrosoftAppPassword);
 }
 
 adapter.use(new InspectionMiddleware(inspectionState, userState, conversationState, credentials))
@@ -94,6 +94,8 @@ Open the Emulator if it isn't open already. In the Emulator choose file > Bot In
 <img width="889" alt="Screen Shot 2019-04-30 at 2 50 14 PM" src="https://user-images.githubusercontent.com/1156704/56995693-4a09e500-6b57-11e9-917b-0178ea504f90.png">
 
 ## 7.  Copy the `/INSPECT connect <UUID>` command rendered in the Conversation window and paste it into the configured channel's chat
+
+You can do this few ways. The easiest is by right-clicking on the rendered message and selecting "Copy text" from the context menu.
 
 <img width="895" alt="Screen Shot 2019-04-30 at 8 38 47 PM" src="https://user-images.githubusercontent.com/1156704/57004973-ac2f0e00-6b88-11e9-8d05-e627d50b791b.png">
 
