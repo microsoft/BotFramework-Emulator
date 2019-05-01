@@ -437,6 +437,7 @@ export class AppMenuBuilder {
         { role: 'zoomout' },
         { type: 'separator' },
         { role: 'togglefullscreen' },
+        { role: 'toggledevtools' },
         {
           type: 'checkbox',
           checked: debugMode === DebugMode.Sidecar,
