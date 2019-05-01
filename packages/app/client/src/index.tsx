@@ -36,7 +36,6 @@ import * as ReactDOM from 'react-dom';
 import * as React from 'react';
 import { newNotification, SharedConstants } from '@bfemulator/app-shared';
 
-import { LogService } from './platform/log/logService';
 import interceptError from './interceptError';
 import interceptHyperlink from './interceptHyperlink';
 import Main from './ui/shell/mainContainer';
@@ -50,9 +49,6 @@ import './ui/styles/globals.scss';
 
 interceptError();
 interceptHyperlink();
-
-LogService.init();
-
 registerAllCommands(CommandRegistry);
 
 // Start rendering the UI
