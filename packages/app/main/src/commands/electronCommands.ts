@@ -156,10 +156,25 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // fetches the resource using node-fetch - useful when CORS is enabled on the remote host
   // Returns an array buffer since it's the most versatile data structure.
   commandRegistry.registerCommand(Commands.FetchRemote, async (url: string, requestInit: RequestInit) => {
-    const response = await fetch(url, requestInit);
+    const response: {
+      buffer?: () => Promise<ArrayBuffer>;
+      arrayBuffer?: () => Promise<ArrayBuffer>;
+      ok: boolean;
+    } = await fetch(url, requestInit);
+    let buffer: ArrayBuffer;
     if (response.ok) {
-      const buffer = await response.arrayBuffer();
-      return new Uint8Array(buffer);
+      try {
+        buffer = await response.arrayBuffer();
+        return new Uint8Array(buffer);
+      } catch {
+        // Old version of node-fetch?
+      }
+      try {
+        buffer = await response.buffer();
+        return new Uint8Array(buffer);
+      } catch {
+        // Something went wrong.
+      }
     }
     return null;
   });
