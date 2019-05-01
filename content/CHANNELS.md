@@ -40,7 +40,7 @@ Your bot will need to configure the Bot Inspector middleware in order to connect
 
 ```javascript
 const { InspectionMiddleware } = require('botbuilder')
-const { MicrosoftAppCredentials } = require('boframework-connector')
+const { MicrosoftAppCredentials } = require('botframework-connector')
 
 let credentials = undefined;
 if (process.env.MicrosoftAppId && process.env.MicrosoftAppPassword) {
