@@ -35,10 +35,8 @@ import { DebugMode, SharedConstants } from '@bfemulator/app-shared';
 import { BotEmulator, Conversation, ConversationSet } from '@bfemulator/emulator-core';
 import { LogLevel, networkRequestItem, networkResponseItem, textItem } from '@bfemulator/sdk-shared';
 import { IEndpointService } from 'botframework-config';
-import { Activity } from 'botframework-schema';
 import { createServer, Request, Response, Route, Server } from 'restify';
 import CORS from 'restify-cors-middleware';
-import { traceContainsDebugData } from '@bfemulator/app-shared';
 
 import { Emulator } from './emulator';
 import { mainWindow } from './main';
@@ -173,12 +171,8 @@ function shouldPostToChat(
 ): boolean {
   const isDLine = method === 'GET' && route.spec.path === '/v3/directline/conversations/:conversationId/activities';
   const isNotTranscript = !!conversationId && !conversationId.includes('transcript');
-  const { body, conversation } = req;
-  return (
-    !isDLine &&
-    isNotTranscript &&
-    (conversation.debugMode !== DebugMode.Sidecar || traceContainsDebugData(body as Activity))
-  );
+  const { conversation } = req;
+  return !isDLine && isNotTranscript && conversation.debugMode !== DebugMode.Sidecar;
 }
 
 function getConversationId(req: ConversationAwareRequest): string {

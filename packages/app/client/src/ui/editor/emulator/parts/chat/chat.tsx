@@ -185,6 +185,20 @@ export class Chat extends Component<ChatProps, ChatState> {
           {next({ activity: messageActivity, timestampClassName: 'transcript-timestamp' })(children)}
         </ActivityWrapper>
       );
+    } else if (valueType === ValueTypes.Command) {
+      const messageActivity = { ...card.activity, type: ActivityTypes.Message, text: card.activity.value } as Activity;
+      return (
+        <ActivityWrapper
+          activity={messageActivity}
+          data-activity-id={card.activity.id}
+          onKeyDown={this.onItemRendererKeyDown}
+          onClick={this.onItemRendererClick}
+          onContextMenu={this.onContextMenu}
+          isSelected={this.shouldBeSelected(messageActivity)}
+        >
+          {next({ activity: messageActivity, timestampClassName: 'transcript-timestamp' })(children)}
+        </ActivityWrapper>
+      );
     } else if (valueType === ValueTypes.BotState) {
       const diffIndicatorIndex =
         this.state.highlightedActivities.length > 1

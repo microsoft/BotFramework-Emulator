@@ -62,8 +62,7 @@ import {
   IInvokeActivity,
   IMessageActivity,
 } from 'botframework-schema';
-import { ChatMode, DebugMode, ValueTypesMask } from '@bfemulator/app-shared';
-import { traceContainsDebugData } from '@bfemulator/app-shared';
+import { ChatMode, DebugMode, traceContainsDebugData, ValueTypesMask } from '@bfemulator/app-shared';
 
 import { BotEmulator } from '../botEmulator';
 import { TokenCache } from '../userToken/tokenCache';
@@ -212,6 +211,9 @@ export default class Conversation extends EventEmitter {
   }
 
   public async sendConversationUpdate(membersAdded: User[], membersRemoved: User[]) {
+    if (this.debugMode === DebugMode.Sidecar) {
+      return;
+    }
     const activity = {
       type: 'conversationUpdate',
       membersAdded,
