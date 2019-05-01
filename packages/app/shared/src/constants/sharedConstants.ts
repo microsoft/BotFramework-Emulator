@@ -182,6 +182,6 @@ export const SharedConstants = {
   },
   Channels: {
     ReadmeUrl: 'https://raw.githubusercontent.com/Microsoft/BotFramework-Emulator/master/content/CHANNELS.md',
-    HelpLabel: 'Get started with channels',
+    HelpLabel: 'Get started with channels (Bot Inspector)',
   },
 };

@@ -343,7 +343,7 @@ describe('AppMenuBuilder', () => {
     expect(editMenuTemplate).toHaveLength(7);
 
     const viewMenuTemplate = appMenuTemplate[2].submenu;
-    expect(viewMenuTemplate).toHaveLength(6);
+    expect(viewMenuTemplate).toHaveLength(7);
 
     const convoMenuTemplate = appMenuTemplate[3].submenu;
     expect(convoMenuTemplate).toHaveLength(1);
@@ -413,24 +413,24 @@ describe('AppMenuBuilder', () => {
 
   it('should initialize and update the debugMenu item', async () => {
     const viewMenu = await AppMenuBuilder.initViewMenu();
-    expect(viewMenu.submenu[5]).toEqual({
+    expect(viewMenu.submenu[6]).toEqual({
       checked: false,
       click: jasmine.any(Function),
       id: 'debugMode',
-      label: 'Sidecar Debug Mode',
+      label: 'Bot Inspector Mode',
       type: 'checkbox',
     });
 
     mockGetApplicationMenu = () => ({
-      getMenuItemById: () => viewMenu.submenu[5],
+      getMenuItemById: () => viewMenu.submenu[6],
     });
 
     AppMenuBuilder.updateDebugModeViewMenuItem(DebugMode.Sidecar);
-    expect(viewMenu.submenu[5]).toEqual({
+    expect(viewMenu.submenu[6]).toEqual({
       checked: true,
       click: jasmine.any(Function),
       id: 'debugMode',
-      label: 'Sidecar Debug Mode',
+      label: 'Bot Inspector Mode',
       type: 'checkbox',
     });
   });
