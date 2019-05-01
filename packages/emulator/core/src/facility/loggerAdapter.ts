@@ -50,11 +50,7 @@ export default class LoggerAdapter implements Logger {
     return '-> ';
   }
 
-  constructor(public logService: LogService) {
-    this.logActivity = this.logActivity.bind(this);
-    this.logMessage = this.logMessage.bind(this);
-    this.logException = this.logException.bind(this);
-  }
+  constructor(public logService: LogService) {}
 
   public logActivity = (conversationId: string, activity: Activity, role: string) => {
     const logItems: LogItem[] = [
