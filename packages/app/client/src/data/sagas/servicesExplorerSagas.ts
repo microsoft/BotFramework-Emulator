@@ -124,7 +124,7 @@ function* launchConnectedServicePicker(
     });
     // Sign up with XXXX
     if (result === 1) {
-      // TODO - launch an external link
+      yield* launchExternalLink(action);
     }
     // Add services manually
     if (result === 2) {
@@ -203,6 +203,25 @@ function* openConnectedServiceDeepLink(action: ConnectedServiceAction<ConnectedS
 
     case ServiceTypes.QnA:
       return openQnaMakerDeepLink(connectedService as IQnAService);
+
+    default:
+      return window.open('https://portal.azure.com');
+  }
+}
+
+function* launchExternalLink(action: ConnectedServiceAction<ConnectedServicePayload>): IterableIterator<any> {
+  const serviceType = action.payload.serviceType;
+  switch (serviceType) {
+    case ServiceTypes.QnA:
+      return window.open('https://www.qnamaker.ai/');
+
+    case ServiceTypes.Dispatch:
+      return window.open(
+        'https://docs.microsoft.com/en-us/azure/bot-service/bot-builder-tutorial-dispatch?view=azure-bot-service-4.0&tabs=csharp'
+      );
+
+    case ServiceTypes.Luis:
+      return window.open('https://luis.ai');
 
     default:
       return window.open('https://portal.azure.com');

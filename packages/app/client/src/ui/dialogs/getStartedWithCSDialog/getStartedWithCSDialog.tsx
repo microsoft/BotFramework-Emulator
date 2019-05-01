@@ -56,7 +56,7 @@ const titleMap = {
 
 const buttonTextMap = {
   [ServiceTypes.Luis]: 'LUIS',
-  [ServiceTypes.Dispatch]: 'LUIS',
+  [ServiceTypes.Dispatch]: 'Dispatch',
   [ServiceTypes.QnA]: 'QnA Maker',
   [ServiceTypes.BlobStorage]: 'Blob Storage',
 };
@@ -129,16 +129,21 @@ export class GetStartedWithCSDialog extends Component<GetStartedWithCSDialogProp
       <>
         <p>Signed in as {this.props.authenticatedUser}.</p>
         <p>
-          {'You do not have any {label} models associated with this account. '}
-          <a href="javascript:void(0)">Connect to a {label} model manually</a> by entering the app ID and key.
+          {`You do not have any ${label} models associated with this account. `}
+          <a href="javascript:void(0)" onClick={this.props.launchConnectedServiceEditor}>
+            Connect to a {label} model manually
+          </a>{' '}
+          by entering the app ID and key.
         </p>
         <p>
-          <a href="javascript:void(0)">Learn more about {label} models</a>
+          <a href="https://docs.microsoft.com/en-us/azure/cognitive-services/luis/what-is-luis">
+            Learn more about {label} models
+          </a>
           <br />
         </p>
         <p>
-          {'You can link apps from a different {label} account to this Azure account by adding ' +
-            'yourself as a collaborator.'}
+          {`You can link apps from a different ${label} account to this Azure account by adding ` +
+            'yourself as a collaborator. '}
           <a href="http://aka.ms/bot-framework-emulator-luis-collaboration">Learn more about collaborating</a>
         </p>
       </>
