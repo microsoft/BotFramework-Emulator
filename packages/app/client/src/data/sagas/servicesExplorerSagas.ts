@@ -124,7 +124,7 @@ function* launchConnectedServicePicker(
     });
     // Sign up with XXXX
     if (result === 1) {
-      yield* launchExternalLink(action);
+      yield launchExternalLink(action);
     }
     // Add services manually
     if (result === 2) {
@@ -209,7 +209,7 @@ function* openConnectedServiceDeepLink(action: ConnectedServiceAction<ConnectedS
   }
 }
 
-function* launchExternalLink(action: ConnectedServiceAction<ConnectedServicePayload>): IterableIterator<any> {
+function launchExternalLink(action: ConnectedServiceAction<ConnectedServicePayload>): Window {
   const serviceType = action.payload.serviceType;
   switch (serviceType) {
     case ServiceTypes.QnA:
