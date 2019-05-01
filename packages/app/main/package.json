@@ -147,7 +147,7 @@
     "jsonwebtoken": "^8.3.0",
     "mkdirp": "^0.5.1",
     "moment": "^2.22.1",
-    "node-fetch": "^2.3.0",
+    "node-fetch": "^2.5.0",
     "node-uuid": "^1.4.8",
     "query-string": "^6.0.0",
     "read-text-file": "^1.1.0",
