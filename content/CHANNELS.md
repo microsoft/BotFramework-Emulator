@@ -14,8 +14,8 @@ To test your bot in bot deployed to Azure configured to use the Teams channel.
 4. Set the appropriate environment variables (prefix with EXPORT for OSX/Linux, SET for Windows):
 ```bash
 NODE_ENV=development;
-MICROSOFT_APP_ID=<your app id>;
-MICROSOFT_APP_PASSWORD=<your bot's password>;
+MicrosoftAppId=<your app id>;
+MicrosoftAppPassword=<your bot's password>;
 ```
 5. Run your bot: `npm start`
 6. Open the Microsoft Teams chat link provided in the Azure Portal in the Channels blade.
@@ -26,7 +26,7 @@ MICROSOFT_APP_PASSWORD=<your bot's password>;
 # Run Your Bot in an external Channel and observing with the Bot Framework Emulator
 If you have configured your bot to [run in 1 or more channels](https://docs.microsoft.com/en-us/azure/bot-service/bot-service-manage-channels?view=azure-bot-service-4.0) and would like to test a locally running bot using the Emulator while interacting with it in a communication app (Teams, Skype, Slack, WebChat, etc.), these instructions will show you how.
 
-**note:** Since chat messages, Adaptive Cards, and other features have notable differences across the many available channels, the Emulator cannot visually recreate the experience inside the Emulator at this time. What we do expose is can see is protocol data and  internal bot state as turn context's execute throughout a conversation.
+**Note:** Since chat messages, Adaptive Cards, and other features have notable differences across the many available channels, the Emulator cannot visually recreate the experience inside the Emulator at this time. What we do expose is can see is protocol data and  internal bot state as turn context's execute throughout a conversation.
 
 # How it works
 The tunneling software [ngrok](https://ngrok.com/) is used to create a tunnel to your locally running bot. The tunnel's URL is provided to your Web App bot in Azure. You build your bot with the BotBuilder **4.4** [InspectionMiddleware](https://github.com/Microsoft/botbuilder-js/blob/1c790f4a4f0d761c215eb3841ff370f4b274f5d1/libraries/testbot/index.js#L21), and run it locally, chatting with it in Teams or another configured channel. The Emulator will receives the conversation's message exchange as usual, and some internal Bot State information now being exposed through this middleware.
@@ -38,6 +38,9 @@ If you haven't already, get the [latest Emulator](https://github.com/Microsoft/B
 Your bot will need have the Bot Inspector middleware configured in order to connect to and send the conversation exchange to the Emulator. Include the [InspectionMiddleware](https://github.com/Microsoft/botbuilder-js/blob/1c790f4a4f0d761c215eb3841ff370f4b274f5d1/libraries/testbot/index.js#L21) in your Bot's middleware stack:
 
 ```javascript
+const { InspectionMiddleware } = require('botbuilder')
+const { MicrosoftAppCredentials } = require('boframework-connector)
+
 let credentials = undefined;
 if (appId && appPassword) {
   credentials = new MicrosoftAppCredentials(appId, appPassword);
