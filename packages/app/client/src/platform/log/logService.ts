@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { DebugMode, SharedConstants } from '@bfemulator/app-shared';
+import { SharedConstants } from '@bfemulator/app-shared';
 import { CommandRegistryImpl, LogEntry } from '@bfemulator/sdk-shared';
 
 import * as ChatActions from '../../data/action/chatActions';
@@ -56,12 +56,6 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   commandRegistry.registerCommand(
     SharedConstants.Commands.Emulator.AppendToLog,
     (conversationId: string, entry: LogEntry): any => {
-      const {
-        clientAwareSettings: { debugMode },
-      } = store.getState();
-      if (debugMode === DebugMode.Sidecar) {
-        // entry.items = entry.items.filter(item => item.payload)
-      }
       LogService.logToChat(conversationId, entry);
     }
   );
