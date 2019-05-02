@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## Added
+- [client] Added auto complete component and mounted in open bot dialog in PR [1510](https://github.com/Microsoft/BotFramework-Emulator/pull/1510)
 
 ## v4.4.0 - 2019 - 05 - 03
 ## Added

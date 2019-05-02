@@ -148,9 +148,10 @@ export const SharedConstants = {
     },
 
     Settings: {
-      SaveAppSettings: 'app:settings:save',
       LoadAppSettings: 'app:settings:load',
       ReceiveGlobalSettings: 'receive-global-settings',
+      SaveAppSettings: 'app:settings:save',
+      SaveBotUrl: 'settings:save-bot-url',
     },
 
     Telemetry: {

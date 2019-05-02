@@ -45,6 +45,7 @@ import {
   RememberDebugModePayload,
   WindowStateAction,
 } from '../actions/windowStateActions';
+import { ADD_SAVED_BOT_URL } from '../actions/savedBotUrlsActions';
 
 const getAvailableThemes = (state: Settings) => state.windowState.availableThemes;
 const getCurrentTheme = (state: Settings) => state.windowState.theme;
@@ -145,6 +146,7 @@ function* pushClientAwareSettings() {
       users: settingsState.users,
       locale: settingsState.framework.locale,
       debugMode: settingsState.windowState.debugMode || DebugMode.Normal,
+      savedBotUrls: settingsState.savedBotUrls,
     } as ClientAwareSettings
   );
 }
@@ -154,4 +156,5 @@ export function* settingsSagas(): IterableIterator<ForkEffect> {
   yield takeEvery(DEBUG_MODE_CHANGED, debugModeChanged);
   yield takeEvery(SET_FRAMEWORK, setFramework);
   yield takeEvery(PUSH_CLIENT_AWARE_SETTINGS, pushClientAwareSettings);
+  yield takeEvery(ADD_SAVED_BOT_URL, pushClientAwareSettings);
 }

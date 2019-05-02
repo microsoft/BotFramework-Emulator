@@ -31,15 +31,21 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './autoComplete/autoComplete';
-export * from './largeHeader/largeHeader';
-export * from './mediumHeader/mediumHeader';
-export * from './smallHeader/smallHeader';
-export * from './dialog';
-export * from './button/primaryButton';
-export * from './button/defaultButton';
-export * from './textField/textField';
-export * from './checkbox/checkbox';
-export * from './insetShadow/insetShadow';
-export * from './spinner/spinner';
-export * from './splitButton';
+import { ADD_SAVED_BOT_URL } from '../actions/savedBotUrlsActions';
+
+import { savedBotUrlsReducer } from './savedBotUrlsReducer';
+
+describe('saved bot urls reducer', () => {
+  it('should return the default state', () => {
+    const state = savedBotUrlsReducer([], {} as any);
+
+    expect(state).toEqual([]);
+  });
+
+  it('should add a saved bot url if it has not already been saved', () => {
+    const action: any = { type: ADD_SAVED_BOT_URL, payload: 'http://some.boturl.com' };
+    const state = savedBotUrlsReducer([], action);
+
+    expect(state).toEqual(['http://some.boturl.com']);
+  });
+});

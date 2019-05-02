@@ -37,6 +37,7 @@ import { combineReducers } from 'redux';
 import { azureAuth } from './azureAuthReducer';
 import { botsReducer } from './botReducer';
 import { frameworkReducer } from './frameworkReducer';
+import { savedBotUrlsReducer } from './savedBotUrlsReducer';
 import { usersReducer } from './usersReducer';
 import { windowStateReducer } from './windowStateReducer';
 
@@ -44,6 +45,7 @@ export default combineReducers<Settings>({
   azure: azureAuth,
   framework: frameworkReducer,
   bots: botsReducer,
+  savedBotUrls: savedBotUrlsReducer,
   windowState: windowStateReducer,
   users: usersReducer,
 });

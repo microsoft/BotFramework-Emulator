@@ -64,6 +64,7 @@ const mapDispatchToProps = (dispatch: (action: Action) => void): OpenBotDialogPr
 const mapStateToProps = (state: RootState, ownProps: Partial<OpenBotDialogProps>): Partial<OpenBotDialogProps> => {
   return {
     debugMode: state.clientAwareSettings.debugMode,
+    savedBotUrls: state.clientAwareSettings.savedBotUrls,
     ...ownProps,
   };
 };

@@ -107,6 +107,13 @@ export function* openBotViaUrl(action: BotAction<Partial<StartConversationParams
   if (error) {
     const errorNotification = beginAdd(newNotification(error));
     yield put(errorNotification);
+  } else {
+    // remember the endpoint
+    yield call(
+      [CommandServiceImpl, CommandServiceImpl.remoteCall],
+      SharedConstants.Commands.Settings.SaveBotUrl,
+      action.payload.endpoint
+    );
   }
 }
 

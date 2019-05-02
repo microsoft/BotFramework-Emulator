@@ -226,4 +226,7 @@ html {
 
   /* Inspector accessory buttons */
   --accessory-button-color: var(--s-button-color);
+
+  /* Auto Complete */
+  --auto-complete-results-opacity: 0.9;
 }
