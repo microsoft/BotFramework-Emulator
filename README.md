@@ -55,5 +55,3 @@ Security issues and bugs should be reported privately, via email, to the Microso
 ## License
 
 Copyright (c) Microsoft Corporation. All rights reserved.
-
-Licensed under the [MIT](LICENSE) License.
