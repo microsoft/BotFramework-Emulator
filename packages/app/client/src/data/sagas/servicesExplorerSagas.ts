@@ -42,7 +42,7 @@ import {
   IQnAService,
   ServiceTypes,
 } from 'botframework-config/lib/schema';
-import { ForkEffect, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
+import { call, ForkEffect, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
 
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { DialogService } from '../../ui/dialogs/service';
@@ -124,7 +124,7 @@ function* launchConnectedServicePicker(
     });
     // Sign up with XXXX
     if (result === 1) {
-      yield launchExternalLink(action);
+      yield* launchExternalLink(action);
     }
     // Add services manually
     if (result === 2) {
@@ -209,22 +209,35 @@ function* openConnectedServiceDeepLink(action: ConnectedServiceAction<ConnectedS
   }
 }
 
-function launchExternalLink(action: ConnectedServiceAction<ConnectedServicePayload>): Window {
+function* launchExternalLink(action: ConnectedServiceAction<ConnectedServicePayload>): IterableIterator<any> {
   const serviceType = action.payload.serviceType;
   switch (serviceType) {
     case ServiceTypes.QnA:
-      return window.open('https://www.qnamaker.ai/');
+      yield call(
+        [CommandServiceImpl, CommandServiceImpl.remoteCall],
+        SharedConstants.Commands.Electron.OpenExternal,
+        'https://www.qnamaker.ai/'
+      );
+      break;
 
     case ServiceTypes.Dispatch:
-      return window.open(
+      yield call(
+        [CommandServiceImpl, CommandServiceImpl.remoteCall],
+        SharedConstants.Commands.Electron.OpenExternal,
         'https://docs.microsoft.com/en-us/azure/bot-service/bot-builder-tutorial-dispatch?view=azure-bot-service-4.0&tabs=csharp'
       );
+      break;
 
     case ServiceTypes.Luis:
-      return window.open('https://luis.ai');
+      yield call(
+        [CommandServiceImpl, CommandServiceImpl.remoteCall],
+        SharedConstants.Commands.Electron.OpenExternal,
+        'https://luis.ai'
+      );
+      break;
 
     default:
-      return window.open('https://portal.azure.com');
+      return;
   }
 }
 
