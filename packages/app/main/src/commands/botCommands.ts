@@ -108,7 +108,10 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
     Bot.Open,
     async (botPath: string, secret?: string): Promise<BotConfigWithPath> => {
       // Make sure we're not in Sidecar debug mode
-      getSettingsStore().dispatch(debugModeChanged(DebugMode.Normal));
+      const settingsStore = getSettingsStore();
+      if (settingsStore.getState().windowState.debugMode !== DebugMode.Normal) {
+        getSettingsStore().dispatch(debugModeChanged(DebugMode.Normal));
+      }
       // try to get the bot secret from bots.json
       const botInfo = pathExistsInRecentBots(botPath) ? getBotInfoByPath(botPath) : null;
       if (botInfo) {
