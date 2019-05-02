@@ -70,6 +70,7 @@ export interface ExtensionInspector {
   criteria?: InspectorCriteria | InspectorCriteria[];
   summaryText?: string | string[];
   accessories?: InspectorAccessory[];
+  preloadPath?: string;
 }
 
 // =============================================================================

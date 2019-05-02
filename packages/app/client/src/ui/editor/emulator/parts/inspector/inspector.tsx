@@ -72,7 +72,6 @@ interface IpcMessageEvent extends Event {
 
 interface InspectorProps {
   document: any;
-  cwdAsBase: string;
   themeInfo: { themeName: string; themeComponents: string[] };
   activeBot?: IBotConfiguration;
   botHash?: string;
@@ -297,13 +296,6 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
   }
 
   private createWebView(state: InspectorState): ElectronHTMLWebViewElement {
-    // const { cwdAsBase } = this.props;
-    // const preload = `file://${cwdAsBase}/../../../node_modules/@bfemulator/client/public/inspector-preload.js`;
-    // const preload = `file://node_modules/@bfemulator/client/public/inspector-preload.js`;
-    // THIS IS A HACK!! WILL FIX LATER
-    const preload = state.inspector.src
-      .replace(/extension-.*/, 'client/public/inspector-preload.js')
-      .replace('asar.unpacked', 'asar');
     const webView: ElectronHTMLWebViewElement = document.createElement('webview');
 
     webView.className = styles.webViewContainer;
@@ -311,7 +303,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     webView.addEventListener('dragover', this.onInspectorDrag, true);
     webView.addEventListener('ipc-message', this.ipcMessageEventHandler);
     webView.setAttribute('partition', `persist:${state.botHash}`);
-    webView.setAttribute('preload', preload);
+    webView.setAttribute('preload', state.inspector.preloadPath);
     webView.setAttribute('src', encodeURI(state.inspector.src));
     return webView;
   }

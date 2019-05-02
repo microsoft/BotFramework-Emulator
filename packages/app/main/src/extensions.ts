@@ -236,13 +236,15 @@ class ExtManagerImpl extends DisposableImpl implements ExtensionManager {
     });
   }
 
-  public unloadExtensions() {
+  public async unloadExtensions() {
+    const extensionUnloadPromises = [];
     for (const kvPair of this.extensions) {
-      this.unloadExtension(kvPair[0]);
+      extensionUnloadPromises.push(this.unloadExtension(kvPair[0]));
     }
+    return Promise.all(extensionUnloadPromises);
   }
 
-  public unloadExtension(ipc: IPC) {
+  private async unloadExtension(ipc: IPC) {
     const extension = this.extensions.get(ipc);
     if (extension) {
       // eslint-disable-next-line no-console
@@ -250,22 +252,25 @@ class ExtManagerImpl extends DisposableImpl implements ExtensionManager {
       // Disconnect from the extension process
       extension.disconnect();
       // Notify the client that the extension is gone.
-      mainWindow.commandService.remoteCall(SharedConstants.Commands.Extension.Disconnect, extension.config.location);
+      await mainWindow.commandService.remoteCall(
+        SharedConstants.Commands.Extension.Disconnect,
+        extension.config.location
+      );
       // Cleanup
       this.extensions.delete(ipc);
     }
   }
 
-  public addExtension(extension: ExtensionImpl, configPath: string) {
+  public async addExtension(extension: ExtensionImpl, configPath: string): Promise<void> {
     // Cleanup configPath
     configPath = configPath.replace(/\\/g, '/');
     // Remove any previous extension with matching name.
-    this.unloadExtension(extension.ipc);
+    await this.unloadExtension(extension.ipc);
     // Save it off.
     this.extensions.set(extension.ipc, extension);
-    extension.on('exit', () => {
+    extension.on('exit', async () => {
       // Unload the extension if its process exits.
-      this.unloadExtension(extension.ipc);
+      await this.unloadExtension(extension.ipc);
     });
     // eslint-disable-next-line no-console
     console.log(`Adding extension ${extension.config.name}`);
@@ -280,31 +285,20 @@ class ExtManagerImpl extends DisposableImpl implements ExtensionManager {
     inspectors.forEach(inspector => {
       inspector.src = (inspector.src || '').replace(/\\/g, '/');
     });
-    if (
-      extension.config.client.debug &&
-      extension.config.client.debug.enabled &&
-      extension.config.client.debug.webpack
-    ) {
-      // If running in debug mode, rewrite inspector paths as http URLs for webpack-dev-server.
-      const port = extension.config.client.debug.webpack.port || 3030;
-      const host = extension.config.client.debug.webpack.host || 'localhost';
-      inspectors.forEach(inspector => {
-        inspector.src = `http://${host}:${port}/${inspector.src}`.replace(extension.config.client.basePath, '');
-      });
-    } else {
-      // If not in debug mode, rewrite paths as file path URLs.
-      inspectors.forEach(inspector => {
-        let folder = path.resolve(configPath).replace(/\\/g, '/');
-        if (folder[0] !== '/') {
-          folder = `/${folder}`;
-        }
-        inspector.src = `file://${folder}/` + inspector.src;
-      });
-    }
+    inspectors.forEach(inspector => {
+      let folder = path.resolve(configPath).replace(/\\/g, '/');
+      if (folder[0] !== '/') {
+        folder = `/${folder}`;
+      }
+      inspector.src = `file://${folder}/` + inspector.src;
+      inspector.preloadPath =
+        'file://' + path.resolve(path.join(__dirname, '..', 'extensions', 'inspector-preload.js'));
+    });
+
     // Connect to the extension's node process (if any).
     extension.connect();
     // Notify the client of the new extension.
-    mainWindow.commandService.remoteCall(SharedConstants.Commands.Extension.Connect, extension.config);
+    return mainWindow.commandService.remoteCall(SharedConstants.Commands.Extension.Connect, extension.config);
   }
 
   // Check whether we're running from an 'app.asar' packfile. If so, it means we were installed

@@ -40,7 +40,6 @@ import { combineReducers, createStore } from 'redux';
 import { loadBotInfos, setActiveBot } from '../../../../../data/action/botActions';
 import { switchTheme } from '../../../../../data/action/themeActions';
 import { bot } from '../../../../../data/reducer/bot';
-import { clientAwareSettings } from '../../../../../data/reducer/clientAwareSettingsReducer';
 import { theme } from '../../../../../data/reducer/themeReducer';
 import { ExtensionManager } from '../../../../../extensions';
 import { LogService } from '../../../../../platform/log/logService';
@@ -48,7 +47,7 @@ import { LogService } from '../../../../../platform/log/logService';
 import { Inspector } from './inspector';
 import { InspectorContainer } from './inspectorContainer';
 
-const mockStore = createStore(combineReducers({ theme, bot, clientAwareSettings }), {});
+const mockStore = createStore(combineReducers({ theme, bot }), {});
 
 jest.mock('../../../panel/panel.scss', () => ({}));
 
