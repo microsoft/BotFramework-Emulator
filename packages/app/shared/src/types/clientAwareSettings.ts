@@ -33,6 +33,7 @@
 import { DebugMode, UserSettings } from './serverSettingsTypes';
 
 export interface ClientAwareSettings {
+  appPath: string;
   cwd: string;
   locale: string;
   serverUrl: string;
