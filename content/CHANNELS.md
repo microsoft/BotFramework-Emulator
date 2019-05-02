@@ -69,7 +69,7 @@ Windows
 ```
 
 The output in the terminal should look something like this:
-<img width="639" alt="image" src="assets/ngrok.png">
+![ngrok](assets/ngrok.png)
 
 ## 3. Update Azure to Point to the Tunnel
 In the azure portal, [navigate to your bot's settings](https://docs.microsoft.com/en-us/azure/bot-service/bot-service-manage-settings?view=azure-bot-service-4.0) and paste the url provided by the ngrok terminal in the *Messaging endpoint* field and save the changes. Do not forget to use `/api/messages`. It's best to create a Bot in Azure that is used specifically for this purpose. Do not overwrite the messaging endpoint of a deployed production bot.
