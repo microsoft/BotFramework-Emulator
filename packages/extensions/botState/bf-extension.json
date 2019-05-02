@@ -30,18 +30,6 @@
                 "aria-selected": true
               }
             }
-          },
-          {
-            "id": "graph",
-            "states": {
-              "default": {
-                "label": "Graph"
-              },
-              "selected": {
-                "label": "Graph",
-                "aria-selected": true
-              }
-            }
           }
         ]
       }
