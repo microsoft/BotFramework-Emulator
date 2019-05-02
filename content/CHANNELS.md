@@ -3,7 +3,7 @@
 [jump to Bot State Inspection](#bot-state-inspection)
 
 ## Prerequisites 
-- A bot deployed to Azure configured to use the Teams channel.
+- A bot configured in Azure configured to use the additional channels. (Microsoft Teams, etc).
 - [The latest Emulator](https://github.com/Microsoft/BotFramework-Emulator/releases)
 
 ## TL;DR
@@ -39,8 +39,14 @@ If you haven't already, get the [latest Emulator](https://github.com/Microsoft/B
 Your bot will need to configure the Bot Inspector middleware in order to connect to and send the conversation exchange to the Emulator. Include the [InspectionMiddleware](https://github.com/Microsoft/botbuilder-js/blob/1c790f4a4f0d761c215eb3841ff370f4b274f5d1/libraries/testbot/index.js#L21) in your Bot's middleware stack:
 
 ```javascript
-const { InspectionMiddleware } = require('botbuilder')
+const { MemoryStorage, UserState, ConversationState, InspectionState, InspectionMiddleware } = require('botbuilder')
 const { MicrosoftAppCredentials } = require('botframework-connector')
+
+let memoryStorage = new MemoryStorage();
+let inspectionState = new InspectionState(memoryStorage);
+
+let userState = new UserState(memoryStorage);
+let conversationState = new ConversationState(memoryStorage)
 
 let credentials = undefined;
 if (process.env.MicrosoftAppId && process.env.MicrosoftAppPassword) {
@@ -51,7 +57,7 @@ adapter.use(new InspectionMiddleware(inspectionState, userState, conversation
 ```
 
 ## 2. Run ngrok 
-Open a terminal and run ngrok with the following command to create a new tunnel:
+Open a terminal and run ngrok with the following command to create a new tunnel (you may need to navigate to where the ngrok executable lives on your filesystem):
 
 OSX
 ```bash
@@ -63,7 +69,7 @@ Windows
 ```
 
 The output in the terminal should look something like this:
-<img width="639" alt="image" src="https://user-images.githubusercontent.com/2652885/55196448-a2bb1c00-516c-11e9-87ce-98bdc1ebd7f8.png">
+<img width="639" alt="image" src="assets/ngrok.png">
 
 ## 3. Update Azure to Point to the Tunnel
 In the azure portal, [navigate to your bot's settings](https://docs.microsoft.com/en-us/azure/bot-service/bot-service-manage-settings?view=azure-bot-service-4.0) and paste the url provided by the ngrok terminal in the *Messaging endpoint* field and save the changes. Do not forget to use `/api/messages`. It's best to create a Bot in Azure that is used specifically for this purpose. Do not overwrite the messaging endpoint of a deployed production bot.
