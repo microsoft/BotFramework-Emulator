@@ -243,7 +243,7 @@ function getTextFromActivity(activity: Activity): string {
   } else if (activity.valueType === ValueTypes.Activity) {
     return 'text' in activity.value ? activity.value.text : activity.label;
   }
-  return activity.text;
+  return activity.text || activity.label || '';
 }
 
 function buildDiff(prependWith: string, path: (string | number)[], target: any, source: any): void {
