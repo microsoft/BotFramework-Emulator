@@ -63,6 +63,10 @@ let mockStore;
   return mockStore || (mockStore = createStore(combineReducers({ bot })));
 };
 
+jest.mock('electron', () => ({
+  app: { getAppPath: () => '' },
+}));
+
 const mockOn = { on: () => mockOn };
 jest.mock('chokidar', () => ({
   watch: () => ({

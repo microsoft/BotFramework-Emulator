@@ -34,6 +34,7 @@ import { DebugMode, FrameworkSettings, Settings, SharedConstants } from '@bfemul
 import { Users } from '@bfemulator/emulator-core';
 import { ClientAwareSettings } from '@bfemulator/app-shared';
 import { call, ForkEffect, select, takeEvery } from 'redux-saga/effects';
+import { app } from 'electron';
 
 import { Emulator } from '../../emulator';
 import { mainWindow } from '../../main';
@@ -138,6 +139,7 @@ function* pushClientAwareSettings() {
     [mainWindow.commandService, mainWindow.commandService.remoteCall],
     SharedConstants.Commands.Settings.ReceiveGlobalSettings,
     {
+      appPath: app.getAppPath(),
       serverUrl: (Emulator.getInstance().framework.serverUrl || '').replace('[::]', 'localhost'),
       cwd: (process.cwd() || '').replace(/\\/g, '/'),
       users: settingsState.users,

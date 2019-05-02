@@ -30,6 +30,8 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+import { normalize, join } from 'path';
+
 import { logEntry, LogLevel, textItem, luisEditorDeepLinkItem } from '@bfemulator/sdk-shared';
 import { SharedConstants } from '@bfemulator/app-shared';
 import { mount } from 'enzyme';
@@ -48,7 +50,9 @@ import { LogService } from '../../../../../platform/log/logService';
 import { Inspector } from './inspector';
 import { InspectorContainer } from './inspectorContainer';
 
-const mockStore = createStore(combineReducers({ theme, bot, clientAwareSettings }), {});
+const mockStore = createStore(combineReducers({ theme, bot, clientAwareSettings }), {
+  clientAwareSettings: { appPath: 'app-path' },
+});
 
 jest.mock('../../../panel/panel.scss', () => ({}));
 
@@ -279,12 +283,12 @@ describe('The Inspector component', () => {
   });
 
   describe('when there are no objects to be inspected', () => {
-    beforeEach(() => {
-      const docWithoutInspectorObjs = {
-        ...mockState.document,
-        inspectorObjects: [],
-      };
+    const docWithoutInspectorObjs = {
+      ...mockState.document,
+      inspectorObjects: [],
+    };
 
+    beforeEach(() => {
       parent = mount(
         <Provider store={mockStore}>
           <InspectorContainer document={docWithoutInspectorObjs} inspector={{ src }} />
@@ -300,6 +304,34 @@ describe('The Inspector component', () => {
 
     it('does not render a webview container', () => {
       expect(node.find('.webViewContainer').exists()).toBe(false);
+    });
+
+    it('should create a webview', () => {
+      const instance = node.instance();
+      const wv: HTMLElement = instance.createWebView({ botHash: 'botHash', inspector: { src: 'inspectorSrc' } });
+      expect(wv).toBeTruthy();
+      expect(wv.getAttribute('preload')).toBe(
+        normalize(join('file://', 'app-path', '/node_modules/@bfemulator/client/public/inspector-preload.js'))
+      );
+      expect(wv.getAttribute('src')).toBe(encodeURI('inspectorSrc'));
+      expect(wv.getAttribute('partition')).toBe('persist:botHash');
+    });
+
+    it('should update the inspector', async () => {
+      const instance = node.instance();
+      const mockSendInitStack = jest.fn(() => null);
+      instance.sendInitializationStackToInspector = mockSendInitStack;
+      const mockAddEventListener = jest.fn(() => null);
+      const mockInspector = { addEventListener: mockAddEventListener, style: {} };
+      instance.webViewByLocation = { inspectorSrc: mockInspector };
+      const mockAppendChild = jest.fn(() => null);
+      const mockContainerRef = { appendChild: mockAppendChild, children: [], contains: () => false };
+      instance.state.containerRef = mockContainerRef;
+
+      await instance.updateInspector({ inspector: { src: 'inspectorSrc' } });
+      expect(mockSendInitStack).toHaveBeenCalled();
+      expect(mockAppendChild).toHaveBeenCalledWith(mockInspector);
+      expect(mockAddEventListener).toHaveBeenCalled();
     });
   });
 
