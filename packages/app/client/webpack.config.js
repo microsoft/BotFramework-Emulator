@@ -142,7 +142,6 @@ const defaultConfig = {
     new HotModuleReplacementPlugin(),
     new HardSourceWebpackPlugin(),
     new CopyWebpackPlugin([
-      { from: './src/inspector-preload.js', to: './' },
       { from: './src/splash.html', to: './splash.html' },
       { from: './src/index.html', to: './index.html' },
       { from: './src/ui/styles/themes/light.css', to: 'themes/light.css' },
