@@ -6,11 +6,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## v4.4.0 - 2019 - 05 - 03
 ## Added
+- [client] - Bumped `botframework-webchat` to v4.4.1 in PR [1511](https://github.com/Microsoft/BotFramework-Emulator/pull/1511)
+- [client] - Added the ability to toggle into Chromium's Developer Tools via a menu item in PR [1481](https://github.com/Microsoft/BotFramework-Emulator/pull/1481)
+- [client] - Added CHANNELS.md for documentation on Bot Inspector mode in PR [1502](https://github.com/Microsoft/BotFramework-Emulator/pull/1502)
+- [client/main] Added Bot Inspector mode in PR [1400](https://github.com/Microsoft/BotFramework-Emulator/pull/1400)
+- [client] Added the ability to specicy a UserID override in conversations in PR [1456](https://github.com/Microsoft/BotFramework-Emulator/pull/1456)
+- [main] Added a splash screen on app startup in PR [1450](https://github.com/Microsoft/BotFramework-Emulator/pull/1451)
 - [main] Added npm script to watch and auto-restart the main process in PR [1450](https://github.com/Microsoft/BotFramework-Emulator/pull/1450)
 - [main] Added a splash screen to app startup in PR [1451](https://github.com/Microsoft/BotFramework-Emulator/pull/1451)
 
 ## Fixed
+- [main] Fixed the ability to export transcripts when connected to a bot via URL in PR [1452](https://github.com/Microsoft/BotFramework-Emulator/pull/1452)
 - [luis / client] Fixed several styling issues within the LUIS inspector, and enabled log deep link to configure missing LUIS service in PR [#1399](https://github.com/Microsoft/BotFramework-Emulator/pull/1399)
 - [client] Fixed secret prompt dialog's opaque background so that it is now transparent in PR [1407](https://github.com/Microsoft/BotFramework-Emulator/pull/1407)
 - [build / client] Fixed ipc issue that was breaking the command service in PR [1418](https://github.com/Microsoft/BotFramework-Emulator/pull/1418)
