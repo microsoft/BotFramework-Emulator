@@ -3,9 +3,7 @@
 # Microsoft Bot Framework Emulator
 [![Build Status](https://travis-ci.org/Microsoft/BotFramework-Emulator.svg?branch=master)](https://travis-ci.org/Microsoft/BotFramework-Emulator) [![Coverage Status](https://coveralls.io/repos/github/Microsoft/BotFramework-Emulator/badge.svg?branch=master)](https://coveralls.io/github/Microsoft/BotFramework-Emulator?branch=master)
 
-The Bot Framework Emulator is a desktop application that allows bot developers to test and debug bots built using the [Bot Framework SDK](https://github.com/microsoft/botbuilder).
-
-You can use the Bot Framework Emulator to test bots running either locally on your machine or connect to bots running remotely through a tunnel.
+The Bot Framework Emulator is a desktop application that allows bot developers to test and debug bots built using the [Bot Framework SDK](https://github.com/microsoft/botbuilder). You can use the Bot Framework Emulator to test bots running either locally on your machine or connect to bots running remotely through a tunnel.
 
 ## Download
 
@@ -28,10 +26,10 @@ Checkout the [Wiki](https://github.com/Microsoft/BotFramework-Emulator/wiki) for
 
 ## Related
 
-* [Microsoft Bot Framework](https://botframework.com)
-* [BotBuilder SDK](https://github.com/Microsoft/BotBuilder)
-* [BotBuilder Tools](https://github.com/Microsoft/BotBuilder-Tools)
-* [BotFramework-WebChat](https://github.com/Microsoft/BotFramework-WebChat)
+* [Microsoft Bot Framework](https://github.com/Microsoft/botframework)
+* [Bot Framework SDK](https://github.com/Microsoft/BotBuilder)
+* [Bot Framework Tools](https://github.com/Microsoft/BotBuilder-Tools)
+* [Bot Framework Web Chat](https://github.com/Microsoft/BotFramework-WebChat)
 
 ## Nightly builds
 
