@@ -89,10 +89,17 @@ export default class BotEndpoint {
 
   public async fetchWithAuth(url: string, fetchOptions: any = {}, forceRefresh: boolean = false) {
     if (this.msaAppId) {
-      fetchOptions.headers = {
-        ...fetchOptions.headers,
-        Authorization: `Bearer ${await this.getAccessToken(forceRefresh)}`,
-      };
+      try {
+        fetchOptions.headers = {
+          ...fetchOptions.headers,
+          Authorization: `Bearer ${await this.getAccessToken(forceRefresh)}`,
+        };
+      } catch (e) {
+        return {
+          status: e.status,
+          text: "The bot's Microsoft App Id or Microsoft App Password is incorrect.",
+        };
+      }
     }
 
     const response = await this._options.fetch(url, fetchOptions);
@@ -144,10 +151,11 @@ export default class BotEndpoint {
 
       return this.accessToken;
     } else {
-      // this.facilities.logger.logError(this.conversationId, 'Error: The bot\'s MSA appId or password is incorrect.');
-      // this.facilities.logger.logError(this.conversationId, makeBotSettingsLink('Edit your bot\'s MSA info'));
-
-      throw new Error('Refresh access token failed with status code: ' + resp.status);
+      throw {
+        message: 'Refresh access token failed with status code: ' + resp.status,
+        status: resp.status,
+        body: resp.body,
+      };
     }
   }
 }
