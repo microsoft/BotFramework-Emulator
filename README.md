@@ -1,5 +1,7 @@
 # ![Bot Framework Emulator](./docs/media/FrameWorkEmmulator-header.png)
 
+### [Click here to find out what's new for //build2019!](https://github.com/Microsoft/botframework/blob/master/whats-new.md#whats-new)
+
 # Microsoft Bot Framework Emulator
 [![Build Status](https://travis-ci.org/Microsoft/BotFramework-Emulator.svg?branch=master)](https://travis-ci.org/Microsoft/BotFramework-Emulator) [![Coverage Status](https://coveralls.io/repos/github/Microsoft/BotFramework-Emulator/badge.svg?branch=master)](https://coveralls.io/github/Microsoft/BotFramework-Emulator?branch=master)
 
