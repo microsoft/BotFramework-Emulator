@@ -53,13 +53,16 @@ import {
   ConnectedServicePickerPayload,
   launchConnectedServicePicker,
   openAddServiceContextMenu,
+  launchExternalLink,
   openContextMenuForConnectedService,
   openServiceDeepLink,
 } from '../action/connectedServiceActions';
 import { azureAuth } from '../reducer/azureAuthReducer';
 import { bot } from '../reducer/bot';
 
-import { servicesExplorerSagas } from './servicesExplorerSagas';
+import { launchExternalLink as launchExternalLinkSaga, servicesExplorerSagas } from './servicesExplorerSagas';
+
+import { call } from 'redux-saga/effects';
 
 const sagaMiddleWare = sagaMiddlewareFactory();
 const mockStore = createStore(combineReducers({ azureAuth, bot }), {}, applyMiddleware(sagaMiddleWare));
@@ -107,6 +110,12 @@ jest.mock('./azureAuthSaga', () => ({
   getArmToken: function*() {
     // eslint-disable-next-line typescript/camelcase
     yield { access_token: mockArmToken };
+  },
+}));
+
+jest.mock('../../platform/commands/commandServiceImpl', () => ({
+  CommandServiceImpl: {
+    remoteCall: () => Promise.resolve(true),
   },
 }));
 
@@ -394,6 +403,96 @@ describe('The ServiceExplorerSagas', () => {
       expect(_type).toBe(SharedConstants.Commands.Bot.RemoveService);
       expect(_args[0]).toBe(ServiceTypes.Dispatch);
       expect(_args[1]).toBe('#1');
+    });
+  });
+
+  describe(' launchExternalLink', () => {
+    let action: ConnectedServiceAction<ConnectedServicePayload>;
+    let openConnectedServiceGen;
+    let sagaIt;
+
+    it(' should open a LIUS external link', async () => {
+      const payload = {
+        azureAuthWorkflowComponents: {
+          loginFailedDialog: AzureLoginFailedDialogContainer,
+          loginSuccessDialog: AzureLoginSuccessDialogContainer,
+          promptDialog: ConnectServicePromptDialogContainer,
+        },
+        getStartedDialog: GetStartedWithCSDialogContainer,
+        editorComponent: ConnectedServiceEditorContainer,
+        pickerComponent: ConnectedServicePickerContainer,
+        serviceType: ServiceTypes.Luis,
+      };
+
+      action = launchExternalLink(payload as any);
+      sagaIt = launchExternalLinkSaga;
+
+      const it = sagaIt(action);
+      const result = it.next().value;
+
+      expect(result).toEqual(
+        call(
+          [CommandServiceImpl, CommandServiceImpl.remoteCall],
+          SharedConstants.Commands.Electron.OpenExternal,
+          'https://luis.ai'
+        )
+      );
+    });
+
+    it(' should open a Dispatch external link', () => {
+      const payload = {
+        azureAuthWorkflowComponents: {
+          loginFailedDialog: AzureLoginFailedDialogContainer,
+          loginSuccessDialog: AzureLoginSuccessDialogContainer,
+          promptDialog: ConnectServicePromptDialogContainer,
+        },
+        getStartedDialog: GetStartedWithCSDialogContainer,
+        editorComponent: ConnectedServiceEditorContainer,
+        pickerComponent: ConnectedServicePickerContainer,
+        serviceType: ServiceTypes.Dispatch,
+      };
+
+      action = launchExternalLink(payload as any);
+      sagaIt = launchExternalLinkSaga;
+
+      const it = sagaIt(action);
+      const result = it.next().value;
+
+      expect(result).toEqual(
+        call(
+          [CommandServiceImpl, CommandServiceImpl.remoteCall],
+          SharedConstants.Commands.Electron.OpenExternal,
+          'https://docs.microsoft.com/en-us/azure/bot-service/bot-builder-tutorial-dispatch?view=azure-bot-service-4.0&tabs=csharp'
+        )
+      );
+    });
+
+    it(' should open a Dispatch external link', () => {
+      const payload = {
+        azureAuthWorkflowComponents: {
+          loginFailedDialog: AzureLoginFailedDialogContainer,
+          loginSuccessDialog: AzureLoginSuccessDialogContainer,
+          promptDialog: ConnectServicePromptDialogContainer,
+        },
+        getStartedDialog: GetStartedWithCSDialogContainer,
+        editorComponent: ConnectedServiceEditorContainer,
+        pickerComponent: ConnectedServicePickerContainer,
+        serviceType: ServiceTypes.QnA,
+      };
+
+      action = launchExternalLink(payload as any);
+      sagaIt = launchExternalLinkSaga;
+
+      const it = sagaIt(action);
+      const result = it.next().value;
+
+      expect(result).toEqual(
+        call(
+          [CommandServiceImpl, CommandServiceImpl.remoteCall],
+          SharedConstants.Commands.Electron.OpenExternal,
+          'https://www.qnamaker.ai/'
+        )
+      );
     });
   });
 

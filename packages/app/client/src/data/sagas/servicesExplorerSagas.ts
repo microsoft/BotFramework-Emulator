@@ -58,6 +58,7 @@ import {
   OPEN_CONNECTED_SERVICE_SORT_CONTEXT_MENU,
   OPEN_CONTEXT_MENU_FOR_CONNECTED_SERVICE,
   OPEN_SERVICE_DEEP_LINK,
+  LAUNCH_EXTERNAL_LINK,
 } from '../action/connectedServiceActions';
 import { sortExplorerContents } from '../action/explorerActions';
 import { SortCriteria } from '../reducer/explorer';
@@ -209,7 +210,7 @@ function* openConnectedServiceDeepLink(action: ConnectedServiceAction<ConnectedS
   }
 }
 
-function* launchExternalLink(action: ConnectedServiceAction<ConnectedServicePayload>): IterableIterator<any> {
+export function* launchExternalLink(action: ConnectedServiceAction<ConnectedServicePayload>): IterableIterator<any> {
   const serviceType = action.payload.serviceType;
   switch (serviceType) {
     case ServiceTypes.QnA:
@@ -391,6 +392,7 @@ function openQnaMakerDeepLink(service: IQnAService) {
 export function* servicesExplorerSagas(): IterableIterator<ForkEffect> {
   yield takeLatest(LAUNCH_CONNECTED_SERVICE_PICKER, launchConnectedServicePicker);
   yield takeLatest(LAUNCH_CONNECTED_SERVICE_EDITOR, launchConnectedServiceEditor);
+  yield takeEvery(LAUNCH_EXTERNAL_LINK, launchExternalLink);
   yield takeEvery(OPEN_SERVICE_DEEP_LINK, openConnectedServiceDeepLink);
   yield takeEvery(OPEN_CONTEXT_MENU_FOR_CONNECTED_SERVICE, openContextMenuForService);
   yield takeEvery(OPEN_ADD_CONNECTED_SERVICE_CONTEXT_MENU, openAddConnectedServiceContextMenu);

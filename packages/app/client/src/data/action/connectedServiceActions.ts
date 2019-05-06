@@ -40,6 +40,7 @@ import { CONNECTED_SERVICES_PANEL_ID } from './explorerActions';
 export const OPEN_SERVICE_DEEP_LINK = 'OPEN_SERVICE_DEEP_LINK';
 export const OPEN_CONTEXT_MENU_FOR_CONNECTED_SERVICE = 'OPEN_CONTEXT_MENU_FOR_CONNECTED_SERVICE';
 export const OPEN_ADD_CONNECTED_SERVICE_CONTEXT_MENU = 'OPEN_ADD_CONNECTED_SERVICE_CONTEXT_MENU';
+export const LAUNCH_EXTERNAL_LINK = 'LAUNCH_EXTERNAL_LINK';
 export const OPEN_CONNECTED_SERVICE_SORT_CONTEXT_MENU = 'OPEN_CONNECTED_SERVICE_SORT_CONTEXT_MENU';
 export const LAUNCH_CONNECTED_SERVICE_EDITOR = 'LAUNCH_CONNECTED_SERVICE_EDITOR';
 export const LAUNCH_CONNECTED_SERVICE_PICKER = 'LAUNCH_CONNECTED_SERVICE_PICKER';
@@ -111,6 +112,13 @@ export function openAddServiceContextMenu(
 ): ConnectedServiceAction<ConnectedServicePickerPayload> {
   return {
     type: OPEN_ADD_CONNECTED_SERVICE_CONTEXT_MENU,
+    payload,
+  };
+}
+
+export function launchExternalLink(payload: ConnectedServicePayload): ConnectedServiceAction<ConnectedServicePayload> {
+  return {
+    type: LAUNCH_EXTERNAL_LINK,
     payload,
   };
 }
