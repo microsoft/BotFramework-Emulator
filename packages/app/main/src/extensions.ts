@@ -33,6 +33,7 @@
 
 import { ChildProcess, fork } from 'child_process';
 import * as path from 'path';
+import { app } from 'electron';
 
 import { SharedConstants } from '@bfemulator/app-shared';
 import { ProcessIPC, WebSocketIPC } from '@bfemulator/sdk-main';
@@ -307,18 +308,12 @@ class ExtManagerImpl extends DisposableImpl implements ExtensionManager {
     mainWindow.commandService.remoteCall(SharedConstants.Commands.Extension.Connect, extension.config);
   }
 
-  // Check whether we're running from an 'app.asar' packfile. If so, it means we were installed
-  // using an installer (as opposed to running a developer build).
-  private isPacked(): boolean {
-    return /[\\/]app.asar[\\/]/.test(__dirname);
-  }
-
   // Most source files of the installed application exist in a packed archive called 'app.asar'.
   // The emulator is configured to unpack extensions out of the asar file onto disk in a folder
   // called 'app.asar.unpacked'. Electron doesn't support an automatic way to remap file paths
   // from packed to unpacked locations, so we're doing that manually here.
   private unpackedFolder(filename: string) {
-    if (path.isAbsolute(filename) && this.isPacked()) {
+    if (path.isAbsolute(filename) && app.isPackaged) {
       return filename.replace('app.asar', 'app.asar.unpacked');
     } else {
       return filename;
