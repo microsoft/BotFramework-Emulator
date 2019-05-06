@@ -242,7 +242,7 @@ export default class Conversation extends EventEmitter {
         '/v3/directline/conversations'
       ),
       networkResponseItem(
-        { id: result.activityId },
+        { ...result.response, id: result.activityId },
         result.response.headers,
         result.statusCode,
         result.status,

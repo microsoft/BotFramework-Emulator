@@ -257,7 +257,7 @@ describe('BotEndpoint', () => {
     try {
       const response = await (endpoint as any).getAccessToken();
     } catch (e) {
-      expect(e).toEqual(new Error('Refresh access token failed with status code: 404'));
+      expect(e).toEqual({ body: undefined, message: 'Refresh access token failed with status code: 404', status: 404 });
     }
   });
 });
