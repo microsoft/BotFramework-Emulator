@@ -214,13 +214,13 @@ describe('The botSagas', () => {
     // select debug mode
     gen.next(DebugMode.Sidecar);
     // response.json from starting conversation
-    const postActivityResponse = gen.next({ id: 'someConversationId' }).value;
+    const callToPostActivity = gen.next({ id: 'someConversationId' }).value;
     // posting activity to conversation
     const activity = {
       type: 'message',
       text: '/INSPECT open',
     };
-    expect(postActivityResponse).toEqual(
+    expect(callToPostActivity).toEqual(
       call(
         [CommandServiceImpl, CommandServiceImpl.remoteCall],
         SharedConstants.Commands.Emulator.PostActivityToConversation,
@@ -228,8 +228,17 @@ describe('The botSagas', () => {
         activity
       )
     );
-    // the response from POSTing to the conversation should end the saga
-    expect(gen.next({ statusCode: 200 }).done).toBe(true);
+    // POSTing the activity to the conversation should return a 200
+    const callToRememberEndpoint = gen.next({ statusCode: 200 });
+    expect(callToRememberEndpoint.value).toEqual(
+      call(
+        [CommandServiceImpl, CommandServiceImpl.remoteCall],
+        SharedConstants.Commands.Settings.SaveBotUrl,
+        'http://localhost/api/messages'
+      )
+    );
+    // the saga should be finished
+    expect(gen.next().done).toBe(true);
   });
 
   it('should spawn a notification if posting the "/INSPECT open" command fails', () => {

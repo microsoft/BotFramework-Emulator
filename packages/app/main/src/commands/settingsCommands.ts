@@ -34,6 +34,7 @@
 import { FrameworkSettings, SharedConstants } from '@bfemulator/app-shared';
 import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 
+import { addSavedBotUrl } from '../settingsData/actions/savedBotUrlsActions';
 import { setFramework } from '../settingsData/actions/frameworkActions';
 import { dispatch, getSettings } from '../settingsData/store';
 import { TelemetryService } from '../telemetry';
@@ -65,4 +66,10 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
       return getSettings().framework;
     }
   );
+
+  // ---------------------------------------------------------------------------
+  // Save a new bot url to disk
+  commandRegistry.registerCommand(Commands.SaveBotUrl, (url: string) => {
+    dispatch(addSavedBotUrl(url));
+  });
 }

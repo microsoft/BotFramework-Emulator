@@ -32,10 +32,8 @@
 //
 
 .browse-button {
-  overflow: hidden;
-  position: absolute;
-  right: 4px;
-  bottom: 11.5px;
+  margin-left: 8px;
+  bottom: 1px;
 }
 
 .input-container {
@@ -77,4 +75,12 @@
   --my-bots-well-border: 0;
   --my-bots-scrollbar-color: rgba(136, 136, 136, 0.5);
   --my-bots-entry-color: var(--neutral-12);
+}
+
+.auto-complete-bar {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: flex-end;
+  margin-top: 16px;
+  margin-bottom: 24px;
 }

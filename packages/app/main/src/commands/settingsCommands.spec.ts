@@ -36,6 +36,7 @@ import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 
 import { TelemetryService } from '../telemetry';
 import { setFramework } from '../settingsData/actions/frameworkActions';
+import { addSavedBotUrl } from '../settingsData/actions/savedBotUrlsActions';
 
 import { registerCommands } from './settingsCommands';
 
@@ -54,6 +55,9 @@ registerCommands(mockRegistry);
 describe('The settings commands', () => {
   let mockTrackEvent;
   const trackEventBackup = TelemetryService.trackEvent;
+  const {
+    Commands: { Settings },
+  } = SharedConstants;
 
   beforeEach(() => {
     mockTrackEvent = jest.fn(() => Promise.resolve());
@@ -66,7 +70,7 @@ describe('The settings commands', () => {
   });
 
   it('should save the global app settings', async () => {
-    const { handler } = mockRegistry.getCommand(SharedConstants.Commands.Settings.SaveAppSettings);
+    const { handler } = mockRegistry.getCommand(Settings.SaveAppSettings);
     const mockSettings = { ngrokPath: 'other/path/to/ngrok.exe' };
     await handler(mockSettings);
 
@@ -75,9 +79,16 @@ describe('The settings commands', () => {
   });
 
   it('should load the app settings from the store', async () => {
-    const { handler } = mockRegistry.getCommand(SharedConstants.Commands.Settings.LoadAppSettings);
+    const { handler } = mockRegistry.getCommand(Settings.LoadAppSettings);
     const appSettings = await handler();
 
     expect(appSettings).toBe(mockSettings.framework);
+  });
+
+  it('should save a new bot url to disk', () => {
+    const { handler } = mockRegistry.getCommand(Settings.SaveBotUrl);
+    handler('http://some.boturl.com');
+
+    expect(mockDispatch).toHaveBeenCalledWith(addSavedBotUrl('http://some.boturl.com'));
   });
 });

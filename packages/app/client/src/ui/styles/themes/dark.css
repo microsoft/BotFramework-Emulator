@@ -227,6 +227,9 @@ html {
 
   /* accessory buttons */
   --accessory-button-color: var(--neutral-5);
+
+  /* Auto Complete */
+  --auto-complete-results-opacity: 0.9;
 }
 
 .dialog {

@@ -31,15 +31,20 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './autoComplete/autoComplete';
-export * from './largeHeader/largeHeader';
-export * from './mediumHeader/mediumHeader';
-export * from './smallHeader/smallHeader';
-export * from './dialog';
-export * from './button/primaryButton';
-export * from './button/defaultButton';
-export * from './textField/textField';
-export * from './checkbox/checkbox';
-export * from './insetShadow/insetShadow';
-export * from './spinner/spinner';
-export * from './splitButton';
+export const ADD_SAVED_BOT_URL = 'SAVED_BOT_URLS_ADD';
+
+export type SavedBotUrlsActionType = 'SAVED_BOT_URLS_ADD';
+
+export interface SavedBotUrlsAction<P> {
+  type: SavedBotUrlsActionType;
+  payload: P;
+}
+
+export type SavedBotUrlsActionPayload = string;
+
+export function addSavedBotUrl(url: string): SavedBotUrlsAction<string> {
+  return {
+    type: ADD_SAVED_BOT_URL,
+    payload: url,
+  };
+}

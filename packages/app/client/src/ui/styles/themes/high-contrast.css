@@ -226,6 +226,9 @@ html {
 
   /* Inspector accessory buttons */
   --accessory-button-color: var(--neutral-5);
+
+  /* Auto Complete */
+  --auto-complete-results-opacity: 1;
 }
 
 .dialog .ms-Button-label {

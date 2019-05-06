@@ -98,6 +98,7 @@ export interface AzureSettings {
 export interface PersistentSettings {
   framework?: FrameworkSettings;
   bots?: Bot[];
+  savedBotUrls?: string[];
   windowState?: WindowStateSettings;
   users?: UserSettings;
 }
@@ -109,13 +110,14 @@ export interface Settings extends PersistentSettings {
 export class SettingsImpl implements Settings {
   public framework: FrameworkSettings;
   public bots: Bot[];
+  public savedBotUrls: string[];
   public windowState: WindowStateSettings;
   public users: UserSettings;
   public azure: AzureSettings;
 
   public constructor(source?: Settings) {
-    const { framework, bots, windowState, users, azure }: Settings = source || {};
-    Object.assign(this, { framework, bots, windowState, users, azure });
+    const { framework, bots, savedBotUrls, windowState, users, azure }: Settings = source || {};
+    Object.assign(this, { framework, bots, savedBotUrls, windowState, users, azure });
   }
 
   /**
@@ -123,10 +125,10 @@ export class SettingsImpl implements Settings {
    * @returns {Partial<Settings>}
    */
   public toJSON(): Partial<Settings> {
-    const { framework, bots, windowState, users, azure = {} } = this;
+    const { framework, bots, savedBotUrls, windowState, users, azure = {} } = this;
     // Do not write the armToken to disk
     const { armToken, ...azureProps } = azure;
-    return { framework, bots, windowState, users, azure: azureProps };
+    return { framework, bots, savedBotUrls, windowState, users, azure: azureProps };
   }
 }
 
@@ -167,6 +169,7 @@ export const settingsDefault: Settings = new SettingsImpl({
       locale: '',
     },
   ],
+  savedBotUrls: [],
   windowState: windowStateDefault,
   users: {},
   azure: {},

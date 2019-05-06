@@ -31,9 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { DefaultButton, Dialog, DialogFooter, PrimaryButton, Row, TextField } from '@bfemulator/ui-react';
+import { AutoComplete, DefaultButton, Dialog, DialogFooter, PrimaryButton, Row, TextField } from '@bfemulator/ui-react';
 import * as React from 'react';
-import { ChangeEvent, Component, FocusEvent, ReactNode } from 'react';
+import { ChangeEvent, Component, ReactNode } from 'react';
 import { DebugMode } from '@bfemulator/app-shared';
 
 import * as openBotStyles from './openBotDialog.scss';
@@ -41,6 +41,7 @@ import * as openBotStyles from './openBotDialog.scss';
 export interface OpenBotDialogProps {
   onDialogCancel?: () => void;
   openBot?: (state: OpenBotDialogState) => void;
+  savedBotUrls?: string[];
   sendNotification?: (error: Error) => void;
   switchToBot?: (path: string) => void;
   debugMode?: DebugMode;
@@ -60,7 +61,11 @@ enum ValidationResult {
 }
 
 export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogState> {
-  public state = { botUrl: '', appId: '', appPassword: '' };
+  public state = {
+    botUrl: '',
+    appId: '',
+    appPassword: '',
+  };
 
   private static getErrorMessage(result: ValidationResult): string {
     if (result === ValidationResult.Empty || result === ValidationResult.Valid) {
@@ -85,6 +90,7 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
   }
 
   public render(): ReactNode {
+    const { savedBotUrls = [] } = this.props;
     const { botUrl, appId, appPassword } = this.state;
     const validationResult = OpenBotDialog.validateEndpoint(botUrl);
     const errorMessage = OpenBotDialog.getErrorMessage(validationResult);
@@ -98,17 +104,16 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
     return (
       <Dialog cancel={this.props.onDialogCancel} className={openBotStyles.themeOverrides} title="Open a bot">
         <form onSubmit={this.onSubmit}>
-          <TextField
-            autoFocus={true}
-            name="botUrl"
-            errorMessage={errorMessage}
-            inputContainerClassName={`${openBotStyles.inputContainer} ${!inSidecar ? openBotStyles.padded : ''}`}
-            label={botUrlLabel}
-            onChange={this.onInputChange}
-            onFocus={this.onFocus}
-            placeholder={botUrlLabel}
-            value={botUrl}
-          >
+          <div className={openBotStyles.autoCompleteBar}>
+            <AutoComplete
+              autoFocus={true}
+              errorMessage={errorMessage}
+              label={botUrlLabel}
+              items={savedBotUrls}
+              onChange={this.onBotUrlChange}
+              placeholder={botUrlLabel}
+              value={this.state.botUrl}
+            />
             {!inSidecar && (
               <PrimaryButton className={openBotStyles.browseButton}>
                 Browse
@@ -121,7 +126,7 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
                 />
               </PrimaryButton>
             )}
-          </TextField>
+          </div>
           <Row className={openBotStyles.multiInputRow}>
             <TextField
               inputContainerClassName={openBotStyles.inputContainerRow}
@@ -152,18 +157,14 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
     );
   }
 
-  private onFocus = (event: FocusEvent<HTMLInputElement>) => {
-    const input = event.target as HTMLInputElement;
-    input.setSelectionRange(0, (input.value || '').length);
-  };
-
   private onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { type, files, value, name } = event.target;
-    let newValue = value;
-    if (name === 'botUrl') {
-      newValue = type === 'file' ? files.item(0).path : value;
-    }
+    const newValue = type === 'file' ? files.item(0).path : value;
     this.setState({ [name]: newValue });
+  };
+
+  private onBotUrlChange = (botUrl: string) => {
+    this.setState({ botUrl });
   };
 
   private onSubmit = () => {
