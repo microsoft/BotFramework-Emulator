@@ -284,7 +284,7 @@ describe('The QnaApiService happy path', () => {
     expect(result.services).toEqual([
       {
         endpointKey: 'primary-endpoint-key-1',
-        hostname: 'https://localhost',
+        hostname: 'https://localhost/qnamaker',
         id: '1234',
         kbId: '1234',
         name: 'HIThere#1',
@@ -293,7 +293,7 @@ describe('The QnaApiService happy path', () => {
       },
       {
         endpointKey: 'primary-endpoint-key-2',
-        hostname: 'https://localhost',
+        hostname: 'https://localhost/qnamaker',
         id: '9876543',
         kbId: '9876543',
         name: 'HIThere#2',
