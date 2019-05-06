@@ -46,19 +46,19 @@ describe('saved bot urls reducer', () => {
     const action: any = { type: ADD_SAVED_BOT_URL, payload: 'http://some.boturl.com' };
     const state = savedBotUrlsReducer([], action);
 
-    expect(state).toEqual([{ url: 'http://some.boturl.com', lastAccessed: expect.any(Date) }]);
+    expect(state).toEqual([{ url: 'http://some.boturl.com', lastAccessed: expect.any(String) }]);
   });
 
   it('should re-order the savedBots list when mutated', () => {
     const action: any = { type: ADD_SAVED_BOT_URL, payload: 'http://some.boturl2.com' };
     const state = savedBotUrlsReducer(
-      [{ url: 'http://some.boturl1.com', lastAccessed: new Date('2019-05-06T21:18:08.029Z') }],
+      [{ url: 'http://some.boturl1.com', lastAccessed: new Date('2019-05-06T21:18:08.029Z').toUTCString() }],
       action
     );
 
     expect(state).toEqual([
-      { url: 'http://some.boturl2.com', lastAccessed: expect.any(Date) },
-      { url: 'http://some.boturl1.com', lastAccessed: expect.any(Date) },
+      { url: 'http://some.boturl2.com', lastAccessed: expect.any(String) },
+      { url: 'http://some.boturl1.com', lastAccessed: expect.any(String) },
     ]);
   });
 });
