@@ -1,9 +1,14 @@
-# ![Bot Framework Emulator](./docs/media/FrameWorkEmmulator-header.png)
+# ![Bot Framework Emulator](./docs/media/BotFrameworkEmulator_header.png)
 
-# Microsoft Bot Framework Emulator
+### [Click here to find out what's new for //build2019!](https://github.com/Microsoft/botframework/blob/master/whats-new.md#whats-new)
+
+# Bot Framework Emulator
 [![Build Status](https://travis-ci.org/Microsoft/BotFramework-Emulator.svg?branch=master)](https://travis-ci.org/Microsoft/BotFramework-Emulator) [![Coverage Status](https://coveralls.io/repos/github/Microsoft/BotFramework-Emulator/badge.svg?branch=master)](https://coveralls.io/github/Microsoft/BotFramework-Emulator?branch=master)
 
 The Bot Framework Emulator is a desktop application that allows bot developers to test and debug bots built using the [Bot Framework SDK](https://github.com/microsoft/botbuilder). You can use the Bot Framework Emulator to test bots running either locally on your machine or connect to bots running remotely through a tunnel.
+
+This repo is part the [Microsoft Bot Framework](https://github.com/microsoft/botframework) - a comprehensive framework for building enterprise-grade conversational AI experiences.
+
 
 ## Download
 
@@ -51,7 +56,5 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 
 ## Reporting Security Issues
 Security issues and bugs should be reported privately, via email, to the Microsoft Security Response Center (MSRC) at [secure@microsoft.com](mailto:secure@microsoft.com). You should receive a response within 24 hours. If for some reason you do not, please follow up via email to ensure we received your original message. Further information, including the [MSRC PGP](https://technet.microsoft.com/en-us/security/dn606155) key, can be found in the [Security TechCenter](https://technet.microsoft.com/en-us/security/default).
-
-## License
 
 Copyright (c) Microsoft Corporation. All rights reserved.
