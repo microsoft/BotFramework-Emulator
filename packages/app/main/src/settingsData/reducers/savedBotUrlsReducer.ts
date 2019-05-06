@@ -35,7 +35,7 @@ import { ADD_SAVED_BOT_URL, SavedBotUrlsAction, SavedBotUrlsActionPayload } from
 
 type BotUrl = {
   url: string;
-  lastAccessed: Date;
+  lastAccessed: string;
 };
 
 export function savedBotUrlsReducer(
@@ -46,14 +46,16 @@ export function savedBotUrlsReducer(
     case ADD_SAVED_BOT_URL: {
       const foundAtIndex = state.findIndex(element => element.url === action.payload);
       if (foundAtIndex === -1) {
-        state.push({ url: action.payload, lastAccessed: new Date() });
+        state.push({ url: action.payload, lastAccessed: new Date().toUTCString() });
       } else {
-        state[foundAtIndex].lastAccessed = new Date();
+        state[foundAtIndex].lastAccessed = new Date().toUTCString();
       }
 
-      state.sort((prev, curr) => {
-        return curr.lastAccessed.getTime() - prev.lastAccessed.getTime();
-      });
+      if (state.length > 1) {
+        state.sort((prev, curr) => {
+          return curr.lastAccessed > prev.lastAccessed ? 1 : -1;
+        });
+      }
 
       break;
     }
