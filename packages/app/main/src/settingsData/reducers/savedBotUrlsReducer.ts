@@ -33,17 +33,30 @@
 
 import { ADD_SAVED_BOT_URL, SavedBotUrlsAction, SavedBotUrlsActionPayload } from '../actions/savedBotUrlsActions';
 
-export function savedBotUrlsReducer(
-  state: string[] = [],
-  action: SavedBotUrlsAction<SavedBotUrlsActionPayload>
-): string[] {
-  switch (action.type) {
-    case ADD_SAVED_BOT_URL:
-      if (!state.some(botUrl => botUrl === action.payload)) {
-        state.push(action.payload);
-      }
-      break;
+type BotUrl = {
+  url: string;
+  lastAccessed: Date;
+};
 
+export function savedBotUrlsReducer(
+  state: Array<BotUrl> = [],
+  action: SavedBotUrlsAction<SavedBotUrlsActionPayload>
+): Array<BotUrl> {
+  switch (action.type) {
+    case ADD_SAVED_BOT_URL: {
+      const foundAtIndex = state.findIndex(element => element.url === action.payload);
+      if (foundAtIndex === -1) {
+        state.push({ url: action.payload, lastAccessed: new Date() });
+      } else {
+        state[foundAtIndex].lastAccessed = new Date();
+      }
+
+      state.sort((prev, curr) => {
+        return curr.lastAccessed.getTime() - prev.lastAccessed.getTime();
+      });
+
+      break;
+    }
     default:
       break;
   }
