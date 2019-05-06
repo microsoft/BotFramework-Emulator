@@ -1,6 +1,7 @@
 .editor {
   color: var(--log-panel-item-debug);
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
   height: 100%;
   padding: 8px 16px;
 }
