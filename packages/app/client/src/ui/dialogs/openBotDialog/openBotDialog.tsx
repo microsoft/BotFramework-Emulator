@@ -41,7 +41,7 @@ import * as openBotStyles from './openBotDialog.scss';
 export interface OpenBotDialogProps {
   onDialogCancel?: () => void;
   openBot?: (state: OpenBotDialogState) => void;
-  savedBotUrls?: string[];
+  savedBotUrls?: Array<{ url: string; lastAccessed: Date }>;
   sendNotification?: (error: Error) => void;
   switchToBot?: (path: string) => void;
   debugMode?: DebugMode;
@@ -101,6 +101,7 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
     if (!inSidecar) {
       botUrlLabel += ' or .bot file location';
     }
+
     return (
       <Dialog cancel={this.props.onDialogCancel} className={openBotStyles.themeOverrides} title="Open a bot">
         <form onSubmit={this.onSubmit}>
@@ -109,7 +110,7 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
               autoFocus={true}
               errorMessage={errorMessage}
               label={botUrlLabel}
-              items={savedBotUrls}
+              items={savedBotUrls.map(elem => elem.url).slice(0, 9)}
               onChange={this.onBotUrlChange}
               placeholder={botUrlLabel}
               value={this.state.botUrl}
