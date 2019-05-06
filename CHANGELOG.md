@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Added
 - [client] Added auto complete component and mounted in open bot dialog in PR [1510](https://github.com/Microsoft/BotFramework-Emulator/pull/1510)
 
+## Fixed
+- [luis] Added ability to scroll within editor section of LUIS inspector and made inspector scrollbars thinner in PR [#1516](https://github.com/Microsoft/BotFramework-Emulator/pull/1516)
+
 ## v4.4.0 - 2019 - 05 - 03
 ## Added
 - [client] - Bumped `botframework-webchat` to v4.4.1 in PR [1511](https://github.com/Microsoft/BotFramework-Emulator/pull/1511)
