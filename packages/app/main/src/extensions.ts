@@ -33,8 +33,8 @@
 
 import { ChildProcess, fork } from 'child_process';
 import * as path from 'path';
-import { app } from 'electron';
 
+import { app } from 'electron';
 import { SharedConstants } from '@bfemulator/app-shared';
 import { ProcessIPC, WebSocketIPC } from '@bfemulator/sdk-main';
 import {
@@ -220,8 +220,8 @@ class ExtManagerImpl extends DisposableImpl implements ExtensionManager {
   public loadExtensions() {
     let folders = [];
     try {
-      // Get all subdirectories under ../extensions
-      const folder = this.unpackedFolder(path.resolve(path.join(__dirname, '..', 'extensions')));
+      // Get all subdirectories under app/extensions
+      const folder = this.unpackedFolder(path.resolve(path.join(app.getAppPath(), 'app', 'extensions')));
       folders = getDirectories(folder);
     } catch {
       // do nothing
