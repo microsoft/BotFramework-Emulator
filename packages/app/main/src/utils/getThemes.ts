@@ -34,6 +34,9 @@ import * as path from 'path';
 
 import * as fse from 'fs-extra';
 
+//TAKE ME OUT AFTERWARDS!!!!!!!
+// eslint-disable-next-line
+console.log('hello!');
 export function getThemes(): { name: string; href: string }[] {
   let files: string[];
   try {
