@@ -42,7 +42,7 @@ import {
   IQnAService,
   ServiceTypes,
 } from 'botframework-config/lib/schema';
-import { ForkEffect, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
+import { call, ForkEffect, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
 
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { DialogService } from '../../ui/dialogs/service';
@@ -58,6 +58,7 @@ import {
   OPEN_CONNECTED_SERVICE_SORT_CONTEXT_MENU,
   OPEN_CONTEXT_MENU_FOR_CONNECTED_SERVICE,
   OPEN_SERVICE_DEEP_LINK,
+  LAUNCH_EXTERNAL_LINK,
 } from '../action/connectedServiceActions';
 import { sortExplorerContents } from '../action/explorerActions';
 import { SortCriteria } from '../reducer/explorer';
@@ -124,7 +125,7 @@ function* launchConnectedServicePicker(
     });
     // Sign up with XXXX
     if (result === 1) {
-      // TODO - launch an external link
+      yield* launchExternalLink(action);
     }
     // Add services manually
     if (result === 2) {
@@ -206,6 +207,38 @@ function* openConnectedServiceDeepLink(action: ConnectedServiceAction<ConnectedS
 
     default:
       return window.open('https://portal.azure.com');
+  }
+}
+
+export function* launchExternalLink(action: ConnectedServiceAction<ConnectedServicePayload>): IterableIterator<any> {
+  const serviceType = action.payload.serviceType;
+  switch (serviceType) {
+    case ServiceTypes.QnA:
+      yield call(
+        [CommandServiceImpl, CommandServiceImpl.remoteCall],
+        SharedConstants.Commands.Electron.OpenExternal,
+        'https://www.qnamaker.ai/'
+      );
+      break;
+
+    case ServiceTypes.Dispatch:
+      yield call(
+        [CommandServiceImpl, CommandServiceImpl.remoteCall],
+        SharedConstants.Commands.Electron.OpenExternal,
+        'https://docs.microsoft.com/en-us/azure/bot-service/bot-builder-tutorial-dispatch?view=azure-bot-service-4.0&tabs=csharp'
+      );
+      break;
+
+    case ServiceTypes.Luis:
+      yield call(
+        [CommandServiceImpl, CommandServiceImpl.remoteCall],
+        SharedConstants.Commands.Electron.OpenExternal,
+        'https://luis.ai'
+      );
+      break;
+
+    default:
+      return;
   }
 }
 
@@ -359,6 +392,7 @@ function openQnaMakerDeepLink(service: IQnAService) {
 export function* servicesExplorerSagas(): IterableIterator<ForkEffect> {
   yield takeLatest(LAUNCH_CONNECTED_SERVICE_PICKER, launchConnectedServicePicker);
   yield takeLatest(LAUNCH_CONNECTED_SERVICE_EDITOR, launchConnectedServiceEditor);
+  yield takeEvery(LAUNCH_EXTERNAL_LINK, launchExternalLink);
   yield takeEvery(OPEN_SERVICE_DEEP_LINK, openConnectedServiceDeepLink);
   yield takeEvery(OPEN_CONTEXT_MENU_FOR_CONNECTED_SERVICE, openContextMenuForService);
   yield takeEvery(OPEN_ADD_CONNECTED_SERVICE_CONTEXT_MENU, openAddConnectedServiceContextMenu);
