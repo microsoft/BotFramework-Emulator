@@ -32,6 +32,8 @@
 //
 
 // Cheating here and pulling in a module from node. Can be easily replaced if we ever move the emulator to the web.
+import { join, normalize } from 'path';
+
 import {
   ExtensionInspector,
   InspectorAccessory,
@@ -71,8 +73,8 @@ interface IpcMessageEvent extends Event {
 }
 
 interface InspectorProps {
+  appPath?: string;
   document: any;
-  cwdAsBase: string;
   themeInfo: { themeName: string; themeComponents: string[] };
   activeBot?: IBotConfiguration;
   botHash?: string;
@@ -271,13 +273,14 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     if (!src) {
       return;
     }
+    const encodedSrc = encodeURI(src);
     const { webViewByLocation: webViews } = this;
-    if (!webViews[src]) {
-      webViews[src] = this.createWebView(state);
+    if (!webViews[encodedSrc]) {
+      webViews[encodedSrc] = this.createWebView(state);
     } else {
       this.sendInitializationStackToInspector();
     }
-    const nextInspector = webViews[src] || (webViews[src] = this.createWebView(state));
+    const nextInspector = webViews[encodedSrc] || (webViews[encodedSrc] = this.createWebView(state));
     nextInspector.style.display = '';
 
     const { containerRef } = this.state;
@@ -296,8 +299,8 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
   }
 
   private createWebView(state: InspectorState): ElectronHTMLWebViewElement {
-    const { cwdAsBase } = this.props;
-    const preload = `file://${cwdAsBase}/node_modules/@bfemulator/client/public/inspector-preload.js`;
+    const appPath = normalize(this.props.appPath);
+    const preload = normalize(join('file://', appPath, '/node_modules/@bfemulator/client/public/inspector-preload.js'));
     const webView: ElectronHTMLWebViewElement = document.createElement('webview');
 
     webView.className = styles.webViewContainer;
@@ -306,7 +309,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     webView.addEventListener('ipc-message', this.ipcMessageEventHandler);
     webView.setAttribute('partition', `persist:${state.botHash}`);
     webView.setAttribute('preload', preload);
-    webView.setAttribute('src', state.inspector.src);
+    webView.setAttribute('src', encodeURI(state.inspector.src));
     return webView;
   }
 
@@ -430,8 +433,8 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
 
   private sendToInspector(channel: string, ...args: any[]) {
     const { inspectorSrc } = this.state;
-    const inspector = this.webViewByLocation[inspectorSrc];
-    if (!inspector || !this.domReadyByLocation[inspectorSrc]) {
+    const inspector = this.webViewByLocation[encodeURI(inspectorSrc)];
+    if (!inspector || !this.domReadyByLocation[encodeURI(inspectorSrc)]) {
       return;
     }
     try {

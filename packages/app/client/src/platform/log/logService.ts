@@ -32,19 +32,14 @@
 //
 
 import { SharedConstants } from '@bfemulator/app-shared';
-import { LogEntry } from '@bfemulator/sdk-shared';
-import { CommandRegistryImpl, DisposableImpl } from '@bfemulator/sdk-shared';
+import { CommandRegistryImpl, LogEntry } from '@bfemulator/sdk-shared';
 
 import * as ChatActions from '../../data/action/chatActions';
 import * as chatHelpers from '../../data/chatHelpers';
 import { store } from '../../data/store';
 
-class LogServiceImpl extends DisposableImpl {
-  public init() {
-    return null;
-  }
-
-  public logToChat(conversationId: string, entry: LogEntry): void {
+export class LogService {
+  public static logToChat(conversationId: string, entry: LogEntry): void {
     const documentId = chatHelpers.documentIdForConversation(conversationId);
     if (documentId) {
       // eslint-disable-next-line typescript/no-use-before-define
@@ -52,12 +47,10 @@ class LogServiceImpl extends DisposableImpl {
     }
   }
 
-  public logToDocument(documentId: string, entry: LogEntry): void {
+  public static logToDocument(documentId: string, entry: LogEntry): void {
     store.dispatch(ChatActions.appendToLog(documentId, entry));
   }
 }
-
-export const LogService = new LogServiceImpl();
 
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
   commandRegistry.registerCommand(

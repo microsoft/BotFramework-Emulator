@@ -62,8 +62,7 @@ import {
   IInvokeActivity,
   IMessageActivity,
 } from 'botframework-schema';
-import { ChatMode } from '@bfemulator/app-shared';
-import { ValueTypesMask } from '@bfemulator/app-shared';
+import { ChatMode, DebugMode, traceContainsDebugData, ValueTypesMask } from '@bfemulator/app-shared';
 
 import { BotEmulator } from '../botEmulator';
 import { TokenCache } from '../userToken/tokenCache';
@@ -94,6 +93,7 @@ export default class Conversation extends EventEmitter {
   public conversationId: string;
   public user: User;
   public mode: ChatMode;
+  public debugMode: DebugMode;
   // flag indicating if the user has been shown the
   // "please don't use default Bot State API" warning message
   // when they try to write bot state data
@@ -110,9 +110,16 @@ export default class Conversation extends EventEmitter {
     return this.conversationId.includes('transcript');
   }
 
-  constructor(botEmulator: BotEmulator, botEndpoint: BotEndpoint, conversationId: string, user: User, mode: ChatMode) {
+  constructor(
+    botEmulator: BotEmulator,
+    botEndpoint: BotEndpoint,
+    conversationId: string,
+    user: User,
+    mode: ChatMode,
+    debugMode: DebugMode = DebugMode.Normal
+  ) {
     super();
-    Object.assign(this, { botEmulator, botEndpoint, conversationId, user, mode });
+    Object.assign(this, { botEmulator, botEndpoint, conversationId, user, mode, debugMode });
     // We should consider hardcoding bot id because we don't really use it
     this.members.push({
       id: (botEndpoint && botEndpoint.botId) || 'bot-1',
@@ -204,6 +211,9 @@ export default class Conversation extends EventEmitter {
   }
 
   public async sendConversationUpdate(membersAdded: User[], membersRemoved: User[]) {
+    if (this.debugMode === DebugMode.Sidecar) {
+      return;
+    }
     const activity = {
       type: 'conversationUpdate',
       membersAdded,
@@ -232,7 +242,7 @@ export default class Conversation extends EventEmitter {
         '/v3/directline/conversations'
       ),
       networkResponseItem(
-        { id: result.activityId },
+        { ...result.response, id: result.activityId },
         result.response.headers,
         result.statusCode,
         result.status,
@@ -251,6 +261,12 @@ export default class Conversation extends EventEmitter {
 
     if (!activity.from.name) {
       activity.from.name = 'Bot';
+    }
+
+    if (activity.name === 'ReceivedActivity') {
+      activity.value.from.role = 'user';
+    } else if (activity.name === 'SentActivity') {
+      activity.value.from.role = 'bot';
     }
 
     if (!activity.locale) {
@@ -757,9 +773,12 @@ export default class Conversation extends EventEmitter {
   }
 
   private addActivityToQueue(activity: Activity) {
+    if (this.debugMode === DebugMode.Sidecar && !traceContainsDebugData(activity)) {
+      return;
+    }
+
     if (!(activity.channelData || {}).postback) {
       this.activities = [...this.activities, { activity, watermark: this.nextWatermark++ }];
-      this.emit('addactivity', { activity });
     }
 
     if (activity && activity.recipient) {

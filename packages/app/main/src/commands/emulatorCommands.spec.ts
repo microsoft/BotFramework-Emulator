@@ -63,6 +63,10 @@ let mockStore;
   return mockStore || (mockStore = createStore(combineReducers({ bot })));
 };
 
+jest.mock('electron', () => ({
+  app: { getAppPath: () => '' },
+}));
+
 const mockOn = { on: () => mockOn };
 jest.mock('chokidar', () => ({
   watch: () => ({
@@ -111,6 +115,7 @@ const mockEmulator = {
         facilities: {
           logger: {
             logActivity: () => true,
+            logMessage: () => true,
           },
           conversations: {
             conversationById: () => mockConversation,
@@ -129,6 +134,7 @@ const mockEmulator = {
             mockUsers = users;
           },
         },
+        getServiceUrl: () => 'http://localhost:6728',
       },
     },
   },
@@ -521,5 +527,38 @@ describe('The emulatorCommands', () => {
       .getCommand(SharedConstants.Commands.Emulator.OpenChatFile)
       .handler('chats/myChat.chat');
     expect(result).toEqual({ activities: [], fileName: 'myChat.chat' });
+  });
+
+  it('should post an activity to the bot in a conversation', async () => {
+    mockConversation.botEndpoint = {
+      fetchWithAuth: async () => ({
+        status: 200,
+      }),
+    } as any;
+    const postActivitySpy = jest.spyOn(mockConversation, 'postActivityToBot');
+    const activity = { type: 'message', text: 'I am an activity!', id: 'someId' };
+    const result = await mockCommandRegistry
+      .getCommand(SharedConstants.Commands.Emulator.PostActivityToConversation)
+      .handler(mockConversation.conversationId, activity, false);
+
+    expect(result.activityId).toBe('someId');
+    expect(result.statusCode).toBe(200);
+    expect(postActivitySpy).toHaveBeenCalled();
+  });
+
+  it('should post an activity to the user in a conversation', async () => {
+    mockConversation.botEndpoint = {
+      fetchWithAuth: async () => ({
+        status: 200,
+      }),
+    } as any;
+    const postActivitySpy = jest.spyOn(mockConversation, 'postActivityToUser');
+    const activity = { type: 'message', text: 'I am an activity!', id: 'someId', from: {} };
+    const result = await mockCommandRegistry
+      .getCommand(SharedConstants.Commands.Emulator.PostActivityToConversation)
+      .handler(mockConversation.conversationId, activity, true);
+
+    expect(result.id).toBe('someId');
+    expect(postActivitySpy).toHaveBeenCalled();
   });
 });

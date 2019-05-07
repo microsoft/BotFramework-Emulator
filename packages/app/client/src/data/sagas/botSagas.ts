@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { newNotification, UserSettings } from '@bfemulator/app-shared';
+import { DebugMode, newNotification, SharedConstants, UserSettings } from '@bfemulator/app-shared';
 import { ConversationService, StartConversationParams } from '@bfemulator/sdk-shared';
 import { call, ForkEffect, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
 
@@ -40,6 +40,7 @@ import { BotAction, BotActionType, BotConfigWithPathPayload, botHashGenerated } 
 import { beginAdd } from '../action/notificationActions';
 import { generateHash } from '../botHelpers';
 import { RootState } from '../store';
+import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 
 import { refreshConversationMenu } from './sharedSagas';
 
@@ -76,12 +77,43 @@ export function* openBotViaUrl(action: BotAction<Partial<StartConversationParams
     if (!response.ok) {
       error = `An Error occurred opening the bot at ${action.payload.endpoint}: ${response.statusText}`;
     }
+    const debugMode = yield select((state: RootState) => state.clientAwareSettings.debugMode);
+    if (debugMode === DebugMode.Sidecar) {
+      // extract the conversation id from the body
+      const parsedBody = yield response.json();
+      const conversationId = parsedBody.id || '';
+      if (conversationId) {
+        // post debug init command to conversation
+        const activity = {
+          type: 'message',
+          text: '/INSPECT open',
+        };
+        const postActivityResponse = yield call(
+          [CommandServiceImpl, CommandServiceImpl.remoteCall],
+          SharedConstants.Commands.Emulator.PostActivityToConversation,
+          conversationId,
+          activity
+        );
+        if (postActivityResponse.statusCode >= 400) {
+          throw new Error(`An error occurred while POSTing "/INSPECT open" command to conversation ${conversationId}`);
+        }
+      } else {
+        throw new Error('An error occurred while trying to grab conversation ID from new conversation.');
+      }
+    }
   } catch (e) {
     error = e.message;
   }
   if (error) {
     const errorNotification = beginAdd(newNotification(error));
     yield put(errorNotification);
+  } else {
+    // remember the endpoint
+    yield call(
+      [CommandServiceImpl, CommandServiceImpl.remoteCall],
+      SharedConstants.Commands.Settings.SaveBotUrl,
+      action.payload.endpoint
+    );
   }
 }
 

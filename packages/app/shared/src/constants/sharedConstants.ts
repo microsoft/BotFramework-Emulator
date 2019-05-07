@@ -106,6 +106,7 @@ export const SharedConstants = {
       AppendToLog: 'log:append',
       SetCurrentUser: 'emulator:set-current-user',
       DeleteConversation: 'emulator:delete-conversation',
+      PostActivityToConversation: 'emulator:post-activity',
     },
 
     Extension: {
@@ -147,9 +148,10 @@ export const SharedConstants = {
     },
 
     Settings: {
-      SaveAppSettings: 'app:settings:save',
       LoadAppSettings: 'app:settings:load',
       ReceiveGlobalSettings: 'receive-global-settings',
+      SaveAppSettings: 'app:settings:save',
+      SaveBotUrl: 'settings:save-bot-url',
     },
 
     Telemetry: {
@@ -181,6 +183,6 @@ export const SharedConstants = {
   },
   Channels: {
     ReadmeUrl: 'https://raw.githubusercontent.com/Microsoft/BotFramework-Emulator/master/content/CHANNELS.md',
-    HelpLabel: 'Get started with channels',
+    HelpLabel: 'Get started with channels (Bot Inspector)',
   },
 };

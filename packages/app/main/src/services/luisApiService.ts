@@ -91,6 +91,7 @@ export class LuisApi {
           type: luisModel.activeVersion === 'Dispatch' ? ServiceTypes.Dispatch : ServiceTypes.Luis,
           version: luisModel.activeVersion,
           region: luisModel.region,
+          getEndpoint: () => luisModel.region,
         };
       }
     ) as ILuisService[];

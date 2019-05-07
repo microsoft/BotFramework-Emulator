@@ -1,70 +1,114 @@
-# EAP Testing Instructions (Node Only)
+# Getting started with the Bot Inspector
+
+[jump to Bot State Inspection](#bot-state-inspection)
+
 ## Prerequisites 
-EAP Testing assumes you have a bot deployed to Azure configured to use the Teams channel.
+- A bot configured in Azure configured to use the additional channels. (Microsoft Teams, etc).
+- [The latest Emulator](https://github.com/Microsoft/BotFramework-Emulator/releases)
+
 ## TL;DR
-1. install [ngrok](https://ngrok.com/) locally then cd to it's location in a terminal
-2. run ngrok `./ngrok http 3979 --host-header=localhost`
-3. Open your bot in the azure portal, select the `settings` blade and paste the ngrok url provided in the terminal then save.
-4. Clone the [BotBuilder-JS](https://github.com/Microsoft/botbuilder-js) repo 
-5. `git checkout stevenic/4.4-planning`
-6. install lerna: `npm i -g lerna` then run `lerna bootstrap --hoist && npm run build`
-7. `cd samples/10. sidecarDebugging` and build using `npm run build`
-8. set your environment variables (prefix with EXPORT for mac, SET for windows):
+1. Update your Emulator to be on version `4.4`. You can do this by selecting `Help` -> `Check for Update...`
+1. Install [ngrok](https://ngrok.com/) and navigate to the ngrok executable's location in a terminal.
+1. [Update your bot's code](#1-update-your-bots-code)
+1. Run ngrok `./ngrok http 3979 --host-header=localhost`
+1. Open your bot in the [Azure Portal](https://ms.portal.azure.com/), select the `Settings` blade and paste the ngrok url provided in the terminal into the *Messaging Endpoint* field then save. **note:** If necessary, don't forget to add the `/api/messages` endpoint.
+1. Set the appropriate environment variables (prefix with EXPORT for OSX/Linux, SET for Windows):
 ```bash
-PORT=3979;
 NODE_ENV=development;
-MICROSOFT_APP_ID=<your app id>;
-MICROSOFT_APP_PASSWORD=<your bot's password>;
-EMULATOR_URL=http://localhost:9000;
+MicrosoftAppId=<your app id>;
+MicrosoftAppPassword=<your bot's password>;
 ```
-9. Run your bot: `npm start`
-10. Open the Teams chat link provided in the azure portal in the channels blade.
-11. checkout the [Emulator](https://github.com/Microsoft/Botframework-emulator) branch`jwilaby/auto-connect-emulator`, build and run the Emulator as usual.
-12. In the Emulator, go to the view menu and select "Sidecar debug mode" the begin chatting with your bot in teams.
+1. Run your bot: `npm start`
+1. Open the respective channel's chat link provided in the Azure Portal in the Channels blade.
+1. Open the Emulator and toggle to Bot Inspector mode via `View` -> `Bot Inspector Mode`
+1. Connect to your locally running Bot by pasting the URL to the Bot's endpoint in the connection modal. **note**: if configured with an external channel you may need to supply your Microsoft App Id & Microsoft App password.
+1. Copy the `/INSPECT attach <UUID>` command rendered in the Conversation window and paste it into your configured channel's chat.
 
-# Run Your Bot in a Channel While Debugging Locally
- If you have configured your bot to [run in 1 or more channels](https://docs.microsoft.com/en-us/azure/bot-service/bot-service-manage-channels?view=azure-bot-service-4.0) and would like to test a locally running bot using the Emulator while interacting with it in a communication app (Teams, Skype, Slack, WebChat, etc.), these instructions will show you how.
- 
-Since chat messages, adaptive cards, and other features have notable differences across the many available channels, the Emulator cannot reasonably account for all of them. This guide shows you how to have a locally running bot where changes can be made quickly, breakpoints can be set and the project can be rebuilt and restarted while interacting with it via an installed app like Teams or Slack.
- 
- # How it works
- The tunneling software [ngrok](https://ngrok.com/) is used to create a tunnel to your locally running bot. The tunnel's URL is provided to your web app bot in Azure. You build your bot with an Emulator aware Adapter, run it locally then chat with it in Teams or any other available channel. The Emulator still receives the conversation's message exchange as usual.
- 
- # Let's get Started
- If you haven't already, get the [latest Emulator](https://github.com/Microsoft/BotFramework-Emulator/releases), [ngrok](https://ngrok.com/) and update your bot's dependencies to use BotBuilder v4.4+
- 
- ## 1. Update Your Bot's Code
- Your bot will need to become "Emulator Aware" in order to connect to and send the conversation exchange to the Emulator. Include the BotDebugger class somewhere in your bot's code:
- 
-<img width="354" alt="image" src="https://user-images.githubusercontent.com/2652885/55196481-b5355580-516c-11e9-84dd-facae6c26528.png">
+# Run Your Bot in an external Channel and observing with the Bot Framework Emulator
+If you have configured your bot to [run in 1 or more channels](https://docs.microsoft.com/en-us/azure/bot-service/bot-service-manage-channels?view=azure-bot-service-4.0) and would like to test a locally running bot using the Emulator while interacting with it in a communication app (Teams, Skype, Slack, WebChat, etc.), these instructions will show you how.
 
-Then set the `EMULATOR_URL` environment variable to `http://localhost:9000` prior to launching your bot. On a mac, this is done using this command:
+**Note:** Since chat messages, Adaptive Cards, and other features have notable differences across the many available channels, the Emulator cannot visually recreate all experiences at this time. Instead, the Emulator provides the inspection of [channel-specific](https://blog.botframework.com/2017/03/28/Custom-Channel-Data/) protocol data and [internal bot state](https://docs.microsoft.com/en-us/azure/bot-service/bot-builder-concept-state?view=azure-bot-service-4.0) as each turn context executes throughout the conversation within a channel.
+
+# How it works
+The tunneling software [ngrok](https://ngrok.com/) is used to create a tunnel to your locally running bot. The tunnel's URL is provided to your Web App bot in Azure. You build your bot with the BotBuilder **4.4** [InspectionMiddleware](https://github.com/Microsoft/botbuilder-js/blob/1c790f4a4f0d761c215eb3841ff370f4b274f5d1/libraries/testbot/index.js#L21), and run it locally, chatting with it in Teams or another configured channel. The Emulator will receive the conversation's message exchange as usual, and some internal bot state information now being exposed through this middleware.
+
+# Let's get Started
+If you haven't already, get the [latest Emulator](https://github.com/Microsoft/BotFramework-Emulator/releases), [ngrok](https://ngrok.com/) and update your bot's dependencies to use BotBuilder v4.4+
+
+## 1. Update Your Bot's Code
+Your bot will need to configure the Bot Inspector middleware in order to connect to and send the conversation exchange to the Emulator. Include the [InspectionMiddleware](https://github.com/Microsoft/botbuilder-js/blob/1c790f4a4f0d761c215eb3841ff370f4b274f5d1/libraries/testbot/index.js#L21) in your Bot's middleware stack:
+
+```javascript
+const { MemoryStorage, UserState, ConversationState, InspectionState, InspectionMiddleware } = require('botbuilder')
+const { MicrosoftAppCredentials } = require('botframework-connector')
+
+let memoryStorage = new MemoryStorage();
+let inspectionState = new InspectionState(memoryStorage);
+
+let userState = new UserState(memoryStorage);
+let conversationState = new ConversationState(memoryStorage)
+
+let credentials = undefined;
+if (process.env.MicrosoftAppId && process.env.MicrosoftAppPassword) {
+  credentials = new MicrosoftAppCredentials(process.env.MicrosoftAppId, process.env.MicrosoftAppPassword);
+}
+
+adapter.use(new InspectionMiddleware(inspectionState, userState, conversationState, credentials))
+```
+
+## 2. Run ngrok 
+Open a terminal and run ngrok with the following command to create a new tunnel (you may need to navigate to where the ngrok executable lives on your filesystem):
+
+OSX
 ```bash
-export EMULATOR_URL=http://localhost:9000
-```
-Alternatively, you can refer to documentation in [VS Code](https://code.visualstudio.com/docs/editor/variables-reference#_environment-variables) for setting up environment variables in the launch configs for your bot.
-
- ## 2. Run ngrok 
- Open a terminal and run ngrok with the following command to create a new tunnel:
- ```bash
 ./ngrok http 3979 --host-header=localhost
-``` 
- The output in the terminal should look something like this:
-<img width="639" alt="image" src="https://user-images.githubusercontent.com/2652885/55196448-a2bb1c00-516c-11e9-87ce-98bdc1ebd7f8.png">
+```
+Windows
+```bash
+"ngrok.exe" http 3979 --host-header=localhost
+```
 
-  ## 3. Update Azure to Point to the Tunnel
-  In the azure portal, [navigate to your bot's settings](https://docs.microsoft.com/en-us/azure/bot-service/bot-service-manage-settings?view=azure-bot-service-4.0) and paste the 
-  url provided by the ngrok terminal in the *Messaging endpoint* field and save the changes. Do not forget to use `/api/messages`. It's best to create a Bot in Azure that is used specifically for this purpose. Do not overwrite 
-  the messaging endpoint of a deployed production bot.
-  
-  ## 4. Connect to a Channel
-  If you haven't already done so, [connect your bot to a channel](https://docs.microsoft.com/en-us/azure/bot-service/bot-service-manage-channels?view=azure-bot-service-4.0). You may also need to download and install the app
-  associated with the channel if you have't already.
-  
-  ## 5. Debug!
-  Run your bot locally, then open the Emulator. In the Emulator choose file > Sidecar Debug Mode.
+Save the https entry generated by ngrok to your clipboard.
 
-<img width="357" alt="image" src="https://user-images.githubusercontent.com/2652885/55196498-c8482580-516c-11e9-8276-e660593197c4.png">
- This will place the Emulator in a read only mode an enable inbound 
-  connections from your locally running bot. Begin chatting with your bot in Teams, Skype, Slack or WebChat. Once the first message is received, your bot will connect
-  to the Emulator and send it the conversation exchange.
+## 3. Update Azure to Point to the Tunnel
+In the azure portal, [navigate to your bot's settings](https://docs.microsoft.com/en-us/azure/bot-service/bot-service-manage-settings?view=azure-bot-service-4.0) and paste the url provided by the ngrok terminal in the *Messaging endpoint* field and save the changes. Do not forget to use `/api/messages`. It's best to create a Bot in Azure that is used specifically for this purpose. Do not overwrite the messaging endpoint of a deployed production bot.
+
+## 4. Set the appropiate environment variables in your Bot's running process & start the Bot
+```bash
+MicrosoftAppId=<your app id>;
+MicrosoftAppPassword=<your bot's password>;
+```
+Node
+```bash
+node index.js
+```
+C#
+```bash
+dotnet run
+```
+
+## 5. Connect to a Channel & start a converstion in it
+If you haven't already done so, [connect your bot to a channel](https://docs.microsoft.com/en-us/azure/bot-service/bot-service-manage-channels?view=azure-bot-service-4.0). You may also need to download and install the app associated with the channel if you have't already. Afterwards, open the respective chat link provided in the Azure Portal in the Channels blade.
+
+## 6. Start up the Emulator
+Open the Emulator if it isn't open already. In the Emulator choose `View` -> `Bot Inspector Mode`.
+
+## 7. Connect to your locally running Bot Open Bot -> Url
+
+Connect to your bot by selecting `Open Bot` and providing the appropriate fields. Don't forget the MicrosoftAppId & MicrosoftAppPassword if configured to use an external channel.
+
+## 8.  Copy the `/INSPECT attach <UUID>` command rendered in the Conversation window and paste it into the configured channel's chat
+
+A successful connection to the bot will render the text that you see above. We need to save this text and paste it in to the channel you intend to have the conversation in. You can do this few ways. The easiest is by right-clicking on the rendered message and selecting "Copy text" from the context menu.
+
+## 9. Have conversation in external channel
+
+Have a normal conversation with your Bot in your configured channel, and while doing do you will see information populating in your connected conversation in the Emulator.
+
+# Bot State Inspection
+
+The Bot Inspector now renders the Bot State for each Turn Context executed in the Bot's runtime. You can view this by selecting the `Bot State` element rendered in the Conversation control in JSON or Graph form.
+
+You can view the difference between Bot State's by right-clicking on one of these Bot State elements and selecting the "view diff with previous" item.
+
+Have fun! And please provide any feedback by filing a new issue on [the Bot Framework Emulator Github Project](https://github.com/Microsoft/BotFramework-Emulator/issues)

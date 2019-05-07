@@ -33,9 +33,11 @@
 import { DebugMode, UserSettings } from './serverSettingsTypes';
 
 export interface ClientAwareSettings {
+  appPath: string;
   cwd: string;
   locale: string;
   serverUrl: string;
   debugMode: DebugMode;
   users: UserSettings;
+  savedBotUrls: Array<{ url: string; lastAccessed: string }>;
 }

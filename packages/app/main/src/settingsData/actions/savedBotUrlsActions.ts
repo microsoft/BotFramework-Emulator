@@ -31,36 +31,20 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { connect } from 'react-redux';
-import { SharedConstants } from '@bfemulator/app-shared';
+export const ADD_SAVED_BOT_URL = 'SAVED_BOT_URLS_ADD';
 
-import { RootState } from '../../../../../data/store';
-import { CommandServiceImpl } from '../../../../../platform/commands/commandServiceImpl';
+export type SavedBotUrlsActionType = 'SAVED_BOT_URLS_ADD';
 
-import { Inspector } from './inspector';
+export interface SavedBotUrlsAction<P> {
+  type: SavedBotUrlsActionType;
+  payload: P;
+}
 
-const mapStateToProps = (state: RootState, ownProps: any) => {
-  const { bot, theme, clientAwareSettings } = state;
+export type SavedBotUrlsActionPayload = string;
+
+export function addSavedBotUrl(url: string): SavedBotUrlsAction<string> {
   return {
-    ...ownProps,
-    appPath: clientAwareSettings.appPath,
-    botHash: bot.activeBotDigest,
-    activeBot: bot.activeBot,
-    themeInfo: theme,
+    type: ADD_SAVED_BOT_URL,
+    payload: url,
   };
-};
-
-const mapDispatchToProps = _dispatch => {
-  return {
-    trackEvent: (name: string, properties?: { [key: string]: any }) => {
-      CommandServiceImpl.remoteCall(SharedConstants.Commands.Telemetry.TrackEvent, name, properties).catch(
-        _e => void 0
-      );
-    },
-  };
-};
-
-export const InspectorContainer = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Inspector);
+}

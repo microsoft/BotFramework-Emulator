@@ -34,6 +34,7 @@ import { DebugMode, FrameworkSettings, Settings, SharedConstants } from '@bfemul
 import { Users } from '@bfemulator/emulator-core';
 import { ClientAwareSettings } from '@bfemulator/app-shared';
 import { call, ForkEffect, select, takeEvery } from 'redux-saga/effects';
+import { app } from 'electron';
 
 import { Emulator } from '../../emulator';
 import { mainWindow } from '../../main';
@@ -44,6 +45,7 @@ import {
   RememberDebugModePayload,
   WindowStateAction,
 } from '../actions/windowStateActions';
+import { ADD_SAVED_BOT_URL } from '../actions/savedBotUrlsActions';
 
 const getAvailableThemes = (state: Settings) => state.windowState.availableThemes;
 const getCurrentTheme = (state: Settings) => state.windowState.theme;
@@ -138,11 +140,13 @@ function* pushClientAwareSettings() {
     [mainWindow.commandService, mainWindow.commandService.remoteCall],
     SharedConstants.Commands.Settings.ReceiveGlobalSettings,
     {
+      appPath: app.getAppPath(),
       serverUrl: (Emulator.getInstance().framework.serverUrl || '').replace('[::]', 'localhost'),
       cwd: (process.cwd() || '').replace(/\\/g, '/'),
       users: settingsState.users,
       locale: settingsState.framework.locale,
       debugMode: settingsState.windowState.debugMode || DebugMode.Normal,
+      savedBotUrls: settingsState.savedBotUrls,
     } as ClientAwareSettings
   );
 }
@@ -152,4 +156,5 @@ export function* settingsSagas(): IterableIterator<ForkEffect> {
   yield takeEvery(DEBUG_MODE_CHANGED, debugModeChanged);
   yield takeEvery(SET_FRAMEWORK, setFramework);
   yield takeEvery(PUSH_CLIENT_AWARE_SETTINGS, pushClientAwareSettings);
+  yield takeEvery(ADD_SAVED_BOT_URL, pushClientAwareSettings);
 }

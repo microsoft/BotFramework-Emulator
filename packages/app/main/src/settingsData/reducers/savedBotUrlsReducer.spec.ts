@@ -31,36 +31,34 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { connect } from 'react-redux';
-import { SharedConstants } from '@bfemulator/app-shared';
+import { ADD_SAVED_BOT_URL } from '../actions/savedBotUrlsActions';
 
-import { RootState } from '../../../../../data/store';
-import { CommandServiceImpl } from '../../../../../platform/commands/commandServiceImpl';
+import { savedBotUrlsReducer } from './savedBotUrlsReducer';
 
-import { Inspector } from './inspector';
+describe('saved bot urls reducer', () => {
+  it('should return the default state', () => {
+    const state = savedBotUrlsReducer([], {} as any);
 
-const mapStateToProps = (state: RootState, ownProps: any) => {
-  const { bot, theme, clientAwareSettings } = state;
-  return {
-    ...ownProps,
-    appPath: clientAwareSettings.appPath,
-    botHash: bot.activeBotDigest,
-    activeBot: bot.activeBot,
-    themeInfo: theme,
-  };
-};
+    expect(state).toEqual([]);
+  });
 
-const mapDispatchToProps = _dispatch => {
-  return {
-    trackEvent: (name: string, properties?: { [key: string]: any }) => {
-      CommandServiceImpl.remoteCall(SharedConstants.Commands.Telemetry.TrackEvent, name, properties).catch(
-        _e => void 0
-      );
-    },
-  };
-};
+  it('should add a saved bot url if it has not already been saved', () => {
+    const action: any = { type: ADD_SAVED_BOT_URL, payload: 'http://some.boturl.com' };
+    const state = savedBotUrlsReducer([], action);
 
-export const InspectorContainer = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Inspector);
+    expect(state).toEqual([{ url: 'http://some.boturl.com', lastAccessed: expect.any(String) }]);
+  });
+
+  it('should re-order the savedBots list when mutated', () => {
+    const action: any = { type: ADD_SAVED_BOT_URL, payload: 'http://some.boturl2.com' };
+    const state = savedBotUrlsReducer(
+      [{ url: 'http://some.boturl1.com', lastAccessed: new Date('2019-05-06T21:18:08.029Z').toUTCString() }],
+      action
+    );
+
+    expect(state).toEqual([
+      { url: 'http://some.boturl2.com', lastAccessed: expect.any(String) },
+      { url: 'http://some.boturl1.com', lastAccessed: expect.any(String) },
+    ]);
+  });
+});

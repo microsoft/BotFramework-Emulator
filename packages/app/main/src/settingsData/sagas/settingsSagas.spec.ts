@@ -77,6 +77,10 @@ jest.mock('../../main', () => ({
 }));
 const sagaMiddleWare = sagaMiddlewareFactory();
 
+jest.mock('electron', () => ({
+  app: { getAppPath: () => '' },
+}));
+
 describe('The SettingsSagas', () => {
   beforeEach(() => {
     mockStore = createStore(
@@ -96,7 +100,7 @@ describe('The SettingsSagas', () => {
     expect(commandServiceSpy).toHaveBeenCalledWith(SharedConstants.Commands.UI.SwitchTheme, 'myTheme', 'myTheme.scss');
   });
 
-  it('should orchesrtate the changes needed when switching debug modes', async () => {
+  it('should orchestrate the changes needed when switching debug modes', async () => {
     const localCommandServiceSpy = jest.spyOn(mainWindow.commandService, 'call').mockResolvedValue(true);
     const remoteCommandServiceSpy = jest.spyOn(mainWindow.commandService, 'remoteCall');
 

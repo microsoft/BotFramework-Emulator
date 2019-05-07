@@ -31,36 +31,36 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { connect } from 'react-redux';
-import { SharedConstants } from '@bfemulator/app-shared';
+import { ADD_SAVED_BOT_URL, SavedBotUrlsAction, SavedBotUrlsActionPayload } from '../actions/savedBotUrlsActions';
 
-import { RootState } from '../../../../../data/store';
-import { CommandServiceImpl } from '../../../../../platform/commands/commandServiceImpl';
-
-import { Inspector } from './inspector';
-
-const mapStateToProps = (state: RootState, ownProps: any) => {
-  const { bot, theme, clientAwareSettings } = state;
-  return {
-    ...ownProps,
-    appPath: clientAwareSettings.appPath,
-    botHash: bot.activeBotDigest,
-    activeBot: bot.activeBot,
-    themeInfo: theme,
-  };
+type BotUrl = {
+  url: string;
+  lastAccessed: string;
 };
 
-const mapDispatchToProps = _dispatch => {
-  return {
-    trackEvent: (name: string, properties?: { [key: string]: any }) => {
-      CommandServiceImpl.remoteCall(SharedConstants.Commands.Telemetry.TrackEvent, name, properties).catch(
-        _e => void 0
-      );
-    },
-  };
-};
+export function savedBotUrlsReducer(
+  state: Array<BotUrl> = [],
+  action: SavedBotUrlsAction<SavedBotUrlsActionPayload>
+): Array<BotUrl> {
+  switch (action.type) {
+    case ADD_SAVED_BOT_URL: {
+      const foundAtIndex = state.findIndex(element => element.url === action.payload);
+      if (foundAtIndex === -1) {
+        state.push({ url: action.payload, lastAccessed: new Date().toUTCString() });
+      } else {
+        state[foundAtIndex].lastAccessed = new Date().toUTCString();
+      }
 
-export const InspectorContainer = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Inspector);
+      if (state.length > 1) {
+        state.sort((prev, curr) => {
+          return curr.lastAccessed > prev.lastAccessed ? 1 : -1;
+        });
+      }
+
+      break;
+    }
+    default:
+      break;
+  }
+  return state;
+}

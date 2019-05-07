@@ -126,18 +126,6 @@ describe('The OpenBotDialog', () => {
     expect(instance.state.botUrl).toBe('some/path/to/myBot.bot');
   });
 
-  it('should select all text in the input when focused', () => {
-    const spy = jest.fn();
-    const mockInput = {
-      value: 'this is some text',
-      setSelectionRange: spy,
-    };
-
-    instance.onFocus({ target: mockInput } as any);
-
-    expect(spy).toHaveBeenCalledWith(0, 17);
-  });
-
   it('should open a bot when a path is provided', async () => {
     instance.onInputChange({
       target: {
@@ -170,5 +158,11 @@ describe('The OpenBotDialog', () => {
       appPassword: '',
       endpoint: 'http://localhost',
     });
+  });
+
+  it('should handle a bot url change', () => {
+    instance.onBotUrlChange('http://localhost:3978');
+
+    expect(instance.state.botUrl).toBe('http://localhost:3978');
   });
 });

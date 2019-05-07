@@ -32,7 +32,7 @@
 //
 import * as Electron from 'electron';
 import { MenuItemConstructorOptions } from 'electron';
-import { Activity, ActivityTypes } from 'botframework-schema';
+import { Activity } from 'botframework-schema';
 import { SharedConstants, ValueTypes } from '@bfemulator/app-shared';
 import { InspectableObjectLogItem, LogItem, LogItemType } from '@bfemulator/sdk-shared';
 import { diff } from 'deep-diff';
@@ -238,10 +238,12 @@ export function* diffWithPreviousBotState(currentBotState: Activity): Iterable<a
 }
 
 function getTextFromActivity(activity: Activity): string {
-  if (activity.type === ActivityTypes.Trace) {
+  if (activity.valueType === ValueTypes.Command) {
+    return activity.value;
+  } else if (activity.valueType === ValueTypes.Activity) {
     return 'text' in activity.value ? activity.value.text : activity.label;
   }
-  return activity.text;
+  return activity.text || activity.label || '';
 }
 
 function buildDiff(prependWith: string, path: (string | number)[], target: any, source: any): void {

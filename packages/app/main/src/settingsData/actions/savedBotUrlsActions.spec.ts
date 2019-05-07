@@ -31,36 +31,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { connect } from 'react-redux';
-import { SharedConstants } from '@bfemulator/app-shared';
+import { addSavedBotUrl, ADD_SAVED_BOT_URL } from './savedBotUrlsActions';
 
-import { RootState } from '../../../../../data/store';
-import { CommandServiceImpl } from '../../../../../platform/commands/commandServiceImpl';
-
-import { Inspector } from './inspector';
-
-const mapStateToProps = (state: RootState, ownProps: any) => {
-  const { bot, theme, clientAwareSettings } = state;
-  return {
-    ...ownProps,
-    appPath: clientAwareSettings.appPath,
-    botHash: bot.activeBotDigest,
-    activeBot: bot.activeBot,
-    themeInfo: theme,
-  };
-};
-
-const mapDispatchToProps = _dispatch => {
-  return {
-    trackEvent: (name: string, properties?: { [key: string]: any }) => {
-      CommandServiceImpl.remoteCall(SharedConstants.Commands.Telemetry.TrackEvent, name, properties).catch(
-        _e => void 0
-      );
-    },
-  };
-};
-
-export const InspectorContainer = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Inspector);
+describe('saved bot urls actions', () => {
+  it('should generate an add saved bot url action', () => {
+    expect(addSavedBotUrl('http://some.boturl.com')).toEqual({
+      type: ADD_SAVED_BOT_URL,
+      payload: 'http://some.boturl.com',
+    });
+  });
+});

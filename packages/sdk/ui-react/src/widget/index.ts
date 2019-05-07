@@ -31,6 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+export * from './autoComplete/autoComplete';
 export * from './largeHeader/largeHeader';
 export * from './mediumHeader/mediumHeader';
 export * from './smallHeader/smallHeader';

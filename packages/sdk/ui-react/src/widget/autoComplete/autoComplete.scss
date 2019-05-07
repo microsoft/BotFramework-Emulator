@@ -1,0 +1,70 @@
+.auto-complete-container {
+  box-sizing: border-box;
+  position: relative;
+  width: 100%;
+
+  > label {
+    display: inline-block;
+    margin-bottom: 5px;
+  }
+
+  > input {
+    box-sizing: border-box;
+    height: 24px;
+    width: 100%;
+    background-color: var(--input-bg);
+    border: var(--input-border);
+    color: var(--input-color);
+    font-family: var(--default-font-family);
+    font-size: 13px;
+    padding: 0 3px;
+  }
+
+  > ul {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    padding: 0;
+    margin: 0;
+    max-height: 141.5px;
+    overflow-y: auto;
+    z-index: 2;
+    background-color: #FFFFFF;
+    box-shadow: 1px 1px 3px 0 rgba(0,0,0,0.3);
+    opacity: var(--auto-complete-results-opacity); // .9;
+    list-style: none;
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: var(--scrollbar-color);
+    }
+
+    > li {
+      padding: 3px 26px;
+      color: var(--input-color);
+
+      &:hover, &.selected {
+        background-color: #EAEAEA;
+      }
+    }
+  }
+
+  > .error-message {
+    display: inline-block;
+    position: absolute;
+    top: calc(100% + 2px);
+    left: 0;
+    color: var(--error-text);
+  }
+}
+
+.auto-complete-container.invalid {
+  > input {
+    color: var(--error-text);
+    border: var(--input-border-error);
+  }
+}

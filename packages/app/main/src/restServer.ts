@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { SharedConstants } from '@bfemulator/app-shared';
+import { DebugMode, SharedConstants } from '@bfemulator/app-shared';
 import { BotEmulator, Conversation, ConversationSet } from '@bfemulator/emulator-core';
 import { LogLevel, networkRequestItem, networkResponseItem, textItem } from '@bfemulator/sdk-shared';
 import { IEndpointService } from 'botframework-config';
@@ -40,6 +40,7 @@ import CORS from 'restify-cors-middleware';
 
 import { Emulator } from './emulator';
 import { mainWindow } from './main';
+import { getStore } from './settingsData/store';
 
 interface ConversationAwareRequest extends Request {
   conversation?: { conversationId?: string };
@@ -109,7 +110,7 @@ export class RestServer {
 
   private onRouterAfter = async (req: Request, res: Response, route: Route) => {
     const conversationId = getConversationId(req as ConversationAwareRequest);
-    if (!shouldPostToChat(conversationId, req.method, route)) {
+    if (!shouldPostToChat(conversationId, req.method, route, req as any)) {
       return;
     }
 
@@ -141,6 +142,12 @@ export class RestServer {
       botEndpoint: { id, botUrl },
       mode,
     } = conversation;
+    // Set the debugMode which affects what is
+    // visible to chat and the log panel.
+    const {
+      windowState: { debugMode },
+    } = getStore().getState();
+    conversation.debugMode = debugMode;
 
     await mainWindow.commandService.remoteCall(
       SharedConstants.Commands.Emulator.NewLiveChat,
@@ -156,9 +163,16 @@ export class RestServer {
   };
 }
 
-function shouldPostToChat(conversationId: string, method: string, route: Route): boolean {
+function shouldPostToChat(
+  conversationId: string,
+  method: string,
+  route: Route,
+  req: { body: {}; conversation: Conversation }
+): boolean {
   const isDLine = method === 'GET' && route.spec.path === '/v3/directline/conversations/:conversationId/activities';
-  return !isDLine && !!conversationId && !conversationId.includes('transcript');
+  const isNotTranscript = !!conversationId && !conversationId.includes('transcript');
+  const { conversation } = req;
+  return !isDLine && isNotTranscript && conversation.debugMode !== DebugMode.Sidecar;
 }
 
 function getConversationId(req: ConversationAwareRequest): string {
