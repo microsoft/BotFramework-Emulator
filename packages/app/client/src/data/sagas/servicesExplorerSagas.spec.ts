@@ -251,7 +251,7 @@ describe('The ServiceExplorerSagas', () => {
         ConnectedServiceEditorContainer,
         mockService
       );
-      let i = 4;
+      let i = 5;
       while (i--) {
         contextMenuGen = sagaIt.next().value.FORK.args[1];
       }
@@ -467,7 +467,7 @@ describe('The ServiceExplorerSagas', () => {
       );
     });
 
-    it(' should open a Dispatch external link', () => {
+    it(' should open a QnA maker external link', () => {
       const payload = {
         azureAuthWorkflowComponents: {
           loginFailedDialog: AzureLoginFailedDialogContainer,
@@ -514,7 +514,7 @@ describe('The ServiceExplorerSagas', () => {
       };
 
       action = openAddServiceContextMenu(payload);
-      let i = 5;
+      let i = 6;
       while (i--) {
         contextMenuGen = sagaIt.next().value.FORK.args[1];
       }
@@ -542,7 +542,7 @@ describe('The ServiceExplorerSagas', () => {
     let openConnectedServiceGen;
     beforeEach(() => {
       const sagaIt = servicesExplorerSagas();
-      let i = 3;
+      let i = 4;
       while (i--) {
         openConnectedServiceGen = sagaIt.next().value.FORK.args[1];
       }
