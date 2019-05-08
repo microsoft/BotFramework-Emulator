@@ -255,17 +255,17 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
   }
 
   private disableSaveButton(): boolean {
-    return this.state.useCustomId ? !this.state.userGUID : !this.state.dirty;
+    return this.state.useCustomId ? !this.state.userGUID && !this.state.dirty : !this.state.dirty;
   }
 
   private onChangeCheckBox = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = event.target;
     const change = { [name]: checked };
     this.setState(change);
-    this.updateDirtyFlag(change);
     if (name === 'useCustomId' && checked === false) {
-      this.setState({ userGUID: null });
+      this.setState({ userGUID: '' });
     }
+    this.updateDirtyFlag(change);
   };
 
   private onClickBrowse = async (): Promise<void> => {
