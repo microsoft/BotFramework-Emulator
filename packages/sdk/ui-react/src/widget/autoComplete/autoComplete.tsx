@@ -44,6 +44,7 @@ export interface AutoCompleteProps {
   items?: string[];
   label?: string;
   onChange?: (updatedValue: string) => void;
+  onSelectionComplete?: (value: string) => void;
   placeholder?: string;
   value?: string; // use only for a "controlled input" experience
 }
@@ -116,7 +117,7 @@ export class AutoComplete extends Component<AutoCompleteProps, AutoCompleteState
           className={`${index === this.state.selectedIndex ? styles.selected : ''}`}
           id={this.getOptionId(index)}
           key={result}
-          onMouseDown={this.onSelectResult(result)}
+          onMouseDown={this.onListItemMouseDown(result)}
           role="option"
           aria-selected={index === this.state.selectedIndex}
         >
@@ -182,10 +183,15 @@ export class AutoComplete extends Component<AutoCompleteProps, AutoCompleteState
     return `auto-complete-option-${this.state.id}-${index}`;
   }
 
-  private onSelectResult = (result: string) => () => {
+  private onListItemMouseDown = (result: string) => () => {
     if (this.props.onChange) {
       this.props.onChange(result);
     }
+
+    if (this.props.onSelectionComplete) {
+      this.props.onSelectionComplete(result);
+    }
+
     this.setState({ currentInput: result });
   };
 

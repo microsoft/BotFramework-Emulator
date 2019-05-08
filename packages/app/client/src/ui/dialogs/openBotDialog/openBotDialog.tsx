@@ -67,6 +67,8 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
     appPassword: '',
   };
 
+  private appIdInputRef: HTMLInputElement;
+
   private static getErrorMessage(result: ValidationResult): string {
     if (result === ValidationResult.Empty || result === ValidationResult.Valid) {
       return ''; // Allow empty endpoints
@@ -112,6 +114,7 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
               label={botUrlLabel}
               items={savedBotUrls.map(elem => elem.url).slice(0, 9)}
               onChange={this.onBotUrlChange}
+              onSelectionComplete={this.onSelectionComplete}
               placeholder={botUrlLabel}
               value={this.state.botUrl}
             />
@@ -134,6 +137,7 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
               name="appId"
               label="Microsoft App ID"
               onChange={this.onInputChange}
+              inputRef={this.setAppIdInputRef}
               placeholder="Optional"
               value={appId}
             />
@@ -170,5 +174,16 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
 
   private onSubmit = () => {
     this.props.openBot(this.state);
+  };
+
+  private setAppIdInputRef = (input: HTMLInputElement): void => {
+    this.appIdInputRef = input;
+  };
+
+  private onSelectionComplete = () => {
+    if (this.appIdInputRef) {
+      // RAF used to provide focus after Rect renders, else it will not work as expected.
+      requestAnimationFrame(() => this.appIdInputRef.focus());
+    }
   };
 }
