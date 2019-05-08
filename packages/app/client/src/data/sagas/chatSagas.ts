@@ -157,10 +157,10 @@ export function* newChat(action: ChatAction<NewChatPayload>): Iterable<any> {
   yield put(updatePendingSpeechTokenRetrieval(true));
   // If an existing factory is found, refresh the token
   const existingFactory: string = yield select(getWebSpeechFactoryForDocumentId, documentId);
-  const { GetSpeechToken: command } = SharedConstants.Commands.Emulator;
+  const { GetSpeechToken } = SharedConstants.Commands.Emulator;
   const token = yield call(
     [CommandServiceImpl, CommandServiceImpl.remoteCall],
-    command,
+    GetSpeechToken,
     endpoint.id,
     !!existingFactory
   );

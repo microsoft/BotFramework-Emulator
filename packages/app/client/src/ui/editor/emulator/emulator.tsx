@@ -177,7 +177,7 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
     if (props.document.directLine) {
       props.document.directLine.end();
     }
-
+    await Promise.resolve();
     this.initConversation(props, options);
 
     if (props.mode === 'transcript') {

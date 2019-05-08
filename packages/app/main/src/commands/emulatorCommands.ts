@@ -171,10 +171,14 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
   // ---------------------------------------------------------------------------
   // Get a speech token
-  commandRegistry.registerCommand(Commands.GetSpeechToken, (endpointId: string, refresh: boolean) => {
+  commandRegistry.registerCommand(Commands.GetSpeechToken, async (endpointId: string, refresh: boolean) => {
     const endpoint = Emulator.getInstance().framework.server.botEmulator.facilities.endpoints.get(endpointId);
 
-    return endpoint && endpoint.getSpeechToken(refresh);
+    if (endpoint) {
+      const token = await endpoint.getSpeechToken(refresh);
+      return token;
+    }
+    return null;
   });
 
   // ---------------------------------------------------------------------------
