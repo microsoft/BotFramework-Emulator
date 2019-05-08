@@ -39,8 +39,8 @@ import { app } from 'electron';
 import * as Fs from 'fs-extra';
 import { sync as mkdirp } from 'mkdirp';
 
-import * as BotActions from './botData/actions/botActions';
-import { getStore } from './botData/store';
+import * as BotActions from './data/actions/botActions';
+import { getStore } from './data/store';
 import { cloneBot, saveBot } from './botHelpers';
 import { mainWindow } from './main';
 import { ensureStoragePath } from './utils/ensureStoragePath';

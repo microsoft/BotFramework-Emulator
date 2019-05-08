@@ -32,20 +32,16 @@
 //
 
 import * as Path from 'path';
-import * as QueryString from 'querystring';
 
-import { FrameworkSettings, newBot, newEndpoint, newNotification, SharedConstants } from '@bfemulator/app-shared';
+import { FrameworkSettings, newNotification, SharedConstants } from '@bfemulator/app-shared';
 import got from 'got';
 import { IEndpointService } from 'botframework-config/lib/schema';
 import {
   applyBotConfigOverrides,
   BotConfigOverrides,
   BotConfigWithPath,
-  BotConfigWithPathImpl,
+  ConversationService,
 } from '@bfemulator/sdk-shared';
-
-import * as BotActions from './botData/actions/botActions';
-import { getStore } from './botData/store';
 import { Protocol } from './constants';
 import { Emulator } from './emulator';
 import { mainWindow } from './main';
@@ -60,15 +56,15 @@ enum ProtocolDomains {
   bot,
 }
 
-enum ProtocolLiveChatActions {
+export enum ProtocolLiveChatActions {
   open,
 }
 
-enum ProtocolTranscriptActions {
+export enum ProtocolTranscriptActions {
   open,
 }
 
-enum ProtocolBotActions {
+export enum ProtocolBotActions {
   open,
 }
 
@@ -94,31 +90,22 @@ export interface ProtocolHandler {
 export const ProtocolHandler = new (class ProtocolHandlerImpl implements ProtocolHandler {
   /** Extracts useful information out of a protocol URL */
   public parseProtocolUrl(url: string): Protocol {
-    const validProtocol = /^bfemulator:\/\//;
-    if (!validProtocol.test(url)) {
+    const parsedUrl = new URL(url);
+    if (!Protocol.startsWith(parsedUrl.protocol)) {
       throw new Error(`Invalid protocol url. Must start with '${Protocol}'`);
     }
 
     // grab what's left after the protocol prefix (protocol automatically places '/' before query string params)
-    const restOfUrl = url.substring(Protocol.length).replace(/\//g, '');
-
-    // split into two parts: domain.action?args -> ['domain.action', 'args']
-    const chunks = restOfUrl.split('?');
-    const domainAndAction = chunks[0].split('.');
-
-    const domain = (domainAndAction[0] || '').toLowerCase();
-    const action = (domainAndAction[1] || '').toLowerCase();
-    const args = chunks[1] || '';
-    const parsedArgs = QueryString.parse(args);
-
-    const info: Protocol = {
+    const domainAndAction = (parsedUrl.hostname || '').toLowerCase().split('.');
+    const [domain = '', action = ''] = domainAndAction;
+    const parsedArgs = {};
+    parsedUrl.searchParams.forEach((value: string, key: string) => (parsedArgs[key] = value));
+    return {
       domain,
       action,
-      args,
+      args: (parsedUrl.search || '').replace(/(\?)/, ''),
       parsedArgs,
     };
-
-    return info;
   }
 
   /** Uses information from a protocol URL and carries out the corresponding action */
@@ -147,90 +134,17 @@ export const ProtocolHandler = new (class ProtocolHandlerImpl implements Protoco
   }
 
   public performLiveChatAction(protocol: Protocol): void {
-    switch (ProtocolLiveChatActions[protocol.action]) {
-      case ProtocolLiveChatActions.open:
-        this.openLiveChat(protocol);
-        break;
-
-      default:
-        break;
-    }
+    const { botUrl: endpoint, msaAppId: appId, msaAppPassword: appPassword } = protocol.parsedArgs;
+    const { serverUrl } = Emulator.getInstance().framework;
+    ConversationService.startConversation(serverUrl.replace('[::]', 'localhost'), { appId, appPassword, endpoint });
   }
 
   public performTranscriptAction(protocol: Protocol): void {
-    switch (ProtocolTranscriptActions[protocol.action]) {
-      case ProtocolTranscriptActions.open:
-        this.openTranscript(protocol);
-        break;
-
-      default:
-        break;
-    }
+    this.openTranscript(protocol);
   }
 
   public performBotAction(protocol: Protocol): void {
-    switch (ProtocolBotActions[protocol.action]) {
-      case ProtocolBotActions.open:
-        this.openBot(protocol);
-        break;
-
-      default:
-        break;
-    }
-  }
-
-  /** Mocks a bot object with any configuration parsed from the
-   *  protocol string and starts a live chat session with that bot
-   */
-  public async openLiveChat(protocol: Protocol): Promise<void> {
-    // mock up a bot object
-    const { botUrl, msaAppId, msaPassword } = protocol.parsedArgs;
-    const bot: BotConfigWithPath = BotConfigWithPathImpl.fromJSON(newBot());
-    bot.name = '';
-    bot.path = SharedConstants.TEMP_BOT_IN_MEMORY_PATH;
-
-    const endpoint: IEndpointService = newEndpoint();
-    endpoint.endpoint = botUrl;
-    endpoint.appId = msaAppId;
-    endpoint.appPassword = msaPassword;
-    endpoint.id = botUrl;
-    endpoint.name = 'New livechat';
-
-    bot.services.push(endpoint);
-    getStore().dispatch(BotActions.mockAndSetActive(bot));
-
-    const appSettings: FrameworkSettings = getSettings().framework;
-
-    if (appSettings.ngrokPath) {
-      let ngrokSpawnStatus = Emulator.getInstance().ngrok.getSpawnStatus();
-      // if ngrok hasn't spawned yet, we need to start it up
-      if (!ngrokSpawnStatus.triedToSpawn) {
-        await Emulator.getInstance().ngrok.recycle();
-      }
-      ngrokSpawnStatus = Emulator.getInstance().ngrok.getSpawnStatus();
-      if (ngrokSpawnStatus.triedToSpawn && ngrokSpawnStatus.err) {
-        throw new Error(`Error while trying to spawn ngrok instance: ${ngrokSpawnStatus.err || ''}`);
-      }
-
-      // make sure there is an active bot on the client side and the emulator object contains the new endpoint
-      await mainWindow.commandService.remoteCall(SharedConstants.Commands.Bot.SetActive, bot, '');
-      await mainWindow.commandService.call(SharedConstants.Commands.Bot.RestartEndpointService);
-
-      if (running()) {
-        mainWindow.commandService.remoteCall(SharedConstants.Commands.Emulator.NewLiveChat, endpoint);
-      } else {
-        // if ngrok hasn't connected yet, wait for it to connect and start the livechat
-        ngrokEmitter.once(
-          'connect',
-          (...args: any[]): void => {
-            mainWindow.commandService.remoteCall(SharedConstants.Commands.Emulator.NewLiveChat, endpoint);
-          }
-        );
-      }
-    } else {
-      // try to connect and let the chat log showExplorer the user the error
-      mainWindow.commandService.remoteCall(SharedConstants.Commands.Emulator.NewLiveChat, endpoint);
-    }
+    this.openBot(protocol);
   }
 
   /** Downloads a transcript from a URL provided in the protocol string,

@@ -33,8 +33,8 @@
 import { SettingsImpl } from '@bfemulator/app-shared';
 import { combineReducers, createStore } from 'redux';
 
-import { bot } from './botData/reducers/bot';
-import * as store from './botData/store';
+import { bot } from './data/reducers/bot';
+import * as store from './data/store';
 import { Emulator } from './emulator';
 import { NgrokService } from './ngrokService';
 import { setFramework } from './settingsData/actions/frameworkActions';

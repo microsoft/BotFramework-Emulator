@@ -31,7 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import { DebugMode, FrameworkSettings, Settings, SharedConstants } from '@bfemulator/app-shared';
-import { Users } from '@bfemulator/emulator-core';
 import { ClientAwareSettings } from '@bfemulator/app-shared';
 import { call, ForkEffect, select, takeEvery } from 'redux-saga/effects';
 import { app } from 'electron';
@@ -109,23 +108,6 @@ export function* debugModeChanged(action: WindowStateAction<RememberDebugModePay
   yield pushClientAwareSettings();
 }
 
-export function* startEmulator(forceRestart: boolean = false) {
-  const emulator = Emulator.getInstance();
-  const port = emulator.framework.serverPort || null;
-  if (!forceRestart && emulator.framework.serverPort === port) {
-    return;
-  }
-  yield emulator.startup(port);
-  const { users: userSettings, framework } = yield select(getState);
-  const users = new Users();
-  users.currentUserId = userSettings.currentUserId;
-  users.users = userSettings.usersById;
-
-  const { facilities } = emulator.framework.server.botEmulator;
-  facilities.locale = framework.locale;
-  facilities.users = users;
-}
-
 export function* setFramework(action: FrameworkAction<FrameworkSettings>): IterableIterator<any> {
   const emulator = Emulator.getInstance();
   yield emulator.ngrok.updateNgrokFromSettings(action.state);
@@ -134,7 +116,14 @@ export function* setFramework(action: FrameworkAction<FrameworkSettings>): Itera
 }
 
 function* pushClientAwareSettings() {
-  yield* startEmulator(); // Start the emulator to get the serverUrl
+  // Start the emulator to get the serverUrl (noop if it's already been started)
+  yield call(
+    [mainWindow.commandService, mainWindow.commandService.call],
+    SharedConstants.Commands.Emulator.StartEmulator,
+    false
+  );
+
+  // Push the settings which includes the url
   const settingsState = yield select(getState);
   yield call(
     [mainWindow.commandService, mainWindow.commandService.remoteCall],
@@ -148,6 +137,12 @@ function* pushClientAwareSettings() {
       debugMode: settingsState.windowState.debugMode || DebugMode.Normal,
       savedBotUrls: settingsState.savedBotUrls,
     } as ClientAwareSettings
+  );
+
+  // Now that the client has the settings, empty the protocol url queue
+  yield call(
+    [mainWindow.commandService, mainWindow.commandService.call],
+    SharedConstants.Commands.Emulator.OpenProtocolUrls
   );
 }
 
