@@ -5,7 +5,7 @@ module.exports = {
     index: path.resolve('./src/index.ts'),
   },
 
-  devtool: 'inline-source-map',
+  devtool: 'source-map',
 
   module: {
     rules: [
@@ -22,8 +22,7 @@ module.exports = {
               namedExport: true,
               camelCase: true,
               sourcemaps: true,
-              banner:
-                '// This is a generated file. Changes are likely to result in being overwritten',
+              banner: '// This is a generated file. Changes are likely to result in being overwritten',
             },
           },
           'resolve-url-loader',
