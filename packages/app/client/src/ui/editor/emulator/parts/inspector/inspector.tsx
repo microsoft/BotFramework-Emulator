@@ -300,14 +300,15 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
   }
 
   private createWebView(state: InspectorState): ElectronHTMLWebViewElement {
-    const webView: any = document.createElement('webview');
-    webView.executeJavaScript(inspectPreload);
+    const webView: ElectronHTMLWebViewElement = document.createElement('webview');
+
     webView.className = styles.webViewContainer;
     webView.addEventListener('dragenter', this.onInspectorDrag, true);
     webView.addEventListener('dragover', this.onInspectorDrag, true);
     webView.addEventListener('ipc-message', this.ipcMessageEventHandler);
     webView.setAttribute('partition', `persist:${state.botHash}`);
-
+    webView.setAttribute('preload', state.inspector.preloadPath);
+    webView.setAttribute('src', encodeURI(state.inspector.src));
     return webView;
   }
 
