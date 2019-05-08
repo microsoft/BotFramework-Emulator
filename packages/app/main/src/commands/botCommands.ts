@@ -39,9 +39,9 @@ import { BotConfigurationBase } from 'botframework-config/lib';
 import { IConnectedService, IEndpointService, ServiceTypes } from 'botframework-config/lib/schema';
 import { dialog } from 'electron';
 
-import * as BotActions from '../botData/actions/botActions';
-import { setActive } from '../botData/actions/botActions';
-import { getStore } from '../botData/store';
+import * as BotActions from '../data/actions/botActions';
+import { setActive } from '../data/actions/botActions';
+import { getStore } from '../data/store';
 import { getStore as getSettingsStore } from '../settingsData/store';
 import {
   getActiveBot,

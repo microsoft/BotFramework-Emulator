@@ -39,7 +39,7 @@ import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 import { app, dialog, Menu, MessageBoxOptions } from 'electron';
 
 import { AppMenuBuilder } from '../appMenuBuilder';
-import { getStore } from '../botData/store';
+import { getStore } from '../data/store';
 import { mainWindow } from '../main';
 import { ContextMenuService } from '../services/contextMenuService';
 import { TelemetryService } from '../telemetry';
