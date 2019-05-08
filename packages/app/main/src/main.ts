@@ -217,11 +217,6 @@ ngrokEmitter.on('expired', () => {
 
 // -----------------------------------------------------------------------------
 let protocolUsed = false;
-store.dispatch(
-  setOpenUrl(
-    'bfemulator://livechat.open?botUrl=http://jwilabytestdeletethisplease.azurewebsites.net/api/messages&msaAppId=825059e1-0dd5-4a90-9136-121a702c18ca&msaAppPassword=rvbgbkMQC183:cAMVP63%5D:;'
-  )
-);
 const onOpenUrl = function(event: any, url: string): void {
   event.preventDefault();
   if (isMac()) {
