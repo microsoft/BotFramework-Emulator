@@ -41,7 +41,7 @@ import * as openBotStyles from './openBotDialog.scss';
 export interface OpenBotDialogProps {
   onDialogCancel?: () => void;
   openBot?: (state: OpenBotDialogState) => void;
-  savedBotUrls?: Array<{ url: string; lastAccessed: string }>;
+  savedBotUrls?: { url: string; lastAccessed: string }[];
   sendNotification?: (error: Error) => void;
   switchToBot?: (path: string) => void;
   debugMode?: DebugMode;

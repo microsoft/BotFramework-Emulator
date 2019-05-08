@@ -49,6 +49,7 @@ import {
 import { Document } from '../../../data/reducer/editor';
 import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
 import { debounce } from '../../../utils';
+import { conversationDefaults } from '../../../conversationDefault';
 
 import ChatPanel from './chatPanel/chatPanel';
 import LogPanel from './logPanel/logPanel';
@@ -56,7 +57,6 @@ import PlaybackBar from './playbackBar/playbackBar';
 import * as styles from './emulator.scss';
 import { InspectorContainer } from './parts';
 import { ToolBar } from './toolbar/toolbar';
-import { conversationDefaults } from '../../../conversationDefault';
 
 const { encode } = base64Url;
 

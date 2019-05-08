@@ -34,6 +34,7 @@ import { ServiceCodes, SharedConstants } from '@bfemulator/app-shared';
 import { ServiceTypes } from 'botframework-config/lib/schema';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import sagaMiddlewareFactory from 'redux-saga';
+import { call } from 'redux-saga/effects';
 
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import {
@@ -61,8 +62,6 @@ import { azureAuth } from '../reducer/azureAuthReducer';
 import { bot } from '../reducer/bot';
 
 import { launchExternalLink as launchExternalLinkSaga, servicesExplorerSagas } from './servicesExplorerSagas';
-
-import { call } from 'redux-saga/effects';
 
 const sagaMiddleWare = sagaMiddlewareFactory();
 const mockStore = createStore(combineReducers({ azureAuth, bot }), {}, applyMiddleware(sagaMiddleWare));

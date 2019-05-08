@@ -39,5 +39,5 @@ export interface ClientAwareSettings {
   serverUrl: string;
   debugMode: DebugMode;
   users: UserSettings;
-  savedBotUrls: Array<{ url: string; lastAccessed: string }>;
+  savedBotUrls: { url: string; lastAccessed: string }[];
 }

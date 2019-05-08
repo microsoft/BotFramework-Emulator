@@ -33,15 +33,15 @@
 
 import { ADD_SAVED_BOT_URL, SavedBotUrlsAction, SavedBotUrlsActionPayload } from '../actions/savedBotUrlsActions';
 
-type BotUrl = {
+interface BotUrl {
   url: string;
   lastAccessed: string;
-};
+}
 
 export function savedBotUrlsReducer(
-  state: Array<BotUrl> = [],
+  state: BotUrl[] = [],
   action: SavedBotUrlsAction<SavedBotUrlsActionPayload>
-): Array<BotUrl> {
+): BotUrl[] {
   switch (action.type) {
     case ADD_SAVED_BOT_URL: {
       const foundAtIndex = state.findIndex(element => element.url === action.payload);
