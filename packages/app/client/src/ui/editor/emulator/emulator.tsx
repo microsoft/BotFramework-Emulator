@@ -56,6 +56,7 @@ import PlaybackBar from './playbackBar/playbackBar';
 import * as styles from './emulator.scss';
 import { InspectorContainer } from './parts';
 import { ToolBar } from './toolbar/toolbar';
+import { conversationDefaults } from '../../../conversationDefault';
 
 const { encode } = base64Url;
 
@@ -155,7 +156,7 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
     const framework: FrameworkSettings = await CommandServiceImpl.remoteCall(
       SharedConstants.Commands.Settings.LoadAppSettings
     );
-    const stableId = framework.userGUID || props.document.userId;
+    const stableId = framework.userGUID || conversationDefaults.userId;
     const userId = requireNewUserId ? uniqueIdv4() : stableId;
 
     await CommandServiceImpl.remoteCall(SharedConstants.Commands.Emulator.SetCurrentUser, userId);
