@@ -34,7 +34,7 @@
 import * as React from 'react';
 import { mount } from 'enzyme';
 
-import { AutoComplete } from './autoComplete';
+import { AutoComplete, AutoCompleteState } from './autoComplete';
 
 describe('<AutoComplete />', () => {
   let wrapper;
@@ -49,8 +49,8 @@ describe('<AutoComplete />', () => {
   });
 
   it('should generate a unique id per instance', () => {
-    const wrapper1 = mount(<AutoComplete />);
-    const wrapper2 = mount(<AutoComplete />);
+    const wrapper1 = mount<AutoCompleteState>(<AutoComplete />);
+    const wrapper2 = mount<AutoCompleteState>(<AutoComplete />);
 
     expect(wrapper1.state().id).not.toEqual(wrapper2.state().id);
   });
@@ -124,7 +124,7 @@ describe('<AutoComplete />', () => {
   });
 
   it('should select a result', () => {
-    instance.onSelectResult('frank')();
+    instance.onListItemMouseDown('frank')();
 
     expect(wrapper.state().currentInput).toBe('frank');
     expect(mockOnChange).toHaveBeenCalledWith('frank');
