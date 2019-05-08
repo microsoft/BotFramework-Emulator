@@ -7,7 +7,7 @@
     "start": "cd packages\\app\\client && npm run start",
     "test": "jest --no-cache --runInBand",
     "test:coveralls": "jest --runInBand --coverage --coverageReporters=text-lcov | coveralls",
-    "test:gen-lcov": "npm run test --coverage --coverageReporters=lcov --coverageReporters=text"
+    "test:gen-lcov": "npm run test -- --coverage --coverageReporters=lcov --coverageReporters=text"
   },
   "devDependencies": {
     "@babel/cli": "^7.1.0",
