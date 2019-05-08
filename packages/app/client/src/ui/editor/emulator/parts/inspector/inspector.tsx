@@ -33,8 +33,6 @@
 
 // Cheating here and pulling in a module from node. Can be easily replaced if we ever move the emulator to the web.
 // @ts-ignore
-import inspectPreload from '!raw-loader!./inspector-preload.js';
-
 import {
   ExtensionInspector,
   InspectorAccessory,
