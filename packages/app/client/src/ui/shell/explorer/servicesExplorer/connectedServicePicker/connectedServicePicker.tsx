@@ -100,7 +100,7 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
         <div className={styles.listContainer}>
           {this.headerElements}
           {this.selectAllCheckbox}
-          <ul>{this.serviceListElements}</ul>
+          <ul className={styles.well}>{this.serviceListElements}</ul>
           {this.contentElements}
         </div>
         <DialogFooter>
