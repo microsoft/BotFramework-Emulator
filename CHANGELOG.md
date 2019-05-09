@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [main] Bumps `botframework-config` to v4.4.0 to address issues encrypting and decrypting .bot files in PR [1521](https://github.com/microsoft/BotFramework-Emulator/pull/1521)
 - [luis] Added ability to scroll within editor section of LUIS inspector and made inspector scrollbars thinner in PR [#1516](https://github.com/Microsoft/BotFramework-Emulator/pull/1516)
 - [client] Fixed issue where the slider control was getting stuck when dragging next to a webview element in PR [1546](https://github.com/microsoft/BotFramework-Emulator/pull/1546)
+- [client] Fixed issue where selecting an autocomplete result with the mouse was losing focus in PR [1554](https://github.com/microsoft/BotFramework-Emulator/pull/1554)
 
 ## v4.4.0 - 2019 - 05 - 03
 ## Added

@@ -124,8 +124,11 @@ describe('<AutoComplete />', () => {
   });
 
   it('should select a result', () => {
-    instance.onSelectResult('frank')();
+    const mockPreventDefault = jest.fn(() => null);
+    const mockEvent = { preventDefault: mockPreventDefault };
+    instance.onSelectResult(mockEvent, 'frank');
 
+    expect(mockPreventDefault).toHaveBeenCalled();
     expect(wrapper.state().currentInput).toBe('frank');
     expect(mockOnChange).toHaveBeenCalledWith('frank');
   });
