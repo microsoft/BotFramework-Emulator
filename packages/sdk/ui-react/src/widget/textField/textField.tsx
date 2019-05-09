@@ -71,7 +71,7 @@ export class TextField extends Component<TextFieldProps, {}> {
     return (
       <div className={`${styles.inputContainer} ${inputContainerClassName}`}>
         {this.labelNode}
-        <input {...inputProps} className={inputClassName} id={this.inputId} ref={inputRef || undefined} />
+        <input className={inputClassName} id={this.inputId} ref={inputRef || undefined} {...inputProps} />
         {children}
         {this.errorNode}
       </div>
