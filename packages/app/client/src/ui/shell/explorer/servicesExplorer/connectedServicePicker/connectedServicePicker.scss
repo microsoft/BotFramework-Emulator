@@ -69,3 +69,18 @@
     }
   }
 }
+
+.well {
+  background-color: var(--my-bots-well-bg);
+  border: var(--my-bots-well-border);
+
+  &::-webkit-scrollbar-thumb {
+    background-color: transparent;
+  }
+
+  &:hover {
+    &::-webkit-scrollbar-thumb {
+      background-color: var(--my-bots-scrollbar-color);
+    }
+  }
+}
