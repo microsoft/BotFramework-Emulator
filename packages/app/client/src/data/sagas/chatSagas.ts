@@ -99,6 +99,10 @@ const getPreviousBotState = (state: RootState, selectedTrace: Activity): Activit
   return targetLogEntry && (targetLogEntry.payload.obj as Activity);
 };
 
+const getChatFromDocumentId = (state: RootState, documentId: string): any => {
+  return state.chat.chats[documentId];
+};
+
 export function* showContextMenuForActivity(action: ChatAction<Activity>): Iterable<any> {
   const { payload: activity } = action;
   const previousBotState = yield select(getPreviousBotState, activity);
@@ -136,6 +140,10 @@ export function* closeConversation(action: ChatAction<DocumentIdPayload>): Itera
   const conversationId = yield select(getConversationIdFromDocumentId, action.payload.documentId);
   const { DeleteConversation } = SharedConstants.Commands.Emulator;
   const { documentId } = action.payload;
+  const chat = yield select(getChatFromDocumentId, documentId);
+  if (chat.directLine) {
+    chat.directLine.end(); // stop polling
+  }
   yield call([CommandServiceImpl, CommandServiceImpl.remoteCall], DeleteConversation, conversationId);
   yield put(closeDocument(documentId));
   // remove the webchat store when the document is closed
