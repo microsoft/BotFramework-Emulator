@@ -215,14 +215,26 @@ describe('<AutoComplete />', () => {
 
   it('should handle an enter key press when no item is selected', () => {
     const mockPreventDefault = jest.fn(() => null);
-    instance.setState({ currentInput: 'cricket', selectedIndex: undefined, showResults: true });
+    instance.setState({ currentInput: 'de', selectedIndex: undefined, showResults: true });
     instance.onKeyDown({ key: 'Enter', preventDefault: mockPreventDefault });
 
-    expect(wrapper.state().currentInput).toBe('cricket');
+    expect(wrapper.state().currentInput).toBe('de');
     expect(wrapper.state().selectedIndex).toBe(undefined);
     expect(wrapper.state().showResults).toBe(false);
     expect(mockPreventDefault).toHaveBeenCalled();
-    expect(mockOnChange).toHaveBeenCalledWith('cricket');
+    expect(mockOnChange).toHaveBeenCalledWith('de');
+  });
+
+  it('should handle an enter key press when no matches are being shown', () => {
+    const mockPreventDefault = jest.fn(() => null);
+    instance.setState({ currentInput: 'nothing matches this', selectedIndex: undefined, showResults: true });
+    instance.onKeyDown({ key: 'Enter', preventDefault: mockPreventDefault });
+
+    expect(wrapper.state().currentInput).toBe('nothing matches this');
+    expect(wrapper.state().selectedIndex).toBe(undefined);
+    expect(wrapper.state().showResults).toBe(false);
+    expect(mockPreventDefault).not.toHaveBeenCalled();
+    expect(mockOnChange).not.toHaveBeenCalled();
   });
 
   it('should handle an escape key press', () => {
