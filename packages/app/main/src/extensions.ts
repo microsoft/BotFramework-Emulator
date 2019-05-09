@@ -280,27 +280,16 @@ class ExtManagerImpl extends DisposableImpl implements ExtensionManager {
     inspectors.forEach(inspector => {
       inspector.src = (inspector.src || '').replace(/\\/g, '/');
     });
-    if (
-      extension.config.client.debug &&
-      extension.config.client.debug.enabled &&
-      extension.config.client.debug.webpack
-    ) {
-      // If running in debug mode, rewrite inspector paths as http URLs for webpack-dev-server.
-      const port = extension.config.client.debug.webpack.port || 3030;
-      const host = extension.config.client.debug.webpack.host || 'localhost';
-      inspectors.forEach(inspector => {
-        inspector.src = `http://${host}:${port}/${inspector.src}`.replace(extension.config.client.basePath, '');
-      });
-    } else {
-      // If not in debug mode, rewrite paths as file path URLs.
-      inspectors.forEach(inspector => {
-        let folder = path.resolve(configPath).replace(/\\/g, '/');
-        if (folder[0] !== '/') {
-          folder = `/${folder}`;
-        }
-        inspector.src = `file://${folder}/` + inspector.src;
-      });
-    }
+    inspectors.forEach(inspector => {
+      let folder = path.resolve(configPath).replace(/\\/g, '/');
+      if (folder[0] !== '/') {
+        folder = `/${folder}`;
+      }
+      inspector.src = `file://${folder}/` + inspector.src;
+      inspector.preloadPath =
+        'file://' + path.resolve(path.join(__dirname, '..', 'extensions', 'inspector-preload.js'));
+    });
+
     // Connect to the extension's node process (if any).
     extension.connect();
     // Notify the client of the new extension.
