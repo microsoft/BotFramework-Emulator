@@ -5,7 +5,7 @@
   "main": "built/index.js",
   "types": "built/index.d.ts",
   "scripts": {
-    "build": "run-s clean build:prod && tsc --emitDeclarationOnly --declaration",
+    "build": "run-s clean && webpack --mode development && tsc --emitDeclarationOnly --declaration",
     "build:prod": "webpack --mode production --progress --colors",
     "clean": "rimraf ./built",
     "lint": "eslint --color --quiet --ext .js,.jsx,.ts,.tsx ./src",

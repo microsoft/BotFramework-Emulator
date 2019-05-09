@@ -67,6 +67,7 @@ export interface InspectorAccessoryState extends HTMLAttributes<HTMLButtonElemen
 export interface ExtensionInspector {
   name?: string;
   src?: string;
+  preloadPath?: string;
   criteria?: InspectorCriteria | InspectorCriteria[];
   summaryText?: string | string[];
   accessories?: InspectorAccessory[];

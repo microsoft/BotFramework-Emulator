@@ -246,6 +246,10 @@ export class AutoComplete extends Component<AutoCompleteProps, AutoCompleteState
 
       // sets the value to currently focused item and closes the listbox
       case 'Enter': {
+        if (!this.filteredItems.length) {
+          this.setState({ showResults: false });
+          return;
+        }
         event.preventDefault();
         const currentInput = this.filteredItems[this.state.selectedIndex] || this.value;
         if (this.props.onChange && typeof this.props.onChange === 'function') {
