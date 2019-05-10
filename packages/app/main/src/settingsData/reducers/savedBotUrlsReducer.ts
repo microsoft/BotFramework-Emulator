@@ -53,7 +53,9 @@ export function savedBotUrlsReducer(
 
       if (state.length > 1) {
         state.sort((prev, curr) => {
-          return curr.lastAccessed > prev.lastAccessed ? 1 : -1;
+          // Comparing string will not work so we use dates
+          // e.g. "Mon, 06 May 2019 21:18:08 GMT" > "Fri, 10 May 2019 14:59:38 GMT" // returns true when it should be false
+          return new Date(curr.lastAccessed) > new Date(prev.lastAccessed) ? 1 : -1;
         });
       }
 

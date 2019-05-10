@@ -53,7 +53,7 @@ function buildServiceModel(key: KeyEntry, account: AzureResource, container: Azu
     connectionString:
       `DefaultEndpointsProtocol=https;AccountName=${serviceName};AccountKey=${key.value}` +
       ';EndpointSuffix=core.windows.net',
-    resourceGroup: id.split('/')[3],
+    resourceGroup: id.split('/')[4],
     serviceName,
   });
 }
