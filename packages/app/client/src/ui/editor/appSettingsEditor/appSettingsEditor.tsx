@@ -255,7 +255,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
   }
 
   private disableSaveButton(): boolean {
-    return this.state.useCustomId ? !this.state.userGUID && !this.state.dirty : !this.state.dirty;
+    return this.state.useCustomId ? !this.state.userGUID || !this.state.dirty : !this.state.dirty;
   }
 
   private onChangeCheckBox = (event: ChangeEvent<HTMLInputElement>) => {
