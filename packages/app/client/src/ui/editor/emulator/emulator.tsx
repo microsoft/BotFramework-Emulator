@@ -105,10 +105,6 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
     };
   }, 500);
 
-  constructor(props: EmulatorProps) {
-    super(props);
-  }
-
   shouldStartNewConversation(props: EmulatorProps = this.props): boolean {
     return !props.document.directLine || props.document.conversationId !== props.document.directLine.conversationId;
   }
@@ -122,9 +118,6 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
 
   componentWillUnmount() {
     window.removeEventListener('keydown', this.keyboardEventListener);
-    if (this.props.document.directLine) {
-      this.props.document.directLine.end();
-    }
   }
 
   componentWillReceiveProps(nextProps: EmulatorProps) {
@@ -178,7 +171,7 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
     if (props.document.directLine) {
       props.document.directLine.end();
     }
-
+    await Promise.resolve();
     this.initConversation(props, options);
 
     if (props.mode === 'transcript') {

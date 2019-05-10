@@ -38,12 +38,12 @@ import { BotConfiguration } from 'botframework-config';
 import { ServiceTypes } from 'botframework-config/lib/schema';
 import { combineReducers, createStore } from 'redux';
 
-import * as BotActions from '../botData/actions/botActions';
-import { setActive } from '../botData/actions/botActions';
-import { bot } from '../botData/reducers/bot';
-import { State } from '../botData/state';
-import * as store from '../botData/store';
-import { getStore } from '../botData/store';
+import * as BotActions from '../data/actions/botActions';
+import { setActive } from '../data/actions/botActions';
+import { bot } from '../data/reducers/bot';
+import { State } from '../data/state';
+import * as store from '../data/store';
+import { getStore } from '../data/store';
 import * as helpers from '../botHelpers';
 import { Emulator } from '../emulator';
 import { mainWindow } from '../main';

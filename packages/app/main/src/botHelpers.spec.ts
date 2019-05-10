@@ -52,7 +52,7 @@ import {
   getTranscriptsPath,
 } from './botHelpers';
 
-jest.mock('./botData/store', () => ({
+jest.mock('./data/store', () => ({
   getStore: () => ({
     getState: () => ({
       bot: {

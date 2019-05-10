@@ -107,6 +107,8 @@ export const SharedConstants = {
       SetCurrentUser: 'emulator:set-current-user',
       DeleteConversation: 'emulator:delete-conversation',
       PostActivityToConversation: 'emulator:post-activity',
+      StartEmulator: 'emulator:start',
+      OpenProtocolUrls: 'emulator:openProtocolUrls',
     },
 
     Extension: {

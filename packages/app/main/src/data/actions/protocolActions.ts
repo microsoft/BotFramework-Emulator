@@ -30,11 +30,24 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+import { Action } from 'redux';
 
-import { combineReducers } from 'redux';
+export const SET_OPEN_URLS = 'SET_OPEN_URLS';
 
-import { bot } from './bot';
+export interface ProtocolAction<P> extends Action {
+  type: ProtocolActionType;
+  payload: P;
+}
 
-export default combineReducers({
-  bot,
-});
+export interface ProtocolOpenUrlsPayload {
+  openUrl?: string;
+}
+
+export declare type ProtocolActionType = 'SET_OPEN_URLS';
+
+export function setOpenUrl(openUrl: string): ProtocolAction<ProtocolOpenUrlsPayload> {
+  return {
+    type: SET_OPEN_URLS,
+    payload: { openUrl },
+  };
+}

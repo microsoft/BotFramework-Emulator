@@ -36,13 +36,13 @@ import * as url from 'url';
 
 import { newNotification, Notification, PersistentSettings, Settings, SharedConstants } from '@bfemulator/app-shared';
 import { ProgressInfo } from 'builder-util-runtime';
-import { app, BrowserWindow, dialog, ipcMain, Rectangle, screen, systemPreferences } from 'electron';
+import { app, BrowserWindow, dialog, Rectangle, screen, systemPreferences } from 'electron';
 import { UpdateInfo } from 'electron-updater';
 import { Store } from 'redux';
 
 import { AppMenuBuilder } from './appMenuBuilder';
 import { AppUpdater } from './appUpdater';
-import { getStore } from './botData/store';
+import { getStore } from './data/store';
 import * as commandLine from './commandLine';
 import { CommandRegistry, registerAllCommands } from './commands';
 import { Protocol } from './constants';
@@ -58,6 +58,8 @@ import { botListsAreDifferent, ensureStoragePath, isMac, saveSettings, writeFile
 import { openFileFromCommandLine } from './utils/openFileFromCommandLine';
 import { sendNotificationToClient } from './utils/sendNotificationToClient';
 import { WindowManager } from './windowManager';
+import { ProtocolHandler } from './protocolHandler';
+import { setOpenUrl } from './data/actions/protocolActions';
 
 export let mainWindow: Window;
 export let windowManager: WindowManager;
@@ -214,17 +216,17 @@ ngrokEmitter.on('expired', () => {
 });
 
 // -----------------------------------------------------------------------------
-
-let openUrls = [];
-const onOpenUrl = function(event: any, url1: any) {
+let protocolUsed = false;
+const onOpenUrl = function(event: any, url: string): void {
   event.preventDefault();
   if (isMac()) {
+    protocolUsed = true;
     if (mainWindow && mainWindow.webContents) {
       // the app is already running, send a message containing the url to the renderer process
-      mainWindow.webContents.send('botemulator', url1);
+      ProtocolHandler.parseProtocolUrlAndDispatch(url);
     } else {
       // the app is not yet running, so store the url so the UI can request it later
-      openUrls.push(url1);
+      store.dispatch(setOpenUrl(url));
     }
   }
 };
@@ -236,11 +238,6 @@ registerAllCommands(CommandRegistry);
 commandLine.parseArgs();
 
 app.on('will-finish-launching', () => {
-  ipcMain.on('getUrls', () => {
-    openUrls.forEach(url2 => mainWindow.webContents.send('botemulator', url2));
-    openUrls = [];
-  });
-
   // On Mac, a protocol handler invocation sends urls via this event
   app.on('open-url', onOpenUrl);
 });
@@ -384,7 +381,7 @@ const createMainWindow = async () => {
     // log app startup time in seconds
     const endStartupTime = Date.now();
     const startupTime = (endStartupTime - beginStartupTime) / 1000;
-    const launchedByProtocol = process.argv.some(arg => arg.includes(Protocol));
+    const launchedByProtocol = process.argv.some(arg => arg.includes(Protocol)) || protocolUsed;
     TelemetryService.trackEvent('app_launch', {
       method: launchedByProtocol ? 'protocol' : 'binary',
       startupTime,
@@ -403,12 +400,6 @@ const createMainWindow = async () => {
 };
 
 function loadMainPage() {
-  let queryString = '';
-  if (process.argv[1] && process.argv[1].indexOf('botemulator') !== -1) {
-    // add a query string with the botemulator protocol handler content
-    queryString = '?' + process.argv[1];
-  }
-
   let page =
     process.env.ELECTRON_TARGET_URL ||
     url.format({
@@ -422,9 +413,6 @@ function loadMainPage() {
     console.warn(`Loading emulator code from ${page}`);
   }
 
-  if (queryString) {
-    page = page + queryString;
-  }
   mainWindow.browserWindow.loadURL(page);
 }
 

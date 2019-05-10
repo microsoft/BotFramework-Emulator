@@ -42,12 +42,12 @@ import { newBot, newEndpoint, SharedConstants } from '@bfemulator/app-shared';
 import { Conversation } from '@bfemulator/emulator-core';
 import { ValueTypesMask } from '@bfemulator/app-shared';
 
-import * as store from '../botData/store';
+import * as store from '../data/store';
 import { getStore as getSettingsStore } from '../settingsData/store';
 import * as utils from '../utils';
 import * as botHelpers from '../botHelpers';
-import { bot } from '../botData/reducers/bot';
-import * as BotActions from '../botData/actions/botActions';
+import { bot } from '../data/reducers/bot';
+import * as BotActions from '../data/actions/botActions';
 import { TelemetryService } from '../telemetry';
 import { mainWindow } from '../main';
 import { setCurrentUser } from '../settingsData/actions/userActions';

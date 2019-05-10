@@ -36,11 +36,10 @@ import { DebugMode, SharedConstants } from '@bfemulator/app-shared';
 import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 import * as Electron from 'electron';
 
-import { load } from '../botData/actions/botActions';
-import { getStore } from '../botData/store';
+import { load } from '../data/actions/botActions';
+import { getStore } from '../data/store';
 import { mainWindow } from '../main';
 import { TelemetryService } from '../telemetry';
-import { AppMenuBuilder } from '../appMenuBuilder';
 
 import { registerCommands } from './electronCommands';
 

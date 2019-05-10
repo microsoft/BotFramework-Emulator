@@ -32,8 +32,7 @@
 //
 
 // Cheating here and pulling in a module from node. Can be easily replaced if we ever move the emulator to the web.
-import { join, normalize } from 'path';
-
+// @ts-ignore
 import {
   ExtensionInspector,
   InspectorAccessory,
@@ -299,8 +298,6 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
   }
 
   private createWebView(state: InspectorState): ElectronHTMLWebViewElement {
-    const appPath = normalize(this.props.appPath);
-    const preload = normalize(join('file://', appPath, '/node_modules/@bfemulator/client/public/inspector-preload.js'));
     const webView: ElectronHTMLWebViewElement = document.createElement('webview');
 
     webView.className = styles.webViewContainer;
@@ -308,7 +305,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     webView.addEventListener('dragover', this.onInspectorDrag, true);
     webView.addEventListener('ipc-message', this.ipcMessageEventHandler);
     webView.setAttribute('partition', `persist:${state.botHash}`);
-    webView.setAttribute('preload', preload);
+    webView.setAttribute('preload', state.inspector.preloadPath);
     webView.setAttribute('src', encodeURI(state.inspector.src));
     return webView;
   }
