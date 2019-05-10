@@ -30,8 +30,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { normalize, join } from 'path';
-
 import { logEntry, LogLevel, textItem, luisEditorDeepLinkItem } from '@bfemulator/sdk-shared';
 import { SharedConstants } from '@bfemulator/app-shared';
 import { mount } from 'enzyme';
@@ -310,9 +308,6 @@ describe('The Inspector component', () => {
       const instance = node.instance();
       const wv: HTMLElement = instance.createWebView({ botHash: 'botHash', inspector: { src: 'inspectorSrc' } });
       expect(wv).toBeTruthy();
-      expect(wv.getAttribute('preload')).toBe(
-        normalize(join('file://', 'app-path', '/node_modules/@bfemulator/client/public/inspector-preload.js'))
-      );
       expect(wv.getAttribute('src')).toBe(encodeURI('inspectorSrc'));
       expect(wv.getAttribute('partition')).toBe('persist:botHash');
     });

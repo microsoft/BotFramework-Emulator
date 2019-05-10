@@ -1,7 +1,7 @@
 {
   "name": "@bfemulator/main",
   "packagename": "BotFramework-Emulator",
-  "version": "4.4.0",
+  "version": "4.4.1",
   "private": true,
   "description": "Development tool for the Microsoft Bot Framework. Allows developers to test and debug bots on localhost.",
   "main": "./app/server/main.js",
@@ -149,7 +149,6 @@
     "moment": "^2.22.1",
     "node-fetch": "^2.3.0",
     "node-uuid": "^1.4.8",
-    "query-string": "^6.0.0",
     "read-text-file": "^1.1.0",
     "redux": "^3.7.2",
     "redux-promise-middleware": "^5.0.0",

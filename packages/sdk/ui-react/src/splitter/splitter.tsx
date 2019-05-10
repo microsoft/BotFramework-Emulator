@@ -36,11 +36,11 @@ import * as ReactDom from 'react-dom';
 
 import { SplitterPane } from './pane';
 import * as styles from './splitter.scss';
+import { MouseEvent } from 'react';
 
 const DEFAULT_PANE_SIZE = 200;
 const MIN_PANE_SIZE = 0;
 const SPLITTER_SIZE = 0;
-const event = new Event('splitterResize');
 
 export type SplitterOrientation = 'horizontal' | 'vertical';
 
@@ -55,7 +55,6 @@ export interface SplitterProps {
 
 export interface SplitterState {
   paneSizes?: number[];
-  resizing?: boolean;
 }
 
 /** Used to clear any text selected as a side effect of holding down the mouse and dragging */
@@ -72,52 +71,32 @@ function clearSelection(): void {
   }
 }
 
+const mouseShield = document.createElement('div') as HTMLDivElement;
+mouseShield.style.position = 'absolute';
+mouseShield.style.top = '0';
+mouseShield.style.right = '0';
+mouseShield.style.bottom = '0';
+mouseShield.style.left = '0';
+mouseShield.style.zIndex = '9999';
+
 export class Splitter extends React.Component<SplitterProps, SplitterState> {
   public static defaultProps: SplitterProps = {
     minSizes: {},
   };
 
-  private activeSplitter: any;
-  private splitters: any[];
-  private splitNum: number;
-  private panes: any[];
+  public state = {
+    paneSizes: [],
+  };
+
+  private activeSplitter: any = null;
+  private readonly splitters: any[] = [];
+  private splitNum = 0;
+  private readonly panes: any[] = [];
   private paneNum: number;
   private containerSize: number;
   private containerRef: HTMLElement;
 
-  public constructor(props: SplitterProps, context: SplitterState) {
-    super(props, context);
-
-    this.saveContainerRef = this.saveContainerRef.bind(this);
-    this.saveSplitterRef = this.saveSplitterRef.bind(this);
-    this.savePaneRef = this.savePaneRef.bind(this);
-
-    this.onGrabSplitter = this.onGrabSplitter.bind(this);
-    this.onMouseMove = this.onMouseMove.bind(this);
-    this.onMouseUp = this.onMouseUp.bind(this);
-    this.checkForContainerResize = this.checkForContainerResize.bind(this);
-
-    this.activeSplitter = null;
-
-    // [{ ref: splitterRef, dimensions: ref.getBoundingClientRect() }]
-    this.splitters = [];
-    this.splitNum = 0;
-
-    // [{ size: num, ref: paneRef }]
-    this.panes = [];
-    this.paneNum = 0;
-
-    this.state = {
-      resizing: false,
-      paneSizes: [],
-    };
-  }
-
   public componentWillMount() {
-    // set up event listeners
-    document.addEventListener('mousemove', this.onMouseMove);
-    document.addEventListener('mouseup', this.onMouseUp);
-    document.addEventListener('splitterResize', this.checkForContainerResize);
     window.addEventListener('resize', this.checkForContainerResize);
   }
 
@@ -126,10 +105,6 @@ export class Splitter extends React.Component<SplitterProps, SplitterState> {
   }
 
   public componentWillUnmount() {
-    // remove event listeners
-    document.removeEventListener('mousemove', this.onMouseMove);
-    document.removeEventListener('mouseup', this.onMouseUp);
-    document.removeEventListener('splitterResize', this.checkForContainerResize);
     window.removeEventListener('resize', this.checkForContainerResize);
   }
 
@@ -197,7 +172,7 @@ export class Splitter extends React.Component<SplitterProps, SplitterState> {
     return null;
   }
 
-  public checkForContainerResize(): void {
+  public checkForContainerResize = (): void => {
     // only recalculate secondary panes if there is a specified primary pane
     if (this.props.primaryPaneIndex || this.props.primaryPaneIndex === 0) {
       // only recalculate pane sizes if the container's size has changed at all
@@ -209,7 +184,7 @@ export class Splitter extends React.Component<SplitterProps, SplitterState> {
         this.calculateSecondaryPaneSizes(oldContainerSize, newContainerSize);
       }
     }
-  }
+  };
 
   public calculateSecondaryPaneSizes(oldContainerSize: number, newContainerSize: number): void {
     const containerSizeDelta = newContainerSize - oldContainerSize;
@@ -227,42 +202,42 @@ export class Splitter extends React.Component<SplitterProps, SplitterState> {
     this.setState({ paneSizes: currentPaneSizes });
   }
 
-  public saveContainerRef(element: HTMLElement): void {
+  public saveContainerRef = (element: HTMLElement): void => {
     this.containerRef = element;
-  }
+  };
 
-  public saveSplitterRef(element: HTMLElement, index: number): void {
+  public saveSplitterRef = (element: HTMLElement, index: number): void => {
     if (!this.splitters[index]) {
       this.splitters[index] = {};
     }
     this.splitters[index].ref = element;
-  }
+  };
 
-  public savePaneRef(element: SplitterPane, index: number): void {
+  public savePaneRef = (element: SplitterPane, index: number): void => {
     if (!this.panes[index]) {
       this.panes[index] = {};
     }
     // eslint-disable-next-line react/no-find-dom-node
     this.panes[index].ref = ReactDom.findDOMNode(element);
-  }
+  };
 
-  public onGrabSplitter(e: any, splitterIndex: number): void {
+  public onActuatorMouseDown = (e: MouseEvent<HTMLDivElement>, splitterIndex: number): void => {
     clearSelection();
     // cache splitter dimensions
     this.splitters[splitterIndex].dimensions = this.splitters[splitterIndex].ref.getBoundingClientRect();
     this.activeSplitter = splitterIndex;
     // cache container size
     this.containerSize = this.getContainerSize();
-    this.setState({ resizing: true });
-  }
+    document.addEventListener('mousemove', this.onMouseMove);
+    document.addEventListener('mouseup', this.onMouseUp);
+    document.body.insertBefore(mouseShield, document.body.firstElementChild);
+  };
 
-  public onMouseMove(e: any): void {
-    if (this.state.resizing) {
-      document.dispatchEvent(event);
-      this.calculatePaneSizes(this.activeSplitter, e);
-      clearSelection();
-    }
-  }
+  public onMouseMove = (e: any): void => {
+    this.checkForContainerResize();
+    this.calculatePaneSizes(this.activeSplitter, e);
+    clearSelection();
+  };
 
   public calculatePaneSizes(splitterIndex: number, e: any): void {
     // get dimensions of both panes and the splitter
@@ -334,10 +309,11 @@ export class Splitter extends React.Component<SplitterProps, SplitterState> {
     this.setState({ paneSizes: currentPaneSizes });
   }
 
-  public onMouseUp(): void {
-    // stop resizing
-    this.setState({ resizing: false });
-  }
+  public onMouseUp = (): void => {
+    document.removeEventListener('mousemove', this.onMouseMove);
+    document.removeEventListener('mouseup', this.onMouseUp);
+    document.body.removeChild(mouseShield);
+  };
 
   public render(): JSX.Element {
     // jam a splitter handle inbetween each pair of children
@@ -379,7 +355,7 @@ export class Splitter extends React.Component<SplitterProps, SplitterState> {
         // add a splitter
         const splitter = (
           <div className={splitterCss} key={`splitter${splitIndex}`} ref={x => this.saveSplitterRef(x, splitIndex)}>
-            <div onMouseDown={e => this.onGrabSplitter(e, splitIndex)} />
+            <div onMouseDown={e => this.onActuatorMouseDown(e, splitIndex)} />
           </div>
         );
         splitChildren.push(splitter);

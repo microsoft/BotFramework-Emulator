@@ -31,16 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { BotState } from './reducers/bot';
+import { combineReducers } from 'redux';
 
-export interface State {
-  bot: BotState;
-}
+import { bot } from './bot';
+import { protocol } from './protocolReducer';
 
-export const DEFAULT_STATE: State = {
-  bot: {
-    activeBot: null,
-    botFiles: [],
-    currentBotDirectory: '',
-  },
-};
+export default combineReducers({
+  bot,
+  protocol,
+});

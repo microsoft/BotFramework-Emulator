@@ -34,8 +34,8 @@ import { SettingsImpl, SharedConstants } from '@bfemulator/app-shared';
 import { BotConfigWithPathImpl, CommandRegistryImpl } from '@bfemulator/sdk-shared';
 import { combineReducers, createStore } from 'redux';
 
-import { bot } from '../botData/reducers/bot';
-import * as store from '../botData/store';
+import { bot } from '../data/reducers/bot';
+import * as store from '../data/store';
 import { mainWindow } from '../main';
 import reducers from '../settingsData/reducers';
 
@@ -171,7 +171,7 @@ describe('The clientInitCommands', () => {
     await command();
     expect(localCommandArgs).toEqual([
       ['menu:update-file-menu'],
-      ['bot:open', 'pathtobot.bot', undefined],
+      ['bot:open', 'path/to/bot.bot', undefined],
       [
         'bot:set-active',
         {

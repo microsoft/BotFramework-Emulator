@@ -31,38 +31,20 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ADD_SAVED_BOT_URL, SavedBotUrlsAction, SavedBotUrlsActionPayload } from '../actions/savedBotUrlsActions';
+import { ProtocolAction, ProtocolOpenUrlsPayload, SET_OPEN_URLS } from '../actions/protocolActions';
 
-interface BotUrl {
-  url: string;
-  lastAccessed: string;
+export interface ProtocolState {
+  openUrls?: string[];
 }
 
-export function savedBotUrlsReducer(
-  state: BotUrl[] = [],
-  action: SavedBotUrlsAction<SavedBotUrlsActionPayload>
-): BotUrl[] {
+export function protocol(state: ProtocolState = {}, action: ProtocolAction<ProtocolOpenUrlsPayload>): ProtocolState {
   switch (action.type) {
-    case ADD_SAVED_BOT_URL: {
-      const foundAtIndex = state.findIndex(element => element.url === action.payload);
-      if (foundAtIndex === -1) {
-        state.push({ url: action.payload, lastAccessed: new Date().toUTCString() });
-      } else {
-        state[foundAtIndex].lastAccessed = new Date().toUTCString();
-      }
-
-      if (state.length > 1) {
-        state.sort((prev, curr) => {
-          // Comparing string will not work so we use dates
-          // e.g. "Mon, 06 May 2019 21:18:08 GMT" > "Fri, 10 May 2019 14:59:38 GMT" // returns true when it should be false
-          return new Date(curr.lastAccessed) > new Date(prev.lastAccessed) ? 1 : -1;
-        });
-      }
-
-      break;
+    case SET_OPEN_URLS: {
+      const { openUrls } = state;
+      return { openUrls: [...openUrls, action.payload.openUrl] };
     }
+
     default:
-      break;
+      return state;
   }
-  return state;
 }

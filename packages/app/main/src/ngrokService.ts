@@ -64,6 +64,13 @@ export class NgrokService {
   }
 
   public async getServiceUrl(botUrl: string): Promise<string> {
+    // Ngrok can show as "running" but not have an active session
+    // with an assigned ngrok url. If a recycle is pending, await
+    // on it before reporting the service url otherwise, it will
+    // report the wrong one.
+    if (this.pendingRecycle) {
+      await this.pendingRecycle;
+    }
     if (ngrok.running()) {
       return this.serviceUrl;
     }

@@ -5,7 +5,7 @@ module.exports = {
   entry: {
     botstate: path.resolve('./src/index.ts'),
   },
-  devtool: 'inline-source-map',
+  devtool: 'source-map',
   target: 'electron-renderer',
   module: {
     rules: [

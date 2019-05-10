@@ -34,14 +34,14 @@
 import * as path from 'path';
 
 import { newBot, newEndpoint, SharedConstants } from '@bfemulator/app-shared';
-import { Conversation } from '@bfemulator/emulator-core';
+import { Conversation, Users } from '@bfemulator/emulator-core';
 import { BotConfigWithPath, CommandRegistryImpl } from '@bfemulator/sdk-shared';
 import * as fs from 'fs-extra';
 import { sync as mkdirpSync } from 'mkdirp';
 
-import * as BotActions from '../botData/actions/botActions';
-import { getStore } from '../botData/store';
-import { getActiveBot, getBotInfoByPath, patchBotsJson, toSavableBot, getTranscriptsPath } from '../botHelpers';
+import * as BotActions from '../data/actions/botActions';
+import { getStore } from '../data/store';
+import { getActiveBot, getBotInfoByPath, getTranscriptsPath, patchBotsJson, toSavableBot } from '../botHelpers';
 import { Emulator } from '../emulator';
 import { mainWindow } from '../main';
 import { dispatch, getStore as getSettingsStore } from '../settingsData/store';
@@ -51,6 +51,7 @@ import { botProjectFileWatcher } from '../watchers';
 import { TelemetryService } from '../telemetry';
 import { setCurrentUser } from '../settingsData/actions/userActions';
 import { pushClientAwareSettings } from '../settingsData/actions/frameworkActions';
+import { ProtocolHandler } from '../protocolHandler';
 
 /** Registers emulator (actual conversation emulation logic) commands */
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
@@ -256,4 +257,31 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
       }
     }
   );
+
+  commandRegistry.registerCommand(Commands.StartEmulator, async (forceRestart: boolean = false) => {
+    const emulator = Emulator.getInstance();
+    const port = emulator.framework.serverPort || null;
+    if (!forceRestart && emulator.framework.serverPort === port) {
+      return;
+    }
+    await emulator.startup(port);
+    const { users: userSettings, framework } = getSettingsStore().getState();
+    const users = new Users();
+    users.currentUserId = userSettings.currentUserId;
+    users.users = userSettings.usersById;
+
+    const { facilities } = emulator.framework.server.botEmulator;
+    facilities.locale = framework.locale;
+    facilities.users = users;
+  });
+
+  commandRegistry.registerCommand(Commands.OpenProtocolUrls, async () => {
+    const {
+      protocol: { openUrls },
+    } = getStore().getState();
+    if (openUrls.length) {
+      await Promise.all(openUrls.map(url => ProtocolHandler.parseProtocolUrlAndDispatch(url)));
+    }
+    openUrls.length = 0;
+  });
 }

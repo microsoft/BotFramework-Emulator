@@ -32,7 +32,7 @@
 //
 
 import * as React from 'react';
-import { ChangeEvent, Component, KeyboardEvent, ReactNode } from 'react';
+import { ChangeEvent, Component, KeyboardEvent, MouseEvent, ReactNode } from 'react';
 
 import * as styles from './autoComplete.scss';
 
@@ -116,7 +116,7 @@ export class AutoComplete extends Component<AutoCompleteProps, AutoCompleteState
           className={`${index === this.state.selectedIndex ? styles.selected : ''}`}
           id={this.getOptionId(index)}
           key={result}
-          onMouseDown={this.onSelectResult(result)}
+          onMouseDown={ev => this.onSelectResult(ev, result)}
           role="option"
           aria-selected={index === this.state.selectedIndex}
         >
@@ -182,11 +182,14 @@ export class AutoComplete extends Component<AutoCompleteProps, AutoCompleteState
     return `auto-complete-option-${this.state.id}-${index}`;
   }
 
-  private onSelectResult = (result: string) => () => {
+  private onSelectResult = (ev: MouseEvent<HTMLLIElement>, result: string) => {
+    // stop the mousedown from firing a focus event on the <li> because
+    // we are going to dismiss the results list and want focus to remain on the input
+    ev.preventDefault();
     if (this.props.onChange) {
       this.props.onChange(result);
     }
-    this.setState({ currentInput: result });
+    this.setState({ currentInput: result, showResults: false });
   };
 
   private onFocus = () => {
@@ -246,6 +249,10 @@ export class AutoComplete extends Component<AutoCompleteProps, AutoCompleteState
 
       // sets the value to currently focused item and closes the listbox
       case 'Enter': {
+        if (!this.filteredItems.length) {
+          this.setState({ showResults: false });
+          return;
+        }
         event.preventDefault();
         const currentInput = this.filteredItems[this.state.selectedIndex] || this.value;
         if (this.props.onChange && typeof this.props.onChange === 'function') {
