@@ -196,7 +196,7 @@ describe('The StorageAccountApiService', () => {
           connectionString:
             'DefaultEndpointsProtocol=https;AccountName=AStorage;' +
             'AccountKey=5743298573hgjfkdsghjsd7584329fghjlkds;EndpointSuffix=core.windows.net',
-          resourceGroup: 'resourceGroups',
+          resourceGroup: 'blob',
           serviceName: 'AStorage',
         },
       ],
