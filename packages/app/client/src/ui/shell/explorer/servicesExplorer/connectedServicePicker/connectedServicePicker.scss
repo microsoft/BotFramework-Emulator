@@ -33,14 +33,24 @@
   }
 
   & > ul {
+    background-color: transparent;
     list-style: none;
     margin: 0;
     max-height: 96px;
     overflow: auto;
     padding: 0;
 
+    &::-webkit-scrollbar-thumb {
+      background-color: transparent;
+    }
+  
+    &:hover {
+      &::-webkit-scrollbar-thumb {
+        background-color: var(--scrollbar-color);
+      }
+    }
+
     > li {
-      background-color: #efefef;
       height: 24px;
       overflow: hidden;
       padding: 5px 10px;
@@ -49,7 +59,6 @@
 
       & > span {
         overflow: hidden;
-        color: #777;
         padding: 5px 10px;
         width: 50%;
         text-overflow: ellipsis;
@@ -62,25 +71,6 @@
           float: right;	
         }	
       }
-
-      &:nth-child(odd) {	
-        background-color: white;	
-      }
-    }
-  }
-}
-
-.well {
-  background-color: var(--my-bots-well-bg);
-  border: var(--my-bots-well-border);
-
-  &::-webkit-scrollbar-thumb {
-    background-color: transparent;
-  }
-
-  &:hover {
-    &::-webkit-scrollbar-thumb {
-      background-color: var(--my-bots-scrollbar-color);
     }
   }
 }

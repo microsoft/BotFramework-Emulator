@@ -4,4 +4,3 @@ export const paddedLink: string;
 export const checkboxOverride: string;
 export const selectAll: string;
 export const listContainer: string;
-export const well: string;
