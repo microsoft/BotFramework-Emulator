@@ -140,7 +140,7 @@ export class CosmosDbApiService {
 function buildServiceModel(
   account: AzureResource,
   cosmosDb: AzureResource,
-  collection: { id: string }
+  collection: { id: string; _self: string }
 ): CosmosDbService {
   const service = new CosmosDbService();
   service.database = cosmosDb.id;
@@ -150,6 +150,7 @@ function buildServiceModel(
   service.resourceGroup = account.id.split('/')[4];
   service.subscriptionId = account.subscriptionId;
   service.tenantId = account.tenantId;
+  service.id = collection._self;
 
   return service;
 }
