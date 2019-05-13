@@ -229,6 +229,13 @@ html {
 
   /* Auto Complete */
   --auto-complete-results-opacity: 1;
+
+  /* Service Picker */
+  --service-picker-list-bg-color: transparent;
+  --service-picker-list-border: 1px solid #72C3DF;
+  --service-picker-scrollbar-thumb: var(--neutral-1);
+  --service-picker-scrollbar-track: transparent;
+  --service-picker-select-all-border: 1px solid transparent;
 }
 
 .dialog .ms-Button-label {
