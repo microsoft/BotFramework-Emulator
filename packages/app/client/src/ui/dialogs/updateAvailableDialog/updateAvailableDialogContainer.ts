@@ -40,8 +40,8 @@ import { UpdateAvailableDialog, UpdateAvailableDialogProps } from './updateAvail
 function mapDispatchToProps(_dispatch: any): UpdateAvailableDialogProps {
   return {
     onCloseClick: () => DialogService.hideDialog(null),
-    onDownloadClick: (installAfterDownload: boolean) => {
-      DialogService.hideDialog({ installAfterDownload });
+    onUpdateClick: (updateOption: number) => {
+      DialogService.hideDialog(updateOption);
     },
   };
 }

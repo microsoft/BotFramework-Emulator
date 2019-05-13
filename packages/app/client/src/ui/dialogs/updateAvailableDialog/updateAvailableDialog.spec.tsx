@@ -39,7 +39,7 @@ import { mount } from 'enzyme';
 import { navBar } from '../../../data/reducer/navBar';
 
 import { UpdateAvailableDialogContainer } from './updateAvailableDialogContainer';
-import { UpdateAvailableDialog } from './updateAvailableDialog';
+import { Options, UpdateAvailableDialog } from './updateAvailableDialog';
 
 let mockHideDialog;
 jest.mock('../service', () => ({
@@ -74,13 +74,14 @@ describe('UpdateAvailableDialog', () => {
     expect(node.find(UpdateAvailableDialog)).not.toBe(null);
   });
 
-  it('should change state when the install after download checkbox is toggled', () => {
-    instance.setState({ installAfterDownload: false });
+  it('should change state when the install after a radio button is selected', () => {
+    const mockEvent = { target: { value: Options[Options.AutoUpdate] } };
+    instance.setState({ selectedOption: 0 });
 
-    instance.onChangeInstallAfterDownload();
+    instance.onChange(mockEvent);
 
     const state = instance.state;
-    expect(state.installAfterDownload).toBe(true);
+    expect(state.selectedOption).toBe(2);
   });
 
   it('should close properly', () => {
@@ -89,9 +90,9 @@ describe('UpdateAvailableDialog', () => {
     expect(mockHideDialog).toHaveBeenCalledWith(null);
   });
 
-  it('should close and return the passed in value when "Download" is clicked', () => {
-    instance.props.onDownloadClick(true);
+  it('should close and return the passed in value when "Update" is clicked', () => {
+    instance.props.onUpdateClick(1);
 
-    expect(mockHideDialog).toHaveBeenCalledWith({ installAfterDownload: true });
+    expect(mockHideDialog).toHaveBeenCalledWith(1);
   });
 });
