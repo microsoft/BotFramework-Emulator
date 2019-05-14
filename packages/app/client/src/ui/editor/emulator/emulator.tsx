@@ -111,9 +111,7 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
 
   componentWillMount() {
     window.addEventListener('keydown', this.keyboardEventListener);
-    if (this.shouldStartNewConversation()) {
-      this.startNewConversation();
-    }
+    this.startNewConversation();
   }
 
   componentWillUnmount() {
