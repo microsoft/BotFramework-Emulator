@@ -284,4 +284,25 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
     }
     openUrls.length = 0;
   });
+
+  commandRegistry.registerCommand(Commands.ClearState, async () => {
+    const clearState = await mainWindow.commandService.call(SharedConstants.Commands.Electron.ShowMessageBox, true, {
+      buttons: ['Cancel', 'OK'],
+      cancelId: 0,
+      defaultId: 1,
+      message: 'Clear State?',
+      type: 'question',
+    });
+
+    if (clearState === 1) {
+      await mainWindow.commandService.call(SharedConstants.Commands.Electron.ShowMessageBox, false, {
+        message: 'You have successfully cleared state.',
+        title: 'Success!',
+      });
+      const { session } = require('electron');
+      await new Promise(resolve => session.defaultSession.clearStorageData({}, resolve));
+    }
+
+    return true;
+  });
 }

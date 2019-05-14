@@ -325,14 +325,18 @@ describe('AppMenuBuilder', () => {
     expect(appMenuTemplate).toHaveLength(5); // file, edit, view, convo, help
 
     const fileMenuTemplate = appMenuTemplate[0].submenu;
-    expect(fileMenuTemplate).toHaveLength(16);
+    expect(fileMenuTemplate).toHaveLength(17);
 
     // should show the currently signed in user
     const azureSignInItem = fileMenuTemplate[9];
     expect(azureSignInItem.label).toBe('Sign out (TheAmazingAuthLad@hotmail.com)');
 
+    // should show the correct label
+    const clearStateMenu = fileMenuTemplate[10];
+    expect(clearStateMenu.label).toBe('Clear State');
+
     // should list all available themes and selected theme (midnight) as checked
-    const themeMenu = fileMenuTemplate[11];
+    const themeMenu = fileMenuTemplate[12];
     expect(themeMenu.label).toBe('Themes');
     expect(themeMenu.submenu).toHaveLength(3); // light, dark, midnight
     expect(themeMenu.submenu[2].type).toBe('checkbox');
@@ -407,7 +411,7 @@ describe('AppMenuBuilder', () => {
 
     // should set the theme menu type to radio
     const fileMenuTemplate = appMenuTemplate[1].submenu;
-    const themeMenu = fileMenuTemplate[11];
+    const themeMenu = fileMenuTemplate[12];
     expect(themeMenu.submenu[0].type).toBe('radio');
   });
 

@@ -561,4 +561,9 @@ describe('The emulatorCommands', () => {
     expect(result.id).toBe('someId');
     expect(postActivitySpy).toHaveBeenCalled();
   });
+
+  it('should clear state', async () => {
+    const result = await mockCommandRegistry.getCommand(SharedConstants.Commands.Emulator.ClearState).handler();
+    expect(result).toBe(true);
+  });
 });

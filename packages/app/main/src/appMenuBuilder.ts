@@ -249,6 +249,13 @@ export class AppMenuBuilder {
       },
     });
 
+    subMenu.push({
+      label: 'Clear State',
+      click: async () => {
+        await mainWindow.commandService.call(SharedConstants.Commands.Emulator.ClearState);
+      },
+    });
+
     const { availableThemes, theme } = settingsState.windowState;
 
     subMenu.push.apply(subMenu, [
