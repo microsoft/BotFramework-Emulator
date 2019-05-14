@@ -37,8 +37,6 @@ import { Channel, IPC } from '../ipc';
 import { Disposable, DisposableImpl } from '../lifecycle';
 import { uniqueId } from '../utils';
 
-import { CommandHandler } from '.';
-
 export interface CommandService extends DisposableImpl {
   registry: CommandRegistry;
 
@@ -46,84 +44,81 @@ export interface CommandService extends DisposableImpl {
 
   remoteCall(commandName: string, ...args: any[]): Promise<any>;
 
-  on(commandName: string, handler?: CommandHandler): Disposable;
+  on(commandName: string, handler?: Function): Disposable;
 
   on(event: 'command-not-found', notFoundHandler?: (commandName: string, ...args: any[]) => any);
 }
 
 export class CommandServiceImpl extends DisposableImpl implements CommandService {
-  private readonly _channel: Channel;
+  private readonly channel: Channel;
   private readonly _registry: CommandRegistry;
-  private readonly _channelName: string;
-  private readonly _ipc: IPC;
-  private _notFoundHandler: (commandName: string, ...args: any[]) => any;
+  private readonly channelName: string;
+  private readonly ipc: IPC;
+  private notFoundHandler: (commandName: string, ...args: any[]) => any;
 
   public get registry() {
     return this._registry;
   }
 
   constructor(
-    _ipc: IPC,
-    _channelName: string = 'command-service',
-    _registry: CommandRegistry = new CommandRegistryImpl()
+    ipc: IPC,
+    channelName: string = 'command-service',
+    registry: CommandRegistry = new CommandRegistryImpl()
   ) {
     super();
 
-    this._ipc = _ipc;
-    this._channelName = _channelName;
-    this._registry = _registry;
-    this._channel = new Channel(this._channelName, this._ipc);
-    this.toDispose(this._ipc.registerChannel(this._channel));
+    this.ipc = ipc;
+    this.channelName = channelName;
+    this._registry = registry;
+    this.channel = new Channel(this.channelName, this.ipc);
+    this.toDispose(this.ipc.registerChannel(this.channel));
     this.toDispose(
-      this._channel.setListener('call', (commandName: string, transactionId: string, ...args: any[]) => {
-        this.call(commandName, ...args)
-          .then(result => {
-            result = Array.isArray(result) ? result : [result];
-            this._channel.send(transactionId, true, ...result);
-          })
-          .catch(err => {
-            err = err.message ? err.message : err;
-            this._channel.send(transactionId, false, err);
-          });
+      this.channel.setListener('call', async (commandName: string, transactionId: string, ...args: any[]) => {
+        try {
+          let result = await this.call<any>(commandName, ...args);
+          result = Array.isArray(result) ? result : [result];
+          this.channel.send(transactionId, true, ...result);
+        } catch (err) {
+          err = err.message ? err.message : err;
+          this.channel.send(transactionId, false, err);
+        }
       })
     );
   }
 
-  public on(event: string, handler?: CommandHandler): Disposable;
-  public on(event: 'command-not-found', handler?: (commandName: string, ...args: any[]) => any) {
+  public on(event: string, handler: Function): Disposable;
+  public on(event: 'command-not-found', handler: (commandName: string, ...args: any[]) => any) {
     if (event === 'command-not-found') {
-      this._notFoundHandler = handler;
+      this.notFoundHandler = handler;
       return undefined;
     } else {
       return this.registry.registerCommand(event, handler);
     }
   }
 
-  public call(commandName: string, ...args: any[]): Promise<any> {
-    const command = this._registry.getCommand(commandName);
+  public async call<T>(commandName: string, ...args: any[]): Promise<T | Error> {
+    const command = this.registry.getCommand(commandName);
     try {
       if (!command) {
-        if (this._notFoundHandler) {
-          const result = this._notFoundHandler(commandName, ...args);
-          return Promise.resolve(result);
+        if (this.notFoundHandler) {
+          return this.notFoundHandler(commandName, ...args);
         } else {
-          throw new Error(`Command '${commandName}' not found`);
+          return new Error(`Command '${commandName}' not found`);
         }
       } else {
-        const result = command.handler(...args);
-        return Promise.resolve(result);
+        return command(...args) as T;
       }
     } catch (err) {
-      return Promise.reject(err);
+      return err;
     }
   }
 
-  public remoteCall(commandName: string, ...args: any[]): Promise<any> {
+  public async remoteCall<T>(commandName: string, ...args: any[]): Promise<T | Error> {
     const transactionId = uniqueId();
-    this._channel.send('call', commandName, transactionId, ...args);
+    this.channel.send('call', commandName, transactionId, ...args);
     return new Promise<any>((resolve, reject) => {
-      this._channel.setListener(transactionId, (success: boolean, ...responseArgs: any[]) => {
-        this._channel.clearListener(transactionId);
+      this.channel.setListener(transactionId, (success: boolean, ...responseArgs: any[]) => {
+        this.channel.clearListener(transactionId);
         if (success) {
           const result = responseArgs.length ? responseArgs.shift() : undefined;
           resolve(result);

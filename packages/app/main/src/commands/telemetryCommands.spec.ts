@@ -61,7 +61,7 @@ describe('The telemetry commands', () => {
   });
 
   it('should track events to App Insights', async () => {
-    const { handler } = mockRegistry.getCommand(SharedConstants.Commands.Telemetry.TrackEvent);
+    const handler = mockRegistry.getCommand(SharedConstants.Commands.Telemetry.TrackEvent);
     await handler('test_event', { some: 'data' });
 
     expect(mockTrackEvent).toHaveBeenCalledWith('test_event', { some: 'data' });

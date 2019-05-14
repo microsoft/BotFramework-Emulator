@@ -31,23 +31,35 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { CommandServiceImpl } from './service';
+
 export * from './registry';
 export * from './service';
+const commandServiceByChannelId = {};
 
-export interface Command {
-  id: string;
-  handler: CommandHandler;
-  description?: CommandDescription;
+function getCommandService(channelId: string): CommandServiceImpl {
+  return commandServiceByChannelId[channelId] || (commandServiceByChannelId[channelId] = new CommandServiceImpl());
 }
 
-export interface CommandMap {
-  [id: string]: Command;
-}
+export function Command(id: string, channelId: string = 'command-service'): MethodDecorator {
+  return function(elementDescriptor: any) {
+    const { key, descriptor } = elementDescriptor;
+    const initializer = function() {
+      const bound = this[key].bind(this);
+      const { registry } = getCommandService(channelId);
+      registry.registerCommand(id, bound);
+      return bound;
+    };
 
-export type CommandHandler = (...args: any[]) => any;
-
-export interface CommandDescription {
-  description: string;
-  args: { name: string; description?: string }[];
-  returns?: string;
+    elementDescriptor.extras = [
+      {
+        kind: 'field',
+        key,
+        placement: 'own',
+        initializer,
+        descriptor: { ...descriptor, value: undefined },
+      },
+    ];
+    return elementDescriptor;
+  };
 }

@@ -78,7 +78,7 @@ registerCommands(mockCommandRegistry);
 
 describe('The connected service commands', () => {
   it('should retrieve luis models when the ServiceTypes.Luis is specified', async () => {
-    const { handler } = mockCommandRegistry.getCommand(
+    const handler = mockCommandRegistry.getCommand(
       SharedConstants.Commands.ConnectedService.GetConnectedServicesByType
     );
 
@@ -87,7 +87,7 @@ describe('The connected service commands', () => {
   });
 
   it('should retrieve knowledge bases when the ServiceTypes.QnA is specified', async () => {
-    const { handler } = mockCommandRegistry.getCommand(
+    const handler = mockCommandRegistry.getCommand(
       SharedConstants.Commands.ConnectedService.GetConnectedServicesByType
     );
 
@@ -96,7 +96,7 @@ describe('The connected service commands', () => {
   });
 
   it('should retrieve Blob Containers when the ServiceTypes.BlobStorage is specified', async () => {
-    const { handler } = mockCommandRegistry.getCommand(
+    const handler = mockCommandRegistry.getCommand(
       SharedConstants.Commands.ConnectedService.GetConnectedServicesByType
     );
 
@@ -105,7 +105,7 @@ describe('The connected service commands', () => {
   });
 
   it('should throw if an unexpected service type is specified', async () => {
-    const { handler } = mockCommandRegistry.getCommand(
+    const handler = mockCommandRegistry.getCommand(
       SharedConstants.Commands.ConnectedService.GetConnectedServicesByType
     );
     let error;

@@ -101,7 +101,7 @@ describe('The azureCommand,', () => {
 
   describe(`${SharedConstants.Commands.Azure.RetrieveArmToken}, `, () => {
     it('should retrieve the arm token and the user email address and place it in the store', async () => {
-      const result = await registry.getCommand(SharedConstants.Commands.Azure.RetrieveArmToken).handler();
+      const result = await registry.getCommand(SharedConstants.Commands.Azure.RetrieveArmToken)();
       expect(result.access_token).toBe(mockArmToken);
       expect((mockStore.getState() as any).azure.signedInUser).toBe('glasgow@scotland.com');
     });
@@ -110,7 +110,7 @@ describe('The azureCommand,', () => {
       AzureAuthWorkflowService.retrieveAuthToken = function*() {
         yield false;
       } as any;
-      const result = await registry.getCommand(SharedConstants.Commands.Azure.RetrieveArmToken).handler();
+      const result = await registry.getCommand(SharedConstants.Commands.Azure.RetrieveArmToken)();
       expect(result).toBe(false);
     });
   });
@@ -119,7 +119,7 @@ describe('The azureCommand,', () => {
     it('should update the store with an empty string for the signed in user when sign out is successful', async () => {
       mockStore.dispatch(azureLoggedInUserChanged('none@none.com'));
       expect((mockStore.getState() as any).azure.signedInUser).toBe('none@none.com');
-      const result = await registry.getCommand(SharedConstants.Commands.Azure.SignUserOutOfAzure).handler();
+      const result = await registry.getCommand(SharedConstants.Commands.Azure.SignUserOutOfAzure)();
       expect(result).toBe(true);
       expect((mockStore.getState() as any).azure.signedInUser).toBe('');
     });

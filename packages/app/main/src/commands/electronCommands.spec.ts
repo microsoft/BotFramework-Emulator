@@ -167,7 +167,7 @@ describe('the electron commands', () => {
   });
 
   it('should show a message box', async () => {
-    const { handler } = mockCommandRegistry.getCommand(SharedConstants.Commands.Electron.ShowMessageBox);
+    const handler = mockCommandRegistry.getCommand(SharedConstants.Commands.Electron.ShowMessageBox);
     const showMessageBoxSpy = jest.spyOn(Electron.dialog, 'showMessageBox');
     await handler(true, {});
     expect(showMessageBoxSpy).toHaveBeenCalledWith(mainWindow.browserWindow, {
@@ -177,7 +177,7 @@ describe('the electron commands', () => {
   });
 
   it('should show the open dialog', async () => {
-    const { handler } = mockCommandRegistry.getCommand(SharedConstants.Commands.Electron.ShowOpenDialog);
+    const handler = mockCommandRegistry.getCommand(SharedConstants.Commands.Electron.ShowOpenDialog);
     const showOpenDialogSpy = jest.spyOn(Electron.dialog, 'showOpenDialog');
     await handler({});
 
@@ -185,7 +185,7 @@ describe('the electron commands', () => {
   });
 
   it('should show the save dialog', async () => {
-    const { handler } = mockCommandRegistry.getCommand(SharedConstants.Commands.Electron.ShowSaveDialog);
+    const handler = mockCommandRegistry.getCommand(SharedConstants.Commands.Electron.ShowSaveDialog);
     const showSaveDialogSpy = jest.spyOn(Electron.dialog, 'showSaveDialog');
 
     await handler({});
@@ -193,7 +193,7 @@ describe('the electron commands', () => {
   });
 
   it('should update the file menu', async () => {
-    const { handler } = mockCommandRegistry.getCommand(SharedConstants.Commands.Electron.UpdateFileMenu);
+    const handler = mockCommandRegistry.getCommand(SharedConstants.Commands.Electron.UpdateFileMenu);
     const mockBotInfo = {
       path: 'this/is/my.json',
       displayName: 'AuthBot',
@@ -212,7 +212,7 @@ describe('the electron commands', () => {
   });
 
   it('should update the conversation menu', async () => {
-    const { handler } = mockCommandRegistry.getCommand(SharedConstants.Commands.Electron.UpdateConversationMenu);
+    const handler = mockCommandRegistry.getCommand(SharedConstants.Commands.Electron.UpdateConversationMenu);
     const mockEditorState = {
       activeEditor: 'primary',
       editors: {
@@ -239,7 +239,7 @@ describe('the electron commands', () => {
   });
 
   it('should set full screen mode and set the application menu to null', async () => {
-    const { handler } = mockCommandRegistry.getCommand(SharedConstants.Commands.Electron.SetFullscreen);
+    const handler = mockCommandRegistry.getCommand(SharedConstants.Commands.Electron.SetFullscreen);
     const fullScreenSpy = jest.spyOn(mainWindow.browserWindow, 'setFullScreen');
     const setApplicationMenuSpy = jest.spyOn(Electron.Menu, 'setApplicationMenu');
 
@@ -249,7 +249,7 @@ describe('the electron commands', () => {
   });
 
   it('should remove full screen mode and set the application menu back to normal', async () => {
-    const { handler } = mockCommandRegistry.getCommand(SharedConstants.Commands.Electron.SetFullscreen);
+    const handler = mockCommandRegistry.getCommand(SharedConstants.Commands.Electron.SetFullscreen);
     const fullScreenSpy = jest.spyOn(mainWindow.browserWindow, 'setFullScreen');
     mockInitAppMenu = jest.fn(() => null);
 
@@ -259,7 +259,7 @@ describe('the electron commands', () => {
   });
 
   it('should set the title bar', async () => {
-    const { handler } = mockCommandRegistry.getCommand(SharedConstants.Commands.Electron.SetTitleBar);
+    const handler = mockCommandRegistry.getCommand(SharedConstants.Commands.Electron.SetTitleBar);
     let setTitleSpy = jest.spyOn(mainWindow.browserWindow, 'setTitle');
 
     await handler();
@@ -271,13 +271,13 @@ describe('the electron commands', () => {
   });
 
   it('should rename a file', async () => {
-    const { handler } = mockCommandRegistry.getCommand(SharedConstants.Commands.Electron.RenameFile);
+    const handler = mockCommandRegistry.getCommand(SharedConstants.Commands.Electron.RenameFile);
     await handler({ path: 'my/path/bot.bot', newPath: 'my/path/bot1.bot' });
     expect(renameArgs).toEqual(['my/path/bot.bot', 'my/path/bot1.bot']);
   });
 
   it('should throw if the file to rename does not exist', async () => {
-    const { handler } = mockCommandRegistry.getCommand(SharedConstants.Commands.Electron.RenameFile);
+    const handler = mockCommandRegistry.getCommand(SharedConstants.Commands.Electron.RenameFile);
     let threw = false;
     try {
       await handler({ path: 'error/bot.bot', newPath: 'error/bot1.bot' });
@@ -290,7 +290,7 @@ describe('the electron commands', () => {
 
   it('should open an external link', async () => {
     mockOpenExternal = jest.fn(() => null);
-    const { handler } = mockCommandRegistry.getCommand(SharedConstants.Commands.Electron.OpenExternal);
+    const handler = mockCommandRegistry.getCommand(SharedConstants.Commands.Electron.OpenExternal);
     const url = 'https://aka.ms/bf-emulator-testing';
     await handler(url);
 
@@ -300,7 +300,7 @@ describe('the electron commands', () => {
 
   it('should update the debug menu item', async () => {
     mockUpdateDebugModeViewMenuItem = jest.fn();
-    const { handler } = mockCommandRegistry.getCommand(SharedConstants.Commands.Electron.UpdateDebugModeMenuItem);
+    const handler = mockCommandRegistry.getCommand(SharedConstants.Commands.Electron.UpdateDebugModeMenuItem);
     handler(DebugMode.Sidecar);
     expect(mockUpdateDebugModeViewMenuItem).toHaveBeenCalled();
   });

@@ -75,12 +75,14 @@ describe('The emulator commands', () => {
         locale: 'en-us',
         serverUrl: 'https://localhost',
         debugMode: 1,
+        appPath: '',
+        savedBotUrls: [],
       })
     );
   });
 
   it('Should open a new emulator tabbed document for an endpoint', () => {
-    const { handler } = registry.getCommand(SharedConstants.Commands.Emulator.NewLiveChat);
+    const handler = registry.getCommand(SharedConstants.Commands.Emulator.NewLiveChat);
     const documentId = handler(mockEndpoint, false);
     const state: RootState = mockStore.getState();
     const documentIds = Object.keys(state.chat.chats);
@@ -101,7 +103,7 @@ describe('The emulator commands', () => {
   });
 
   it('should set the active tab of an existing chat', () => {
-    const { handler } = registry.getCommand(SharedConstants.Commands.Emulator.NewLiveChat);
+    const handler = registry.getCommand(SharedConstants.Commands.Emulator.NewLiveChat);
     const documentId = handler(mockEndpoint, false);
     const secondDocumentId = handler({
       endpoint: 'https://localhost:8181/api/messages',
@@ -114,7 +116,7 @@ describe('The emulator commands', () => {
   });
 
   it('should open a transcript', () => {
-    const { handler } = registry.getCommand(SharedConstants.Commands.Emulator.OpenTranscript);
+    const handler = registry.getCommand(SharedConstants.Commands.Emulator.OpenTranscript);
     const filePath = 'transcript.transcript';
     handler(filePath, filePath);
 
@@ -124,7 +126,7 @@ describe('The emulator commands', () => {
   });
 
   it('Should prompt to open a transcript', async () => {
-    const { handler } = registry.getCommand(SharedConstants.Commands.Emulator.PromptToOpenTranscript);
+    const handler = registry.getCommand(SharedConstants.Commands.Emulator.PromptToOpenTranscript);
     const remoteCallSpy = jest.spyOn(CommandServiceImpl, 'remoteCall').mockResolvedValue('transcript.transcript');
     const callSpy = jest.spyOn(CommandServiceImpl, 'call').mockResolvedValue(null);
 
@@ -144,7 +146,7 @@ describe('The emulator commands', () => {
   });
 
   it('should dispatch a notification when opening a transcript fails', async () => {
-    const { handler } = registry.getCommand(SharedConstants.Commands.Emulator.PromptToOpenTranscript);
+    const handler = registry.getCommand(SharedConstants.Commands.Emulator.PromptToOpenTranscript);
     const remoteCallSpy = jest.spyOn(CommandServiceImpl, 'remoteCall').mockResolvedValue('transcript.transcript');
     const callSpy = jest.spyOn(CommandServiceImpl, 'call').mockImplementationOnce(() => {
       throw new Error('Oh noes!');
@@ -163,11 +165,11 @@ describe('The emulator commands', () => {
   });
 
   it('should reload a transcript', async () => {
-    const { handler: openTranscriptHandler } = registry.getCommand(SharedConstants.Commands.Emulator.OpenTranscript);
+    const openTranscriptHandler = registry.getCommand(SharedConstants.Commands.Emulator.OpenTranscript);
     await openTranscriptHandler('transcript.transcript');
     let state = mockStore.getState();
     expect(state.chat.changeKey).toBe(1);
-    const { handler } = registry.getCommand(SharedConstants.Commands.Emulator.ReloadTranscript);
+    const handler = registry.getCommand(SharedConstants.Commands.Emulator.ReloadTranscript);
     await handler('transcript.transcript');
     state = mockStore.getState();
     expect(state.chat.changeKey).toBe(3);
@@ -177,7 +179,7 @@ describe('The emulator commands', () => {
     const callSpy = jest.spyOn(CommandServiceImpl, 'call').mockResolvedValue(true);
     const remoteCallSpy = jest.spyOn(CommandServiceImpl, 'remoteCall').mockResolvedValue(true);
 
-    const { handler: openChatFileHandler } = registry.getCommand(SharedConstants.Commands.Emulator.OpenChatFile);
+    const openChatFileHandler = registry.getCommand(SharedConstants.Commands.Emulator.OpenChatFile);
     await openChatFileHandler('some/path.chat', true);
     expect(remoteCallSpy).toHaveBeenCalledWith(SharedConstants.Commands.Emulator.OpenChatFile, 'some/path.chat');
     expect(callSpy).toHaveBeenCalledWith(

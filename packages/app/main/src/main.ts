@@ -35,16 +35,13 @@ import { setTimeout } from 'timers';
 import * as url from 'url';
 
 import { newNotification, Notification, PersistentSettings, Settings, SharedConstants } from '@bfemulator/app-shared';
-import { ProgressInfo } from 'builder-util-runtime';
 import { app, BrowserWindow, dialog, Rectangle, screen, systemPreferences } from 'electron';
-import { UpdateInfo } from 'electron-updater';
 import { Store } from 'redux';
 
 import { AppMenuBuilder } from './appMenuBuilder';
 import { AppUpdater } from './appUpdater';
 import { getStore } from './data/store';
 import * as commandLine from './commandLine';
-import { CommandRegistry, registerAllCommands } from './commands';
 import { Protocol } from './constants';
 import { Emulator } from './emulator';
 import './fetchProxy';
@@ -60,6 +57,7 @@ import { sendNotificationToClient } from './utils/sendNotificationToClient';
 import { WindowManager } from './windowManager';
 import { ProtocolHandler } from './protocolHandler';
 import { setOpenUrl } from './data/actions/protocolActions';
+import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 
 export let mainWindow: Window;
 export let windowManager: WindowManager;
@@ -81,114 +79,6 @@ const store = getStore();
 if (app) {
   app.setName('Bot Framework Emulator');
 }
-
-// -----------------------------------------------------------------------------
-// App-Updater events
-
-AppUpdater.on('update-available', async (update: UpdateInfo) => {
-  try {
-    AppMenuBuilder.refreshAppUpdateMenu();
-
-    if (AppUpdater.userInitiated) {
-      const { ShowUpdateAvailableDialog, ShowProgressIndicator, UpdateProgressIndicator } = SharedConstants.Commands.UI;
-      const result = await mainWindow.commandService.remoteCall(ShowUpdateAvailableDialog, update.version);
-      if (result) {
-        // show but don't block on result of progress indicator dialog
-        await mainWindow.commandService.remoteCall(UpdateProgressIndicator, {
-          label: 'Downloading...',
-          progress: 0,
-        });
-        mainWindow.commandService.remoteCall(ShowProgressIndicator);
-        const { installAfterDownload = false } = result;
-        await AppUpdater.downloadUpdate(installAfterDownload);
-      }
-    }
-  } catch (e) {
-    // eslint-disable-next-line no-console
-    console.error(`An error occurred in the updater's "update-available" event handler: ${e}`);
-  }
-});
-
-AppUpdater.on('update-downloaded', async (update: UpdateInfo) => {
-  try {
-    AppMenuBuilder.refreshAppUpdateMenu();
-
-    // TODO - localization
-    if (AppUpdater.userInitiated) {
-      // update the progress indicator
-      const { UpdateProgressIndicator } = SharedConstants.Commands.UI;
-      const progressPayload = { label: 'Download finished.', progress: 100 };
-      await mainWindow.commandService.remoteCall(UpdateProgressIndicator, progressPayload);
-
-      // send a notification when the update is finished downloading
-      const notification = newNotification(
-        `Emulator version ${update.version} has finished downloading. Restart and update now?`
-      );
-      notification.addButton('Dismiss', () => {
-        const { Commands } = SharedConstants;
-        mainWindow.commandService.remoteCall(Commands.Notifications.Remove, notification.id);
-      });
-      notification.addButton('Restart', async () => {
-        try {
-          AppUpdater.quitAndInstall();
-        } catch (e) {
-          sendNotificationToClient(newNotification(e), mainWindow.commandService);
-        }
-      });
-      sendNotificationToClient(notification, mainWindow.commandService);
-    }
-  } catch (e) {
-    // eslint-disable-next-line no-console
-    console.error(`An error occurred in the updater's "update-downloaded" event handler: ${e}`);
-  }
-});
-
-AppUpdater.on('up-to-date', async () => {
-  try {
-    // TODO - localization
-    AppMenuBuilder.refreshAppUpdateMenu();
-
-    // only show the alert if the user explicity checked for update, and no update was downloaded
-    const { userInitiated, updateDownloaded } = AppUpdater;
-    if (userInitiated && !updateDownloaded) {
-      const { ShowUpdateUnavailableDialog } = SharedConstants.Commands.UI;
-      await mainWindow.commandService.remoteCall(ShowUpdateUnavailableDialog);
-    }
-  } catch (e) {
-    // eslint-disable-next-line no-console
-    console.error(`An error occurred in the updater's "up-to-date" event handler: ${e}`);
-  }
-});
-
-AppUpdater.on('download-progress', async (info: ProgressInfo) => {
-  try {
-    AppMenuBuilder.refreshAppUpdateMenu();
-
-    // update the progress bar component
-    const { UpdateProgressIndicator } = SharedConstants.Commands.UI;
-    const progressPayload = { label: 'Downloading...', progress: info.percent };
-    await mainWindow.commandService.remoteCall(UpdateProgressIndicator, progressPayload);
-  } catch (e) {
-    // eslint-disable-next-line no-console
-    console.error(`An error occurred in the updater's "download-progress" event handler: ${e}`);
-  }
-});
-
-AppUpdater.on('error', async (err: Error, message: string = '') => {
-  // TODO - localization
-  AppMenuBuilder.refreshAppUpdateMenu();
-  // TODO - Send to debug.txt / error dump file
-  if (message.includes('.yml')) {
-    AppUpdater.emit('up-to-date');
-    return;
-  }
-  if (AppUpdater.userInitiated) {
-    await mainWindow.commandService.call(SharedConstants.Commands.Electron.ShowMessageBox, true, {
-      title: app.getName(),
-      message: `An error occurred while using the updater: ${err}`,
-    });
-  }
-});
 
 // -----------------------------------------------------------------------------
 // Ngrok events
@@ -230,9 +120,6 @@ const onOpenUrl = function(event: any, url: string): void {
     }
   }
 };
-
-// Register all commands
-registerAllCommands(CommandRegistry);
 
 // Parse command line
 commandLine.parseArgs();
@@ -302,101 +189,6 @@ const createMainWindow = async () => {
   AppMenuBuilder.initAppMenu().catch(err => {
     dialog.showErrorBox('Bot Framework Emulator', `An error occurred while initializing the application menu: ${err}`);
   });
-
-  const rememberCurrentBounds = () => {
-    const currentBounds = mainWindow.browserWindow.getBounds();
-    const bounds = {
-      displayId: screen.getDisplayMatching(currentBounds).id,
-      width: currentBounds.width,
-      height: currentBounds.height,
-      left: currentBounds.x,
-      top: currentBounds.y,
-    };
-
-    dispatch(rememberBounds(bounds));
-  };
-
-  mainWindow.browserWindow.on('resize', () => {
-    rememberCurrentBounds();
-  });
-
-  mainWindow.browserWindow.on('move', () => {
-    rememberCurrentBounds();
-  });
-
-  mainWindow.browserWindow.on('closed', function() {
-    windowManager.closeAll();
-    mainWindow = null;
-  });
-
-  mainWindow.browserWindow.on('restore', () => {
-    if (windowIsOffScreen(mainWindow.browserWindow.getBounds())) {
-      const currentBounds = mainWindow.browserWindow.getBounds();
-      let display = screen.getAllDisplays().find(displayArg => displayArg.id === getSettings().windowState.displayId);
-      display = display || screen.getDisplayMatching(currentBounds);
-      mainWindow.browserWindow.setPosition(display.workArea.x, display.workArea.y);
-      const bounds = {
-        displayId: display.id,
-        width: currentBounds.width,
-        height: currentBounds.height,
-        left: display.workArea.x,
-        top: display.workArea.y,
-      };
-      dispatch(rememberBounds(bounds));
-    }
-  });
-
-  mainWindow.browserWindow.once('ready-to-show', async () => {
-    const { zoomLevel, theme, availableThemes } = getSettings().windowState;
-    const themeInfo = availableThemes.find(availableTheme => availableTheme.name === theme);
-    const isHighContrast = systemPreferences.isInvertedColorScheme();
-    const settingsStore: Store<Settings> = getSettingsStore();
-    if (themeInfo) {
-      settingsStore.dispatch(rememberTheme(isHighContrast ? 'high-contrast' : themeInfo.name));
-    }
-    mainWindow.webContents.setZoomLevel(zoomLevel);
-    splashWindow.browserWindow.close();
-    mainWindow.browserWindow.show();
-
-    // Start auto-updater
-    AppUpdater.startup();
-
-    // Renew arm token
-    const { persistLogin, signedInUser } = settingsStore.getState().azure;
-    if (persistLogin && signedInUser) {
-      const result = await CommandRegistry.getCommand(SharedConstants.Commands.Azure.RetrieveArmToken).handler(true);
-      if (result && 'access_token' in result) {
-        await mainWindow.commandService.remoteCall(SharedConstants.Commands.UI.ArmTokenReceivedOnStartup, result);
-      } else if (!result) {
-        settingsStore.dispatch(azureLoggedInUserChanged(''));
-        await mainWindow.commandService.call(SharedConstants.Commands.Electron.UpdateFileMenu);
-      }
-    }
-
-    if (fileToOpen) {
-      await openFileFromCommandLine(fileToOpen, mainWindow.commandService);
-      fileToOpen = null;
-    }
-
-    // log app startup time in seconds
-    const endStartupTime = Date.now();
-    const startupTime = (endStartupTime - beginStartupTime) / 1000;
-    const launchedByProtocol = process.argv.some(arg => arg.includes(Protocol)) || protocolUsed;
-    TelemetryService.trackEvent('app_launch', {
-      method: launchedByProtocol ? 'protocol' : 'binary',
-      startupTime,
-    });
-  });
-
-  mainWindow.browserWindow.once('close', async function(event: Event) {
-    const { azure } = getSettings();
-    if (azure.signedInUser && !azure.persistLogin) {
-      event.preventDefault();
-      await mainWindow.commandService.call(SharedConstants.Commands.Azure.SignUserOutOfAzure, false);
-    }
-    saveSettings<PersistentSettings>('server.json', getSettings());
-    app.quit();
-  });
 };
 
 function loadMainPage() {
@@ -463,3 +255,121 @@ app.on('activate', async function() {
     await createMainWindow();
   }
 });
+
+class EmulatorApplication {
+  public mainBrowserWindow = new BrowserWindow({ show: false, backgroundColor: '#f7f7f7', width: 1400, height: 920 });
+  public mainWindow = new Window(this.mainBrowserWindow);
+  public windowManager = new WindowManager();
+  public splashWindow = new Window(
+    new BrowserWindow({
+      show: false,
+      width: 400,
+      height: 300,
+      center: true,
+      frame: false,
+    })
+  );
+
+  private commandRegistry: CommandRegistryImpl;
+
+  constructor() {
+    this.initializeBrowserWindowListeners();
+  }
+
+  private initializeBrowserWindowListeners() {
+    this.mainBrowserWindow.once('close', this.onBrowserWindowClose);
+    this.mainBrowserWindow.once('ready-to-show', this.onBrowserWindowReadyToShow);
+    this.mainBrowserWindow.on('restore', this.onBrowserWindowRestore);
+    this.mainBrowserWindow.on('closed', this.onBrowserWindowClosed);
+    this.mainBrowserWindow.on('move', this.rememberCurrentBounds);
+    this.mainBrowserWindow.on('restore', this.rememberCurrentBounds);
+  }
+
+  // Main browser window listeners
+  private onBrowserWindowClose = async (event: Event) => {
+    const { azure } = getSettings();
+    if (azure.signedInUser && !azure.persistLogin) {
+      event.preventDefault();
+      await mainWindow.commandService.call(SharedConstants.Commands.Azure.SignUserOutOfAzure, false);
+    }
+    saveSettings<PersistentSettings>('server.json', getSettings());
+    app.quit();
+  };
+
+  private onBrowserWindowReadyToShow = async () => {
+    const { zoomLevel, theme, availableThemes } = getSettings().windowState;
+    const themeInfo = availableThemes.find(availableTheme => availableTheme.name === theme);
+    const isHighContrast = systemPreferences.isInvertedColorScheme();
+    const settingsStore: Store<Settings> = getSettingsStore();
+    if (themeInfo) {
+      settingsStore.dispatch(rememberTheme(isHighContrast ? 'high-contrast' : themeInfo.name));
+    }
+    mainWindow.webContents.setZoomLevel(zoomLevel);
+    splashWindow.browserWindow.close();
+    mainWindow.browserWindow.show();
+
+    // Start auto-updater
+    await AppUpdater.startup();
+
+    // Renew arm token
+    const { persistLogin, signedInUser } = settingsStore.getState().azure;
+    if (persistLogin && signedInUser) {
+      const result = await this.commandRegistry.getCommand(SharedConstants.Commands.Azure.RetrieveArmToken)(true);
+      if (result && 'access_token' in result) {
+        await mainWindow.commandService.remoteCall(SharedConstants.Commands.UI.ArmTokenReceivedOnStartup, result);
+      } else if (!result) {
+        settingsStore.dispatch(azureLoggedInUserChanged(''));
+        await mainWindow.commandService.call(SharedConstants.Commands.Electron.UpdateFileMenu);
+      }
+    }
+
+    if (fileToOpen) {
+      await openFileFromCommandLine(fileToOpen, mainWindow.commandService);
+      fileToOpen = null;
+    }
+
+    // log app startup time in seconds
+    const endStartupTime = Date.now();
+    const startupTime = (endStartupTime - beginStartupTime) / 1000;
+    const launchedByProtocol = process.argv.some(arg => arg.includes(Protocol)) || protocolUsed;
+    TelemetryService.trackEvent('app_launch', {
+      method: launchedByProtocol ? 'protocol' : 'binary',
+      startupTime,
+    });
+  };
+
+  private onBrowserWindowRestore = () => {
+    if (windowIsOffScreen(mainWindow.browserWindow.getBounds())) {
+      const currentBounds = mainWindow.browserWindow.getBounds();
+      let display = screen.getAllDisplays().find(displayArg => displayArg.id === getSettings().windowState.displayId);
+      display = display || screen.getDisplayMatching(currentBounds);
+      mainWindow.browserWindow.setPosition(display.workArea.x, display.workArea.y);
+      const bounds = {
+        displayId: display.id,
+        width: currentBounds.width,
+        height: currentBounds.height,
+        left: display.workArea.x,
+        top: display.workArea.y,
+      };
+      dispatch(rememberBounds(bounds));
+    }
+  };
+
+  private onBrowserWindowClosed = () => {
+    windowManager.closeAll();
+    mainWindow = null;
+  };
+
+  private rememberCurrentBounds = () => {
+    const currentBounds = mainWindow.browserWindow.getBounds();
+    const bounds = {
+      displayId: screen.getDisplayMatching(currentBounds).id,
+      width: currentBounds.width,
+      height: currentBounds.height,
+      left: currentBounds.x,
+      top: currentBounds.y,
+    };
+
+    dispatch(rememberBounds(bounds));
+  };
+}

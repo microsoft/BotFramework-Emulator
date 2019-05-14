@@ -38,6 +38,12 @@ import { autoUpdater as electronUpdater, UpdateInfo } from 'electron-updater';
 
 import { TelemetryService } from './telemetry';
 import { getSettings } from './settingsData/store';
+import { AppMenuBuilder } from './appMenuBuilder';
+import { mainWindow } from './main';
+import { SharedConstants } from '@bfemulator/app-shared';
+import { app } from 'electron';
+import { sendNotificationToClient } from './utils/sendNotificationToClient';
+import { newNotification } from '@bfemulator/app-shared/src';
 
 export enum UpdateStatus {
   Idle,
@@ -96,7 +102,7 @@ class EmulatorUpdater extends EventEmitter {
     return 'BotFramework-Emulator';
   }
 
-  public startup() {
+  public async startup() {
     const settings = getSettings().framework;
     this.allowPrerelease = !!settings.usePrereleases;
     this.autoDownload = !!settings.autoUpdate;
@@ -105,49 +111,14 @@ class EmulatorUpdater extends EventEmitter {
     electronUpdater.autoInstallOnAppQuit = true;
     electronUpdater.logger = null;
 
-    electronUpdater.on('checking-for-update', () => {
-      this.emit('checking-for-update');
-    });
-    electronUpdater.on('update-available', (updateInfo: UpdateInfo) => {
-      if (!this.autoDownload) {
-        this._status = UpdateStatus.Idle;
-        this.emit('update-available', updateInfo);
-      }
-      // if this was initiated on startup, download in the background
-      if (!this.userInitiated) {
-        this.downloadUpdate(false).catch(e => this.emit('error', e, e.toString()));
-      }
-    });
-    electronUpdater.on('update-not-available', (updateInfo: UpdateInfo) => {
-      this._status = UpdateStatus.Idle;
-      this.emit('up-to-date');
-    });
-    electronUpdater.on('error', (err: Error, message: string) => {
-      this._status = UpdateStatus.Idle;
-      this.emit('error', err, message);
-    });
-    electronUpdater.on('download-progress', (progress: ProgressInfo) => {
-      this._status = UpdateStatus.UpdateDownloading;
-      this._downloadProgress = progress.percent;
-      this.emit('download-progress', progress);
-    });
-    electronUpdater.on('update-downloaded', (updateInfo: UpdateInfo) => {
-      TelemetryService.trackEvent('update_download', {
-        version: updateInfo.version,
-        installAfterDownload: this._installAfterDownload,
-      });
-      if (this._installAfterDownload) {
-        this.quitAndInstall();
-        return;
-      } else {
-        this._status = UpdateStatus.UpdateReadyToInstall;
-        this._updateDownloaded = true;
-        this.emit('update-downloaded', updateInfo);
-      }
-    });
+    electronUpdater.on('update-available', this.onUpdateAvailable);
+    electronUpdater.on('update-not-available', this.onUpdateNotAvailable);
+    electronUpdater.on('error', this.onError);
+    electronUpdater.on('download-progress', this.onDownloadProgress);
+    electronUpdater.on('update-downloaded', this.onUpdateDownloaded);
 
     if (this.autoDownload) {
-      this.checkForUpdates(false);
+      await this.checkForUpdates(false);
     }
   }
 
@@ -191,6 +162,137 @@ class EmulatorUpdater extends EventEmitter {
       throw new Error(`There was an error while trying to quit and install the latest update: ${e}`);
     }
   }
+
+  private onUpdateAvailable = async (updateInfo: UpdateInfo) => {
+    if (!this.autoDownload) {
+      this._status = UpdateStatus.Idle;
+      try {
+        AppMenuBuilder.refreshAppUpdateMenu();
+
+        if (AppUpdater.userInitiated) {
+          const {
+            ShowUpdateAvailableDialog,
+            ShowProgressIndicator,
+            UpdateProgressIndicator,
+          } = SharedConstants.Commands.UI;
+          const result = await mainWindow.commandService.remoteCall(ShowUpdateAvailableDialog, updateInfo.version);
+          if (result) {
+            // show but don't block on result of progress indicator dialog
+            await mainWindow.commandService.remoteCall(UpdateProgressIndicator, {
+              label: 'Downloading...',
+              progress: 0,
+            });
+            await mainWindow.commandService.remoteCall(ShowProgressIndicator);
+            const { installAfterDownload = false } = result;
+            await AppUpdater.downloadUpdate(installAfterDownload);
+          }
+        }
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.error(`An error occurred in the updater's "update-available" event handler: ${e}`);
+      }
+    }
+    // if this was initiated on startup, download in the background
+    if (!this.userInitiated) {
+      this.downloadUpdate(false).catch(e => this.emit('error', e, e.toString()));
+    }
+  };
+
+  private onUpdateNotAvailable = async () => {
+    this._status = UpdateStatus.Idle;
+    try {
+      // TODO - localization
+      AppMenuBuilder.refreshAppUpdateMenu();
+
+      // only show the alert if the user explicity checked for update, and no update was downloaded
+      const { userInitiated, updateDownloaded } = AppUpdater;
+      if (userInitiated && !updateDownloaded) {
+        const { ShowUpdateUnavailableDialog } = SharedConstants.Commands.UI;
+        await mainWindow.commandService.remoteCall(ShowUpdateUnavailableDialog);
+      }
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error(`An error occurred in the updater's "up-to-date" event handler: ${e}`);
+    }
+  };
+
+  private onError = async (err: Error, message: string = '') => {
+    this._status = UpdateStatus.Idle;
+    // TODO - localization
+    AppMenuBuilder.refreshAppUpdateMenu();
+    // TODO - Send to debug.txt / error dump file
+    if (message.includes('.yml')) {
+      AppUpdater.emit('up-to-date');
+      return;
+    }
+    if (AppUpdater.userInitiated) {
+      await mainWindow.commandService.call(SharedConstants.Commands.Electron.ShowMessageBox, true, {
+        title: app.getName(),
+        message: `An error occurred while using the updater: ${err}`,
+      });
+    }
+  };
+
+  private onDownloadProgress = async (progress: ProgressInfo) => {
+    this._status = UpdateStatus.UpdateDownloading;
+    this._downloadProgress = progress.percent;
+    try {
+      AppMenuBuilder.refreshAppUpdateMenu();
+
+      // update the progress bar component
+      const { UpdateProgressIndicator } = SharedConstants.Commands.UI;
+      const progressPayload = { label: 'Downloading...', progress: progress.percent };
+      await mainWindow.commandService.remoteCall(UpdateProgressIndicator, progressPayload);
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error(`An error occurred in the updater's "download-progress" event handler: ${e}`);
+    }
+  };
+
+  private onUpdateDownloaded = async (updateInfo: UpdateInfo) => {
+    TelemetryService.trackEvent('update_download', {
+      version: updateInfo.version,
+      installAfterDownload: this._installAfterDownload,
+    });
+    if (this._installAfterDownload) {
+      this.quitAndInstall();
+      return;
+    } else {
+      this._status = UpdateStatus.UpdateReadyToInstall;
+      this._updateDownloaded = true;
+      try {
+        AppMenuBuilder.refreshAppUpdateMenu();
+
+        // TODO - localization
+        if (AppUpdater.userInitiated) {
+          // update the progress indicator
+          const { UpdateProgressIndicator } = SharedConstants.Commands.UI;
+          const progressPayload = { label: 'Download finished.', progress: 100 };
+          await mainWindow.commandService.remoteCall(UpdateProgressIndicator, progressPayload);
+
+          // send a notification when the update is finished downloading
+          const notification = newNotification(
+            `Emulator version ${updateInfo.version} has finished downloading. Restart and update now?`
+          );
+          notification.addButton('Dismiss', () => {
+            const { Commands } = SharedConstants;
+            mainWindow.commandService.remoteCall(Commands.Notifications.Remove, notification.id);
+          });
+          notification.addButton('Restart', async () => {
+            try {
+              AppUpdater.quitAndInstall();
+            } catch (e) {
+              await sendNotificationToClient(newNotification(e), mainWindow.commandService);
+            }
+          });
+          await sendNotificationToClient(notification, mainWindow.commandService);
+        }
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.error(`An error occurred in the updater's "update-downloaded" event handler: ${e}`);
+      }
+    }
+  };
 }
 
 export const AppUpdater = new EmulatorUpdater();

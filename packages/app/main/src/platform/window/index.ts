@@ -34,7 +34,6 @@
 import { CommandService, CommandServiceImpl, DisposableImpl, LogService as ILogService } from '@bfemulator/sdk-shared';
 import { BrowserWindow, WebContents } from 'electron';
 
-import { CommandRegistry } from '../../commands';
 import { ElectronIPC, ElectronIPCServer } from '../../ipc';
 import { LogService } from '../log/logService';
 

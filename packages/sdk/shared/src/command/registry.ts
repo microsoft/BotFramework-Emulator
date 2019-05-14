@@ -32,47 +32,28 @@
 //
 import { Disposable } from '../lifecycle';
 
-import { Command, CommandHandler, CommandMap } from './';
-
 export interface CommandRegistry {
-  registerCommand(id: string, command: CommandHandler): Disposable;
+  registerCommand(id: string, command: Function): Disposable;
 
-  registerCommand(command: Command): Disposable;
-
-  getCommand(id: string): Command;
-
-  getCommands(): CommandMap;
+  getCommand(id: string): Function;
 }
 
 export class CommandRegistryImpl implements CommandRegistry {
-  private _commands: CommandMap = {};
+  private commands: { [id: string]: Function } = {};
 
-  public registerCommand(idOrCommand: string | Command, handler?: CommandHandler): Disposable {
-    if (!idOrCommand) {
+  public registerCommand(id: string, handler?: Function): Disposable {
+    if (!id || (typeof id === 'string' && typeof handler !== 'function')) {
       throw new Error('invalid command');
     }
 
-    if (typeof idOrCommand === 'string') {
-      if (!handler) {
-        throw new Error('invalid command');
-      }
-      return this.registerCommand({ id: idOrCommand, handler });
-    }
-
-    const { id } = idOrCommand;
-
-    this._commands[id] = idOrCommand;
+    this.commands[id] = handler;
 
     return {
-      dispose: () => delete this._commands[id],
+      dispose: () => delete this.commands[id],
     };
   }
 
-  public getCommand(id: string): Command {
-    return this._commands[id];
-  }
-
-  public getCommands(): CommandMap {
-    return this._commands;
+  public getCommand(id: string): Function {
+    return this.commands[id];
   }
 }

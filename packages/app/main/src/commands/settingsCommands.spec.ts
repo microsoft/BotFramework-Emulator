@@ -70,7 +70,7 @@ describe('The settings commands', () => {
   });
 
   it('should save the global app settings', async () => {
-    const { handler } = mockRegistry.getCommand(Settings.SaveAppSettings);
+    const handler = mockRegistry.getCommand(Settings.SaveAppSettings);
     const mockSettings = { ngrokPath: 'other/path/to/ngrok.exe' };
     await handler(mockSettings);
 
@@ -79,14 +79,14 @@ describe('The settings commands', () => {
   });
 
   it('should load the app settings from the store', async () => {
-    const { handler } = mockRegistry.getCommand(Settings.LoadAppSettings);
+    const handler = mockRegistry.getCommand(Settings.LoadAppSettings);
     const appSettings = await handler();
 
     expect(appSettings).toBe(mockSettings.framework);
   });
 
   it('should save a new bot url to disk', () => {
-    const { handler } = mockRegistry.getCommand(Settings.SaveBotUrl);
+    const handler = mockRegistry.getCommand(Settings.SaveBotUrl);
     handler('http://some.boturl.com');
 
     expect(mockDispatch).toHaveBeenCalledWith(addSavedBotUrl('http://some.boturl.com'));

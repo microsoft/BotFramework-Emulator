@@ -31,13 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import {
-  CommandHandler,
-  CommandRegistry,
-  CommandRegistryImpl,
-  CommandService,
-  DisposableImpl,
-} from '@bfemulator/sdk-shared';
+import { CommandRegistry, CommandRegistryImpl, CommandService, DisposableImpl } from '@bfemulator/sdk-shared';
 
 import { TelemetryService } from '../telemetry';
 
@@ -76,7 +70,7 @@ class MockCommandService extends DisposableImpl implements CommandService {
     return null;
   }
 
-  on(commandName: string, handler?: CommandHandler): any {
+  on(commandName: string, handler?: Function): any {
     return null;
   }
 }

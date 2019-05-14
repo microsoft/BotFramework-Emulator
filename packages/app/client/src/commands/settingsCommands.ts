@@ -45,7 +45,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
     const state = store.getState();
     store.dispatch(clientAwareSettingsChanged(settings));
     if (state.clientAwareSettings.debugMode !== settings.debugMode) {
-      await commandRegistry.getCommand(SharedConstants.Commands.UI.SwitchDebugMode).handler(settings.debugMode);
+      await commandRegistry.getCommand(SharedConstants.Commands.UI.SwitchDebugMode)(settings.debugMode);
     }
   });
 }
