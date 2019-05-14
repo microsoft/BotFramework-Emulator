@@ -230,6 +230,13 @@ html {
 
   /* Auto Complete */
   --auto-complete-results-opacity: 0.9;
+
+  /* Service Picker */
+  --service-picker-list-bg-color: var(--neutral-3);
+  --service-picker-list-border: 1px solid transparent;
+  --service-picker-scrollbar-thumb: var(--scrollbar-color);
+  --service-picker-scrollbar-track: var(--neutral-4);
+  --service-picker-select-all-border: 1px solid transparent;
 }
 
 .dialog {

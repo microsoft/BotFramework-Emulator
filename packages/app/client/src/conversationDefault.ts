@@ -30,14 +30,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { DebugMode, UserSettings } from './serverSettingsTypes';
-
-export interface ClientAwareSettings {
-  appPath: string;
-  cwd: string;
-  locale: string;
-  serverUrl: string;
-  debugMode: DebugMode;
-  users: UserSettings;
-  savedBotUrls: { url: string; lastAccessed: string }[];
-}
+export const conversationDefaults: any = {
+  userId: 'genericUserId',
+  documentId: 'genericConversationId',
+};

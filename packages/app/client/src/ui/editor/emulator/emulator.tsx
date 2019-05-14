@@ -49,6 +49,7 @@ import {
 import { Document } from '../../../data/reducer/editor';
 import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
 import { debounce } from '../../../utils';
+import { conversationDefaults } from '../../../conversationDefault';
 
 import ChatPanel from './chatPanel/chatPanel';
 import LogPanel from './logPanel/logPanel';
@@ -155,7 +156,7 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
     const framework: FrameworkSettings = await CommandServiceImpl.remoteCall(
       SharedConstants.Commands.Settings.LoadAppSettings
     );
-    const stableId = framework.userGUID || props.document.userId;
+    const stableId = framework.userGUID || conversationDefaults.userId;
     const userId = requireNewUserId ? uniqueIdv4() : stableId;
 
     await CommandServiceImpl.remoteCall(SharedConstants.Commands.Emulator.SetCurrentUser, userId);

@@ -97,7 +97,7 @@ export default class BotEndpoint {
       } catch (e) {
         return {
           status: e.status,
-          text: "The bot's Microsoft App Id or Microsoft App Password is incorrect.",
+          message: "The bot's Microsoft App Id or Microsoft App Password is incorrect.",
         };
       }
     }
