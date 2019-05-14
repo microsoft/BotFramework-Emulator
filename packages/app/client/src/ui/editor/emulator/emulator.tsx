@@ -105,10 +105,6 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
     };
   }, 500);
 
-  shouldStartNewConversation(props: EmulatorProps = this.props): boolean {
-    return !props.document.directLine || props.document.conversationId !== props.document.directLine.conversationId;
-  }
-
   componentWillMount() {
     window.addEventListener('keydown', this.keyboardEventListener);
     this.startNewConversation();
