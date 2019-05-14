@@ -42,6 +42,7 @@ import {
   BotConfigWithPath,
   ConversationService,
 } from '@bfemulator/sdk-shared';
+
 import { Protocol } from './constants';
 import { Emulator } from './emulator';
 import { mainWindow } from './main';

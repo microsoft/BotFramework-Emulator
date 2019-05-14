@@ -400,7 +400,7 @@ const createMainWindow = async () => {
 };
 
 function loadMainPage() {
-  let page =
+  const page =
     process.env.ELECTRON_TARGET_URL ||
     url.format({
       protocol: 'file',
