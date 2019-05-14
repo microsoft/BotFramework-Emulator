@@ -226,7 +226,7 @@
     },
     "nsis": {
       "include": "./scripts/config/resources/nsis/installer.nsh",
-      "perMachine": true,
+      "perMachine": false,
       "allowElevation": true,
       "packElevateHelper": true,
       "unicode": true,

@@ -98,7 +98,7 @@ export interface AzureSettings {
 export interface PersistentSettings {
   framework?: FrameworkSettings;
   bots?: Bot[];
-  savedBotUrls?: Array<{ url: string; lastAccessed: string }>;
+  savedBotUrls?: { url: string; lastAccessed: string }[];
   windowState?: WindowStateSettings;
   users?: UserSettings;
 }
@@ -110,7 +110,7 @@ export interface Settings extends PersistentSettings {
 export class SettingsImpl implements Settings {
   public framework: FrameworkSettings;
   public bots: Bot[];
-  public savedBotUrls: Array<{ url: string; lastAccessed: string }>;
+  public savedBotUrls: { url: string; lastAccessed: string }[];
   public windowState: WindowStateSettings;
   public users: UserSettings;
   public azure: AzureSettings;
