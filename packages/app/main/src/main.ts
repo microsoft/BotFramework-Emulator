@@ -81,31 +81,6 @@ if (app) {
 }
 
 // -----------------------------------------------------------------------------
-// Ngrok events
-
-ngrokEmitter.on('expired', () => {
-  // when ngrok expires, spawn notification to reconnect
-  const ngrokNotification: Notification = newNotification(
-    'Your ngrok tunnel instance has expired. Would you like to reconnect to a new tunnel?'
-  );
-  ngrokNotification.addButton('Dismiss', () => {
-    const { Commands } = SharedConstants;
-    mainWindow.commandService.remoteCall(Commands.Notifications.Remove, ngrokNotification.id);
-  });
-  ngrokNotification.addButton('Reconnect', async () => {
-    try {
-      const { Commands } = SharedConstants;
-      await mainWindow.commandService.call(Commands.Ngrok.Reconnect);
-      mainWindow.commandService.remoteCall(Commands.Notifications.Remove, ngrokNotification.id);
-    } catch (e) {
-      sendNotificationToClient(newNotification(e), mainWindow.commandService);
-    }
-  });
-  sendNotificationToClient(ngrokNotification, mainWindow.commandService);
-  Emulator.getInstance().ngrok.broadcastNgrokExpired();
-});
-
-// -----------------------------------------------------------------------------
 let protocolUsed = false;
 const onOpenUrl = function(event: any, url: string): void {
   event.preventDefault();
@@ -274,6 +249,8 @@ class EmulatorApplication {
 
   constructor() {
     this.initializeBrowserWindowListeners();
+    this.initializeNgrokListeners();
+    this.initializeAppListeners();
   }
 
   private initializeBrowserWindowListeners() {
@@ -284,6 +261,12 @@ class EmulatorApplication {
     this.mainBrowserWindow.on('move', this.rememberCurrentBounds);
     this.mainBrowserWindow.on('restore', this.rememberCurrentBounds);
   }
+
+  private initializeNgrokListeners() {
+    ngrokEmitter.on('expired', this.onNgrokSessionExpired);
+  }
+
+  private initializeAppListeners() {}
 
   // Main browser window listeners
   private onBrowserWindowClose = async (event: Event) => {
@@ -371,5 +354,28 @@ class EmulatorApplication {
     };
 
     dispatch(rememberBounds(bounds));
+  };
+
+  // ngrok listeners
+  private onNgrokSessionExpired = async () => {
+    // when ngrok expires, spawn notification to reconnect
+    const ngrokNotification: Notification = newNotification(
+      'Your ngrok tunnel instance has expired. Would you like to reconnect to a new tunnel?'
+    );
+    ngrokNotification.addButton('Dismiss', () => {
+      const { Commands } = SharedConstants;
+      mainWindow.commandService.remoteCall(Commands.Notifications.Remove, ngrokNotification.id);
+    });
+    ngrokNotification.addButton('Reconnect', async () => {
+      try {
+        const { Commands } = SharedConstants;
+        await mainWindow.commandService.call(Commands.Ngrok.Reconnect);
+        mainWindow.commandService.remoteCall(Commands.Notifications.Remove, ngrokNotification.id);
+      } catch (e) {
+        await sendNotificationToClient(newNotification(e), mainWindow.commandService);
+      }
+    });
+    await sendNotificationToClient(ngrokNotification, mainWindow.commandService);
+    Emulator.getInstance().ngrok.broadcastNgrokExpired();
   };
 }
