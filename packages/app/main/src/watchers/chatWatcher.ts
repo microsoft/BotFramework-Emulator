@@ -38,11 +38,13 @@ import { isChatFile } from '@bfemulator/app-shared';
 import { IFileService, ServiceTypes } from 'botframework-config/lib/schema';
 import { WatchOptions } from 'chokidar';
 
-import { mainWindow } from '../main';
-
 import { FileWatcher } from './fileWatcher';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 export class ChatWatcher extends FileWatcher {
+  @CommandServiceInstance()
+  private commandService: CommandServiceImpl;
+
   private chatFiles: { [path: string]: boolean } = {};
   private notificationPending: NodeJS.Timer;
 
@@ -75,7 +77,7 @@ export class ChatWatcher extends FileWatcher {
   };
 
   protected onFileChange = (file: string, fstats?: fs.Stats): void => {
-    mainWindow.commandService.remoteCall(SharedConstants.Commands.File.Changed, file).catch();
+    this.commandService.remoteCall(SharedConstants.Commands.File.Changed, file).catch();
   };
 
   /**
@@ -96,7 +98,7 @@ export class ChatWatcher extends FileWatcher {
         path: key,
       };
     });
-    mainWindow.commandService.remoteCall(SharedConstants.Commands.Bot.ChatFilesUpdated, chatFiles).catch();
+    this.commandService.remoteCall(SharedConstants.Commands.Bot.ChatFilesUpdated, chatFiles).catch();
     this.notificationPending = null;
   };
 }

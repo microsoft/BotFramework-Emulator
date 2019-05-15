@@ -32,7 +32,7 @@
 //
 import { connect } from 'react-redux';
 import { Notification, SharedConstants } from '@bfemulator/app-shared';
-import { ValueTypesMask } from '@bfemulator/app-shared/src';
+import { ValueTypesMask } from '@bfemulator/app-shared';
 
 import { RootState } from '../../../data/store';
 import * as PresentationActions from '../../../data/action/presentationActions';

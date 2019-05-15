@@ -31,16 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { CommandService, CommandServiceImpl, DisposableImpl, LogService as ILogService } from '@bfemulator/sdk-shared';
+import { DisposableImpl, LogService as ILogService } from '@bfemulator/sdk-shared';
 import { BrowserWindow, WebContents } from 'electron';
-
-import { ElectronIPC, ElectronIPCServer } from '../../ipc';
 import { LogService } from '../log/logService';
 
 export class Window extends DisposableImpl {
-  private readonly _commandService: CommandService;
   private readonly _logService: ILogService;
-  private readonly _ipc: ElectronIPC;
 
   get browserWindow(): BrowserWindow {
     return this._browserWindow;
@@ -50,29 +46,13 @@ export class Window extends DisposableImpl {
     return this._browserWindow.webContents;
   }
 
-  get commandService(): CommandService {
-    return this._commandService;
-  }
-
   get logService(): ILogService {
     return this._logService;
   }
 
-  get ipc(): ElectronIPC {
-    return this._ipc;
-  }
-
   constructor(private _browserWindow: BrowserWindow) {
     super();
-    this._ipc = new ElectronIPC(this._browserWindow.webContents);
-    const commandService = (this._commandService = new CommandServiceImpl(
-      this._ipc,
-      'command-service',
-      CommandRegistry
-    ));
     const logService = (this._logService = new LogService(this));
-    super.toDispose(ElectronIPCServer.registerIPC(this._ipc));
-    super.toDispose(commandService);
     super.toDispose(logService);
   }
 }

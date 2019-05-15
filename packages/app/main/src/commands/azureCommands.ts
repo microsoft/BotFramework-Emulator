@@ -1,6 +1,3 @@
-import { SharedConstants } from '@bfemulator/app-shared';
-import { CommandRegistry } from '@bfemulator/sdk-shared';
-
 //
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license.
@@ -33,24 +30,28 @@ import { CommandRegistry } from '@bfemulator/sdk-shared';
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { mainWindow } from '../main';
+import { SharedConstants } from '@bfemulator/app-shared';
+import { Command, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 import { AzureAuthWorkflowService } from '../services/azureAuthWorkflowService';
 import { azureLoggedInUserChanged, azurePersistLoginChanged } from '../settingsData/actions/azureAuthActions';
 import { getStore as getSettingsStore } from '../settingsData/store';
 
 // eslint-disable-next-line typescript/no-var-requires
 const { session } = require('electron');
+const { Azure } = SharedConstants.Commands;
 
-/** Registers LUIS commands */
-export function registerCommands(commandRegistry: CommandRegistry) {
-  const { Azure } = SharedConstants.Commands;
+/** Registers Azure commands */
+export class AzureCommands {
+  @CommandServiceInstance()
+  private commandService: CommandServiceImpl;
 
   // ---------------------------------------------------------------------------
   // Retrieve the Azure ARM Token
-  commandRegistry.registerCommand(Azure.RetrieveArmToken, async (renew: boolean = false) => {
+  @Command(Azure.RetrieveArmToken)
+  protected async retrieveArmToken(renew: boolean = false) {
     const settingsStore = getSettingsStore();
     const workflow = AzureAuthWorkflowService.retrieveAuthToken(renew);
-    let result;
+    let result = undefined;
     // eslint-disable-next-line no-constant-condition
     while (true) {
       const next = workflow.next(result);
@@ -67,29 +68,30 @@ export function registerCommands(commandRegistry: CommandRegistry) {
       const [, payload] = (result.access_token as string).split('.');
       const pjson = JSON.parse(Buffer.from(payload, 'base64').toString());
       settingsStore.dispatch(azureLoggedInUserChanged(pjson.upn || pjson.unique_name || pjson.name || pjson.email));
-      await mainWindow.commandService.call(SharedConstants.Commands.Electron.UpdateFileMenu);
+      await this.commandService.call(SharedConstants.Commands.Electron.UpdateFileMenu);
       // Add the current persistLogin value which the UI can use
       // to bind to without retrieving the entire settingsStore
       result.persistLogin = settingsStore.getState().azure.persistLogin;
     }
     return result;
-  });
+  }
 
   // ---------------------------------------------------------------------------
   // Sign the user out of Azure
-  commandRegistry.registerCommand(Azure.SignUserOutOfAzure, async (prompt: boolean = true) => {
+  @Command(Azure.SignUserOutOfAzure)
+  protected async signUserOutOfAzure(prompt: boolean = true) {
     await new Promise(resolve => session.defaultSession.clearStorageData({}, resolve));
 
     const store = getSettingsStore();
     store.dispatch(azureLoggedInUserChanged(''));
     try {
-      await mainWindow.commandService.call(SharedConstants.Commands.Electron.UpdateFileMenu);
+      await this.commandService.call(SharedConstants.Commands.Electron.UpdateFileMenu);
     } catch {
       // Nothing to do
     }
     if (prompt) {
       try {
-        await mainWindow.commandService.call(SharedConstants.Commands.Electron.ShowMessageBox, false, {
+        await this.commandService.call(SharedConstants.Commands.Electron.ShowMessageBox, false, {
           message: 'You have successfully signed out of azure',
           title: 'Success!',
         });
@@ -99,11 +101,12 @@ export function registerCommands(commandRegistry: CommandRegistry) {
     }
 
     return true;
-  });
+  }
 
   // ---------------------------------------------------------------------------
   // User has changed the "Keep me signed in" selection after a successful login
-  commandRegistry.registerCommand(Azure.PersistAzureLoginChanged, persistLogin => {
+  @Command(Azure.PersistAzureLoginChanged)
+  protected persistAzureLoginChanged(persistLogin) {
     getSettingsStore().dispatch(azurePersistLoginChanged(persistLogin));
-  });
+  }
 }

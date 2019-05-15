@@ -36,11 +36,15 @@ import { newNotification, SharedConstants } from '@bfemulator/app-shared';
 
 import { mainWindow } from './main';
 import { RestServer } from './restServer';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 /**
  * Communicates with the bot.
  */
 export class BotFrameworkService {
+  @CommandServiceInstance()
+  private commandService: CommandServiceImpl;
+
   public server: RestServer;
   private _serverUrl: string;
   private _serverPort: number;
@@ -72,7 +76,7 @@ export class BotFrameworkService {
         const notification = newNotification(
           `Port ${port} is in use and the Emulator cannot start. Please free this port so the emulator can use it.`
         );
-        await mainWindow.commandService.remoteCall(SharedConstants.Commands.Notifications.Add, notification);
+        await this.commandService.remoteCall(SharedConstants.Commands.Notifications.Add, notification);
       }
     }
   }

@@ -32,13 +32,40 @@
 //
 
 import { CommandServiceImpl } from './service';
+import { ipcMain, ipcRenderer } from 'electron';
 
 export * from './registry';
 export * from './service';
 const commandServiceByChannelId = {};
 
 function getCommandService(channelId: string): CommandServiceImpl {
-  return commandServiceByChannelId[channelId] || (commandServiceByChannelId[channelId] = new CommandServiceImpl());
+  if (commandServiceByChannelId[channelId]) {
+    return commandServiceByChannelId[channelId];
+  }
+  const ipc = process.type === 'browser' ? ipcMain : ipcRenderer;
+  commandServiceByChannelId[channelId] = new CommandServiceImpl(ipc);
+  return commandServiceByChannelId[channelId];
+}
+
+export function CommandServiceInstance(channelId = 'command-service'): PropertyDecorator {
+  return function(elementDescriptor: any) {
+    const { key, descriptor } = elementDescriptor;
+    delete descriptor.writable;
+    elementDescriptor.extras = [
+      {
+        kind: 'method',
+        key,
+        placement: 'prototype',
+        descriptor: {
+          ...descriptor,
+          get: function() {
+            return getCommandService(channelId);
+          },
+        },
+      },
+    ];
+    return elementDescriptor;
+  };
 }
 
 export function Command(id: string, channelId: string = 'command-service'): MethodDecorator {

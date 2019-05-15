@@ -32,44 +32,41 @@
 //
 
 import { FrameworkSettings, SharedConstants } from '@bfemulator/app-shared';
-import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 
 import { addSavedBotUrl } from '../settingsData/actions/savedBotUrlsActions';
 import { setFramework } from '../settingsData/actions/frameworkActions';
 import { dispatch, getSettings } from '../settingsData/store';
 import { TelemetryService } from '../telemetry';
+import { Command } from '@bfemulator/sdk-shared';
+
+const Commands = SharedConstants.Commands.Settings;
 
 /** Registers settings commands */
-export function registerCommands(commandRegistry: CommandRegistryImpl) {
-  const Commands = SharedConstants.Commands.Settings;
-
+export class SettingsCommands {
   // ---------------------------------------------------------------------------
   // Saves global app settings
-  commandRegistry.registerCommand(
-    Commands.SaveAppSettings,
-    (settings: FrameworkSettings): any => {
-      const frameworkSettings = getSettings().framework;
-      const { ngrokPath = '' } = frameworkSettings;
-      const { ngrokPath: newNgrokPath } = settings;
-      if (newNgrokPath !== ngrokPath) {
-        TelemetryService.trackEvent('app_configureNgrok');
-      }
-      dispatch(setFramework(settings));
+  @Command(Commands.SaveAppSettings)
+  protected saveAppSettings(settings: FrameworkSettings): any {
+    const frameworkSettings = getSettings().framework;
+    const { ngrokPath = '' } = frameworkSettings;
+    const { ngrokPath: newNgrokPath } = settings;
+    if (newNgrokPath !== ngrokPath) {
+      TelemetryService.trackEvent('app_configureNgrok');
     }
-  );
+    dispatch(setFramework(settings));
+  }
 
   // ---------------------------------------------------------------------------
   // Get and return app settings from store
-  commandRegistry.registerCommand(
-    Commands.LoadAppSettings,
-    (...args: any[]): FrameworkSettings => {
-      return getSettings().framework;
-    }
-  );
+  @Command(Commands.LoadAppSettings)
+  protected loadAppSettings(...args: any[]): FrameworkSettings {
+    return getSettings().framework;
+  }
 
   // ---------------------------------------------------------------------------
   // Save a new bot url to disk
-  commandRegistry.registerCommand(Commands.SaveBotUrl, (url: string) => {
+  @Command(Commands.SaveBotUrl)
+  protected saveBotUrl(url: string) {
     dispatch(addSavedBotUrl(url));
-  });
+  }
 }

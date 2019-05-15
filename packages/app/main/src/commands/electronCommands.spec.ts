@@ -78,7 +78,7 @@ jest.mock('../main', () => ({
   mainWindow: {
     browserWindow: {
       setFullScreen: () => void 0,
-      setTitle: () => void 0,
+      setTitle: (_name: string = '') => void 0,
     },
     commandService: {
       remoteCall: command => {

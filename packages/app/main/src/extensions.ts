@@ -31,172 +31,24 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ChildProcess, fork } from 'child_process';
 import * as path from 'path';
 
 import { SharedConstants } from '@bfemulator/app-shared';
-import { ProcessIPC, WebSocketIPC } from '@bfemulator/sdk-main';
-import {
-  CommandService,
-  CommandServiceImpl,
-  DisposableImpl,
-  ExtensionConfig,
-  IPC,
-  NoopIPC,
-} from '@bfemulator/sdk-shared';
+import { CommandServiceImpl, DisposableImpl, ExtensionConfig } from '@bfemulator/sdk-shared';
 
-import { mainWindow } from './main';
 import { getDirectories, readFileSync } from './utils';
+import { CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 // =============================================================================
 export interface Extension {
   readonly config: ExtensionConfig;
-  readonly ipc: IPC;
-
-  on(event: 'exit', listener: NodeJS.ExitListener);
-
-  call(commandName: string, ...args: any[]): Promise<any>;
-
-  connect();
-
-  disconnect();
-}
-
-// =============================================================================
-export abstract class ExtensionImpl extends DisposableImpl implements Extension {
-  protected _ext: CommandService;
-  protected _cli: CommandService;
-
-  get config(): ExtensionConfig {
-    return this._config;
-  }
-
-  get ipc(): IPC {
-    return this._ipc;
-  }
-
-  protected constructor(private _config: ExtensionConfig, protected _ipc: IPC) {
-    super();
-    this._ext = new CommandServiceImpl(this._ipc, `ext-${this._config.location}`);
-    this._cli = new CommandServiceImpl(mainWindow.ipc, `ext-${this._config.location}`);
-    this.toDispose(this._ipc);
-    this.toDispose(this._ext);
-
-    // -------------------------------------------------------------------------
-    // Methods callable by extension
-    this._ext.on('ext-ping', () => {
-      return 'ext-pong';
-    });
-
-    // -------------------------------------------------------------------------
-    // Methods callable by client interface
-    this._cli.on('cli-ping', () => {
-      return 'cli-pong';
-    });
-
-    // -------------------------------------------------------------------------
-    // Pass unknown commands from client to extension
-    this._cli.on(
-      'command-not-found',
-      (commandName: string, ...args: any[]): Promise<any> => {
-        return this._ext.remoteCall(commandName, ...args);
-      }
-    );
-
-    // -------------------------------------------------------------------------
-    // Pass unknown commands from extension to shell
-    this._ext.on(
-      'command-not-found',
-      (commandName: string, ...args: any[]): Promise<any> => {
-        return mainWindow.commandService.call(commandName, ...args);
-      }
-    );
-  }
-
-  public call(commandName: string, ...args: any[]): Promise<any> {
-    try {
-      return this._ext.remoteCall(commandName, ...args);
-    } catch (err) {
-      return Promise.reject(err);
-    }
-  }
-
-  public abstract on(event: 'exit', listener: NodeJS.ExitListener);
-
-  public abstract connect();
-
-  public abstract disconnect();
-
-  public toDispose(obj: any) {
-    super.toDispose(obj);
-  }
-}
-
-// =============================================================================
-export class ChildExtension extends ExtensionImpl {
-  constructor(config: ExtensionConfig, private _process: ChildProcess) {
-    super(config, new ProcessIPC(_process));
-  }
-
-  public on(event: 'exit', listener: NodeJS.ExitListener) {
-    this._process.on(event, listener);
-  }
-
-  public connect() {
-    this.call('connect').catch(() => null);
-  }
-
-  public disconnect() {
-    this.call('disconnect').catch(() => null);
-    this._process.disconnect();
-  }
-}
-
-// =============================================================================
-export class PeerExtension extends ExtensionImpl {
-  constructor(config: ExtensionConfig, private _wsipc: WebSocketIPC) {
-    super(config, _wsipc);
-  }
-
-  public on(event: 'exit', listener: NodeJS.ExitListener) {
-    this._wsipc.ws.on('close', listener);
-  }
-
-  public connect() {
-    this.call('connect').catch(() => null);
-  }
-
-  public disconnect() {
-    this.call('disconnect').catch(() => null);
-  }
-}
-
-// =============================================================================
-export class ClientExtension extends ExtensionImpl {
-  public static counter: number = 0;
-
-  constructor(config: ExtensionConfig) {
-    super(config, new NoopIPC(--ClientExtension.counter));
-  }
-
-  public on() {
-    return null;
-  }
-
-  public connect() {
-    return null;
-  }
-
-  public disconnect() {
-    return null;
-  }
 }
 
 // =============================================================================
 export interface ExtensionManager {
-  findExtension(name: string): ExtensionImpl;
+  findExtension(name: string): Extension;
 
-  addExtension(extension: ExtensionImpl, configPath: string);
+  addExtension(extension: Extension, configPath: string);
 
   loadExtensions();
 
@@ -205,12 +57,14 @@ export interface ExtensionManager {
 
 // =============================================================================
 class ExtManagerImpl extends DisposableImpl implements ExtensionManager {
-  private extensions: Map<IPC, ExtensionImpl> = new Map<IPC, ExtensionImpl>();
+  @CommandServiceInstance()
+  private commandService: CommandServiceImpl;
+  private extensions: Map<Extension, string> = new Map<Extension, string>();
 
-  public findExtension(name: string): ExtensionImpl {
+  public findExtension(name: string): Extension {
     for (const kvPair of this.extensions) {
-      if (kvPair[1].config.name === name) {
-        return kvPair[1];
+      if (kvPair[0].config.name === name) {
+        return kvPair[0];
       }
     }
     return undefined;
@@ -242,31 +96,24 @@ class ExtManagerImpl extends DisposableImpl implements ExtensionManager {
     }
   }
 
-  public unloadExtension(ipc: IPC) {
-    const extension = this.extensions.get(ipc);
+  public unloadExtension(extension: Extension) {
     if (extension) {
       // eslint-disable-next-line no-console
       console.log(`Removing extension ${extension.config.name}`);
-      // Disconnect from the extension process
-      extension.disconnect();
       // Notify the client that the extension is gone.
-      mainWindow.commandService.remoteCall(SharedConstants.Commands.Extension.Disconnect, extension.config.location);
+      this.commandService.remoteCall(SharedConstants.Commands.Extension.Disconnect, extension.config.location);
       // Cleanup
-      this.extensions.delete(ipc);
+      this.extensions.delete(extension);
     }
   }
 
-  public addExtension(extension: ExtensionImpl, configPath: string) {
+  public addExtension(extension: Extension, configPath: string) {
     // Cleanup configPath
     configPath = configPath.replace(/\\/g, '/');
     // Remove any previous extension with matching name.
-    this.unloadExtension(extension.ipc);
+    this.unloadExtension(extension);
     // Save it off.
-    this.extensions.set(extension.ipc, extension);
-    extension.on('exit', () => {
-      // Unload the extension if its process exits.
-      this.unloadExtension(extension.ipc);
-    });
+    this.extensions.set(extension, configPath);
     // eslint-disable-next-line no-console
     console.log(`Adding extension ${extension.config.name}`);
     // Cleanup some data
@@ -290,10 +137,8 @@ class ExtManagerImpl extends DisposableImpl implements ExtensionManager {
         'file://' + path.resolve(path.join(__dirname, '..', 'extensions', 'inspector-preload.js'));
     });
 
-    // Connect to the extension's node process (if any).
-    extension.connect();
     // Notify the client of the new extension.
-    mainWindow.commandService.remoteCall(SharedConstants.Commands.Extension.Connect, extension.config);
+    this.commandService.remoteCall(SharedConstants.Commands.Extension.Connect, extension.config);
   }
 
   // Check whether we're running from an 'app.asar' packfile. If so, it means we were installed
@@ -315,7 +160,6 @@ class ExtManagerImpl extends DisposableImpl implements ExtensionManager {
   }
 
   private spawnExtension(folder: string) {
-    let child: ChildProcess;
     try {
       // Read the extension's config file.
       let config = JSON.parse(readFileSync(`${folder}/bf-extension.json`));
@@ -334,54 +178,15 @@ class ExtManagerImpl extends DisposableImpl implements ExtensionManager {
         config = null;
       }
       if (config && config.name) {
-        if (config.node) {
-          if (config.node.debug && config.node.debug.enabled) {
-            if (config.node.debug.websocket && config.node.debug.websocket.port) {
-              const port = +config.node.debug.websocket.port;
-              try {
-                // This extension is going to connect to us over websocket. Once that
-                // connection is established we'll add the extension.
-                // const wss = new ExtensionServer(port);
-                // eslint-disable-next-line no-console
-                console.log(`Waiting for extension ${config.name} to connect on port ${port}`);
-              } catch (err) {
-                const msg = `Failed to spawn WebSocketServer on port ${port}.
-                Extension ${config.name} will be unable to connect.`;
-                // eslint-disable-next-line no-console
-                console.log(msg, err);
-              }
-            }
-          } else if (config.node.main) {
-            // Launch node process as a child of this one.
-            const file = this.unpackedFolder(path.resolve(folder, config.node.main));
-            // Start the extension in a child process.
-            child = fork(file, [], {
-              cwd: path.dirname(file),
-              stdio: [0, 1, 2, 'ipc'],
-            });
-            // Wrap the extension process.
-            const extension = new ChildExtension(config, child);
-            // Add it to the ecosystem (notifies client, etc).
-            this.addExtension(extension, folder);
-          }
-        } else {
-          // It's a client-only extension
-          const extension = new ClientExtension(config);
-          // Add it to the ecosystem (notifies client, etc).
-          this.addExtension(extension, folder);
-        }
+        // It's a client-only extension
+        const extension = { config } as Extension;
+        // Add it to the ecosystem (notifies client, etc).
+        this.addExtension(extension, folder);
       }
     } catch (err) {
-      // Something went wrong. If we still have a child process, try to kill it.
+      // Something went wrong.
       // eslint-disable-next-line no-console
       console.log('Failed to spawn extension', folder, err);
-      try {
-        if (child) {
-          child.kill();
-        }
-      } catch {
-        // do nothing
-      }
     }
   }
 }

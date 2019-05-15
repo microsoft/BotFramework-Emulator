@@ -39,11 +39,11 @@ import { autoUpdater as electronUpdater, UpdateInfo } from 'electron-updater';
 import { TelemetryService } from './telemetry';
 import { getSettings } from './settingsData/store';
 import { AppMenuBuilder } from './appMenuBuilder';
-import { mainWindow } from './main';
 import { SharedConstants } from '@bfemulator/app-shared';
 import { app } from 'electron';
 import { sendNotificationToClient } from './utils/sendNotificationToClient';
-import { newNotification } from '@bfemulator/app-shared/src';
+import { newNotification } from '@bfemulator/app-shared';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 export enum UpdateStatus {
   Idle,
@@ -53,6 +53,9 @@ export enum UpdateStatus {
 }
 
 class EmulatorUpdater extends EventEmitter {
+  @CommandServiceInstance()
+  private commandService: CommandServiceImpl;
+
   private _userInitiated: boolean;
   private _autoDownload: boolean;
   private _status: UpdateStatus = UpdateStatus.Idle;
@@ -175,14 +178,17 @@ class EmulatorUpdater extends EventEmitter {
             ShowProgressIndicator,
             UpdateProgressIndicator,
           } = SharedConstants.Commands.UI;
-          const result = await mainWindow.commandService.remoteCall(ShowUpdateAvailableDialog, updateInfo.version);
+          const result = await this.commandService.remoteCall<{ installAfterDownload: boolean }>(
+            ShowUpdateAvailableDialog,
+            updateInfo.version
+          );
           if (result) {
             // show but don't block on result of progress indicator dialog
-            await mainWindow.commandService.remoteCall(UpdateProgressIndicator, {
+            await this.commandService.remoteCall(UpdateProgressIndicator, {
               label: 'Downloading...',
               progress: 0,
             });
-            await mainWindow.commandService.remoteCall(ShowProgressIndicator);
+            await this.commandService.remoteCall(ShowProgressIndicator);
             const { installAfterDownload = false } = result;
             await AppUpdater.downloadUpdate(installAfterDownload);
           }
@@ -208,7 +214,7 @@ class EmulatorUpdater extends EventEmitter {
       const { userInitiated, updateDownloaded } = AppUpdater;
       if (userInitiated && !updateDownloaded) {
         const { ShowUpdateUnavailableDialog } = SharedConstants.Commands.UI;
-        await mainWindow.commandService.remoteCall(ShowUpdateUnavailableDialog);
+        await this.commandService.remoteCall(ShowUpdateUnavailableDialog);
       }
     } catch (e) {
       // eslint-disable-next-line no-console
@@ -226,7 +232,7 @@ class EmulatorUpdater extends EventEmitter {
       return;
     }
     if (AppUpdater.userInitiated) {
-      await mainWindow.commandService.call(SharedConstants.Commands.Electron.ShowMessageBox, true, {
+      await this.commandService.call(SharedConstants.Commands.Electron.ShowMessageBox, true, {
         title: app.getName(),
         message: `An error occurred while using the updater: ${err}`,
       });
@@ -242,7 +248,7 @@ class EmulatorUpdater extends EventEmitter {
       // update the progress bar component
       const { UpdateProgressIndicator } = SharedConstants.Commands.UI;
       const progressPayload = { label: 'Downloading...', progress: progress.percent };
-      await mainWindow.commandService.remoteCall(UpdateProgressIndicator, progressPayload);
+      await this.commandService.remoteCall(UpdateProgressIndicator, progressPayload);
     } catch (e) {
       // eslint-disable-next-line no-console
       console.error(`An error occurred in the updater's "download-progress" event handler: ${e}`);
@@ -268,7 +274,7 @@ class EmulatorUpdater extends EventEmitter {
           // update the progress indicator
           const { UpdateProgressIndicator } = SharedConstants.Commands.UI;
           const progressPayload = { label: 'Download finished.', progress: 100 };
-          await mainWindow.commandService.remoteCall(UpdateProgressIndicator, progressPayload);
+          await this.commandService.remoteCall(UpdateProgressIndicator, progressPayload);
 
           // send a notification when the update is finished downloading
           const notification = newNotification(
@@ -276,16 +282,16 @@ class EmulatorUpdater extends EventEmitter {
           );
           notification.addButton('Dismiss', () => {
             const { Commands } = SharedConstants;
-            mainWindow.commandService.remoteCall(Commands.Notifications.Remove, notification.id);
+            this.commandService.remoteCall(Commands.Notifications.Remove, notification.id);
           });
           notification.addButton('Restart', async () => {
             try {
               AppUpdater.quitAndInstall();
             } catch (e) {
-              await sendNotificationToClient(newNotification(e), mainWindow.commandService);
+              await sendNotificationToClient(newNotification(e), this.commandService);
             }
           });
-          await sendNotificationToClient(notification, mainWindow.commandService);
+          await sendNotificationToClient(notification, this.commandService);
         }
       } catch (e) {
         // eslint-disable-next-line no-console

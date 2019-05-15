@@ -33,57 +33,32 @@
 
 import { CommandRegistry, CommandRegistryImpl } from '..';
 
-import { Channel, IPC } from '../ipc';
 import { Disposable, DisposableImpl } from '../lifecycle';
 import { uniqueId } from '../utils';
+import { EventEmitter } from 'electron';
 
-export interface CommandService extends DisposableImpl {
-  registry: CommandRegistry;
-
-  call(commandName: string, ...args: any[]): Promise<any>;
-
-  remoteCall(commandName: string, ...args: any[]): Promise<any>;
-
-  on(commandName: string, handler?: Function): Disposable;
-
-  on(event: 'command-not-found', notFoundHandler?: (commandName: string, ...args: any[]) => any);
+interface Sender {
+  send(channel: string, ...args: any[]): void;
 }
 
-export class CommandServiceImpl extends DisposableImpl implements CommandService {
-  private readonly channel: Channel;
+export class CommandServiceImpl extends DisposableImpl {
   private readonly _registry: CommandRegistry;
-  private readonly channelName: string;
-  private readonly ipc: IPC;
+  private readonly ipcListener: EventEmitter;
+  private readonly ipcSender: Sender;
+
   private notFoundHandler: (commandName: string, ...args: any[]) => any;
 
   public get registry() {
     return this._registry;
   }
 
-  constructor(
-    ipc: IPC,
-    channelName: string = 'command-service',
-    registry: CommandRegistry = new CommandRegistryImpl()
-  ) {
+  constructor(ipcListener: EventEmitter, channelName = 'command-service', registry = new CommandRegistryImpl()) {
     super();
 
-    this.ipc = ipc;
-    this.channelName = channelName;
+    this.ipcListener = ipcListener;
+    this.ipcSender = 'send' in ipcListener ? (ipcListener as Sender) : null;
     this._registry = registry;
-    this.channel = new Channel(this.channelName, this.ipc);
-    this.toDispose(this.ipc.registerChannel(this.channel));
-    this.toDispose(
-      this.channel.setListener('call', async (commandName: string, transactionId: string, ...args: any[]) => {
-        try {
-          let result = await this.call<any>(commandName, ...args);
-          result = Array.isArray(result) ? result : [result];
-          this.channel.send(transactionId, true, ...result);
-        } catch (err) {
-          err = err.message ? err.message : err;
-          this.channel.send(transactionId, false, err);
-        }
-      })
-    );
+    ipcListener.on('remote-call', this.onIpcMessage);
   }
 
   public on(event: string, handler: Function): Disposable;
@@ -113,12 +88,12 @@ export class CommandServiceImpl extends DisposableImpl implements CommandService
     }
   }
 
-  public async remoteCall<T>(commandName: string, ...args: any[]): Promise<T | Error> {
+  public async remoteCall<T>(commandName: string, ...args: any[]): Promise<T> {
     const transactionId = uniqueId();
-    this.channel.send('call', commandName, transactionId, ...args);
-    return new Promise<any>((resolve, reject) => {
-      this.channel.setListener(transactionId, (success: boolean, ...responseArgs: any[]) => {
-        this.channel.clearListener(transactionId);
+    return new Promise<T>((resolve, reject) => {
+      // Wait for the response
+      this.ipcListener.once(transactionId, (event: Event, ...args) => {
+        const [success, ...responseArgs] = args;
         if (success) {
           const result = responseArgs.length ? responseArgs.shift() : undefined;
           resolve(result);
@@ -126,6 +101,18 @@ export class CommandServiceImpl extends DisposableImpl implements CommandService
           reject(responseArgs.shift());
         }
       });
+      this.ipcSender.send('remote-call', commandName, transactionId, ...args);
     });
   }
+
+  protected onIpcMessage = async (commandName: string, transactionId: string, ...args: any[]) => {
+    try {
+      let result = await this.call<any>(commandName, ...args);
+      result = Array.isArray(result) ? result : [result];
+      this.ipcSender.send(transactionId, true, ...result);
+    } catch (err) {
+      err = err.message ? err.message : err;
+      this.ipcSender.send(transactionId, false, err);
+    }
+  };
 }

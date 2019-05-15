@@ -31,7 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import * as path from 'path';
-import { setTimeout } from 'timers';
 import * as url from 'url';
 
 import { newNotification, Notification, PersistentSettings, Settings, SharedConstants } from '@bfemulator/app-shared';
@@ -57,11 +56,8 @@ import { sendNotificationToClient } from './utils/sendNotificationToClient';
 import { WindowManager } from './windowManager';
 import { ProtocolHandler } from './protocolHandler';
 import { setOpenUrl } from './data/actions/protocolActions';
-import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
-
-export let mainWindow: Window;
-export let windowManager: WindowManager;
-let splashWindow: Window;
+import { CommandRegistryImpl, CommandServiceImpl } from '@bfemulator/sdk-shared';
+import { CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 // start app startup timer
 const beginStartupTime = Date.now();
@@ -80,40 +76,12 @@ if (app) {
   app.setName('Bot Framework Emulator');
 }
 
-// -----------------------------------------------------------------------------
 let protocolUsed = false;
-const onOpenUrl = function(event: any, url: string): void {
-  event.preventDefault();
-  if (isMac()) {
-    protocolUsed = true;
-    if (mainWindow && mainWindow.webContents) {
-      // the app is already running, send a message containing the url to the renderer process
-      ProtocolHandler.parseProtocolUrlAndDispatch(url);
-    } else {
-      // the app is not yet running, so store the url so the UI can request it later
-      store.dispatch(setOpenUrl(url));
-    }
-  }
-};
 
 // Parse command line
 commandLine.parseArgs();
 
-app.on('will-finish-launching', () => {
-  // On Mac, a protocol handler invocation sends urls via this event
-  app.on('open-url', onOpenUrl);
-});
-
-let fileToOpen: string;
-app.on('open-file', async (event: Event, file: string) => {
-  if (!mainWindow || !mainWindow.commandService) {
-    fileToOpen = file;
-  } else {
-    await openFileFromCommandLine(file, mainWindow.commandService);
-  }
-});
-
-const windowIsOffScreen = function(windowBounds: Rectangle): boolean {
+function windowIsOffScreen(windowBounds: Rectangle): boolean {
   const nearestDisplay = screen.getDisplayMatching(windowBounds).workArea;
   return (
     windowBounds.x > nearestDisplay.x + nearestDisplay.width ||
@@ -121,136 +89,64 @@ const windowIsOffScreen = function(windowBounds: Rectangle): boolean {
     windowBounds.y > nearestDisplay.y + nearestDisplay.height ||
     windowBounds.y + windowBounds.height < nearestDisplay.y
   );
-};
-
-const createMainWindow = async () => {
-  mainWindow = new Window(
-    new BrowserWindow({
-      show: false,
-      backgroundColor: '#f7f7f7',
-      width: 1400,
-      height: 920,
-    })
-  );
-
-  // get reference to bots list in state for comparison against state changes
-  let botsRef = store.getState().bot.botFiles;
-
-  store.subscribe(() => {
-    const state = store.getState();
-
-    // if the bots list changed, write it to disk
-    const bots = state.bot.botFiles.filter(botFile => !!botFile);
-    if (botListsAreDifferent(botsRef, bots)) {
-      const botsJson = { bots };
-      const botsJsonPath = path.join(ensureStoragePath(), 'bots.json');
-
-      try {
-        // write bots list
-        writeFile(botsJsonPath, botsJson);
-        // update cached version to check against for changes
-        botsRef = bots;
-      } catch (e) {
-        // eslint-disable-next-line no-console
-        console.error('Error writing bot list to disk: ', e);
-      }
-    }
-  });
-  loadMainPage();
-
-  mainWindow.browserWindow.setTitle(app.getName());
-  windowManager = new WindowManager();
-
-  AppMenuBuilder.initAppMenu().catch(err => {
-    dialog.showErrorBox('Bot Framework Emulator', `An error occurred while initializing the application menu: ${err}`);
-  });
-};
-
-function loadMainPage() {
-  let page =
-    process.env.ELECTRON_TARGET_URL ||
-    url.format({
-      protocol: 'file',
-      slashes: true,
-      pathname: require.resolve('@bfemulator/client/public/index.html'),
-    });
-
-  if (/^http:\/\//.test(page)) {
-    // eslint-disable-next-line no-console
-    console.warn(`Loading emulator code from ${page}`);
-  }
-
-  mainWindow.browserWindow.loadURL(page);
 }
 
-function createSplashScreen(): void {
-  // create the splash window
-  splashWindow = new Window(
-    new BrowserWindow({
+class SplashScreen {
+  private static splashWindow: BrowserWindow;
+
+  public static show(mainBrowserWindow: BrowserWindow) {
+    if (this.splashWindow) {
+      return;
+    }
+    this.splashWindow = new BrowserWindow({
       show: false,
       width: 400,
       height: 300,
       center: true,
       frame: false,
-    })
-  );
-  // dereference on close
-  splashWindow.browserWindow.once('closed', () => {
-    splashWindow = null;
-  });
-  const splashPage = process.env.ELECTRON_TARGET_URL
-    ? `${process.env.ELECTRON_TARGET_URL}splash.html`
-    : url.format({
-        protocol: 'file',
-        slashes: true,
-        pathname: require.resolve('@bfemulator/client/public/splash.html'),
-      });
-  splashWindow.browserWindow.loadURL(splashPage);
-  splashWindow.browserWindow.once('ready-to-show', () => {
-    // only show if the main window still hasn't loaded
-    const showSplashScreen = !mainWindow || (mainWindow.browserWindow && !mainWindow.browserWindow.isVisible());
-    showSplashScreen && splashWindow.browserWindow.show();
-  });
-}
+    });
+    const splashPage = process.env.ELECTRON_TARGET_URL
+      ? `${process.env.ELECTRON_TARGET_URL}splash.html`
+      : url.format({
+          protocol: 'file',
+          slashes: true,
+          pathname: require.resolve('@bfemulator/client/public/splash.html'),
+        });
+    this.splashWindow.loadURL(splashPage);
+    this.splashWindow.once('ready-to-show', () => {
+      // only show if the main window still hasn't loaded
+      if (!mainBrowserWindow.isVisible()) {
+        this.splashWindow.show();
+      } else {
+        this.hide();
+      }
+    });
+  }
 
-app.on('ready', function() {
-  if (!mainWindow) {
-    createSplashScreen();
-    if (process.argv.find(val => val.includes('--vscode-debugger'))) {
-      // workaround for delay in vscode debugger attach
-      setTimeout(createMainWindow, 5000);
-    } else {
-      createMainWindow();
+  public static hide() {
+    if (!this.splashWindow) {
+      return;
     }
+    this.splashWindow.destroy();
+    this.splashWindow = null;
   }
-});
-
-app.on('activate', async function() {
-  if (!mainWindow) {
-    await createMainWindow();
-  }
-});
+}
 
 class EmulatorApplication {
-  public mainBrowserWindow = new BrowserWindow({ show: false, backgroundColor: '#f7f7f7', width: 1400, height: 920 });
-  public mainWindow = new Window(this.mainBrowserWindow);
+  @CommandServiceInstance()
+  public commandService: CommandServiceImpl;
+  public mainBrowserWindow: BrowserWindow;
+  public mainWindow: Window;
   public windowManager = new WindowManager();
-  public splashWindow = new Window(
-    new BrowserWindow({
-      show: false,
-      width: 400,
-      height: 300,
-      center: true,
-      frame: false,
-    })
-  );
 
   private commandRegistry: CommandRegistryImpl;
+  private botsRef = store.getState().bot.botFiles;
+  private fileToOpen: string;
 
   constructor() {
-    this.initializeBrowserWindowListeners();
     this.initializeNgrokListeners();
     this.initializeAppListeners();
+    store.subscribe(this.storeSubscriptionHandler);
   }
 
   private initializeBrowserWindowListeners() {
@@ -266,14 +162,19 @@ class EmulatorApplication {
     ngrokEmitter.on('expired', this.onNgrokSessionExpired);
   }
 
-  private initializeAppListeners() {}
+  private initializeAppListeners() {
+    app.on('ready', this.onAppReady);
+    app.on('activate', this.onAppActivate);
+    app.on('will-finish-launching', this.onAppWillFinishLaunching);
+    app.on('open-file', this.onAppOpenFile);
+  }
 
   // Main browser window listeners
   private onBrowserWindowClose = async (event: Event) => {
     const { azure } = getSettings();
     if (azure.signedInUser && !azure.persistLogin) {
       event.preventDefault();
-      await mainWindow.commandService.call(SharedConstants.Commands.Azure.SignUserOutOfAzure, false);
+      await this.commandService.call(SharedConstants.Commands.Azure.SignUserOutOfAzure, false);
     }
     saveSettings<PersistentSettings>('server.json', getSettings());
     app.quit();
@@ -287,28 +188,19 @@ class EmulatorApplication {
     if (themeInfo) {
       settingsStore.dispatch(rememberTheme(isHighContrast ? 'high-contrast' : themeInfo.name));
     }
-    mainWindow.webContents.setZoomLevel(zoomLevel);
-    splashWindow.browserWindow.close();
-    mainWindow.browserWindow.show();
+    this.mainWindow.webContents.setZoomLevel(zoomLevel);
+    SplashScreen.hide();
+    this.mainBrowserWindow.show();
 
     // Start auto-updater
     await AppUpdater.startup();
 
     // Renew arm token
-    const { persistLogin, signedInUser } = settingsStore.getState().azure;
-    if (persistLogin && signedInUser) {
-      const result = await this.commandRegistry.getCommand(SharedConstants.Commands.Azure.RetrieveArmToken)(true);
-      if (result && 'access_token' in result) {
-        await mainWindow.commandService.remoteCall(SharedConstants.Commands.UI.ArmTokenReceivedOnStartup, result);
-      } else if (!result) {
-        settingsStore.dispatch(azureLoggedInUserChanged(''));
-        await mainWindow.commandService.call(SharedConstants.Commands.Electron.UpdateFileMenu);
-      }
-    }
+    await this.renewArmToken();
 
-    if (fileToOpen) {
-      await openFileFromCommandLine(fileToOpen, mainWindow.commandService);
-      fileToOpen = null;
+    if (this.fileToOpen) {
+      await openFileFromCommandLine(this.fileToOpen, this.commandService);
+      this.fileToOpen = null;
     }
 
     // log app startup time in seconds
@@ -322,11 +214,11 @@ class EmulatorApplication {
   };
 
   private onBrowserWindowRestore = () => {
-    if (windowIsOffScreen(mainWindow.browserWindow.getBounds())) {
-      const currentBounds = mainWindow.browserWindow.getBounds();
+    if (windowIsOffScreen(this.mainWindow.browserWindow.getBounds())) {
+      const currentBounds = this.mainWindow.browserWindow.getBounds();
       let display = screen.getAllDisplays().find(displayArg => displayArg.id === getSettings().windowState.displayId);
       display = display || screen.getDisplayMatching(currentBounds);
-      mainWindow.browserWindow.setPosition(display.workArea.x, display.workArea.y);
+      this.mainWindow.browserWindow.setPosition(display.workArea.x, display.workArea.y);
       const bounds = {
         displayId: display.id,
         width: currentBounds.width,
@@ -339,12 +231,12 @@ class EmulatorApplication {
   };
 
   private onBrowserWindowClosed = () => {
-    windowManager.closeAll();
-    mainWindow = null;
+    this.windowManager.closeAll();
+    this.mainWindow = null;
   };
 
   private rememberCurrentBounds = () => {
-    const currentBounds = mainWindow.browserWindow.getBounds();
+    const currentBounds = this.mainWindow.browserWindow.getBounds();
     const bounds = {
       displayId: screen.getDisplayMatching(currentBounds).id,
       width: currentBounds.width,
@@ -364,18 +256,120 @@ class EmulatorApplication {
     );
     ngrokNotification.addButton('Dismiss', () => {
       const { Commands } = SharedConstants;
-      mainWindow.commandService.remoteCall(Commands.Notifications.Remove, ngrokNotification.id);
+      this.commandService.remoteCall(Commands.Notifications.Remove, ngrokNotification.id);
     });
     ngrokNotification.addButton('Reconnect', async () => {
       try {
         const { Commands } = SharedConstants;
-        await mainWindow.commandService.call(Commands.Ngrok.Reconnect);
-        mainWindow.commandService.remoteCall(Commands.Notifications.Remove, ngrokNotification.id);
+        await this.commandService.call(Commands.Ngrok.Reconnect);
+        this.commandService.remoteCall(Commands.Notifications.Remove, ngrokNotification.id);
       } catch (e) {
-        await sendNotificationToClient(newNotification(e), mainWindow.commandService);
+        await sendNotificationToClient(newNotification(e), this.commandService);
       }
     });
-    await sendNotificationToClient(ngrokNotification, mainWindow.commandService);
+    await sendNotificationToClient(ngrokNotification, this.commandService);
     Emulator.getInstance().ngrok.broadcastNgrokExpired();
   };
+
+  // App listeners
+  private onAppReady = () => {
+    if (this.mainBrowserWindow) {
+      return;
+    }
+    this.mainBrowserWindow = new BrowserWindow({ show: false, backgroundColor: '#f7f7f7', width: 1400, height: 920 });
+    this.initializeBrowserWindowListeners();
+
+    this.mainWindow = new Window(this.mainBrowserWindow);
+
+    SplashScreen.show(this.mainBrowserWindow);
+    const page =
+      process.env.ELECTRON_TARGET_URL ||
+      url.format({
+        protocol: 'file',
+        slashes: true,
+        pathname: require.resolve('@bfemulator/client/public/index.html'),
+      });
+
+    if (/^http:\/\//.test(page)) {
+      // eslint-disable-next-line no-console
+      console.warn(`Loading emulator code from ${page}`);
+    }
+
+    this.mainBrowserWindow.loadURL(page);
+    this.mainBrowserWindow.setTitle(app.getName());
+  };
+
+  private onAppActivate = () => {
+    this.onAppReady();
+  };
+
+  private onAppWillFinishLaunching = () => {
+    app.on('open-url', this.onAppOpenUrl);
+    AppMenuBuilder.initAppMenu().catch(err => {
+      dialog.showErrorBox(
+        'Bot Framework Emulator',
+        `An error occurred while initializing the application menu: ${err}`
+      );
+    });
+  };
+
+  private onAppOpenUrl = (event: any, url: string): void => {
+    event.preventDefault();
+    if (isMac()) {
+      protocolUsed = true;
+      if (this.mainWindow && this.mainWindow.webContents) {
+        // the app is already running, send a message containing the url to the renderer process
+        ProtocolHandler.parseProtocolUrlAndDispatch(url);
+      } else {
+        // the app is not yet running, so store the url so the UI can request it later
+        store.dispatch(setOpenUrl(url));
+      }
+    }
+  };
+
+  private onAppOpenFile = async (event: Event, file: string) => {
+    if (!this.mainWindow || !this.commandService) {
+      this.fileToOpen = file;
+    } else {
+      await openFileFromCommandLine(file, this.commandService);
+    }
+  };
+
+  private storeSubscriptionHandler = () => {
+    const state = store.getState();
+
+    // if the bots list changed, write it to disk
+    const bots = state.bot.botFiles.filter(botFile => !!botFile);
+    if (botListsAreDifferent(this.botsRef, bots)) {
+      const botsJson = { bots };
+      const botsJsonPath = path.join(ensureStoragePath(), 'bots.json');
+
+      try {
+        // write bots list
+        writeFile(botsJsonPath, botsJson);
+        // update cached version to check against for changes
+        this.botsRef = bots;
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.error('Error writing bot list to disk: ', e);
+      }
+    }
+  };
+
+  private async renewArmToken() {
+    const settingsStore = getSettingsStore();
+    const { persistLogin, signedInUser } = settingsStore.getState().azure;
+    if (persistLogin && signedInUser) {
+      const result = await this.commandRegistry.getCommand(SharedConstants.Commands.Azure.RetrieveArmToken)(true);
+      if (result && 'access_token' in result) {
+        await this.commandService.remoteCall(SharedConstants.Commands.UI.ArmTokenReceivedOnStartup, result);
+      } else if (!result) {
+        settingsStore.dispatch(azureLoggedInUserChanged(''));
+        await this.commandService.call(SharedConstants.Commands.Electron.UpdateFileMenu);
+      }
+    }
+  }
 }
+const emulatorApplication = new EmulatorApplication();
+export const mainWindow = emulatorApplication.mainWindow;
+export const windowManager = emulatorApplication.windowManager;

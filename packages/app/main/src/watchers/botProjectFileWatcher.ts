@@ -40,9 +40,9 @@ import { existsSync, readFileSync, Stats } from 'fs-extra';
 import * as BotActions from '../data/actions/botActions';
 import { getStore } from '../data/store';
 import { getActiveBot, getBotInfoByPath, loadBotWithRetry } from '../botHelpers';
-import { mainWindow } from '../main';
 
 import { FileWatcher } from './fileWatcher';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 function findGitIgnore(directory: string): string {
   const filePath = path.resolve(directory, '.gitignore');
@@ -67,6 +67,9 @@ function readGitIgnore(filePath: string): string[] {
 
 /** Singleton class that will watch one bot project directory at a time */
 export class BotProjectFileWatcher extends FileWatcher {
+  @CommandServiceInstance()
+  private commandService: CommandServiceImpl;
+
   private botFilePath: string;
 
   protected onFileAdd = (file: string, fstats?: Stats): void => {
@@ -93,15 +96,15 @@ export class BotProjectFileWatcher extends FileWatcher {
     const botDir = path.dirname(this.botFilePath);
     getStore().dispatch(BotActions.setActive(bot));
     return Promise.all([
-      mainWindow.commandService.remoteCall(SharedConstants.Commands.Bot.SetActive, bot, botDir),
-      mainWindow.commandService.call(SharedConstants.Commands.Bot.RestartEndpointService),
+      this.commandService.remoteCall(SharedConstants.Commands.Bot.SetActive, bot, botDir),
+      this.commandService.call(SharedConstants.Commands.Bot.RestartEndpointService),
     ]);
   };
 
   public async watch(botFilePath: string): Promise<true> {
     this.botFilePath = botFilePath;
     // wipe the transcript explorer store
-    await mainWindow.commandService.remoteCall(SharedConstants.Commands.File.Clear);
+    await this.commandService.remoteCall(SharedConstants.Commands.File.Clear);
     if (botFilePath) {
       return super.watch(botFilePath);
     }

@@ -142,7 +142,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // Sets the app's title bar
   commandRegistry.registerCommand(Commands.SetTitleBar, (text: string) => {
     if (text && text.length) {
-      mainWindow.browserWindow.setTitle(`${app.getName()} - ${text}`);
+      mainWindow.browserWindow.setTitle(app.getName());
     } else {
       mainWindow.browserWindow.setTitle(app.getName());
     }
