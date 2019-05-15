@@ -330,7 +330,7 @@ describe('<EmulatorContainer/>', () => {
       conversationId: 'someUniqueId|livechat',
       conversationMode: instance.props.mode,
       endpointId: instance.props.endpointId,
-      userId: 'someUserId',
+      userId: 'genericUserId',
     };
     await instance.startNewConversation(undefined, true, false);
 
