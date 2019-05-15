@@ -104,10 +104,14 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
       horizontalSplitter: sizes,
     };
   }, 500);
-
-  componentWillMount() {
+  private shouldStartNewConversation(): boolean {
+    return !!this.props.endpointService || !this.props.document.directLine;
+  }
+  componentDidMount() {
     window.addEventListener('keydown', this.keyboardEventListener);
-    this.startNewConversation();
+    if (this.shouldStartNewConversation()) {
+      this.startNewConversation();
+    }
   }
 
   componentWillUnmount() {
