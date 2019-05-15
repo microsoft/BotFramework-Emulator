@@ -230,6 +230,7 @@ export default class Conversation extends EventEmitter {
       this.botEmulator.facilities.logger.logException(this.conversationId, result.response);
     }
 
+    const { headers, message } = result.response;
     this.botEmulator.facilities.logger.logMessage(
       this.conversationId,
       networkRequestItem(
@@ -242,8 +243,8 @@ export default class Conversation extends EventEmitter {
         '/v3/directline/conversations'
       ),
       networkResponseItem(
-        { ...result.response, id: result.activityId },
-        result.response.headers,
+        { id: result.activityId, message },
+        headers,
         result.statusCode,
         result.status,
         '/v3/directline/conversations'
