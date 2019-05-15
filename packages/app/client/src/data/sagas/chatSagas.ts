@@ -144,10 +144,10 @@ export function* closeConversation(action: ChatAction<DocumentIdPayload>): Itera
   if (chat.directLine) {
     chat.directLine.end(); // stop polling
   }
-  yield call([CommandServiceImpl, CommandServiceImpl.remoteCall], DeleteConversation, conversationId);
   yield put(closeDocument(documentId));
   // remove the webchat store when the document is closed
   yield put(webChatStoreUpdated(documentId, null));
+  yield call([CommandServiceImpl, CommandServiceImpl.remoteCall], DeleteConversation, conversationId);
 }
 
 export function* newChat(action: ChatAction<NewChatPayload>): Iterable<any> {
