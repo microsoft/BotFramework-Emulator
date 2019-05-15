@@ -44,10 +44,11 @@ import {
 import { Chat, ChatProps } from './chat';
 
 const mapStateToProps = (state: RootState, { document }): Partial<ChatProps> => {
-  const currentUserId = state.clientAwareSettings.users.currentUserId;
+  const currentUserId = document.userId || state.clientAwareSettings.users.currentUserId;
   const { documentId } = document;
   return {
-    currentUser: state.clientAwareSettings.users.usersById[currentUserId] || ({} as User),
+    currentUser:
+      state.clientAwareSettings.users.usersById[currentUserId] || ({ id: currentUserId, name: 'User' } as User),
     locale: state.clientAwareSettings.locale || 'en-us',
     debugMode: state.clientAwareSettings.debugMode,
     webSpeechPonyfillFactory: state.chat.webSpeechFactories[documentId],

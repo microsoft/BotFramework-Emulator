@@ -270,6 +270,9 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
 
   private onClickBrowse = async (): Promise<void> => {
     const ngrokPath = await this.props.openBrowseForNgrok();
+    if (ngrokPath === null) {
+      return; // Cancelled browse dialog
+    }
     const change = { ngrokPath };
     this.setState(change);
     this.updateDirtyFlag(change);
