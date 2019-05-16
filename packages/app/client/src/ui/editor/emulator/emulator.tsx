@@ -159,6 +159,8 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
     const stableId = framework.userGUID || conversationDefaults.userId;
     const userId = requireNewUserId ? uniqueIdv4() : stableId;
 
+    await CommandServiceImpl.remoteCall(SharedConstants.Commands.Emulator.SetCurrentUser, userId);
+
     const options = {
       conversationId,
       conversationMode: props.mode,
