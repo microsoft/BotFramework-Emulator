@@ -76,7 +76,7 @@ class EmulatorSettingsImpl implements EmulatorSettings {
 }
 
 class EmulatorSettingsService extends DisposableImpl {
-  private _emulator: EmulatorSettingsImpl;
+  private readonly _emulator: EmulatorSettingsImpl;
 
   get emulator(): EmulatorSettingsImpl {
     return this._emulator;
