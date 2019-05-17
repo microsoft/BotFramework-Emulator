@@ -30,34 +30,25 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+import { Action } from 'redux';
 
 export enum PresentationActions {
   disable = 'PRESENTATION/DISABLE',
   enable = 'PRESENTATION/ENABLE',
 }
 
-export interface EnablePresentationAction {
-  type: PresentationActions.enable;
-  payload: {};
+export interface PresentationAction extends Action {
+  type: PresentationActions;
 }
 
-export interface DisablePresentationAction {
-  type: PresentationActions.disable;
-  payload: {};
-}
-
-export type PresentationAction = EnablePresentationAction | DisablePresentationAction;
-
-export function enable(): EnablePresentationAction {
+export function enable(): PresentationAction {
   return {
     type: PresentationActions.enable,
-    payload: {},
   };
 }
 
-export function disable(): DisablePresentationAction {
+export function disable(): PresentationAction {
   return {
     type: PresentationActions.disable,
-    payload: {},
   };
 }

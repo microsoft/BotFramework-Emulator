@@ -31,12 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { DisposableImpl, LogService as ILogService } from '@bfemulator/sdk-shared';
+import { LogService as ILogService } from '@bfemulator/sdk-shared';
 import { BrowserWindow, WebContents } from 'electron';
 import { LogService } from '../log/logService';
 
-export class Window extends DisposableImpl {
-  private readonly _logService: ILogService;
+export class Window {
+  public readonly logService: ILogService;
 
   get browserWindow(): BrowserWindow {
     return this._browserWindow;
@@ -46,13 +46,7 @@ export class Window extends DisposableImpl {
     return this._browserWindow.webContents;
   }
 
-  get logService(): ILogService {
-    return this._logService;
-  }
-
   constructor(private _browserWindow: BrowserWindow) {
-    super();
-    const logService = (this._logService = new LogService(this));
-    super.toDispose(logService);
+    this.logService = new LogService(this);
   }
 }

@@ -33,7 +33,6 @@
 import { frameworkDefault, FrameworkSettings, newNotification, SharedConstants } from '@bfemulator/app-shared';
 import { call, ForkEffect, put, select, takeEvery } from 'redux-saga/effects';
 
-import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import * as EditorActions from '../action/editorActions';
 import {
   FrameworkSettingsAction,
@@ -46,6 +45,7 @@ import { beginAdd } from '../action/notificationActions';
 import { generateHash } from '../botHelpers';
 import { Document } from '../reducer/editor';
 import { RootState } from '../store';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 export const normalizeSettingsData = async (settings: FrameworkSettings): Promise<FrameworkSettings> => {
   // trim keys that do not belong and generate a hash
@@ -61,34 +61,44 @@ export const activeDocumentSelector = (state: RootState) => {
   return editors[activeEditor].documents[activeDocumentId];
 };
 
-export function* getFrameworkSettings(): IterableIterator<any> {
-  try {
-    const framework = yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Settings.LoadAppSettings);
-    const normalized = yield call(normalizeSettingsData, framework);
-    yield put(frameworkSettingsChanged(normalized));
-  } catch (e) {
-    const errMsg = `Error while loading emulator settings: ${e}`;
-    const notification = newNotification(errMsg);
-    yield put(beginAdd(notification));
-  }
-}
+export class FrameworkSettingsSagas {
+  @CommandServiceInstance()
+  private static commandService: CommandServiceImpl;
 
-export function* saveFrameworkSettings(action: FrameworkSettingsAction<FrameworkSettings>): IterableIterator<any> {
-  try {
-    // trim keys that do not belong and generate a hash
-    const normalized = yield call(normalizeSettingsData, action.payload);
-    yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Settings.SaveAppSettings, normalized);
-    yield put(getFrameworkSettingsAction()); // sync with main - do not assume main hasn't processed this in some way
-    const activeDoc: Document = yield select(activeDocumentSelector);
-    yield put(EditorActions.setDirtyFlag(activeDoc.documentId, false)); // mark as clean
-  } catch (e) {
-    const errMsg = `Error while saving emulator settings: ${e}`;
-    const notification = newNotification(errMsg);
-    yield put(beginAdd(notification));
+  public static *getFrameworkSettings(): IterableIterator<any> {
+    try {
+      const framework = yield FrameworkSettingsSagas.commandService.remoteCall(
+        SharedConstants.Commands.Settings.LoadAppSettings
+      );
+      const normalized = yield call(normalizeSettingsData, framework);
+      yield put(frameworkSettingsChanged(normalized));
+    } catch (e) {
+      const errMsg = `Error while loading emulator settings: ${e}`;
+      const notification = newNotification(errMsg);
+      yield put(beginAdd(notification));
+    }
+  }
+
+  public static *saveFrameworkSettings(action: FrameworkSettingsAction<FrameworkSettings>): IterableIterator<any> {
+    try {
+      // trim keys that do not belong and generate a hash
+      const normalized = yield call(normalizeSettingsData, action.payload);
+      yield FrameworkSettingsSagas.commandService.remoteCall(
+        SharedConstants.Commands.Settings.SaveAppSettings,
+        normalized
+      );
+      yield put(getFrameworkSettingsAction()); // sync with main - do not assume main hasn't processed this in some way
+      const activeDoc: Document = yield select(activeDocumentSelector);
+      yield put(EditorActions.setDirtyFlag(activeDoc.documentId, false)); // mark as clean
+    } catch (e) {
+      const errMsg = `Error while saving emulator settings: ${e}`;
+      const notification = newNotification(errMsg);
+      yield put(beginAdd(notification));
+    }
   }
 }
 
 export function* frameworkSettingsSagas(): IterableIterator<ForkEffect> {
-  yield takeEvery(GET_FRAMEWORK_SETTINGS, getFrameworkSettings);
-  yield takeEvery(SAVE_FRAMEWORK_SETTINGS, saveFrameworkSettings);
+  yield takeEvery(GET_FRAMEWORK_SETTINGS, FrameworkSettingsSagas.getFrameworkSettings);
+  yield takeEvery(SAVE_FRAMEWORK_SETTINGS, FrameworkSettingsSagas.saveFrameworkSettings);
 }

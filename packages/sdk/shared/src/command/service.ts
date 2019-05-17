@@ -33,7 +33,6 @@
 
 import { CommandRegistry, CommandRegistryImpl } from '..';
 
-import { Disposable, DisposableImpl } from '../lifecycle';
 import { uniqueId } from '../utils';
 import { EventEmitter } from 'electron';
 
@@ -41,28 +40,21 @@ interface Sender {
   send(channel: string, ...args: any[]): void;
 }
 
-export class CommandServiceImpl extends DisposableImpl {
-  private readonly _registry: CommandRegistry;
+export class CommandServiceImpl {
+  public readonly registry: CommandRegistry;
   private readonly ipcListener: EventEmitter;
-  private readonly ipcSender: Sender;
+  private ipcSender: Sender;
 
   private notFoundHandler: (commandName: string, ...args: any[]) => any;
 
-  public get registry() {
-    return this._registry;
-  }
-
   constructor(ipcListener: EventEmitter, channelName = 'command-service', registry = new CommandRegistryImpl()) {
-    super();
-
     this.ipcListener = ipcListener;
     this.ipcSender = 'send' in ipcListener ? (ipcListener as Sender) : null;
-    this._registry = registry;
-    ipcListener.on('remote-call', this.onIpcMessage);
+    this.registry = registry;
+    this.initializeListeners();
   }
 
-  public on(event: string, handler: Function): Disposable;
-  public on(event: 'command-not-found', handler: (commandName: string, ...args: any[]) => any) {
+  public on(event: string, handler: (commandName: string, ...args: any[]) => any) {
     if (event === 'command-not-found') {
       this.notFoundHandler = handler;
       return undefined;
@@ -115,4 +107,19 @@ export class CommandServiceImpl extends DisposableImpl {
       this.ipcSender.send(transactionId, false, err);
     }
   };
+
+  private initializeListeners() {
+    this.ipcListener.on('remote-call', this.onIpcMessage);
+    if (process.type === 'browser' && !this.ipcSender) {
+      // We're in main and need the ipcSender from the
+      // render process.
+      this.ipcListener.once('ping', event => {
+        this.ipcSender = event.sender;
+      });
+    } else {
+      // this is the render process and the main
+      // process needs our ipcSender
+      this.ipcSender.send('ping');
+    }
+  }
 }

@@ -53,9 +53,9 @@ import {
   webChatStoreUpdated,
   webSpeechFactoryUpdated,
 } from '../action/chatActions';
-import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { RootState } from '../store';
 import { isSpeechEnabled } from '../../utils';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 const getConversationIdFromDocumentId = (state: RootState, documentId: string) => {
   return (state.chat.chats[documentId] || {}).conversationId;
@@ -102,176 +102,180 @@ const getPreviousBotState = (state: RootState, selectedTrace: Activity): Activit
 const getChatFromDocumentId = (state: RootState, documentId: string): any => {
   return state.chat.chats[documentId];
 };
+export class ChatSagas {
+  @CommandServiceInstance()
+  private static commandService: CommandServiceImpl;
 
-export function* showContextMenuForActivity(action: ChatAction<Activity>): Iterable<any> {
-  const { payload: activity } = action;
-  const previousBotState = yield select(getPreviousBotState, activity);
-  const diffEnabled = activity.valueType.endsWith('botState') && !!previousBotState;
-  const menuItems = [
-    { label: 'Copy text', id: 'copy' },
-    { label: 'Copy json', id: 'json' },
-    { type: 'separator' },
-    { label: 'Compare with previous', id: 'diff', enabled: diffEnabled },
-  ] as MenuItemConstructorOptions[];
+  public static *showContextMenuForActivity(action: ChatAction<Activity>): Iterable<any> {
+    const { payload: activity } = action;
+    const previousBotState = yield select(getPreviousBotState, activity);
+    const diffEnabled = activity.valueType.endsWith('botState') && !!previousBotState;
+    const menuItems = [
+      { label: 'Copy text', id: 'copy' },
+      { label: 'Copy json', id: 'json' },
+      { type: 'separator' },
+      { label: 'Compare with previous', id: 'diff', enabled: diffEnabled },
+    ] as MenuItemConstructorOptions[];
 
-  const { DisplayContextMenu } = SharedConstants.Commands.Electron;
-  const response: { id: string } = yield call(
-    CommandServiceImpl.remoteCall.bind(CommandServiceImpl),
-    DisplayContextMenu,
-    menuItems
-  );
+    const { DisplayContextMenu } = SharedConstants.Commands.Electron;
+    const response: { id: string } = yield call(
+      ChatSagas.commandService.remoteCall.bind(CommandServiceImpl),
+      DisplayContextMenu,
+      menuItems
+    );
 
-  if (!response) {
-    return; // canceled context menu
+    if (!response) {
+      return; // canceled context menu
+    }
+    switch (response.id) {
+      case 'copy':
+        return Electron.clipboard.writeText(ChatSagas.getTextFromActivity(activity));
+
+      case 'json':
+        return Electron.clipboard.writeText(ChatSagas.getTextFromActivity(activity));
+
+      default:
+        yield* ChatSagas.diffWithPreviousBotState(activity);
+    }
   }
-  switch (response.id) {
-    case 'copy':
-      return Electron.clipboard.writeText(getTextFromActivity(activity));
 
-    case 'json':
-      return Electron.clipboard.writeText(JSON.stringify(activity, null, 2));
-
-    default:
-      yield* diffWithPreviousBotState(activity);
+  public static *closeConversation(action: ChatAction<DocumentIdPayload>): Iterable<any> {
+    const conversationId = yield select(getConversationIdFromDocumentId, action.payload.documentId);
+    const { DeleteConversation } = SharedConstants.Commands.Emulator;
+    const { documentId } = action.payload;
+    const chat = yield select(getChatFromDocumentId, documentId);
+    if (chat.directLine) {
+      chat.directLine.end(); // stop polling
+    }
+    yield call([ChatSagas.commandService, ChatSagas.commandService.remoteCall], DeleteConversation, conversationId);
+    yield put(closeDocument(documentId));
+    // remove the webchat store when the document is closed
+    yield put(webChatStoreUpdated(documentId, null));
   }
-}
 
-export function* closeConversation(action: ChatAction<DocumentIdPayload>): Iterable<any> {
-  const conversationId = yield select(getConversationIdFromDocumentId, action.payload.documentId);
-  const { DeleteConversation } = SharedConstants.Commands.Emulator;
-  const { documentId } = action.payload;
-  const chat = yield select(getChatFromDocumentId, documentId);
-  if (chat.directLine) {
-    chat.directLine.end(); // stop polling
+  public static *newChat(action: ChatAction<NewChatPayload>): Iterable<any> {
+    const { documentId } = action.payload;
+    // Create a new webchat store for this documentId
+    yield put(webChatStoreUpdated(documentId, createWebChatStore()));
+    // Each time a new chat is open, retrieve the speech token
+    // if the endpoint is speech enabled and create a bind speech
+    // pony fill factory. This is consumed by WebChat...
+    yield put(webSpeechFactoryUpdated(documentId, null)); // remove the old factory
+    const endpoint: IEndpointService = yield select(getEndpointServiceByDocumentId, documentId);
+    if (!isSpeechEnabled(endpoint)) {
+      return;
+    }
+    yield put(updatePendingSpeechTokenRetrieval(true));
+    // If an existing factory is found, refresh the token
+    const existingFactory: string = yield select(getWebSpeechFactoryForDocumentId, documentId);
+    const { GetSpeechToken: command } = SharedConstants.Commands.Emulator;
+    const token = yield call(
+      [ChatSagas.commandService, ChatSagas.commandService.remoteCall],
+      command,
+      endpoint.id,
+      !!existingFactory
+    );
+    if (token) {
+      const factory = yield call(createCognitiveServicesBingSpeechPonyfillFactory, {
+        authorizationToken: token,
+      });
+      yield put(webSpeechFactoryUpdated(documentId, factory)); // Provide the new factory to the store
+    }
+    yield put(updatePendingSpeechTokenRetrieval(false));
   }
-  yield put(closeDocument(documentId));
-  // remove the webchat store when the document is closed
-  yield put(webChatStoreUpdated(documentId, null));
-  yield call([CommandServiceImpl, CommandServiceImpl.remoteCall], DeleteConversation, conversationId);
-}
 
-export function* newChat(action: ChatAction<NewChatPayload>): Iterable<any> {
-  const { documentId } = action.payload;
-  // Create a new webchat store for this documentId
-  yield put(webChatStoreUpdated(documentId, createWebChatStore()));
-  // Each time a new chat is open, retrieve the speech token
-  // if the endpoint is speech enabled and create a bind speech
-  // pony fill factory. This is consumed by WebChat...
-  yield put(webSpeechFactoryUpdated(documentId, null)); // remove the old factory
-  const endpoint: IEndpointService = yield select(getEndpointServiceByDocumentId, documentId);
-  if (!isSpeechEnabled(endpoint)) {
-    return;
-  }
-  yield put(updatePendingSpeechTokenRetrieval(true));
-  // If an existing factory is found, refresh the token
-  const existingFactory: string = yield select(getWebSpeechFactoryForDocumentId, documentId);
-  const { GetSpeechToken: command } = SharedConstants.Commands.Emulator;
-  const token = yield call(
-    [CommandServiceImpl, CommandServiceImpl.remoteCall],
-    command,
-    endpoint.id,
-    !!existingFactory
-  );
-  if (token) {
-    const factory = yield call(createCognitiveServicesBingSpeechPonyfillFactory, {
-      authorizationToken: token,
-    });
-    yield put(webSpeechFactoryUpdated(documentId, factory)); // Provide the new factory to the store
-  }
-  yield put(updatePendingSpeechTokenRetrieval(false));
-}
+  public static *diffWithPreviousBotState(currentBotState: Activity): Iterable<any> {
+    const previousBotState: Activity = yield select(getPreviousBotState, currentBotState);
 
-export function* diffWithPreviousBotState(currentBotState: Activity): Iterable<any> {
-  const previousBotState: Activity = yield select(getPreviousBotState, currentBotState);
-
-  const lhs = [];
-  const rhs = [];
-  const deltas = diff(previousBotState.value, currentBotState.value);
-  (deltas || []).forEach(diff => {
-    switch (diff.kind) {
-      case 'A':
-        {
-          const { item, path } = diff;
-          path.push(diff.index);
-          if (item.kind === 'D') {
-            lhs.push(path);
-          } else if (item.kind === 'E') {
-            rhs.push(path);
-            lhs.push(path);
-          } else {
-            rhs.push(path);
+    const lhs = [];
+    const rhs = [];
+    const deltas = diff(previousBotState.value, currentBotState.value);
+    (deltas || []).forEach(diff => {
+      switch (diff.kind) {
+        case 'A':
+          {
+            const { item, path } = diff;
+            path.push(diff.index);
+            if (item.kind === 'D') {
+              lhs.push(path);
+            } else if (item.kind === 'E') {
+              rhs.push(path);
+              lhs.push(path);
+            } else {
+              rhs.push(path);
+            }
           }
-        }
-        break;
+          break;
 
-      case 'D':
-        lhs.push(diff.path);
-        break;
+        case 'D':
+          lhs.push(diff.path);
+          break;
 
-      case 'E':
-        rhs.push(diff.path);
-        lhs.push(diff.path);
-        break;
+        case 'E':
+          rhs.push(diff.path);
+          lhs.push(diff.path);
+          break;
 
-      case 'N':
-        rhs.push(diff.path);
-        break;
-    }
-  });
-
-  // Clone the bot state and update the keys to show changes
-  const botStateClone: Activity = JSON.parse(
-    JSON.stringify(currentBotState, (key: string, value: any) => {
-      if (value instanceof Array) {
-        return Object.keys(value).reduce((conversion: any, key) => {
-          conversion['' + key] = value[key];
-          return conversion;
-        }, {});
+        case 'N':
+          rhs.push(diff.path);
+          break;
       }
-      return value;
-    })
-  );
-  botStateClone.valueType = ValueTypes.Diff;
-  // values that were added
-  rhs.forEach(path => {
-    buildDiff('+', path, botStateClone.value, botStateClone.value);
-  });
-  // values that were removed
-  lhs.forEach(path => {
-    buildDiff('-', path, botStateClone.value, previousBotState.value);
-  });
-  const documentId = yield select(getCurrentDocumentId);
-  yield put(setHighlightedObjects(documentId, [previousBotState, currentBotState]));
-  yield put(setInspectorObjects(documentId, botStateClone));
-}
+    });
 
-function getTextFromActivity(activity: Activity): string {
-  if (activity.valueType === ValueTypes.Command) {
-    return activity.value;
-  } else if (activity.valueType === ValueTypes.Activity) {
-    return 'text' in activity.value ? activity.value.text : activity.label;
+    // Clone the bot state and update the keys to show changes
+    const botStateClone: Activity = JSON.parse(
+      JSON.stringify(currentBotState, (key: string, value: any) => {
+        if (value instanceof Array) {
+          return Object.keys(value).reduce((conversion: any, key) => {
+            conversion['' + key] = value[key];
+            return conversion;
+          }, {});
+        }
+        return value;
+      })
+    );
+    botStateClone.valueType = ValueTypes.Diff;
+    // values that were added
+    rhs.forEach(path => {
+      ChatSagas.buildDiff('+', path, botStateClone.value, botStateClone.value);
+    });
+    // values that were removed
+    lhs.forEach(path => {
+      ChatSagas.buildDiff('-', path, botStateClone.value, previousBotState.value);
+    });
+    const documentId = yield select(getCurrentDocumentId);
+    yield put(setHighlightedObjects(documentId, [previousBotState, currentBotState]));
+    yield put(setInspectorObjects(documentId, botStateClone));
   }
-  return activity.text || activity.label || '';
-}
 
-function buildDiff(prependWith: string, path: (string | number)[], target: any, source: any): void {
-  let key;
-  for (let i = 0; i < path.length; i++) {
-    key = path[i];
-    if (key in target && target[key] !== null && typeof target[key] === 'object') {
-      target = target[key];
-      source = source[key];
-    } else {
-      break;
+  private static getTextFromActivity(activity: Activity): string {
+    if (activity.valueType === ValueTypes.Command) {
+      return activity.value;
+    } else if (activity.valueType === ValueTypes.Activity) {
+      return 'text' in activity.value ? activity.value.text : activity.label;
     }
+    return activity.text || activity.label || '';
   }
-  const value = source[key];
-  delete target[key];
-  target[prependWith + key] = value;
+
+  public static buildDiff(prependWith: string, path: (string | number)[], target: any, source: any): void {
+    let key;
+    for (let i = 0; i < path.length; i++) {
+      key = path[i];
+      if (key in target && target[key] !== null && typeof target[key] === 'object') {
+        target = target[key];
+        source = source[key];
+      } else {
+        break;
+      }
+    }
+    const value = source[key];
+    delete target[key];
+    target[prependWith + key] = value;
+  }
 }
 
 export function* chatSagas(): IterableIterator<ForkEffect> {
-  yield takeEvery(ChatActions.showContextMenuForActivity, showContextMenuForActivity);
-  yield takeEvery(ChatActions.closeConversation, closeConversation);
-  yield takeLatest([ChatActions.newChat, ChatActions.clearLog], newChat);
+  yield takeEvery(ChatActions.showContextMenuForActivity, ChatSagas.showContextMenuForActivity);
+  yield takeEvery(ChatActions.closeConversation, ChatSagas.closeConversation);
+  yield takeLatest([ChatActions.newChat, ChatActions.clearLog], ChatSagas.newChat);
 }

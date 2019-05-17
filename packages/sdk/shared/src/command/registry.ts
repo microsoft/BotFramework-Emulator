@@ -30,27 +30,20 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { Disposable } from '../lifecycle';
 
 export interface CommandRegistry {
-  registerCommand(id: string, command: Function): Disposable;
-
+  registerCommand(id: string, command: Function): void;
   getCommand(id: string): Function;
 }
 
 export class CommandRegistryImpl implements CommandRegistry {
   private commands: { [id: string]: Function } = {};
 
-  public registerCommand(id: string, handler?: Function): Disposable {
+  public registerCommand(id: string, handler?: Function): void {
     if (!id || (typeof id === 'string' && typeof handler !== 'function')) {
       throw new Error('invalid command');
     }
-
     this.commands[id] = handler;
-
-    return {
-      dispose: () => delete this.commands[id],
-    };
   }
 
   public getCommand(id: string): Function {

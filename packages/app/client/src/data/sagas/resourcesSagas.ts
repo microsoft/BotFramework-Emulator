@@ -36,7 +36,6 @@ import { IFileService } from 'botframework-config/lib/schema';
 import { ComponentClass } from 'react';
 import { ForkEffect, put, takeEvery } from 'redux-saga/effects';
 
-import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { DialogService } from '../../ui/dialogs/service';
 import { beginAdd } from '../action/notificationActions';
 import {
@@ -47,94 +46,108 @@ import {
   RENAME_RESOURCE,
   ResourcesAction,
 } from '../action/resourcesAction';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
-function* openContextMenuForResource(action: ResourcesAction<IFileService>): IterableIterator<any> {
-  const menuItems = [{ label: 'Open file location', id: 0 }, { label: 'Rename', id: 1 }, { label: 'Delete', id: 2 }];
+export class ResourcesSagas {
+  @CommandServiceInstance()
+  private static commandService: CommandServiceImpl;
 
-  const result = yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.DisplayContextMenu, menuItems);
-  switch (result.id) {
-    case 0:
-      yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.OpenFileLocation, action.payload.path);
-      break;
+  public static *openContextMenuForResource(action: ResourcesAction<IFileService>): IterableIterator<any> {
+    const menuItems = [{ label: 'Open file location', id: 0 }, { label: 'Rename', id: 1 }, { label: 'Delete', id: 2 }];
 
-    case 1:
-      yield put(editResource(action.payload));
-      break;
+    const result = yield ResourcesSagas.commandService.remoteCall(
+      SharedConstants.Commands.Electron.DisplayContextMenu,
+      menuItems
+    );
+    switch (result.id) {
+      case 0:
+        yield ResourcesSagas.commandService.remoteCall(
+          SharedConstants.Commands.Electron.OpenFileLocation,
+          action.payload.path
+        );
+        break;
 
-    case 2:
-      yield* deleteFile(action);
-      break;
+      case 1:
+        yield put(editResource(action.payload));
+        break;
 
-    default:
-      // Canceled context menu
-      break;
+      case 2:
+        yield* ResourcesSagas.deleteFile(action);
+        break;
+
+      default:
+        // Canceled context menu
+        break;
+    }
   }
-}
 
-function* deleteFile(action: ResourcesAction<IFileService>): IterableIterator<any> {
-  const { name, path } = action.payload;
-  const { ShowMessageBox, UnlinkFile } = SharedConstants.Commands.Electron;
-  const result = yield CommandServiceImpl.remoteCall(ShowMessageBox, true, {
-    type: 'info',
-    title: 'Delete this file',
-    buttons: ['Cancel', 'Delete'],
-    defaultId: 1,
-    message: `This action cannot be undone. Are you sure you want to delete ${name}?`,
-    cancelId: 0,
-  });
-  if (result) {
-    yield CommandServiceImpl.remoteCall(UnlinkFile, path);
-  }
-}
-
-function* doRename(action: ResourcesAction<IFileService>) {
-  const { payload } = action;
-  const { ShowMessageBox, RenameFile } = SharedConstants.Commands.Electron;
-  if (!payload.name) {
-    return CommandServiceImpl.remoteCall(ShowMessageBox, true, {
-      type: 'error',
-      title: 'Invalid file name',
-      buttons: ['Ok'],
+  public static *deleteFile(action: ResourcesAction<IFileService>): IterableIterator<any> {
+    const { name, path } = action.payload;
+    const { ShowMessageBox, UnlinkFile } = SharedConstants.Commands.Electron;
+    const result = yield ResourcesSagas.commandService.remoteCall(ShowMessageBox, true, {
+      type: 'info',
+      title: 'Delete this file',
+      buttons: ['Cancel', 'Delete'],
       defaultId: 1,
-      message: `A valid file name must be used`,
+      message: `This action cannot be undone. Are you sure you want to delete ${name}?`,
       cancelId: 0,
     });
+    if (result) {
+      yield ResourcesSagas.commandService.remoteCall(UnlinkFile, path);
+    }
   }
-  yield CommandServiceImpl.remoteCall(RenameFile, payload);
-  yield put(editResource(null));
-}
 
-function* doOpenResource(action: ResourcesAction<IFileService>): IterableIterator<any> {
-  const { OpenChatFile, OpenTranscript } = SharedConstants.Commands.Emulator;
-  const { TrackEvent } = SharedConstants.Commands.Telemetry;
-  const { path, name } = action.payload;
-  if (isChatFile(path)) {
-    yield CommandServiceImpl.call(OpenChatFile, path, true);
-    CommandServiceImpl.remoteCall(TrackEvent, 'chatFile_open').catch(_e => void 0);
-  } else if (isTranscriptFile(path)) {
-    yield CommandServiceImpl.call(OpenTranscript, path, name);
-    CommandServiceImpl.remoteCall(TrackEvent, 'transcriptFile_open', {
-      method: 'resources_pane',
-    }).catch(_e => void 0);
+  public static *doRename(action: ResourcesAction<IFileService>) {
+    const { payload } = action;
+    const { ShowMessageBox, RenameFile } = SharedConstants.Commands.Electron;
+    if (!payload.name) {
+      return ResourcesSagas.commandService.remoteCall(ShowMessageBox, true, {
+        type: 'error',
+        title: 'Invalid file name',
+        buttons: ['Ok'],
+        defaultId: 1,
+        message: `A valid file name must be used`,
+        cancelId: 0,
+      });
+    }
+    yield ResourcesSagas.commandService.remoteCall(RenameFile, payload);
+    yield put(editResource(null));
   }
-  // unknown types just fall into the abyss
-}
 
-function* launchResourcesSettingsModal(action: ResourcesAction<{ dialog: ComponentClass<any> }>) {
-  const result: Partial<BotInfo> = yield DialogService.showDialog(action.payload.dialog);
-  if (result) {
-    try {
-      yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.PatchBotList, result.path, result);
-    } catch (e) {
-      const notification = newNotification('Unable to save resource settings', NotificationType.Error);
-      yield put(beginAdd(notification));
+  public static *doOpenResource(action: ResourcesAction<IFileService>): IterableIterator<any> {
+    const { OpenChatFile, OpenTranscript } = SharedConstants.Commands.Emulator;
+    const { TrackEvent } = SharedConstants.Commands.Telemetry;
+    const { path, name } = action.payload;
+    if (isChatFile(path)) {
+      yield ResourcesSagas.commandService.call(OpenChatFile, path, true);
+      ResourcesSagas.commandService.remoteCall(TrackEvent, 'chatFile_open').catch(_e => void 0);
+    } else if (isTranscriptFile(path)) {
+      yield ResourcesSagas.commandService.call(OpenTranscript, path, name);
+      ResourcesSagas.commandService
+        .remoteCall(TrackEvent, 'transcriptFile_open', {
+          method: 'resources_pane',
+        })
+        .catch();
+    }
+    // unknown types just fall into the abyss
+  }
+
+  public static *launchResourcesSettingsModal(action: ResourcesAction<{ dialog: ComponentClass<any> }>) {
+    const result: Partial<BotInfo> = yield DialogService.showDialog(action.payload.dialog);
+    if (result) {
+      try {
+        yield ResourcesSagas.commandService.remoteCall(SharedConstants.Commands.Bot.PatchBotList, result.path, result);
+      } catch (e) {
+        const notification = newNotification('Unable to save resource settings', NotificationType.Error);
+        yield put(beginAdd(notification));
+      }
     }
   }
 }
 
 export function* resourceSagas(): IterableIterator<ForkEffect> {
-  yield takeEvery(OPEN_CONTEXT_MENU_FOR_RESOURCE, openContextMenuForResource);
-  yield takeEvery(RENAME_RESOURCE, doRename);
-  yield takeEvery(OPEN_RESOURCE, doOpenResource);
-  yield takeEvery(OPEN_RESOURCE_SETTINGS, launchResourcesSettingsModal);
+  yield takeEvery(OPEN_CONTEXT_MENU_FOR_RESOURCE, ResourcesSagas.openContextMenuForResource);
+  yield takeEvery(RENAME_RESOURCE, ResourcesSagas.doRename);
+  yield takeEvery(OPEN_RESOURCE, ResourcesSagas.doOpenResource);
+  yield takeEvery(OPEN_RESOURCE_SETTINGS, ResourcesSagas.launchResourcesSettingsModal);
 }

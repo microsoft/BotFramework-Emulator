@@ -33,7 +33,6 @@
 import { SharedConstants } from '@bfemulator/app-shared';
 import { call, ForkEffect, put, select, takeEvery } from 'redux-saga/effects';
 
-import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { DialogService } from '../../ui/dialogs';
 import {
   AZURE_BEGIN_AUTH_WORKFLOW,
@@ -43,34 +42,40 @@ import {
 } from '../action/azureAuthActions';
 import { AzureAuthState } from '../reducer/azureAuthReducer';
 import { RootState } from '../store';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 const getArmTokenFromState = (state: RootState) => state.azureAuth;
 
-export function* getArmToken(action: AzureAuthAction<AzureAuthWorkflow>): IterableIterator<any> {
-  let azureAuth: AzureAuthState = yield select(getArmTokenFromState);
-  if (azureAuth.access_token) {
+export class AzureAuthSaga {
+  @CommandServiceInstance()
+  private static commandService: CommandServiceImpl;
+
+  public static *getArmToken(action: AzureAuthAction<AzureAuthWorkflow>): IterableIterator<any> {
+    let azureAuth: AzureAuthState = yield select(getArmTokenFromState);
+    if (azureAuth.access_token) {
+      return azureAuth;
+    }
+    const result = yield DialogService.showDialog(action.payload.promptDialog, action.payload.promptDialogProps);
+    if (result !== 1) {
+      // Result must be 1 which is a confirmation to sign in to Azure
+      return result;
+    }
+    const { RetrieveArmToken, PersistAzureLoginChanged } = SharedConstants.Commands.Azure;
+    const { TrackEvent } = SharedConstants.Commands.Telemetry;
+    azureAuth = yield call(this.commandService.remoteCall.bind(CommandServiceImpl), RetrieveArmToken);
+    if (azureAuth && !('error' in azureAuth)) {
+      const persistLogin = yield DialogService.showDialog(action.payload.loginSuccessDialog, azureAuth);
+      yield call(this.commandService.remoteCall.bind(this.commandService), PersistAzureLoginChanged, persistLogin);
+      this.commandService.remoteCall(TrackEvent, 'signIn_success').catch(_e => void 0);
+    } else {
+      yield DialogService.showDialog(action.payload.loginFailedDialog);
+      this.commandService.remoteCall(TrackEvent, 'signIn_failure').catch(_e => void 0);
+    }
+    yield put(azureArmTokenDataChanged(azureAuth.access_token));
     return azureAuth;
   }
-  const result = yield DialogService.showDialog(action.payload.promptDialog, action.payload.promptDialogProps);
-  if (result !== 1) {
-    // Result must be 1 which is a confirmation to sign in to Azure
-    return result;
-  }
-  const { RetrieveArmToken, PersistAzureLoginChanged } = SharedConstants.Commands.Azure;
-  const { TrackEvent } = SharedConstants.Commands.Telemetry;
-  azureAuth = yield call(CommandServiceImpl.remoteCall.bind(CommandServiceImpl), RetrieveArmToken);
-  if (azureAuth && !('error' in azureAuth)) {
-    const persistLogin = yield DialogService.showDialog(action.payload.loginSuccessDialog, azureAuth);
-    yield call(CommandServiceImpl.remoteCall.bind(CommandServiceImpl), PersistAzureLoginChanged, persistLogin);
-    CommandServiceImpl.remoteCall(TrackEvent, 'signIn_success').catch(_e => void 0);
-  } else {
-    yield DialogService.showDialog(action.payload.loginFailedDialog);
-    CommandServiceImpl.remoteCall(TrackEvent, 'signIn_failure').catch(_e => void 0);
-  }
-  yield put(azureArmTokenDataChanged(azureAuth.access_token));
-  return azureAuth;
 }
 
 export function* azureAuthSagas(): IterableIterator<ForkEffect> {
-  yield takeEvery(AZURE_BEGIN_AUTH_WORKFLOW, getArmToken);
+  yield takeEvery(AZURE_BEGIN_AUTH_WORKFLOW, AzureAuthSaga.getArmToken);
 }

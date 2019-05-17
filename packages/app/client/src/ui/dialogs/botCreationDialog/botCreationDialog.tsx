@@ -50,12 +50,12 @@ import * as React from 'react';
 
 import { beginAdd } from '../../../data/action/notificationActions';
 import { store } from '../../../data/store';
-import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
 import { generateBotSecret } from '../../../utils';
 import { ActiveBotHelper } from '../../helpers/activeBotHelper';
 import { DialogService } from '../service';
 
 import * as styles from './botCreationDialog.scss';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 export interface BotCreationDialogState {
   bot: BotConfigWithPath;
@@ -67,6 +67,9 @@ export interface BotCreationDialogState {
 }
 
 export class BotCreationDialog extends React.Component<{}, BotCreationDialogState> {
+  @CommandServiceInstance()
+  public commandService: CommandServiceImpl;
+
   public constructor(props: {}, context: BotCreationDialogState) {
     super(props, context);
 
@@ -321,7 +324,7 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
   private showBotSaveDialog = async (): Promise<any> => {
     const { Commands } = SharedConstants;
     // get a safe bot file name
-    const botFileName = await CommandServiceImpl.remoteCall(Commands.File.SanitizeString, this.state.bot.name);
+    const botFileName = await this.commandService.remoteCall(Commands.File.SanitizeString, this.state.bot.name);
     // TODO - Localization
     const dialogOptions = {
       filters: [
@@ -336,7 +339,7 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
       buttonLabel: 'Save',
     };
 
-    return CommandServiceImpl.remoteCall(Commands.Electron.ShowSaveDialog, dialogOptions);
+    return this.commandService.remoteCall(Commands.Electron.ShowSaveDialog, dialogOptions);
   };
 
   /** Checks the endpoint to see if it has the correct route syntax at the end (/api/messages) */

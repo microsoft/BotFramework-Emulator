@@ -35,10 +35,10 @@ import { connect } from 'react-redux';
 
 import { getBotInfoByPath } from '../../../data/botHelpers';
 import { RootState } from '../../../data/store';
-import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
 import { DialogService } from '../service';
 
 import { ResourcesSettings, ResourcesSettingsProps } from './resourcesSettings';
+import { executeCommand } from '../../../data/action/commandAction';
 
 const mapStateToProps = (state: RootState, ownProps: ResourcesSettingsProps) => {
   const { path } = state.bot.activeBot;
@@ -47,10 +47,12 @@ const mapStateToProps = (state: RootState, ownProps: ResourcesSettingsProps) => 
   return { transcriptsPath, chatsPath, path, ...ownProps };
 };
 
-const mapDispatchToProps = _dispatch => ({
+const mapDispatchToProps = dispatch => ({
   save: (settings: Partial<BotInfo>) => DialogService.hideDialog(settings),
   showOpenDialog: () =>
-    CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.ShowOpenDialog, { properties: ['openDirectory'] }),
+    dispatch(
+      executeCommand(true, SharedConstants.Commands.Electron.ShowOpenDialog, null, { properties: ['openDirectory'] })
+    ),
   cancel: () => DialogService.hideDialog(0),
 });
 export const ResourcesSettingsContainer = connect(

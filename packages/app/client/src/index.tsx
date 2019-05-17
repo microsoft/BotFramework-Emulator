@@ -34,43 +34,22 @@
 import { Provider } from 'react-redux';
 import * as ReactDOM from 'react-dom';
 import * as React from 'react';
-import { newNotification, SharedConstants } from '@bfemulator/app-shared';
+import './commands';
 
 import interceptError from './interceptError';
 import interceptHyperlink from './interceptHyperlink';
 import Main from './ui/shell/mainContainer';
 import { store } from './data/store';
-import { CommandServiceImpl } from './platform/commands/commandServiceImpl';
-import { showWelcomePage } from './data/editorHelpers';
-import { CommandRegistry, registerAllCommands } from './commands';
-import { beginAdd } from './data/action/notificationActions';
-import { globalHandlers } from './utils/eventHandlers';
 import './ui/styles/globals.scss';
 
 interceptError();
 interceptHyperlink();
-registerAllCommands(CommandRegistry);
 
 // Start rendering the UI
 ReactDOM.render(
   React.createElement(Provider, { store }, React.createElement(Main as any)),
   document.getElementById('root')
 );
-
-// Tell the main process we're loaded
-CommandServiceImpl.remoteCall(SharedConstants.Commands.ClientInit.Loaded)
-  .then(async () => {
-    showWelcomePage();
-    // do actions on main side that might open a document, so that they will be active over the welcome screen
-    await CommandServiceImpl.remoteCall(SharedConstants.Commands.ClientInit.PostWelcomeScreen);
-    window.addEventListener('keydown', globalHandlers, true);
-  })
-  .catch(err => {
-    const errMsg = `Error occurred while client was loading: ${err}`;
-    const notification = newNotification(errMsg);
-    store.dispatch(beginAdd(notification));
-    window.removeEventListener('keydown', globalHandlers, true);
-  });
 
 if (module.hasOwnProperty('hot')) {
   (module as any).hot.accept();

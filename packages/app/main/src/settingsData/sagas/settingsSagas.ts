@@ -75,7 +75,7 @@ export class SettingsSagas {
     const { commandService } = this;
     if (hasConversations) {
       const confirmation = yield call(
-        [commandService, commandService.call],
+        [this.commandService, this.commandService.call],
         SharedConstants.Commands.Electron.ShowMessageBox,
         true,
         {

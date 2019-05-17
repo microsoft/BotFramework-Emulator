@@ -59,11 +59,12 @@ jest.mock('electron', () => ({
     getVersion: () => '4.x',
   },
   Menu: {
-    setApplicationMenu: () => void 0,
+    setApplicationMenu: _a => void 0,
     buildFromTemplate: () => void 0,
   },
   dialog: {
-    showMessageBox: () => void 0,
+    showMessageBox: (mainBrowserWindow: any, p: { buttons: string[]; type: string; title: string; message: string }) =>
+      void 0,
     showOpenDialog: () => void 0,
     showSaveDialog: () => void 0,
   },

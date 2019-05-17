@@ -48,11 +48,11 @@ import { ChangeEvent } from 'react';
 import * as React from 'react';
 
 import { getBotInfoByPath } from '../../../data/botHelpers';
-import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
 import { generateBotSecret } from '../../../utils';
 import { ActiveBotHelper } from '../../helpers/activeBotHelper';
 
 import * as styles from './botSettingsEditor.scss';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 export interface BotSettingsEditorProps {
   bot: BotConfigWithPath;
@@ -70,6 +70,9 @@ export interface BotSettingsEditorState extends BotConfigWithPath {
 }
 
 export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, BotSettingsEditorState> {
+  @CommandServiceInstance()
+  private commandService: CommandServiceImpl;
+
   private _generatedSecret: string;
 
   constructor(props: BotSettingsEditorProps, context: BotSettingsEditorState) {
@@ -225,14 +228,14 @@ export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, B
       path: newPath,
       secret: this.state.secret,
     };
-    await CommandServiceImpl.remoteCall(PatchBotList, SharedConstants.TEMP_BOT_IN_MEMORY_PATH, botInfo);
-    await CommandServiceImpl.remoteCall(Save, bot);
+    await this.commandService.remoteCall(PatchBotList, SharedConstants.TEMP_BOT_IN_MEMORY_PATH, botInfo);
+    await this.commandService.remoteCall(Save, bot);
     // need to set the new bot as active now that it is no longer a placeholder bot in memory
     await ActiveBotHelper.setActiveBot(bot);
     this.setState({ ...bot });
 
     if (connectArg && endpointService) {
-      await CommandServiceImpl.call(SharedConstants.Commands.Emulator.NewLiveChat, endpointService);
+      await this.commandService.call(SharedConstants.Commands.Emulator.NewLiveChat, endpointService);
     }
     this.props.cancel();
   };
@@ -243,11 +246,11 @@ export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, B
     // write updated bot entry to bots.json so main side can pick up possible changes to secret
     const botInfo: BotInfo = getBotInfoByPath(bot.path) || {};
     botInfo.secret = this.state.secret;
-    await CommandServiceImpl.remoteCall(PatchBotList, bot.path, botInfo);
+    await this.commandService.remoteCall(PatchBotList, bot.path, botInfo);
 
     // save bot
     try {
-      await CommandServiceImpl.remoteCall(Save, bot);
+      await this.commandService.remoteCall(Save, bot);
     } catch {
       const note = newNotification(
         'There was an error updating your bot settings. ' +
@@ -257,7 +260,7 @@ export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, B
       this.props.sendNotification(note);
       return;
     }
-    await CommandServiceImpl.remoteCall(PatchBotList, bot.path, botInfo);
+    await this.commandService.remoteCall(PatchBotList, bot.path, botInfo);
     this.props.cancel();
   };
 
@@ -265,7 +268,7 @@ export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, B
     // get a safe bot file name
     // TODO - localization
     const { SanitizeString } = SharedConstants.Commands.File;
-    const botFileName = await CommandServiceImpl.remoteCall(SanitizeString, this.state.name);
+    const botFileName = await this.commandService.remoteCall(SanitizeString, this.state.name);
     const dialogOptions = {
       filters: [
         {
@@ -278,7 +281,7 @@ export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, B
       title: 'Save as',
       buttonLabel: 'Save',
     };
-    return CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.ShowSaveDialog, dialogOptions);
+    return this.commandService.remoteCall(SharedConstants.Commands.Electron.ShowSaveDialog, dialogOptions);
   };
 
   private onRevealSecretClick = (): void => {

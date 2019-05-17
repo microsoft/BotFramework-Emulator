@@ -33,6 +33,5 @@
 export * from './command';
 export * from './emulatorApi';
 export * from './extensions';
-export * from './lifecycle';
 export * from './types';
 export * from './utils';

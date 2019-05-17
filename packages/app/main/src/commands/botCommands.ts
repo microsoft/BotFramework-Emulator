@@ -50,16 +50,7 @@ import * as BotActions from '../data/actions/botActions';
 import { setActive } from '../data/actions/botActions';
 import { getStore } from '../data/store';
 import { getStore as getSettingsStore } from '../settingsData/store';
-import {
-  getActiveBot,
-  getBotInfoByPath,
-  loadBotWithRetry,
-  patchBotsJson,
-  pathExistsInRecentBots,
-  removeBotFromList,
-  saveBot,
-  toSavableBot,
-} from '../botHelpers';
+import { BotHelpers } from '../botHelpers';
 import { Emulator } from '../emulator';
 import { debugModeChanged } from '../settingsData/actions/windowStateActions';
 import { TelemetryService } from '../telemetry';
@@ -85,11 +76,11 @@ export class BotCommands {
       transcriptsPath: path.join(dirName, './transcripts'),
       chatsPath: path.join(dirName, './dialogs'),
     };
-    await patchBotsJson(bot.path, botsJsonEntry);
+    await BotHelpers.patchBotsJson(bot.path, botsJsonEntry);
 
     // save the bot
     try {
-      await saveBot(bot);
+      await BotHelpers.saveBot(bot);
     } catch (e) {
       // TODO: make sure these are surfaced on the client side and caught so we can act on them
       // eslint-disable-next-line no-console
@@ -106,7 +97,7 @@ export class BotCommands {
   // Save bot file and cause a bots list write
   @Command(Bot.Save)
   protected async saveBot(bot: BotConfigWithPath) {
-    await saveBot(bot); // Let this propagate up the stack
+    await BotHelpers.saveBot(bot); // Let this propagate up the stack
   }
 
   // ---------------------------------------------------------------------------
@@ -119,7 +110,7 @@ export class BotCommands {
       getSettingsStore().dispatch(debugModeChanged(DebugMode.Normal));
     }
     // try to get the bot secret from bots.json
-    const botInfo = pathExistsInRecentBots(botPath) ? getBotInfoByPath(botPath) : null;
+    const botInfo = BotHelpers.pathExistsInRecentBots(botPath) ? BotHelpers.getBotInfoByPath(botPath) : null;
     if (botInfo) {
       secret = botInfo.secret;
       const dirName = path.dirname(botPath);
@@ -141,7 +132,7 @@ export class BotCommands {
     // load the bot (decrypt with secret if we were able to get it)
     let bot: BotConfigWithPath;
     try {
-      bot = await loadBotWithRetry(botPath, secret);
+      bot = await BotHelpers.loadBotWithRetry(botPath, secret);
     } catch (e) {
       await dialog.showErrorBox('Failed to open the bot', e.message);
     }
@@ -165,7 +156,7 @@ export class BotCommands {
     store.dispatch(BotActions.setActive(bot));
     store.dispatch(BotActions.setDirectory(botDirectory));
 
-    const botInfo = getBotInfoByPath(bot.path) || {};
+    const botInfo = BotHelpers.getBotInfoByPath(bot.path) || {};
     const dirName = path.dirname(bot.path);
 
     const {
@@ -194,7 +185,7 @@ export class BotCommands {
   // Restart emulator endpoint service
   @Command(Bot.RestartEndpointService)
   protected async restartEndpointService() {
-    const bot = getActiveBot();
+    const bot = BotHelpers.getActiveBot();
 
     Emulator.getInstance().framework.server.botEmulator.facilities.endpoints.reset();
 
@@ -244,10 +235,10 @@ export class BotCommands {
     if (!service.id || !service.id.length) {
       service.id = uniqueId();
     }
-    const activeBot = getActiveBot();
-    const botInfo = activeBot && getBotInfoByPath(activeBot.path);
+    const activeBot = BotHelpers.getActiveBot();
+    const botInfo = activeBot && BotHelpers.getBotInfoByPath(activeBot.path);
     if (botInfo) {
-      const botConfig = toSavableBot(activeBot, botInfo.secret);
+      const botConfig = BotHelpers.toSavableBot(activeBot, botInfo.secret);
       const index = botConfig.services.findIndex(s => s.id === service.id && s.type === service.type);
       const existing = botConfig.services[index];
       if (existing) {
@@ -265,7 +256,7 @@ export class BotCommands {
         TelemetryService.trackEvent('service_add', { type: service.type });
       }
       try {
-        await saveBot(botConfig);
+        await BotHelpers.saveBot(botConfig);
         // The file watcher will not pick up this change immediately
         // making the value in the store stale and potentially incorrect
         // so we'll dispatch it right away
@@ -283,14 +274,14 @@ export class BotCommands {
   // Removes an msbot service entry.
   @Command(Bot.RemoveService)
   protected async removeService(serviceType: ServiceTypes, serviceOrId: any) {
-    const activeBot = getActiveBot();
-    const botInfo = activeBot && getBotInfoByPath(activeBot.path);
+    const activeBot = BotHelpers.getActiveBot();
+    const botInfo = activeBot && BotHelpers.getBotInfoByPath(activeBot.path);
     if (botInfo) {
-      const botConfig = toSavableBot(activeBot, botInfo.secret);
+      const botConfig = BotHelpers.toSavableBot(activeBot, botInfo.secret);
       const id = typeof serviceOrId === 'string' ? serviceOrId : serviceOrId.id;
       botConfig.disconnectService(id);
       try {
-        await saveBot(botConfig);
+        await BotHelpers.saveBot(botConfig);
         getStore().dispatch(setActive(botConfig));
         await this.commandService.remoteCall(SharedConstants.Commands.Bot.SetActive, botConfig, botConfig.getPath());
       } catch (e) {
@@ -306,7 +297,7 @@ export class BotCommands {
   @Command(Bot.PatchBotList)
   protected async patchBotList(botPath: string, botInfo: BotInfo): Promise<boolean> {
     // patch bots.json and update the store
-    await patchBotsJson(botPath, botInfo);
+    await BotHelpers.patchBotsJson(botPath, botInfo);
 
     const dirName = path.dirname(botInfo.path);
 
@@ -333,7 +324,7 @@ export class BotCommands {
       cancelId: 0,
     });
     if (result) {
-      await removeBotFromList(botPath).catch();
+      await BotHelpers.removeBotFromList(botPath).catch();
     }
   }
 }

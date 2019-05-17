@@ -39,9 +39,9 @@ import * as EditorActions from '../../../data/action/editorActions';
 import * as ExplorerActions from '../../../data/action/explorerActions';
 import * as NavBarActions from '../../../data/action/navBarActions';
 import { RootState } from '../../../data/store';
-import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
 
 import { NavBarComponent, NavBarProps } from './navBar';
+import { executeCommand } from '../../../data/action/commandAction';
 
 const mapStateToProps = (state: RootState): NavBarProps => ({
   notifications: state.notification.allIds,
@@ -62,9 +62,8 @@ const mapDispatchToProps = (dispatch): NavBarProps => ({
       })
     );
   },
-  trackEvent: (name: string, properties?: { [key: string]: any }) => {
-    CommandServiceImpl.remoteCall(SharedConstants.Commands.Telemetry.TrackEvent, name, properties).catch(_e => void 0);
-  },
+  trackEvent: (name: string, properties?: { [key: string]: any }) =>
+    dispatch(executeCommand(true, SharedConstants.Commands.Telemetry.TrackEvent, null, name, properties)),
 });
 
 export const NavBar = connect(

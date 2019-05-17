@@ -42,16 +42,20 @@ import { resourceSagas } from './resourcesSagas';
 import { servicesExplorerSagas } from './servicesExplorerSagas';
 import { welcomePageSagas } from './welcomePageSagas';
 import { chatSagas } from './chatSagas';
+import { commandSagas } from './commandSagas';
+import { presentationSagas } from './presentationSagas';
 
 export const applicationSagas = [
   azureAuthSagas,
   botSagas,
   chatSagas,
+  commandSagas,
   editorSagas,
   endpointSagas,
   frameworkSettingsSagas,
   navBarSagas,
   notificationSagas,
+  presentationSagas,
   resourceSagas,
   servicesExplorerSagas,
   welcomePageSagas,

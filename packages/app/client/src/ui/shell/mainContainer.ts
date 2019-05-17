@@ -37,6 +37,10 @@ import * as PresentationActions from '../../data/action/presentationActions';
 import { RootState } from '../../data/store';
 
 import { Main, MainProps } from './main';
+import { executeCommand } from '../../data/action/commandAction';
+import { SharedConstants } from '@bfemulator/app-shared';
+import { showWelcomePage } from '../../data/editorHelpers';
+import { globalHandlers } from '../../utils/eventHandlers';
 
 const mapStateToProps = (state: RootState): MainProps => ({
   presentationModeEnabled: state.presentation.enabled,
@@ -51,6 +55,16 @@ const mapDispatchToProps = (dispatch): MainProps => ({
     if (e.key === 'Escape') {
       dispatch(PresentationActions.disable());
     }
+  },
+  applicationMountComplete: async () => {
+    await new Promise(resolve => {
+      dispatch(executeCommand(true, SharedConstants.Commands.ClientInit.Loaded, resolve));
+    });
+    showWelcomePage();
+    await new Promise(resolve => {
+      dispatch(executeCommand(true, SharedConstants.Commands.ClientInit.PostWelcomeScreen, resolve));
+    });
+    window.addEventListener('keydown', globalHandlers, true);
   },
 });
 

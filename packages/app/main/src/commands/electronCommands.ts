@@ -34,9 +34,8 @@ import * as path from 'path';
 
 import * as fs from 'fs-extra';
 import * as Electron from 'electron';
-import { DebugMode, SharedConstants } from '@bfemulator/app-shared';
-import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 import { app, dialog, Menu, MessageBoxOptions } from 'electron';
+import { DebugMode, SharedConstants } from '@bfemulator/app-shared';
 
 import { AppMenuBuilder } from '../appMenuBuilder';
 import { getStore } from '../data/store';
@@ -44,18 +43,19 @@ import { mainWindow } from '../main';
 import { ContextMenuService } from '../services/contextMenuService';
 import { TelemetryService } from '../telemetry';
 import { showOpenDialog, showSaveDialog } from '../utils';
+import { Command } from '@bfemulator/sdk-shared';
 
 const { shell } = Electron;
 
 const store = getStore();
+const Commands = SharedConstants.Commands.Electron;
 
 /** Registers electron commands */
-export function registerCommands(commandRegistry: CommandRegistryImpl) {
-  const Commands = SharedConstants.Commands.Electron;
-
+export class ElectronCommands {
   // ---------------------------------------------------------------------------
   // Show OS-native messsage box
-  commandRegistry.registerCommand(Commands.ShowMessageBox, (modal: boolean, options: MessageBoxOptions) => {
+  @Command(Commands.ShowMessageBox)
+  protected showMessageBox(modal: boolean, options: MessageBoxOptions) {
     options = {
       message: '',
       title: app.getName(),
@@ -63,99 +63,95 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
     };
     const args = modal ? [mainWindow.browserWindow, options] : [options];
     return dialog.showMessageBox.apply(dialog, args);
-  });
+  }
 
   // ---------------------------------------------------------------------------
   // Shows an open dialog and returns a path
-  commandRegistry.registerCommand(
-    Commands.ShowOpenDialog,
-    (dialogOptions: Electron.OpenDialogOptions = {}): false | string => {
-      return showOpenDialog(mainWindow.browserWindow, dialogOptions);
-    }
-  );
+  @Command(Commands.ShowOpenDialog)
+  protected showOpenDialog(dialogOptions: Electron.OpenDialogOptions = {}): false | string {
+    return showOpenDialog(mainWindow.browserWindow, dialogOptions);
+  }
 
   // ---------------------------------------------------------------------------
   // Shows a save dialog and returns a path + filename
-  commandRegistry.registerCommand(
-    Commands.ShowSaveDialog,
-    (dialogOptions: Electron.SaveDialogOptions = {}): string => {
-      return showSaveDialog(mainWindow.browserWindow, dialogOptions);
-    }
-  );
+  @Command(Commands.ShowSaveDialog)
+  protected showSaveDialogWithOptions(dialogOptions: Electron.SaveDialogOptions = {}): string {
+    return showSaveDialog(mainWindow.browserWindow, dialogOptions);
+  }
 
   // ---------------------------------------------------------------------------
   // Builds a new app menu to reflect the updated recent bots list
-  commandRegistry.registerCommand(
-    Commands.UpdateFileMenu,
-    async (): Promise<void> => {
-      AppMenuBuilder.refreshFileMenu();
-      const state = store.getState();
-      const recentBots = state.bot && state.bot.botFiles ? state.bot.botFiles : [];
-      AppMenuBuilder.updateRecentBotsList(recentBots);
-    }
-  );
+  @Command(Commands.UpdateFileMenu)
+  protected async updateFileMenu(): Promise<void> {
+    AppMenuBuilder.refreshFileMenu();
+    const state = store.getState();
+    const recentBots = state.bot && state.bot.botFiles ? state.bot.botFiles : [];
+    AppMenuBuilder.updateRecentBotsList(recentBots);
+  }
 
-  commandRegistry.registerCommand(Commands.UpdateDebugModeMenuItem, async (debugMode: DebugMode) => {
+  @Command(Commands.UpdateDebugModeMenuItem)
+  protected async updateDebugModeMenuItem(debugMode: DebugMode) {
     AppMenuBuilder.updateDebugModeViewMenuItem(debugMode);
-  });
+  }
 
   // ---------------------------------------------------------------------------
   // Builds a new app menu to reflect the updated conversation send activity list
-  commandRegistry.registerCommand(
-    Commands.UpdateConversationMenu,
-    async (clientEditorState: any): Promise<void> => {
-      // get the conversation menu items that we want to update
-      const sendActivityMenuItems = AppMenuBuilder.sendActivityMenuItems;
+  @Command(Commands.UpdateConversationMenu)
+  protected async updateConversationMenu(clientEditorState: any): Promise<void> {
+    // get the conversation menu items that we want to update
+    const sendActivityMenuItems = AppMenuBuilder.sendActivityMenuItems;
 
-      // enable / disable the send activity menu
-      let enabled = false;
-      const { editors = {}, activeEditor = '' } = clientEditorState;
-      const { activeDocumentId = '' } = editors[activeEditor] || {};
+    // enable / disable the send activity menu
+    let enabled = false;
+    const { editors = {}, activeEditor = '' } = clientEditorState;
+    const { activeDocumentId = '' } = editors[activeEditor] || {};
 
-      if (activeDocumentId && editors[activeEditor] && editors[activeEditor].documents) {
-        const activeDocument = editors[activeEditor].documents[activeDocumentId];
-        const { contentType = '' } = activeDocument;
-        enabled = contentType && contentType === SharedConstants.ContentTypes.CONTENT_TYPE_LIVE_CHAT;
-      }
-
-      sendActivityMenuItems.forEach(item => {
-        item.enabled = enabled;
-      });
+    if (activeDocumentId && editors[activeEditor] && editors[activeEditor].documents) {
+      const activeDocument = editors[activeEditor].documents[activeDocumentId];
+      const { contentType = '' } = activeDocument;
+      enabled = contentType && contentType === SharedConstants.ContentTypes.CONTENT_TYPE_LIVE_CHAT;
     }
-  );
+
+    sendActivityMenuItems.forEach(item => {
+      item.enabled = enabled;
+    });
+  }
 
   // ---------------------------------------------------------------------------
   // Toggles app fullscreen mode
-  commandRegistry.registerCommand(
-    Commands.SetFullscreen,
-    async (fullscreen: boolean): Promise<void> => {
-      mainWindow.browserWindow.setFullScreen(fullscreen);
-      if (fullscreen) {
-        Menu.setApplicationMenu(null);
-      } else {
-        await AppMenuBuilder.initAppMenu();
-      }
+  @Command(Commands.SetFullscreen)
+  protected async setFullScreen(fullscreen: boolean): Promise<void> {
+    mainWindow.browserWindow.setFullScreen(fullscreen);
+    if (fullscreen) {
+      Menu.setApplicationMenu(null);
+    } else {
+      await AppMenuBuilder.initAppMenu();
     }
-  );
+  }
 
   // ---------------------------------------------------------------------------
   // Sets the app's title bar
-  commandRegistry.registerCommand(Commands.SetTitleBar, (text: string) => {
+  @Command(Commands.SetTitleBar)
+  protected setTitleBar(text: string) {
     if (text && text.length) {
       mainWindow.browserWindow.setTitle(app.getName());
     } else {
       mainWindow.browserWindow.setTitle(app.getName());
     }
-  });
+  }
 
   // ---------------------------------------------------------------------------
   // Displays the context menu for a given element
-  commandRegistry.registerCommand(Commands.DisplayContextMenu, ContextMenuService.showMenuAndWaitForInput);
+  @Command(Commands.DisplayContextMenu)
+  protected displayContextMenu(...args) {
+    return ContextMenuService.showMenuAndWaitForInput(...args);
+  }
 
   // ---------------------------------------------------------------------------
   // fetches the resource using node-fetch - useful when CORS is enabled on the remote host
   // Returns an array buffer since it's the most versatile data structure.
-  commandRegistry.registerCommand(Commands.FetchRemote, async (url: string, requestInit: RequestInit) => {
+  @Command(Commands.FetchRemote)
+  protected async fetchRemote(url: string, requestInit: RequestInit) {
     const response: {
       buffer?: () => Promise<ArrayBuffer>;
       arrayBuffer?: () => Promise<ArrayBuffer>;
@@ -177,56 +173,51 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
       }
     }
     return null;
-  });
+  }
 
   // ---------------------------------------------------------------------------
   // Opens an external link
-  commandRegistry.registerCommand(Commands.OpenExternal, (url: string) => {
+  @Command(Commands.OpenExternal)
+  protected openExternal(url: string) {
     TelemetryService.trackEvent('app_openLink', { url });
     shell.openExternal(url, { activate: true });
-  });
+  }
 
   // ---------------------------------------------------------------------------
   // Opens and item on the disk in Explorer (win) or Finder (mac)
-  commandRegistry.registerCommand(
-    Commands.OpenFileLocation,
-    (filePath: string): boolean => {
-      const parts = path.parse(filePath);
-      return shell.openItem(path.resolve(parts.dir));
-    }
-  );
+  @Command(Commands.OpenFileLocation)
+  protected openFileLocation(filePath: string): boolean {
+    const parts = path.parse(filePath);
+    return shell.openItem(path.resolve(parts.dir));
+  }
 
   // ---------------------------------------------------------------------------
   // Moves an item to the trash
-  commandRegistry.registerCommand(
-    Commands.UnlinkFile,
-    (filePath: string): boolean => {
-      return shell.moveItemToTrash(path.resolve(filePath));
-    }
-  );
+  @Command(Commands.UnlinkFile)
+  protected unlinkFile(filePath: string): boolean {
+    return shell.moveItemToTrash(path.resolve(filePath));
+  }
 
   // ---------------------------------------------------------------------------
   // Renames a file - the payload must contain the property "path" and "name"
   // This will also rename the file extension if one is provided in the "name" field
-  commandRegistry.registerCommand(
-    Commands.RenameFile,
-    async (info: { path: string; newPath: string; name: string }) => {
-      const { path: existingPath, newPath } = info;
-      let { name } = info;
-      const exists = await fs.pathExists(existingPath);
-      if (!exists) {
-        throw new ReferenceError(`Cannot rename File: ${existingPath} does not exist`);
-      }
-      const parts = path.parse(newPath || existingPath);
-      if (!name) {
-        name = parts.base;
-      }
-      const nameHasExt = path.extname(name);
-      let fullPath = `${parts.dir}/${name}`;
-      if (!nameHasExt) {
-        fullPath += parts.ext;
-      }
-      return fs.rename(existingPath, fullPath); // let any errors propagate up the stack
+  @Command(Commands.RenameFile)
+  protected async renameFile(info: { path: string; newPath: string; name: string }) {
+    const { path: existingPath, newPath } = info;
+    let { name } = info;
+    const exists = await fs.pathExists(existingPath);
+    if (!exists) {
+      throw new ReferenceError(`Cannot rename File: ${existingPath} does not exist`);
     }
-  );
+    const parts = path.parse(newPath || existingPath);
+    if (!name) {
+      name = parts.base;
+    }
+    const nameHasExt = path.extname(name);
+    let fullPath = `${parts.dir}/${name}`;
+    if (!nameHasExt) {
+      fullPath += parts.ext;
+    }
+    return fs.rename(existingPath, fullPath); // let any errors propagate up the stack
+  }
 }

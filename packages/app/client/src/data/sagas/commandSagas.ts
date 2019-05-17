@@ -30,60 +30,35 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+import { call, ForkEffect, put, takeEvery } from 'redux-saga/effects';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
+import { CommandAction, CommandActionPayload, EXECUTE_COMMAND } from '../action/commandAction';
+import { beginAdd } from '../action/notificationActions';
+import { newNotification } from '@bfemulator/app-shared';
 
-import { Disposable, IPC } from '@bfemulator/sdk-shared';
-import { Event, ipcMain, WebContents } from 'electron';
+export class CommandSagas {
+  @CommandServiceInstance()
+  private static commandService: CommandServiceImpl;
 
-export class ElectronIPC extends IPC {
-  private _webContents: WebContents;
-  public get webContents(): WebContents {
-    return this._webContents;
-  }
+  public static *executeCommand(action: CommandAction<CommandActionPayload>): IterableIterator<any> {
+    const { isRemote, commandName, args, resolver } = action.payload;
+    try {
+      const result = isRemote
+        ? yield call([this.commandService, this.commandService.remoteCall], commandName, args)
+        : yield call([this.commandService, this.commandService.call], commandName, args);
 
-  public constructor(webContents: WebContents) {
-    super();
-    this._webContents = webContents;
-  }
-
-  public send(...args: any[]): void {
-    this._webContents.send('ipc:message', ...args);
-  }
-
-  public onMessage(event: Event, ...args: any[]): void {
-    const channelName = args.shift();
-    const channel = super.getChannel(channelName);
-    if (channel) {
-      channel.onMessage(...args);
-    }
-  }
-}
-
-class ElectronIPCServerImpl {
-  private _ipcs: WeakMap<WebContents, ElectronIPC> = new WeakMap<WebContents, ElectronIPC>();
-  private initialized = false;
-
-  public registerIPC(ipc: ElectronIPC): Disposable {
-    this._ipcs.set(ipc.webContents, ipc);
-    this.initialize();
-    return {
-      dispose: () => {
-        this._ipcs.delete(ipc.webContents);
-      },
-    };
-  }
-
-  private initialize(): void {
-    if (this.initialized) {
-      return;
-    }
-    ipcMain.on('ipc:message', (event: Event, ...args) => {
-      const ipc = this._ipcs.get(event.sender);
-      if (ipc) {
-        ipc.onMessage(event, ...args);
+      if (resolver) {
+        resolver(result);
       }
-    });
-    this.initialized = true;
+    } catch (e) {
+      const type = isRemote ? 'remote' : 'local';
+      yield put(
+        beginAdd(newNotification(`An error occurred while executing the ${type} command: ${commandName}\n ${e}`))
+      );
+    }
   }
 }
 
-export const ElectronIPCServer = new ElectronIPCServerImpl();
+export function* commandSagas(): IterableIterator<ForkEffect> {
+  yield takeEvery(EXECUTE_COMMAND, CommandSagas.executeCommand);
+}

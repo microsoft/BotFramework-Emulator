@@ -32,7 +32,7 @@
 //
 
 import { BotInfo, getBotDisplayName, SharedConstants } from '@bfemulator/app-shared';
-import { BotConfigWithPath, CommandRegistryImpl } from '@bfemulator/sdk-shared';
+import { BotConfigWithPath, Command, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 import { IFileService } from 'botframework-config/lib/schema';
 
 import * as BotActions from '../data/action/botActions';
@@ -45,82 +45,106 @@ import {
 } from '../data/action/resourcesAction';
 import { pathExistsInRecentBots } from '../data/botHelpers';
 import { store } from '../data/store';
-import { CommandServiceImpl } from '../platform/commands/commandServiceImpl';
 import { ActiveBotHelper } from '../ui/helpers/activeBotHelper';
+import { newNotification } from '@bfemulator/app-shared';
+import { beginAdd } from '../data/action/notificationActions';
+
+const Commands = SharedConstants.Commands;
 
 /** Registers bot commands */
-export function registerCommands(commandRegistry: CommandRegistryImpl) {
-  const Commands = SharedConstants.Commands;
+export class BotCommands {
+  @CommandServiceInstance()
+  private commandService: CommandServiceImpl;
 
   // ---------------------------------------------------------------------------
   // Switches the current active bot
-  commandRegistry.registerCommand(Commands.Bot.Switch, (bot: BotConfigWithPath | string) => {
+  @Command(Commands.Bot.Switch)
+  protected async switchBot(bot: BotConfigWithPath | string) {
     let numOfServices;
     if (typeof bot !== 'string') {
       numOfServices = bot.services && bot.services.length;
     }
-    CommandServiceImpl.remoteCall(Commands.Telemetry.TrackEvent, 'bot_open', {
-      method: 'bots_list',
-      numOfServices,
-    }).catch(_e => void 0);
-    return ActiveBotHelper.confirmAndSwitchBots(bot);
-  });
+    try {
+      await this.commandService.remoteCall(Commands.Telemetry.TrackEvent, 'bot_open', {
+        method: 'bots_list',
+        numOfServices,
+      });
+      return ActiveBotHelper.confirmAndSwitchBots(bot);
+    } catch (e) {
+      await beginAdd(newNotification(e));
+    }
+  }
 
   // ---------------------------------------------------------------------------
   // Closes the current active bot
-  commandRegistry.registerCommand(Commands.Bot.Close, () => ActiveBotHelper.confirmAndCloseBot());
+  @Command(Commands.Bot.Close)
+  protected async closeBot() {
+    try {
+      await ActiveBotHelper.confirmAndCloseBot();
+    } catch (e) {
+      await beginAdd(newNotification(e));
+    }
+  }
 
   // ---------------------------------------------------------------------------
   // Browse for a .bot file and open it
-  commandRegistry.registerCommand(Commands.Bot.OpenBrowse, () => ActiveBotHelper.confirmAndOpenBotFromFile());
+  @Command(Commands.Bot.OpenBrowse)
+  protected async browseForBotFile() {
+    try {
+      await ActiveBotHelper.confirmAndOpenBotFromFile();
+    } catch (e) {
+      await beginAdd(newNotification(e));
+    }
+  }
 
   // ---------------------------------------------------------------------------
   // Loads the bot on the client side using the activeBotHelper
-  commandRegistry.registerCommand(
-    Commands.Bot.Load,
-    (bot: BotConfigWithPath): Promise<any> => {
-      if (!pathExistsInRecentBots(bot.path)) {
-        // create and switch bots
-        return ActiveBotHelper.confirmAndCreateBot(bot, '');
-      }
-      return ActiveBotHelper.confirmAndSwitchBots(bot);
+  @Command(Commands.Bot.Load)
+  protected loadBot(bot: BotConfigWithPath): Promise<any> {
+    if (!pathExistsInRecentBots(bot.path)) {
+      // create and switch bots
+      return ActiveBotHelper.confirmAndCreateBot(bot, '');
     }
-  );
+    return ActiveBotHelper.confirmAndSwitchBots(bot);
+  }
 
   // ---------------------------------------------------------------------------
   // Syncs the client side list of bots with bots arg (usually called from server side)
-  commandRegistry.registerCommand(
-    Commands.Bot.SyncBotList,
-    async (bots: BotInfo[]): Promise<void> => {
-      store.dispatch(BotActions.loadBotInfos(bots));
-      await CommandServiceImpl.remoteCall(Commands.Electron.UpdateFileMenu);
-    }
-  );
+  @Command(Commands.Bot.SyncBotList)
+  protected async syncBotList(bots: BotInfo[]): Promise<void> {
+    store.dispatch(BotActions.loadBotInfos(bots));
+    await this.commandService.remoteCall(Commands.Electron.UpdateFileMenu);
+  }
 
   // ---------------------------------------------------------------------------
   // Sets a bot as active (called from server-side)
-  commandRegistry.registerCommand(Commands.Bot.SetActive, async (bot: BotConfigWithPath, botDirectory: string) => {
+  @Command(Commands.Bot.SetActive)
+  protected async setActiveBot(bot: BotConfigWithPath, botDirectory: string) {
     store.dispatch(BotActions.setActiveBot(bot));
     store.dispatch(FileActions.setRoot(botDirectory));
     await Promise.all([
-      CommandServiceImpl.remoteCall(Commands.Electron.UpdateFileMenu),
-      CommandServiceImpl.remoteCall(Commands.Electron.SetTitleBar, getBotDisplayName(bot)),
+      this.commandService.remoteCall(Commands.Electron.UpdateFileMenu),
+      this.commandService.remoteCall(Commands.Electron.SetTitleBar, getBotDisplayName(bot)),
     ]);
-  });
+  }
 
-  commandRegistry.registerCommand(Commands.Bot.TranscriptFilesUpdated, (transcripts: IFileService[]) => {
+  @Command(Commands.Bot.TranscriptFilesUpdated)
+  protected transcriptFilesUpdated(transcripts: IFileService[]) {
     store.dispatch(transcriptsUpdated(transcripts));
-  });
+  }
 
-  commandRegistry.registerCommand(Commands.Bot.ChatFilesUpdated, (chatFiles: IFileService[]) => {
+  @Command(Commands.Bot.ChatFilesUpdated)
+  protected chatFilesUpdated(chatFiles: IFileService[]) {
     store.dispatch(chatFilesUpdated(chatFiles));
-  });
+  }
 
-  commandRegistry.registerCommand(Commands.Bot.TranscriptsPathUpdated, (path: string) => {
+  @Command(Commands.Bot.TranscriptsPathUpdated)
+  protected transcriptsPathUpdated(path: string) {
     store.dispatch(transcriptDirectoryUpdated(path));
-  });
+  }
 
-  commandRegistry.registerCommand(Commands.Bot.ChatsPathUpdated, (path: string) => {
+  @Command(Commands.Bot.ChatsPathUpdated)
+  protected chatsPathUpdated(path: string) {
     store.dispatch(chatsDirectoryUpdated(path));
-  });
+  }
 }

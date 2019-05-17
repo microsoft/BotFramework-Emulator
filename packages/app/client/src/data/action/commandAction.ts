@@ -30,6 +30,38 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+import { Action } from 'redux';
 
-export * from './process';
-export * from './websocket';
+export const EXECUTE_COMMAND = 'EXECUTE_COMMAND';
+
+export interface CommandAction<T> extends Action {
+  payload: T;
+}
+
+export interface CommandActionPayload {
+  isRemote: boolean;
+  commandName: string;
+  args: any[];
+  resolver?: Function;
+}
+
+/**
+ * Executes a command and calls the resolve function
+ * with the result when complete.
+ *
+ * @param isRemote
+ * @param commandName
+ * @param resolver
+ * @param args
+ */
+export function executeCommand(
+  isRemote: boolean,
+  commandName,
+  resolver: Function = null,
+  ...args: any[]
+): CommandAction<CommandActionPayload> {
+  return {
+    type: EXECUTE_COMMAND,
+    payload: { isRemote, commandName, resolver, args },
+  };
+}

@@ -533,7 +533,7 @@ export class AppMenuBuilder {
         {
           label: 'About',
           click: () =>
-            Electron.dialog.showMessageBox(mainWindow.mainBrowserWindow, {
+            Electron.dialog.showMessageBox(mainWindow.browserWindow, {
               type: 'info',
               title: appName,
               message: appName + '\r\nversion: ' + version,

@@ -41,7 +41,7 @@ import { sync as mkdirpSync } from 'mkdirp';
 
 import * as BotActions from '../data/actions/botActions';
 import { getStore } from '../data/store';
-import { getActiveBot, getBotInfoByPath, getTranscriptsPath, patchBotsJson, toSavableBot } from '../botHelpers';
+import { BotHelpers } from '../botHelpers';
 import { Emulator } from '../emulator';
 import { mainWindow } from '../main';
 import { dispatch, getStore as getSettingsStore } from '../settingsData/store';
@@ -63,14 +63,14 @@ export class EmulatorCommands {
   // Saves the conversation to a transcript file, with user interaction to set filename.
   @Command(Commands.SaveTranscriptToFile)
   protected async saveTranscriptToFile(valueTypes: number, conversationId: string): Promise<void> {
-    const activeBot: BotConfigWithPath = getActiveBot();
+    const activeBot: BotConfigWithPath = BotHelpers.getActiveBot();
     const conversation = Emulator.getInstance().framework.server.botEmulator.facilities.conversations.conversationById(
       conversationId
     );
     if (!conversation) {
       throw new Error(`${Commands.SaveTranscriptToFile}: Conversation ${conversationId} not found.`);
     }
-    let botInfo = activeBot ? getBotInfoByPath(activeBot.path) : {};
+    let botInfo = activeBot ? BotHelpers.getBotInfoByPath(activeBot.path) : {};
 
     const filename = showSaveDialog(mainWindow.browserWindow, {
       // TODO - Localization
@@ -80,7 +80,7 @@ export class EmulatorCommands {
           extensions: ['transcript'],
         },
       ],
-      defaultPath: getTranscriptsPath(activeBot, conversation),
+      defaultPath: BotHelpers.getTranscriptsPath(activeBot, conversation),
       showsTagField: false,
       title: 'Save conversation transcript',
       buttonLabel: 'Save',
@@ -103,13 +103,13 @@ export class EmulatorCommands {
     const store = getStore();
     const { currentBotDirectory } = store.getState().bot;
     if (!currentBotDirectory && filename && filename.length) {
-      const saveableBot = toSavableBot(activeBot, botInfo.secret);
+      const saveableBot = BotHelpers.toSavableBot(activeBot, botInfo.secret);
       const botDirectory = path.dirname(filename);
       const botPath = path.join(botDirectory, `${activeBot.name}.bot`);
       botInfo = { ...botInfo, path: botPath };
 
       await saveableBot.save(botPath);
-      await patchBotsJson(botPath, botInfo);
+      await BotHelpers.patchBotsJson(botPath, botInfo);
       await botProjectFileWatcher.watch(botPath);
       store.dispatch(BotActions.setDirectory(botDirectory));
     }
@@ -148,7 +148,7 @@ export class EmulatorCommands {
     userId: string,
     activities: CustomActivity[]
   ): void {
-    const activeBot: BotConfigWithPath = getActiveBot();
+    const activeBot: BotConfigWithPath = BotHelpers.getActiveBot();
 
     if (!activeBot) {
       throw new Error('emulator:feed-transcript:deep-link: No active bot.');
@@ -179,7 +179,7 @@ export class EmulatorCommands {
   @Command(Commands.NewTranscript)
   protected newTranscript(conversationId: string): Conversation {
     // get the active bot or mock one
-    let bot: BotConfigWithPath = getActiveBot();
+    let bot: BotConfigWithPath = BotHelpers.getActiveBot();
 
     if (!bot) {
       bot = newBot();

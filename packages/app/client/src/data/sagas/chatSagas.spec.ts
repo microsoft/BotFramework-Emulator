@@ -58,7 +58,7 @@ jest.mock('../store', () => ({
 
 jest.mock('electron', () => {
   return {
-    clipboard: { writeText: () => true },
+    clipboard: { writeText: (textFromActivity: string) => true },
   };
 });
 

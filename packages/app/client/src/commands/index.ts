@@ -31,5 +31,20 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './commandRegistry';
-export * from './registerAllCommands';
+import { BotCommands } from './botCommands';
+import { ElectronCommands } from './electronCommands';
+import { EmulatorCommands } from './emulatorCommands';
+import { FileCommands } from './fileCommands';
+import { NotificationCommands } from './notificationCommands';
+import { SettingsCommands } from './settingsCommands';
+import { UiCommands } from './uiCommands';
+
+export const commands = [
+  new BotCommands(),
+  new ElectronCommands(),
+  new EmulatorCommands(),
+  new FileCommands(),
+  new NotificationCommands(),
+  new SettingsCommands(),
+  new UiCommands(),
+];

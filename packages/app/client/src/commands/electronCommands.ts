@@ -32,36 +32,41 @@
 //
 
 import { SharedConstants } from '@bfemulator/app-shared';
-import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
+import { Command } from '@bfemulator/sdk-shared';
+
+const { Electron } = SharedConstants.Commands;
 
 /** Registers electron commands */
-export function registerCommands(commandRegistry: CommandRegistryImpl) {
-  const { Electron } = SharedConstants.Commands;
+export class ElectronCommands {
   // ---------------------------------------------------------------------------
   // Toggle inspector dev tools for all open inspectors
-  commandRegistry.registerCommand(Electron.ToggleDevTools, () => {
+  @Command(Electron.ToggleDevTools)
+  protected toggleDevTools() {
     window.dispatchEvent(new Event('toggle-inspector-devtools'));
-  });
+  }
 
   // ---------------------------------------------------------------------------
   // An update is ready to install
-  commandRegistry.registerCommand(Electron.UpdateAvailable, (...args: any[]) => {
+  @Command(Electron.UpdateAvailable)
+  protected emulatorUpdateAvailable(...args: any[]) {
     // TODO: Show a notification
     // eslint-disable-next-line no-console
     console.log('Update available', ...args);
-  });
+  }
 
   // ---------------------------------------------------------------------------
   // Application is up to date
-  commandRegistry.registerCommand(Electron.UpdateNotAvailable, () => {
+  @Command(Electron.UpdateNotAvailable)
+  protected emulatorUpdateNotAvailable() {
     // TODO: Show a notification
     // eslint-disable-next-line no-console
     console.log('Application is up to date');
-  });
+  }
 
   // ---------------------------------------------------------------------------
   // Open About dialog
-  commandRegistry.registerCommand(Electron.ShowAboutDialog, () => {
+  @Command(Electron.ShowAboutDialog)
+  protected showAboutDialog() {
     // TODO: Show about dialog (native dialog box)
-  });
+  }
 }

@@ -41,6 +41,7 @@ import CORS from 'restify-cors-middleware';
 import { Emulator } from './emulator';
 import { mainWindow } from './main';
 import { getStore } from './settingsData/store';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 interface ConversationAwareRequest extends Request {
   conversation?: { conversationId?: string };
@@ -48,6 +49,8 @@ interface ConversationAwareRequest extends Request {
 }
 
 export class RestServer {
+  @CommandServiceInstance()
+  private commandService: CommandServiceImpl;
   private readonly router: Server;
 
   // Late binding
@@ -149,7 +152,7 @@ export class RestServer {
     } = getStore().getState();
     conversation.debugMode = debugMode;
 
-    await mainWindow.commandService.remoteCall(
+    await this.commandService.remoteCall(
       SharedConstants.Commands.Emulator.NewLiveChat,
       {
         id,

@@ -39,7 +39,7 @@ import { existsSync, readFileSync, Stats } from 'fs-extra';
 
 import * as BotActions from '../data/actions/botActions';
 import { getStore } from '../data/store';
-import { getActiveBot, getBotInfoByPath, loadBotWithRetry } from '../botHelpers';
+import { BotHelpers } from '../botHelpers';
 
 import { FileWatcher } from './fileWatcher';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
@@ -81,12 +81,12 @@ export class BotProjectFileWatcher extends FileWatcher {
   };
 
   protected onFileChange = async (file: string, fstats?: Stats): Promise<any> => {
-    if (file !== this.botFilePath || !getActiveBot()) {
+    if (file !== this.botFilePath || !BotHelpers.getActiveBot()) {
       return;
     }
     // the bot file changed, we should load it and push it to the store
-    const botInfo = getBotInfoByPath(this.botFilePath) || {};
-    const bot = await loadBotWithRetry(this.botFilePath, botInfo.secret);
+    const botInfo = BotHelpers.getBotInfoByPath(this.botFilePath) || {};
+    const bot = await BotHelpers.loadBotWithRetry(this.botFilePath, botInfo.secret);
     if (!bot) {
       // user dismissed the secret prompt dialog (if it was shown)
       throw new Error('No secret provided to decrypt encrypted bot.');

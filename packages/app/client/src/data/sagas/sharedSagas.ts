@@ -34,14 +34,19 @@
 import { SharedConstants } from '@bfemulator/app-shared';
 import { select } from 'redux-saga/effects';
 
-import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { RootState } from '../store';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 export function editorSelector(state: RootState) {
   return state.editor;
 }
 
-export function* refreshConversationMenu(): IterableIterator<any> {
-  const stateData = yield select(editorSelector);
-  yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.UpdateConversationMenu, stateData);
+export class SharedSagas {
+  @CommandServiceInstance()
+  private static commandService: CommandServiceImpl;
+
+  public static *refreshConversationMenu(): IterableIterator<any> {
+    const stateData = yield select(editorSelector);
+    yield SharedSagas.commandService.remoteCall(SharedConstants.Commands.Electron.UpdateConversationMenu, stateData);
+  }
 }

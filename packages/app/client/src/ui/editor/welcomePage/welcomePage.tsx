@@ -45,11 +45,11 @@ import * as styles from './welcomePage.scss';
 export interface WelcomePageProps {
   accessToken?: string;
   onNewBotClick?: () => void;
-  showOpenBotDialog: () => Promise<any>;
+  showOpenBotDialog: () => void;
   sendNotification?: (error: Error) => void;
   signInWithAzure?: () => void;
   signOutWithAzure?: () => void;
-  switchToBot?: (path: string) => Promise<any>;
+  switchToBot?: (path: string) => void;
   openBotInspectorDocs: () => void;
   debugMode?: number;
 }
@@ -134,19 +134,11 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
   }
 
   private onBotSelected = async (bot: BotInfo) => {
-    try {
-      await this.props.switchToBot(bot.path);
-    } catch (e) {
-      this.props.sendNotification(e);
-    }
+    this.props.switchToBot(bot.path);
   };
 
   private onOpenBotClick = async () => {
-    try {
-      await this.props.showOpenBotDialog();
-    } catch (e) {
-      this.props.sendNotification(e);
-    }
+    this.props.showOpenBotDialog();
   };
 
   private get signInSection(): JSX.Element {
