@@ -32,20 +32,10 @@
 //
 
 import { SharedConstants } from '@bfemulator/app-shared';
-import {
-  CommandRegistryImpl,
-  CommandService,
-  CommandServiceImpl,
-  ExtensionConfig,
-  ExtensionInspector,
-} from '@bfemulator/sdk-shared';
-
-import { ElectronIPC } from './ipc';
+import { CommandRegistryImpl, ExtensionConfig, ExtensionInspector } from '@bfemulator/sdk-shared';
 
 // =============================================================================
 export class Extension {
-  private _ext: CommandService;
-
   public get unid(): string {
     return this._unid;
   }
@@ -54,14 +44,7 @@ export class Extension {
     return this._config;
   }
 
-  public constructor(private _config: ExtensionConfig, private _unid: string) {
-    this._ext = new CommandServiceImpl(ElectronIPC, `ext-${this._unid}`);
-    /*
-    this._ext.remoteCall('ext-ping')
-      .then(reply => console.log(reply))
-      .catch(err => console.log('ping failed', err));
-    */
-  }
+  public constructor(private _config: ExtensionConfig, private _unid: string) {}
 
   public inspectorForObject(obj: any): GetInspectorResult | null {
     const inspectors = this.config.client.inspectors || [];
@@ -72,10 +55,6 @@ export class Extension {
           inspector,
         }
       : null;
-  }
-
-  public call(commandName: string, ...args: any[]): Promise<any> {
-    return this._ext.remoteCall(commandName, ...args);
   }
 }
 
@@ -151,8 +130,6 @@ export interface GetInspectorResult {
 
 // =============================================================================
 export interface ExtensionManager {
-  registerCommands(commandRegistry: CommandRegistryImpl);
-
   addExtension(config: ExtensionConfig, unid: string);
 
   removeExtension(unid: string);

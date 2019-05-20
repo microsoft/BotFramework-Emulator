@@ -33,9 +33,8 @@
 
 import { SharedConstants } from '@bfemulator/app-shared';
 
-import { CommandServiceImpl } from '../platform/commands/commandServiceImpl';
-
 import { globalHandlers } from './eventHandlers';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 const {
   Commands: {
@@ -44,16 +43,43 @@ const {
 } = SharedConstants;
 
 let mockLocalCommandsCalled = [];
-
-jest.mock('../platform/commands/commandServiceImpl', () => ({
-  CommandServiceImpl: {
-    call: async (commandName: string, ...args: any[]) => {
-      mockLocalCommandsCalled.push({ commandName, args: args });
-    },
-  },
+jest.mock('electron', () => ({
+  ipcMain: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+  ipcRenderer: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
 }));
 
 describe('#globalHandlers', () => {
+  let commandService: CommandServiceImpl;
+  beforeAll(() => {
+    const decorator = CommandServiceInstance();
+    const descriptor = decorator({ descriptor: {} }, 'none') as any;
+    commandService = descriptor.descriptor.get();
+
+    commandService.call = (commandName: string, ...args: any[]) => {
+      mockLocalCommandsCalled.push({ commandName, args: args });
+      return true as any;
+    };
+  });
   beforeEach(() => {
     mockLocalCommandsCalled = [];
   });
@@ -102,7 +128,7 @@ describe('#globalHandlers', () => {
 
   it('should send a notification if a command fails', async () => {
     const event = new KeyboardEvent('keydown', { ctrlKey: true, key: 'N' });
-    const spy = jest.spyOn(CommandServiceImpl, 'call').mockRejectedValueOnce('oh noes!');
+    const spy = jest.spyOn(commandService, 'call').mockRejectedValueOnce('oh noes!');
 
     await globalHandlers(event);
     expect(spy).toHaveBeenLastCalledWith('notification:add', {

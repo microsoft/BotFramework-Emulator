@@ -59,6 +59,35 @@ jest.mock('./settingsData/store', () => ({
   getSettings: () => ({ framework: mockSettings }),
 }));
 
+jest.mock('electron', () => ({
+  app: {
+    on: () => void 0,
+    setName: () => void 0,
+  },
+  ipcMain: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+  ipcRenderer: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+}));
+
 describe('AppUpdater', () => {
   let mockTrackEvent;
   const trackEventBackup = TelemetryService.trackEvent;
@@ -130,7 +159,7 @@ describe('AppUpdater', () => {
     expect(AppUpdater.allowPrerelease).toBe(true);
   });
 
-  it('should startup and check for updates', () => {
+  it('should startup and check for updates', async () => {
     mockSettings.usePrereleases = false;
     mockSettings.autoUpdate = true;
 
@@ -143,7 +172,7 @@ describe('AppUpdater', () => {
     const mockCheckForUpdates = jest.fn(_ => Promise.resolve(true));
     AppUpdater.checkForUpdates = mockCheckForUpdates;
 
-    AppUpdater.startup();
+    await AppUpdater.startup();
 
     expect(AppUpdater.autoDownload).toBe(true);
     expect(AppUpdater.allowPrerelease).toBe(false);
@@ -151,7 +180,7 @@ describe('AppUpdater', () => {
     expect(mockAutoUpdater.logger).toBe(null);
 
     // event handlers should have been set up
-    expect(mockOn).toHaveBeenCalledTimes(6);
+    expect(mockOn).toHaveBeenCalledTimes(5);
 
     expect(mockCheckForUpdates).toHaveBeenCalledWith(false);
 

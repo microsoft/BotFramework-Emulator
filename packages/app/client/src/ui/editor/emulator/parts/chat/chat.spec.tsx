@@ -39,7 +39,6 @@ import { ActivityTypes } from 'botframework-schema';
 import { DebugMode, ValueTypes } from '@bfemulator/app-shared';
 import { combineReducers, createStore } from 'redux';
 
-import { CommandServiceImpl } from '../../../../../platform/commands/commandServiceImpl';
 import { EmulatorMode } from '../../emulator';
 import { bot } from '../../../../../data/reducer/bot';
 import { chat } from '../../../../../data/reducer/chat';
@@ -49,6 +48,33 @@ import { clientAwareSettings } from '../../../../../data/reducer/clientAwareSett
 import webChatStyleOptions from './webChatTheme';
 import { ChatContainer } from './chatContainer';
 import { ChatProps } from './chat';
+import { BotCommands } from '../../../../../commands/botCommands';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
+
+jest.mock('electron', () => ({
+  ipcMain: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+  ipcRenderer: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+}));
 
 const mockStore = createStore(combineReducers({ bot, chat, clientAwareSettings, editor }), {
   clientAwareSettings: {
@@ -95,6 +121,14 @@ function render(overrides: Partial<ChatProps> = {}): ReactWrapper {
 }
 
 describe('<ChatContainer />', () => {
+  let commandService: CommandServiceImpl;
+  beforeAll(() => {
+    new BotCommands();
+    const decorator = CommandServiceInstance();
+    const descriptor = decorator({ descriptor: {} }, 'none') as any;
+    commandService = descriptor.descriptor.get();
+  });
+
   describe('when there is no direct line client', () => {
     it('renders a `not connected` message', () => {
       const component = render({ document: {} } as any);
@@ -208,7 +242,7 @@ describe('<ChatContainer />', () => {
 
   describe('speech services', () => {
     it('displays a message when fetching the speech token', () => {
-      (CommandServiceImpl as any).remoteCall = jest.fn();
+      commandService.remoteCall = jest.fn().mockResolvedValueOnce(true);
       const component = render({ pendingSpeechTokenRetrieval: true });
       expect(component.find('div').text()).toEqual('Connecting...');
     });

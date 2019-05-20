@@ -134,7 +134,7 @@ export class ElectronCommands {
   @Command(Commands.SetTitleBar)
   protected setTitleBar(text: string) {
     if (text && text.length) {
-      mainWindow.browserWindow.setTitle(app.getName());
+      mainWindow.browserWindow.setTitle(app.getName() + ' - ' + text);
     } else {
       mainWindow.browserWindow.setTitle(app.getName());
     }

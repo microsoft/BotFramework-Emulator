@@ -39,12 +39,6 @@ import { mount, ReactWrapper } from 'enzyme';
 import { Log, LogProps } from './log';
 import { LogEntry } from './logEntry';
 
-jest.mock('./log.scss', () => ({}));
-jest.mock('../../../../../platform/commands/commandServiceImpl', () => ({
-  call: (...args: any[]) => null,
-  remoteCall: (...args: any[]) => null,
-}));
-
 describe('log component', () => {
   let parent: ReactWrapper;
   let wrapper: ReactWrapper;

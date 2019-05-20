@@ -73,6 +73,6 @@ export class BotNotOpenExplorer extends React.Component<BotNotOpenExplorerProps,
   };
 
   private onOpenBotFileClick = async () => {
-    this.props.openBotFile();
+    await this.props.openBotFile();
   };
 }

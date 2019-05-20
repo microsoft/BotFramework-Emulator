@@ -31,7 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import { DebugMode, SharedConstants } from '@bfemulator/app-shared';
-import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 
 import { CONTENT_TYPE_APP_SETTINGS, DOCUMENT_ID_APP_SETTINGS } from '../constants';
 import { AzureAuthAction, AzureAuthWorkflow, invalidateArmToken } from '../data/action/azureAuthActions';
@@ -47,28 +46,48 @@ import {
   OpenBotDialogContainer,
   SecretPromptDialogContainer,
 } from '../ui/dialogs';
-import { CommandServiceImpl } from '../platform/commands/commandServiceImpl';
 import { ExplorerActions } from '../data/action/explorerActions';
 import { SWITCH_DEBUG_MODE } from '../data/action/debugModeAction';
 import { ActiveBotHelper } from '../ui/helpers/activeBotHelper';
+import { CommandRegistry, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
+import { UiCommands } from './uiCommands';
 
-import { registerCommands } from './uiCommands';
-
-jest.mock('../ui/dialogs', () => ({
-  AzureLoginPromptDialogContainer: class {},
-  AzureLoginSuccessDialogContainer: class {},
-  BotCreationDialog: class {},
-  DialogService: { showDialog: () => Promise.resolve(true) },
-  SecretPromptDialog: class {},
+jest.mock('electron', () => ({
+  ipcMain: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+  ipcRenderer: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
 }));
 
 const Commands = SharedConstants.Commands.UI;
 
 describe('the uiCommands', () => {
-  let registry: CommandRegistryImpl;
+  let commandService: CommandServiceImpl;
+  let registry: CommandRegistry;
   beforeAll(() => {
-    registry = new CommandRegistryImpl();
-    registerCommands(registry);
+    new UiCommands();
+    const decorator = CommandServiceInstance();
+    const descriptor = decorator({ descriptor: {} }, 'none') as any;
+    commandService = descriptor.descriptor.get();
+    registry = commandService.registry;
   });
 
   it('should showExplorer the welcome page when the ShowWelcomePage command is dispatched', async () => {
@@ -78,21 +97,21 @@ describe('the uiCommands', () => {
   });
 
   it('should call DialogService.showDialog when the ShowBotCreationDialog command is dispatched', async () => {
-    const spy = jest.spyOn(DialogService, 'showDialog');
+    const spy = jest.spyOn(DialogService, 'showDialog').mockResolvedValueOnce(true);
     const result = await registry.getCommand(Commands.ShowBotCreationDialog)();
     expect(spy).toHaveBeenCalledWith(BotCreationDialog);
     expect(result).toBe(true);
   });
 
   it('should call DialogService.showDialog when the ShowSecretPromptDialog command is dispatched', async () => {
-    const spy = jest.spyOn(DialogService, 'showDialog');
+    const spy = jest.spyOn(DialogService, 'showDialog').mockResolvedValueOnce(true);
     const result = await registry.getCommand(Commands.ShowSecretPromptDialog)();
     expect(spy).toHaveBeenCalledWith(SecretPromptDialogContainer);
     expect(result).toBe(true);
   });
 
   it('should call DialogService.showDialog when the ShowOpenBotDialog command is dispatched', async () => {
-    const spy = jest.spyOn(DialogService, 'showDialog');
+    const spy = jest.spyOn(DialogService, 'showDialog').mockResolvedValueOnce(true);
     const result = await registry.getCommand(Commands.ShowOpenBotDialog)();
     expect(spy).toHaveBeenCalledWith(OpenBotDialogContainer);
     expect(result).toBe(true);
@@ -138,7 +157,7 @@ describe('the uiCommands', () => {
   });
 
   it('should set the proper href on the theme tag when the SwitchTheme command is dispatched', () => {
-    const remoteCallSpy = jest.spyOn(CommandServiceImpl, 'remoteCall');
+    const remoteCallSpy = jest.spyOn(commandService, 'remoteCall');
     const link = document.createElement('link');
     link.id = 'themeVars';
     document.querySelector('head').appendChild(link);
@@ -186,7 +205,7 @@ describe('the uiCommands', () => {
         dispatchedActions.push(action);
         return action;
       };
-      jest.spyOn(CommandServiceImpl, 'remoteCall').mockRejectedValueOnce('oh noes! ENOTFOUND');
+      jest.spyOn(commandService, 'remoteCall').mockRejectedValueOnce('oh noes! ENOTFOUND');
       await registry.getCommand(Commands.ShowMarkdownPage)('http://localhost', 'Yo!', { navigator: { onLine: true } });
       expect(dispatchedActions.length).toBe(1);
       expect(dispatchedActions[0].payload.meta).toEqual({
@@ -202,7 +221,7 @@ describe('the uiCommands', () => {
         dispatchedActions.push(action);
         return action;
       };
-      jest.spyOn(CommandServiceImpl, 'remoteCall').mockResolvedValueOnce(true);
+      jest.spyOn(commandService, 'remoteCall').mockResolvedValueOnce(true);
       await registry.getCommand(Commands.ShowMarkdownPage)('http://localhost', 'Yo!', { navigator: { onLine: true } });
       expect(dispatchedActions.length).toBe(1);
       expect(dispatchedActions[0].payload).toEqual({

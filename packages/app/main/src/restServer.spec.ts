@@ -34,13 +34,10 @@ import { Emulator } from './emulator';
 import './fetchProxy';
 import { mainWindow } from './main';
 import { RestServer } from './restServer';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 jest.mock('./main', () => ({
   mainWindow: {
-    commandService: {
-      call: async () => true,
-      remoteCall: async () => true,
-    },
     logService: {
       logToChat: () => void 0,
     },
@@ -51,6 +48,32 @@ const mockEmulator = {
     return null;
   },
 };
+
+jest.mock('electron', () => ({
+  ipcMain: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+  ipcRenderer: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+}));
+
 jest.mock('./emulator', () => ({
   Emulator: {
     getInstance: () => {
@@ -60,8 +83,12 @@ jest.mock('./emulator', () => ({
 }));
 
 describe('The restServer', () => {
+  let commandService: CommandServiceImpl;
   let restServer;
   beforeAll(() => {
+    const decorator = CommandServiceInstance();
+    const descriptor = decorator({ descriptor: {} }, 'none') as any;
+    commandService = descriptor.descriptor.get();
     restServer = new RestServer();
   });
 
@@ -114,7 +141,7 @@ describe('The restServer', () => {
   });
 
   it('should create a new conversation and open a new livechat window', async () => {
-    const remoteCallSpy = jest.spyOn(mainWindow.commandService, 'remoteCall').mockResolvedValue(true);
+    const remoteCallSpy = jest.spyOn(commandService, 'remoteCall').mockResolvedValue(true);
     const reportSpy = jest.spyOn(Emulator.getInstance(), 'report');
     const mockConversation = {
       conversationId: '123',
@@ -139,7 +166,7 @@ describe('The restServer', () => {
   });
 
   it('should not create a new conversation when the conversationId contains "transcript"', async () => {
-    const remoteCallSpy = jest.spyOn(mainWindow.commandService, 'remoteCall').mockResolvedValue(true);
+    const remoteCallSpy = jest.spyOn(commandService, 'remoteCall').mockResolvedValue(true);
     const reportSpy = jest.spyOn(Emulator.getInstance(), 'report');
     const mockConversation = {
       conversationId: 'transcript',

@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { LogLevel, textItem } from '@bfemulator/sdk-shared';
+import { CommandServiceImpl, CommandServiceInstance, LogLevel, textItem } from '@bfemulator/sdk-shared';
 import { mount, ReactWrapper } from 'enzyme';
 import * as React from 'react';
 import { Provider } from 'react-redux';
@@ -53,6 +53,7 @@ import { ConnectedServicePickerContainer } from '../../../../shell/explorer/serv
 
 import { LogEntry as LogEntryContainer } from './logEntryContainer';
 import { LogEntry, LogEntryProps, number2, timestamp } from './logEntry';
+import { executeCommand } from '../../../../../data/action/commandAction';
 
 jest.mock('../../../../dialogs', () => ({
   BotCreationDialog: () => ({}),
@@ -62,17 +63,30 @@ jest.mock('./log.scss', () => ({}));
 
 let mockRemoteCallsMade;
 let mockCallsMade;
-jest.mock('../../../../../platform/commands/commandServiceImpl', () => ({
-  CommandServiceImpl: {
-    call: (commandName, ...args) => {
-      mockCallsMade.push({ commandName, args });
-      return Promise.resolve(true);
-    },
-    remoteCall: (commandName, ...args) => {
-      mockRemoteCallsMade.push({ commandName, args });
-      return Promise.resolve(true);
-    },
-  },
+
+jest.mock('electron', () => ({
+  ipcMain: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+  ipcRenderer: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
 }));
 
 describe('logEntry component', () => {
@@ -81,6 +95,21 @@ describe('logEntry component', () => {
   let instance;
   let props: LogEntryProps;
   let mockDispatch;
+
+  let commandService: CommandServiceImpl;
+  beforeAll(() => {
+    const decorator = CommandServiceInstance();
+    const descriptor = decorator({ descriptor: {} }, 'none') as any;
+    commandService = descriptor.descriptor.get();
+    commandService.remoteCall = (commandName: string, ...args: any[]) => {
+      mockRemoteCallsMade.push({ commandName, args });
+      return Promise.resolve(true) as any;
+    };
+    commandService.call = (commandName: string, ...args: any[]) => {
+      mockCallsMade.push({ commandName, args });
+      return Promise.resolve(true) as any;
+    };
+  });
 
   beforeEach(() => {
     mockRemoteCallsMade = [];
@@ -159,14 +188,14 @@ describe('logEntry component', () => {
     const mockInspectableObj = { some: 'data', type: 'message', id: 'someId' };
     instance.inspectAndHighlightInWebchat(mockInspectableObj);
 
-    expect(mockRemoteCallsMade).toHaveLength(1);
-    expect(mockRemoteCallsMade[0].commandName).toBe(SharedConstants.Commands.Telemetry.TrackEvent);
-    expect(mockRemoteCallsMade[0].args).toEqual(['log_inspectActivity', { type: 'message' }]);
+    expect(mockDispatch).toHaveBeenLastCalledWith(
+      executeCommand(true, SharedConstants.Commands.Telemetry.TrackEvent, null, 'log_inspectActivity', {
+        type: 'message',
+      })
+    );
 
     mockInspectableObj.type = undefined;
     instance.inspectAndHighlightInWebchat(mockInspectableObj);
-
-    expect(mockRemoteCallsMade[1].args).toEqual(['log_inspectActivity', { type: '' }]);
   });
 
   it('should highlight an object', () => {

@@ -30,7 +30,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 import { SharedConstants } from '@bfemulator/app-shared';
 import { ServiceTypes } from 'botframework-config/lib/schema';
 
@@ -42,27 +42,46 @@ import {
   AzureLoginSuccessDialogContainer,
   DialogService,
 } from '../../ui/dialogs';
-import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
-import { registerCommands } from '../../commands/uiCommands';
 
 import { azureAuthSagas } from './azureAuthSaga';
 
-jest.mock('../../ui/dialogs', () => ({
-  AzureLoginPromptDialogContainer: () => undefined,
-  AzureLoginSuccessDialogContainer: () => undefined,
-  BotCreationDialog: () => undefined,
-  DialogService: { showDialog: () => Promise.resolve(true) },
-  PostMigrationDialogContainer: () => undefined,
-  SecretPromptDialog: () => undefined,
+jest.mock('electron', () => ({
+  ipcMain: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+  ipcRenderer: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
 }));
 
-jest.mock('../../platform/commands/commandServiceImpl', () => ({
-  CommandServiceImpl: {
-    remoteCall: () => Promise.resolve(true),
-  },
+jest.mock('../../ui/dialogs', () => ({
+  DialogService: { showDialog: () => Promise.resolve(true) },
 }));
 
 describe('The azureAuthSaga', () => {
+  let commandService: CommandServiceImpl;
+  beforeAll(() => {
+    const decorator = CommandServiceInstance();
+    const descriptor = decorator({ descriptor: {} }, 'none') as any;
+    commandService = descriptor.descriptor.get();
+  });
+
   it('should contain a single step if the token in the store is valid', () => {
     store.dispatch(azureArmTokenDataChanged('a valid access_token'));
     const it = azureAuthSagas()
@@ -87,12 +106,6 @@ describe('The azureAuthSaga', () => {
   });
 
   describe('with an invalid token in the store', () => {
-    let registry: CommandRegistryImpl;
-    beforeAll(() => {
-      registry = new CommandRegistryImpl();
-      registerCommands(registry);
-    });
-
     it('should contain just 2 steps when the Azure login dialog prompt is canceled', async () => {
       store.dispatch(azureArmTokenDataChanged(''));
       // @ts-ignore
@@ -133,7 +146,7 @@ describe('The azureAuthSaga', () => {
       store.dispatch(azureArmTokenDataChanged(''));
       // @ts-ignore
       DialogService.showDialog = () => Promise.resolve(1);
-      (CommandServiceImpl as any).remoteCall = () => Promise.resolve(false);
+      jest.spyOn(commandService, 'remoteCall').mockResolvedValueOnce(false);
       const it = azureAuthSagas()
         .next()
         .value.FORK.args[1](
@@ -146,7 +159,7 @@ describe('The azureAuthSaga', () => {
         );
       let val = undefined;
       let ct = 0;
-      const remoteCallSpy = jest.spyOn(CommandServiceImpl, 'remoteCall');
+      const remoteCallSpy = jest.spyOn(commandService, 'remoteCall').mockResolvedValue(true);
       // eslint-disable-next-line no-constant-condition
       while (true) {
         const next = it.next(val);
@@ -165,7 +178,7 @@ describe('The azureAuthSaga', () => {
           }
         } else if ('CALL' in val) {
           val = val.CALL.fn.call(null, val.CALL.args);
-          if (val instanceof Promise) {
+          if (val[Symbol.toStringTag] === 'Promise') {
             val = await val;
             if (ct === 2) {
               // Login was unsuccessful
@@ -184,7 +197,7 @@ describe('The azureAuthSaga', () => {
       store.dispatch(azureArmTokenDataChanged(''));
       // @ts-ignore
       DialogService.showDialog = () => Promise.resolve(1);
-      (CommandServiceImpl as any).remoteCall = args => {
+      commandService.remoteCall = args => {
         switch (args[0]) {
           case SharedConstants.Commands.Azure.RetrieveArmToken:
             // eslint-disable-next-line typescript/camelcase
@@ -194,7 +207,7 @@ describe('The azureAuthSaga', () => {
             return Promise.resolve({ persistLogin: true });
 
           default:
-            return Promise.resolve(false);
+            return Promise.resolve(false) as any;
         }
       };
       const it = azureAuthSagas()
@@ -209,7 +222,7 @@ describe('The azureAuthSaga', () => {
         );
       let val = undefined;
       let ct = 0;
-      const remoteCallSpy = jest.spyOn(CommandServiceImpl, 'remoteCall');
+      const remoteCallSpy = jest.spyOn(commandService, 'remoteCall');
       // eslint-disable-next-line no-constant-condition
       while (true) {
         const next = it.next(val);
@@ -228,13 +241,13 @@ describe('The azureAuthSaga', () => {
           }
         } else if ('CALL' in val) {
           val = val.CALL.fn.call(null, val.CALL.args);
-          if (val instanceof Promise) {
+          if (val[Symbol.toStringTag] === 'Promise') {
             val = await val;
-            if (ct === 2) {
+            if (ct === 3) {
               // Login was successful
               expect(val.access_token).toBe('a valid access_token');
               expect(remoteCallSpy).toHaveBeenCalledWith([SharedConstants.Commands.Azure.RetrieveArmToken]);
-            } else if (ct === 4) {
+            } else if (ct === 5) {
               expect(val.persistLogin).toBe(true);
               expect(remoteCallSpy).toHaveBeenCalledWith([SharedConstants.Commands.Azure.PersistAzureLoginChanged, 1]);
             }

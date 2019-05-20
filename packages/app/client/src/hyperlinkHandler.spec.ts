@@ -33,7 +33,8 @@
 
 import { SharedConstants } from '@bfemulator/app-shared';
 
-import { navigate } from './hyperlinkHandler';
+import { HyperlinkHandler } from './hyperlinkHandler';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 let mockParse;
 jest.mock('url', () => ({
@@ -41,23 +42,45 @@ jest.mock('url', () => ({
     return mockParse;
   },
 }));
+jest.mock('electron', () => ({
+  ipcMain: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+  ipcRenderer: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+}));
 
 const mockUniqueId = 'id1234';
-jest.mock('@bfemulator/sdk-shared', () => ({
+jest.mock('@bfemulator/sdk-shared/build/utils/misc', () => ({
   uniqueId: () => mockUniqueId,
 }));
 
 let mockRemoteCallsMade;
-let mockRemoteCall;
-jest.mock('./platform/commands/commandServiceImpl', () => ({
-  CommandServiceImpl: {
-    get remoteCall() {
-      return mockRemoteCall;
-    },
-  },
-}));
 
 describe('hyperlinkHandler', () => {
+  let commandService: CommandServiceImpl;
+  beforeAll(() => {
+    const decorator = CommandServiceInstance();
+    const descriptor = decorator({ descriptor: {} }, 'none') as any;
+    commandService = descriptor.descriptor.get();
+  });
   beforeEach(() => {
     mockParse = jest.fn(url => {
       if (url) {
@@ -69,7 +92,7 @@ describe('hyperlinkHandler', () => {
     });
     mockRemoteCallsMade = [];
     (window as any)._openExternal.mockClear();
-    mockRemoteCall = jest.fn((commandName: string, ...args: any[]) => {
+    commandService.remoteCall = jest.fn((commandName: string, ...args: any[]) => {
       mockRemoteCallsMade.push({ commandName, args });
       return Promise.resolve(true);
     });
@@ -77,7 +100,7 @@ describe('hyperlinkHandler', () => {
 
   it('should navigate to an emulated ouath url', async () => {
     const url = 'oauth://someoauthurl.com/auth&&&ending';
-    await navigate(url);
+    await HyperlinkHandler.navigate(url);
 
     expect(mockRemoteCallsMade).toHaveLength(1);
     expect(mockRemoteCallsMade[0].commandName).toBe(SharedConstants.Commands.OAuth.SendTokenResponse);
@@ -86,7 +109,7 @@ describe('hyperlinkHandler', () => {
 
   it('should navigate to an ouath url', async () => {
     const url = 'oauthlink://someoauthurl.com/auth&&&ending';
-    await navigate(url);
+    await HyperlinkHandler.navigate(url);
 
     expect(mockRemoteCallsMade).toHaveLength(1);
     expect(mockRemoteCallsMade[0].commandName).toBe(SharedConstants.Commands.OAuth.CreateOAuthWindow);
@@ -95,7 +118,7 @@ describe('hyperlinkHandler', () => {
 
   it('should open a data url', async () => {
     const url = 'data:image/png;base64;somedata';
-    await navigate(url);
+    await HyperlinkHandler.navigate(url);
 
     expect(mockRemoteCallsMade).toHaveLength(1);
     expect(mockRemoteCallsMade[0].commandName).toBe(SharedConstants.Commands.Telemetry.TrackEvent);
@@ -105,7 +128,7 @@ describe('hyperlinkHandler', () => {
 
   it('should open a normal url', async () => {
     const url = 'https://aka.ms/bot-framework-emulator';
-    await navigate(url);
+    await HyperlinkHandler.navigate(url);
 
     expect(mockRemoteCallsMade).toHaveLength(1);
     expect(mockRemoteCallsMade[0].commandName).toBe(SharedConstants.Commands.Telemetry.TrackEvent);
@@ -119,7 +142,7 @@ describe('hyperlinkHandler', () => {
       throw new Error();
     });
     const url = '';
-    await navigate(url);
+    await HyperlinkHandler.navigate(url);
 
     expect(mockRemoteCallsMade).toHaveLength(1);
     expect(mockRemoteCallsMade[0].commandName).toBe(SharedConstants.Commands.Telemetry.TrackEvent);

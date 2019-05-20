@@ -36,19 +36,47 @@ import { select } from 'redux-saga/effects';
 
 import { RootState } from '../store';
 
-import { editorSelector, refreshConversationMenu } from './sharedSagas';
+import { editorSelector, SharedSagas } from './sharedSagas';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
-let mockRemoteCommandsCalled = [];
-jest.mock('../../platform/commands/commandServiceImpl', () => ({
-  CommandServiceImpl: {
-    remoteCall: async (commandName: string, ...args: any[]) => {
-      mockRemoteCommandsCalled.push({ commandName, args: args });
-    },
-  },
+jest.mock('electron', () => ({
+  ipcMain: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+  ipcRenderer: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
 }));
 
 describe('The sharedSagas', () => {
   const editorState = { activeEditor: 'primary' };
+  let mockRemoteCommandsCalled = [];
+  let commandService: CommandServiceImpl;
+  beforeAll(() => {
+    const decorator = CommandServiceInstance();
+    const descriptor = decorator({ descriptor: {} }, 'none') as any;
+    commandService = descriptor.descriptor.get();
+    commandService.remoteCall = async (commandName: string, ...args: any[]) => {
+      mockRemoteCommandsCalled.push({ commandName, args: args });
+      return true as any;
+    };
+  });
 
   beforeEach(() => {
     mockRemoteCommandsCalled = [];
@@ -61,7 +89,7 @@ describe('The sharedSagas', () => {
   });
 
   it('should refresh the conversation menu', () => {
-    const gen = refreshConversationMenu();
+    const gen = SharedSagas.refreshConversationMenu();
 
     const editorSelection = gen.next().value;
     expect(editorSelection).toEqual(select(editorSelector));

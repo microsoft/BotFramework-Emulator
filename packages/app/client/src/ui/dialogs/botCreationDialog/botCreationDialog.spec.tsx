@@ -34,17 +34,41 @@
 import { mount } from 'enzyme';
 import * as React from 'react';
 
-import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
 import { ActiveBotHelper } from '../../helpers/activeBotHelper';
 
 import { BotCreationDialog, BotCreationDialogState } from './botCreationDialog';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
-jest.mock('./botCreationDialog.scss', () => ({}));
 jest.mock('../index', () => null);
 jest.mock('../../../utils', () => ({
   generateBotSecret: () => {
     return Math.random() + '';
   },
+}));
+
+jest.mock('electron', () => ({
+  ipcMain: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+  ipcRenderer: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
 }));
 
 jest.mock('../../helpers/activeBotHelper', () => ({
@@ -54,6 +78,13 @@ jest.mock('../../helpers/activeBotHelper', () => ({
 }));
 
 describe('BotCreationDialog tests', () => {
+  let commandService: CommandServiceImpl;
+  beforeAll(() => {
+    const decorator = CommandServiceInstance();
+    const descriptor = decorator({ descriptor: {} }, 'none') as any;
+    commandService = descriptor.descriptor.get();
+  });
+
   let testWrapper;
   beforeEach(() => {
     testWrapper = mount(<BotCreationDialog />);
@@ -174,7 +205,7 @@ describe('BotCreationDialog tests', () => {
 
   it('should save and connect', async () => {
     const instance = testWrapper.instance();
-    const remoteCallSpy = jest.spyOn(CommandServiceImpl, 'remoteCall').mockResolvedValue('some/path');
+    const remoteCallSpy = jest.spyOn(commandService, 'remoteCall').mockResolvedValue('some/path');
     const confirmAndCreateSpy = jest.spyOn(ActiveBotHelper, 'confirmAndCreateBot').mockResolvedValue(true);
     await instance.onSaveAndConnect();
     expect(remoteCallSpy).toHaveBeenCalledWith('shell:showExplorer-save-dialog', {

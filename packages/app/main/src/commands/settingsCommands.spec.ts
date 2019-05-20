@@ -32,13 +32,12 @@
 //
 
 import { SharedConstants } from '@bfemulator/app-shared';
-import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 
 import { TelemetryService } from '../telemetry';
 import { setFramework } from '../settingsData/actions/frameworkActions';
 import { addSavedBotUrl } from '../settingsData/actions/savedBotUrlsActions';
-
-import { registerCommands } from './settingsCommands';
+import { CommandRegistry, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
+import { SettingsCommands } from './settingsCommands';
 
 const mockSettings = { framework: { ngrokPath: 'path/to/ngrok.exe' } };
 let mockDispatch;
@@ -49,8 +48,30 @@ jest.mock('../settingsData/store', () => ({
   getSettings: () => mockSettings,
 }));
 
-const mockRegistry = new CommandRegistryImpl();
-registerCommands(mockRegistry);
+jest.mock('electron', () => ({
+  ipcMain: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+  ipcRenderer: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+}));
 
 describe('The settings commands', () => {
   let mockTrackEvent;
@@ -58,6 +79,15 @@ describe('The settings commands', () => {
   const {
     Commands: { Settings },
   } = SharedConstants;
+  let registry: CommandRegistry;
+  let commandService: CommandServiceImpl;
+  beforeAll(() => {
+    new SettingsCommands();
+    const decorator = CommandServiceInstance();
+    const descriptor = decorator({ descriptor: {} }, 'none') as any;
+    commandService = descriptor.descriptor.get();
+    registry = commandService.registry;
+  });
 
   beforeEach(() => {
     mockTrackEvent = jest.fn(() => Promise.resolve());
@@ -70,7 +100,7 @@ describe('The settings commands', () => {
   });
 
   it('should save the global app settings', async () => {
-    const handler = mockRegistry.getCommand(Settings.SaveAppSettings);
+    const handler = registry.getCommand(Settings.SaveAppSettings);
     const mockSettings = { ngrokPath: 'other/path/to/ngrok.exe' };
     await handler(mockSettings);
 
@@ -79,14 +109,14 @@ describe('The settings commands', () => {
   });
 
   it('should load the app settings from the store', async () => {
-    const handler = mockRegistry.getCommand(Settings.LoadAppSettings);
+    const handler = registry.getCommand(Settings.LoadAppSettings);
     const appSettings = await handler();
 
     expect(appSettings).toBe(mockSettings.framework);
   });
 
   it('should save a new bot url to disk', () => {
-    const handler = mockRegistry.getCommand(Settings.SaveBotUrl);
+    const handler = registry.getCommand(Settings.SaveBotUrl);
     handler('http://some.boturl.com');
 
     expect(mockDispatch).toHaveBeenCalledWith(addSavedBotUrl('http://some.boturl.com'));

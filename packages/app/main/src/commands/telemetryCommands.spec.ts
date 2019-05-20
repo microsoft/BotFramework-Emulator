@@ -32,24 +32,54 @@
 //
 
 import { SharedConstants } from '@bfemulator/app-shared';
-import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 
 import { TelemetryService } from '../telemetry';
-
-import { registerCommands } from './telemetryCommands';
+import { CommandRegistry, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
+import { TelemetryCommands } from './telemetryCommands';
 
 jest.mock('../settingsData/store', () => ({
   getSettings: () => ({
     framework: {},
   }),
 }));
-
-const mockRegistry = new CommandRegistryImpl();
-registerCommands(mockRegistry);
+jest.mock('electron', () => ({
+  ipcMain: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+  ipcRenderer: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+}));
 
 describe('The telemetry commands', () => {
   let mockTrackEvent;
   const trackEventBackup = TelemetryService.trackEvent;
+
+  let registry: CommandRegistry;
+  let commandService: CommandServiceImpl;
+  beforeAll(() => {
+    new TelemetryCommands();
+    const decorator = CommandServiceInstance();
+    const descriptor = decorator({ descriptor: {} }, 'none') as any;
+    commandService = descriptor.descriptor.get();
+    registry = commandService.registry;
+  });
 
   beforeEach(() => {
     mockTrackEvent = jest.fn(() => Promise.resolve());
@@ -61,7 +91,7 @@ describe('The telemetry commands', () => {
   });
 
   it('should track events to App Insights', async () => {
-    const handler = mockRegistry.getCommand(SharedConstants.Commands.Telemetry.TrackEvent);
+    const handler = registry.getCommand(SharedConstants.Commands.Telemetry.TrackEvent);
     await handler('test_event', { some: 'data' });
 
     expect(mockTrackEvent).toHaveBeenCalledWith('test_event', { some: 'data' });

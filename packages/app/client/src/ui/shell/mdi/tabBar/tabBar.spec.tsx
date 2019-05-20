@@ -36,10 +36,9 @@ import { mount } from 'enzyme';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import { SharedConstants } from '@bfemulator/app-shared';
-import { MouseEvent } from 'react';
 
 import { enable } from '../../../../data/action/presentationActions';
-import { setActiveTab, appendTab, splitTab } from '../../../../data/action/editorActions';
+import { appendTab, setActiveTab, splitTab } from '../../../../data/action/editorActions';
 import {
   CONTENT_TYPE_APP_SETTINGS,
   CONTENT_TYPE_LIVE_CHAT,
@@ -50,6 +49,8 @@ import {
 
 import { TabBarContainer } from './tabBarContainer';
 import { TabBar } from './tabBar';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
+import { executeCommand } from '../../../../data/action/commandAction';
 
 const mockTab = class Tab extends React.Component {
   public render() {
@@ -57,29 +58,45 @@ const mockTab = class Tab extends React.Component {
   }
 };
 
-jest.mock('./tabBar.scss', () => ({}));
 jest.mock('../../../../data/reducer/editor', () => ({
   Document: {},
   Editor: {},
 }));
+
 jest.mock('../../../../data/editorHelpers', () => ({
   getTabGroupForDocument: () => null,
   getOtherTabGroup: (tabGroup: string) => (tabGroup === 'primary' ? 'secondary' : 'primary'),
 }));
+
 jest.mock('../tab/tab', () => ({
   get Tab() {
     return mockTab;
   },
 }));
 
-let mockRemoteCallsMade;
-jest.mock('../../../../platform/commands/commandServiceImpl', () => ({
-  CommandServiceImpl: {
-    remoteCall: (commandName, ...args) => {
-      mockRemoteCallsMade.push({ commandName, args });
-      return Promise.resolve(true);
-    },
-  },
+jest.mock('electron', () => ({
+  ipcMain: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+  ipcRenderer: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
 }));
 
 describe('TabBar', () => {
@@ -88,6 +105,18 @@ describe('TabBar', () => {
   let instance;
   let mockStore;
   let mockDispatch;
+  let commandService: CommandServiceImpl;
+  let mockRemoteCallsMade = [];
+  beforeAll(() => {
+    const decorator = CommandServiceInstance();
+    const descriptor = decorator({ descriptor: {} }, 'none') as any;
+    commandService = descriptor.descriptor.get();
+    commandService.remoteCall = (commandName, ...args) => {
+      mockRemoteCallsMade.push({ commandName, args });
+      return true as any;
+    };
+    commandService.call = () => true as any;
+  });
 
   beforeEach(() => {
     const defaultState = {
@@ -132,11 +161,10 @@ describe('TabBar', () => {
 
   it('should enable presentation mode', async () => {
     await instance.onPresentationModeClick();
-
+    expect(mockDispatch).toHaveBeenCalledWith(
+      executeCommand(true, SharedConstants.Commands.Telemetry.TrackEvent, null, 'tabBar_presentationMode')
+    );
     expect(mockDispatch).toHaveBeenCalledWith(enable());
-    expect(mockRemoteCallsMade).toHaveLength(1);
-    expect(mockRemoteCallsMade[0].commandName).toBe(SharedConstants.Commands.Telemetry.TrackEvent);
-    expect(mockRemoteCallsMade[0].args).toEqual(['tabBar_presentationMode']);
   });
 
   it('should load widgets', () => {
@@ -189,9 +217,9 @@ describe('TabBar', () => {
   });
 
   it('should handle a key press', () => {
-    const mockOtherKeyPress = { key: 'a', currentTarget: { dataset: { index: 0 } } as any };
-    const mockSpaceKeyPress = { key: ' ', currentTarget: { dataset: { index: 0 } } as any };
-    const mockEnterKeyPress = { key: 'enter', currentTarget: { dataset: { index: 0 } } as any };
+    const mockOtherKeyPress = { key: 'a', currentTarget: { dataset: { index: 0 } } as any } as any;
+    const mockSpaceKeyPress = { key: ' ', currentTarget: { dataset: { index: 0 } } as any } as any;
+    const mockEnterKeyPress = { key: 'enter', currentTarget: { dataset: { index: 0 } } as any } as any;
 
     // simulate neither key press
     instance.handleKeyDown(mockOtherKeyPress);
@@ -206,18 +234,17 @@ describe('TabBar', () => {
     expect(mockDispatch).toHaveBeenCalledTimes(2);
   });
 
-  it('should handle a split click', () => {
-    instance.onSplitClick();
-
+  it('should handle a split click', async () => {
+    await instance.onSplitClick();
+    expect(mockDispatch).toHaveBeenCalledWith(
+      executeCommand(true, SharedConstants.Commands.Telemetry.TrackEvent, null, 'tabBar_splitTab')
+    );
     expect(mockDispatch).toHaveBeenCalledWith(splitTab('transcript', 'doc1', 'primary', 'secondary'));
-    expect(mockRemoteCallsMade).toHaveLength(1);
-    expect(mockRemoteCallsMade[0].commandName).toBe(SharedConstants.Commands.Telemetry.TrackEvent);
-    expect(mockRemoteCallsMade[0].args).toEqual(['tabBar_splitTab']);
   });
 
   it('should handle a drag enter event', () => {
     const mockPreventDefault = jest.fn(() => null);
-    const mockDragEvent = { preventDefault: mockPreventDefault };
+    const mockDragEvent = { preventDefault: mockPreventDefault } as any;
 
     instance.onDragEnter(mockDragEvent);
     expect(mockPreventDefault).toHaveBeenCalled();

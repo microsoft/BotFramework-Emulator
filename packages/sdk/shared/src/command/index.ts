@@ -48,23 +48,20 @@ function getCommandService(channelId: string): CommandServiceImpl {
 }
 
 export function CommandServiceInstance(channelId = 'command-service'): PropertyDecorator {
-  return function(elementDescriptor: any) {
-    const { key, descriptor } = elementDescriptor;
-    delete descriptor.writable;
-    elementDescriptor.extras = [
-      {
-        kind: 'method',
-        key,
-        placement: 'prototype',
-        descriptor: {
-          ...descriptor,
-          get: function() {
-            return getCommandService(channelId);
-          },
+  return function(descriptor: any) {
+    descriptor.kind = 'method';
+    descriptor.descriptor = (function(propertyDescriptor = {}) {
+      return {
+        get: function() {
+          return getCommandService(channelId);
         },
-      },
-    ];
-    return elementDescriptor;
+
+        enumerable: propertyDescriptor.enumerable !== undefined ? propertyDescriptor.enumerable : true,
+      };
+    })(descriptor.descriptor);
+
+    delete descriptor.initializer;
+    return descriptor;
   };
 }
 

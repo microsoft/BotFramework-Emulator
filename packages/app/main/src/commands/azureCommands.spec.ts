@@ -31,14 +31,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import { SharedConstants } from '@bfemulator/app-shared';
-import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 import { combineReducers, createStore } from 'redux';
 
 import { AzureAuthWorkflowService } from '../services/azureAuthWorkflowService';
 import { azureLoggedInUserChanged } from '../settingsData/actions/azureAuthActions';
 import { azureAuth } from '../settingsData/reducers/azureAuthReducer';
-
-import { registerCommands } from './azureCommands';
+import { CommandRegistry, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
+import { AzureCommands } from './azureCommands';
 
 const mockStore = createStore(combineReducers({ azure: azureAuth }));
 const mockArmToken = 'bm90aGluZw==.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds';
@@ -90,13 +89,39 @@ jest.mock('electron', () => ({
       clearStorageData: (options, cb) => cb(true),
     },
   },
+  ipcMain: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+  ipcRenderer: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
 }));
 
 describe('The azureCommand,', () => {
-  let registry: CommandRegistryImpl;
+  let registry: CommandRegistry;
+  let commandService: CommandServiceImpl;
   beforeAll(() => {
-    registry = new CommandRegistryImpl();
-    registerCommands(registry);
+    new AzureCommands();
+    const decorator = CommandServiceInstance();
+    const descriptor = decorator({ descriptor: {} }, 'none') as any;
+    commandService = descriptor.descriptor.get();
+    registry = commandService.registry;
   });
 
   describe(`${SharedConstants.Commands.Azure.RetrieveArmToken}, `, () => {

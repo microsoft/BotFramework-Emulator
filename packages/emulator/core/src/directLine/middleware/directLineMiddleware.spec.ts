@@ -51,6 +51,31 @@ import startConversation from './startConversation';
 import stream from './stream';
 import upload from './upload';
 
+jest.mock('electron', () => ({
+  ipcMain: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+  ipcRenderer: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+}));
+
 jest.mock('formidable', () => ({
   IncomingForm: class {
     // jest won't allow the use of args in this callback signature unless they are prefaced with 'mock'

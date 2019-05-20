@@ -34,13 +34,16 @@
 import * as path from 'path';
 
 import { SharedConstants } from '@bfemulator/app-shared';
-import { CommandService } from '@bfemulator/sdk-shared';
+import { CommandServiceImpl } from '@bfemulator/sdk-shared';
 
 import { TelemetryService } from '../telemetry';
 
 import { readFileSync } from './readFileSync';
 
-export async function openFileFromCommandLine(fileToBeOpened: string, commandService: CommandService): Promise<void> {
+export async function openFileFromCommandLine(
+  fileToBeOpened: string,
+  commandService: CommandServiceImpl
+): Promise<void> {
   const { Bot, Emulator } = SharedConstants.Commands;
   if (path.extname(fileToBeOpened) === '.bot') {
     try {

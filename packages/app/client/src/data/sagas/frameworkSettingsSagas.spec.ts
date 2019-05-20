@@ -30,47 +30,56 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { SharedConstants, newNotification } from '@bfemulator/app-shared';
+import { newNotification, SharedConstants } from '@bfemulator/app-shared';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import sagaMiddlewareFactory from 'redux-saga';
-import { call, put, takeEvery, select } from 'redux-saga/effects';
+import { call, put, select, takeEvery } from 'redux-saga/effects';
 
 import { CONTENT_TYPE_APP_SETTINGS, DOCUMENT_ID_APP_SETTINGS } from '../../constants';
 import * as EditorActions from '../action/editorActions';
 import {
-  getFrameworkSettings as getFrameworkSettingsAction,
-  saveFrameworkSettings as saveFrameworkSettingsAction,
-} from '../action/frameworkSettingsActions';
-import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
-import { beginAdd } from '../action/notificationActions';
-import { editor } from '../reducer/editor';
-import {
   frameworkSettingsChanged,
   GET_FRAMEWORK_SETTINGS,
+  getFrameworkSettings as getFrameworkSettingsAction,
   SAVE_FRAMEWORK_SETTINGS,
+  saveFrameworkSettings as saveFrameworkSettingsAction,
 } from '../action/frameworkSettingsActions';
+import { beginAdd } from '../action/notificationActions';
+import { editor } from '../reducer/editor';
 import { framework } from '../reducer/frameworkSettingsReducer';
 
 import {
   activeDocumentSelector,
   frameworkSettingsSagas,
-  getFrameworkSettings,
+  FrameworkSettingsSagas,
   normalizeSettingsData,
-  saveFrameworkSettings,
 } from './frameworkSettingsSagas';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
-jest.mock(
-  '../../ui/dialogs/',
-  () =>
-    new Proxy(
-      {},
-      {
-        get(): any {
-          return {};
-        },
-      }
-    )
-);
+jest.mock('electron', () => ({
+  ipcMain: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+  ipcRenderer: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+}));
 
 const sagaMiddleWare = sagaMiddlewareFactory();
 const mockStore = createStore(combineReducers({ framework, editor }), {}, applyMiddleware(sagaMiddleWare));
@@ -91,16 +100,23 @@ mockStore.dispatch(
   })
 );
 describe('The frameworkSettingsSagas', () => {
+  let commandService: CommandServiceImpl;
+  beforeAll(() => {
+    const decorator = CommandServiceInstance();
+    const descriptor = decorator({ descriptor: {} }, 'none') as any;
+    commandService = descriptor.descriptor.get();
+  });
+
   it('should register the expected generators', () => {
     const it = frameworkSettingsSagas();
-    expect(it.next().value).toEqual(takeEvery(GET_FRAMEWORK_SETTINGS, getFrameworkSettings));
-    expect(it.next().value).toEqual(takeEvery(SAVE_FRAMEWORK_SETTINGS, saveFrameworkSettings));
+    expect(it.next().value).toEqual(takeEvery(GET_FRAMEWORK_SETTINGS, FrameworkSettingsSagas.getFrameworkSettings));
+    expect(it.next().value).toEqual(takeEvery(SAVE_FRAMEWORK_SETTINGS, FrameworkSettingsSagas.saveFrameworkSettings));
   });
 
   it('should get the framework settings when using the happy path', async () => {
-    const it = getFrameworkSettings();
+    const it = FrameworkSettingsSagas.getFrameworkSettings();
     let next = it.next();
-    expect(next.value).toEqual(CommandServiceImpl.remoteCall(SharedConstants.Commands.Settings.LoadAppSettings));
+    expect(next.value).toEqual(commandService.remoteCall(SharedConstants.Commands.Settings.LoadAppSettings));
 
     next = it.next({});
     const normalized = await next.value.CALL.fn({});
@@ -108,23 +124,23 @@ describe('The frameworkSettingsSagas', () => {
   });
 
   it('should send a notification when something goes wrong while getting the framework settings', () => {
-    const it = getFrameworkSettings();
+    const it = FrameworkSettingsSagas.getFrameworkSettings();
     it.next();
     const errMsg = `Error while loading emulator settings: oh noes!`;
     const notification = newNotification(errMsg);
-    notification.timestamp = jasmine.any(Number);
-    notification.id = jasmine.any(String);
+    notification.timestamp = jasmine.any(Number) as any;
+    notification.id = jasmine.any(String) as any;
     expect(it.throw('oh noes!').value).toEqual(put(beginAdd(notification)));
   });
 
   it('should save the framework settings', async () => {
-    const it = saveFrameworkSettings(saveFrameworkSettingsAction({}));
+    const it = FrameworkSettingsSagas.saveFrameworkSettings(saveFrameworkSettingsAction({}));
     const normalize = it.next().value;
     expect(normalize).toEqual(call(normalizeSettingsData, {}));
     const normalized = await normalize.CALL.fn({});
     // remote call to save the settings
     expect(it.next(normalized).value).toEqual(
-      CommandServiceImpl.remoteCall(SharedConstants.Commands.Settings.SaveAppSettings, normalized)
+      commandService.remoteCall(SharedConstants.Commands.Settings.SaveAppSettings, normalized)
     );
     // get the settings from the main side again
     expect(it.next().value).toEqual(put(getFrameworkSettingsAction()));
@@ -137,12 +153,12 @@ describe('The frameworkSettingsSagas', () => {
   });
 
   it('should send a notification when saving the settings fails', () => {
-    const it = saveFrameworkSettings(saveFrameworkSettingsAction({}));
+    const it = FrameworkSettingsSagas.saveFrameworkSettings(saveFrameworkSettingsAction({}));
     it.next();
     const errMsg = `Error while saving emulator settings: oh noes!`;
     const notification = newNotification(errMsg);
-    notification.timestamp = jasmine.any(Number);
-    notification.id = jasmine.any(String);
+    notification.timestamp = jasmine.any(Number) as any;
+    notification.id = jasmine.any(String) as any;
     expect(it.throw('oh noes!').value).toEqual(put(beginAdd(notification)));
   });
 });

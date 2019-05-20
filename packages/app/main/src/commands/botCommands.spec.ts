@@ -33,7 +33,12 @@
 import * as path from 'path';
 
 import { SharedConstants } from '@bfemulator/app-shared';
-import { BotConfigWithPathImpl, CommandRegistryImpl } from '@bfemulator/sdk-shared';
+import {
+  BotConfigWithPathImpl,
+  CommandRegistry,
+  CommandServiceImpl,
+  CommandServiceInstance,
+} from '@bfemulator/sdk-shared';
 import { BotConfiguration } from 'botframework-config';
 import { ServiceTypes } from 'botframework-config/lib/schema';
 import { combineReducers, createStore } from 'redux';
@@ -44,13 +49,11 @@ import { bot } from '../data/reducers/bot';
 import { State } from '../data/state';
 import * as store from '../data/store';
 import { getStore } from '../data/store';
-import * as helpers from '../botHelpers';
+import { BotHelpers } from '../botHelpers';
 import { Emulator } from '../emulator';
-import { mainWindow } from '../main';
 import { botProjectFileWatcher, chatWatcher, transcriptsWatcher } from '../watchers';
 import { TelemetryService } from '../telemetry';
-
-import { registerCommands } from './botCommands';
+import { BotCommands } from './botCommands';
 
 const mockBotConfig = BotConfiguration;
 let mockStore;
@@ -76,14 +79,41 @@ const mockBot = BotConfigWithPathImpl.fromJSON({
 } as any);
 
 jest.mock('../botHelpers', () => ({
-  saveBot: async () => void 0,
-  toSavableBot: () => mockBotConfig.fromJSON(mockBot),
-  patchBotsJson: async () => true,
-  pathExistsInRecentBots: () => true,
-  getBotInfoByPath: () => ({ secret: 'secret' }),
-  loadBotWithRetry: () => mockBot,
-  getActiveBot: () => mockBot,
-  removeBotFromList: async () => true,
+  BotHelpers: {
+    saveBot: async () => void 0,
+    toSavableBot: () => mockBotConfig.fromJSON(mockBot),
+    patchBotsJson: async () => true,
+    pathExistsInRecentBots: () => true,
+    getBotInfoByPath: () => ({ secret: 'secret' }),
+    loadBotWithRetry: () => mockBot,
+    getActiveBot: () => mockBot,
+    removeBotFromList: async () => true,
+  },
+}));
+
+jest.mock('electron', () => ({
+  ipcMain: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+  ipcRenderer: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
 }));
 
 jest.mock('../utils/ensureStoragePath', () => ({
@@ -108,9 +138,6 @@ jest.mock('../emulator', () => ({
     getInstance: () => mockEmulator,
   },
 }));
-const mockCommandRegistry = new CommandRegistryImpl();
-
-registerCommands(mockCommandRegistry);
 jest.mock('../main', () => ({
   mainWindow: {
     commandService: {
@@ -131,7 +158,16 @@ const { Bot } = SharedConstants.Commands;
 describe('The botCommands', () => {
   let mockTrackEvent;
   const trackEventBackup = TelemetryService.trackEvent;
-
+  let registry: CommandRegistry;
+  let commandService: CommandServiceImpl;
+  beforeAll(() => {
+    new BotCommands();
+    const decorator = CommandServiceInstance();
+    const descriptor = decorator({ descriptor: {} }, 'none') as any;
+    commandService = descriptor.descriptor.get();
+    commandService.remoteCall = () => Promise.resolve(true) as any;
+    registry = commandService.registry;
+  });
   beforeEach(() => {
     mockTrackEvent = jest.fn(() => Promise.resolve());
     TelemetryService.trackEvent = mockTrackEvent;
@@ -143,8 +179,8 @@ describe('The botCommands', () => {
 
   it('should create/save a new bot', async () => {
     const botToSave = BotConfigWithPathImpl.fromJSON(mockBot as any);
-    const patchBotInfoSpy = jest.spyOn((helpers as any).default, 'patchBotsJson');
-    const saveBotSpy = jest.spyOn((helpers as any).default, 'saveBot');
+    const patchBotInfoSpy = jest.spyOn(BotHelpers, 'patchBotsJson');
+    const saveBotSpy = jest.spyOn(BotHelpers, 'saveBot');
 
     const mockBotInfo = {
       path: path.normalize(botToSave.path),
@@ -153,7 +189,7 @@ describe('The botCommands', () => {
       chatsPath: path.normalize('some/dialogs'),
       transcriptsPath: path.normalize('some/transcripts'),
     };
-    const command = mockCommandRegistry.getCommand(Bot.Create);
+    const command = registry.getCommand(Bot.Create);
     const result = await command(botToSave, 'secret');
     expect(patchBotInfoSpy).toHaveBeenCalledWith(botToSave.path, mockBotInfo);
     expect(saveBotSpy).toHaveBeenCalledWith(botToSave);
@@ -170,13 +206,11 @@ describe('The botCommands', () => {
       transcriptsPath: '',
       chatsPath: '',
     };
-    const syncWithClientSpy = jest.spyOn(mainWindow.commandService, 'remoteCall');
-    const pathExistsInRecentBotsSpy = jest
-      .spyOn((helpers as any).default, 'pathExistsInRecentBots')
-      .mockReturnValue(true);
-    const getBotInfoByPathSpy = jest.spyOn((helpers as any).default, 'getBotInfoByPath').mockReturnValue(mockBotInfo);
-    const loadBotWithRetrySpy = jest.spyOn((helpers as any).default, 'loadBotWithRetry').mockResolvedValue(mockBot);
-    const command = mockCommandRegistry.getCommand(Bot.Open);
+    const syncWithClientSpy = jest.spyOn(commandService, 'remoteCall');
+    const pathExistsInRecentBotsSpy = jest.spyOn(BotHelpers, 'pathExistsInRecentBots').mockReturnValue(true);
+    const getBotInfoByPathSpy = jest.spyOn(BotHelpers, 'getBotInfoByPath').mockReturnValue(mockBotInfo);
+    const loadBotWithRetrySpy = jest.spyOn(BotHelpers, 'loadBotWithRetry').mockResolvedValue(mockBot);
+    const command = registry.getCommand(Bot.Open);
     const result = await command('bot/path', 'secret');
 
     expect(pathExistsInRecentBotsSpy).toHaveBeenCalledWith('bot/path');
@@ -190,8 +224,8 @@ describe('The botCommands', () => {
 
   it('should set the active bot', async () => {
     const botProjectFileWatcherSpy = jest.spyOn(botProjectFileWatcher, 'watch');
-    const commandServiceSpy = jest.spyOn(mainWindow.commandService, 'call');
-    const command = mockCommandRegistry.getCommand(Bot.SetActive);
+    const commandServiceSpy = jest.spyOn(commandService, 'call');
+    const command = registry.getCommand(Bot.SetActive);
     const result = await command(mockBot);
 
     expect(botProjectFileWatcherSpy).toHaveBeenCalledWith(mockBot.path);
@@ -207,7 +241,7 @@ describe('The botCommands', () => {
     store.getStore().dispatch(setActive(mockBot));
     const resetSpy = jest.spyOn(emulator.framework.server.botEmulator.facilities.endpoints, 'reset');
     const pushSpy = jest.spyOn(emulator.framework.server.botEmulator.facilities.endpoints, 'push');
-    const command = mockCommandRegistry.getCommand(Bot.RestartEndpointService);
+    const command = registry.getCommand(Bot.RestartEndpointService);
     const result = await command();
 
     expect(resetSpy).toHaveBeenCalled();
@@ -219,8 +253,8 @@ describe('The botCommands', () => {
     const serviceToSave = mockBot.services[0];
     serviceToSave.name = 'A new Name';
     serviceToSave.id = '';
-    const remoteCallSpy = jest.spyOn(mainWindow.commandService, 'remoteCall');
-    const command = mockCommandRegistry.getCommand(Bot.AddOrUpdateService);
+    const remoteCallSpy = jest.spyOn(commandService, 'remoteCall');
+    const command = registry.getCommand(Bot.AddOrUpdateService);
     await command(serviceToSave.type, serviceToSave);
     const savedBot = mockBotConfig.fromJSON(store.getStore().getState().bot.activeBot);
 
@@ -234,7 +268,7 @@ describe('The botCommands', () => {
     jest.spyOn(store.getStore(), 'dispatch').mockImplementationOnce(() => {
       throw new Error('');
     });
-    const handler = mockCommandRegistry.getCommand(Bot.AddOrUpdateService);
+    const handler = registry.getCommand(Bot.AddOrUpdateService);
     let threw = false;
     try {
       await handler(serviceToUpdate.type, serviceToUpdate);
@@ -249,7 +283,7 @@ describe('The botCommands', () => {
     const serviceToSave = JSON.parse(JSON.stringify(mockBot.services[0]));
     serviceToSave.id = null;
     serviceToSave.type = ServiceTypes.AppInsights;
-    const handler = mockCommandRegistry.getCommand(Bot.AddOrUpdateService);
+    const handler = registry.getCommand(Bot.AddOrUpdateService);
     let threw = false;
     try {
       await handler(ServiceTypes.Luis, serviceToSave);
@@ -262,8 +296,8 @@ describe('The botCommands', () => {
 
   it('should remove a service as expected', async () => {
     const serviceToRemove = mockBot.services[0];
-    const remoteCallSpy = jest.spyOn(mainWindow.commandService, 'remoteCall');
-    const handler = mockCommandRegistry.getCommand(Bot.RemoveService);
+    const remoteCallSpy = jest.spyOn(commandService, 'remoteCall');
+    const handler = registry.getCommand(Bot.RemoveService);
     await handler(serviceToRemove.type, serviceToRemove.id);
     const savedBot = mockBotConfig.fromJSON(store.getStore().getState().bot.activeBot);
     expect(savedBot.services.length).toBe(0);
@@ -276,7 +310,7 @@ describe('The botCommands', () => {
     jest.spyOn(store.getStore(), 'dispatch').mockImplementationOnce(() => {
       throw new Error('');
     });
-    const handler = mockCommandRegistry.getCommand(Bot.RemoveService);
+    const handler = registry.getCommand(Bot.RemoveService);
     let threw = false;
     try {
       await handler(serviceToRemove.type, serviceToRemove.id);
@@ -296,16 +330,16 @@ describe('The botCommands', () => {
     const transcriptWatchSpy = jest.spyOn(transcriptsWatcher, 'watch');
     const chatWatcherSpy = jest.spyOn(chatWatcher, 'watch');
 
-    const handler = mockCommandRegistry.getCommand(SharedConstants.Commands.Bot.PatchBotList);
+    const handler = registry.getCommand(SharedConstants.Commands.Bot.PatchBotList);
     await handler(mockBotInfo.path, mockBotInfo);
     expect(transcriptWatchSpy).toHaveBeenCalledWith(path.normalize('this/is/transcripts'));
     expect(chatWatcherSpy).toHaveBeenCalledWith(path.normalize('this/is/dialogs'));
   });
 
   it('should remove a bot from the list', async () => {
-    const callSpy = jest.spyOn(mainWindow.commandService, 'call').mockResolvedValue(true);
-    const handler = mockCommandRegistry.getCommand(SharedConstants.Commands.Bot.RemoveFromBotList);
-    const removeBotFromListSpy = jest.spyOn((helpers as any).default, 'removeBotFromList').mockResolvedValue(true);
+    const callSpy = jest.spyOn(commandService, 'call').mockResolvedValue(true);
+    const handler = registry.getCommand(SharedConstants.Commands.Bot.RemoveFromBotList);
+    const removeBotFromListSpy = jest.spyOn(BotHelpers, 'removeBotFromList').mockResolvedValue(true);
     await handler('some/bot/path.json');
     expect(callSpy).toHaveBeenCalledWith('shell:showExplorer-message-box', true, {
       buttons: ['Cancel', 'OK'],
@@ -318,7 +352,7 @@ describe('The botCommands', () => {
   });
 
   it('should close the bot', async () => {
-    const handler = mockCommandRegistry.getCommand(SharedConstants.Commands.Bot.Close);
+    const handler = registry.getCommand(SharedConstants.Commands.Bot.Close);
     const dispatchSpy = jest.spyOn(getStore(), 'dispatch');
     await handler();
     expect(dispatchSpy).toHaveBeenCalledWith(BotActions.close());

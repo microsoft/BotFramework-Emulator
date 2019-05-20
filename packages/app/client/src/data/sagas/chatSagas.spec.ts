@@ -41,10 +41,10 @@ import { chat } from '../reducer/chat';
 import { editor } from '../reducer/editor';
 import { presentation } from '../reducer/presentation';
 import * as Constants from '../../constants';
-import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { closeConversation, newChat, showContextMenuForActivity } from '../action/chatActions';
 
 import { chatSagas } from './chatSagas';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 const sagaMiddleWare = sagaMiddlewareFactory();
 let mockStore;
@@ -58,6 +58,28 @@ jest.mock('../store', () => ({
 
 jest.mock('electron', () => {
   return {
+    ipcMain: new Proxy(
+      {},
+      {
+        get(): any {
+          return () => ({});
+        },
+        has() {
+          return true;
+        },
+      }
+    ),
+    ipcRenderer: new Proxy(
+      {},
+      {
+        get(): any {
+          return () => ({});
+        },
+        has() {
+          return true;
+        },
+      }
+    ),
     clipboard: { writeText: (textFromActivity: string) => true },
   };
 });
@@ -597,8 +619,14 @@ describe('The ChatSagas,', () => {
   });
 
   describe('when showing a context menu for an activity', () => {
+    let commandService: CommandServiceImpl;
+    beforeAll(() => {
+      const decorator = CommandServiceInstance();
+      const descriptor = decorator({ descriptor: {} }, 'none') as any;
+      commandService = descriptor.descriptor.get();
+    });
     it('should handle the "copy message" selection', async () => {
-      const commandServiceSpy = jest.spyOn(CommandServiceImpl, 'remoteCall').mockResolvedValue({ id: 'copy' });
+      const commandServiceSpy = jest.spyOn(commandService, 'remoteCall').mockResolvedValue({ id: 'copy' });
       const clipboardSpy = jest.spyOn(Electron.clipboard, 'writeText');
       const activity = {
         valueType: ValueTypes.Activity,
@@ -612,21 +640,21 @@ describe('The ChatSagas,', () => {
     });
 
     it('should handle the "copy json" selection', async () => {
-      const commandServiceSpy = jest.spyOn(CommandServiceImpl, 'remoteCall').mockResolvedValue({ id: 'json' });
+      const commandServiceSpy = jest.spyOn(commandService, 'remoteCall').mockResolvedValue({ id: 'json' });
       const clipboardSpy = jest.spyOn(Electron.clipboard, 'writeText');
       const activity = {
         valueType: '',
         type: ActivityTypes.Trace,
         value: { type: ActivityTypes.Message, text: 'Hello Bot!' },
       };
-      mockStore.dispatch(showContextMenuForActivity(activity));
+      await mockStore.dispatch(showContextMenuForActivity(activity));
       await Promise.resolve(true);
       expect(commandServiceSpy).toHaveBeenCalled();
       expect(clipboardSpy).toHaveBeenCalledWith(JSON.stringify(activity, null, 2));
     });
 
     it('should handle the "Compare with previous" selection', async () => {
-      const commandServiceSpy = jest.spyOn(CommandServiceImpl, 'remoteCall').mockResolvedValue({ id: 'diff' });
+      const commandServiceSpy = jest.spyOn(commandService, 'remoteCall').mockResolvedValue({ id: 'diff' });
       const activity = mockStoreState.chat.chats.doc1.log.entries[2].items[0].payload.obj;
       mockStore.dispatch(showContextMenuForActivity(activity));
       await Promise.resolve(true);
@@ -705,36 +733,36 @@ describe('The ChatSagas,', () => {
         ])
       );
     });
-  });
 
-  it('when closing a document it should notify the main process so it can remove the conversation', async () => {
-    const commandServiceSpy = jest.spyOn(CommandServiceImpl, 'remoteCall').mockResolvedValue(true);
-    mockStore.dispatch(closeConversation('doc1'));
-    expect(commandServiceSpy).toHaveBeenCalledWith(SharedConstants.Commands.Emulator.DeleteConversation, 'convo1');
-    await Promise.resolve(); // wait for the comand service call to complete
-    expect(mockStore.getState().chat.chats.doc1).toBeUndefined();
-  });
+    it('when closing a document it should notify the main process so it can remove the conversation', async () => {
+      const commandServiceSpy = jest.spyOn(commandService, 'remoteCall').mockResolvedValue(true);
+      mockStore.dispatch(closeConversation('doc1'));
+      expect(commandServiceSpy).toHaveBeenCalledWith(SharedConstants.Commands.Emulator.DeleteConversation, 'convo1');
+      await Promise.resolve(); // wait for the comand service call to complete
+      expect(mockStore.getState().chat.chats.doc1).toBeUndefined();
+    });
 
-  it('when starting a new conversation, should create a speech token ponyfill factory', async () => {
-    const commandServiceSpy = jest.spyOn(CommandServiceImpl, 'remoteCall').mockResolvedValue('mockSpeechToken');
+    it('when starting a new conversation, should create a speech token ponyfill factory', async () => {
+      const commandServiceSpy = jest.spyOn(commandService, 'remoteCall').mockResolvedValue('mockSpeechToken');
 
-    mockStore.dispatch(
-      newChat('doc2', 'livechat', {
-        conversationId: 'convo2',
-        endpointId: 'endpoint2',
-        userId: 'someUserId2',
-      })
-    );
+      mockStore.dispatch(
+        newChat('doc2', 'livechat', {
+          conversationId: 'convo2',
+          endpointId: 'endpoint2',
+          userId: 'someUserId2',
+        })
+      );
 
-    await Promise.resolve();
-    const state = mockStore.getState();
-    expect(state.chat.chats.doc2).not.toBeUndefined();
-    expect(state.chat.webSpeechFactories.doc2).not.toBeUndefined();
-    expect(state.chat.webSpeechFactories.doc2()).toBe('Yay! ponyfill!');
-    expect(commandServiceSpy).toHaveBeenCalledWith(
-      SharedConstants.Commands.Emulator.GetSpeechToken,
-      'endpoint2',
-      false
-    );
+      await Promise.resolve();
+      const state = mockStore.getState();
+      expect(state.chat.chats.doc2).not.toBeUndefined();
+      expect(state.chat.webSpeechFactories.doc2).not.toBeUndefined();
+      expect(state.chat.webSpeechFactories.doc2()).toBe('Yay! ponyfill!');
+      expect(commandServiceSpy).toHaveBeenCalledWith(
+        SharedConstants.Commands.Emulator.GetSpeechToken,
+        'endpoint2',
+        false
+      );
+    });
   });
 });

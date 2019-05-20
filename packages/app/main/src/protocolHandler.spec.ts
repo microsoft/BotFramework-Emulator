@@ -45,6 +45,7 @@ import { applyBotConfigOverrides, ConversationService } from '@bfemulator/sdk-sh
 
 import { parseEndpointOverrides, Protocol, ProtocolHandler } from './protocolHandler';
 import { TelemetryService } from './telemetry';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 let mockCallsMade, mockRemoteCallsMade;
 let mockOpenedBot;
@@ -112,9 +113,52 @@ jest.mock('got', () => {
   return jest.fn(() => Promise.resolve(mockGotReturnValue));
 });
 
+jest.mock('electron', () => ({
+  ipcMain: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+  ipcRenderer: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+}));
+
 describe('Protocol handler tests', () => {
   let mockTrackEvent;
   const trackEventBackup = TelemetryService.trackEvent;
+
+  let commandService: CommandServiceImpl;
+  beforeAll(() => {
+    const decorator = CommandServiceInstance();
+    const descriptor = decorator({ descriptor: {} }, 'none') as any;
+    commandService = descriptor.descriptor.get();
+    commandService.call = (commandName, ...args) => {
+      mockCallsMade.push({ commandName, args });
+      if (commandName === mockSharedConstants.Commands.Bot.Open) {
+        return Promise.resolve(mockOpenedBot);
+      }
+      return null;
+    };
+
+    commandService.remoteCall = (commandName, ...args) => {
+      return Promise.resolve(mockRemoteCallsMade.push({ commandName, args }));
+    };
+  });
 
   beforeEach(() => {
     mockTrackEvent = jest.fn(() => null);

@@ -39,12 +39,20 @@ import { ActiveBotHelper } from '../../../helpers/activeBotHelper';
 
 import { BotNotOpenExplorer as BotNotOpenExplorerComp, BotNotOpenExplorerProps } from './botNotOpenExplorer';
 import { executeCommand } from '../../../../data/action/commandAction';
+import { beginAdd } from '../../../../data/action/notificationActions';
+import { newNotification } from '@bfemulator/app-shared';
 
 const mapStateToProps = (state: RootState): any => ({
   hasChat: !!Object.keys(state.chat.chats).length,
 });
 const mapDispatchToProps = (dispatch: (action: Action) => void): BotNotOpenExplorerProps => ({
-  openBotFile: () => ActiveBotHelper.confirmAndOpenBotFromFile(),
+  openBotFile: async () => {
+    try {
+      await ActiveBotHelper.confirmAndOpenBotFromFile();
+    } catch (e) {
+      dispatch(beginAdd(newNotification('An Error occurred on the Bot Not Open Explorer: oh noes!')));
+    }
+  },
   showCreateNewBotDialog: () => dispatch(executeCommand(false, SharedConstants.Commands.UI.ShowBotCreationDialog)),
 });
 

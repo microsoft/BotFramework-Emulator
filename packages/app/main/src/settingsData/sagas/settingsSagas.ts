@@ -58,7 +58,7 @@ export class SettingsSagas {
     const theme = yield select(getCurrentTheme);
 
     const themeInfo = availableThemes.find(availableTheme => availableTheme.name === theme);
-    const { commandService } = this;
+    const { commandService } = SettingsSagas;
     const { SwitchTheme } = SharedConstants.Commands.UI;
     yield call([commandService, commandService.remoteCall], SwitchTheme, themeInfo.name, themeInfo.href);
   }
@@ -72,10 +72,10 @@ export class SettingsSagas {
     // Note that once this propagates to the client,
     // it's assumed the user has confirmed that all
     // tabs will be closed.
-    const { commandService } = this;
+    const { commandService } = SettingsSagas;
     if (hasConversations) {
       const confirmation = yield call(
-        [this.commandService, this.commandService.call],
+        [commandService, commandService.call],
         SharedConstants.Commands.Electron.ShowMessageBox,
         true,
         {
@@ -108,24 +108,28 @@ export class SettingsSagas {
     // bot or there is not open bot.
     yield call([commandService, commandService.remoteCall], SharedConstants.Commands.UI.SwitchDebugMode, debugMode);
     // finally, push the new settings to the client
-    yield this.pushClientAwareSettings();
+    yield SettingsSagas.pushClientAwareSettings();
   }
 
   public static *setFramework(action: FrameworkAction<FrameworkSettings>): IterableIterator<any> {
     const emulator = Emulator.getInstance();
     yield emulator.ngrok.updateNgrokFromSettings(action.state);
     emulator.framework.server.botEmulator.facilities.locale = action.state.locale;
-    yield* this.pushClientAwareSettings();
+    yield* SettingsSagas.pushClientAwareSettings();
   }
 
   public static *pushClientAwareSettings() {
     // Start the emulator to get the serverUrl (noop if it's already been started)
-    yield call([this.commandService, this.commandService.call], SharedConstants.Commands.Emulator.StartEmulator, false);
+    yield call(
+      [SettingsSagas.commandService, SettingsSagas.commandService.call],
+      SharedConstants.Commands.Emulator.StartEmulator,
+      false
+    );
 
     // Push the settings which includes the url
     const settingsState = yield select(getState);
     yield call(
-      [this.commandService, this.commandService.remoteCall],
+      [SettingsSagas.commandService, SettingsSagas.commandService.remoteCall],
       SharedConstants.Commands.Settings.ReceiveGlobalSettings,
       {
         appPath: app.getAppPath(),
@@ -139,7 +143,10 @@ export class SettingsSagas {
     );
 
     // Now that the client has the settings, empty the protocol url queue
-    yield call([this.commandService, this.commandService.call], SharedConstants.Commands.Emulator.OpenProtocolUrls);
+    yield call(
+      [SettingsSagas.commandService, SettingsSagas.commandService.call],
+      SharedConstants.Commands.Emulator.OpenProtocolUrls
+    );
   }
 }
 

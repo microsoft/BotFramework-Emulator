@@ -47,6 +47,6 @@ export class Window {
   }
 
   constructor(private _browserWindow: BrowserWindow) {
-    this.logService = new LogService(this);
+    this.logService = new LogService();
   }
 }

@@ -32,7 +32,7 @@
 //
 
 import { SharedConstants } from '@bfemulator/app-shared';
-import { CommandRegistryImpl, DisposableImpl } from '@bfemulator/sdk-shared';
+import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 
 export interface EmulatorSettings {
   url?: string;
@@ -75,8 +75,8 @@ class EmulatorSettingsImpl implements EmulatorSettings {
   }
 }
 
-class EmulatorSettingsService extends DisposableImpl {
-  private readonly _emulator: EmulatorSettingsImpl;
+class EmulatorSettingsService {
+  private _emulator: EmulatorSettingsImpl;
 
   get emulator(): EmulatorSettingsImpl {
     return this._emulator;

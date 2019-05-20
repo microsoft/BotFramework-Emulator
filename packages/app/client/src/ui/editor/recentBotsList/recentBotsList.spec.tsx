@@ -41,10 +41,10 @@ import * as BotActions from '../../../data/action/botActions';
 import { beginAdd } from '../../../data/action/notificationActions';
 import { openContextMenuForBot } from '../../../data/action/welcomePageActions';
 import { bot } from '../../../data/reducer/bot';
-import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
 
 import { RecentBotsList } from './recentBotsList';
 import { RecentBotsListContainer } from './recentBotsListContainer';
+import { executeCommand } from '../../../data/action/commandAction';
 
 const mockStore = createStore(combineReducers({ bot }));
 jest.mock('./recentBotsList.scss', () => ({}));
@@ -93,23 +93,7 @@ describe('The RecentBotsList', () => {
     expect(mockDispatch).toHaveBeenCalledWith(openContextMenuForBot((mockStore.getState() as any).bot.botFiles[0]));
   });
 
-  it('should send a notification when a bot fails to delete', async () => {
-    await instance.onDeleteBotClick({
-      currentTarget: {
-        dataset: {
-          index: 1,
-        },
-      },
-    } as any);
-    const message = `An Error occurred on the Recent Bots List: TypeError: Cannot read property 'path' of undefined`;
-    const notification = beginAdd(newNotification(message));
-    notification.payload.notification.timestamp = jasmine.any(Number) as any;
-    notification.payload.notification.id = jasmine.any(String) as any;
-    expect(mockDispatch).toHaveBeenCalledWith(notification);
-  });
-
   it('should call the appropriate command when a bot from the list is deleted', async () => {
-    const spy = jest.spyOn(CommandServiceImpl, 'remoteCall').mockResolvedValue(true);
     await instance.onDeleteBotClick({
       currentTarget: {
         dataset: {
@@ -118,7 +102,7 @@ describe('The RecentBotsList', () => {
       },
     } as any);
     const { RemoveFromBotList } = SharedConstants.Commands.Bot;
-    expect(spy).toHaveBeenCalledWith(RemoveFromBotList, '/some/path');
+    expect(mockDispatch).toHaveBeenCalledWith(executeCommand(true, RemoveFromBotList, null, '/some/path'));
   });
 
   it('should call the onBotSelected function passed in the props when a bot it selected from the list', () => {

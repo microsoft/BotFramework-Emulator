@@ -30,7 +30,14 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { logEntry, LogLevel, textItem, luisEditorDeepLinkItem } from '@bfemulator/sdk-shared';
+import {
+  CommandServiceImpl,
+  CommandServiceInstance,
+  logEntry,
+  LogLevel,
+  luisEditorDeepLinkItem,
+  textItem,
+} from '@bfemulator/sdk-shared';
 import { SharedConstants } from '@bfemulator/app-shared';
 import { mount } from 'enzyme';
 import * as React from 'react';
@@ -47,12 +54,11 @@ import { LogService } from '../../../../../platform/log/logService';
 
 import { Inspector } from './inspector';
 import { InspectorContainer } from './inspectorContainer';
+import { executeCommand } from '../../../../../data/action/commandAction';
 
 const mockStore = createStore(combineReducers({ theme, bot, clientAwareSettings }), {
   clientAwareSettings: { appPath: 'app-path' },
 });
-
-jest.mock('../../../panel/panel.scss', () => ({}));
 
 jest.mock('../../../../../data/store', () => ({
   get store() {
@@ -60,14 +66,29 @@ jest.mock('../../../../../data/store', () => ({
   },
 }));
 
-let mockRemoteCallsMade;
-jest.mock('../../../../../platform/commands/commandServiceImpl', () => ({
-  CommandServiceImpl: {
-    remoteCall: (commandName, ...args) => {
-      mockRemoteCallsMade.push({ commandName, args });
-      return Promise.resolve();
-    },
-  },
+jest.mock('electron', () => ({
+  ipcMain: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+  ipcRenderer: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
 }));
 
 const mockState = {
@@ -273,6 +294,18 @@ describe('The Inspector component', () => {
     return el;
   };
 
+  let commandService: CommandServiceImpl;
+  let mockRemoteCallsMade = [];
+  beforeAll(() => {
+    const decorator = CommandServiceInstance();
+    const descriptor = decorator({ descriptor: {} }, 'none') as any;
+    commandService = descriptor.descriptor.get();
+    commandService.remoteCall = (commandName, ...args) => {
+      mockRemoteCallsMade.push({ commandName, args });
+      return true as any;
+    };
+  });
+
   beforeEach(() => {
     mockStore.dispatch(switchTheme('light', ['vars.css', 'light.css']));
     mockStore.dispatch(loadBotInfos([mockState.bot]));
@@ -331,7 +364,9 @@ describe('The Inspector component', () => {
   });
 
   describe('when there is an object to be inspected', () => {
+    let dispatchSpy;
     beforeEach(() => {
+      dispatchSpy = jest.spyOn(mockStore, 'dispatch');
       parent = mount(
         <Provider store={mockStore}>
           <InspectorContainer document={mockState.document} inspector={{ src }} />
@@ -452,25 +487,20 @@ describe('The Inspector component', () => {
         expect(logSpy).toHaveBeenCalledWith(mockState.document.documentId, logEntry(luisEditorDeepLinkItem(text)));
       });
 
-      it('"track-event"', () => {
+      it('"track-event"', async () => {
         event.channel = 'track-event';
         event.args[0] = 'someEvent';
         event.args[1] = { some: 'data' };
-        instance.ipcMessageEventHandler(event);
+        await instance.ipcMessageEventHandler(event);
+        expect(dispatchSpy).toHaveBeenCalledWith(
+          executeCommand(true, SharedConstants.Commands.Telemetry.TrackEvent, null, ...event.args)
+        );
 
-        expect(mockRemoteCallsMade).toHaveLength(1);
-        expect(mockRemoteCallsMade[0]).toEqual({
-          commandName: SharedConstants.Commands.Telemetry.TrackEvent,
-          args: ['someEvent', { some: 'data' }],
-        });
-
-        event.args[1] = undefined;
+        event.args[1] = {};
         instance.ipcMessageEventHandler(event);
-        expect(mockRemoteCallsMade).toHaveLength(2);
-        expect(mockRemoteCallsMade[1]).toEqual({
-          commandName: SharedConstants.Commands.Telemetry.TrackEvent,
-          args: ['someEvent', {}],
-        });
+        expect(dispatchSpy).toHaveBeenCalledWith(
+          executeCommand(true, SharedConstants.Commands.Telemetry.TrackEvent, null, ...event.args)
+        );
       });
     });
   });

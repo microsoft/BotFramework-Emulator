@@ -34,7 +34,7 @@
 import * as path from 'path';
 
 import { SharedConstants } from '@bfemulator/app-shared';
-import { CommandServiceImpl, DisposableImpl, ExtensionConfig } from '@bfemulator/sdk-shared';
+import { CommandServiceImpl, ExtensionConfig } from '@bfemulator/sdk-shared';
 
 import { getDirectories, readFileSync } from './utils';
 import { CommandServiceInstance } from '@bfemulator/sdk-shared';
@@ -56,7 +56,7 @@ export interface ExtensionManager {
 }
 
 // =============================================================================
-class ExtManagerImpl extends DisposableImpl implements ExtensionManager {
+class ExtManagerImpl implements ExtensionManager {
   @CommandServiceInstance()
   private commandService: CommandServiceImpl;
   private extensions: Map<Extension, string> = new Map<Extension, string>();

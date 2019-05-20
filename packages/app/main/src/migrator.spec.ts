@@ -36,6 +36,7 @@ import * as Path from 'path';
 import { SharedConstants } from '@bfemulator/app-shared';
 
 import { Migrator } from './migrator';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 interface MockCall {
   name: string;
@@ -47,6 +48,28 @@ jest.mock('electron', () => ({
   app: {
     getPath: () => mockAppDataPath,
   },
+  ipcMain: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+  ipcRenderer: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
 }));
 
 let mockWillCallMkdirp;
@@ -94,20 +117,11 @@ jest.mock('botframework-config', () => ({
 }));
 
 jest.mock('./botHelpers', () => ({
-  cloneBot: bot => bot,
-  saveBot: bot => {
-    mockCalls.push({ name: 'saveBot', args: [bot] });
-    return Promise.resolve(true);
-  },
-}));
-
-jest.mock('./main', () => ({
-  mainWindow: {
-    commandService: {
-      remoteCall: (...args: any[]) => {
-        mockCalls.push({ name: 'remoteCall', args });
-        return Promise.resolve(true);
-      },
+  BotHelpers: {
+    cloneBot: bot => bot,
+    saveBot: bot => {
+      mockCalls.push({ name: 'saveBot', args: [bot] });
+      return Promise.resolve(true);
     },
   },
 }));
@@ -125,6 +139,21 @@ jest.mock('mkdirp', () => ({
 describe('Migrator tests', () => {
   let tempLeaveMigrationMarker;
   let tempMigrateBots;
+
+  let commandService: CommandServiceImpl;
+  beforeAll(() => {
+    const decorator = CommandServiceInstance();
+    const descriptor = decorator({ descriptor: {} }, 'none') as any;
+    commandService = descriptor.descriptor.get();
+    commandService.remoteCall = (...args: any[]) => {
+      mockCalls.push({ name: 'remoteCall', args });
+      return Promise.resolve(true) as any;
+    };
+    commandService.call = (...args: any[]) => {
+      mockCalls.push({ name: 'call', args });
+      return Promise.resolve(true) as any;
+    };
+  });
 
   beforeEach(() => {
     tempLeaveMigrationMarker = (Migrator as any).leaveMigrationMarker;

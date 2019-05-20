@@ -51,11 +51,11 @@ class EventHandlers {
 
     let awaitable: Promise<any>;
     if (ctrlOrCmdPressed && key === 'o') {
-      awaitable = this.commandService.call(ShowOpenBotDialog);
+      awaitable = EventHandlers.commandService.call(ShowOpenBotDialog);
     }
 
     if (ctrlOrCmdPressed && key === 'n') {
-      awaitable = this.commandService.call(ShowBotCreationDialog);
+      awaitable = EventHandlers.commandService.call(ShowBotCreationDialog);
     }
 
     if (awaitable) {
@@ -65,7 +65,7 @@ class EventHandlers {
       try {
         await awaitable;
       } catch (e) {
-        await this.commandService.call(Add, {
+        await EventHandlers.commandService.call(Add, {
           message: '' + e,
           type: NotificationType.Error,
         } as Notification);

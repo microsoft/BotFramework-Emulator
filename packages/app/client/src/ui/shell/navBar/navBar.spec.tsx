@@ -35,7 +35,6 @@ import * as React from 'react';
 import { mount, shallow } from 'enzyme';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
-import { SharedConstants } from '@bfemulator/app-shared';
 
 import * as Constants from '../../../constants';
 import { select } from '../../../data/action/navBarActions';
@@ -44,17 +43,8 @@ import { showExplorer } from '../../../data/action/explorerActions';
 
 import { NavBarComponent as NavBar } from './navBar';
 import { NavBar as NavBarContainer } from './navBarContainer';
-
-let mockRemoteCallsMade;
-jest.mock('../../../platform/commands/commandServiceImpl', () => ({
-  CommandServiceImpl: {
-    remoteCall: jest.fn((commandName, ...args) => {
-      mockRemoteCallsMade.push({ commandName, args });
-      return Promise.resolve();
-    }),
-  },
-}));
-jest.mock('./navBar.scss', () => ({}));
+import { BotCommands } from '../../../commands/botCommands';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 let mockState;
 const mockNotifications = {
@@ -68,11 +58,48 @@ jest.mock('../../../notificationManager', () => ({
   },
 }));
 
+jest.mock('electron', () => ({
+  ipcMain: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+  ipcRenderer: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+}));
+
 describe('<NavBar/>', () => {
   let mockDispatch;
   let wrapper;
   let instance;
   let node;
+  let mockRemoteCallsMade;
+  let commandService: CommandServiceImpl;
+  beforeAll(() => {
+    new BotCommands();
+    const decorator = CommandServiceInstance();
+    const descriptor = decorator({ descriptor: {} }, 'none') as any;
+    commandService = descriptor.descriptor.get();
+    commandService.remoteCall = (...args) => {
+      mockRemoteCallsMade.push(args);
+      return true as any;
+    };
+  });
 
   beforeEach(() => {
     mockState = {
@@ -119,11 +146,7 @@ describe('<NavBar/>', () => {
     const mockEvent = {
       currentTarget,
     };
-    instance.onLinkClick(mockEvent);
-
-    expect(mockRemoteCallsMade).toHaveLength(1);
-    expect(mockRemoteCallsMade[0].commandName).toBe(SharedConstants.Commands.Telemetry.TrackEvent);
-    expect(mockRemoteCallsMade[0].args).toEqual(['navbar_selection', { selection: 'notifications' }]);
+    instance.onLinkClick(mockEvent as any);
     expect(mockDispatch).toHaveBeenCalledWith(select('navbar.notifications'));
     expect(instance.state.selection).toBe('navbar.notifications');
   });

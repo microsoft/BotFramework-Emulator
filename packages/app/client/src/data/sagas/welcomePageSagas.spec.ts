@@ -34,24 +34,19 @@ import { SharedConstants } from '@bfemulator/app-shared';
 import sagaMiddlewareFactory from 'redux-saga';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 
-import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { openContextMenuForBot } from '../action/welcomePageActions';
 import { bot } from '../reducer/bot';
 import notification from '../reducer/notification';
 
 import { notificationSagas } from './notificationSagas';
 import { welcomePageSagas } from './welcomePageSagas';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 const mockBot = {
   path: '/some/path.bot',
   displayName: 'AuthBot',
   secret: 'secret',
 };
-jest.mock('../../platform/commands/commandServiceImpl', () => ({
-  CommandServiceImpl: {
-    remoteCall: async () => null,
-  },
-}));
 
 const sagaMiddleWare = sagaMiddlewareFactory();
 const mockStore = createStore(
@@ -68,14 +63,46 @@ jest.mock('../store', () => ({
   },
 }));
 
+jest.mock('electron', () => ({
+  ipcMain: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+  ipcRenderer: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+}));
+
 sagaMiddleWare.run(welcomePageSagas);
 sagaMiddleWare.run(notificationSagas);
 
 describe('The WelcomePageSagas', () => {
+  let commandService: CommandServiceImpl;
+  beforeAll(() => {
+    const decorator = CommandServiceInstance();
+    const descriptor = decorator({ descriptor: {} }, 'none') as any;
+    commandService = descriptor.descriptor.get();
+  });
+
   describe(', when invoking a context menu over a bot in the list', () => {
     it('should call the series of commands that move the bot file to a new location.', async () => {
       const remoteCalls = [];
-      CommandServiceImpl.remoteCall = async function(...args: any[]) {
+      commandService.remoteCall = async function(...args: any[]) {
         remoteCalls.push(args);
         switch (args[0]) {
           case SharedConstants.Commands.Electron.DisplayContextMenu:
@@ -85,7 +112,7 @@ describe('The WelcomePageSagas', () => {
             return 'this/is/a/new/location.bot';
 
           default:
-            return null;
+            return null as any;
         }
       };
       await mockStore.dispatch(openContextMenuForBot(mockBot));
@@ -142,7 +169,7 @@ describe('The WelcomePageSagas', () => {
     });
 
     it('should add a notification if a remote command fails when moving a bot file', async () => {
-      CommandServiceImpl.remoteCall = async function(...args: any[]) {
+      commandService.remoteCall = async function(...args: any[]) {
         switch (args[0]) {
           case SharedConstants.Commands.Electron.DisplayContextMenu:
             return { id: 0 };
@@ -154,7 +181,7 @@ describe('The WelcomePageSagas', () => {
             throw new Error('oh noes!');
 
           default:
-            return null;
+            return null as any;
         }
       };
       await mockStore.dispatch(openContextMenuForBot(mockBot));
@@ -166,7 +193,7 @@ describe('The WelcomePageSagas', () => {
 
     it('should call the appropriate command when opening the bot file location', async () => {
       let openFileLocationArgs;
-      CommandServiceImpl.remoteCall = async function(...args: any[]) {
+      commandService.remoteCall = async function(...args: any[]) {
         switch (args[0]) {
           case SharedConstants.Commands.Electron.DisplayContextMenu:
             return { id: 1 };
@@ -175,7 +202,7 @@ describe('The WelcomePageSagas', () => {
             return (openFileLocationArgs = args);
 
           default:
-            return null;
+            return null as any;
         }
       };
 
@@ -185,8 +212,8 @@ describe('The WelcomePageSagas', () => {
     });
 
     it('should call the appropriate command when removing a bot from the list', async () => {
-      let removeBotFromListArgs;
-      CommandServiceImpl.remoteCall = async function(...args: any[]) {
+      let removeBotFromListArgs = null;
+      commandService.remoteCall = async function(...args: any[]) {
         switch (args[0]) {
           case SharedConstants.Commands.Electron.DisplayContextMenu:
             return { id: 2 };
@@ -195,7 +222,7 @@ describe('The WelcomePageSagas', () => {
             return (removeBotFromListArgs = args);
 
           default:
-            return null;
+            return null as any;
         }
       };
       await mockStore.dispatch(openContextMenuForBot(mockBot));

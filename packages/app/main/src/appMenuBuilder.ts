@@ -36,7 +36,7 @@ import { ConversationService } from '@bfemulator/sdk-shared';
 import * as Electron from 'electron';
 
 import { AppUpdater, UpdateStatus } from './appUpdater';
-import { getActiveBot } from './botHelpers';
+import { BotHelpers } from './botHelpers';
 import { Emulator } from './emulator';
 import { mainWindow } from './main';
 import { debugModeChanged, rememberTheme } from './settingsData/actions/windowStateActions';
@@ -175,7 +175,7 @@ export class AppMenuBuilder {
           new Electron.MenuItem({
             label: bot.displayName,
             click: () => {
-              this.commandService.remoteCall(SharedConstants.Commands.Bot.Switch, bot.path).catch(err =>
+              AppMenuBuilder.commandService.remoteCall(SharedConstants.Commands.Bot.Switch, bot.path).catch(err =>
                 // eslint-disable-next-line no-console
                 console.error('Error while switching bots from file menu recent bots list: ', err)
               );
@@ -193,14 +193,14 @@ export class AppMenuBuilder {
       {
         label: 'New Bot Configuration...',
         click: () => {
-          this.commandService.remoteCall(UI.ShowBotCreationDialog);
+          AppMenuBuilder.commandService.remoteCall(UI.ShowBotCreationDialog);
         },
       },
       { type: 'separator' },
       {
         label: 'Open Bot',
         click: () => {
-          this.commandService.remoteCall(UI.ShowOpenBotDialog);
+          AppMenuBuilder.commandService.remoteCall(UI.ShowOpenBotDialog);
         },
       },
       {
@@ -214,7 +214,7 @@ export class AppMenuBuilder {
         label: 'Open Transcript...',
         click: async () => {
           try {
-            this.commandService.remoteCall(EmulatorCommands.PromptToOpenTranscript);
+            AppMenuBuilder.commandService.remoteCall(EmulatorCommands.PromptToOpenTranscript);
           } catch (err) {
             // eslint-disable-next-line no-console
             console.error('Error opening transcript file from menu: ', err);
@@ -224,13 +224,13 @@ export class AppMenuBuilder {
       { type: 'separator' },
     ];
 
-    const activeBot = getActiveBot();
+    const activeBot = BotHelpers.getActiveBot();
 
     subMenu.push({
       label: 'Close Tab',
       click: async () => {
-        await this.commandService.remoteCall(Bot.Close);
-        await this.commandService.call(SharedConstants.Commands.Electron.UpdateFileMenu);
+        await AppMenuBuilder.commandService.remoteCall(Bot.Close);
+        await AppMenuBuilder.commandService.call(SharedConstants.Commands.Electron.UpdateFileMenu);
       },
       enabled: activeBot !== null,
     });
@@ -245,10 +245,10 @@ export class AppMenuBuilder {
       label: azureMenuItemLabel,
       click: async () => {
         if (signedInUser) {
-          await this.commandService.call(Azure.SignUserOutOfAzure);
-          await this.commandService.remoteCall(UI.InvalidateAzureArmToken);
+          await AppMenuBuilder.commandService.call(Azure.SignUserOutOfAzure);
+          await AppMenuBuilder.commandService.remoteCall(UI.InvalidateAzureArmToken);
         } else {
-          await this.commandService.remoteCall(UI.SignInToAzure);
+          await AppMenuBuilder.commandService.remoteCall(UI.SignInToAzure);
         }
       },
     });
@@ -266,7 +266,7 @@ export class AppMenuBuilder {
           click: async () => {
             settingsStore.dispatch(rememberTheme(t.name));
 
-            await this.commandService.call(SharedConstants.Commands.Electron.UpdateFileMenu);
+            await AppMenuBuilder.commandService.call(SharedConstants.Commands.Electron.UpdateFileMenu);
           },
         })),
       },
@@ -286,7 +286,7 @@ export class AppMenuBuilder {
   }
 
   private static async initConversationMenu(): Promise<MenuOpts> {
-    const getState = () => this.commandService.remoteCall<any>(SharedConstants.Commands.Misc.GetStoreState);
+    const getState = () => AppMenuBuilder.commandService.remoteCall<any>(SharedConstants.Commands.Misc.GetStoreState);
 
     const getConversationId = async () => {
       const state = await getState();
@@ -470,7 +470,7 @@ export class AppMenuBuilder {
       submenu: [
         {
           label: 'Welcome',
-          click: () => this.commandService.remoteCall(Commands.UI.ShowWelcomePage),
+          click: () => AppMenuBuilder.commandService.remoteCall(Commands.UI.ShowWelcomePage),
         },
         { type: 'separator' },
         {
@@ -528,7 +528,11 @@ export class AppMenuBuilder {
         {
           label: Channels.HelpLabel,
           click: () =>
-            this.commandService.remoteCall(Commands.UI.ShowMarkdownPage, Channels.ReadmeUrl, Channels.HelpLabel),
+            AppMenuBuilder.commandService.remoteCall(
+              Commands.UI.ShowMarkdownPage,
+              Channels.ReadmeUrl,
+              Channels.HelpLabel
+            ),
         },
         {
           label: 'About',

@@ -132,7 +132,7 @@ export class ChatSagas {
         return Electron.clipboard.writeText(ChatSagas.getTextFromActivity(activity));
 
       case 'json':
-        return Electron.clipboard.writeText(ChatSagas.getTextFromActivity(activity));
+        return Electron.clipboard.writeText(JSON.stringify(activity, null, 2));
 
       default:
         yield* ChatSagas.diffWithPreviousBotState(activity);

@@ -62,9 +62,7 @@ const mapDispatchToProps = (dispatch): TabBarProps => ({
   appendTab: (srcEditorKey: string, destEditorKey: string, tabId: string) =>
     dispatch(appendTab(srcEditorKey, destEditorKey, tabId)),
   enablePresentationMode: async () => {
-    await new Promise(resolve => {
-      dispatch(executeCommand(true, SharedConstants.Commands.Telemetry.TrackEvent, resolve, 'tabBar_presentationMode'));
-    });
+    dispatch(executeCommand(true, SharedConstants.Commands.Telemetry.TrackEvent, null, 'tabBar_presentationMode'));
     dispatch(enablePresentationMode());
   },
   setActiveTab: (documentId: string) => dispatch(setActiveTab(documentId)),
