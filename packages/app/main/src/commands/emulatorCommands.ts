@@ -286,11 +286,18 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   });
 
   commandRegistry.registerCommand(Commands.ClearState, async () => {
+    const settingsStore = getSettingsStore();
+    const settingsState = settingsStore.getState();
+    const { signedInUser } = settingsState.azure;
+    const signedInMessage = signedInUser
+      ? 'This will log you out of Azure and remove any session based data. Continue?'
+      : 'This will remove any session based data. Continue?';
+
     const clearState = await mainWindow.commandService.call(SharedConstants.Commands.Electron.ShowMessageBox, true, {
       buttons: ['Cancel', 'OK'],
       cancelId: 0,
       defaultId: 1,
-      message: 'Clear State?',
+      message: signedInMessage,
       type: 'question',
     });
 
