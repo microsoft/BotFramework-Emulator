@@ -147,10 +147,10 @@ export class ChatSagas {
     if (chat.directLine) {
       chat.directLine.end(); // stop polling
     }
-    yield call([ChatSagas.commandService, ChatSagas.commandService.remoteCall], DeleteConversation, conversationId);
     yield put(closeDocument(documentId));
     // remove the webchat store when the document is closed
     yield put(webChatStoreUpdated(documentId, null));
+    yield call([ChatSagas.commandService, ChatSagas.commandService.remoteCall], DeleteConversation, conversationId);
   }
 
   public static *newChat(action: ChatAction<NewChatPayload>): Iterable<any> {
