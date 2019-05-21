@@ -35,11 +35,10 @@ import * as path from 'path';
 import * as url from 'url';
 
 import { newNotification, Notification, PersistentSettings, Settings, SharedConstants } from '@bfemulator/app-shared';
-import { app, BrowserWindow, dialog, Rectangle, screen, systemPreferences } from 'electron';
+import { app, BrowserWindow, Rectangle, screen, systemPreferences } from 'electron';
 import { Store } from 'redux';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
-import { AppMenuBuilder } from './appMenuBuilder';
 import { AppUpdater } from './appUpdater';
 import { getStore } from './data/store';
 import * as commandLine from './commandLine';
@@ -304,12 +303,6 @@ class EmulatorApplication {
 
   private onAppWillFinishLaunching = () => {
     app.on('open-url', this.onAppOpenUrl);
-    AppMenuBuilder.initAppMenu().catch(err => {
-      dialog.showErrorBox(
-        'Bot Framework Emulator',
-        `An error occurred while initializing the application menu: ${err}`
-      );
-    });
   };
 
   private onAppOpenUrl = (event: any, url: string): void => {

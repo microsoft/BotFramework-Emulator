@@ -290,6 +290,9 @@ export class AppMenuBuilder {
 
     const getConversationId = async () => {
       const state = await getState();
+      if (!state.editor) {
+        return;
+      }
       const { editors, activeEditor } = state.editor;
       const { activeDocumentId } = editors[activeEditor];
 
@@ -298,6 +301,9 @@ export class AppMenuBuilder {
 
     const getActiveDocumentContentType = async () => {
       const state = await getState();
+      if (!state.editor) {
+        return;
+      }
       const { editors, activeEditor } = state.editor;
       const { activeDocumentId } = editors[activeEditor];
       const activeDocument = editors[activeEditor].documents[activeDocumentId];

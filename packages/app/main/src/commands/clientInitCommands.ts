@@ -30,7 +30,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
+import { dialog } from 'electron';
 import { SharedConstants } from '@bfemulator/app-shared';
 import { Command, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
@@ -44,6 +44,7 @@ import { getStore as getSettingsStore } from '../settingsData/store';
 import { getBotsFromDisk } from '../utils';
 import { openFileFromCommandLine } from '../utils/openFileFromCommandLine';
 import { pushClientAwareSettings } from '../settingsData/actions/frameworkActions';
+import { AppMenuBuilder } from '../appMenuBuilder';
 
 const Commands = SharedConstants.Commands;
 
@@ -94,6 +95,15 @@ export class ClientInitCommands {
     const fileToBeOpened = args.find(arg => /(\.transcript)|(\.bot)$/.test(arg));
     if (fileToBeOpened) {
       await openFileFromCommandLine(fileToBeOpened, this.commandService);
+    }
+
+    try {
+      await AppMenuBuilder.initAppMenu();
+    } catch (err) {
+      dialog.showErrorBox(
+        'Bot Framework Emulator',
+        `An error occurred while initializing the application menu: ${err}`
+      );
     }
   }
 }

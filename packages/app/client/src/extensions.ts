@@ -128,29 +128,15 @@ export interface GetInspectorResult {
   inspector: ExtensionInspector;
 }
 
-// =============================================================================
-export interface ExtensionManager {
-  addExtension(config: ExtensionConfig, unid: string);
-
-  removeExtension(unid: string);
-
-  getExtensions(): Extension[];
-
-  inspectorForObject(obj: any, defaultToJson: boolean): GetInspectorResult | null;
-}
-
 const { Connect, Disconnect } = SharedConstants.Commands.Extension;
 
 // =============================================================================
-class EmulatorExtensionManager implements ExtensionManager {
+class EmulatorExtensionManager {
   private extensions: { [unid: string]: Extension } = {};
 
   public addExtension(config: ExtensionConfig, unid: string) {
     this.removeExtension(unid);
-    // eslint-disable-next-line no-console
-    console.log(`adding extension ${config.name}`);
-    const ext = new Extension(config, unid);
-    this.extensions[unid] = ext;
+    this.extensions[unid] = new Extension(config, unid);
   }
 
   public removeExtension(unid: string) {
@@ -177,7 +163,7 @@ class EmulatorExtensionManager implements ExtensionManager {
     if (!result && defaultToJson) {
       // Default to the JSON inspector
       // eslint-disable-next-line typescript/no-use-before-define
-      const jsonExtension = ExtensionManager.findExtension('JSON');
+      const jsonExtension = this.findExtension('JSON');
       if (jsonExtension) {
         result = {
           extension: jsonExtension,
