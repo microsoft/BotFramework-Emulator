@@ -34,13 +34,15 @@ import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shar
 
 import { Emulator } from './emulator';
 import './fetchProxy';
-import { mainWindow } from './main';
+import { emulatorApplication } from './main';
 import { RestServer } from './restServer';
 
 jest.mock('./main', () => ({
-  mainWindow: {
-    logService: {
-      logToChat: () => void 0,
+  emulatorApplication: {
+    mainWindow: {
+      logService: {
+        logToChat: () => void 0,
+      },
     },
   },
 }));
@@ -94,7 +96,7 @@ describe('The restServer', () => {
   });
 
   it('should log to the LOG panel after each successful request', () => {
-    const logSpy = jest.spyOn(mainWindow.logService, 'logToChat');
+    const logSpy = jest.spyOn(emulatorApplication.mainWindow.logService, 'logToChat');
     const mockReq = {
       method: 'post',
       conversation: {

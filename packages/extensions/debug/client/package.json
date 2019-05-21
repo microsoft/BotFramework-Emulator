@@ -19,7 +19,7 @@
     "@babel/plugin-proposal-class-properties": "^7.1.0",
     "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
     "@babel/plugin-transform-react-jsx": "^7.0.0",
-    "@babel/plugin-transform-runtime": "^7.1.0",
+    "@babel/plugin-transform-runtime": "^7.4.4",
     "@babel/preset-env": "^7.1.0",
     "@babel/preset-typescript": "^7.1.0",
     "@babel/runtime": "^7.1.5",
@@ -34,7 +34,6 @@
     "eslint-plugin-prettier": "^3.0.1",
     "eslint-plugin-typescript": "^1.0.0-rc.3",
     "jest": "^23.0.0",
-    "ts-loader": "^4.4.2",
     "url-loader": "^1.0.1",
     "webpack": "4.16.4",
     "webpack-cli": "^3.1.1"

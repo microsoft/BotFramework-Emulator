@@ -43,7 +43,7 @@ import * as BotActions from '../data/actions/botActions';
 import { getStore } from '../data/store';
 import { BotHelpers } from '../botHelpers';
 import { Emulator } from '../emulator';
-import { mainWindow } from '../main';
+import { emulatorApplication } from '../main';
 import { dispatch, getStore as getSettingsStore } from '../settingsData/store';
 import { parseActivitiesFromChatFile, readFileSync, showSaveDialog, writeFile } from '../utils';
 import { cleanupId as cleanupActivityChannelAccountId, CustomActivity } from '../utils/conversation';
@@ -72,7 +72,7 @@ export class EmulatorCommands {
     }
     let botInfo = activeBot ? BotHelpers.getBotInfoByPath(activeBot.path) : {};
 
-    const filename = showSaveDialog(mainWindow.browserWindow, {
+    const filename = showSaveDialog(emulatorApplication.mainWindow.browserWindow, {
       // TODO - Localization
       filters: [
         {

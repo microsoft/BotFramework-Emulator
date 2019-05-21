@@ -35,7 +35,7 @@ import { SharedConstants } from '@bfemulator/app-shared';
 import { Command } from '@bfemulator/sdk-shared';
 
 import { Emulator } from '../emulator';
-import { windowManager } from '../main';
+import { emulatorApplication } from '../main';
 
 const Commands = SharedConstants.Commands.OAuth;
 
@@ -61,6 +61,6 @@ export class OauthCommands {
     const convo = Emulator.getInstance().framework.server.botEmulator.facilities.conversations.conversationById(
       conversationId
     );
-    windowManager.createOAuthWindow(url, convo.codeVerifier);
+    emulatorApplication.windowManager.createOAuthWindow(url, convo.codeVerifier);
   }
 }

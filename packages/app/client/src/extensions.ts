@@ -32,7 +32,7 @@
 //
 
 import { SharedConstants } from '@bfemulator/app-shared';
-import { CommandRegistryImpl, ExtensionConfig, ExtensionInspector } from '@bfemulator/sdk-shared';
+import { Command, ExtensionConfig, ExtensionInspector } from '@bfemulator/sdk-shared';
 
 // =============================================================================
 export class Extension {
@@ -139,6 +139,8 @@ export interface ExtensionManager {
   inspectorForObject(obj: any, defaultToJson: boolean): GetInspectorResult | null;
 }
 
+const { Connect, Disconnect } = SharedConstants.Commands.Extension;
+
 // =============================================================================
 class EmulatorExtensionManager implements ExtensionManager {
   private extensions: { [unid: string]: Extension } = {};
@@ -186,17 +188,16 @@ class EmulatorExtensionManager implements ExtensionManager {
     return result;
   }
 
-  public registerCommands(commandRegistry: CommandRegistryImpl) {
-    const { Connect, Disconnect } = SharedConstants.Commands.Extension;
-    commandRegistry.registerCommand(Connect, (config: ExtensionConfig) => {
-      // eslint-disable-next-line typescript/no-use-before-define
-      ExtensionManager.addExtension(config, config.location);
-    });
+  @Command(Connect)
+  protected connectExtension(config: ExtensionConfig) {
+    // eslint-disable-next-line typescript/no-use-before-define
+    this.addExtension(config, config.location);
+  }
 
-    commandRegistry.registerCommand(Disconnect, (location: string) => {
-      // eslint-disable-next-line typescript/no-use-before-define
-      ExtensionManager.removeExtension(location);
-    });
+  @Command(Disconnect)
+  protected disconnectExtension(location: string) {
+    // eslint-disable-next-line typescript/no-use-before-define
+    this.removeExtension(location);
   }
 }
 

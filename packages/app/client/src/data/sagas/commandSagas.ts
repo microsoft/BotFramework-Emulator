@@ -30,7 +30,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { call, ForkEffect, put, takeEvery } from 'redux-saga/effects';
+import { ForkEffect, put, takeEvery } from 'redux-saga/effects';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 import { newNotification } from '@bfemulator/app-shared';
 
@@ -45,9 +45,8 @@ export class CommandSagas {
     const { isRemote, commandName, args, resolver } = action.payload;
     try {
       const result = isRemote
-        ? yield call([this.commandService, this.commandService.remoteCall], commandName, args)
-        : yield call([this.commandService, this.commandService.call], commandName, args);
-
+        ? yield CommandSagas.commandService.remoteCall(commandName, ...args)
+        : yield CommandSagas.commandService.call(commandName, ...args);
       if (resolver) {
         resolver(result);
       }

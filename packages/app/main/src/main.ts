@@ -37,7 +37,7 @@ import * as url from 'url';
 import { newNotification, Notification, PersistentSettings, Settings, SharedConstants } from '@bfemulator/app-shared';
 import { app, BrowserWindow, dialog, Rectangle, screen, systemPreferences } from 'electron';
 import { Store } from 'redux';
-import { CommandRegistryImpl, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { AppMenuBuilder } from './appMenuBuilder';
 import { AppUpdater } from './appUpdater';
@@ -139,7 +139,6 @@ class EmulatorApplication {
   public mainWindow: Window;
   public windowManager = new WindowManager();
 
-  private commandRegistry: CommandRegistryImpl;
   private botsRef = store.getState().bot.botFiles;
   private fileToOpen: string;
 
@@ -360,7 +359,9 @@ class EmulatorApplication {
     const settingsStore = getSettingsStore();
     const { persistLogin, signedInUser } = settingsStore.getState().azure;
     if (persistLogin && signedInUser) {
-      const result = await this.commandRegistry.getCommand(SharedConstants.Commands.Azure.RetrieveArmToken)(true);
+      const result = await this.commandService.registry.getCommand(SharedConstants.Commands.Azure.RetrieveArmToken)(
+        true
+      );
       if (result && 'access_token' in result) {
         await this.commandService.remoteCall(SharedConstants.Commands.UI.ArmTokenReceivedOnStartup, result);
       } else if (!result) {
@@ -371,6 +372,4 @@ class EmulatorApplication {
   }
 }
 
-const emulatorApplication = new EmulatorApplication();
-export const mainWindow = emulatorApplication.mainWindow;
-export const windowManager = emulatorApplication.windowManager;
+export const emulatorApplication = new EmulatorApplication();

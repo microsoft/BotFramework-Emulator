@@ -40,7 +40,7 @@ import { Command } from '@bfemulator/sdk-shared';
 
 import { AppMenuBuilder } from '../appMenuBuilder';
 import { getStore } from '../data/store';
-import { mainWindow } from '../main';
+import { emulatorApplication } from '../main';
 import { ContextMenuService } from '../services/contextMenuService';
 import { TelemetryService } from '../telemetry';
 import { showOpenDialog, showSaveDialog } from '../utils';
@@ -61,7 +61,7 @@ export class ElectronCommands {
       title: app.getName(),
       ...options,
     };
-    const args = modal ? [mainWindow.browserWindow, options] : [options];
+    const args = modal ? [emulatorApplication.mainWindow.browserWindow, options] : [options];
     return dialog.showMessageBox.apply(dialog, args);
   }
 
@@ -69,14 +69,14 @@ export class ElectronCommands {
   // Shows an open dialog and returns a path
   @Command(Commands.ShowOpenDialog)
   protected showOpenDialog(dialogOptions: Electron.OpenDialogOptions = {}): false | string {
-    return showOpenDialog(mainWindow.browserWindow, dialogOptions);
+    return showOpenDialog(emulatorApplication.mainWindow.browserWindow, dialogOptions);
   }
 
   // ---------------------------------------------------------------------------
   // Shows a save dialog and returns a path + filename
   @Command(Commands.ShowSaveDialog)
   protected showSaveDialogWithOptions(dialogOptions: Electron.SaveDialogOptions = {}): string {
-    return showSaveDialog(mainWindow.browserWindow, dialogOptions);
+    return showSaveDialog(emulatorApplication.mainWindow.browserWindow, dialogOptions);
   }
 
   // ---------------------------------------------------------------------------
@@ -121,7 +121,7 @@ export class ElectronCommands {
   // Toggles app fullscreen mode
   @Command(Commands.SetFullscreen)
   protected async setFullScreen(fullscreen: boolean): Promise<void> {
-    mainWindow.browserWindow.setFullScreen(fullscreen);
+    emulatorApplication.mainWindow.browserWindow.setFullScreen(fullscreen);
     if (fullscreen) {
       Menu.setApplicationMenu(null);
     } else {
@@ -134,9 +134,9 @@ export class ElectronCommands {
   @Command(Commands.SetTitleBar)
   protected setTitleBar(text: string) {
     if (text && text.length) {
-      mainWindow.browserWindow.setTitle(app.getName() + ' - ' + text);
+      emulatorApplication.mainWindow.browserWindow.setTitle(app.getName() + ' - ' + text);
     } else {
-      mainWindow.browserWindow.setTitle(app.getName());
+      emulatorApplication.mainWindow.browserWindow.setTitle(app.getName());
     }
   }
 

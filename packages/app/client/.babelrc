@@ -4,7 +4,7 @@
       "@babel/preset-env",
       {
         "targets": {
-          "chrome": "58",
+          "chrome": "68",
           "esmodules": true
         }
       }
@@ -16,14 +16,14 @@
   ],
   "sourceMaps": "inline",
   "plugins": [
-    "@babel/proposal-class-properties",
     "@babel/plugin-transform-react-jsx",
-    "@babel/plugin-transform-runtime",
     [
       "@babel/proposal-decorators",
       {
         "decoratorsBeforeExport": true
       }
-    ]
+    ],
+    "@babel/plugin-proposal-class-properties",
+    "@babel/plugin-transform-runtime"
   ]
 }

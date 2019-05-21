@@ -39,7 +39,7 @@ import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shar
 import { AppUpdater, UpdateStatus } from './appUpdater';
 import { BotHelpers } from './botHelpers';
 import { Emulator } from './emulator';
-import { mainWindow } from './main';
+import { emulatorApplication } from './main';
 import { debugModeChanged, rememberTheme } from './settingsData/actions/windowStateActions';
 import { getStore as getSettingsStore } from './settingsData/store';
 import { TelemetryService } from './telemetry';
@@ -537,7 +537,7 @@ export class AppMenuBuilder {
         {
           label: 'About',
           click: () =>
-            Electron.dialog.showMessageBox(mainWindow.browserWindow, {
+            Electron.dialog.showMessageBox(emulatorApplication.mainBrowserWindow, {
               type: 'info',
               title: appName,
               message: appName + '\r\nversion: ' + version,

@@ -39,6 +39,31 @@ import { mount, ReactWrapper } from 'enzyme';
 import { Log, LogProps } from './log';
 import { LogEntry } from './logEntry';
 
+jest.mock('electron', () => ({
+  ipcMain: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+  ipcRenderer: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+}));
+
 describe('log component', () => {
   let parent: ReactWrapper;
   let wrapper: ReactWrapper;

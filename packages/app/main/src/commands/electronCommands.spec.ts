@@ -38,7 +38,7 @@ import { CommandRegistry, CommandServiceImpl, CommandServiceInstance } from '@bf
 
 import { load } from '../data/actions/botActions';
 import { getStore } from '../data/store';
-import { mainWindow } from '../main';
+import { emulatorApplication } from '../main';
 import { TelemetryService } from '../telemetry';
 
 import { ElectronCommands } from './electronCommands';
@@ -98,39 +98,11 @@ jest.mock('electron', () => ({
 }));
 
 jest.mock('../main', () => ({
-  mainWindow: {
-    browserWindow: {
-      setFullScreen: () => void 0,
-      setTitle: (_name: string = '') => void 0,
-    },
-    commandService: {
-      remoteCall: command => {
-        if (command === 'store:get-state') {
-          return {
-            chat: {
-              chats: {
-                'document-id': {
-                  conversationId: 'conversation-id',
-                },
-              },
-            },
-            editor: {
-              activeEditor: 'active-editor-id',
-              editors: {
-                'active-editor-id': {
-                  activeDocumentId: 'document-id',
-                  documents: {
-                    'document-id': {
-                      contentType: 'application/vnd.microsoft.bfemulator.document.livechat',
-                    },
-                  },
-                },
-              },
-            },
-          };
-        } else {
-          throw new Error('mock not implemented');
-        }
+  emulatorApplication: {
+    mainWindow: {
+      browserWindow: {
+        setFullScreen: () => void 0,
+        setTitle: (_name: string = '') => void 0,
       },
     },
   },
@@ -200,7 +172,7 @@ describe('the electron commands', () => {
     const handler = registry.getCommand(SharedConstants.Commands.Electron.ShowMessageBox);
     const showMessageBoxSpy = jest.spyOn(Electron.dialog, 'showMessageBox');
     await handler(true, {});
-    expect(showMessageBoxSpy).toHaveBeenCalledWith(mainWindow.browserWindow, {
+    expect(showMessageBoxSpy).toHaveBeenCalledWith(emulatorApplication.mainWindow.browserWindow, {
       message: '',
       title: 'BotFramework Emulator',
     });
@@ -211,7 +183,7 @@ describe('the electron commands', () => {
     const showOpenDialogSpy = jest.spyOn(Electron.dialog, 'showOpenDialog');
     await handler({});
 
-    expect(showOpenDialogSpy).toHaveBeenCalledWith(mainWindow.browserWindow, {});
+    expect(showOpenDialogSpy).toHaveBeenCalledWith(emulatorApplication.mainWindow.browserWindow, {});
   });
 
   it('should show the save dialog', async () => {
@@ -219,7 +191,7 @@ describe('the electron commands', () => {
     const showSaveDialogSpy = jest.spyOn(Electron.dialog, 'showSaveDialog');
 
     await handler({});
-    expect(showSaveDialogSpy).toHaveBeenCalledWith(mainWindow.browserWindow, {});
+    expect(showSaveDialogSpy).toHaveBeenCalledWith(emulatorApplication.mainWindow.browserWindow, {});
   });
 
   it('should update the file menu', async () => {
@@ -270,7 +242,7 @@ describe('the electron commands', () => {
 
   it('should set full screen mode and set the application menu to null', async () => {
     const handler = registry.getCommand(SharedConstants.Commands.Electron.SetFullscreen);
-    const fullScreenSpy = jest.spyOn(mainWindow.browserWindow, 'setFullScreen');
+    const fullScreenSpy = jest.spyOn(emulatorApplication.mainWindow.browserWindow, 'setFullScreen');
     const setApplicationMenuSpy = jest.spyOn(Electron.Menu, 'setApplicationMenu');
 
     await handler(true);
@@ -280,7 +252,7 @@ describe('the electron commands', () => {
 
   it('should remove full screen mode and set the application menu back to normal', async () => {
     const handler = registry.getCommand(SharedConstants.Commands.Electron.SetFullscreen);
-    const fullScreenSpy = jest.spyOn(mainWindow.browserWindow, 'setFullScreen');
+    const fullScreenSpy = jest.spyOn(emulatorApplication.mainWindow.browserWindow, 'setFullScreen');
     mockInitAppMenu = jest.fn(() => null);
 
     await handler(false);
@@ -290,12 +262,12 @@ describe('the electron commands', () => {
 
   it('should set the title bar', async () => {
     const handler = registry.getCommand(SharedConstants.Commands.Electron.SetTitleBar);
-    let setTitleSpy = jest.spyOn(mainWindow.browserWindow, 'setTitle');
+    let setTitleSpy = jest.spyOn(emulatorApplication.mainWindow.browserWindow, 'setTitle');
 
     await handler();
     expect(setTitleSpy).toHaveBeenCalledWith(Electron.app.getName());
 
-    setTitleSpy = jest.spyOn(mainWindow.browserWindow, 'setTitle');
+    setTitleSpy = jest.spyOn(emulatorApplication.mainWindow.browserWindow, 'setTitle');
     await handler('preview');
     expect(setTitleSpy).toHaveBeenCalledWith(`${Electron.app.getName()} - preview`);
   });

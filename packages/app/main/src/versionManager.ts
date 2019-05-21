@@ -35,7 +35,7 @@ import { LogLevel, textItem } from '@bfemulator/sdk-shared';
 import got from 'got';
 import { DOMParser } from 'xmldom';
 
-import { mainWindow } from './main';
+import { emulatorApplication } from './main';
 
 interface Version {
   type?: string;
@@ -132,7 +132,7 @@ export class VersionManager {
   }
 
   private static warnAboutNewSdkVersion(conversationId: string, botVersion: Version, latestVersion: Version) {
-    mainWindow.logService.logToChat(
+    emulatorApplication.mainWindow.logService.logToChat(
       conversationId,
       textItem(
         LogLevel.Warn,

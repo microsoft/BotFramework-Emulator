@@ -50,7 +50,7 @@ import { bot } from '../../../../../data/reducer/bot';
 import { clientAwareSettings } from '../../../../../data/reducer/clientAwareSettingsReducer';
 import { theme } from '../../../../../data/reducer/themeReducer';
 import { ExtensionManager } from '../../../../../extensions';
-import { LogService } from '../../../../../platform/log/logService';
+import { logService } from '../../../../../platform/log/logService';
 import { executeCommand } from '../../../../../data/action/commandAction';
 
 import { Inspector } from './inspector';
@@ -469,7 +469,7 @@ describe('The Inspector component', () => {
 
       it('"logger.log" or "logger.error"', () => {
         event.channel = 'logger.log';
-        const logSpy = jest.spyOn(LogService, 'logToDocument');
+        const logSpy = jest.spyOn(logService, 'logToDocument');
         const inspectorName = mockExtensions[0].name;
         const text = `[${inspectorName}] ${event.args[0]}`;
         instance.ipcMessageEventHandler(event);
@@ -479,7 +479,7 @@ describe('The Inspector component', () => {
 
       it('"logger.luis-editor-deep-link"', () => {
         event.channel = 'logger.luis-editor-deep-link';
-        const logSpy = jest.spyOn(LogService, 'logToDocument');
+        const logSpy = jest.spyOn(logService, 'logToDocument');
         const inspectorName = mockExtensions[0].name;
         const text = `[${inspectorName}] ${event.args[0]}`;
         instance.ipcMessageEventHandler(event);

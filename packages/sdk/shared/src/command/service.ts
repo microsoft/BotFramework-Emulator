@@ -74,7 +74,7 @@ export class CommandServiceImpl {
           return new Error(`Command '${commandName}' not found`);
         }
       } else {
-        return command(...args) as T;
+        return (await command(...args)) as T;
       }
     } catch (err) {
       return err;
@@ -94,11 +94,13 @@ export class CommandServiceImpl {
           reject(responseArgs.shift());
         }
       });
-      this.ipcSender.send('remote-call', commandName, transactionId, ...args);
+      if (this.ipcSender) {
+        this.ipcSender.send('remote-call', commandName, transactionId, ...args);
+      }
     });
   }
 
-  protected onIpcMessage = async (commandName: string, transactionId: string, ...args: any[]) => {
+  protected onIpcMessage = async (event: Event, commandName: string, transactionId: string, ...args: any[]) => {
     try {
       let result = await this.call<any>(commandName, ...args);
       result = Array.isArray(result) ? result : [result];

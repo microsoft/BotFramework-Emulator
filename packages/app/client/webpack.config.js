@@ -50,12 +50,7 @@ const manifestLocation = path.resolve('./generated');
 const use = [
   {
     loader: 'babel-loader',
-    options: {
-      babelrc: false,
-      plugins: ['react-hot-loader/babel'],
-    },
   },
-  'ts-loader',
 ];
 const defaultConfig = {
   entry: {

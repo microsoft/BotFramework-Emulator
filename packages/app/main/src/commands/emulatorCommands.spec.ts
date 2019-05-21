@@ -174,15 +174,17 @@ jest.mock('../emulator', () => ({
 
 let mockCallsMade = [];
 jest.mock('../main', () => ({
-  mainWindow: {
-    commandService: {
-      call: async (commandName, ...args) => {
-        mockCallsMade.push({ commandName, args });
-        return Promise.resolve(true);
+  emulatorApplication: {
+    mainWindow: {
+      commandService: {
+        call: async (commandName, ...args) => {
+          mockCallsMade.push({ commandName, args });
+          return Promise.resolve(true);
+        },
+        remoteCall: async () => true,
       },
-      remoteCall: async () => true,
+      browserWindow: {},
     },
-    browserWindow: {},
   },
 }));
 

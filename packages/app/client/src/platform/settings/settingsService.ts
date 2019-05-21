@@ -32,7 +32,7 @@
 //
 
 import { SharedConstants } from '@bfemulator/app-shared';
-import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
+import { Command } from '@bfemulator/sdk-shared';
 
 export interface EmulatorSettings {
   url?: string;
@@ -50,6 +50,7 @@ class EmulatorSettingsImpl implements EmulatorSettings {
     }
     return this._url;
   }
+
   set url(value: string) {
     this._url = value;
   }
@@ -89,16 +90,12 @@ class EmulatorSettingsService {
   constructor() {
     this._emulator = new EmulatorSettingsImpl();
   }
+
+  @Command(SharedConstants.Commands.Settings.ReceiveGlobalSettings)
+  protected receiveGlobalSettings(settings: { url: string; cwd: string }): any {
+    SettingsService.emulator.url = (settings.url || '').replace('[::]', 'localhost');
+    SettingsService.emulator.cwd = (settings.cwd || '').replace(/\\/g, '/');
+  }
 }
 
 export const SettingsService = new EmulatorSettingsService();
-
-export function registerCommands(commandRegistry: CommandRegistryImpl) {
-  commandRegistry.registerCommand(
-    SharedConstants.Commands.Settings.ReceiveGlobalSettings,
-    (settings: { url: string; cwd: string }): any => {
-      SettingsService.emulator.url = (settings.url || '').replace('[::]', 'localhost');
-      SettingsService.emulator.cwd = (settings.cwd || '').replace(/\\/g, '/');
-    }
-  );
-}

@@ -32,31 +32,29 @@
 //
 
 import { SharedConstants } from '@bfemulator/app-shared';
-import { CommandRegistryImpl, LogEntry } from '@bfemulator/sdk-shared';
+import { Command, LogEntry } from '@bfemulator/sdk-shared';
 
 import * as ChatActions from '../../data/action/chatActions';
 import * as chatHelpers from '../../data/chatHelpers';
 import { store } from '../../data/store';
 
-export class LogService {
-  public static logToChat(conversationId: string, entry: LogEntry): void {
+class LogService {
+  public logToChat(conversationId: string, entry: LogEntry): void {
     const documentId = chatHelpers.documentIdForConversation(conversationId);
     if (documentId) {
       // eslint-disable-next-line typescript/no-use-before-define
-      LogService.logToDocument(documentId, entry);
+      this.logToDocument(documentId, entry);
     }
   }
 
-  public static logToDocument(documentId: string, entry: LogEntry): void {
+  public logToDocument(documentId: string, entry: LogEntry): void {
     store.dispatch(ChatActions.appendToLog(documentId, entry));
   }
+
+  @Command(SharedConstants.Commands.Emulator.AppendToLog)
+  protected appendToLog(conversationId: string, entry: LogEntry): any {
+    this.logToChat(conversationId, entry);
+  }
 }
 
-export function registerCommands(commandRegistry: CommandRegistryImpl) {
-  commandRegistry.registerCommand(
-    SharedConstants.Commands.Emulator.AppendToLog,
-    (conversationId: string, entry: LogEntry): any => {
-      LogService.logToChat(conversationId, entry);
-    }
-  );
-}
+export const logService = new LogService();

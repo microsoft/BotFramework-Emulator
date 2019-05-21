@@ -40,7 +40,7 @@ import CORS from 'restify-cors-middleware';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { Emulator } from './emulator';
-import { mainWindow } from './main';
+import { emulatorApplication } from './main';
 import { getStore } from './settingsData/store';
 
 interface ConversationAwareRequest extends Request {
@@ -59,7 +59,7 @@ export class RestServer {
     if (!this._botEmulator) {
       this._botEmulator = new BotEmulator(botUrl => Emulator.getInstance().ngrok.getServiceUrl(botUrl), {
         fetch,
-        loggerOrLogService: mainWindow.logService,
+        loggerOrLogService: emulatorApplication.mainWindow.logService,
       });
       this._botEmulator.facilities.conversations.on('new', this.onNewConversation);
     }
@@ -125,7 +125,7 @@ export class RestServer {
       level = LogLevel.Error;
     }
 
-    mainWindow.logService.logToChat(
+    emulatorApplication.mainWindow.logService.logToChat(
       conversationId,
       networkRequestItem(facility, (req as any)._body, req.headers, req.method, req.url),
       networkResponseItem((res as any)._data, res.headers, res.statusCode, res.statusMessage, req.url),
