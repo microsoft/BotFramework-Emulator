@@ -93,8 +93,8 @@ class EmulatorSettingsService {
 
   @Command(SharedConstants.Commands.Settings.ReceiveGlobalSettings)
   protected receiveGlobalSettings(settings: { url: string; cwd: string }): any {
-    SettingsService.emulator.url = (settings.url || '').replace('[::]', 'localhost');
-    SettingsService.emulator.cwd = (settings.cwd || '').replace(/\\/g, '/');
+    this.emulator.url = (settings.url || '').replace('[::]', 'localhost');
+    this.emulator.cwd = (settings.cwd || '').replace(/\\/g, '/');
   }
 }
 
