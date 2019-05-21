@@ -31,16 +31,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import { connect } from 'react-redux';
+import { SharedConstants } from '@bfemulator/app-shared';
 
 import * as Constants from '../../constants';
 import * as PresentationActions from '../../data/action/presentationActions';
 import { RootState } from '../../data/store';
-
-import { Main, MainProps } from './main';
 import { executeCommand } from '../../data/action/commandAction';
-import { SharedConstants } from '@bfemulator/app-shared';
 import { showWelcomePage } from '../../data/editorHelpers';
 import { globalHandlers } from '../../utils/eventHandlers';
+
+import { Main, MainProps } from './main';
 
 const mapStateToProps = (state: RootState): MainProps => ({
   presentationModeEnabled: state.presentation.enabled,

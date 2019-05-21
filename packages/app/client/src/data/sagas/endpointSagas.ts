@@ -35,6 +35,7 @@ import { SharedConstants } from '@bfemulator/app-shared';
 import { IBotService, IEndpointService, ServiceTypes } from 'botframework-config/lib/schema';
 import { ComponentClass } from 'react';
 import { call, ForkEffect, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { DialogService } from '../../ui/dialogs/service';
 import { openServiceDeepLink } from '../action/connectedServiceActions';
@@ -47,7 +48,6 @@ import {
   OPEN_ENDPOINT_IN_EMULATOR,
 } from '../action/endpointServiceActions';
 import { RootState } from '../store';
-import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 const getConnectedAbs = (state: RootState, endpointAppId: string) => {
   return (state.bot.activeBot.services || []).find(service => {

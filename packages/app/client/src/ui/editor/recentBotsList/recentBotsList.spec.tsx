@@ -41,10 +41,10 @@ import * as BotActions from '../../../data/action/botActions';
 import { beginAdd } from '../../../data/action/notificationActions';
 import { openContextMenuForBot } from '../../../data/action/welcomePageActions';
 import { bot } from '../../../data/reducer/bot';
+import { executeCommand } from '../../../data/action/commandAction';
 
 import { RecentBotsList } from './recentBotsList';
 import { RecentBotsListContainer } from './recentBotsListContainer';
-import { executeCommand } from '../../../data/action/commandAction';
 
 const mockStore = createStore(combineReducers({ bot }));
 jest.mock('./recentBotsList.scss', () => ({}));

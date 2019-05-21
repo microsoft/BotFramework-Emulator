@@ -35,16 +35,16 @@ import * as React from 'react';
 import { mount, shallow } from 'enzyme';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import * as Constants from '../../../constants';
 import { select } from '../../../data/action/navBarActions';
 import { open } from '../../../data/action/editorActions';
 import { showExplorer } from '../../../data/action/explorerActions';
+import { BotCommands } from '../../../commands/botCommands';
 
 import { NavBarComponent as NavBar } from './navBar';
 import { NavBar as NavBarContainer } from './navBarContainer';
-import { BotCommands } from '../../../commands/botCommands';
-import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 let mockState;
 const mockNotifications = {

@@ -31,8 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { CommandServiceImpl } from './service';
 import { ipcMain, ipcRenderer } from 'electron';
+
+import { CommandServiceImpl } from './service';
 
 export * from './registry';
 export * from './service';

@@ -87,7 +87,6 @@ class EmulatorSettingsService {
   }
 
   constructor() {
-    super();
     this._emulator = new EmulatorSettingsImpl();
   }
 }

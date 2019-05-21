@@ -37,9 +37,9 @@ import { connect } from 'react-redux';
 import { beginAdd } from '../../../data/action/notificationActions';
 import { RootState } from '../../../data/store';
 import { DialogService } from '../service';
+import { executeCommand } from '../../../data/action/commandAction';
 
 import { BotSettingsEditor, BotSettingsEditorProps } from './botSettingsEditor';
-import { executeCommand } from '../../../data/action/commandAction';
 
 const mapStateToProps = (state: RootState, ownProps: {}): Partial<BotSettingsEditorProps> => {
   return {

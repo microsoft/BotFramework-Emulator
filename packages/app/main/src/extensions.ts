@@ -35,9 +35,9 @@ import * as path from 'path';
 
 import { SharedConstants } from '@bfemulator/app-shared';
 import { CommandServiceImpl, ExtensionConfig } from '@bfemulator/sdk-shared';
+import { CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { getDirectories, readFileSync } from './utils';
-import { CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 // =============================================================================
 export interface Extension {

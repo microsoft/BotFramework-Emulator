@@ -32,6 +32,7 @@
 //
 import { SharedConstants } from '@bfemulator/app-shared';
 import { call, ForkEffect, put, select, takeEvery } from 'redux-saga/effects';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { DialogService } from '../../ui/dialogs';
 import {
@@ -42,7 +43,6 @@ import {
 } from '../action/azureAuthActions';
 import { AzureAuthState } from '../reducer/azureAuthReducer';
 import { RootState } from '../store';
-import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 const getArmTokenFromState = (state: RootState) => state.azureAuth;
 

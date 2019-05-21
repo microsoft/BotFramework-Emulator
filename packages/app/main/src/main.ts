@@ -37,6 +37,7 @@ import * as url from 'url';
 import { newNotification, Notification, PersistentSettings, Settings, SharedConstants } from '@bfemulator/app-shared';
 import { app, BrowserWindow, dialog, Rectangle, screen, systemPreferences } from 'electron';
 import { Store } from 'redux';
+import { CommandRegistryImpl, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { AppMenuBuilder } from './appMenuBuilder';
 import { AppUpdater } from './appUpdater';
@@ -57,8 +58,6 @@ import { sendNotificationToClient } from './utils/sendNotificationToClient';
 import { WindowManager } from './windowManager';
 import { ProtocolHandler } from './protocolHandler';
 import { setOpenUrl } from './data/actions/protocolActions';
-import { CommandRegistryImpl, CommandServiceImpl } from '@bfemulator/sdk-shared';
-import { CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 // start app startup timer
 const beginStartupTime = Date.now();
@@ -371,6 +370,7 @@ class EmulatorApplication {
     }
   }
 }
+
 const emulatorApplication = new EmulatorApplication();
 export const mainWindow = emulatorApplication.mainWindow;
 export const windowManager = emulatorApplication.windowManager;

@@ -32,10 +32,10 @@
 //
 
 import { SharedConstants } from '@bfemulator/app-shared';
+import { Command } from '@bfemulator/sdk-shared';
 
 import { Emulator } from '../emulator';
 import { kill } from '../ngrok';
-import { Command } from '@bfemulator/sdk-shared';
 
 const Commands = SharedConstants.Commands.Ngrok;
 

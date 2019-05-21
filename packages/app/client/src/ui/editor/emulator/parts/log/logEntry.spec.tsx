@@ -50,10 +50,10 @@ import {
 } from '../../../../dialogs';
 import { ConnectedServiceEditorContainer } from '../../../../shell/explorer/servicesExplorer/connectedServiceEditor';
 import { ConnectedServicePickerContainer } from '../../../../shell/explorer/servicesExplorer';
+import { executeCommand } from '../../../../../data/action/commandAction';
 
 import { LogEntry as LogEntryContainer } from './logEntryContainer';
 import { LogEntry, LogEntryProps, number2, timestamp } from './logEntry';
-import { executeCommand } from '../../../../../data/action/commandAction';
 
 jest.mock('../../../../dialogs', () => ({
   BotCreationDialog: () => ({}),

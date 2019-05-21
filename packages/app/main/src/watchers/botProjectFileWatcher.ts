@@ -36,13 +36,13 @@ import * as path from 'path';
 import { SharedConstants } from '@bfemulator/app-shared';
 import { WatchOptions } from 'chokidar';
 import { existsSync, readFileSync, Stats } from 'fs-extra';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import * as BotActions from '../data/actions/botActions';
 import { getStore } from '../data/store';
 import { BotHelpers } from '../botHelpers';
 
 import { FileWatcher } from './fileWatcher';
-import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 function findGitIgnore(directory: string): string {
   const filePath = path.resolve(directory, '.gitignore');

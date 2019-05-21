@@ -34,15 +34,15 @@ import * as React from 'react';
 import { Provider } from 'react-redux';
 import { mount } from 'enzyme';
 import { combineReducers, createStore } from 'redux';
+import { SharedConstants } from '@bfemulator/app-shared';
 
 import { bot } from '../../../data/reducer/bot';
 import { resources } from '../../../data/reducer/resourcesReducer';
 import { loadBotInfos, setActiveBot } from '../../../data/action/botActions';
+import { executeCommand } from '../../../data/action/commandAction';
 
 import { ResourcesSettings } from './resourcesSettings';
 import { ResourcesSettingsContainer } from './resourcesSettingsContainer';
-import { executeCommand } from '../../../data/action/commandAction';
-import { SharedConstants } from '@bfemulator/app-shared';
 
 const mockStore = createStore(combineReducers({ resources, bot }));
 

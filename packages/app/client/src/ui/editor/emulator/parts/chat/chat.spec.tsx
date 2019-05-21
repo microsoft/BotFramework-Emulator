@@ -38,18 +38,18 @@ import ReactWebChat, { createDirectLine } from 'botframework-webchat';
 import { ActivityTypes } from 'botframework-schema';
 import { DebugMode, ValueTypes } from '@bfemulator/app-shared';
 import { combineReducers, createStore } from 'redux';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { EmulatorMode } from '../../emulator';
 import { bot } from '../../../../../data/reducer/bot';
 import { chat } from '../../../../../data/reducer/chat';
 import { editor } from '../../../../../data/reducer/editor';
 import { clientAwareSettings } from '../../../../../data/reducer/clientAwareSettingsReducer';
+import { BotCommands } from '../../../../../commands/botCommands';
 
 import webChatStyleOptions from './webChatTheme';
 import { ChatContainer } from './chatContainer';
 import { ChatProps } from './chat';
-import { BotCommands } from '../../../../../commands/botCommands';
-import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 jest.mock('electron', () => ({
   ipcMain: new Proxy(

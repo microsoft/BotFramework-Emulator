@@ -35,6 +35,7 @@ import { newNotification } from '@bfemulator/app-shared/built';
 import { IFileService } from 'botframework-config/lib/schema';
 import { ComponentClass } from 'react';
 import { ForkEffect, put, takeEvery } from 'redux-saga/effects';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { DialogService } from '../../ui/dialogs/service';
 import { beginAdd } from '../action/notificationActions';
@@ -46,7 +47,6 @@ import {
   RENAME_RESOURCE,
   ResourcesAction,
 } from '../action/resourcesAction';
-import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 export class ResourcesSagas {
   @CommandServiceInstance()

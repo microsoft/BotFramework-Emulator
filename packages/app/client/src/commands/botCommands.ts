@@ -34,6 +34,7 @@
 import { BotInfo, getBotDisplayName, SharedConstants } from '@bfemulator/app-shared';
 import { BotConfigWithPath, Command, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 import { IFileService } from 'botframework-config/lib/schema';
+import { newNotification } from '@bfemulator/app-shared';
 
 import * as BotActions from '../data/action/botActions';
 import * as FileActions from '../data/action/fileActions';
@@ -46,7 +47,6 @@ import {
 import { pathExistsInRecentBots } from '../data/botHelpers';
 import { store } from '../data/store';
 import { ActiveBotHelper } from '../ui/helpers/activeBotHelper';
-import { newNotification } from '@bfemulator/app-shared';
 import { beginAdd } from '../data/action/notificationActions';
 
 const Commands = SharedConstants.Commands;

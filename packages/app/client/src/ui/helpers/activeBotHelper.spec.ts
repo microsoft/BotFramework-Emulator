@@ -33,13 +33,13 @@
 import { SharedConstants } from '@bfemulator/app-shared';
 import { BotConfigWithPath } from '@bfemulator/sdk-shared';
 import { IEndpointService, ServiceTypes } from 'botframework-config/lib/schema';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import * as botHelpers from '../../data/botHelpers';
 import * as editorHelpers from '../../data/editorHelpers';
 import { store } from '../../data/store';
 
 import { ActiveBotHelper } from './activeBotHelper';
-import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 jest.mock('electron', () => ({
   ipcMain: new Proxy(

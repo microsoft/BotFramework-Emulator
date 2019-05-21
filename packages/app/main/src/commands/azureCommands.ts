@@ -32,6 +32,7 @@
 //
 import { SharedConstants } from '@bfemulator/app-shared';
 import { Command, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
+
 import { AzureAuthWorkflowService } from '../services/azureAuthWorkflowService';
 import { azureLoggedInUserChanged, azurePersistLoginChanged } from '../settingsData/actions/azureAuthActions';
 import { getStore as getSettingsStore } from '../settingsData/store';

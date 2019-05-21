@@ -34,6 +34,7 @@ import { DebugMode, FrameworkSettings, Settings, SharedConstants } from '@bfemul
 import { ClientAwareSettings } from '@bfemulator/app-shared';
 import { call, ForkEffect, select, takeEvery } from 'redux-saga/effects';
 import { app } from 'electron';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { Emulator } from '../../emulator';
 import { FrameworkAction, PUSH_CLIENT_AWARE_SETTINGS, SET_FRAMEWORK } from '../actions/frameworkActions';
@@ -44,7 +45,6 @@ import {
   WindowStateAction,
 } from '../actions/windowStateActions';
 import { ADD_SAVED_BOT_URL } from '../actions/savedBotUrlsActions';
-import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 const getAvailableThemes = (state: Settings) => state.windowState.availableThemes;
 const getCurrentTheme = (state: Settings) => state.windowState.theme;

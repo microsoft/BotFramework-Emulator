@@ -34,6 +34,7 @@
 import { BotInfo, DebugMode, SharedConstants } from '@bfemulator/app-shared';
 import { ConversationService } from '@bfemulator/sdk-shared';
 import * as Electron from 'electron';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { AppUpdater, UpdateStatus } from './appUpdater';
 import { BotHelpers } from './botHelpers';
@@ -43,7 +44,6 @@ import { debugModeChanged, rememberTheme } from './settingsData/actions/windowSt
 import { getStore as getSettingsStore } from './settingsData/store';
 import { TelemetryService } from './telemetry';
 import { isMac } from './utils';
-import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 declare type MenuOpts = Electron.MenuItemConstructorOptions;
 export class AppMenuBuilder {

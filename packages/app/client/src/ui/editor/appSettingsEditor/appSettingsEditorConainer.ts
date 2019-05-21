@@ -41,9 +41,9 @@ import { getTabGroupForDocument } from '../../../data/editorHelpers';
 import { RootState } from '../../../data/store';
 import { debounce } from '../../../utils';
 import { saveFrameworkSettings } from '../../../data/action/frameworkSettingsActions';
+import { executeCommand } from '../../../data/action/commandAction';
 
 import { AppSettingsEditor, AppSettingsEditorProps } from './appSettingsEditor';
-import { executeCommand } from '../../../data/action/commandAction';
 
 const mapStateToProps = (state: RootState, ownProps: AppSettingsEditorProps) => ({
   ...ownProps,

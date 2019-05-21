@@ -32,9 +32,9 @@
 //
 
 import { SharedConstants } from '@bfemulator/app-shared';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { globalHandlers } from './eventHandlers';
-import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 const {
   Commands: {

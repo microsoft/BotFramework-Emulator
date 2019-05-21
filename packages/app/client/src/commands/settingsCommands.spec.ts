@@ -38,6 +38,7 @@ import { combineReducers, createStore } from 'redux';
 import { clientAwareSettings } from '../data/reducer/clientAwareSettingsReducer';
 import { store } from '../data/store';
 import { clientAwareSettingsChanged } from '../data/action/clientAwareSettingsActions';
+
 import { SettingsCommands } from './settingsCommands';
 
 const mockStore = createStore(combineReducers({ clientAwareSettings }));

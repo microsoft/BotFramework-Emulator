@@ -33,6 +33,7 @@
 import { SharedConstants } from '@bfemulator/app-shared';
 import { CommandRegistry, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 import { ServiceTypes } from 'botframework-config/lib/schema';
+
 import { ConnectedServiceCommands } from './connectedServiceCommands';
 
 const mockServiceTypes = ServiceTypes;

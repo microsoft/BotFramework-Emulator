@@ -34,9 +34,9 @@
 import * as Path from 'path';
 
 import { SharedConstants } from '@bfemulator/app-shared';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { Migrator } from './migrator';
-import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 interface MockCall {
   name: string;

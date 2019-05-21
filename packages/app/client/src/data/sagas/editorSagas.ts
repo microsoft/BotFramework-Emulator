@@ -33,11 +33,11 @@
 
 import { isChatFile, isTranscriptFile, SharedConstants } from '@bfemulator/app-shared';
 import { call, ForkEffect, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { EditorActions, removeDocPendingChange } from '../action/editorActions';
 
 import { editorSelector, SharedSagas } from './sharedSagas';
-import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 export class EditorSagas {
   @CommandServiceInstance()

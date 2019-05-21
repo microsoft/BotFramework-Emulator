@@ -32,9 +32,9 @@
 //
 
 import { SharedConstants } from '@bfemulator/app-shared';
+import { Command } from '@bfemulator/sdk-shared';
 
 import { readFileSync, writeFile } from '../utils';
-import { Command } from '@bfemulator/sdk-shared';
 
 // eslint-disable-next-line typescript/no-var-requires
 const sanitize = require('sanitize-filename');

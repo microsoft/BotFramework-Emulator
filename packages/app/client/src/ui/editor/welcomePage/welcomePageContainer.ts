@@ -36,9 +36,9 @@ import { connect } from 'react-redux';
 import { Action } from 'redux';
 
 import { RootState } from '../../../data/store';
+import { executeCommand } from '../../../data/action/commandAction';
 
 import { WelcomePage, WelcomePageProps } from './welcomePage';
-import { executeCommand } from '../../../data/action/commandAction';
 
 function mapStateToProps(state: RootState, ownProps: WelcomePageProps): WelcomePageProps {
   return {

@@ -33,6 +33,7 @@
 import { call, ForkEffect, takeEvery } from 'redux-saga/effects';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 import { SharedConstants } from '@bfemulator/app-shared';
+
 import { PresentationAction, PresentationActions } from '../action/presentationActions';
 
 export class PresentationSagas {

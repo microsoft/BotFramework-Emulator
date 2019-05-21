@@ -33,6 +33,7 @@
 import { SharedConstants } from '@bfemulator/app-shared';
 import sagaMiddlewareFactory from 'redux-saga';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { openContextMenuForBot } from '../action/welcomePageActions';
 import { bot } from '../reducer/bot';
@@ -40,7 +41,6 @@ import notification from '../reducer/notification';
 
 import { notificationSagas } from './notificationSagas';
 import { welcomePageSagas } from './welcomePageSagas';
-import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 const mockBot = {
   path: '/some/path.bot',

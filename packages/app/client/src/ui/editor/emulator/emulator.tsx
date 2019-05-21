@@ -45,6 +45,8 @@ import {
   SharedConstants,
   ValueTypesMask,
 } from '@bfemulator/app-shared';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
+import { Conversation } from '@bfemulator/emulator-core';
 
 import { Document } from '../../../data/reducer/editor';
 import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';

@@ -37,9 +37,9 @@ import { Action } from 'redux';
 
 import { openContextMenuForBot } from '../../../data/action/welcomePageActions';
 import { RootState } from '../../../data/store';
+import { executeCommand } from '../../../data/action/commandAction';
 
 import { RecentBotsList, RecentBotsListProps } from './recentBotsList';
-import { executeCommand } from '../../../data/action/commandAction';
 
 const mapStateToProps = (state: RootState, ownProps: { [propName: string]: any }): RecentBotsListProps => {
   return {

@@ -39,9 +39,9 @@ import * as ChatActions from '../../../data/action/chatActions';
 import { Document } from '../../../data/reducer/editor';
 import { updateDocument } from '../../../data/action/editorActions';
 import { beginAdd } from '../../../data/action/notificationActions';
+import { executeCommand } from '../../../data/action/commandAction';
 
 import { Emulator, EmulatorProps } from './emulator';
-import { executeCommand } from '../../../data/action/commandAction';
 
 const mapStateToProps = (state: RootState, { documentId, ...ownProps }: { documentId: string }) => ({
   activeDocumentId: state.editor.editors[state.editor.activeEditor].activeDocumentId,

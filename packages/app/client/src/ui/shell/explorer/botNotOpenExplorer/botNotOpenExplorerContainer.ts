@@ -34,13 +34,14 @@
 import { SharedConstants } from '@bfemulator/app-shared';
 import { connect } from 'react-redux';
 import { Action } from 'redux';
+import { newNotification } from '@bfemulator/app-shared';
+
 import { RootState } from '../../../../data/store';
 import { ActiveBotHelper } from '../../../helpers/activeBotHelper';
-
-import { BotNotOpenExplorer as BotNotOpenExplorerComp, BotNotOpenExplorerProps } from './botNotOpenExplorer';
 import { executeCommand } from '../../../../data/action/commandAction';
 import { beginAdd } from '../../../../data/action/notificationActions';
-import { newNotification } from '@bfemulator/app-shared';
+
+import { BotNotOpenExplorer as BotNotOpenExplorerComp, BotNotOpenExplorerProps } from './botNotOpenExplorer';
 
 const mapStateToProps = (state: RootState): any => ({
   hasChat: !!Object.keys(state.chat.chats).length,

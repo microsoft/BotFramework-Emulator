@@ -41,10 +41,10 @@ import { beginAdd } from '../../../../data/action/notificationActions';
 import { bot } from '../../../../data/reducer/bot';
 import { chat } from '../../../../data/reducer/chat';
 import { ActiveBotHelper } from '../../../helpers/activeBotHelper';
+import { executeCommand } from '../../../../data/action/commandAction';
 
 import { BotNotOpenExplorer } from './botNotOpenExplorer';
 import { BotNotOpenExplorerContainer } from './botNotOpenExplorerContainer';
-import { executeCommand } from '../../../../data/action/commandAction';
 
 const mockStore = createStore(combineReducers({ bot, chat }), {});
 

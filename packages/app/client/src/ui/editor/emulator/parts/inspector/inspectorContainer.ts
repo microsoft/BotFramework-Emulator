@@ -35,9 +35,9 @@ import { connect } from 'react-redux';
 import { SharedConstants } from '@bfemulator/app-shared';
 
 import { RootState } from '../../../../../data/store';
+import { executeCommand } from '../../../../../data/action/commandAction';
 
 import { Inspector } from './inspector';
-import { executeCommand } from '../../../../../data/action/commandAction';
 
 const mapStateToProps = (state: RootState, ownProps: any) => {
   const { bot, theme, clientAwareSettings } = state;

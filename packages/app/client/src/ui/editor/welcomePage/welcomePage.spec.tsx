@@ -41,10 +41,10 @@ import * as BotActions from '../../../data/action/botActions';
 import { azureAuth } from '../../../data/reducer/azureAuthReducer';
 import { clientAwareSettings } from '../../../data/reducer/clientAwareSettingsReducer';
 import { bot } from '../../../data/reducer/bot';
+import { executeCommand } from '../../../data/action/commandAction';
 
 import { WelcomePage } from './welcomePage';
 import { WelcomePageContainer } from './welcomePageContainer';
-import { executeCommand } from '../../../data/action/commandAction';
 
 const mockStore = createStore(combineReducers({ azureAuth, bot, clientAwareSettings }));
 jest.mock('../../dialogs', () => ({}));

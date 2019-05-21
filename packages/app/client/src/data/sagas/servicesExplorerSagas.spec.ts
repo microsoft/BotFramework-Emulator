@@ -35,6 +35,8 @@ import { ServiceTypes } from 'botframework-config/lib/schema';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import sagaMiddlewareFactory from 'redux-saga';
 import { call } from 'redux-saga/effects';
+import { CommandServiceInstance } from '@bfemulator/sdk-shared';
+import { CommandServiceImpl } from '@bfemulator/sdk-shared';
 
 import {
   AzureLoginFailedDialogContainer,
@@ -61,8 +63,6 @@ import { azureAuth } from '../reducer/azureAuthReducer';
 import { bot } from '../reducer/bot';
 
 import { ServicesExplorerSagas, servicesExplorerSagas } from './servicesExplorerSagas';
-import { CommandServiceInstance } from '@bfemulator/sdk-shared';
-import { CommandServiceImpl } from '@bfemulator/sdk-shared';
 
 const sagaMiddleWare = sagaMiddlewareFactory();
 const mockStore = createStore(combineReducers({ azureAuth, bot }), {}, applyMiddleware(sagaMiddleWare));

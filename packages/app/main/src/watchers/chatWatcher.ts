@@ -37,9 +37,9 @@ import { SharedConstants } from '@bfemulator/app-shared';
 import { isChatFile } from '@bfemulator/app-shared';
 import { IFileService, ServiceTypes } from 'botframework-config/lib/schema';
 import { WatchOptions } from 'chokidar';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { FileWatcher } from './fileWatcher';
-import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 export class ChatWatcher extends FileWatcher {
   @CommandServiceInstance()

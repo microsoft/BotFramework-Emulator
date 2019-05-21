@@ -42,10 +42,10 @@
 import './fetchProxy';
 import { SharedConstants } from '@bfemulator/app-shared';
 import { applyBotConfigOverrides, ConversationService } from '@bfemulator/sdk-shared';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { parseEndpointOverrides, Protocol, ProtocolHandler } from './protocolHandler';
 import { TelemetryService } from './telemetry';
-import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 let mockCallsMade, mockRemoteCallsMade;
 let mockOpenedBot;

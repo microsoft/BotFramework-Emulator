@@ -33,11 +33,11 @@
 
 import { SharedConstants } from '@bfemulator/app-shared';
 import { select } from 'redux-saga/effects';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { RootState } from '../store';
 
 import { editorSelector, SharedSagas } from './sharedSagas';
-import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 jest.mock('electron', () => ({
   ipcMain: new Proxy(

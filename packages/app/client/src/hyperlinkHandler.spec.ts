@@ -32,9 +32,9 @@
 //
 
 import { SharedConstants } from '@bfemulator/app-shared';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { HyperlinkHandler } from './hyperlinkHandler';
-import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 let mockParse;
 jest.mock('url', () => ({

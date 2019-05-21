@@ -44,6 +44,7 @@ import {
   ConversationService,
   CommandServiceInstance,
 } from '@bfemulator/sdk-shared';
+
 import { Protocol } from './constants';
 import { Emulator } from './emulator';
 import { ngrokEmitter, running } from './ngrok';

@@ -36,9 +36,9 @@ import { connect } from 'react-redux';
 import { getBotInfoByPath } from '../../../data/botHelpers';
 import { RootState } from '../../../data/store';
 import { DialogService } from '../service';
+import { executeCommand } from '../../../data/action/commandAction';
 
 import { ResourcesSettings, ResourcesSettingsProps } from './resourcesSettings';
-import { executeCommand } from '../../../data/action/commandAction';
 
 const mapStateToProps = (state: RootState, ownProps: ResourcesSettingsProps) => {
   const { path } = state.bot.activeBot;

@@ -33,6 +33,7 @@
 
 import { LogService as ILogService } from '@bfemulator/sdk-shared';
 import { BrowserWindow, WebContents } from 'electron';
+
 import { LogService } from '../log/logService';
 
 export class Window {

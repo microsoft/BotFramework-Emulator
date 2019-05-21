@@ -32,12 +32,12 @@
 //
 
 import { FrameworkSettings, SharedConstants } from '@bfemulator/app-shared';
+import { Command } from '@bfemulator/sdk-shared';
 
 import { addSavedBotUrl } from '../settingsData/actions/savedBotUrlsActions';
 import { setFramework } from '../settingsData/actions/frameworkActions';
 import { dispatch, getSettings } from '../settingsData/store';
 import { TelemetryService } from '../telemetry';
-import { Command } from '@bfemulator/sdk-shared';
 
 const Commands = SharedConstants.Commands.Settings;
 

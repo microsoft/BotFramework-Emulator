@@ -34,6 +34,7 @@
 import { getBotDisplayName, newNotification, SharedConstants } from '@bfemulator/app-shared';
 import { BotConfigWithPath, mergeEndpoints } from '@bfemulator/sdk-shared';
 import { IEndpointService, ServiceTypes } from 'botframework-config/lib/schema';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import * as Constants from '../../constants';
 import * as BotActions from '../../data/action/botActions';
@@ -45,7 +46,6 @@ import { beginAdd } from '../../data/action/notificationActions';
 import { getActiveBot } from '../../data/botHelpers';
 import { hasNonGlobalTabs } from '../../data/editorHelpers';
 import { store } from '../../data/store';
-import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 const { Bot, Electron, Telemetry } = SharedConstants.Commands;
 

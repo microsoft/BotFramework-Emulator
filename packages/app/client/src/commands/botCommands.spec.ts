@@ -43,6 +43,7 @@ import * as BotActions from '../data/action/botActions';
 import { bot } from '../data/reducer/bot';
 import { resources } from '../data/reducer/resourcesReducer';
 import { ActiveBotHelper } from '../ui/helpers/activeBotHelper';
+
 import { BotCommands } from './botCommands';
 
 jest.mock('electron', () => ({

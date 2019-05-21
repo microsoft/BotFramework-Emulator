@@ -38,13 +38,13 @@ import { mount } from 'enzyme';
 import { combineReducers, createStore } from 'redux';
 import { BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
 import { SharedConstants } from '@bfemulator/app-shared';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { bot } from '../../../data/reducer/bot';
 import { setActiveBot } from '../../../data/action/botActions';
 
 import { BotSettingsEditor } from './botSettingsEditor';
 import { BotSettingsEditorContainer } from './botSettingsEditorContainer';
-import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 const mockStore = createStore(combineReducers({ bot }));
 const mockBot = BotConfigWithPathImpl.fromJSON({});

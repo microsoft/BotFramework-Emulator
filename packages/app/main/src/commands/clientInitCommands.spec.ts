@@ -42,6 +42,7 @@ import { combineReducers, createStore } from 'redux';
 import { bot } from '../data/reducers/bot';
 import * as store from '../data/store';
 import reducers from '../settingsData/reducers';
+
 import { ClientInitCommands } from './clientInitCommands';
 
 let mockSettingsStore;

@@ -34,6 +34,7 @@ import { newNotification, SharedConstants } from '@bfemulator/app-shared';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import sagaMiddlewareFactory from 'redux-saga';
 import { call, put, select, takeEvery } from 'redux-saga/effects';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { CONTENT_TYPE_APP_SETTINGS, DOCUMENT_ID_APP_SETTINGS } from '../../constants';
 import * as EditorActions from '../action/editorActions';
@@ -54,7 +55,6 @@ import {
   FrameworkSettingsSagas,
   normalizeSettingsData,
 } from './frameworkSettingsSagas';
-import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 jest.mock('electron', () => ({
   ipcMain: new Proxy(

@@ -33,10 +33,10 @@
 
 import { LogLevel, textItem } from '@bfemulator/sdk-shared';
 import { newNotification, SharedConstants } from '@bfemulator/app-shared';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { mainWindow } from './main';
 import { RestServer } from './restServer';
-import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 /**
  * Communicates with the bot.

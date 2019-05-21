@@ -32,9 +32,10 @@
 //
 
 import { SharedConstants } from '@bfemulator/app-shared';
+import { CommandRegistry, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { TelemetryService } from '../telemetry';
-import { CommandRegistry, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
+
 import { TelemetryCommands } from './telemetryCommands';
 
 jest.mock('../settingsData/store', () => ({

@@ -34,12 +34,12 @@ import '../../fetchProxy';
 import { DebugMode, Settings, settingsDefault, SharedConstants } from '@bfemulator/app-shared';
 import { applyMiddleware, createStore, Store } from 'redux';
 import sagaMiddlewareFactory from 'redux-saga';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import reducers from '../reducers';
 import { debugModeChanged, rememberTheme } from '../actions/windowStateActions';
 
 import { settingsSagas } from './settingsSagas';
-import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 const mockEmulator = {
   startup: async () => true,

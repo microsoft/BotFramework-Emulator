@@ -32,10 +32,10 @@
 //
 import { BotInfo, newNotification, SharedConstants } from '@bfemulator/app-shared';
 import { ForkEffect, put, takeEvery } from 'redux-saga/effects';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { beginAdd } from '../action/notificationActions';
 import { OPEN_CONTEXT_MENU_FOR_BOT, WelcomePageAction } from '../action/welcomePageActions';
-import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 export class WelcomePageSagas {
   @CommandServiceInstance()
   private static commandService: CommandServiceImpl;

@@ -34,6 +34,7 @@
 import { CommandRegistry, CommandRegistryImpl } from '..';
 
 import { uniqueId } from '../utils';
+
 import { EventEmitter } from 'electron';
 
 interface Sender {
@@ -103,8 +104,8 @@ export class CommandServiceImpl {
       result = Array.isArray(result) ? result : [result];
       this.ipcSender.send(transactionId, true, ...result);
     } catch (err) {
-      err = err.message ? err.message : err;
-      this.ipcSender.send(transactionId, false, err);
+      const message = err.message ? err.message : err;
+      this.ipcSender.send(transactionId, false, message);
     }
   };
 

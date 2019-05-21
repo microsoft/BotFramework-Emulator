@@ -30,11 +30,12 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
+
 import { Emulator } from './emulator';
 import './fetchProxy';
 import { mainWindow } from './main';
 import { RestServer } from './restServer';
-import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 jest.mock('./main', () => ({
   mainWindow: {

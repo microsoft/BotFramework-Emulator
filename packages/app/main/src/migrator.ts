@@ -38,12 +38,12 @@ import { BotConfiguration } from 'botframework-config';
 import { app } from 'electron';
 import * as Fs from 'fs-extra';
 import { sync as mkdirp } from 'mkdirp';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import * as BotActions from './data/actions/botActions';
 import { getStore } from './data/store';
 import { BotHelpers } from './botHelpers';
 import { ensureStoragePath, getFilesInDir, writeFile } from './utils';
-import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 /** Performs the V4 side of migration from V3 -> V4 bots */
 export class Migrator {

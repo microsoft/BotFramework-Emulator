@@ -36,6 +36,7 @@ import * as fs from 'fs-extra';
 import * as Electron from 'electron';
 import { app, dialog, Menu, MessageBoxOptions } from 'electron';
 import { DebugMode, SharedConstants } from '@bfemulator/app-shared';
+import { Command } from '@bfemulator/sdk-shared';
 
 import { AppMenuBuilder } from '../appMenuBuilder';
 import { getStore } from '../data/store';
@@ -43,7 +44,6 @@ import { mainWindow } from '../main';
 import { ContextMenuService } from '../services/contextMenuService';
 import { TelemetryService } from '../telemetry';
 import { showOpenDialog, showSaveDialog } from '../utils';
-import { Command } from '@bfemulator/sdk-shared';
 
 const { shell } = Electron;
 

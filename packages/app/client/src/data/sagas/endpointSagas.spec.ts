@@ -34,6 +34,7 @@ import { applyMiddleware, combineReducers, createStore } from 'redux';
 import sagaMiddlewareFactory from 'redux-saga';
 import { Component } from 'react';
 import { SharedConstants } from '@bfemulator/app-shared';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { bot } from '../reducer/bot';
 import { loadBotInfos, setActiveBot } from '../action/botActions';
@@ -41,7 +42,6 @@ import { launchEndpointEditor, openEndpointExplorerContextMenu } from '../action
 import { DialogService } from '../../ui/dialogs/service';
 
 import { endpointSagas } from './endpointSagas';
-import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 const sagaMiddleWare = sagaMiddlewareFactory();
 const mockStore = createStore(combineReducers({ bot }), {}, applyMiddleware(sagaMiddleWare));

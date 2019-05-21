@@ -37,11 +37,11 @@ import { LogLevel, networkRequestItem, networkResponseItem, textItem } from '@bf
 import { IEndpointService } from 'botframework-config';
 import { createServer, Request, Response, Route, Server } from 'restify';
 import CORS from 'restify-cors-middleware';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { Emulator } from './emulator';
 import { mainWindow } from './main';
 import { getStore } from './settingsData/store';
-import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 interface ConversationAwareRequest extends Request {
   conversation?: { conversationId?: string };

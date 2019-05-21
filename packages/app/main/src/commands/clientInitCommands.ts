@@ -32,6 +32,7 @@
 //
 
 import { SharedConstants } from '@bfemulator/app-shared';
+import { Command, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import * as BotActions from '../data/actions/botActions';
 import { getStore } from '../data/store';
@@ -43,7 +44,6 @@ import { getStore as getSettingsStore } from '../settingsData/store';
 import { getBotsFromDisk } from '../utils';
 import { openFileFromCommandLine } from '../utils/openFileFromCommandLine';
 import { pushClientAwareSettings } from '../settingsData/actions/frameworkActions';
-import { Command, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 const Commands = SharedConstants.Commands;
 

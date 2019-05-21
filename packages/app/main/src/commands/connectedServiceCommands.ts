@@ -33,6 +33,7 @@
 import { SharedConstants } from '@bfemulator/app-shared';
 import { Command, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 import { IConnectedService, ServiceTypes } from 'botframework-config/lib/schema';
+
 import { CosmosDbApiService } from '../services/cosmosDbApiService';
 import { LuisApi } from '../services/luisApiService';
 import { QnaApiService } from '../services/qnaApiService';

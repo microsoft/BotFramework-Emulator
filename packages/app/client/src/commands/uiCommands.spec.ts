@@ -31,6 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import { DebugMode, SharedConstants } from '@bfemulator/app-shared';
+import { CommandRegistry, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { CONTENT_TYPE_APP_SETTINGS, DOCUMENT_ID_APP_SETTINGS } from '../constants';
 import { AzureAuthAction, AzureAuthWorkflow, invalidateArmToken } from '../data/action/azureAuthActions';
@@ -49,7 +50,7 @@ import {
 import { ExplorerActions } from '../data/action/explorerActions';
 import { SWITCH_DEBUG_MODE } from '../data/action/debugModeAction';
 import { ActiveBotHelper } from '../ui/helpers/activeBotHelper';
-import { CommandRegistry, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
+
 import { UiCommands } from './uiCommands';
 
 jest.mock('electron', () => ({

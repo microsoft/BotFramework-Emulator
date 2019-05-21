@@ -33,11 +33,11 @@
 
 import { mount } from 'enzyme';
 import * as React from 'react';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { ActiveBotHelper } from '../../helpers/activeBotHelper';
 
 import { BotCreationDialog, BotCreationDialogState } from './botCreationDialog';
-import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 jest.mock('../index', () => null);
 jest.mock('../../../utils', () => ({

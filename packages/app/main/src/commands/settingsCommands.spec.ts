@@ -32,11 +32,12 @@
 //
 
 import { SharedConstants } from '@bfemulator/app-shared';
+import { CommandRegistry, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { TelemetryService } from '../telemetry';
 import { setFramework } from '../settingsData/actions/frameworkActions';
 import { addSavedBotUrl } from '../settingsData/actions/savedBotUrlsActions';
-import { CommandRegistry, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
+
 import { SettingsCommands } from './settingsCommands';
 
 const mockSettings = { framework: { ngrokPath: 'path/to/ngrok.exe' } };

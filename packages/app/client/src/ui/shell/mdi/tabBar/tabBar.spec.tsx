@@ -36,6 +36,7 @@ import { mount } from 'enzyme';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import { SharedConstants } from '@bfemulator/app-shared';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { enable } from '../../../../data/action/presentationActions';
 import { appendTab, setActiveTab, splitTab } from '../../../../data/action/editorActions';
@@ -46,11 +47,10 @@ import {
   CONTENT_TYPE_TRANSCRIPT,
   CONTENT_TYPE_WELCOME_PAGE,
 } from '../../../../constants';
+import { executeCommand } from '../../../../data/action/commandAction';
 
 import { TabBarContainer } from './tabBarContainer';
 import { TabBar } from './tabBar';
-import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
-import { executeCommand } from '../../../../data/action/commandAction';
 
 const mockTab = class Tab extends React.Component {
   public render() {

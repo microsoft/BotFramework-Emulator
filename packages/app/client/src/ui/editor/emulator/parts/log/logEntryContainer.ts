@@ -46,9 +46,9 @@ import {
 import { ConnectedServicePickerContainer } from '../../../../shell/explorer/servicesExplorer';
 import { ConnectedServiceEditorContainer } from '../../../../shell/explorer/servicesExplorer/connectedServiceEditor';
 import { setHighlightedObjects, setInspectorObjects } from '../../../../../data/action/chatActions';
+import { executeCommand } from '../../../../../data/action/commandAction';
 
 import { LogEntry as LogEntryComponent, LogEntryProps } from './logEntry';
-import { executeCommand } from '../../../../../data/action/commandAction';
 
 function mapDispatchToProps(dispatch: any): Partial<LogEntryProps> {
   return {

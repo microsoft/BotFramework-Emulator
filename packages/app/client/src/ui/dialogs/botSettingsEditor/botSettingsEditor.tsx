@@ -46,13 +46,13 @@ import {
 import { IConnectedService, ServiceTypes } from 'botframework-config/lib/schema';
 import { ChangeEvent } from 'react';
 import * as React from 'react';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { getBotInfoByPath } from '../../../data/botHelpers';
 import { generateBotSecret } from '../../../utils';
 import { ActiveBotHelper } from '../../helpers/activeBotHelper';
 
 import * as styles from './botSettingsEditor.scss';
-import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 export interface BotSettingsEditorProps {
   bot: BotConfigWithPath;

@@ -33,12 +33,12 @@
 
 import { SharedConstants } from '@bfemulator/app-shared';
 import { call, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { EditorActions, removeDocPendingChange } from '../action/editorActions';
 
 import { editorSagas, EditorSagas } from './editorSagas';
 import { SharedSagas, editorSelector } from './sharedSagas';
-import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 jest.mock('../store', () => ({
   get store() {

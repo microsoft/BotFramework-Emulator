@@ -53,6 +53,7 @@ import { BotHelpers } from '../botHelpers';
 import { Emulator } from '../emulator';
 import { botProjectFileWatcher, chatWatcher, transcriptsWatcher } from '../watchers';
 import { TelemetryService } from '../telemetry';
+
 import { BotCommands } from './botCommands';
 
 const mockBotConfig = BotConfiguration;

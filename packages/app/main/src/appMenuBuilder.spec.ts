@@ -34,9 +34,9 @@
 import { join } from 'path';
 
 import { DebugMode, SharedConstants } from '@bfemulator/app-shared';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { AppMenuBuilder } from './appMenuBuilder';
-import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 jest.mock('./settingsData/store', () => ({
   getStore: () => ({

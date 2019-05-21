@@ -35,15 +35,15 @@ import { EventEmitter } from 'events';
 
 import { ProgressInfo } from 'builder-util-runtime';
 import { autoUpdater as electronUpdater, UpdateInfo } from 'electron-updater';
+import { SharedConstants } from '@bfemulator/app-shared';
+import { app } from 'electron';
+import { newNotification } from '@bfemulator/app-shared';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { TelemetryService } from './telemetry';
 import { getSettings } from './settingsData/store';
 import { AppMenuBuilder } from './appMenuBuilder';
-import { SharedConstants } from '@bfemulator/app-shared';
-import { app } from 'electron';
 import { sendNotificationToClient } from './utils/sendNotificationToClient';
-import { newNotification } from '@bfemulator/app-shared';
-import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 export enum UpdateStatus {
   Idle,
@@ -172,7 +172,7 @@ class EmulatorUpdater extends EventEmitter {
       try {
         AppMenuBuilder.refreshAppUpdateMenu();
 
-        if (AppUpdater.userInitiated) {
+        if (this.userInitiated) {
           const {
             ShowUpdateAvailableDialog,
             ShowProgressIndicator,
@@ -190,7 +190,7 @@ class EmulatorUpdater extends EventEmitter {
             });
             await this.commandService.remoteCall(ShowProgressIndicator);
             const { installAfterDownload = false } = result;
-            await AppUpdater.downloadUpdate(installAfterDownload);
+            await this.downloadUpdate(installAfterDownload);
           }
         }
       } catch (e) {
@@ -211,7 +211,7 @@ class EmulatorUpdater extends EventEmitter {
       AppMenuBuilder.refreshAppUpdateMenu();
 
       // only show the alert if the user explicity checked for update, and no update was downloaded
-      const { userInitiated, updateDownloaded } = AppUpdater;
+      const { userInitiated, updateDownloaded } = this;
       if (userInitiated && !updateDownloaded) {
         const { ShowUpdateUnavailableDialog } = SharedConstants.Commands.UI;
         await this.commandService.remoteCall(ShowUpdateUnavailableDialog);
@@ -228,10 +228,10 @@ class EmulatorUpdater extends EventEmitter {
     AppMenuBuilder.refreshAppUpdateMenu();
     // TODO - Send to debug.txt / error dump file
     if (message.includes('.yml')) {
-      AppUpdater.emit('up-to-date');
+      this.emit('up-to-date');
       return;
     }
-    if (AppUpdater.userInitiated) {
+    if (this.userInitiated) {
       await this.commandService.call(SharedConstants.Commands.Electron.ShowMessageBox, true, {
         title: app.getName(),
         message: `An error occurred while using the updater: ${err}`,
@@ -270,7 +270,7 @@ class EmulatorUpdater extends EventEmitter {
         AppMenuBuilder.refreshAppUpdateMenu();
 
         // TODO - localization
-        if (AppUpdater.userInitiated) {
+        if (this.userInitiated) {
           // update the progress indicator
           const { UpdateProgressIndicator } = SharedConstants.Commands.UI;
           const progressPayload = { label: 'Download finished.', progress: 100 };
@@ -286,7 +286,7 @@ class EmulatorUpdater extends EventEmitter {
           });
           notification.addButton('Restart', async () => {
             try {
-              AppUpdater.quitAndInstall();
+              this.quitAndInstall();
             } catch (e) {
               await sendNotificationToClient(newNotification(e), this.commandService);
             }

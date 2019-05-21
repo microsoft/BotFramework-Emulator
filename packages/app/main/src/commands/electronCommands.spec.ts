@@ -34,12 +34,13 @@
 import '../fetchProxy';
 import { DebugMode, SharedConstants } from '@bfemulator/app-shared';
 import * as Electron from 'electron';
+import { CommandRegistry, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { load } from '../data/actions/botActions';
 import { getStore } from '../data/store';
 import { mainWindow } from '../main';
 import { TelemetryService } from '../telemetry';
-import { CommandRegistry, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
+
 import { ElectronCommands } from './electronCommands';
 
 let renameArgs;

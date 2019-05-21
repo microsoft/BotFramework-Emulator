@@ -39,9 +39,9 @@ import { appendTab, close, setActiveTab, splitTab } from '../../../../data/actio
 import { enable as enablePresentationMode } from '../../../../data/action/presentationActions';
 import { getTabGroupForDocument } from '../../../../data/editorHelpers';
 import { RootState } from '../../../../data/store';
+import { executeCommand } from '../../../../data/action/commandAction';
 
 import { TabBar, TabBarProps } from './tabBar';
-import { executeCommand } from '../../../../data/action/commandAction';
 
 const mapStateToProps = (state: RootState, ownProps: TabBarProps): TabBarProps => ({
   ...ownProps,

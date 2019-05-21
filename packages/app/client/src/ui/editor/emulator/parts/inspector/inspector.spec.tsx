@@ -51,10 +51,10 @@ import { clientAwareSettings } from '../../../../../data/reducer/clientAwareSett
 import { theme } from '../../../../../data/reducer/themeReducer';
 import { ExtensionManager } from '../../../../../extensions';
 import { LogService } from '../../../../../platform/log/logService';
+import { executeCommand } from '../../../../../data/action/commandAction';
 
 import { Inspector } from './inspector';
 import { InspectorContainer } from './inspectorContainer';
-import { executeCommand } from '../../../../../data/action/commandAction';
 
 const mockStore = createStore(combineReducers({ theme, bot, clientAwareSettings }), {
   clientAwareSettings: { appPath: 'app-path' },

@@ -32,11 +32,12 @@
 //
 import { SharedConstants } from '@bfemulator/app-shared';
 import { combineReducers, createStore } from 'redux';
+import { CommandRegistry, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { AzureAuthWorkflowService } from '../services/azureAuthWorkflowService';
 import { azureLoggedInUserChanged } from '../settingsData/actions/azureAuthActions';
 import { azureAuth } from '../settingsData/reducers/azureAuthReducer';
-import { CommandRegistry, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
+
 import { AzureCommands } from './azureCommands';
 
 const mockStore = createStore(combineReducers({ azure: azureAuth }));

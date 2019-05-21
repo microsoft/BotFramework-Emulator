@@ -34,6 +34,7 @@
 import { DebugMode, SharedConstants } from '@bfemulator/app-shared';
 import { Command, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 import { ServiceTypes } from 'botframework-config/lib/schema';
+import { newNotification } from '@bfemulator/app-shared';
 
 import * as Constants from '../constants';
 import { azureArmTokenDataChanged, beginAzureAuthWorkflow, invalidateArmToken } from '../data/action/azureAuthActions';
@@ -63,7 +64,6 @@ import * as ExplorerActions from '../data/action/explorerActions';
 import { closeConversation } from '../data/action/chatActions';
 import { ActiveBotHelper } from '../ui/helpers/activeBotHelper';
 import { beginAdd } from '../data/action/notificationActions';
-import { newNotification } from '@bfemulator/app-shared';
 
 const { UI, Telemetry } = SharedConstants.Commands;
 

@@ -47,6 +47,7 @@ import { EndpointService } from 'botframework-config/lib/models';
 import { IEndpointService, ServiceTypes } from 'botframework-config/lib/schema';
 import { ChangeEvent } from 'react';
 import * as React from 'react';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { beginAdd } from '../../../data/action/notificationActions';
 import { store } from '../../../data/store';
@@ -55,7 +56,6 @@ import { ActiveBotHelper } from '../../helpers/activeBotHelper';
 import { DialogService } from '../service';
 
 import * as styles from './botCreationDialog.scss';
-import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 export interface BotCreationDialogState {
   bot: BotConfigWithPath;
