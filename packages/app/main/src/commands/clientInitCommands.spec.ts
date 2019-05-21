@@ -88,6 +88,9 @@ jest.mock('electron', () => ({
   app: {
     getPath: () => './',
   },
+  dialog: {
+    showErrorBox: () => void 0,
+  },
   ipcMain: new Proxy(
     {},
     {
