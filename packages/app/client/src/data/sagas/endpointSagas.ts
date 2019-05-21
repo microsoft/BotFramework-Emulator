@@ -99,7 +99,7 @@ export class EndpointSagas {
     ];
     const { DisplayContextMenu } = SharedConstants.Commands.Electron;
     const response = yield call(
-      EndpointSagas.commandService.remoteCall.bind(CommandServiceImpl),
+      [EndpointSagas.commandService, EndpointSagas.commandService.remoteCall],
       DisplayContextMenu,
       menuItems
     );

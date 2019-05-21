@@ -125,7 +125,7 @@ export class ChatSagas {
 
     const { DisplayContextMenu } = SharedConstants.Commands.Electron;
     const response: { id: string } = yield call(
-      ChatSagas.commandService.remoteCall.bind(CommandServiceImpl),
+      [ChatSagas.commandService, ChatSagas.commandService.remoteCall],
       DisplayContextMenu,
       menuItems
     );
