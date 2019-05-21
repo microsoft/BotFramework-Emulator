@@ -70,7 +70,7 @@ export type EmulatorMode = 'transcript' | 'livechat';
 
 export interface EmulatorProps {
   activeDocumentId?: string;
-  clearLog?: (documentId: string) => void;
+  clearLog?: (documentId: string) => Promise<void>;
   conversationId?: string;
   createErrorNotification?: (notification: Notification) => void;
   debugMode?: DebugMode;
@@ -173,10 +173,6 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
       userId,
     };
 
-    if (props.document.directLine) {
-      props.document.directLine.end();
-    }
-    await Promise.resolve();
     this.initConversation(props, options);
 
     if (props.mode === 'transcript') {
@@ -365,8 +361,11 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
 
   private onStartOverClick = async (option: string = RestartConversationOptions.NewUserId): Promise<void> => {
     const { NewUserId, SameUserId } = RestartConversationOptions;
-    this.props.clearLog(this.props.document.documentId);
     this.props.setInspectorObjects(this.props.document.documentId, []);
+    if (this.props.document.directLine) {
+      this.props.document.directLine.end();
+    }
+    await this.props.clearLog(this.props.document.documentId);
 
     switch (option) {
       case NewUserId: {

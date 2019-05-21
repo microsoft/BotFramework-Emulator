@@ -134,7 +134,11 @@ describe('<EmulatorContainer/>', () => {
       clientAwareSettings: { debugMode: DebugMode.Normal },
     };
     const mockStore = createStore((_state, _action) => mockStoreState);
-    mockDispatch = jest.spyOn(mockStore, 'dispatch');
+    mockDispatch = jest.spyOn(mockStore, 'dispatch').mockImplementation(action => {
+      if (action && action.payload && action.payload.resolver) {
+        action.payload.resolver();
+      }
+    });
     wrapper = mount(
       <Provider store={mockStore}>
         <EmulatorContainer documentId={'doc1'} url={'someUrl'} mode={'livechat'} conversationId={'convo1'} />
@@ -358,8 +362,7 @@ describe('<EmulatorContainer/>', () => {
     const mockStartNewConversation = jest.fn(async () => Promise.resolve(true));
     instance.startNewConversation = mockStartNewConversation;
     await instance.onStartOverClick();
-
-    expect(mockDispatch).toHaveBeenCalledWith(clearLog('doc1'));
+    expect(mockDispatch).toHaveBeenCalledWith(clearLog('doc1', jasmine.any(Function)));
     expect(mockDispatch).toHaveBeenCalledWith(setInspectorObjects('doc1', []));
     expect(mockRemoteCallsMade).toHaveLength(3);
     expect(mockRemoteCallsMade.some(cmd => cmd.commandName === SharedConstants.Commands.Telemetry.TrackEvent)).toBe(
@@ -378,7 +381,7 @@ describe('<EmulatorContainer/>', () => {
     instance.startNewConversation = mockStartNewConversation;
     await instance.onStartOverClick(RestartConversationOptions.SameUserId);
 
-    expect(mockDispatch).toHaveBeenCalledWith(clearLog('doc1'));
+    expect(mockDispatch).toHaveBeenCalledWith(clearLog('doc1', jasmine.any(Function)));
     expect(mockDispatch).toHaveBeenCalledWith(setInspectorObjects('doc1', []));
     expect(mockRemoteCallsMade).toHaveLength(3);
     expect(mockRemoteCallsMade.some(cmd => cmd.commandName === SharedConstants.Commands.Telemetry.TrackEvent)).toBe(

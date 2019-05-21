@@ -58,7 +58,11 @@ const mapDispatchToProps = (dispatch): EmulatorProps => ({
   enablePresentationMode: enable =>
     enable ? dispatch(PresentationActions.enable()) : dispatch(PresentationActions.disable()),
   setInspectorObjects: (documentId, objects) => dispatch(ChatActions.setInspectorObjects(documentId, objects)),
-  clearLog: documentId => dispatch(ChatActions.clearLog(documentId)),
+  clearLog: (documentId: string) => {
+    return new Promise(resolve => {
+      dispatch(ChatActions.clearLog(documentId, resolve));
+    });
+  },
   newConversation: (documentId, options) => dispatch(ChatActions.newConversation(documentId, options)),
   updateChat: (documentId: string, updatedValues: any) => dispatch(ChatActions.updateChat(documentId, updatedValues)),
   updateDocument: (documentId, updatedValues: Partial<Document>) => dispatch(updateDocument(documentId, updatedValues)),

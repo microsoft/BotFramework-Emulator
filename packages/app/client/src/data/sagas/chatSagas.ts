@@ -34,13 +34,18 @@ import * as Electron from 'electron';
 import { MenuItemConstructorOptions } from 'electron';
 import { Activity } from 'botframework-schema';
 import { SharedConstants, ValueTypes } from '@bfemulator/app-shared';
-import { InspectableObjectLogItem, LogItem, LogItemType } from '@bfemulator/sdk-shared';
+import {
+  CommandServiceImpl,
+  CommandServiceInstance,
+  InspectableObjectLogItem,
+  LogItem,
+  LogItemType,
+} from '@bfemulator/sdk-shared';
 import { diff } from 'deep-diff';
 import { IEndpointService } from 'botframework-config/lib/schema';
 import { createCognitiveServicesBingSpeechPonyfillFactory } from 'botframework-webchat';
 import { createStore as createWebChatStore } from 'botframework-webchat-core';
 import { call, ForkEffect, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
-import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import {
   ChatAction,
@@ -102,6 +107,7 @@ const getPreviousBotState = (state: RootState, selectedTrace: Activity): Activit
 const getChatFromDocumentId = (state: RootState, documentId: string): any => {
   return state.chat.chats[documentId];
 };
+
 export class ChatSagas {
   @CommandServiceInstance()
   private static commandService: CommandServiceImpl;
@@ -154,7 +160,7 @@ export class ChatSagas {
   }
 
   public static *newChat(action: ChatAction<NewChatPayload>): Iterable<any> {
-    const { documentId } = action.payload;
+    const { documentId, resolver } = action.payload;
     // Create a new webchat store for this documentId
     yield put(webChatStoreUpdated(documentId, createWebChatStore()));
     // Each time a new chat is open, retrieve the speech token
@@ -182,6 +188,9 @@ export class ChatSagas {
       yield put(webSpeechFactoryUpdated(documentId, factory)); // Provide the new factory to the store
     }
     yield put(updatePendingSpeechTokenRetrieval(false));
+    if (resolver) {
+      resolver();
+    }
   }
 
   public static *diffWithPreviousBotState(currentBotState: Activity): Iterable<any> {
