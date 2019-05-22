@@ -40,8 +40,10 @@ import { bot } from '../data/reducer/bot';
 import { chat } from '../data/reducer/chat';
 import { clientAwareSettings } from '../data/reducer/clientAwareSettingsReducer';
 import { editor } from '../data/reducer/editor';
+import { framework } from '../data/reducer/frameworkSettingsReducer';
 import { RootState } from '../data/store';
 import { CommandServiceImpl } from '../platform/commands/commandServiceImpl';
+import { frameworkSettingsChanged } from '../data/action/frameworkSettingsActions';
 
 import { registerCommands } from './emulatorCommands';
 
@@ -65,7 +67,7 @@ describe('The emulator commands', () => {
   });
 
   beforeEach(() => {
-    mockStore = createStore(combineReducers({ bot, chat, clientAwareSettings, editor }));
+    mockStore = createStore(combineReducers({ bot, chat, clientAwareSettings, editor, framework }));
     mockStore.dispatch(
       clientAwareSettingsChanged({
         users: { currentUserId: '1234' },
@@ -82,8 +84,20 @@ describe('The emulator commands', () => {
     const documentId = handler(mockEndpoint, false);
     const state: RootState = mockStore.getState();
     const documentIds = Object.keys(state.chat.chats);
+    const document = state.chat.chats[documentId];
+    expect(document.userId).toEqual('1234');
     expect(documentIds.length).toBe(1);
     expect(state.editor.editors.primary.activeDocumentId).toBe(documentId);
+  });
+
+  it('should open a new emulator tabbed document for an endpoint and use the custom user id', () => {
+    let state: RootState = mockStore.getState();
+    mockStore.dispatch(frameworkSettingsChanged({ ...state.framework, userGUID: 'customUserId' }));
+    const { handler } = registry.getCommand(SharedConstants.Commands.Emulator.NewLiveChat);
+    const documentId = handler(mockEndpoint, false);
+    state = mockStore.getState();
+    const document = state.chat.chats[documentId];
+    expect(document.userId).toEqual('customUserId');
   });
 
   it('should set the active tab of an existing chat', () => {

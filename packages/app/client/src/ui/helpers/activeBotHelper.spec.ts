@@ -220,6 +220,8 @@ describe('ActiveBotHelper tests', () => {
   });
 
   it('confirmAndOpenBotFromFile() functionality', async () => {
+    const backupGetState = store.getState;
+    store.getState = jest.fn(() => ({ clientAwareSettings: { users: { currentUserId: 'some-random-hash' } } }));
     const backupBrowseForBotFile = ActiveBotHelper.browseForBotFile;
     const backupBotAlreadyOpen = ActiveBotHelper.botAlreadyOpen;
     const backupConfirmSwitchBot = ActiveBotHelper.confirmSwitchBot;
@@ -259,6 +261,7 @@ describe('ActiveBotHelper tests', () => {
     await ActiveBotHelper.confirmAndOpenBotFromFile();
     expect(mockDispatch).toHaveBeenCalledTimes(1);
     expect(mockCall).toHaveBeenCalledWith(SharedConstants.Commands.Bot.Load, bot);
+    expect(mockRemoteCall).toHaveBeenCalledWith(SharedConstants.Commands.Emulator.SetCurrentUser, 'some-random-hash');
     expect(mockRemoteCall).toHaveBeenCalledWith(SharedConstants.Commands.Bot.Open, 'someOtherPath');
     expect(mockRemoteCall).toHaveBeenCalledWith(SharedConstants.Commands.Bot.SetActive, bot);
     expect(mockRemoteCall).toHaveBeenCalledWith(SharedConstants.Commands.Telemetry.TrackEvent, 'bot_open', {
@@ -269,6 +272,49 @@ describe('ActiveBotHelper tests', () => {
     ActiveBotHelper.browseForBotFile = backupBrowseForBotFile;
     ActiveBotHelper.botAlreadyOpen = backupBotAlreadyOpen;
     ActiveBotHelper.confirmSwitchBot = backupConfirmSwitchBot;
+    store.getState = backupGetState;
+  });
+
+  it('confirmAndOpenBotFromFile() functionality with a custom user ID', async () => {
+    const backupGetState = store.getState;
+    store.getState = jest.fn(() => ({
+      clientAwareSettings: { users: { currentUserId: '' } },
+      framework: { userGUID: 'customUserId' },
+    }));
+    const backupBrowseForBotFile = ActiveBotHelper.browseForBotFile;
+    const backupBotAlreadyOpen = ActiveBotHelper.botAlreadyOpen;
+    const backupConfirmSwitchBot = ActiveBotHelper.confirmSwitchBot;
+
+    const bot: BotConfigWithPath = {
+      name: 'someBot',
+      description: '',
+      padlock: null,
+      path: 'somePath',
+      services: [],
+      version: '0.1',
+    };
+
+    const mockDispatch = jest.fn().mockReturnValue(null);
+    (store as any).dispatch = mockDispatch;
+
+    ActiveBotHelper.browseForBotFile = () => new Promise(resolve => resolve('someOtherPath'));
+    ActiveBotHelper.confirmSwitchBot = () => new Promise(resolve => resolve(true));
+
+    const mockRemoteCall = jest
+      .fn()
+      .mockResolvedValueOnce(bot)
+      .mockResolvedValue(null);
+    const mockCall = jest.fn().mockResolvedValue(null);
+    (CommandServiceImpl as any).remoteCall = mockRemoteCall;
+    (CommandServiceImpl as any).call = mockCall;
+
+    await ActiveBotHelper.confirmAndOpenBotFromFile();
+    expect(mockRemoteCall).toHaveBeenCalledWith(SharedConstants.Commands.Emulator.SetCurrentUser, 'customUserId');
+
+    ActiveBotHelper.browseForBotFile = backupBrowseForBotFile;
+    ActiveBotHelper.botAlreadyOpen = backupBotAlreadyOpen;
+    ActiveBotHelper.confirmSwitchBot = backupConfirmSwitchBot;
+    store.getState = backupGetState;
   });
 
   it('should throw an error when confirmAndOpenBotFromFile fails', async () => {

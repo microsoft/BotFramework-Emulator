@@ -77,11 +77,12 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
       if (!documentId) {
         documentId = uniqueId();
         const { currentUserId } = state.clientAwareSettings.users;
+        const customUserId = state.framework.userGUID;
         const action = ChatActions.newChat(documentId, mode, {
           botId: 'bot',
           endpointId: endpoint.id,
           endpointUrl: endpoint.endpoint,
-          userId: currentUserId,
+          userId: customUserId || currentUserId,
           conversationId,
           // directLine: createDirectLine({
           //   secret: base64Url.encode(JSON.stringify({ conversationId, endpointId: endpoint.id })),
