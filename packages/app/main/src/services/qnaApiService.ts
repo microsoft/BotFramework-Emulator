@@ -140,6 +140,6 @@ function knowledgeBaseToQnaService(kb: KnowledgeBase, subscriptionKey: string, e
     name: kb.name,
     subscriptionKey,
     endpointKey,
-    hostname: kb.hostName || '',
+    hostname: kb.hostName || 'http://aka.ms',
   });
 }
