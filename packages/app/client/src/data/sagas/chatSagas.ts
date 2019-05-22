@@ -169,6 +169,9 @@ export class ChatSagas {
     yield put(webSpeechFactoryUpdated(documentId, null)); // remove the old factory
     const endpoint: IEndpointService = yield select(getEndpointServiceByDocumentId, documentId);
     if (!isSpeechEnabled(endpoint)) {
+      if (resolver) {
+        resolver();
+      }
       return;
     }
     yield put(updatePendingSpeechTokenRetrieval(true));
