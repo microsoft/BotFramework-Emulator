@@ -178,6 +178,12 @@ const buildConfig = mode => {
     config.optimization = {
       minimizer: [
         new UglifyJsPlugin({
+          cache: true,
+          cacheKeys(defaultCacheKeys) {
+            delete defaultCacheKeys['uglify-js'];
+
+            return Object.assign({}, defaultCacheKeys, { 'uglify-js': require('uglify-js/package.json').version });
+          },
           minify(file, sourceMap) {
             // https://github.com/mishoo/UglifyJS2#minify-options
             const uglifyJsOptions = {

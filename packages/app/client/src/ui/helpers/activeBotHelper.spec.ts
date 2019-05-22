@@ -320,8 +320,8 @@ describe('ActiveBotHelper tests', () => {
       .mockResolvedValueOnce(bot)
       .mockResolvedValue(null);
     const mockCall = jest.fn().mockResolvedValue(null);
-    (CommandServiceImpl as any).remoteCall = mockRemoteCall;
-    (CommandServiceImpl as any).call = mockCall;
+    commandService.remoteCall = mockRemoteCall;
+    commandService.call = mockCall;
 
     await ActiveBotHelper.confirmAndOpenBotFromFile();
     expect(mockRemoteCall).toHaveBeenCalledWith(SharedConstants.Commands.Emulator.SetCurrentUser, 'customUserId');
