@@ -37,15 +37,15 @@ import { createStore } from 'redux';
 import { mount, shallow } from 'enzyme';
 import { DebugMode, SharedConstants } from '@bfemulator/app-shared';
 import base64Url from 'base64url';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { disable, enable } from '../../../data/action/presentationActions';
 import { clearLog, newConversation, setInspectorObjects } from '../../../data/action/chatActions';
 import { updateDocument } from '../../../data/action/editorActions';
+import { executeCommand } from '../../../data/action/commandAction';
 
 import { Emulator, RestartConversationOptions } from './emulator';
 import { EmulatorContainer } from './emulatorContainer';
-import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
-import { executeCommand } from '../../../data/action/commandAction';
 
 const { encode } = base64Url;
 

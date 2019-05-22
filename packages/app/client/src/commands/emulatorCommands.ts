@@ -36,6 +36,7 @@ import { DebugMode, newNotification, SharedConstants } from '@bfemulator/app-sha
 import { CommandServiceImpl, CommandServiceInstance, isLocalHostUrl, uniqueId } from '@bfemulator/sdk-shared';
 import { IEndpointService } from 'botframework-config/lib/schema';
 import { Activity } from 'botframework-schema';
+import { Command } from '@bfemulator/sdk-shared';
 
 import * as Constants from '../constants';
 import * as ChatActions from '../data/action/chatActions';
@@ -43,7 +44,6 @@ import * as EditorActions from '../data/action/editorActions';
 import { beginAdd } from '../data/action/notificationActions';
 import { getTabGroupForDocument } from '../data/editorHelpers';
 import { store } from '../data/store';
-import { Command } from '@bfemulator/sdk-shared';
 
 const {
   Emulator,

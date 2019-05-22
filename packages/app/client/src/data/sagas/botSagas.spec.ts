@@ -34,6 +34,7 @@
 import { DebugMode, newNotification, SharedConstants } from '@bfemulator/app-shared';
 import { BotConfigWithPath, ConversationService } from '@bfemulator/sdk-shared';
 import { call, put, takeEvery, takeLatest } from 'redux-saga/effects';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { ActiveBotHelper } from '../../ui/helpers/activeBotHelper';
 import {
@@ -48,7 +49,6 @@ import { generateHash } from '../botHelpers';
 
 import { botSagas, BotSagas } from './botSagas';
 import { SharedSagas } from './sharedSagas';
-import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 jest.mock('../store', () => ({
   get store() {

@@ -32,6 +32,7 @@
 //
 import { newNotification, SharedConstants } from '@bfemulator/app-shared';
 import { combineReducers, createStore } from 'redux';
+import { CommandRegistry, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { clientAwareSettingsChanged } from '../data/action/clientAwareSettingsActions';
 import { beginAdd } from '../data/action/notificationActions';
@@ -42,8 +43,8 @@ import { editor } from '../data/reducer/editor';
 import { framework } from '../data/reducer/frameworkSettingsReducer';
 import { RootState } from '../data/store';
 import { frameworkSettingsChanged } from '../data/action/frameworkSettingsActions';
+
 import { EmulatorCommands } from './emulatorCommands';
-import { CommandRegistry, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 const mockEndpoint = {
   endpoint: 'https://localhost:8080/api/messages',

@@ -34,6 +34,7 @@
 import { DebugMode, newNotification, SharedConstants, UserSettings } from '@bfemulator/app-shared';
 import { ConversationService, StartConversationParams } from '@bfemulator/sdk-shared';
 import { call, ForkEffect, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { ActiveBotHelper } from '../../ui/helpers/activeBotHelper';
 import { BotAction, BotActionType, BotConfigWithPathPayload, botHashGenerated } from '../action/botActions';
@@ -42,7 +43,6 @@ import { generateHash } from '../botHelpers';
 import { RootState } from '../store';
 
 import { SharedSagas } from './sharedSagas';
-import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 export class BotSagas {
   @CommandServiceInstance()
