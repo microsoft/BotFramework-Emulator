@@ -34,6 +34,8 @@
 const path = require('path');
 
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+
 const webpack = require('webpack');
 const {
   DllPlugin,
@@ -160,7 +162,6 @@ const defaultConfig = {
 const buildConfig = mode => {
   const config = {
     ...defaultConfig,
-
     plugins: [
       ...defaultConfig.plugins,
       new DllReferencePlugin({
@@ -173,6 +174,27 @@ const buildConfig = mode => {
   };
   if (mode === 'development') {
     config.module.rules[0].use = use;
+  } else {
+    config.optimization = {
+      minimizer: [
+        new UglifyJsPlugin({
+          minify(file, sourceMap) {
+            // https://github.com/mishoo/UglifyJS2#minify-options
+            const uglifyJsOptions = {
+              /* your `uglify-js` package options */
+            };
+
+            if (sourceMap) {
+              uglifyJsOptions.sourceMap = {
+                content: sourceMap,
+              };
+            }
+
+            return require('terser').minify(file, uglifyJsOptions);
+          },
+        }),
+      ],
+    };
   }
   return config;
 };

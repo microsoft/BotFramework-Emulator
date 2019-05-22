@@ -52,8 +52,6 @@ export const loadSettings = (filename: string, defaultSettings: Partial<Settings
     }
     return defaultSettings;
   } catch (e) {
-    // eslint-disable-next-line no-console
-    console.error(`Failed to read file: ${filename}`, e);
     return defaultSettings;
   }
 };
