@@ -68,8 +68,17 @@ export function* openBotViaUrl(action: BotAction<Partial<StartConversationParams
   const serverUrl = yield select((state: RootState) => state.clientAwareSettings.serverUrl);
   if (!action.payload.user) {
     // If no user is provided, select the current user
+    const customUserId = yield select((state: RootState) => state.framework.userGUID);
     const users: UserSettings = yield select((state: RootState) => state.clientAwareSettings.users);
-    action.payload.user = users.usersById[users.currentUserId];
+    action.payload.user = customUserId || users.usersById[users.currentUserId];
+    if (customUserId) {
+      action.payload.user = customUserId;
+      yield call(
+        [CommandServiceImpl, CommandServiceImpl.remoteCall],
+        SharedConstants.Commands.Emulator.SetCurrentUser,
+        customUserId
+      );
+    }
   }
   let error;
   try {
