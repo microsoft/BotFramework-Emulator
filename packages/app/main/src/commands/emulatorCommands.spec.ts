@@ -54,6 +54,7 @@ import { setCurrentUser } from '../settingsData/actions/userActions';
 import { pushClientAwareSettings } from '../settingsData/actions/frameworkActions';
 
 import { registerCommands } from './emulatorCommands';
+import { azureLoggedInUserChanged } from '../settingsData/actions/azureAuthActions';
 
 const mockBotConfig = BotConfiguration;
 const mockConversationConstructor = Conversation;
@@ -562,8 +563,53 @@ describe('The emulatorCommands', () => {
     expect(postActivitySpy).toHaveBeenCalled();
   });
 
-  it('should clear state', async () => {
-    const result = await mockCommandRegistry.getCommand(SharedConstants.Commands.Emulator.ClearState).handler();
+  it('should clear state if user is signed in to Azure', async () => {
+    getSettingsStore().dispatch(azureLoggedInUserChanged('someone@microsoft.com'));
+
+    const signedInUser = getSettingsStore().getState().azure.signedInUser;
+    const signedInMessage = signedInUser
+      ? 'This will log you out of Azure and remove any session based data. Continue?'
+      : 'This will remove any session based data. Continue?';
+
+    expect(signedInMessage).toBe('This will log you out of Azure and remove any session based data. Continue?');
+
+    const callSpy = jest.spyOn(mainWindow.commandService, 'call').mockResolvedValue(true);
+    const handler = mockCommandRegistry.getCommand(SharedConstants.Commands.Emulator.ClearState).handler();
+    const result = await handler;
+
     expect(result).toBe(true);
+
+    expect(callSpy).toHaveBeenCalledWith(SharedConstants.Commands.Electron.ShowMessageBox, true, {
+      buttons: ['Cancel', 'OK'],
+      cancelId: 0,
+      defaultId: 1,
+      message: signedInMessage,
+      type: 'question',
+    });
+  });
+
+  it('should clear state if user is not signed in to Azure', async () => {
+    getSettingsStore().dispatch(azureLoggedInUserChanged(''));
+
+    const signedInUser = getSettingsStore().getState().azure.signedInUser;
+    const signedInMessage = signedInUser
+      ? 'This will log you out of Azure and remove any session based data. Continue?'
+      : 'This will remove any session based data. Continue?';
+
+    expect(signedInMessage).toBe('This will remove any session based data. Continue?');
+
+    const callSpy = jest.spyOn(mainWindow.commandService, 'call').mockResolvedValue(true);
+    const handler = mockCommandRegistry.getCommand(SharedConstants.Commands.Emulator.ClearState).handler();
+    const result = await handler;
+
+    expect(result).toBe(true);
+
+    expect(callSpy).toHaveBeenCalledWith(SharedConstants.Commands.Electron.ShowMessageBox, true, {
+      buttons: ['Cancel', 'OK'],
+      cancelId: 0,
+      defaultId: 1,
+      message: signedInMessage,
+      type: 'question',
+    });
   });
 });
