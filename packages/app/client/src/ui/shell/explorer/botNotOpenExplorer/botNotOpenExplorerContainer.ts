@@ -51,7 +51,7 @@ const mapDispatchToProps = (dispatch: (action: Action) => void): BotNotOpenExplo
     try {
       await ActiveBotHelper.confirmAndOpenBotFromFile();
     } catch (e) {
-      dispatch(beginAdd(newNotification('An Error occurred on the Bot Not Open Explorer: oh noes!')));
+      dispatch(beginAdd(newNotification(`An Error occurred on the Bot Not Open Explorer: ${e}`)));
     }
   },
   showCreateNewBotDialog: () => dispatch(executeCommand(false, SharedConstants.Commands.UI.ShowBotCreationDialog)),
