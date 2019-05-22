@@ -59,7 +59,7 @@ import { LuisTraceInfo } from './Models/LuisTraceInfo';
 const $host: InspectorHost = (window as any).host;
 const LuisApiBasePath = 'https://westus.api.cognitive.microsoft.com/luis/api/v2.0';
 const TrainAccessoryId = 'train';
-const PublichAccessoryId = 'publish';
+const PublishAccessoryId = 'publish';
 const AccessoryDefaultState = 'default';
 const AccessoryWorkingState = 'working';
 
@@ -147,13 +147,13 @@ export class App extends Component<any, AppState> {
       await this.populateLuisInfo();
       $host.setInspectorTitle(this.state.appInfo.isDispatchApp ? 'Dispatch' : 'LUIS');
       $host.setAccessoryState(TrainAccessoryId, AccessoryDefaultState);
-      $host.setAccessoryState(PublichAccessoryId, AccessoryDefaultState);
+      $host.setAccessoryState(PublishAccessoryId, AccessoryDefaultState);
       $host.enableAccessory(
         TrainAccessoryId,
         this.state.persistentState[this.state.id] && this.state.persistentState[this.state.id].pendingTrain
       );
       $host.enableAccessory(
-        PublichAccessoryId,
+        PublishAccessoryId,
         this.state.persistentState[this.state.id] && this.state.persistentState[this.state.id].pendingPublish
       );
     });
@@ -164,7 +164,7 @@ export class App extends Component<any, AppState> {
           await this.train();
           break;
 
-        case PublichAccessoryId:
+        case PublishAccessoryId:
           await this.publish();
           break;
 
@@ -308,7 +308,7 @@ export class App extends Component<any, AppState> {
   };
 
   private publish = async (): Promise<void> => {
-    $host.setAccessoryState(PublichAccessoryId, AccessoryWorkingState);
+    $host.setAccessoryState(PublishAccessoryId, AccessoryWorkingState);
     try {
       await this.luisclient.publish(this.state.appInfo, this.state.traceInfo.luisOptions.Staging || false);
       $host.logger.log('Application published successfully');
@@ -321,7 +321,7 @@ export class App extends Component<any, AppState> {
       $host.logger.error(err.message);
       $host.trackEvent('luis_publishFailure', { error: err.message });
     } finally {
-      $host.setAccessoryState(TrainAccessoryId, AccessoryDefaultState);
+      $host.setAccessoryState(PublishAccessoryId, AccessoryDefaultState);
     }
   };
 
@@ -331,7 +331,7 @@ export class App extends Component<any, AppState> {
     this.setState({ persistentState: this.state.persistentState });
     localStorage.setItem(persistentStateKey, JSON.stringify(this.state.persistentState));
     $host.enableAccessory(TrainAccessoryId, persistentState.pendingTrain);
-    $host.enableAccessory(PublichAccessoryId, persistentState.pendingPublish);
+    $host.enableAccessory(PublishAccessoryId, persistentState.pendingPublish);
   }
 
   private loadAppPersistentState(): { [key: string]: PersistentAppState } {
