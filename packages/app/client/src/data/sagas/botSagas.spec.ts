@@ -33,7 +33,7 @@
 
 import { newNotification, SharedConstants, DebugMode } from '@bfemulator/app-shared';
 import { BotConfigWithPath, ConversationService } from '@bfemulator/sdk-shared';
-import { call, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
+import { call, put, takeEvery, takeLatest } from 'redux-saga/effects';
 
 import { ActiveBotHelper } from '../../ui/helpers/activeBotHelper';
 import {
@@ -86,6 +86,7 @@ describe('The botSagas', () => {
   beforeEach(() => {
     mockRemoteCommandsCalled = [];
     mockLocalCommandsCalled = [];
+    ConversationService.startConversation = jest.fn().mockResolvedValue(true);
   });
 
   it('should initialize the root saga', () => {
@@ -137,15 +138,6 @@ describe('The botSagas', () => {
   });
 
   it('should open a bot from a url', () => {
-    const mockState = {
-      clientAwareSettings: {
-        serverUrl: 'http://localhost:3000',
-        users: {
-          currentUserId: '1',
-          usersById: { '1': {} },
-        },
-      },
-    };
     const gen = openBotViaUrl(
       openBotViaUrlAction({
         appPassword: 'password',
@@ -153,17 +145,67 @@ describe('The botSagas', () => {
         endpoint: 'http://localhost/api/messages',
       })
     );
-    const io = select(() => void 0);
-    io.SELECT.selector = jasmine.any(Function) as any;
+    gen.next();
     // select serverUrl
-    const selectServerUrl = gen.next().value as any;
-    expect(selectServerUrl).toEqual(io);
-    // select user
-    const selectUser = gen.next(selectServerUrl.SELECT.selector(mockState)).value as any;
-    expect(selectUser).toEqual(io);
-    // call ConversationService.startConversation
-    jest.spyOn(ConversationService, 'startConversation').mockResolvedValue({ ok: true });
-    expect(gen.next(selectUser.SELECT.selector(mockState)).value).not.toBeNull();
+    gen.next('www.serverurl.com');
+    // select custom user id
+    gen.next('');
+    // select users
+    const users = { currentUserId: 'user1', usersById: { user1: {} } };
+    gen.next(users);
+    // startConversation
+    gen.next({ ok: true, json: async () => null });
+    // select debug mode
+    const callToSaveUrl = gen.next(DebugMode.Normal).value;
+    expect(callToSaveUrl).toEqual(
+      call(
+        [CommandServiceImpl, CommandServiceImpl.remoteCall],
+        SharedConstants.Commands.Settings.SaveBotUrl,
+        'http://localhost/api/messages'
+      )
+    );
+    // the saga should be finished
+    expect(gen.next().done).toBe(true);
+  });
+
+  it('should open a bot from a url with the custom user id', () => {
+    const gen = openBotViaUrl(
+      openBotViaUrlAction({
+        appPassword: 'password',
+        appId: '1234abcd',
+        endpoint: 'http://localhost/api/messages',
+      })
+    );
+    gen.next();
+    // select serverUrl
+    gen.next('www.serverurl.com');
+    // select custom user id
+    gen.next('customUserId');
+    // select users
+    const users = { currentUserId: 'user1', usersById: { user1: {} } };
+    const callToSetCurrentUser = gen.next(users).value;
+    expect(callToSetCurrentUser).toEqual(
+      call(
+        [CommandServiceImpl, CommandServiceImpl.remoteCall],
+        SharedConstants.Commands.Emulator.SetCurrentUser,
+        'customUserId'
+      )
+    );
+    // call to set current user
+    gen.next();
+    // startConversation
+    gen.next({ ok: true, json: async () => null });
+    // select debug mode
+    const callToSaveUrl = gen.next(DebugMode.Normal).value;
+    expect(callToSaveUrl).toEqual(
+      call(
+        [CommandServiceImpl, CommandServiceImpl.remoteCall],
+        SharedConstants.Commands.Settings.SaveBotUrl,
+        'http://localhost/api/messages'
+      )
+    );
+    // the saga should be finished
+    expect(gen.next().done).toBe(true);
   });
 
   it('should send a notification if opening a bot from a URL fails', () => {
@@ -177,6 +219,8 @@ describe('The botSagas', () => {
     gen.next();
     // select serverUrl
     gen.next('www.serverurl.com');
+    // select custom user id
+    gen.next('');
     // select users
     const users = { currentUserId: 'user1', usersById: { user1: {} } };
     gen.next(users);
@@ -206,6 +250,8 @@ describe('The botSagas', () => {
     gen.next();
     // select serverUrl
     gen.next('www.serverurl.com');
+    // select custom user id
+    gen.next('');
     // select users
     const users = { currentUserId: 'user1', usersById: { user1: {} } };
     gen.next(users);
@@ -252,6 +298,8 @@ describe('The botSagas', () => {
     gen.next();
     // select serverUrl
     gen.next('www.serverurl.com');
+    // select custom user id
+    gen.next('');
     // select users
     const users = { currentUserId: 'user1', usersById: { user1: {} } };
     gen.next(users);
@@ -281,6 +329,8 @@ describe('The botSagas', () => {
     gen.next();
     // select serverUrl
     gen.next('www.serverurl.com');
+    // select custom user id
+    gen.next('');
     // select users
     const users = { currentUserId: 'user1', usersById: { user1: {} } };
     gen.next(users);

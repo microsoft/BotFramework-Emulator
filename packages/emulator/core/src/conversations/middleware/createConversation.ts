@@ -81,7 +81,8 @@ function getConversation(
   if (!conversation) {
     const { members = [] } = params;
     const [member] = members;
-    const { id = uniqueId(), name = 'User' } = member || {};
+    const currentUserId = emulator.facilities.users.currentUserId;
+    const { id = currentUserId || uniqueId(), name = 'User' } = member || {};
     conversation = emulator.facilities.conversations.newConversation(
       emulator,
       endpoint,
