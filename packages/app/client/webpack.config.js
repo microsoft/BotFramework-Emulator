@@ -136,8 +136,6 @@ const defaultConfig = {
 
   plugins: [
     new NamedModulesPlugin(),
-    new HotModuleReplacementPlugin(),
-    new HardSourceWebpackPlugin(),
     new CopyWebpackPlugin([
       { from: './src/inspector-preload.js', to: './' },
       { from: './src/splash.html', to: './splash.html' },
@@ -174,6 +172,7 @@ const buildConfig = mode => {
   };
   if (mode === 'development') {
     config.module.rules[0].use = use;
+    config.plugins.unshift(new HotModuleReplacementPlugin(), new HardSourceWebpackPlugin());
   } else {
     config.optimization = {
       minimizer: [

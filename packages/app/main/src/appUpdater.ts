@@ -188,7 +188,7 @@ class EmulatorUpdater extends EventEmitter {
               label: 'Downloading...',
               progress: 0,
             });
-            await this.commandService.remoteCall(ShowProgressIndicator);
+            this.commandService.remoteCall(ShowProgressIndicator);
             const { installAfterDownload = false } = result;
             await this.downloadUpdate(installAfterDownload);
           }
