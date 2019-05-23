@@ -93,9 +93,22 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
   }
 
   public render(): JSX.Element {
-    const { state } = this;
+    const {
+      ngrokPath = '',
+      useCustomId = false,
+      bypassNgrokLocalhost = true,
+      runNgrokAtStartup = false,
+      localhost = '',
+      locale = '',
+      use10Tokens = false,
+      useCodeValidation = false,
+      userGUID = '',
+      autoUpdate = false,
+      usePrereleases = false,
+    } = this.state;
+
     const inputProps = {
-      disabled: !state.useCustomId,
+      disabled: !useCustomId,
     };
 
     return (
@@ -123,7 +136,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
                 className={styles.appSettingsInput}
                 inputContainerClassName={styles.inputContainer}
                 readOnly={false}
-                value={state.ngrokPath}
+                value={ngrokPath}
                 onChange={this.onInputChange}
                 name="ngrokPath"
                 label={'Path to ngrok'}
@@ -132,7 +145,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
             </Row>
             <Checkbox
               className={styles.checkboxOverrides}
-              checked={state.bypassNgrokLocalhost}
+              checked={bypassNgrokLocalhost}
               onChange={this.onChangeCheckBox}
               id="ngrok-bypass"
               label="Bypass ngrok for local addresses"
@@ -140,7 +153,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
             />
             <Checkbox
               className={styles.checkboxOverrides}
-              checked={state.runNgrokAtStartup}
+              checked={runNgrokAtStartup}
               onChange={this.onChangeCheckBox}
               id="ngrok-startup"
               label="Run ngrok when the Emulator starts up"
@@ -151,7 +164,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
                 className={styles.appSettingsInput}
                 inputContainerClassName={styles.inputContainer}
                 readOnly={false}
-                value={state.localhost}
+                value={localhost}
                 onChange={this.onInputChange}
                 name="localhost"
                 label="localhost override"
@@ -162,7 +175,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
                 className={styles.appSettingsInput}
                 inputContainerClassName={styles.inputContainer}
                 readOnly={false}
-                value={state.locale}
+                value={locale}
                 name="locale"
                 onChange={this.onInputChange}
                 label="Locale"
@@ -173,7 +186,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
             <SmallHeader>User settings</SmallHeader>
             <Checkbox
               className={styles.checkboxOverrides}
-              checked={state.use10Tokens}
+              checked={use10Tokens}
               onChange={this.onChangeCheckBox}
               id="auth-token-version"
               label="Use version 1.0 authentication tokens"
@@ -181,7 +194,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
             />
             <Checkbox
               className={styles.checkboxOverrides}
-              checked={state.useCodeValidation}
+              checked={useCodeValidation}
               onChange={this.onChangeCheckBox}
               id="use-validation-code"
               label="Use a sign-in verification code for OAuthCards"
@@ -189,7 +202,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
             />
             <Checkbox
               className={styles.checkboxOverrides}
-              checked={state.useCustomId}
+              checked={useCustomId}
               onChange={this.onChangeCheckBox}
               id="use-custom-id"
               label="Use your own user ID to communicate with the bot"
@@ -200,29 +213,29 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
               <TextField
                 {...inputProps}
                 label="User ID"
-                placeholder={state.useCustomId ? '' : 'There is no ID configured'}
+                placeholder={useCustomId ? '' : 'There is no ID configured'}
                 className={styles.appSettingsInput}
                 inputContainerClassName={styles.inputContainer}
                 readOnly={false}
-                value={state.userGUID}
+                value={userGUID}
                 name="userGUID"
                 onChange={this.onInputChange}
-                required={state.useCustomId}
-                errorMessage={state.userGUID ? '' : 'Enter a User ID'}
+                required={useCustomId}
+                errorMessage={userGUID ? '' : 'Enter a User ID'}
               />
             </Row>
 
             <SmallHeader>Application Updates</SmallHeader>
             <Checkbox
               className={styles.checkboxOverrides}
-              checked={state.autoUpdate}
+              checked={autoUpdate}
               onChange={this.onChangeCheckBox}
               label="Automatically download and install updates"
               name="autoUpdate"
             />
             <Checkbox
               className={styles.checkboxOverrides}
-              checked={state.usePrereleases}
+              checked={usePrereleases}
               onChange={this.onChangeCheckBox}
               label="Use pre-release versions"
               name="usePrereleases"

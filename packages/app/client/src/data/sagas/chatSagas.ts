@@ -150,7 +150,7 @@ export class ChatSagas {
     const { DeleteConversation } = SharedConstants.Commands.Emulator;
     const { documentId } = action.payload;
     const chat = yield select(getChatFromDocumentId, documentId);
-    if (chat.directLine) {
+    if (chat && chat.directLine) {
       chat.directLine.end(); // stop polling
     }
     yield put(closeDocument(documentId));
