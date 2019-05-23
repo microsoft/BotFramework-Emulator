@@ -38,6 +38,7 @@ import { FileCommands } from './fileCommands';
 import { NotificationCommands } from './notificationCommands';
 import { SettingsCommands } from './settingsCommands';
 import { UiCommands } from './uiCommands';
+import { MiscCommands } from './miscCommands';
 
 export const commands = [
   new BotCommands(),
@@ -47,4 +48,5 @@ export const commands = [
   new NotificationCommands(),
   new SettingsCommands(),
   new UiCommands(),
+  new MiscCommands(),
 ];

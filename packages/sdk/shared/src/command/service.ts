@@ -66,18 +66,14 @@ export class CommandServiceImpl {
 
   public async call<T>(commandName: string, ...args: any[]): Promise<T | Error> {
     const command = this.registry.getCommand(commandName);
-    try {
-      if (!command) {
-        if (this.notFoundHandler) {
-          return this.notFoundHandler(commandName, ...args);
-        } else {
-          return new Error(`Command '${commandName}' not found`);
-        }
+    if (!command) {
+      if (this.notFoundHandler) {
+        return this.notFoundHandler(commandName, ...args);
       } else {
-        return (await command(...args)) as T;
+        throw new Error(`Command '${commandName}' not found`);
       }
-    } catch (err) {
-      return err;
+    } else {
+      return (await command(...args)) as T;
     }
   }
 

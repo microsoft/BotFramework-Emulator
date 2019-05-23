@@ -39,6 +39,7 @@ import { azureLoggedInUserChanged } from '../settingsData/actions/azureAuthActio
 import { azureAuth } from '../settingsData/reducers/azureAuthReducer';
 
 import { AzureCommands } from './azureCommands';
+import { ElectronCommands } from './electronCommands';
 
 const mockStore = createStore(combineReducers({ azure: azureAuth }));
 const mockArmToken = 'bm90aGluZw==.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds';
@@ -56,13 +57,7 @@ jest.mock('../services/azureAuthWorkflowService', () => ({
   },
 }));
 
-jest.mock('../main', () => ({
-  mainWindow: {
-    commandService: {
-      call: () => Promise.resolve(false),
-    },
-  },
-}));
+jest.mock('../main', () => ({}));
 
 jest.mock('../settingsData/store', () => ({
   getStore: () => mockStore,
@@ -77,6 +72,9 @@ jest.mock('../emulator', () => ({
 }));
 
 jest.mock('electron', () => ({
+  Menu: {
+    getApplicationMenu: () => ({ getMenuItemById: () => ({}) }),
+  },
   app: {
     getPath: () => 'not/there',
   },
@@ -119,6 +117,7 @@ describe('The azureCommand,', () => {
   let commandService: CommandServiceImpl;
   beforeAll(() => {
     new AzureCommands();
+    new ElectronCommands();
     const decorator = CommandServiceInstance();
     const descriptor = decorator({ descriptor: {} }, 'none') as any;
     commandService = descriptor.descriptor.get();
