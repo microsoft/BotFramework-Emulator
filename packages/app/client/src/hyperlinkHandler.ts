@@ -34,51 +34,52 @@
 import * as URL from 'url';
 
 import { SharedConstants } from '@bfemulator/app-shared';
-import { uniqueId } from '@bfemulator/sdk-shared';
+import { CommandServiceImpl, CommandServiceInstance, uniqueId } from '@bfemulator/sdk-shared';
 
-import { CommandServiceImpl } from './platform/commands/commandServiceImpl';
 const Electron = (window as any).require('electron');
 const { shell } = Electron;
 
-export function navigate(url: string = '') {
-  const { TrackEvent } = SharedConstants.Commands.Telemetry;
-  try {
-    const parsed = URL.parse(url) || { protocol: '' };
-    if ((parsed.protocol || '').startsWith('oauth:')) {
-      navigateEmulatedOAuthUrl(url.substring(8));
-    } else if (parsed.protocol.startsWith('oauthlink:')) {
-      navigateOAuthUrl(url.substring(12));
-    } else {
-      CommandServiceImpl.remoteCall(TrackEvent, 'app_openLink', { url }).catch(_e => void 0);
-      // manually create and click a download link for data url's
-      if (url.startsWith('data:')) {
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = '';
-        a.click();
+export class HyperlinkHandler {
+  @CommandServiceInstance()
+  private static commandService: CommandServiceImpl;
+
+  public static navigate(url: string = '') {
+    const { TrackEvent } = SharedConstants.Commands.Telemetry;
+    try {
+      const parsed = URL.parse(url) || { protocol: '' };
+      if ((parsed.protocol || '').startsWith('oauth:')) {
+        this.navigateEmulatedOAuthUrl(url.substring(8));
+      } else if (parsed.protocol.startsWith('oauthlink:')) {
+        this.navigateOAuthUrl(url.substring(12));
       } else {
-        shell.openExternal(url, { activate: true });
+        this.commandService.remoteCall(TrackEvent, 'app_openLink', { url }).catch(_e => void 0);
+        // manually create and click a download link for data url's
+        if (url.startsWith('data:')) {
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = '';
+          a.click();
+        } else {
+          shell.openExternal(url, { activate: true });
+        }
       }
+    } catch (e) {
+      this.commandService.remoteCall(TrackEvent, 'app_openLink', { url }).catch(_e => void 0);
+      shell.openExternal(url, { activate: true });
     }
-  } catch (e) {
-    CommandServiceImpl.remoteCall(TrackEvent, 'app_openLink', { url }).catch(_e => void 0);
-    shell.openExternal(url, { activate: true });
   }
-}
 
-function navigateEmulatedOAuthUrl(oauthParam: string) {
-  const { Commands } = SharedConstants;
-  const parts = oauthParam.split('&&&');
-  CommandServiceImpl.remoteCall(
-    Commands.OAuth.SendTokenResponse,
-    parts[0],
-    parts[1],
-    'emulatedToken_' + uniqueId()
-  ).catch();
-}
+  private static navigateEmulatedOAuthUrl(oauthParam: string) {
+    const { Commands } = SharedConstants;
+    const parts = oauthParam.split('&&&');
+    this.commandService
+      .remoteCall(Commands.OAuth.SendTokenResponse, parts[0], parts[1], 'emulatedToken_' + uniqueId())
+      .catch();
+  }
 
-function navigateOAuthUrl(oauthParam: string) {
-  const { Commands } = SharedConstants;
-  const parts = oauthParam.split('&&&');
-  CommandServiceImpl.remoteCall(Commands.OAuth.CreateOAuthWindow, parts[0], parts[1]).catch();
+  private static navigateOAuthUrl(oauthParam: string) {
+    const { Commands } = SharedConstants;
+    const parts = oauthParam.split('&&&');
+    this.commandService.remoteCall(Commands.OAuth.CreateOAuthWindow, parts[0], parts[1]).catch();
+  }
 }

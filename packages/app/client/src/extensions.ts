@@ -32,20 +32,10 @@
 //
 
 import { SharedConstants } from '@bfemulator/app-shared';
-import {
-  CommandRegistryImpl,
-  CommandService,
-  CommandServiceImpl,
-  ExtensionConfig,
-  ExtensionInspector,
-} from '@bfemulator/sdk-shared';
-
-import { ElectronIPC } from './ipc';
+import { Command, ExtensionConfig, ExtensionInspector } from '@bfemulator/sdk-shared';
 
 // =============================================================================
 export class Extension {
-  private _ext: CommandService;
-
   public get unid(): string {
     return this._unid;
   }
@@ -54,14 +44,7 @@ export class Extension {
     return this._config;
   }
 
-  public constructor(private _config: ExtensionConfig, private _unid: string) {
-    this._ext = new CommandServiceImpl(ElectronIPC, `ext-${this._unid}`);
-    /*
-    this._ext.remoteCall('ext-ping')
-      .then(reply => console.log(reply))
-      .catch(err => console.log('ping failed', err));
-    */
-  }
+  public constructor(private _config: ExtensionConfig, private _unid: string) {}
 
   public inspectorForObject(obj: any): GetInspectorResult | null {
     const inspectors = this.config.client.inspectors || [];
@@ -72,10 +55,6 @@ export class Extension {
           inspector,
         }
       : null;
-  }
-
-  public call(commandName: string, ...args: any[]): Promise<any> {
-    return this._ext.remoteCall(commandName, ...args);
   }
 }
 
@@ -149,29 +128,15 @@ export interface GetInspectorResult {
   inspector: ExtensionInspector;
 }
 
-// =============================================================================
-export interface ExtensionManager {
-  registerCommands(commandRegistry: CommandRegistryImpl);
-
-  addExtension(config: ExtensionConfig, unid: string);
-
-  removeExtension(unid: string);
-
-  getExtensions(): Extension[];
-
-  inspectorForObject(obj: any, defaultToJson: boolean): GetInspectorResult | null;
-}
+const { Connect, Disconnect } = SharedConstants.Commands.Extension;
 
 // =============================================================================
-class EmulatorExtensionManager implements ExtensionManager {
+class EmulatorExtensionManager {
   private extensions: { [unid: string]: Extension } = {};
 
   public addExtension(config: ExtensionConfig, unid: string) {
     this.removeExtension(unid);
-    // eslint-disable-next-line no-console
-    console.log(`adding extension ${config.name}`);
-    const ext = new Extension(config, unid);
-    this.extensions[unid] = ext;
+    this.extensions[unid] = new Extension(config, unid);
   }
 
   public removeExtension(unid: string) {
@@ -198,7 +163,7 @@ class EmulatorExtensionManager implements ExtensionManager {
     if (!result && defaultToJson) {
       // Default to the JSON inspector
       // eslint-disable-next-line typescript/no-use-before-define
-      const jsonExtension = ExtensionManager.findExtension('JSON');
+      const jsonExtension = this.findExtension('JSON');
       if (jsonExtension) {
         result = {
           extension: jsonExtension,
@@ -209,17 +174,16 @@ class EmulatorExtensionManager implements ExtensionManager {
     return result;
   }
 
-  public registerCommands(commandRegistry: CommandRegistryImpl) {
-    const { Connect, Disconnect } = SharedConstants.Commands.Extension;
-    commandRegistry.registerCommand(Connect, (config: ExtensionConfig) => {
-      // eslint-disable-next-line typescript/no-use-before-define
-      ExtensionManager.addExtension(config, config.location);
-    });
+  @Command(Connect)
+  protected connectExtension(config: ExtensionConfig) {
+    // eslint-disable-next-line typescript/no-use-before-define
+    this.addExtension(config, config.location);
+  }
 
-    commandRegistry.registerCommand(Disconnect, (location: string) => {
-      // eslint-disable-next-line typescript/no-use-before-define
-      ExtensionManager.removeExtension(location);
-    });
+  @Command(Disconnect)
+  protected disconnectExtension(location: string) {
+    // eslint-disable-next-line typescript/no-use-before-define
+    this.removeExtension(location);
   }
 }
 

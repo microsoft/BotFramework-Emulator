@@ -48,6 +48,7 @@ import { NavBar } from './navBar';
 import { StatusBar } from './statusBar/statusBar';
 
 export interface MainProps {
+  applicationMountComplete?: () => void;
   primaryEditor?: Editor;
   secondaryEditor?: Editor;
   explorerIsVisible?: boolean;
@@ -75,6 +76,10 @@ export class Main extends React.Component<MainProps, MainState> {
     } else {
       window.removeEventListener('keydown', this.props.exitPresentationMode);
     }
+  }
+
+  public componentDidMount() {
+    this.props.applicationMountComplete();
   }
 
   public render() {

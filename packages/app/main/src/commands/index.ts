@@ -31,5 +31,28 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './commandRegistry';
-export * from './registerAllCommands';
+import { AzureCommands } from './azureCommands';
+import { BotCommands } from './botCommands';
+import { ClientInitCommands } from './clientInitCommands';
+import { ConnectedServiceCommands } from './connectedServiceCommands';
+import { ElectronCommands } from './electronCommands';
+import { EmulatorCommands } from './emulatorCommands';
+import { FileCommands } from './fileCommands';
+import { NgrokCommands } from './ngrokCommands';
+import { OauthCommands } from './oauthCommands';
+import { SettingsCommands } from './settingsCommands';
+import { TelemetryCommands } from './telemetryCommands';
+
+export const commands = [
+  new AzureCommands(),
+  new BotCommands(),
+  new ClientInitCommands(),
+  new ConnectedServiceCommands(),
+  new ElectronCommands(),
+  new EmulatorCommands(),
+  new FileCommands(),
+  new NgrokCommands(),
+  new OauthCommands(),
+  new SettingsCommands(),
+  new TelemetryCommands(),
+];

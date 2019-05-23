@@ -41,7 +41,7 @@ import * as BotActions from '../../../data/action/botActions';
 import { azureAuth } from '../../../data/reducer/azureAuthReducer';
 import { clientAwareSettings } from '../../../data/reducer/clientAwareSettingsReducer';
 import { bot } from '../../../data/reducer/bot';
-import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
+import { executeCommand } from '../../../data/action/commandAction';
 
 import { WelcomePage } from './welcomePage';
 import { WelcomePageContainer } from './welcomePageContainer';
@@ -52,6 +52,31 @@ jest.mock('../../../data/store', () => ({
   get store() {
     return mockStore;
   },
+}));
+
+jest.mock('electron', () => ({
+  ipcMain: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+  ipcRenderer: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
 }));
 
 const mockArmToken = 'bm90aGluZw==.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds';
@@ -73,9 +98,11 @@ describe('The AzureLoginFailedDialogContainer component should', () => {
   let parent;
   let node;
   let instance: any;
+  let mockDispatch;
   beforeEach(() => {
     mockStore.dispatch(azureArmTokenDataChanged(mockArmToken));
     mockStore.dispatch(BotActions.loadBotInfos(bots));
+    mockDispatch = jest.spyOn(mockStore, 'dispatch');
     parent = mount(
       <Provider store={mockStore}>
         <WelcomePageContainer />
@@ -91,25 +118,22 @@ describe('The AzureLoginFailedDialogContainer component should', () => {
   });
 
   it('should call the appropriate command when a recent bot is clicked', () => {
-    const spy = jest.spyOn(CommandServiceImpl, 'call');
     instance.onBotSelected(bots[1]);
-    const { Switch } = SharedConstants.Commands.Bot;
-    expect(spy).toHaveBeenCalledWith(Switch, '/Users/microsoft/Documents/testbot/TestBot.bot');
+    expect(mockDispatch).toHaveBeenCalledWith(
+      executeCommand(false, SharedConstants.Commands.Bot.Switch, null, '/Users/microsoft/Documents/testbot/TestBot.bot')
+    );
   });
 
   it('should call the appropriate command when onOpenBotClick is called', async () => {
-    const spy = jest.spyOn(CommandServiceImpl, 'call');
     await instance.onOpenBotClick();
-    expect(spy).toHaveBeenCalledWith(SharedConstants.Commands.UI.ShowOpenBotDialog);
+    expect(mockDispatch).toHaveBeenCalledWith(executeCommand(false, SharedConstants.Commands.UI.ShowOpenBotDialog));
   });
 
   it('should call the appropriate command when openBotInspectorDocs is called', async () => {
-    const callSpy = jest.spyOn(CommandServiceImpl, 'call');
     instance.props.openBotInspectorDocs();
-    expect(callSpy).toHaveBeenCalledWith(
-      SharedConstants.Commands.UI.ShowMarkdownPage,
-      SharedConstants.Channels.ReadmeUrl,
-      SharedConstants.Channels.HelpLabel
+    const { Commands, Channels } = SharedConstants;
+    expect(mockDispatch).toHaveBeenCalledWith(
+      executeCommand(false, Commands.UI.ShowMarkdownPage, null, Channels.ReadmeUrl, Channels.HelpLabel)
     );
   });
 });

@@ -34,6 +34,7 @@
 import { join } from 'path';
 
 import { DebugMode, SharedConstants } from '@bfemulator/app-shared';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { AppMenuBuilder } from './appMenuBuilder';
 
@@ -56,8 +57,32 @@ const mockMenuClassAppend = jest.fn(() => null);
 jest.mock('electron', () => ({
   app: {
     getName: () => 'bot-framework-emulator',
+    setName: () => void 0,
     getVersion: () => '4.2.0',
+    on: () => void 0,
   },
+  ipcMain: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+  ipcRenderer: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
   Menu: class {
     append = mockMenuClassAppend;
     items: any[] = [];
@@ -103,17 +128,7 @@ jest.mock('./appUpdater', () => ({
   },
 }));
 
-let mockRemoteCall = () => null;
 jest.mock('./emulator', () => ({}));
-jest.mock('./main', () => ({
-  mainWindow: {
-    commandService: {
-      get remoteCall() {
-        return mockRemoteCall;
-      },
-    },
-  },
-}));
 
 describe('AppMenuBuilder', () => {
   const mockSendActivityMenu = {
@@ -146,7 +161,12 @@ describe('AppMenuBuilder', () => {
   };
   let mockGetMenuItemById;
   let processPlatformBackup;
-
+  let commandService: CommandServiceImpl;
+  beforeAll(() => {
+    const decorator = CommandServiceInstance();
+    const descriptor = decorator({ descriptor: {} }, 'none') as any;
+    commandService = descriptor.descriptor.get();
+  });
   beforeEach(() => {
     processPlatformBackup = process.platform;
     mockAppendedBots = [];
@@ -238,7 +258,7 @@ describe('AppMenuBuilder', () => {
   });
 
   it('should update the recent bots list', () => {
-    mockRemoteCall = jest.fn(() => Promise.resolve(null));
+    const mockRemoteCall = jest.spyOn(commandService, 'remoteCall').mockResolvedValueOnce(true);
     const mockBotPath = join('path', 'to', 'bot');
     const mockRecentBots = [
       { displayName: 'bot1', path: mockBotPath },
@@ -311,13 +331,14 @@ describe('AppMenuBuilder', () => {
         },
       },
     };
-    mockRemoteCall = jest.fn(commandName => {
+    const mockRemoteCall = jest.fn(commandName => {
       if (commandName === SharedConstants.Commands.Misc.GetStoreState) {
         return Promise.resolve(mockState);
       } else {
         return Promise.resolve({});
       }
     });
+    jest.spyOn(commandService, 'remoteCall').mockImplementation(mockRemoteCall);
     Object.defineProperty(process, 'platform', { value: 'win32' });
     await AppMenuBuilder.initAppMenu();
 
@@ -386,13 +407,14 @@ describe('AppMenuBuilder', () => {
         },
       },
     };
-    mockRemoteCall = jest.fn(commandName => {
+    const mockRemoteCall = jest.fn(commandName => {
       if (commandName === SharedConstants.Commands.Misc.GetStoreState) {
         return Promise.resolve(mockState);
       } else {
         return Promise.resolve({});
       }
     });
+    jest.spyOn(commandService, 'remoteCall').mockImplementation(mockRemoteCall);
     Object.defineProperty(process, 'platform', { value: 'darwin' });
     await AppMenuBuilder.initAppMenu();
 

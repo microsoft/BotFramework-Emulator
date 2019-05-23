@@ -8,9 +8,9 @@
     background: transparent;
     width: 100%;
     border-radius: 2px;
-    border: solid 1px #777;
+    border: var(--input-border);
     padding: 4px 9px;
-    color: white;
+    color: var(--input-color);
     box-sizing: border-box;
   }
 }
@@ -18,8 +18,8 @@
 .answers-block {
   border-radius: 2px;
   border: solid 1px #777;
-  background-color: transparent;
-  color: white;
+  background-color: var(--explorer-panel-bg);
+  color: var(--list-item-color);
   line-height: 1.38;
   white-space: normal;
   text-align: left;

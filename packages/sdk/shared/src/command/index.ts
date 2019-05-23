@@ -31,23 +31,60 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { ipcMain, ipcRenderer } from 'electron';
+
+import { CommandServiceImpl } from './service';
+
 export * from './registry';
 export * from './service';
+const commandServiceByChannelId = {};
 
-export interface Command {
-  id: string;
-  handler: CommandHandler;
-  description?: CommandDescription;
+function getCommandService(channelId: string): CommandServiceImpl {
+  if (commandServiceByChannelId[channelId]) {
+    return commandServiceByChannelId[channelId];
+  }
+  const ipc = process.type === 'browser' ? ipcMain : ipcRenderer;
+  commandServiceByChannelId[channelId] = new CommandServiceImpl(ipc);
+  return commandServiceByChannelId[channelId];
 }
 
-export interface CommandMap {
-  [id: string]: Command;
+export function CommandServiceInstance(channelId = 'command-service'): PropertyDecorator {
+  return function(descriptor: any) {
+    descriptor.kind = 'method';
+    descriptor.descriptor = (function(propertyDescriptor = {}) {
+      return {
+        get: function() {
+          return getCommandService(channelId);
+        },
+
+        enumerable: propertyDescriptor.enumerable !== undefined ? propertyDescriptor.enumerable : true,
+      };
+    })(descriptor.descriptor);
+
+    delete descriptor.initializer;
+    return descriptor;
+  };
 }
 
-export type CommandHandler = (...args: any[]) => any;
+export function Command(id: string, channelId: string = 'command-service'): MethodDecorator {
+  return function(elementDescriptor: any) {
+    const { key, descriptor } = elementDescriptor;
+    const initializer = function() {
+      const bound = this[key].bind(this);
+      const { registry } = getCommandService(channelId);
+      registry.registerCommand(id, bound);
+      return bound;
+    };
 
-export interface CommandDescription {
-  description: string;
-  args: { name: string; description?: string }[];
-  returns?: string;
+    elementDescriptor.extras = [
+      {
+        kind: 'field',
+        key,
+        placement: 'own',
+        initializer,
+        descriptor: { ...descriptor, value: undefined },
+      },
+    ];
+    return elementDescriptor;
+  };
 }

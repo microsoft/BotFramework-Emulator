@@ -38,6 +38,7 @@ import { mount } from 'enzyme';
 import { combineReducers, createStore } from 'redux';
 import { BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
 import { SharedConstants } from '@bfemulator/app-shared';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { bot } from '../../../data/reducer/bot';
 import { setActiveBot } from '../../../data/action/botActions';
@@ -73,7 +74,6 @@ const mockWindow = {
   },
 };
 
-jest.mock('./botSettingsEditor.scss', () => ({}));
 jest.mock('../../../data/store', () => ({
   get store() {
     return mockStore;
@@ -87,25 +87,32 @@ jest.mock('../service', () => ({
   },
 }));
 
-const mockRemoteCommandsCalled = [];
-const mockSharedConstants = SharedConstants; // thanks Jest!
-jest.mock('../../../platform/commands/commandServiceImpl', () => ({
-  CommandServiceImpl: {
-    remoteCall: async (commandName: string, ...args: any[]) => {
-      mockRemoteCommandsCalled.push({ commandName, args: args });
-      switch (commandName) {
-        case mockSharedConstants.Commands.File.SanitizeString:
-          return args[0];
-
-        case mockSharedConstants.Commands.Electron.ShowSaveDialog:
-          return '/test/path';
-
-        default:
-          return true;
-      }
-    },
-  },
+jest.mock('electron', () => ({
+  ipcMain: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+  ipcRenderer: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
 }));
+
+const mockRemoteCommandsCalled = [];
 
 jest.mock('../../../utils', () => ({
   generateBotSecret: () => {
@@ -114,6 +121,25 @@ jest.mock('../../../utils', () => ({
 }));
 
 describe('The BotSettingsEditor dialog should', () => {
+  let commandService: CommandServiceImpl;
+  beforeAll(() => {
+    const decorator = CommandServiceInstance();
+    const descriptor = decorator({ descriptor: {} }, 'none') as any;
+    commandService = descriptor.descriptor.get();
+    commandService.remoteCall = async (commandName: string, ...args: any[]) => {
+      mockRemoteCommandsCalled.push({ commandName, args: args });
+      switch (commandName) {
+        case SharedConstants.Commands.File.SanitizeString:
+          return args[0];
+
+        case SharedConstants.Commands.Electron.ShowSaveDialog:
+          return '/test/path';
+
+        default:
+          return true;
+      }
+    };
+  });
   let parent;
   let node;
   beforeEach(() => {

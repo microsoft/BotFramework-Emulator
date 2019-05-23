@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { LogEntry } from '@bfemulator/sdk-shared';
+import { LogEntry, LogItemType } from '@bfemulator/sdk-shared';
 
 import {
   addTranscript,
@@ -40,8 +40,8 @@ import {
   clearLog,
   clearTranscripts,
   closeDocument,
-  newConversation,
   newChat,
+  newConversation,
   removeTranscript,
   setInspectorObjects,
   updateChat,
@@ -62,7 +62,7 @@ describe('Chat reducer tests', () => {
       },
     },
     transcripts: [],
-  };
+  } as any;
 
   it('should return unaltered state for non-matching action type', () => {
     const emptyAction: ChatAction = { type: null, payload: null };
@@ -134,7 +134,7 @@ describe('Chat reducer tests', () => {
       timestamp: 123,
       items: [
         {
-          type: 'text',
+          type: LogItemType.Text,
           payload: {
             level: 0,
             text: 'testing',
@@ -164,7 +164,7 @@ describe('Chat reducer tests', () => {
       timestamp: 1234,
       items: [
         {
-          type: 'text',
+          type: LogItemType.Text,
           payload: {
             level: 0,
             text: 'testing',
@@ -217,7 +217,7 @@ describe('Chat reducer tests', () => {
         },
       },
       transcripts: ['xs1', 'xs2', 'xs3'],
-    };
+    } as any;
     const action = closeNonGlobalTabs();
     const state = chat(alteredState, action);
     expect(state.changeKey).toBe(0);

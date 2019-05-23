@@ -34,34 +34,47 @@ import * as React from 'react';
 import { Provider } from 'react-redux';
 import { mount } from 'enzyme';
 import { combineReducers, createStore } from 'redux';
+import { SharedConstants } from '@bfemulator/app-shared';
 
 import { bot } from '../../../data/reducer/bot';
 import { resources } from '../../../data/reducer/resourcesReducer';
 import { loadBotInfos, setActiveBot } from '../../../data/action/botActions';
-import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
+import { executeCommand } from '../../../data/action/commandAction';
 
 import { ResourcesSettings } from './resourcesSettings';
 import { ResourcesSettingsContainer } from './resourcesSettingsContainer';
 
 const mockStore = createStore(combineReducers({ resources, bot }));
-jest.mock('./resourcesSettings.scss', () => ({}));
-jest.mock('../dialogStyles.scss', () => ({}));
+
+jest.mock('electron', () => ({
+  ipcMain: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+  ipcRenderer: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+}));
 
 jest.mock('../service', () => ({
   DialogService: {
     showDialog: () => Promise.resolve(true),
     hideDialog: () => Promise.resolve(false),
-  },
-}));
-
-jest.mock('../../../platform/commands/commandServiceImpl', () => ({
-  CommandServiceImpl: {
-    remoteCall: async (commandName: string, ...args: any[]) => {
-      //
-    },
-    call: async (commandName: string, ...args: any[]) => {
-      //
-    },
   },
 }));
 
@@ -79,6 +92,8 @@ jest.mock('../../../data/botHelpers', () => ({
 describe('The ResourcesSettings component should', () => {
   let parent;
   let node;
+  let dispatchSpy;
+
   beforeEach(() => {
     const mockBot = JSON.parse(`{
         "name": "TestBot",
@@ -96,6 +111,7 @@ describe('The ResourcesSettings component should', () => {
 
     mockStore.dispatch(loadBotInfos([mockBot]));
     mockStore.dispatch(setActiveBot(mockBot));
+    dispatchSpy = jest.spyOn(mockStore, 'dispatch');
     parent = mount(
       <Provider store={mockStore}>
         <ResourcesSettingsContainer label="test" progress={50} />
@@ -137,10 +153,11 @@ describe('The ResourcesSettings component should', () => {
 
   it('should open the browse dialog when the browse anchor is clicked', async () => {
     const instance = node.instance();
-    const spy = jest.spyOn(CommandServiceImpl, 'remoteCall');
     await instance.onBrowseClick({
       currentTarget: { getAttribute: () => 'attr' },
-    });
-    expect(spy).toHaveBeenCalled();
+    } as any);
+    expect(dispatchSpy).toHaveBeenCalledWith(
+      executeCommand(true, SharedConstants.Commands.Electron.ShowOpenDialog, null, { properties: ['openDirectory'] })
+    );
   });
 });

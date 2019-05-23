@@ -45,9 +45,10 @@ import {
   SharedConstants,
   ValueTypesMask,
 } from '@bfemulator/app-shared';
+import { CommandServiceImpl } from '@bfemulator/sdk-shared';
+import { CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { Document } from '../../../data/reducer/editor';
-import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
 import { debounce } from '../../../utils';
 
 import ChatPanel from './chatPanel/chatPanel';
@@ -68,7 +69,7 @@ export type EmulatorMode = 'transcript' | 'livechat';
 
 export interface EmulatorProps {
   activeDocumentId?: string;
-  clearLog?: (documentId: string) => void;
+  clearLog?: (documentId: string) => Promise<void>;
   conversationId?: string;
   createErrorNotification?: (notification: Notification) => void;
   debugMode?: DebugMode;
@@ -90,6 +91,9 @@ export interface EmulatorProps {
 }
 
 export class Emulator extends React.Component<EmulatorProps, {}> {
+  @CommandServiceInstance()
+  private commandService: CommandServiceImpl;
+
   private readonly onVerticalSizeChange = debounce(sizes => {
     this.props.document.ui = {
       ...this.props.document.ui,
@@ -157,12 +161,12 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
       userId = uniqueIdv4();
     } else {
       // use the previous id, or custom id
-      const framework: FrameworkSettings = await CommandServiceImpl.remoteCall(
+      const framework: FrameworkSettings = await this.commandService.remoteCall(
         SharedConstants.Commands.Settings.LoadAppSettings
       );
       userId = props.document.userId || framework.userGUID;
     }
-    await CommandServiceImpl.remoteCall(SharedConstants.Commands.Emulator.SetCurrentUser, userId);
+    await this.commandService.remoteCall(SharedConstants.Commands.Emulator.SetCurrentUser, userId);
 
     const options = {
       conversationId,
@@ -171,15 +175,11 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
       userId,
     };
 
-    if (props.document.directLine) {
-      props.document.directLine.end();
-    }
-    await Promise.resolve();
     this.initConversation(props, options);
 
     if (props.mode === 'transcript') {
       try {
-        const conversation = await CommandServiceImpl.remoteCall(
+        const conversation = await this.commandService.remoteCall<any>(
           SharedConstants.Commands.Emulator.NewTranscript,
           conversationId
         );
@@ -188,7 +188,7 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
           try {
             // transcript was deep linked via protocol or is generated in-memory via chatdown,
             // and should just be fed its own activities attached to the document
-            await CommandServiceImpl.remoteCall(
+            await this.commandService.remoteCall<any>(
               SharedConstants.Commands.Emulator.FeedTranscriptFromMemory,
               conversation.conversationId,
               props.document.botId,
@@ -204,7 +204,7 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
             const fileInfo: {
               fileName: string;
               filePath: string;
-            } = await CommandServiceImpl.remoteCall(
+            } = await this.commandService.remoteCall<any>(
               SharedConstants.Commands.Emulator.FeedTranscriptFromDisk,
               conversation.conversationId,
               props.document.botId,
@@ -363,8 +363,11 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
 
   private onStartOverClick = async (option: string = RestartConversationOptions.NewUserId): Promise<void> => {
     const { NewUserId, SameUserId } = RestartConversationOptions;
-    this.props.clearLog(this.props.document.documentId);
     this.props.setInspectorObjects(this.props.document.documentId, []);
+    if (this.props.document.directLine) {
+      this.props.document.directLine.end();
+    }
+    await this.props.clearLog(this.props.document.documentId);
 
     switch (option) {
       case NewUserId: {

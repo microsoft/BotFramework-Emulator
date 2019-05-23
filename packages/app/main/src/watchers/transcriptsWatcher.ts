@@ -37,12 +37,14 @@ import { SharedConstants } from '@bfemulator/app-shared';
 import { isTranscriptFile } from '@bfemulator/app-shared';
 import { IFileService, ServiceTypes } from 'botframework-config/lib/schema';
 import { WatchOptions } from 'chokidar';
-
-import { mainWindow } from '../main';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { FileWatcher } from './fileWatcher';
 
 export class TranscriptsWatcher extends FileWatcher {
+  @CommandServiceInstance()
+  private commandService: CommandServiceImpl;
+
   private transcriptFiles: { [path: string]: boolean } = {};
   private notificationPending: NodeJS.Timer;
 
@@ -75,7 +77,7 @@ export class TranscriptsWatcher extends FileWatcher {
   };
 
   protected onFileChange = (file: string, fstats?: fs.Stats): void => {
-    mainWindow.commandService.remoteCall(SharedConstants.Commands.File.Changed, file).catch();
+    this.commandService.remoteCall(SharedConstants.Commands.File.Changed, file).catch();
   };
 
   private invalidateTranscriptFiles() {
@@ -93,7 +95,7 @@ export class TranscriptsWatcher extends FileWatcher {
         path: key,
       };
     });
-    mainWindow.commandService.remoteCall(SharedConstants.Commands.Bot.TranscriptFilesUpdated, transcriptFiles).catch();
+    this.commandService.remoteCall(SharedConstants.Commands.Bot.TranscriptFilesUpdated, transcriptFiles).catch();
     this.notificationPending = null;
   };
 }

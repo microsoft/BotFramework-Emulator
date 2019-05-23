@@ -39,7 +39,7 @@ import { appendTab, close, setActiveTab, splitTab } from '../../../../data/actio
 import { enable as enablePresentationMode } from '../../../../data/action/presentationActions';
 import { getTabGroupForDocument } from '../../../../data/editorHelpers';
 import { RootState } from '../../../../data/store';
-import { CommandServiceImpl } from '../../../../platform/commands/commandServiceImpl';
+import { executeCommand } from '../../../../data/action/commandAction';
 
 import { TabBar, TabBarProps } from './tabBar';
 
@@ -56,13 +56,13 @@ const mapStateToProps = (state: RootState, ownProps: TabBarProps): TabBarProps =
 
 const mapDispatchToProps = (dispatch): TabBarProps => ({
   splitTab: (contentType: string, documentId: string, srcEditorKey: string, destEditorKey: string) => {
-    CommandServiceImpl.remoteCall(SharedConstants.Commands.Telemetry.TrackEvent, 'tabBar_splitTab').catch(_e => void 0);
+    dispatch(executeCommand(true, SharedConstants.Commands.Telemetry.TrackEvent, null, 'tabBar_splitTab'));
     dispatch(splitTab(contentType, documentId, srcEditorKey, destEditorKey));
   },
   appendTab: (srcEditorKey: string, destEditorKey: string, tabId: string) =>
     dispatch(appendTab(srcEditorKey, destEditorKey, tabId)),
   enablePresentationMode: async () => {
-    await CommandServiceImpl.remoteCall(SharedConstants.Commands.Telemetry.TrackEvent, 'tabBar_presentationMode');
+    dispatch(executeCommand(true, SharedConstants.Commands.Telemetry.TrackEvent, null, 'tabBar_presentationMode'));
     dispatch(enablePresentationMode());
   },
   setActiveTab: (documentId: string) => dispatch(setActiveTab(documentId)),

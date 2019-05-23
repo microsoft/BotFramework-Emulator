@@ -32,20 +32,24 @@
 //
 
 import { ClientAwareSettings, SharedConstants } from '@bfemulator/app-shared';
-import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
+import { Command, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { clientAwareSettingsChanged } from '../data/action/clientAwareSettingsActions';
 import { store } from '../data/store';
 
-/** Registers settings commands */
-export function registerCommands(commandRegistry: CommandRegistryImpl) {
-  const { Settings } = SharedConstants.Commands;
+const { Settings } = SharedConstants.Commands;
 
-  commandRegistry.registerCommand(Settings.ReceiveGlobalSettings, async (settings: ClientAwareSettings) => {
+/** Registers settings commands */
+export class SettingsCommands {
+  @CommandServiceInstance()
+  private commandService: CommandServiceImpl;
+
+  @Command(Settings.ReceiveGlobalSettings)
+  protected async receiveGlobalSettings(settings: ClientAwareSettings) {
     const state = store.getState();
     store.dispatch(clientAwareSettingsChanged(settings));
     if (state.clientAwareSettings.debugMode !== settings.debugMode) {
-      await commandRegistry.getCommand(SharedConstants.Commands.UI.SwitchDebugMode).handler(settings.debugMode);
+      await this.commandService.call(SharedConstants.Commands.UI.SwitchDebugMode, settings.debugMode);
     }
-  });
+  }
 }

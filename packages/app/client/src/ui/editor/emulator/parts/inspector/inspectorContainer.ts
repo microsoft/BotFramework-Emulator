@@ -35,7 +35,7 @@ import { connect } from 'react-redux';
 import { SharedConstants } from '@bfemulator/app-shared';
 
 import { RootState } from '../../../../../data/store';
-import { CommandServiceImpl } from '../../../../../platform/commands/commandServiceImpl';
+import { executeCommand } from '../../../../../data/action/commandAction';
 
 import { Inspector } from './inspector';
 
@@ -50,12 +50,10 @@ const mapStateToProps = (state: RootState, ownProps: any) => {
   };
 };
 
-const mapDispatchToProps = _dispatch => {
+const mapDispatchToProps = dispatch => {
   return {
     trackEvent: (name: string, properties?: { [key: string]: any }) => {
-      CommandServiceImpl.remoteCall(SharedConstants.Commands.Telemetry.TrackEvent, name, properties).catch(
-        _e => void 0
-      );
+      dispatch(executeCommand(true, SharedConstants.Commands.Telemetry.TrackEvent, null, name, properties));
     },
   };
 };

@@ -32,22 +32,48 @@
 //
 
 import { SharedConstants } from '@bfemulator/app-shared';
-import { logEntry, LogLevel, textItem } from '@bfemulator/sdk-shared';
+import { CommandServiceImpl, CommandServiceInstance, logEntry, LogLevel, textItem } from '@bfemulator/sdk-shared';
 
 import { LogService } from './logService';
 
+jest.mock('electron', () => ({
+  ipcMain: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+  ipcRenderer: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+}));
+
 describe('LogService', () => {
+  let commandService: CommandServiceImpl;
+  beforeAll(() => {
+    const decorator = CommandServiceInstance();
+    const descriptor = decorator({ descriptor: {} }, 'none') as any;
+    commandService = descriptor.descriptor.get();
+  });
   it('should log items to chat', () => {
     // lock down the time so that the timestamp doesn't break the test
     Date.now = () => 123;
 
-    const mockRemoteCall = jest.fn(() => null);
-    const window: any = {
-      commandService: {
-        remoteCall: mockRemoteCall,
-      },
-    };
-    const logService = new LogService(window);
+    const mockRemoteCall = jest.spyOn(commandService, 'remoteCall').mockResolvedValueOnce(true);
+    const logService = new LogService();
     const item1 = textItem(LogLevel.Debug, 'someText');
     const item2 = textItem(LogLevel.Info, 'someOtherText');
     logService.logToChat('someConvoId', item1, item2);

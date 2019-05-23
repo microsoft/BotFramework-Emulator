@@ -31,8 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import { connect } from 'react-redux';
-import { Notification, SharedConstants } from '@bfemulator/app-shared';
-import { ValueTypesMask } from '@bfemulator/app-shared/src';
+import { Notification, SharedConstants, ValueTypesMask } from '@bfemulator/app-shared';
 
 import { RootState } from '../../../data/store';
 import * as PresentationActions from '../../../data/action/presentationActions';
@@ -40,7 +39,7 @@ import * as ChatActions from '../../../data/action/chatActions';
 import { Document } from '../../../data/reducer/editor';
 import { updateDocument } from '../../../data/action/editorActions';
 import { beginAdd } from '../../../data/action/notificationActions';
-import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
+import { executeCommand } from '../../../data/action/commandAction';
 
 import { Emulator, EmulatorProps } from './emulator';
 
@@ -59,15 +58,21 @@ const mapDispatchToProps = (dispatch): EmulatorProps => ({
   enablePresentationMode: enable =>
     enable ? dispatch(PresentationActions.enable()) : dispatch(PresentationActions.disable()),
   setInspectorObjects: (documentId, objects) => dispatch(ChatActions.setInspectorObjects(documentId, objects)),
-  clearLog: documentId => dispatch(ChatActions.clearLog(documentId)),
+  clearLog: (documentId: string) => {
+    return new Promise(resolve => {
+      dispatch(ChatActions.clearLog(documentId, resolve));
+    });
+  },
   newConversation: (documentId, options) => dispatch(ChatActions.newConversation(documentId, options)),
   updateChat: (documentId: string, updatedValues: any) => dispatch(ChatActions.updateChat(documentId, updatedValues)),
   updateDocument: (documentId, updatedValues: Partial<Document>) => dispatch(updateDocument(documentId, updatedValues)),
   createErrorNotification: (notification: Notification) => dispatch(beginAdd(notification)),
   trackEvent: (name: string, properties?: { [key: string]: any }) =>
-    CommandServiceImpl.remoteCall(SharedConstants.Commands.Telemetry.TrackEvent, name, properties).catch(),
+    dispatch(executeCommand(true, SharedConstants.Commands.Telemetry.TrackEvent, null, name, properties)),
   exportItems: (valueTypes: ValueTypesMask, conversationId: string) =>
-    CommandServiceImpl.remoteCall(SharedConstants.Commands.Emulator.SaveTranscriptToFile, valueTypes, conversationId),
+    dispatch(
+      executeCommand(true, SharedConstants.Commands.Emulator.SaveTranscriptToFile, null, valueTypes, conversationId)
+    ),
 });
 
 export const EmulatorContainer = connect(

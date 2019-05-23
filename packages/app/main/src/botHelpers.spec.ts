@@ -33,24 +33,44 @@
 
 import { normalize } from 'path';
 
-import { BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
+import {
+  BotConfigWithPath,
+  BotConfigWithPathImpl,
+  CommandServiceImpl,
+  CommandServiceInstance,
+} from '@bfemulator/sdk-shared';
 import { SharedConstants } from '@bfemulator/app-shared';
-import { BotConfigWithPath } from '@bfemulator/sdk-shared';
 import { BotConfiguration } from 'botframework-config';
 
-import { mainWindow } from './main';
-import {
-  getActiveBot,
-  getBotInfoByPath,
-  pathExistsInRecentBots,
-  removeBotFromList,
-  cloneBot,
-  toSavableBot,
-  promptForSecretAndRetry,
-  loadBotWithRetry,
-  saveBot,
-  getTranscriptsPath,
-} from './botHelpers';
+import { BotHelpers } from './botHelpers';
+
+jest.mock('electron', () => ({
+  app: {
+    getPath: () => '/downloads',
+  },
+  ipcMain: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+  ipcRenderer: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+}));
 
 jest.mock('./data/store', () => ({
   getStore: () => ({
@@ -75,23 +95,16 @@ jest.mock('./data/store', () => ({
   }),
 }));
 
-jest.mock('./main', () => ({
-  mainWindow: {
-    commandService: {
-      remoteCall: () => Promise.resolve(true),
-    },
-  },
-}));
-
-jest.mock('electron', () => ({
-  app: {
-    getPath: () => '/downloads',
-  },
-}));
-
 describe('The botHelpers', () => {
+  let commandService: CommandServiceImpl;
+  beforeAll(() => {
+    const decorator = CommandServiceInstance();
+    const descriptor = decorator({ descriptor: {} }, 'none') as any;
+    commandService = descriptor.descriptor.get();
+  });
+
   it('getActiveBot() should retrieve the active bot', () => {
-    const activeBot = getActiveBot();
+    const activeBot = BotHelpers.getActiveBot();
     expect(activeBot).toEqual({
       name: 'someBot',
       description: '',
@@ -102,18 +115,18 @@ describe('The botHelpers', () => {
   });
 
   it('getBotInfoByPath() should get the bot info matching the specified path', () => {
-    const info = getBotInfoByPath('path2');
+    const info = BotHelpers.getBotInfoByPath('path2');
     expect(info).toEqual({ path: 'path2', displayName: 'name2', secret: '' });
   });
 
   it('pathExistsInRecentBots() should determine if the specified path exists in the recent bot list', () => {
-    const pathExists = pathExistsInRecentBots('path1');
+    const pathExists = BotHelpers.pathExistsInRecentBots('path1');
     expect(pathExists).toBe(true);
   });
 
   it(`removeBotFromList() should remove the bot from the list based on the specified path`, async () => {
-    const spy = jest.spyOn(mainWindow.commandService, 'remoteCall');
-    await removeBotFromList('path3');
+    const spy = jest.spyOn(commandService, 'remoteCall').mockResolvedValueOnce(true);
+    await BotHelpers.removeBotFromList('path3');
 
     // should have sync'd up list with remaining 2 bot entries (3rd was removed)
     expect(spy).toHaveBeenCalledWith(SharedConstants.Commands.Bot.SyncBotList, [
@@ -125,7 +138,7 @@ describe('The botHelpers', () => {
 
   it('cloneBot() should clone the specified bot as expected', () => {
     const bot1 = null;
-    expect(cloneBot(bot1)).toBe(null);
+    expect(BotHelpers.cloneBot(bot1)).toBe(null);
 
     const bot2: BotConfigWithPath = BotConfigWithPathImpl.fromJSON({
       version: '',
@@ -136,12 +149,12 @@ describe('The botHelpers', () => {
       path: 'somePath',
       overrides: null,
     });
-    expect(cloneBot(bot2)).toEqual(bot2);
+    expect(BotHelpers.cloneBot(bot2)).toEqual(bot2);
   });
 
   it('toSavableBot() should convert the specified bot to a savable instance', () => {
     const bot1 = null;
-    expect(() => toSavableBot(bot1)).toThrowError('Cannot convert null bot to savable bot.');
+    expect(() => BotHelpers.toSavableBot(bot1)).toThrowError('Cannot convert null bot to savable bot.');
 
     const bot2: BotConfigWithPath = BotConfigWithPathImpl.fromJSON({
       version: '',
@@ -152,7 +165,7 @@ describe('The botHelpers', () => {
       overrides: null,
     });
     const secret = 'lgCbJPXnfOlatjbBDKMbh0ie6bc8PD/cjqA/2tPgMS0=';
-    const savableBot = toSavableBot(bot2, secret);
+    const savableBot = BotHelpers.toSavableBot(bot2, secret);
 
     const expectedBot = new BotConfiguration();
     expectedBot.name = 'someName';
@@ -167,18 +180,18 @@ describe('The botHelpers', () => {
   });
 
   it('promptForSecretAndRetry() should prompt the user for the bot secret', async () => {
-    mainWindow.commandService.remoteCall = jest
+    commandService.remoteCall = jest
       .fn()
       .mockImplementationOnce(() => Promise.resolve(null))
       .mockImplementation(() => Promise.resolve('secret'));
 
     // if prompt for secret is dismissed, this should return null
-    expect(await promptForSecretAndRetry('somePath')).toBe(null);
+    expect(await BotHelpers.promptForSecretAndRetry('somePath')).toBe(null);
 
     // should throw because it will get to the end of the function and try
     // to load a .bot file at 'somePath'
     try {
-      await promptForSecretAndRetry('somePath');
+      await BotHelpers.promptForSecretAndRetry('somePath');
     } catch (e) {
       expect(e.code).toBe('ENOENT');
     }
@@ -186,14 +199,14 @@ describe('The botHelpers', () => {
 
   it('saveBot() should save a bot', async () => {
     let saved = false;
-    const fromJSONSpy = jest.spyOn(BotConfiguration, 'fromJSON').mockReturnValue({
+    jest.spyOn(BotConfiguration, 'fromJSON').mockReturnValue({
       internal: {},
       validateSecret: () => true,
       save: async () => {
         saved = true;
       },
     });
-    await saveBot({
+    await BotHelpers.saveBot({
       path: 'path4',
     } as any);
     expect(saved).toBeTruthy();
@@ -202,7 +215,7 @@ describe('The botHelpers', () => {
   describe('loadBotWithRetry()', () => {
     it('should prompt the user for the secret and retry if no secret was given for an encrypted bot', async () => {
       const botConfigLoadSpy = jest.spyOn(BotConfiguration, 'load').mockResolvedValue({ padlock: '55sdgfd' });
-      const result = await loadBotWithRetry('path');
+      const result = await BotHelpers.loadBotWithRetry('path');
       expect(botConfigLoadSpy).toHaveBeenCalledWith('path', undefined);
 
       expect(result).toEqual({
@@ -218,8 +231,8 @@ describe('The botHelpers', () => {
 
     it('should update the secret when the specified secret does not match the one on record', async () => {
       const botConfigLoadSpy = jest.spyOn(BotConfiguration, 'load').mockResolvedValue({ padlock: 'newSecret' });
-      const remoteCallSpy = jest.spyOn(mainWindow.commandService, 'remoteCall').mockResolvedValue('newSecret');
-      const result = await loadBotWithRetry('path1');
+      const remoteCallSpy = jest.spyOn(commandService, 'remoteCall').mockResolvedValue('newSecret');
+      const result = await BotHelpers.loadBotWithRetry('path1');
       expect(botConfigLoadSpy).toHaveBeenCalledWith('path1', undefined);
       expect(result).toEqual({
         description: '',
@@ -241,12 +254,12 @@ describe('The botHelpers', () => {
 
   describe('getTranscriptsPath()', async () => {
     it('should return a value directory path with an active bot', async () => {
-      const result = getTranscriptsPath({ path: '/foo/bar' }, { mode: 'livechat' });
+      const result = BotHelpers.getTranscriptsPath({ path: '/foo/bar' } as any, { mode: 'livechat' } as any);
       expect(result).toBe(normalize('/foo/transcripts'));
     });
 
     it('should return a value directory path with a bot opened via url', async () => {
-      const result = getTranscriptsPath({ path: '/foo/bar' }, { mode: 'livechat-url' });
+      const result = BotHelpers.getTranscriptsPath({ path: '/foo/bar' } as any, { mode: 'livechat-url' } as any);
       expect(result).toBe(normalize('/downloads/transcripts'));
     });
   });

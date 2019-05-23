@@ -46,7 +46,7 @@ import { IBotConfiguration } from 'botframework-config/lib/schema';
 import * as React from 'react';
 
 import { ExtensionManager, GetInspectorResult, InspectorAPI } from '../../../../../extensions';
-import { LogService } from '../../../../../platform/log/logService';
+import { logService } from '../../../../../platform/log/logService';
 import Panel, { PanelContent, PanelControls } from '../../../panel/panel';
 
 import * as styles from './inspector.scss';
@@ -383,7 +383,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
         const { documentId } = this.props.document;
         const inspectorName = this._state.titleOverride || this.state.inspector.name || 'inspector';
         const text = `[${inspectorName}] ${event.args[0]}`;
-        LogService.logToDocument(documentId, logEntry(textItem(logLevel, text)));
+        logService.logToDocument(documentId, logEntry(textItem(logLevel, text)));
         break;
       }
 
@@ -391,7 +391,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
         const { documentId } = this.props.document;
         const inspectorName = this._state.titleOverride || this.state.inspector.name || 'inspector';
         const text = `[${inspectorName}] ${event.args[0]}`;
-        LogService.logToDocument(documentId, logEntry(luisEditorDeepLinkItem(text)));
+        logService.logToDocument(documentId, logEntry(luisEditorDeepLinkItem(text)));
         break;
       }
 

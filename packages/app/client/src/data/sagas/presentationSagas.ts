@@ -30,6 +30,26 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+import { call, ForkEffect, takeEvery } from 'redux-saga/effects';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
+import { SharedConstants } from '@bfemulator/app-shared';
 
-export * from './process';
-export * from './websocket';
+import { PresentationAction, PresentationActions } from '../action/presentationActions';
+
+export class PresentationSagas {
+  @CommandServiceInstance()
+  private static commandService: CommandServiceImpl;
+
+  public static *presentationModeChanged(action: PresentationAction): IterableIterator<any> {
+    const enabled = action.type === PresentationActions.enable;
+    yield call(
+      [PresentationSagas.commandService, PresentationSagas.commandService.remoteCall],
+      SharedConstants.Commands.Electron.SetFullscreen,
+      enabled
+    );
+  }
+}
+
+export function* presentationSagas(): IterableIterator<ForkEffect> {
+  yield takeEvery([PresentationActions.disable, PresentationActions.enable], PresentationSagas.presentationModeChanged);
+}

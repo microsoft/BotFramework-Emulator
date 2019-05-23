@@ -34,11 +34,11 @@
 import { BotInfo, DebugMode, SharedConstants } from '@bfemulator/app-shared';
 import { ConversationService } from '@bfemulator/sdk-shared';
 import * as Electron from 'electron';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { AppUpdater, UpdateStatus } from './appUpdater';
-import { getActiveBot } from './botHelpers';
+import { BotHelpers } from './botHelpers';
 import { Emulator } from './emulator';
-import { mainWindow } from './main';
 import { debugModeChanged, rememberTheme } from './settingsData/actions/windowStateActions';
 import { getStore as getSettingsStore } from './settingsData/store';
 import { TelemetryService } from './telemetry';
@@ -46,6 +46,9 @@ import { isMac } from './utils';
 
 declare type MenuOpts = Electron.MenuItemConstructorOptions;
 export class AppMenuBuilder {
+  @CommandServiceInstance()
+  private static commandService: CommandServiceImpl;
+
   public static get sendActivityMenuItems(): Electron.MenuItem[] {
     const menu = Electron.Menu.getApplicationMenu();
     if (menu) {
@@ -171,7 +174,7 @@ export class AppMenuBuilder {
           new Electron.MenuItem({
             label: bot.displayName,
             click: () => {
-              mainWindow.commandService.remoteCall(SharedConstants.Commands.Bot.Switch, bot.path).catch(err =>
+              AppMenuBuilder.commandService.remoteCall(SharedConstants.Commands.Bot.Switch, bot.path).catch(err =>
                 // eslint-disable-next-line no-console
                 console.error('Error while switching bots from file menu recent bots list: ', err)
               );
@@ -189,14 +192,14 @@ export class AppMenuBuilder {
       {
         label: 'New Bot Configuration...',
         click: () => {
-          mainWindow.commandService.remoteCall(UI.ShowBotCreationDialog);
+          AppMenuBuilder.commandService.remoteCall(UI.ShowBotCreationDialog);
         },
       },
       { type: 'separator' },
       {
         label: 'Open Bot',
         click: () => {
-          mainWindow.commandService.remoteCall(UI.ShowOpenBotDialog);
+          AppMenuBuilder.commandService.remoteCall(UI.ShowOpenBotDialog);
         },
       },
       {
@@ -210,7 +213,7 @@ export class AppMenuBuilder {
         label: 'Open Transcript...',
         click: async () => {
           try {
-            mainWindow.commandService.remoteCall(EmulatorCommands.PromptToOpenTranscript);
+            AppMenuBuilder.commandService.remoteCall(EmulatorCommands.PromptToOpenTranscript);
           } catch (err) {
             // eslint-disable-next-line no-console
             console.error('Error opening transcript file from menu: ', err);
@@ -220,13 +223,13 @@ export class AppMenuBuilder {
       { type: 'separator' },
     ];
 
-    const activeBot = getActiveBot();
+    const activeBot = BotHelpers.getActiveBot();
 
     subMenu.push({
       label: 'Close Tab',
       click: async () => {
-        await mainWindow.commandService.remoteCall(Bot.Close);
-        await mainWindow.commandService.call(SharedConstants.Commands.Electron.UpdateFileMenu);
+        await AppMenuBuilder.commandService.remoteCall(Bot.Close);
+        await AppMenuBuilder.commandService.call(SharedConstants.Commands.Electron.UpdateFileMenu);
       },
       enabled: activeBot !== null,
     });
@@ -241,10 +244,10 @@ export class AppMenuBuilder {
       label: azureMenuItemLabel,
       click: async () => {
         if (signedInUser) {
-          await mainWindow.commandService.call(Azure.SignUserOutOfAzure);
-          await mainWindow.commandService.remoteCall(UI.InvalidateAzureArmToken);
+          await AppMenuBuilder.commandService.call(Azure.SignUserOutOfAzure);
+          await AppMenuBuilder.commandService.remoteCall(UI.InvalidateAzureArmToken);
         } else {
-          await mainWindow.commandService.remoteCall(UI.SignInToAzure);
+          await AppMenuBuilder.commandService.remoteCall(UI.SignInToAzure);
         }
       },
     });
@@ -262,7 +265,7 @@ export class AppMenuBuilder {
           click: async () => {
             settingsStore.dispatch(rememberTheme(t.name));
 
-            await mainWindow.commandService.call(SharedConstants.Commands.Electron.UpdateFileMenu);
+            await AppMenuBuilder.commandService.call(SharedConstants.Commands.Electron.UpdateFileMenu);
           },
         })),
       },
@@ -282,10 +285,13 @@ export class AppMenuBuilder {
   }
 
   private static async initConversationMenu(): Promise<MenuOpts> {
-    const getState = () => mainWindow.commandService.remoteCall(SharedConstants.Commands.Misc.GetStoreState);
+    const getState = () => AppMenuBuilder.commandService.remoteCall<any>(SharedConstants.Commands.Misc.GetStoreState);
 
     const getConversationId = async () => {
       const state = await getState();
+      if (!state.editor) {
+        return;
+      }
       const { editors, activeEditor } = state.editor;
       const { activeDocumentId } = editors[activeEditor];
 
@@ -294,6 +300,9 @@ export class AppMenuBuilder {
 
     const getActiveDocumentContentType = async () => {
       const state = await getState();
+      if (!state.editor) {
+        return;
+      }
       const { editors, activeEditor } = state.editor;
       const { activeDocumentId } = editors[activeEditor];
       const activeDocument = editors[activeEditor].documents[activeDocumentId];
@@ -466,7 +475,7 @@ export class AppMenuBuilder {
       submenu: [
         {
           label: 'Welcome',
-          click: () => mainWindow.commandService.remoteCall(Commands.UI.ShowWelcomePage),
+          click: () => AppMenuBuilder.commandService.remoteCall(Commands.UI.ShowWelcomePage),
         },
         { type: 'separator' },
         {
@@ -524,12 +533,16 @@ export class AppMenuBuilder {
         {
           label: Channels.HelpLabel,
           click: () =>
-            mainWindow.commandService.remoteCall(Commands.UI.ShowMarkdownPage, Channels.ReadmeUrl, Channels.HelpLabel),
+            AppMenuBuilder.commandService.remoteCall(
+              Commands.UI.ShowMarkdownPage,
+              Channels.ReadmeUrl,
+              Channels.HelpLabel
+            ),
         },
         {
           label: 'About',
           click: () =>
-            Electron.dialog.showMessageBox(mainWindow.browserWindow, {
+            this.commandService.call(SharedConstants.Commands.Electron.ShowMessageBox, true, {
               type: 'info',
               title: appName,
               message: appName + '\r\nversion: ' + version,

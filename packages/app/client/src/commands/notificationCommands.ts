@@ -32,28 +32,31 @@
 //
 
 import { Notification, SharedConstants } from '@bfemulator/app-shared';
-import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
+import { Command } from '@bfemulator/sdk-shared';
 
 import * as NotificationActions from '../data/action/notificationActions';
 import { store } from '../data/store';
 import { getGlobal } from '../utils';
 
+const Commands = SharedConstants.Commands.Notifications;
+
 /** Registers notification commands */
-export function registerCommands(commandRegistry: CommandRegistryImpl) {
-  const Commands = SharedConstants.Commands.Notifications;
+export class NotificationCommands {
   // ---------------------------------------------------------------------------
   // Adds a notification from the main side to the store / notification manager
-  commandRegistry.registerCommand(Commands.Add, (notification: Notification) => {
+  @Command(Commands.Add)
+  protected addNotificationFromMain(notification: Notification) {
     if (!notification) {
       notification = getGlobal(SharedConstants.NOTIFICATION_FROM_MAIN);
     }
 
     store.dispatch(NotificationActions.beginAdd(notification));
-  });
+  }
 
   // ---------------------------------------------------------------------------
   // Removes a notification from the store / notification manager
-  commandRegistry.registerCommand(Commands.Remove, (id: string) => {
+  @Command(Commands.Remove)
+  protected removeNotificationFromStore(id: string) {
     store.dispatch(NotificationActions.beginRemove(id));
-  });
+  }
 }

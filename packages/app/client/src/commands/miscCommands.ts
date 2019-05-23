@@ -32,16 +32,18 @@
 //
 
 import { SharedConstants } from '@bfemulator/app-shared';
-import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
+import { Command } from '@bfemulator/sdk-shared';
 
 import { store } from '../data/store';
 
+const Commands = SharedConstants.Commands.Misc;
+
 /** Registers miscellaneous commands */
-export function registerCommands(commandRegistry: CommandRegistryImpl) {
-  const Commands = SharedConstants.Commands.Misc;
+export class MiscCommands {
   // ---------------------------------------------------------------------------
   // Returns the store's state
-  commandRegistry.registerCommand(Commands.GetStoreState, () => {
+  @Command(Commands.GetStoreState)
+  protected getStoreState() {
     return store.getState();
-  });
+  }
 }

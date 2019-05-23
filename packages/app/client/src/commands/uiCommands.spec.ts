@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import { DebugMode, SharedConstants } from '@bfemulator/app-shared';
-import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
+import { CommandRegistry, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { CONTENT_TYPE_APP_SETTINGS, DOCUMENT_ID_APP_SETTINGS } from '../constants';
 import { AzureAuthAction, AzureAuthWorkflow, invalidateArmToken } from '../data/action/azureAuthActions';
@@ -47,53 +47,73 @@ import {
   OpenBotDialogContainer,
   SecretPromptDialogContainer,
 } from '../ui/dialogs';
-import { CommandServiceImpl } from '../platform/commands/commandServiceImpl';
 import { ExplorerActions } from '../data/action/explorerActions';
 import { SWITCH_DEBUG_MODE } from '../data/action/debugModeAction';
 import { ActiveBotHelper } from '../ui/helpers/activeBotHelper';
 
-import { registerCommands } from './uiCommands';
+import { UiCommands } from './uiCommands';
 
-jest.mock('../ui/dialogs', () => ({
-  AzureLoginPromptDialogContainer: class {},
-  AzureLoginSuccessDialogContainer: class {},
-  BotCreationDialog: class {},
-  DialogService: { showDialog: () => Promise.resolve(true) },
-  SecretPromptDialog: class {},
+jest.mock('electron', () => ({
+  ipcMain: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+  ipcRenderer: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
 }));
 
 const Commands = SharedConstants.Commands.UI;
 
 describe('the uiCommands', () => {
-  let registry: CommandRegistryImpl;
+  let commandService: CommandServiceImpl;
+  let registry: CommandRegistry;
   beforeAll(() => {
-    registry = new CommandRegistryImpl();
-    registerCommands(registry);
+    new UiCommands();
+    const decorator = CommandServiceInstance();
+    const descriptor = decorator({ descriptor: {} }, 'none') as any;
+    commandService = descriptor.descriptor.get();
+    registry = commandService.registry;
   });
 
   it('should showExplorer the welcome page when the ShowWelcomePage command is dispatched', async () => {
     const spy = jest.spyOn(editorHelpers, 'showWelcomePage');
-    await registry.getCommand(Commands.ShowWelcomePage).handler();
+    await registry.getCommand(Commands.ShowWelcomePage)();
     expect(spy).toHaveBeenCalled();
   });
 
   it('should call DialogService.showDialog when the ShowBotCreationDialog command is dispatched', async () => {
-    const spy = jest.spyOn(DialogService, 'showDialog');
-    const result = await registry.getCommand(Commands.ShowBotCreationDialog).handler();
+    const spy = jest.spyOn(DialogService, 'showDialog').mockResolvedValueOnce(true);
+    const result = await registry.getCommand(Commands.ShowBotCreationDialog)();
     expect(spy).toHaveBeenCalledWith(BotCreationDialog);
     expect(result).toBe(true);
   });
 
   it('should call DialogService.showDialog when the ShowSecretPromptDialog command is dispatched', async () => {
-    const spy = jest.spyOn(DialogService, 'showDialog');
-    const result = await registry.getCommand(Commands.ShowSecretPromptDialog).handler();
+    const spy = jest.spyOn(DialogService, 'showDialog').mockResolvedValueOnce(true);
+    const result = await registry.getCommand(Commands.ShowSecretPromptDialog)();
     expect(spy).toHaveBeenCalledWith(SecretPromptDialogContainer);
     expect(result).toBe(true);
   });
 
   it('should call DialogService.showDialog when the ShowOpenBotDialog command is dispatched', async () => {
-    const spy = jest.spyOn(DialogService, 'showDialog');
-    const result = await registry.getCommand(Commands.ShowOpenBotDialog).handler();
+    const spy = jest.spyOn(DialogService, 'showDialog').mockResolvedValueOnce(true);
+    const result = await registry.getCommand(Commands.ShowOpenBotDialog)();
     expect(spy).toHaveBeenCalledWith(OpenBotDialogContainer);
     expect(result).toBe(true);
   });
@@ -103,7 +123,7 @@ describe('the uiCommands', () => {
       // eslint-disable-next-line prefer-const
       let arg: SelectNavBarAction = {} as SelectNavBarAction;
       store.dispatch = action => ((arg as any) = action);
-      registry.getCommand(Commands.SwitchNavBarTab).handler('Do it Nauuuw!');
+      registry.getCommand(Commands.SwitchNavBarTab)('Do it Nauuuw!');
       expect(arg.type).toBe(NavBarActions.select);
       expect(arg.payload.selection).toBe('Do it Nauuuw!');
     });
@@ -112,7 +132,7 @@ describe('the uiCommands', () => {
       // eslint-disable-next-line prefer-const
       let arg: OpenEditorAction = {} as OpenEditorAction;
       store.dispatch = action => ((arg as any) = action);
-      registry.getCommand(Commands.ShowAppSettings).handler();
+      registry.getCommand(Commands.ShowAppSettings)();
       expect(arg.type).toBe(EditorActions.open);
       expect(arg.payload.contentType).toBe(CONTENT_TYPE_APP_SETTINGS);
       expect(arg.payload.documentId).toBe(DOCUMENT_ID_APP_SETTINGS);
@@ -123,7 +143,7 @@ describe('the uiCommands', () => {
       // eslint-disable-next-line prefer-const
       let arg: AzureAuthAction<AzureAuthWorkflow> = {} as AzureAuthAction<AzureAuthWorkflow>;
       store.dispatch = action => ((arg as any) = action);
-      registry.getCommand(Commands.SignInToAzure).handler();
+      registry.getCommand(Commands.SignInToAzure)();
       expect(arg.payload.loginSuccessDialog).toBe(AzureLoginSuccessDialogContainer);
       expect(arg.payload.promptDialog).toBe(AzureLoginPromptDialogContainer);
     });
@@ -132,17 +152,17 @@ describe('the uiCommands', () => {
       // eslint-disable-next-line prefer-const
       let arg: AzureAuthAction<void> = {} as AzureAuthAction<void>;
       store.dispatch = action => ((arg as any) = action);
-      registry.getCommand(Commands.InvalidateAzureArmToken).handler();
+      registry.getCommand(Commands.InvalidateAzureArmToken)();
       expect(arg).toEqual(invalidateArmToken());
     });
   });
 
   it('should set the proper href on the theme tag when the SwitchTheme command is dispatched', () => {
-    const remoteCallSpy = jest.spyOn(CommandServiceImpl, 'remoteCall');
+    const remoteCallSpy = jest.spyOn(commandService, 'remoteCall');
     const link = document.createElement('link');
     link.id = 'themeVars';
     document.querySelector('head').appendChild(link);
-    registry.getCommand(Commands.SwitchTheme).handler('light', './light.css');
+    registry.getCommand(Commands.SwitchTheme)('light', './light.css');
     expect(link.href).toBe('http://localhost/light.css');
     expect(remoteCallSpy).toHaveBeenCalledWith(SharedConstants.Commands.Telemetry.TrackEvent, 'app_chooseTheme', {
       themeName: 'light',
@@ -156,7 +176,7 @@ describe('the uiCommands', () => {
       return action;
     };
     const closeActiveBotSpy = jest.spyOn(ActiveBotHelper, 'closeActiveBot').mockResolvedValueOnce(true);
-    await registry.getCommand(Commands.SwitchDebugMode).handler(DebugMode.Sidecar);
+    await registry.getCommand(Commands.SwitchDebugMode)(DebugMode.Sidecar);
     expect(dispatchedActions.length).toBe(2);
     expect(closeActiveBotSpy).toHaveBeenCalled();
     [ExplorerActions.Show, SWITCH_DEBUG_MODE].forEach((type, index) =>
@@ -171,9 +191,7 @@ describe('the uiCommands', () => {
         dispatchedActions.push(action);
         return action;
       };
-      await registry
-        .getCommand(Commands.ShowMarkdownPage)
-        .handler('http://localhost', 'Yo!', { navigator: { onLine: false } });
+      await registry.getCommand(Commands.ShowMarkdownPage)('http://localhost', 'Yo!', { navigator: { onLine: false } });
       expect(dispatchedActions.length).toBe(1);
       expect(dispatchedActions[0].payload.meta).toEqual({
         markdown: '',
@@ -188,10 +206,8 @@ describe('the uiCommands', () => {
         dispatchedActions.push(action);
         return action;
       };
-      jest.spyOn(CommandServiceImpl, 'remoteCall').mockRejectedValueOnce('oh noes! ENOTFOUND');
-      await registry
-        .getCommand(Commands.ShowMarkdownPage)
-        .handler('http://localhost', 'Yo!', { navigator: { onLine: true } });
+      jest.spyOn(commandService, 'remoteCall').mockRejectedValueOnce('oh noes! ENOTFOUND');
+      await registry.getCommand(Commands.ShowMarkdownPage)('http://localhost', 'Yo!', { navigator: { onLine: true } });
       expect(dispatchedActions.length).toBe(1);
       expect(dispatchedActions[0].payload.meta).toEqual({
         markdown: '',
@@ -206,10 +222,8 @@ describe('the uiCommands', () => {
         dispatchedActions.push(action);
         return action;
       };
-      jest.spyOn(CommandServiceImpl, 'remoteCall').mockResolvedValueOnce(true);
-      await registry
-        .getCommand(Commands.ShowMarkdownPage)
-        .handler('http://localhost', 'Yo!', { navigator: { onLine: true } });
+      jest.spyOn(commandService, 'remoteCall').mockResolvedValueOnce(true);
+      await registry.getCommand(Commands.ShowMarkdownPage)('http://localhost', 'Yo!', { navigator: { onLine: true } });
       expect(dispatchedActions.length).toBe(1);
       expect(dispatchedActions[0].payload).toEqual({
         contentType: 'application/vnd.microsoft.bfemulator.document.markdown',

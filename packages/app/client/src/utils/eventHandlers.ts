@@ -32,40 +32,46 @@
 //
 
 import { Notification, NotificationType, SharedConstants } from '@bfemulator/app-shared';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
-import { CommandServiceImpl } from '../platform/commands/commandServiceImpl';
+class EventHandlers {
+  @CommandServiceInstance()
+  public static commandService: CommandServiceImpl;
 
-export const globalHandlers: EventListener = async (event: KeyboardEvent): Promise<any> => {
-  // Meta corresponds to 'Command' on Mac
-  const ctrlOrCmdPressed = event.ctrlKey || event.metaKey;
-  const key = event.key.toLowerCase();
-  const {
-    Commands: {
-      UI: { ShowBotCreationDialog, ShowOpenBotDialog },
-      Notifications: { Add },
-    },
-  } = SharedConstants;
+  public static async globalHandles(event: KeyboardEvent): Promise<any> {
+    // Meta corresponds to 'Command' on Mac
+    const ctrlOrCmdPressed = event.ctrlKey || event.metaKey;
+    const key = event.key.toLowerCase();
+    const {
+      Commands: {
+        UI: { ShowBotCreationDialog, ShowOpenBotDialog },
+        Notifications: { Add },
+      },
+    } = SharedConstants;
 
-  let awaitable: Promise<any>;
-  if (ctrlOrCmdPressed && key === 'o') {
-    awaitable = CommandServiceImpl.call(ShowOpenBotDialog);
-  }
+    let awaitable: Promise<any>;
+    if (ctrlOrCmdPressed && key === 'o') {
+      awaitable = EventHandlers.commandService.call(ShowOpenBotDialog);
+    }
 
-  if (ctrlOrCmdPressed && key === 'n') {
-    awaitable = CommandServiceImpl.call(ShowBotCreationDialog);
-  }
+    if (ctrlOrCmdPressed && key === 'n') {
+      awaitable = EventHandlers.commandService.call(ShowBotCreationDialog);
+    }
 
-  if (awaitable) {
-    // Prevents the char from showing up if an input is focused
-    event.preventDefault();
-    event.stopPropagation();
-    try {
-      await awaitable;
-    } catch (e) {
-      await CommandServiceImpl.call(Add, {
-        message: '' + e,
-        type: NotificationType.Error,
-      } as Notification);
+    if (awaitable) {
+      // Prevents the char from showing up if an input is focused
+      event.preventDefault();
+      event.stopPropagation();
+      try {
+        await awaitable;
+      } catch (e) {
+        await EventHandlers.commandService.call(Add, {
+          message: '' + e,
+          type: NotificationType.Error,
+        } as Notification);
+      }
     }
   }
-};
+}
+
+export const globalHandlers = EventHandlers.globalHandles;

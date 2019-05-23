@@ -31,13 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import {
-  CommandHandler,
-  CommandRegistry,
-  CommandRegistryImpl,
-  CommandService,
-  DisposableImpl,
-} from '@bfemulator/sdk-shared';
+import { CommandRegistry, CommandRegistryImpl } from '@bfemulator/sdk-shared';
 
 import { TelemetryService } from '../telemetry';
 
@@ -61,7 +55,7 @@ jest.mock('./readFileSync', () => ({
   },
 }));
 
-class MockCommandService extends DisposableImpl implements CommandService {
+class MockCommandService implements CommandService {
   public registry: CommandRegistry = new CommandRegistryImpl();
   public remoteCalls = [];
   public localCalls = [];
@@ -76,7 +70,7 @@ class MockCommandService extends DisposableImpl implements CommandService {
     return null;
   }
 
-  on(commandName: string, handler?: CommandHandler): any {
+  on(commandName: string, handler?: Function): any {
     return null;
   }
 }

@@ -32,39 +32,44 @@
 //
 
 import { isChatFile, isTranscriptFile, SharedConstants } from '@bfemulator/app-shared';
-import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
+import { Command } from '@bfemulator/sdk-shared';
 
 import * as EditorActions from '../data/action/editorActions';
 import * as FileActions from '../data/action/fileActions';
 import { store } from '../data/store';
 
+const { File } = SharedConstants.Commands;
+
 /** Registers file commands */
-export function registerCommands(commandRegistry: CommandRegistryImpl) {
-  const { File } = SharedConstants.Commands;
+export class FileCommands {
   // ---------------------------------------------------------------------------
   // Adds a file to the file store
-  commandRegistry.registerCommand(File.Add, payload => {
+  @Command(File.Add)
+  protected addFileToStore(payload) {
     store.dispatch(FileActions.addFile(payload));
-  });
+  }
 
   // ---------------------------------------------------------------------------
   // Removes a file from the file store
-  commandRegistry.registerCommand(File.Remove, path => {
+  @Command(File.Remove)
+  protected removeFileFromStore(path) {
     store.dispatch(FileActions.removeFile(path));
-  });
+  }
 
   // ---------------------------------------------------------------------------
   // Clears the file store
-  commandRegistry.registerCommand(File.Clear, () => {
+  @Command(File.Clear)
+  protected clearFileStore() {
     store.dispatch(FileActions.clear());
-  });
+  }
 
   // ---------------------------------------------------------------------------
   // Called for files in the bot's directory whose contents have changed on disk
-  commandRegistry.registerCommand(File.Changed, (filename: string) => {
+  @Command(File.Changed)
+  protected fileChangedOnDisk(filename: string) {
     // add the filename to pending updates and prompt the user once the document is focused again
     if (isChatFile(filename) || isTranscriptFile(filename)) {
       store.dispatch(EditorActions.addDocPendingChange(filename));
     }
-  });
+  }
 }

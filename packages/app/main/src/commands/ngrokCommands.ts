@@ -32,29 +32,30 @@
 //
 
 import { SharedConstants } from '@bfemulator/app-shared';
-import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
+import { Command } from '@bfemulator/sdk-shared';
 
 import { Emulator } from '../emulator';
 import { kill } from '../ngrok';
 
-/** Registers ngrok commands */
-export function registerCommands(commandRegistry: CommandRegistryImpl) {
-  const Commands = SharedConstants.Commands.Ngrok;
+const Commands = SharedConstants.Commands.Ngrok;
 
+/** Registers ngrok commands */
+export class NgrokCommands {
   // ---------------------------------------------------------------------------
   // Attempts to reconnect to a new ngrok tunnel
-  commandRegistry.registerCommand(
-    Commands.Reconnect,
-    async (): Promise<any> => {
-      const emulator = Emulator.getInstance();
-      try {
-        await emulator.ngrok.recycle();
-        emulator.ngrok.broadcastNgrokReconnected();
-      } catch (e) {
-        throw new Error(`There was an error while trying to reconnect ngrok: ${e}`);
-      }
+  @Command(Commands.Reconnect)
+  protected async reconnectToNgrok(): Promise<any> {
+    const emulator = Emulator.getInstance();
+    try {
+      await emulator.ngrok.recycle();
+      emulator.ngrok.broadcastNgrokReconnected();
+    } catch (e) {
+      throw new Error(`There was an error while trying to reconnect ngrok: ${e}`);
     }
-  );
+  }
 
-  commandRegistry.registerCommand(Commands.KillProcess, kill);
+  @Command(Commands.KillProcess)
+  protected killNgrokProcess() {
+    return kill();
+  }
 }

@@ -32,8 +32,9 @@
 //
 
 import { DebugMode, SharedConstants } from '@bfemulator/app-shared';
-import { CommandRegistry } from '@bfemulator/sdk-shared';
+import { Command, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 import { ServiceTypes } from 'botframework-config/lib/schema';
+import { newNotification } from '@bfemulator/app-shared';
 
 import * as Constants from '../constants';
 import { azureArmTokenDataChanged, beginAzureAuthWorkflow, invalidateArmToken } from '../data/action/azureAuthActions';
@@ -46,7 +47,6 @@ import { switchTheme } from '../data/action/themeActions';
 import { getTabGroupForDocument, showMarkdownPage, showWelcomePage } from '../data/editorHelpers';
 import { AzureAuthState } from '../data/reducer/azureAuthReducer';
 import { store } from '../data/store';
-import { CommandServiceImpl } from '../platform/commands/commandServiceImpl';
 import {
   AzureLoginFailedDialogContainer,
   AzureLoginPromptDialogContainer,
@@ -63,93 +63,96 @@ import {
 import * as ExplorerActions from '../data/action/explorerActions';
 import { closeConversation } from '../data/action/chatActions';
 import { ActiveBotHelper } from '../ui/helpers/activeBotHelper';
+import { beginAdd } from '../data/action/notificationActions';
+
+const { UI, Telemetry } = SharedConstants.Commands;
 
 /** Register UI commands (toggling UI) */
-export function registerCommands(commandRegistry: CommandRegistry) {
-  const { UI, Telemetry } = SharedConstants.Commands;
+export class UiCommands {
+  @CommandServiceInstance()
+  private commandService: CommandServiceImpl;
 
   // ---------------------------------------------------------------------------
   // Shows the welcome page
-  commandRegistry.registerCommand(UI.ShowWelcomePage, () => {
+  @Command(UI.ShowWelcomePage)
+  protected showWelcomePageDispatcher() {
     return showWelcomePage();
-  });
+  }
 
   // ---------------------------------------------------------------------------
   // Shows the markdown page after retrieving the remote source
-  commandRegistry.registerCommand(
-    UI.ShowMarkdownPage,
-    async (urlOrMarkdown: string, label: string, windowRef = window) => {
-      let markdown = '';
-      let { onLine } = windowRef.navigator;
-      if (!onLine) {
-        return showMarkdownPage(markdown, label, onLine);
-      }
-      try {
-        new URL(urlOrMarkdown); // Is this a valid URL?
-        const bytes: ArrayBuffer = await CommandServiceImpl.remoteCall(
-          SharedConstants.Commands.Electron.FetchRemote,
-          urlOrMarkdown
-        );
-        markdown = new TextDecoder().decode(bytes);
-      } catch (e) {
-        if (typeof e === 'string' && ('' + e).includes('ENOTFOUND')) {
-          onLine = false;
-        } else {
-          // assume this is markdown text
-          markdown = urlOrMarkdown;
-        }
-      }
+  @Command(UI.ShowMarkdownPage)
+  protected async showMarkdownPage(urlOrMarkdown: string, label: string, windowRef = window) {
+    let markdown = '';
+    let { onLine } = windowRef.navigator;
+    if (!onLine) {
       return showMarkdownPage(markdown, label, onLine);
     }
-  );
+    try {
+      new URL(urlOrMarkdown); // Is this a valid URL?
+      const bytes = await this.commandService.remoteCall<ArrayBuffer>(
+        SharedConstants.Commands.Electron.FetchRemote,
+        urlOrMarkdown
+      );
+      markdown = new TextDecoder().decode(bytes);
+    } catch (e) {
+      if (typeof e === 'string' && ('' + e).includes('ENOTFOUND')) {
+        onLine = false;
+      } else {
+        // assume this is markdown text
+        markdown = urlOrMarkdown;
+      }
+    }
+    return showMarkdownPage(markdown, label, onLine);
+  }
 
   // ---------------------------------------------------------------------------
   // Shows a bot creation dialog
-  commandRegistry.registerCommand(UI.ShowBotCreationDialog, async () => {
+  @Command(UI.ShowBotCreationDialog)
+  protected async showBotCreationPage() {
     return await DialogService.showDialog(BotCreationDialog);
-  });
+  }
 
   // ---------------------------------------------------------------------------
   // Shows a bot creation dialog
-  commandRegistry.registerCommand(UI.ShowOpenBotDialog, async () => {
+  @Command(UI.ShowOpenBotDialog)
+  protected async showOpenBotDialog() {
     return await DialogService.showDialog(OpenBotDialogContainer);
-  });
+  }
 
   // ---------------------------------------------------------------------------
   // Shows a dialog prompting the user for a bot secret
-  commandRegistry.registerCommand(UI.ShowSecretPromptDialog, async () => {
+  @Command(UI.ShowSecretPromptDialog)
+  protected async showSecretePromptDialog() {
     return await DialogService.showDialog(SecretPromptDialogContainer);
-  });
+  }
 
   // ---------------------------------------------------------------------------
   // Switches navbar tab selection
-  commandRegistry.registerCommand(
-    UI.SwitchNavBarTab,
-    (tabName: string): void => {
-      store.dispatch(NavBarActions.select(tabName));
-    }
-  );
+  @Command(UI.SwitchNavBarTab)
+  protected switchNavBar(tabName: string): void {
+    store.dispatch(NavBarActions.select(tabName));
+  }
 
   // ---------------------------------------------------------------------------
   // Open App Settings
-  commandRegistry.registerCommand(
-    UI.ShowAppSettings,
-    (): void => {
-      const { CONTENT_TYPE_APP_SETTINGS, DOCUMENT_ID_APP_SETTINGS } = Constants;
-      store.dispatch(
-        EditorActions.open({
-          contentType: CONTENT_TYPE_APP_SETTINGS,
-          documentId: DOCUMENT_ID_APP_SETTINGS,
-          isGlobal: true,
-          meta: null,
-        })
-      );
-    }
-  );
+  @Command(UI.ShowAppSettings)
+  protected showAppSettings(): void {
+    const { CONTENT_TYPE_APP_SETTINGS, DOCUMENT_ID_APP_SETTINGS } = Constants;
+    store.dispatch(
+      EditorActions.open({
+        contentType: CONTENT_TYPE_APP_SETTINGS,
+        documentId: DOCUMENT_ID_APP_SETTINGS,
+        isGlobal: true,
+        meta: null,
+      })
+    );
+  }
 
   // ---------------------------------------------------------------------------
   // Theme switching from main
-  commandRegistry.registerCommand(UI.SwitchTheme, (themeName: string, themeHref: string) => {
+  @Command(UI.SwitchTheme)
+  protected switchTheme(themeName: string, themeHref: string) {
     const linkTags = document.querySelectorAll<HTMLLinkElement>('[data-theme-component="true"]');
     const themeTag = document.getElementById('themeVars') as HTMLLinkElement;
     if (themeTag) {
@@ -157,14 +160,17 @@ export function registerCommands(commandRegistry: CommandRegistry) {
     }
     const themeComponents = Array.prototype.map.call(linkTags, link => link.href); // href is fully qualified
     store.dispatch(switchTheme(themeName, themeComponents));
-    CommandServiceImpl.remoteCall(Telemetry.TrackEvent, 'app_chooseTheme', {
-      themeName,
-    }).catch();
-  });
+    this.commandService
+      .remoteCall(Telemetry.TrackEvent, 'app_chooseTheme', {
+        themeName,
+      })
+      .catch();
+  }
 
   // ---------------------------------------------------------------------------
   // Debug mode from main
-  commandRegistry.registerCommand(UI.SwitchDebugMode, async (debugMode: DebugMode) => {
+  @Command(UI.SwitchDebugMode)
+  protected async switchDebugMode(debugMode: DebugMode) {
     const {
       editor: { editors, activeEditor },
     } = store.getState();
@@ -180,11 +186,12 @@ export function registerCommands(commandRegistry: CommandRegistry) {
         store.dispatch(closeConversation(documentId));
       }
     });
-  });
+  }
 
   // ---------------------------------------------------------------------------
   // Azure sign in
-  commandRegistry.registerCommand(UI.SignInToAzure, (serviceType: ServiceTypes) => {
+  @Command(UI.SignInToAzure)
+  protected signIntoAzure(serviceType: ServiceTypes) {
     store.dispatch(
       beginAzureAuthWorkflow(
         AzureLoginPromptDialogContainer,
@@ -193,53 +200,64 @@ export function registerCommands(commandRegistry: CommandRegistry) {
         AzureLoginFailedDialogContainer
       )
     );
-  });
+  }
 
-  commandRegistry.registerCommand(UI.ArmTokenReceivedOnStartup, (azureAuth: AzureAuthState) => {
+  @Command(UI.ArmTokenReceivedOnStartup)
+  protected armTokenReceivedOnStartup(azureAuth: AzureAuthState) {
     store.dispatch(azureArmTokenDataChanged(azureAuth.access_token));
-  });
+  }
 
-  commandRegistry.registerCommand(UI.InvalidateAzureArmToken, () => {
+  @Command(UI.InvalidateAzureArmToken)
+  protected invalidateAzureArmToken() {
     store.dispatch(invalidateArmToken());
-  });
+  }
 
   // ---------------------------------------------------------------------------
   // Show post migration dialog on startup if the user has just been migrated
-  commandRegistry.registerCommand(UI.ShowPostMigrationDialog, () => {
+  @Command(UI.ShowPostMigrationDialog)
+  protected showPostMigrationDialog() {
     return DialogService.showDialog(PostMigrationDialogContainer);
-  });
+  }
 
   // ---------------------------------------------------------------------------
   // Shows the progress indicator component
-  commandRegistry.registerCommand(UI.ShowProgressIndicator, async (props?: ProgressIndicatorPayload) => {
-    return await DialogService.showDialog(
-      ProgressIndicatorContainer,
-      props
-      // eslint-disable-next-line no-console
-    ).catch(e => console.error(e));
-  });
+  @Command(UI.ShowProgressIndicator)
+  protected async showProgressIndicator(props?: ProgressIndicatorPayload) {
+    try {
+      return await DialogService.showDialog(ProgressIndicatorContainer, props);
+    } catch (e) {
+      beginAdd(newNotification(e));
+    }
+  }
 
   // ---------------------------------------------------------------------------
   // Updates the progress of the progress indicator component
-  commandRegistry.registerCommand(UI.UpdateProgressIndicator, (value: ProgressIndicatorPayload) => {
+  @Command(UI.UpdateProgressIndicator)
+  protected updateProgressIndicator(value: ProgressIndicatorPayload) {
     store.dispatch(updateProgressIndicator(value));
-  });
+  }
 
   // ---------------------------------------------------------------------------
   // Shows the dialog telling the user that an update is available
-  commandRegistry.registerCommand(UI.ShowUpdateAvailableDialog, async (version: string = '') => {
-    return await DialogService.showDialog(UpdateAvailableDialogContainer, {
-      version,
-      // eslint-disable-next-line no-console
-    }).catch(e => console.error(e));
-  });
+  @Command(UI.ShowUpdateAvailableDialog)
+  protected async showUpdateAvailableDialog(version: string = '') {
+    try {
+      return await DialogService.showDialog(UpdateAvailableDialogContainer, {
+        version,
+      });
+    } catch (e) {
+      beginAdd(newNotification(e));
+    }
+  }
 
   // ---------------------------------------------------------------------------
   // Shows the dialog telling the user that an update is unavailable
-  commandRegistry.registerCommand(UI.ShowUpdateUnavailableDialog, async () => {
-    return await DialogService.showDialog(
-      UpdateUnavailableDialogContainer
-      // eslint-disable-next-line no-console
-    ).catch(e => console.error(e));
-  });
+  @Command(UI.ShowUpdateUnavailableDialog)
+  protected async showUpdateUnavailableDialog() {
+    try {
+      return await DialogService.showDialog(UpdateUnavailableDialogContainer);
+    } catch (e) {
+      beginAdd(newNotification(e));
+    }
+  }
 }

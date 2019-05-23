@@ -44,7 +44,7 @@ import {
 } from '@bfemulator/sdk-shared';
 
 import { Emulator } from './emulator';
-import { mainWindow } from './main';
+import { emulatorApplication } from './main';
 import * as ngrok from './ngrok';
 import { getStore } from './settingsData/store';
 
@@ -160,7 +160,7 @@ export class NgrokService {
     const { conversations } = Emulator.getInstance().framework.server.botEmulator.facilities;
     const conversationIds: string[] = conversations.getConversationIds();
     conversationIds.forEach(id => {
-      mainWindow.logService.logToChat(id, ...logItems);
+      emulatorApplication.mainWindow.logService.logToChat(id, ...logItems);
     });
   }
 
@@ -169,7 +169,7 @@ export class NgrokService {
     // TODO - localization
     await this.getServiceUrl(botUrl);
     if (this.spawnErr) {
-      mainWindow.logService.logToChat(
+      emulatorApplication.mainWindow.logService.logToChat(
         conversationId,
         textItem(LogLevel.Error, 'Failed to spawn ngrok'),
         exceptionItem(this.spawnErr)
@@ -179,7 +179,10 @@ export class NgrokService {
     } else if (ngrok.running()) {
       this.reportRunning(conversationId);
     } else {
-      mainWindow.logService.logToChat(conversationId, textItem(LogLevel.Debug, 'ngrok configured but not running'));
+      emulatorApplication.mainWindow.logService.logToChat(
+        conversationId,
+        textItem(LogLevel.Debug, 'ngrok configured but not running')
+      );
     }
   }
 
@@ -190,33 +193,39 @@ export class NgrokService {
 
   /** Logs messages that tell the user that ngrok isn't configured */
   private reportNotConfigured(conversationId: string): void {
-    mainWindow.logService.logToChat(
+    emulatorApplication.mainWindow.logService.logToChat(
       conversationId,
       textItem(LogLevel.Debug, 'ngrok not configured (only needed when connecting to remotely hosted bots)')
     );
-    mainWindow.logService.logToChat(
+    emulatorApplication.mainWindow.logService.logToChat(
       conversationId,
       externalLinkItem('Connecting to bots hosted remotely', 'https://aka.ms/cnjvpo')
     );
-    mainWindow.logService.logToChat(conversationId, appSettingsItem('Edit ngrok settings'));
+    emulatorApplication.mainWindow.logService.logToChat(conversationId, appSettingsItem('Edit ngrok settings'));
   }
 
   /** Logs messages that tell the user about ngrok's current running status */
   private reportRunning(conversationId: string): void {
     const bypassNgrokLocalhost = getStore().getState().framework.bypassNgrokLocalhost;
-    mainWindow.logService.logToChat(conversationId, textItem(LogLevel.Debug, `ngrok listening on ${this.serviceUrl}`));
-    mainWindow.logService.logToChat(
+    emulatorApplication.mainWindow.logService.logToChat(
+      conversationId,
+      textItem(LogLevel.Debug, `ngrok listening on ${this.serviceUrl}`)
+    );
+    emulatorApplication.mainWindow.logService.logToChat(
       conversationId,
       textItem(LogLevel.Debug, 'ngrok traffic inspector:'),
       externalLinkItem(this.inspectUrl, this.inspectUrl)
     );
     if (bypassNgrokLocalhost) {
-      mainWindow.logService.logToChat(
+      emulatorApplication.mainWindow.logService.logToChat(
         conversationId,
         textItem(LogLevel.Debug, 'Will bypass ngrok for local addresses')
       );
     } else {
-      mainWindow.logService.logToChat(conversationId, textItem(LogLevel.Debug, 'Will use ngrok for local addresses'));
+      emulatorApplication.mainWindow.logService.logToChat(
+        conversationId,
+        textItem(LogLevel.Debug, 'Will use ngrok for local addresses')
+      );
     }
   }
 

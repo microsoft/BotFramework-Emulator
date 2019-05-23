@@ -39,8 +39,7 @@ import * as styles from './botNotOpenExplorer.scss';
 export interface BotNotOpenExplorerProps {
   hasChat?: boolean;
   openBotFile?: () => Promise<any>;
-  showCreateNewBotDialog?: () => Promise<void>;
-  sendNotification: (error: Error) => void;
+  showCreateNewBotDialog?: () => void;
 }
 
 export class BotNotOpenExplorer extends React.Component<BotNotOpenExplorerProps, {}> {
@@ -70,18 +69,10 @@ export class BotNotOpenExplorer extends React.Component<BotNotOpenExplorerProps,
   }
 
   private onCreateNewBotClick = async () => {
-    try {
-      await this.props.showCreateNewBotDialog();
-    } catch (e) {
-      this.props.sendNotification(e);
-    }
+    this.props.showCreateNewBotDialog();
   };
 
   private onOpenBotFileClick = async () => {
-    try {
-      await this.props.openBotFile();
-    } catch (e) {
-      this.props.sendNotification(e);
-    }
+    await this.props.openBotFile();
   };
 }

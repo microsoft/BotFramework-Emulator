@@ -102,7 +102,7 @@ export class App extends React.Component<any, AppState> {
         metadataBoost: null,
       },
       qnaService: null,
-      persistentState: this.loadAppPersistentState(),
+      persistentState: this.loadAppPersistentState() || {},
       phrasings: [],
       answers: [],
       selectedAnswer: null,
@@ -115,6 +115,7 @@ export class App extends React.Component<any, AppState> {
       $host.on('inspect', async (obj: any) => {
         const appState = new AppStateAdapter(obj);
         appState.qnaService = App.getQnAServiceFromBot($host.bot, appState.traceInfo.knowledgeBaseId);
+        appState.persistentState = this.state.persistentState;
         this.setState(appState);
         if (appState.qnaService !== null) {
           this.client = new QnAMakerClient({

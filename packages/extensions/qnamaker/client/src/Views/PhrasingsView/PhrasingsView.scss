@@ -3,17 +3,17 @@
   overflow-y: auto;
   height: 100%;
   font-family: var(--default-font-family);
-  border-right: solid 1px var(--neutral-14);
+  border-right: var(--explorer-panel-group-border);
   
   input {
     margin-top: 5px;
     margin-bottom: 8px;
-    background: transparent;
+    background: var(--input-bg);
     width: 100%;
     border-radius: 2px;
-    border: solid 1px var(--neutral-9);
+    border: var(--input-border);
     padding: 4px 8px;
-    color: var(--neutral-11);
+    color: var(--input-color);
     box-sizing: border-box;
   }
 
@@ -37,9 +37,9 @@
   & .phrasing-block {
     margin-bottom: 8px;
     border-radius: 2px;
-    background-color: var(--neutral-11);
+    background-color: var(--explorer-panel-bg);
     padding: 4px 8px;
-    color: var(--neutral-12);
+    color: var(--list-item-color);
     font-size: 13px;
     white-space: normal;
 

@@ -35,14 +35,14 @@ import * as React from 'react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import { mount, shallow } from 'enzyme';
-import { DebugMode, newNotification, SharedConstants } from '@bfemulator/app-shared';
+import { DebugMode, SharedConstants } from '@bfemulator/app-shared';
 import base64Url from 'base64url';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { disable, enable } from '../../../data/action/presentationActions';
 import { clearLog, newConversation, setInspectorObjects } from '../../../data/action/chatActions';
 import { updateDocument } from '../../../data/action/editorActions';
-import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
-import { beginAdd } from '../../../data/action/notificationActions';
+import { executeCommand } from '../../../data/action/commandAction';
 
 import { Emulator, RestartConversationOptions } from './emulator';
 import { EmulatorContainer } from './emulatorContainer';
@@ -51,28 +51,6 @@ const { encode } = base64Url;
 
 let mockCallsMade, mockRemoteCallsMade;
 const mockSharedConstants = SharedConstants;
-jest.mock('../../../platform/commands/commandServiceImpl', () => ({
-  CommandServiceImpl: {
-    call: (commandName, ...args) => {
-      mockCallsMade.push({ commandName, args });
-      return Promise.resolve();
-    },
-    remoteCall: (commandName, ...args) => {
-      mockRemoteCallsMade.push({ commandName, args });
-      if (commandName === mockSharedConstants.Commands.Emulator.NewTranscript) {
-        return Promise.resolve({ conversationId: 'someConvoId' });
-      }
-      if (commandName === mockSharedConstants.Commands.Emulator.FeedTranscriptFromDisk) {
-        return Promise.resolve({ meta: 'some file info' });
-      }
-      if (commandName === mockSharedConstants.Commands.Settings.LoadAppSettings) {
-        return Promise.resolve({ framework: { userGUID: '' } });
-      }
-
-      return Promise.resolve();
-    },
-  },
-}));
 jest.mock('./chatPanel/chatPanel', () => {
   return jest.fn(() => <div />);
 });
@@ -89,13 +67,38 @@ jest.mock('./parts', () => {
 jest.mock('./toolbar/toolbar', () => {
   return jest.fn(() => <div />);
 });
-jest.mock('@bfemulator/sdk-shared', () => ({
+jest.mock('@bfemulator/sdk-shared/build/utils/misc', () => ({
   uniqueId: () => 'someUniqueId',
   uniqueIdv4: () => 'newUserId',
 }));
 
 jest.mock('botframework-webchat', () => ({
   createDirectLine: args => ({ ...args }),
+}));
+
+jest.mock('electron', () => ({
+  ipcMain: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+  ipcRenderer: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
 }));
 
 describe('<EmulatorContainer/>', () => {
@@ -105,6 +108,30 @@ describe('<EmulatorContainer/>', () => {
   let mockDispatch;
   let mockStoreState;
   const mockUnsubscribe = jest.fn(() => null);
+
+  let commandService: CommandServiceImpl;
+  beforeAll(() => {
+    const decorator = CommandServiceInstance();
+    const descriptor = decorator({ descriptor: {} }, 'none') as any;
+    commandService = descriptor.descriptor.get();
+    commandService.call = (commandName, ...args) => {
+      mockCallsMade.push({ commandName, args });
+      return Promise.resolve() as any;
+    };
+    commandService.remoteCall = (commandName, ...args) => {
+      mockRemoteCallsMade.push({ commandName, args });
+      if (commandName === mockSharedConstants.Commands.Emulator.NewTranscript) {
+        return Promise.resolve({ conversationId: 'someConvoId' });
+      }
+      if (commandName === mockSharedConstants.Commands.Emulator.FeedTranscriptFromDisk) {
+        return Promise.resolve({ meta: 'some file info' });
+      }
+      if (commandName === mockSharedConstants.Commands.Settings.LoadAppSettings) {
+        return Promise.resolve({ framework: { userGUID: '' } });
+      }
+      return Promise.resolve() as any;
+    };
+  });
 
   beforeEach(() => {
     mockUnsubscribe.mockClear();
@@ -134,7 +161,11 @@ describe('<EmulatorContainer/>', () => {
       clientAwareSettings: { debugMode: DebugMode.Normal },
     };
     const mockStore = createStore((_state, _action) => mockStoreState);
-    mockDispatch = jest.spyOn(mockStore, 'dispatch');
+    mockDispatch = jest.spyOn(mockStore, 'dispatch').mockImplementation(action => {
+      if (action && action.payload && action.payload.resolver) {
+        action.payload.resolver();
+      }
+    });
     wrapper = mount(
       <Provider store={mockStore}>
         <EmulatorContainer documentId={'doc1'} url={'someUrl'} mode={'livechat'} conversationId={'convo1'} />
@@ -288,18 +319,10 @@ describe('<EmulatorContainer/>', () => {
   it('should export a transcript', async () => {
     await instance.onExportTranscriptClick();
 
-    expect(mockRemoteCallsMade).toHaveLength(3);
-    expect(mockRemoteCallsMade[2].commandName).toBe(SharedConstants.Commands.Emulator.SaveTranscriptToFile);
-    expect(mockRemoteCallsMade[2].args).toEqual([32, 'convo1']);
-  });
-
-  it('should report a notification when exporting a transcript fails', async () => {
-    jest.spyOn(CommandServiceImpl, 'remoteCall').mockRejectedValueOnce({ message: 'oh noes!' });
-    await instance.onExportTranscriptClick();
-    const notification = newNotification('oh noes!');
-    notification.timestamp = jasmine.any(Number) as any;
-
-    expect(mockDispatch).toHaveBeenCalledWith(beginAdd(notification));
+    expect(mockRemoteCallsMade).toHaveLength(2);
+    expect(mockDispatch).toHaveBeenCalledWith(
+      executeCommand(true, SharedConstants.Commands.Emulator.SaveTranscriptToFile, null, 32, 'convo1')
+    );
   });
 
   it('should start a new conversation', async () => {
@@ -358,18 +381,13 @@ describe('<EmulatorContainer/>', () => {
     const mockStartNewConversation = jest.fn(async () => Promise.resolve(true));
     instance.startNewConversation = mockStartNewConversation;
     await instance.onStartOverClick();
-
-    expect(mockDispatch).toHaveBeenCalledWith(clearLog('doc1'));
+    expect(mockDispatch).toHaveBeenCalledWith(clearLog('doc1', jasmine.any(Function)));
     expect(mockDispatch).toHaveBeenCalledWith(setInspectorObjects('doc1', []));
-    expect(mockRemoteCallsMade).toHaveLength(3);
-    expect(mockRemoteCallsMade.some(cmd => cmd.commandName === SharedConstants.Commands.Telemetry.TrackEvent)).toBe(
-      true
-    );
-    expect(
-      mockRemoteCallsMade.some(cmd => {
-        return cmd.args[0] === 'conversation_restart' && cmd.args[1].userId === 'new';
+    expect(mockDispatch).toHaveBeenCalledWith(
+      executeCommand(true, SharedConstants.Commands.Telemetry.TrackEvent, null, 'conversation_restart', {
+        userId: 'new',
       })
-    ).toBe(true);
+    );
     expect(mockStartNewConversation).toHaveBeenCalledWith(undefined, true, true);
   });
 
@@ -378,17 +396,13 @@ describe('<EmulatorContainer/>', () => {
     instance.startNewConversation = mockStartNewConversation;
     await instance.onStartOverClick(RestartConversationOptions.SameUserId);
 
-    expect(mockDispatch).toHaveBeenCalledWith(clearLog('doc1'));
+    expect(mockDispatch).toHaveBeenCalledWith(clearLog('doc1', jasmine.any(Function)));
     expect(mockDispatch).toHaveBeenCalledWith(setInspectorObjects('doc1', []));
-    expect(mockRemoteCallsMade).toHaveLength(3);
-    expect(mockRemoteCallsMade.some(cmd => cmd.commandName === SharedConstants.Commands.Telemetry.TrackEvent)).toBe(
-      true
-    );
-    expect(
-      mockRemoteCallsMade.some(cmd => {
-        return cmd.args[0] === 'conversation_restart' && cmd.args[1].userId === 'same';
+    expect(mockDispatch).toHaveBeenCalledWith(
+      executeCommand(true, SharedConstants.Commands.Telemetry.TrackEvent, null, 'conversation_restart', {
+        userId: 'same',
       })
-    ).toBe(true);
+    );
     expect(mockStartNewConversation).toHaveBeenCalledWith(undefined, true, false);
   });
 

@@ -38,17 +38,17 @@ import { BotConfiguration } from 'botframework-config';
 import { app } from 'electron';
 import * as Fs from 'fs-extra';
 import { sync as mkdirp } from 'mkdirp';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import * as BotActions from './data/actions/botActions';
 import { getStore } from './data/store';
-import { cloneBot, saveBot } from './botHelpers';
-import { mainWindow } from './main';
-import { ensureStoragePath } from './utils/ensureStoragePath';
-import { getFilesInDir } from './utils/getFilesInDir';
-import { writeFile } from './utils/writeFile';
+import { BotHelpers } from './botHelpers';
+import { ensureStoragePath, getFilesInDir, writeFile } from './utils';
 
 /** Performs the V4 side of migration from V3 -> V4 bots */
 export class Migrator {
+  @CommandServiceInstance()
+  private static commandService: CommandServiceImpl;
   private static readonly _migrationMarkerName = 'migration_marker.txt';
 
   /** Runs the V4 side of migration if necessary */
@@ -99,9 +99,9 @@ export class Migrator {
 
           // load bot from old path, then change its path to the new path
           const botWithOldPath = await BotConfiguration.load(oldPath);
-          const bot = cloneBot(botWithOldPath);
+          const bot = BotHelpers.cloneBot(botWithOldPath);
           bot.path = newPath;
-          await saveBot(bot);
+          await BotHelpers.saveBot(bot);
 
           const botInfo: BotInfo = {
             path: newPath,
@@ -118,11 +118,11 @@ export class Migrator {
       const { SyncBotList } = SharedConstants.Commands.Bot;
       const store = getStore();
       store.dispatch(BotActions.load(recentBotsList));
-      await mainWindow.commandService.remoteCall(SyncBotList, recentBotsList).catch();
+      await Migrator.commandService.remoteCall(SyncBotList, recentBotsList).catch();
 
       // show post-migration page
       const { ShowPostMigrationDialog } = SharedConstants.Commands.UI;
-      await mainWindow.commandService.remoteCall(ShowPostMigrationDialog).catch();
+      await Migrator.commandService.remoteCall(ShowPostMigrationDialog).catch();
       return true;
     }
     return false;

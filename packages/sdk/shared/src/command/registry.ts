@@ -30,49 +30,23 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { Disposable } from '../lifecycle';
-
-import { Command, CommandHandler, CommandMap } from './';
 
 export interface CommandRegistry {
-  registerCommand(id: string, command: CommandHandler): Disposable;
-
-  registerCommand(command: Command): Disposable;
-
-  getCommand(id: string): Command;
-
-  getCommands(): CommandMap;
+  registerCommand(id: string, command: Function): void;
+  getCommand(id: string): Function;
 }
 
 export class CommandRegistryImpl implements CommandRegistry {
-  private _commands: CommandMap = {};
+  private commands: { [id: string]: Function } = {};
 
-  public registerCommand(idOrCommand: string | Command, handler?: CommandHandler): Disposable {
-    if (!idOrCommand) {
+  public registerCommand(id: string, handler?: Function): void {
+    if (!id || (typeof id === 'string' && typeof handler !== 'function')) {
       throw new Error('invalid command');
     }
-
-    if (typeof idOrCommand === 'string') {
-      if (!handler) {
-        throw new Error('invalid command');
-      }
-      return this.registerCommand({ id: idOrCommand, handler });
-    }
-
-    const { id } = idOrCommand;
-
-    this._commands[id] = idOrCommand;
-
-    return {
-      dispose: () => delete this._commands[id],
-    };
+    this.commands[id] = handler;
   }
 
-  public getCommand(id: string): Command {
-    return this._commands[id];
-  }
-
-  public getCommands(): CommandMap {
-    return this._commands;
+  public getCommand(id: string): Function {
+    return this.commands[id];
   }
 }

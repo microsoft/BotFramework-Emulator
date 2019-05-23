@@ -32,36 +32,35 @@
 //
 
 import { SharedConstants } from '@bfemulator/app-shared';
-import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
+import { Command } from '@bfemulator/sdk-shared';
 
 import { Emulator } from '../emulator';
-import { windowManager } from '../main';
+import { emulatorApplication } from '../main';
+
+const Commands = SharedConstants.Commands.OAuth;
 
 /** Registers OAuth commands */
-export function registerCommands(commandRegistry: CommandRegistryImpl) {
-  const Commands = SharedConstants.Commands.OAuth;
-
+export class OauthCommands {
   // ---------------------------------------------------------------------------
   // Sends an OAuth TokenResponse
-  commandRegistry.registerCommand(
-    Commands.SendTokenResponse,
-    async (connectionName: string, conversationId: string, token: string) => {
-      const convo = Emulator.getInstance().framework.server.botEmulator.facilities.conversations.conversationById(
-        conversationId
-      );
-      if (!convo) {
-        throw new Error(`oauth:send-token-response: Conversation ${conversationId} not found.`);
-      }
-      await convo.sendTokenResponse(connectionName, conversationId, false);
-    }
-  );
-
-  // ---------------------------------------------------------------------------
-  // Opens an OAuth login window
-  commandRegistry.registerCommand(Commands.CreateOAuthWindow, async (url: string, conversationId: string) => {
+  @Command(Commands.SendTokenResponse)
+  protected async sendTokenResponse(connectionName: string, conversationId: string, token: string) {
     const convo = Emulator.getInstance().framework.server.botEmulator.facilities.conversations.conversationById(
       conversationId
     );
-    windowManager.createOAuthWindow(url, convo.codeVerifier);
-  });
+    if (!convo) {
+      throw new Error(`oauth:send-token-response: Conversation ${conversationId} not found.`);
+    }
+    await convo.sendTokenResponse(connectionName, conversationId, false);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Opens an OAuth login window
+  @Command(Commands.CreateOAuthWindow)
+  protected async createOauthWindow(url: string, conversationId: string) {
+    const convo = Emulator.getInstance().framework.server.botEmulator.facilities.conversations.conversationById(
+      conversationId
+    );
+    emulatorApplication.windowManager.createOAuthWindow(url, convo.codeVerifier);
+  }
 }

@@ -33,9 +33,10 @@
 // import base64Url from 'base64url';
 // import { createDirectLine } from 'botframework-webchat';
 import { DebugMode, newNotification, SharedConstants } from '@bfemulator/app-shared';
-import { CommandRegistryImpl, isLocalHostUrl, uniqueId } from '@bfemulator/sdk-shared';
+import { CommandServiceImpl, CommandServiceInstance, isLocalHostUrl, uniqueId } from '@bfemulator/sdk-shared';
 import { IEndpointService } from 'botframework-config/lib/schema';
 import { Activity } from 'botframework-schema';
+import { Command } from '@bfemulator/sdk-shared';
 
 import * as Constants from '../constants';
 import * as ChatActions from '../data/action/chatActions';
@@ -43,107 +44,105 @@ import * as EditorActions from '../data/action/editorActions';
 import { beginAdd } from '../data/action/notificationActions';
 import { getTabGroupForDocument } from '../data/editorHelpers';
 import { store } from '../data/store';
-import { CommandServiceImpl } from '../platform/commands/commandServiceImpl';
 
-/** Registers emulator (actual conversation emulation logic) commands */
-export function registerCommands(commandRegistry: CommandRegistryImpl) {
-  const {
-    Emulator,
-    Telemetry: { TrackEvent },
-  } = SharedConstants.Commands;
+const {
+  Emulator,
+  Telemetry: { TrackEvent },
+} = SharedConstants.Commands;
+
+export class EmulatorCommands {
+  @CommandServiceInstance()
+  private commandService: CommandServiceImpl;
 
   // ---------------------------------------------------------------------------
   // Open a new emulator tabbed document
-  commandRegistry.registerCommand(
-    Emulator.NewLiveChat,
-    (
-      endpoint: IEndpointService,
-      focusExistingChat: boolean = false,
-      conversationId: string,
-      mode: ChatActions.ChatMode = 'livechat'
-    ) => {
-      const state = store.getState();
-      let documentId: string;
+  @Command(Emulator.NewLiveChat)
+  protected newLiveChat(
+    endpoint: IEndpointService,
+    focusExistingChat: boolean = false,
+    conversationId: string,
+    mode: ChatActions.ChatMode = 'livechat'
+  ) {
+    const state = store.getState();
+    let documentId: string;
 
-      if (focusExistingChat && state.chat.chats) {
-        const { chats } = state.chat;
-        documentId = Object.keys(chats).find(docId => {
-          const { [docId]: chat } = chats;
-          // If we have a conversationId, the match must include it.
-          return chat.endpointUrl === endpoint.endpoint && (!conversationId || chat.conversationId === conversationId);
-        });
-      }
-
-      if (!documentId) {
-        documentId = uniqueId();
-        const { currentUserId } = state.clientAwareSettings.users;
-        const customUserId = state.framework.userGUID;
-        const action = ChatActions.newChat(documentId, mode, {
-          botId: 'bot',
-          endpointId: endpoint.id,
-          endpointUrl: endpoint.endpoint,
-          userId: customUserId || currentUserId,
-          conversationId,
-          // directLine: createDirectLine({
-          //   secret: base64Url.encode(JSON.stringify({ conversationId, endpointId: endpoint.id })),
-          //   domain: `${ state.clientAwareSettings.serverUrl }/v3/directline`,
-          //   webSocket: false,
-          // })
-        });
-        if (state.clientAwareSettings.debugMode === DebugMode.Sidecar) {
-          action.payload.ui.horizontalSplitter[0].percentage = 75;
-          action.payload.ui.verticalSplitter[0].percentage = 25;
-        }
-        store.dispatch(action);
-      }
-
-      if (!isLocalHostUrl(endpoint.endpoint)) {
-        CommandServiceImpl.remoteCall(TrackEvent, 'livechat_openRemote').catch(_e => void 0);
-      }
-
-      store.dispatch(
-        EditorActions.open({
-          contentType: Constants.CONTENT_TYPE_LIVE_CHAT,
-          documentId,
-          isGlobal: false,
-        })
-      );
-      return documentId;
+    if (focusExistingChat && state.chat.chats) {
+      const { chats } = state.chat;
+      documentId = Object.keys(chats).find(docId => {
+        const { [docId]: chat } = chats;
+        // If we have a conversationId, the match must include it.
+        return chat.endpointUrl === endpoint.endpoint && (!conversationId || chat.conversationId === conversationId);
+      });
     }
-  );
+
+    if (!documentId) {
+      documentId = uniqueId();
+      const { currentUserId } = state.clientAwareSettings.users;
+      const customUserId = state.framework.userGUID;
+      const action = ChatActions.newChat(documentId, mode, {
+        botId: 'bot',
+        endpointId: endpoint.id,
+        endpointUrl: endpoint.endpoint,
+        userId: customUserId || currentUserId,
+        conversationId,
+        // directLine: createDirectLine({
+        //   secret: base64Url.encode(JSON.stringify({ conversationId, endpointId: endpoint.id })),
+        //   domain: `${ state.clientAwareSettings.serverUrl }/v3/directline`,
+        //   webSocket: false,
+        // })
+      });
+      if (state.clientAwareSettings.debugMode === DebugMode.Sidecar) {
+        action.payload.ui.horizontalSplitter[0].percentage = 75;
+        action.payload.ui.verticalSplitter[0].percentage = 25;
+      }
+      store.dispatch(action);
+    }
+
+    if (!isLocalHostUrl(endpoint.endpoint)) {
+      this.commandService.remoteCall(TrackEvent, 'livechat_openRemote').catch(_e => void 0);
+    }
+
+    store.dispatch(
+      EditorActions.open({
+        contentType: Constants.CONTENT_TYPE_LIVE_CHAT,
+        documentId,
+        isGlobal: false,
+      })
+    );
+    return documentId;
+  }
 
   // ---------------------------------------------------------------------------
   // Open the transcript file in a tabbed document
-  commandRegistry.registerCommand(
-    Emulator.OpenTranscript,
-    (filePath: string, fileName: string, additionalData?: object) => {
-      const tabGroup = getTabGroupForDocument(filePath);
-      const { currentUserId } = store.getState().clientAwareSettings.users;
-      if (!tabGroup) {
-        store.dispatch(
-          ChatActions.newChat(filePath, 'transcript', {
-            ...additionalData,
-            botId: 'bot',
-            userId: currentUserId,
-          })
-        );
-      }
-
+  @Command(Emulator.OpenTranscript)
+  protected openTranscript(filePath: string, fileName: string, additionalData?: object) {
+    const tabGroup = getTabGroupForDocument(filePath);
+    const { currentUserId } = store.getState().clientAwareSettings.users;
+    if (!tabGroup) {
       store.dispatch(
-        EditorActions.open({
-          contentType: Constants.CONTENT_TYPE_TRANSCRIPT,
-          documentId: filePath,
-          fileName,
-          filePath,
-          isGlobal: false,
+        ChatActions.newChat(filePath, 'transcript', {
+          ...additionalData,
+          botId: 'bot',
+          userId: currentUserId,
         })
       );
     }
-  );
+
+    store.dispatch(
+      EditorActions.open({
+        contentType: Constants.CONTENT_TYPE_TRANSCRIPT,
+        documentId: filePath,
+        fileName,
+        filePath,
+        isGlobal: false,
+      })
+    );
+  }
 
   // ---------------------------------------------------------------------------
   // Prompt to open a transcript file, then open it
-  commandRegistry.registerCommand(Emulator.PromptToOpenTranscript, async () => {
+  @Command(Emulator.PromptToOpenTranscript)
+  protected async promptToOpenTranscript() {
     const dialogOptions = {
       title: 'Open transcript file',
       buttonLabel: 'Choose file',
@@ -157,53 +156,54 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
     };
     try {
       const { ShowOpenDialog } = SharedConstants.Commands.Electron;
-      const filename = await CommandServiceImpl.remoteCall(ShowOpenDialog, dialogOptions);
+      const filename = await this.commandService.remoteCall(ShowOpenDialog, dialogOptions);
       if (filename) {
-        await CommandServiceImpl.call(Emulator.OpenTranscript, filename);
-        CommandServiceImpl.remoteCall(TrackEvent, 'transcriptFile_open', {
-          method: 'file_menu',
-        }).catch(_e => void 0);
+        await this.commandService.call(Emulator.OpenTranscript, filename);
+        this.commandService
+          .remoteCall(TrackEvent, 'transcriptFile_open', {
+            method: 'file_menu',
+          })
+          .catch(_e => void 0);
       }
     } catch (e) {
       const errMsg = `Error while opening transcript file: ${e}`;
       const notification = newNotification(errMsg);
       store.dispatch(beginAdd(notification));
     }
-  });
+  }
 
   // ---------------------------------------------------------------------------
   // Same as open transcript, except that it closes the transcript first, before reopening it
-  commandRegistry.registerCommand(
-    Emulator.ReloadTranscript,
-    (filePath: string, fileName: string, additionalData?: object) => {
-      const tabGroup = getTabGroupForDocument(filePath);
-      const { currentUserId } = store.getState().clientAwareSettings.users;
-      if (tabGroup) {
-        store.dispatch(EditorActions.close(getTabGroupForDocument(filePath), filePath));
-        store.dispatch(ChatActions.closeDocument(filePath));
-      }
-      store.dispatch(
-        ChatActions.newChat(filePath, 'transcript', {
-          ...additionalData,
-          botId: 'bot',
-          userId: currentUserId,
-        })
-      );
-      store.dispatch(
-        EditorActions.open({
-          contentType: Constants.CONTENT_TYPE_TRANSCRIPT,
-          documentId: filePath,
-          filePath,
-          fileName,
-          isGlobal: false,
-        })
-      );
+  @Command(Emulator.ReloadTranscript)
+  protected reloadTranscript(filePath: string, fileName: string, additionalData?: object) {
+    const tabGroup = getTabGroupForDocument(filePath);
+    const { currentUserId } = store.getState().clientAwareSettings.users;
+    if (tabGroup) {
+      store.dispatch(EditorActions.close(getTabGroupForDocument(filePath), filePath));
+      store.dispatch(ChatActions.closeDocument(filePath));
     }
-  );
+    store.dispatch(
+      ChatActions.newChat(filePath, 'transcript', {
+        ...additionalData,
+        botId: 'bot',
+        userId: currentUserId,
+      })
+    );
+    store.dispatch(
+      EditorActions.open({
+        contentType: Constants.CONTENT_TYPE_TRANSCRIPT,
+        documentId: filePath,
+        filePath,
+        fileName,
+        isGlobal: false,
+      })
+    );
+  }
 
   // ---------------------------------------------------------------------------
   // Open the chat file in a tabbed document as a transcript
-  commandRegistry.registerCommand(Emulator.OpenChatFile, async (filePath: string, reload?: boolean) => {
+  @Command(Emulator.OpenChatFile)
+  protected async openChatFile(filePath: string, reload?: boolean) {
     try {
       // wait for the main side to use the chatdown library to parse the activities (transcript) out of the .chat file
       const {
@@ -212,16 +212,16 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
       }: {
         activities: Activity[];
         fileName: string;
-      } = await CommandServiceImpl.remoteCall(Emulator.OpenChatFile, filePath);
+      } = await this.commandService.remoteCall<any>(Emulator.OpenChatFile, filePath);
 
       // open or reload the transcript
       if (reload) {
-        await CommandServiceImpl.call(Emulator.ReloadTranscript, filePath, fileName, { activities, inMemory: true });
+        await this.commandService.call(Emulator.ReloadTranscript, filePath, fileName, { activities, inMemory: true });
       } else {
-        await CommandServiceImpl.call(Emulator.OpenTranscript, filePath, fileName, { activities, inMemory: true });
+        await this.commandService.call(Emulator.OpenTranscript, filePath, fileName, { activities, inMemory: true });
       }
     } catch (err) {
       throw new Error(`Error while retrieving activities from main side: ${err}`);
     }
-  });
+  }
 }

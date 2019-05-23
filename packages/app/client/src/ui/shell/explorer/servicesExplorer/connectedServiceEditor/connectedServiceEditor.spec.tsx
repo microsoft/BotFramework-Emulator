@@ -164,7 +164,8 @@ describe('The ConnectedServiceEditor component should render the correct content
             "version": "0.1",
             "appId": "121221",
             "authoringKey": "poo",
-            "subscriptionKey": "emoji"
+            "subscriptionKey": "emoji",
+            "hostname": "http://localhost"
         }`);
   const services = [
     ServiceTypes.Luis,

@@ -36,17 +36,17 @@ import { connect } from 'react-redux';
 import { ServiceTypes } from 'botframework-config/lib/schema';
 
 import * as ConnectedServiceActions from '../../../../../data/action/connectedServiceActions';
-import { CommandServiceImpl } from '../../../../../platform/commands/commandServiceImpl';
 import {
-  ConnectServicePromptDialogContainer,
-  AzureLoginSuccessDialogContainer,
   AzureLoginFailedDialogContainer,
+  AzureLoginSuccessDialogContainer,
+  ConnectServicePromptDialogContainer,
   GetStartedWithCSDialogContainer,
   ProgressIndicatorContainer,
 } from '../../../../dialogs';
 import { ConnectedServicePickerContainer } from '../../../../shell/explorer/servicesExplorer';
 import { ConnectedServiceEditorContainer } from '../../../../shell/explorer/servicesExplorer/connectedServiceEditor';
 import { setHighlightedObjects, setInspectorObjects } from '../../../../../data/action/chatActions';
+import { executeCommand } from '../../../../../data/action/commandAction';
 
 import { LogEntry as LogEntryComponent, LogEntryProps } from './logEntry';
 
@@ -71,17 +71,14 @@ function mapDispatchToProps(dispatch: any): Partial<LogEntryProps> {
     setInspectorObjects: (documentId: string, obj: any) => dispatch(setInspectorObjects(documentId, obj)),
     setHighlightedObjects: (documentId: string, obj: any) => dispatch(setHighlightedObjects(documentId, obj)),
     reconnectNgrok: () => {
-      const { Ngrok } = SharedConstants.Commands;
-      return CommandServiceImpl.remoteCall(Ngrok.Reconnect);
+      dispatch(executeCommand(true, SharedConstants.Commands.Ngrok.Reconnect));
     },
     showAppSettings: () => {
       const { UI } = SharedConstants.Commands;
-      return CommandServiceImpl.call(UI.ShowAppSettings);
+      return dispatch(executeCommand(false, UI.ShowAppSettings));
     },
     trackEvent: (name: string, properties?: { [key: string]: any }) => {
-      CommandServiceImpl.remoteCall(SharedConstants.Commands.Telemetry.TrackEvent, name, properties).catch(
-        _e => void 0
-      );
+      dispatch(executeCommand(true, SharedConstants.Commands.Telemetry.TrackEvent, null, name, properties));
     },
   };
 }

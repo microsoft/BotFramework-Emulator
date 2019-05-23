@@ -34,6 +34,8 @@
 const path = require('path');
 
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+
 const webpack = require('webpack');
 const {
   DllPlugin,
@@ -50,12 +52,7 @@ const manifestLocation = path.resolve('./generated');
 const use = [
   {
     loader: 'babel-loader',
-    options: {
-      babelrc: false,
-      plugins: ['react-hot-loader/babel'],
-    },
   },
-  'ts-loader',
 ];
 const defaultConfig = {
   entry: {
@@ -139,8 +136,6 @@ const defaultConfig = {
 
   plugins: [
     new NamedModulesPlugin(),
-    new HotModuleReplacementPlugin(),
-    new HardSourceWebpackPlugin(),
     new CopyWebpackPlugin([
       { from: './src/inspector-preload.js', to: './' },
       { from: './src/splash.html', to: './splash.html' },
@@ -165,7 +160,6 @@ const defaultConfig = {
 const buildConfig = mode => {
   const config = {
     ...defaultConfig,
-
     plugins: [
       ...defaultConfig.plugins,
       new DllReferencePlugin({
@@ -178,6 +172,34 @@ const buildConfig = mode => {
   };
   if (mode === 'development') {
     config.module.rules[0].use = use;
+    config.plugins.unshift(new HotModuleReplacementPlugin(), new HardSourceWebpackPlugin());
+  } else {
+    config.optimization = {
+      minimizer: [
+        new UglifyJsPlugin({
+          cache: true,
+          cacheKeys(defaultCacheKeys) {
+            delete defaultCacheKeys['uglify-js'];
+
+            return Object.assign({}, defaultCacheKeys, { 'uglify-js': require('uglify-js/package.json').version });
+          },
+          minify(file, sourceMap) {
+            // https://github.com/mishoo/UglifyJS2#minify-options
+            const uglifyJsOptions = {
+              /* your `uglify-js` package options */
+            };
+
+            if (sourceMap) {
+              uglifyJsOptions.sourceMap = {
+                content: sourceMap,
+              };
+            }
+
+            return require('terser').minify(file, uglifyJsOptions);
+          },
+        }),
+      ],
+    };
   }
   return config;
 };

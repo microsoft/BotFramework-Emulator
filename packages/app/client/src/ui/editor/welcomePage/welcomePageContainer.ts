@@ -31,13 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { newNotification, SharedConstants } from '@bfemulator/app-shared';
+import { SharedConstants } from '@bfemulator/app-shared';
 import { connect } from 'react-redux';
 import { Action } from 'redux';
 
-import { beginAdd } from '../../../data/action/notificationActions';
 import { RootState } from '../../../data/store';
-import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
+import { executeCommand } from '../../../data/action/commandAction';
 
 import { WelcomePage, WelcomePageProps } from './welcomePage';
 
@@ -52,22 +51,16 @@ function mapStateToProps(state: RootState, ownProps: WelcomePageProps): WelcomeP
 function mapDispatchToProps(dispatch: (action: Action) => void): WelcomePageProps {
   const { Commands, Channels } = SharedConstants;
   return {
-    onNewBotClick: () => {
-      CommandServiceImpl.call(Commands.UI.ShowBotCreationDialog).catch();
-    },
-    showOpenBotDialog: (): Promise<any> => CommandServiceImpl.call(SharedConstants.Commands.UI.ShowOpenBotDialog),
-    sendNotification: (error: Error) =>
-      dispatch(beginAdd(newNotification(`An Error occurred on the Welcome page: ${error}`))),
-    signInWithAzure: () => {
-      CommandServiceImpl.call(Commands.UI.SignInToAzure).catch();
-    },
+    onNewBotClick: () => dispatch(executeCommand(false, Commands.UI.ShowBotCreationDialog)),
+    showOpenBotDialog: () => dispatch(executeCommand(false, SharedConstants.Commands.UI.ShowOpenBotDialog)),
+    signInWithAzure: () => dispatch(executeCommand(false, Commands.UI.SignInToAzure)),
     signOutWithAzure: () => {
-      CommandServiceImpl.remoteCall(Commands.Azure.SignUserOutOfAzure).catch();
-      CommandServiceImpl.call(Commands.UI.InvalidateAzureArmToken).catch();
+      dispatch(executeCommand(true, Commands.Azure.SignUserOutOfAzure));
+      dispatch(executeCommand(false, Commands.UI.InvalidateAzureArmToken));
     },
-    switchToBot: (path: string) => CommandServiceImpl.call(Commands.Bot.Switch, path),
+    switchToBot: (path: string) => dispatch(executeCommand(false, Commands.Bot.Switch, null, path)),
     openBotInspectorDocs: () =>
-      CommandServiceImpl.call(Commands.UI.ShowMarkdownPage, Channels.ReadmeUrl, Channels.HelpLabel),
+      dispatch(executeCommand(false, Commands.UI.ShowMarkdownPage, null, Channels.ReadmeUrl, Channels.HelpLabel)),
   };
 }
 

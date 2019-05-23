@@ -31,10 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import { SharedConstants } from '@bfemulator/app-shared';
-import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
+import { CommandRegistry, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 import { ServiceTypes } from 'botframework-config/lib/schema';
 
-import { registerCommands } from './connectedServiceCommands';
+import { ConnectedServiceCommands } from './connectedServiceCommands';
 
 const mockServiceTypes = ServiceTypes;
 jest.mock('../services/luisApiService', () => ({
@@ -73,41 +73,75 @@ jest.mock('../main', () => ({
     browserWindow: {},
   },
 }));
-const mockCommandRegistry = new CommandRegistryImpl();
-registerCommands(mockCommandRegistry);
+
+jest.mock('../globals', () => ({
+  getGlobal: () => ({ storagepath: '' }),
+  setGlobal: () => void 0,
+}));
+
+jest.mock('electron', () => ({
+  app: {
+    getPath: () => './',
+  },
+  ipcMain: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+  ipcRenderer: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+}));
 
 describe('The connected service commands', () => {
+  let registry: CommandRegistry;
+  let commandService: CommandServiceImpl;
+  beforeAll(() => {
+    new ConnectedServiceCommands();
+    const decorator = CommandServiceInstance();
+    const descriptor = decorator({ descriptor: {} }, 'none') as any;
+    commandService = descriptor.descriptor.get();
+    commandService.remoteCall = () => Promise.resolve(true) as any;
+    registry = commandService.registry;
+  });
+
   it('should retrieve luis models when the ServiceTypes.Luis is specified', async () => {
-    const { handler } = mockCommandRegistry.getCommand(
-      SharedConstants.Commands.ConnectedService.GetConnectedServicesByType
-    );
+    const handler = registry.getCommand(SharedConstants.Commands.ConnectedService.GetConnectedServicesByType);
 
     const result = await handler('', mockServiceTypes.Luis);
     expect(result.services[0].type).toBe(mockServiceTypes.Luis);
   });
 
   it('should retrieve knowledge bases when the ServiceTypes.QnA is specified', async () => {
-    const { handler } = mockCommandRegistry.getCommand(
-      SharedConstants.Commands.ConnectedService.GetConnectedServicesByType
-    );
+    const handler = registry.getCommand(SharedConstants.Commands.ConnectedService.GetConnectedServicesByType);
 
     const result = await handler('', mockServiceTypes.QnA);
     expect(result.services[0].type).toBe(mockServiceTypes.QnA);
   });
 
   it('should retrieve Blob Containers when the ServiceTypes.BlobStorage is specified', async () => {
-    const { handler } = mockCommandRegistry.getCommand(
-      SharedConstants.Commands.ConnectedService.GetConnectedServicesByType
-    );
+    const handler = registry.getCommand(SharedConstants.Commands.ConnectedService.GetConnectedServicesByType);
 
     const result = await handler('', mockServiceTypes.BlobStorage);
     expect(result.services[0].type).toBe(mockServiceTypes.BlobStorage);
   });
 
   it('should throw if an unexpected service type is specified', async () => {
-    const { handler } = mockCommandRegistry.getCommand(
-      SharedConstants.Commands.ConnectedService.GetConnectedServicesByType
-    );
+    const handler = registry.getCommand(SharedConstants.Commands.ConnectedService.GetConnectedServicesByType);
     let error;
     try {
       await handler('', mockServiceTypes.File);

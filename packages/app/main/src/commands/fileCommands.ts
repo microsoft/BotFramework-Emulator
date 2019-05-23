@@ -32,35 +32,33 @@
 //
 
 import { SharedConstants } from '@bfemulator/app-shared';
-import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
+import { Command } from '@bfemulator/sdk-shared';
 
 import { readFileSync, writeFile } from '../utils';
 
 // eslint-disable-next-line typescript/no-var-requires
 const sanitize = require('sanitize-filename');
+const Commands = SharedConstants.Commands.File;
 
 /** Registers file commands */
-export function registerCommands(commandRegistry: CommandRegistryImpl) {
-  const Commands = SharedConstants.Commands.File;
+export class FileCommands {
   // ---------------------------------------------------------------------------
   // Read file
-  commandRegistry.registerCommand(
-    Commands.Read,
-    (path: string): any => {
-      try {
-        const contents = readFileSync(path);
-        return contents;
-      } catch (e) {
-        // eslint-disable-next-line no-console
-        console.error(`Failure reading file at ${path}: `, e);
-        throw e;
-      }
+  @Command(Commands.Read)
+  protected readFile(path: string): any {
+    try {
+      return readFileSync(path);
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error(`Failure reading file at ${path}: `, e);
+      throw e;
     }
-  );
+  }
 
   // ---------------------------------------------------------------------------
   // Write file
-  commandRegistry.registerCommand(Commands.Write, (path: string, contents: object | string) => {
+  @Command(Commands.Write)
+  protected writeFile(path: string, contents: object | string) {
     try {
       writeFile(path, contents);
     } catch (e) {
@@ -68,14 +66,12 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
       console.error(`Failure writing to file at ${path}: `, e);
       throw e;
     }
-  });
+  }
 
   // ---------------------------------------------------------------------------
   // Sanitize a string for file name usage
-  commandRegistry.registerCommand(
-    Commands.SanitizeString,
-    (path: string): string => {
-      return sanitize(path);
-    }
-  );
+  @Command(Commands.SanitizeString)
+  protected sanitizeString(path: string): string {
+    return sanitize(path);
+  }
 }

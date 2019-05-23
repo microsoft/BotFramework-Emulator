@@ -158,7 +158,7 @@ export const windowStateDefault: WindowStateSettings = {
   availableThemes: [],
 };
 
-export const settingsDefault: Settings = new SettingsImpl({
+export const settingsDefault: Settings = {
   framework: frameworkDefault,
   bots: [
     {
@@ -171,6 +171,6 @@ export const settingsDefault: Settings = new SettingsImpl({
   ],
   savedBotUrls: [],
   windowState: windowStateDefault,
-  users: {},
+  users: { usersById: {} },
   azure: {},
-});
+};

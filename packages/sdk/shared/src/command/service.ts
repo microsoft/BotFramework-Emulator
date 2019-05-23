@@ -33,97 +33,56 @@
 
 import { CommandRegistry, CommandRegistryImpl } from '..';
 
-import { Channel, IPC } from '../ipc';
-import { Disposable, DisposableImpl } from '../lifecycle';
 import { uniqueId } from '../utils';
 
-import { CommandHandler } from '.';
+import { EventEmitter } from 'electron';
 
-export interface CommandService extends DisposableImpl {
-  registry: CommandRegistry;
-
-  call(commandName: string, ...args: any[]): Promise<any>;
-
-  remoteCall(commandName: string, ...args: any[]): Promise<any>;
-
-  on(commandName: string, handler?: CommandHandler): Disposable;
-
-  on(event: 'command-not-found', notFoundHandler?: (commandName: string, ...args: any[]) => any);
+interface Sender {
+  send(channel: string, ...args: any[]): void;
 }
 
-export class CommandServiceImpl extends DisposableImpl implements CommandService {
-  private readonly _channel: Channel;
-  private readonly _registry: CommandRegistry;
-  private readonly _channelName: string;
-  private readonly _ipc: IPC;
-  private _notFoundHandler: (commandName: string, ...args: any[]) => any;
+export class CommandServiceImpl {
+  public readonly registry: CommandRegistry;
+  private readonly ipcListener: EventEmitter;
+  private ipcSender: Sender;
 
-  public get registry() {
-    return this._registry;
+  private notFoundHandler: (commandName: string, ...args: any[]) => any;
+
+  constructor(ipcListener: EventEmitter, channelName = 'command-service', registry = new CommandRegistryImpl()) {
+    this.ipcListener = ipcListener;
+    this.ipcSender = 'send' in ipcListener ? (ipcListener as Sender) : null;
+    this.registry = registry;
+    this.initializeListeners();
   }
 
-  constructor(
-    _ipc: IPC,
-    _channelName: string = 'command-service',
-    _registry: CommandRegistry = new CommandRegistryImpl()
-  ) {
-    super();
-
-    this._ipc = _ipc;
-    this._channelName = _channelName;
-    this._registry = _registry;
-    this._channel = new Channel(this._channelName, this._ipc);
-    this.toDispose(this._ipc.registerChannel(this._channel));
-    this.toDispose(
-      this._channel.setListener('call', (commandName: string, transactionId: string, ...args: any[]) => {
-        this.call(commandName, ...args)
-          .then(result => {
-            result = Array.isArray(result) ? result : [result];
-            this._channel.send(transactionId, true, ...result);
-          })
-          .catch(err => {
-            err = err.message ? err.message : err;
-            this._channel.send(transactionId, false, err);
-          });
-      })
-    );
-  }
-
-  public on(event: string, handler?: CommandHandler): Disposable;
-  public on(event: 'command-not-found', handler?: (commandName: string, ...args: any[]) => any) {
+  public on(event: string, handler: (commandName: string, ...args: any[]) => any) {
     if (event === 'command-not-found') {
-      this._notFoundHandler = handler;
+      this.notFoundHandler = handler;
       return undefined;
     } else {
       return this.registry.registerCommand(event, handler);
     }
   }
 
-  public call(commandName: string, ...args: any[]): Promise<any> {
-    const command = this._registry.getCommand(commandName);
-    try {
-      if (!command) {
-        if (this._notFoundHandler) {
-          const result = this._notFoundHandler(commandName, ...args);
-          return Promise.resolve(result);
-        } else {
-          throw new Error(`Command '${commandName}' not found`);
-        }
+  public async call<T>(commandName: string, ...args: any[]): Promise<T | Error> {
+    const command = this.registry.getCommand(commandName);
+    if (!command) {
+      if (this.notFoundHandler) {
+        return this.notFoundHandler(commandName, ...args);
       } else {
-        const result = command.handler(...args);
-        return Promise.resolve(result);
+        throw new Error(`Command '${commandName}' not found`);
       }
-    } catch (err) {
-      return Promise.reject(err);
+    } else {
+      return (await command(...args)) as T;
     }
   }
 
-  public remoteCall(commandName: string, ...args: any[]): Promise<any> {
+  public async remoteCall<T>(commandName: string, ...args: any[]): Promise<T> {
     const transactionId = uniqueId();
-    this._channel.send('call', commandName, transactionId, ...args);
-    return new Promise<any>((resolve, reject) => {
-      this._channel.setListener(transactionId, (success: boolean, ...responseArgs: any[]) => {
-        this._channel.clearListener(transactionId);
+    return new Promise<T>((resolve, reject) => {
+      // Wait for the response
+      this.ipcListener.once(transactionId, (event: Event, ...args) => {
+        const [success, ...responseArgs] = args;
         if (success) {
           const result = responseArgs.length ? responseArgs.shift() : undefined;
           resolve(result);
@@ -131,6 +90,35 @@ export class CommandServiceImpl extends DisposableImpl implements CommandService
           reject(responseArgs.shift());
         }
       });
+      if (this.ipcSender) {
+        this.ipcSender.send('remote-call', commandName, transactionId, ...args);
+      }
     });
+  }
+
+  protected onIpcMessage = async (event: Event, commandName: string, transactionId: string, ...args: any[]) => {
+    try {
+      let result = await this.call<any>(commandName, ...args);
+      result = Array.isArray(result) ? result : [result];
+      this.ipcSender.send(transactionId, true, ...result);
+    } catch (err) {
+      const message = err.message ? err.message : err;
+      this.ipcSender.send(transactionId, false, message);
+    }
+  };
+
+  private initializeListeners() {
+    this.ipcListener.on('remote-call', this.onIpcMessage);
+    if (process.type === 'browser' && !this.ipcSender) {
+      // We're in main and need the ipcSender from the
+      // render process.
+      this.ipcListener.once('ping', event => {
+        this.ipcSender = event.sender;
+      });
+    } else {
+      // this is the render process and the main
+      // process needs our ipcSender
+      this.ipcSender.send('ping');
+    }
   }
 }

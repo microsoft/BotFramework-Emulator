@@ -40,9 +40,8 @@ import * as styles from './recentBotsList.scss';
 
 export interface RecentBotsListProps {
   onBotSelected?: (bot: BotInfo) => void;
-  onDeleteBotClick?: (path: string) => Promise<any>;
+  onDeleteBotClick?: (path: string) => void;
   recentBots?: BotInfo[];
-  sendNotification?: (error: Error) => void;
   showContextMenuForBot?: (bot: BotInfo) => void;
 }
 
@@ -101,10 +100,6 @@ export class RecentBotsList extends Component<RecentBotsListProps, {}> {
   private onDeleteBotClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
     const { index } = event.currentTarget.dataset;
     const bot = this.props.recentBots[index];
-    try {
-      await this.props.onDeleteBotClick(bot.path);
-    } catch (e) {
-      this.props.sendNotification(e);
-    }
+    this.props.onDeleteBotClick(bot.path);
   };
 }

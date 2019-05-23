@@ -31,16 +31,45 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import { SharedConstants } from '@bfemulator/app-shared';
-import { BotConfigWithPathImpl, CommandRegistryImpl } from '@bfemulator/sdk-shared';
+import {
+  BotConfigWithPathImpl,
+  CommandRegistry,
+  CommandServiceImpl,
+  CommandServiceInstance,
+} from '@bfemulator/sdk-shared';
 import { combineReducers, createStore } from 'redux';
 
 import * as BotActions from '../data/action/botActions';
 import { bot } from '../data/reducer/bot';
 import { resources } from '../data/reducer/resourcesReducer';
-import { CommandServiceImpl } from '../platform/commands/commandServiceImpl';
 import { ActiveBotHelper } from '../ui/helpers/activeBotHelper';
 
-import { registerCommands } from './botCommands';
+import { BotCommands } from './botCommands';
+
+jest.mock('electron', () => ({
+  ipcMain: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+  ipcRenderer: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+}));
 
 const mockBotInfo = {
   path: 'some/path.bot',
@@ -74,24 +103,27 @@ jest.mock('../data/store', () => ({
     return mockStore;
   },
 }));
-jest.mock('../ui/dialogs/', () => ({}));
 
 describe('The bot commands', () => {
-  let registry: CommandRegistryImpl;
+  let commandService: CommandServiceImpl;
+  let registry: CommandRegistry;
   beforeAll(() => {
-    registry = new CommandRegistryImpl();
-    registerCommands(registry);
+    new BotCommands();
+    const decorator = CommandServiceInstance();
+    const descriptor = decorator({ descriptor: {} }, 'none') as any;
+    commandService = descriptor.descriptor.get();
+    registry = commandService.registry;
   });
 
-  it('should make the appropriate calls to switch bots', () => {
+  it('should make the appropriate calls to switch bots', async () => {
     const remoteCallArgs = [];
-    CommandServiceImpl.remoteCall = async (...args: any[]) => {
+    commandService.remoteCall = async (...args: any[]) => {
       remoteCallArgs.push(args);
-      return true;
+      return true as any;
     };
-    const spy = jest.spyOn(ActiveBotHelper, 'confirmAndSwitchBots');
-    const { handler } = registry.getCommand(SharedConstants.Commands.Bot.Switch);
-    handler({});
+    const spy = jest.spyOn(ActiveBotHelper, 'confirmAndSwitchBots').mockResolvedValueOnce(true);
+    const handler = registry.getCommand(SharedConstants.Commands.Bot.Switch);
+    await handler({});
     expect(spy).toHaveBeenCalledWith({});
     expect(remoteCallArgs[0][0]).toBe(SharedConstants.Commands.Telemetry.TrackEvent);
     expect(remoteCallArgs[0][1]).toBe('bot_open');
@@ -103,14 +135,14 @@ describe('The bot commands', () => {
 
   it('should make the appropriate calls to close a bot', () => {
     const spy = jest.spyOn(ActiveBotHelper, 'confirmAndCloseBot');
-    const { handler } = registry.getCommand(SharedConstants.Commands.Bot.Close);
+    const handler = registry.getCommand(SharedConstants.Commands.Bot.Close);
     handler();
     expect(spy).toHaveBeenCalled();
   });
 
   it('should make the appropriate calls to load a bot when the bot does not yet exist', () => {
     const createSpy = jest.spyOn(ActiveBotHelper, 'confirmAndCreateBot');
-    const { handler } = registry.getCommand(SharedConstants.Commands.Bot.Load);
+    const handler = registry.getCommand(SharedConstants.Commands.Bot.Load);
     handler({});
 
     expect(createSpy).toHaveBeenCalledWith({}, '');
@@ -118,7 +150,7 @@ describe('The bot commands', () => {
 
   it('should make the appropriate calls to load a bot when the bot exists', () => {
     const switchSpy = jest.spyOn(ActiveBotHelper, 'confirmAndSwitchBots');
-    const { handler } = registry.getCommand(SharedConstants.Commands.Bot.Load);
+    const handler = registry.getCommand(SharedConstants.Commands.Bot.Load);
     handler({ path: 'some/path.bot' });
 
     expect(switchSpy).toHaveBeenCalledWith({ path: 'some/path.bot' });
@@ -126,8 +158,8 @@ describe('The bot commands', () => {
 
   it('should make the appropriate calls to sync the bot list', () => {
     const dispatchSpy = jest.spyOn(mockStore, 'dispatch');
-    const remoteCallSpy = jest.spyOn(CommandServiceImpl, 'remoteCall');
-    const { handler } = registry.getCommand(SharedConstants.Commands.Bot.SyncBotList);
+    const remoteCallSpy = jest.spyOn(commandService, 'remoteCall');
+    const handler = registry.getCommand(SharedConstants.Commands.Bot.SyncBotList);
     handler([{}]);
 
     expect(dispatchSpy).toHaveBeenCalledWith(BotActions.loadBotInfos([{}]));
@@ -136,11 +168,11 @@ describe('The bot commands', () => {
 
   it('should make the appropriate call when setting the active bot', async () => {
     const remoteCallArgs = [];
-    CommandServiceImpl.remoteCall = async (...args: any[]) => {
+    commandService.remoteCall = async (...args: any[]) => {
       remoteCallArgs.push(args);
-      return true;
+      return true as any;
     };
-    const { handler } = registry.getCommand(SharedConstants.Commands.Bot.SetActive);
+    const handler = registry.getCommand(SharedConstants.Commands.Bot.SetActive);
     await handler(mockBot, mockBotInfo.path);
     const state: any = mockStore.getState();
     expect(state.bot.activeBot).toEqual(mockBot);
@@ -149,10 +181,8 @@ describe('The bot commands', () => {
   });
 
   it('should dispatch the appropriate actions when updating the list of transcript files on disc', () => {
-    const { handler: transcriptFilesUpdated } = registry.getCommand(
-      SharedConstants.Commands.Bot.TranscriptFilesUpdated
-    );
-    const { handler: transcriptPathUpdated } = registry.getCommand(SharedConstants.Commands.Bot.TranscriptsPathUpdated);
+    const transcriptFilesUpdated = registry.getCommand(SharedConstants.Commands.Bot.TranscriptFilesUpdated);
+    const transcriptPathUpdated = registry.getCommand(SharedConstants.Commands.Bot.TranscriptsPathUpdated);
     transcriptFilesUpdated([{ path: 'transcript/path.transcript' }]);
     transcriptPathUpdated('transcript/');
     const state: any = mockStore.getState();
@@ -161,8 +191,8 @@ describe('The bot commands', () => {
   });
 
   it('should dispatch the appropriate actions when updating the list of chat files on disc', () => {
-    const { handler: chatFilesUpdated } = registry.getCommand(SharedConstants.Commands.Bot.ChatFilesUpdated);
-    const { handler: chatPathUpdated } = registry.getCommand(SharedConstants.Commands.Bot.ChatsPathUpdated);
+    const chatFilesUpdated = registry.getCommand(SharedConstants.Commands.Bot.ChatFilesUpdated);
+    const chatPathUpdated = registry.getCommand(SharedConstants.Commands.Bot.ChatsPathUpdated);
     chatFilesUpdated([{ path: 'chat/path.chat' }]);
     chatPathUpdated('chat/');
     const state: any = mockStore.getState();

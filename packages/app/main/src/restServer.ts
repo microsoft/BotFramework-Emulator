@@ -37,9 +37,10 @@ import { LogLevel, networkRequestItem, networkResponseItem, textItem } from '@bf
 import { IEndpointService } from 'botframework-config';
 import { createServer, Request, Response, Route, Server } from 'restify';
 import CORS from 'restify-cors-middleware';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { Emulator } from './emulator';
-import { mainWindow } from './main';
+import { emulatorApplication } from './main';
 import { getStore } from './settingsData/store';
 
 interface ConversationAwareRequest extends Request {
@@ -48,6 +49,8 @@ interface ConversationAwareRequest extends Request {
 }
 
 export class RestServer {
+  @CommandServiceInstance()
+  private commandService: CommandServiceImpl;
   private readonly router: Server;
 
   // Late binding
@@ -56,7 +59,7 @@ export class RestServer {
     if (!this._botEmulator) {
       this._botEmulator = new BotEmulator(botUrl => Emulator.getInstance().ngrok.getServiceUrl(botUrl), {
         fetch,
-        loggerOrLogService: mainWindow.logService,
+        loggerOrLogService: emulatorApplication.mainWindow.logService,
       });
       this._botEmulator.facilities.conversations.on('new', this.onNewConversation);
     }
@@ -122,7 +125,7 @@ export class RestServer {
       level = LogLevel.Error;
     }
 
-    mainWindow.logService.logToChat(
+    emulatorApplication.mainWindow.logService.logToChat(
       conversationId,
       networkRequestItem(facility, (req as any)._body, req.headers, req.method, req.url),
       networkResponseItem((res as any)._data, res.headers, res.statusCode, res.statusMessage, req.url),
@@ -149,7 +152,7 @@ export class RestServer {
     } = getStore().getState();
     conversation.debugMode = debugMode;
 
-    await mainWindow.commandService.remoteCall(
+    await this.commandService.remoteCall(
       SharedConstants.Commands.Emulator.NewLiveChat,
       {
         id,

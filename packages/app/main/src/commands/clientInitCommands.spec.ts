@@ -31,15 +31,19 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import { SettingsImpl, SharedConstants } from '@bfemulator/app-shared';
-import { BotConfigWithPathImpl, CommandRegistryImpl } from '@bfemulator/sdk-shared';
+import {
+  BotConfigWithPathImpl,
+  CommandRegistry,
+  CommandServiceImpl,
+  CommandServiceInstance,
+} from '@bfemulator/sdk-shared';
 import { combineReducers, createStore } from 'redux';
 
 import { bot } from '../data/reducers/bot';
 import * as store from '../data/store';
-import { mainWindow } from '../main';
 import reducers from '../settingsData/reducers';
 
-import { registerCommands } from './clientInitCommands';
+import { ClientInitCommands } from './clientInitCommands';
 
 let mockSettingsStore;
 const mockCreateStore = () => createStore(reducers);
@@ -77,12 +81,38 @@ jest.mock('../emulator', () => ({
 
 jest.mock('../globals', () => ({
   getGlobal: () => ({ storagepath: '' }),
+  setGlobal: () => void 0,
 }));
 
 jest.mock('electron', () => ({
   app: {
     getPath: () => './',
   },
+  dialog: {
+    showErrorBox: () => void 0,
+  },
+  ipcMain: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+  ipcRenderer: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
 }));
 
 jest.mock('mkdirp', () => ({
@@ -106,27 +136,22 @@ let mockStore;
   return mockStore || (mockStore = createStore(combineReducers({ bot })));
 };
 
-jest.mock('../main', () => ({
-  mainWindow: {
-    commandService: {
-      call: async () => true,
-      remoteCall: async () => true,
-    },
-  },
-}));
-
 describe('The clientInitCommands', () => {
-  let registry: CommandRegistryImpl;
+  let registry: CommandRegistry;
+  let commandService: CommandServiceImpl;
   beforeAll(() => {
-    registry = new CommandRegistryImpl();
-    registerCommands(registry);
+    new ClientInitCommands();
+    const decorator = CommandServiceInstance();
+    const descriptor = decorator({ descriptor: {} }, 'none') as any;
+    commandService = descriptor.descriptor.get();
+    registry = commandService.registry;
   });
 
   it('should retrieve the bots from disk when the client is done loading', async () => {
-    const command = registry.getCommand(SharedConstants.Commands.ClientInit.Loaded).handler;
+    const command = registry.getCommand(SharedConstants.Commands.ClientInit.Loaded);
 
     const localCommandArgs = [];
-    (mainWindow.commandService as any).call = (...args) => {
+    (commandService as any).call = (...args) => {
       localCommandArgs.push(args);
     };
 
@@ -156,10 +181,10 @@ describe('The clientInitCommands', () => {
 
     const remoteCommandArgs = [];
     const localCommandArgs = [];
-    (mainWindow.commandService as any).remoteCall = (...args) => {
+    (commandService as any).remoteCall = (...args) => {
       remoteCommandArgs.push(args);
     };
-    (mainWindow.commandService as any).call = (...args: any[]) => {
+    (commandService as any).call = (...args: any[]) => {
       localCommandArgs.push(args);
       if (args[0] === SharedConstants.Commands.Bot.Open) {
         return mockBot;
@@ -167,7 +192,7 @@ describe('The clientInitCommands', () => {
       return null;
     };
 
-    const command = registry.getCommand(SharedConstants.Commands.ClientInit.PostWelcomeScreen).handler;
+    const command = registry.getCommand(SharedConstants.Commands.ClientInit.PostWelcomeScreen);
     await command();
     expect(localCommandArgs).toEqual([
       ['menu:update-file-menu'],

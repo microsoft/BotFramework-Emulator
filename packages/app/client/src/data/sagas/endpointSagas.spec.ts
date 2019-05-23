@@ -34,11 +34,11 @@ import { applyMiddleware, combineReducers, createStore } from 'redux';
 import sagaMiddlewareFactory from 'redux-saga';
 import { Component } from 'react';
 import { SharedConstants } from '@bfemulator/app-shared';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { bot } from '../reducer/bot';
 import { loadBotInfos, setActiveBot } from '../action/botActions';
 import { launchEndpointEditor, openEndpointExplorerContextMenu } from '../action/endpointServiceActions';
-import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { DialogService } from '../../ui/dialogs/service';
 
 import { endpointSagas } from './endpointSagas';
@@ -75,32 +75,46 @@ const mockBot = JSON.parse(`{
   }]
 }`);
 
-jest.mock('../../ui/dialogs', () => ({
-  AzureLoginPromptDialogContainer: function mock() {
-    return undefined;
-  },
-  AzureLoginSuccessDialogContainer: function mock() {
-    return undefined;
-  },
-  BotCreationDialog: function mock() {
-    return undefined;
-  },
-  DialogService: {
-    showDialog: () => Promise.resolve(mockBot.services),
-  },
-  SecretPromptDialog: function mock() {
-    return undefined;
-  },
+jest.mock('electron', () => ({
+  ipcMain: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+  ipcRenderer: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
 }));
 
 describe('The endpoint sagas', () => {
+  let commandService: CommandServiceImpl;
+  beforeAll(() => {
+    const decorator = CommandServiceInstance();
+    const descriptor = decorator({ descriptor: {} }, 'none') as any;
+    commandService = descriptor.descriptor.get();
+  });
+
   beforeEach(() => {
     mockStore.dispatch(loadBotInfos([mockBot]));
     mockStore.dispatch(setActiveBot(mockBot));
   });
 
   it('should launch the endpoint editor and execute a command to save the edited services', async () => {
-    const remoteCallSpy = jest.spyOn(CommandServiceImpl, 'remoteCall');
+    const remoteCallSpy = jest.spyOn(commandService, 'remoteCall');
     const dialogServiceSpy = jest.spyOn(DialogService, 'showDialog').mockResolvedValue(mockBot.services);
     await mockStore.dispatch(launchEndpointEditor(mockComponentClass, mockBot.services[0]));
     const { AddOrUpdateService } = SharedConstants.Commands.Bot;
@@ -121,7 +135,7 @@ describe('The endpoint sagas', () => {
     const { DisplayContextMenu, ShowMessageBox } = SharedConstants.Commands.Electron;
     const { NewLiveChat } = SharedConstants.Commands.Emulator;
     it('should launch the endpoint editor when that menu option is chosen', () => {
-      const commandServiceSpy = jest.spyOn(CommandServiceImpl, 'remoteCall').mockResolvedValue({ id: 'edit' });
+      const commandServiceSpy = jest.spyOn(commandService, 'remoteCall').mockResolvedValue({ id: 'edit' });
       const dialogServiceSpy = jest.spyOn(DialogService, 'showDialog').mockResolvedValue(mockBot.services);
       mockStore.dispatch(openEndpointExplorerContextMenu(mockComponentClass, mockBot.services[0]));
 
@@ -132,10 +146,8 @@ describe('The endpoint sagas', () => {
     });
 
     it('should open a deep link when that menu option is chosen', async () => {
-      const commandServiceRemoteCallSpy = jest
-        .spyOn(CommandServiceImpl, 'remoteCall')
-        .mockResolvedValue({ id: 'open' });
-      const commandServiceCallSpy = jest.spyOn(CommandServiceImpl, 'call').mockResolvedValue(true);
+      const commandServiceRemoteCallSpy = jest.spyOn(commandService, 'remoteCall').mockResolvedValue({ id: 'open' });
+      const commandServiceCallSpy = jest.spyOn(commandService, 'call').mockResolvedValue(true);
 
       await mockStore.dispatch(openEndpointExplorerContextMenu(mockComponentClass, mockBot.services[0]));
       expect(commandServiceRemoteCallSpy).toHaveBeenCalledWith(DisplayContextMenu, menuItems);
@@ -144,12 +156,12 @@ describe('The endpoint sagas', () => {
 
     it('should forget the service when that menu item is chosen', async () => {
       const remoteCallArgs = [];
-      CommandServiceImpl.remoteCall = async (commandName, ...args) => {
+      commandService.remoteCall = async (commandName, ...args) => {
         remoteCallArgs.push({ commandName, args: args });
         if (commandName === DisplayContextMenu) {
           return { id: 'forget' };
         }
-        return true;
+        return true as any;
       };
       const { RemoveService } = SharedConstants.Commands.Bot;
       await mockStore.dispatch(openEndpointExplorerContextMenu(mockComponentClass, mockBot.services[0]));

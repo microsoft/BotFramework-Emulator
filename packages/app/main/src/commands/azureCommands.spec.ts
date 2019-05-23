@@ -31,14 +31,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import { SharedConstants } from '@bfemulator/app-shared';
-import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 import { combineReducers, createStore } from 'redux';
+import { CommandRegistry, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { AzureAuthWorkflowService } from '../services/azureAuthWorkflowService';
 import { azureLoggedInUserChanged } from '../settingsData/actions/azureAuthActions';
 import { azureAuth } from '../settingsData/reducers/azureAuthReducer';
 
-import { registerCommands } from './azureCommands';
+import { AzureCommands } from './azureCommands';
+import { ElectronCommands } from './electronCommands';
 
 const mockStore = createStore(combineReducers({ azure: azureAuth }));
 const mockArmToken = 'bm90aGluZw==.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds';
@@ -56,13 +57,7 @@ jest.mock('../services/azureAuthWorkflowService', () => ({
   },
 }));
 
-jest.mock('../main', () => ({
-  mainWindow: {
-    commandService: {
-      call: () => Promise.resolve(false),
-    },
-  },
-}));
+jest.mock('../main', () => ({}));
 
 jest.mock('../settingsData/store', () => ({
   getStore: () => mockStore,
@@ -77,6 +72,9 @@ jest.mock('../emulator', () => ({
 }));
 
 jest.mock('electron', () => ({
+  Menu: {
+    getApplicationMenu: () => ({ getMenuItemById: () => ({}) }),
+  },
   app: {
     getPath: () => 'not/there',
   },
@@ -90,18 +88,45 @@ jest.mock('electron', () => ({
       clearStorageData: (options, cb) => cb(true),
     },
   },
+  ipcMain: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+  ipcRenderer: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
 }));
 
 describe('The azureCommand,', () => {
-  let registry: CommandRegistryImpl;
+  let registry: CommandRegistry;
+  let commandService: CommandServiceImpl;
   beforeAll(() => {
-    registry = new CommandRegistryImpl();
-    registerCommands(registry);
+    new AzureCommands();
+    new ElectronCommands();
+    const decorator = CommandServiceInstance();
+    const descriptor = decorator({ descriptor: {} }, 'none') as any;
+    commandService = descriptor.descriptor.get();
+    registry = commandService.registry;
   });
 
   describe(`${SharedConstants.Commands.Azure.RetrieveArmToken}, `, () => {
     it('should retrieve the arm token and the user email address and place it in the store', async () => {
-      const result = await registry.getCommand(SharedConstants.Commands.Azure.RetrieveArmToken).handler();
+      const result = await registry.getCommand(SharedConstants.Commands.Azure.RetrieveArmToken)();
       expect(result.access_token).toBe(mockArmToken);
       expect((mockStore.getState() as any).azure.signedInUser).toBe('glasgow@scotland.com');
     });
@@ -110,7 +135,7 @@ describe('The azureCommand,', () => {
       AzureAuthWorkflowService.retrieveAuthToken = function*() {
         yield false;
       } as any;
-      const result = await registry.getCommand(SharedConstants.Commands.Azure.RetrieveArmToken).handler();
+      const result = await registry.getCommand(SharedConstants.Commands.Azure.RetrieveArmToken)();
       expect(result).toBe(false);
     });
   });
@@ -119,7 +144,7 @@ describe('The azureCommand,', () => {
     it('should update the store with an empty string for the signed in user when sign out is successful', async () => {
       mockStore.dispatch(azureLoggedInUserChanged('none@none.com'));
       expect((mockStore.getState() as any).azure.signedInUser).toBe('none@none.com');
-      const result = await registry.getCommand(SharedConstants.Commands.Azure.SignUserOutOfAzure).handler();
+      const result = await registry.getCommand(SharedConstants.Commands.Azure.SignUserOutOfAzure)();
       expect(result).toBe(true);
       expect((mockStore.getState() as any).azure.signedInUser).toBe('');
     });

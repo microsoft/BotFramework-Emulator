@@ -34,6 +34,7 @@
 import { mount } from 'enzyme';
 import * as React from 'react';
 import { combineReducers, createStore } from 'redux';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import * as EditorActions from '../../../data/action/editorActions';
 import {
@@ -47,39 +48,52 @@ import { framework } from '../../../data/reducer/frameworkSettingsReducer';
 import { AppSettingsEditor } from './appSettingsEditor';
 import { AppSettingsEditorContainer } from './appSettingsEditorConainer';
 
-jest.mock('./appSettingsEditor.scss', () => ({}));
-jest.mock('../../layout/genericDocument.scss', () => ({}));
-jest.mock(
-  '../../dialogs/',
-  () =>
-    new Proxy(
-      {},
-      {
-        get(): any {
-          return {};
-        },
-      }
-    )
-);
-const mockCallsMade = [];
-const mockRemoteCallsMade = [];
-jest.mock('../../../platform/commands/commandServiceImpl', () => ({
-  CommandServiceImpl: {
-    call: (commandName, ...args) => {
-      mockCallsMade.push({ commandName, args });
-      return Promise.resolve();
-    },
-    remoteCall: (commandName, ...args) => {
-      mockRemoteCallsMade.push({ commandName, args });
-      return Promise.resolve('hai!');
-    },
-  },
+jest.mock('electron', () => ({
+  ipcMain: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+  ipcRenderer: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
 }));
+
 describe('The AppSettingsEditorContainer', () => {
   let instance: AppSettingsEditor;
   let node;
   let mockDispatch;
   let mockStore;
+  let commandService: CommandServiceImpl;
+  const mockCallsMade = [];
+  const mockRemoteCallsMade = [];
+  beforeAll(() => {
+    const decorator = CommandServiceInstance();
+    const descriptor = decorator({ descriptor: {} }, 'none') as any;
+    commandService = descriptor.descriptor.get();
+    commandService.call = (commandName, ...args) => {
+      mockCallsMade.push({ commandName, args });
+      return Promise.resolve(true) as any;
+    };
+    commandService.remoteCall = (commandName, ...args) => {
+      mockRemoteCallsMade.push({ commandName, args });
+      return Promise.resolve('hai!') as any;
+    };
+  });
   beforeEach(() => {
     mockStore = createStore(combineReducers({ framework }));
     mockStore.dispatch(
@@ -130,23 +144,19 @@ describe('The AppSettingsEditorContainer', () => {
   });
 
   it('should call a remote command to open a browse window when "onClickBrowse" is called', async () => {
-    const dispatchSpy = jest.spyOn(mockStore, 'dispatch');
-    await (instance as any).onClickBrowse();
-    expect(mockRemoteCallsMade[0]).toEqual({
-      args: [
-        {
-          buttonLabel: 'Select ngrok',
-          properties: ['openFile'],
-          title: 'Browse for ngrok',
-        },
-      ],
-      commandName: 'shell:showExplorer-open-dialog',
+    const dispatchSpy = jest.spyOn(mockStore, 'dispatch').mockImplementation(action => {
+      if (action.payload.resolver) {
+        action.payload.resolver('some/path');
+      }
     });
+    await (instance as any).onClickBrowse();
 
-    expect(dispatchSpy).toHaveBeenCalledWith({
+    expect(dispatchSpy).toHaveBeenLastCalledWith({
       payload: { dirty: true, documentId: undefined },
       type: 'EDITOR/SET_DIRTY_FLAG',
     });
+
+    expect(instance.state.ngrokPath).toBe('some/path');
   });
 
   it('should discard the changes when "discardChanges" is called', () => {

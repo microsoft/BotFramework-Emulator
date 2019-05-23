@@ -31,14 +31,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { BotInfo, newNotification, SharedConstants } from '@bfemulator/app-shared';
+import { BotInfo, SharedConstants } from '@bfemulator/app-shared';
 import { connect } from 'react-redux';
 import { Action } from 'redux';
 
-import { beginAdd } from '../../../data/action/notificationActions';
 import { openContextMenuForBot } from '../../../data/action/welcomePageActions';
 import { RootState } from '../../../data/store';
-import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
+import { executeCommand } from '../../../data/action/commandAction';
 
 import { RecentBotsList, RecentBotsListProps } from './recentBotsList';
 
@@ -51,10 +50,8 @@ const mapStateToProps = (state: RootState, ownProps: { [propName: string]: any }
 
 const mapDispatchToProps = (dispatch: (action: Action) => void): RecentBotsListProps => {
   return {
-    onDeleteBotClick: (path: string): Promise<any> =>
-      CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.RemoveFromBotList, path),
-    sendNotification: (error: Error) =>
-      dispatch(beginAdd(newNotification(`An Error occurred on the Recent Bots List: ${error}`))),
+    onDeleteBotClick: (path: string): void =>
+      dispatch(executeCommand(true, SharedConstants.Commands.Bot.RemoveFromBotList, null, path)),
     showContextMenuForBot: (bot: BotInfo): void => dispatch(openContextMenuForBot(bot)),
   };
 };

@@ -60,7 +60,7 @@ export interface ActiveInspectorChangedPayload {
   inspectorWebView: HTMLWebViewElement;
 }
 
-export interface NewChatPayload {
+export interface NewChatPayload extends ClearLogPayload {
   [propName: string]: any;
 
   documentId: string;
@@ -97,6 +97,7 @@ export interface AppendLogPayload {
 
 export interface ClearLogPayload {
   documentId: string;
+  resolver?: Function;
 }
 
 export interface SetInspectorObjectsPayload {
@@ -179,7 +180,12 @@ export function updatePendingSpeechTokenRetrieval(pending: boolean): ChatAction<
   };
 }
 
-export function newChat(documentId: string, mode: ChatMode, additionalData?: object): ChatAction<NewChatPayload> {
+export function newChat(
+  documentId: string,
+  mode: ChatMode,
+  additionalData?: object,
+  resolver?: Function
+): ChatAction<NewChatPayload> {
   return {
     type: ChatActions.newChat,
     payload: {
@@ -256,11 +262,12 @@ export function appendToLog(documentId: string, entry: LogEntry): ChatAction<App
   };
 }
 
-export function clearLog(documentId: string): ChatAction<ClearLogPayload> {
+export function clearLog(documentId: string, resolver?: Function): ChatAction<ClearLogPayload> {
   return {
     type: ChatActions.clearLog,
     payload: {
       documentId,
+      resolver,
     },
   };
 }

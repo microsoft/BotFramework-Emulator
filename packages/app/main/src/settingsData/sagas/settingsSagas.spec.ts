@@ -34,10 +34,10 @@ import '../../fetchProxy';
 import { DebugMode, Settings, settingsDefault, SharedConstants } from '@bfemulator/app-shared';
 import { applyMiddleware, createStore, Store } from 'redux';
 import sagaMiddlewareFactory from 'redux-saga';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import reducers from '../reducers';
 import { debugModeChanged, rememberTheme } from '../actions/windowStateActions';
-import { mainWindow } from '../../main';
 
 import { settingsSagas } from './settingsSagas';
 
@@ -67,21 +67,42 @@ jest.mock('../store', () => ({
   },
 }));
 
-jest.mock('../../main', () => ({
-  mainWindow: {
-    commandService: {
-      call: async => true,
-      remoteCall: async => true,
-    },
-  },
-}));
 const sagaMiddleWare = sagaMiddlewareFactory();
 
 jest.mock('electron', () => ({
   app: { getAppPath: () => '' },
+  ipcMain: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+  ipcRenderer: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
 }));
 
 describe('The SettingsSagas', () => {
+  let commandService: CommandServiceImpl;
+  beforeAll(() => {
+    const decorator = CommandServiceInstance();
+    const descriptor = decorator({ descriptor: {} }, 'none') as any;
+    commandService = descriptor.descriptor.get();
+  });
+
   beforeEach(() => {
     mockStore = createStore(
       reducers,
@@ -95,14 +116,14 @@ describe('The SettingsSagas', () => {
   });
 
   it('should remember a theme change and dispatch', () => {
-    const commandServiceSpy = jest.spyOn(mainWindow.commandService, 'remoteCall');
+    const commandServiceSpy = jest.spyOn(commandService, 'remoteCall');
     mockStore.dispatch(rememberTheme('myTheme'));
     expect(commandServiceSpy).toHaveBeenCalledWith(SharedConstants.Commands.UI.SwitchTheme, 'myTheme', 'myTheme.scss');
   });
 
   it('should orchestrate the changes needed when switching debug modes', async () => {
-    const localCommandServiceSpy = jest.spyOn(mainWindow.commandService, 'call').mockResolvedValue(true);
-    const remoteCommandServiceSpy = jest.spyOn(mainWindow.commandService, 'remoteCall');
+    const localCommandServiceSpy = jest.spyOn(commandService, 'call').mockResolvedValue(true);
+    const remoteCommandServiceSpy = jest.spyOn(commandService, 'remoteCall').mockResolvedValue(true);
 
     mockStore.dispatch(debugModeChanged(DebugMode.Sidecar));
     expect(localCommandServiceSpy).toHaveBeenCalledWith(

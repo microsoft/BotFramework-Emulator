@@ -33,11 +33,12 @@
 
 import { SharedConstants } from '@bfemulator/app-shared';
 import { call, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { EditorActions, removeDocPendingChange } from '../action/editorActions';
 
-import { checkActiveDocForPendingChanges, editorSagas, promptUserToReloadDocument } from './editorSagas';
-import { refreshConversationMenu, editorSelector } from './sharedSagas';
+import { editorSagas, EditorSagas } from './editorSagas';
+import { SharedSagas, editorSelector } from './sharedSagas';
 
 jest.mock('../store', () => ({
   get store() {
@@ -45,43 +46,63 @@ jest.mock('../store', () => ({
   },
 }));
 
-jest.mock('../../ui/dialogs', () => ({}));
+jest.mock('electron', () => ({
+  ipcMain: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+  ipcRenderer: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+}));
 
-const mockSharedConstants = SharedConstants;
 let mockRemoteCommandsCalled = [];
 let mockLocalCommandsCalled = [];
-const mockMessageResponse = false;
 
-jest.mock('../../platform/commands/commandServiceImpl', () => ({
-  CommandServiceImpl: {
-    call: async (commandName: string, ...args: any[]) => {
+describe('The Editor Sagas', () => {
+  let commandService: CommandServiceImpl;
+  beforeAll(() => {
+    const decorator = CommandServiceInstance();
+    const descriptor = decorator({ descriptor: {} }, 'none') as any;
+    commandService = descriptor.descriptor.get();
+    commandService.call = async (commandName: string, ...args: any[]) => {
       mockLocalCommandsCalled.push({ commandName, args: args });
-    },
-    remoteCall: async (commandName: string, ...args: any[]) => {
+      return true as any;
+    };
+    commandService.remoteCall = async (commandName: string, ...args: any[]) => {
       mockRemoteCommandsCalled.push({ commandName, args: args });
 
       switch (commandName) {
-        case mockSharedConstants.Commands.Electron.ShowMessageBox:
-          if (mockMessageResponse) {
-            return Promise.resolve(true);
-          } else {
-            return Promise.resolve(false);
-          }
+        case SharedConstants.Commands.Electron.ShowMessageBox:
+          return Promise.resolve(false);
         default:
-          return Promise.resolve(true);
+          return Promise.resolve(true) as any;
       }
-    },
-  },
-}));
+    };
+  });
 
-describe('The Editor Sagas', () => {
   beforeEach(() => {
     mockRemoteCommandsCalled = [];
     mockLocalCommandsCalled = [];
   });
 
   it('should check the active doc for pending changes', () => {
-    const gen = checkActiveDocForPendingChanges();
+    const gen = EditorSagas.checkActiveDocForPendingChanges();
     const stateData = gen.next().value;
 
     expect(stateData).toEqual(select(editorSelector));
@@ -98,7 +119,7 @@ describe('The Editor Sagas', () => {
     };
     // should return the inner generator that we delegate to
     const innerGen = gen.next(mockEditorState).value;
-    expect(innerGen).toEqual(call(promptUserToReloadDocument, mockActiveDocId));
+    expect(innerGen).toEqual(call(EditorSagas.promptUserToReloadDocument, mockActiveDocId));
 
     expect(gen.next().done).toBe(true);
   });
@@ -110,7 +131,7 @@ describe('The Editor Sagas', () => {
       title: 'File change detected',
       message: 'We have detected a change in this file on disk. Would you like to reload it in the Emulator?',
     };
-    const gen = promptUserToReloadDocument(mockChatFileName);
+    const gen = EditorSagas.promptUserToReloadDocument(mockChatFileName);
 
     gen.next();
 
@@ -138,7 +159,7 @@ describe('The Editor Sagas', () => {
       title: 'File change detected',
       message: 'We have detected a change in this file on disk. Would you like to reload it in the Emulator?',
     };
-    const gen = promptUserToReloadDocument(mockTranscriptFile);
+    const gen = EditorSagas.promptUserToReloadDocument(mockTranscriptFile);
 
     gen.next();
 
@@ -170,7 +191,7 @@ describe('The Editor Sagas', () => {
           EditorActions.setActiveTab,
           EditorActions.open,
         ],
-        checkActiveDocForPendingChanges
+        EditorSagas.checkActiveDocForPendingChanges
       )
     );
 
@@ -179,7 +200,7 @@ describe('The Editor Sagas', () => {
     expect(refreshConversationMenuYield).toEqual(
       takeLatest(
         [EditorActions.close, EditorActions.open, EditorActions.setActiveEditor, EditorActions.setActiveTab],
-        refreshConversationMenu
+        SharedSagas.refreshConversationMenu
       )
     );
 

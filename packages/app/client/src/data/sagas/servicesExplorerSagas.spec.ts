@@ -35,8 +35,9 @@ import { ServiceTypes } from 'botframework-config/lib/schema';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import sagaMiddlewareFactory from 'redux-saga';
 import { call } from 'redux-saga/effects';
+import { CommandServiceInstance } from '@bfemulator/sdk-shared';
+import { CommandServiceImpl } from '@bfemulator/sdk-shared';
 
-import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import {
   AzureLoginFailedDialogContainer,
   AzureLoginSuccessDialogContainer,
@@ -61,7 +62,7 @@ import {
 import { azureAuth } from '../reducer/azureAuthReducer';
 import { bot } from '../reducer/bot';
 
-import { launchExternalLink as launchExternalLinkSaga, servicesExplorerSagas } from './servicesExplorerSagas';
+import { ServicesExplorerSagas, servicesExplorerSagas } from './servicesExplorerSagas';
 
 const sagaMiddleWare = sagaMiddlewareFactory();
 const mockStore = createStore(combineReducers({ azureAuth, bot }), {}, applyMiddleware(sagaMiddleWare));
@@ -69,66 +70,62 @@ sagaMiddleWare.run(servicesExplorerSagas);
 
 const mockArmToken = 'bm90aGluZw==.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds';
 
-jest.mock('../../ui/dialogs', () => ({
-  AzureLoginPromptDialogContainer: function mock() {
-    return undefined;
-  },
-  AzureLoginSuccessDialogContainer: function mock() {
-    return undefined;
-  },
-  BotCreationDialog: function mock() {
-    return undefined;
-  },
-  DialogService: {
-    showDialog: () => Promise.resolve(true),
-  },
-  SecretPromptDialog: function mock() {
-    return undefined;
-  },
-}));
-
-jest.mock('../../ui/shell/explorer/servicesExplorer/connectedServiceEditor', () => ({
-  ConnectedServiceEditorContainer: function mock() {
-    return undefined;
-  },
-}));
-
-jest.mock('../../ui/shell/explorer/servicesExplorer', () => ({
-  ConnectedServicePicker: function mock() {
-    return undefined;
-  },
-}));
-
 jest.mock('../store', () => ({
   get store() {
     return mockStore;
   },
 }));
 
+jest.mock('electron', () => ({
+  ipcMain: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+  ipcRenderer: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+}));
+
 jest.mock('./azureAuthSaga', () => ({
-  getArmToken: function*() {
-    // eslint-disable-next-line typescript/camelcase
-    yield { access_token: mockArmToken };
+  AzureAuthSaga: {
+    getArmToken: function*() {
+      // eslint-disable-next-line typescript/camelcase
+      yield { access_token: mockArmToken };
+    },
   },
 }));
-
-jest.mock('../../platform/commands/commandServiceImpl', () => ({
-  CommandServiceImpl: {
-    remoteCall: () => Promise.resolve(true),
-  },
-}));
-
-CommandServiceImpl.remoteCall = async function(type: string) {
-  switch (type) {
-    case SharedConstants.Commands.ConnectedService.GetConnectedServicesByType:
-      return { services: [{ id: 'a luis service' }], code: ServiceCodes.OK };
-
-    default:
-      return null;
-  }
-};
 
 describe('The ServiceExplorerSagas', () => {
+  let commandService: CommandServiceImpl;
+  beforeAll(() => {
+    const decorator = CommandServiceInstance();
+    const descriptor = decorator({ descriptor: {} }, 'none') as any;
+    commandService = descriptor.descriptor.get();
+    commandService.remoteCall = (type: string) => {
+      switch (type) {
+        case SharedConstants.Commands.ConnectedService.GetConnectedServicesByType:
+          return { services: [{ id: 'a luis service' }], code: ServiceCodes.OK };
+
+        default:
+          return null as any;
+      }
+    };
+  });
   describe(' launchConnectedServicePicker happy path', () => {
     let launchConnectedServicePickerGen;
     let payload: ConnectedServicePickerPayload;
@@ -218,11 +215,11 @@ describe('The ServiceExplorerSagas', () => {
       const botConfig = it.next(newModels).value.SELECT.selector(mockStore.getState());
       let _type;
       let _args;
-      CommandServiceImpl.remoteCall = function(type: string, ...args: any[]) {
+      commandService.remoteCall = function(type: string, ...args: any[]) {
         _type = type;
         _args = args;
         return Promise.resolve(true);
-      };
+      } as any;
 
       const result = await it.next(botConfig).value;
       expect(result).toBeTruthy();
@@ -257,7 +254,7 @@ describe('The ServiceExplorerSagas', () => {
     });
 
     it('should open the service deep link when the "open" menu item is selected', async () => {
-      CommandServiceImpl.remoteCall = async () => ({ id: 'open' });
+      commandService.remoteCall = async () => ({ id: 'open' } as any);
 
       const it = contextMenuGen(action);
       const result = await it.next().value;
@@ -273,14 +270,14 @@ describe('The ServiceExplorerSagas', () => {
     });
 
     it('should open the luis editor when the "edit" item is selected', async () => {
-      CommandServiceImpl.remoteCall = async () => ({ id: 'edit' });
+      commandService.remoteCall = async () => ({ id: 'edit' } as any);
 
       const it = contextMenuGen(action);
       const result = await it.next().value;
       expect(result.id).toBe('edit');
 
       DialogService.showDialog = () => Promise.resolve(mockService);
-      CommandServiceImpl.remoteCall = () => Promise.resolve(true);
+      commandService.remoteCall = () => Promise.resolve(true) as any;
 
       const responseFromEditor = await it.next(result).value;
       expect(responseFromEditor).toEqual(mockService);
@@ -290,17 +287,17 @@ describe('The ServiceExplorerSagas', () => {
     });
 
     it('should ask the main process to remove the selected luis service from the active bot', async () => {
-      CommandServiceImpl.remoteCall = async () => ({ id: 'forget' });
+      commandService.remoteCall = async () => ({ id: 'forget' } as any);
       const it = contextMenuGen(action);
       let result = await it.next().value;
       expect(result.id).toBe('forget');
 
       let _type;
       let _args;
-      CommandServiceImpl.remoteCall = async (type: string, ...args: any[]) => {
+      commandService.remoteCall = async (type: string, ...args: any[]) => {
         _type = type;
         _args = args;
-        return true;
+        return true as any;
       };
 
       result = await it.next(result).value;
@@ -321,7 +318,7 @@ describe('The ServiceExplorerSagas', () => {
     });
 
     it('should ask the main process to remove the selected QnA Maker service from the active bot', async () => {
-      CommandServiceImpl.remoteCall = async () => ({ id: 'forget' });
+      commandService.remoteCall = async () => ({ id: 'forget' } as any);
 
       action.payload.connectedService = JSON.parse(`{
           "type": "qna",
@@ -339,10 +336,10 @@ describe('The ServiceExplorerSagas', () => {
 
       let _type;
       let _args;
-      CommandServiceImpl.remoteCall = async (type: string, ...args: any[]) => {
+      commandService.remoteCall = async (type: string, ...args: any[]) => {
         _type = type;
         _args = args;
-        return true;
+        return true as any;
       };
 
       result = await it.next(result).value;
@@ -363,7 +360,7 @@ describe('The ServiceExplorerSagas', () => {
     });
 
     it('should ask the main process to remove the selected dispatch Maker service from the active bot', async () => {
-      CommandServiceImpl.remoteCall = async () => ({ id: 'forget' });
+      commandService.remoteCall = async () => ({ id: 'forget' } as any);
 
       action.payload.connectedService = JSON.parse(`{
           "type": "dispatch",
@@ -381,10 +378,10 @@ describe('The ServiceExplorerSagas', () => {
 
       let _type;
       let _args;
-      CommandServiceImpl.remoteCall = async (type: string, ...args: any[]) => {
+      commandService.remoteCall = async (type: string, ...args: any[]) => {
         _type = type;
         _args = args;
-        return true;
+        return true as any;
       };
 
       result = await it.next(result).value;
@@ -407,7 +404,6 @@ describe('The ServiceExplorerSagas', () => {
 
   describe(' launchExternalLink', () => {
     let action: ConnectedServiceAction<ConnectedServicePayload>;
-    let openConnectedServiceGen;
     let sagaIt;
 
     it(' should open a LIUS external link', async () => {
@@ -424,14 +420,14 @@ describe('The ServiceExplorerSagas', () => {
       };
 
       action = launchExternalLink(payload as any);
-      sagaIt = launchExternalLinkSaga;
+      sagaIt = ServicesExplorerSagas.launchExternalLink;
 
       const it = sagaIt(action);
       const result = it.next().value;
 
       expect(result).toEqual(
         call(
-          [CommandServiceImpl, CommandServiceImpl.remoteCall],
+          [commandService, commandService.remoteCall],
           SharedConstants.Commands.Electron.OpenExternal,
           'https://luis.ai'
         )
@@ -452,14 +448,14 @@ describe('The ServiceExplorerSagas', () => {
       };
 
       action = launchExternalLink(payload as any);
-      sagaIt = launchExternalLinkSaga;
+      sagaIt = ServicesExplorerSagas.launchExternalLink;
 
       const it = sagaIt(action);
       const result = it.next().value;
 
       expect(result).toEqual(
         call(
-          [CommandServiceImpl, CommandServiceImpl.remoteCall],
+          [commandService, commandService.remoteCall],
           SharedConstants.Commands.Electron.OpenExternal,
           'https://docs.microsoft.com/en-us/azure/bot-service/bot-builder-tutorial-dispatch?view=azure-bot-service-4.0&tabs=csharp'
         )
@@ -480,14 +476,14 @@ describe('The ServiceExplorerSagas', () => {
       };
 
       action = launchExternalLink(payload as any);
-      sagaIt = launchExternalLinkSaga;
+      sagaIt = ServicesExplorerSagas.launchExternalLink;
 
       const it = sagaIt(action);
       const result = it.next().value;
 
       expect(result).toEqual(
         call(
-          [CommandServiceImpl, CommandServiceImpl.remoteCall],
+          [commandService, commandService.remoteCall],
           SharedConstants.Commands.Electron.OpenExternal,
           'https://www.qnamaker.ai/'
         )
@@ -520,7 +516,7 @@ describe('The ServiceExplorerSagas', () => {
     });
 
     it('should launch the luis connected service picker workflow when the luis menu item is selected', async () => {
-      CommandServiceImpl.remoteCall = async () => ({ id: ServiceTypes.Luis });
+      commandService.remoteCall = async () => ({ id: ServiceTypes.Luis } as any);
       const it = contextMenuGen(action);
       let result = await it.next().value;
 

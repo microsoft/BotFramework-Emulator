@@ -40,11 +40,13 @@ import {
   applyBotConfigOverrides,
   BotConfigOverrides,
   BotConfigWithPath,
+  CommandServiceImpl,
   ConversationService,
+  CommandServiceInstance,
 } from '@bfemulator/sdk-shared';
+
 import { Protocol } from './constants';
 import { Emulator } from './emulator';
-import { mainWindow } from './main';
 import { ngrokEmitter, running } from './ngrok';
 import { getSettings } from './settingsData/store';
 import { sendNotificationToClient } from './utils/sendNotificationToClient';
@@ -87,7 +89,10 @@ export interface ProtocolHandler {
   performBotAction: (protocol: Protocol) => void;
 }
 
-export const ProtocolHandler = new (class ProtocolHandlerImpl implements ProtocolHandler {
+class ProtocolHandlerImpl implements ProtocolHandler {
+  @CommandServiceInstance()
+  private commandService: CommandServiceImpl;
+
   /** Extracts useful information out of a protocol URL */
   public parseProtocolUrl(url: string): Protocol {
     const parsedUrl = new URL(url);
@@ -169,11 +174,11 @@ export const ProtocolHandler = new (class ProtocolHandlerImpl implements Protoco
               const fileName = `${name}${ext}`;
               // open a transcript on the client side and pass in some
               // extra info to differentiate it from a transcript on disk
-              mainWindow.commandService.remoteCall(
-                SharedConstants.Commands.Emulator.OpenTranscript,
-                'deepLinkedTranscript',
-                { activities: conversationActivities, inMemory: true, fileName }
-              );
+              this.commandService.remoteCall(SharedConstants.Commands.Emulator.OpenTranscript, 'deepLinkedTranscript', {
+                activities: conversationActivities,
+                inMemory: true,
+                fileName,
+              });
             } catch (e) {
               throw new Error(`Error occured while reading downloaded transcript: ${e}`);
             }
@@ -193,7 +198,7 @@ export const ProtocolHandler = new (class ProtocolHandlerImpl implements Protoco
       .catch(err => {
         const errMsg = `Error downloading and parsing transcript file: ${err}`;
         const notification = newNotification(errMsg);
-        sendNotificationToClient(notification, mainWindow.commandService);
+        sendNotificationToClient(notification, this.commandService);
       });
   }
 
@@ -206,7 +211,7 @@ export const ProtocolHandler = new (class ProtocolHandlerImpl implements Protoco
 
     let bot: BotConfigWithPath;
     try {
-      bot = await mainWindow.commandService.call(SharedConstants.Commands.Bot.Open, path, secret);
+      bot = (await this.commandService.call(SharedConstants.Commands.Bot.Open, path, secret)) as BotConfigWithPath;
       if (!bot) {
         throw new Error(
           `Error occurred while trying to open bot at ${path} inside of protocol handler: Bot is invalid.`
@@ -235,8 +240,8 @@ export const ProtocolHandler = new (class ProtocolHandlerImpl implements Protoco
 
       if (running()) {
         try {
-          await mainWindow.commandService.call(SharedConstants.Commands.Bot.SetActive, bot);
-          await mainWindow.commandService.remoteCall(SharedConstants.Commands.Bot.Load, bot);
+          await this.commandService.call(SharedConstants.Commands.Bot.SetActive, bot);
+          await this.commandService.remoteCall(SharedConstants.Commands.Bot.Load, bot);
         } catch (e) {
           throw new Error(`(ngrok running) Error occurred while trying to deep link to bot project at ${path}: ${e}`);
         }
@@ -246,8 +251,8 @@ export const ProtocolHandler = new (class ProtocolHandlerImpl implements Protoco
           'connect',
           async (...args: any[]): Promise<void> => {
             try {
-              await mainWindow.commandService.call(SharedConstants.Commands.Bot.SetActive, bot);
-              await mainWindow.commandService.remoteCall(SharedConstants.Commands.Bot.Load, bot);
+              await this.commandService.call(SharedConstants.Commands.Bot.SetActive, bot);
+              await this.commandService.remoteCall(SharedConstants.Commands.Bot.Load, bot);
             } catch (e) {
               throw new Error(
                 `(ngrok running but not connected) Error occurred while ` +
@@ -259,8 +264,8 @@ export const ProtocolHandler = new (class ProtocolHandlerImpl implements Protoco
       }
     } else {
       try {
-        await mainWindow.commandService.call(SharedConstants.Commands.Bot.SetActive, bot);
-        await mainWindow.commandService.remoteCall(SharedConstants.Commands.Bot.Load, bot);
+        await this.commandService.call(SharedConstants.Commands.Bot.SetActive, bot);
+        await this.commandService.remoteCall(SharedConstants.Commands.Bot.Load, bot);
       } catch (e) {
         throw new Error(
           `(ngrok not configured) Error occurred while trying to deep link to bot project at ${path}: ${e}`
@@ -273,7 +278,9 @@ export const ProtocolHandler = new (class ProtocolHandlerImpl implements Protoco
       numOfServices,
     });
   }
-})();
+}
+
+export const ProtocolHandler = new ProtocolHandlerImpl();
 
 /**
  * Takes the list of parsed protocol URI query params and constructs an endpoint service

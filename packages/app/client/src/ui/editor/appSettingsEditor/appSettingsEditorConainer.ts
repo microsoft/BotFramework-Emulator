@@ -39,9 +39,9 @@ import * as EditorActions from '../../../data/action/editorActions';
 import { getFrameworkSettings } from '../../../data/action/frameworkSettingsActions';
 import { getTabGroupForDocument } from '../../../data/editorHelpers';
 import { RootState } from '../../../data/store';
-import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
 import { debounce } from '../../../utils';
 import { saveFrameworkSettings } from '../../../data/action/frameworkSettingsActions';
+import { executeCommand } from '../../../data/action/commandAction';
 
 import { AppSettingsEditor, AppSettingsEditorProps } from './appSettingsEditor';
 
@@ -59,7 +59,9 @@ const mapDispatchToProps = (dispatch: (action: Action) => void, ownProps: AppSet
       buttonLabel: 'Select ngrok',
       properties: ['openFile'],
     };
-    return CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.ShowOpenDialog, dialogOptions);
+    return new Promise(resolve => {
+      dispatch(executeCommand(true, SharedConstants.Commands.Electron.ShowOpenDialog, resolve, dialogOptions));
+    });
   },
   getFrameworkSettings: () => dispatch(getFrameworkSettings()),
   saveFrameworkSettings: (framework: FrameworkSettings) => dispatch(saveFrameworkSettings(framework)),

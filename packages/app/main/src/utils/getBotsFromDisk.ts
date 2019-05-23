@@ -41,12 +41,15 @@ import { readFileSync } from './readFileSync';
 /** Reads and returns list of bots from %APPSTORAGEPATH%/bots.json */
 export const getBotsFromDisk = (): BotInfo[] => {
   const botsJsonPath = join(ensureStoragePath(), 'bots.json');
-  const botsJsonContents = readFileSync(botsJsonPath);
-  const botsJson = botsJsonContents ? JSON.parse(botsJsonContents) : null;
-
-  if (botsJson && botsJson.bots && Array.isArray(botsJson.bots)) {
-    return botsJson.bots;
-  } else {
+  try {
+    const botsJsonContents = readFileSync(botsJsonPath);
+    const botsJson = botsJsonContents ? JSON.parse(botsJsonContents) : null;
+    if (botsJson && botsJson.bots && Array.isArray(botsJson.bots)) {
+      return botsJson.bots;
+    } else {
+      return [];
+    }
+  } catch (e) {
     return [];
   }
 };

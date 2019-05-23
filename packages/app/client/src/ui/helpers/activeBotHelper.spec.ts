@@ -33,37 +33,52 @@
 import { SharedConstants } from '@bfemulator/app-shared';
 import { BotConfigWithPath } from '@bfemulator/sdk-shared';
 import { IEndpointService, ServiceTypes } from 'botframework-config/lib/schema';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import * as botHelpers from '../../data/botHelpers';
 import * as editorHelpers from '../../data/editorHelpers';
 import { store } from '../../data/store';
-import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 
 import { ActiveBotHelper } from './activeBotHelper';
 
-jest.mock('../../ui/dialogs', () => ({
-  AzureLoginPromptDialogContainer: function mock() {
-    return undefined;
-  },
-  AzureLoginSuccessDialogContainer: function mock() {
-    return undefined;
-  },
-  BotCreationDialog: function mock() {
-    return undefined;
-  },
-  DialogService: { showDialog: () => Promise.resolve(true) },
-  SecretPromptDialog: function mock() {
-    return undefined;
-  },
+jest.mock('electron', () => ({
+  ipcMain: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+  ipcRenderer: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
 }));
 
 describe('ActiveBotHelper tests', () => {
+  let commandService: CommandServiceImpl;
+  beforeAll(() => {
+    const decorator = CommandServiceInstance();
+    const descriptor = decorator({ descriptor: {} }, 'none') as any;
+    commandService = descriptor.descriptor.get();
+  });
   it('confirmSwitchBot() functionality', async () => {
     (editorHelpers as any).hasNonGlobalTabs = jest
       .fn()
       .mockReturnValueOnce(true)
       .mockReturnValueOnce(false);
-    (CommandServiceImpl as any).remoteCall = jest.fn().mockResolvedValue('done');
+    commandService.remoteCall = jest.fn().mockResolvedValue('done');
 
     const result1 = await ActiveBotHelper.confirmSwitchBot();
     expect(result1).toBe('done');
@@ -78,7 +93,7 @@ describe('ActiveBotHelper tests', () => {
       .mockReturnValueOnce(true)
       .mockReturnValueOnce(false);
 
-    (CommandServiceImpl as any).remoteCall = jest.fn().mockResolvedValue('done');
+    commandService.remoteCall = jest.fn().mockResolvedValue('done');
 
     const result1 = await ActiveBotHelper.confirmCloseBot();
     expect(result1).toBe('done');
@@ -89,21 +104,21 @@ describe('ActiveBotHelper tests', () => {
 
   it('closeActiveBot() functionality', async () => {
     const mockRemoteCall1 = jest.fn().mockResolvedValue(true);
-    (CommandServiceImpl as any).remoteCall = mockRemoteCall1;
+    commandService.remoteCall = mockRemoteCall1;
     (store as any).dispatch = () => null;
 
     await ActiveBotHelper.closeActiveBot();
     expect(mockRemoteCall1).toHaveBeenCalledTimes(2);
 
     const mockRemoteCall2 = jest.fn().mockRejectedValue('err');
-    (CommandServiceImpl as any).remoteCall = mockRemoteCall2;
+    commandService.remoteCall = mockRemoteCall2;
 
     expect(ActiveBotHelper.closeActiveBot()).rejects.toEqual(new Error('Error while closing active bot: err'));
   });
 
   it('botAlreadyOpen() functionality', async () => {
     const mockRemoteCall = jest.fn().mockResolvedValue(true);
-    (CommandServiceImpl as any).remoteCall = mockRemoteCall;
+    commandService.remoteCall = mockRemoteCall;
 
     await ActiveBotHelper.botAlreadyOpen();
 
@@ -112,7 +127,7 @@ describe('ActiveBotHelper tests', () => {
 
   it('browseForBotFile() functionality', async () => {
     const mockRemoteCall = jest.fn().mockResolvedValue(true);
-    (CommandServiceImpl as any).remoteCall = mockRemoteCall;
+    commandService.remoteCall = mockRemoteCall;
 
     await ActiveBotHelper.browseForBotFile();
 
@@ -160,7 +175,7 @@ describe('ActiveBotHelper tests', () => {
     (store as any).dispatch = mockDispatch;
 
     let mockRemoteCall = jest.fn().mockResolvedValue({});
-    (CommandServiceImpl as any).remoteCall = mockRemoteCall;
+    commandService.remoteCall = mockRemoteCall;
 
     await ActiveBotHelper.setActiveBot(bot);
     expect(mockDispatch).toHaveBeenCalledTimes(2);
@@ -168,7 +183,7 @@ describe('ActiveBotHelper tests', () => {
     expect(mockRemoteCall).toHaveBeenCalledWith(SharedConstants.Commands.Bot.SetActive, bot);
 
     mockRemoteCall = jest.fn().mockRejectedValueOnce('error');
-    (CommandServiceImpl as any).remoteCall = mockRemoteCall;
+    commandService.remoteCall = mockRemoteCall;
     expect(ActiveBotHelper.setActiveBot(bot)).rejects.toEqual(new Error('Error while setting active bot: error'));
   });
 
@@ -199,8 +214,8 @@ describe('ActiveBotHelper tests', () => {
     };
     let mockRemoteCall = jest.fn().mockResolvedValue(bot);
     const mockCall = jest.fn().mockResolvedValue(null);
-    (CommandServiceImpl as any).remoteCall = mockRemoteCall;
-    (CommandServiceImpl as any).call = mockCall;
+    commandService.remoteCall = mockRemoteCall;
+    commandService.call = mockCall;
 
     await ActiveBotHelper.confirmAndCreateBot(bot, 'someSecret');
     expect(mockDispatch).toHaveBeenCalledTimes(3);
@@ -208,8 +223,8 @@ describe('ActiveBotHelper tests', () => {
     expect(mockRemoteCall).toHaveBeenCalledWith(SharedConstants.Commands.Bot.Create, bot, 'someSecret');
 
     mockRemoteCall = jest.fn().mockRejectedValue('err');
-    (CommandServiceImpl as any).remoteCall = mockRemoteCall;
-    (CommandServiceImpl as any).call = mockCall;
+    commandService.remoteCall = mockRemoteCall;
+    commandService.call = mockCall;
 
     expect(ActiveBotHelper.confirmAndCreateBot(bot, 'someSecret')).rejects.toEqual(
       new Error('Error during bot create: err')
@@ -255,8 +270,8 @@ describe('ActiveBotHelper tests', () => {
       .mockResolvedValueOnce(bot)
       .mockResolvedValue(null);
     const mockCall = jest.fn().mockResolvedValue(null);
-    (CommandServiceImpl as any).remoteCall = mockRemoteCall;
-    (CommandServiceImpl as any).call = mockCall;
+    commandService.remoteCall = mockRemoteCall;
+    commandService.call = mockCall;
 
     await ActiveBotHelper.confirmAndOpenBotFromFile();
     expect(mockDispatch).toHaveBeenCalledTimes(1);
@@ -305,8 +320,8 @@ describe('ActiveBotHelper tests', () => {
       .mockResolvedValueOnce(bot)
       .mockResolvedValue(null);
     const mockCall = jest.fn().mockResolvedValue(null);
-    (CommandServiceImpl as any).remoteCall = mockRemoteCall;
-    (CommandServiceImpl as any).call = mockCall;
+    commandService.remoteCall = mockRemoteCall;
+    commandService.call = mockCall;
 
     await ActiveBotHelper.confirmAndOpenBotFromFile();
     expect(mockRemoteCall).toHaveBeenCalledWith(SharedConstants.Commands.Emulator.SetCurrentUser, 'customUserId');
@@ -328,7 +343,7 @@ describe('ActiveBotHelper tests', () => {
   });
 
   it('should throw when confirmAndSwitchBots fails', async () => {
-    jest.spyOn(CommandServiceImpl, 'call').mockRejectedValueOnce('oh noes!');
+    jest.spyOn(commandService, 'call').mockRejectedValueOnce('oh noes!');
     jest.spyOn(botHelpers, 'getActiveBot').mockReturnValueOnce({ path: '' });
     try {
       await ActiveBotHelper.confirmAndSwitchBots('');
@@ -375,8 +390,8 @@ describe('ActiveBotHelper tests', () => {
     (botHelpers.getActiveBot as any) = () => otherBot;
     const mockRemoteCall = jest.fn().mockResolvedValue(bot);
     const mockCall = jest.fn().mockResolvedValue(null);
-    (CommandServiceImpl as any).call = mockCall;
-    (CommandServiceImpl as any).remoteCall = mockRemoteCall;
+    commandService.call = mockCall;
+    commandService.remoteCall = mockRemoteCall;
     ActiveBotHelper.confirmSwitchBot = () => new Promise((resolve, reject) => resolve(true));
     ActiveBotHelper.setActiveBot = (arg: any) => new Promise((resolve, reject) => resolve(null));
 

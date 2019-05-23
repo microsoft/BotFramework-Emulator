@@ -32,7 +32,7 @@
 //
 
 import { applyMiddleware, combineReducers, createStore } from 'redux';
-import { BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
+import { BotConfigWithPathImpl, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 import { ServiceTypes } from 'botframework-config/lib/schema';
 import sagaMiddlewareFactory from 'redux-saga';
 import { SharedConstants } from '@bfemulator/app-shared/built';
@@ -57,6 +57,32 @@ jest.mock('../store', () => ({
     return mockStore;
   },
 }));
+
+jest.mock('electron', () => ({
+  ipcMain: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+  ipcRenderer: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+}));
+
 jest.mock('../../ui/dialogs/service', () => ({
   DialogService: {
     showDialog: () => Promise.resolve(true),
@@ -68,9 +94,14 @@ const mockRemoteCommandsCalled = [];
 const mockLocalCommandsCalled = [];
 const mockSharedConstants = SharedConstants; // thanks Jest!
 let mockContextMenuResponse;
-jest.mock('../../platform/commands/commandServiceImpl', () => ({
-  CommandServiceImpl: {
-    remoteCall: async (commandName: string, ...args: any[]) => {
+
+describe('The ResourceSagas', () => {
+  let commandService: CommandServiceImpl;
+  beforeAll(() => {
+    const decorator = CommandServiceInstance();
+    const descriptor = decorator({ descriptor: {} }, 'none') as any;
+    commandService = descriptor.descriptor.get();
+    commandService.remoteCall = async (commandName: string, ...args: any[]) => {
       mockRemoteCommandsCalled.push({ commandName, args: args });
       switch (commandName) {
         case mockSharedConstants.Commands.Electron.DisplayContextMenu:
@@ -82,14 +113,14 @@ jest.mock('../../platform/commands/commandServiceImpl', () => ({
         default:
           return true;
       }
-    },
-    call: async (commandName: string, ...args: any[]) => {
-      mockLocalCommandsCalled.push({ commandName, args: args });
-    },
-  },
-}));
+    };
 
-describe('The ResourceSagas', () => {
+    commandService.call = async (commandName: string, ...args: any[]) => {
+      mockLocalCommandsCalled.push({ commandName, args: args });
+      return true as any;
+    };
+  });
+
   beforeEach(() => {
     mockRemoteCommandsCalled.length = 0;
     mockLocalCommandsCalled.length = 0;

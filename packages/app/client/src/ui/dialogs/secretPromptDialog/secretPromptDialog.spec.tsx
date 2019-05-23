@@ -46,15 +46,6 @@ import { SecretPromptDialog } from './secretPromptDialog';
 const mockStore = createStore(combineReducers({ bot }));
 const mockBot = BotConfigWithPathImpl.fromJSON({});
 
-jest.mock('../../../platform/commands/commandServiceImpl', () => ({
-  CommandServiceImpl: {
-    remoteCall: async () => true,
-  },
-}));
-
-jest.mock('../dialogStyles.scss', () => ({}));
-
-jest.mock('./secretPromptDialog.scss', () => ({}));
 jest.mock('../../../data/store', () => ({
   get store() {
     return mockStore;

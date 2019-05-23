@@ -30,30 +30,35 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+import { ForkEffect, put, takeEvery } from 'redux-saga/effects';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
+import { newNotification } from '@bfemulator/app-shared';
 
-import { Channel, Disposable, IPC } from '@bfemulator/sdk-shared';
-const { ipcRenderer } = (window as any).require('electron');
+import { CommandAction, CommandActionPayload, EXECUTE_COMMAND } from '../action/commandAction';
+import { beginAdd } from '../action/notificationActions';
 
-class ElectronIPCImpl extends IPC {
-  constructor() {
-    super();
+export class CommandSagas {
+  @CommandServiceInstance()
+  private static commandService: CommandServiceImpl;
 
-    ipcRenderer.on('ipc:message', (_sender: any, ...args: any[]) => {
-      const channelName = args.shift();
-      const channel = this._channels[channelName];
-      if (channel) {
-        channel.onMessage(...args);
+  public static *executeCommand(action: CommandAction<CommandActionPayload>): IterableIterator<any> {
+    const { isRemote, commandName, args, resolver } = action.payload;
+    try {
+      const result = isRemote
+        ? yield CommandSagas.commandService.remoteCall(commandName, ...args)
+        : yield CommandSagas.commandService.call(commandName, ...args);
+      if (resolver) {
+        resolver(result);
       }
-    });
-  }
-
-  public send(...args: any[]): void {
-    ipcRenderer.send('ipc:message', ...args);
-  }
-
-  public registerChannel(channel: Channel): Disposable {
-    return super.registerChannel(channel);
+    } catch (e) {
+      const type = isRemote ? 'remote' : 'local';
+      yield put(
+        beginAdd(newNotification(`An error occurred while executing the ${type} command: ${commandName}\n ${e}`))
+      );
+    }
   }
 }
 
-export const ElectronIPC = new ElectronIPCImpl();
+export function* commandSagas(): IterableIterator<ForkEffect> {
+  yield takeEvery(EXECUTE_COMMAND, CommandSagas.executeCommand);
+}

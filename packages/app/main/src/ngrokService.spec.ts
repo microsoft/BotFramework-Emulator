@@ -91,10 +91,12 @@ let mockStore;
 
 const mockCallsToLog = [];
 jest.mock('./main', () => ({
-  mainWindow: {
-    logService: {
-      logToChat: (...args: any[]) => {
-        mockCallsToLog.push({ name: 'remoteCall', args });
+  emulatorApplication: {
+    mainWindow: {
+      logService: {
+        logToChat: (...args: any[]) => {
+          mockCallsToLog.push({ name: 'remoteCall', args });
+        },
       },
     },
   },

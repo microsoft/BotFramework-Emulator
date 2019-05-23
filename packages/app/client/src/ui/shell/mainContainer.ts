@@ -31,10 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import { connect } from 'react-redux';
+import { SharedConstants } from '@bfemulator/app-shared';
 
 import * as Constants from '../../constants';
 import * as PresentationActions from '../../data/action/presentationActions';
 import { RootState } from '../../data/store';
+import { executeCommand } from '../../data/action/commandAction';
+import { showWelcomePage } from '../../data/editorHelpers';
+import { globalHandlers } from '../../utils/eventHandlers';
 
 import { Main, MainProps } from './main';
 
@@ -51,6 +55,16 @@ const mapDispatchToProps = (dispatch): MainProps => ({
     if (e.key === 'Escape') {
       dispatch(PresentationActions.disable());
     }
+  },
+  applicationMountComplete: async () => {
+    await new Promise(resolve => {
+      dispatch(executeCommand(true, SharedConstants.Commands.ClientInit.Loaded, resolve));
+    });
+    showWelcomePage();
+    await new Promise(resolve => {
+      dispatch(executeCommand(true, SharedConstants.Commands.ClientInit.PostWelcomeScreen, resolve));
+    });
+    window.addEventListener('keydown', globalHandlers, true);
   },
 });
 

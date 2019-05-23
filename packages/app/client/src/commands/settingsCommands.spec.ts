@@ -31,16 +31,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
-import { SharedConstants } from '@bfemulator/app-shared';
+import { CommandRegistry, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
+import { DebugMode, SharedConstants } from '@bfemulator/app-shared';
 import { combineReducers, createStore } from 'redux';
-import { DebugMode } from '@bfemulator/app-shared';
 
 import { clientAwareSettings } from '../data/reducer/clientAwareSettingsReducer';
 import { store } from '../data/store';
 import { clientAwareSettingsChanged } from '../data/action/clientAwareSettingsActions';
 
-import { registerCommands } from './settingsCommands';
+import { SettingsCommands } from './settingsCommands';
 
 const mockStore = createStore(combineReducers({ clientAwareSettings }));
 jest.mock('../data/store', () => ({
@@ -49,15 +48,44 @@ jest.mock('../data/store', () => ({
   },
 }));
 
+jest.mock('electron', () => ({
+  ipcMain: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+  ipcRenderer: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+}));
+
 describe('the settings commands', () => {
-  let registry: CommandRegistryImpl;
+  let commandService: CommandServiceImpl;
+  let registry: CommandRegistry;
   beforeAll(() => {
-    registry = new CommandRegistryImpl();
-    registerCommands(registry);
+    new SettingsCommands();
+    const decorator = CommandServiceInstance();
+    const descriptor = decorator({ descriptor: {} }, 'none') as any;
+    commandService = descriptor.descriptor.get();
+    registry = commandService.registry;
   });
 
   it('should dispatch to the store when settings are sent from the main side', () => {
-    const command = registry.getCommand(SharedConstants.Commands.Settings.ReceiveGlobalSettings).handler;
+    const command = registry.getCommand(SharedConstants.Commands.Settings.ReceiveGlobalSettings);
     const dispatchSpy = jest.spyOn(store, 'dispatch');
     command({ debugMode: DebugMode.Normal });
     expect(dispatchSpy).toHaveBeenCalledWith(clientAwareSettingsChanged({ debugMode: DebugMode.Normal } as any));
