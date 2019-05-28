@@ -40,11 +40,12 @@
 // will be overwritten due to the call to "jest.mock('./main', ...)"
 
 import './fetchProxy';
-import { SharedConstants } from '@bfemulator/app-shared';
+import { DebugMode, SharedConstants } from '@bfemulator/app-shared';
 import { applyBotConfigOverrides, ConversationService } from '@bfemulator/sdk-shared';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { parseEndpointOverrides, Protocol, ProtocolHandler } from './protocolHandler';
+import { debugModeChanged } from './settingsData/actions/windowStateActions';
 import { TelemetryService } from './telemetry';
 
 let mockCallsMade, mockRemoteCallsMade;
@@ -72,11 +73,15 @@ jest.mock('./globals', () => ({
 }));
 
 let mockNgrokPath;
+let mockDispatch = jest.fn(() => null);
 jest.mock('./settingsData/store', () => ({
   getSettings: () => ({
     framework: {
       ngrokPath: mockNgrokPath,
     },
+  }),
+  getStore: () => ({
+    dispatch: mockDispatch,
   }),
 }));
 
@@ -236,6 +241,7 @@ describe('Protocol handler tests', () => {
       tmpPerformBotAction = ProtocolHandler.performBotAction;
       tmpPerformLiveChatAction = ProtocolHandler.performLiveChatAction;
       tmpPerformTranscriptAction = ProtocolHandler.performTranscriptAction;
+      mockDispatch.mockClear();
     });
 
     afterEach(() => {
@@ -269,7 +275,7 @@ describe('Protocol handler tests', () => {
     });
 
     it('should dispatch a livechat action', () => {
-      const spy = jest.spyOn(ConversationService, 'startConversation');
+      const spy = jest.spyOn(ConversationService, 'startConversation').mockResolvedValue(true);
       ProtocolHandler.parseProtocolUrlAndDispatch(
         'bfemulator://livechat.open?botUrl=http://localhost/&msaAppId=id&msaAppPassword=pass'
       );
@@ -290,6 +296,48 @@ describe('Protocol handler tests', () => {
         domain: 'transcript',
         parsedArgs: { url: 'http://localhost/myTranscript' },
       });
+    });
+
+    it('should dispatch a inspector action', async () => {
+      const spy = jest.spyOn(ProtocolHandler, 'performInspectorAction');
+      const mockJson = jest.fn(async () => ({ id: '0001' }));
+      const commandServiceSpy = jest.spyOn(commandService, 'call').mockResolvedValueOnce({ statusCode: 200 });
+      const conversationServiceSpy = jest.spyOn(ConversationService, 'startConversation').mockResolvedValue({
+        json: mockJson,
+      });
+      await ProtocolHandler.parseProtocolUrlAndDispatch(
+        'bfemulator://inspector.open?url=http://localhost/&msaAppId=id&msaAppPassword=pass'
+      );
+      expect(mockDispatch).toHaveBeenCalledWith(debugModeChanged(DebugMode.Sidecar));
+      expect(commandServiceSpy).toHaveBeenCalled();
+      expect(conversationServiceSpy).toHaveBeenCalled(); // Probably need to update for more specificity (expect args)
+      expect(spy).toHaveBeenCalledWith({
+        action: 'open',
+        args: 'url=http://localhost/&msaAppId=id&msaAppPassword=pass',
+        domain: 'inspector',
+        parsedArgs: {
+          url: 'http://localhost/',
+          msaAppId: 'id',
+          msaAppPassword: 'pass',
+        },
+      });
+    });
+
+    it('should throw error if unable to post activity in inspector action', async () => {
+      const commandServiceSpy = jest.spyOn(commandService, 'call').mockResolvedValueOnce({ statusCode: 403 });
+      const mockJson = jest.fn(async () => ({ id: '0001' }));
+      const conversationServiceSpy = jest.spyOn(ConversationService, 'startConversation').mockResolvedValue({
+        json: mockJson,
+      });
+      try {
+        await ProtocolHandler.parseProtocolUrlAndDispatch(
+          'bfemulator://inspector.open?url=http://localhost/&msaAppId=id&msaAppPassword=pass'
+        );
+        expect(conversationServiceSpy).toHaveBeenCalled();
+        expect(commandServiceSpy).toHaveBeenCalled();
+      } catch (e) {
+        expect(e).toEqual(new Error(`An error occurred while POSTing "/INSPECT open" command to conversation 0001`));
+      }
     });
   });
 
