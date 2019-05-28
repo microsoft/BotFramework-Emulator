@@ -32,9 +32,9 @@
 //
 
 // TODO: Revert import to `@bfemulator/sdk-shared` once issue #1333 (https://github.com/Microsoft/BotFramework-Emulator/issues/1333) is resolved.
-import { TraceActivity } from '@bfemulator/sdk-shared/build/types';
+import { Activity } from 'botframework-schema';
 
-import { RecognizerResultAdapter } from '../Adapters/RecognizerResultAdapter';
+import { RecognizerResultAdapter } from './RecognizerResultAdapter';
 import { AppState, PersistentAppState } from '../App';
 import { ButtonSelected } from '../Controls/ControlBar/ControlBar';
 import { AppInfo } from '../Luis/AppInfo';
@@ -56,7 +56,7 @@ export default class AppStateAdapter implements AppState {
     if (!obj) {
       return false;
     }
-    const trace = obj as TraceActivity;
+    const trace = obj as Activity;
     if (trace.type !== 'trace' || trace.valueType !== LuisTraceType) {
       return false;
     }
@@ -77,7 +77,7 @@ export default class AppStateAdapter implements AppState {
     if (!AppStateAdapter.validate(obj)) {
       return;
     }
-    const traceActivity = obj as TraceActivity;
+    const traceActivity = obj as Activity;
     this.traceInfo = traceActivity.value as LuisTraceInfo;
     this.controlBarButtonSelected = this.traceInfo.recognizerResult
       ? ButtonSelected.RecognizerResult
