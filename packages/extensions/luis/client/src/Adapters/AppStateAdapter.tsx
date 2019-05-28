@@ -34,12 +34,13 @@
 // TODO: Revert import to `@bfemulator/sdk-shared` once issue #1333 (https://github.com/Microsoft/BotFramework-Emulator/issues/1333) is resolved.
 import { Activity } from 'botframework-schema';
 
-import { RecognizerResultAdapter } from './RecognizerResultAdapter';
 import { AppState, PersistentAppState } from '../App';
 import { ButtonSelected } from '../Controls/ControlBar/ControlBar';
 import { AppInfo } from '../Luis/AppInfo';
 import { IntentInfo } from '../Luis/IntentInfo';
 import { LuisTraceInfo } from '../Models/LuisTraceInfo';
+
+import { RecognizerResultAdapter } from './RecognizerResultAdapter';
 
 const LuisTraceType = 'https://www.luis.ai/schemas/trace';
 
