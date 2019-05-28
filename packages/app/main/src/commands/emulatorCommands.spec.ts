@@ -57,6 +57,7 @@ import { setCurrentUser } from '../settingsData/actions/userActions';
 import { pushClientAwareSettings } from '../settingsData/actions/frameworkActions';
 
 import { EmulatorCommands } from './emulatorCommands';
+import { azureLoggedInUserChanged } from '../settingsData/actions/azureAuthActions';
 
 const mockBotConfig = BotConfiguration;
 const mockConversationConstructor = Conversation;
@@ -594,5 +595,53 @@ describe('The emulatorCommands', () => {
 
     expect(result.id).toBe('someId');
     expect(postActivitySpy).toHaveBeenCalled();
+  });
+
+  it('should clear state if user is signed in to Azure', async () => {
+    getSettingsStore().dispatch(azureLoggedInUserChanged('someone@microsoft.com'));
+
+    const signedInUser = getSettingsStore().getState().azure.signedInUser;
+    const signedInMessage = signedInUser
+      ? 'This will log you out of Azure and remove any session based data. Continue?'
+      : 'This will remove any session based data. Continue?';
+
+    expect(signedInMessage).toBe('This will log you out of Azure and remove any session based data. Continue?');
+
+    const callSpy = jest.spyOn(commandService, 'call').mockResolvedValue(true);
+    const result = await registry.getCommand(SharedConstants.Commands.Emulator.ClearState)();
+
+    expect(result).toBe(true);
+
+    expect(callSpy).toHaveBeenCalledWith(SharedConstants.Commands.Electron.ShowMessageBox, true, {
+      buttons: ['Cancel', 'OK'],
+      cancelId: 0,
+      defaultId: 1,
+      message: signedInMessage,
+      type: 'question',
+    });
+  });
+
+  it('should clear state if user is signed in to Azure', async () => {
+    getSettingsStore().dispatch(azureLoggedInUserChanged(''));
+
+    const signedInUser = getSettingsStore().getState().azure.signedInUser;
+    const signedInMessage = signedInUser
+      ? 'This will log you out of Azure and remove any session based data. Continue?'
+      : 'This will remove any session based data. Continue?';
+
+    expect(signedInMessage).toBe('This will remove any session based data. Continue?');
+
+    const callSpy = jest.spyOn(commandService, 'call').mockResolvedValue(true);
+    const result = await registry.getCommand(SharedConstants.Commands.Emulator.ClearState)();
+
+    expect(result).toBe(true);
+
+    expect(callSpy).toHaveBeenCalledWith(SharedConstants.Commands.Electron.ShowMessageBox, true, {
+      buttons: ['Cancel', 'OK'],
+      cancelId: 0,
+      defaultId: 1,
+      message: signedInMessage,
+      type: 'question',
+    });
   });
 });
