@@ -33,7 +33,7 @@
 
 import * as Path from 'path';
 
-import { FrameworkSettings, newNotification, SharedConstants } from '@bfemulator/app-shared';
+import { DebugMode, FrameworkSettings, newNotification, SharedConstants } from '@bfemulator/app-shared';
 import got from 'got';
 import { IEndpointService } from 'botframework-config/lib/schema';
 import {
@@ -48,7 +48,8 @@ import {
 import { Protocol } from './constants';
 import { Emulator } from './emulator';
 import { ngrokEmitter, running } from './ngrok';
-import { getSettings } from './settingsData/store';
+import { debugModeChanged } from './settingsData/actions/windowStateActions';
+import { getSettings, getStore as getSettingsStore } from './settingsData/store';
 import { sendNotificationToClient } from './utils/sendNotificationToClient';
 import { TelemetryService } from './telemetry';
 
@@ -56,6 +57,7 @@ enum ProtocolDomains {
   livechat,
   transcript,
   bot,
+  inspector,
 }
 
 export enum ProtocolLiveChatActions {
@@ -114,7 +116,7 @@ class ProtocolHandlerImpl implements ProtocolHandler {
   }
 
   /** Uses information from a protocol URL and carries out the corresponding action */
-  public dispatchProtocolAction(protocol: Protocol): void {
+  public async dispatchProtocolAction(protocol: Protocol): Promise<void> {
     switch (ProtocolDomains[protocol.domain]) {
       case ProtocolDomains.bot:
         this.performBotAction(protocol);
@@ -128,14 +130,18 @@ class ProtocolHandlerImpl implements ProtocolHandler {
         this.performTranscriptAction(protocol);
         break;
 
+      case ProtocolDomains.inspector:
+        await this.performInspectorAction(protocol);
+        break;
+
       default:
         break;
     }
   }
 
   /** Reads in a protocol URL and then performs the corresponding action if valid */
-  public parseProtocolUrlAndDispatch(url: string): void {
-    this.dispatchProtocolAction(this.parseProtocolUrl(url));
+  public async parseProtocolUrlAndDispatch(url: string): Promise<void> {
+    await this.dispatchProtocolAction(this.parseProtocolUrl(url));
   }
 
   public performLiveChatAction(protocol: Protocol): void {
@@ -150,6 +156,10 @@ class ProtocolHandlerImpl implements ProtocolHandler {
 
   public performBotAction(protocol: Protocol): void {
     this.openBot(protocol);
+  }
+
+  public async performInspectorAction(protocol: Protocol): Promise<void> {
+    await this.openInspector(protocol);
   }
 
   /** Downloads a transcript from a URL provided in the protocol string,
@@ -277,6 +287,55 @@ class ProtocolHandlerImpl implements ProtocolHandler {
       method: 'protocol',
       numOfServices,
     });
+  }
+
+  /** Opens the inspector with the provided URL, and optional AppId and AppPassword */
+  public async openInspector(protocol: Protocol): Promise<void> {
+    const { botUrl: endpoint, msaAppId: appId, msaAppPassword: appPassword } = protocol.parsedArgs;
+    const { serverUrl } = Emulator.getInstance().framework;
+    const settingsStore = getSettingsStore();
+    settingsStore.dispatch(debugModeChanged(DebugMode.Sidecar));
+    // Make sure ngrok is running
+    const appSettings: FrameworkSettings = getSettings().framework;
+    if (appSettings.ngrokPath) {
+      let ngrokSpawnStatus = Emulator.getInstance().ngrok.getSpawnStatus();
+      // if ngrok hasn't spawned yet, we need to start it up
+      if (!ngrokSpawnStatus.triedToSpawn) {
+        await Emulator.getInstance().ngrok.recycle();
+      }
+      ngrokSpawnStatus = Emulator.getInstance().ngrok.getSpawnStatus();
+      if (ngrokSpawnStatus.triedToSpawn && ngrokSpawnStatus.err) {
+        throw new Error(`Error while trying to spawn ngrok instance: ${ngrokSpawnStatus.err || ''}\n`);
+      }
+    }
+    // Start conversation with bot before beginning attach process
+    const response = await ConversationService.startConversation(serverUrl.replace('[::]', 'localhost'), {
+      appId,
+      appPassword,
+      endpoint,
+    });
+
+    // extract the conversation id from the body
+    const parsedBody = await response.json();
+    const conversationId = parsedBody.id || '';
+
+    if (conversationId) {
+      const activity = {
+        type: 'message',
+        text: '/INSPECT open',
+      };
+      const postActivityResponse = await this.commandService.call(
+        SharedConstants.Commands.Emulator.PostActivityToConversation,
+        conversationId,
+        activity,
+        false
+      );
+      if ((postActivityResponse as any).statusCode >= 400) {
+        throw new Error(`An error occurred while POSTing "/INSPECT open" command to conversation ${conversationId}`);
+      }
+    } else {
+      throw new Error('An error occurred while trying to grab conversation ID from new conversation.');
+    }
   }
 }
 

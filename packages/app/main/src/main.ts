@@ -305,13 +305,13 @@ class EmulatorApplication {
     app.on('open-url', this.onAppOpenUrl);
   };
 
-  private onAppOpenUrl = (event: any, url: string): void => {
+  private onAppOpenUrl = async (event: any, url: string): Promise<void> => {
     event.preventDefault();
     if (isMac()) {
       protocolUsed = true;
       if (this.mainWindow && this.mainWindow.webContents) {
         // the app is already running, send a message containing the url to the renderer process
-        ProtocolHandler.parseProtocolUrlAndDispatch(url);
+        await ProtocolHandler.parseProtocolUrlAndDispatch(url);
       } else {
         // the app is not yet running, so store the url so the UI can request it later
         store.dispatch(setOpenUrl(url));
