@@ -35,7 +35,7 @@ import * as path from 'path';
 import * as fs from 'fs-extra';
 import * as Electron from 'electron';
 import { app, dialog, Menu, MessageBoxOptions } from 'electron';
-import { DebugMode, SharedConstants } from '@bfemulator/app-shared';
+import { SharedConstants } from '@bfemulator/app-shared';
 import { Command } from '@bfemulator/sdk-shared';
 
 import { AppMenuBuilder } from '../appMenuBuilder';
@@ -87,11 +87,6 @@ export class ElectronCommands {
     const state = store.getState();
     const recentBots = state.bot && state.bot.botFiles ? state.bot.botFiles : [];
     AppMenuBuilder.updateRecentBotsList(recentBots);
-  }
-
-  @Command(Commands.UpdateDebugModeMenuItem)
-  protected async updateDebugModeMenuItem(debugMode: DebugMode) {
-    AppMenuBuilder.updateDebugModeViewMenuItem(debugMode);
   }
 
   // ---------------------------------------------------------------------------

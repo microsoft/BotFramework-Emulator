@@ -62,7 +62,7 @@ import {
   IInvokeActivity,
   IMessageActivity,
 } from 'botframework-schema';
-import { ChatMode, DebugMode, traceContainsDebugData, ValueTypesMask } from '@bfemulator/app-shared';
+import { EmulatorMode, traceContainsDebugData, ValueTypesMask } from '@bfemulator/app-shared';
 
 import { BotEmulator } from '../botEmulator';
 import { TokenCache } from '../userToken/tokenCache';
@@ -92,8 +92,7 @@ export default class Conversation extends EventEmitter {
   public botEndpoint: BotEndpoint;
   public conversationId: string;
   public user: User;
-  public mode: ChatMode;
-  public debugMode: DebugMode;
+  public mode: EmulatorMode;
   // flag indicating if the user has been shown the
   // "please don't use default Bot State API" warning message
   // when they try to write bot state data
@@ -115,11 +114,10 @@ export default class Conversation extends EventEmitter {
     botEndpoint: BotEndpoint,
     conversationId: string,
     user: User,
-    mode: ChatMode,
-    debugMode: DebugMode = DebugMode.Normal
+    mode: EmulatorMode
   ) {
     super();
-    Object.assign(this, { botEmulator, botEndpoint, conversationId, user, mode, debugMode });
+    Object.assign(this, { botEmulator, botEndpoint, conversationId, user, mode });
     // We should consider hardcoding bot id because we don't really use it
     this.members.push({
       id: (botEndpoint && botEndpoint.botId) || 'bot-1',
@@ -211,7 +209,7 @@ export default class Conversation extends EventEmitter {
   }
 
   public async sendConversationUpdate(membersAdded: User[], membersRemoved: User[]) {
-    if (this.debugMode === DebugMode.Sidecar) {
+    if (this.mode === 'debug') {
       return;
     }
     const activity = {
@@ -774,7 +772,7 @@ export default class Conversation extends EventEmitter {
   }
 
   private addActivityToQueue(activity: Activity) {
-    if (this.debugMode === DebugMode.Sidecar && !traceContainsDebugData(activity)) {
+    if (this.mode === 'debug' && !traceContainsDebugData(activity)) {
       return;
     }
 

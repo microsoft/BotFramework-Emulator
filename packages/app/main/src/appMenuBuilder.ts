@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { BotInfo, DebugMode, SharedConstants } from '@bfemulator/app-shared';
+import { BotInfo, SharedConstants } from '@bfemulator/app-shared';
 import { ConversationService } from '@bfemulator/sdk-shared';
 import * as Electron from 'electron';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
@@ -39,7 +39,7 @@ import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shar
 import { AppUpdater, UpdateStatus } from './appUpdater';
 import { BotHelpers } from './botHelpers';
 import { Emulator } from './emulator';
-import { debugModeChanged, rememberTheme } from './settingsData/actions/windowStateActions';
+import { rememberTheme } from './settingsData/actions/windowStateActions';
 import { getStore as getSettingsStore } from './settingsData/store';
 import { TelemetryService } from './telemetry';
 import { isMac } from './utils';
@@ -113,17 +113,6 @@ export class AppMenuBuilder {
           fileMenu.submenu.append(item);
         });
       }
-    }
-  }
-
-  public static updateDebugModeViewMenuItem(debugMode: DebugMode): void {
-    const menu = Electron.Menu.getApplicationMenu();
-    if (!menu) {
-      return;
-    }
-    const debugMenuItem = menu.getMenuItemById('debugMode');
-    if (debugMenuItem) {
-      debugMenuItem.checked = debugMode === DebugMode.Sidecar;
     }
   }
 
@@ -439,11 +428,6 @@ export class AppMenuBuilder {
 
   public static async initViewMenu(): Promise<MenuOpts> {
     // TODO - localization
-    const settingsStore = getSettingsStore();
-    const {
-      windowState: { debugMode },
-    } = settingsStore.getState();
-
     return {
       label: 'View',
       id: 'view',
@@ -454,16 +438,6 @@ export class AppMenuBuilder {
         { type: 'separator' },
         { role: 'togglefullscreen' },
         { role: 'toggledevtools' },
-        {
-          type: 'checkbox',
-          checked: debugMode === DebugMode.Sidecar,
-          label: 'Bot Inspector Mode',
-          id: 'debugMode',
-          click: async (menuItem: Electron.MenuItem) => {
-            const debugMode = menuItem.checked ? DebugMode.Sidecar : DebugMode.Normal;
-            settingsStore.dispatch(debugModeChanged(debugMode));
-          },
-        },
       ],
     };
   }

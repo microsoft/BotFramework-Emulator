@@ -74,13 +74,7 @@ export interface WindowStateSettings {
   width?: number;
   height?: number;
   theme?: string;
-  debugMode?: DebugMode;
   availableThemes?: { name: string; href: string }[];
-}
-
-export enum DebugMode {
-  Normal,
-  Sidecar,
 }
 
 export interface UserSettings {

@@ -31,8 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { DebugMode } from '@bfemulator/app-shared';
-
 import * as windowStateActions from './windowStateActions';
 
 describe('Window state actions', () => {
@@ -64,15 +62,6 @@ describe('Window state actions', () => {
     expect(windowStateActions.rememberZoomLevel(zoomState)).toEqual({
       type: windowStateActions.REMEMBER_ZOOM_LEVEL,
       state: zoomState,
-    });
-  });
-
-  test('debugModeChanged action', () => {
-    expect(windowStateActions.debugModeChanged(DebugMode.Normal)).toEqual({
-      type: windowStateActions.DEBUG_MODE_CHANGED,
-      payload: {
-        debugMode: DebugMode.Normal,
-      },
     });
   });
 });

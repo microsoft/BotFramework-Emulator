@@ -32,40 +32,60 @@
 //
 
 import { deepCopySlow } from '@bfemulator/app-shared';
+import { DirectLine } from 'botframework-directlinejs';
+import { Activity } from 'botframework-schema';
+import { EmulatorMode } from '@bfemulator/app-shared';
 
 import * as Constants from '../../constants';
 import { BotAction } from '../action/botActions';
 import { EditorAction, EditorActions } from '../action/editorActions';
 import { getOtherTabGroup, tabGroupHasDocuments } from '../editorHelpers';
 
-export interface EditorState {
+export interface EditorState<M = any> {
   // TODO: enum editors
   activeEditor?: string;
   draggingTab?: boolean;
-  editors?: { [editorKey: string]: Editor };
+  editors?: { [editorKey: string]: Editor<M> };
   docsWithPendingChanges?: string[];
 }
 
 // TODO: rename all mentions of editor to tab group
 /** Represents an editor (tab group) */
-export interface Editor {
+export interface Editor<M = any> {
   activeDocumentId?: string;
-  documents?: { [documentId: string]: Document };
+  documents?: { [documentId: string]: Document<M> };
   /** UI representation of tab order in tab bar */
   tabOrder?: string[];
   /** Updated list of recently-used tabs (used to be tabStack) */
   recentTabs?: string[];
 }
 
-export interface Document {
-  // TODO: enum content types
-  contentType?: string;
+export interface Document<M = any> {
+  activities: Activity[];
+  botId: string;
+  conversationId: string;
+  contentType: string;
+  directLine: DirectLine;
   dirty?: boolean;
   documentId?: string;
   fileName?: string;
   filePath?: string;
+  inMemory?: boolean;
   isGlobal?: boolean;
-  meta?: any;
+  meta?: M;
+  mode: EmulatorMode;
+  ui?: DocumentUI;
+  userId: string;
+}
+
+export interface DocumentUI {
+  horizontalSplitter: SplitterSize[];
+  verticalSplitter: SplitterSize[];
+}
+
+export interface SplitterSize {
+  absolute: boolean;
+  percentage: number;
 }
 
 const DEFAULT_STATE: EditorState = {

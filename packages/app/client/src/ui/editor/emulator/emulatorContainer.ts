@@ -46,7 +46,6 @@ import { Emulator, EmulatorProps } from './emulator';
 const mapStateToProps = (state: RootState, { documentId, ...ownProps }: { documentId: string }) => ({
   activeDocumentId: state.editor.editors[state.editor.activeEditor].activeDocumentId,
   conversationId: state.chat.chats[documentId].conversationId,
-  debugMode: state.clientAwareSettings.debugMode,
   document: state.chat.chats[documentId],
   endpointId: state.chat.chats[documentId].endpointId,
   presentationModeEnabled: state.presentation.enabled,

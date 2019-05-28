@@ -33,7 +33,7 @@
 
 import * as path from 'path';
 
-import { BotInfo, DebugMode, getBotDisplayName, SharedConstants } from '@bfemulator/app-shared';
+import { BotInfo, getBotDisplayName, SharedConstants } from '@bfemulator/app-shared';
 import {
   BotConfigWithPath,
   Command,
@@ -49,10 +49,8 @@ import { dialog } from 'electron';
 import * as BotActions from '../data/actions/botActions';
 import { setActive } from '../data/actions/botActions';
 import { getStore } from '../data/store';
-import { getStore as getSettingsStore } from '../settingsData/store';
 import { BotHelpers } from '../botHelpers';
 import { Emulator } from '../emulator';
-import { debugModeChanged } from '../settingsData/actions/windowStateActions';
 import { TelemetryService } from '../telemetry';
 import { isMac } from '../utils';
 import { botProjectFileWatcher, chatWatcher, transcriptsWatcher } from '../watchers';
@@ -104,11 +102,6 @@ export class BotCommands {
   // Opens a bot file at specified path and returns the bot
   @Command(Bot.Open)
   protected async openBot(botPath: string, secret?: string): Promise<BotConfigWithPath> {
-    // Make sure we're not in Sidecar debug mode
-    const settingsStore = getSettingsStore();
-    if (settingsStore.getState().windowState.debugMode !== DebugMode.Normal) {
-      getSettingsStore().dispatch(debugModeChanged(DebugMode.Normal));
-    }
     // try to get the bot secret from bots.json
     const botInfo = BotHelpers.pathExistsInRecentBots(botPath) ? BotHelpers.getBotInfoByPath(botPath) : null;
     if (botInfo) {

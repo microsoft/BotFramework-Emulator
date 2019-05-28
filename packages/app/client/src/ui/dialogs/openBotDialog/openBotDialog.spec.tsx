@@ -36,6 +36,7 @@ import { mount } from 'enzyme';
 import * as React from 'react';
 import { Provider } from 'react-redux';
 import { combineReducers, createStore } from 'redux';
+import { User } from '@bfemulator/sdk-shared';
 
 import * as botActions from '../../../data/action/botActions';
 import * as BotActions from '../../../data/action/botActions';
@@ -84,7 +85,7 @@ describe('The OpenBotDialog', () => {
       clientAwareSettingsChanged({
         serverUrl: 'http://localhost:3543',
         users: {
-          usersById: { user1: {} },
+          usersById: { user1: {} as User },
           currentUserId: 'user1',
         } as UserSettings,
       } as ClientAwareSettings)

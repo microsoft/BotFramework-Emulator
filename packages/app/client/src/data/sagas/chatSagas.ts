@@ -63,7 +63,7 @@ import { RootState } from '../store';
 import { isSpeechEnabled } from '../../utils';
 
 const getConversationIdFromDocumentId = (state: RootState, documentId: string) => {
-  return (state.chat.chats[documentId] || {}).conversationId;
+  return (state.chat.chats[documentId] || { conversationId: null }).conversationId;
 };
 
 const getWebSpeechFactoryForDocumentId = (state: RootState, documentId: string): (() => any) => {

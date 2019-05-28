@@ -40,4 +40,4 @@ export interface Conversation extends ETagObject {
   streamUrl?: string;
 }
 
-export declare type ChatMode = 'livechat' | 'livechat-url' | 'transcript';
+export declare type EmulatorMode = 'livechat' | 'livechat-url' | 'transcript' | 'debug';

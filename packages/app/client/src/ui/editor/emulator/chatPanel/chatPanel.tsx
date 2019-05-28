@@ -34,19 +34,18 @@ import * as React from 'react';
 
 import { ChatContainer } from '../parts/chat/chatContainer';
 import { EmulatorMode } from '../emulator';
+import { ChatDocument } from '../../../../data/reducer/chat';
 
 import * as styles from './chatPanel.scss';
 
 interface ChatPanelProps {
-  document?: {
-    endpointUrl: string;
-  };
+  document?: ChatDocument;
   mode?: EmulatorMode;
   onStartConversation?: () => any;
   className?: string;
 }
 
-export default class ChatPanel extends React.Component<ChatPanelProps, {}> {
+export default class ChatPanel extends React.Component<ChatPanelProps> {
   render() {
     const { document, mode } = this.props;
     const { endpointUrl } = document || { endpointUrl: '' };

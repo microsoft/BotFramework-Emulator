@@ -33,7 +33,7 @@
 
 import { join } from 'path';
 
-import { DebugMode, SharedConstants } from '@bfemulator/app-shared';
+import { SharedConstants } from '@bfemulator/app-shared';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { AppMenuBuilder } from './appMenuBuilder';
@@ -364,7 +364,7 @@ describe('AppMenuBuilder', () => {
     expect(editMenuTemplate).toHaveLength(7);
 
     const viewMenuTemplate = appMenuTemplate[2].submenu;
-    expect(viewMenuTemplate).toHaveLength(7);
+    expect(viewMenuTemplate).toHaveLength(6);
 
     const convoMenuTemplate = appMenuTemplate[3].submenu;
     expect(convoMenuTemplate).toHaveLength(1);
@@ -431,29 +431,5 @@ describe('AppMenuBuilder', () => {
     const fileMenuTemplate = appMenuTemplate[1].submenu;
     const themeMenu = fileMenuTemplate[12];
     expect(themeMenu.submenu[0].type).toBe('radio');
-  });
-
-  it('should initialize and update the debugMenu item', async () => {
-    const viewMenu = await AppMenuBuilder.initViewMenu();
-    expect(viewMenu.submenu[6]).toEqual({
-      checked: false,
-      click: jasmine.any(Function),
-      id: 'debugMode',
-      label: 'Bot Inspector Mode',
-      type: 'checkbox',
-    });
-
-    mockGetApplicationMenu = () => ({
-      getMenuItemById: () => viewMenu.submenu[6],
-    });
-
-    AppMenuBuilder.updateDebugModeViewMenuItem(DebugMode.Sidecar);
-    expect(viewMenu.submenu[6]).toEqual({
-      checked: true,
-      click: jasmine.any(Function),
-      id: 'debugMode',
-      label: 'Bot Inspector Mode',
-      type: 'checkbox',
-    });
   });
 });

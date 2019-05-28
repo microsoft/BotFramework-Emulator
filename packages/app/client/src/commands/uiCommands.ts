@@ -31,20 +31,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { DebugMode, SharedConstants } from '@bfemulator/app-shared';
+import { SharedConstants } from '@bfemulator/app-shared';
 import { Command, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 import { ServiceTypes } from 'botframework-config/lib/schema';
 import { newNotification } from '@bfemulator/app-shared';
 
 import * as Constants from '../constants';
 import { azureArmTokenDataChanged, beginAzureAuthWorkflow, invalidateArmToken } from '../data/action/azureAuthActions';
-import { switchDebugMode } from '../data/action/debugModeAction';
 import * as EditorActions from '../data/action/editorActions';
-import { close } from '../data/action/editorActions';
 import * as NavBarActions from '../data/action/navBarActions';
 import { ProgressIndicatorPayload, updateProgressIndicator } from '../data/action/progressIndicatorActions';
 import { switchTheme } from '../data/action/themeActions';
-import { getTabGroupForDocument, showMarkdownPage, showWelcomePage } from '../data/editorHelpers';
+import { showMarkdownPage, showWelcomePage } from '../data/editorHelpers';
 import { AzureAuthState } from '../data/reducer/azureAuthReducer';
 import { store } from '../data/store';
 import {
@@ -60,9 +58,6 @@ import {
   UpdateAvailableDialogContainer,
   UpdateUnavailableDialogContainer,
 } from '../ui/dialogs';
-import * as ExplorerActions from '../data/action/explorerActions';
-import { closeConversation } from '../data/action/chatActions';
-import { ActiveBotHelper } from '../ui/helpers/activeBotHelper';
 import { beginAdd } from '../data/action/notificationActions';
 
 const { UI, Telemetry } = SharedConstants.Commands;
@@ -165,27 +160,6 @@ export class UiCommands {
         themeName,
       })
       .catch();
-  }
-
-  // ---------------------------------------------------------------------------
-  // Debug mode from main
-  @Command(UI.SwitchDebugMode)
-  protected async switchDebugMode(debugMode: DebugMode) {
-    const {
-      editor: { editors, activeEditor },
-    } = store.getState();
-    const { documents } = editors[activeEditor];
-    await ActiveBotHelper.closeActiveBot();
-    store.dispatch(ExplorerActions.showExplorer(debugMode !== DebugMode.Sidecar));
-    store.dispatch(switchDebugMode(debugMode));
-    // Close all active conversations - this is a clean wipe of all active conversations
-    Object.values(documents).forEach(document => {
-      if (!document.isGlobal) {
-        const { documentId } = document;
-        store.dispatch(close(getTabGroupForDocument(documentId), documentId));
-        store.dispatch(closeConversation(documentId));
-      }
-    });
   }
 
   // ---------------------------------------------------------------------------
