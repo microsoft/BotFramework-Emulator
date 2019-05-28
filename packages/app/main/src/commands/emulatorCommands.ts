@@ -52,6 +52,7 @@ import { TelemetryService } from '../telemetry';
 import { setCurrentUser } from '../settingsData/actions/userActions';
 import { pushClientAwareSettings } from '../settingsData/actions/frameworkActions';
 import { ProtocolHandler } from '../protocolHandler';
+import { session } from 'electron';
 
 const Commands = SharedConstants.Commands.Emulator;
 
@@ -300,7 +301,6 @@ export class EmulatorCommands {
         message: 'You have successfully cleared state.',
         title: 'Success!',
       });
-      const { session } = require('electron');
       await new Promise(resolve => session.defaultSession.clearStorageData({}, resolve));
     }
 
