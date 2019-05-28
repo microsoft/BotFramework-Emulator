@@ -109,6 +109,7 @@ export const SharedConstants = {
       PostActivityToConversation: 'emulator:post-activity',
       StartEmulator: 'emulator:start',
       OpenProtocolUrls: 'emulator:openProtocolUrls',
+      ClearState: 'emulator:clear-state',
     },
 
     Extension: {

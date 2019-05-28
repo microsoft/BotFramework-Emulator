@@ -277,4 +277,33 @@ export class EmulatorCommands {
     }
     openUrls.length = 0;
   }
+
+  @Command(Commands.ClearState)
+  protected async clearState() {
+    const settingsStore = getSettingsStore();
+    const settingsState = settingsStore.getState();
+    const { signedInUser } = settingsState.azure;
+    const signedInMessage = signedInUser
+      ? 'This will log you out of Azure and remove any session based data. Continue?'
+      : 'This will remove any session based data. Continue?';
+
+    const bClearState = await this.commandService.call(SharedConstants.Commands.Electron.ShowMessageBox, true, {
+      buttons: ['Cancel', 'OK'],
+      cancelId: 0,
+      defaultId: 1,
+      message: signedInMessage,
+      type: 'question',
+    });
+
+    if (bClearState === 1) {
+      await this.commandService.call(SharedConstants.Commands.Electron.ShowMessageBox, false, {
+        message: 'You have successfully cleared state.',
+        title: 'Success!',
+      });
+      const { session } = require('electron');
+      await new Promise(resolve => session.defaultSession.clearStorageData({}, resolve));
+    }
+
+    return true;
+  }
 }
