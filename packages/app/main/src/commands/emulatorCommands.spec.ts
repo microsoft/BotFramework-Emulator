@@ -55,9 +55,9 @@ import * as BotActions from '../data/actions/botActions';
 import { TelemetryService } from '../telemetry';
 import { setCurrentUser } from '../settingsData/actions/userActions';
 import { pushClientAwareSettings } from '../settingsData/actions/frameworkActions';
+import { azureLoggedInUserChanged } from '../settingsData/actions/azureAuthActions';
 
 import { EmulatorCommands } from './emulatorCommands';
-import { azureLoggedInUserChanged } from '../settingsData/actions/azureAuthActions';
 
 const mockBotConfig = BotConfiguration;
 const mockConversationConstructor = Conversation;

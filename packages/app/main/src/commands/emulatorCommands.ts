@@ -38,6 +38,7 @@ import { Conversation, Users } from '@bfemulator/emulator-core';
 import { BotConfigWithPath, Command, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 import * as fs from 'fs-extra';
 import { sync as mkdirpSync } from 'mkdirp';
+import { session } from 'electron';
 
 import * as BotActions from '../data/actions/botActions';
 import { getStore } from '../data/store';
@@ -52,7 +53,6 @@ import { TelemetryService } from '../telemetry';
 import { setCurrentUser } from '../settingsData/actions/userActions';
 import { pushClientAwareSettings } from '../settingsData/actions/frameworkActions';
 import { ProtocolHandler } from '../protocolHandler';
-import { session } from 'electron';
 
 const Commands = SharedConstants.Commands.Emulator;
 
