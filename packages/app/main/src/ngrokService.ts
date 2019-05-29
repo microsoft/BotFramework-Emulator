@@ -32,13 +32,13 @@
 //
 
 import { FrameworkSettings } from '@bfemulator/app-shared';
-import { LogItem } from '@bfemulator/sdk-shared';
-import { LogLevel } from '@bfemulator/sdk-shared';
-import { isLocalHostUrl } from '@bfemulator/sdk-shared';
 import {
   appSettingsItem,
   exceptionItem,
   externalLinkItem,
+  isLocalHostUrl,
+  LogItem,
+  LogLevel,
   ngrokExpirationItem,
   textItem,
 } from '@bfemulator/sdk-shared';
@@ -104,17 +104,18 @@ export class NgrokService {
     if (this.pendingRecycle) {
       return this.pendingRecycle;
     }
-    this.pendingRecycle = new Promise(async resolve => {
-      ngrok.kill();
-      const port = Emulator.getInstance().framework.serverPort;
 
-      this.ngrokPath = getStore().getState().framework.ngrokPath;
-      this.serviceUrl = `http://${this.localhost}:${port}`;
-      this.inspectUrl = null;
-      this.spawnErr = null;
-      this.triedToSpawn = false;
+    ngrok.kill();
+    const port = Emulator.getInstance().framework.serverPort;
 
-      if (this.ngrokPath && this.ngrokPath.length) {
+    this.ngrokPath = getStore().getState().framework.ngrokPath;
+    this.serviceUrl = `http://${this.localhost}:${port}`;
+    this.inspectUrl = null;
+    this.spawnErr = null;
+    this.triedToSpawn = false;
+
+    if (this.ngrokPath && this.ngrokPath.length) {
+      return (this.pendingRecycle = new Promise(async resolve => {
         try {
           this.triedToSpawn = true;
           const { inspectUrl, url } = await ngrok.connect({
@@ -129,11 +130,11 @@ export class NgrokService {
           // eslint-disable-next-line no-console
           console.error('Failed to spawn ngrok', err);
         }
-      }
-      this.pendingRecycle = null;
-      resolve();
-    });
-    return this.pendingRecycle;
+        this.pendingRecycle = null;
+        resolve();
+      }));
+    }
+    return Promise.resolve();
   }
 
   /** Logs a message in all active conversations that ngrok has expired */
