@@ -142,7 +142,7 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
               placeholder={botUrlLabel}
               value={this.state.botUrl}
             />
-            {isDebug && (
+            {!isDebug && (
               <PrimaryButton className={openBotStyles.browseButton}>
                 Browse
                 <input
