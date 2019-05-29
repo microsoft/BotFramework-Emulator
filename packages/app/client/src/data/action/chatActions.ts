@@ -34,7 +34,7 @@
 import { LogEntry } from '@bfemulator/sdk-shared';
 import { Action } from 'redux';
 import { Activity } from 'botframework-schema';
-import { EmulatorMode } from '@bfemulator/app-shared/src';
+import { EmulatorMode } from '@bfemulator/sdk-shared';
 
 import { ChatDocument } from '../reducer/chat';
 

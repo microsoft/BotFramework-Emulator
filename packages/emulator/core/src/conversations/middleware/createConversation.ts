@@ -34,7 +34,7 @@
 import { ConversationParameters, ChannelAccount, ConversationAccount } from 'botframework-schema';
 import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
-import { EmulatorMode } from '@bfemulator/app-shared';
+import { EmulatorMode } from '@bfemulator/sdk-shared';
 
 import { BotEmulator } from '../../botEmulator';
 import BotEndpoint from '../../facility/botEndpoint';

@@ -73,7 +73,7 @@ jest.mock('../emulator', () => ({
 
 jest.mock('electron', () => ({
   Menu: {
-    getApplicationMenu: () => ({ getMenuItemById: () => ({}) }),
+    getApplicationMenu: () => ({ getMenuItemById: (file: string) => ({}) }),
   },
   app: {
     getPath: () => 'not/there',

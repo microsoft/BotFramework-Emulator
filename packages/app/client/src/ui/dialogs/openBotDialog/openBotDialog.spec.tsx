@@ -92,7 +92,7 @@ describe('The OpenBotDialog', () => {
     );
     parent = mount(
       <Provider store={mockStore}>
-        <OpenBotDialogContainer />
+        <OpenBotDialogContainer isDebug={false} mode={'livechat'} savedBotUrls={['http://localhost/api/messages']} />
       </Provider>
     );
     node = parent.find(OpenBotDialog);
@@ -127,6 +127,19 @@ describe('The OpenBotDialog', () => {
     expect(instance.state.botUrl).toBe('some/path/to/myBot.bot');
   });
 
+  it('should properly set the state when the "debug" checkbox is clicked', () => {
+    instance.onCheckboxClick({
+      currentTarget: {
+        name: 'mode',
+        type: 'input',
+        checked: 'true',
+      },
+    } as any);
+
+    expect(instance.state.mode).toBe('debug');
+    expect(instance.state.isDebug).toBeTruthy();
+  });
+
   it('should open a bot when a path is provided', async () => {
     instance.onInputChange({
       target: {
@@ -158,6 +171,7 @@ describe('The OpenBotDialog', () => {
       appId: '',
       appPassword: '',
       endpoint: 'http://localhost',
+      mode: 'livechat',
     });
   });
 

@@ -103,11 +103,11 @@ export function openBotViaFilePathAction(path: string): BotAction<string> {
 }
 
 export function openBotViaUrlAction(
-  params: Partial<StartConversationParams>
+  startConversationParams: Partial<StartConversationParams>
 ): BotAction<Partial<StartConversationParams>> {
   return {
     type: BotActionType.openViaUrl,
-    payload: { ...params, mode: 'livechat-url' },
+    payload: startConversationParams,
   };
 }
 

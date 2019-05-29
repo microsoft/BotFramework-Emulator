@@ -37,7 +37,7 @@ import { CommandServiceImpl, CommandServiceInstance, isLocalHostUrl, uniqueId } 
 import { IEndpointService } from 'botframework-config/lib/schema';
 import { Activity } from 'botframework-schema';
 import { Command } from '@bfemulator/sdk-shared';
-import { EmulatorMode } from '@bfemulator/app-shared';
+import { EmulatorMode } from '@bfemulator/sdk-shared';
 
 import * as Constants from '../constants';
 import * as ChatActions from '../data/action/chatActions';
@@ -105,7 +105,7 @@ export class EmulatorCommands {
 
     store.dispatch(
       EditorActions.open({
-        contentType: Constants.CONTENT_TYPE_LIVE_CHAT,
+        contentType: mode === 'debug' ? Constants.CONTENT_TYPE_DEBUG : Constants.CONTENT_TYPE_LIVE_CHAT,
         documentId,
         isGlobal: false,
       })

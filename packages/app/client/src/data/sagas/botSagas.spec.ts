@@ -262,12 +262,13 @@ describe('The botSagas', () => {
     ).toEqual(put(errorNotification));
   });
 
-  xit('should send the "/INSPECT open" command when in debug mode and opening from url', () => {
+  it('should send the "/INSPECT open" command when in debug mode and opening from url', () => {
     const gen = BotSagas.openBotViaUrl(
       openBotViaUrlAction({
         appPassword: 'password',
         appId: '1234abcd',
         endpoint: 'http://localhost/api/messages',
+        mode: 'debug',
       })
     );
     gen.next();
@@ -308,12 +309,13 @@ describe('The botSagas', () => {
     expect(gen.next().done).toBe(true);
   });
 
-  xit('should spawn a notification if posting the "/INSPECT open" command fails', () => {
+  it('should spawn a notification if posting the "/INSPECT open" command fails', () => {
     const gen = BotSagas.openBotViaUrl(
       openBotViaUrlAction({
         appPassword: 'password',
         appId: '1234abcd',
         endpoint: 'http://localhost/api/messages',
+        mode: 'debug',
       })
     );
     gen.next();
@@ -337,12 +339,13 @@ describe('The botSagas', () => {
     expect(gen.next({ statusCode: 400 }).value).toEqual(put(errorNotification));
   });
 
-  xit('should spawn a notification if parsing the conversation id from the response fails', () => {
+  it('should spawn a notification if parsing the conversation id from the response fails', () => {
     const gen = BotSagas.openBotViaUrl(
       openBotViaUrlAction({
         appPassword: 'password',
         appId: '1234abcd',
         endpoint: 'http://localhost/api/messages',
+        mode: 'debug',
       })
     );
     gen.next();
@@ -359,7 +362,7 @@ describe('The botSagas', () => {
     const startConversationResponse = gen.next({ id: undefined }).value;
     // POSTing to the conversation should return a 400
     const errorNotification = beginAdd(
-      newNotification('An error occurred while trying to grab conversation ID from new conversation.')
+      newNotification('An error occurred while trying to grab conversation ID from the new conversation.')
     );
     (errorNotification as any).payload.notification.timestamp = jasmine.any(Number);
     (errorNotification as any).payload.notification.id = jasmine.any(String);

@@ -53,6 +53,9 @@ export class EditorFactory extends React.Component<EditorFactoryProps> {
       case Constants.CONTENT_TYPE_LIVE_CHAT:
         return <EmulatorContainer mode="livechat" documentId={document.documentId} dirty={this.props.document.dirty} />;
 
+      case Constants.CONTENT_TYPE_DEBUG:
+        return <EmulatorContainer mode="debug" documentId={document.documentId} dirty={false} />;
+
       case Constants.CONTENT_TYPE_TRANSCRIPT:
         return (
           <EmulatorContainer mode="transcript" documentId={document.documentId} dirty={this.props.document.dirty} />

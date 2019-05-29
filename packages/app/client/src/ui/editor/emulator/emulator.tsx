@@ -33,7 +33,7 @@
 
 import { createDirectLine } from 'botframework-webchat';
 import { uniqueId, uniqueIdv4 } from '@bfemulator/sdk-shared';
-import { EmulatorMode } from '@bfemulator/app-shared';
+import { EmulatorMode } from '@bfemulator/sdk-shared';
 import { Splitter, SplitButton } from '@bfemulator/ui-react';
 import base64Url from 'base64url';
 import { IEndpointService } from 'botframework-config/lib/schema';

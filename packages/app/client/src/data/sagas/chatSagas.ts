@@ -50,9 +50,9 @@ import { call, ForkEffect, put, select, takeEvery, takeLatest } from 'redux-saga
 import {
   ChatAction,
   ChatActions,
+  ClearLogPayload,
   closeDocument,
   DocumentIdPayload,
-  NewChatPayload,
   setHighlightedObjects,
   setInspectorObjects,
   updatePendingSpeechTokenRetrieval,
@@ -61,6 +61,7 @@ import {
 } from '../action/chatActions';
 import { RootState } from '../store';
 import { isSpeechEnabled } from '../../utils';
+import { ChatDocument } from '../reducer/chat';
 
 const getConversationIdFromDocumentId = (state: RootState, documentId: string) => {
   return (state.chat.chats[documentId] || { conversationId: null }).conversationId;
@@ -159,7 +160,7 @@ export class ChatSagas {
     yield call([ChatSagas.commandService, ChatSagas.commandService.remoteCall], DeleteConversation, conversationId);
   }
 
-  public static *newChat(action: ChatAction<NewChatPayload>): Iterable<any> {
+  public static *newChat(action: ChatAction<Partial<ChatDocument & ClearLogPayload>>): Iterable<any> {
     const { documentId, resolver } = action.payload;
     // Create a new webchat store for this documentId
     yield put(webChatStoreUpdated(documentId, createWebChatStore()));
@@ -178,12 +179,17 @@ export class ChatSagas {
     // If an existing factory is found, refresh the token
     const existingFactory: string = yield select(getWebSpeechFactoryForDocumentId, documentId);
     const { GetSpeechToken: command } = SharedConstants.Commands.Emulator;
-    const token = yield call(
-      [ChatSagas.commandService, ChatSagas.commandService.remoteCall],
-      command,
-      endpoint.id,
-      !!existingFactory
-    );
+    let token;
+    try {
+      token = yield call(
+        [ChatSagas.commandService, ChatSagas.commandService.remoteCall],
+        command,
+        endpoint.id,
+        !!existingFactory
+      );
+    } catch (e) {
+      // No-op - this appId/pass combo is not provisioned to use the speech api
+    }
     if (token) {
       const factory = yield call(createCognitiveServicesBingSpeechPonyfillFactory, {
         authorizationToken: token,

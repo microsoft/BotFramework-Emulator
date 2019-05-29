@@ -37,7 +37,7 @@ import ReactWebChat from 'botframework-webchat';
 import * as React from 'react';
 import { Component, KeyboardEvent, MouseEvent, ReactNode } from 'react';
 import { PrimaryButton } from '@bfemulator/ui-react';
-import { EmulatorMode } from '@bfemulator/app-shared/src';
+import { EmulatorMode } from '@bfemulator/sdk-shared';
 
 import { areActivitiesEqual, getActivityTargets } from '../../../../../utils';
 import { ChatDocument } from '../../../../../data/reducer/chat';

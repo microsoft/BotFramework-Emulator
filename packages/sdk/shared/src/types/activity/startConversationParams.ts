@@ -33,11 +33,12 @@
 import { ConversationParameters } from 'botframework-schema';
 
 import { User } from '../user';
+import { EmulatorMode } from '../emulatorMode';
 
 export interface StartConversationParams extends ConversationParameters {
   endpoint?: string;
   appId?: string;
   appPassword?: string;
   user?: User;
-  mode?: string;
+  mode?: EmulatorMode;
 }

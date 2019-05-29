@@ -38,6 +38,7 @@ import updateIn from 'simple-update-in';
 import {
   appSettingsItem,
   CheckoutConversationSession,
+  EmulatorMode,
   ErrorCodes,
   externalLinkItem,
   isLocalHostUrl,
@@ -62,7 +63,7 @@ import {
   IInvokeActivity,
   IMessageActivity,
 } from 'botframework-schema';
-import { EmulatorMode, traceContainsDebugData, ValueTypesMask } from '@bfemulator/app-shared';
+import { traceContainsDebugData, ValueTypesMask } from '@bfemulator/app-shared';
 
 import { BotEmulator } from '../botEmulator';
 import { TokenCache } from '../userToken/tokenCache';

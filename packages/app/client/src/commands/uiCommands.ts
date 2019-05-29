@@ -31,10 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { SharedConstants } from '@bfemulator/app-shared';
+import { newNotification, SharedConstants } from '@bfemulator/app-shared';
 import { Command, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 import { ServiceTypes } from 'botframework-config/lib/schema';
-import { newNotification } from '@bfemulator/app-shared';
+import { ComponentClass } from 'react';
 
 import * as Constants from '../constants';
 import { azureArmTokenDataChanged, beginAzureAuthWorkflow, invalidateArmToken } from '../data/action/azureAuthActions';
@@ -59,6 +59,7 @@ import {
   UpdateUnavailableDialogContainer,
 } from '../ui/dialogs';
 import { beginAdd } from '../data/action/notificationActions';
+import { OpenBotDialogProps } from '../ui/dialogs/openBotDialog/openBotDialog';
 
 const { UI, Telemetry } = SharedConstants.Commands;
 
@@ -111,8 +112,10 @@ export class UiCommands {
   // ---------------------------------------------------------------------------
   // Shows a bot creation dialog
   @Command(UI.ShowOpenBotDialog)
-  protected async showOpenBotDialog() {
-    return await DialogService.showDialog(OpenBotDialogContainer);
+  protected async showOpenBotDialog(isDebug: boolean = false): Promise<void> {
+    return await DialogService.showDialog<ComponentClass, void>(OpenBotDialogContainer, {
+      isDebug,
+    } as OpenBotDialogProps);
   }
 
   // ---------------------------------------------------------------------------

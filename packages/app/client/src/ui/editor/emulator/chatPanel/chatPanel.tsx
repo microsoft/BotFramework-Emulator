@@ -31,9 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import * as React from 'react';
+import { EmulatorMode } from '@bfemulator/sdk-shared';
 
 import { ChatContainer } from '../parts/chat/chatContainer';
-import { EmulatorMode } from '../emulator';
 import { ChatDocument } from '../../../../data/reducer/chat';
 
 import * as styles from './chatPanel.scss';

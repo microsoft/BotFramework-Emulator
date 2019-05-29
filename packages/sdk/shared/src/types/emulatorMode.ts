@@ -30,46 +30,4 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
-import { connect } from 'react-redux';
-import { Action } from 'redux';
-
-import { openBotViaFilePathAction, openBotViaUrlAction } from '../../../data/action/botActions';
-import { DialogService } from '../service';
-import { RootState } from '../../../data/store';
-
-import { OpenBotDialog, OpenBotDialogProps, OpenBotDialogState } from './openBotDialog';
-
-const mapDispatchToProps = (dispatch: (action: Action) => void): OpenBotDialogProps => {
-  return {
-    openBot: (componentState: OpenBotDialogState) => {
-      DialogService.hideDialog();
-      const { appId = '', appPassword = '', botUrl = '', mode = 'livechat-url' } = componentState;
-      if (botUrl.startsWith('http')) {
-        dispatch(
-          openBotViaUrlAction({
-            appId,
-            appPassword,
-            endpoint: botUrl,
-            mode,
-          })
-        );
-      } else {
-        dispatch(openBotViaFilePathAction(botUrl));
-      }
-    },
-    onDialogCancel: () => DialogService.hideDialog(),
-  };
-};
-
-const mapStateToProps = (state: RootState, ownProps: OpenBotDialogProps): OpenBotDialogProps => {
-  return {
-    savedBotUrls: state.clientAwareSettings.savedBotUrls,
-    ...ownProps,
-  };
-};
-
-export const OpenBotDialogContainer = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(OpenBotDialog);
+export type EmulatorMode = 'livechat' | 'livechat-url' | 'transcript' | 'debug';

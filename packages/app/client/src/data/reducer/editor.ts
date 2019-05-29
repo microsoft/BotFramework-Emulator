@@ -34,7 +34,7 @@
 import { deepCopySlow } from '@bfemulator/app-shared';
 import { DirectLine } from 'botframework-directlinejs';
 import { Activity } from 'botframework-schema';
-import { EmulatorMode } from '@bfemulator/app-shared';
+import { EmulatorMode } from '@bfemulator/sdk-shared';
 
 import * as Constants from '../../constants';
 import { BotAction } from '../action/botActions';

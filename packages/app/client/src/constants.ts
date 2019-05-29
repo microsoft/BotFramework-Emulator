@@ -33,6 +33,7 @@
 
 import { SharedConstants } from '@bfemulator/app-shared';
 
+export const CONTENT_TYPE_DEBUG = 'application/vnd.microsoft.bfemulator.document.debug';
 export const CONTENT_TYPE_MARKDOWN = 'application/vnd.microsoft.bfemulator.document.markdown';
 export const CONTENT_TYPE_APP_SETTINGS = 'application/vnd.microsoft.bfemulator.document.appsettings';
 export const CONTENT_TYPE_WELCOME_PAGE = 'application/vnd.microsoft.bfemulator.document.welcome';
