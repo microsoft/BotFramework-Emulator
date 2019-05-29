@@ -298,20 +298,21 @@ describe('Protocol handler tests', () => {
       });
     });
 
-    it('should dispatch a inspector action', async () => {
-      const spy = jest.spyOn(ProtocolHandler, 'performInspectorAction');
+    it('should dispatch a inspector action with correct query params', async () => {
       const mockJson = jest.fn(async () => ({ id: '0001' }));
-      const commandServiceSpy = jest.spyOn(commandService, 'call').mockResolvedValueOnce({ statusCode: 200 });
+      const expectedActivityContent = { type: 'message', text: '/INSPECT open' };
+
+      const protocolHandlerSpy = jest.spyOn(ProtocolHandler, 'performInspectorAction');
       const conversationServiceSpy = jest.spyOn(ConversationService, 'startConversation').mockResolvedValue({
         json: mockJson,
       });
+      const commandServiceSpy = jest.spyOn(commandService, 'call').mockResolvedValueOnce({ statusCode: 200 });
+
       await ProtocolHandler.parseProtocolUrlAndDispatch(
         'bfemulator://inspector.open?url=http://localhost/&msaAppId=id&msaAppPassword=pass'
       );
-      expect(mockDispatch).toHaveBeenCalledWith(debugModeChanged(DebugMode.Sidecar));
-      expect(commandServiceSpy).toHaveBeenCalled();
-      expect(conversationServiceSpy).toHaveBeenCalled(); // Probably need to update for more specificity (expect args)
-      expect(spy).toHaveBeenCalledWith({
+
+      expect(protocolHandlerSpy).toHaveBeenCalledWith({
         action: 'open',
         args: 'url=http://localhost/&msaAppId=id&msaAppPassword=pass',
         domain: 'inspector',
@@ -321,6 +322,18 @@ describe('Protocol handler tests', () => {
           msaAppPassword: 'pass',
         },
       });
+      expect(mockDispatch).toHaveBeenCalledWith(debugModeChanged(DebugMode.Sidecar));
+      expect(conversationServiceSpy).toHaveBeenCalledWith('http://localhost:8090', {
+        appId: 'id',
+        appPassword: 'pass',
+        endpoint: 'http://localhost/',
+      });
+      expect(commandServiceSpy).toHaveBeenCalledWith(
+        mockSharedConstants.Commands.Emulator.PostActivityToConversation,
+        '0001',
+        expectedActivityContent,
+        false
+      );
     });
 
     it('should throw error if unable to post activity in inspector action', async () => {
