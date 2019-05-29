@@ -308,33 +308,36 @@ class ProtocolHandlerImpl implements ProtocolHandler {
         throw new Error(`Error while trying to spawn ngrok instance: ${ngrokSpawnStatus.err || ''}\n`);
       }
     }
-    // Start conversation with bot before beginning attach process
-    const response = await ConversationService.startConversation(serverUrl.replace('[::]', 'localhost'), {
-      appId,
-      appPassword,
-      endpoint,
-    });
 
-    // extract the conversation id from the body
-    const parsedBody = await response.json();
-    const conversationId = parsedBody.id || '';
+    if (endpoint) {
+      // Start conversation with bot before beginning attach process
+      const response = await ConversationService.startConversation(serverUrl.replace('[::]', 'localhost'), {
+        appId,
+        appPassword,
+        endpoint,
+      });
 
-    if (conversationId) {
-      const activity = {
-        type: 'message',
-        text: '/INSPECT open',
-      };
-      const postActivityResponse = await this.commandService.call(
-        SharedConstants.Commands.Emulator.PostActivityToConversation,
-        conversationId,
-        activity,
-        false
-      );
-      if ((postActivityResponse as any).statusCode >= 400) {
-        throw new Error(`An error occurred while POSTing "/INSPECT open" command to conversation ${conversationId}`);
+      // extract the conversation id from the body
+      const parsedBody = await response.json();
+      const conversationId = parsedBody.id || '';
+
+      if (conversationId) {
+        const activity = {
+          type: 'message',
+          text: '/INSPECT open',
+        };
+        const postActivityResponse = await this.commandService.call(
+          SharedConstants.Commands.Emulator.PostActivityToConversation,
+          conversationId,
+          activity,
+          false
+        );
+        if ((postActivityResponse as any).statusCode >= 400) {
+          throw new Error(`An error occurred while POSTing "/INSPECT open" command to conversation ${conversationId}`);
+        }
+      } else {
+        throw new Error('An error occurred while trying to grab conversation ID from new conversation.');
       }
-    } else {
-      throw new Error('An error occurred while trying to grab conversation ID from new conversation.');
     }
   }
 }

@@ -234,11 +234,13 @@ describe('Protocol handler tests', () => {
 
   describe('dispatching protocol actions', () => {
     let tmpPerformBotAction;
+    let tmpPeformInspectorAction;
     let tmpPerformLiveChatAction;
     let tmpPerformTranscriptAction;
 
     beforeEach(() => {
       tmpPerformBotAction = ProtocolHandler.performBotAction;
+      tmpPeformInspectorAction = ProtocolHandler.performInspectorAction;
       tmpPerformLiveChatAction = ProtocolHandler.performLiveChatAction;
       tmpPerformTranscriptAction = ProtocolHandler.performTranscriptAction;
       mockDispatch.mockClear();
@@ -246,6 +248,7 @@ describe('Protocol handler tests', () => {
 
     afterEach(() => {
       ProtocolHandler.performBotAction = tmpPerformBotAction;
+      ProtocolHandler.performInspectorAction = tmpPeformInspectorAction;
       ProtocolHandler.performLiveChatAction = tmpPerformLiveChatAction;
       ProtocolHandler.performTranscriptAction = tmpPerformTranscriptAction;
     });
@@ -275,7 +278,7 @@ describe('Protocol handler tests', () => {
     });
 
     it('should dispatch a livechat action', () => {
-      const spy = jest.spyOn(ConversationService, 'startConversation').mockResolvedValue(true);
+      const spy = jest.spyOn(ConversationService, 'startConversation').mockResolvedValueOnce(true);
       ProtocolHandler.parseProtocolUrlAndDispatch(
         'bfemulator://livechat.open?botUrl=http://localhost/&msaAppId=id&msaAppPassword=pass'
       );
@@ -285,6 +288,7 @@ describe('Protocol handler tests', () => {
         appPassword: 'pass',
         endpoint: 'http://localhost/',
       });
+      spy.mockReset();
     });
 
     it('should dispatch a transcript action', () => {
@@ -298,7 +302,24 @@ describe('Protocol handler tests', () => {
       });
     });
 
-    it('should dispatch a inspector action with correct query params', async () => {
+    it('should dispatch an inspector action', async () => {
+      const protocolHandlerSpy = jest.spyOn(ProtocolHandler, 'performInspectorAction');
+      const conversationServiceSpy = jest.spyOn(ConversationService, 'startConversation');
+
+      await ProtocolHandler.parseProtocolUrlAndDispatch('bfemulator://inspector.open');
+
+      expect(protocolHandlerSpy).toHaveBeenCalledWith({
+        action: 'open',
+        args: '',
+        domain: 'inspector',
+        parsedArgs: {},
+      });
+      expect(conversationServiceSpy).not.toBeCalled();
+      conversationServiceSpy.mockReset();
+      protocolHandlerSpy.mockReset();
+    });
+
+    it('should dispatch an inspector action with correct query params', async () => {
       const mockJson = jest.fn(async () => ({ id: '0001' }));
       const expectedActivityContent = { type: 'message', text: '/INSPECT open' };
 
@@ -309,15 +330,15 @@ describe('Protocol handler tests', () => {
       const commandServiceSpy = jest.spyOn(commandService, 'call').mockResolvedValueOnce({ statusCode: 200 });
 
       await ProtocolHandler.parseProtocolUrlAndDispatch(
-        'bfemulator://inspector.open?url=http://localhost/&msaAppId=id&msaAppPassword=pass'
+        'bfemulator://inspector.open?botUrl=http://localhost/&msaAppId=id&msaAppPassword=pass'
       );
 
       expect(protocolHandlerSpy).toHaveBeenCalledWith({
         action: 'open',
-        args: 'url=http://localhost/&msaAppId=id&msaAppPassword=pass',
+        args: 'botUrl=http://localhost/&msaAppId=id&msaAppPassword=pass',
         domain: 'inspector',
         parsedArgs: {
-          url: 'http://localhost/',
+          botUrl: 'http://localhost/',
           msaAppId: 'id',
           msaAppPassword: 'pass',
         },
@@ -344,7 +365,7 @@ describe('Protocol handler tests', () => {
       });
       try {
         await ProtocolHandler.parseProtocolUrlAndDispatch(
-          'bfemulator://inspector.open?url=http://localhost/&msaAppId=id&msaAppPassword=pass'
+          'bfemulator://inspector.open?botUrl=http://localhost/&msaAppId=id&msaAppPassword=pass'
         );
         expect(conversationServiceSpy).toHaveBeenCalled();
         expect(commandServiceSpy).toHaveBeenCalled();
