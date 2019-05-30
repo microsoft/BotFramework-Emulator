@@ -25,10 +25,10 @@
     "@babel/plugin-transform-runtime": "^7.4.4",
     "@babel/preset-env": "^7.1.0",
     "@babel/preset-typescript": "^7.1.0",
-    "@types/jest": "^22.2.3",
+    "@types/jest": "24.0.13",
     "@types/react": "~16.3.2",
     "@types/react-dom": "^16.0.4",
-    "babel-jest": "23.6.0",
+    "babel-jest": "24.8.0",
     "babel-loader": "^8.0.6",
     "enzyme": "^3.3.0",
     "eslint": "^5.12.0",
@@ -39,7 +39,7 @@
     "eslint-plugin-react": "^7.12.3",
     "eslint-plugin-typescript": "^1.0.0-rc.3",
     "file-loader": "^1.1.11",
-    "jest": "^23.0.0",
+    "jest": "24.8.0",
     "npm-run-all": "^4.1.5",
     "prettier-eslint": "^8.8.2",
     "prettier-eslint-cli": "^4.7.1",
@@ -50,8 +50,8 @@
     "typescript": "3.1.1",
     "typings-for-css-modules-loader": "^1.7.0",
     "url-loader": "^1.0.1",
-    "webpack": "4.16.4",
-    "webpack-cli": "^3.1.1"
+    "webpack": "^4.32.2",
+    "webpack-cli": "^3.3.2"
   },
   "dependencies": {
     "@babel/runtime": "^7.1.5",

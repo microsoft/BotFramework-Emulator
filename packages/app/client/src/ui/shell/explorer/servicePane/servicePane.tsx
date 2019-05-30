@@ -51,6 +51,7 @@ export interface ServicePaneState {
   expanded?: boolean;
 }
 
+/* eslint-disable react/display-name */
 export abstract class ServicePane<
   T extends ServicePaneProps,
   S extends ServicePaneState = ServicePaneState
