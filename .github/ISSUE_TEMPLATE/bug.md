@@ -1,6 +1,9 @@
 ---
-name: "Bot Framework Emulator Bug"
+name: Bot Framework Emulator Bug
 about: Create a bug report for a bug you found in the Bot Framework Emulator
+title: ''
+labels: Bug
+assignees: ''
 
 ---
 

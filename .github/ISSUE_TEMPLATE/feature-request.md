@@ -1,6 +1,9 @@
 ---
-name: "Bot Framework Emulator Feature request"
+name: Bot Framework Emulator Feature request
 about: Suggest a feature for the Bot Framework Emulator
+title: ''
+labels: Enhancement
+assignees: ''
 
 ---
 
