@@ -32,7 +32,7 @@
 //
 
 // TODO: Revert import to `@bfemulator/sdk-shared` once issue #1333 (https://github.com/Microsoft/BotFramework-Emulator/issues/1333) is resolved.
-import { TraceActivity } from '@bfemulator/sdk-shared/build/types';
+import { Activity } from 'botframework-schema';
 import { IQnAService } from 'botframework-config/lib/schema';
 
 import { AppState, PersistentAppState } from './App';
@@ -40,11 +40,6 @@ import { Answer } from './Models/QnAMakerModels';
 import { QnAMakerTraceInfo, QueryResult } from './Models/QnAMakerTraceInfo';
 
 const QnaMakerTracerType = 'https://www.qnamaker.ai/schemas/trace';
-
-interface QnaMakerModel {
-  ModelID: string;
-  SubscriptionKey: string;
-}
 
 export default class AppStateAdapter implements AppState {
   public id: string;
@@ -59,7 +54,7 @@ export default class AppStateAdapter implements AppState {
     if (!obj) {
       return false;
     }
-    const trace = obj as TraceActivity;
+    const trace = obj as Activity;
     if (trace.type !== 'trace' || trace.valueType !== QnaMakerTracerType) {
       return false;
     }
@@ -80,7 +75,7 @@ export default class AppStateAdapter implements AppState {
     if (!AppStateAdapter.validate(obj)) {
       return;
     }
-    const traceActivity = obj as TraceActivity;
+    const traceActivity = obj as Activity;
     this.traceInfo = traceActivity.value as QnAMakerTraceInfo;
     this.id = traceActivity.id || '';
 
