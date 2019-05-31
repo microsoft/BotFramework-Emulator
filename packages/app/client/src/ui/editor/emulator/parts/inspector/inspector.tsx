@@ -72,7 +72,7 @@ interface IpcMessageEvent extends Event {
 }
 
 interface InspectorProps {
-  appPath?: string;
+  serverUrl?: string;
   document: any;
   themeInfo: { themeName: string; themeComponents: string[] };
   activeBot?: IBotConfiguration;
@@ -141,7 +141,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
         activeBot: newProps.activeBot,
         botHash: newProps.botHash,
         inspector,
-        inspectorSrc: inspector.src,
+        inspectorSrc: `${newProps.serverUrl}/${inspector.src}`,
         inspectObj: inspectorResult.inspectObj,
         themeInfo: newProps.themeInfo,
         title: inspector.name,
@@ -268,11 +268,11 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
   }
 
   private async updateInspector(state: InspectorState): Promise<void> {
-    const { src } = state.inspector || { src: '' };
-    if (!src) {
+    const { inspectorSrc } = state || { inspectorSrc: '' };
+    if (!inspectorSrc) {
       return;
     }
-    const encodedSrc = encodeURI(src);
+    const encodedSrc = encodeURI(inspectorSrc);
     const { webViewByLocation: webViews } = this;
     if (!webViews[encodedSrc]) {
       webViews[encodedSrc] = this.createWebView(state);
@@ -306,7 +306,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     webView.addEventListener('ipc-message', this.ipcMessageEventHandler);
     webView.setAttribute('partition', `persist:${state.botHash}`);
     webView.setAttribute('preload', state.inspector.preloadPath);
-    webView.setAttribute('src', encodeURI(state.inspector.src));
+    webView.setAttribute('src', encodeURI(state.inspectorSrc));
     return webView;
   }
 

@@ -37,7 +37,7 @@ import { Command, CommandServiceImpl, CommandServiceInstance } from '@bfemulator
 import * as BotActions from '../data/actions/botActions';
 import { getStore } from '../data/store';
 import { Protocol } from '../constants';
-import { ExtensionManagerImpl } from '../extensions';
+import { ExtensionManagerImpl } from '../extensions/extensions';
 import { Migrator } from '../migrator';
 import { ProtocolHandler } from '../protocolHandler';
 import { getStore as getSettingsStore } from '../settingsData/store';

@@ -165,6 +165,9 @@ function shouldPostToChat(
   route: Route,
   req: { body: {}; conversation: Conversation }
 ): boolean {
+  if (!conversationId) {
+    return false;
+  }
   const isDLine = method === 'GET' && route.spec.path === '/v3/directline/conversations/:conversationId/activities';
   const isNotTranscript = !!conversationId && !conversationId.includes('transcript');
   const { conversation } = req;
@@ -172,7 +175,7 @@ function shouldPostToChat(
 }
 
 function getConversationId(req: ConversationAwareRequest): string {
-  return req.conversation ? req.conversation.conversationId : req.params.conversationId;
+  return req.conversation ? req.conversation.conversationId : (req.params || {}).conversationId;
 }
 
 function hasLiveChat(conversationId: string, conversationSet: ConversationSet): boolean {

@@ -1,10 +1,12 @@
 {
   "name": "QNAMaker",
+  "root": "/public",
+  "id": "qnamaker",
   "client": {
     "inspectors": [
       {
         "name": "QNAMaker",
-        "src": "client/public/index.html",
+        "src": "index.html",
         "criteria": [
           {
             "path": "valueType",

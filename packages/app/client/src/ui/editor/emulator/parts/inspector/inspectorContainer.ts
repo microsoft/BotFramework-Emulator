@@ -43,7 +43,7 @@ const mapStateToProps = (state: RootState, ownProps: any) => {
   const { bot, theme, clientAwareSettings } = state;
   return {
     ...ownProps,
-    appPath: clientAwareSettings.appPath,
+    serverUrl: clientAwareSettings.serverUrl,
     botHash: bot.activeBotDigest,
     activeBot: bot.activeBot,
     themeInfo: theme,

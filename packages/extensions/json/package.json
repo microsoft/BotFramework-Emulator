@@ -5,7 +5,12 @@
   "main": "index.js",
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "@babel/runtime": "^7.1.5"
+  "scripts": {
+    "copy": "copyfiles -f src/index.html src/index.css public",
+    "build": "tsc && npm run copy",
+    "build:dev": "tsc --sourceMap && npm run copy"
+  },
+  "devDependencies": {
+    "copyfiles": "^2.1.0"
   }
 }

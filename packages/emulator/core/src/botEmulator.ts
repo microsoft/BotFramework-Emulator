@@ -40,6 +40,7 @@ import registerBotStateRoutes from './botState/registerRoutes';
 import registerConversationRoutes from './conversations/registerRoutes';
 import registerDirectLineRoutes from './directLine/registerRoutes';
 import registerEmulatorRoutes from './emulator/registerRoutes';
+import registerExtensionRoutes from './extension/registerRoutes';
 import Attachments from './facility/attachments';
 import BotState from './facility/botState';
 import ConsoleLogService from './facility/consoleLogService';
@@ -110,6 +111,7 @@ export class BotEmulator {
     registerSessionRoutes(this, router, uses);
     registerUserTokenRoutes(this, router, uses);
     registerEmulatorRoutes(this, router, uses);
+    registerExtensionRoutes(this, router, uses);
 
     return this;
   }

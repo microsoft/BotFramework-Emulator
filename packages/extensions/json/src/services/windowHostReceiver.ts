@@ -30,30 +30,34 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { ValueTypes } from '@bfemulator/app-shared';
-
-import { BotStateVisualizer } from './BotStateVisualizer';
-import { IpcHandler } from './utils';
-import { BotState } from './types';
-import { ViewState } from './ViewState';
+import { CollapsibleJson } from '../components/collapsibleJson';
+import { EventEmitter } from 'events';
 
 export class WindowHostReceiver {
-  private visualizer: BotStateVisualizer;
+  private collapsibleJson: CollapsibleJson;
+  private readonly host: EventEmitter;
 
-  constructor(visualizer: BotStateVisualizer) {
-    this.visualizer = visualizer;
+  constructor(collapsibleJson: CollapsibleJson, host: EventEmitter) {
+    this.collapsibleJson = collapsibleJson;
+    this.host = host;
+    this.startListening();
   }
 
-  @IpcHandler('inspect')
-  protected inspectHandler(data: { value: BotState; valueType: string }): void {
-    const { visualizer } = this;
-    visualizer.isDiff = data.valueType === ValueTypes.Diff;
-    visualizer.dataProvider = data.value;
-    this.accessoryClick(visualizer.viewState || ViewState.Json);
+  private startListening() {
+    if (!this.host) {
+      return;
+    }
+    this.host.on('inspect', this.onInspect.bind(this));
+    this.host.on('theme', this.onTheme.bind(this));
+    this.host.on('accessory-click', this.onAccessoryClick.bind(this));
   }
 
-  @IpcHandler('theme')
-  protected async themeHandler(themeInfo): Promise<void> {
+  protected onInspect(data: any): void {
+    const { collapsibleJson } = this;
+    collapsibleJson.json = data;
+  }
+
+  protected async onTheme(themeInfo): Promise<void> {
     const oldThemeComponents = document.querySelectorAll('[data-theme-component="true"]');
     const head = document.querySelector('head');
     const fragment = document.createDocumentFragment();
@@ -82,12 +86,7 @@ export class WindowHostReceiver {
     });
   }
 
-  @IpcHandler('accessory-click')
-  protected accessoryClick(id: ViewState): void {
-    const { host } = window as any;
-    const resetId = id === ViewState.Graph ? ViewState.Json : ViewState.Graph;
-    host.setAccessoryState(resetId, 'default');
-    host.setAccessoryState(id, 'selected');
-    this.visualizer.viewState = id;
+  protected onAccessoryClick(_id: any): void {
+    // stub for immediate future use
   }
 }

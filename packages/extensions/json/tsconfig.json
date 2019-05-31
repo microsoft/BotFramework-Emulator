@@ -1,10 +1,12 @@
 {
   "extends": "../../../tsconfig.json",
   "compilerOptions": {
-    "outDir": "build/dist",
+    "outDir": "public",
     "lib": ["dom", "es2015.proxy", "es5", "esnext", "es7"],
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
+    "declaration": false,
+    "sourceMap": false,
     "target": "esnext",
     "module": "es6"
   },

@@ -1,5 +1,7 @@
 {
   "name": "JSON",
+  "root": "/public",
+  "id": "json",
   "client": {
     "inspectors": [
       {

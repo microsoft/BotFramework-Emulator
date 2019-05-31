@@ -103,6 +103,8 @@ export interface ExtensionConfigNode {
 // =============================================================================
 export interface ExtensionConfig {
   name?: string;
+  id?: string;
+  root?: string;
   location?: string;
   node?: ExtensionConfigNode;
   client?: ExtensionConfigClient;

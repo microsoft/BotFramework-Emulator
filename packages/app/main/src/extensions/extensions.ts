@@ -34,10 +34,9 @@
 import * as path from 'path';
 
 import { SharedConstants } from '@bfemulator/app-shared';
-import { CommandServiceImpl, ExtensionConfig } from '@bfemulator/sdk-shared';
-import { CommandServiceInstance } from '@bfemulator/sdk-shared';
+import { CommandServiceImpl, CommandServiceInstance, ExtensionConfig } from '@bfemulator/sdk-shared';
 
-import { getDirectories, readFileSync } from './utils';
+import { getDirectories, readFileSync } from '../utils';
 
 // =============================================================================
 export interface Extension {
@@ -74,7 +73,7 @@ class ExtManagerImpl implements ExtensionManager {
     let folders = [];
     try {
       // Get all subdirectories under ../extensions
-      const folder = this.unpackedFolder(path.resolve(path.join(__dirname, '..', 'extensions')));
+      const folder = this.unpackedFolder(path.resolve('./app/extensions'));
       folders = getDirectories(folder);
     } catch {
       // do nothing
@@ -119,22 +118,15 @@ class ExtManagerImpl implements ExtensionManager {
     // Cleanup some data
     extension.config.client = extension.config.client || {};
     extension.config.node = extension.config.node || {};
-    // Cleanup basePath (root of webpack-dev-server, where index.html would live)
-    extension.config.client.basePath = (extension.config.client.basePath || '').replace(/\\/g, '/');
     // Get the list of inspectors
     const inspectors = extension.config.client.inspectors || [];
     // Cleanup inspector paths
     inspectors.forEach(inspector => {
-      inspector.src = (inspector.src || '').replace(/\\/g, '/');
+      // should be /extension/:extensionId/:extensionSrc/
+      inspector.src = `extension/${extension.config.id}/${(inspector.src || '').replace(/\\/g, '/')}`;
     });
     inspectors.forEach(inspector => {
-      let folder = path.resolve(configPath).replace(/\\/g, '/');
-      if (folder[0] !== '/') {
-        folder = `/${folder}`;
-      }
-      inspector.src = `file://${folder}/` + inspector.src;
-      inspector.preloadPath =
-        'file://' + path.resolve(path.join(__dirname, '..', 'extensions', 'inspector-preload.js'));
+      inspector.preloadPath = 'file://' + path.resolve(path.join('./app/extensions/', 'inspector-preload.js'));
     });
 
     // Notify the client of the new extension.
@@ -168,7 +160,7 @@ class ExtManagerImpl implements ExtensionManager {
       }
       if (!path.isAbsolute(config.location)) {
         // If relative path, make it absolute from the app directory
-        folder = this.unpackedFolder(path.join(__dirname, config.location));
+        folder = this.unpackedFolder(config.location);
       } else {
         folder = this.unpackedFolder(path.resolve(config.location));
       }
@@ -190,45 +182,5 @@ class ExtManagerImpl implements ExtensionManager {
     }
   }
 }
+
 export const ExtensionManagerImpl = new ExtManagerImpl();
-
-// =============================================================================
-// class PendingExtension extends DisposableImpl {
-//   private readonly _ipc: WebSocketIPC;
-//   private readonly _ext: CommandService;
-
-//   public constructor(private _ws: WebSocket) {
-//     super();
-//     this._ipc = new WebSocketIPC(this._ws);
-//     this._ext = new CommandServiceImpl(this._ipc, 'connector');
-//     super.toDispose(this._ipc);
-//     super.toDispose(this._ext);
-//     this._ext
-//       .remoteCall('hello')
-//       .then(
-//         (reply: {
-//           id: number;
-//           configPath: string;
-//           config: ExtensionConfig;
-//         }) => {
-//           const ipc = new WebSocketIPC(this._ws);
-//           ipc.id = reply.id;
-//           const configPath = reply.configPath;
-//           const extension = new PeerExtension(reply.config, ipc);
-//           ExtensionManagerImpl.addExtension(extension, configPath);
-//           super.dispose();
-//         }
-//       );
-//   }
-// }
-
-// =============================================================================
-// class ExtensionServer extends WebSocketServer {
-//   constructor(port: number) {
-//     super(port);
-//   }
-
-//   public onConnection(ws: WebSocket): PendingExtension {
-//     return new PendingExtension(ws);
-//   }
-// }

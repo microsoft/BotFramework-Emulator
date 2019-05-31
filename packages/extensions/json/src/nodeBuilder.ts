@@ -75,7 +75,7 @@ export function buildJsonNodes(parent: ParentNode, data: any): void {
       }
     }
 
-    // Add the comma if we have children
+    // Add the comma if we have siblings
     if (appendComma) {
       node.appendChild(document.createTextNode(','));
     }
