@@ -12,5 +12,20 @@
   },
   "devDependencies": {
     "copyfiles": "^2.1.0"
+  },
+  "jest": {
+    "rootDir": "./src",
+    "testMatch": [
+      "**/?(*.)(spec|test).(ts)?(x)"
+    ],
+    "testURL": "http://localhost",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ]
   }
 }

@@ -32,6 +32,8 @@
 //
 
 import { Activity } from 'botframework-schema';
+import { LogItem } from '@bfemulator/sdk-shared';
+
 import { BotEmulator } from './botEmulator';
 import ConsoleLogService from './facility/consoleLogService';
 import registerAttachmentRoutes from './attachments/registerRoutes';
@@ -42,7 +44,6 @@ import registerEmulatorRoutes from './emulator/registerRoutes';
 import registerSessionRoutes from './session/registerRoutes';
 import registerUserTokenRoutes from './userToken/registerRoutes';
 import stripEmptyBearerToken from './utils/stripEmptyBearerToken';
-import { LogItem } from '@bfemulator/sdk-shared';
 
 jest.mock('./attachments/registerRoutes', () => jest.fn(() => null));
 jest.mock('./botState/registerRoutes', () => jest.fn(() => null));
