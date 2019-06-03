@@ -47,6 +47,7 @@ export * from './botEndpointOptions';
 export * from './entity';
 export * from './error';
 export * from './errorCodes';
+export * from './emulatorMode';
 export * from './logger';
 export * from './speechToken';
 export * from './transcriptRecord';

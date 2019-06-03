@@ -34,6 +34,9 @@
 import { LogEntry } from '@bfemulator/sdk-shared';
 import { Action } from 'redux';
 import { Activity } from 'botframework-schema';
+import { EmulatorMode } from '@bfemulator/sdk-shared';
+
+import { ChatDocument } from '../reducer/chat';
 
 export enum ChatActions {
   activeInspectorChanged = 'CHAT/INSPECTOR/CHANGED',
@@ -58,13 +61,6 @@ export enum ChatActions {
 
 export interface ActiveInspectorChangedPayload {
   inspectorWebView: HTMLWebViewElement;
-}
-
-export interface NewChatPayload extends ClearLogPayload {
-  [propName: string]: any;
-
-  documentId: string;
-  mode: ChatMode;
 }
 
 export interface WebSpeechFactoryPayload {
@@ -125,8 +121,6 @@ export interface ChatAction<T = any> extends Action {
   payload: T;
 }
 
-export type ChatMode = 'livechat' | 'transcript' | 'livechat-url';
-
 export function inspectorChanged(inspectorWebView: HTMLWebViewElement): ChatAction<ActiveInspectorChangedPayload> {
   return {
     type: ChatActions.activeInspectorChanged,
@@ -182,10 +176,10 @@ export function updatePendingSpeechTokenRetrieval(pending: boolean): ChatAction<
 
 export function newChat(
   documentId: string,
-  mode: ChatMode,
-  additionalData?: object,
+  mode: EmulatorMode,
+  additionalData?: Partial<ChatDocument>,
   resolver?: Function
-): ChatAction<NewChatPayload> {
+): ChatAction<Partial<ChatDocument & ClearLogPayload>> {
   return {
     type: ChatActions.newChat,
     payload: {

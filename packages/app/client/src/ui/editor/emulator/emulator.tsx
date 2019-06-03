@@ -33,12 +33,12 @@
 
 import { createDirectLine } from 'botframework-webchat';
 import { uniqueId, uniqueIdv4 } from '@bfemulator/sdk-shared';
+import { EmulatorMode } from '@bfemulator/sdk-shared';
 import { Splitter, SplitButton } from '@bfemulator/ui-react';
 import base64Url from 'base64url';
 import { IEndpointService } from 'botframework-config/lib/schema';
 import * as React from 'react';
 import {
-  DebugMode,
   FrameworkSettings,
   newNotification,
   Notification,
@@ -48,8 +48,9 @@ import {
 import { CommandServiceImpl } from '@bfemulator/sdk-shared';
 import { CommandServiceInstance } from '@bfemulator/sdk-shared';
 
-import { Document } from '../../../data/reducer/editor';
+import { Document, SplitterSize } from '../../../data/reducer/editor';
 import { debounce } from '../../../utils';
+import { ChatDocument } from '../../../data/reducer/chat';
 
 import ChatPanel from './chatPanel/chatPanel';
 import LogPanel from './logPanel/logPanel';
@@ -65,16 +66,13 @@ export const RestartConversationOptions = {
   SameUserId: 'Restart with same user ID',
 };
 
-export type EmulatorMode = 'transcript' | 'livechat';
-
 export interface EmulatorProps {
   activeDocumentId?: string;
   clearLog?: (documentId: string) => Promise<void>;
   conversationId?: string;
   createErrorNotification?: (notification: Notification) => void;
-  debugMode?: DebugMode;
   dirty?: boolean;
-  document?: any;
+  document?: Document;
   documentId?: string;
   enablePresentationMode?: (enabled: boolean) => void;
   endpointId?: string;
@@ -94,14 +92,14 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
   @CommandServiceInstance()
   private commandService: CommandServiceImpl;
 
-  private readonly onVerticalSizeChange = debounce(sizes => {
+  private readonly onVerticalSizeChange = debounce((sizes: SplitterSize[]) => {
     this.props.document.ui = {
       ...this.props.document.ui,
       verticalSplitter: sizes,
     };
   }, 500);
 
-  private readonly onHorizontalSizeChange = debounce(sizes => {
+  private readonly onHorizontalSizeChange = debounce((sizes: SplitterSize[]) => {
     this.props.document.ui = {
       ...this.props.document.ui,
       horizontalSplitter: sizes,
@@ -109,7 +107,9 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
   }, 500);
 
   shouldStartNewConversation(props: EmulatorProps = this.props): boolean {
-    return !props.document.directLine || props.document.conversationId !== props.document.directLine.conversationId;
+    return (
+      !props.document.directLine || props.document.conversationId !== (props.document.directLine as any).conversationId
+    );
   }
 
   componentWillMount() {
@@ -125,8 +125,8 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
 
   componentWillReceiveProps(nextProps: EmulatorProps) {
     const { props, keyboardEventListener, startNewConversation } = this;
-    const { document = {} } = props;
-    const { document: nextDocument = {} } = nextProps;
+    const { document = {} as Document } = props;
+    const { document: nextDocument = {} as Document } = nextProps;
 
     const documentIdChanged = !nextDocument.directLine && document.documentId !== nextDocument.documentId;
 
@@ -258,7 +258,7 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
     return (
       <div className={styles.presentation}>
         <div className={styles.presentationContent}>
-          <ChatPanel mode={this.props.mode} document={this.props.document} />
+          <ChatPanel mode={this.props.mode} document={this.props.document as ChatDocument} />
           {chatPanelChild}
         </div>
         <span className={styles.closePresentationIcon} onClick={() => this.onPresentationClick(false)} />
@@ -269,35 +269,24 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
   renderDefaultView(): JSX.Element {
     const { NewUserId, SameUserId } = RestartConversationOptions;
 
-    const { mode, debugMode } = this.props;
+    const { mode } = this.props;
     return (
       <div className={styles.emulator} key={this.getConversationId()}>
         {mode === 'livechat' && (
           <div className={styles.header}>
             <ToolBar>
-              {debugMode === DebugMode.Normal && (
-                <SplitButton
-                  defaultLabel="Restart conversation"
-                  buttonClass={styles.restartIcon}
-                  options={[NewUserId, SameUserId]}
-                  onClick={this.onStartOverClick}
-                />
-              )}
-
+              <SplitButton
+                defaultLabel="Restart conversation"
+                buttonClass={styles.restartIcon}
+                options={[NewUserId, SameUserId]}
+                onClick={this.onStartOverClick}
+              />
               <button
                 className={`${styles.saveIcon} ${styles.toolbarIcon || ''}`}
                 onClick={this.onExportTranscriptClick}
               >
                 Save transcript
               </button>
-              {/*{debugMode === DebugMode.Sidecar && (*/}
-              {/*  <button*/}
-              {/*    className={`${styles.saveIcon} ${styles.toolbarIcon || ''}`}*/}
-              {/*    onClick={this.onExportBotStateClick}*/}
-              {/*  >*/}
-              {/*    Save bot state*/}
-              {/*  </button>*/}
-              {/*)}*/}
             </ToolBar>
           </div>
         )}
@@ -313,7 +302,7 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
               <ChatPanel
                 mode={this.props.mode}
                 className={styles.chatPanel}
-                document={this.props.document}
+                document={this.props.document as ChatDocument}
                 onStartConversation={this.onStartOverClick}
               />
             </div>
@@ -337,13 +326,13 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
 
   private getVerticalSplitterSizes = (): { [0]: string } => {
     return {
-      0: `${this.props.document.ui.verticalSplitter[0].percentage}`,
+      0: '' + this.props.document.ui.verticalSplitter[0].percentage,
     };
   };
 
   private getHorizontalSplitterSizes = (): { [0]: string } => {
     return {
-      0: `${this.props.document.ui.horizontalSplitter[0].percentage}`,
+      0: '' + this.props.document.ui.horizontalSplitter[0].percentage,
     };
   };
 

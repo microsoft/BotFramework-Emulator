@@ -32,11 +32,12 @@
 //
 // import base64Url from 'base64url';
 // import { createDirectLine } from 'botframework-webchat';
-import { DebugMode, newNotification, SharedConstants } from '@bfemulator/app-shared';
+import { newNotification, SharedConstants } from '@bfemulator/app-shared';
 import { CommandServiceImpl, CommandServiceInstance, isLocalHostUrl, uniqueId } from '@bfemulator/sdk-shared';
 import { IEndpointService } from 'botframework-config/lib/schema';
 import { Activity } from 'botframework-schema';
 import { Command } from '@bfemulator/sdk-shared';
+import { EmulatorMode } from '@bfemulator/sdk-shared';
 
 import * as Constants from '../constants';
 import * as ChatActions from '../data/action/chatActions';
@@ -61,7 +62,7 @@ export class EmulatorCommands {
     endpoint: IEndpointService,
     focusExistingChat: boolean = false,
     conversationId: string,
-    mode: ChatActions.ChatMode = 'livechat'
+    mode: EmulatorMode = 'livechat'
   ) {
     const state = store.getState();
     let documentId: string;
@@ -91,7 +92,7 @@ export class EmulatorCommands {
         //   webSocket: false,
         // })
       });
-      if (state.clientAwareSettings.debugMode === DebugMode.Sidecar) {
+      if (mode === 'debug') {
         action.payload.ui.horizontalSplitter[0].percentage = 75;
         action.payload.ui.verticalSplitter[0].percentage = 25;
       }
@@ -104,7 +105,7 @@ export class EmulatorCommands {
 
     store.dispatch(
       EditorActions.open({
-        contentType: Constants.CONTENT_TYPE_LIVE_CHAT,
+        contentType: mode === 'debug' ? Constants.CONTENT_TYPE_DEBUG : Constants.CONTENT_TYPE_LIVE_CHAT,
         documentId,
         isGlobal: false,
       })

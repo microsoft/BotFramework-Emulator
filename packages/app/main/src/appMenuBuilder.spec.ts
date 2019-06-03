@@ -33,7 +33,7 @@
 
 import { join } from 'path';
 
-import { DebugMode, SharedConstants } from '@bfemulator/app-shared';
+import { SharedConstants } from '@bfemulator/app-shared';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { AppMenuBuilder } from './appMenuBuilder';
@@ -343,7 +343,7 @@ describe('AppMenuBuilder', () => {
     await AppMenuBuilder.initAppMenu();
 
     // verify that each section of the menu is the expected length
-    expect(appMenuTemplate).toHaveLength(5); // file, edit, view, convo, help
+    expect(appMenuTemplate).toHaveLength(6); // file, debug, edit, view, convo, help
 
     const fileMenuTemplate = appMenuTemplate[0].submenu;
     expect(fileMenuTemplate).toHaveLength(17);
@@ -360,18 +360,21 @@ describe('AppMenuBuilder', () => {
     expect(themeMenu.submenu[2].label).toBe('midnight');
     expect(themeMenu.submenu[2].checked).toBe(true);
 
-    const editMenuTemplate = appMenuTemplate[1].submenu;
+    const debugMenuTemplate = appMenuTemplate[1].submenu;
+    expect(debugMenuTemplate).toHaveLength(1);
+
+    const editMenuTemplate = appMenuTemplate[2].submenu;
     expect(editMenuTemplate).toHaveLength(7);
 
-    const viewMenuTemplate = appMenuTemplate[2].submenu;
-    expect(viewMenuTemplate).toHaveLength(7);
+    const viewMenuTemplate = appMenuTemplate[3].submenu;
+    expect(viewMenuTemplate).toHaveLength(6);
 
-    const convoMenuTemplate = appMenuTemplate[3].submenu;
+    const convoMenuTemplate = appMenuTemplate[4].submenu;
     expect(convoMenuTemplate).toHaveLength(1);
     const sendActivityMenu = convoMenuTemplate[0].submenu;
     expect(sendActivityMenu).toHaveLength(7);
 
-    const helpMenuTemplate = appMenuTemplate[4].submenu;
+    const helpMenuTemplate = appMenuTemplate[5].submenu;
     expect(helpMenuTemplate).toHaveLength(14);
 
     expect(mockSetApplicationMenu).toHaveBeenCalledWith('I am a menu');
@@ -419,7 +422,7 @@ describe('AppMenuBuilder', () => {
     await AppMenuBuilder.initAppMenu();
 
     // verify that each section of the menu is the expected length
-    expect(appMenuTemplate).toHaveLength(7); // app, file, edit, view, window, convo, help
+    expect(appMenuTemplate).toHaveLength(8); // app, debug, file, edit, view, window, convo, help
 
     const macAppMenuTemplate = appMenuTemplate[0].submenu;
     expect(macAppMenuTemplate).toHaveLength(9);
@@ -431,29 +434,5 @@ describe('AppMenuBuilder', () => {
     const fileMenuTemplate = appMenuTemplate[1].submenu;
     const themeMenu = fileMenuTemplate[12];
     expect(themeMenu.submenu[0].type).toBe('radio');
-  });
-
-  it('should initialize and update the debugMenu item', async () => {
-    const viewMenu = await AppMenuBuilder.initViewMenu();
-    expect(viewMenu.submenu[6]).toEqual({
-      checked: false,
-      click: jasmine.any(Function),
-      id: 'debugMode',
-      label: 'Bot Inspector Mode',
-      type: 'checkbox',
-    });
-
-    mockGetApplicationMenu = () => ({
-      getMenuItemById: () => viewMenu.submenu[6],
-    });
-
-    AppMenuBuilder.updateDebugModeViewMenuItem(DebugMode.Sidecar);
-    expect(viewMenu.submenu[6]).toEqual({
-      checked: true,
-      click: jasmine.any(Function),
-      id: 'debugMode',
-      label: 'Bot Inspector Mode',
-      type: 'checkbox',
-    });
   });
 });

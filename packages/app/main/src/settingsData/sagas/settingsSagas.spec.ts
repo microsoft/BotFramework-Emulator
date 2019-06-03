@@ -31,13 +31,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import '../../fetchProxy';
-import { DebugMode, Settings, settingsDefault, SharedConstants } from '@bfemulator/app-shared';
+import { Settings, settingsDefault, SharedConstants } from '@bfemulator/app-shared';
 import { applyMiddleware, createStore, Store } from 'redux';
 import sagaMiddlewareFactory from 'redux-saga';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import reducers from '../reducers';
-import { debugModeChanged, rememberTheme } from '../actions/windowStateActions';
+import { rememberTheme } from '../actions/windowStateActions';
 
 import { settingsSagas } from './settingsSagas';
 
@@ -119,29 +119,5 @@ describe('The SettingsSagas', () => {
     const commandServiceSpy = jest.spyOn(commandService, 'remoteCall');
     mockStore.dispatch(rememberTheme('myTheme'));
     expect(commandServiceSpy).toHaveBeenCalledWith(SharedConstants.Commands.UI.SwitchTheme, 'myTheme', 'myTheme.scss');
-  });
-
-  it('should orchestrate the changes needed when switching debug modes', async () => {
-    const localCommandServiceSpy = jest.spyOn(commandService, 'call').mockResolvedValue(true);
-    const remoteCommandServiceSpy = jest.spyOn(commandService, 'remoteCall').mockResolvedValue(true);
-
-    mockStore.dispatch(debugModeChanged(DebugMode.Sidecar));
-    expect(localCommandServiceSpy).toHaveBeenCalledWith(
-      SharedConstants.Commands.Electron.ShowMessageBox,
-      true,
-      jasmine.any(Object)
-    );
-    await Promise.resolve(true); // Wait for ShowMessageBox to resolve
-    expect(localCommandServiceSpy).toHaveBeenCalledWith(SharedConstants.Commands.Ngrok.KillProcess);
-
-    expect(remoteCommandServiceSpy).toHaveBeenCalledWith(
-      SharedConstants.Commands.UI.SwitchDebugMode,
-      DebugMode.Sidecar
-    );
-    await new Promise(resolve => setTimeout(resolve, 50));
-    expect(remoteCommandServiceSpy).toHaveBeenCalledWith(
-      SharedConstants.Commands.Settings.ReceiveGlobalSettings,
-      jasmine.any(Object)
-    );
   });
 });

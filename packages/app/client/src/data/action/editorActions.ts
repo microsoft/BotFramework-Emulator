@@ -84,12 +84,12 @@ export interface SetDirtyFlagAction {
 
 export interface OpenEditorAction {
   type: EditorActions.open;
-  payload: Document;
+  payload: Partial<Document>;
 }
 
 export interface UpdateDocumentAction {
   type: EditorActions.updateDocument;
-  payload: Document;
+  payload: Partial<Document>;
 }
 
 export interface SetActiveTabAction {
@@ -228,7 +228,7 @@ export function setDirtyFlag(documentId: string, dirty: boolean): SetDirtyFlagAc
   };
 }
 
-export function open(document: Document): OpenEditorAction {
+export function open(document: Partial<Document>): OpenEditorAction {
   return {
     type: EditorActions.open,
     payload: document,

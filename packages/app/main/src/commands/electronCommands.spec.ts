@@ -32,7 +32,7 @@
 //
 
 import '../fetchProxy';
-import { DebugMode, SharedConstants } from '@bfemulator/app-shared';
+import { SharedConstants } from '@bfemulator/app-shared';
 import * as Electron from 'electron';
 import { CommandRegistry, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
@@ -298,12 +298,5 @@ describe('the electron commands', () => {
 
     expect(mockTrackEvent).toHaveBeenCalledWith('app_openLink', { url });
     expect(mockOpenExternal).toHaveBeenCalledWith(url, { activate: true });
-  });
-
-  it('should update the debug menu item', async () => {
-    mockUpdateDebugModeViewMenuItem = jest.fn();
-    const handler = registry.getCommand(SharedConstants.Commands.Electron.UpdateDebugModeMenuItem);
-    handler(DebugMode.Sidecar);
-    expect(mockUpdateDebugModeViewMenuItem).toHaveBeenCalled();
   });
 });

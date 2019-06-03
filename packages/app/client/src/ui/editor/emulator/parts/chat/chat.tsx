@@ -30,33 +30,25 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { DebugMode, ValueTypes } from '@bfemulator/app-shared';
+import { ValueTypes } from '@bfemulator/app-shared';
 import { User } from '@bfemulator/sdk-shared';
 import { Activity, ActivityTypes } from 'botframework-schema';
 import ReactWebChat from 'botframework-webchat';
 import * as React from 'react';
 import { Component, KeyboardEvent, MouseEvent, ReactNode } from 'react';
 import { PrimaryButton } from '@bfemulator/ui-react';
+import { EmulatorMode } from '@bfemulator/sdk-shared';
 
-import { EmulatorMode } from '../../emulator';
 import { areActivitiesEqual, getActivityTargets } from '../../../../../utils';
+import { ChatDocument } from '../../../../../data/reducer/chat';
 
 import ActivityWrapper from './activityWrapper';
 import * as styles from './chat.scss';
 import webChatStyleOptions from './webChatTheme';
 
-interface PartialDocument {
-  directLine: any;
-  botId: string;
-  inspectorObjects: Activity[];
-  highlightedObjects: Activity[];
-  documentId: string;
-}
-
 export interface ChatProps {
-  document: PartialDocument;
+  document: ChatDocument;
   mode: EmulatorMode;
-  debugMode: DebugMode;
   currentUser: User;
   locale: string;
   webSpeechPonyfillFactory?: () => any;
@@ -69,7 +61,7 @@ export interface ChatProps {
 interface ChatState {
   selectedActivity?: Activity;
   highlightedActivities?: Activity[];
-  document?: PartialDocument;
+  document?: ChatDocument;
 }
 
 export class Chat extends Component<ChatProps, ChatState> {
@@ -99,7 +91,7 @@ export class Chat extends Component<ChatProps, ChatState> {
 
   public render() {
     this.activityMap = {};
-    const { currentUser, document, locale, mode, debugMode, webchatStore } = this.props;
+    const { currentUser, document, locale, mode, webchatStore } = this.props;
 
     if (this.props.pendingSpeechTokenRetrieval) {
       return <div className={styles.disconnected}>Connecting...</div>;
@@ -110,7 +102,7 @@ export class Chat extends Component<ChatProps, ChatState> {
         id: document.botId || 'bot',
         name: 'Bot',
       };
-      const isDisabled = mode === 'transcript' || debugMode === DebugMode.Sidecar;
+      const isDisabled = mode === 'transcript' || document.mode === 'debug';
 
       return (
         <div className={styles.chat}>
@@ -120,7 +112,7 @@ export class Chat extends Component<ChatProps, ChatState> {
             bot={bot}
             directLine={document.directLine}
             disabled={isDisabled}
-            key={document.directLine.token}
+            key={document.conversationId}
             locale={locale}
             styleOptions={{ ...webChatStyleOptions, hideSendBox: isDisabled }}
             userID={currentUser.id}
@@ -166,7 +158,7 @@ export class Chat extends Component<ChatProps, ChatState> {
   };
 
   private renderTraceActivity(next, card, children): ReactNode {
-    if (this.props.debugMode !== DebugMode.Sidecar) {
+    if (this.props.document.mode !== 'debug') {
       return null;
     }
     const { valueType } = card.activity; // activities are nested

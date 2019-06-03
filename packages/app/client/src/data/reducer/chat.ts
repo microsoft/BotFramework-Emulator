@@ -31,6 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { LogEntry } from '@bfemulator/sdk-shared';
+import { Activity } from 'botframework-schema';
+
 import {
   ChatAction,
   ChatActions,
@@ -40,14 +43,28 @@ import {
 } from '../action/chatActions';
 import { EditorAction, EditorActions } from '../action/editorActions';
 
+import { Document, DocumentUI } from './editor';
+
 export interface ChatState {
   changeKey?: number;
-  // TODO: keys should map to an Chat
-  chats?: { [chatId: string]: any };
+  chats?: { [chatId: string]: ChatDocument };
   webSpeechFactories?: { [documentId: string]: () => any };
   webChatStores: { [documentId: string]: any };
   transcripts?: string[];
   pendingSpeechTokenRetrieval: boolean;
+}
+
+export interface ChatDocument<I = any> extends Document {
+  endpointId: string;
+  endpointUrl: string;
+  highlightedObjects: Activity[];
+  inspectorObjects: I[];
+  log: ChatLog;
+  ui: DocumentUI;
+}
+
+export interface ChatLog {
+  entries: LogEntry[];
 }
 
 const DEFAULT_STATE: ChatState = {

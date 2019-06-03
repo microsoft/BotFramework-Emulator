@@ -35,7 +35,7 @@ import * as React from 'react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import { mount, shallow } from 'enzyme';
-import { DebugMode, SharedConstants } from '@bfemulator/app-shared';
+import { SharedConstants } from '@bfemulator/app-shared';
 import base64Url from 'base64url';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
@@ -138,6 +138,9 @@ describe('<EmulatorContainer/>', () => {
     mockCallsMade = [];
     mockRemoteCallsMade = [];
     mockStoreState = {
+      clientAwareSettings: {
+        serverUrl: 'http://localhost',
+      },
       chat: {
         chats: {
           doc1: {
@@ -158,7 +161,6 @@ describe('<EmulatorContainer/>', () => {
         },
       },
       presentation: { enabled: true },
-      clientAwareSettings: { debugMode: DebugMode.Normal },
     };
     const mockStore = createStore((_state, _action) => mockStoreState);
     mockDispatch = jest.spyOn(mockStore, 'dispatch').mockImplementation(action => {

@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { DebugMode, newNotification, SharedConstants } from '@bfemulator/app-shared';
+import { newNotification, SharedConstants } from '@bfemulator/app-shared';
 import { BotConfigWithPath, ConversationService } from '@bfemulator/sdk-shared';
 import { call, put, takeEvery, takeLatest } from 'redux-saga/effects';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
@@ -183,10 +183,8 @@ describe('The botSagas', () => {
     const users = { currentUserId: 'user1', usersById: { user1: {} } };
     gen.next(users);
     // startConversation
-    gen.next({ ok: true, json: async () => null });
-    // select debug mode
-    const callToSaveUrl = gen.next(DebugMode.Normal).value;
-    expect(callToSaveUrl).toEqual(
+    const callToSaveUrl = gen.next({ ok: true, json: async () => null });
+    expect(callToSaveUrl.value).toEqual(
       call(
         [commandService, commandService.remoteCall],
         SharedConstants.Commands.Settings.SaveBotUrl,
@@ -223,10 +221,8 @@ describe('The botSagas', () => {
     // call to set current user
     gen.next();
     // startConversation
-    gen.next({ ok: true, json: async () => null });
-    // select debug mode
-    const callToSaveUrl = gen.next(DebugMode.Normal).value;
-    expect(callToSaveUrl).toEqual(
+    const callToSaveUrl = gen.next({ ok: true, json: async () => null });
+    expect(callToSaveUrl.value).toEqual(
       call(
         [commandService, commandService.remoteCall],
         SharedConstants.Commands.Settings.SaveBotUrl,
@@ -253,8 +249,6 @@ describe('The botSagas', () => {
     // select users
     const users = { currentUserId: 'user1', usersById: { user1: {} } };
     gen.next(users);
-    // call ConversationService.startConversation
-    gen.next({ ok: false, statusText: 'oh noes!' });
     const errorNotification = beginAdd(
       newNotification('An Error occurred opening the bot at http://localhost/api/messages: oh noes!')
     );
@@ -274,6 +268,7 @@ describe('The botSagas', () => {
         appPassword: 'password',
         appId: '1234abcd',
         endpoint: 'http://localhost/api/messages',
+        mode: 'debug',
       })
     );
     gen.next();
@@ -286,8 +281,6 @@ describe('The botSagas', () => {
     gen.next(users);
     // startConversation
     gen.next({ ok: true, json: async () => null });
-    // select debug mode
-    gen.next(DebugMode.Sidecar);
     // response.json from starting conversation
     const callToPostActivity = gen.next({ id: 'someConversationId' }).value;
     // posting activity to conversation
@@ -322,6 +315,7 @@ describe('The botSagas', () => {
         appPassword: 'password',
         appId: '1234abcd',
         endpoint: 'http://localhost/api/messages',
+        mode: 'debug',
       })
     );
     gen.next();
@@ -334,8 +328,6 @@ describe('The botSagas', () => {
     gen.next(users);
     // startConversation
     gen.next({ ok: true, json: async () => null });
-    // select debug mode
-    gen.next(DebugMode.Sidecar);
     // response.json from starting conversation
     gen.next({ id: 'someConversationId' });
     // POSTing to the conversation should return a 400
@@ -353,6 +345,7 @@ describe('The botSagas', () => {
         appPassword: 'password',
         appId: '1234abcd',
         endpoint: 'http://localhost/api/messages',
+        mode: 'debug',
       })
     );
     gen.next();
@@ -365,13 +358,11 @@ describe('The botSagas', () => {
     gen.next(users);
     // startConversation
     gen.next({ ok: true, json: async () => null });
-    // select debug mode
-    gen.next(DebugMode.Sidecar);
     // response.json from starting conversation
     const startConversationResponse = gen.next({ id: undefined }).value;
     // POSTing to the conversation should return a 400
     const errorNotification = beginAdd(
-      newNotification('An error occurred while trying to grab conversation ID from new conversation.')
+      newNotification('An error occurred while trying to grab conversation ID from the new conversation.')
     );
     (errorNotification as any).payload.notification.timestamp = jasmine.any(Number);
     (errorNotification as any).payload.notification.id = jasmine.any(String);

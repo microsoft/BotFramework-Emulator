@@ -44,13 +44,14 @@ const mapDispatchToProps = (dispatch: (action: Action) => void): OpenBotDialogPr
   return {
     openBot: (componentState: OpenBotDialogState) => {
       DialogService.hideDialog();
-      const { appId = '', appPassword = '', botUrl = '' } = componentState;
+      const { appId = '', appPassword = '', botUrl = '', mode = 'livechat-url' } = componentState;
       if (botUrl.startsWith('http')) {
         dispatch(
           openBotViaUrlAction({
             appId,
             appPassword,
             endpoint: botUrl,
+            mode,
           })
         );
       } else {
@@ -61,9 +62,8 @@ const mapDispatchToProps = (dispatch: (action: Action) => void): OpenBotDialogPr
   };
 };
 
-const mapStateToProps = (state: RootState, ownProps: Partial<OpenBotDialogProps>): Partial<OpenBotDialogProps> => {
+const mapStateToProps = (state: RootState, ownProps: OpenBotDialogProps): OpenBotDialogProps => {
   return {
-    debugMode: state.clientAwareSettings.debugMode,
     savedBotUrls: state.clientAwareSettings.savedBotUrls,
     ...ownProps,
   };

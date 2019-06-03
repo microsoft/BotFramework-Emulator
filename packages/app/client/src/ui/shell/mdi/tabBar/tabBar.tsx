@@ -38,6 +38,7 @@ import { DragEvent, MouseEvent } from 'react';
 import * as Constants from '../../../../constants';
 import {
   CONTENT_TYPE_APP_SETTINGS,
+  CONTENT_TYPE_DEBUG,
   CONTENT_TYPE_LIVE_CHAT,
   CONTENT_TYPE_MARKDOWN,
   CONTENT_TYPE_TRANSCRIPT,
@@ -172,7 +173,7 @@ export class TabBar extends React.Component<TabBarProps, TabBarState> {
 
   private get tabs(): JSX.Element[] {
     return this.props.tabOrder.map((documentId, index) => {
-      const document = this.props.documents[documentId] || {};
+      const document = this.props.documents[documentId] || ({} as Document);
       const isActive = documentId === this.props.activeDocumentId;
 
       return (
@@ -281,6 +282,9 @@ export class TabBar extends React.Component<TabBarProps, TabBarState> {
 
       case CONTENT_TYPE_MARKDOWN:
         return document.meta.label;
+
+      case CONTENT_TYPE_DEBUG:
+        return 'Debug';
 
       default:
         return '';

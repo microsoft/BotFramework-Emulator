@@ -32,7 +32,7 @@
 //
 
 import { CommandRegistry, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
-import { DebugMode, SharedConstants } from '@bfemulator/app-shared';
+import { SharedConstants } from '@bfemulator/app-shared';
 import { combineReducers, createStore } from 'redux';
 
 import { clientAwareSettings } from '../data/reducer/clientAwareSettingsReducer';
@@ -87,7 +87,7 @@ describe('the settings commands', () => {
   it('should dispatch to the store when settings are sent from the main side', () => {
     const command = registry.getCommand(SharedConstants.Commands.Settings.ReceiveGlobalSettings);
     const dispatchSpy = jest.spyOn(store, 'dispatch');
-    command({ debugMode: DebugMode.Normal });
-    expect(dispatchSpy).toHaveBeenCalledWith(clientAwareSettingsChanged({ debugMode: DebugMode.Normal } as any));
+    command({});
+    expect(dispatchSpy).toHaveBeenCalledWith(clientAwareSettingsChanged({} as any));
   });
 });

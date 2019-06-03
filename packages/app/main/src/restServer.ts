@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { DebugMode, SharedConstants } from '@bfemulator/app-shared';
+import { SharedConstants } from '@bfemulator/app-shared';
 import { BotEmulator, Conversation, ConversationSet } from '@bfemulator/emulator-core';
 import { LogLevel, networkRequestItem, networkResponseItem, textItem } from '@bfemulator/sdk-shared';
 import { IEndpointService } from 'botframework-config';
@@ -41,7 +41,6 @@ import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shar
 
 import { Emulator } from './emulator';
 import { emulatorApplication } from './main';
-import { getStore } from './settingsData/store';
 
 interface ConversationAwareRequest extends Request {
   conversation?: { conversationId?: string };
@@ -145,12 +144,6 @@ export class RestServer {
       botEndpoint: { id, botUrl },
       mode,
     } = conversation;
-    // Set the debugMode which affects what is
-    // visible to chat and the log panel.
-    const {
-      windowState: { debugMode },
-    } = getStore().getState();
-    conversation.debugMode = debugMode;
 
     await this.commandService.remoteCall(
       SharedConstants.Commands.Emulator.NewLiveChat,
@@ -175,7 +168,7 @@ function shouldPostToChat(
   const isDLine = method === 'GET' && route.spec.path === '/v3/directline/conversations/:conversationId/activities';
   const isNotTranscript = !!conversationId && !conversationId.includes('transcript');
   const { conversation } = req;
-  return !isDLine && isNotTranscript && conversation.debugMode !== DebugMode.Sidecar;
+  return !isDLine && isNotTranscript && conversation.mode !== 'debug';
 }
 
 function getConversationId(req: ConversationAwareRequest): string {

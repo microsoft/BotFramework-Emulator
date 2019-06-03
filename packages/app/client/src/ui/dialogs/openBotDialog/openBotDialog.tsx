@@ -31,23 +31,35 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { AutoComplete, DefaultButton, Dialog, DialogFooter, PrimaryButton, Row, TextField } from '@bfemulator/ui-react';
+import {
+  AutoComplete,
+  Checkbox,
+  DefaultButton,
+  Dialog,
+  DialogFooter,
+  PrimaryButton,
+  Row,
+  TextField,
+} from '@bfemulator/ui-react';
 import * as React from 'react';
-import { ChangeEvent, Component, ReactNode } from 'react';
-import { DebugMode } from '@bfemulator/app-shared';
+import { ChangeEvent, Component, MouseEvent, ReactNode } from 'react';
+import { EmulatorMode } from '@bfemulator/sdk-shared';
 
 import * as openBotStyles from './openBotDialog.scss';
 
 export interface OpenBotDialogProps {
+  mode?: EmulatorMode;
+  isDebug?: boolean;
   onDialogCancel?: () => void;
   openBot?: (state: OpenBotDialogState) => void;
   savedBotUrls?: { url: string; lastAccessed: string }[];
   sendNotification?: (error: Error) => void;
   switchToBot?: (path: string) => void;
-  debugMode?: DebugMode;
 }
 
 export interface OpenBotDialogState {
+  isDebug?: boolean;
+  mode?: EmulatorMode;
   botUrl?: string;
   appId?: string;
   appPassword?: string;
@@ -61,12 +73,6 @@ enum ValidationResult {
 }
 
 export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogState> {
-  public state = {
-    botUrl: '',
-    appId: '',
-    appPassword: '',
-  };
-
   private static getErrorMessage(result: ValidationResult): string {
     if (result === ValidationResult.Empty || result === ValidationResult.Valid) {
       return ''; // Allow empty endpoints
@@ -89,18 +95,39 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
     return endpoint.endsWith('.bot') ? ValidationResult.Valid : ValidationResult.Invalid;
   }
 
+  public static getDerivedStateFromProps(
+    newProps: OpenBotDialogProps = {},
+    newState: OpenBotDialogState = {}
+  ): OpenBotDialogState {
+    let { mode = 'livechat' } = newProps;
+    const { isDebug } = newProps;
+    if (isDebug) {
+      mode = 'debug';
+      if (!(newState.botUrl || '').startsWith('http')) newState.botUrl = '';
+    }
+    return { ...newState, mode, isDebug };
+  }
+
+  constructor(props: OpenBotDialogProps) {
+    super(props);
+    const { mode = 'livechat' } = props;
+    this.state = {
+      botUrl: '',
+      appId: '',
+      appPassword: '',
+      isDebug: false,
+      mode,
+    };
+  }
+
   public render(): ReactNode {
     const { savedBotUrls = [] } = this.props;
-    const { botUrl, appId, appPassword } = this.state;
+    const { botUrl, appId, appPassword, mode, isDebug } = this.state;
     const validationResult = OpenBotDialog.validateEndpoint(botUrl);
     const errorMessage = OpenBotDialog.getErrorMessage(validationResult);
     const shouldBeDisabled =
       validationResult === ValidationResult.Invalid || validationResult === ValidationResult.Empty;
-    const inSidecar = this.props.debugMode === DebugMode.Sidecar;
-    let botUrlLabel = 'Bot URL';
-    if (!inSidecar) {
-      botUrlLabel += ' or .bot file location';
-    }
+    const botUrlLabel = 'Bot URL';
 
     return (
       <Dialog cancel={this.props.onDialogCancel} className={openBotStyles.themeOverrides} title="Open a bot">
@@ -115,7 +142,7 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
               placeholder={botUrlLabel}
               value={this.state.botUrl}
             />
-            {!inSidecar && (
+            {!isDebug && (
               <PrimaryButton className={openBotStyles.browseButton}>
                 Browse
                 <input
@@ -147,6 +174,9 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
               value={appPassword}
             />
           </Row>
+          <Row>
+            <Checkbox label="Open in debug mode" checked={isDebug && mode === 'debug'} onClick={this.onCheckboxClick} />
+          </Row>
           <DialogFooter>
             <DefaultButton type="button" onClick={this.props.onDialogCancel}>
               Cancel
@@ -166,7 +196,20 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
     this.setState({ [name]: newValue });
   };
 
+  private onCheckboxClick = (event: MouseEvent<HTMLInputElement>) => {
+    const { checked: isDebug } = event.currentTarget;
+    const newState = { isDebug, mode: isDebug ? 'debug' : 'livechat-url' } as OpenBotDialogState;
+
+    if (isDebug && !this.state.botUrl.startsWith('http')) {
+      newState.botUrl = '';
+    }
+
+    this.setState(newState);
+  };
+
   private onBotUrlChange = (botUrl: string) => {
+    const newState = { botUrl } as OpenBotDialogState;
+    newState.mode = botUrl.startsWith('http') ? 'livechat-url' : 'livechat';
     this.setState({ botUrl });
   };
 

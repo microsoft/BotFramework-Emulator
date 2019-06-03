@@ -31,10 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { DebugMode, newNotification, SharedConstants, UserSettings } from '@bfemulator/app-shared';
-import { ConversationService, StartConversationParams } from '@bfemulator/sdk-shared';
+import { newNotification, ResourceResponse, SharedConstants, UserSettings } from '@bfemulator/app-shared';
+import {
+  CommandServiceImpl,
+  CommandServiceInstance,
+  ConversationService,
+  StartConversationParams,
+} from '@bfemulator/sdk-shared';
 import { call, ForkEffect, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
-import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { ActiveBotHelper } from '../../ui/helpers/activeBotHelper';
 import { BotAction, BotActionType, BotConfigWithPathPayload, botHashGenerated } from '../action/botActions';
@@ -87,12 +91,13 @@ export class BotSagas {
     }
     let error;
     try {
-      const response = yield ConversationService.startConversation(serverUrl, action.payload);
+      const response: Response = yield ConversationService.startConversation(serverUrl, action.payload);
+
       if (!response.ok) {
         error = `An Error occurred opening the bot at ${action.payload.endpoint}: ${response.statusText}`;
       }
-      const debugMode = yield select((state: RootState) => state.clientAwareSettings.debugMode);
-      if (debugMode === DebugMode.Sidecar) {
+
+      if (action.payload.mode === 'debug') {
         // extract the conversation id from the body
         const parsedBody = yield response.json();
         const conversationId = parsedBody.id || '';
@@ -102,19 +107,17 @@ export class BotSagas {
             type: 'message',
             text: '/INSPECT open',
           };
-          const postActivityResponse = yield call(
+          const postActivityResponse: ResourceResponse & { statusCode: number } = yield call(
             [BotSagas.commandService, BotSagas.commandService.remoteCall],
             SharedConstants.Commands.Emulator.PostActivityToConversation,
             conversationId,
             activity
           );
-          if (postActivityResponse.statusCode >= 400) {
-            throw new Error(
-              `An error occurred while POSTing "/INSPECT open" command to conversation ${conversationId}`
-            );
+          if (postActivityResponse.statusCode > 399) {
+            error = `An error occurred while POSTing "/INSPECT open" command to conversation ${conversationId}`;
           }
         } else {
-          throw new Error('An error occurred while trying to grab conversation ID from new conversation.');
+          error = 'An error occurred while trying to grab conversation ID from the new conversation.';
         }
       }
     } catch (e) {

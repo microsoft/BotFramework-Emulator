@@ -30,23 +30,4 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { DebugMode } from '@bfemulator/app-shared';
-
-export const SWITCH_DEBUG_MODE = 'switchDebugMode';
-export type DebugType = 'switchDebugMode';
-
-export interface DebugModeAction<T> {
-  type: DebugType;
-  payload: T;
-}
-
-export interface SwitchDebugModePayload {
-  debugMode: DebugMode;
-}
-
-export function switchDebugMode(debugMode: DebugMode): DebugModeAction<SwitchDebugModePayload> {
-  return {
-    type: SWITCH_DEBUG_MODE,
-    payload: { debugMode },
-  };
-}
+export type EmulatorMode = 'livechat' | 'livechat-url' | 'transcript' | 'debug';

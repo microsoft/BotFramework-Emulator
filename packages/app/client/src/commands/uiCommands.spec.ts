@@ -30,7 +30,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { DebugMode, SharedConstants } from '@bfemulator/app-shared';
+import { SharedConstants } from '@bfemulator/app-shared';
 import { CommandRegistry, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { CONTENT_TYPE_APP_SETTINGS, DOCUMENT_ID_APP_SETTINGS } from '../constants';
@@ -47,9 +47,6 @@ import {
   OpenBotDialogContainer,
   SecretPromptDialogContainer,
 } from '../ui/dialogs';
-import { ExplorerActions } from '../data/action/explorerActions';
-import { SWITCH_DEBUG_MODE } from '../data/action/debugModeAction';
-import { ActiveBotHelper } from '../ui/helpers/activeBotHelper';
 
 import { UiCommands } from './uiCommands';
 
@@ -114,7 +111,7 @@ describe('the uiCommands', () => {
   it('should call DialogService.showDialog when the ShowOpenBotDialog command is dispatched', async () => {
     const spy = jest.spyOn(DialogService, 'showDialog').mockResolvedValueOnce(true);
     const result = await registry.getCommand(Commands.ShowOpenBotDialog)();
-    expect(spy).toHaveBeenCalledWith(OpenBotDialogContainer);
+    expect(spy).toHaveBeenCalledWith(OpenBotDialogContainer, { isDebug: false });
     expect(result).toBe(true);
   });
 
@@ -167,21 +164,6 @@ describe('the uiCommands', () => {
     expect(remoteCallSpy).toHaveBeenCalledWith(SharedConstants.Commands.Telemetry.TrackEvent, 'app_chooseTheme', {
       themeName: 'light',
     });
-  });
-
-  it('should orchestrate the switch to sidecar debug mode', async () => {
-    const dispatchedActions = [];
-    store.dispatch = action => {
-      dispatchedActions.push(action);
-      return action;
-    };
-    const closeActiveBotSpy = jest.spyOn(ActiveBotHelper, 'closeActiveBot').mockResolvedValueOnce(true);
-    await registry.getCommand(Commands.SwitchDebugMode)(DebugMode.Sidecar);
-    expect(dispatchedActions.length).toBe(2);
-    expect(closeActiveBotSpy).toHaveBeenCalled();
-    [ExplorerActions.Show, SWITCH_DEBUG_MODE].forEach((type, index) =>
-      expect(type).toEqual(dispatchedActions[index].type)
-    );
   });
 
   describe('when showing the markdow page', () => {
