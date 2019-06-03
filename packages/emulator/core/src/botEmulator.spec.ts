@@ -31,8 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { GenericActivity, ILogItem } from '@bfemulator/sdk-shared';
-
+import { Activity } from 'botframework-schema';
 import { BotEmulator } from './botEmulator';
 import ConsoleLogService from './facility/consoleLogService';
 import registerAttachmentRoutes from './attachments/registerRoutes';
@@ -43,6 +42,7 @@ import registerEmulatorRoutes from './emulator/registerRoutes';
 import registerSessionRoutes from './session/registerRoutes';
 import registerUserTokenRoutes from './userToken/registerRoutes';
 import stripEmptyBearerToken from './utils/stripEmptyBearerToken';
+import { LogItem } from '@bfemulator/sdk-shared';
 
 jest.mock('./attachments/registerRoutes', () => jest.fn(() => null));
 jest.mock('./botState/registerRoutes', () => jest.fn(() => null));
@@ -75,8 +75,8 @@ describe('BotEmulator', () => {
     const getServiceUrl = _url => Promise.resolve('serviceUrl');
     const customFetch = (_url, _options) => Promise.resolve();
     const customLogger = {
-      logActivity: (_conversationId: string, _activity: GenericActivity, _role: string) => 'activityLogged',
-      logMessage: (_conversationId: string, ..._items: ILogItem[]) => 'messageLogged',
+      logActivity: (_conversationId: string, _activity: Activity, _role: string) => 'activityLogged',
+      logMessage: (_conversationId: string, ..._items: LogItem[]) => 'messageLogged',
       logException: (_conversationId: string, _err: Error) => 'exceptionLogged',
     };
     const customLogService = new ConsoleLogService();
@@ -115,7 +115,7 @@ describe('BotEmulator', () => {
   it('should mount routes onto a restify server', () => {
     const getServiceUrl = _url => Promise.resolve('serviceUrl');
     const botEmulator = new BotEmulator(getServiceUrl);
-    const restifyServer = { acceptable: true };
+    const restifyServer = { acceptable: true, get: () => ({}) };
     const mockUses = [
       mockAcceptParser(restifyServer.acceptable),
       stripEmptyBearerToken(),

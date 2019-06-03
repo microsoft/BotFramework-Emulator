@@ -339,7 +339,11 @@ describe('The Inspector component', () => {
 
     it('should create a webview', () => {
       const instance = node.instance();
-      const wv: HTMLElement = instance.createWebView({ botHash: 'botHash', inspector: { src: 'inspectorSrc' } });
+      const wv: HTMLElement = instance.createWebView({
+        botHash: 'botHash',
+        inspectorSrc: 'inspectorSrc',
+        inspector: { preloadPath: 'preloadPath' },
+      });
       expect(wv).toBeTruthy();
       expect(wv.getAttribute('src')).toBe(encodeURI('inspectorSrc'));
       expect(wv.getAttribute('partition')).toBe('persist:botHash');
@@ -356,7 +360,7 @@ describe('The Inspector component', () => {
       const mockContainerRef = { appendChild: mockAppendChild, children: [], contains: () => false };
       instance.state.containerRef = mockContainerRef;
 
-      await instance.updateInspector({ inspector: { src: 'inspectorSrc' } });
+      await instance.updateInspector({ inspectorSrc: 'inspectorSrc' });
       expect(mockSendInitStack).toHaveBeenCalled();
       expect(mockAppendChild).toHaveBeenCalledWith(mockInspector);
       expect(mockAddEventListener).toHaveBeenCalled();
