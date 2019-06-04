@@ -46,6 +46,9 @@
     > li {
       padding: 3px 26px;
       color: var(--input-color);
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
 
       &:hover, &.selected {
         background-color: #EAEAEA;
