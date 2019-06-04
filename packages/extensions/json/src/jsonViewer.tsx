@@ -32,15 +32,18 @@
 //
 import * as React from 'react';
 import { Component } from 'react';
-import ReactJson from 'react-json-view';
+import JSONTree from 'react-json-tree';
 
+import light from './themes/light';
+import dark from './themes/dark';
+import highContrast from './themes/highContrast';
 import { WindowHostReceiver } from './windowHostReceiver';
 import './index.scss';
 
 const themeNameToViewerThemeName = {
-  light: 'shapeshifter:inverted',
-  dark: 'shapeshifter',
-  'high-contrast': 'bright',
+  light,
+  dark,
+  'high-contrast': highContrast,
 };
 
 export interface JsonViewerState {
@@ -57,17 +60,7 @@ export class JsonViewer extends Component<{}, JsonViewerState> {
   public render() {
     const state = this.state || ({ data: {} } as any);
     const { data, themeName = 'light' } = state;
-    return (
-      <ReactJson
-        displayDataTypes={false}
-        displayObjectSize={false}
-        src={data}
-        enableClipboard={false}
-        theme={themeNameToViewerThemeName[themeName]}
-        style={{ backgroundColor: 'transparent' }}
-        name={false}
-      />
-    );
+    return <JSONTree data={data} theme={themeNameToViewerThemeName[themeName]} invertTheme={false} />;
   }
 
   public setData(data: any): void {

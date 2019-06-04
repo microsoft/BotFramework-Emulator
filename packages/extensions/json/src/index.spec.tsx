@@ -77,7 +77,7 @@ describe('The JsonViewer', () => {
     (window as any).host.handlers.inspect[0](mockData); // Simulate event through host
     const jsonViewer = jsonViewerWrapper.find(JsonViewer).instance();
 
-    expect(jsonViewerWrapper.find('div').length).toBeGreaterThan(0);
+    expect(jsonViewerWrapper.find('*').length).toBeGreaterThan(0);
     expect(jsonViewer.state.data).toBe(mockData);
   });
 
