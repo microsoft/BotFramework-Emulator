@@ -158,6 +158,9 @@ const mockState = {
   },
   document: {
     documentId: 'a00c2150-b6dc-11e8-9139-bbce58b6f97c',
+    log: {
+      entries: [],
+    },
     inspectorObjects: [
       {
         accessories: [],

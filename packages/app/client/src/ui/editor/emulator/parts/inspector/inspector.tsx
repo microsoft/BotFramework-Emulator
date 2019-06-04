@@ -44,10 +44,12 @@ import {
 import { PrimaryButton, Spinner } from '@bfemulator/ui-react';
 import { IBotConfiguration } from 'botframework-config/lib/schema';
 import * as React from 'react';
+import { LogEntry } from '@bfemulator/sdk-shared';
 
 import { ExtensionManager, GetInspectorResult, InspectorAPI } from '../../../../../extensions';
 import { logService } from '../../../../../platform/log/logService';
 import Panel, { PanelContent, PanelControls } from '../../../panel/panel';
+import { ChatDocument } from '../../../../../data/reducer/chat';
 
 import * as styles from './inspector.scss';
 
@@ -73,7 +75,7 @@ interface IpcMessageEvent extends Event {
 
 interface InspectorProps {
   appPath?: string;
-  document: any;
+  document: ChatDocument;
   themeInfo: { themeName: string; themeComponents: string[] };
   activeBot?: IBotConfiguration;
   botHash?: string;
@@ -83,6 +85,7 @@ interface InspectorProps {
 interface InspectorState {
   titleOverride?: string;
   activeBot?: IBotConfiguration;
+  logEntries: LogEntry[];
   botHash?: string;
   inspectorSrc?: string;
   inspectObj: InspectObject;
@@ -126,19 +129,21 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
   private domReadyByLocation = {};
 
   public static getDerivedStateFromProps(newProps: InspectorProps, prevState: InspectorState): InspectorState {
-    const { document = {} } = newProps;
+    const { document = {} as ChatDocument } = newProps;
     const inspectorResult = Inspector.getInspector(document.inspectorObjects);
     const { inspector = { name: '' } } = inspectorResult.response;
 
     if (
       newProps.botHash !== prevState.botHash ||
       inspector.src !== prevState.inspectorSrc ||
+      newProps.document.log.entries.length !== prevState.logEntries.length ||
       newProps.themeInfo.themeName !== prevState.themeInfo.themeName ||
       JSON.stringify(inspectorResult.inspectObj) !== JSON.stringify(prevState.inspectObj)
     ) {
       return {
         ...prevState,
         activeBot: newProps.activeBot,
+        logEntries: [...newProps.document.log.entries],
         botHash: newProps.botHash,
         inspector,
         inspectorSrc: inspector.src,
@@ -256,12 +261,19 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     if (oldState.botHash !== newState.botHash) {
       this.botUpdated(newState.activeBot);
     }
+
     if (oldState.inspectorSrc !== newState.inspectorSrc || oldState.containerRef !== newState.containerRef) {
       this.updateInspector(this.state).catch();
     }
+
+    if (oldState.logEntries !== newState.logEntries) {
+      this.chatLogUpdated(this.props.document.conversationId, newState.logEntries);
+    }
+
     if (JSON.stringify(oldState.inspectObj) !== JSON.stringify(newState.inspectObj)) {
       this.inspect(newState.inspectObj);
     }
+
     if ((oldState.themeInfo || { themeName: '' }).themeName !== newState.themeInfo.themeName) {
       this.sendToInspector('theme', newState.themeInfo);
     }
@@ -413,6 +425,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     this.botUpdated(this.state.activeBot);
     this.inspect(this.state.inspectObj);
     this.sendToInspector('theme', this.state.themeInfo);
+    this.chatLogUpdated(this.props.document.conversationId, this.state.logEntries);
   }
 
   private inspect(obj: InspectObject) {
@@ -426,6 +439,10 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
 
   private botUpdated(bot: IBotConfiguration) {
     this.sendToInspector('bot-updated', bot);
+  }
+
+  private chatLogUpdated(conversationId: string, logItems: LogEntry[]): void {
+    this.sendToInspector('chat-log-updated', conversationId, logItems);
   }
 
   private sendToInspector(channel: string, ...args: any[]) {

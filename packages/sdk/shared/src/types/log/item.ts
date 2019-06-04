@@ -31,6 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { Activity } from 'botframework-schema';
+
 import { LogLevel } from './level';
 
 export enum LogItemType {
@@ -74,7 +76,7 @@ export interface ExternalLinkLogItem {
 
 export interface InspectableObjectLogItem {
   text: string;
-  obj: any;
+  obj: Activity | { [propName: string]: {} };
 }
 
 export interface NetworkRequestLogItem {
