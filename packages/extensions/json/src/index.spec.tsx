@@ -31,8 +31,60 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import { mount } from 'enzyme';
 
 import { JsonViewer } from './jsonViewer';
 
-ReactDOM.render(<JsonViewer />, document.getElementById('root') as HTMLElement);
+(window as any).host = {
+  handlers: {
+    inspect: [],
+    theme: [],
+  },
+
+  on: function(event, handler) {
+    if (handler && Array.isArray(this.handlers[event]) && !this.handlers[event].includes(handler)) {
+      this.handlers[event].push(handler);
+    }
+    return () => {
+      this.handlers[event] = this.handlers[event].filter(item => item !== handler);
+    };
+  },
+};
+
+const mockData = {
+  conversationState: {
+    memory: {
+      id: 12,
+      value: 'bot',
+    },
+  },
+  userState: {
+    memory: {
+      value: 'greetings!',
+      dialogStack: ['test', 'test1', 'test2'],
+    },
+  },
+};
+
+let jsonViewerWrapper;
+
+describe('The JsonViewer', () => {
+  beforeAll(() => {
+    jsonViewerWrapper = mount(<JsonViewer />);
+  });
+
+  it('should render with data', () => {
+    (window as any).host.handlers.inspect[0](mockData); // Simulate event through host
+    const jsonViewer = jsonViewerWrapper.find(JsonViewer).instance();
+
+    expect(jsonViewerWrapper.find('div').length).toBeGreaterThan(0);
+    expect(jsonViewer.state.data).toBe(mockData);
+  });
+
+  it('should set the state as expected when the theme changes', () => {
+    (window as any).host.handlers.theme[0]({ themeName: 'high-contrast' }); // Simulate event through host
+    const jsonViewer = jsonViewerWrapper.find(JsonViewer).instance();
+
+    expect(jsonViewer.state.themeName).toBe('high-contrast');
+  });
+});
