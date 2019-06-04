@@ -41,7 +41,7 @@
 
 import './fetchProxy';
 import { SharedConstants } from '@bfemulator/app-shared';
-import { applyBotConfigOverrides, ConversationService } from '@bfemulator/sdk-shared';
+import { applyBotConfigOverrides } from '@bfemulator/sdk-shared';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { parseEndpointOverrides, Protocol, ProtocolHandler } from './protocolHandler';
@@ -231,17 +231,20 @@ describe('Protocol handler tests', () => {
     let tmpPerformBotAction;
     let tmpPerformLiveChatAction;
     let tmpPerformTranscriptAction;
+    let tmpPerformInspectorAction;
 
     beforeEach(() => {
       tmpPerformBotAction = ProtocolHandler.performBotAction;
       tmpPerformLiveChatAction = ProtocolHandler.performLiveChatAction;
       tmpPerformTranscriptAction = ProtocolHandler.performTranscriptAction;
+      tmpPerformInspectorAction = ProtocolHandler.performInspectorAction;
     });
 
     afterEach(() => {
       ProtocolHandler.performBotAction = tmpPerformBotAction;
       ProtocolHandler.performLiveChatAction = tmpPerformLiveChatAction;
       ProtocolHandler.performTranscriptAction = tmpPerformTranscriptAction;
+      ProtocolHandler.performInspectorAction = tmpPerformInspectorAction;
     });
 
     it("shouldn't do anything on an unrecognized action", () => {
@@ -269,15 +272,30 @@ describe('Protocol handler tests', () => {
     });
 
     it('should dispatch a livechat action', () => {
-      const spy = jest.spyOn(ConversationService, 'startConversation');
+      const spy = jest.spyOn(ProtocolHandler, 'performLiveChatAction');
       ProtocolHandler.parseProtocolUrlAndDispatch(
         'bfemulator://livechat.open?botUrl=http://localhost/&msaAppId=id&msaAppPassword=pass'
       );
+      expect(mockRemoteCallsMade).toHaveLength(1);
+      expect(mockRemoteCallsMade[0].commandName).toBe(SharedConstants.Commands.UI.OpenBotViaUrl);
+      expect(mockRemoteCallsMade[0].args).toEqual([
+        {
+          endpoint: 'http://localhost/',
+          appId: 'id',
+          appPassword: 'pass',
+          mode: 'livechat',
+        },
+      ]);
 
-      expect(spy).toHaveBeenCalledWith('http://localhost:8090', {
-        appId: 'id',
-        appPassword: 'pass',
-        endpoint: 'http://localhost/',
+      expect(spy).toHaveBeenCalledWith({
+        action: 'open',
+        args: 'botUrl=http://localhost/&msaAppId=id&msaAppPassword=pass',
+        domain: 'livechat',
+        parsedArgs: {
+          botUrl: 'http://localhost/',
+          msaAppId: 'id',
+          msaAppPassword: 'pass',
+        },
       });
     });
 
@@ -289,6 +307,34 @@ describe('Protocol handler tests', () => {
         args: 'url=http://localhost/myTranscript',
         domain: 'transcript',
         parsedArgs: { url: 'http://localhost/myTranscript' },
+      });
+    });
+
+    it('should dispatch a inspector action', () => {
+      const spy = jest.spyOn(ProtocolHandler, 'performInspectorAction');
+      ProtocolHandler.parseProtocolUrlAndDispatch(
+        'bfemulator://inspector.open?botUrl=http://localhost/&msaAppId=id&msaAppPassword=pass'
+      );
+      expect(mockRemoteCallsMade).toHaveLength(1);
+      expect(mockRemoteCallsMade[0].commandName).toBe(SharedConstants.Commands.UI.OpenBotViaUrl);
+      expect(mockRemoteCallsMade[0].args).toEqual([
+        {
+          endpoint: 'http://localhost/',
+          appId: 'id',
+          appPassword: 'pass',
+          mode: 'debug',
+        },
+      ]);
+
+      expect(spy).toHaveBeenCalledWith({
+        action: 'open',
+        args: 'botUrl=http://localhost/&msaAppId=id&msaAppPassword=pass',
+        domain: 'inspector',
+        parsedArgs: {
+          botUrl: 'http://localhost/',
+          msaAppId: 'id',
+          msaAppPassword: 'pass',
+        },
       });
     });
   });

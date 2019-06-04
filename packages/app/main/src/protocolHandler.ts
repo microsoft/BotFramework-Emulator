@@ -41,8 +41,8 @@ import {
   BotConfigOverrides,
   BotConfigWithPath,
   CommandServiceImpl,
-  ConversationService,
   CommandServiceInstance,
+  StartConversationParams,
 } from '@bfemulator/sdk-shared';
 
 import { Protocol } from './constants';
@@ -56,6 +56,7 @@ enum ProtocolDomains {
   livechat,
   transcript,
   bot,
+  inspector,
 }
 
 export enum ProtocolLiveChatActions {
@@ -128,6 +129,9 @@ class ProtocolHandlerImpl implements ProtocolHandler {
         this.performTranscriptAction(protocol);
         break;
 
+      case ProtocolDomains.inspector:
+        this.performInspectorAction(protocol);
+        break;
       default:
         break;
     }
@@ -140,8 +144,12 @@ class ProtocolHandlerImpl implements ProtocolHandler {
 
   public performLiveChatAction(protocol: Protocol): void {
     const { botUrl: endpoint, msaAppId: appId, msaAppPassword: appPassword } = protocol.parsedArgs;
-    const { serverUrl } = Emulator.getInstance().framework;
-    ConversationService.startConversation(serverUrl.replace('[::]', 'localhost'), { appId, appPassword, endpoint });
+    this.commandService.remoteCall(SharedConstants.Commands.UI.OpenBotViaUrl, {
+      endpoint,
+      appId,
+      appPassword,
+      mode: 'livechat',
+    } as StartConversationParams);
   }
 
   public performTranscriptAction(protocol: Protocol): void {
@@ -150,6 +158,16 @@ class ProtocolHandlerImpl implements ProtocolHandler {
 
   public performBotAction(protocol: Protocol): void {
     this.openBot(protocol);
+  }
+
+  public performInspectorAction(protocol: Protocol): void {
+    const { botUrl: endpoint, msaAppId: appId, msaAppPassword: appPassword } = protocol.parsedArgs;
+    this.commandService.remoteCall(SharedConstants.Commands.UI.OpenBotViaUrl, {
+      endpoint,
+      appId,
+      appPassword,
+      mode: 'debug',
+    } as StartConversationParams);
   }
 
   /** Downloads a transcript from a URL provided in the protocol string,

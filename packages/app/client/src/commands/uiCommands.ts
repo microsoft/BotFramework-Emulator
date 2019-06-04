@@ -32,7 +32,7 @@
 //
 
 import { newNotification, SharedConstants } from '@bfemulator/app-shared';
-import { Command, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
+import { Command, CommandServiceImpl, CommandServiceInstance, StartConversationParams } from '@bfemulator/sdk-shared';
 import { ServiceTypes } from 'botframework-config/lib/schema';
 import { ComponentClass } from 'react';
 
@@ -58,6 +58,7 @@ import {
   UpdateAvailableDialogContainer,
   UpdateUnavailableDialogContainer,
 } from '../ui/dialogs';
+import { openBotViaUrlAction } from '../data/action/botActions';
 import { beginAdd } from '../data/action/notificationActions';
 import { OpenBotDialogProps } from '../ui/dialogs/openBotDialog/openBotDialog';
 
@@ -236,5 +237,12 @@ export class UiCommands {
     } catch (e) {
       beginAdd(newNotification(e));
     }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Connect to a bot via URL
+  @Command(UI.OpenBotViaUrl)
+  protected openBotViaURL(conversationParams: StartConversationParams): void {
+    store.dispatch(openBotViaUrlAction(conversationParams));
   }
 }
