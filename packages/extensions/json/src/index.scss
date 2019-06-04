@@ -3,4 +3,18 @@ body {
   margin: 0;
   height: 100%;
   color: #d4d4d4;
+  font-family: monospace;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #5E5E5E;
 }
