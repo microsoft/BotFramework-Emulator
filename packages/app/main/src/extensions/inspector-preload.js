@@ -43,6 +43,10 @@ ipcRenderer.on('bot-updated', (sender, bot) => {
   window.host.dispatch('bot-updated', bot);
 });
 
+ipcRenderer.on('chat-log-updated', (sender, conversationId, logEntries) => {
+  window.host.dispatch('chat-log-updated', conversationId, logEntries);
+});
+
 ipcRenderer.on('toggle-dev-tools', () => {
   remote.getCurrentWebContents().toggleDevTools();
 });
@@ -60,6 +64,7 @@ window.host = {
   handlers: {
     'accessory-click': [],
     'bot-updated': [],
+    'chat-log-updated': [],
     inspect: [],
     theme: [],
   },
