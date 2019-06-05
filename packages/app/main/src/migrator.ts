@@ -106,7 +106,6 @@ export class Migrator {
           const botInfo: BotInfo = {
             path: newPath,
             displayName: bot.name,
-            secret: null,
           };
           recentBotsList.unshift(botInfo);
         } catch (err) {

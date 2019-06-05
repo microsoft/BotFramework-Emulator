@@ -53,6 +53,7 @@ import { BotHelpers } from '../botHelpers';
 import { Emulator } from '../emulator';
 import { botProjectFileWatcher, chatWatcher, transcriptsWatcher } from '../watchers';
 import { TelemetryService } from '../telemetry';
+import { CredentialManager } from '../credentialManager';
 
 import { BotCommands } from './botCommands';
 
@@ -182,23 +183,24 @@ describe('The botCommands', () => {
     const botToSave = BotConfigWithPathImpl.fromJSON(mockBot as any);
     const patchBotInfoSpy = jest.spyOn(BotHelpers, 'patchBotsJson');
     const saveBotSpy = jest.spyOn(BotHelpers, 'saveBot');
+    const setPasswordSpy = jest.spyOn(CredentialManager, 'setPassword').mockResolvedValueOnce(null);
 
     const mockBotInfo = {
       path: path.normalize(botToSave.path),
       displayName: 'AuthBot',
-      secret: 'secret',
       chatsPath: path.normalize('some/dialogs'),
       transcriptsPath: path.normalize('some/transcripts'),
     };
     const command = registry.getCommand(Bot.Create);
     const result = await command(botToSave, 'secret');
     expect(patchBotInfoSpy).toHaveBeenCalledWith(botToSave.path, mockBotInfo);
-    expect(saveBotSpy).toHaveBeenCalledWith(botToSave);
+    expect(saveBotSpy).toHaveBeenCalledWith(botToSave, 'secret');
     expect(result).toEqual(botToSave);
     expect(mockTrackEvent).toHaveBeenCalledWith('bot_create', {
       path: mockBotInfo.path,
       hasSecret: true,
     });
+    expect(setPasswordSpy).toHaveBeenCalledWith(mockBotInfo.path, 'secret');
   });
 
   it('should open a bot and set the default transcript and chat path if none exists', async () => {

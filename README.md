@@ -18,7 +18,19 @@ This repo is part the [Microsoft Bot Framework](https://github.com/microsoft/bot
 
 * Windows
 * OS X
-* Linux
+* Linux 
+
+  **Note for Linux users:**
+
+  The Emulator leverages a library that uses `libsecret` so you may need to install it before running `npm install`.
+
+  Depending on your distribution, you will need to run the following command:
+
+  Debian/Ubuntu: `sudo apt-get install libsecret-1-dev`
+
+  Red Hat-based: `sudo yum install libsecret-devel`
+  
+  Arch Linux: `sudo pacman -S libsecret`
 
 ## Documentation
 

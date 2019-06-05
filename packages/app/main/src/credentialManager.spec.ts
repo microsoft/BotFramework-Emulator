@@ -31,28 +31,32 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { join } from 'path';
+import keytar from 'keytar';
 
-import { BotInfo } from '@bfemulator/app-shared';
+import { CredentialManager } from './credentialManager';
 
-import { ensureStoragePath } from './ensureStoragePath';
-import { readFileSync } from './readFileSync';
+describe('CredentialManager', () => {
+  const getPasswordSpy = jest.spyOn(keytar, 'getPassword');
+  const setPasswordSpy = jest.spyOn(keytar, 'setPassword');
 
-/** Reads and returns list of bots from %APPSTORAGEPATH%/bots.json */
-export const getBotsFromDisk = (): BotInfo[] => {
-  const botsJsonPath = join(ensureStoragePath(), 'bots.json');
-  try {
-    const botsJsonContents = readFileSync(botsJsonPath);
-    const botsJson = botsJsonContents ? JSON.parse(botsJsonContents) : null;
-    if (botsJson && botsJson.bots && Array.isArray(botsJson.bots)) {
-      return botsJson.bots.map(bot => {
-        delete bot.secret;
-        return bot;
-      });
-    } else {
-      return [];
-    }
-  } catch (e) {
-    return [];
-  }
-};
+  beforeEach(() => {
+    getPasswordSpy.mockClear();
+    setPasswordSpy.mockClear();
+  });
+
+  it('should retrieve a password', async () => {
+    getPasswordSpy.mockResolvedValueOnce('password');
+    const pw = await CredentialManager.getPassword('myAccount');
+
+    expect(pw).toBe('password');
+    expect(getPasswordSpy).toHaveBeenCalledWith('BotFramework-Emulator', 'myAccount');
+  });
+
+  it('should store a password', async () => {
+    setPasswordSpy.mockResolvedValueOnce(true);
+    const result = await CredentialManager.setPassword('myAccount', 'password');
+
+    expect(result).toBe(true);
+    expect(setPasswordSpy).toHaveBeenCalledWith('BotFramework-Emulator', 'myAccount', 'password');
+  });
+});

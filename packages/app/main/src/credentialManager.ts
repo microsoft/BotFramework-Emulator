@@ -31,28 +31,25 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { join } from 'path';
+import { getPassword, setPassword } from 'keytar';
 
-import { BotInfo } from '@bfemulator/app-shared';
+export class CredentialManager {
+  private static readonly serviceName = 'BotFramework-Emulator';
 
-import { ensureStoragePath } from './ensureStoragePath';
-import { readFileSync } from './readFileSync';
-
-/** Reads and returns list of bots from %APPSTORAGEPATH%/bots.json */
-export const getBotsFromDisk = (): BotInfo[] => {
-  const botsJsonPath = join(ensureStoragePath(), 'bots.json');
-  try {
-    const botsJsonContents = readFileSync(botsJsonPath);
-    const botsJson = botsJsonContents ? JSON.parse(botsJsonContents) : null;
-    if (botsJson && botsJson.bots && Array.isArray(botsJson.bots)) {
-      return botsJson.bots.map(bot => {
-        delete bot.secret;
-        return bot;
-      });
-    } else {
-      return [];
-    }
-  } catch (e) {
-    return [];
+  /**
+   * Fetches a password stored by the OS at index 'key'
+   * @param key key used to index password
+   */
+  public static getPassword(key: string): Promise<string> {
+    return getPassword(this.serviceName, key);
   }
-};
+
+  /**
+   * Stores a password in the OS at index 'key'
+   * @param key key used to index password
+   * @param password
+   */
+  public static setPassword(key: string, password: string): Promise<void> {
+    return setPassword(this.serviceName, key, password);
+  }
+}

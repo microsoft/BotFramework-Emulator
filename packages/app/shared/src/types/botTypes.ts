@@ -51,6 +51,4 @@ export interface BotInfo {
   transcriptsPath?: string;
   /** Path to .chat files - defaults to ./dialogs */
   chatsPath?: string;
-  /** Bot secret used to encrypt / decrypt sensitive service info */
-  secret?: string;
 }

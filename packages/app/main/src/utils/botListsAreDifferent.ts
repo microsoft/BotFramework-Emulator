@@ -49,7 +49,6 @@ export const botListsAreDifferent = (list1: BotInfo[], list2: BotInfo[]): boolea
     if (
       bot1.displayName !== bot2.displayName ||
       bot1.path !== bot2.path ||
-      bot1.secret !== bot2.secret ||
       bot1.chatsPath !== bot2.chatsPath ||
       bot1.transcriptsPath !== bot2.transcriptsPath
     ) {

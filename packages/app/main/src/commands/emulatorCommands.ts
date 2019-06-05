@@ -53,6 +53,7 @@ import { TelemetryService } from '../telemetry';
 import { setCurrentUser } from '../settingsData/actions/userActions';
 import { pushClientAwareSettings } from '../settingsData/actions/frameworkActions';
 import { ProtocolHandler } from '../protocolHandler';
+import { CredentialManager } from '../credentialManager';
 
 const Commands = SharedConstants.Commands.Emulator;
 
@@ -104,7 +105,8 @@ export class EmulatorCommands {
     const store = getStore();
     const { currentBotDirectory } = store.getState().bot;
     if (!currentBotDirectory && filename && filename.length) {
-      const saveableBot = BotHelpers.toSavableBot(activeBot, botInfo.secret);
+      const secret = await CredentialManager.getPassword(activeBot.path);
+      const saveableBot = BotHelpers.toSavableBot(activeBot, secret);
       const botDirectory = path.dirname(filename);
       const botPath = path.join(botDirectory, `${activeBot.name}.bot`);
       botInfo = { ...botInfo, path: botPath };
