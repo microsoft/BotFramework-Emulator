@@ -31,48 +31,91 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Checkbox, DefaultButton, Dialog, DialogFooter, PrimaryButton } from '@bfemulator/ui-react';
+import { DefaultButton, Dialog, DialogFooter, PrimaryButton } from '@bfemulator/ui-react';
 import * as React from 'react';
 
+import * as styles from './updateAvailableDialog.scss';
+
+export enum Options {
+  ManuallyInstall,
+  InstallAndRestart,
+  AutoUpdate,
+}
+
 export interface UpdateAvailableDialogProps {
+  autoInstallUpdates?: boolean;
   onCloseClick?: () => any;
-  onDownloadClick?: (installAfterDownload: boolean) => any;
+  onUpdateClick?: (updateOption: number) => any;
   version?: string;
 }
 
 export interface UpdateAvailableDialogState {
-  installAfterDownload: boolean;
+  selectedOption: Options;
 }
 
 export class UpdateAvailableDialog extends React.Component<UpdateAvailableDialogProps, UpdateAvailableDialogState> {
   constructor(props: UpdateAvailableDialogProps) {
     super(props);
 
-    this.state = { installAfterDownload: false };
+    this.state = {
+      selectedOption: Options.InstallAndRestart,
+    };
   }
 
   public render(): JSX.Element {
-    const { onCloseClick, onDownloadClick, version } = this.props;
-    const { installAfterDownload } = this.state;
-    const { onChangeInstallAfterDownload } = this;
+    const { onCloseClick, onUpdateClick, version } = this.props;
+    const { selectedOption } = this.state;
 
     return (
       <Dialog cancel={onCloseClick} title="Update available">
         <p>Bot Framework Emulator {version} is available. Would you like to download the new version?</p>
-        <Checkbox
-          label="Restart the emulator and install update after download"
-          checked={installAfterDownload}
-          onChange={onChangeInstallAfterDownload}
-        />
+        <div className={styles.inputContainer}>
+          <span>
+            <input
+              name="update-choice"
+              type="radio"
+              id="choice1"
+              value={Options[Options.ManuallyInstall]}
+              onChange={this.onChange}
+              checked={selectedOption === Options.ManuallyInstall}
+            />
+            <label htmlFor="choice1">Download and manually install this update.</label>
+          </span>
+          <span>
+            <input
+              name="update-choice"
+              type="radio"
+              id="choice2"
+              value={Options[Options.InstallAndRestart]}
+              onChange={this.onChange}
+              checked={selectedOption === Options.InstallAndRestart}
+            />
+            <label htmlFor="choice2">Install this update and restart Emulator.</label>
+          </span>
+          <span>
+            <input
+              name="update-choice"
+              type="radio"
+              id="choice3"
+              value={Options[Options.AutoUpdate]}
+              onChange={this.onChange}
+              checked={selectedOption === Options.AutoUpdate}
+            />
+            <label htmlFor="choice3">Automatically download and install all updates.</label>
+          </span>
+        </div>
         <DialogFooter>
           <DefaultButton text="Cancel" onClick={onCloseClick} />
-          <PrimaryButton text="Download" onClick={() => onDownloadClick(this.state.installAfterDownload)} />
+          <PrimaryButton text="Update" onClick={() => onUpdateClick(this.state.selectedOption)} />
         </DialogFooter>
       </Dialog>
     );
   }
 
-  private onChangeInstallAfterDownload = (): void => {
-    this.setState({ installAfterDownload: !this.state.installAfterDownload });
+  private onChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
+    const {
+      target: { value },
+    } = ev;
+    this.setState({ selectedOption: Options[value] });
   };
 }

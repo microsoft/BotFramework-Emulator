@@ -236,6 +236,11 @@ html {
   --service-picker-scrollbar-thumb: var(--neutral-1);
   --service-picker-scrollbar-track: transparent;
   --service-picker-select-all-border: 1px solid transparent;
+
+  /* Radio buttons */
+  --radio-bg-color: var(--neutral-1);
+  --radio-border-color: var(--neutral-1);
+  --radio-selected-border-color: #3B99FC;
 }
 
 .dialog .ms-Button-label {
