@@ -52,22 +52,204 @@ export interface JsonViewerState {
 }
 
 export class JsonViewer extends Component<{}, JsonViewerState> {
+  private readonly mutationObserver: MutationObserver;
+  private jsonViewerRef: HTMLDivElement;
+
+  private static nodesAdded(addedNodes: NodeList): void {
+    addedNodes.forEach((node: Element) => {
+      switch (node.tagName) {
+        case 'UL':
+          node.setAttribute('role', 'group');
+          node.setAttribute('aria-expanded', '' + !!node.childNodes.length);
+          break;
+
+        case 'LI':
+          node.setAttribute('role', 'treeitem');
+          node.setAttribute('tabindex', '-1');
+          break;
+
+        case 'DIV':
+          node.setAttribute('role', 'button');
+          break;
+
+        default:
+          break;
+      }
+    });
+  }
+
   constructor(props: any) {
     super(props);
     new WindowHostReceiver(this);
+    this.mutationObserver = new MutationObserver(this.mutationObserverCallback);
   }
 
   public render() {
     const state = this.state || ({ data: {} } as any);
     const { data, themeName = 'light' } = state;
-    return <JSONTree data={data} theme={themeNameToViewerThemeName[themeName]} invertTheme={false} />;
+    return (
+      <div ref={this.jsonTreeRef}>
+        <JSONTree data={data} theme={themeNameToViewerThemeName[themeName]} invertTheme={false} />
+      </div>
+    );
   }
 
-  public setData(data: any): void {
+  public setData<T = {}>(data: Record<string, T>): void {
     this.setState({ data });
   }
 
   public setTheme(themeName: string) {
     this.setState({ themeName });
+  }
+
+  private jsonTreeRef = (ref: HTMLDivElement): void => {
+    if (this.mutationObserver) {
+      this.mutationObserver.disconnect();
+    }
+    if (this.jsonViewerRef) {
+      this.jsonViewerRef.removeEventListener('keydown', this.onTreeKeydown, true);
+    }
+    if (ref) {
+      ref.addEventListener('keydown', this.onTreeKeydown, true);
+      this.mutationObserver.observe(ref, { childList: true, subtree: true });
+      // <ul>
+      ref.firstElementChild.setAttribute('role', 'tree');
+      // <ul><li>
+      ref.firstElementChild.firstElementChild.setAttribute('tabindex', '0');
+    }
+    this.jsonViewerRef = ref;
+  };
+
+  private mutationObserverCallback = (mutations: MutationRecord[]) => {
+    mutations.forEach(mutationRecord => {
+      JsonViewer.nodesAdded(mutationRecord.addedNodes);
+    });
+  };
+
+  private onTreeKeydown = (event: KeyboardEvent) => {
+    switch (event.key) {
+      case 'Enter':
+      case ' ':
+        break;
+
+      case 'ArrowDown':
+        this.focusNext(event);
+        break;
+
+      case 'ArrowUp':
+        this.focusPrevious(event);
+        break;
+
+      case 'Tab':
+        this.focusGroup(event);
+        break;
+
+      // case 'Home':
+      //   this.focusHead(event);
+      //   break;
+      //
+      // case 'End':
+      //   this.focusTail(event);
+      //   break;
+
+      default:
+        break;
+    }
+  };
+
+  private focusNext(event: KeyboardEvent): void {
+    const target = event.target as HTMLElement;
+    const role = target.getAttribute('role');
+
+    switch (role) {
+      case 'group':
+        // Are we expanded with children?
+        if (target.firstElementChild) {
+          (target.firstElementChild as HTMLElement).focus();
+          // Focus the next group instead
+        } else if (target.nextElementSibling) {
+          (target.nextElementSibling as HTMLElement).focus();
+        }
+        break;
+
+      case 'treeitem':
+        // focus the next sibling or find the
+        // next group and focus that.
+        if (target.nextElementSibling) {
+          (target.nextElementSibling as HTMLElement).focus();
+        } else if (target.parentElement.nextElementSibling) {
+          (target.parentElement.nextElementSibling as HTMLElement).focus();
+        }
+        break;
+
+      default:
+        // TODO - determine if this is necessary
+        event.preventDefault();
+        break;
+    }
+  }
+
+  private focusPrevious(event: KeyboardEvent): void {
+    const target = event.target as HTMLElement;
+    const role = target.getAttribute('role');
+
+    switch (role) {
+      case 'group':
+        // Try to move into the previous group
+        // and focus it
+        if (target.parentElement && target.parentElement.lastElementChild) {
+          (target.parentElement.lastElementChild as HTMLElement).focus();
+          // Focus the last group instead but
+          // only if it is a group.
+        } else if (target.parentElement && target.parentElement.getAttribute('role') === 'group') {
+          (target.parentElement as HTMLElement).focus();
+        }
+        break;
+
+      case 'treeitem':
+        // focus the previous sibling or find the
+        // previous group and focus that.
+        if (target.previousElementSibling) {
+          (target.previousElementSibling as HTMLElement).focus();
+        } else if (target.parentElement.previousElementSibling) {
+          (target.parentElement.previousElementSibling as HTMLElement).focus();
+        }
+        break;
+
+      default:
+        // TODO - determine if this is necessary
+        event.preventDefault();
+        break;
+    }
+  }
+
+  private focusGroup(event: KeyboardEvent): void {
+    const target = event.target as HTMLElement;
+    const role = target.getAttribute('role');
+    let targetGroupRoot;
+
+    switch (role) {
+      case 'group':
+        targetGroupRoot = target;
+        break;
+
+      case 'treeitem':
+        targetGroupRoot = target.parentElement;
+        break;
+
+      default:
+        break;
+    }
+    if (!targetGroupRoot) {
+      return;
+    }
+    // Focus previous group
+    if (event.shiftKey) {
+      if (target.previousElementSibling && target.previousElementSibling.getAttribute('role') === 'group') {
+        (target.previousElementSibling as HTMLElement).focus();
+      }
+    } else if (target.nextElementSibling) {
+      (target.nextElementSibling as HTMLElement).focus();
+    }
   }
 }
