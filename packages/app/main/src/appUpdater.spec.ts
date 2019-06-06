@@ -31,8 +31,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
+import { SharedConstants } from '@bfemulator/app-shared';
+
 import { AppUpdater } from './appUpdater';
 import { TelemetryService } from './telemetry';
+import { AppMenuBuilder } from './appMenuBuilder';
+import { setFramework } from './settingsData/actions/frameworkActions';
 
 let mockAutoUpdater: any = {
   quitAndInstall: null,
@@ -55,8 +60,19 @@ jest.mock('electron-updater', () => ({
   UpdateInfo: typeof {},
 }));
 
+const mockSettingsStore = {
+  getState: () => ({ framework: mockSettings }),
+  dispatch: () => null,
+};
 jest.mock('./settingsData/store', () => ({
   getSettings: () => ({ framework: mockSettings }),
+  getStore: () => mockSettingsStore,
+}));
+
+jest.mock('./telemetry', () => ({
+  TelemetryService: {
+    trackEvent: () => null,
+  },
 }));
 
 jest.mock('electron', () => ({
@@ -88,15 +104,30 @@ jest.mock('electron', () => ({
   ),
 }));
 
+const mockSendNotification = jest.fn().mockResolvedValue(undefined);
+jest.mock('./utils/sendNotificationToClient', () => ({
+  get sendNotificationToClient() {
+    return mockSendNotification;
+  },
+}));
+
 describe('AppUpdater', () => {
   let mockTrackEvent;
   const trackEventBackup = TelemetryService.trackEvent;
+  let commandService: CommandServiceImpl;
+
+  beforeAll(() => {
+    const decorator = CommandServiceInstance();
+    const descriptor = decorator({ descriptor: {} }, 'none') as any;
+    commandService = descriptor.descriptor.get();
+  });
 
   beforeEach(() => {
     mockAutoUpdater = {};
     mockSettings = { ...defaultSettings };
     mockTrackEvent = jest.fn(() => Promise.resolve());
     TelemetryService.trackEvent = mockTrackEvent;
+    mockSendNotification.mockClear();
   });
 
   afterAll(() => {
@@ -183,29 +214,6 @@ describe('AppUpdater', () => {
     expect(mockOn).toHaveBeenCalledTimes(5);
 
     expect(mockCheckForUpdates).toHaveBeenCalledWith(false);
-
-    AppUpdater.checkForUpdates = tmp;
-  });
-
-  it('should startup and not check for updates if autoUpdate is false ', () => {
-    mockSettings.usePrereleases = true;
-    mockSettings.autoUpdate = false;
-
-    const mockOn = jest.fn((_eventName: string, _handler: () => any) => null);
-    const mockSetFeedURL = jest.fn((_options: any) => null);
-    mockAutoUpdater.on = mockOn;
-    mockAutoUpdater.setFeedURL = mockSetFeedURL;
-
-    const tmp = AppUpdater.checkForUpdates;
-    const mockCheckForUpdates = jest.fn(_ => Promise.resolve(true));
-    AppUpdater.checkForUpdates = mockCheckForUpdates;
-
-    AppUpdater.startup();
-
-    expect(AppUpdater.autoDownload).toBe(false);
-    expect(AppUpdater.allowPrerelease).toBe(true);
-
-    expect(mockCheckForUpdates).not.toHaveBeenCalled();
 
     AppUpdater.checkForUpdates = tmp;
   });
@@ -300,5 +308,117 @@ describe('AppUpdater', () => {
     expect(() => AppUpdater.quitAndInstall()).toThrow(
       'There was an error while trying to quit and install the latest update: ERROR'
     );
+  });
+
+  it('should show a progress indicator and download the update; not install', async () => {
+    const downloadUpdateSpy = jest.spyOn(AppUpdater, 'downloadUpdate').mockResolvedValueOnce(undefined);
+    jest.spyOn(AppMenuBuilder, 'refreshAppUpdateMenu').mockReturnValueOnce(undefined);
+    const remoteCallSpy = jest
+      .spyOn(commandService, 'remoteCall')
+      // result from dialog
+      .mockResolvedValueOnce(0)
+      // update progress indicator
+      .mockResolvedValueOnce(undefined)
+      // show progress indicator
+      .mockResolvedValueOnce(undefined);
+    AppUpdater.autoDownload = false;
+    await (AppUpdater as any).onUpdateAvailable({ version: 'v4.5.0' });
+
+    expect(remoteCallSpy).toHaveBeenCalledTimes(3);
+    expect(downloadUpdateSpy).toHaveBeenCalledWith(false);
+
+    remoteCallSpy.mockClear();
+    downloadUpdateSpy.mockClear();
+  });
+
+  it('should show a progress indicator and download & install the update', async () => {
+    const downloadUpdateSpy = jest.spyOn(AppUpdater, 'downloadUpdate').mockResolvedValueOnce(undefined);
+    jest.spyOn(AppMenuBuilder, 'refreshAppUpdateMenu').mockReturnValueOnce(undefined);
+    const remoteCallSpy = jest
+      .spyOn(commandService, 'remoteCall')
+      // result from dialog
+      .mockResolvedValueOnce(1)
+      // update progress indicator
+      .mockResolvedValueOnce(undefined)
+      // show progress indicator
+      .mockResolvedValueOnce(undefined);
+    AppUpdater.autoDownload = false;
+    await (AppUpdater as any).onUpdateAvailable({ version: 'v4.5.0' });
+
+    expect(remoteCallSpy).toHaveBeenCalledTimes(3);
+    expect(downloadUpdateSpy).toHaveBeenCalledWith(true);
+
+    remoteCallSpy.mockClear();
+    downloadUpdateSpy.mockClear();
+  });
+
+  it('should show a progress indicator and download & install the update, and opt into auto updates', async () => {
+    const downloadUpdateSpy = jest.spyOn(AppUpdater, 'downloadUpdate').mockResolvedValueOnce(undefined);
+    jest.spyOn(AppMenuBuilder, 'refreshAppUpdateMenu').mockReturnValueOnce(undefined);
+    const remoteCallSpy = jest
+      .spyOn(commandService, 'remoteCall')
+      // result from dialog
+      .mockResolvedValueOnce(2)
+      // update progress indicator
+      .mockResolvedValueOnce(undefined)
+      // show progress indicator
+      .mockResolvedValueOnce(undefined);
+    const dispatchSpy = jest.spyOn(mockSettingsStore, 'dispatch');
+    AppUpdater.autoDownload = false;
+    await (AppUpdater as any).onUpdateAvailable({ version: 'v4.5.0' });
+
+    expect(remoteCallSpy).toHaveBeenCalledTimes(3);
+    expect(downloadUpdateSpy).toHaveBeenCalledWith(true);
+    expect(dispatchSpy).toHaveBeenCalledWith(setFramework({ ...mockSettings, autoUpdate: true }));
+
+    remoteCallSpy.mockClear();
+    downloadUpdateSpy.mockClear();
+    dispatchSpy.mockClear();
+  });
+
+  it('should not show anything if the user closes the update available dialog', async () => {
+    jest.spyOn(AppMenuBuilder, 'refreshAppUpdateMenu').mockReturnValueOnce(undefined);
+    const remoteCallSpy = jest.spyOn(commandService, 'remoteCall').mockResolvedValueOnce(undefined);
+    AppUpdater.autoDownload = false;
+    await (AppUpdater as any).onUpdateAvailable({ version: 'v4.5.0' });
+
+    expect(remoteCallSpy).toHaveBeenCalledTimes(1);
+
+    remoteCallSpy.mockClear();
+  });
+
+  it('should download the update silently if auto download is enabled', async () => {
+    const downloadUpdateSpy = jest.spyOn(AppUpdater, 'downloadUpdate').mockResolvedValueOnce(undefined);
+    AppUpdater.autoDownload = true;
+    await (AppUpdater as any).onUpdateAvailable({ version: 'v4.5.0' });
+
+    expect(downloadUpdateSpy).toHaveBeenCalledWith(false);
+
+    downloadUpdateSpy.mockClear();
+  });
+
+  it('should quit and install after the update has been downloaded', async () => {
+    const quitAndInstall = jest.spyOn(AppUpdater, 'quitAndInstall').mockReturnValue(undefined);
+    (AppUpdater as any)._installAfterDownload = true;
+    await (AppUpdater as any).onUpdateDownloaded({ version: 'v4.5.0' });
+
+    expect(quitAndInstall).toHaveBeenCalled();
+
+    quitAndInstall.mockClear();
+  });
+
+  it('should send a notification to quit and install after the update has been downloaded', async () => {
+    const remoteCallSpy = jest.spyOn(commandService, 'remoteCall').mockResolvedValueOnce(undefined);
+    jest.spyOn(AppMenuBuilder, 'refreshAppUpdateMenu').mockReturnValueOnce(undefined);
+    (AppUpdater as any)._installAfterDownload = false;
+    await (AppUpdater as any).onUpdateDownloaded({ version: 'v4.5.0' });
+
+    expect(remoteCallSpy).toHaveBeenCalledWith(SharedConstants.Commands.UI.UpdateProgressIndicator, {
+      label: 'Download finished.',
+      progress: 100,
+    });
+    expect(mockSendNotification).toHaveBeenCalled();
+
+    remoteCallSpy.mockClear();
   });
 });

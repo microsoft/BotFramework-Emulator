@@ -136,7 +136,7 @@ export const frameworkDefault: FrameworkSettings = {
   localhost: 'localhost',
   locale: 'en-US',
   usePrereleases: false,
-  autoUpdate: true,
+  autoUpdate: false,
   collectUsageData: false,
   userGUID: '',
   useCustomId: false,

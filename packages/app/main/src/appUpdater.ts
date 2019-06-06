@@ -41,9 +41,10 @@ import { newNotification } from '@bfemulator/app-shared';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { TelemetryService } from './telemetry';
-import { getSettings } from './settingsData/store';
+import { getSettings, getStore as getSettingsStore } from './settingsData/store';
 import { AppMenuBuilder } from './appMenuBuilder';
 import { sendNotificationToClient } from './utils/sendNotificationToClient';
+import { setFramework } from './settingsData/actions/frameworkActions';
 
 export enum UpdateStatus {
   Idle,
@@ -120,9 +121,7 @@ class EmulatorUpdater extends EventEmitter {
     electronUpdater.on('download-progress', this.onDownloadProgress);
     electronUpdater.on('update-downloaded', this.onUpdateDownloaded);
 
-    if (this.autoDownload) {
-      await this.checkForUpdates(false);
-    }
+    await this.checkForUpdates(false);
   }
 
   public async checkForUpdates(userInitiated: boolean): Promise<void> {
@@ -171,35 +170,69 @@ class EmulatorUpdater extends EventEmitter {
       this._status = UpdateStatus.Idle;
       try {
         AppMenuBuilder.refreshAppUpdateMenu();
+        // show the update available dialog
+        const {
+          ShowUpdateAvailableDialog,
+          ShowProgressIndicator,
+          UpdateProgressIndicator,
+        } = SharedConstants.Commands.UI;
+        const result = await this.commandService.remoteCall<number>(ShowUpdateAvailableDialog, updateInfo.version);
 
-        if (this.userInitiated) {
-          const {
-            ShowUpdateAvailableDialog,
-            ShowProgressIndicator,
-            UpdateProgressIndicator,
-          } = SharedConstants.Commands.UI;
-          const result = await this.commandService.remoteCall<{ installAfterDownload: boolean }>(
-            ShowUpdateAvailableDialog,
-            updateInfo.version
-          );
-          if (result) {
+        switch (result) {
+          // manually download the update, and the user can choose to install afterwards
+          case 0: {
             // show but don't block on result of progress indicator dialog
             await this.commandService.remoteCall(UpdateProgressIndicator, {
               label: 'Downloading...',
               progress: 0,
             });
             this.commandService.remoteCall(ShowProgressIndicator);
-            const { installAfterDownload = false } = result;
-            await this.downloadUpdate(installAfterDownload);
+            await this.downloadUpdate(false);
+            return;
+          }
+
+          // install the update and restart the emulator
+          case 1: {
+            // show but don't block on result of progress indicator dialog
+            await this.commandService.remoteCall(UpdateProgressIndicator, {
+              label: 'Downloading...',
+              progress: 0,
+            });
+            this.commandService.remoteCall(ShowProgressIndicator);
+            await this.downloadUpdate(true);
+            return;
+          }
+
+          // install the update, restart, and enable auto updates from here on
+          case 2: {
+            const settingsStore = getSettingsStore();
+            let settings = settingsStore.getState().framework;
+            settings = {
+              ...settings,
+              autoUpdate: true,
+            };
+            settingsStore.dispatch(setFramework(settings));
+            // show but don't block on result of progress indicator dialog
+            await this.commandService.remoteCall(UpdateProgressIndicator, {
+              label: 'Downloading...',
+              progress: 0,
+            });
+            this.commandService.remoteCall(ShowProgressIndicator);
+            await this.downloadUpdate(true);
+            return;
+          }
+
+          // cancel
+          default: {
+            return;
           }
         }
       } catch (e) {
         // eslint-disable-next-line no-console
         console.error(`An error occurred in the updater's "update-available" event handler: ${e}`);
       }
-    }
-    // if this was initiated on startup, download in the background
-    if (!this.userInitiated) {
+    } else {
+      // download the update silently and update on app quit
       this.downloadUpdate(false).catch(e => this.emit('error', e, e.toString()));
     }
   };
@@ -270,29 +303,28 @@ class EmulatorUpdater extends EventEmitter {
         AppMenuBuilder.refreshAppUpdateMenu();
 
         // TODO - localization
-        if (this.userInitiated) {
-          // update the progress indicator
-          const { UpdateProgressIndicator } = SharedConstants.Commands.UI;
-          const progressPayload = { label: 'Download finished.', progress: 100 };
-          await this.commandService.remoteCall(UpdateProgressIndicator, progressPayload);
 
-          // send a notification when the update is finished downloading
-          const notification = newNotification(
-            `Emulator version ${updateInfo.version} has finished downloading. Restart and update now?`
-          );
-          notification.addButton('Dismiss', () => {
-            const { Commands } = SharedConstants;
-            this.commandService.remoteCall(Commands.Notifications.Remove, notification.id);
-          });
-          notification.addButton('Restart', async () => {
-            try {
-              this.quitAndInstall();
-            } catch (e) {
-              await sendNotificationToClient(newNotification(e), this.commandService);
-            }
-          });
-          await sendNotificationToClient(notification, this.commandService);
-        }
+        // update the progress indicator
+        const { UpdateProgressIndicator } = SharedConstants.Commands.UI;
+        const progressPayload = { label: 'Download finished.', progress: 100 };
+        await this.commandService.remoteCall(UpdateProgressIndicator, progressPayload);
+
+        // send a notification when the update is finished downloading
+        const notification = newNotification(
+          `Emulator version ${updateInfo.version} has finished downloading. Restart and update now?`
+        );
+        notification.addButton('Dismiss', () => {
+          const { Commands } = SharedConstants;
+          this.commandService.remoteCall(Commands.Notifications.Remove, notification.id);
+        });
+        notification.addButton('Restart', async () => {
+          try {
+            this.quitAndInstall();
+          } catch (e) {
+            await sendNotificationToClient(newNotification(e), this.commandService);
+          }
+        });
+        await sendNotificationToClient(notification, this.commandService);
       } catch (e) {
         // eslint-disable-next-line no-console
         console.error(`An error occurred in the updater's "update-downloaded" event handler: ${e}`);
