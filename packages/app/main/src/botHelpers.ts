@@ -41,6 +41,7 @@ import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shar
 
 import * as BotActions from './data/actions/botActions';
 import { getStore } from './data/store';
+import { CredentialManager } from './credentialManager';
 
 const store = getStore();
 
@@ -58,33 +59,24 @@ export class BotHelpers {
     try {
       // load the bot and transform it into internal BotConfig implementation
       let bot: BotConfigWithPath = await BotConfiguration.load(botPath, secret);
-
-      // if the bot has a padlock and we don't have a secret, then we need to ask for a secret and decrypt
-      if (bot.padlock && !secret) {
-        return await BotHelpers.promptForSecretAndRetry(botPath);
-      }
-
       bot = BotHelpers.cloneBot(bot);
       bot.path = botPath;
 
-      if (BotHelpers.pathExistsInRecentBots(botPath)) {
-        // Bot was either decrypted on first try, or we used a new secret
-        // entered via the secret prompt dialog. In the latter case, we should
-        // update the secret for the bot that we have on record with the correct secret.
-        const botInfo = BotHelpers.getBotInfoByPath(botPath);
-        if (secret && botInfo.secret !== secret) {
-          // update the secret in bots.json with the valid secret
-          const updatedBot = { ...botInfo, secret };
-          await BotHelpers.patchBotsJson(botPath, updatedBot);
-        }
-      } else {
+      if (!BotHelpers.pathExistsInRecentBots(botPath)) {
         // bot does not have an entry in recent bots so create one
         const botInfo: BotInfo = {
           path: botPath,
           displayName: getBotDisplayName(bot),
-          secret,
         };
         await BotHelpers.patchBotsJson(botPath, botInfo);
+      }
+
+      if (secret) {
+        // make sure the user stores an updated version of the secret
+        const storedSecret = await CredentialManager.getPassword(botPath);
+        if (!storedSecret || secret !== storedSecret) {
+          await CredentialManager.setPassword(botPath, secret);
+        }
       }
 
       return bot;
@@ -93,7 +85,14 @@ export class BotHelpers {
       // Lots of different errors can arrive here, like ENOENT, if the file wasn't found.
       // Add easily discernable errors / error codes to msbot package
       if (e instanceof Error && e.message.includes('secret')) {
-        return BotHelpers.promptForSecretAndRetry(botPath);
+        // try to fetch the secret from the OS credential store
+        secret = await CredentialManager.getPassword(botPath);
+        if (secret) {
+          return await this.loadBotWithRetry(botPath, secret);
+        } else {
+          // otherwise, we need to ask for a secret and decrypt
+          return await BotHelpers.promptForSecretAndRetry(botPath);
+        }
       } else {
         throw e;
       }
@@ -168,15 +167,15 @@ export class BotHelpers {
   }
 
   /** Saves a bot to disk */
-  public static async saveBot(bot: BotConfigWithPath): Promise<void> {
-    const botInfo = (await BotHelpers.getBotInfoByPath(bot.path)) || {};
+  public static async saveBot(bot: BotConfigWithPath, secret?: string): Promise<void> {
+    secret = secret || (await CredentialManager.getPassword(bot.path));
 
-    const savableBot = BotHelpers.toSavableBot(bot, botInfo.secret);
+    const savableBot = BotHelpers.toSavableBot(bot, secret);
 
-    if (botInfo.secret) {
-      savableBot.validateSecret(botInfo.secret);
+    if (secret) {
+      savableBot.validateSecret(secret);
     }
-    return savableBot.save(botInfo.secret).catch();
+    return savableBot.save(secret).catch();
   }
 
   /** Removes a bot from bots.json (doesn't delete the bot file) */

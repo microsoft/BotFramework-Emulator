@@ -44,8 +44,18 @@ npm i -g lerna@3.4.0 webpack@4.8.x webpack-cli jest
 ```
 
 > **NOTE:** If you are using Linux, building the Emulator might result in an error due to a missing package: **libXScrnSaver**. If you run into this error, install the package using your OS's package manager and retry: 
-
+>
 >`yum install libXScrnSaver`
+>
+>The Emulator (on Linux) also leverages a library that uses `libsecret` so you may need to install it before running `npm install`.
+>
+>  Depending on your distribution, you will need to run the following command:
+>
+>  Debian/Ubuntu: `sudo apt-get install libsecret-1-dev`
+>
+>  Red Hat-based: `sudo yum install libsecret-devel`
+>  
+>  Arch Linux: `sudo pacman -S libsecret`
 
 ### Install local dependencies
 

@@ -40,17 +40,14 @@ test('botListsAreDifferent() tests', () => {
     {
       path: 'path1',
       displayName: 'bot1',
-      secret: null,
     },
     {
       path: 'path2',
       displayName: 'bot2',
-      secret: null,
     },
     {
       path: 'path3',
       displayName: 'bot3',
-      secret: null,
     },
   ];
 
@@ -58,13 +55,13 @@ test('botListsAreDifferent() tests', () => {
 
   expect(botListsAreDifferent(list1, list2)).toBe(true);
 
-  list2[0] = { path: 'path1', displayName: 'bot1', secret: null };
-  list2[1] = { path: 'path2', displayName: 'bot2', secret: null };
-  list2[2] = { path: 'path3', displayName: 'bot3', secret: null };
+  list2[0] = { path: 'path1', displayName: 'bot1' };
+  list2[1] = { path: 'path2', displayName: 'bot2' };
+  list2[2] = { path: 'path3', displayName: 'bot3' };
 
   expect(botListsAreDifferent(list1, list2)).toBe(false);
 
-  list2[1] = { path: 'path2', displayName: 'bot2', secret: 'someSecret' };
+  list2[1] = { path: 'path2', displayName: 'bot_not2' };
 
   expect(botListsAreDifferent(list1, list2)).toBe(true);
 });

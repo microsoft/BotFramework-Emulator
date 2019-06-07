@@ -31,28 +31,35 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { join } from 'path';
+import { getBotsFromDisk } from './getBotsFromDisk';
 
-import { BotInfo } from '@bfemulator/app-shared';
+let botsJsonContent: any = '';
+const mockReadFileSync = () => botsJsonContent;
+jest.mock('./readFileSync', () => ({
+  readFileSync: () => mockReadFileSync(),
+}));
 
-import { ensureStoragePath } from './ensureStoragePath';
-import { readFileSync } from './readFileSync';
+jest.mock('./ensureStoragePath', () => ({ ensureStoragePath: () => '' }));
 
-/** Reads and returns list of bots from %APPSTORAGEPATH%/bots.json */
-export const getBotsFromDisk = (): BotInfo[] => {
-  const botsJsonPath = join(ensureStoragePath(), 'bots.json');
-  try {
-    const botsJsonContents = readFileSync(botsJsonPath);
-    const botsJson = botsJsonContents ? JSON.parse(botsJsonContents) : null;
-    if (botsJson && botsJson.bots && Array.isArray(botsJson.bots)) {
-      return botsJson.bots.map(bot => {
-        delete bot.secret;
-        return bot;
-      });
-    } else {
-      return [];
-    }
-  } catch (e) {
-    return [];
-  }
-};
+describe('loading bots from bots.json', () => {
+  it('should load bots from disk if there are bots', () => {
+    botsJsonContent = JSON.stringify({ bots: [{ displayName: 'myBot', path: 'path/to/bot', secret: 'secret' }] });
+    const bots = getBotsFromDisk();
+
+    expect(bots).toEqual([{ displayName: 'myBot', path: 'path/to/bot' }]);
+  });
+
+  it('should return an empty array if there are no bots on disk', () => {
+    botsJsonContent = '';
+    const bots = getBotsFromDisk();
+
+    expect(bots).toEqual([]);
+  });
+
+  it('should return an empty array if an error is caught', () => {
+    botsJsonContent = new Error('Something went wrong.');
+    const bots = getBotsFromDisk();
+
+    expect(bots).toEqual([]);
+  });
+});

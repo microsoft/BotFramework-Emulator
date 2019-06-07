@@ -56,6 +56,7 @@ import { TelemetryService } from '../telemetry';
 import { setCurrentUser } from '../settingsData/actions/userActions';
 import { pushClientAwareSettings } from '../settingsData/actions/frameworkActions';
 import { azureLoggedInUserChanged } from '../settingsData/actions/azureAuthActions';
+import { CredentialManager } from '../credentialManager';
 
 import { EmulatorCommands } from './emulatorCommands';
 
@@ -207,7 +208,6 @@ const mockBot = BotConfigWithPathImpl.fromJSON({
 } as any);
 
 const mockInfo = {
-  secret: 'shhh!',
   path: mockNormalize('Users/blerg/Documents/testbot/contoso-cafe-bot.bot'),
   displayName: 'contoso-cafe-bot',
   transcriptsPath: mockNormalize('Users/blerg/Documents/testbot/transcripts'),
@@ -458,6 +458,7 @@ describe('The emulatorCommands', () => {
     const toSavableBotSpy = jest.spyOn(BotHelpers, 'toSavableBot').mockReturnValue({ save: async () => ({}) });
     const patchBotJsonSpy = jest.spyOn(BotHelpers, 'patchBotsJson').mockResolvedValue(true);
     const remoteCallSpy = jest.spyOn(commandService, 'remoteCall').mockResolvedValueOnce(true);
+    jest.spyOn(CredentialManager, 'getPassword').mockResolvedValueOnce(undefined);
     const command = registry.getCommand(SharedConstants.Commands.Emulator.SaveTranscriptToFile);
     await command(ValueTypesMask.Activity, '1234');
     expect(remoteCallSpy).toHaveBeenCalledWith('file:clear');
@@ -481,7 +482,7 @@ describe('The emulatorCommands', () => {
     );
     const newPath = mockNormalize('chosen/AuthBot.bot');
     expect(getBotInfoByPathSpy).toHaveBeenCalledWith('some/path');
-    expect(toSavableBotSpy).toHaveBeenCalledWith(mockBot, mockInfo.secret);
+    expect(toSavableBotSpy).toHaveBeenCalledWith(mockBot, undefined);
     expect(patchBotJsonSpy).toHaveBeenCalledWith(newPath, Object.assign({}, mockInfo, { path: newPath }));
     expect(mockTrackEvent).toHaveBeenCalledWith('transcript_save');
   });

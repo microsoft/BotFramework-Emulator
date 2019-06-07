@@ -85,8 +85,7 @@ export class BotProjectFileWatcher extends FileWatcher {
       return;
     }
     // the bot file changed, we should load it and push it to the store
-    const botInfo = BotHelpers.getBotInfoByPath(this.botFilePath) || {};
-    const bot = await BotHelpers.loadBotWithRetry(this.botFilePath, botInfo.secret);
+    const bot = await BotHelpers.loadBotWithRetry(this.botFilePath);
     if (!bot) {
       // user dismissed the secret prompt dialog (if it was shown)
       throw new Error('No secret provided to decrypt encrypted bot.');

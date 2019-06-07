@@ -42,6 +42,7 @@ import {
 import { SharedConstants } from '@bfemulator/app-shared';
 import { BotConfiguration } from 'botframework-config';
 
+import { CredentialManager } from './credentialManager';
 import { BotHelpers } from './botHelpers';
 
 jest.mock('electron', () => ({
@@ -197,58 +198,142 @@ describe('The botHelpers', () => {
     }
   });
 
-  it('saveBot() should save a bot', async () => {
-    let saved = false;
-    jest.spyOn(BotConfiguration, 'fromJSON').mockReturnValue({
-      internal: {},
-      validateSecret: () => true,
-      save: async () => {
-        saved = true;
-      },
+  describe('saveBot()', () => {
+    it('should save a bot using the provided secret', async () => {
+      const mockSave = jest.fn().mockResolvedValueOnce(true);
+      const mockValidateSecret = jest.fn(() => null);
+      jest
+        .spyOn(BotHelpers, 'toSavableBot')
+        .mockReturnValueOnce({ save: mockSave, validateSecret: mockValidateSecret });
+      const result = await BotHelpers.saveBot({ path: 'path' } as any, 'secret');
+
+      expect(result).toBe(true);
+      expect(mockValidateSecret).toHaveBeenCalledWith('secret');
+      expect(mockSave).toHaveBeenCalledWith('secret');
     });
-    await BotHelpers.saveBot({
-      path: 'path4',
-    } as any);
-    expect(saved).toBeTruthy();
+
+    it('should save a bot using the secret from the store', async () => {
+      const mockSave = jest.fn().mockResolvedValueOnce(true);
+      const mockValidateSecret = jest.fn(() => null);
+      jest
+        .spyOn(BotHelpers, 'toSavableBot')
+        .mockReturnValueOnce({ save: mockSave, validateSecret: mockValidateSecret });
+      jest.spyOn(CredentialManager, 'getPassword').mockResolvedValueOnce('secret');
+      const result = await BotHelpers.saveBot({ path: 'path' } as any, undefined);
+
+      expect(result).toBe(true);
+      expect(mockValidateSecret).toHaveBeenCalledWith('secret');
+      expect(mockSave).toHaveBeenCalledWith('secret');
+    });
   });
 
   describe('loadBotWithRetry()', () => {
-    it('should prompt the user for the secret and retry if no secret was given for an encrypted bot', async () => {
-      const botConfigLoadSpy = jest.spyOn(BotConfiguration, 'load').mockResolvedValue({ padlock: '55sdgfd' });
-      const result = await BotHelpers.loadBotWithRetry('path');
-      expect(botConfigLoadSpy).toHaveBeenCalledWith('path', undefined);
+    it('should load the bot if the correct secret is provided (happy path)', async () => {
+      const botConfigLoadSpy = jest
+        .spyOn(BotConfiguration, 'load')
+        .mockResolvedValueOnce({ path: 'path', name: 'boticus' });
+      const getPasswordSpy = jest.spyOn(CredentialManager, 'getPassword').mockResolvedValueOnce('secret');
+      const setPasswordSpy = jest.spyOn(CredentialManager, 'setPassword');
+      jest.spyOn(BotHelpers, 'pathExistsInRecentBots').mockReturnValueOnce(false);
+      const patchBotsSpy = jest.spyOn(BotHelpers, 'patchBotsJson').mockResolvedValueOnce(true);
+      const result = await BotHelpers.loadBotWithRetry('path', 'secret');
 
+      expect(botConfigLoadSpy).toHaveBeenCalledWith('path', 'secret');
+      expect(patchBotsSpy).toHaveBeenCalledWith('path', { path: 'path', displayName: 'boticus' });
+      expect(getPasswordSpy).toHaveBeenCalledWith('path');
+      expect(setPasswordSpy).not.toHaveBeenCalled();
       expect(result).toEqual({
         description: '',
-        name: '',
+        name: 'boticus',
         overrides: null,
-        padlock: '55sdgfd',
+        padlock: '',
         path: 'path',
         services: [],
         version: '2.0',
       });
     });
 
-    it('should update the secret when the specified secret does not match the one on record', async () => {
-      const botConfigLoadSpy = jest.spyOn(BotConfiguration, 'load').mockResolvedValue({ padlock: 'newSecret' });
-      const remoteCallSpy = jest.spyOn(commandService, 'remoteCall').mockResolvedValue('newSecret');
-      const result = await BotHelpers.loadBotWithRetry('path1');
-      expect(botConfigLoadSpy).toHaveBeenCalledWith('path1', undefined);
+    it('should update the secret in the store if there is no secret in the store', async () => {
+      jest.spyOn(BotConfiguration, 'load').mockResolvedValueOnce({ path: 'path', name: 'boticus' });
+      jest.spyOn(CredentialManager, 'getPassword').mockResolvedValueOnce(undefined);
+      const setPasswordSpy = jest.spyOn(CredentialManager, 'setPassword');
+      jest.spyOn(BotHelpers, 'pathExistsInRecentBots').mockReturnValueOnce(false);
+      jest.spyOn(BotHelpers, 'patchBotsJson').mockResolvedValueOnce(true);
+      const result = await BotHelpers.loadBotWithRetry('path', 'secret');
+
+      expect(setPasswordSpy).toHaveBeenCalledWith('path', 'secret');
+      expect(result).toEqual({
+        description: '',
+        name: 'boticus',
+        overrides: null,
+        padlock: '',
+        path: 'path',
+        services: [],
+        version: '2.0',
+      });
+    });
+
+    it('should update the secret in the store if it does not match the supplied secret', async () => {
+      jest.spyOn(BotConfiguration, 'load').mockResolvedValueOnce({ path: 'path', name: 'boticus' });
+      jest.spyOn(CredentialManager, 'getPassword').mockResolvedValueOnce('otherSecret');
+      const setPasswordSpy = jest.spyOn(CredentialManager, 'setPassword');
+      jest.spyOn(BotHelpers, 'pathExistsInRecentBots').mockReturnValueOnce(false);
+      jest.spyOn(BotHelpers, 'patchBotsJson').mockResolvedValueOnce(true);
+      const result = await BotHelpers.loadBotWithRetry('path', 'secret');
+
+      expect(setPasswordSpy).toHaveBeenCalledWith('path', 'secret');
+      expect(result).toEqual({
+        description: '',
+        name: 'boticus',
+        overrides: null,
+        padlock: '',
+        path: 'path',
+        services: [],
+        version: '2.0',
+      });
+    });
+
+    it('should try loading the bot again if a secret was found in the store', async () => {
+      jest
+        .spyOn(BotConfiguration, 'load')
+        // enter catch block on first attempt
+        .mockRejectedValueOnce(new Error('provided secret was wrong'))
+        // return a bot on second attempt
+        .mockResolvedValueOnce({ path: 'path' });
+      const loadBotWithRetrySpy = jest.spyOn(BotHelpers, 'loadBotWithRetry');
+      jest.spyOn(BotHelpers, 'pathExistsInRecentBots').mockReturnValue(true);
+      jest.spyOn(CredentialManager, 'getPassword').mockResolvedValue('secret');
+      const result = await BotHelpers.loadBotWithRetry('path', 'secret');
+
       expect(result).toEqual({
         description: '',
         name: '',
         overrides: null,
-        padlock: 'newSecret',
-        path: 'path1',
+        padlock: '',
+        path: 'path',
         services: [],
         version: '2.0',
       });
-      expect(remoteCallSpy).toHaveBeenCalledWith('bot:list:sync', [
-        { displayName: 'name1', path: 'path1', secret: 'newSecret' },
-        { displayName: 'name2', path: 'path2', secret: '' },
-        { displayName: 'name3', path: 'path3', secret: '' },
-        { path: 'path4', displayName: 'name4', secret: 'ffsafsdfdsa' },
-      ]);
+      expect(loadBotWithRetrySpy).toHaveBeenCalledTimes(2);
+    });
+
+    it('should prompt the user for a secret if there is no secret in the credential store', async () => {
+      jest.spyOn(BotConfiguration, 'load').mockRejectedValueOnce(new Error('provided secret was wrong'));
+      jest.spyOn(CredentialManager, 'getPassword').mockResolvedValue(undefined);
+      const promptForSecretSpy = jest.spyOn(BotHelpers, 'promptForSecretAndRetry').mockResolvedValueOnce(null);
+      const result = await BotHelpers.loadBotWithRetry('path', undefined);
+
+      expect(result).toBe(null);
+      expect(promptForSecretSpy).toHaveBeenCalled();
+    });
+
+    it('should throw if it catches an error not related to loading a bot without a secret', async () => {
+      try {
+        jest.spyOn(BotConfiguration, 'load').mockRejectedValue(new Error('something went wrong'));
+        await BotHelpers.loadBotWithRetry('path', undefined);
+      } catch (e) {
+        expect(e).toEqual(new Error('something went wrong'));
+      }
     });
   });
 

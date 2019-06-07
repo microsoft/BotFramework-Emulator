@@ -54,6 +54,7 @@ import { Emulator } from '../emulator';
 import { TelemetryService } from '../telemetry';
 import { isMac } from '../utils';
 import { botProjectFileWatcher, chatWatcher, transcriptsWatcher } from '../watchers';
+import { CredentialManager } from '../credentialManager';
 
 const { Bot } = SharedConstants.Commands;
 
@@ -70,15 +71,17 @@ export class BotCommands {
     const botsJsonEntry: BotInfo = {
       path: bot.path,
       displayName: getBotDisplayName(bot),
-      secret,
       transcriptsPath: path.join(dirName, './transcripts'),
       chatsPath: path.join(dirName, './dialogs'),
     };
     await BotHelpers.patchBotsJson(bot.path, botsJsonEntry);
 
-    // save the bot
+    // save the bot & secret
     try {
-      await BotHelpers.saveBot(bot);
+      await BotHelpers.saveBot(bot, secret);
+      if (secret) {
+        await CredentialManager.setPassword(bot.path, secret);
+      }
     } catch (e) {
       // TODO: make sure these are surfaced on the client side and caught so we can act on them
       // eslint-disable-next-line no-console
@@ -105,7 +108,6 @@ export class BotCommands {
     // try to get the bot secret from bots.json
     const botInfo = BotHelpers.pathExistsInRecentBots(botPath) ? BotHelpers.getBotInfoByPath(botPath) : null;
     if (botInfo) {
-      secret = botInfo.secret;
       const dirName = path.dirname(botPath);
       let syncWithClient: boolean;
       if (!botInfo.transcriptsPath) {
@@ -231,7 +233,8 @@ export class BotCommands {
     const activeBot = BotHelpers.getActiveBot();
     const botInfo = activeBot && BotHelpers.getBotInfoByPath(activeBot.path);
     if (botInfo) {
-      const botConfig = BotHelpers.toSavableBot(activeBot, botInfo.secret);
+      const secret = await CredentialManager.getPassword(activeBot.path);
+      const botConfig = BotHelpers.toSavableBot(activeBot, secret);
       const index = botConfig.services.findIndex(s => s.id === service.id && s.type === service.type);
       const existing = botConfig.services[index];
       if (existing) {
@@ -270,7 +273,8 @@ export class BotCommands {
     const activeBot = BotHelpers.getActiveBot();
     const botInfo = activeBot && BotHelpers.getBotInfoByPath(activeBot.path);
     if (botInfo) {
-      const botConfig = BotHelpers.toSavableBot(activeBot, botInfo.secret);
+      const secret = await CredentialManager.getPassword(activeBot.path);
+      const botConfig = BotHelpers.toSavableBot(activeBot, secret);
       const id = typeof serviceOrId === 'string' ? serviceOrId : serviceOrId.id;
       botConfig.disconnectService(id);
       try {
