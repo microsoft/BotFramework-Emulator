@@ -6,7 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ## Added
+- [main] Added ability to launch into a bot inspector mode session via protocol url in PR [1617](https://github.com/microsoft/BotFramework-Emulator/pull/1617)
 - [main/shared] Added 'Clear State' menu item in PR [1596](https://github.com/microsoft/BotFramework-Emulator/pull/1596)
+- [main] Encrypted bot secrets are now stored in the user's OS secret store in PR [1618](https://github.com/microsoft/BotFramework-Emulator/pull/1618)
+
+## Fixed 
+- [client/main] Auto update is now opt-in by default and changed UX to reflect this in PR [1575](https://github.com/microsoft/BotFramework-Emulator/pull/1575)
 
 ## v4.4.2 - 2019 - 05 - 28
 ## Fixed
