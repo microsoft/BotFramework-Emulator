@@ -75,3 +75,8 @@ window.crypto = {
     digest: async () => Promise.resolve('Hi! I am in your digest'),
   },
 };
+
+window.MutationObserver = class {
+  observe() {}
+  disconnect() {}
+};

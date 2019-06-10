@@ -56,16 +56,19 @@ export class JsonViewer extends Component<{}, JsonViewerState> {
   private jsonViewerRef: HTMLDivElement;
 
   private static nodesAdded(addedNodes: NodeList): void {
-    addedNodes.forEach((node: Element) => {
+    addedNodes.forEach((node: HTMLElement) => {
       switch (node.tagName) {
         case 'UL':
           node.setAttribute('role', 'group');
           node.setAttribute('aria-expanded', '' + !!node.childNodes.length);
           break;
-
+        // List items nest UL and DIV(button) so we recurse
         case 'LI':
           node.setAttribute('role', 'treeitem');
-          node.setAttribute('tabindex', '-1');
+          node.tabIndex = -1;
+          if (node.children.length) {
+            JsonViewer.nodesAdded(node.childNodes);
+          }
           break;
 
         case 'DIV':
@@ -88,7 +91,7 @@ export class JsonViewer extends Component<{}, JsonViewerState> {
     const state = this.state || ({ data: {} } as any);
     const { data, themeName = 'light' } = state;
     return (
-      <div ref={this.jsonTreeRef}>
+      <div ref={this.jsonTreeContainerRef}>
         <JSONTree data={data} theme={themeNameToViewerThemeName[themeName]} invertTheme={false} />
       </div>
     );
@@ -102,7 +105,7 @@ export class JsonViewer extends Component<{}, JsonViewerState> {
     this.setState({ themeName });
   }
 
-  private jsonTreeRef = (ref: HTMLDivElement): void => {
+  private jsonTreeContainerRef = (ref: HTMLDivElement): void => {
     if (this.mutationObserver) {
       this.mutationObserver.disconnect();
     }
@@ -115,7 +118,8 @@ export class JsonViewer extends Component<{}, JsonViewerState> {
       // <ul>
       ref.firstElementChild.setAttribute('role', 'tree');
       // <ul><li>
-      ref.firstElementChild.firstElementChild.setAttribute('tabindex', '0');
+      JsonViewer.nodesAdded(ref.firstElementChild.childNodes);
+      (ref.firstElementChild as HTMLElement).tabIndex = 0;
     }
     this.jsonViewerRef = ref;
   };
@@ -163,23 +167,12 @@ export class JsonViewer extends Component<{}, JsonViewerState> {
 
     switch (role) {
       case 'group':
-        // Are we expanded with children?
-        if (target.firstElementChild) {
-          (target.firstElementChild as HTMLElement).focus();
-          // Focus the next group instead
-        } else if (target.nextElementSibling) {
-          (target.nextElementSibling as HTMLElement).focus();
-        }
+      case 'tree':
+        this.focusNextItemFromGroup(target as HTMLUListElement);
         break;
 
       case 'treeitem':
-        // focus the next sibling or find the
-        // next group and focus that.
-        if (target.nextElementSibling) {
-          (target.nextElementSibling as HTMLElement).focus();
-        } else if (target.parentElement.nextElementSibling) {
-          (target.parentElement.nextElementSibling as HTMLElement).focus();
-        }
+        this.focusNextItemFromTreeItem(target as HTMLLIElement);
         break;
 
       default:
@@ -195,25 +188,11 @@ export class JsonViewer extends Component<{}, JsonViewerState> {
 
     switch (role) {
       case 'group':
-        // Try to move into the previous group
-        // and focus it
-        if (target.parentElement && target.parentElement.lastElementChild) {
-          (target.parentElement.lastElementChild as HTMLElement).focus();
-          // Focus the last group instead but
-          // only if it is a group.
-        } else if (target.parentElement && target.parentElement.getAttribute('role') === 'group') {
-          (target.parentElement as HTMLElement).focus();
-        }
+        this.focusPreviousItemFromGroup(target as HTMLUListElement);
         break;
 
       case 'treeitem':
-        // focus the previous sibling or find the
-        // previous group and focus that.
-        if (target.previousElementSibling) {
-          (target.previousElementSibling as HTMLElement).focus();
-        } else if (target.parentElement.previousElementSibling) {
-          (target.parentElement.previousElementSibling as HTMLElement).focus();
-        }
+        this.focusPreviousItemFromTreeItem(target as HTMLLIElement);
         break;
 
       default:
@@ -250,6 +229,77 @@ export class JsonViewer extends Component<{}, JsonViewerState> {
       }
     } else if (target.nextElementSibling) {
       (target.nextElementSibling as HTMLElement).focus();
+    }
+  }
+
+  private focusPreviousItemFromGroup(group: HTMLUListElement): void {
+    // Try to move into the previous group
+    // and focus it
+    if (group.parentElement && group.parentElement.lastElementChild) {
+      (group.parentElement.lastElementChild as HTMLElement).focus();
+      // Focus the last group instead but
+      // only if it is a group.
+    } else if (group.parentElement && group.parentElement.getAttribute('role') === 'group') {
+      (group.parentElement as HTMLElement).focus();
+    }
+  }
+
+  private focusPreviousItemFromTreeItem(treeItem: HTMLLIElement): void {
+    // focus the previous sibling or find the
+    // previous group and focus that.
+    if (treeItem.previousElementSibling) {
+      // Determine if the previous element has a subgroup
+      // and select the last item in it's list if expanded
+      // or select the group if not.
+      const subGroup = treeItem.previousElementSibling.querySelector('ul[role="group"]') as HTMLUListElement;
+      if (subGroup && subGroup.lastElementChild) {
+        (subGroup.lastElementChild as HTMLElement).focus();
+      } else {
+        (treeItem.previousElementSibling as HTMLElement).focus();
+      }
+    } else {
+      // Traverse up the DOM to find a parent with a
+      // previous element sibling.
+      let parent: HTMLElement = treeItem.parentElement;
+      while (parent && parent !== this.jsonViewerRef && parent.tagName !== 'LI') {
+        parent = parent.parentElement as HTMLElement;
+      }
+      if (parent) {
+        parent.focus();
+      }
+    }
+  }
+
+  private focusNextItemFromTreeItem(treeItem: HTMLLIElement): void {
+    // Tree items may contain nested groups.
+    const subGroup = treeItem.querySelector('ul[role="group"]') as HTMLUListElement;
+    // Focus the first item in a subgroup if present
+    if (subGroup && subGroup.childNodes.length) {
+      (subGroup.firstElementChild as HTMLLIElement).focus();
+    }
+    // If we have siblings, focus the next one.
+    // Otherwise, jump out of the tree item and
+    // focus the next group.
+    else if (treeItem.nextElementSibling) {
+      (treeItem.nextElementSibling as HTMLElement).focus();
+    } else {
+      let parent: HTMLElement = treeItem.parentElement;
+      while (parent && parent !== this.jsonViewerRef && !parent.nextElementSibling) {
+        parent = parent.parentElement as HTMLElement;
+      }
+      if (parent && parent.nextElementSibling) {
+        (parent.nextElementSibling as HTMLElement).focus();
+      }
+    }
+  }
+
+  private focusNextItemFromGroup(group: HTMLUListElement): void {
+    // Are we expanded with children?
+    if (group.firstElementChild) {
+      (group.firstElementChild as HTMLElement).focus();
+      // Focus the next group instead
+    } else if (group.nextElementSibling) {
+      (group.nextElementSibling as HTMLElement).focus();
     }
   }
 }
