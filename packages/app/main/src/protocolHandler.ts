@@ -143,12 +143,18 @@ class ProtocolHandlerImpl implements ProtocolHandler {
   }
 
   public performLiveChatAction(protocol: Protocol): void {
-    const { botUrl: endpoint, msaAppId: appId, msaAppPassword: appPassword } = protocol.parsedArgs;
+    const {
+      botUrl: endpoint,
+      msaAppId: appId,
+      msaAppPassword: appPassword,
+      cloud: channelService,
+    } = protocol.parsedArgs;
     this.commandService.remoteCall(SharedConstants.Commands.UI.OpenBotViaUrl, {
       endpoint,
       appId,
       appPassword,
       mode: 'livechat',
+      channelService,
     } as StartConversationParams);
   }
 
@@ -161,12 +167,18 @@ class ProtocolHandlerImpl implements ProtocolHandler {
   }
 
   public performInspectorAction(protocol: Protocol): void {
-    const { botUrl: endpoint, msaAppId: appId, msaAppPassword: appPassword } = protocol.parsedArgs;
+    const {
+      botUrl: endpoint,
+      msaAppId: appId,
+      msaAppPassword: appPassword,
+      cloud: channelService,
+    } = protocol.parsedArgs;
     this.commandService.remoteCall(SharedConstants.Commands.UI.OpenBotViaUrl, {
       endpoint,
       appId,
       appPassword,
       mode: 'debug',
+      channelService,
     } as StartConversationParams);
   }
 

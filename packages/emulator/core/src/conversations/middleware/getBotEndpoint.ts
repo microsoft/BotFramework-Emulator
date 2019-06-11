@@ -32,6 +32,7 @@
 //
 import * as Restify from 'restify';
 
+import { usGovernmentAuthentication } from '../../authEndpoints';
 import { BotEmulator } from '../../botEmulator';
 
 export default function getBotEndpoint(botEmulator: BotEmulator) {
@@ -44,10 +45,16 @@ export default function getBotEndpoint(botEmulator: BotEmulator) {
      */
     if (req.headers && 'x-emulator-botendpoint' in req.headers) {
       const {
-        'x-emulator-botendpoint': botUrl,
         'x-emulator-appid': msaAppId = '',
         'x-emulator-apppassword': msaPassword = '',
+        'x-emulator-botendpoint': botUrl,
+        'x-emulator-channelservice': channelServiceType,
       } = req.headers as { [prop: string]: string };
+
+      let channelService;
+      if (channelServiceType === 'azureusgovernment') {
+        channelService = usGovernmentAuthentication.channelService;
+      }
 
       let endpoint = endpoints.get(botUrl);
       if (!endpoint) {
@@ -57,6 +64,7 @@ export default function getBotEndpoint(botEmulator: BotEmulator) {
           botUrl,
           msaAppId,
           msaPassword,
+          channelService,
         });
       } else {
         // update the endpoint in memory with the new
