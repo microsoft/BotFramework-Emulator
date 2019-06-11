@@ -132,7 +132,7 @@ html {
   --s-button-bg-disabled: var(--neutral-2);
 
   /* Dialogs & Modals */
-  --dialog-bg: var(--neutral-2);
+  --dialog-bg: var(--neutral-13);
   --dialog-color: var(--neutral-14);
   --dialog-error-color: var(--error-text);
 
