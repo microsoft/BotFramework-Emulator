@@ -132,7 +132,7 @@ html {
   --s-button-bg-disabled: var(--neutral-2);
 
   /* Dialogs & Modals */
-  --dialog-bg: var(--neutral-13);
+  --dialog-bg: var(--neutral-2);
   --dialog-color: var(--neutral-14);
   --dialog-error-color: var(--error-text);
 
@@ -237,6 +237,10 @@ html {
   --service-picker-scrollbar-thumb: var(--scrollbar-color);
   --service-picker-scrollbar-track: var(--neutral-4);
   --service-picker-select-all-border: 1px solid transparent;
+
+  /* MDI Component */
+  --mdi-bg: var(--neutral-13);
+  --mdi-img-bg: var(--neutral-13);
 }
 
 .dialog {

@@ -236,4 +236,8 @@ html {
   --service-picker-scrollbar-thumb: var(--scrollbar-color);
   --service-picker-scrollbar-track: var(--neutral-4);
   --service-picker-select-all-border: 1px solid transparent;
+
+    /* MDI Component */
+    --mdi-bg: var(--neutral-2);
+    --mdi-img-bg: var(--neutral-2);
 }
