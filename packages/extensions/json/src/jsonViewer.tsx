@@ -69,6 +69,9 @@ export class JsonViewer extends Component<{}, JsonViewerState> {
           if (node.children.length) {
             JsonViewer.nodesAdded(node.childNodes);
           }
+          if (node.parentElement.getAttribute('aria-expanded') === 'false') {
+            node.parentElement.setAttribute('aria-expanded', 'true');
+          }
           break;
 
         case 'DIV':
@@ -132,8 +135,12 @@ export class JsonViewer extends Component<{}, JsonViewerState> {
 
   private onTreeKeydown = (event: KeyboardEvent) => {
     switch (event.key) {
-      case 'Enter':
-      case ' ':
+      case 'ArrowRight':
+        this.expandOrCollapseSubtree(event, true);
+        break;
+
+      case 'ArrowLeft':
+        this.expandOrCollapseSubtree(event, false);
         break;
 
       case 'ArrowDown':
@@ -148,20 +155,13 @@ export class JsonViewer extends Component<{}, JsonViewerState> {
         this.focusGroup(event);
         break;
 
-      // case 'Home':
-      //   this.focusHead(event);
-      //   break;
-      //
-      // case 'End':
-      //   this.focusTail(event);
-      //   break;
-
       default:
         break;
     }
   };
 
   private focusNext(event: KeyboardEvent): void {
+    event.preventDefault();
     const target = event.target as HTMLElement;
     const role = target.getAttribute('role');
 
@@ -176,13 +176,12 @@ export class JsonViewer extends Component<{}, JsonViewerState> {
         break;
 
       default:
-        // TODO - determine if this is necessary
-        event.preventDefault();
         break;
     }
   }
 
   private focusPrevious(event: KeyboardEvent): void {
+    event.preventDefault();
     const target = event.target as HTMLElement;
     const role = target.getAttribute('role');
 
@@ -196,10 +195,25 @@ export class JsonViewer extends Component<{}, JsonViewerState> {
         break;
 
       default:
-        // TODO - determine if this is necessary
-        event.preventDefault();
         break;
     }
+  }
+
+  private expandOrCollapseSubtree(event: KeyboardEvent, expand: boolean): void {
+    event.preventDefault();
+    const target = event.target as HTMLElement;
+    const role = target.getAttribute('role');
+    if (role !== 'treeitem') {
+      return;
+    }
+    const ul = target.querySelector('ul');
+    const proposedAriaExpandedValue = expand.toString();
+    if (ul.getAttribute('aria-expanded') === proposedAriaExpandedValue) {
+      return;
+    }
+    ul.setAttribute('aria-expanded', proposedAriaExpandedValue);
+    const actuator: HTMLDivElement = target.querySelector('[role="button"]');
+    actuator.click();
   }
 
   private focusGroup(event: KeyboardEvent): void {
@@ -248,12 +262,11 @@ export class JsonViewer extends Component<{}, JsonViewerState> {
     // focus the previous sibling or find the
     // previous group and focus that.
     if (treeItem.previousElementSibling) {
-      // Determine if the previous element has a subgroup
-      // and select the last item in it's list if expanded
-      // or select the group if not.
-      const subGroup = treeItem.previousElementSibling.querySelector('ul[role="group"]') as HTMLUListElement;
-      if (subGroup && subGroup.lastElementChild) {
-        (subGroup.lastElementChild as HTMLElement).focus();
+      // drill down to the lowest expanded subgroup
+      const subGroups = treeItem.previousElementSibling.querySelectorAll('ul[role="group"]');
+
+      if (subGroups.length) {
+        (subGroups[subGroups.length - 1].lastElementChild as HTMLElement).focus();
       } else {
         (treeItem.previousElementSibling as HTMLElement).focus();
       }
