@@ -65,7 +65,9 @@ export class JsonViewer extends Component<{}, JsonViewerState> {
         // List items nest UL and DIV(button) so we recurse
         case 'LI':
           node.setAttribute('role', 'treeitem');
-          node.tabIndex = -1;
+          // If we have a nested <ul>, this is a node and
+          // should have a tab index
+          node.tabIndex = node.querySelector('ul') ? 0 : -1;
           if (node.children.length) {
             JsonViewer.nodesAdded(node.childNodes);
           }
@@ -151,10 +153,6 @@ export class JsonViewer extends Component<{}, JsonViewerState> {
         this.focusPrevious(event);
         break;
 
-      case 'Tab':
-        this.focusGroup(event);
-        break;
-
       default:
         break;
     }
@@ -162,128 +160,8 @@ export class JsonViewer extends Component<{}, JsonViewerState> {
 
   private focusNext(event: KeyboardEvent): void {
     event.preventDefault();
-    const target = event.target as HTMLElement;
-    const role = target.getAttribute('role');
+    const treeItem = event.target as HTMLElement;
 
-    switch (role) {
-      case 'group':
-      case 'tree':
-        this.focusNextItemFromGroup(target as HTMLUListElement);
-        break;
-
-      case 'treeitem':
-        this.focusNextItemFromTreeItem(target as HTMLLIElement);
-        break;
-
-      default:
-        break;
-    }
-  }
-
-  private focusPrevious(event: KeyboardEvent): void {
-    event.preventDefault();
-    const target = event.target as HTMLElement;
-    const role = target.getAttribute('role');
-
-    switch (role) {
-      case 'group':
-        this.focusPreviousItemFromGroup(target as HTMLUListElement);
-        break;
-
-      case 'treeitem':
-        this.focusPreviousItemFromTreeItem(target as HTMLLIElement);
-        break;
-
-      default:
-        break;
-    }
-  }
-
-  private expandOrCollapseSubtree(event: KeyboardEvent, expand: boolean): void {
-    event.preventDefault();
-    const target = event.target as HTMLElement;
-    const role = target.getAttribute('role');
-    if (role !== 'treeitem') {
-      return;
-    }
-    const ul = target.querySelector('ul');
-    const proposedAriaExpandedValue = expand.toString();
-    if (ul.getAttribute('aria-expanded') === proposedAriaExpandedValue) {
-      return;
-    }
-    ul.setAttribute('aria-expanded', proposedAriaExpandedValue);
-    const actuator: HTMLDivElement = target.querySelector('[role="button"]');
-    actuator.click();
-  }
-
-  private focusGroup(event: KeyboardEvent): void {
-    const target = event.target as HTMLElement;
-    const role = target.getAttribute('role');
-    let targetGroupRoot;
-
-    switch (role) {
-      case 'group':
-        targetGroupRoot = target;
-        break;
-
-      case 'treeitem':
-        targetGroupRoot = target.parentElement;
-        break;
-
-      default:
-        break;
-    }
-    if (!targetGroupRoot) {
-      return;
-    }
-    // Focus previous group
-    if (event.shiftKey) {
-      if (target.previousElementSibling && target.previousElementSibling.getAttribute('role') === 'group') {
-        (target.previousElementSibling as HTMLElement).focus();
-      }
-    } else if (target.nextElementSibling) {
-      (target.nextElementSibling as HTMLElement).focus();
-    }
-  }
-
-  private focusPreviousItemFromGroup(group: HTMLUListElement): void {
-    // Try to move into the previous group
-    // and focus it
-    if (group.parentElement && group.parentElement.lastElementChild) {
-      (group.parentElement.lastElementChild as HTMLElement).focus();
-      // Focus the last group instead but
-      // only if it is a group.
-    } else if (group.parentElement && group.parentElement.getAttribute('role') === 'group') {
-      (group.parentElement as HTMLElement).focus();
-    }
-  }
-
-  private focusPreviousItemFromTreeItem(treeItem: HTMLLIElement): void {
-    // focus the previous sibling or find the
-    // previous group and focus that.
-    if (treeItem.previousElementSibling) {
-      // drill down to the lowest expanded subgroup
-      const subGroups = treeItem.previousElementSibling.querySelectorAll('ul[role="group"]');
-
-      if (subGroups.length) {
-        (subGroups[subGroups.length - 1].lastElementChild as HTMLElement).focus();
-      } else {
-        (treeItem.previousElementSibling as HTMLElement).focus();
-      }
-    } else {
-      // Traverse up the DOM to find a parent with a
-      // previous element sibling.
-      let parent: HTMLElement = treeItem.parentElement;
-      while (parent && parent !== this.jsonViewerRef && parent.tagName !== 'LI') {
-        parent = parent.parentElement as HTMLElement;
-      }
-      if (parent) {
-        parent.focus();
-      }
-    }
-  }
-
-  private focusNextItemFromTreeItem(treeItem: HTMLLIElement): void {
     // Tree items may contain nested groups.
     const subGroup = treeItem.querySelector('ul[role="group"]') as HTMLUListElement;
     // Focus the first item in a subgroup if present
@@ -306,13 +184,49 @@ export class JsonViewer extends Component<{}, JsonViewerState> {
     }
   }
 
-  private focusNextItemFromGroup(group: HTMLUListElement): void {
-    // Are we expanded with children?
-    if (group.firstElementChild) {
-      (group.firstElementChild as HTMLElement).focus();
-      // Focus the next group instead
-    } else if (group.nextElementSibling) {
-      (group.nextElementSibling as HTMLElement).focus();
+  private focusPrevious(event: KeyboardEvent): void {
+    event.preventDefault();
+    const treeItem = event.target as HTMLElement;
+
+    // focus the previous sibling or find the
+    // previous group and focus that.
+    if (treeItem.previousElementSibling) {
+      // drill down to the lowest expanded subgroup
+      const subGroups = treeItem.previousElementSibling.querySelectorAll('ul[role="group"]');
+
+      if (subGroups.length && subGroups[subGroups.length - 1].lastElementChild) {
+        const targetItem = subGroups[subGroups.length - 1].lastElementChild as HTMLElement;
+        targetItem.focus();
+      } else {
+        (treeItem.previousElementSibling as HTMLElement).focus();
+      }
+    } else {
+      // Traverse up the DOM to find a parent with a
+      // previous element sibling.
+      let parent: HTMLElement = treeItem.parentElement;
+      while (parent && parent !== this.jsonViewerRef && parent.tagName !== 'LI') {
+        parent = parent.parentElement as HTMLElement;
+      }
+      if (parent) {
+        parent.focus();
+      }
     }
+  }
+
+  private expandOrCollapseSubtree(event: KeyboardEvent, expand: boolean): void {
+    event.preventDefault();
+    const target = event.target as HTMLElement;
+    const role = target.getAttribute('role');
+    const ul = target.querySelector('ul');
+    if (role !== 'treeitem' || !ul) {
+      return;
+    }
+    const proposedAriaExpandedValue = expand.toString();
+    if (ul.getAttribute('aria-expanded') === proposedAriaExpandedValue) {
+      return;
+    }
+    ul.setAttribute('aria-expanded', proposedAriaExpandedValue);
+    const actuator: HTMLDivElement = target.querySelector('[role="button"]');
+    actuator.click();
   }
 }

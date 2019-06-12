@@ -20,12 +20,16 @@
   ::-webkit-scrollbar-thumb {
     background: #5E5E5E;
   }
-  .light, .dark {
-    --border-color: #00BCF2;
-  }
 
-  .high-contrast {
-    --border-color: #F38518;
+  html {
+    .light, .dark {
+    }
+
+    --border-color: #00BCF2;
+
+    .high-contrast {
+      --border-color: #F38518;
+    }
   }
 }
 

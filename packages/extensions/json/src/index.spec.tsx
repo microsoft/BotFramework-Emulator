@@ -66,25 +66,175 @@ const mockData = {
   },
 };
 
-let jsonViewerWrapper;
+const mockTreeHTMLText = `
+<ul id="rootGroup">
+  <li>
+    <div>
+      <div>▶</div>
+    </div>
+    <label><span>root:</span></label>
+    <span>
+      <span> 
+        <span>{}</span> 2 keys
+        </span></span>
+    <ul id="group1">
+      <li>
+        <div>
+          <div>▶</div>
+        </div>
+        <label><span>membersAdded:</span></label>
+        <span><span><span>[]</span> 1 item</span></span>
+        <ul id="group2">
+          <li>
+            <div>
+              <div>▶</div>
+            </div>
+            <label><span>0:</span></label>
+            <span>
+              <span>
+                <span>{}</span> 
+                2 keys
+              </span>
+            </span>
+            <ul id="group3">
+              <li><label><span>id:</span></label><span>"1"</span></li>
+              <li><label><span>name:</span></label><span>"Bot"</span>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li><label><span>type:</span></label><span>"conversationUpdate"</span>
+      </li>
+    </ul>
+  </li>
+</ul>`;
 
+let jsonViewerWrapper;
+let jsonViewer;
 describe('The JsonViewer', () => {
   beforeAll(() => {
     jsonViewerWrapper = mount(<JsonViewer />);
+    jsonViewer = jsonViewerWrapper.find(JsonViewer).instance();
+    (window as any).host.handlers.inspect[0](mockData); // Simulate event through host
+    (window as any).host.handlers.theme[0]({ themeName: 'high-contrast' });
   });
 
-  it('should render with data', () => {
-    (window as any).host.handlers.inspect[0](mockData); // Simulate event through host
-    const jsonViewer = jsonViewerWrapper.find(JsonViewer).instance();
-
+  it('should render with data and a theme', () => {
     expect(jsonViewerWrapper.find('*').length).toBeGreaterThan(0);
     expect(jsonViewer.state.data).toBe(mockData);
+    expect(jsonViewer.state.themeName).toBe('high-contrast');
   });
 
-  it('should set the state as expected when the theme changes', () => {
-    (window as any).host.handlers.theme[0]({ themeName: 'high-contrast' }); // Simulate event through host
-    const jsonViewer = jsonViewerWrapper.find(JsonViewer).instance();
+  describe('The JsonViewer keyboard navigation system', () => {
+    let simulatedTree;
+    beforeAll(() => {
+      (jsonViewer as any).jsonViewerRef = simulatedTree = document.createElement('div');
+      simulatedTree.innerHTML = mockTreeHTMLText;
 
-    expect(jsonViewer.state.themeName).toBe('high-contrast');
+      const root = simulatedTree.querySelector('#rootGroup');
+      (jsonViewer as any).mutationObserverCallback([{ addedNodes: root.querySelectorAll('*') }] as any);
+    });
+
+    it('should set the expected attributes when the mutationObserverCallback is called', () => {
+      expect(simulatedTree.querySelectorAll('[role="group"]').length).toBe(3);
+
+      (jsonViewer as any).mutationObserverCallback([
+        { addedNodes: [simulatedTree.firstElementChild.firstElementChild] },
+      ] as any);
+      expect(simulatedTree.querySelectorAll('[role="treeitem"]').length).toBe(6);
+    });
+
+    it('should focus the next item within an expanded group when the down arrow is pressed from the last item within the previous group', () => {
+      const group = simulatedTree.querySelector('#group2');
+      const nextGroup = simulatedTree.querySelector('#group3');
+      const target = group.lastElementChild;
+      const spy = jest.spyOn(nextGroup.firstElementChild, 'focus');
+      const event = {
+        preventDefault: () => void 0,
+        key: 'ArrowDown',
+        target,
+      };
+
+      (jsonViewer as any).onTreeKeydown(event as any);
+
+      expect(spy).toHaveBeenCalled();
+    });
+
+    it('should focus the next item with the tree when the down arrow is pressed from a treeitem', () => {
+      const group = simulatedTree.querySelector('#group3');
+      const target = group.children[0];
+      const event = {
+        preventDefault: () => void 0,
+        key: 'ArrowDown',
+        target,
+      };
+
+      const spy = jest.spyOn(group.children[1], 'focus');
+      (jsonViewer as any).onTreeKeydown(event as any);
+
+      expect(spy).toHaveBeenCalled();
+    });
+
+    it('should focus the previous item within the tree when the up arrow is pressed from a treeitem', () => {
+      const group = simulatedTree.querySelector('#group3');
+      const target = group.lastElementChild;
+      const spy = jest.spyOn(group.firstElementChild, 'focus');
+
+      const event = {
+        preventDefault: () => void 0,
+        key: 'ArrowUp',
+        target,
+      };
+
+      (jsonViewer as any).onTreeKeydown(event as any);
+
+      expect(spy).toHaveBeenCalled();
+    });
+
+    it('should focus the last item within the previous group when the up arrow is pressed from a the last child in a group', () => {
+      const target = simulatedTree.querySelector('#group3').firstElementChild;
+      const spy = jest.spyOn(simulatedTree.querySelector('#group2').lastElementChild, 'focus');
+      const event = {
+        preventDefault: () => void 0,
+        key: 'ArrowUp',
+        target,
+      };
+
+      (jsonViewer as any).onTreeKeydown(event as any);
+
+      expect(spy).toHaveBeenCalled();
+    });
+
+    it('should expand a node when the right arrow is pressed', () => {
+      const targetGroup = simulatedTree.querySelector('#group2');
+      const groupThatShouldExpand = simulatedTree.querySelector('#group3');
+      const target = targetGroup.firstElementChild;
+
+      const event = {
+        preventDefault: () => void 0,
+        key: 'ArrowRight',
+        target,
+      };
+
+      (jsonViewer as any).onTreeKeydown(event as any);
+      expect(groupThatShouldExpand.getAttribute('aria-expanded')).toBe('true');
+    });
+
+    it('should collapse a node whe the left arrow is pressed', () => {
+      const targetGroup = simulatedTree.querySelector('#group2');
+      const groupThatShouldCollapse = simulatedTree.querySelector('#group3');
+      groupThatShouldCollapse.setAttribute('aria-expanded', 'true');
+
+      const target = targetGroup.firstElementChild;
+
+      const event = {
+        preventDefault: () => void 0,
+        key: 'ArrowLeft',
+        target,
+      };
+      (jsonViewer as any).onTreeKeydown(event as any);
+      expect(groupThatShouldCollapse.getAttribute('aria-expanded')).toBe('false');
+    });
   });
 });
