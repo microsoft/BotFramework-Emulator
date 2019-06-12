@@ -34,6 +34,7 @@ import { AttachmentData, ConversationParameters, GenericActivity } from '@bfemul
 import * as HttpStatus from 'http-status-codes';
 
 import { BotEmulator } from '../../botEmulator';
+import { usGovernmentAuthentication } from '../../authEndpoints';
 import Attachments from '../../facility/attachments';
 import BotEndpoint from '../../facility/botEndpoint';
 import Conversation from '../../facility/conversation';
@@ -572,6 +573,27 @@ describe('The getBotEndpoint middleware', () => {
     getBotEndpointMiddleware(req as any, res, (() => null) as any);
 
     expect(emulator.facilities.endpoints.get('http://localhost:5050/api/messages')).not.toBeNull();
+  });
+
+  it('should push a new endpoint and set the proper ChannelService for Gov bots', () => {
+    const req = {
+      body: {
+        bot: {
+          id: '1234',
+        },
+      },
+      headers: {
+        'x-emulator-botendpoint': 'http://localhost:5050/api/messages',
+        'x-emulator-appid': '12e34',
+        'x-emulator-apppassword': '54543',
+        'x-emulator-channelservice': 'azureusgovernment',
+      },
+    } as any;
+    getBotEndpointMiddleware(req as any, res, (() => null) as any);
+
+    expect(emulator.facilities.endpoints.get('http://localhost:5050/api/messages')).not.toBeNull();
+    const endpoint = emulator.facilities.endpoints.get('http://localhost:5050/api/messages');
+    expect(endpoint.channelService).toEqual(usGovernmentAuthentication.channelService);
   });
 
   it('should retrieve the endpoint from the jwt when one exists', () => {
