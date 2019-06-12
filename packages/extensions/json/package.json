@@ -17,7 +17,7 @@
     "build": "webpack --mode production",
     "lint": "eslint --color --quiet --ext .js,.jsx,.ts,.tsx ./src",
     "lint:fix": "npm run lint -- --fix",
-    "test": ""
+    "test": "jest"
   },
   "devDependencies": {
     "@babel/cli": "^7.1.0",

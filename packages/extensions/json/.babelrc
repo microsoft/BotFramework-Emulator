@@ -1,0 +1,29 @@
+{
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "targets": {
+          "chrome": "68",
+          "esmodules": true
+        }
+      }
+    ],
+    "@babel/preset-typescript"
+  ],
+  "ignore": [
+    "**/*.d.ts"
+  ],
+  "sourceMaps": "inline",
+  "plugins": [
+    "@babel/plugin-transform-react-jsx",
+    [
+      "@babel/proposal-decorators",
+      {
+        "decoratorsBeforeExport": true
+      }
+    ],
+    "@babel/plugin-proposal-class-properties",
+    "@babel/plugin-transform-runtime"
+  ]
+}

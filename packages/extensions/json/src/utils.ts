@@ -30,9 +30,25 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 
-import { JsonViewer } from './jsonViewer';
+export function IpcHandler(type: string): MethodDecorator {
+  return function(elementDescriptor: any) {
+    const { key, descriptor } = elementDescriptor;
+    const initializer = function() {
+      const bound = this[key].bind(this);
+      (window as any).host.on(type, bound);
+      return bound;
+    };
 
-ReactDOM.render(<JsonViewer />, document.getElementById('root') as HTMLElement);
+    elementDescriptor.extras = [
+      {
+        kind: 'field',
+        key,
+        placement: 'own',
+        initializer,
+        descriptor: { ...descriptor, value: undefined },
+      },
+    ];
+    return elementDescriptor;
+  };
+}

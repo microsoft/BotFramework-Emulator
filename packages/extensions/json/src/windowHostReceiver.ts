@@ -30,9 +30,24 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-
+import { IpcHandler } from './utils';
 import { JsonViewer } from './jsonViewer';
 
-ReactDOM.render(<JsonViewer />, document.getElementById('root') as HTMLElement);
+export class WindowHostReceiver {
+  private jsonViewer: JsonViewer;
+
+  constructor(jsonViewer: JsonViewer) {
+    this.jsonViewer = jsonViewer;
+  }
+
+  @IpcHandler('inspect')
+  protected inspectHandler(data: { [prop: string]: any }): void {
+    this.jsonViewer.setData(data);
+  }
+
+  @IpcHandler('theme')
+  protected async themeHandler(themeInfo: { themeName: string }): Promise<void> {
+    this.jsonViewer.setTheme(themeInfo.themeName.toLowerCase());
+    document.getElementById('root').className = themeInfo.themeName;
+  }
+}
