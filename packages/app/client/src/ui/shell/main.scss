@@ -20,8 +20,22 @@
   }
 
   & .mdi-wrapper {
+    background-color: var(--mdi-bg);
     height: 100%;
     width: 100%;
+  }
+
+  & .mdi-wrapper::before {
+    content: "";
+    background-color: var(--mdi-img-bg);
+    background-image: url('../media/ic_bot_framework.svg');
+    width: 100%;
+    height: 100%;
+    background-size: 50% 50%;
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    position: absolute;
+    opacity: .2;
   }
 
   & .secondary-mdi {

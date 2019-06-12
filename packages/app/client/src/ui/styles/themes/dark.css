@@ -242,6 +242,10 @@ html {
   --radio-bg-color: var(--neutral-1);
   --radio-border-color: var(--neutral-16);
   --radio-selected-border-color: #3B99FC;
+
+  /* MDI Component */
+  --mdi-bg: var(--neutral-13);
+  --mdi-img-bg: var(--neutral-13);
 }
 
 .dialog {

@@ -241,6 +241,9 @@ html {
   --radio-bg-color: var(--neutral-1);
   --radio-border-color: var(--neutral-1);
   --radio-selected-border-color: #3B99FC;
+
+    /* MDI Component */
+    --mdi-bg: var(--neutral-16);
 }
 
 .dialog .ms-Button-label {
