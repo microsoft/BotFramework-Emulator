@@ -40,6 +40,7 @@ import {
   PrimaryButton,
   Row,
   TextField,
+  RowAlignment,
 } from '@bfemulator/ui-react';
 import * as React from 'react';
 import { ChangeEvent, Component, MouseEvent, ReactNode } from 'react';
@@ -63,6 +64,7 @@ export interface OpenBotDialogState {
   botUrl?: string;
   appId?: string;
   appPassword?: string;
+  isAzureGov?: boolean;
 }
 
 enum ValidationResult {
@@ -117,12 +119,13 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
       appPassword: '',
       isDebug: false,
       mode,
+      isAzureGov: false,
     };
   }
 
   public render(): ReactNode {
     const { savedBotUrls = [] } = this.props;
-    const { botUrl, appId, appPassword, mode, isDebug } = this.state;
+    const { botUrl, appId, appPassword, mode, isDebug, isAzureGov } = this.state;
     const validationResult = OpenBotDialog.validateEndpoint(botUrl);
     const errorMessage = OpenBotDialog.getErrorMessage(validationResult);
     const shouldBeDisabled =
@@ -142,18 +145,7 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
               placeholder={botUrlLabel}
               value={this.state.botUrl}
             />
-            {!isDebug && (
-              <PrimaryButton className={openBotStyles.browseButton}>
-                Browse
-                <input
-                  accept=".bot"
-                  className={openBotStyles.fileInput}
-                  name="botUrl"
-                  onChange={this.onInputChange}
-                  type="file"
-                />
-              </PrimaryButton>
-            )}
+            {this.browseButton}
           </div>
           <Row className={openBotStyles.multiInputRow}>
             <TextField
@@ -174,8 +166,20 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
               value={appPassword}
             />
           </Row>
-          <Row>
-            <Checkbox label="Open in debug mode" checked={isDebug && mode === 'debug'} onClick={this.onCheckboxClick} />
+          <Row className={openBotStyles.rowOverride}>
+            <Checkbox
+              label="Open in debug mode"
+              checked={isDebug && mode === 'debug'}
+              onClick={this.onDebugCheckboxClick}
+            />
+          </Row>
+          <Row className={openBotStyles.rowOverride}>
+            <Checkbox
+              label="Azure for US Government"
+              checked={isAzureGov}
+              onClick={this.onChannelServiceCheckboxClick}
+            />
+            <a href="https://aka.ms/bot-framework-emulator-azuregov">&nbsp;Learn more.</a>
           </Row>
           <DialogFooter>
             <DefaultButton type="button" onClick={this.props.onDialogCancel}>
@@ -196,7 +200,18 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
     this.setState({ [name]: newValue });
   };
 
-  private onCheckboxClick = (event: MouseEvent<HTMLInputElement>) => {
+  private onChannelServiceCheckboxClick = (event: MouseEvent<HTMLInputElement>) => {
+    const { checked: isAzureGov } = event.currentTarget;
+    const newState = { ...this.state, isAzureGov } as OpenBotDialogState;
+
+    if (isAzureGov && !this.state.botUrl.startsWith('http')) {
+      newState.botUrl = '';
+    }
+
+    this.setState(newState);
+  };
+
+  private onDebugCheckboxClick = (event: MouseEvent<HTMLInputElement>) => {
     const { checked: isDebug } = event.currentTarget;
     const newState = { isDebug, mode: isDebug ? 'debug' : 'livechat-url' } as OpenBotDialogState;
 
@@ -216,4 +231,22 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
   private onSubmit = () => {
     this.props.openBot(this.state);
   };
+
+  private get browseButton(): React.ReactNode {
+    if (!this.state.isAzureGov && !this.state.isDebug) {
+      return (
+        <PrimaryButton className={openBotStyles.browseButton}>
+          Browse
+          <input
+            accept=".bot"
+            className={openBotStyles.fileInput}
+            name="botUrl"
+            onChange={this.onInputChange}
+            type="file"
+          />
+        </PrimaryButton>
+      );
+    }
+    return null;
+  }
 }

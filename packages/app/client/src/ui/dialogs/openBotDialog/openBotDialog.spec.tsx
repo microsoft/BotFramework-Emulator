@@ -128,7 +128,7 @@ describe('The OpenBotDialog', () => {
   });
 
   it('should properly set the state when the "debug" checkbox is clicked', () => {
-    instance.onCheckboxClick({
+    instance.onDebugCheckboxClick({
       currentTarget: {
         name: 'mode',
         type: 'input',
@@ -138,6 +138,43 @@ describe('The OpenBotDialog', () => {
 
     expect(instance.state.mode).toBe('debug');
     expect(instance.state.isDebug).toBeTruthy();
+  });
+
+  it('should properly set the state when the "Azure Gov" checkbox is clicked', () => {
+    instance.onChannelServiceCheckboxClick({
+      currentTarget: {
+        name: 'isAzureGov',
+        type: 'input',
+        checked: 'true',
+      },
+    } as any);
+
+    expect(instance.state.isAzureGov).toBeTruthy();
+  });
+
+  it('should not show the "Browse" button if either the "debug" or "Azure Gov" checkboxes are clicked', () => {
+    instance.setState({
+      isAzureGov: true,
+    } as any);
+    expect(instance.browseButton).toBe(null);
+
+    instance.setState({
+      isDebug: true,
+      isAzureGov: false,
+    } as any);
+    expect(instance.browseButton).toBe(null);
+
+    instance.setState({
+      isDebug: true,
+      isAzureGov: true,
+    } as any);
+    expect(instance.browseButton).toBe(null);
+
+    instance.setState({
+      isDebug: false,
+      isAzureGov: false,
+    } as any);
+    expect(instance.browseButton).not.toBe(null);
   });
 
   it('should open a bot when a path is provided', async () => {
@@ -170,6 +207,32 @@ describe('The OpenBotDialog', () => {
     expect(spy).toHaveBeenCalledWith({
       appId: '',
       appPassword: '',
+      channelService: 'public',
+      endpoint: 'http://localhost',
+      mode: 'livechat',
+    });
+  });
+
+  it('should open a gov bot when a URL is provided and isAzureGov is true', async () => {
+    instance.onInputChange({
+      target: {
+        name: 'botUrl',
+        type: 'text',
+        value: 'http://localhost',
+      },
+    } as any);
+
+    instance.setState({
+      isAzureGov: true,
+    } as any);
+
+    const spy = jest.spyOn(botActions, 'openBotViaUrlAction');
+    await instance.onSubmit();
+
+    expect(spy).toHaveBeenCalledWith({
+      appId: '',
+      appPassword: '',
+      channelService: 'azureusgovernment',
       endpoint: 'http://localhost',
       mode: 'livechat',
     });
