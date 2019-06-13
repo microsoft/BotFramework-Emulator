@@ -30,53 +30,9 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 
-const Enzyme = require('enzyme');
-const Adapter = require('enzyme-adapter-react-16');
+import { JsonViewer } from './jsonViewer';
 
-Enzyme.configure({ adapter: new Adapter() });
-window.require = function() {
-  return {
-    ipcRenderer: {
-      on() {
-        return null;
-      },
-      send() {
-        return null;
-      },
-    },
-    shell: {
-      openExternal: window._openExternal,
-    },
-  };
-};
-
-window._openExternal = jest.fn(() => null);
-
-window.define = function() {
-  return null;
-};
-
-window.TextEncoder = class {
-  encode() {
-    return 'Hi! I am in your encode';
-  }
-};
-
-window.TextDecoder = class {
-  decode() {
-    return 'Hi! I am in your decode';
-  }
-};
-
-window.crypto = {
-  random: () => Math.random() * 1000,
-  subtle: {
-    digest: async () => Promise.resolve('Hi! I am in your digest'),
-  },
-};
-
-window.MutationObserver = class {
-  observe() {}
-  disconnect() {}
-};
+ReactDOM.render(<JsonViewer />, document.getElementById('root') as HTMLElement);
