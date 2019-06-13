@@ -47,7 +47,8 @@ export class WindowHostReceiver {
 
   @IpcHandler('theme')
   protected async themeHandler(themeInfo: { themeName: string }): Promise<void> {
-    this.jsonViewer.setTheme(themeInfo.themeName.toLowerCase());
-    document.getElementById('root').className = themeInfo.themeName;
+    const themeNameLower = themeInfo.themeName.toLowerCase();
+    this.jsonViewer.setTheme(themeNameLower);
+    document.getElementById('root').className = themeNameLower;
   }
 }
