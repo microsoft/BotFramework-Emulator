@@ -37,8 +37,7 @@ import JSONTree from 'react-json-tree';
 import light from './themes/light';
 import dark from './themes/dark';
 import highContrast from './themes/highContrast';
-import { WindowHostReceiver } from './windowHostReceiver';
-import './index.scss';
+import * as styles from './collapsibleJsonViewer.scss';
 
 const themeNameToViewerThemeName = {
   light,
@@ -46,12 +45,12 @@ const themeNameToViewerThemeName = {
   'high-contrast': highContrast,
 };
 
-export interface JsonViewerState {
-  data: any;
+export interface JsonViewerState<T = any> {
+  data: Record<string, T>;
   themeName: string;
 }
 
-export class JsonViewer extends Component<{}, JsonViewerState> {
+export class CollapsibleJsonViewer extends Component<{}, JsonViewerState> {
   private readonly mutationObserver: MutationObserver;
   private jsonViewerRef: HTMLDivElement;
 
@@ -69,7 +68,7 @@ export class JsonViewer extends Component<{}, JsonViewerState> {
           // should have a tab index
           node.tabIndex = node.querySelector('ul') ? 0 : -1;
           if (node.children.length) {
-            JsonViewer.nodesAdded(node.childNodes);
+            CollapsibleJsonViewer.nodesAdded(node.childNodes);
           }
           if (node.parentElement.getAttribute('aria-expanded') === 'false') {
             node.parentElement.setAttribute('aria-expanded', 'true');
@@ -88,16 +87,17 @@ export class JsonViewer extends Component<{}, JsonViewerState> {
 
   constructor(props: any) {
     super(props);
-    new WindowHostReceiver(this);
     this.mutationObserver = new MutationObserver(this.mutationObserverCallback);
   }
 
   public render() {
     const state = this.state || ({ data: {} } as any);
     const { data, themeName = 'light' } = state;
+    // Props are a pass through and are
+    // allowed to overwrite the ones set here
     return (
-      <div ref={this.jsonTreeContainerRef}>
-        <JSONTree data={data} theme={themeNameToViewerThemeName[themeName]} invertTheme={false} />
+      <div ref={this.jsonTreeContainerRef} className={styles.collapsibleJsonViewer}>
+        <JSONTree data={data} theme={themeNameToViewerThemeName[themeName]} invertTheme={false} {...this.props} />
       </div>
     );
   }
@@ -123,7 +123,7 @@ export class JsonViewer extends Component<{}, JsonViewerState> {
       // <ul>
       ref.firstElementChild.setAttribute('role', 'tree');
       // <ul><li>
-      JsonViewer.nodesAdded(ref.firstElementChild.childNodes);
+      CollapsibleJsonViewer.nodesAdded(ref.firstElementChild.childNodes);
       (ref.firstElementChild as HTMLElement).tabIndex = 0;
     }
     this.jsonViewerRef = ref;
@@ -131,7 +131,7 @@ export class JsonViewer extends Component<{}, JsonViewerState> {
 
   private mutationObserverCallback = (mutations: MutationRecord[]) => {
     mutations.forEach(mutationRecord => {
-      JsonViewer.nodesAdded(mutationRecord.addedNodes);
+      CollapsibleJsonViewer.nodesAdded(mutationRecord.addedNodes);
     });
   };
 

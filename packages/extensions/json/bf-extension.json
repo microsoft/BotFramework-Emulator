@@ -5,14 +5,38 @@
       {
         "name": "JSON",
         "src": "public/index.html",
-        "criteria": {
-          "path": "$.type",
-          "value": "message"
-        },
+        "criteria": [
+          {
+            "path": "$.type",
+            "value": "message"
+          },
+          {
+            "path": "valueType",
+            "value": "https://www.botframework.com/schemas/botState"
+          },
+          {
+            "path": "valueType",
+            "value": "https://www.botframework.com/schemas/diff"
+          }
+        ],
         "summaryText": [
           "attachments.0.contentType",
           "text",
           "label"
+        ],
+        "accessories": [
+          {
+            "id": "json",
+            "states": {
+              "default": {
+                "label": "Json"
+              },
+              "selected": {
+                "label": "Json",
+                "aria-selected": true
+              }
+            }
+          }
         ]
       }
     ]

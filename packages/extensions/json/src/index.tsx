@@ -32,7 +32,15 @@
 //
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { CollapsibleJsonViewer } from '@bfemulator/ui-react';
 
-import { JsonViewer } from './jsonViewer';
+import './index.scss';
 
-ReactDOM.render(<JsonViewer />, document.getElementById('root') as HTMLElement);
+import { WindowHostReceiver } from './windowHostReceiver';
+
+function collapsibleJsonViewerRef(ref: CollapsibleJsonViewer): void {
+  new WindowHostReceiver(ref);
+}
+ReactDOM.render(<CollapsibleJsonViewer ref={collapsibleJsonViewerRef} />, document.getElementById(
+  'root'
+) as HTMLElement);
