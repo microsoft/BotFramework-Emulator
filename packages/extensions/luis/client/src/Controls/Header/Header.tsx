@@ -43,7 +43,7 @@ interface HeaderProps {
   slot: string;
 }
 
-class Header extends Component<HeaderProps, {}> {
+export class Header extends Component<HeaderProps, {}> {
   public render() {
     return (
       <div className={styles.header}>
@@ -63,5 +63,3 @@ class Header extends Component<HeaderProps, {}> {
     ) : null;
   }
 }
-
-export default Header;

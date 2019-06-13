@@ -33,11 +33,11 @@
 
 // TODO: Revert import to `@bfemulator/sdk-shared` once issue #1333 (https://github.com/Microsoft/BotFramework-Emulator/issues/1333) is resolved.
 import { Activity } from 'botframework-schema';
+import { LuisAuthoringModels } from 'luis-apis';
 
 import { AppState, PersistentAppState } from '../App';
 import { ButtonSelected } from '../Controls/ControlBar/ControlBar';
 import { AppInfo } from '../Luis/AppInfo';
-import { IntentInfo } from '../Luis/IntentInfo';
 import { LuisTraceInfo } from '../Models/LuisTraceInfo';
 
 import { RecognizerResultAdapter } from './RecognizerResultAdapter';
@@ -48,7 +48,7 @@ export default class AppStateAdapter implements AppState {
   public authoringKey: string;
   public persistentState: { [key: string]: PersistentAppState };
   public appInfo: AppInfo;
-  public intentInfo: IntentInfo[];
+  public intentInfo: LuisAuthoringModels.IntentClassifier[];
   public traceInfo: LuisTraceInfo;
   public controlBarButtonSelected: ButtonSelected;
   public id: string;

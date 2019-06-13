@@ -44,20 +44,20 @@ import {
 } from 'botframework-config/lib/schema';
 import * as React from 'react';
 import { Component } from 'react';
+import { LuisAuthoringModels } from 'luis-apis';
 
 import AppStateAdapter from './Adapters/AppStateAdapter';
 import * as styles from './App.scss';
 import { ButtonSelected, ControlBar } from './Controls/ControlBar/ControlBar';
-import Editor from './Controls/Editor/Editor';
-import Header from './Controls/Header/Header';
+import { Editor } from './Controls/Editor/Editor';
+import { Header } from './Controls/Header/Header';
 import { AppInfo } from './Luis/AppInfo';
-import LuisClient from './Luis/Client';
-import { IntentInfo } from './Luis/IntentInfo';
+import { LuisClient } from './Luis/Client';
 import { LuisAppInfo } from './Models/LuisAppInfo';
 import { LuisTraceInfo } from './Models/LuisTraceInfo';
 
 const $host: InspectorHost = (window as any).host;
-const LuisApiBasePath = 'https://westus.api.cognitive.microsoft.com/luis/api/v2.0';
+// const LuisApiBasePath = 'https://westus.api.cognitive.microsoft.com/luis/api/v2.0';
 const TrainAccessoryId = 'train';
 const PublishAccessoryId = 'publish';
 const AccessoryDefaultState = 'default';
@@ -68,7 +68,7 @@ const persistentStateKey = Symbol('persistentState').toString();
 export interface AppState {
   traceInfo: LuisTraceInfo;
   appInfo: AppInfo;
-  intentInfo: IntentInfo[];
+  intentInfo: LuisAuthoringModels.IntentClassifier[];
   persistentState: { [key: string]: PersistentAppState };
   controlBarButtonSelected: ButtonSelected;
   authoringKey: string;
@@ -126,7 +126,7 @@ export class App extends Component<any, AppState> {
         luisOptions: {},
       } as LuisTraceInfo,
       appInfo: {} as AppInfo,
-      intentInfo: [] as IntentInfo[],
+      intentInfo: [],
       persistentState: this.loadAppPersistentState(),
       controlBarButtonSelected: ButtonSelected.RawResponse,
       id: '',
@@ -255,7 +255,6 @@ export class App extends Component<any, AppState> {
     if (this.state.traceInfo != null) {
       this.luisclient = new LuisClient({
         appId: this.state.traceInfo.luisModel.ModelID,
-        baseUri: LuisApiBasePath,
         key: this.state.authoringKey,
       } as LuisAppInfo);
 
