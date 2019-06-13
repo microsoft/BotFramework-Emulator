@@ -40,7 +40,6 @@ import {
   PrimaryButton,
   Row,
   TextField,
-  RowAlignment,
 } from '@bfemulator/ui-react';
 import * as React from 'react';
 import { ChangeEvent, Component, MouseEvent, ReactNode } from 'react';
