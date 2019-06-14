@@ -40,6 +40,7 @@ import { Document } from '../../../data/reducer/editor';
 import { updateDocument } from '../../../data/action/editorActions';
 import { beginAdd } from '../../../data/action/notificationActions';
 import { executeCommand } from '../../../data/action/commandAction';
+import { restartConversation } from '../../../data/action/botActions';
 
 import { Emulator, EmulatorProps } from './emulator';
 
@@ -62,6 +63,7 @@ const mapDispatchToProps = (dispatch): EmulatorProps => ({
       dispatch(ChatActions.clearLog(documentId, resolve));
     });
   },
+  restartDebugSession: (conversationId, documentId) => dispatch(restartConversation(conversationId, documentId)),
   newConversation: (documentId, options) => dispatch(ChatActions.newConversation(documentId, options)),
   updateChat: (documentId: string, updatedValues: any) => dispatch(ChatActions.updateChat(documentId, updatedValues)),
   updateDocument: (documentId, updatedValues: Partial<Document>) => dispatch(updateDocument(documentId, updatedValues)),

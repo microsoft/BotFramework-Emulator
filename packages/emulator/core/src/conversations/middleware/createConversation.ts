@@ -58,6 +58,8 @@ export default function createConversation(botEmulator: BotEmulator) {
     }
 
     const newConversation: Conversation = getConversation(conversationParameters, botEmulator, botEndpoint);
+    newConversation.normalize();
+
     const activityId = getActivityId(conversationParameters, botEndpoint, newConversation);
     const response = createConversationResponse(newConversation.conversationId, activityId);
 

@@ -46,6 +46,7 @@ import { executeCommand } from '../../../data/action/commandAction';
 
 import { Emulator, RestartConversationOptions } from './emulator';
 import { EmulatorContainer } from './emulatorContainer';
+import { BotAction } from '../../../data/action/botActions';
 
 const { encode } = base64Url;
 
@@ -163,10 +164,11 @@ describe('<EmulatorContainer/>', () => {
       presentation: { enabled: true },
     };
     const mockStore = createStore((_state, _action) => mockStoreState);
-    mockDispatch = jest.spyOn(mockStore, 'dispatch').mockImplementation(action => {
+    mockDispatch = jest.spyOn(mockStore, 'dispatch').mockImplementation((action: any) => {
       if (action && action.payload && action.payload.resolver) {
         action.payload.resolver();
       }
+      return action;
     });
     wrapper = mount(
       <Provider store={mockStore}>
@@ -331,7 +333,7 @@ describe('<EmulatorContainer/>', () => {
     const initConversationSpy = jest.spyOn(instance, 'initConversation');
     const options = {
       conversationId: 'someUniqueId|livechat',
-      conversationMode: 'livechat',
+      mode: 'livechat',
       endpointId: 'endpoint1',
       userId: 'newUserId',
     };
@@ -353,7 +355,7 @@ describe('<EmulatorContainer/>', () => {
     instance.initConversation = mockInitConversation;
     const options = {
       conversationId: 'someUniqueId|livechat',
-      conversationMode: instance.props.mode,
+      mode: instance.props.mode,
       endpointId: instance.props.endpointId,
       userId: 'someUserId',
     };
@@ -368,7 +370,7 @@ describe('<EmulatorContainer/>', () => {
     instance.props.document.conversationId = undefined;
     const options = {
       conversationId: 'someUniqueId|livechat',
-      conversationMode: instance.props.mode,
+      mode: instance.props.mode,
       endpointId: instance.props.endpointId,
       userId: 'newUserId',
     };

@@ -122,6 +122,7 @@ describe('The botSagas', () => {
 
     expect(gen.next().value).toEqual(takeEvery(BotActionType.openViaUrl, BotSagas.openBotViaUrl));
     expect(gen.next().value).toEqual(takeEvery(BotActionType.openViaFilePath, BotSagas.openBotViaFilePath));
+    expect(gen.next().value).toEqual(takeEvery(BotActionType.restartConversation, BotSagas.restartConversation));
     expect(gen.next().value).toEqual(takeEvery(BotActionType.setActive, BotSagas.generateHashForActiveBot));
 
     expect(gen.next().value).toEqual(
