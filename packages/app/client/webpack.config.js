@@ -37,15 +37,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 const webpack = require('webpack');
-const {
-  DllPlugin,
-  DllReferencePlugin,
-  NamedModulesPlugin,
-  HotModuleReplacementPlugin,
-  DefinePlugin,
-  WatchIgnorePlugin,
-} = webpack;
-const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
+const { DllPlugin, DllReferencePlugin, NamedModulesPlugin, DefinePlugin, WatchIgnorePlugin } = webpack;
 
 const { npm_lifecycle_event = '' } = process.env;
 const manifestLocation = path.resolve('./generated');
