@@ -46,7 +46,6 @@ import { executeCommand } from '../../../data/action/commandAction';
 
 import { Emulator, RestartConversationOptions } from './emulator';
 import { EmulatorContainer } from './emulatorContainer';
-import { BotAction } from '../../../data/action/botActions';
 
 const { encode } = base64Url;
 

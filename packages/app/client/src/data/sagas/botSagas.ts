@@ -53,11 +53,10 @@ import {
 import { beginAdd } from '../action/notificationActions';
 import { generateHash } from '../botHelpers';
 import { RootState } from '../store';
-
-import { SharedSagas } from './sharedSagas';
-
 import * as ChatActions from '../action/chatActions';
 import { ChatDocument } from '../reducer/chat';
+
+import { SharedSagas } from './sharedSagas';
 
 export class BotSagas {
   @CommandServiceInstance()
