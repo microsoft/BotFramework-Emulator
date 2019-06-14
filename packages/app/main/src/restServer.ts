@@ -72,9 +72,10 @@ export class RestServer {
         'authorization',
         'x-requested-with',
         'x-ms-bot-agent',
-        'x-emulator-botendpoint',
         'x-emulator-appid',
         'x-emulator-apppassword',
+        'x-emulator-botendpoint',
+        'x-emulator-channelservice',
       ],
       exposeHeaders: [],
     });

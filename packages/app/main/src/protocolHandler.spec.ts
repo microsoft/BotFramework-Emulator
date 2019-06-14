@@ -313,25 +313,27 @@ describe('Protocol handler tests', () => {
     it('should dispatch a inspector action', () => {
       const spy = jest.spyOn(ProtocolHandler, 'performInspectorAction');
       ProtocolHandler.parseProtocolUrlAndDispatch(
-        'bfemulator://inspector.open?botUrl=http://localhost/&msaAppId=id&msaAppPassword=pass'
+        'bfemulator://inspector.open?botUrl=http://localhost/&msaAppId=id&msaAppPassword=pass&cloud=azureusgovernment'
       );
       expect(mockRemoteCallsMade).toHaveLength(1);
       expect(mockRemoteCallsMade[0].commandName).toBe(SharedConstants.Commands.UI.OpenBotViaUrl);
       expect(mockRemoteCallsMade[0].args).toEqual([
         {
-          endpoint: 'http://localhost/',
           appId: 'id',
           appPassword: 'pass',
+          channelService: 'azureusgovernment',
+          endpoint: 'http://localhost/',
           mode: 'debug',
         },
       ]);
 
       expect(spy).toHaveBeenCalledWith({
         action: 'open',
-        args: 'botUrl=http://localhost/&msaAppId=id&msaAppPassword=pass',
+        args: 'botUrl=http://localhost/&msaAppId=id&msaAppPassword=pass&cloud=azureusgovernment',
         domain: 'inspector',
         parsedArgs: {
           botUrl: 'http://localhost/',
+          cloud: 'azureusgovernment',
           msaAppId: 'id',
           msaAppPassword: 'pass',
         },
