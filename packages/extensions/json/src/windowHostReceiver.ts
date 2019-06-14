@@ -30,53 +30,25 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+import { IpcHandler } from './utils';
+import { JsonViewer } from './jsonViewer';
 
-const Enzyme = require('enzyme');
-const Adapter = require('enzyme-adapter-react-16');
+export class WindowHostReceiver {
+  private jsonViewer: JsonViewer;
 
-Enzyme.configure({ adapter: new Adapter() });
-window.require = function() {
-  return {
-    ipcRenderer: {
-      on() {
-        return null;
-      },
-      send() {
-        return null;
-      },
-    },
-    shell: {
-      openExternal: window._openExternal,
-    },
-  };
-};
-
-window._openExternal = jest.fn(() => null);
-
-window.define = function() {
-  return null;
-};
-
-window.TextEncoder = class {
-  encode() {
-    return 'Hi! I am in your encode';
+  constructor(jsonViewer: JsonViewer) {
+    this.jsonViewer = jsonViewer;
   }
-};
 
-window.TextDecoder = class {
-  decode() {
-    return 'Hi! I am in your decode';
+  @IpcHandler('inspect')
+  protected inspectHandler(data: { [prop: string]: any }): void {
+    this.jsonViewer.setData(data);
   }
-};
 
-window.crypto = {
-  random: () => Math.random() * 1000,
-  subtle: {
-    digest: async () => Promise.resolve('Hi! I am in your digest'),
-  },
-};
-
-window.MutationObserver = class {
-  observe() {}
-  disconnect() {}
-};
+  @IpcHandler('theme')
+  protected async themeHandler(themeInfo: { themeName: string }): Promise<void> {
+    const themeNameLower = themeInfo.themeName.toLowerCase();
+    this.jsonViewer.setTheme(themeNameLower);
+    document.getElementById('root').className = themeNameLower;
+  }
+}
