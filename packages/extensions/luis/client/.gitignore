@@ -24,4 +24,5 @@ yarn-error.log*
 /.vs
 
 public/*.js
+public/*.map
 public/themes

@@ -31,52 +31,24 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-const Enzyme = require('enzyme');
-const Adapter = require('enzyme-adapter-react-16');
+export function IpcHandler(type: string): MethodDecorator {
+  return function(elementDescriptor: any) {
+    const { key, descriptor } = elementDescriptor;
+    const initializer = function() {
+      const bound = this[key].bind(this);
+      (window as any).host.on(type, bound);
+      return bound;
+    };
 
-Enzyme.configure({ adapter: new Adapter() });
-window.require = function() {
-  return {
-    ipcRenderer: {
-      on() {
-        return null;
+    elementDescriptor.extras = [
+      {
+        kind: 'field',
+        key,
+        placement: 'own',
+        initializer,
+        descriptor: { ...descriptor, value: undefined },
       },
-      send() {
-        return null;
-      },
-    },
-    shell: {
-      openExternal: window._openExternal,
-    },
+    ];
+    return elementDescriptor;
   };
-};
-
-window._openExternal = jest.fn(() => null);
-
-window.define = function() {
-  return null;
-};
-
-window.TextEncoder = class {
-  encode() {
-    return 'Hi! I am in your encode';
-  }
-};
-
-window.TextDecoder = class {
-  decode() {
-    return 'Hi! I am in your decode';
-  }
-};
-
-window.crypto = {
-  random: () => Math.random() * 1000,
-  subtle: {
-    digest: async () => Promise.resolve('Hi! I am in your digest'),
-  },
-};
-
-window.MutationObserver = class {
-  observe() {}
-  disconnect() {}
-};
+}

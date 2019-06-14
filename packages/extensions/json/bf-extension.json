@@ -4,7 +4,7 @@
     "inspectors": [
       {
         "name": "JSON",
-        "src": "index.html",
+        "src": "public/index.html",
         "criteria": {
           "path": "$.type",
           "value": "message"
