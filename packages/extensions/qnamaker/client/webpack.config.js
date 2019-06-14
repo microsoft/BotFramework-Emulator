@@ -1,4 +1,4 @@
-const { HotModuleReplacementPlugin, WatchIgnorePlugin } = require('webpack');
+const { WatchIgnorePlugin } = require('webpack');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const path = require('path');
 
@@ -33,8 +33,6 @@ const buildConfig = mode => {
     entry: {
       qna: path.resolve('./src/index.tsx'),
     },
-
-    target: 'electron-renderer',
 
     module: {
       rules: [
@@ -76,7 +74,6 @@ const buildConfig = mode => {
     },
 
     devServer: {
-      hot: true,
       inline: true,
       port: 8080,
       historyApiFallback: false,
@@ -95,14 +92,9 @@ const buildConfig = mode => {
     stats: {
       warnings: false,
     },
-
-    externals: {},
   };
   if (mode === 'development') {
-    config.plugins = [
-      new HotModuleReplacementPlugin(),
-      new WatchIgnorePlugin(['./build/**/*.*', './public/**/*.*', './src/**/*.d.ts']),
-    ];
+    config.plugins = [new WatchIgnorePlugin(['./build/**/*.*', './public/**/*.*', './src/**/*.d.ts'])];
   }
   return config;
 };
