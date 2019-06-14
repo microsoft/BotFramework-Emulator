@@ -178,6 +178,7 @@ describe('The ConversationService should call "fetch" with the expected paramete
       'X-Emulator-AppId': '123',
       'X-Emulator-AppPassword': '321',
       'X-Emulator-BotEndpoint': 'http://endpoint',
+      'X-Emulator-ChannelService': '',
     });
   });
 });
