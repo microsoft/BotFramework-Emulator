@@ -43,9 +43,11 @@ import {
   botHashGenerated,
   openBotViaFilePathAction,
   openBotViaUrlAction,
+  restartConversation,
 } from '../action/botActions';
 import { beginAdd } from '../action/notificationActions';
 import { generateHash } from '../botHelpers';
+import * as ChatActions from '../action/chatActions';
 
 import { botSagas, BotSagas } from './botSagas';
 import { SharedSagas } from './sharedSagas';
@@ -80,6 +82,19 @@ jest.mock('electron', () => ({
     }
   ),
 }));
+
+(global as any).fetch = (function() {
+  const fetch = (url, opts) => {
+    return {
+      ok: true,
+      json: async () => ({ id: "Hi! I'm in ur json" }),
+      text: async () => '{}',
+    };
+  };
+  (fetch as any).Headers = class {};
+  (fetch as any).Response = class {};
+  return fetch;
+})();
 
 const mockSharedConstants = SharedConstants;
 let mockRemoteCommandsCalled = [];
@@ -165,6 +180,42 @@ describe('The botSagas', () => {
     const gen = BotSagas.browseForBot();
     expect(gen.next().value).toEqual(call([ActiveBotHelper, ActiveBotHelper.confirmAndOpenBotFromFile]));
     expect(gen.next().done).toBe(true);
+  });
+
+  it('should restart a conversation', async () => {
+    const gen = BotSagas.restartConversation(restartConversation('1234', '4321'));
+    gen.next();
+    // select serverUrl
+    const response = gen.next('www.serverurl.com');
+    // fetch mock endpoint
+    const json = await gen.next(response.value).value;
+    expect(json).toEqual({ id: "Hi! I'm in ur json" });
+
+    // ChatDocument selector
+    const documentSelector = gen.next(json).value;
+    expect(documentSelector).toEqual({
+      '@@redux-saga/IO': true,
+      SELECT: {
+        args: [],
+        selector: jasmine.any(Function),
+      },
+    });
+
+    const mockDirectLine = { end: jest.fn() };
+    const mockChatDocument = {
+      directLine: mockDirectLine,
+    };
+    const clearLogPutter = gen.next(mockChatDocument).value;
+    expect(mockDirectLine.end).toHaveBeenCalled();
+    expect(mockChatDocument.directLine).toBeNull();
+    expect(clearLogPutter).toEqual(put(ChatActions.clearLog(jasmine.any(String) as any, jasmine.any(Function))));
+
+    const promise = gen.next().value;
+    expect(promise instanceof Promise).toBeTruthy();
+
+    const setInspectorObjectsPutter = gen.next().value;
+
+    expect(setInspectorObjectsPutter).toEqual(put(ChatActions.setInspectorObjects(jasmine.any(String) as any, [])));
   });
 
   it('should open a bot from a url', () => {

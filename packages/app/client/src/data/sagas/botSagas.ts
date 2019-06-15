@@ -90,9 +90,12 @@ export class BotSagas {
     try {
       const endpointResponse: Response = yield ConversationService.getConversationEndpoint(serverUrl, conversationId);
       if (!endpointResponse.ok) {
-        error = 'This conversation does not exist';
+        const error = yield endpointResponse.json();
+        throw new Error(error.error.message);
       }
+
       const endpoint: IEndpointService = yield endpointResponse.json();
+
       const document: ChatDocument = yield select((state: RootState) => state.chat.chats[documentId]);
       // End the direct line connection
       if (document.directLine) {
@@ -123,7 +126,12 @@ export class BotSagas {
         })
       );
     } catch (e) {
-      error = '' + error;
+      error = '' + e;
+    }
+
+    if (error) {
+      const errorNotification = beginAdd(newNotification(error));
+      yield put(errorNotification);
     }
   }
 
