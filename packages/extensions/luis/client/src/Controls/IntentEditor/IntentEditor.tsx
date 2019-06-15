@@ -34,8 +34,8 @@
 import * as React from 'react';
 import { Component } from 'react';
 import { InspectorHost } from '@bfemulator/sdk-client';
+import { LuisAuthoringModels } from 'luis-apis';
 
-import { IntentInfo } from '../../Luis/IntentInfo';
 import { Intent } from '../../Models/Intent';
 
 import * as styles from './IntentEditor.scss';
@@ -61,7 +61,7 @@ interface IntentEditorState {
 
 interface IntentEditorProps {
   currentIntent: Intent;
-  intentInfo?: IntentInfo[];
+  intentInfo?: LuisAuthoringModels.IntentClassifier[];
   mode: IntentEditorMode;
   traceId: string;
   intentReassigner: (newIntent: string, needsRetrain: boolean) => Promise<void>;

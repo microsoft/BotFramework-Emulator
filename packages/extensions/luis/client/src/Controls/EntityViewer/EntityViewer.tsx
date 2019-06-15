@@ -43,11 +43,11 @@ export interface EntityInfo {
   value: any;
 }
 
-export interface EntityViwerProps {
+export interface EntityViewerProps {
   entity: any;
 }
 
-export class EntityViewer extends Component<EntityViwerProps, {}> {
+export class EntityViewer extends Component<EntityViewerProps, {}> {
   public static renderEntityValueObject(entityValue: object): string {
     if (InstanceKey in entityValue) {
       delete entityValue[InstanceKey];
