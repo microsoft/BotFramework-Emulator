@@ -52,8 +52,6 @@ export default function interceptHyperlink() {
 
   // Monkey patch window.open
   window.open = (url: string): any => {
-    if (confirm(`Do you want to open this URL?\n\n${url}`)) {
-      HyperlinkHandler.navigate(url);
-    }
+    HyperlinkHandler.navigate(url);
   };
 }
