@@ -50,11 +50,15 @@ export interface JsonViewerState<T = any> {
   themeName: string;
 }
 
-export class CollapsibleJsonViewer extends Component<{}, JsonViewerState> {
+export interface CollapsibleJsonViewerProps {
+  nodeAdded?: (node: HTMLElement) => void;
+}
+
+export class CollapsibleJsonViewer extends Component<CollapsibleJsonViewerProps, JsonViewerState> {
   private readonly mutationObserver: MutationObserver;
   private jsonViewerRef: HTMLDivElement;
 
-  private static nodesAdded(addedNodes: NodeList): void {
+  private nodesAdded(addedNodes: NodeList): void {
     addedNodes.forEach((node: HTMLElement) => {
       switch (node.tagName) {
         case 'UL':
@@ -68,7 +72,7 @@ export class CollapsibleJsonViewer extends Component<{}, JsonViewerState> {
           // should have a tab index
           node.tabIndex = node.querySelector('ul') ? 0 : -1;
           if (node.children.length) {
-            CollapsibleJsonViewer.nodesAdded(node.childNodes);
+            this.nodesAdded(node.childNodes);
           }
           if (node.parentElement.getAttribute('aria-expanded') === 'false') {
             node.parentElement.setAttribute('aria-expanded', 'true');
@@ -81,6 +85,9 @@ export class CollapsibleJsonViewer extends Component<{}, JsonViewerState> {
 
         default:
           break;
+      }
+      {
+        this.props.nodeAdded && this.props.nodeAdded(node);
       }
     });
   }
@@ -95,9 +102,10 @@ export class CollapsibleJsonViewer extends Component<{}, JsonViewerState> {
     const { data, themeName = 'light' } = state;
     // Props are a pass through and are
     // allowed to overwrite the ones set here
+    const { nodeAdded: _, ...jsonTreeProps } = this.props;
     return (
       <div ref={this.jsonTreeContainerRef} className={styles.collapsibleJsonViewer}>
-        <JSONTree data={data} theme={themeNameToViewerThemeName[themeName]} invertTheme={false} {...this.props} />
+        <JSONTree data={data} theme={themeNameToViewerThemeName[themeName]} invertTheme={false} {...jsonTreeProps} />
       </div>
     );
   }
@@ -123,7 +131,7 @@ export class CollapsibleJsonViewer extends Component<{}, JsonViewerState> {
       // <ul>
       ref.firstElementChild.setAttribute('role', 'tree');
       // <ul><li>
-      CollapsibleJsonViewer.nodesAdded(ref.firstElementChild.childNodes);
+      this.nodesAdded(ref.firstElementChild.childNodes);
       (ref.firstElementChild as HTMLElement).tabIndex = 0;
     }
     this.jsonViewerRef = ref;
@@ -131,7 +139,7 @@ export class CollapsibleJsonViewer extends Component<{}, JsonViewerState> {
 
   private mutationObserverCallback = (mutations: MutationRecord[]) => {
     mutations.forEach(mutationRecord => {
-      CollapsibleJsonViewer.nodesAdded(mutationRecord.addedNodes);
+      this.nodesAdded(mutationRecord.addedNodes);
     });
   };
 

@@ -33,6 +33,7 @@
 import { CollapsibleJsonViewer } from '@bfemulator/ui-react';
 
 import { IpcHandler } from './utils';
+import { LogEntry } from '@bfemulator/sdk-shared';
 
 export class WindowHostReceiver {
   private jsonViewer: CollapsibleJsonViewer;
@@ -52,4 +53,7 @@ export class WindowHostReceiver {
     this.jsonViewer.setTheme(themeNameLower);
     document.getElementById('root').className = themeNameLower;
   }
+
+  @IpcHandler('chat-log-updated')
+  protected async chatLogUpdatedHandler(conversationId: string, logItems: LogEntry[]): Promise<void> {}
 }

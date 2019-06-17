@@ -33,7 +33,8 @@
 import * as React from 'react';
 import { mount } from 'enzyme';
 
-import { JsonViewer } from './jsonViewer';
+import { CollapsibleJsonViewer } from '@bfemulator/ui-react';
+import { WindowHostReceiver } from './windowHostReceiver';
 
 (window as any).host = {
   handlers: {
@@ -112,10 +113,12 @@ const mockTreeHTMLText = `
 
 let jsonViewerWrapper;
 let jsonViewer;
+
 describe('The JsonViewer', () => {
   beforeAll(() => {
-    jsonViewerWrapper = mount(<JsonViewer />);
-    jsonViewer = jsonViewerWrapper.find(JsonViewer).instance();
+    jsonViewerWrapper = mount(<CollapsibleJsonViewer />);
+    jsonViewer = jsonViewerWrapper.find(CollapsibleJsonViewer).instance();
+    new WindowHostReceiver(jsonViewer);
     (window as any).host.handlers.inspect[0](mockData); // Simulate event through host
     (window as any).host.handlers.theme[0]({ themeName: 'high-contrast' });
   });

@@ -8,6 +8,7 @@
   "dependencies": {
     "@babel/runtime": "^7.1.5",
     "@bfemulator/ui-react": "^1.0.0",
+    "@bfemulator/sdk-shared": "^1.0.0",
     "botframework-schema": "^4.3.4",
     "react": "~16.3.2",
     "react-dom": "~16.3.2",
