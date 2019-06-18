@@ -57,6 +57,7 @@ import {
   SecretPromptDialogContainer,
   UpdateAvailableDialogContainer,
   UpdateUnavailableDialogContainer,
+  DataCollectionDialogContainer,
 } from '../ui/dialogs';
 import { openBotViaUrlAction } from '../data/action/botActions';
 import { beginAdd } from '../data/action/notificationActions';
@@ -244,5 +245,12 @@ export class UiCommands {
   @Command(UI.OpenBotViaUrl)
   protected openBotViaURL(conversationParams: StartConversationParams): void {
     store.dispatch(openBotViaUrlAction(conversationParams));
+  }
+
+  // ---------------------------------------------------------------------------
+  // Shows the data collection dialog
+  @Command(UI.ShowDataCollectionDialog)
+  protected showDataCollectionDialog() {
+    return DialogService.showDialog(DataCollectionDialogContainer);
   }
 }

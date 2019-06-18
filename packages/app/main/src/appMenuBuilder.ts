@@ -460,20 +460,20 @@ export class AppMenuBuilder {
         { type: 'separator' },
         {
           label: 'Privacy',
-          click: () => shell.openExternal('https://go.microsoft.com/fwlink/?LinkId=512132', { activate: true }),
+          click: () => shell.openExternal('https://privacy.microsoft.com/privacystatement', { activate: true }),
         },
         {
           // TODO: Proper link for the license instead of third party credits
           label: 'License',
           click: () =>
-            shell.openExternal('https://aka.ms/O10ww2', {
+            shell.openExternal('https://aka.ms/bot-framework-emulator-license', {
               activate: true,
             }),
         },
         {
           label: 'Credits',
           click: () =>
-            shell.openExternal('https://aka.ms/Ud5ga6', {
+            shell.openExternal('https://aka.ms/bot-framework-emulator-credits', {
               activate: true,
             }),
         },
