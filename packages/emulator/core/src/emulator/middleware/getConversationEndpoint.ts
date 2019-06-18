@@ -30,18 +30,35 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { ConversationParameters } from 'botframework-schema';
 
-import { ChannelService } from '../channelService';
-import { EmulatorMode } from '../emulatorMode';
-import { User } from '../user';
+import { ErrorCodes } from '@bfemulator/sdk-shared';
+import * as HttpStatus from 'http-status-codes';
+import { Next, Request, Response } from 'restify';
 
-export interface StartConversationParams extends ConversationParameters {
-  endpoint?: string;
-  appId?: string;
-  appPassword?: string;
-  user?: User;
-  mode?: EmulatorMode;
-  channelService?: ChannelService;
-  conversationId?: string;
+import { BotEmulator } from '../../botEmulator';
+import createAPIException from '../../utils/createResponse/apiException';
+import Conversation from '../../facility/conversation';
+import sendErrorResponse from '../../utils/sendErrorResponse';
+
+export interface ConversationAware extends Request {
+  conversation: Conversation;
+}
+
+export default function fetchConversation(botEmulator: BotEmulator) {
+  return (req: ConversationAware, res: Response, next: Next): any => {
+    const conversation = botEmulator.facilities.conversations.conversationById(req.params.conversationId);
+
+    if (!conversation) {
+      throw createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, 'conversation not found');
+    }
+
+    try {
+      res.json(HttpStatus.OK, conversation.botEndpoint);
+      res.end();
+    } catch (err) {
+      sendErrorResponse(req, res, next, err);
+    }
+
+    next();
+  };
 }

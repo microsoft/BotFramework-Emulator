@@ -32,6 +32,7 @@
 //
 
 import { newNotification, ResourceResponse, SharedConstants, UserSettings } from '@bfemulator/app-shared';
+import { IEndpointService } from 'botframework-config';
 import {
   CommandServiceImpl,
   CommandServiceInstance,
@@ -41,10 +42,19 @@ import {
 import { call, ForkEffect, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
 
 import { ActiveBotHelper } from '../../ui/helpers/activeBotHelper';
-import { BotAction, BotActionType, BotConfigWithPathPayload, botHashGenerated } from '../action/botActions';
+import {
+  BotAction,
+  BotActionType,
+  BotConfigWithPathPayload,
+  botHashGenerated,
+  openBotViaUrlAction,
+  RestartConversationPayload,
+} from '../action/botActions';
 import { beginAdd } from '../action/notificationActions';
 import { generateHash } from '../botHelpers';
 import { RootState } from '../store';
+import * as ChatActions from '../action/chatActions';
+import { ChatDocument } from '../reducer/chat';
 
 import { SharedSagas } from './sharedSagas';
 
@@ -69,6 +79,58 @@ export class BotSagas {
       const errorNotification = beginAdd(
         newNotification(`An Error occurred opening the bot at ${action.payload}: ${e}`)
       );
+      yield put(errorNotification);
+    }
+  }
+  // Currently restarts a conversation with an unchanged ID
+  public static *restartConversation(action: BotAction<RestartConversationPayload>): IterableIterator<any> {
+    const serverUrl = yield select((state: RootState) => state.clientAwareSettings.serverUrl);
+    const { documentId, conversationId, user } = action.payload;
+    let error;
+    try {
+      const endpointResponse: Response = yield ConversationService.getConversationEndpoint(serverUrl, conversationId);
+      if (!endpointResponse.ok) {
+        const error = yield endpointResponse.json();
+        throw new Error(error.error.message);
+      }
+
+      const endpoint: IEndpointService = yield endpointResponse.json();
+
+      const document: ChatDocument = yield select((state: RootState) => state.chat.chats[documentId]);
+      // End the direct line connection
+      if (document.directLine) {
+        document.directLine.end();
+      }
+      document.directLine = null;
+      // Clear the chat log which is an action
+      // that calls into a saga. This is an async
+      // saga and is critical to wait for completion
+      // until the next item is processed.
+      let resolver = null;
+      const awaiter = new Promise(resolve => {
+        resolver = resolve;
+      });
+      yield put(ChatActions.clearLog(documentId, resolver));
+      yield awaiter;
+
+      yield put(ChatActions.setInspectorObjects(documentId, []));
+
+      yield* BotSagas.openBotViaUrl(
+        openBotViaUrlAction({
+          conversationId,
+          appPassword: endpoint.appPassword,
+          appId: endpoint.appId,
+          endpoint: endpoint.endpoint,
+          mode: document.mode,
+          user,
+        })
+      );
+    } catch (e) {
+      error = '' + e;
+    }
+
+    if (error) {
+      const errorNotification = beginAdd(newNotification(error));
       yield put(errorNotification);
     }
   }
@@ -141,6 +203,7 @@ export function* botSagas(): IterableIterator<ForkEffect> {
   yield takeEvery(BotActionType.browse, BotSagas.browseForBot);
   yield takeEvery(BotActionType.openViaUrl, BotSagas.openBotViaUrl);
   yield takeEvery(BotActionType.openViaFilePath, BotSagas.openBotViaFilePath);
+  yield takeEvery(BotActionType.restartConversation, BotSagas.restartConversation);
   yield takeEvery(BotActionType.setActive, BotSagas.generateHashForActiveBot);
   yield takeLatest(
     [BotActionType.setActive, BotActionType.load, BotActionType.close],

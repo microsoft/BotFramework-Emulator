@@ -67,6 +67,9 @@ export class SettingsCommands {
   // Save a new bot url to disk
   @Command(Commands.SaveBotUrl)
   protected saveBotUrl(url: string) {
+    if (!url) {
+      return; // Nothing to save.
+    }
     dispatch(addSavedBotUrl(url));
   }
 }

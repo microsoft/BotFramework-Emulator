@@ -105,6 +105,11 @@ export class ConversationService {
     });
   }
 
+  public static getConversationEndpoint(serverUrl: string, conversationId: string): Promise<Response> {
+    const url = `${serverUrl}/emulator/${conversationId}/endpoint`;
+    return fetch(url);
+  }
+
   public static startConversation(serverUrl: string, payload: Partial<StartConversationParams>): Promise<Response> {
     const { endpoint, appId = '', appPassword = '', user, channelService, ...body } = payload;
     const url = serverUrl + `/v3/conversations`;
