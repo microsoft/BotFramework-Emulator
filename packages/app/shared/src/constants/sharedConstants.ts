@@ -178,6 +178,7 @@ export const SharedConstants = {
       ShowUpdateUnavailableDialog: 'update-unavailable-dialog:show',
       ShowProgressIndicator: 'progress-indicator:show',
       OpenBotViaUrl: 'connect-bot',
+      ShowDataCollectionDialog: 'data-collection:show',
     },
   },
   ContentTypes: {

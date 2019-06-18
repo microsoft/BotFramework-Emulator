@@ -31,21 +31,37 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './botCreationDialog/botCreationDialog';
-export * from './host/hostContainer';
-export * from './secretPromptDialog/secretPromptDialogContainer';
-export * from './tabManager/tabManagerContainer';
-export * from './service';
-export * from './azureLoginSuccessDialog/azureLoginSuccessDialogContainer';
-export * from './azureLoginPromptDialog/azureLoginPromptDialogContainer';
-export * from './azureLoginFailedDialog/azureLoginFailedDialogContainer';
-export * from './connectServicePromptDialog/connectServicePromptDialogContainer';
-export * from './dataCollectionDialog/dataCollectionDialogContainer';
-export * from './getStartedWithCSDialog/getStartedWithCSDialogContainer';
-export * from './postMigrationDialog/postMigrationDialogContainer';
-export * from './progressIndicator/progressIndicatorContainer';
-export * from './botSettingsEditor/botSettingsEditorContainer';
-export * from './resourcesSettings/resourcesSettingsContainer';
-export * from './updateAvailableDialog';
-export * from './updateUnavailableDialog';
-export * from './openBotDialog/openBotDialogContainer';
+import * as React from 'react';
+import { mount } from 'enzyme';
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
+
+import { DialogService } from '../service';
+
+import { DataCollectionDialog } from './dataCollectionDialog';
+import { DataCollectionDialogContainer } from './dataCollectionDialogContainer';
+
+describe('<DataCollectionDialogContainer />', () => {
+  let wrapper;
+  let instance;
+
+  beforeEach(() => {
+    wrapper = mount(
+      <Provider store={createStore((state, _action) => state)}>
+        <DataCollectionDialogContainer />
+      </Provider>
+    );
+    instance = wrapper.find(DataCollectionDialog).instance();
+  });
+
+  it('should render properly', () => {
+    expect(wrapper.find(DataCollectionDialog)).toHaveLength(1);
+  });
+
+  it('should hide the dialog and return the proper result', () => {
+    const hideDialogSpy = jest.spyOn(DialogService, 'hideDialog');
+    instance.onConfirmOrCancel({ target: { name: 'yes' } });
+
+    expect(hideDialogSpy).toHaveBeenCalledWith(true);
+  });
+});

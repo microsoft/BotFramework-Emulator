@@ -31,8 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import { dialog } from 'electron';
-import { SharedConstants } from '@bfemulator/app-shared';
+import { SharedConstants, Settings } from '@bfemulator/app-shared';
 import { Command, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
+import { Store } from 'redux';
 
 import * as BotActions from '../data/actions/botActions';
 import { getStore } from '../data/store';
@@ -40,10 +41,10 @@ import { Protocol } from '../constants';
 import { ExtensionManagerImpl } from '../extensions';
 import { Migrator } from '../migrator';
 import { ProtocolHandler } from '../protocolHandler';
-import { getStore as getSettingsStore } from '../settingsData/store';
+import { getStore as getSettingsStore, dispatch } from '../settingsData/store';
 import { getBotsFromDisk } from '../utils';
 import { openFileFromCommandLine } from '../utils/openFileFromCommandLine';
-import { pushClientAwareSettings } from '../settingsData/actions/frameworkActions';
+import { pushClientAwareSettings, setFramework } from '../settingsData/actions/frameworkActions';
 import { AppMenuBuilder } from '../appMenuBuilder';
 
 const Commands = SharedConstants.Commands;
@@ -83,6 +84,19 @@ export class ClientInitCommands {
   @Command(Commands.ClientInit.PostWelcomeScreen)
   protected async postWelcomeScreen(): Promise<void> {
     await this.commandService.call(Commands.Electron.UpdateFileMenu);
+
+    // show the data collection modal if necessary
+    const settingsStore: Store<Settings> = getSettingsStore();
+    const { framework = {} } = settingsStore.getState();
+    if (!framework.hasBeenShownDataCollectionModal) {
+      const collectUsageData = await this.commandService.remoteCall<boolean>(Commands.UI.ShowDataCollectionDialog);
+      const updatedSettings = {
+        ...framework,
+        collectUsageData,
+        hasBeenShownDataCollectionModal: true,
+      };
+      dispatch(setFramework(updatedSettings));
+    }
 
     // Parse command line args for a protocol url
     const args = process.argv.length ? process.argv.slice(1) : [];
