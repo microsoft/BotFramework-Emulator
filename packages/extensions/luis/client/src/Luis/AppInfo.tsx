@@ -31,6 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { LuisAuthoringModels } from 'luis-apis';
+
 export interface EndpointInfo {
   endpointRegion: string;
 }
@@ -40,11 +42,8 @@ export interface Endpoints {
   STAGING?: EndpointInfo;
 }
 
-export interface AppInfo {
-  activeVersion: string;
-  name: string;
+export type AppInfo = LuisAuthoringModels.ApplicationInfoResponse & {
   authorized: boolean;
   appId: string;
-  endpoints: Endpoints;
   isDispatchApp: boolean;
-}
+};

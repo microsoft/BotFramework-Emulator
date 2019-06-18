@@ -33,34 +33,28 @@
 
 import * as React from 'react';
 import { Component } from 'react';
+import { LuisAuthoringModels } from 'luis-apis';
 
 import { AppInfo } from '../../Luis/AppInfo';
-import { IntentInfo } from '../../Luis/IntentInfo';
 import { Intent } from '../../Models/Intent';
 import { RecognizerResult, RecognizerResultIntent } from '../../Models/RecognizerResults';
-import EntitiesViewer from '../EntitiesViewer/EntitiesViewer';
+import { EntitiesViewer } from '../EntitiesViewer/EntitiesViewer';
 import { IntentEditor, IntentEditorMode } from '../IntentEditor/IntentEditor';
-import IntentViewer from '../IntentViewer/IntentViewer';
+import { IntentViewer } from '../IntentViewer/IntentViewer';
 
 import * as styles from './Editor.scss';
 
 const NoneIntent = 'None';
 
-interface EditorState {}
-
 interface EditorProps {
   recognizerResult: RecognizerResult;
-  intentInfo?: IntentInfo[];
+  intentInfo?: LuisAuthoringModels.IntentClassifier[];
   intentReassigner: (newIntent: string, needsRetrain: boolean) => Promise<void>;
   appInfo: AppInfo;
   traceId: string;
 }
 
-class Editor extends Component<EditorProps, EditorState> {
-  constructor(props: any, context: any) {
-    super(props, context);
-  }
-
+export class Editor extends Component<EditorProps, {}> {
   public getTopScoringIntent(): Intent {
     if (!this.props.recognizerResult || !this.props.recognizerResult.intents) {
       return { intent: NoneIntent, score: 0.0 };
@@ -98,5 +92,3 @@ class Editor extends Component<EditorProps, EditorState> {
     );
   }
 }
-
-export default Editor;

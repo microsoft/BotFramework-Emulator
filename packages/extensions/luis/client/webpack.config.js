@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-const { HotModuleReplacementPlugin, WatchIgnorePlugin } = require('webpack');
+const { WatchIgnorePlugin } = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const path = require('path');
@@ -103,7 +103,6 @@ module.exports = {
 
   externals: {},
   plugins: [
-    new HotModuleReplacementPlugin(),
     new WatchIgnorePlugin(['./build/**/*.*', './public/**/*.*', './src/**/*.d.ts']),
     new CopyWebpackPlugin([
       {

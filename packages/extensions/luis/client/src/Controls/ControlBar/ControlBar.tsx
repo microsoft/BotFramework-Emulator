@@ -41,22 +41,16 @@ export enum ButtonSelected {
   RawResponse,
 }
 
-interface ControlBarState {}
-
 interface ControlBarProps {
   setButtonSelected: (buttonSelected: ButtonSelected) => void;
   buttonSelected: ButtonSelected;
 }
 
-export class ControlBar extends Component<ControlBarProps, ControlBarState> {
+export class ControlBar extends Component<ControlBarProps, {}> {
   public clickHandler: MouseEventHandler<HTMLAnchorElement> = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
     this.props.setButtonSelected(ButtonSelected[e.currentTarget.id]);
   };
-
-  constructor(props: any, context: any) {
-    super(props, context);
-  }
 
   public render() {
     return (
