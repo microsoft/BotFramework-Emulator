@@ -162,7 +162,6 @@ export class Chat extends Component<ChatProps, ChatState> {
       return null;
     }
     const { valueType } = card.activity; // activities are nested
-
     if (valueType === ValueTypes.Activity) {
       const messageActivity = card.activity.value;
       return (

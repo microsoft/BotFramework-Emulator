@@ -178,6 +178,7 @@ describe('The clientInitCommands', () => {
     } as any);
     process.argv.push('/path/to/transcript.transcript');
     process.argv.push('bfemulator://bot.open?path=path/to/bot.bot');
+    const dispatchSpy = jest.spyOn(mockSettingsStore, 'dispatch');
 
     const remoteCommandArgs = [];
     const localCommandArgs = [];
@@ -221,6 +222,7 @@ describe('The clientInitCommands', () => {
     ]);
 
     expect(remoteCommandArgs).toEqual([
+      [SharedConstants.Commands.UI.ShowDataCollectionDialog],
       [
         'transcript:open',
         '/path/to/transcript.transcript',
@@ -252,5 +254,7 @@ describe('The clientInitCommands', () => {
         },
       ],
     ]);
+
+    expect(dispatchSpy).toHaveBeenCalled();
   });
 });

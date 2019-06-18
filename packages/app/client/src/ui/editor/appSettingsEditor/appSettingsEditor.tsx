@@ -249,8 +249,8 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
               name="collectUsageData"
               disabled={true}
             />
-            <a target="_blank" href="https://aka.ms/bot-framework-emulator-data-collection" rel="noopener noreferrer">
-              Learn more.
+            <a target="_blank" href="https://privacy.microsoft.com/privacystatement" rel="noopener noreferrer">
+              Privacy statement
             </a>
           </Column>
         </Row>

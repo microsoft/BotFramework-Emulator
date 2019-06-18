@@ -60,7 +60,7 @@ export default class ConversationSet extends EventEmitter {
     // unless there is already a livechat or transcript queued
     // we add the "|livechat" string to the end of the conversationId
     // so the emulator knows to open a new tab in the UI
-    if (!/(\|livechat|\|transcript)/.test(conversation.conversationId)) {
+    if (!/(\|livechat|\|transcript|\|debug)/.test(conversation.conversationId)) {
       conversation.conversationId += '|livechat';
     }
     this.conversations[conversation.conversationId] = conversation;

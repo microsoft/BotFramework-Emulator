@@ -58,6 +58,8 @@ export interface FrameworkSettings {
   usePrereleases?: boolean;
   // enables instrumentation
   collectUsageData?: boolean;
+  // if false, the user is shown the data collection modal on startup
+  hasBeenShownDataCollectionModal?: boolean;
   // Digest of k/v pairs for integrity
   hash?: string;
   // GUID set by the user
@@ -138,6 +140,7 @@ export const frameworkDefault: FrameworkSettings = {
   usePrereleases: false,
   autoUpdate: false,
   collectUsageData: false,
+  hasBeenShownDataCollectionModal: false,
   userGUID: '',
   useCustomId: false,
 };

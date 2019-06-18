@@ -31,21 +31,34 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './botCreationDialog/botCreationDialog';
-export * from './host/hostContainer';
-export * from './secretPromptDialog/secretPromptDialogContainer';
-export * from './tabManager/tabManagerContainer';
-export * from './service';
-export * from './azureLoginSuccessDialog/azureLoginSuccessDialogContainer';
-export * from './azureLoginPromptDialog/azureLoginPromptDialogContainer';
-export * from './azureLoginFailedDialog/azureLoginFailedDialogContainer';
-export * from './connectServicePromptDialog/connectServicePromptDialogContainer';
-export * from './dataCollectionDialog/dataCollectionDialogContainer';
-export * from './getStartedWithCSDialog/getStartedWithCSDialogContainer';
-export * from './postMigrationDialog/postMigrationDialogContainer';
-export * from './progressIndicator/progressIndicatorContainer';
-export * from './botSettingsEditor/botSettingsEditorContainer';
-export * from './resourcesSettings/resourcesSettingsContainer';
-export * from './updateAvailableDialog';
-export * from './updateUnavailableDialog';
-export * from './openBotDialog/openBotDialogContainer';
+import { ErrorCodes } from '@bfemulator/sdk-shared';
+import * as HttpStatus from 'http-status-codes';
+import { Next, Request, Response } from 'restify';
+
+import { BotEmulator } from '../../botEmulator';
+import createAPIException from '../../utils/createResponse/apiException';
+import Conversation from '../../facility/conversation';
+import sendErrorResponse from '../../utils/sendErrorResponse';
+
+export interface ConversationAware extends Request {
+  conversation: Conversation;
+}
+
+export default function fetchConversation(botEmulator: BotEmulator) {
+  return (req: ConversationAware, res: Response, next: Next): any => {
+    const conversation = botEmulator.facilities.conversations.conversationById(req.params.conversationId);
+
+    if (!conversation) {
+      throw createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, 'conversation not found');
+    }
+
+    try {
+      res.json(HttpStatus.OK, conversation.botEndpoint);
+      res.end();
+    } catch (err) {
+      sendErrorResponse(req, res, next, err);
+    }
+
+    next();
+  };
+}

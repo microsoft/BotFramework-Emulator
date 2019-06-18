@@ -127,6 +127,11 @@ export default class Conversation extends EventEmitter {
     this.members.push({ id: user.id, name: user.name });
   }
 
+  public normalize(): void {
+    this.transcript.length = 0;
+    this.activities.length = 0;
+  }
+
   /**
    * Sends the activity to the conversation's bot.
    */

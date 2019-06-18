@@ -51,11 +51,14 @@ import sendTokenResponse from './middleware/sendTokenResponse';
 import typing from './middleware/typing';
 import updateShippingAddress from './middleware/updateShippingAddress';
 import updateShippingOption from './middleware/updateShippingOption';
+import getConversationEndpoint from './middleware/getConversationEndpoint';
 
 export default function registerRoutes(botEmulator: BotEmulator, server: Server, uses: RequestHandler[]) {
   const fetchConversation = createFetchConversationMiddleware(botEmulator);
   const jsonBodyParser = createJsonBodyParserMiddleware();
   const facility = getFacility('emulator');
+
+  server.get('/emulator/:conversationId/endpoint', getConversationEndpoint(botEmulator));
 
   server.get(
     '/emulator/:conversationId/users',

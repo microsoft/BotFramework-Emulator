@@ -31,21 +31,21 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './botCreationDialog/botCreationDialog';
-export * from './host/hostContainer';
-export * from './secretPromptDialog/secretPromptDialogContainer';
-export * from './tabManager/tabManagerContainer';
-export * from './service';
-export * from './azureLoginSuccessDialog/azureLoginSuccessDialogContainer';
-export * from './azureLoginPromptDialog/azureLoginPromptDialogContainer';
-export * from './azureLoginFailedDialog/azureLoginFailedDialogContainer';
-export * from './connectServicePromptDialog/connectServicePromptDialogContainer';
-export * from './dataCollectionDialog/dataCollectionDialogContainer';
-export * from './getStartedWithCSDialog/getStartedWithCSDialogContainer';
-export * from './postMigrationDialog/postMigrationDialogContainer';
-export * from './progressIndicator/progressIndicatorContainer';
-export * from './botSettingsEditor/botSettingsEditorContainer';
-export * from './resourcesSettings/resourcesSettingsContainer';
-export * from './updateAvailableDialog';
-export * from './updateUnavailableDialog';
-export * from './openBotDialog/openBotDialogContainer';
+import { connect } from 'react-redux';
+
+import { DialogService } from '../service';
+
+import { DataCollectionDialog, DataCollectionDialogProps } from './dataCollectionDialog';
+
+function mapDispatchToProps(): DataCollectionDialogProps {
+  return {
+    hideDialog: (collectData: boolean) => {
+      DialogService.hideDialog(collectData);
+    },
+  };
+}
+
+export const DataCollectionDialogContainer = connect(
+  null,
+  mapDispatchToProps
+)(DataCollectionDialog);
