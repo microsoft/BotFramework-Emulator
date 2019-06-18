@@ -171,8 +171,7 @@
     "productName": "Bot Framework Emulator",
     "copyright": "Copyright © 2018 Microsoft Corporation",
     "electronDownload": {
-      "version": "4.1.1",
-      "mirror": "${env.ELECTRON_MIRROR}"
+      "version": "4.1.1"
     },
     "protocols": [
       {
