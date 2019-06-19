@@ -105,6 +105,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
       userGUID = '',
       autoUpdate = false,
       usePrereleases = false,
+      collectUsageData = false,
     } = this.state;
 
     const inputProps = {
@@ -243,11 +244,10 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
             <SmallHeader>Data Collection</SmallHeader>
             <Checkbox
               className={styles.checkboxOverrides}
-              checked={false}
+              checked={collectUsageData}
               onChange={this.onChangeCheckBox}
               label="Help improve the Emulator by allowing us to collect usage data."
               name="collectUsageData"
-              disabled={true}
             />
             <a target="_blank" href="https://privacy.microsoft.com/privacystatement" rel="noopener noreferrer">
               Privacy statement
