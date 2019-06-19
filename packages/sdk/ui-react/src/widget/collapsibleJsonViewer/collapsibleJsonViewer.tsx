@@ -45,18 +45,17 @@ const themeNameToViewerThemeName = {
   'high-contrast': highContrast,
 };
 
-export interface JsonViewerState<T = any> {
+export interface CollapsibleJsonViewerProps<T = any> {
+  nodeAdded?: (node: HTMLElement) => void;
   data: Record<string, T>;
   themeName: string;
+
+  [jsonTreePropName: string]: any;
 }
 
-export interface CollapsibleJsonViewerProps {
-  nodeAdded?: (node: HTMLElement) => void;
-}
-
-export class CollapsibleJsonViewer extends Component<CollapsibleJsonViewerProps, JsonViewerState> {
+export class CollapsibleJsonViewer extends Component<CollapsibleJsonViewerProps, {}> {
   private readonly mutationObserver: MutationObserver;
-  private jsonViewerRef: HTMLDivElement;
+  private jsonViewerElement: HTMLDivElement;
 
   private nodesAdded(addedNodes: NodeList): void {
     addedNodes.forEach((node: HTMLElement) => {
@@ -64,6 +63,9 @@ export class CollapsibleJsonViewer extends Component<CollapsibleJsonViewerProps,
         case 'UL':
           node.setAttribute('role', 'group');
           node.setAttribute('aria-expanded', '' + !!node.childNodes.length);
+          if (node.children.length) {
+            this.nodesAdded(node.childNodes);
+          }
           break;
         // List items nest UL and DIV(button) so we recurse
         case 'LI':
@@ -86,8 +88,8 @@ export class CollapsibleJsonViewer extends Component<CollapsibleJsonViewerProps,
         default:
           break;
       }
-      {
-        this.props.nodeAdded && this.props.nodeAdded(node);
+      if (this.props.nodeAdded) {
+        this.props.nodeAdded(node);
       }
     });
   }
@@ -98,11 +100,10 @@ export class CollapsibleJsonViewer extends Component<CollapsibleJsonViewerProps,
   }
 
   public render() {
-    const state = this.state || ({ data: {} } as any);
-    const { data, themeName = 'light' } = state;
+    const props = this.props || ({ data: {} } as any);
+    const { data, themeName = 'light', nodeAdded: _, ...jsonTreeProps } = props;
     // Props are a pass through and are
     // allowed to overwrite the ones set here
-    const { nodeAdded: _, ...jsonTreeProps } = this.props;
     return (
       <div ref={this.jsonTreeContainerRef} className={styles.collapsibleJsonViewer}>
         <JSONTree data={data} theme={themeNameToViewerThemeName[themeName]} invertTheme={false} {...jsonTreeProps} />
@@ -110,23 +111,17 @@ export class CollapsibleJsonViewer extends Component<CollapsibleJsonViewerProps,
     );
   }
 
-  public setData<T = {}>(data: Record<string, T>): void {
-    this.setState({ data });
-  }
-
-  public setTheme(themeName: string) {
-    this.setState({ themeName });
-  }
-
   private jsonTreeContainerRef = (ref: HTMLDivElement): void => {
     if (this.mutationObserver) {
       this.mutationObserver.disconnect();
     }
-    if (this.jsonViewerRef) {
-      this.jsonViewerRef.removeEventListener('keydown', this.onTreeKeydown, true);
+    if (this.jsonViewerElement) {
+      this.jsonViewerElement.removeEventListener('keydown', this.onTreeKeydown, true);
+      this.jsonViewerElement.removeEventListener('click', this.onTreeClick);
     }
     if (ref) {
       ref.addEventListener('keydown', this.onTreeKeydown, true);
+      ref.addEventListener('click', this.onTreeClick);
       this.mutationObserver.observe(ref, { childList: true, subtree: true });
       // <ul>
       ref.firstElementChild.setAttribute('role', 'tree');
@@ -134,7 +129,7 @@ export class CollapsibleJsonViewer extends Component<CollapsibleJsonViewerProps,
       this.nodesAdded(ref.firstElementChild.childNodes);
       (ref.firstElementChild as HTMLElement).tabIndex = 0;
     }
-    this.jsonViewerRef = ref;
+    this.jsonViewerElement = ref;
   };
 
   private mutationObserverCallback = (mutations: MutationRecord[]) => {
@@ -166,6 +161,25 @@ export class CollapsibleJsonViewer extends Component<CollapsibleJsonViewerProps,
     }
   };
 
+  private onTreeClick = (event: MouseEvent): void => {
+    let target = event.target as HTMLElement;
+    const { parentElement } = target;
+
+    if (target.getAttribute('role') !== 'button' && !parentElement && parentElement.getAttribute('role') !== 'button') {
+      return;
+    }
+
+    while (target.tagName !== 'LI' && target !== this.jsonViewerElement) {
+      target = target.parentElement;
+    }
+    const ul = target.querySelector('ul');
+    if (!ul) {
+      return;
+    }
+    const proposedAriaExpandedValue = !(ul.getAttribute('aria-expanded') === 'true');
+    ul.setAttribute('aria-expanded', proposedAriaExpandedValue.toString());
+  };
+
   private focusNext(event: KeyboardEvent): void {
     event.preventDefault();
     const treeItem = event.target as HTMLElement;
@@ -183,7 +197,7 @@ export class CollapsibleJsonViewer extends Component<CollapsibleJsonViewerProps,
       (treeItem.nextElementSibling as HTMLElement).focus();
     } else {
       let parent: HTMLElement = treeItem.parentElement;
-      while (parent && parent !== this.jsonViewerRef && !parent.nextElementSibling) {
+      while (parent && parent !== this.jsonViewerElement && !parent.nextElementSibling) {
         parent = parent.parentElement as HTMLElement;
       }
       if (parent && parent.nextElementSibling) {
@@ -199,26 +213,26 @@ export class CollapsibleJsonViewer extends Component<CollapsibleJsonViewerProps,
     // focus the previous sibling or find the
     // previous group and focus that.
     if (treeItem.previousElementSibling) {
-      // drill down to the lowest expanded subgroup
-      const subGroups = treeItem.previousElementSibling.querySelectorAll('ul[role="group"]');
-
-      if (subGroups.length && subGroups[subGroups.length - 1].lastElementChild) {
-        const targetItem = subGroups[subGroups.length - 1].lastElementChild as HTMLElement;
-        targetItem.focus();
-      } else {
-        (treeItem.previousElementSibling as HTMLElement).focus();
-      }
+      this.focusLastSubgroupOrLastItem(treeItem.previousElementSibling);
     } else {
       // Traverse up the DOM to find a parent with a
       // previous element sibling.
       let parent: HTMLElement = treeItem.parentElement;
-      while (parent && parent !== this.jsonViewerRef && parent.tagName !== 'LI') {
+      while (parent && parent !== this.jsonViewerElement && parent.tagName !== 'LI') {
         parent = parent.parentElement as HTMLElement;
       }
       if (parent) {
         parent.focus();
       }
     }
+  }
+
+  private focusLastSubgroupOrLastItem(element: Element): void {
+    const subGroup = element.querySelector('ul[role="group"]');
+    if (subGroup && subGroup.lastElementChild) {
+      return this.focusLastSubgroupOrLastItem(subGroup.lastElementChild);
+    }
+    (element as HTMLElement).focus();
   }
 
   private expandOrCollapseSubtree(event: KeyboardEvent, expand: boolean): void {

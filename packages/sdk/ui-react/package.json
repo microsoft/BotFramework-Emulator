@@ -59,13 +59,18 @@
     "react": "~16.3.2"
   },
   "jest": {
+    "setupTestFrameworkScriptFile": "../../../../testSetup.js",
     "transform": {
       "^.+\\.(tsx?|jsx?)$": "babel-jest"
     },
+    "testURL": "http://localhost",
     "rootDir": "./src",
     "testMatch": [
       "**/?(*.)(spec|test).(ts)?(x)"
     ],
+    "moduleNameMapper": {
+      ".\\.scss$": "<rootDir>/../../../../jestMocks/styleMock.js"
+    },
     "moduleFileExtensions": [
       "ts",
       "tsx",

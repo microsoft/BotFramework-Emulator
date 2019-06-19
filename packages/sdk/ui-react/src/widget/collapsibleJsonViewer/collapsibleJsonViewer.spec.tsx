@@ -33,8 +33,7 @@
 import * as React from 'react';
 import { mount } from 'enzyme';
 
-import { CollapsibleJsonViewer } from '@bfemulator/ui-react';
-import { WindowHostReceiver } from './windowHostReceiver';
+import { CollapsibleJsonViewer } from './collapsibleJsonViewer';
 
 (window as any).host = {
   handlers: {
@@ -116,17 +115,14 @@ let jsonViewer;
 
 describe('The JsonViewer', () => {
   beforeAll(() => {
-    jsonViewerWrapper = mount(<CollapsibleJsonViewer />);
+    jsonViewerWrapper = mount(<CollapsibleJsonViewer data={mockData} themeName={'high-contrast'} />);
     jsonViewer = jsonViewerWrapper.find(CollapsibleJsonViewer).instance();
-    new WindowHostReceiver(jsonViewer);
-    (window as any).host.handlers.inspect[0](mockData); // Simulate event through host
-    (window as any).host.handlers.theme[0]({ themeName: 'high-contrast' });
   });
 
   it('should render with data and a theme', () => {
     expect(jsonViewerWrapper.find('*').length).toBeGreaterThan(0);
-    expect(jsonViewer.state.data).toBe(mockData);
-    expect(jsonViewer.state.themeName).toBe('high-contrast');
+    expect(jsonViewer.props.data).toBe(mockData);
+    expect(jsonViewer.props.themeName).toBe('high-contrast');
   });
 
   describe('The JsonViewer keyboard navigation system', () => {
