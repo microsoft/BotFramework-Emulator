@@ -67,14 +67,16 @@ export class Log extends React.Component<LogProps, LogState> {
       const { showInInspector } = selectedActivity;
       const currentlyInspectedActivity = showInInspector ? selectedActivity : null;
 
-      this.setState((prevState): any => {
-        if (
-          prevState.selectedActivity !== selectedActivity ||
-          prevState.currentlyInspectedActivity !== currentlyInspectedActivity
-        ) {
-          return { currentlyInspectedActivity, selectedActivity };
+      this.setState(
+        (prevState): any => {
+          if (
+            prevState.selectedActivity !== selectedActivity ||
+            prevState.currentlyInspectedActivity !== currentlyInspectedActivity
+          ) {
+            return { currentlyInspectedActivity, selectedActivity };
+          }
         }
-      });
+      );
     }
     if (props.document.log.entries.length !== state.count) {
       scrollMe.scrollTop = scrollMe.scrollHeight;
