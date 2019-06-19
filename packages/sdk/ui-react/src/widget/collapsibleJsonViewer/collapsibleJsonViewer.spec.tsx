@@ -86,7 +86,7 @@ const mockTreeHTMLText = `
         <span><span><span>[]</span> 1 item</span></span>
         <ul id="group2">
           <li>
-            <div>
+            <div role="button" id="actuator">
               <div>▶</div>
             </div>
             <label><span>0:</span></label>
@@ -173,6 +173,19 @@ describe('The JsonViewer', () => {
       (jsonViewer as any).onTreeKeydown(event as any);
 
       expect(spy).toHaveBeenCalled();
+    });
+
+    it('should update the "aria-expanded" attribute when a node is clicked', () => {
+      const target = simulatedTree.querySelector('#actuator');
+      const group = simulatedTree.querySelector('#group3');
+      expect(group.getAttribute('aria-expanded')).toBe('true');
+      const event = {
+        preventDefault: () => void 0,
+        target,
+      };
+      (jsonViewer as any).onTreeClick(event as any);
+
+      expect(group.getAttribute('aria-expanded')).toBe('false');
     });
 
     it('should focus the previous item within the tree when the up arrow is pressed from a treeitem', () => {

@@ -34,8 +34,7 @@
 import { LogEntry } from '@bfemulator/sdk-shared';
 
 import { IpcHandler } from './utils';
-
-import { JsonViewerExtension } from './index';
+import { JsonViewerExtension } from './jsonViewerExtension';
 
 export class WindowHostReceiver {
   private jsonViewer: JsonViewerExtension;
