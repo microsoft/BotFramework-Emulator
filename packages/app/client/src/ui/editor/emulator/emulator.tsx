@@ -32,11 +32,9 @@
 //
 
 import { createDirectLine } from 'botframework-webchat';
-import { uniqueId, uniqueIdv4 } from '@bfemulator/sdk-shared';
-import { EmulatorMode } from '@bfemulator/sdk-shared';
-import { Splitter, SplitButton } from '@bfemulator/ui-react';
+import { CommandServiceImpl, CommandServiceInstance, EmulatorMode, uniqueId, uniqueIdv4 } from '@bfemulator/sdk-shared';
+import { SplitButton, Splitter } from '@bfemulator/ui-react';
 import base64Url from 'base64url';
-import { IEndpointService } from 'botframework-config/lib/schema';
 import * as React from 'react';
 import {
   FrameworkSettings,
@@ -45,8 +43,6 @@ import {
   SharedConstants,
   ValueTypesMask,
 } from '@bfemulator/app-shared';
-import { CommandServiceImpl } from '@bfemulator/sdk-shared';
-import { CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { Document, SplitterSize } from '../../../data/reducer/editor';
 import { debounce } from '../../../utils';
@@ -76,11 +72,11 @@ export interface EmulatorProps {
   documentId?: string;
   enablePresentationMode?: (enabled: boolean) => void;
   endpointId?: string;
-  endpointService?: IEndpointService;
   exportItems?: (types: ValueTypesMask, conversationId: string) => Promise<void>;
   mode?: EmulatorMode;
   newConversation?: (documentId: string, options: any) => void;
   presentationModeEnabled?: boolean;
+  restartDebugSession?: (conversationId: string, documentId: string) => void;
   setInspectorObjects?: (documentId: string, objects: any) => void;
   trackEvent?: (name: string, properties?: { [key: string]: any }) => void;
   updateChat?: (documentId: string, updatedValues: any) => void;
@@ -128,7 +124,7 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
     const { document = {} as Document } = props;
     const { document: nextDocument = {} as Document } = nextProps;
 
-    const documentIdChanged = !nextDocument.directLine && document.documentId !== nextDocument.documentId;
+    const documentIdChanged = !nextDocument.directLine || document.documentId !== nextDocument.documentId;
 
     if (documentIdChanged) {
       startNewConversation(nextProps).catch();
@@ -170,7 +166,7 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
 
     const options = {
       conversationId,
-      conversationMode: props.mode,
+      mode: props.mode,
       endpointId: props.endpointId,
       userId,
     };
@@ -241,6 +237,7 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
       // webChatStore,
       directLine,
       userId: options.userId,
+      mode: options.mode,
     });
   }
 
@@ -269,27 +266,37 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
   renderDefaultView(): JSX.Element {
     const { NewUserId, SameUserId } = RestartConversationOptions;
 
-    const { mode } = this.props;
+    const { mode, document } = this.props;
     return (
       <div className={styles.emulator} key={this.getConversationId()}>
-        {mode === 'livechat' && (
-          <div className={styles.header}>
-            <ToolBar>
-              <SplitButton
-                defaultLabel="Restart conversation"
-                buttonClass={styles.restartIcon}
-                options={[NewUserId, SameUserId]}
-                onClick={this.onStartOverClick}
-              />
+        <div className={styles.header}>
+          <ToolBar>
+            {mode === 'debug' && (
               <button
-                className={`${styles.saveIcon} ${styles.toolbarIcon || ''}`}
-                onClick={this.onExportTranscriptClick}
+                className={`${styles.restartIcon} ${styles.toolbarIcon || ''}`}
+                onClick={this.onReconnectToDebugBotClick}
               >
-                Save transcript
+                Reconnect
               </button>
-            </ToolBar>
-          </div>
-        )}
+            )}
+            {mode === 'livechat' && (
+              <>
+                <SplitButton
+                  defaultLabel="Restart conversation"
+                  buttonClass={styles.restartIcon}
+                  options={[NewUserId, SameUserId]}
+                  onClick={this.onStartOverClick}
+                />
+                <button
+                  className={`${styles.saveIcon} ${styles.toolbarIcon || ''}`}
+                  onClick={this.onExportTranscriptClick}
+                >
+                  Save transcript
+                </button>
+              </>
+            )}
+          </ToolBar>
+        </div>
         <div className={`${styles.content} ${styles.vertical}`}>
           <Splitter
             orientation="vertical"
@@ -300,9 +307,9 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
           >
             <div className={styles.content}>
               <ChatPanel
-                mode={this.props.mode}
+                mode={mode}
                 className={styles.chatPanel}
-                document={this.props.document as ChatDocument}
+                document={document as ChatDocument}
                 onStartConversation={this.onStartOverClick}
               />
             </div>
@@ -314,8 +321,8 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
                 initialSizes={this.getHorizontalSplitterSizes}
                 onSizeChange={this.onHorizontalSizeChange}
               >
-                <InspectorContainer document={this.props.document} />
-                <LogPanel document={this.props.document} />
+                <InspectorContainer document={document} />
+                <LogPanel document={document} />
               </Splitter>
             </div>
           </Splitter>
@@ -398,6 +405,11 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
       const notification = newNotification(e.message);
       this.props.createErrorNotification(notification);
     }
+  };
+
+  private onReconnectToDebugBotClick = () => {
+    const { conversationId, document } = this.props;
+    this.props.restartDebugSession(conversationId, document.documentId);
   };
 
   private readonly keyboardEventListener: EventListener = async (event: KeyboardEvent): Promise<void> => {

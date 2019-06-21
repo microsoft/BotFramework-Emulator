@@ -169,7 +169,7 @@ function shouldPostToChat(
   const isDLine = method === 'GET' && route.spec.path === '/v3/directline/conversations/:conversationId/activities';
   const isNotTranscript = !!conversationId && !conversationId.includes('transcript');
   const { conversation } = req;
-  return !isDLine && isNotTranscript && conversation.mode !== 'debug';
+  return !isDLine && isNotTranscript && conversation && conversation.mode !== 'debug';
 }
 
 function getConversationId(req: ConversationAwareRequest): string {

@@ -30,16 +30,38 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import { mount } from 'enzyme';
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
 
-import './index.scss';
+import { DialogService } from '../service';
 
-import { WindowHostReceiver } from './windowHostReceiver';
-import { JsonViewerExtension } from './jsonViewerExtension';
+import { DataCollectionDialog } from './dataCollectionDialog';
+import { DataCollectionDialogContainer } from './dataCollectionDialogContainer';
 
-function jsonViewerExtensionRef(ref) {
-  new WindowHostReceiver(ref);
-}
+describe('<DataCollectionDialogContainer />', () => {
+  let wrapper;
+  let instance;
 
-ReactDOM.render(<JsonViewerExtension ref={jsonViewerExtensionRef} />, document.getElementById('root') as HTMLElement);
+  beforeEach(() => {
+    wrapper = mount(
+      <Provider store={createStore((state, _action) => state)}>
+        <DataCollectionDialogContainer />
+      </Provider>
+    );
+    instance = wrapper.find(DataCollectionDialog).instance();
+  });
+
+  it('should render properly', () => {
+    expect(wrapper.find(DataCollectionDialog)).toHaveLength(1);
+  });
+
+  it('should hide the dialog and return the proper result', () => {
+    const hideDialogSpy = jest.spyOn(DialogService, 'hideDialog');
+    instance.onConfirmOrCancel({ target: { name: 'yes' } });
+
+    expect(hideDialogSpy).toHaveBeenCalledWith(true);
+  });
+});

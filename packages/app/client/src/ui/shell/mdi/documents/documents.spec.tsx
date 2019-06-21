@@ -78,7 +78,7 @@ describe('Documents', () => {
         <DocumentsContainer owningEditor={'primary'} />
       </Provider>
     );
-    expect(wrapper.html()).toBe(null);
+    expect(wrapper.html()).toBeFalsy();
   });
 
   it('should render a tabbedDocument if there are documents', () => {
@@ -90,6 +90,6 @@ describe('Documents', () => {
         <DocumentsContainer owningEditor={'primary'} />
       </Provider>
     );
-    expect(wrapper.html()).not.toBe(null);
+    expect(wrapper.html()).not.toBeFalsy();
   });
 });

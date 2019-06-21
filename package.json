@@ -41,6 +41,9 @@
       "!**/lib/**",
       "!**/build/**"
     ],
+    "globals": {
+      "__JEST_ENV__": true
+    },
     "testURL": "http://localhost",
     "moduleFileExtensions": [
       "ts",

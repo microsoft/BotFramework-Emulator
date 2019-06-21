@@ -30,16 +30,22 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 
-import './index.scss';
+import { connect } from 'react-redux';
 
-import { WindowHostReceiver } from './windowHostReceiver';
-import { JsonViewerExtension } from './jsonViewerExtension';
+import { DialogService } from '../service';
 
-function jsonViewerExtensionRef(ref) {
-  new WindowHostReceiver(ref);
+import { DataCollectionDialog, DataCollectionDialogProps } from './dataCollectionDialog';
+
+function mapDispatchToProps(): DataCollectionDialogProps {
+  return {
+    hideDialog: (collectData: boolean) => {
+      DialogService.hideDialog(collectData);
+    },
+  };
 }
 
-ReactDOM.render(<JsonViewerExtension ref={jsonViewerExtensionRef} />, document.getElementById('root') as HTMLElement);
+export const DataCollectionDialogContainer = connect(
+  null,
+  mapDispatchToProps
+)(DataCollectionDialog);

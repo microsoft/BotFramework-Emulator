@@ -30,13 +30,16 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
+import { LogEntry } from '@bfemulator/sdk-shared';
+
 import { IpcHandler } from './utils';
-import { JsonViewer } from './jsonViewer';
+import { JsonViewerExtension } from './jsonViewerExtension';
 
 export class WindowHostReceiver {
-  private jsonViewer: JsonViewer;
+  private jsonViewer: JsonViewerExtension;
 
-  constructor(jsonViewer: JsonViewer) {
+  constructor(jsonViewer: JsonViewerExtension) {
     this.jsonViewer = jsonViewer;
   }
 
@@ -46,9 +49,39 @@ export class WindowHostReceiver {
   }
 
   @IpcHandler('theme')
-  protected async themeHandler(themeInfo: { themeName: string }): Promise<void> {
+  protected async themeHandler(themeInfo: { themeName: string; themeComponents: string[] }): Promise<void> {
     const themeNameLower = themeInfo.themeName.toLowerCase();
     this.jsonViewer.setTheme(themeNameLower);
     document.getElementById('root').className = themeNameLower;
+
+    const oldThemeComponents = document.querySelectorAll('[data-theme-component="true"]');
+    const head = document.querySelector('head');
+    const fragment = document.createDocumentFragment();
+    const promises = [];
+    // Create the new links for each theme component
+    themeInfo.themeComponents.forEach(themeComponent => {
+      const link = document.createElement('link');
+      promises.push(
+        new Promise(resolve => {
+          link.addEventListener('load', resolve);
+        })
+      );
+      link.href = themeComponent;
+      link.rel = 'stylesheet';
+      link.setAttribute('data-theme-component', 'true');
+      fragment.appendChild(link);
+    });
+    head.insertBefore(fragment, head.firstElementChild);
+    // Wait for all the links to load their css
+    await Promise.all(promises);
+    // Remove the old links
+    oldThemeComponents.forEach(themeComponent => {
+      if (themeComponent.parentElement) {
+        themeComponent.parentElement.removeChild(themeComponent);
+      }
+    });
   }
+
+  @IpcHandler('chat-log-updated')
+  protected async chatLogUpdatedHandler(conversationId: string, logItems: LogEntry[]): Promise<void> {}
 }

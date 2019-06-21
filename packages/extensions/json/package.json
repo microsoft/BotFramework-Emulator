@@ -7,6 +7,9 @@
   "license": "ISC",
   "dependencies": {
     "@babel/runtime": "^7.1.5",
+    "@bfemulator/ui-react": "^1.0.0",
+    "@bfemulator/sdk-shared": "^1.0.0",
+    "@bfemulator/app-shared": "^1.0.0",
     "botframework-schema": "^4.3.4",
     "react": "~16.3.2",
     "react-dom": "~16.3.2",
@@ -57,7 +60,7 @@
     "webpack-dev-server": "^3.4.1"
   },
   "jest": {
-    "setupTestFrameworkScriptFile": "../../../../testSetup.js",
+    "setupFilesAfterEnv": ["../../../../testSetup.js"],
     "transform": {
       "^.+\\.(tsx?|jsx?)$": "babel-jest"
     },

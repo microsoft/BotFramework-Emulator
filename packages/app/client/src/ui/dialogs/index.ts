@@ -40,6 +40,7 @@ export * from './azureLoginSuccessDialog/azureLoginSuccessDialogContainer';
 export * from './azureLoginPromptDialog/azureLoginPromptDialogContainer';
 export * from './azureLoginFailedDialog/azureLoginFailedDialogContainer';
 export * from './connectServicePromptDialog/connectServicePromptDialogContainer';
+export * from './dataCollectionDialog/dataCollectionDialogContainer';
 export * from './getStartedWithCSDialog/getStartedWithCSDialogContainer';
 export * from './postMigrationDialog/postMigrationDialogContainer';
 export * from './progressIndicator/progressIndicatorContainer';

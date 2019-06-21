@@ -30,7 +30,8 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { AttachmentData, ConversationParameters, GenericActivity } from '@bfemulator/sdk-shared';
+import { AttachmentData } from '@bfemulator/sdk-shared';
+import { ConversationParameters, Activity } from 'botframework-schema';
 import * as HttpStatus from 'http-status-codes';
 
 import { BotEmulator } from '../../botEmulator';
@@ -71,10 +72,12 @@ describe('The conversations middleware', () => {
     const req = {
       botEndpoint: new BotEndpoint('12', '456', 'http://localhost:12345', '', '', false, '', {}),
       body: {
+        isGroup: false,
         members: [{ id: '456', name: 'emulator', role: 'user' }],
         bot,
         conversationId: '007',
-        activity: {},
+        activity: null,
+        channelData: null,
       } as ConversationParameters,
     };
     // Bind to an object with a botId property.
@@ -86,7 +89,6 @@ describe('The conversations middleware', () => {
     createConversationMiddleware(req as any, res, (() => null) as any);
 
     expect(sendSpy).toHaveBeenCalledWith(HttpStatus.OK, {
-      activityId: jasmine.any(String),
       id: '007|livechat',
     });
 
@@ -103,10 +105,12 @@ describe('The conversations middleware', () => {
     let req: any = {
       botEndpoint: new BotEndpoint('12', '456', 'http://localhost:12345', '', '', false, '', {}),
       body: {
+        isGroup: false,
         members: [{ id: '456', name: 'emulator', role: 'user' }],
         bot,
         conversationId: '007',
-        activity: {},
+        activity: {} as Activity,
+        channelData: null,
       } as ConversationParameters,
     };
     const createConversationMiddleware = createConversation.bind({
@@ -200,10 +204,10 @@ describe('The conversations middleware', () => {
     const sendSpy = jest.spyOn(res, 'send');
     await replyToActivityMiddleware(req as any, res, (() => null) as any);
     const { activities } = conversation.getActivitiesSince(0);
-    expect(activities.length).toBe(1);
-    expect(activities[0].replyToId).toBe('456');
+    expect(activities.length).toBe(2);
+    expect(activities[1].replyToId).toBe('456');
     expect(sendSpy).toHaveBeenCalledWith(HttpStatus.OK, {
-      id: activities[0].id,
+      id: activities[1].id,
     });
   });
 
@@ -245,10 +249,10 @@ describe('The conversations middleware', () => {
     const sendSpy = jest.spyOn(res, 'send');
     sendActivityMiddleware(req as any, res, (() => null) as any);
     const { activities } = conversation.getActivitiesSince(0);
-    expect(activities.length).toBe(1);
-    expect(activities[0].replyToId).toBe('1234');
+    expect(activities.length).toBe(2);
+    expect(activities[1].replyToId).toBe('1234');
     expect(sendSpy).toHaveBeenCalledWith(HttpStatus.OK, {
-      id: activities[0].id,
+      id: activities[1].id,
     });
   });
 
@@ -452,7 +456,7 @@ describe('The conversations middleware', () => {
     const sendHistoryToConversationMiddleware = sendHistoryToConversation(emulator);
     const sendSpy = jest.spyOn(res, 'send');
     sendHistoryToConversationMiddleware(req as any, res, (() => null) as any);
-    const { activities } = conversation.getActivitiesSince(0);
+    const { activities } = conversation.getActivitiesSince(1);
     expect(activities.length).toBe(5);
     activities.forEach((activity, index) => {
       expect(activity).toEqual({
@@ -508,7 +512,7 @@ describe('The conversations middleware', () => {
       ...req.body,
       text: 'Hi there!',
       id: activity.id,
-    } as GenericActivity;
+    } as Activity;
     req.params.activityId = activity.id;
 
     const sendSpy = jest.spyOn(res, 'send');
@@ -517,7 +521,7 @@ describe('The conversations middleware', () => {
     expect(sendSpy).toHaveBeenCalledWith(HttpStatus.OK, {
       id: jasmine.any(String),
     });
-    expect((conversation.getActivitiesSince(0).activities[0] as GenericActivity).text).toBe('Hi there!');
+    expect((conversation.getActivitiesSince(0).activities[0] as Activity).text).toBe('Hi there!');
   });
 
   it('should upload an attachment', () => {
@@ -629,9 +633,12 @@ describe('The getBotEndpoint middleware', () => {
         'x-emulator-apppassword': 'newPassword',
       },
       body: {
+        isGroup: false,
         members: [{ id: '456', name: 'emulator', role: 'user' }],
         bot,
         conversationId: '007',
+        activity: null,
+        channelData: null,
       } as ConversationParameters,
     } as any;
     getBotEndpointMiddleware(req as any, res, (() => null) as any);
@@ -670,9 +677,12 @@ function createConversationUtil(emulator: BotEmulator): Conversation {
   const req: any = {
     botEndpoint: new BotEndpoint('12', '456', 'http://localhost:12345', '', '', false, '', {}),
     body: {
+      isGroup: false,
       members: [{ id: '456', name: 'emulator', role: 'user' }],
       bot,
       conversationId: '007',
+      activity: {} as Activity,
+      channelData: null,
     } as ConversationParameters,
   };
   const createConversationMiddleware = createConversation.bind({
