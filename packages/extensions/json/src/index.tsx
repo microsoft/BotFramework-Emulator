@@ -33,6 +33,13 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-import { JsonViewer } from './jsonViewer';
+import './index.scss';
 
-ReactDOM.render(<JsonViewer />, document.getElementById('root') as HTMLElement);
+import { WindowHostReceiver } from './windowHostReceiver';
+import { JsonViewerExtension } from './jsonViewerExtension';
+
+function jsonViewerExtensionRef(ref) {
+  new WindowHostReceiver(ref);
+}
+
+ReactDOM.render(<JsonViewerExtension ref={jsonViewerExtensionRef} />, document.getElementById('root') as HTMLElement);

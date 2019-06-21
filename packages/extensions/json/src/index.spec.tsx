@@ -32,8 +32,10 @@
 //
 import * as React from 'react';
 import { mount } from 'enzyme';
+import { ValueTypes } from '@bfemulator/app-shared';
 
-import { JsonViewer } from './jsonViewer';
+import { WindowHostReceiver } from './windowHostReceiver';
+import { JsonViewerExtension } from './jsonViewerExtension';
 
 (window as any).host = {
   handlers: {
@@ -52,189 +54,82 @@ import { JsonViewer } from './jsonViewer';
 };
 
 const mockData = {
-  conversationState: {
-    memory: {
-      id: 12,
-      value: 'bot',
+  valueType: ValueTypes.Diff,
+  value: {
+    conversationState: {
+      dialogState: {
+        dialogStack: {
+          '0': {
+            id: 'root',
+            state: {
+              options: {},
+              stepIndex: 0,
+              values: { instanceId: '8bc9292d-aa45-bf03-f7dc-50dea831c3fc' },
+            },
+          },
+          '1': {
+            id: 'slot-dialog',
+            state: {
+              '+slot': 'address',
+              '-slot': 'shoesize',
+              values: {
+                '+shoesize': 11,
+                age: 21,
+                fullname: { slot: 'last', values: { first: 'Joe', last: 'Schmo' } },
+              },
+            },
+          },
+          '2': {
+            '+id': 'address',
+            '-id': 'shoesize',
+            state: {
+              '+slot': 'street',
+              '-options': {
+                prompt: 'Please enter your shoe size.',
+                retryPrompt: 'You must enter a size between 0 and 16. Half sizes are acceptable.',
+              },
+              '-state': {},
+              values: {},
+            },
+          },
+          '3': { id: 'text', state: { options: { prompt: 'Please enter your street address.' }, state: {} } },
+        },
+      },
+      eTag: '*',
     },
-  },
-  userState: {
-    memory: {
-      value: 'greetings!',
-      dialogStack: ['test', 'test1', 'test2'],
-    },
+    userState: {},
   },
 };
 
-const mockTreeHTMLText = `
-<ul id="rootGroup">
-  <li>
-    <div>
-      <div>▶</div>
-    </div>
-    <label><span>root:</span></label>
-    <span>
-      <span> 
-        <span>{}</span> 2 keys
-        </span></span>
-    <ul id="group1">
-      <li>
-        <div>
-          <div>▶</div>
-        </div>
-        <label><span>membersAdded:</span></label>
-        <span><span><span>[]</span> 1 item</span></span>
-        <ul id="group2">
-          <li>
-            <div>
-              <div>▶</div>
-            </div>
-            <label><span>0:</span></label>
-            <span>
-              <span>
-                <span>{}</span> 
-                2 keys
-              </span>
-            </span>
-            <ul id="group3">
-              <li><label><span>id:</span></label><span>"1"</span></li>
-              <li><label><span>name:</span></label><span>"Bot"</span>
-              </li>
-            </ul>
-          </li>
-        </ul>
-      </li>
-      <li><label><span>type:</span></label><span>"conversationUpdate"</span>
-      </li>
-    </ul>
-  </li>
-</ul>`;
-
 let jsonViewerWrapper;
 let jsonViewer;
-describe('The JsonViewer', () => {
-  beforeAll(() => {
-    jsonViewerWrapper = mount(<JsonViewer />);
-    jsonViewer = jsonViewerWrapper.find(JsonViewer).instance();
-    (window as any).host.handlers.inspect[0](mockData); // Simulate event through host
-    (window as any).host.handlers.theme[0]({ themeName: 'high-contrast' });
+
+describe('The JsonViewerExtension', () => {
+  let root: HTMLDivElement;
+  beforeAll(async () => {
+    root = document.createElement('div');
+    root.id = 'root';
+    const themeTag = document.createElement('link');
+    themeTag.setAttribute('data-theme-component', 'true');
+    document.head.appendChild(themeTag);
+    document.body.appendChild(root);
+
+    jsonViewerWrapper = mount(<JsonViewerExtension />, { attachTo: root });
+    jsonViewer = jsonViewerWrapper.find(JsonViewerExtension).instance();
+    new WindowHostReceiver(jsonViewer);
+    (window as any).host.handlers.theme[0]({ themeName: 'high-contrast', themeComponents: ['dark.css'] });
   });
 
-  it('should render with data and a theme', () => {
+  it('should render with data and a theme', async () => {
     expect(jsonViewerWrapper.find('*').length).toBeGreaterThan(0);
-    expect(jsonViewer.state.data).toBe(mockData);
     expect(jsonViewer.state.themeName).toBe('high-contrast');
   });
 
-  describe('The JsonViewer keyboard navigation system', () => {
-    let simulatedTree;
-    beforeAll(() => {
-      (jsonViewer as any).jsonViewerRef = simulatedTree = document.createElement('div');
-      simulatedTree.innerHTML = mockTreeHTMLText;
-
-      const root = simulatedTree.querySelector('#rootGroup');
-      (jsonViewer as any).mutationObserverCallback([{ addedNodes: root.querySelectorAll('*') }] as any);
-    });
-
-    it('should set the expected attributes when the mutationObserverCallback is called', () => {
-      expect(simulatedTree.querySelectorAll('[role="group"]').length).toBe(3);
-
-      (jsonViewer as any).mutationObserverCallback([
-        { addedNodes: [simulatedTree.firstElementChild.firstElementChild] },
-      ] as any);
-      expect(simulatedTree.querySelectorAll('[role="treeitem"]').length).toBe(6);
-    });
-
-    it('should focus the next item within an expanded group when the down arrow is pressed from the last item within the previous group', () => {
-      const group = simulatedTree.querySelector('#group2');
-      const nextGroup = simulatedTree.querySelector('#group3');
-      const target = group.lastElementChild;
-      const spy = jest.spyOn(nextGroup.firstElementChild, 'focus');
-      const event = {
-        preventDefault: () => void 0,
-        key: 'ArrowDown',
-        target,
-      };
-
-      (jsonViewer as any).onTreeKeydown(event as any);
-
-      expect(spy).toHaveBeenCalled();
-    });
-
-    it('should focus the next item with the tree when the down arrow is pressed from a treeitem', () => {
-      const group = simulatedTree.querySelector('#group3');
-      const target = group.children[0];
-      const event = {
-        preventDefault: () => void 0,
-        key: 'ArrowDown',
-        target,
-      };
-
-      const spy = jest.spyOn(group.children[1], 'focus');
-      (jsonViewer as any).onTreeKeydown(event as any);
-
-      expect(spy).toHaveBeenCalled();
-    });
-
-    it('should focus the previous item within the tree when the up arrow is pressed from a treeitem', () => {
-      const group = simulatedTree.querySelector('#group3');
-      const target = group.lastElementChild;
-      const spy = jest.spyOn(group.firstElementChild, 'focus');
-
-      const event = {
-        preventDefault: () => void 0,
-        key: 'ArrowUp',
-        target,
-      };
-
-      (jsonViewer as any).onTreeKeydown(event as any);
-
-      expect(spy).toHaveBeenCalled();
-    });
-
-    it('should focus the last item within the previous group when the up arrow is pressed from a the last child in a group', () => {
-      const target = simulatedTree.querySelector('#group3').firstElementChild;
-      const spy = jest.spyOn(simulatedTree.querySelector('#group2').lastElementChild, 'focus');
-      const event = {
-        preventDefault: () => void 0,
-        key: 'ArrowUp',
-        target,
-      };
-
-      (jsonViewer as any).onTreeKeydown(event as any);
-
-      expect(spy).toHaveBeenCalled();
-    });
-
-    it('should expand a node when the right arrow is pressed', () => {
-      const targetGroup = simulatedTree.querySelector('#group2');
-      const groupThatShouldExpand = simulatedTree.querySelector('#group3');
-      const target = targetGroup.firstElementChild;
-
-      const event = {
-        preventDefault: () => void 0,
-        key: 'ArrowRight',
-        target,
-      };
-
-      (jsonViewer as any).onTreeKeydown(event as any);
-      expect(groupThatShouldExpand.getAttribute('aria-expanded')).toBe('true');
-    });
-
-    it('should collapse a node whe the left arrow is pressed', () => {
-      const targetGroup = simulatedTree.querySelector('#group2');
-      const groupThatShouldCollapse = simulatedTree.querySelector('#group3');
-      groupThatShouldCollapse.setAttribute('aria-expanded', 'true');
-
-      const target = targetGroup.firstElementChild;
-
-      const event = {
-        preventDefault: () => void 0,
-        key: 'ArrowLeft',
-        target,
-      };
-      (jsonViewer as any).onTreeKeydown(event as any);
-      expect(groupThatShouldCollapse.getAttribute('aria-expanded')).toBe('false');
-    });
+  it('should set the color treatment for diff data appropriately', () => {
+    const spy = jest.spyOn(JsonViewerExtension as any, 'nodeColorVarName');
+    (window as any).host.handlers.inspect[0](mockData); // Simulate event through host
+    expect(spy).toHaveReturnedWith('--log-panel-item-error');
+    expect(spy).toHaveReturnedWith('--log-panel-timestamp');
+    expect(spy).toHaveReturnedWith('--log-panel-item-info');
   });
 });

@@ -6,14 +6,7 @@
         "name": "Bot State Visualizer",
         "src": "public/index.html",
         "criteria": [
-          {
-            "path": "valueType",
-            "value": "https://www.botframework.com/schemas/botState"
-          },
-          {
-            "path": "valueType",
-            "value": "https://www.botframework.com/schemas/diff"
-          }
+
         ],
         "summaryText": [
           "label"
