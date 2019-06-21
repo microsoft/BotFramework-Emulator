@@ -33,13 +33,15 @@
 import { connect } from 'react-redux';
 import { User } from '@bfemulator/sdk-shared';
 import { Activity } from 'botframework-schema';
+import { SharedConstants } from '@bfemulator/app-shared';
 
-import { RootState } from '../../../../../data/store';
 import {
   setHighlightedObjects,
   setInspectorObjects,
   showContextMenuForActivity,
 } from '../../../../../data/action/chatActions';
+import { RootState } from '../../../../../data/store';
+import { executeCommand } from '../../../../../data/action/commandAction';
 
 import { Chat, ChatProps } from './chat';
 
@@ -64,6 +66,11 @@ const mapDispatchToProps = (dispatch, ownProps: ChatProps): Partial<ChatProps> =
       dispatch(setInspectorObjects(documentId, activity));
     },
     showContextMenuForActivity: (activity: Partial<Activity>) => dispatch(showContextMenuForActivity(activity)),
+    showOpenUrlDialog: async (url: string) => {
+      return new Promise(resolve => {
+        dispatch(executeCommand(false, SharedConstants.Commands.UI.ShowOpenUrlDialog, resolve, url));
+      });
+    },
     ...ownProps,
   };
 };

@@ -56,6 +56,7 @@ export interface ChatProps {
   showContextMenuForActivity: (activity: Partial<Activity>) => void;
   setInspectorObject: (documentId: string, activity: Partial<Activity & { showInInspector: true }>) => void;
   webchatStore: any;
+  showOpenUrlDialog?: (url) => any;
 }
 
 interface ChatState {
@@ -145,20 +146,23 @@ export class Chat extends Component<ChatProps, ChatState> {
     const { type, value } = cardAction;
 
     switch (type) {
-      case 'signin':
+      case 'signin': {
         const popup = window.open();
         const url = await getSignInUrl();
         popup.location.href = url;
         break;
-
+      }
       case 'downloadFile':
       case 'playAudio':
       case 'playVideo':
       case 'showImage':
       case 'openUrl':
-        if (confirm(`Do you want to open this URL?\n\n${value}`)) {
-          window.open(value, '_blank');
-        }
+        this.props.showOpenUrlDialog(value).then(result => {
+          if (result == 1) {
+            window.open(value, '_blank');
+          }
+        });
+
         break;
 
       default:
