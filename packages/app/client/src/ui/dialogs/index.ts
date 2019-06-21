@@ -48,3 +48,5 @@ export * from './resourcesSettings/resourcesSettingsContainer';
 export * from './updateAvailableDialog';
 export * from './updateUnavailableDialog';
 export * from './openBotDialog/openBotDialogContainer';
+export * from './openUrlDialog/openUrlDialog';
+export * from './openUrlDialog/openUrlDialogContainer';

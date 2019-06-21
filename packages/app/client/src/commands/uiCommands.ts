@@ -52,6 +52,7 @@ import {
   BotCreationDialog,
   DialogService,
   OpenBotDialogContainer,
+  OpenUrlDialogContainer,
   PostMigrationDialogContainer,
   ProgressIndicatorContainer,
   SecretPromptDialogContainer,
@@ -237,6 +238,13 @@ export class UiCommands {
     } catch (e) {
       beginAdd(newNotification(e));
     }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Shows the confirmation dialog when open url
+  @Command(UI.ShowOpenUrlDialog)
+  protected async showOpenUrlDialog(url: string) {
+    return await DialogService.showDialog(OpenUrlDialogContainer, { url });
   }
 
   // ---------------------------------------------------------------------------
