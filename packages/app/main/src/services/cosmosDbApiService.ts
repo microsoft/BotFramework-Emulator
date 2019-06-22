@@ -146,7 +146,8 @@ function buildServiceModel(
   service.database = cosmosDb.id;
   service.collection = collection.id;
   service.endpoint = account.properties.documentEndpoint;
-  service.serviceName = service.name = collection.id;
+  service.serviceName = account.name;
+  service.name = collection.id;
   service.resourceGroup = account.id.split('/')[4];
   service.subscriptionId = account.subscriptionId;
   service.tenantId = account.tenantId;

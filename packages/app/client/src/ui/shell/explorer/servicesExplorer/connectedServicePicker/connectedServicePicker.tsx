@@ -32,7 +32,7 @@
 //
 
 import { Checkbox, DefaultButton, Dialog, DialogFooter, PrimaryButton } from '@bfemulator/ui-react';
-import { IConnectedService, ServiceTypes } from 'botframework-config/lib/schema';
+import { IBlobStorageService, IConnectedService, ICosmosDBService, ServiceTypes } from 'botframework-config/lib/schema';
 import * as React from 'react';
 import { ChangeEvent, ChangeEventHandler, Component, ReactNode } from 'react';
 
@@ -115,7 +115,17 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
     const { state, onChange } = this;
     const { availableServices } = this.props;
     return availableServices.map((service, index) => {
-      const { id, name: label } = service;
+      let serviceName = '';
+      let { name: label } = service;
+      if (service.type === 'cosmosdb') {
+        serviceName += ` - ${(service as ICosmosDBService).serviceName}`;
+        label = (service as ICosmosDBService).collection;
+      } else if (service.type === 'blob') {
+        serviceName += ` - ${(service as IBlobStorageService).serviceName}`;
+        label = (service as IBlobStorageService).container;
+      }
+
+      const { id } = service;
       const checkboxProps = {
         label,
         checked: !!state[id],
@@ -127,7 +137,8 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
       return (
         <li key={index}>
           <Checkbox {...checkboxProps} className={styles.checkboxOverride} />
-          {'version' in service ? <span>v{(service as any).version}</span> : null}
+          {'version' in service ? <span className={styles.version}>v{(service as any).version}</span> : null}
+          {serviceName ? <span className={styles.serviceName}>{serviceName}</span> : null}
         </li>
       );
     });

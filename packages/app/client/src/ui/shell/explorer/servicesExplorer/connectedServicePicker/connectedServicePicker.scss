@@ -62,21 +62,24 @@
       padding: 5px 10px;
       text-overflow: ellipsis;
       white-space: nowrap;
-
-      & > span {
-        overflow: hidden;
-        padding: 5px 10px;
-        width: 50%;
-        text-overflow: ellipsis;
-
-        &:last-child {
-          white-space: nowrap;
-          width: 25px;	
-          text-align: left;	
-          padding-right: 10px;	
-          float: right;	
-        }	
-      }
     }
+  }
+  .version {
+    overflow: hidden;
+    padding: 5px 10px;
+    width: 50%;
+    text-overflow: ellipsis;
+
+    &:last-child {
+      white-space: nowrap;
+      width: 25px;	
+      text-align: left;	
+      padding-right: 10px;	
+      float: right;	
+    }	
+  }
+  .service-name {
+    color: var(--neutral-7);
+    text-align: left;
   }
 }
