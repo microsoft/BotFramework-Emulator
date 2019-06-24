@@ -117,12 +117,12 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
     return availableServices.map((service, index) => {
       let serviceName = '';
       let { name: label } = service;
-      if (service.type === 'cosmosdb') {
+      if (service.type === ServiceTypes.CosmosDB) {
         serviceName += ` - ${(service as ICosmosDBService).serviceName}`;
         label = (service as ICosmosDBService).collection;
-      } else if (service.type === 'blob') {
+      } else if (service.type === ServiceTypes.BlobStorage) {
         serviceName += ` - ${(service as IBlobStorageService).serviceName}`;
-        label = (service as IBlobStorageService).container;
+        label = (service as IBlobStorageService).name;
       }
 
       const { id } = service;
@@ -290,9 +290,9 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
   private get cosmosDbHeader(): ReactNode {
     return (
       <p>
-        {'Select an account below or '}
+        {'Select a resource below or '}
         <a href="javascript:void(0);" onClick={this.props.launchServiceEditor}>
-          connect to an Azure storage account manually.
+          connect to an Azure Cosmos DB resource manually.
         </a>
       </p>
     );
