@@ -37,6 +37,8 @@
 
     .accessory-button-icon {
       width: 30px;
+      height: 30px;
+      background-repeat: no-repeat;
     }
   }
 }
@@ -55,4 +57,36 @@
 
 .nothing-inspected {
   padding: 0 16px;
+}
+
+.left-arrow {
+  background-image: url('../../../../media/ic_next_copy.svg');
+  margin-top: 8px;
+}
+
+.left-arrow-selected {
+  background-image: url('../../../../media/ic_next_copy.svg');
+  margin-top: 8px;
+}
+
+.right-arrow {
+  background-image: url('../../../../media/ic_next.svg');
+  margin-top: 8px;
+}
+
+.right-arrow-selected {
+  background-image: url('../../../../media/ic_next.svg');
+  margin-top: 8px;
+}
+
+.resetDiff {
+  background-image: url('../../../../media/ic_start_point.svg');
+  margin-top: 4px;
+  margin-left: 4px;
+}
+
+.resetDiffSelected {
+  background-image: url('../../../../media/ic_start_point.svg');
+  margin-top: 4px;
+  margin-left: 4px;
 }

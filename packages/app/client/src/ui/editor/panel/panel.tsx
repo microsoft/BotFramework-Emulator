@@ -53,7 +53,6 @@ export default class Panel extends React.Component<PanelProps, {}> {
     return (
       <div className={styles.panel}>
         <div className={styles.panelHeader}>
-          {this.props.title}
           <div className={styles.accessories}>
             {filterChildren(this.props.children, child => hmrSafeNameComparison(child.type, PanelControls))}
           </div>

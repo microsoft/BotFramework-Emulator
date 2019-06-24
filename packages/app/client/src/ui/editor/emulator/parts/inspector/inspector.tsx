@@ -105,7 +105,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     if (icon === 'Spinner') {
       return <Spinner segmentRadius={2} width={25} height={25} />;
     } else if (icon) {
-      return <i className={`${styles.accessoryButtonIcon} ms-Icon ms-Icon--${icon}`} aria-hidden="true" />;
+      return <div className={`${styles.accessoryButtonIcon} ${styles[icon]}`} aria-hidden="true" />;
     } else {
       return false;
     }
@@ -265,7 +265,6 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     if (oldState.inspectorSrc !== newState.inspectorSrc || oldState.containerRef !== newState.containerRef) {
       this.updateInspector(this.state).catch();
     }
-
     if (oldState.logEntries !== newState.logEntries) {
       this.chatLogUpdated(this.props.document.conversationId, newState.logEntries);
     }

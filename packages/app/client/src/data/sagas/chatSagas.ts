@@ -84,7 +84,7 @@ const getCurrentDocumentId = (state: RootState): string => {
   return activeDocumentId;
 };
 
-const getPreviousBotState = (state: RootState, selectedTrace: Activity): Activity => {
+const getBotState = (state: RootState, selectedTrace: Activity, botDiff: number): Activity => {
   const { editors, activeEditor } = state.editor;
   const { activeDocumentId } = editors[activeEditor];
   const chat = state.chat.chats[activeDocumentId];
@@ -100,7 +100,7 @@ const getPreviousBotState = (state: RootState, selectedTrace: Activity): Activit
       return item.type === LogItemType.InspectableObject && activity.valueType === ValueTypes.BotState;
     }
   );
-  const index = filteredLogItems.findIndex(logItem => logItem.payload.obj.id === selectedTrace.id) - 1;
+  const index = filteredLogItems.findIndex(logItem => logItem.payload.obj.id === selectedTrace.id) + botDiff;
   const targetLogEntry = filteredLogItems[index];
   return targetLogEntry && (targetLogEntry.payload.obj as Activity);
 };
@@ -115,7 +115,7 @@ export class ChatSagas {
 
   public static *showContextMenuForActivity(action: ChatAction<Activity>): Iterable<any> {
     const { payload: activity } = action;
-    const previousBotState = yield select(getPreviousBotState, activity);
+    const previousBotState = yield select(getBotState, activity, -1);
     const diffEnabled = activity.valueType.endsWith('botState') && !!previousBotState;
     const menuItems = [
       { label: 'Copy text', id: 'copy' },
@@ -203,7 +203,7 @@ export class ChatSagas {
   }
 
   public static *diffWithPreviousBotState(currentBotState: Activity): Iterable<any> {
-    const previousBotState: Activity = yield select(getPreviousBotState, currentBotState);
+    const previousBotState: Activity = yield select(getBotState, currentBotState, -1);
 
     const lhs = [];
     const rhs = [];

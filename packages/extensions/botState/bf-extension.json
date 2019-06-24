@@ -23,6 +23,54 @@
                 "aria-selected": true
               }
             }
+          },
+          {
+            "id": "leftArror",
+            "states": {
+              "default": {
+                "icon": "leftArrow"
+              },
+              "selected": {
+                "aria-selected": true,
+                "icon": "leftArrowSelected"
+              }
+            }
+          },
+          {
+            "id": "rightArrow",
+            "states": {
+              "default": {
+                "icon": "rightArrow"
+              },
+              "selected": {
+                "aria-selected": true,
+                "icon": "rightArrowSelected"
+              }
+            }
+          },
+          {
+            "id": "resetDiff",
+            "states": {
+              "default": {
+                "icon": "resetDiff"
+              },
+              "selected": {
+                "aria-selected": true,
+                "icon": "resetDiffSelected"
+              }
+            }
+          },
+          {
+            "id": "diff",
+            "states": {
+              "default": {
+                "label": "Show Diff"
+              },
+              "selected": {
+                "label": "Hide Diff",
+                "aria-selected": true
+              }
+            }
           }
         ]
       }

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="17px" height="16px" viewBox="0 0 17 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 55 (78076) - https://sketchapp.com -->
+    <title>Icons/Full MDL2 Assets/Next Copy</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <filter x="-0.8%" y="-22.9%" width="101.6%" height="145.7%" filterUnits="objectBoundingBox" id="filter-1">
+            <feOffset dx="0" dy="2" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="1" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.5 0" type="matrix" in="shadowBlurOuter1" result="shadowMatrixOuter1"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixOuter1"></feMergeNode>
+                <feMergeNode in="SourceGraphic"></feMergeNode>
+            </feMerge>
+        </filter>
+        <polygon id="path-2" points="14.9619141 8.37939453 3.54882812 8.37939453 8.54443359 13.375 7.97314453 13.9462891 2 7.97314453 7.97314453 2 8.54443359 2.57128906 3.54882812 7.56689453 14.9619141 7.56689453"></polygon>
+    </defs>
+    <g id="SIDECAR" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="4.10-sidecar-07" transform="translate(-1290.000000, -219.000000)">
+            <g id="Group-2" transform="translate(100.000000, 100.000000)">
+                <g id="dark/tab-bar" filter="url(#filter-1)" transform="translate(371.000000, 107.000000)">
+                    <g id="Group-3">
+                        <g id="Icons/Full-MDL2-Assets/Previous" transform="translate(819.000000, 10.000000)">
+                            <mask id="mask-3" fill="white">
+                                <use xlink:href="#path-2"></use>
+                            </mask>
+                            <use id="" fill="#000000" fill-rule="evenodd" xlink:href="#path-2"></use>
+                            <g id="_color/Primary-1-(00BCF2)-sql-light" mask="url(#mask-3)" fill="#00BCF2" fill-rule="evenodd">
+                                <rect id="Rectangle" x="0" y="0" width="16" height="16"></rect>
+                            </g>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
