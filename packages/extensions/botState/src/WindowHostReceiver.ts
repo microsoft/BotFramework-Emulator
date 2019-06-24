@@ -36,6 +36,7 @@ import { BotStateVisualizer } from './BotStateVisualizer';
 import { IpcHandler } from './utils';
 import { BotState } from './types';
 import { ViewState } from './ViewState';
+import { LogEntry } from '@bfemulator/sdk-shared';
 
 export class WindowHostReceiver {
   private visualizer: BotStateVisualizer;
@@ -89,5 +90,10 @@ export class WindowHostReceiver {
     host.setAccessoryState(resetId, 'default');
     host.setAccessoryState(id, 'selected');
     this.visualizer.viewState = id;
+  }
+
+  @IpcHandler('chat-log-updated')
+  protected chatLogUpdateHandler(conversationId: string, logEntries: LogEntry[]): void {
+    BotStateVisualizer.getEntries(conversationId, logEntries);
   }
 }
