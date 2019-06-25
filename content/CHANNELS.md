@@ -7,17 +7,19 @@
 - [The latest Emulator](https://github.com/Microsoft/BotFramework-Emulator/releases)
 
 ## TL;DR
-1. Update your Emulator to be on version `4.4`. You can do this by selecting `Help` -> `Check for Update...`
+1. Update your Emulator to be on version `4.5`. You can do this by selecting `Help` -> `Check for Update...`
 1. Install [ngrok](https://ngrok.com/) and navigate to the ngrok executable's location in a terminal.
 1. [Update your bot's code](#1-update-your-bots-code)
 1. Run ngrok `./ngrok http 3979 --host-header=localhost`
 1. Open your bot in the [Azure Portal](https://ms.portal.azure.com/), select the `Settings` blade and paste the ngrok url provided in the terminal into the *Messaging Endpoint* field then save. **note:** If necessary, don't forget to add the `/api/messages` endpoint.
 1. Set the appropriate environment variables (prefix with EXPORT for OSX/Linux, SET for Windows):
+
 ```bash
 NODE_ENV=development;
 MicrosoftAppId=<your app id>;
 MicrosoftAppPassword=<your bot's password>;
 ```
+
 1. Run your bot: `npm start`
 1. Open the respective channel's chat link provided in the Azure Portal in the Channels blade.
 1. Open the Emulator and toggle to Bot Inspector mode via `View` -> `Bot Inspector Mode`
@@ -91,24 +93,24 @@ dotnet run
 If you haven't already done so, [connect your bot to a channel](https://docs.microsoft.com/en-us/azure/bot-service/bot-service-manage-channels?view=azure-bot-service-4.0). You may also need to download and install the app associated with the channel if you have't already. Afterwards, open the respective chat link provided in the Azure Portal in the Channels blade.
 
 ## 6. Start up the Emulator
-Open the Emulator if it isn't open already. In the Emulator choose `View` -> `Bot Inspector Mode`.
+Open the Emulator if it isn't open already.
 
-## 7. Connect to your locally running Bot Open Bot -> Url
+## 7. Connect to your locally running Bot
 
-Connect to your bot by selecting `Open Bot` and providing the appropriate fields. Don't forget the MicrosoftAppId & MicrosoftAppPassword if configured to use an external channel.
+Connect to your bot by selecting `Open Bot` and provide the appropriate fields. Select the "Open in debug mode" checkbox. Don't forget the MicrosoftAppId & MicrosoftAppPassword if configured to use an external channel.
 
 ## 8.  Copy the `/INSPECT attach <UUID>` command rendered in the Conversation window and paste it into the configured channel's chat
 
-A successful connection to the bot will render the text that you see above. We need to save this text and paste it in to the channel you intend to have the conversation in. You can do this few ways. The easiest is by right-clicking on the rendered message and selecting "Copy text" from the context menu.
+A successful connection to the bot with the InspectionMiddleware configured will render the text that you see above. We need to save this text and paste it in to the channel you intend to have the conversation in. You can do this few ways. The easiest is by right-clicking on the rendered message and selecting "Copy text" from the context menu.
 
 ## 9. Have conversation in external channel
 
-Have a normal conversation with your Bot in your configured channel, and while doing do you will see information populating in your connected conversation in the Emulator.
+Have a normal conversation with your Bot in your configured channel, and while doing so you will see information populating in your connected conversation in the Emulator.
+
+*Note*: You can also have a normal conversation with your bot in the Emulator directly, by connecting to the bot via traditional means (Open Bot) and not selecting the "Open in debug mode" checkbox.
 
 # Bot State Inspection
 
-The Bot Inspector now renders the Bot State for each Turn Context executed in the Bot's runtime. You can view this by selecting the `Bot State` element rendered in the Conversation control in JSON or Graph form.
-
-You can view the difference between Bot State's by right-clicking on one of these Bot State elements and selecting the "view diff with previous" item.
+The Bot Inspector now renders the Bot State for each Turn Context executed in the Bot's runtime. You can view this by selecting the `Bot State` element rendered in the Conversation control and then clicking the View diff button in the inspector panel that appears. At this point you can toggle between Bot States, seeing the state diff across each turn.
 
 Have fun! And please provide any feedback by filing a new issue on [the Bot Framework Emulator Github Project](https://github.com/Microsoft/BotFramework-Emulator/issues)
