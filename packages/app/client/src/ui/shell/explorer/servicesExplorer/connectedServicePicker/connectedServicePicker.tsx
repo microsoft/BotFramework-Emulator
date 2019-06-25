@@ -32,7 +32,7 @@
 //
 
 import { Checkbox, DefaultButton, Dialog, DialogFooter, PrimaryButton } from '@bfemulator/ui-react';
-import { IConnectedService, ServiceTypes } from 'botframework-config/lib/schema';
+import { IBlobStorageService, IConnectedService, ICosmosDBService, ServiceTypes } from 'botframework-config/lib/schema';
 import * as React from 'react';
 import { ChangeEvent, ChangeEventHandler, Component, ReactNode } from 'react';
 
@@ -115,9 +115,22 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
     const { state, onChange } = this;
     const { availableServices } = this.props;
     return availableServices.map((service, index) => {
-      const { id, name: label } = service;
+      let serviceName = '';
+      let { name: label } = service;
+      if (service.type === ServiceTypes.CosmosDB) {
+        serviceName += `${(service as ICosmosDBService).serviceName}`;
+        label = (service as ICosmosDBService).collection;
+      } else if (service.type === ServiceTypes.BlobStorage) {
+        serviceName += `${(service as IBlobStorageService).serviceName}`;
+        // For older bot files, the container value was not initially set when adding a Azure Storage service, and was instead stored as the service's name
+        // If service.container exists, use this value for rendering, otherwise default to service.name
+        label = (service as IBlobStorageService).container || label;
+      }
+      const title = serviceName ? `${serviceName} - ${label}` : label;
+
+      const { id } = service;
       const checkboxProps = {
-        label,
+        label: serviceName ? serviceName : label,
         checked: !!state[id],
         id: `service_${id}`,
         onChange,
@@ -125,9 +138,10 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
         'data-index': index,
       };
       return (
-        <li key={index}>
+        <li key={index} title={title}>
           <Checkbox {...checkboxProps} className={styles.checkboxOverride} />
-          {'version' in service ? <span>v{(service as any).version}</span> : null}
+          {'version' in service ? <span className={styles.version}>v{(service as any).version}</span> : null}
+          {serviceName ? <span className={styles.containerName}> - {label}</span> : null}
         </li>
       );
     });
@@ -279,9 +293,9 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
   private get cosmosDbHeader(): ReactNode {
     return (
       <p>
-        {'Select an account below or '}
+        {'Select a resource below or '}
         <a href="javascript:void(0);" onClick={this.props.launchServiceEditor}>
-          connect to an Azure storage account manually.
+          connect to an Azure Cosmos DB resource manually.
         </a>
       </p>
     );

@@ -31,7 +31,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IConnectedService, ServiceTypes, IBlobStorageService } from 'botframework-config/lib/schema';
+import {
+  IConnectedService,
+  ServiceTypes,
+  IAzureService,
+  IBlobStorageService,
+  ICosmosDBService,
+} from 'botframework-config/lib/schema';
 import * as React from 'react';
 import { MouseEventHandler, SyntheticEvent } from 'react';
 
@@ -131,10 +137,15 @@ export class ServicesExplorer extends ServicePane<ServicesExplorerProps> {
     const { services = [], toAnimate = {} } = this.state;
 
     return services.map((service, index) => {
-      let label =
-        service.type === ServiceTypes.BlobStorage ? (service as IBlobStorageService).serviceName : service.name;
-      const containerName =
-        service.type === ServiceTypes.BlobStorage ? '- ' + (service as IBlobStorageService).container + ' ' : '';
+      let label = service.name;
+      let containerName = '';
+
+      if (service.type === ServiceTypes.BlobStorage || service.type === ServiceTypes.CosmosDB) {
+        // Both IBlobStorageService and ICosmosDBService extend IAzureService
+        label = (service as IAzureService).serviceName;
+        containerName += `-  ${(service as IBlobStorageService).container ||
+          (service as ICosmosDBService).collection} `;
+      }
 
       if ('version' in service) {
         label += `, v${(service as any).version}`;

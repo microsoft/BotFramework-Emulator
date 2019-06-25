@@ -55,6 +55,7 @@ function buildServiceModel(key: KeyEntry, account: AzureResource, container: Azu
       ';EndpointSuffix=core.windows.net',
     resourceGroup: id.split('/')[4],
     serviceName,
+    container: name,
   });
 }
 

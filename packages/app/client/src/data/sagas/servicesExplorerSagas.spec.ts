@@ -609,7 +609,7 @@ describe('The ServiceExplorerSagas', () => {
       openConnectedServiceGen(action).next();
       expect(window.open).toHaveBeenCalledWith(
         'https://ms.portal.azure.com/#@microsoft.com/resource/subscriptions/' +
-          '0389857f-aaaa-ssss-fff-gfsgfdsfgssdgfd/resourceGroups/blob-service/providers/Microsoft.DocumentDB/' +
+          '0389857f-aaaa-ssss-fff-gfsgfdsfgssdgfd/resourceGroups/blob-service/providers/Microsoft.Storage/' +
           'storageAccounts/blob/overview'
       );
     });

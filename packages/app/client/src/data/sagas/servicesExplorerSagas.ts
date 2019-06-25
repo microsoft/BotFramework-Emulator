@@ -205,7 +205,7 @@ export class ServicesExplorerSagas {
 
       case ServiceTypes.BlobStorage:
         return ServicesExplorerSagas.openAzureProviderDeepLink(
-          'Microsoft.DocumentDB/storageAccounts',
+          'Microsoft.Storage/storageAccounts',
           connectedService as IAzureService
         );
 
