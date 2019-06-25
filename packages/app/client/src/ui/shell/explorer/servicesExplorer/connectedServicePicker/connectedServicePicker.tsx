@@ -126,7 +126,7 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
         // If service.container exists, use this value for rendering, otherwise default to service.name
         label = (service as IBlobStorageService).container || label;
       }
-      const title = serviceName ? label + serviceName : label;
+      const title = serviceName ? `${serviceName} - ${label}` : label;
 
       const { id } = service;
       const checkboxProps = {
