@@ -198,6 +198,7 @@ describe('The StorageAccountApiService', () => {
             'AccountKey=5743298573hgjfkdsghjsd7584329fghjlkds;EndpointSuffix=core.windows.net',
           resourceGroup: 'blob',
           serviceName: 'AStorage',
+          container: 'containerName',
         },
       ],
       code: 0,

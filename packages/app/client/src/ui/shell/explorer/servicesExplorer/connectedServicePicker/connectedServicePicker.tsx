@@ -122,8 +122,11 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
         label = (service as ICosmosDBService).collection;
       } else if (service.type === ServiceTypes.BlobStorage) {
         serviceName += ` - ${(service as IBlobStorageService).serviceName}`;
-        label = (service as IBlobStorageService).name;
+        // For older bot files, the container value was not initially set when adding a Azure Storage service, and was instead stored as the service's name
+        // If service.container exists, use this value for rendering, otherwise default to service.name
+        label = (service as IBlobStorageService).container || label;
       }
+      const title = serviceName ? label + serviceName : label;
 
       const { id } = service;
       const checkboxProps = {
@@ -135,7 +138,7 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
         'data-index': index,
       };
       return (
-        <li key={index}>
+        <li key={index} title={title}>
           <Checkbox {...checkboxProps} className={styles.checkboxOverride} />
           {'version' in service ? <span className={styles.version}>v{(service as any).version}</span> : null}
           {serviceName ? <span className={styles.serviceName}>{serviceName}</span> : null}
