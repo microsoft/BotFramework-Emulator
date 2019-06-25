@@ -34,6 +34,7 @@ import * as Restify from 'restify';
 
 import { usGovernmentAuthentication } from '../../authEndpoints';
 import { BotEmulator } from '../../botEmulator';
+import BotEndpoint from '../../facility/botEndpoint';
 
 export default function getBotEndpoint(botEmulator: BotEmulator) {
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
@@ -59,13 +60,10 @@ export default function getBotEndpoint(botEmulator: BotEmulator) {
       let endpoint = endpoints.get(botUrl);
       if (!endpoint) {
         const params = req.body as any;
-        endpoint = endpoints.push(null, {
-          botId: params.bot.id,
-          botUrl,
-          msaAppId,
-          msaPassword,
-          channelService,
-        });
+        endpoint = endpoints.push(
+          null,
+          new BotEndpoint(params.bot.id, params.bot.id, botUrl, msaAppId, msaPassword, false, channelService)
+        );
       } else {
         // update the endpoint in memory with the new
         // appId and password if they exist in the params
