@@ -5,4 +5,4 @@ export const checkboxOverride: string;
 export const selectAll: string;
 export const listContainer: string;
 export const version: string;
-export const serviceName: string;
+export const containerName: string;
