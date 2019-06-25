@@ -46,6 +46,8 @@ export default class BotEndpoint {
   public accessToken?: string;
   public accessTokenExpires?: number;
   public speechToken?: string;
+  public appId?: string;
+  public appPassword?: string;
 
   constructor(
     public id?: string,
@@ -56,7 +58,10 @@ export default class BotEndpoint {
     public use10Tokens?: boolean,
     public channelService?: string,
     private _options?: BotEndpointOptions
-  ) {}
+  ) {
+    this.appId = msaAppId;
+    this.appPassword = msaPassword;
+  }
 
   public async getSpeechToken(refresh: boolean = false, duration: number = 10) {
     if (this.speechToken && !refresh) {

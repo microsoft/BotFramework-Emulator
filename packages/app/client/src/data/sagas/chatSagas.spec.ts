@@ -35,7 +35,7 @@ import sagaMiddlewareFactory from 'redux-saga';
 import { ActivityTypes } from 'botframework-schema';
 import * as Electron from 'electron';
 import { SharedConstants, ValueTypes } from '@bfemulator/app-shared';
-import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
+import { CommandServiceImpl, CommandServiceInstance, ConversationService } from '@bfemulator/sdk-shared';
 
 import { bot } from '../reducer/bot';
 import { chat } from '../reducer/chat';
@@ -45,6 +45,8 @@ import * as Constants from '../../constants';
 import { closeConversation, newChat, showContextMenuForActivity } from '../action/chatActions';
 
 import { chatSagas } from './chatSagas';
+import { closeBot } from '../action/botActions';
+import { clientAwareSettings } from '../reducer/clientAwareSettingsReducer';
 
 const sagaMiddleWare = sagaMiddlewareFactory();
 let mockStore;
@@ -603,6 +605,7 @@ describe('The ChatSagas,', () => {
         },
       },
       presentation: { enabled: true },
+      clientAwareSettings: { serverUrl: 'localhost:3000' },
     };
 
     mockStore = createStore(
@@ -611,6 +614,7 @@ describe('The ChatSagas,', () => {
         chat,
         editor,
         presentation,
+        clientAwareSettings,
       }),
       mockStoreState,
       applyMiddleware(sagaMiddleWare)
@@ -763,6 +767,23 @@ describe('The ChatSagas,', () => {
         'endpoint2',
         false
       );
+    });
+
+    it('should try to retrieve the bot from the service when no active bot file is in play', async () => {
+      const mockEndpointResponse = { ok: true, json: async () => ({ appId: 'appId', appPassword: 'appPassword' }) };
+      const spy = jest
+        .spyOn(ConversationService, 'getConversationEndpoint')
+        .mockResolvedValueOnce(mockEndpointResponse as any);
+
+      mockStore.dispatch(closeBot());
+      mockStore.dispatch(
+        newChat('doc2', 'livechat', {
+          conversationId: 'convo2',
+          endpointId: 'endpoint2',
+          userId: 'someUserId2',
+        })
+      );
+      expect(spy).toHaveBeenCalled();
     });
   });
 });
