@@ -43,10 +43,10 @@ import { editor } from '../reducer/editor';
 import { presentation } from '../reducer/presentation';
 import * as Constants from '../../constants';
 import { closeConversation, newChat, showContextMenuForActivity } from '../action/chatActions';
-
-import { chatSagas } from './chatSagas';
 import { closeBot } from '../action/botActions';
 import { clientAwareSettings } from '../reducer/clientAwareSettingsReducer';
+
+import { chatSagas } from './chatSagas';
 
 const sagaMiddleWare = sagaMiddlewareFactory();
 let mockStore;
