@@ -33,10 +33,11 @@
 import * as Electron from 'electron';
 import { MenuItemConstructorOptions } from 'electron';
 import { Activity } from 'botframework-schema';
-import { SharedConstants, ValueTypes } from '@bfemulator/app-shared';
+import { SharedConstants, ValueTypes, newNotification } from '@bfemulator/app-shared';
 import {
   CommandServiceImpl,
   CommandServiceInstance,
+  ConversationService,
   InspectableObjectLogItem,
   LogItem,
   LogItemType,
@@ -62,6 +63,7 @@ import {
 import { RootState } from '../store';
 import { isSpeechEnabled } from '../../utils';
 import { ChatDocument } from '../reducer/chat';
+import { beginAdd } from '../action/notificationActions';
 
 const getConversationIdFromDocumentId = (state: RootState, documentId: string) => {
   return (state.chat.chats[documentId] || { conversationId: null }).conversationId;
@@ -165,10 +167,27 @@ export class ChatSagas {
     // Create a new webchat store for this documentId
     yield put(webChatStoreUpdated(documentId, createWebChatStore()));
     // Each time a new chat is open, retrieve the speech token
-    // if the endpoint is speech enabled and create a bind speech
+    // if the endpoint is speech enabled and create a bound speech
     // pony fill factory. This is consumed by WebChat...
     yield put(webSpeechFactoryUpdated(documentId, null)); // remove the old factory
-    const endpoint: IEndpointService = yield select(getEndpointServiceByDocumentId, documentId);
+    const conversationId = yield select(getConversationIdFromDocumentId, documentId);
+    // Try the bot file
+    let endpoint: IEndpointService = yield select(getEndpointServiceByDocumentId, documentId);
+    // Not there. Try the service
+    if (!endpoint) {
+      try {
+        const serverUrl = yield select((state: RootState) => state.clientAwareSettings.serverUrl);
+        const endpointResponse: Response = yield ConversationService.getConversationEndpoint(serverUrl, conversationId);
+        if (!endpointResponse.ok) {
+          const error = yield endpointResponse.json();
+          throw new Error(error.error.message);
+        }
+        endpoint = yield endpointResponse.json();
+      } catch (e) {
+        yield put(beginAdd(newNotification('' + e)));
+      }
+    }
+
     if (!isSpeechEnabled(endpoint)) {
       if (resolver) {
         resolver();
