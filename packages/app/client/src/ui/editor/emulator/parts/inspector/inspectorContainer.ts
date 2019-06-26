@@ -36,8 +36,9 @@ import { SharedConstants } from '@bfemulator/app-shared';
 
 import { RootState } from '../../../../../data/store';
 import { executeCommand } from '../../../../../data/action/commandAction';
-
+import { Activity } from 'botframework-schema';
 import { Inspector } from './inspector';
+import { setHighlightedObjects } from '../../../../../data/action/chatActions';
 
 const mapStateToProps = (state: RootState, ownProps: any) => {
   const { bot, theme, clientAwareSettings } = state;
@@ -55,6 +56,8 @@ const mapDispatchToProps = dispatch => {
     trackEvent: (name: string, properties?: { [key: string]: any }) => {
       dispatch(executeCommand(true, SharedConstants.Commands.Telemetry.TrackEvent, null, name, properties));
     },
+    setHighlightedObjects: (documentId: string, objects: Activity[]) =>
+      dispatch(setHighlightedObjects(documentId, objects)),
   };
 };
 

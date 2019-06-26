@@ -46,8 +46,8 @@ import { ValueTypes } from '@bfemulator/app-shared/built/enums';
 import { diff } from 'deep-diff';
 //import { setHighlightedObjects, setInspectorObjects, } from '../../../app/client/src/data/action/chatActions';
 
-const getBotState = (state: RootState, selectedTrace: Activity, botDiff: number): Activity => {
-  const entries = BotStateVisualizer.getEntries.arguments[1];
+const getBotState = (selectedTrace: Activity, botDiff: number): Activity => {
+  const entries = BotStateVisualizer.getEntries(selectedTrace);
 
   const allEntries: LogItem<InspectableObjectLogItem>[] = entries.reduce(
     (agg: LogItem[], entry) => agg.concat(entry.items),

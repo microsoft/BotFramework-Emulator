@@ -33,7 +33,7 @@
 
 import { LogItem } from './item';
 
-export interface LogEntry {
+export interface LogEntry<T = any> {
   timestamp: number;
-  items: LogItem[];
+  items: LogItem<T>[];
 }

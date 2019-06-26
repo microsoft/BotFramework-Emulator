@@ -35,6 +35,7 @@ export * from './account';
 export * from './activity';
 export * from './attachment';
 export * from './card';
+export * from './ipc';
 export * from './log';
 export * from './payment';
 export * from './response';

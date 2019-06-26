@@ -34,17 +34,21 @@
 // Cheating here and pulling in a module from node. Can be easily replaced if we ever move the emulator to the web.
 // @ts-ignore
 import {
+  EmulatorChannel,
+  ExtensionChannel,
   ExtensionInspector,
   InspectorAccessory,
   logEntry,
+  LogEntry,
   LogLevel,
   luisEditorDeepLinkItem,
   textItem,
 } from '@bfemulator/sdk-shared';
 import { PrimaryButton, Spinner } from '@bfemulator/ui-react';
 import { IBotConfiguration } from 'botframework-config/lib/schema';
+import { Activity } from 'botframework-schema';
 import * as React from 'react';
-import { LogEntry } from '@bfemulator/sdk-shared';
+import { MouseEvent } from 'react';
 
 import { ExtensionManager, GetInspectorResult, InspectorAPI } from '../../../../../extensions';
 import { logService } from '../../../../../platform/log/logService';
@@ -80,6 +84,7 @@ interface InspectorProps {
   activeBot?: IBotConfiguration;
   botHash?: string;
   trackEvent?: (name: string, properties?: { [key: string]: any }) => void;
+  setHighlightedObjects: (documentId: string, objects: Activity[]) => void;
 }
 
 interface InspectorState {
@@ -132,6 +137,11 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     const { document = {} as ChatDocument } = newProps;
     const inspectorResult = Inspector.getInspector(document.inspectorObjects);
     const { inspector = { name: '' } } = inspectorResult.response;
+    const buttons = Inspector.getButtons(inspector.accessories);
+
+    if (prevState.buttons) {
+      Object.assign(buttons, prevState.buttons);
+    }
 
     if (
       newProps.botHash !== prevState.botHash ||
@@ -150,7 +160,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
         inspectObj: inspectorResult.inspectObj,
         themeInfo: newProps.themeInfo,
         title: inspector.name,
-        buttons: Inspector.getButtons(inspector.accessories),
+        buttons,
       };
     }
     return null;
@@ -230,7 +240,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     }
   }
 
-  private renderAccessoryButton(button: AccessoryButton, onClickHandler: (id: string) => void) {
+  private renderAccessoryButton(button: AccessoryButton) {
     const { config, state, enabled } = button;
     const currentState = config.states[state] || {};
     const { icon, ...buttonAttrs } = currentState;
@@ -240,7 +250,8 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
         className={styles.accessoryButton}
         key={config.id}
         disabled={!enabled}
-        onClick={() => onClickHandler(config.id)}
+        name={config.id}
+        onClick={this.accessoryClick}
       >
         {Inspector.renderAccessoryIcon(icon)}
         {currentState.label}
@@ -252,7 +263,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
   private renderAccessoryButtons() {
     return (
       <PanelControls>
-        {this.state.buttons.map(accessoryButton => this.renderAccessoryButton(accessoryButton, this.accessoryClick))}
+        {this.state.buttons.map(accessoryButton => this.renderAccessoryButton(accessoryButton))}
       </PanelControls>
     );
   }
@@ -274,7 +285,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     }
 
     if ((oldState.themeInfo || { themeName: '' }).themeName !== newState.themeInfo.themeName) {
-      this.sendToInspector('theme', newState.themeInfo);
+      this.sendToExtension(ExtensionChannel.Theme, newState.themeInfo);
     }
   }
 
@@ -352,12 +363,13 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     }
   };
 
-  private accessoryClick = (id: string): void => {
-    this.sendToInspector('accessory-click', id);
+  private accessoryClick = (event: MouseEvent<HTMLButtonElement>): void => {
+    const id = event.currentTarget.name;
+    this.sendToExtension(ExtensionChannel.AccessoryClick, id);
   };
 
   private toggleDevTools = (): void => {
-    this.sendToInspector('toggle-dev-tools');
+    this.sendToExtension(ExtensionChannel.ToggleDevTools);
   };
 
   private canInspect(inspectObj: InspectObject): boolean {
@@ -375,21 +387,21 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     // TODO - localization
     const { channel } = event;
     switch (channel) {
-      case 'enable-accessory':
+      case EmulatorChannel.EnableAccessory:
         this.enableAccessory(event.args[0], event.args[1]);
         break;
 
-      case 'set-accessory-state':
+      case EmulatorChannel.SetAccessoryState:
         this.setAccessoryState(event.args[0], event.args[1]);
         break;
 
-      case 'set-inspector-title':
+      case EmulatorChannel.SetInspectorTitle:
         this.setState({ titleOverride: event.args[0] });
         this.setInspectorTitle(event.args[0]);
         break;
 
-      case 'logger.log':
-      case 'logger.error': {
+      case EmulatorChannel.Log:
+      case EmulatorChannel.LogError: {
         const logLevel = channel === 'logger.log' ? LogLevel.Info : LogLevel.Error;
         const { documentId } = this.props.document;
         const inspectorName = this._state.titleOverride || this.state.inspector.name || 'inspector';
@@ -398,7 +410,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
         break;
       }
 
-      case 'logger.luis-editor-deep-link': {
+      case EmulatorChannel.LogLuisDeepLink: {
         const { documentId } = this.props.document;
         const inspectorName = this._state.titleOverride || this.state.inspector.name || 'inspector';
         const text = `[${inspectorName}] ${event.args[0]}`;
@@ -407,10 +419,15 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
       }
 
       // record telemetry from extension
-      case 'track-event': {
+      case EmulatorChannel.TrackEvent: {
         const eventName = event.args[0];
         const eventProperties = event.args[1] || {};
         this.props.trackEvent(eventName, eventProperties);
+        break;
+      }
+
+      case EmulatorChannel.SetHightlightedObjects: {
+        this.props.setHighlightedObjects(this.props.document.documentId, event.args as Activity[]);
         break;
       }
 
@@ -423,7 +440,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
   private sendInitializationStackToInspector(): void {
     this.botUpdated(this.state.activeBot);
     this.inspect(this.state.inspectObj);
-    this.sendToInspector('theme', this.state.themeInfo);
+    this.sendToExtension(ExtensionChannel.Theme, this.state.themeInfo);
     this.chatLogUpdated(this.props.document.conversationId, this.state.logEntries);
   }
 
@@ -432,19 +449,19 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
       // showInInspector is for internal bookkeeping and shouldn't make it to the view
       // remove before rendering
       delete obj.showInInspector;
-      this.sendToInspector('inspect', obj);
+      this.sendToExtension(ExtensionChannel.Inspect, obj);
     }
   }
 
   private botUpdated(bot: IBotConfiguration) {
-    this.sendToInspector('bot-updated', bot);
+    this.sendToExtension(ExtensionChannel.BotUpdated, bot);
   }
 
   private chatLogUpdated(conversationId: string, logItems: LogEntry[]): void {
-    this.sendToInspector('chat-log-updated', conversationId, logItems);
+    this.sendToExtension(ExtensionChannel.ChatLogUpdated, conversationId, logItems);
   }
 
-  private sendToInspector(channel: string, ...args: any[]) {
+  private sendToExtension(channel: ExtensionChannel, ...args: any[]) {
     const { inspectorSrc } = this.state;
     const inspector = this.webViewByLocation[encodeURI(inspectorSrc)];
     if (!inspector || !this.domReadyByLocation[encodeURI(inspectorSrc)]) {

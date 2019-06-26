@@ -46,6 +46,9 @@
               "selected": {
                 "aria-selected": true,
                 "icon": "leftArrowSelected"
+              },
+              "disabled": {
+                "aria-disabled": true
               }
             }
           },
@@ -58,6 +61,9 @@
               "selected": {
                 "aria-selected": true,
                 "icon": "rightArrowSelected"
+              },
+              "disabled": {
+                "aria-disabled": true
               }
             }
           },
@@ -70,6 +76,9 @@
               "selected": {
                 "aria-selected": true,
                 "icon": "resetDiffSelected"
+              },
+              "disabled": {
+                "aria-disabled": true
               }
             }
           },
@@ -82,6 +91,9 @@
               "selected": {
                 "label": "Hide Diff",
                 "aria-selected": true
+              },
+              "disabled": {
+                "aria-disabled": true
               }
             }
           }
