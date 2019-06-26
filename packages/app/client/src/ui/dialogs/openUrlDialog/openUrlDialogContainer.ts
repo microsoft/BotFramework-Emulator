@@ -31,23 +31,27 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './botCreationDialog/botCreationDialog';
-export * from './host/hostContainer';
-export * from './secretPromptDialog/secretPromptDialogContainer';
-export * from './tabManager/tabManagerContainer';
-export * from './service';
-export * from './azureLoginSuccessDialog/azureLoginSuccessDialogContainer';
-export * from './azureLoginPromptDialog/azureLoginPromptDialogContainer';
-export * from './azureLoginFailedDialog/azureLoginFailedDialogContainer';
-export * from './connectServicePromptDialog/connectServicePromptDialogContainer';
-export * from './dataCollectionDialog/dataCollectionDialogContainer';
-export * from './getStartedWithCSDialog/getStartedWithCSDialogContainer';
-export * from './postMigrationDialog/postMigrationDialogContainer';
-export * from './progressIndicator/progressIndicatorContainer';
-export * from './botSettingsEditor/botSettingsEditorContainer';
-export * from './resourcesSettings/resourcesSettingsContainer';
-export * from './updateAvailableDialog';
-export * from './updateUnavailableDialog';
-export * from './openBotDialog/openBotDialogContainer';
-export * from './openUrlDialog/openUrlDialog';
-export * from './openUrlDialog/openUrlDialogContainer';
+import { connect } from 'react-redux';
+
+import { DialogService } from '../service';
+import { RootState } from '../../../data/store';
+
+import { OpenUrlDialog, OpenUrlDialogProps } from './openUrlDialog';
+
+const mapStateToProps = (state: RootState, ownProps: {}): Partial<OpenUrlDialogProps> => {
+  return {
+    ...ownProps,
+  };
+};
+
+const mapDispatchToProps = (_dispatch: () => void): OpenUrlDialogProps => {
+  return {
+    cancel: () => DialogService.hideDialog(0),
+    confirm: () => DialogService.hideDialog(1),
+  };
+};
+
+export const OpenUrlDialogContainer = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(OpenUrlDialog);

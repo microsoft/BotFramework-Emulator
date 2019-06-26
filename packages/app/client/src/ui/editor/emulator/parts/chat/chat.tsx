@@ -56,6 +56,7 @@ export interface ChatProps {
   showContextMenuForActivity: (activity: Partial<Activity>) => void;
   setInspectorObject: (documentId: string, activity: Partial<Activity & { showInInspector: true }>) => void;
   webchatStore: any;
+  showOpenUrlDialog?: (url) => any;
 }
 
 interface ChatState {
@@ -109,6 +110,7 @@ export class Chat extends Component<ChatProps, ChatState> {
           <ReactWebChat
             store={webchatStore}
             activityMiddleware={this.createActivityMiddleware}
+            cardActionMiddleware={this.cardActionMiddleware}
             bot={bot}
             directLine={document.directLine}
             disabled={isDisabled}
@@ -139,6 +141,34 @@ export class Chat extends Component<ChatProps, ChatState> {
       </ActivityWrapper>
     );
   }
+
+  private cardActionMiddleware = () => next => async ({ cardAction, getSignInUrl }) => {
+    const { type, value } = cardAction;
+
+    switch (type) {
+      case 'signin': {
+        const popup = window.open();
+        const url = await getSignInUrl();
+        popup.location.href = url;
+        break;
+      }
+      case 'downloadFile':
+      case 'playAudio':
+      case 'playVideo':
+      case 'showImage':
+      case 'openUrl':
+        this.props.showOpenUrlDialog(value).then(result => {
+          if (result == 1) {
+            window.open(value, '_blank');
+          }
+        });
+
+        break;
+
+      default:
+        return next({ cardAction, getSignInUrl });
+    }
+  };
 
   private createActivityMiddleware = () => next => card => children => {
     const { valueType } = card.activity;
