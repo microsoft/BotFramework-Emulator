@@ -71,11 +71,20 @@ export class BotEmulator {
   // TODO: Instead of providing a getter for serviceUrl, we should let the upstream to set the serviceUrl
   // Currently, the upstreamer doesn't really know when the serviceUrl change (ngrok), they need to do their job
   public getServiceUrl: (botUrl: string) => Promise<string>;
+  public getServiceUrlForOAuth: () => Promise<string>;
+  public shutDownOAuthNgrokInstance: () => void;
   public options: BotEmulatorOptions;
   public facilities: Facilities;
 
-  constructor(getServiceUrl: (botUrl: string) => Promise<string>, options: BotEmulatorOptions = DEFAULT_OPTIONS) {
+  constructor(
+    getServiceUrl: (botUrl: string) => Promise<string>,
+    getServiceUrlForOAuth: () => Promise<string>,
+    shutDownOAuthNgrokInstance: () => void,
+    options: BotEmulatorOptions = DEFAULT_OPTIONS
+  ) {
     this.getServiceUrl = getServiceUrl;
+    this.getServiceUrlForOAuth = getServiceUrlForOAuth;
+    this.shutDownOAuthNgrokInstance = shutDownOAuthNgrokInstance;
 
     this.options = { ...DEFAULT_OPTIONS, ...options };
 

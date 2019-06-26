@@ -56,10 +56,15 @@ export class RestServer {
   private _botEmulator: BotEmulator;
   public get botEmulator(): BotEmulator {
     if (!this._botEmulator) {
-      this._botEmulator = new BotEmulator(botUrl => Emulator.getInstance().ngrok.getServiceUrl(botUrl), {
-        fetch,
-        loggerOrLogService: emulatorApplication.mainWindow.logService,
-      });
+      this._botEmulator = new BotEmulator(
+        botUrl => Emulator.getInstance().ngrok.getServiceUrl(botUrl),
+        () => Emulator.getInstance().ngrok.getServiceUrlForOAuth(),
+        () => Emulator.getInstance().ngrok.shutDownOAuthNgrokInstance(),
+        {
+          fetch,
+          loggerOrLogService: emulatorApplication.mainWindow.logService,
+        }
+      );
       this._botEmulator.facilities.conversations.on('new', this.onNewConversation);
     }
     return this._botEmulator;

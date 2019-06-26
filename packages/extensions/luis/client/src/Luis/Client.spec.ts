@@ -240,7 +240,7 @@ describe('LUIS API client', () => {
       }
     });
 
-    fit('should throw if training fails', async () => {
+    it('should throw if training fails', async () => {
       mockGetStatus.mockResolvedValue({ _response: { status: 201 } });
       try {
         await client.train({} as any);

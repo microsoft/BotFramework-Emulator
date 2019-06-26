@@ -45,7 +45,6 @@ import * as commandLine from './commandLine';
 import { Protocol } from './constants';
 import { Emulator } from './emulator';
 import './fetchProxy';
-import { ngrokEmitter } from './ngrok';
 import { Window } from './platform/window';
 import { azureLoggedInUserChanged } from './settingsData/actions/azureAuthActions';
 import { rememberBounds, rememberTheme } from './settingsData/actions/windowStateActions';
@@ -157,7 +156,7 @@ class EmulatorApplication {
   }
 
   private initializeNgrokListeners() {
-    ngrokEmitter.on('expired', this.onNgrokSessionExpired);
+    Emulator.getInstance().ngrok.ngrokEmitter.on('expired', this.onNgrokSessionExpired);
   }
 
   private initializeAppListeners() {

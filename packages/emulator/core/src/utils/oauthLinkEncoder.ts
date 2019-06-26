@@ -112,17 +112,17 @@ export default class OAuthLinkEncoder {
     const headers = {
       Authorization: this.authorizationHeader,
     };
-    const conversation = this.botEmulator.facilities.conversations.conversationById(this.conversationId);
-    const emulatorUrl = await this.botEmulator.getServiceUrl(conversation.botEndpoint.botUrl);
-    const url =
-      'https://api.botframework.com/api/botsignin/GetSignInUrl?state=' +
-      state +
-      '&emulatorUrl=' +
-      emulatorUrl +
-      '&code_challenge=' +
-      codeChallenge;
     let errorMessage: string;
     try {
+      // we need to make sure that the postback url is accessible from the token server (ngrok)
+      const emulatorUrl = await this.botEmulator.getServiceUrlForOAuth();
+      const url =
+        'https://api.botframework.com/api/botsignin/GetSignInUrl?state=' +
+        state +
+        '&emulatorUrl=' +
+        emulatorUrl +
+        '&code_challenge=' +
+        codeChallenge;
       const response = await fetch(url, {
         headers,
         method: 'GET',

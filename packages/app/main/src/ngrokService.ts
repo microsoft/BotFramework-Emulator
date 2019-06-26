@@ -31,6 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { EventEmitter } from 'events';
+
 import { FrameworkSettings } from '@bfemulator/app-shared';
 import {
   appSettingsItem,
@@ -45,12 +47,13 @@ import {
 
 import { Emulator } from './emulator';
 import { emulatorApplication } from './main';
-import * as ngrok from './ngrok';
+import { NgrokInstance } from './ngrok';
 import { getStore } from './settingsData/store';
 
-let ngrokInstance: NgrokService;
+let ngrokServiceInstance: NgrokService;
 
 export class NgrokService {
+  private ngrok = new NgrokInstance();
   private ngrokPath: string;
   private serviceUrl: string;
   private inspectUrl: string;
@@ -58,9 +61,10 @@ export class NgrokService {
   private localhost = 'localhost';
   private triedToSpawn: boolean;
   private pendingRecycle: Promise<void>;
+  private oauthNgrokInstance: NgrokInstance;
 
   constructor() {
-    return ngrokInstance || (ngrokInstance = this); // Singleton
+    return ngrokServiceInstance || (ngrokServiceInstance = this); // Singleton
   }
 
   public async getServiceUrl(botUrl: string): Promise<string> {
@@ -71,14 +75,14 @@ export class NgrokService {
     if (this.pendingRecycle) {
       await this.pendingRecycle;
     }
-    if (ngrok.running()) {
+    if (this.ngrok.running()) {
       return this.serviceUrl;
     }
     const { bypassNgrokLocalhost, runNgrokAtStartup } = getStore().getState().framework;
     // Use ngrok
     const local = !botUrl || isLocalHostUrl(botUrl);
     if (runNgrokAtStartup || !local || (local && !bypassNgrokLocalhost)) {
-      if (!ngrok.running()) {
+      if (!this.ngrok.running()) {
         await this.startup();
       }
 
@@ -88,6 +92,41 @@ export class NgrokService {
     return `http://${this.localhost}:${Emulator.getInstance().framework.serverPort}`;
   }
 
+  // OAuth sign-in flow must always use an ngrok url so that the BF token
+  // service can deliver the token to the Emulator
+  public async getServiceUrlForOAuth(): Promise<string> {
+    // grab the service url from the current ngrok instance if it's running
+    if (this.pendingRecycle) {
+      await this.pendingRecycle;
+    }
+    if (this.ngrok.running()) {
+      return this.serviceUrl;
+    }
+    // otherwise, we need to spin up an auxillary ngrok instance that we can tear down when the token response comes back
+    this.oauthNgrokInstance = new NgrokInstance();
+    const port = Emulator.getInstance().framework.serverPort;
+    const ngrokPath = getStore().getState().framework.ngrokPath;
+    const inspectUrl = new Promise<string>(async (resolve, reject) => {
+      try {
+        const { url } = await this.oauthNgrokInstance.connect({
+          addr: port,
+          path: ngrokPath,
+        });
+        resolve(url);
+      } catch (e) {
+        reject(new Error(`Failed to connect to ngrok instance for OAuth postback URL: ${e}`));
+      }
+    });
+
+    return inspectUrl;
+  }
+
+  public shutDownOAuthNgrokInstance(): void {
+    if (this.oauthNgrokInstance) {
+      this.oauthNgrokInstance.kill();
+    }
+  }
+
   public getSpawnStatus = (): { triedToSpawn: boolean; err: any } => ({
     triedToSpawn: this.triedToSpawn,
     err: this.spawnErr,
@@ -95,7 +134,7 @@ export class NgrokService {
 
   public async updateNgrokFromSettings(framework: FrameworkSettings) {
     this.cacheSettings();
-    if (this.ngrokPath !== framework.ngrokPath && ngrok.running()) {
+    if (this.ngrokPath !== framework.ngrokPath && this.ngrok.running()) {
       return this.recycle();
     }
   }
@@ -105,7 +144,7 @@ export class NgrokService {
       return this.pendingRecycle;
     }
 
-    ngrok.kill();
+    this.ngrok.kill();
     const port = Emulator.getInstance().framework.serverPort;
 
     this.ngrokPath = getStore().getState().framework.ngrokPath;
@@ -118,7 +157,7 @@ export class NgrokService {
       return (this.pendingRecycle = new Promise(async resolve => {
         try {
           this.triedToSpawn = true;
-          const { inspectUrl, url } = await ngrok.connect({
+          const { inspectUrl, url } = await this.ngrok.connect({
             addr: port,
             path: this.ngrokPath,
           });
@@ -135,6 +174,20 @@ export class NgrokService {
       }));
     }
     return Promise.resolve();
+  }
+
+  public kill(): void {
+    if (this.ngrok) {
+      this.ngrok.kill();
+    }
+  }
+
+  public get ngrokEmitter(): EventEmitter {
+    return this.ngrok.ngrokEmitter || undefined;
+  }
+
+  public get running(): boolean {
+    return this.ngrok.running() || false;
   }
 
   /** Logs a message in all active conversations that ngrok has expired */
@@ -177,7 +230,7 @@ export class NgrokService {
       );
     } else if (!this.ngrokPath) {
       this.reportNotConfigured(conversationId);
-    } else if (ngrok.running()) {
+    } else if (this.ngrok.running()) {
       this.reportRunning(conversationId);
     } else {
       emulatorApplication.mainWindow.logService.logToChat(
