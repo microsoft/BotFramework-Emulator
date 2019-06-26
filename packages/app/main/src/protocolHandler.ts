@@ -47,7 +47,6 @@ import {
 
 import { Protocol } from './constants';
 import { Emulator } from './emulator';
-import { ngrokEmitter, running } from './ngrok';
 import { getSettings } from './settingsData/store';
 import { sendNotificationToClient } from './utils/sendNotificationToClient';
 import { TelemetryService } from './telemetry';
@@ -258,17 +257,18 @@ class ProtocolHandlerImpl implements ProtocolHandler {
 
     const appSettings: FrameworkSettings = getSettings().framework;
     if (appSettings.ngrokPath) {
-      let ngrokSpawnStatus = Emulator.getInstance().ngrok.getSpawnStatus();
+      const ngrok = Emulator.getInstance().ngrok;
+      let ngrokSpawnStatus = ngrok.getSpawnStatus();
       // if ngrok hasn't spawned yet, we need to start it up
       if (!ngrokSpawnStatus.triedToSpawn) {
-        await Emulator.getInstance().ngrok.recycle();
+        await ngrok.recycle();
       }
-      ngrokSpawnStatus = Emulator.getInstance().ngrok.getSpawnStatus();
+      ngrokSpawnStatus = ngrok.getSpawnStatus();
       if (ngrokSpawnStatus.triedToSpawn && ngrokSpawnStatus.err) {
         throw new Error(`Error while trying to spawn ngrok instance: ${ngrokSpawnStatus.err || ''}`);
       }
 
-      if (running()) {
+      if (ngrok.running) {
         try {
           await this.commandService.call(SharedConstants.Commands.Bot.SetActive, bot);
           await this.commandService.remoteCall(SharedConstants.Commands.Bot.Load, bot);
@@ -277,7 +277,7 @@ class ProtocolHandlerImpl implements ProtocolHandler {
         }
       } else {
         // if ngrok hasn't connected yet, wait for it to connect and load the bot
-        ngrokEmitter.once(
+        ngrok.ngrokEmitter.once(
           'connect',
           async (...args: any[]): Promise<void> => {
             try {

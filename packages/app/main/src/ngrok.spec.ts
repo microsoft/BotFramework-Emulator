@@ -31,8 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import './fetchProxy';
-import { ngrokEmitter } from './ngrok';
-import * as ngrok from './ngrok';
+import { intervals, NgrokInstance } from './ngrok';
 
 const mockSpawn = {
   on: () => {},
@@ -76,6 +75,8 @@ jest.mock('node-fetch', () => {
 });
 
 describe('the ngrok ', () => {
+  const ngrok = new NgrokInstance();
+
   afterEach(() => {
     ngrok.kill();
   });
@@ -106,9 +107,9 @@ describe('the ngrok ', () => {
 
   it('should emit when the ngrok session is expired', async () => {
     mockOk = 0;
-    ngrok.intervals.retry = 100;
-    ngrok.intervals.expirationPoll = 1;
-    ngrok.intervals.expirationTime = -1;
+    intervals.retry = 100;
+    intervals.expirationPoll = 1;
+    intervals.expirationTime = -1;
     let emitted = false;
     ngrok.ngrokEmitter.on('expired', () => {
       emitted = true;
@@ -127,7 +128,7 @@ describe('the ngrok ', () => {
 
   it('should disconnect', async () => {
     let disconnected = false;
-    ngrokEmitter.on('disconnect', url => {
+    ngrok.ngrokEmitter.on('disconnect', url => {
       disconnected = true;
     });
 
@@ -144,7 +145,7 @@ describe('the ngrok ', () => {
   it('should throw when the number of reties to retrieve the ngrok url are exhausted', async () => {
     mockOk = -101;
     let threw = false;
-    ngrok.intervals.retry = 1;
+    intervals.retry = 1;
     try {
       await ngrok.connect({
         addr: 61914,

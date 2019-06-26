@@ -104,9 +104,14 @@ async function main() {
   const port = program.port || (await getPort(5000));
 
   // Create a bot entry
-  const bot = new BotEmulator(async () => program.serviceUrl || `http://localhost:${port}`, {
-    loggerOrLogService: new NpmLogger(),
-  });
+  const bot = new BotEmulator(
+    async () => program.serviceUrl,
+    () => program.serviceUrl,
+    () => null || `http://localhost:${port}`,
+    {
+      loggerOrLogService: new NpmLogger(),
+    }
+  );
 
   if (program.file) {
     const botsJSON = await new Promise<string>((resolve, reject) => {

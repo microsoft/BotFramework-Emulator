@@ -111,6 +111,18 @@ jest.mock('./utils/sendNotificationToClient', () => ({
   },
 }));
 
+jest.mock('./emulator', () => ({
+  Emulator: {
+    getInstance: () => ({
+      ngrok: {
+        ngrokEmitter: {
+          on: () => null,
+        },
+      },
+    }),
+  },
+}));
+
 describe('AppUpdater', () => {
   let mockTrackEvent;
   const trackEventBackup = TelemetryService.trackEvent;

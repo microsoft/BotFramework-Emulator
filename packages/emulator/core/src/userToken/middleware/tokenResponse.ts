@@ -48,6 +48,8 @@ export default function tokenResponse(botEmulator: BotEmulator) {
     const conversation = botEmulator.facilities.conversations.conversationById(conversationId);
 
     conversation.sendTokenResponse(body.connectionName, body.token, false).then(response => {
+      // shut down the oauth ngrok instance
+      botEmulator.shutDownOAuthNgrokInstance();
       if (response.statusCode === HttpStatus.OK) {
         res.send(HttpStatus.OK, body);
       } else {

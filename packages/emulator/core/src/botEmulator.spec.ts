@@ -73,6 +73,8 @@ jest.mock('restify', () => ({
 describe('BotEmulator', () => {
   it('should instantiate itself properly', async () => {
     const getServiceUrl = _url => Promise.resolve('serviceUrl');
+    const getServiceUrlForOAuth = () => Promise.resolve('serviceUrlForOAuth');
+    const shutDownOAuthNgrokInstance = jest.fn(() => null);
     const customFetch = (_url, _options) => Promise.resolve();
     const customLogger = {
       logActivity: (_conversationId: string, _activity: GenericActivity, _role: string) => 'activityLogged',
@@ -86,10 +88,14 @@ describe('BotEmulator', () => {
       fetch: customFetch,
       loggerOrLogService: customLogger,
     };
-    const botEmulator1 = new BotEmulator(getServiceUrl, options1);
+    const botEmulator1 = new BotEmulator(getServiceUrl, getServiceUrlForOAuth, shutDownOAuthNgrokInstance, options1);
     const serviceUrl = await botEmulator1.getServiceUrl('');
+    const serviceUrlForOAuth = await botEmulator1.getServiceUrlForOAuth();
+    botEmulator1.shutDownOAuthNgrokInstance();
 
     expect(serviceUrl).toBe('serviceUrl');
+    expect(serviceUrlForOAuth).toBe('serviceUrlForOAuth');
+    expect(shutDownOAuthNgrokInstance).toHaveBeenCalled();
     expect(botEmulator1.options).toEqual({ ...options1, stateSizeLimitKB: 64 });
     expect(botEmulator1.facilities.attachments).not.toBeFalsy();
     expect(botEmulator1.facilities.botState).not.toBeFalsy();

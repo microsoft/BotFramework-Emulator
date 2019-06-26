@@ -81,26 +81,23 @@ jest.mock('./settingsData/store', () => ({
 }));
 
 let mockGetSpawnStatus: any = jest.fn(() => ({ triedToSpawn: true }));
+let mockRunningStatus;
 const mockRecycle = jest.fn(() => null);
 const mockEmulator = {
   framework: { serverUrl: 'http://[::]:8090' },
   ngrok: {
     getSpawnStatus: () => mockGetSpawnStatus(),
+    ngrokEmitter: {
+      once: (_eventName, cb) => cb(),
+    },
     recycle: () => mockRecycle(),
+    running: () => mockRunningStatus,
   },
 };
 jest.mock('./emulator', () => ({
   Emulator: {
     getInstance: () => mockEmulator,
   },
-}));
-
-let mockRunningStatus;
-jest.mock('./ngrok', () => ({
-  ngrokEmitter: {
-    once: (_eventName, cb) => cb(),
-  },
-  running: () => mockRunningStatus,
 }));
 
 let mockSendNotificationToClient;

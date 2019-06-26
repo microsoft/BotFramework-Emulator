@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Fixed 
 - [client/main] Auto update is now opt-in by default and changed UX to reflect this in PR [1575](https://github.com/microsoft/BotFramework-Emulator/pull/1575)
+- [client/main] Fixed OAuth card sign-in flow when not using magic code in PR [1660](https://github.com/microsoft/BotFramework-Emulator/pull/1660)
 
 ## v4.4.2 - 2019 - 05 - 28
 ## Fixed

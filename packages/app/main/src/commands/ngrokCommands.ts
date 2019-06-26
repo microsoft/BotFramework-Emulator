@@ -35,7 +35,6 @@ import { SharedConstants } from '@bfemulator/app-shared';
 import { Command } from '@bfemulator/sdk-shared';
 
 import { Emulator } from '../emulator';
-import { kill } from '../ngrok';
 
 const Commands = SharedConstants.Commands.Ngrok;
 
@@ -56,6 +55,6 @@ export class NgrokCommands {
 
   @Command(Commands.KillProcess)
   protected killNgrokProcess() {
-    return kill();
+    Emulator.getInstance().ngrok.kill();
   }
 }
