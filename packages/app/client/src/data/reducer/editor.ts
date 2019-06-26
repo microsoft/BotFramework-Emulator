@@ -289,7 +289,7 @@ export const editor = (state: EditorState = DEFAULT_STATE, action: EditorAction 
     }
 
     case EditorActions.updateDocument: {
-      const { payload: updatedDocument }: { payload: Document } = action;
+      const { payload: updatedDocument }: { payload: Partial<Document> } = action;
       const { editors } = state;
       const editorKeys = Object.keys(editors);
       let i = editorKeys.length;

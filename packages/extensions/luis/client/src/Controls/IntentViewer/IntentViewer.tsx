@@ -42,9 +42,7 @@ interface IntentViewerProps {
   topScoringIntent: Intent;
 }
 
-class IntentViewer extends Component<IntentViewerProps, {}> {
-  public state = {};
-
+export class IntentViewer extends Component<IntentViewerProps, {}> {
   public render() {
     const { intent, score } = this.props.topScoringIntent;
     return (
@@ -57,5 +55,3 @@ class IntentViewer extends Component<IntentViewerProps, {}> {
     );
   }
 }
-
-export default IntentViewer;

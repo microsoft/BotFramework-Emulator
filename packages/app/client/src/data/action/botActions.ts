@@ -32,7 +32,7 @@
 //
 
 import { BotInfo } from '@bfemulator/app-shared';
-import { BotConfigWithPath, StartConversationParams } from '@bfemulator/sdk-shared';
+import { BotConfigWithPath, StartConversationParams, User } from '@bfemulator/sdk-shared';
 
 export enum BotActionType {
   close = 'BOT/CLOSE',
@@ -42,6 +42,7 @@ export enum BotActionType {
   open = 'BOT/OPEN',
   openViaUrl = 'BOT/OPEN_VIA_URL',
   openViaFilePath = 'BOT/OPEN_VIA_FILE_PATH',
+  restartConversation = 'BOT/RESTART_CONVERSATION',
   setActive = 'BOT/SET_ACTIVE',
 }
 
@@ -60,6 +61,12 @@ export interface BotInfosPayload {
 
 export interface HashPayload {
   hash: string;
+}
+
+export interface RestartConversationPayload {
+  conversationId: string;
+  documentId: string;
+  user?: User;
 }
 
 export function botHashGenerated(hash: string): BotAction<HashPayload> {
@@ -108,6 +115,13 @@ export function openBotViaUrlAction(
   return {
     type: BotActionType.openViaUrl,
     payload: startConversationParams,
+  };
+}
+
+export function restartConversation(conversationId: string, documentId: string): BotAction<RestartConversationPayload> {
+  return {
+    type: BotActionType.restartConversation,
+    payload: { conversationId, documentId },
   };
 }
 

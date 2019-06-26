@@ -31,12 +31,4 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-/// <reference types="node" />
-
-declare module 'luis-apis/lib/api/serviceBase' {
-  class ServiceBase {
-    static config: any;
-  }
-
-  export { ServiceBase };
-}
+export type ChannelService = 'public' | 'azureusgovernment';

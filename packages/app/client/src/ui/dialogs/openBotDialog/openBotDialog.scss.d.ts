@@ -7,3 +7,4 @@ export const fileInput: string;
 export const multiInputRow: string;
 export const themeOverrides: string;
 export const autoCompleteBar: string;
+export const rowOverride: string;

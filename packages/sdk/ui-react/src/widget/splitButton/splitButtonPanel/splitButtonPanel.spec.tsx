@@ -77,7 +77,7 @@ describe('<SplitButtonPanel>', () => {
     wrapper = mount(<SplitButtonPanel expanded={false} />);
     node = wrapper.find(SplitButtonPanel);
 
-    expect(node.html()).toBe(null);
+    expect(node.html()).toBeFalsy();
   });
 
   it('should render deeply', () => {

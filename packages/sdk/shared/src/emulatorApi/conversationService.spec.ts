@@ -165,6 +165,7 @@ describe('The ConversationService should call "fetch" with the expected paramete
       appId: '123',
       appPassword: '321',
       endpoint: 'http://endpoint',
+      channelService: 'public',
     });
     const { url, opts } = mockFetchArgs;
     expect(url).toBe('http://localhost/v3/conversations');
@@ -178,6 +179,30 @@ describe('The ConversationService should call "fetch" with the expected paramete
       'X-Emulator-AppId': '123',
       'X-Emulator-AppPassword': '321',
       'X-Emulator-BotEndpoint': 'http://endpoint',
+      'X-Emulator-ChannelService': 'public',
+    });
+  });
+
+  test('the "startConversation" function with Gov channelService', () => {
+    ConversationService.startConversation('http://localhost', {
+      appId: '123',
+      appPassword: '321',
+      endpoint: 'http://endpoint',
+      channelService: 'azureusgovernment',
+    });
+    const { url, opts } = mockFetchArgs;
+    expect(url).toBe('http://localhost/v3/conversations');
+
+    const { body, headers, method } = opts;
+    expect(headers === headers).toBeTruthy();
+    expect(method).toBe('POST');
+    expect(body).toBeTruthy();
+    expect(headers).toEqual({
+      'Content-Type': 'application/json',
+      'X-Emulator-AppId': '123',
+      'X-Emulator-AppPassword': '321',
+      'X-Emulator-BotEndpoint': 'http://endpoint',
+      'X-Emulator-ChannelService': 'azureusgovernment',
     });
   });
 });

@@ -31,27 +31,21 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-/// <reference types="node" />
+import { connect } from 'react-redux';
 
-declare module 'luis-apis/lib/api/examples' {
-  export class Example {
-    addLabel(params: any, exampleLabelObject: any): Promise<any>;
-  }
+import { DialogService } from '../service';
 
-  export interface AddLabelParams {
-    appId: string;
-    versionId: string;
-  }
+import { DataCollectionDialog, DataCollectionDialogProps } from './dataCollectionDialog';
 
-  export interface EntityLabel {
-    entityName: string;
-    startCharIndex: number;
-    endCharIndex: number;
-  }
-
-  export interface ExampleLabelObject {
-    text: string;
-    intentName: string;
-    entityLabels?: EntityLabel[];
-  }
+function mapDispatchToProps(): DataCollectionDialogProps {
+  return {
+    hideDialog: (collectData: boolean) => {
+      DialogService.hideDialog(collectData);
+    },
+  };
 }
+
+export const DataCollectionDialogContainer = connect(
+  null,
+  mapDispatchToProps
+)(DataCollectionDialog);

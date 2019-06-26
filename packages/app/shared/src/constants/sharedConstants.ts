@@ -179,6 +179,7 @@ export const SharedConstants = {
       ShowProgressIndicator: 'progress-indicator:show',
       OpenBotViaUrl: 'connect-bot',
       ShowOpenUrlDialog: 'chat:open-url',
+      ShowDataCollectionDialog: 'data-collection:show',
     },
   },
   ContentTypes: {

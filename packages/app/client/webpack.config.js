@@ -37,15 +37,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 const webpack = require('webpack');
-const {
-  DllPlugin,
-  DllReferencePlugin,
-  NamedModulesPlugin,
-  HotModuleReplacementPlugin,
-  DefinePlugin,
-  WatchIgnorePlugin,
-} = webpack;
-const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
+const { DllPlugin, DllReferencePlugin, NamedModulesPlugin, DefinePlugin, WatchIgnorePlugin } = webpack;
 
 const { npm_lifecycle_event = '' } = process.env;
 const manifestLocation = path.resolve('./generated');
@@ -137,7 +129,6 @@ const defaultConfig = {
   plugins: [
     new NamedModulesPlugin(),
     new CopyWebpackPlugin([
-      { from: './src/inspector-preload.js', to: './' },
       { from: './src/splash.html', to: './splash.html' },
       { from: './src/index.html', to: './index.html' },
       { from: './src/ui/styles/themes/light.css', to: 'themes/light.css' },
@@ -172,7 +163,6 @@ const buildConfig = mode => {
   };
   if (mode === 'development') {
     config.module.rules[0].use = use;
-    config.plugins.unshift(new HotModuleReplacementPlugin(), new HardSourceWebpackPlugin());
   } else {
     config.optimization = {
       minimizer: [

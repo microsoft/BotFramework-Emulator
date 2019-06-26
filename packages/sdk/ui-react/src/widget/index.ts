@@ -43,3 +43,4 @@ export * from './checkbox/checkbox';
 export * from './insetShadow/insetShadow';
 export * from './spinner/spinner';
 export * from './splitButton';
+export * from './collapsibleJsonViewer/collapsibleJsonViewer';

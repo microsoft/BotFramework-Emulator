@@ -31,24 +31,34 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-/// <reference types="node" />
+import { ErrorCodes } from '@bfemulator/sdk-shared';
+import * as HttpStatus from 'http-status-codes';
+import { Next, Request, Response } from 'restify';
 
-declare module 'luis-apis/lib/api/train' {
-  interface ModelTrainStatusDetails {
-    statusId: TrainStatus;
-    status: string;
-    exampleCount: number;
-  }
+import { BotEmulator } from '../../botEmulator';
+import createAPIException from '../../utils/createResponse/apiException';
+import Conversation from '../../facility/conversation';
+import sendErrorResponse from '../../utils/sendErrorResponse';
 
-  interface ModelTrainStatus {
-    modelId: string;
-    details: ModelTrainStatusDetails;
-  }
+export interface ConversationAware extends Request {
+  conversation: Conversation;
+}
 
-  class Train {
-    getVersionTrainingStatus(params: any): Promise<any>;
-    trainApplicationVersion(params: any): Promise<any>;
-  }
+export default function fetchConversation(botEmulator: BotEmulator) {
+  return (req: ConversationAware, res: Response, next: Next): any => {
+    const conversation = botEmulator.facilities.conversations.conversationById(req.params.conversationId);
 
-  export { Train, ModelTrainStatus, ModelTrainStatusDetails, TrainStatus };
+    if (!conversation) {
+      throw createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, 'conversation not found');
+    }
+
+    try {
+      res.json(HttpStatus.OK, conversation.botEndpoint);
+      res.end();
+    } catch (err) {
+      sendErrorResponse(req, res, next, err);
+    }
+
+    next();
+  };
 }

@@ -31,23 +31,37 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-/// <reference types="node" />
+import * as React from 'react';
+import { mount } from 'enzyme';
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
 
-declare module 'luis-apis/lib/api/apps' {
-  interface ApplicationPublishRequest {
-    versionId: string;
-    isStaging: bool;
-    region: string;
-  }
+import { DialogService } from '../service';
 
-  class Apps {
-    getApplicationsList(): Promise<any>;
-    getApplicationInfo(params: any): Promise<any>;
-  }
+import { DataCollectionDialog } from './dataCollectionDialog';
+import { DataCollectionDialogContainer } from './dataCollectionDialogContainer';
 
-  class Publish {
-    publishApplication(params, applicationPublishObject): Promise<any>;
-  }
+describe('<DataCollectionDialogContainer />', () => {
+  let wrapper;
+  let instance;
 
-  export { Apps, Publish, ApplicationPublishRequest };
-}
+  beforeEach(() => {
+    wrapper = mount(
+      <Provider store={createStore((state, _action) => state)}>
+        <DataCollectionDialogContainer />
+      </Provider>
+    );
+    instance = wrapper.find(DataCollectionDialog).instance();
+  });
+
+  it('should render properly', () => {
+    expect(wrapper.find(DataCollectionDialog)).toHaveLength(1);
+  });
+
+  it('should hide the dialog and return the proper result', () => {
+    const hideDialogSpy = jest.spyOn(DialogService, 'hideDialog');
+    instance.onConfirmOrCancel({ target: { name: 'yes' } });
+
+    expect(hideDialogSpy).toHaveBeenCalledWith(true);
+  });
+});

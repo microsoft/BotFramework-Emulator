@@ -105,8 +105,13 @@ export class ConversationService {
     });
   }
 
+  public static getConversationEndpoint(serverUrl: string, conversationId: string): Promise<Response> {
+    const url = `${serverUrl}/emulator/${conversationId}/endpoint`;
+    return fetch(url);
+  }
+
   public static startConversation(serverUrl: string, payload: Partial<StartConversationParams>): Promise<Response> {
-    const { endpoint, appId = '', appPassword = '', user, ...body } = payload;
+    const { endpoint, appId = '', appPassword = '', user, channelService, ...body } = payload;
     const url = serverUrl + `/v3/conversations`;
     return fetch(url, {
       method: 'POST',
@@ -115,6 +120,7 @@ export class ConversationService {
         'X-Emulator-BotEndpoint': (endpoint || '').trim(),
         'X-Emulator-AppId': (appId || '').trim(),
         'X-Emulator-AppPassword': (appPassword || '').trim(),
+        'X-Emulator-ChannelService': (channelService || '').trim().toLowerCase(),
       },
       body: JSON.stringify({
         bot: {

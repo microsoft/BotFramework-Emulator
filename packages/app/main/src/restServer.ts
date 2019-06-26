@@ -72,9 +72,10 @@ export class RestServer {
         'authorization',
         'x-requested-with',
         'x-ms-bot-agent',
-        'x-emulator-botendpoint',
         'x-emulator-appid',
         'x-emulator-apppassword',
+        'x-emulator-botendpoint',
+        'x-emulator-channelservice',
       ],
       exposeHeaders: [],
     });
@@ -168,7 +169,7 @@ function shouldPostToChat(
   const isDLine = method === 'GET' && route.spec.path === '/v3/directline/conversations/:conversationId/activities';
   const isNotTranscript = !!conversationId && !conversationId.includes('transcript');
   const { conversation } = req;
-  return !isDLine && isNotTranscript && conversation.mode !== 'debug';
+  return !isDLine && isNotTranscript && conversation && conversation.mode !== 'debug';
 }
 
 function getConversationId(req: ConversationAwareRequest): string {

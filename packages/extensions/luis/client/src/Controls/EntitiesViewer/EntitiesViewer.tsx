@@ -40,18 +40,11 @@ import * as styles from './EntitiesViewer.scss';
 
 const INSTANCE_KEY = '$instance';
 
-interface EntitiesViewerState {}
-
 interface EntitiesViewerProps {
   entities: any;
 }
 
-class EntitiesViewer extends Component<EntitiesViewerProps, EntitiesViewerState> {
-  constructor(props: any, context: any) {
-    super(props, context);
-    this.state = {};
-  }
-
+export class EntitiesViewer extends Component<EntitiesViewerProps, {}> {
   public render() {
     let entities: any[];
     const filteredEntityKeys = Object.keys(this.props.entities || {}).filter(entityKey => {
@@ -76,5 +69,3 @@ class EntitiesViewer extends Component<EntitiesViewerProps, EntitiesViewerState>
     );
   }
 }
-
-export default EntitiesViewer;
