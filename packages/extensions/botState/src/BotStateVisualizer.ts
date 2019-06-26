@@ -34,16 +34,17 @@ import * as d3 from 'd3';
 import { HierarchyPointNode } from 'd3';
 // TODO: Revert import to `@bfemulator/sdk-shared` once issue #1333 (https://github.com/Microsoft/BotFramework-Emulator/issues/1333) is resolved.
 import { json2HTML } from '@bfemulator/sdk-shared/build/utils/json2HTML';
-
-import { BotState, HierarchicalData } from './types';
-import { ViewState } from './ViewState';
-import { buildHierarchicalData } from './utils';
-import { RootState } from '../../../app/client/src/data/store';
 import { Activity } from 'botframework-schema';
 import { LogEntry, InspectableObjectLogItem, LogItem, LogItemType } from '@bfemulator/sdk-shared';
 import { select } from 'redux-saga/effects';
 import { ValueTypes } from '@bfemulator/app-shared/built/enums';
 import { diff } from 'deep-diff';
+
+import { RootState } from '../../../app/client/src/data/store';
+
+import { buildHierarchicalData } from './utils';
+import { ViewState } from './ViewState';
+import { BotState, HierarchicalData } from './types';
 //import { setHighlightedObjects, setInspectorObjects, } from '../../../app/client/src/data/action/chatActions';
 
 const getBotState = (selectedTrace: Activity, botDiff: number): Activity => {

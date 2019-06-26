@@ -33,12 +33,13 @@
 
 import { connect } from 'react-redux';
 import { SharedConstants } from '@bfemulator/app-shared';
+import { Activity } from 'botframework-schema';
 
 import { RootState } from '../../../../../data/store';
 import { executeCommand } from '../../../../../data/action/commandAction';
-import { Activity } from 'botframework-schema';
-import { Inspector } from './inspector';
 import { setHighlightedObjects } from '../../../../../data/action/chatActions';
+
+import { Inspector } from './inspector';
 
 const mapStateToProps = (state: RootState, ownProps: any) => {
   const { bot, theme, clientAwareSettings } = state;

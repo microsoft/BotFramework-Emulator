@@ -31,12 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import { ValueTypes } from '@bfemulator/app-shared/built/enums';
+import { LogEntry } from '@bfemulator/sdk-shared';
 
 import { BotStateVisualizer } from './BotStateVisualizer';
 import { IpcHandler } from './utils';
 import { BotState } from './types';
 import { ViewState } from './ViewState';
-import { LogEntry } from '@bfemulator/sdk-shared';
 
 export class WindowHostReceiver {
   private visualizer: BotStateVisualizer;

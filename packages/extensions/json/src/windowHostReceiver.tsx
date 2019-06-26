@@ -36,6 +36,7 @@ import { Activity } from 'botframework-schema';
 import { ExtensionChannel } from '@bfemulator/sdk-shared/build/types/ipc';
 import { ValueTypes } from '@bfemulator/app-shared/built/enums/valueTypes';
 import { LogEntry, LogItem } from '@bfemulator/sdk-shared/build/types/log';
+
 import { buildDiff, getBotState, IpcHandler, IpcHost, updateTheme } from './utils';
 
 export interface WindowHostReceiverState {
@@ -47,13 +48,13 @@ export interface WindowHostReceiverState {
   selectedItem: Activity | LogItem;
 }
 
-type JsonViewerExtensionAccessory = {
+interface JsonViewerExtensionAccessory {
   json: string;
   leftArrow: string;
   rightArrow: string;
   resetDiff: string;
   diff: string;
-};
+}
 
 type AccessoryId = keyof JsonViewerExtensionAccessory;
 
@@ -107,12 +108,24 @@ export function windowHostReceiver(WrappedComponent: ComponentClass<any>): Compo
       const newStateFragment = { lastAccessoryClicked: id } as WindowHostReceiverState;
       switch (id) {
         case 'diff':
-          newStateFragment.isDiff = true;
-          // Determine if we can diff
-          const previousBotState = getBotState(this.state.chatLogs.logItems, this.state.selectedItem as Activity);
-          if (previousBotState) {
-            newStateFragment.data = buildDiff(this.state.selectedItem as Activity, previousBotState);
+          {
+            newStateFragment.isDiff = true;
+            // Determine if we can diff
+            const previousBotState = getBotState(this.state.chatLogs.logItems, this.state.selectedItem as Activity);
+            if (previousBotState) {
+              newStateFragment.data = buildDiff(this.state.selectedItem as Activity, previousBotState);
+            }
           }
+          break;
+
+        case 'leftArrow':
+          break;
+
+        case 'rightArrow':
+          break;
+
+        default:
+          break;
       }
       this.setState(newStateFragment);
     }
