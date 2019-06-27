@@ -51,8 +51,8 @@ ipcRenderer.on('toggle-dev-tools', () => {
   remote.getCurrentWebContents().toggleDevTools();
 });
 
-ipcRenderer.on('accessory-click', (sender, id) => {
-  window.host.dispatch('accessory-click', id);
+ipcRenderer.on('accessory-click', (sender, id, currentState) => {
+  window.host.dispatch('accessory-click', id, currentState);
 });
 
 ipcRenderer.on('theme', (sender, ...args) => {
@@ -109,6 +109,10 @@ window.host = {
 
   trackEvent: function(name, properties) {
     ipcRenderer.sendToHost('track-event', name, properties);
+  },
+
+  setHighlightedObjects(documentId, objects) {
+    ipcRenderer.sendToHost('set-highlighted-objects', documentId, objects);
   },
 
   dispatch: function(event, ...args) {

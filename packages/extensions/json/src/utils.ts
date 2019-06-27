@@ -89,9 +89,7 @@ export function IpcHost(mixins: (keyof InspectorHost)[]) {
 }
 
 export async function updateTheme(themeInfo: { themeName: string; themeComponents: string[] }): Promise<void> {
-  const themeNameLower = themeInfo.themeName.toLowerCase();
-  this.setState({ themeName: themeNameLower });
-  document.getElementById('root').className = themeNameLower;
+  document.getElementById('root').className = themeInfo.themeName;
 
   const oldThemeComponents = document.querySelectorAll('[data-theme-component="true"]');
   const head = document.querySelector('head');
@@ -126,14 +124,22 @@ export function getBotState(
   selectedTrace: Activity,
   offset: number = -1
 ): Activity {
-  const allEntries: LogItem<InspectableObjectLogItem>[] = entries.reduce((agg, entry) => agg.concat(entry.items), []);
-  const filteredLogItems = allEntries.filter((item: LogItem<InspectableObjectLogItem>) => {
-    const activity = item.payload.obj as Activity;
-    return item.type === LogItemType.InspectableObject && activity.valueType === ValueTypes.BotState;
-  });
-  const index = filteredLogItems.findIndex(logItem => logItem.payload.obj.id === selectedTrace.id) + offset;
-  const targetLogEntry = filteredLogItems[index];
-  return targetLogEntry && (targetLogEntry.payload.obj as Activity);
+  const allBotStates = extractBotStateActivitiesFromLogEntries(entries);
+  const index = allBotStates.findIndex(botState => botState.id === selectedTrace.id) + offset;
+  return allBotStates[index];
+}
+
+export function extractBotStateActivitiesFromLogEntries(entries: LogEntry<InspectableObjectLogItem>[]): Activity[] {
+  if (!entries) {
+    return [];
+  }
+  return entries
+    .reduce((agg, entry) => agg.concat(entry.items), [])
+    .filter((item: LogItem<InspectableObjectLogItem>) => {
+      const activity = item.payload.obj as Activity;
+      return item.type === LogItemType.InspectableObject && activity.valueType === ValueTypes.BotState;
+    })
+    .map((item: LogItem) => (item.payload as InspectableObjectLogItem).obj as Activity);
 }
 
 export function buildDiff(a: Activity, b: Activity): Activity {

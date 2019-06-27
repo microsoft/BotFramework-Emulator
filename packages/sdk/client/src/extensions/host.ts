@@ -49,7 +49,7 @@ export interface InspectorHost {
 
   on(event: ExtensionChannel.BotUpdated, handler: (bot: IBotConfiguration) => void): () => void;
 
-  on(event: ExtensionChannel.AccessoryClick, handler: (id: string) => void): () => void;
+  on(event: ExtensionChannel.AccessoryClick, handler: (id: string, currentState: string) => void): () => void;
 
   on(
     event: ExtensionChannel.Theme,
@@ -67,4 +67,7 @@ export interface InspectorHost {
 
   // Tracks a telemetry event to App Insights
   trackEvent(name: string, properties?: { [key: string]: any }): void;
+
+  // Sets highlighted items within chat and the logs
+  setHighlightedObjects(documentId: string, items: Activity | Activity[]): void;
 }

@@ -37,14 +37,23 @@ import { ExtensionChannel } from '@bfemulator/sdk-shared/build/types/ipc';
 import { ValueTypes } from '@bfemulator/app-shared/built/enums/valueTypes';
 import { LogEntry, LogItem } from '@bfemulator/sdk-shared/build/types/log';
 
-import { buildDiff, getBotState, IpcHandler, IpcHost, updateTheme } from './utils';
+import {
+  buildDiff,
+  extractBotStateActivitiesFromLogEntries,
+  getBotState,
+  IpcHandler,
+  IpcHost,
+  updateTheme,
+} from './utils';
 
 export interface WindowHostReceiverState {
-  data?: { [prop: string]: any };
+  // The data that's actually displayed in the viewer
+  data?: Activity | LogItem;
   isDiff?: boolean;
+  containsBotStateActivities?: boolean;
   themeName?: string;
-  chatLogs?: { conversationId: string; logItems: LogEntry[] };
-  lastAccessoryClicked?: string;
+  chatLogs?: { documentId: string; logItems: LogEntry[] };
+  // The item explicitly selected by the user
   selectedItem: Activity | LogItem;
 }
 
@@ -52,76 +61,98 @@ interface JsonViewerExtensionAccessory {
   json: string;
   leftArrow: string;
   rightArrow: string;
-  resetDiff: string;
   diff: string;
 }
 
 type AccessoryId = keyof JsonViewerExtensionAccessory;
 
 export function windowHostReceiver(WrappedComponent: ComponentClass<any>): ComponentClass {
-  @IpcHost(['setAccessoryState'])
+  @IpcHost(['setAccessoryState', 'setHighlightedObjects'])
   class WindowHostReceiver extends Component<{}, WindowHostReceiverState> {
     private setAccessoryState: (accessoryId: AccessoryId, state: string) => void;
+    private setHighlightedObjects: (documentId: string, items: Activity | Activity[]) => void;
+
+    public state = { data: {} } as WindowHostReceiverState;
 
     constructor(props) {
       super(props);
-      // set all buttons to disabled
-      const toDisable: (keyof Partial<JsonViewerExtensionAccessory>)[] = [
-        'diff',
-        'leftArrow',
-        'rightArrow',
-        'resetDiff',
-      ];
-      toDisable.forEach(accessoryId => this.setAccessoryState(accessoryId, 'disabled'));
-      this.setAccessoryState('json', 'selected');
+      this.updateButtonStates();
     }
 
     @IpcHandler(ExtensionChannel.Inspect)
-    protected inspectHandler(selectedItem: Activity | LogItem): void {
-      // the diff button wants to know: Is this a botState?
-      const isBotState = (selectedItem as Activity).valueType === ValueTypes.BotState;
-      this.setAccessoryState('diff', isBotState ? 'default' : 'disabled');
+    protected inspectHandler(selectedItem: Activity | LogItem = {} as Activity | LogItem): void {
       const newStateFragment = { selectedItem } as WindowHostReceiverState;
+      const isBotState = (selectedItem as Activity).valueType === ValueTypes.BotState;
+      // pull the user out of diff mode if this data is not a bot state
       if (!isBotState) {
         newStateFragment.isDiff = false;
       }
       // If we're not in diff mode or have selected something other than
       // a botState, the selectedItem and data will be the same
       if (!this.state.isDiff || !isBotState) {
-        newStateFragment.data = selectedItem;
+        newStateFragment.data = selectedItem || ({} as Activity);
       }
       this.setState(newStateFragment);
     }
 
     @IpcHandler(ExtensionChannel.Theme)
     protected async themeHandler(themeInfo: { themeName: string; themeComponents: string[] }): Promise<void> {
+      const themeNameLower = themeInfo.themeName.toLowerCase();
+      this.setState({ themeName: themeNameLower });
       return updateTheme(themeInfo);
     }
 
     @IpcHandler(ExtensionChannel.ChatLogUpdated)
-    protected async chatLogUpdatedHandler(conversationId: string, logItems: LogEntry[]): Promise<void> {
-      this.setState({ chatLogs: { conversationId, logItems } });
+    protected async chatLogUpdatedHandler(documentId: string, logItems: LogEntry[]): Promise<void> {
+      const containsBotStateActivities = !!extractBotStateActivitiesFromLogEntries(logItems).length;
+      this.setState({ chatLogs: { documentId, logItems }, containsBotStateActivities });
     }
 
     @IpcHandler(ExtensionChannel.AccessoryClick)
-    protected accessoryClick(id: AccessoryId): void {
-      const newStateFragment = { lastAccessoryClicked: id } as WindowHostReceiverState;
-      switch (id) {
+    protected accessoryClick(accessoryId: AccessoryId, currentState: string): void {
+      const newStateFragment = {} as WindowHostReceiverState;
+      const { selectedItem, chatLogs } = this.state;
+      const { logItems, documentId } = chatLogs;
+
+      switch (accessoryId) {
+        // Show the diff
         case 'diff':
           {
-            newStateFragment.isDiff = true;
-            // Determine if we can diff
-            const previousBotState = getBotState(this.state.chatLogs.logItems, this.state.selectedItem as Activity);
-            if (previousBotState) {
-              newStateFragment.data = buildDiff(this.state.selectedItem as Activity, previousBotState);
+            const newState = currentState === 'disabled' ? 'default' : 'disabled';
+            newStateFragment.isDiff = newState === 'default';
+            const previousBotState = getBotState(logItems, selectedItem as Activity);
+            if (newStateFragment.isDiff && previousBotState) {
+              newStateFragment.data = buildDiff(selectedItem as Activity, previousBotState);
+            } else {
+              newStateFragment.data = selectedItem;
             }
           }
           break;
 
         case 'leftArrow':
+          {
+            const newSelectedItem = getBotState(logItems, selectedItem as Activity);
+            const previousBotState = getBotState(logItems, newSelectedItem);
+            if (previousBotState) {
+              newStateFragment.selectedItem = newSelectedItem;
+              newStateFragment.data = buildDiff(newSelectedItem, previousBotState);
+            }
+          }
           break;
 
         case 'rightArrow':
+          {
+            const newSelectedItem = getBotState(logItems, selectedItem as Activity, 1);
+            const previousSelectedItem = selectedItem as Activity;
+            if (previousSelectedItem && previousSelectedItem.valueType === ValueTypes.BotState && this.state.isDiff) {
+              newStateFragment.selectedItem = newSelectedItem;
+              newStateFragment.data = buildDiff(newSelectedItem, previousSelectedItem);
+              this.setHighlightedObjects(documentId, [newSelectedItem, previousSelectedItem]);
+            } else {
+              newStateFragment.selectedItem = newStateFragment.data = newSelectedItem;
+              this.setHighlightedObjects(documentId, [newSelectedItem]);
+            }
+          }
           break;
 
         default:
@@ -130,9 +161,20 @@ export function windowHostReceiver(WrappedComponent: ComponentClass<any>): Compo
       this.setState(newStateFragment);
     }
 
-    render() {
+    public render() {
       const { selectedItem: _, ...props } = this.state;
+      this.updateButtonStates();
       return <WrappedComponent {...props} />;
+    }
+
+    private updateButtonStates(): void {
+      const groupStates: Partial<AccessoryId>[] = ['leftArrow', 'rightArrow'];
+      const { containsBotStateActivities, isDiff } = this.state;
+      groupStates.forEach(accessoryId =>
+        this.setAccessoryState(accessoryId, containsBotStateActivities ? 'default' : 'disabled')
+      );
+      this.setAccessoryState('json', isDiff ? 'default' : 'selected');
+      this.setAccessoryState('diff', isDiff ? 'selected' : containsBotStateActivities ? 'default' : 'disabled');
     }
   }
 

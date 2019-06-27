@@ -68,21 +68,6 @@
             }
           },
           {
-            "id": "resetDiff",
-            "states": {
-              "default": {
-                "icon": "resetDiff"
-              },
-              "selected": {
-                "aria-selected": true,
-                "icon": "resetDiffSelected"
-              },
-              "disabled": {
-                "aria-disabled": true
-              }
-            }
-          },
-          {
             "id": "diff",
             "states": {
               "default": {

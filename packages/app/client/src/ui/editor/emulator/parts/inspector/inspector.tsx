@@ -251,6 +251,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
         key={config.id}
         disabled={!enabled}
         name={config.id}
+        data-current-state={state}
         onClick={this.accessoryClick}
       >
         {Inspector.renderAccessoryIcon(icon)}
@@ -277,7 +278,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
       this.updateInspector(this.state).catch();
     }
     if (oldState.logEntries !== newState.logEntries) {
-      this.chatLogUpdated(this.props.document.conversationId, newState.logEntries);
+      this.chatLogUpdated(this.props.document.documentId, newState.logEntries);
     }
 
     if (JSON.stringify(oldState.inspectObj) !== JSON.stringify(newState.inspectObj)) {
@@ -365,7 +366,8 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
 
   private accessoryClick = (event: MouseEvent<HTMLButtonElement>): void => {
     const id = event.currentTarget.name;
-    this.sendToExtension(ExtensionChannel.AccessoryClick, id);
+    const { currentState } = event.currentTarget.dataset;
+    this.sendToExtension(ExtensionChannel.AccessoryClick, id, currentState);
   };
 
   private toggleDevTools = (): void => {
@@ -441,7 +443,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     this.botUpdated(this.state.activeBot);
     this.inspect(this.state.inspectObj);
     this.sendToExtension(ExtensionChannel.Theme, this.state.themeInfo);
-    this.chatLogUpdated(this.props.document.conversationId, this.state.logEntries);
+    this.chatLogUpdated(this.props.document.documentId, this.state.logEntries);
   }
 
   private inspect(obj: InspectObject) {
@@ -457,8 +459,8 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     this.sendToExtension(ExtensionChannel.BotUpdated, bot);
   }
 
-  private chatLogUpdated(conversationId: string, logItems: LogEntry[]): void {
-    this.sendToExtension(ExtensionChannel.ChatLogUpdated, conversationId, logItems);
+  private chatLogUpdated(documentId: string, logItems: LogEntry[]): void {
+    this.sendToExtension(ExtensionChannel.ChatLogUpdated, documentId, logItems);
   }
 
   private sendToExtension(channel: ExtensionChannel, ...args: any[]) {
