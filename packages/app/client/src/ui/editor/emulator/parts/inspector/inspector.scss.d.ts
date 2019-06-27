@@ -9,5 +9,3 @@ export const leftArrow: string;
 export const leftArrowSelected: string;
 export const rightArrow: string;
 export const rightArrowSelected: string;
-export const resetDiff: string;
-export const resetDiffSelected: string;

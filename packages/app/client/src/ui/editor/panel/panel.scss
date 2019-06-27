@@ -37,41 +37,30 @@
       }
     }
 
-    & > button:nth-of-type(2) {
+    
+    & > button[name="leftArrow"],
+    & > button[name="rightArrow"],
+    & > button[name="diff"] {
+      height: 30px;
+      width: auto;
+      min-width: auto;
+      padding: 0 6px;
+
+      &:hover:not([disabled]), &[selected], &[aria-selected] {
+        &:after {
+          border: none;
+        }
+      }
+    }
+
+    // left arrow diff button
+    & > button[name="leftArrow"] {
       margin-left: auto;
-      min-width: 30px;
-      width: 30px;
-      height: 30px;
-
-      &:hover:not([disabled]), &[selected], &[aria-selected] {
-        &:after {
-          border: none;
-        }
-      }
     }
 
-    & > button:nth-of-type(3) {
-      min-width: 30px;
-      width: 30px;
-      height: 30px;
-
-      &:hover:not([disabled]), &[selected], &[aria-selected] {
-        &:after {
-          border: none;
-        }
-      }
-    }
-
-    & > button:nth-of-type(4) {
-      min-width: 30px;
-      width: 30px;
-      height: 30px;
-
-      &:hover:not([disabled]), &[selected], &[aria-selected] {
-        &:after {
-          border: none;
-        }
-      }
+    // toggle diff button
+    & > button[name="diff"] {
+      padding-right: 12px; // items have 6 padding on each side, so right-most item should have 12 padding
     }
   }
 }

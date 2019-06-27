@@ -16,6 +16,7 @@
     &:hover:not([disabled]), &[selected], &[aria-selected] {
       background-color: transparent;
       position: relative;
+
       &:after {
         content:'';
         border: 1px solid var(--p-button-bg);
@@ -61,32 +62,20 @@
 
 .left-arrow {
   background-image: url('../../../../media/ic_next_copy.svg');
-  margin-top: 8px;
+  background-position: 50% 50%;
 }
 
 .left-arrow-selected {
   background-image: url('../../../../media/ic_next_copy.svg');
-  margin-top: 8px;
+  background-position: 50% 50%;
 }
 
 .right-arrow {
   background-image: url('../../../../media/ic_next.svg');
-  margin-top: 8px;
+  background-position: 50% 50%;
 }
 
 .right-arrow-selected {
   background-image: url('../../../../media/ic_next.svg');
-  margin-top: 8px;
-}
-
-.resetDiff {
-  background-image: url('../../../../media/ic_start_point.svg');
-  margin-top: 4px;
-  margin-left: 4px;
-}
-
-.resetDiffSelected {
-  background-image: url('../../../../media/ic_start_point.svg');
-  margin-top: 4px;
-  margin-left: 4px;
+  background-position: 50% 50%;
 }
