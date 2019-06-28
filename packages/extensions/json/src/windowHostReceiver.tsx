@@ -55,6 +55,8 @@ export interface WindowHostReceiverState {
   chatLogs?: { documentId: string; logItems: LogEntry[] };
   // The item explicitly selected by the user
   selectedItem: Activity | LogItem;
+  // The item we are using to diff with the selectedItem
+  selectedDiffItem: Activity;
 }
 
 interface JsonViewerExtensionAccessory {
@@ -67,10 +69,13 @@ interface JsonViewerExtensionAccessory {
 type AccessoryId = keyof JsonViewerExtensionAccessory;
 
 export function windowHostReceiver(WrappedComponent: ComponentClass<any>): ComponentClass {
-  @IpcHost(['setAccessoryState', 'setHighlightedObjects'])
+  @IpcHost(['setAccessoryState', 'setHighlightedObjects', 'setInspectorObjects'])
   class WindowHostReceiver extends Component<{}, WindowHostReceiverState> {
     private setAccessoryState: (accessoryId: AccessoryId, state: string) => void;
     private setHighlightedObjects: (documentId: string, items: Activity | Activity[]) => void;
+    private setInspectorObjects: (documentId: string, items: Activity | Activity[]) => void;
+
+    private pendingHighlightReset;
 
     public state = { data: {} } as WindowHostReceiverState;
 
@@ -81,16 +86,19 @@ export function windowHostReceiver(WrappedComponent: ComponentClass<any>): Compo
 
     @IpcHandler(ExtensionChannel.Inspect)
     protected inspectHandler(selectedItem: Activity | LogItem = {} as Activity | LogItem): void {
-      const newStateFragment = { selectedItem } as WindowHostReceiverState;
-      const isBotState = (selectedItem as Activity).valueType === ValueTypes.BotState;
-      // pull the user out of diff mode if this data is not a bot state
-      if (!isBotState) {
-        newStateFragment.isDiff = false;
+      if (this.pendingHighlightReset) {
+        cancelAnimationFrame(this.pendingHighlightReset);
       }
-      // If we're not in diff mode or have selected something other than
-      // a botState, the selectedItem and data will be the same
-      if (!this.state.isDiff || !isBotState) {
-        newStateFragment.data = selectedItem || ({} as Activity);
+      // always display the selected item
+      const newStateFragment = { data: selectedItem } as WindowHostReceiverState;
+      const { valueType } = selectedItem as Activity;
+      // pull the user out of diff mode if this data is not a bot state
+      newStateFragment.isDiff = valueType === ValueTypes.Diff;
+      // If this is not a diff, the selectedItem and data will be the same
+      // Once we enter diff mode, we want to retain the selected item
+      // as a reference to our cursor's index
+      if (valueType !== ValueTypes.Diff) {
+        newStateFragment.selectedItem = selectedItem || ({} as Activity);
       }
       this.setState(newStateFragment);
     }
@@ -108,24 +116,54 @@ export function windowHostReceiver(WrappedComponent: ComponentClass<any>): Compo
       this.setState({ chatLogs: { documentId, logItems }, containsBotStateActivities });
     }
 
+    @IpcHandler(ExtensionChannel.HighlightedObjectsUpdated)
+    protected highlightedObjectsUpdatedHandler(highlightedObjects: Activity[]): void {
+      // if we're diffing and the highlighted objects disappear,
+      // set them back to the items in the diff after a bit
+      if (this.pendingHighlightReset) {
+        clearTimeout(this.pendingHighlightReset);
+      }
+      this.pendingHighlightReset = setTimeout(() => {
+        const { isDiff, selectedItem, selectedDiffItem, chatLogs } = this.state;
+        if (
+          isDiff &&
+          selectedItem &&
+          (!highlightedObjects || !highlightedObjects.length || !Object.keys(highlightedObjects[0]).length)
+        ) {
+          const shouldBeHighlighted = [selectedItem as Activity];
+          if (selectedDiffItem) {
+            shouldBeHighlighted.unshift(selectedDiffItem);
+          }
+          this.setHighlightedObjects(chatLogs.documentId, shouldBeHighlighted);
+        }
+      }, 1000);
+    }
+
     @IpcHandler(ExtensionChannel.AccessoryClick)
     protected accessoryClick(accessoryId: AccessoryId, currentState: string): void {
-      const newStateFragment = {} as WindowHostReceiverState;
-      const { selectedItem, chatLogs } = this.state;
+      const newStateFragment = { selectedDiffItem: null } as WindowHostReceiverState;
+      const { selectedItem, chatLogs, isDiff } = this.state;
       const { logItems, documentId } = chatLogs;
+      const highlightedObjects = [];
+      const inspectorObjects = [];
 
       switch (accessoryId) {
-        // Show the diff
         case 'diff':
           {
-            const newState = currentState === 'disabled' ? 'default' : 'disabled';
-            newStateFragment.isDiff = newState === 'default';
-            const previousBotState = getBotState(logItems, selectedItem as Activity);
-            if (newStateFragment.isDiff && previousBotState) {
-              newStateFragment.data = buildDiff(selectedItem as Activity, previousBotState);
+            const newState = currentState === 'selected' ? 'default' : 'selected';
+            newStateFragment.isDiff = newState === 'selected';
+            const previousBotState =
+              getBotState(logItems, selectedItem as Activity) || extractBotStateActivitiesFromLogEntries(logItems)[0];
+            const nextBotState = getBotState(logItems, previousBotState, 1);
+            if (newStateFragment.isDiff && nextBotState && previousBotState) {
+              newStateFragment.selectedItem = nextBotState;
+              newStateFragment.selectedDiffItem = previousBotState;
+              inspectorObjects.push(buildDiff(nextBotState, previousBotState));
+              highlightedObjects.push(previousBotState, nextBotState);
             } else {
-              newStateFragment.data = selectedItem;
+              inspectorObjects.push(selectedItem as Activity);
             }
+            this.setAccessoryState('diff', newState);
           }
           break;
 
@@ -133,9 +171,15 @@ export function windowHostReceiver(WrappedComponent: ComponentClass<any>): Compo
           {
             const newSelectedItem = getBotState(logItems, selectedItem as Activity);
             const previousBotState = getBotState(logItems, newSelectedItem);
-            if (previousBotState) {
+            if (isDiff && previousBotState && newSelectedItem) {
               newStateFragment.selectedItem = newSelectedItem;
-              newStateFragment.data = buildDiff(newSelectedItem, previousBotState);
+              newStateFragment.selectedDiffItem = previousBotState;
+              inspectorObjects.push(buildDiff(newSelectedItem, previousBotState));
+              highlightedObjects.push(previousBotState, newSelectedItem);
+            } else if (!isDiff) {
+              inspectorObjects.push(newSelectedItem || (selectedItem as Activity));
+            } else {
+              return;
             }
           }
           break;
@@ -143,22 +187,26 @@ export function windowHostReceiver(WrappedComponent: ComponentClass<any>): Compo
         case 'rightArrow':
           {
             const newSelectedItem = getBotState(logItems, selectedItem as Activity, 1);
-            const previousSelectedItem = selectedItem as Activity;
-            if (previousSelectedItem && previousSelectedItem.valueType === ValueTypes.BotState && this.state.isDiff) {
+            const previousBotState = selectedItem as Activity;
+            if (newSelectedItem && isDiff) {
               newStateFragment.selectedItem = newSelectedItem;
-              newStateFragment.data = buildDiff(newSelectedItem, previousSelectedItem);
-              this.setHighlightedObjects(documentId, [newSelectedItem, previousSelectedItem]);
+              newStateFragment.selectedDiffItem = previousBotState;
+              inspectorObjects.push(buildDiff(newSelectedItem, previousBotState));
+              highlightedObjects.push(newSelectedItem, previousBotState);
+            } else if (!isDiff) {
+              inspectorObjects.push(newSelectedItem || (selectedItem as Activity));
             } else {
-              newStateFragment.selectedItem = newStateFragment.data = newSelectedItem;
-              this.setHighlightedObjects(documentId, [newSelectedItem]);
+              return;
             }
           }
           break;
 
         default:
-          break;
+          return;
       }
       this.setState(newStateFragment);
+      this.setHighlightedObjects(documentId, highlightedObjects);
+      this.setInspectorObjects(documentId, inspectorObjects);
     }
 
     public render() {

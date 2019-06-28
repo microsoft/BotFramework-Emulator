@@ -85,12 +85,14 @@ interface InspectorProps {
   botHash?: string;
   trackEvent?: (name: string, properties?: { [key: string]: any }) => void;
   setHighlightedObjects: (documentId: string, objects: Activity[]) => void;
+  setInspectorObjects: (documentId: string, inspectorObjects: Activity[]) => void;
 }
 
 interface InspectorState {
   titleOverride?: string;
   activeBot?: IBotConfiguration;
   logEntries: LogEntry[];
+  highlightedObjects?: Activity[] | LogEntry[];
   botHash?: string;
   inspectorSrc?: string;
   inspectObj: InspectObject;
@@ -142,28 +144,19 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     if (prevState.buttons) {
       Object.assign(buttons, prevState.buttons);
     }
-
-    if (
-      newProps.botHash !== prevState.botHash ||
-      inspector.src !== prevState.inspectorSrc ||
-      newProps.document.log.entries.length !== prevState.logEntries.length ||
-      newProps.themeInfo.themeName !== prevState.themeInfo.themeName ||
-      JSON.stringify(inspectorResult.inspectObj) !== JSON.stringify(prevState.inspectObj)
-    ) {
-      return {
-        ...prevState,
-        activeBot: newProps.activeBot,
-        logEntries: [...newProps.document.log.entries],
-        botHash: newProps.botHash,
-        inspector,
-        inspectorSrc: inspector.src,
-        inspectObj: inspectorResult.inspectObj,
-        themeInfo: newProps.themeInfo,
-        title: inspector.name,
-        buttons,
-      };
-    }
-    return null;
+    return {
+      ...prevState,
+      activeBot: newProps.activeBot,
+      logEntries: newProps.document.log.entries,
+      highlightedObjects: newProps.document.highlightedObjects,
+      botHash: newProps.botHash,
+      inspector,
+      inspectorSrc: inspector.src,
+      inspectObj: inspectorResult.inspectObj,
+      themeInfo: newProps.themeInfo,
+      title: inspector.name,
+      buttons,
+    };
   }
 
   private static getInspector(inspectorObjects: InspectObject[] = []): GetInspectorResultInternal {
@@ -270,6 +263,10 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
   }
 
   private stateChanged(newState: InspectorState, oldState: InspectorState): void {
+    if (!this.canInspect) {
+      return;
+    }
+
     if (oldState.botHash !== newState.botHash) {
       this.botUpdated(newState.activeBot);
     }
@@ -277,9 +274,10 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     if (oldState.inspectorSrc !== newState.inspectorSrc || oldState.containerRef !== newState.containerRef) {
       this.updateInspector(this.state).catch();
     }
-    if (oldState.logEntries !== newState.logEntries) {
-      this.chatLogUpdated(this.props.document.documentId, newState.logEntries);
-    }
+
+    // Send these always
+    this.chatLogUpdated(this.props.document.documentId, newState.logEntries);
+    this.sendToExtension(ExtensionChannel.HighlightedObjectsUpdated, newState.highlightedObjects);
 
     if (JSON.stringify(oldState.inspectObj) !== JSON.stringify(newState.inspectObj)) {
       this.inspect(newState.inspectObj);
@@ -429,7 +427,14 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
       }
 
       case EmulatorChannel.SetHightlightedObjects: {
-        this.props.setHighlightedObjects(this.props.document.documentId, event.args as Activity[]);
+        const [documentId, highlightedObjects] = event.args;
+        this.props.setHighlightedObjects(documentId, highlightedObjects);
+        break;
+      }
+
+      case EmulatorChannel.SetInspectorObjects: {
+        const [documentId, inspectorObjects] = event.args;
+        this.props.setInspectorObjects(documentId, inspectorObjects);
         break;
       }
 

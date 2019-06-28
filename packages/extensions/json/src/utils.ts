@@ -37,12 +37,11 @@ import { InspectableObjectLogItem, LogEntry, LogItem, LogItemType } from '@bfemu
 import { ValueTypes } from '@bfemulator/app-shared/built/enums/valueTypes';
 import { diff } from 'deep-diff';
 
-const host = (window as any).host as InspectorHost;
-
 export function IpcHandler(type: ExtensionChannel): MethodDecorator {
   return function(elementDescriptor: any) {
     const { key, descriptor } = elementDescriptor;
     const initializer = function() {
+      const host = (window as any).host as InspectorHost;
       const bound = this[key].bind(this);
       host.on(type as any, bound);
       return bound;
@@ -64,7 +63,7 @@ export function IpcHandler(type: ExtensionChannel): MethodDecorator {
 export function IpcHost(mixins: (keyof InspectorHost)[]) {
   return function(elementDescriptor: any) {
     const { elements } = elementDescriptor;
-
+    const host = (window as any).host as InspectorHost;
     mixins.forEach(mixin => {
       const value = typeof host[mixin] === 'function' ? (host[mixin] as Function).bind(host) : host[mixin];
 
@@ -121,11 +120,14 @@ export async function updateTheme(themeInfo: { themeName: string; themeComponent
 
 export function getBotState(
   entries: LogEntry<InspectableObjectLogItem>[],
-  selectedTrace: Activity,
+  referenceBotState: Activity,
   offset: number = -1
 ): Activity {
+  if (!referenceBotState) {
+    return null;
+  }
   const allBotStates = extractBotStateActivitiesFromLogEntries(entries);
-  const index = allBotStates.findIndex(botState => botState.id === selectedTrace.id) + offset;
+  const index = allBotStates.findIndex(botState => botState.id === referenceBotState.id) + offset;
   return allBotStates[index];
 }
 

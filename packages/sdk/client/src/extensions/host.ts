@@ -70,4 +70,7 @@ export interface InspectorHost {
 
   // Sets highlighted items within chat and the logs
   setHighlightedObjects(documentId: string, items: Activity | Activity[]): void;
+
+  // Sets inspect items within the chat and logs
+  setInspectorObjects(documentId: string, items: Activity | Activity[]): void;
 }

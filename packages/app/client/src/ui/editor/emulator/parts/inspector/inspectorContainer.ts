@@ -37,7 +37,7 @@ import { Activity } from 'botframework-schema';
 
 import { RootState } from '../../../../../data/store';
 import { executeCommand } from '../../../../../data/action/commandAction';
-import { setHighlightedObjects } from '../../../../../data/action/chatActions';
+import { setHighlightedObjects, setInspectorObjects } from '../../../../../data/action/chatActions';
 
 import { Inspector } from './inspector';
 
@@ -59,6 +59,8 @@ const mapDispatchToProps = dispatch => {
     },
     setHighlightedObjects: (documentId: string, objects: Activity[]) =>
       dispatch(setHighlightedObjects(documentId, objects)),
+    setInspectorObjects: (documentId: string, inspectorObjects: Activity[]) =>
+      dispatch(setInspectorObjects(documentId, inspectorObjects)),
   };
 };
 
