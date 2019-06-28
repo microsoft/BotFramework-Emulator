@@ -102,12 +102,19 @@ jest.mock('./main', () => ({
   },
 }));
 
+const mockRunning = jest.fn(() => false);
+const mockConnect = jest
+  .fn()
+  .mockResolvedValue({ url: 'http://fdsfds.ngrok.io', inspectUrl: 'http://fdsfds.ngrok.io' });
 jest.mock('./ngrok', () => {
-  const connected = false;
   return {
-    running: () => connected,
-    connect: async opts => ({ url: 'http://fdsfds.ngrok.io', inspectUrl: 'http://fdsfds.ngrok.io' }),
-    kill: () => true,
+    NgrokInstance: jest.fn().mockImplementation(() => {
+      return {
+        running: () => mockRunning(),
+        connect: mockConnect,
+        kill: () => true,
+      };
+    }),
   };
 });
 
@@ -117,6 +124,8 @@ describe('The ngrokService', () => {
   beforeEach(() => {
     getStore().dispatch(setFramework(Emulator.getInstance().framework as any));
     mockCallsToLog.length = 0;
+    mockRunning.mockClear();
+    mockConnect.mockClear();
   });
 
   it('should be a singleton', () => {
@@ -152,5 +161,48 @@ describe('The ngrokService', () => {
     expect(mockCallsToLog[0].args[1].payload.text).toBe(
       'ngrok not configured (only needed when connecting to remotely hosted bots)'
     );
+  });
+
+  it('should use the current ngrok instance for an oauth postback url if already running', async () => {
+    (ngrokService as any).serviceUrl = 'someServiceUrl';
+    (ngrokService as any).pendingRecycle = new Promise(resolve => resolve());
+    mockRunning.mockReturnValueOnce(true);
+    const serviceUrl = await ngrokService.getServiceUrlForOAuth();
+
+    expect(serviceUrl).toBe('someServiceUrl');
+
+    (ngrokService as any).serviceUrl = undefined;
+    (ngrokService as any).pendingRecycle = null;
+  });
+
+  it('should start up a new ngrok process for an oauth postback url', async () => {
+    mockRunning.mockReturnValueOnce(false);
+    mockConnect.mockResolvedValueOnce({ url: 'someNgrokServiceUrl' });
+    const serviceUrl = await ngrokService.getServiceUrlForOAuth();
+
+    expect(serviceUrl).toBe('someNgrokServiceUrl');
+  });
+
+  it('should throw if failed to start up a new ngrok process for an oauth postback url', async () => {
+    mockRunning.mockReturnValueOnce(false);
+    mockConnect.mockRejectedValueOnce(new Error('Failed to start ngrok.'));
+    try {
+      await ngrokService.getServiceUrlForOAuth();
+      expect(false); // fail test
+    } catch (e) {
+      expect(e).toEqual(
+        new Error(`Failed to connect to ngrok instance for OAuth postback URL: ${new Error('Failed to start ngrok.')}`)
+      );
+    }
+  });
+
+  it('should shut down the ngrok oauth instance if it is running', () => {
+    const mockKill = jest.fn(() => null);
+    (ngrokService as any).oauthNgrokInstance = { kill: mockKill };
+    ngrokService.shutDownOAuthNgrokInstance();
+
+    expect(mockKill).toHaveBeenCalled();
+
+    (ngrokService as any).oauthNgrokInstance = undefined;
   });
 });
