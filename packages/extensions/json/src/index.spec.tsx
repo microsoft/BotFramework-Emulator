@@ -38,6 +38,7 @@ import { JsonViewerExtension } from './jsonViewerExtension';
 import { mockChatLogs, mockDiff0, mockDiff1 } from './mocks';
 import { ExtensionChannel } from '@bfemulator/sdk-shared';
 import { InspectorHost } from '@bfemulator/sdk-client';
+import { extractBotStateActivitiesFromLogEntries } from './utils';
 
 let hostCalls: any = {};
 (window as any).host = new Proxy(
@@ -133,5 +134,15 @@ describe('The JsonViewerExtension', () => {
     (host as any).handlers[ExtensionChannel.AccessoryClick][0]('rightArrow');
     (host as any).handlers[ExtensionChannel.AccessoryClick][0]('leftArrow');
     expect(hostCalls.setInspectorObjects[2]).toEqual(['1234', [mockDiff0]]);
+  });
+
+  it('should should reset the highlighted objects', async () => {
+    (host as any).handlers[ExtensionChannel.ChatLogUpdated][0]('1234', mockChatLogs);
+    (host as any).handlers[ExtensionChannel.Inspect][0]({});
+    (host as any).handlers[ExtensionChannel.AccessoryClick][0]('diff', 'default');
+    (host as any).handlers[ExtensionChannel.HighlightedObjectsUpdated][0]([]);
+    const botStates = extractBotStateActivitiesFromLogEntries(mockChatLogs as any);
+    await new Promise(resolve => setTimeout(resolve, 1100));
+    expect(hostCalls.setHighlightedObjects[1]).toEqual(['1234', botStates.slice(0, 2)]);
   });
 });
