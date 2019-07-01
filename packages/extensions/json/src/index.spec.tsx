@@ -32,12 +32,12 @@
 //
 import * as React from 'react';
 import { mount } from 'enzyme';
+import { ExtensionChannel } from '@bfemulator/sdk-shared';
+import { InspectorHost } from '@bfemulator/sdk-client';
 
 import { windowHostReceiver } from './windowHostReceiver';
 import { JsonViewerExtension } from './jsonViewerExtension';
 import { mockChatLogs, mockDiff0, mockDiff1 } from './mocks';
-import { ExtensionChannel } from '@bfemulator/sdk-shared';
-import { InspectorHost } from '@bfemulator/sdk-client';
 import { extractBotStateActivitiesFromLogEntries } from './utils';
 
 let hostCalls: any = {};
