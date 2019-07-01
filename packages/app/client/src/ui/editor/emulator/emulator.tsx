@@ -32,6 +32,7 @@
 //
 
 import { createDirectLine } from 'botframework-webchat';
+import { DirectLine } from 'botframework-directlinejs';
 import { CommandServiceImpl, CommandServiceInstance, EmulatorMode, uniqueId, uniqueIdv4 } from '@bfemulator/sdk-shared';
 import { SplitButton, Splitter } from '@bfemulator/ui-react';
 import base64Url from 'base64url';
@@ -67,6 +68,7 @@ export interface EmulatorProps {
   clearLog?: (documentId: string) => Promise<void>;
   conversationId?: string;
   createErrorNotification?: (notification: Notification) => void;
+  directLine?: DirectLine;
   dirty?: boolean;
   document?: Document;
   documentId?: string;
@@ -87,6 +89,7 @@ export interface EmulatorProps {
 export class Emulator extends React.Component<EmulatorProps, {}> {
   @CommandServiceInstance()
   private commandService: CommandServiceImpl;
+  private conversationInitRequested: boolean;
 
   private readonly onVerticalSizeChange = debounce((sizes: SplitterSize[]) => {
     this.props.document.ui = {
@@ -103,9 +106,7 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
   }, 500);
 
   shouldStartNewConversation(props: EmulatorProps = this.props): boolean {
-    return (
-      !props.document.directLine || props.document.conversationId !== (props.document.directLine as any).conversationId
-    );
+    return !props.directLine || props.document.conversationId !== (props.directLine as any).conversationId;
   }
 
   componentWillMount() {
@@ -122,9 +123,9 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
   componentWillReceiveProps(nextProps: EmulatorProps) {
     const { props, keyboardEventListener, startNewConversation } = this;
     const { document = {} as Document } = props;
-    const { document: nextDocument = {} as Document } = nextProps;
+    const { directLine, document: nextDocument = {} as Document } = nextProps;
 
-    const documentIdChanged = !nextDocument.directLine || document.documentId !== nextDocument.documentId;
+    const documentIdChanged = !directLine || document.documentId !== nextDocument.documentId;
 
     if (documentIdChanged) {
       startNewConversation(nextProps).catch();
@@ -146,6 +147,11 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
     requireNewConvoId: boolean = false,
     requireNewUserId: boolean = false
   ): Promise<any> => {
+    if (this.conversationInitRequested) {
+      return;
+    }
+    this.conversationInitRequested = true;
+
     // Look for an existing conversation ID and use that,
     // otherwise, create a new one
     const conversationId = requireNewConvoId
@@ -219,6 +225,7 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
         this.props.createErrorNotification(notification);
       }
     }
+    this.conversationInitRequested = false;
   };
 
   initConversation(props: EmulatorProps, options: any): void {
