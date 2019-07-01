@@ -32,11 +32,14 @@
 //
 import * as React from 'react';
 import { mount } from 'enzyme';
-import { ValueTypes } from '@bfemulator/app-shared';
 
 import { windowHostReceiver } from './windowHostReceiver';
 import { JsonViewerExtension } from './jsonViewerExtension';
+import { mockChatLogs, mockDiff0, mockDiff1 } from './mocks';
+import { ExtensionChannel } from '@bfemulator/sdk-shared';
+import { InspectorHost } from '@bfemulator/sdk-client';
 
+let hostCalls: any = {};
 (window as any).host = new Proxy(
   {
     handlers: new Proxy(
@@ -63,66 +66,21 @@ import { JsonViewerExtension } from './jsonViewerExtension';
   {
     get(target, p) {
       if (!(p in target)) {
-        target[p] = () => void 0;
+        target[p] = (...args) => {
+          (hostCalls[p] || (hostCalls[p] = [])).push(args);
+        };
       }
       return target[p];
     },
   }
 );
 
-const mockData = {
-  valueType: ValueTypes.Diff,
-  value: {
-    conversationState: {
-      dialogState: {
-        dialogStack: {
-          '0': {
-            id: 'root',
-            state: {
-              options: {},
-              stepIndex: 0,
-              values: { instanceId: '8bc9292d-aa45-bf03-f7dc-50dea831c3fc' },
-            },
-          },
-          '1': {
-            id: 'slot-dialog',
-            state: {
-              '+slot': 'address',
-              '-slot': 'shoesize',
-              values: {
-                '+shoesize': 11,
-                age: 21,
-                fullname: { slot: 'last', values: { first: 'Joe', last: 'Schmo' } },
-              },
-            },
-          },
-          '2': {
-            '+id': 'address',
-            '-id': 'shoesize',
-            state: {
-              '+slot': 'street',
-              '-options': {
-                prompt: 'Please enter your shoe size.',
-                retryPrompt: 'You must enter a size between 0 and 16. Half sizes are acceptable.',
-              },
-              '-state': {},
-              values: {},
-            },
-          },
-          '3': { id: 'text', state: { options: { prompt: 'Please enter your street address.' }, state: {} } },
-        },
-      },
-      eTag: '*',
-    },
-    userState: {},
-  },
-};
-
 let jsonViewerWrapper;
 let jsonViewer;
 
 describe('The JsonViewerExtension', () => {
   let root: HTMLDivElement;
+  let host: InspectorHost;
   beforeAll(async () => {
     const Component = windowHostReceiver(JsonViewerExtension);
     root = document.createElement('div');
@@ -134,94 +92,46 @@ describe('The JsonViewerExtension', () => {
 
     jsonViewerWrapper = mount(<Component />, { attachTo: root });
     jsonViewer = jsonViewerWrapper.find(JsonViewerExtension).instance();
-    (window as any).host.handlers.theme[0]({ themeName: 'high-contrast', themeComponents: ['dark.css'] });
+    host = (window as any).host as InspectorHost;
+    (host as any).handlers[ExtensionChannel.Theme][0]({ themeName: 'high-contrast', themeComponents: ['dark.css'] });
+  });
+
+  beforeEach(() => {
+    hostCalls = {};
   });
 
   it('should render with data and a theme', async () => {
     expect(jsonViewerWrapper.find('*').length).toBeGreaterThan(0);
-    // expect(jsonViewer.state.themeName).toBe('high-contrast');
+    expect(jsonViewer.props.themeName).toBe('high-contrast');
   });
 
   it('should set the color treatment for diff data appropriately', () => {
     const spy = jest.spyOn(JsonViewerExtension as any, 'nodeColorVarName');
-    (window as any).host.handlers.inspect[0](mockData); // Simulate event through host
+    (host as any).handlers[ExtensionChannel.Inspect][0](mockDiff0); // Simulate event through host
     expect(spy).toHaveReturnedWith('--log-panel-item-error');
     expect(spy).toHaveReturnedWith('--log-panel-timestamp');
     expect(spy).toHaveReturnedWith('--log-panel-item-info');
   });
 
-  xit('should handle the "Compare with previous" selection', async () => {
-    expect(JSON.stringify({})).toEqual(
-      JSON.stringify([
-        {
-          channelId: 'emulator',
-          conversation: { conversationType: 'personal', id: '9fb93120-5713-11e9-a20f-e185020ba18b|livechat' },
-          from: {
-            aadObjectId: '8d81b1c4-a057-4d27-a41d-e40b3105e6ee',
-            id: '29:1roELw8-HUdxuNSlGwtGqacHW_y-tsmLhvs42duabIDv0JFovw3WX7QC-syrrAYRt0RHBqoS1i0Mt18un1YZmyw',
-            name: 'Justin Wilaby',
-            role: 'user',
-          },
-          id: 'a65d2c70-5713-11e9-a20f-e185020ba18b',
-          label: 'Bot State',
-          localTimestamp: '2019-04-04T12:55:51-07:00',
-          locale: 'en',
-          name: 'BotState',
-          recipient: { id: '28:825059e1-0dd5-4a90-9136-121a702c18ca', role: 'user' },
-          serviceUrl: 'http://localhost:9000',
-          timestamp: '2019-04-04T19:55:51.863Z',
-          type: 'trace',
-          value: {
-            conversationState: {
-              dialogState: {
-                conversationState: {},
-                dialogStack: {
-                  '0': {
-                    id: 'root',
-                    state: {
-                      options: {},
-                      stepIndex: 0,
-                      values: { instanceId: '6938f312-523a-2db2-92ba-9680f559dd2d' },
-                    },
-                  },
-                  '1': {
-                    id: 'slot-dialog',
-                    state: {
-                      values: {
-                        fullname: {
-                          slot: 'last',
-                          values: { first: 'Justin ', last: 'Wilaby' },
-                        },
-                      },
-                      '+slot': 'age',
-                      '-slot': 'fullname',
-                    },
-                  },
-                  '2': {
-                    state: {
-                      options: { prompt: 'Please enter your age.' },
-                      state: {},
-                      '-slot': 'last',
-                      '-values': { first: 'Justin ' },
-                    },
-                    '+id': 'number',
-                    '-id': 'fullname',
-                  },
-                  '-3': {
-                    id: 'text',
-                    state: { options: { prompt: 'Please enter your last name.' }, state: {} },
-                  },
-                },
-                userState: {},
-              },
-              '+eTag': '4',
-              '-eTag': '3',
-            },
-            userState: {},
-          },
-          valueType: 'https://www.botframework.com/schemas/diff',
-        },
-      ])
-    );
+  it('should produce a diff when the "diff" button is selected', async () => {
+    (host as any).handlers[ExtensionChannel.ChatLogUpdated][0]('1234', mockChatLogs);
+    (host as any).handlers[ExtensionChannel.AccessoryClick][0]('diff', 'default');
+    expect(hostCalls.setInspectorObjects[0]).toEqual(['1234', [mockDiff0]]);
+  });
+
+  it('should diff the next bot state when the right arrow is clicked', () => {
+    (host as any).handlers[ExtensionChannel.ChatLogUpdated][0]('1234', mockChatLogs);
+    (host as any).handlers[ExtensionChannel.AccessoryClick][0]('diff', 'default');
+    (host as any).handlers[ExtensionChannel.AccessoryClick][0]('rightArrow');
+    expect(hostCalls.setInspectorObjects[1]).toEqual(['1234', [mockDiff1]]);
+  });
+
+  it('should diff the previous bot state when the left arrow is clicked', () => {
+    (host as any).handlers[ExtensionChannel.ChatLogUpdated][0]('1234', mockChatLogs);
+    (host as any).handlers[ExtensionChannel.Inspect][0]({});
+    (host as any).handlers[ExtensionChannel.AccessoryClick][0]('diff', 'default');
+    (host as any).handlers[ExtensionChannel.AccessoryClick][0]('rightArrow');
+    (host as any).handlers[ExtensionChannel.AccessoryClick][0]('leftArrow');
+    expect(hostCalls.setInspectorObjects[2]).toEqual(['1234', [mockDiff0]]);
   });
 });
