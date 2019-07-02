@@ -31,21 +31,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import * as React from 'react';
-import { Component } from 'react';
-import { CollapsibleJsonViewer } from '@bfemulator/ui-react';
-import { ValueTypes } from '@bfemulator/app-shared/built/enums';
-import { CollapsibleJsonViewerProps } from '@bfemulator/ui-react/src';
+import { PureComponent } from 'react';
+import { CollapsibleJsonViewer, CollapsibleJsonViewerProps } from '@bfemulator/ui-react';
 
 import './index.scss';
 
-interface JsonViewerExtensionState extends CollapsibleJsonViewerProps {
+interface JsonViewerExtensionProps extends CollapsibleJsonViewerProps {
   isDiff?: boolean;
 }
 
-export class JsonViewerExtension extends Component<{}, JsonViewerExtensionState> {
-  public state = { data: {}, themeName: 'light' } as JsonViewerExtensionState;
-  private diffNodesMap = new Map<HTMLElement, boolean>();
-
+export class JsonViewerExtension extends PureComponent<JsonViewerExtensionProps, []> {
   private static nodeColorVarName(paths: string[]): string {
     let i = paths.length;
     while (i--) {
@@ -61,7 +56,7 @@ export class JsonViewerExtension extends Component<{}, JsonViewerExtensionState>
   }
 
   public render() {
-    const { themeName, data } = this.state;
+    const { themeName, data } = this.props;
     return (
       <div>
         <CollapsibleJsonViewer
@@ -70,28 +65,14 @@ export class JsonViewerExtension extends Component<{}, JsonViewerExtensionState>
           valueRenderer={this.valueRenderer}
           shouldExpandNode={this.shouldExpandNodeCallback}
           themeName={themeName}
-          data={data}
+          data={data || {}}
         />
       </div>
     );
   }
 
-  public setData(data: Record<string, any>): void {
-    this.diffNodesMap.clear();
-    const isDiff = data.valueType === ValueTypes.Diff;
-    if (data && (data.valueType === ValueTypes.BotState || isDiff)) {
-      this.setState({ data: data.value, isDiff });
-    } else {
-      this.setState({ data, isDiff });
-    }
-  }
-
-  public setTheme(themeName: string) {
-    this.setState({ themeName });
-  }
-
   private labelRenderer = (path: string[]) => {
-    if (this.state.isDiff) {
+    if (this.props.isDiff) {
       const color = JsonViewerExtension.nodeColorVarName(path);
       return <span style={{ color: `var(${color}` }}>{path[0]}: </span>;
     }
@@ -99,7 +80,7 @@ export class JsonViewerExtension extends Component<{}, JsonViewerExtensionState>
   };
 
   private valueRenderer = (...path: string[]) => {
-    if (this.state.isDiff) {
+    if (this.props.isDiff) {
       const color = JsonViewerExtension.nodeColorVarName(path);
       return <span style={{ color: `var(${color}` }}>{path[0]}</span>;
     }
@@ -107,6 +88,6 @@ export class JsonViewerExtension extends Component<{}, JsonViewerExtensionState>
   };
 
   private shouldExpandNodeCallback = (keyName: string, data: any, level: number): boolean => {
-    return level === 0 || this.state.isDiff;
+    return level === 0 || this.props.isDiff;
   };
 }

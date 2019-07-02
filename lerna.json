@@ -11,12 +11,9 @@
     "packages/sdk/ui-react",
     "packages/extensions/qnamaker",
     "packages/extensions/qnamaker/client",
-    "packages/extensions/debug",
-    "packages/extensions/debug/client",
     "packages/extensions/luis",
     "packages/extensions/luis/client",
-    "packages/extensions/json",
-    "packages/extensions/botState"
+    "packages/extensions/json"
   ],
   "version": "independent"
 }
