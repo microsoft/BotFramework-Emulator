@@ -65,14 +65,10 @@ export default function getBotEndpoint(botEmulator: BotEmulator) {
           new BotEndpoint(params.bot.id, params.bot.id, botUrl, msaAppId, msaPassword, false, channelService)
         );
       } else {
-        // update the endpoint in memory with the new
-        // appId and password if they exist in the params
-        if (msaAppId) {
-          endpoint.msaAppId = msaAppId;
-        }
-        if (msaPassword) {
-          endpoint.msaPassword = msaPassword;
-        }
+        // update the endpoint in memory with the
+        // appId and password passed in the params
+        endpoint.msaAppId = msaAppId;
+        endpoint.msaPassword = msaPassword;
       }
       request.botEndpoint = endpoint;
     } else {
