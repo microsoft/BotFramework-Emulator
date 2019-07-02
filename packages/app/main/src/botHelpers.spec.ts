@@ -337,7 +337,7 @@ describe('The botHelpers', () => {
     });
   });
 
-  describe('getTranscriptsPath()', async () => {
+  describe('getTranscriptsPath()', () => {
     it('should return a value directory path with an active bot', async () => {
       const result = BotHelpers.getTranscriptsPath({ path: '/foo/bar' } as any, { mode: 'livechat' } as any);
       expect(result).toBe(normalize('/foo/transcripts'));
