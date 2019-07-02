@@ -202,9 +202,6 @@ export function buildDiff(a: Activity, b: Activity): Activity {
     buildDiffNode('-', path, botStateClone.value, b.value);
   });
   return botStateClone;
-  // const documentId = yield select(getCurrentDocumentId);
-  // yield put(setHighlightedObjects(documentId, [previousBotState, currentBotState]));
-  // yield put(setInspectorObjects(documentId, botStateClone));
 }
 
 export function buildDiffNode(prependWith: string, path: (string | number)[], target: any, source: any): void {
