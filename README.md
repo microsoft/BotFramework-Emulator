@@ -1,6 +1,6 @@
 # ![Bot Framework Emulator](./docs/media/BotFrameworkEmulator_header.png)
 
-### [Click here to find out what's new for //build2019!](https://github.com/Microsoft/botframework/blob/master/whats-new.md#whats-new)
+### [Click here to find out what's new with Bot Framework](https://github.com/Microsoft/botframework/blob/master/whats-new.md#whats-new)
 
 # Bot Framework Emulator
 [![Build Status](https://fuselabs.visualstudio.com/BotFramework-Emulator/_apis/build/status/%5BV4%20-%20Nightly%5D%20Master%20Build?branchName=master)](https://fuselabs.visualstudio.com/BotFramework-Emulator/_build/latest?definitionId=419&branchName=master) [![Coverage Status](https://coveralls.io/repos/github/Microsoft/BotFramework-Emulator/badge.svg?branch=master)](https://coveralls.io/github/Microsoft/BotFramework-Emulator?branch=master)

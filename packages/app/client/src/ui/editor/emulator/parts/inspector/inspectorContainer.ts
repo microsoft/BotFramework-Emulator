@@ -33,9 +33,11 @@
 
 import { connect } from 'react-redux';
 import { SharedConstants } from '@bfemulator/app-shared';
+import { Activity } from 'botframework-schema';
 
 import { RootState } from '../../../../../data/store';
 import { executeCommand } from '../../../../../data/action/commandAction';
+import { setHighlightedObjects, setInspectorObjects } from '../../../../../data/action/chatActions';
 
 import { Inspector } from './inspector';
 
@@ -55,6 +57,10 @@ const mapDispatchToProps = dispatch => {
     trackEvent: (name: string, properties?: { [key: string]: any }) => {
       dispatch(executeCommand(true, SharedConstants.Commands.Telemetry.TrackEvent, null, name, properties));
     },
+    setHighlightedObjects: (documentId: string, objects: Activity[]) =>
+      dispatch(setHighlightedObjects(documentId, objects)),
+    setInspectorObjects: (documentId: string, inspectorObjects: Activity[]) =>
+      dispatch(setInspectorObjects(documentId, inspectorObjects)),
   };
 };
 

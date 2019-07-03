@@ -13,16 +13,15 @@
   color: var(--tab-color);
   line-height: 36px;
   min-height: 36px;
-  text-transform: uppercase;
   padding-left: 16px;
   display: flex;
   white-space: nowrap;
+  justify-content: flex-end;
 
   & > .accessories {
-    margin: 0 1px 0 auto;
-    width: auto;
     display: flex;
     align-items: center;
+    width: 100%;
 
     & > button {
       background-color: transparent;
@@ -30,6 +29,38 @@
       border: 0;
       cursor: pointer;
       white-space: nowrap;
+
+      &:hover:not([disabled]), &[selected], &[aria-selected] {
+        &:after {
+          border: none;
+        }
+      }
+    }
+
+    
+    & > button[name="leftArrow"],
+    & > button[name="rightArrow"],
+    & > button[name="diff"] {
+      height: 30px;
+      width: auto;
+      min-width: auto;
+      padding: 0 6px;
+
+      &:hover:not([disabled]), &[selected], &[aria-selected] {
+        &:after {
+          border: none;
+        }
+      }
+    }
+
+    // left arrow diff button
+    & > button[name="leftArrow"] {
+      margin-left: auto;
+    }
+
+    // toggle diff button
+    & > button[name="diff"] {
+      padding-right: 12px; // items have 6 padding on each side, so right-most item should have 12 padding
     }
   }
 }

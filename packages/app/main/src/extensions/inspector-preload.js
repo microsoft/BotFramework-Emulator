@@ -47,12 +47,16 @@ ipcRenderer.on('chat-log-updated', (sender, conversationId, logEntries) => {
   window.host.dispatch('chat-log-updated', conversationId, logEntries);
 });
 
+ipcRenderer.on('highlighted-objects-updated', (sender, highlightedObjects) => {
+  window.host.dispatch('highlighted-objects-updated', highlightedObjects);
+});
+
 ipcRenderer.on('toggle-dev-tools', () => {
   remote.getCurrentWebContents().toggleDevTools();
 });
 
-ipcRenderer.on('accessory-click', (sender, id) => {
-  window.host.dispatch('accessory-click', id);
+ipcRenderer.on('accessory-click', (sender, id, currentState) => {
+  window.host.dispatch('accessory-click', id, currentState);
 });
 
 ipcRenderer.on('theme', (sender, ...args) => {
@@ -61,13 +65,17 @@ ipcRenderer.on('theme', (sender, ...args) => {
 
 window.host = {
   bot: {},
-  handlers: {
-    'accessory-click': [],
-    'bot-updated': [],
-    'chat-log-updated': [],
-    inspect: [],
-    theme: [],
-  },
+  handlers: new Proxy(
+    {},
+    {
+      get(target, p) {
+        if (!(p in target)) {
+          target[p] = [];
+        }
+        return target[p];
+      },
+    }
+  ),
   logger: {
     error: function(message) {
       ipcRenderer.sendToHost('logger.error', message);
@@ -109,6 +117,14 @@ window.host = {
 
   trackEvent: function(name, properties) {
     ipcRenderer.sendToHost('track-event', name, properties);
+  },
+
+  setHighlightedObjects(documentId, objects) {
+    ipcRenderer.sendToHost('set-highlighted-objects', documentId, objects);
+  },
+
+  setInspectorObjects(documentId, objects) {
+    ipcRenderer.sendToHost('set-inspector-objects', documentId, objects);
   },
 
   dispatch: function(event, ...args) {

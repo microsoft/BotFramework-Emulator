@@ -36,6 +36,51 @@
                 "aria-selected": true
               }
             }
+          },
+          {
+            "id": "leftArrow",
+            "states": {
+              "default": {
+                "icon": "leftArrow"
+              },
+              "selected": {
+                "aria-selected": true,
+                "icon": "leftArrowSelected"
+              },
+              "disabled": {
+                "aria-disabled": true
+              }
+            }
+          },
+          {
+            "id": "rightArrow",
+            "states": {
+              "default": {
+                "icon": "rightArrow"
+              },
+              "selected": {
+                "aria-selected": true,
+                "icon": "rightArrowSelected"
+              },
+              "disabled": {
+                "aria-disabled": true
+              }
+            }
+          },
+          {
+            "id": "diff",
+            "states": {
+              "default": {
+                "label": "Show Diff"
+              },
+              "selected": {
+                "label": "Hide Diff",
+                "aria-selected": true
+              },
+              "disabled": {
+                "aria-disabled": true
+              }
+            }
           }
         ]
       }
