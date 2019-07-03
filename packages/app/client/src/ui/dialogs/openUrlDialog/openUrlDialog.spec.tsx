@@ -42,7 +42,7 @@ import { OpenUrlDialogContainer } from './openUrlDialogContainer';
 
 jest.mock('../service', () => ({
   DialogService: {
-    howDialog: () => Promise.resolve(1),
+    showDialog: () => Promise.resolve(1),
     hideDialog: () => Promise.resolve(0),
   },
 }));

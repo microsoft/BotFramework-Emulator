@@ -34,15 +34,8 @@
 import { connect } from 'react-redux';
 
 import { DialogService } from '../service';
-import { RootState } from '../../../data/store';
 
 import { OpenUrlDialog, OpenUrlDialogProps } from './openUrlDialog';
-
-const mapStateToProps = (state: RootState, ownProps: {}): Partial<OpenUrlDialogProps> => {
-  return {
-    ...ownProps,
-  };
-};
 
 const mapDispatchToProps = (_dispatch: () => void): OpenUrlDialogProps => {
   return {
@@ -52,6 +45,6 @@ const mapDispatchToProps = (_dispatch: () => void): OpenUrlDialogProps => {
 };
 
 export const OpenUrlDialogContainer = connect(
-  mapStateToProps,
+  null,
   mapDispatchToProps
 )(OpenUrlDialog);
