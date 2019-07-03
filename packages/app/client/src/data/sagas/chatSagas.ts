@@ -34,15 +34,7 @@ import * as Electron from 'electron';
 import { MenuItemConstructorOptions } from 'electron';
 import { Activity } from 'botframework-schema';
 import { SharedConstants, ValueTypes, newNotification } from '@bfemulator/app-shared';
-import {
-  CommandServiceImpl,
-  CommandServiceInstance,
-  ConversationService,
-  InspectableObjectLogItem,
-  LogItem,
-  LogItemType,
-} from '@bfemulator/sdk-shared';
-import { diff } from 'deep-diff';
+import { CommandServiceImpl, CommandServiceInstance, ConversationService } from '@bfemulator/sdk-shared';
 import { IEndpointService } from 'botframework-config/lib/schema';
 import { createCognitiveServicesBingSpeechPonyfillFactory } from 'botframework-webchat';
 import { createStore as createWebChatStore } from 'botframework-webchat-core';
@@ -54,8 +46,6 @@ import {
   ClearLogPayload,
   closeDocument,
   DocumentIdPayload,
-  setHighlightedObjects,
-  setInspectorObjects,
   updatePendingSpeechTokenRetrieval,
   webChatStoreUpdated,
   webSpeechFactoryUpdated,
@@ -80,33 +70,6 @@ const getEndpointServiceByDocumentId = (state: RootState, documentId: string): I
   ) as IEndpointService;
 };
 
-const getCurrentDocumentId = (state: RootState): string => {
-  const { editors, activeEditor } = state.editor;
-  const { activeDocumentId } = editors[activeEditor];
-  return activeDocumentId;
-};
-
-const getPreviousBotState = (state: RootState, selectedTrace: Activity): Activity => {
-  const { editors, activeEditor } = state.editor;
-  const { activeDocumentId } = editors[activeEditor];
-  const chat = state.chat.chats[activeDocumentId];
-  const entries = chat.log.entries as any[];
-
-  const allEntries: LogItem<InspectableObjectLogItem>[] = entries.reduce(
-    (agg: LogItem[], entry) => agg.concat(entry.items),
-    []
-  );
-  const filteredLogItems: LogItem<InspectableObjectLogItem>[] = allEntries.filter(
-    (item: LogItem<InspectableObjectLogItem>) => {
-      const activity = item.payload.obj as Activity;
-      return item.type === LogItemType.InspectableObject && activity.valueType === ValueTypes.BotState;
-    }
-  );
-  const index = filteredLogItems.findIndex(logItem => logItem.payload.obj.id === selectedTrace.id) - 1;
-  const targetLogEntry = filteredLogItems[index];
-  return targetLogEntry && (targetLogEntry.payload.obj as Activity);
-};
-
 const getChatFromDocumentId = (state: RootState, documentId: string): any => {
   return state.chat.chats[documentId];
 };
@@ -117,13 +80,9 @@ export class ChatSagas {
 
   public static *showContextMenuForActivity(action: ChatAction<Activity>): Iterable<any> {
     const { payload: activity } = action;
-    const previousBotState = yield select(getPreviousBotState, activity);
-    const diffEnabled = activity.valueType.endsWith('botState') && !!previousBotState;
     const menuItems = [
       { label: 'Copy text', id: 'copy' },
       { label: 'Copy json', id: 'json' },
-      { type: 'separator' },
-      { label: 'Compare with previous', id: 'diff', enabled: diffEnabled },
     ] as MenuItemConstructorOptions[];
 
     const { DisplayContextMenu } = SharedConstants.Commands.Electron;
@@ -144,7 +103,7 @@ export class ChatSagas {
         return Electron.clipboard.writeText(JSON.stringify(activity, null, 2));
 
       default:
-        yield* ChatSagas.diffWithPreviousBotState(activity);
+        return;
     }
   }
 
@@ -221,70 +180,6 @@ export class ChatSagas {
     }
   }
 
-  public static *diffWithPreviousBotState(currentBotState: Activity): Iterable<any> {
-    const previousBotState: Activity = yield select(getPreviousBotState, currentBotState);
-
-    const lhs = [];
-    const rhs = [];
-    const deltas = diff(previousBotState.value, currentBotState.value);
-    (deltas || []).forEach(diff => {
-      switch (diff.kind) {
-        case 'A':
-          {
-            const { item, path } = diff;
-            path.push(diff.index);
-            if (item.kind === 'D') {
-              lhs.push(path);
-            } else if (item.kind === 'E') {
-              rhs.push(path);
-              lhs.push(path);
-            } else {
-              rhs.push(path);
-            }
-          }
-          break;
-
-        case 'D':
-          lhs.push(diff.path);
-          break;
-
-        case 'E':
-          rhs.push(diff.path);
-          lhs.push(diff.path);
-          break;
-
-        case 'N':
-          rhs.push(diff.path);
-          break;
-      }
-    });
-
-    // Clone the bot state and update the keys to show changes
-    const botStateClone: Activity = JSON.parse(
-      JSON.stringify(currentBotState, (key: string, value: any) => {
-        if (value instanceof Array) {
-          return Object.keys(value).reduce((conversion: any, key) => {
-            conversion['' + key] = value[key];
-            return conversion;
-          }, {});
-        }
-        return value;
-      })
-    );
-    botStateClone.valueType = ValueTypes.Diff;
-    // values that were added
-    rhs.forEach(path => {
-      ChatSagas.buildDiff('+', path, botStateClone.value, botStateClone.value);
-    });
-    // values that were removed
-    lhs.forEach(path => {
-      ChatSagas.buildDiff('-', path, botStateClone.value, previousBotState.value);
-    });
-    const documentId = yield select(getCurrentDocumentId);
-    yield put(setHighlightedObjects(documentId, [previousBotState, currentBotState]));
-    yield put(setInspectorObjects(documentId, botStateClone));
-  }
-
   private static getTextFromActivity(activity: Activity): string {
     if (activity.valueType === ValueTypes.Command) {
       return activity.value;
@@ -292,22 +187,6 @@ export class ChatSagas {
       return 'text' in activity.value ? activity.value.text : activity.label;
     }
     return activity.text || activity.label || '';
-  }
-
-  public static buildDiff(prependWith: string, path: (string | number)[], target: any, source: any): void {
-    let key;
-    for (let i = 0; i < path.length; i++) {
-      key = path[i];
-      if (key in target && target[key] !== null && typeof target[key] === 'object') {
-        target = target[key];
-        source = source[key];
-      } else {
-        break;
-      }
-    }
-    const value = source[key];
-    delete target[key];
-    target[prependWith + key] = value;
   }
 }
 

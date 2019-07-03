@@ -247,7 +247,6 @@ export class CollapsibleJsonViewer extends Component<CollapsibleJsonViewerProps,
     if (ul.getAttribute('aria-expanded') === proposedAriaExpandedValue) {
       return;
     }
-    ul.setAttribute('aria-expanded', proposedAriaExpandedValue);
     const actuator: HTMLDivElement = target.querySelector('[role="button"]');
     actuator.click();
   }

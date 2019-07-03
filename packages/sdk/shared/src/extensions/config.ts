@@ -55,6 +55,7 @@ export interface InspectorCriteria {
 export interface InspectorAccessory {
   id?: string;
   states?: { [id: string]: InspectorAccessoryState };
+  className?: string;
 }
 
 // =============================================================================

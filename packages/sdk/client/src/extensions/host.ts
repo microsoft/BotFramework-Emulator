@@ -33,6 +33,7 @@
 
 import { Activity } from 'botframework-schema';
 import { IBotConfiguration } from 'botframework-config/lib/schema';
+import { ExtensionChannel } from '@bfemulator/sdk-shared/build/types/ipc';
 
 export interface InspectorHost {
   // The current bot (msbot schema)
@@ -44,13 +45,16 @@ export interface InspectorHost {
   };
 
   // Each "on" function returns a method that when called, will unregister the handler.
-  on(event: 'inspect', handler: (activity: Activity) => void): () => void;
+  on(event: ExtensionChannel.Inspect, handler: (activity: Activity) => void): () => void;
 
-  on(event: 'bot-updated', handler: (bot: IBotConfiguration) => void): () => void;
+  on(event: ExtensionChannel.BotUpdated, handler: (bot: IBotConfiguration) => void): () => void;
 
-  on(event: 'accessory-click', handler: (id: string) => void): () => void;
+  on(event: ExtensionChannel.AccessoryClick, handler: (id: string, currentState: string) => void): () => void;
 
-  on(event: 'theme', handler: (themeInfo: { themeName: string; themeComponents: string[] }) => void): void;
+  on(
+    event: ExtensionChannel.Theme,
+    handler: (themeInfo: { themeName: string; themeComponents: string[] }) => void
+  ): void;
 
   // Enable/disable an accessory button
   enableAccessory(id: string, enabled: boolean): void;
@@ -63,4 +67,10 @@ export interface InspectorHost {
 
   // Tracks a telemetry event to App Insights
   trackEvent(name: string, properties?: { [key: string]: any }): void;
+
+  // Sets highlighted items within chat and the logs
+  setHighlightedObjects(documentId: string, items: Activity | Activity[]): void;
+
+  // Sets inspect items within the chat and logs
+  setInspectorObjects(documentId: string, items: Activity | Activity[]): void;
 }

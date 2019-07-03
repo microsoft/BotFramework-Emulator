@@ -32,81 +32,58 @@
 //
 import * as React from 'react';
 import { mount } from 'enzyme';
-import { ValueTypes } from '@bfemulator/app-shared';
+import { ExtensionChannel } from '@bfemulator/sdk-shared';
+import { InspectorHost } from '@bfemulator/sdk-client';
 
-import { WindowHostReceiver } from './windowHostReceiver';
+import { windowHostReceiver } from './windowHostReceiver';
 import { JsonViewerExtension } from './jsonViewerExtension';
+import { mockChatLogs, mockDiff0, mockDiff1 } from './mocks';
+import { extractBotStateActivitiesFromLogEntries } from './utils';
 
-(window as any).host = {
-  handlers: {
-    inspect: [],
-    theme: [],
-  },
-
-  on: function(event, handler) {
-    if (handler && Array.isArray(this.handlers[event]) && !this.handlers[event].includes(handler)) {
-      this.handlers[event].push(handler);
-    }
-    return () => {
-      this.handlers[event] = this.handlers[event].filter(item => item !== handler);
-    };
-  },
-};
-
-const mockData = {
-  valueType: ValueTypes.Diff,
-  value: {
-    conversationState: {
-      dialogState: {
-        dialogStack: {
-          '0': {
-            id: 'root',
-            state: {
-              options: {},
-              stepIndex: 0,
-              values: { instanceId: '8bc9292d-aa45-bf03-f7dc-50dea831c3fc' },
-            },
-          },
-          '1': {
-            id: 'slot-dialog',
-            state: {
-              '+slot': 'address',
-              '-slot': 'shoesize',
-              values: {
-                '+shoesize': 11,
-                age: 21,
-                fullname: { slot: 'last', values: { first: 'Joe', last: 'Schmo' } },
-              },
-            },
-          },
-          '2': {
-            '+id': 'address',
-            '-id': 'shoesize',
-            state: {
-              '+slot': 'street',
-              '-options': {
-                prompt: 'Please enter your shoe size.',
-                retryPrompt: 'You must enter a size between 0 and 16. Half sizes are acceptable.',
-              },
-              '-state': {},
-              values: {},
-            },
-          },
-          '3': { id: 'text', state: { options: { prompt: 'Please enter your street address.' }, state: {} } },
+let hostCalls: any = {};
+(window as any).host = new Proxy(
+  {
+    handlers: new Proxy(
+      {},
+      {
+        get(target, p) {
+          if (!(p in target)) {
+            target[p] = [];
+          }
+          return target[p];
         },
-      },
-      eTag: '*',
+      }
+    ),
+
+    on: function(event, handler) {
+      if (handler && Array.isArray(this.handlers[event]) && !this.handlers[event].includes(handler)) {
+        this.handlers[event].push(handler);
+      }
+      return () => {
+        this.handlers[event] = this.handlers[event].filter(item => item !== handler);
+      };
     },
-    userState: {},
   },
-};
+  {
+    get(target, p) {
+      if (!(p in target)) {
+        target[p] = (...args) => {
+          (hostCalls[p] || (hostCalls[p] = [])).push(args);
+        };
+      }
+      return target[p];
+    },
+  }
+);
 
 let jsonViewerWrapper;
 let jsonViewer;
 
 describe('The JsonViewerExtension', () => {
   let root: HTMLDivElement;
+  let host: InspectorHost;
   beforeAll(async () => {
+    const Component = windowHostReceiver(JsonViewerExtension);
     root = document.createElement('div');
     root.id = 'root';
     const themeTag = document.createElement('link');
@@ -114,22 +91,58 @@ describe('The JsonViewerExtension', () => {
     document.head.appendChild(themeTag);
     document.body.appendChild(root);
 
-    jsonViewerWrapper = mount(<JsonViewerExtension />, { attachTo: root });
+    jsonViewerWrapper = mount(<Component />, { attachTo: root });
     jsonViewer = jsonViewerWrapper.find(JsonViewerExtension).instance();
-    new WindowHostReceiver(jsonViewer);
-    (window as any).host.handlers.theme[0]({ themeName: 'high-contrast', themeComponents: ['dark.css'] });
+    host = (window as any).host as InspectorHost;
+    (host as any).handlers[ExtensionChannel.Theme][0]({ themeName: 'high-contrast', themeComponents: ['dark.css'] });
+  });
+
+  beforeEach(() => {
+    hostCalls = {};
   });
 
   it('should render with data and a theme', async () => {
     expect(jsonViewerWrapper.find('*').length).toBeGreaterThan(0);
-    expect(jsonViewer.state.themeName).toBe('high-contrast');
+    expect(jsonViewer.props.themeName).toBe('high-contrast');
   });
 
   it('should set the color treatment for diff data appropriately', () => {
     const spy = jest.spyOn(JsonViewerExtension as any, 'nodeColorVarName');
-    (window as any).host.handlers.inspect[0](mockData); // Simulate event through host
+    (host as any).handlers[ExtensionChannel.Inspect][0](mockDiff0); // Simulate event through host
     expect(spy).toHaveReturnedWith('--log-panel-item-error');
     expect(spy).toHaveReturnedWith('--log-panel-timestamp');
     expect(spy).toHaveReturnedWith('--log-panel-item-info');
+  });
+
+  it('should produce a diff when the "diff" button is selected', async () => {
+    (host as any).handlers[ExtensionChannel.ChatLogUpdated][0]('1234', mockChatLogs);
+    (host as any).handlers[ExtensionChannel.AccessoryClick][0]('diff', 'default');
+    expect(hostCalls.setInspectorObjects[0]).toEqual(['1234', [mockDiff0]]);
+  });
+
+  it('should diff the next bot state when the right arrow is clicked', () => {
+    (host as any).handlers[ExtensionChannel.ChatLogUpdated][0]('1234', mockChatLogs);
+    (host as any).handlers[ExtensionChannel.AccessoryClick][0]('diff', 'default');
+    (host as any).handlers[ExtensionChannel.AccessoryClick][0]('rightArrow');
+    expect(hostCalls.setInspectorObjects[1]).toEqual(['1234', [mockDiff1]]);
+  });
+
+  it('should diff the previous bot state when the left arrow is clicked', () => {
+    (host as any).handlers[ExtensionChannel.ChatLogUpdated][0]('1234', mockChatLogs);
+    (host as any).handlers[ExtensionChannel.Inspect][0]({});
+    (host as any).handlers[ExtensionChannel.AccessoryClick][0]('diff', 'default');
+    (host as any).handlers[ExtensionChannel.AccessoryClick][0]('rightArrow');
+    (host as any).handlers[ExtensionChannel.AccessoryClick][0]('leftArrow');
+    expect(hostCalls.setInspectorObjects[2]).toEqual(['1234', [mockDiff0]]);
+  });
+
+  it('should should reset the highlighted objects', async () => {
+    (host as any).handlers[ExtensionChannel.ChatLogUpdated][0]('1234', mockChatLogs);
+    (host as any).handlers[ExtensionChannel.Inspect][0]({});
+    (host as any).handlers[ExtensionChannel.AccessoryClick][0]('diff', 'default');
+    (host as any).handlers[ExtensionChannel.HighlightedObjectsUpdated][0]([]);
+    const botStates = extractBotStateActivitiesFromLogEntries(mockChatLogs as any);
+    await new Promise(resolve => setTimeout(resolve, 1100));
+    expect(hostCalls.setHighlightedObjects[1]).toEqual(['1234', botStates.slice(0, 2)]);
   });
 });

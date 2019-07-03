@@ -221,6 +221,7 @@ describe('The JsonViewer', () => {
     it('should expand a node when the right arrow is pressed', () => {
       const targetGroup = simulatedTree.querySelector('#group2');
       const groupThatShouldExpand = simulatedTree.querySelector('#group3');
+      groupThatShouldExpand.setAttribute('aria-expanded', 'false');
       const target = targetGroup.firstElementChild;
 
       const event = {
@@ -229,8 +230,10 @@ describe('The JsonViewer', () => {
         target,
       };
 
+      const actuator: HTMLDivElement = targetGroup.querySelector('[role="button"]');
+      const spy = jest.spyOn(actuator, 'click');
       (jsonViewer as any).onTreeKeydown(event as any);
-      expect(groupThatShouldExpand.getAttribute('aria-expanded')).toBe('true');
+      expect(spy).toHaveBeenCalled();
     });
 
     it('should collapse a node whe the left arrow is pressed', () => {
@@ -245,8 +248,10 @@ describe('The JsonViewer', () => {
         key: 'ArrowLeft',
         target,
       };
+      const actuator: HTMLDivElement = targetGroup.querySelector('[role="button"]');
+      const spy = jest.spyOn(actuator, 'click');
       (jsonViewer as any).onTreeKeydown(event as any);
-      expect(groupThatShouldCollapse.getAttribute('aria-expanded')).toBe('false');
+      expect(spy).toHaveBeenCalled();
     });
   });
 });

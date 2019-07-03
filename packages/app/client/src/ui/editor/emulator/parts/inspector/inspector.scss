@@ -16,6 +16,7 @@
     &:hover:not([disabled]), &[selected], &[aria-selected] {
       background-color: transparent;
       position: relative;
+
       &:after {
         content:'';
         border: 1px solid var(--p-button-bg);
@@ -37,6 +38,8 @@
 
     .accessory-button-icon {
       width: 30px;
+      height: 30px;
+      background-repeat: no-repeat;
     }
   }
 }
@@ -55,4 +58,24 @@
 
 .nothing-inspected {
   padding: 0 16px;
+}
+
+.left-arrow {
+  background-image: url('../../../../media/ic_next_copy.svg');
+  background-position: 50% 50%;
+}
+
+.left-arrow-selected {
+  background-image: url('../../../../media/ic_next_copy.svg');
+  background-position: 50% 50%;
+}
+
+.right-arrow {
+  background-image: url('../../../../media/ic_next.svg');
+  background-position: 50% 50%;
+}
+
+.right-arrow-selected {
+  background-image: url('../../../../media/ic_next.svg');
+  background-position: 50% 50%;
 }
