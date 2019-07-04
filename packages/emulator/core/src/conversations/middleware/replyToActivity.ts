@@ -50,7 +50,7 @@ export default function replyToActivity(botEmulator: BotEmulator) {
       // TODO: Need to re-enable
       // VersionManager.checkVersion(req.header("User-agent"));
 
-      activity.id = null;
+      activity.id = activity.id || null;
       activity.replyToId = req.params.activityId;
 
       // if we found the activity to reply to
