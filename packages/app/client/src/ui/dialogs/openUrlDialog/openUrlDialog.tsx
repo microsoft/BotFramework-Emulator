@@ -1,4 +1,4 @@
-//
+///
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license.
 //
@@ -31,23 +31,33 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './botCreationDialog/botCreationDialog';
-export * from './host/hostContainer';
-export * from './secretPromptDialog/secretPromptDialogContainer';
-export * from './tabManager/tabManagerContainer';
-export * from './service';
-export * from './azureLoginSuccessDialog/azureLoginSuccessDialogContainer';
-export * from './azureLoginPromptDialog/azureLoginPromptDialogContainer';
-export * from './azureLoginFailedDialog/azureLoginFailedDialogContainer';
-export * from './connectServicePromptDialog/connectServicePromptDialogContainer';
-export * from './dataCollectionDialog/dataCollectionDialogContainer';
-export * from './getStartedWithCSDialog/getStartedWithCSDialogContainer';
-export * from './postMigrationDialog/postMigrationDialogContainer';
-export * from './progressIndicator/progressIndicatorContainer';
-export * from './botSettingsEditor/botSettingsEditorContainer';
-export * from './resourcesSettings/resourcesSettingsContainer';
-export * from './updateAvailableDialog';
-export * from './updateUnavailableDialog';
-export * from './openBotDialog/openBotDialogContainer';
-export * from './openUrlDialog/openUrlDialog';
-export * from './openUrlDialog/openUrlDialogContainer';
+import { Dialog, DialogFooter, DefaultButton, PrimaryButton } from '@bfemulator/ui-react';
+import * as React from 'react';
+import { Component } from 'react';
+
+import * as styles from './openUrlDialog.scss';
+
+export interface OpenUrlDialogProps {
+  url?: string;
+  cancel: () => void;
+  confirm: () => void;
+}
+
+export class OpenUrlDialog extends Component<OpenUrlDialogProps, {}> {
+  constructor(props: OpenUrlDialogProps) {
+    super(props);
+  }
+
+  public render() {
+    return (
+      <Dialog cancel={this.props.cancel} className={styles.openUrlDialog} title="Confirm Open URL">
+        <p>{'\n\n Do you want to open this URL?'}</p>
+        <p>{'\n' + this.props.url}</p>
+        <DialogFooter>
+          <DefaultButton text="Cancel" type="button" onClick={this.props.cancel} />
+          <PrimaryButton text="Confirm" type="button" onClick={this.props.confirm} />
+        </DialogFooter>
+      </Dialog>
+    );
+  }
+}
