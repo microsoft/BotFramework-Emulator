@@ -32,8 +32,12 @@
 //
 
 .open-url-dialog {
-    min-width: 400px;
-    width: 400px;
-    max-height: 120px;
-    height: 120px;
+  min-width: 400px;
+  width: 400px;
+  min-height: 120px;
+  height: auto;
+
+  > p.url-container {
+    word-break: break-all;
+  }
 }

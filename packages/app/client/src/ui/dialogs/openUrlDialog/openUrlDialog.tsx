@@ -52,7 +52,7 @@ export class OpenUrlDialog extends Component<OpenUrlDialogProps, {}> {
     return (
       <Dialog cancel={this.props.cancel} className={styles.openUrlDialog} title="Confirm Open URL">
         <p>{'\n\n Do you want to open this URL?'}</p>
-        <p>{'\n' + this.props.url}</p>
+        <p className={styles.urlContainer}>{'\n' + this.props.url}</p>
         <DialogFooter>
           <DefaultButton text="Cancel" type="button" onClick={this.props.cancel} />
           <PrimaryButton text="Confirm" type="button" onClick={this.props.confirm} />
