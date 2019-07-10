@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-const { WatchIgnorePlugin } = require('webpack');
+const { DefinePlugin, WatchIgnorePlugin } = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const path = require('path');
@@ -118,5 +118,8 @@ module.exports = {
         to: './themes/high-contrast-luis.css',
       },
     ]),
+    new DefinePlugin({
+      process: { env: {} },
+    }),
   ],
 };
