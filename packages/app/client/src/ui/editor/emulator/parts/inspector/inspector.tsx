@@ -140,8 +140,9 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     const inspectorResult = Inspector.getInspector(document.inspectorObjects);
     const { inspector = { name: '' } } = inspectorResult.response;
     const buttons = Inspector.getButtons(inspector.accessories);
+    const { inspector: prevInspector = {} } = prevState;
 
-    if (prevState.buttons) {
+    if (prevState.buttons && inspector.name === prevInspector.name) {
       Object.assign(buttons, prevState.buttons);
     }
     return {
