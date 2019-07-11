@@ -31,11 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { CommandRegistry, CommandRegistryImpl } from '..';
+import { EventEmitter } from 'electron';
 
 import { uniqueId } from '../utils';
 
-import { EventEmitter } from 'electron';
+import { CommandRegistry, CommandRegistryImpl } from '..';
 
 interface Sender {
   send(channel: string, ...args: any[]): void;
