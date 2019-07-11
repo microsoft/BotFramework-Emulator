@@ -41,13 +41,15 @@ describe('The getAttachment middleware', () => {
   let facilities;
   let attachments;
   let attachmentId;
+  const mockAttachmentData = new Uint8Array(Buffer.from('aGk='));
+
   beforeEach(() => {
     attachments = new Attachments();
     attachmentId = attachments.uploadAttachment({
       name: 'an attachment',
-      originalBase64: new Uint8Array(Buffer.from('aGk=')),
+      originalBase64: mockAttachmentData,
       type: 'application/text',
-      thumbnailBase64: new Uint8Array(Buffer.from('aGk=')),
+      thumbnailBase64: mockAttachmentData,
     });
     facilities = {
       attachments,
@@ -80,7 +82,7 @@ describe('The getAttachment middleware', () => {
       } as any
     );
 
-    expect(sendSpy).toHaveBeenCalledWith(HttpStatus.OK, Buffer.from('aGk=', 'base64'));
+    expect(sendSpy).toHaveBeenCalledWith(HttpStatus.OK, Buffer.from(mockAttachmentData));
     expect(res.contentType).toBe('application/text');
   });
 
