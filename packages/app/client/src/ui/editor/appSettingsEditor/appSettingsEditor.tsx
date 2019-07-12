@@ -130,7 +130,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
               >
                 wiki page
               </a>{' '}
-              to learn more about using ngrok and to download it.
+              to learn more about using ngrok and how to download it.
             </p>
             <Row align={RowAlignment.Center} className={styles.marginBottomRow}>
               <TextField

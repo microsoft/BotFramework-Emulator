@@ -54,10 +54,12 @@ export default function getAttachment(bot: BotEmulator) {
           if (attachmentBase64) {
             // can be an ArrayBuffer if uploaded via the Web Chat paperclip control, or can be
             // an already-encoded base64 content string if sent from the bot
-            const bufferContents = attachmentBase64.buffer
-              ? Buffer.from(attachmentBase64.buffer as ArrayBuffer).toString()
-              : attachmentBase64.toString();
-            const buffer = Buffer.from(bufferContents, 'base64');
+            let buffer;
+            if (attachmentBase64.buffer) {
+              buffer = Buffer.from(attachmentBase64 as any);
+            } else {
+              buffer = Buffer.from(attachmentBase64.toString(), 'base64');
+            }
 
             res.contentType = attachment.type;
             res.send(HttpStatus.OK, buffer);

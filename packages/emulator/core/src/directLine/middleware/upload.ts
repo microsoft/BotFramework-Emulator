@@ -88,13 +88,13 @@ export default function upload(botEmulator: BotEmulator) {
             const name = (upload1 as any).name || 'file.dat';
             const type = upload1.type;
             const path = upload1.path;
-            const buf: Buffer = fs.readFileSync(path);
-            const base64Buffer = Buffer.from(buf.toString('base64'));
+            const base64EncodedContent = fs.readFileSync(path, { encoding: 'base64' });
+            const base64Buf = Buffer.from(base64EncodedContent, 'base64');
             const attachmentData: AttachmentData = {
               type,
               name,
-              originalBase64: new Uint8Array(base64Buffer.buffer),
-              thumbnailBase64: new Uint8Array(base64Buffer.buffer),
+              originalBase64: new Uint8Array(base64Buf),
+              thumbnailBase64: new Uint8Array(base64Buf),
             };
             const attachmentId = botEmulator.facilities.attachments.uploadAttachment(attachmentData);
             const attachment: Attachment = {
