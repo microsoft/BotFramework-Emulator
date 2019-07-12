@@ -60,9 +60,7 @@ export interface ChatProps {
 }
 
 interface ChatState {
-  selectedActivity?: Activity;
   highlightedActivities?: Activity[];
-  document?: ChatDocument;
 }
 
 export class Chat extends Component<ChatProps, ChatState> {
@@ -84,8 +82,6 @@ export class Chat extends Component<ChatProps, ChatState> {
       selectedActivity,
     ]);
     return {
-      document: newProps.document,
-      selectedActivity,
       highlightedActivities,
     };
   }
@@ -245,7 +241,6 @@ export class Chat extends Component<ChatProps, ChatState> {
 
   protected updateSelectedActivity(id: string): void {
     const selectedActivity: Activity & { showInInspector?: boolean } = this.activityMap[id];
-    this.setState({ selectedActivity });
     this.props.setInspectorObject(this.props.document.documentId, { ...selectedActivity, showInInspector: true });
   }
 
@@ -254,12 +249,24 @@ export class Chat extends Component<ChatProps, ChatState> {
   }
 
   private onItemRendererClick = (event: MouseEvent<HTMLDivElement | HTMLButtonElement>): void => {
+    // if we click inside of an input within an adaptive card, we want to avoid selecting the activity
+    // because it will cause a Web Chat re-render which will wipe the adaptive card state
+    const { target = { tagName: '' } } = event;
+    if ((target as HTMLElement).tagName === 'INPUT') {
+      return;
+    }
     const { activityId } = (event.currentTarget as any).dataset;
     this.updateSelectedActivity(activityId);
   };
 
   private onItemRendererKeyDown = (event: KeyboardEvent<HTMLDivElement | HTMLButtonElement>): void => {
     if (event.key !== ' ' && event.key !== 'Enter') {
+      return;
+    }
+    // if we type inside of an input within an adaptive card, we want to avoid selecting the activity
+    // on spacebar because it will cause a Web Chat re-render which will wipe the adaptive card state
+    const { target = { tagName: '' } } = event;
+    if (event.key === ' ' && (target as HTMLElement).tagName === 'INPUT') {
       return;
     }
     const { activityId } = (event.currentTarget as any).dataset;

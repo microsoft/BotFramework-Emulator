@@ -45,6 +45,11 @@ import { chat } from '../../../../../data/reducer/chat';
 import { editor } from '../../../../../data/reducer/editor';
 import { clientAwareSettings } from '../../../../../data/reducer/clientAwareSettingsReducer';
 import { BotCommands } from '../../../../../commands/botCommands';
+import {
+  setInspectorObjects,
+  showContextMenuForActivity,
+  setHighlightedObjects,
+} from '../../../../../data/action/chatActions';
 
 import webChatStyleOptions from './webChatTheme';
 import { ChatContainer } from './chatContainer';
@@ -250,10 +255,12 @@ describe('<ChatContainer />', () => {
 });
 
 describe('event handlers', () => {
-  let dispatchSpy;
+  let dispatchSpy: jest.SpyInstance;
+
   beforeEach(() => {
     dispatchSpy = jest.spyOn(mockStore, 'dispatch').mockReturnValue(true);
   });
+
   it('should invoke the appropriate functions defined in the props', () => {
     const next = () => (kids: any) => kids;
     const chat = render({ document: { ...defaultDocument, mode: 'debug' } as any });
@@ -269,31 +276,35 @@ describe('event handlers', () => {
     const middleware = webChat.prop('activityMiddleware') as any;
     const children = 'a child node';
     const activityWrapper = mount(middleware()(next)(card)(children));
+
+    // keydown on activity
     activityWrapper.simulate('keyDown', { key: ' ', target: { tagName: 'DIV', classList: [] } });
-    expect(dispatchSpy).toHaveBeenCalledWith({
-      payload: {
-        documentId: undefined,
-        objs: [
-          {
-            id: 'activity-id',
-            showInInspector: true,
-            type: 'trace',
-            value: { type: 'event' },
-            valueType: 'https://www.botframework.com/schemas/botState',
-          },
-        ],
-      },
-      type: 'CHAT/INSPECTOR/OBJECTS/SET',
-    });
+    expect(dispatchSpy).toHaveBeenCalledWith(setHighlightedObjects(undefined, []));
+    expect(dispatchSpy).toHaveBeenCalledWith(
+      setInspectorObjects(undefined, { ...card.activity, showInInspector: true })
+    );
+
+    // hitting spacebar on input field within adaptive card
+    dispatchSpy.mockClear();
+    activityWrapper.simulate('keyDown', { key: ' ', target: { tagName: 'INPUT', classList: [] } });
+    expect(dispatchSpy).not.toHaveBeenCalled();
+
+    // click on activity
+    dispatchSpy.mockClear();
     activityWrapper.simulate('click', { target: { tagName: 'DIV', classList: [] } });
-    expect(dispatchSpy).toHaveBeenCalledWith({
-      payload: {
-        documentId: undefined,
-        objs: [{ showInInspector: true }],
-      },
-      type: 'CHAT/INSPECTOR/OBJECTS/SET',
-    });
+    expect(dispatchSpy).toHaveBeenCalledWith(setHighlightedObjects(undefined, []));
+    expect(dispatchSpy).toHaveBeenCalledWith(
+      setInspectorObjects(undefined, { ...card.activity, showInInspector: true })
+    );
+
+    // click on input field within adaptive card
+    dispatchSpy.mockClear();
+    activityWrapper.simulate('click', { target: { tagName: 'INPUT', classList: [] } });
+    expect(dispatchSpy).not.toHaveBeenCalled();
+
+    // show context menu for activity
+    dispatchSpy.mockClear();
     activityWrapper.simulate('contextmenu', { target: { tagName: 'DIV', classList: [] } });
-    expect(dispatchSpy).toHaveBeenCalledWith({ payload: undefined, type: 'CHAT/CONTEXT_MENU/SHOW' });
+    expect(dispatchSpy).toHaveBeenCalledWith(showContextMenuForActivity(card.activity));
   });
 });
