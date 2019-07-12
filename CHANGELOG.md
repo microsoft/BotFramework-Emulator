@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## Fixed
+- [main] Fixed an issue where uploaded attachments weren't being encoded and decoded properly in PR [1678](https://github.com/microsoft/BotFramework-Emulator/pull/1678)
+
 ## v4.5.0 - 2019 - 07 - 11
 ## Added
 - [main] Added ability to launch into a bot inspector mode session via protocol url in PR [1617](https://github.com/microsoft/BotFramework-Emulator/pull/1617)
