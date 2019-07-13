@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## v4.5.1 - 2019 - 07 - 13
 ## Fixed
 - [main] Fixed an issue where uploaded attachments weren't being encoded and decoded properly in PR [1678](https://github.com/microsoft/BotFramework-Emulator/pull/1678)
 - [client] Fixed issue where adaptive card inputs were being reset when clicking or typing within adaptive card input fields in PR [1681](https://github.com/microsoft/BotFramework-Emulator/pull/1681)
