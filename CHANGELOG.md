@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## Fixed
+- [client] Fixed issue where html errors were being displayed incorrectly in PR [1687](https://github.com/microsoft/BotFramework-Emulator/pull/1687/files)
+
 ## v4.5.1 - 2019 - 07 - 13
 ## Fixed
 - [main] Fixed an issue where uploaded attachments weren't being encoded and decoded properly in PR [1678](https://github.com/microsoft/BotFramework-Emulator/pull/1678)
