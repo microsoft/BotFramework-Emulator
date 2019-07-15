@@ -128,7 +128,7 @@ export class ChatSagas {
     // Each time a new chat is open, retrieve the speech token
     // if the endpoint is speech enabled and create a bound speech
     // pony fill factory. This is consumed by WebChat...
-    yield put(webSpeechFactoryUpdated(documentId, null)); // remove the old factory
+    yield put(webSpeechFactoryUpdated(documentId, undefined)); // remove the old factory
     const conversationId = yield select(getConversationIdFromDocumentId, documentId);
     // Try the bot file
     let endpoint: IEndpointService = yield select(getEndpointServiceByDocumentId, documentId);
