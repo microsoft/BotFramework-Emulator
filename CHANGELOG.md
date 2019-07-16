@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Fixed
 - [client] Fixed issue where html errors were being displayed incorrectly in PR [1687](https://github.com/microsoft/BotFramework-Emulator/pull/1687/files)
+- [client] Fixed an issue where webSpeechFactories in store were being set to null in PR [1685](https://github.com/microsoft/BotFramework-Emulator/pull/1685)
 
 ## v4.5.1 - 2019 - 07 - 13
 ## Fixed
