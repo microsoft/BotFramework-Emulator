@@ -13,7 +13,7 @@
     background-color: transparent;
     font-weight: normal;
 
-    &:hover:not([disabled]), &[selected], &[aria-selected] {
+    &:hover:not([disabled]), &[selected], &[aria-selected], &[name="json"] {
       background-color: transparent;
       position: relative;
 
@@ -61,13 +61,15 @@
 }
 
 .left-arrow {
-  background-image: url('../../../../media/ic_next_copy.svg');
+  background-image: url('../../../../media/ic_next.svg');
   background-position: 50% 50%;
+  transform: rotate(180deg);
 }
 
 .left-arrow-selected {
-  background-image: url('../../../../media/ic_next_copy.svg');
+  background-image: url('../../../../media/ic_next.svg');
   background-position: 50% 50%;
+  transform: rotate(180deg);
 }
 
 .right-arrow {

@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## Fixed
+- [client] Fixed some minor styling issues with the JSON inspector in PR [1691](https://github.com/microsoft/BotFramework-Emulator/pull/1691)
+
 ## v4.5.1 - 2019 - 07 - 13
 ## Fixed
 - [main] Fixed an issue where uploaded attachments weren't being encoded and decoded properly in PR [1678](https://github.com/microsoft/BotFramework-Emulator/pull/1678)

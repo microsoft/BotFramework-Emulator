@@ -29,10 +29,10 @@
             "id": "json",
             "states": {
               "default": {
-                "label": "Json"
+                "label": "JSON"
               },
               "selected": {
-                "label": "Json",
+                "label": "JSON",
                 "aria-selected": true
               }
             }
@@ -71,10 +71,10 @@
             "id": "diff",
             "states": {
               "default": {
-                "label": "Show Diff"
+                "label": "Show diff"
               },
               "selected": {
-                "label": "Hide Diff",
+                "label": "Hide diff",
                 "aria-selected": true
               },
               "disabled": {
