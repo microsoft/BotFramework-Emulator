@@ -32,7 +32,7 @@
 //
 
 import * as React from 'react';
-import { mount, ReactWrapper } from 'enzyme';
+import { mount, ReactWrapper, shallow } from 'enzyme';
 import { Provider } from 'react-redux';
 import ReactWebChat, { createDirectLine } from 'botframework-webchat';
 import { ActivityTypes } from 'botframework-schema';
@@ -53,7 +53,7 @@ import {
 
 import webChatStyleOptions from './webChatTheme';
 import { ChatContainer } from './chatContainer';
-import { ChatProps } from './chat';
+import { ChatProps, Chat } from './chat';
 
 jest.mock('electron', () => ({
   ipcMain: new Proxy(
@@ -251,6 +251,41 @@ describe('<ChatContainer />', () => {
       const component = render({ pendingSpeechTokenRetrieval: true });
       expect(component.find('div').text()).toEqual('Connecting...');
     });
+  });
+
+  it('should be able to tell when a click within an activity was on an Adaptive Card input', () => {
+    const wrapper = shallow(
+      <Chat
+        document={{} as any}
+        mode={'livechat'}
+        currentUser={null}
+        locale={'en-US'}
+        showContextMenuForActivity={() => null}
+        setInspectorObject={() => null}
+        webchatStore={null}
+      />
+    );
+    const instance: any = wrapper.instance();
+    const mockElement = { tagName: 'SELECT', parentElement: undefined };
+
+    expect(instance.elementIsAnAdaptiveCardInput(mockElement)).toBe(true);
+
+    mockElement.tagName = 'OPTION';
+    expect(instance.elementIsAnAdaptiveCardInput(mockElement)).toBe(true);
+
+    mockElement.tagName = 'INPUT';
+    expect(instance.elementIsAnAdaptiveCardInput(mockElement)).toBe(true);
+
+    mockElement.tagName = 'TEXTAREA';
+    expect(instance.elementIsAnAdaptiveCardInput(mockElement)).toBe(true);
+
+    mockElement.tagName = 'P';
+    mockElement.parentElement = { tagName: 'LABEL' };
+    expect(instance.elementIsAnAdaptiveCardInput(mockElement)).toBe(true);
+
+    mockElement.parentElement = undefined;
+    mockElement.tagName = 'SPAN';
+    expect(instance.elementIsAnAdaptiveCardInput(mockElement)).toBe(false);
   });
 });
 

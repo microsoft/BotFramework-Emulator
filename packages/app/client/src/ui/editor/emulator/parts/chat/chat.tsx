@@ -63,6 +63,13 @@ interface ChatState {
   highlightedActivities?: Activity[];
 }
 
+const adaptiveCardInputs = {
+  INPUT: null,
+  OPTION: null,
+  SELECT: null,
+  TEXTAREA: null,
+};
+
 export class Chat extends Component<ChatProps, ChatState> {
   public state = { waitForSpeechToken: false } as ChatState;
   private activityMap: { [activityId: string]: Activity };
@@ -252,7 +259,7 @@ export class Chat extends Component<ChatProps, ChatState> {
     // if we click inside of an input within an adaptive card, we want to avoid selecting the activity
     // because it will cause a Web Chat re-render which will wipe the adaptive card state
     const { target = { tagName: '' } } = event;
-    if ((target as HTMLElement).tagName === 'INPUT') {
+    if (this.elementIsAnAdaptiveCardInput(target as HTMLElement)) {
       return;
     }
     const { activityId } = (event.currentTarget as any).dataset;
@@ -266,7 +273,7 @@ export class Chat extends Component<ChatProps, ChatState> {
     // if we type inside of an input within an adaptive card, we want to avoid selecting the activity
     // on spacebar because it will cause a Web Chat re-render which will wipe the adaptive card state
     const { target = { tagName: '' } } = event;
-    if (event.key === ' ' && (target as HTMLElement).tagName === 'INPUT') {
+    if (event.key === ' ' && this.elementIsAnAdaptiveCardInput(target as HTMLElement)) {
       return;
     }
     const { activityId } = (event.currentTarget as any).dataset;
@@ -279,5 +286,14 @@ export class Chat extends Component<ChatProps, ChatState> {
 
     this.updateSelectedActivity(activityId);
     this.props.showContextMenuForActivity(activity);
+  };
+
+  private elementIsAnAdaptiveCardInput = (element: HTMLElement): boolean => {
+    const { tagName = '' } = element;
+    // adaptive cards embed <p> tags inside of input <labels>
+    if (element.parentElement && element.parentElement.tagName === 'LABEL') {
+      return true;
+    }
+    return tagName in adaptiveCardInputs;
   };
 }
