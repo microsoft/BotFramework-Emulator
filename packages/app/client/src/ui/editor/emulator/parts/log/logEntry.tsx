@@ -268,6 +268,13 @@ export class LogEntry extends React.Component<LogEntryProps> {
     if (typeof body === 'string') {
       try {
         obj = JSON.parse(body);
+        // html responses come over as doubly stringified e.g.: ""<some html>"" and
+        // calling JSON.parse will turn them into a standard string;
+        // we want to assign the html to a property so that the string isn't expanded
+        // out into a giant object with one key per character
+        if (typeof obj === 'string') {
+          obj = { value: obj };
+        }
       } catch (e) {
         obj = body;
       }
