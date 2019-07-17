@@ -52,7 +52,7 @@ const mapStateToProps = (state: RootState, { document }): Partial<ChatProps> => 
     currentUser:
       state.clientAwareSettings.users.usersById[currentUserId] || ({ id: currentUserId, name: 'User' } as User),
     locale: state.clientAwareSettings.locale || 'en-us',
-    webSpeechPonyfillFactory: state.chat.webSpeechFactories[documentId] || undefined, // TODO: prevent this value from being assigned to 'null' in store - https://github.com/microsoft/BotFramework-Emulator/issues/1672,
+    webSpeechPonyfillFactory: state.chat.webSpeechFactories[documentId],
     pendingSpeechTokenRetrieval: state.chat.pendingSpeechTokenRetrieval,
     webchatStore: state.chat.webChatStores[documentId],
   };

@@ -130,10 +130,17 @@ export class RestServer {
       level = LogLevel.Error;
     }
 
+    let responseHeaders;
+    try {
+      responseHeaders = res.headers();
+    } catch (e) {
+      responseHeaders = undefined;
+    }
+
     emulatorApplication.mainWindow.logService.logToChat(
       conversationId,
       networkRequestItem(facility, (req as any)._body, req.headers, req.method, req.url),
-      networkResponseItem((res as any)._data, res.headers, res.statusCode, res.statusMessage, req.url),
+      networkResponseItem((res as any)._data, responseHeaders, res.statusCode, res.statusMessage, req.url),
       textItem(level, `${facility}.${routeName}`)
     );
   };
