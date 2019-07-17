@@ -1,37 +1,13 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="17px" height="16px" viewBox="0 0 17 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <!-- Generator: Sketch 55 (78076) - https://sketchapp.com -->
-    <title>Icons/Full MDL2 Assets/Next</title>
-    <desc>Created with Sketch.</desc>
-    <defs>
-        <filter x="-0.8%" y="-22.9%" width="101.6%" height="145.7%" filterUnits="objectBoundingBox" id="filter-1">
-            <feOffset dx="0" dy="2" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
-            <feGaussianBlur stdDeviation="1" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
-            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.5 0" type="matrix" in="shadowBlurOuter1" result="shadowMatrixOuter1"></feColorMatrix>
-            <feMerge>
-                <feMergeNode in="shadowMatrixOuter1"></feMergeNode>
-                <feMergeNode in="SourceGraphic"></feMergeNode>
-            </feMerge>
-        </filter>
-        <polygon id="path-2" points="14.9619141 7.97314453 8.98876953 13.9462891 8.41748047 13.375 13.4130859 8.37939453 2 8.37939453 2 7.56689453 13.4130859 7.56689453 8.41748047 2.57128906 8.98876953 2"></polygon>
-    </defs>
-    <g id="SIDECAR" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="4.10-sidecar-07" transform="translate(-1322.000000, -219.000000)">
-            <g id="Group-2" transform="translate(100.000000, 100.000000)">
-                <g id="dark/tab-bar" filter="url(#filter-1)" transform="translate(371.000000, 107.000000)">
-                    <g id="Group-3">
-                        <g id="Icons/Full-MDL2-Assets/Next" transform="translate(851.000000, 10.000000)">
-                            <mask id="mask-3" fill="white">
-                                <use xlink:href="#path-2"></use>
-                            </mask>
-                            <use id="" fill="#000000" fill-rule="evenodd" xlink:href="#path-2"></use>
-                            <g id="_color/Primary-1-(00BCF2)-sql-light" mask="url(#mask-3)" fill="#00BCF2" fill-rule="evenodd">
-                                <rect id="Rectangle" x="0" y="0" width="16" height="16"></rect>
-                            </g>
-                        </g>
-                    </g>
-                </g>
-            </g>
-        </g>
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <g id="Icons/Full MDL2 Assets/Next">
+    <path id="&#238;&#156;&#170;" fill-rule="evenodd" clip-rule="evenodd" d="M14.9619 7.97314L8.98877 13.9463L8.41748 13.375L13.4131 8.37939H2V7.56689H13.4131L8.41748 2.57129L8.98877 2L14.9619 7.97314Z" fill="black"/>
+    <mask id="mask0" mask-type="alpha" maskUnits="userSpaceOnUse" x="2" y="2" width="13" height="12">
+      <path id="&#238;&#156;&#170;_2" fill-rule="evenodd" clip-rule="evenodd" d="M14.9619 7.97314L8.98877 13.9463L8.41748 13.375L13.4131 8.37939H2V7.56689H13.4131L8.41748 2.57129L8.98877 2L14.9619 7.97314Z" fill="white"/>
+    </mask>
+    <g mask="url(#mask0)">
+      <g id="_color/Primary 1 (00BCF2) sql light">
+        <rect id="Rectangle" width="16" height="16" fill="#00BCF2"/>
+      </g>
     </g>
+  </g>
 </svg>
