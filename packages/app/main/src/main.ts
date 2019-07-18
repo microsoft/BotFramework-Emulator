@@ -278,7 +278,9 @@ class EmulatorApplication {
 
     this.mainWindow = new Window(this.mainBrowserWindow);
 
-    SplashScreen.show(this.mainBrowserWindow);
+    if (process.env.NODE_ENV !== 'test') {
+      SplashScreen.show(this.mainBrowserWindow);
+    }
     const page =
       process.env.ELECTRON_TARGET_URL ||
       url.format({
