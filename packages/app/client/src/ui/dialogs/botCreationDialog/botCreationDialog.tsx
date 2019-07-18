@@ -115,6 +115,7 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
             onChange={this.onInputChange}
             label={'Bot name'}
             required={true}
+            name={'create-bot-name'}
           />
           <TextField
             onChange={this.onInputChange}
@@ -123,6 +124,7 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
             label={'Endpoint URL'}
             required={true}
             value={this.state.endpoint.endpoint}
+            name={'create-bot-url'}
           />
           {endpointWarning && <span className={styles.endpointWarning}>{endpointWarning}</span>}
           <Row className={styles.multiInputRow}>
@@ -199,7 +201,12 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
 
         <DialogFooter>
           <DefaultButton text="Cancel" onClick={this.onCancel} />
-          <PrimaryButton text="Save and connect" onClick={this.onSaveAndConnect} disabled={!requiredFieldsCompleted} />
+          <PrimaryButton
+            text="Save and connect"
+            onClick={this.onSaveAndConnect}
+            disabled={!requiredFieldsCompleted}
+            name={'create-bot-save'}
+          />
         </DialogFooter>
       </Dialog>
     );

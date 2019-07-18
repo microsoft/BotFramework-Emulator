@@ -9,3 +9,4 @@ custom-botframework-webchat/dist
 coverage
 build/
 .vscode/*
+chrome-driver-log.txt
