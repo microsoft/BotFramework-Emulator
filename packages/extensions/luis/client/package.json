@@ -13,7 +13,7 @@
     "botframework-config": "4.4.0",
     "botframework-schema": "^4.3.4",
     "lscache": "^1.1.0",
-    "luis-apis": "^2.5.1",
+    "luis-apis": "2.5.1",
     "react": "~16.3.2",
     "react-dom": "~16.3.2"
   },
