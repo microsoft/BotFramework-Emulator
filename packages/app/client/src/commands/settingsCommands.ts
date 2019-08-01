@@ -34,8 +34,8 @@
 import { ClientAwareSettings, SharedConstants } from '@bfemulator/app-shared';
 import { Command } from '@bfemulator/sdk-shared';
 
-import { clientAwareSettingsChanged } from '../data/action/clientAwareSettingsActions';
-import { store } from '../data/store';
+import { clientAwareSettingsChanged } from '../state/actions/clientAwareSettingsActions';
+import { store } from '../state/store';
 
 const { Settings } = SharedConstants.Commands;
 

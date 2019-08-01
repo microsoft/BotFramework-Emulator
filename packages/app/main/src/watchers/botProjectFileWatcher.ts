@@ -38,8 +38,8 @@ import { WatchOptions } from 'chokidar';
 import { existsSync, readFileSync, Stats } from 'fs-extra';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
-import * as BotActions from '../data/actions/botActions';
-import { getStore } from '../data/store';
+import * as BotActions from '../state/actions/botActions';
+import { store } from '../state/store';
 import { BotHelpers } from '../botHelpers';
 
 import { FileWatcher } from './fileWatcher';
@@ -93,7 +93,7 @@ export class BotProjectFileWatcher extends FileWatcher {
 
     // update store
     const botDir = path.dirname(this.botFilePath);
-    getStore().dispatch(BotActions.setActive(bot));
+    store.dispatch(BotActions.setActive(bot));
     return Promise.all([
       this.commandService.remoteCall(SharedConstants.Commands.Bot.SetActive, bot, botDir),
       this.commandService.call(SharedConstants.Commands.Bot.RestartEndpointService),

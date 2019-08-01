@@ -34,7 +34,7 @@
 import { SharedConstants } from '@bfemulator/app-shared';
 import { Command } from '@bfemulator/sdk-shared';
 
-import { store } from '../data/store';
+import { store } from '../state/store';
 
 const Commands = SharedConstants.Commands.Misc;
 

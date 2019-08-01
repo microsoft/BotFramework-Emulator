@@ -34,8 +34,8 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import * as NotificationActions from '../../../../data/action/notificationActions';
-import { RootState } from '../../../../data/store';
+import * as NotificationActions from '../../../../state/actions/notificationActions';
+import { RootState } from '../../../../state/store';
 import { NotificationManager } from '../../../../notificationManager';
 
 import { Notification } from './notification';

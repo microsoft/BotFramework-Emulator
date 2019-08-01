@@ -33,10 +33,10 @@
 import { BotInfo, SharedConstants } from '@bfemulator/app-shared';
 import { connect } from 'react-redux';
 
-import { getBotInfoByPath } from '../../../data/botHelpers';
-import { RootState } from '../../../data/store';
+import { getBotInfoByPath } from '../../../state/helpers/botHelpers';
+import { RootState } from '../../../state/store';
 import { DialogService } from '../service';
-import { executeCommand } from '../../../data/action/commandAction';
+import { executeCommand } from '../../../state/actions/commandAction';
 
 import { ResourcesSettings, ResourcesSettingsProps } from './resourcesSettings';
 

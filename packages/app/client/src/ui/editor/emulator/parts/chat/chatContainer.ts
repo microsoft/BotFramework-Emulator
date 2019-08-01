@@ -39,9 +39,9 @@ import {
   setHighlightedObjects,
   setInspectorObjects,
   showContextMenuForActivity,
-} from '../../../../../data/action/chatActions';
-import { RootState } from '../../../../../data/store';
-import { executeCommand } from '../../../../../data/action/commandAction';
+} from '../../../../../state/actions/chatActions';
+import { RootState } from '../../../../../state/store';
+import { executeCommand } from '../../../../../state/actions/commandAction';
 
 import { Chat, ChatProps } from './chat';
 

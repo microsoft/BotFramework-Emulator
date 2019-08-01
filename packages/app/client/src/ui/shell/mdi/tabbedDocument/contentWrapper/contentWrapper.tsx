@@ -36,10 +36,10 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 
 import * as Constants from '../../../../../constants';
-import * as EditorActions from '../../../../../data/action/editorActions';
-import { getTabGroupForDocument, tabGroupHasDocuments } from '../../../../../data/editorHelpers';
-import { Editor } from '../../../../../data/reducer/editor';
-import { RootState } from '../../../../../data/store';
+import * as EditorActions from '../../../../../state/actions/editorActions';
+import { getTabGroupForDocument, tabGroupHasDocuments } from '../../../../../state/helpers/editorHelpers';
+import { Editor } from '../../../../../state/reducers/editor';
+import { RootState } from '../../../../../state/store';
 import { ContentOverlay, LeftContentOverlay, RightContentOverlay } from '../index';
 
 import * as styles from './contentWrapper.scss';

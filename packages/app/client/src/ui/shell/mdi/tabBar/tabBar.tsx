@@ -44,8 +44,8 @@ import {
   CONTENT_TYPE_TRANSCRIPT,
   CONTENT_TYPE_WELCOME_PAGE,
 } from '../../../../constants';
-import { getOtherTabGroup } from '../../../../data/editorHelpers';
-import { Document, Editor } from '../../../../data/reducer/editor';
+import { getOtherTabGroup } from '../../../../state/helpers/editorHelpers';
+import { Document, Editor } from '../../../../state/reducers/editor';
 import { Tab } from '../tab/tab';
 
 import * as styles from './tabBar.scss';

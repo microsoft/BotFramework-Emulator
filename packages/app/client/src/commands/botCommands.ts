@@ -31,23 +31,23 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { BotInfo, getBotDisplayName, SharedConstants } from '@bfemulator/app-shared';
+import { getBotDisplayName, SharedConstants } from '@bfemulator/app-shared';
 import { BotConfigWithPath, Command, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 import { IFileService } from 'botframework-config/lib/schema';
 import { newNotification } from '@bfemulator/app-shared';
 
-import * as BotActions from '../data/action/botActions';
-import * as FileActions from '../data/action/fileActions';
+import * as BotActions from '../state/actions/botActions';
+import * as FileActions from '../state/actions/fileActions';
 import {
   chatFilesUpdated,
   chatsDirectoryUpdated,
   transcriptDirectoryUpdated,
   transcriptsUpdated,
-} from '../data/action/resourcesAction';
-import { pathExistsInRecentBots } from '../data/botHelpers';
-import { store } from '../data/store';
+} from '../state/actions/resourcesAction';
+import { pathExistsInRecentBots } from '../state/helpers/botHelpers';
+import { store } from '../state/store';
 import { ActiveBotHelper } from '../ui/helpers/activeBotHelper';
-import { beginAdd } from '../data/action/notificationActions';
+import { beginAdd } from '../state/actions/notificationActions';
 
 const Commands = SharedConstants.Commands;
 
@@ -109,18 +109,10 @@ export class BotCommands {
   }
 
   // ---------------------------------------------------------------------------
-  // Syncs the client side list of bots with bots arg (usually called from server side)
-  @Command(Commands.Bot.SyncBotList)
-  protected async syncBotList(bots: BotInfo[]): Promise<void> {
-    store.dispatch(BotActions.loadBotInfos(bots));
-    await this.commandService.remoteCall(Commands.Electron.UpdateFileMenu);
-  }
-
-  // ---------------------------------------------------------------------------
   // Sets a bot as active (called from server-side)
   @Command(Commands.Bot.SetActive)
   protected async setActiveBot(bot: BotConfigWithPath, botDirectory: string) {
-    store.dispatch(BotActions.setActiveBot(bot));
+    store.dispatch(BotActions.setActive(bot));
     store.dispatch(FileActions.setRoot(botDirectory));
     await Promise.all([
       this.commandService.remoteCall(Commands.Electron.UpdateFileMenu),

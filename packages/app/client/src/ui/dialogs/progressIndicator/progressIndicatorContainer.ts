@@ -34,8 +34,8 @@
 import { connect } from 'react-redux';
 import { Action } from 'redux';
 
-import { cancelCurrentProcess } from '../../../data/action/progressIndicatorActions';
-import { RootState } from '../../../data/store';
+import { cancelCurrentProcess } from '../../../state/actions/progressIndicatorActions';
+import { RootState } from '../../../state/store';
 import { DialogService } from '../service';
 
 import { ProgressIndicator } from './progressIndicator';

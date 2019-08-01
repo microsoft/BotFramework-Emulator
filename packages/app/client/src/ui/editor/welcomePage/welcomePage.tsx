@@ -31,7 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { BotInfo } from '@bfemulator/app-shared';
 import { Column, LargeHeader, PrimaryButton, Row, SmallHeader } from '@bfemulator/ui-react';
 import * as React from 'react';
 

@@ -34,7 +34,7 @@
 import { IBotService, IEndpointService, ServiceTypes } from 'botframework-config/lib/schema';
 import { connect } from 'react-redux';
 
-import { RootState } from '../../../../../data/store';
+import { RootState } from '../../../../../state/store';
 import { DialogService } from '../../../../dialogs/service';
 
 import { EndpointEditor, EndpointEditorProps, UpdatedServicesPayload } from './endpointEditor';

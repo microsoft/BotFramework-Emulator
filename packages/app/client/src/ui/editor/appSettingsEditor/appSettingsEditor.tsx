@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { FrameworkSettings } from '@bfemulator/app-shared';
+import { FrameworkSettings, frameworkDefault } from '@bfemulator/app-shared';
 import {
   Checkbox,
   Column,
@@ -46,6 +46,7 @@ import * as React from 'react';
 import { ChangeEvent } from 'react';
 
 import { GenericDocument } from '../../layout';
+import { generateHash } from '../../../state/helpers/botHelpers';
 
 import * as styles from './appSettingsEditor.scss';
 
@@ -55,7 +56,6 @@ export interface AppSettingsEditorProps {
   framework?: FrameworkSettings;
 
   discardChanges?: () => void;
-  getFrameworkSettings?: () => void;
   openBrowseForNgrok: () => Promise<string>;
   saveFrameworkSettings?: (framework: FrameworkSettings) => void;
   setDirtyFlag?: (dirty: boolean) => void;
@@ -86,10 +86,6 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
       dirty: newProps.dirty,
       pendingUpdate: false,
     };
-  }
-
-  public componentDidMount(): void {
-    this.props.getFrameworkSettings();
   }
 
   public render(): JSX.Element {
@@ -298,8 +294,14 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
     this.updateDirtyFlag(change);
   };
 
-  private onSaveClick = () => {
-    this.props.saveFrameworkSettings(this.state);
+  private onSaveClick = async () => {
+    // trim keys that do not belong and generate a hash
+    const settings = this.state;
+    const keys = Object.keys(frameworkDefault).sort();
+    const newState = keys.reduce((s, key) => ((s[key] = settings[key]), s), {}) as FrameworkSettings;
+    newState.hash = await generateHash(newState);
+
+    this.props.saveFrameworkSettings(newState);
   };
 
   private updateDirtyFlag(change: { [prop: string]: any }) {

@@ -45,9 +45,9 @@ import {
   ValueTypesMask,
 } from '@bfemulator/app-shared';
 
-import { Document, SplitterSize } from '../../../data/reducer/editor';
+import { Document, SplitterSize } from '../../../state/reducers/editor';
 import { debounce } from '../../../utils';
-import { ChatDocument } from '../../../data/reducer/chat';
+import { ChatDocument } from '../../../state/reducers/chat';
 
 import ChatPanel from './chatPanel/chatPanel';
 import LogPanel from './logPanel/logPanel';
@@ -163,6 +163,7 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
       userId = uniqueIdv4();
     } else {
       // use the previous id, or custom id
+      // TODO: REMOVE THIS COMMAND  AND CONNECT COMPONENT TO SETTINGS IN STORE
       const framework: FrameworkSettings = await this.commandService.remoteCall(
         SharedConstants.Commands.Settings.LoadAppSettings
       );

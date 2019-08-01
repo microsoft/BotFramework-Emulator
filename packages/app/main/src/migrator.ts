@@ -40,8 +40,8 @@ import * as Fs from 'fs-extra';
 import { sync as mkdirp } from 'mkdirp';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
-import * as BotActions from './data/actions/botActions';
-import { getStore } from './data/store';
+import * as BotActions from './state/actions/botActions';
+import { store } from './state/store';
 import { BotHelpers } from './botHelpers';
 import { ensureStoragePath, getFilesInDir, writeFile } from './utils';
 
@@ -114,10 +114,7 @@ export class Migrator {
       }
 
       // load the bots into the recent bots list
-      const { SyncBotList } = SharedConstants.Commands.Bot;
-      const store = getStore();
       store.dispatch(BotActions.load(recentBotsList));
-      await Migrator.commandService.remoteCall(SyncBotList, recentBotsList).catch();
 
       // show post-migration page
       const { ShowPostMigrationDialog } = SharedConstants.Commands.UI;

@@ -35,9 +35,9 @@ import * as React from 'react';
 import { DragEvent } from 'react';
 import { connect } from 'react-redux';
 
-import * as EditorActions from '../../../../../data/action/editorActions';
-import { getTabGroupForDocument } from '../../../../../data/editorHelpers';
-import { RootState } from '../../../../../data/store';
+import * as EditorActions from '../../../../../state/actions/editorActions';
+import { getTabGroupForDocument } from '../../../../../state/helpers/editorHelpers';
+import { RootState } from '../../../../../state/store';
 import * as overlay from '../overlay.scss';
 
 import * as styles from './contentOverlay.scss';

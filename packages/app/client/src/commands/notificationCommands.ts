@@ -34,8 +34,8 @@
 import { Notification, SharedConstants } from '@bfemulator/app-shared';
 import { Command } from '@bfemulator/sdk-shared';
 
-import * as NotificationActions from '../data/action/notificationActions';
-import { store } from '../data/store';
+import * as NotificationActions from '../state/actions/notificationActions';
+import { store } from '../state/store';
 import { getGlobal } from '../utils';
 
 const Commands = SharedConstants.Commands.Notifications;

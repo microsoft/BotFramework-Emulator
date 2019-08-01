@@ -34,10 +34,10 @@ import { SharedConstants } from '@bfemulator/app-shared';
 import { BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
 import { connect } from 'react-redux';
 
-import { beginAdd } from '../../../data/action/notificationActions';
-import { RootState } from '../../../data/store';
+import { beginAdd } from '../../../state/actions/notificationActions';
+import { RootState } from '../../../state/store';
 import { DialogService } from '../service';
-import { executeCommand } from '../../../data/action/commandAction';
+import { executeCommand } from '../../../state/actions/commandAction';
 
 import { BotSettingsEditor, BotSettingsEditorProps } from './botSettingsEditor';
 

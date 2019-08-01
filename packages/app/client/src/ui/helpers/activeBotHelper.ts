@@ -37,15 +37,15 @@ import { IEndpointService, ServiceTypes } from 'botframework-config/lib/schema';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import * as Constants from '../../constants';
-import * as BotActions from '../../data/action/botActions';
-import * as EditorActions from '../../data/action/editorActions';
-import * as ExplorerActions from '../../data/action/explorerActions';
-import * as FileActions from '../../data/action/fileActions';
-import * as NavBarActions from '../../data/action/navBarActions';
-import { beginAdd } from '../../data/action/notificationActions';
-import { getActiveBot } from '../../data/botHelpers';
-import { hasNonGlobalTabs } from '../../data/editorHelpers';
-import { store } from '../../data/store';
+import * as BotActions from '../../state/actions/botActions';
+import * as EditorActions from '../../state/actions/editorActions';
+import * as ExplorerActions from '../../state/actions/explorerActions';
+import * as FileActions from '../../state/actions/fileActions';
+import * as NavBarActions from '../../state/actions/navBarActions';
+import { beginAdd } from '../../state/actions/notificationActions';
+import { getActiveBot } from '../../state/helpers/botHelpers';
+import { hasNonGlobalTabs } from '../../state/helpers/editorHelpers';
+import { store } from '../../state/store';
 
 const { Bot, Electron, Telemetry } = SharedConstants.Commands;
 
@@ -90,7 +90,7 @@ export class ActiveBotHelper {
     try {
       // set the bot as active on the server side
       const botDirectory = await this.commandService.remoteCall<string>(SharedConstants.Commands.Bot.SetActive, bot);
-      store.dispatch(BotActions.setActiveBot(bot));
+      store.dispatch(BotActions.setActive(bot));
       store.dispatch(FileActions.setRoot(botDirectory));
 
       // update the app file menu and title bar

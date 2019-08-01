@@ -35,7 +35,7 @@ import { PrimaryButton } from '@bfemulator/ui-react';
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import { RootState } from '../../data/store';
+import { RootState } from '../../state/store';
 
 import * as styles from './storeVisualizer.scss';
 

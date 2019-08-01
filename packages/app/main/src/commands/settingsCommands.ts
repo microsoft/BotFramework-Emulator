@@ -34,28 +34,13 @@
 import { FrameworkSettings, SharedConstants } from '@bfemulator/app-shared';
 import { Command } from '@bfemulator/sdk-shared';
 
-import { addSavedBotUrl } from '../settingsData/actions/savedBotUrlsActions';
-import { setFramework } from '../settingsData/actions/frameworkActions';
-import { dispatch, getSettings } from '../settingsData/store';
-import { TelemetryService } from '../telemetry';
+import { addSavedBotUrl } from '../state/actions/savedBotUrlsActions';
+import { dispatch, getSettings } from '../state/store';
 
 const Commands = SharedConstants.Commands.Settings;
 
 /** Registers settings commands */
 export class SettingsCommands {
-  // ---------------------------------------------------------------------------
-  // Saves global app settings
-  @Command(Commands.SaveAppSettings)
-  protected saveAppSettings(settings: FrameworkSettings): any {
-    const frameworkSettings = getSettings().framework;
-    const { ngrokPath = '' } = frameworkSettings;
-    const { ngrokPath: newNgrokPath } = settings;
-    if (newNgrokPath !== ngrokPath) {
-      TelemetryService.trackEvent('app_configureNgrok');
-    }
-    dispatch(setFramework(settings));
-  }
-
   // ---------------------------------------------------------------------------
   // Get and return app settings from store
   @Command(Commands.LoadAppSettings)

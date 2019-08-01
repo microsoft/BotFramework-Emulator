@@ -41,9 +41,9 @@ import {
   openContextMenuForConnectedService,
   openServiceDeepLink,
   openSortContextMenu,
-} from '../../../../data/action/connectedServiceActions';
-import { CONNECTED_SERVICES_PANEL_ID } from '../../../../data/action/explorerActions';
-import { RootState } from '../../../../data/store';
+} from '../../../../state/actions/connectedServiceActions';
+import { CONNECTED_SERVICES_PANEL_ID } from '../../../../state/actions/explorerActions';
+import { RootState } from '../../../../state/store';
 
 import { ConnectedServiceEditor } from './connectedServiceEditor/connectedServiceEditor';
 import { ServicesExplorer, ServicesExplorerProps } from './servicesExplorer';

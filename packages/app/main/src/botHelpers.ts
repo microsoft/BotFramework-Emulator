@@ -30,6 +30,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 import * as path from 'path';
 
 import * as electron from 'electron';
@@ -39,11 +40,9 @@ import { BotConfigWithPath, BotConfigWithPathImpl } from '@bfemulator/sdk-shared
 import { BotConfiguration } from 'botframework-config';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
-import * as BotActions from './data/actions/botActions';
-import { getStore } from './data/store';
+import * as BotActions from './state/actions/botActions';
+import { store } from './state/store';
 import { CredentialManager } from './credentialManager';
-
-const store = getStore();
 
 export class BotHelpers {
   @CommandServiceInstance()
@@ -68,7 +67,7 @@ export class BotHelpers {
           path: botPath,
           displayName: getBotDisplayName(bot),
         };
-        await BotHelpers.patchBotsJson(botPath, botInfo);
+        BotHelpers.patchBotsJson(botPath, botInfo);
       }
 
       if (secret) {
@@ -150,7 +149,7 @@ export class BotHelpers {
   /** Patches a bot record in bots.json, and updates the list
    *  in the store and on disk.
    */
-  public static async patchBotsJson(botPath: string, bot: BotInfo): Promise<BotInfo[]> {
+  public static patchBotsJson(botPath: string, bot: BotInfo): BotInfo[] {
     const state = store.getState();
     const bots = [...state.bot.botFiles];
     const botIndex = bots.findIndex(bot1 => bot1.path === botPath);
@@ -160,8 +159,6 @@ export class BotHelpers {
       bots.unshift(bot);
     }
     store.dispatch(BotActions.load(bots));
-    const { Commands } = SharedConstants;
-    await this.commandService.remoteCall(Commands.Bot.SyncBotList, bots).catch();
 
     return bots;
   }
@@ -183,8 +180,6 @@ export class BotHelpers {
     const state = store.getState();
     const bots = [...state.bot.botFiles].filter(bot => bot.path !== botPath);
     store.dispatch(BotActions.load(bots));
-    const { Commands } = SharedConstants;
-    await this.commandService.remoteCall(Commands.Bot.SyncBotList, bots).catch();
   }
 
   public static getTranscriptsPath(activeBot: BotConfigWithPath, conversation: Conversation): string {

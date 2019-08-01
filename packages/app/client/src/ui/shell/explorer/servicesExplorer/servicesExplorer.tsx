@@ -41,7 +41,7 @@ import {
 import * as React from 'react';
 import { MouseEventHandler, SyntheticEvent } from 'react';
 
-import { ConnectedServicePickerPayload } from '../../../../data/action/connectedServiceActions';
+import { ConnectedServicePickerPayload } from '../../../../state/actions/connectedServiceActions';
 import { serviceTypeLabels } from '../../../../utils/serviceTypeLables';
 import {
   AzureLoginFailedDialogContainer,

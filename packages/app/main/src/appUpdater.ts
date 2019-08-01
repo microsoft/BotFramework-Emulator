@@ -41,10 +41,10 @@ import { newNotification } from '@bfemulator/app-shared';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { TelemetryService } from './telemetry';
-import { getSettings, getStore as getSettingsStore } from './settingsData/store';
+import { getSettings, store } from './state/store';
 import { AppMenuBuilder } from './appMenuBuilder';
 import { sendNotificationToClient } from './utils/sendNotificationToClient';
-import { setFramework } from './settingsData/actions/frameworkActions';
+import { setFrameworkSettings } from './state/actions/frameworkSettingsActions';
 
 export enum UpdateStatus {
   Idle,
@@ -205,13 +205,12 @@ class EmulatorUpdater extends EventEmitter {
 
           // install the update, restart, and enable auto updates from here on
           case 2: {
-            const settingsStore = getSettingsStore();
-            let settings = settingsStore.getState().framework;
+            let settings = getSettings().framework;
             settings = {
               ...settings,
               autoUpdate: true,
             };
-            settingsStore.dispatch(setFramework(settings));
+            store.dispatch(setFrameworkSettings(settings));
             // show but don't block on result of progress indicator dialog
             await this.commandService.remoteCall(UpdateProgressIndicator, {
               label: 'Downloading...',

@@ -34,7 +34,7 @@
 import * as AppInsights from 'applicationinsights';
 import { SettingsImpl } from '@bfemulator/app-shared';
 
-import { getSettings } from '../settingsData/store';
+import { getSettings } from '../state/store';
 
 const INSTRUMENTATION_KEY = 'cc91f74a-1abd-4be0-8a96-fddedbc08dd7';
 

@@ -34,7 +34,7 @@ import * as React from 'react';
 import { EmulatorMode } from '@bfemulator/sdk-shared';
 
 import { ChatContainer } from '../parts/chat/chatContainer';
-import { ChatDocument } from '../../../../data/reducer/chat';
+import { ChatDocument } from '../../../../state/reducers/chat';
 
 import * as styles from './chatPanel.scss';
 

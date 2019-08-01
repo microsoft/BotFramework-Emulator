@@ -35,9 +35,9 @@ import { BotInfo, SharedConstants } from '@bfemulator/app-shared';
 import { connect } from 'react-redux';
 import { Action } from 'redux';
 
-import { openContextMenuForBot } from '../../../data/action/welcomePageActions';
-import { RootState } from '../../../data/store';
-import { executeCommand } from '../../../data/action/commandAction';
+import { openContextMenuForBot } from '../../../state/actions/welcomePageActions';
+import { RootState } from '../../../state/store';
+import { executeCommand } from '../../../state/actions/commandAction';
 
 import { RecentBotsList, RecentBotsListProps } from './recentBotsList';
 

@@ -32,8 +32,8 @@
 //
 import { connect } from 'react-redux';
 
-import * as EditorActions from '../../../data/action/editorActions';
-import { RootState } from '../../../data/store';
+import * as EditorActions from '../../../state/actions/editorActions';
+import { RootState } from '../../../state/store';
 
 import { TabManager, TabManagerProps } from './tabManager';
 const mapStateToProps = (state: RootState, ownProps: { [propName: string]: any }): TabManagerProps => ({

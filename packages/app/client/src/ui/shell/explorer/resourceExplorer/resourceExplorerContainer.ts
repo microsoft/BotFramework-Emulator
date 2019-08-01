@@ -39,8 +39,8 @@ import {
   openResource,
   openResourcesSettings,
   renameResource,
-} from '../../../../data/action/resourcesAction';
-import { RootState } from '../../../../data/store';
+} from '../../../../state/actions/resourcesAction';
+import { RootState } from '../../../../state/store';
 
 import { ResourceExplorer, ResourceExplorerProps } from './resourceExplorer';
 

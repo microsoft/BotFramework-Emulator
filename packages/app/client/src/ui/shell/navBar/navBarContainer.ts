@@ -35,11 +35,11 @@ import { connect } from 'react-redux';
 import { SharedConstants } from '@bfemulator/app-shared';
 
 import * as Constants from '../../../constants';
-import * as EditorActions from '../../../data/action/editorActions';
-import * as ExplorerActions from '../../../data/action/explorerActions';
-import * as NavBarActions from '../../../data/action/navBarActions';
-import { RootState } from '../../../data/store';
-import { executeCommand } from '../../../data/action/commandAction';
+import * as EditorActions from '../../../state/actions/editorActions';
+import * as ExplorerActions from '../../../state/actions/explorerActions';
+import * as NavBarActions from '../../../state/actions/navBarActions';
+import { RootState } from '../../../state/store';
+import { executeCommand } from '../../../state/actions/commandAction';
 
 import { NavBarComponent, NavBarProps } from './navBar';
 

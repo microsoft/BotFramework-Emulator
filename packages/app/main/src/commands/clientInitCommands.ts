@@ -31,20 +31,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import { dialog } from 'electron';
-import { SharedConstants, Settings } from '@bfemulator/app-shared';
+import { SharedConstants } from '@bfemulator/app-shared';
 import { Command, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
-import { Store } from 'redux';
 
-import * as BotActions from '../data/actions/botActions';
-import { getStore } from '../data/store';
+import * as BotActions from '../state/actions/botActions';
 import { Protocol } from '../constants';
 import { ExtensionManagerImpl } from '../extensions';
 import { Migrator } from '../migrator';
 import { ProtocolHandler } from '../protocolHandler';
-import { getStore as getSettingsStore, dispatch } from '../settingsData/store';
+import { dispatch, getSettings, store } from '../state/store';
 import { getBotsFromDisk } from '../utils';
 import { openFileFromCommandLine } from '../utils/openFileFromCommandLine';
-import { pushClientAwareSettings, setFramework } from '../settingsData/actions/frameworkActions';
+import { pushClientAwareSettings, setFrameworkSettings } from '../state/actions/frameworkSettingsActions';
 import { AppMenuBuilder } from '../appMenuBuilder';
 
 const Commands = SharedConstants.Commands;
@@ -58,13 +56,10 @@ export class ClientInitCommands {
   // Client notifying us it's initialized and has rendered
   @Command(Commands.ClientInit.Loaded)
   protected async clientLoaded() {
-    const store = getStore();
-    const settingsStore = getSettingsStore();
     // Load bots from disk and sync list with client
     const bots = getBotsFromDisk();
     if (bots.length) {
-      store.dispatch(BotActions.load(bots));
-      await this.commandService.remoteCall(Commands.Bot.SyncBotList, bots);
+      dispatch(BotActions.load(bots));
     } else {
       await Migrator.startup();
     }
@@ -73,7 +68,8 @@ export class ClientInitCommands {
     // Un-fullscreen the screen
     await this.commandService.call(Commands.Electron.SetFullscreen, false);
     // Send app settings to client
-    settingsStore.dispatch(pushClientAwareSettings());
+    dispatch(setFrameworkSettings(store.getState().settings.framework));
+    dispatch(pushClientAwareSettings());
     // Load extensions
     ExtensionManagerImpl.unloadExtensions();
     ExtensionManagerImpl.loadExtensions();
@@ -86,8 +82,7 @@ export class ClientInitCommands {
     await this.commandService.call(Commands.Electron.UpdateFileMenu);
 
     // show the data collection modal if necessary
-    const settingsStore: Store<Settings> = getSettingsStore();
-    const { framework = {} } = settingsStore.getState();
+    const { framework = {} } = getSettings();
     if (!framework.hasBeenShownDataCollectionModal) {
       const collectUsageData = await this.commandService.remoteCall<boolean>(Commands.UI.ShowDataCollectionDialog);
       const updatedSettings = {
@@ -95,7 +90,7 @@ export class ClientInitCommands {
         collectUsageData,
         hasBeenShownDataCollectionModal: true,
       };
-      dispatch(setFramework(updatedSettings));
+      dispatch(setFrameworkSettings(updatedSettings));
     }
 
     // Parse command line args for a protocol url

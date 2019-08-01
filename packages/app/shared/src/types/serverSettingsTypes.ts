@@ -32,7 +32,6 @@
 //
 
 import { User } from '@bfemulator/sdk-shared';
-import uuidv4 from 'uuid/v4';
 
 import { Bot } from './botTypes';
 
@@ -93,7 +92,6 @@ export interface AzureSettings {
 
 export interface PersistentSettings {
   framework?: FrameworkSettings;
-  bots?: Bot[];
   savedBotUrls?: { url: string; lastAccessed: string }[];
   windowState?: WindowStateSettings;
   users?: UserSettings;
@@ -112,8 +110,8 @@ export class SettingsImpl implements Settings {
   public azure: AzureSettings;
 
   public constructor(source?: Settings) {
-    const { framework, bots, savedBotUrls, windowState, users, azure }: Settings = source || {};
-    Object.assign(this, { framework, bots, savedBotUrls, windowState, users, azure });
+    const { framework, savedBotUrls, windowState, users, azure }: Settings = source || {};
+    Object.assign(this, { framework, savedBotUrls, windowState, users, azure });
   }
 
   /**
@@ -121,10 +119,10 @@ export class SettingsImpl implements Settings {
    * @returns {Partial<Settings>}
    */
   public toJSON(): Partial<Settings> {
-    const { framework, bots, savedBotUrls, windowState, users, azure = {} } = this;
+    const { framework, savedBotUrls, windowState, users, azure = {} } = this;
     // Do not write the armToken to disk
     const { armToken, ...azureProps } = azure;
-    return { framework, bots, savedBotUrls, windowState, users, azure: azureProps };
+    return { framework, savedBotUrls, windowState, users, azure: azureProps };
   }
 }
 
@@ -156,18 +154,9 @@ export const windowStateDefault: WindowStateSettings = {
 };
 
 export const settingsDefault: Settings = {
+  azure: {},
   framework: frameworkDefault,
-  bots: [
-    {
-      botId: uuidv4(),
-      botUrl: 'http://localhost:3978/api/messages',
-      msaAppId: '',
-      msaPassword: '',
-      locale: '',
-    },
-  ],
   savedBotUrls: [],
   windowState: windowStateDefault,
   users: { usersById: {} },
-  azure: {},
 };

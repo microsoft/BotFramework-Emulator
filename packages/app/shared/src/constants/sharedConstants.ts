@@ -31,9 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+const EDITOR_KEY_PRIMARY = 'primary';
+const EDITOR_KEY_SECONDARY = 'secondary';
+
 export const SharedConstants = {
   NOTIFICATION_FROM_MAIN: 'NOTIFICATION_FROM_MAIN',
   TEMP_BOT_IN_MEMORY_PATH: 'TEMP_BOT_IN_MEMORY',
+  EDITOR_KEY_PRIMARY,
+  EDITOR_KEY_SECONDARY,
 
   /** Names of commands used in both main and client */
   Commands: {
@@ -55,7 +60,6 @@ export const SharedConstants = {
       PatchBotList: 'bot:list:patch',
       Switch: 'bot:switch',
       OpenBrowse: 'bot:browse-open',
-      SyncBotList: 'bot:list:sync',
       Load: 'bot:load',
       RemoveFromBotList: 'bot:list:remove',
       WatchForTranscriptFiles: 'bot:watch-for-transcript-files',
@@ -152,7 +156,6 @@ export const SharedConstants = {
     Settings: {
       LoadAppSettings: 'app:settings:load',
       ReceiveGlobalSettings: 'receive-global-settings',
-      SaveAppSettings: 'app:settings:save',
       SaveBotUrl: 'settings:save-bot-url',
     },
 
@@ -184,9 +187,27 @@ export const SharedConstants = {
   },
   ContentTypes: {
     CONTENT_TYPE_LIVE_CHAT: 'application/vnd.microsoft.bfemulator.document.livechat',
+    CONTENT_TYPE_DEBUG: 'application/vnd.microsoft.bfemulator.document.debug',
+    CONTENT_TYPE_MARKDOWN: 'application/vnd.microsoft.bfemulator.document.markdown',
+    CONTENT_TYPE_APP_SETTINGS: 'application/vnd.microsoft.bfemulator.document.appsettings',
+    CONTENT_TYPE_WELCOME_PAGE: 'application/vnd.microsoft.bfemulator.document.welcome',
+    CONTENT_TYPE_TRANSCRIPT: 'application/vnd.microsoft.bfemulator.document.transcript',
   },
   Channels: {
     ReadmeUrl: 'https://raw.githubusercontent.com/Microsoft/BotFramework-Emulator/master/content/CHANNELS.md',
     HelpLabel: 'Get started with channels (Bot Inspector)',
+  },
+  DocumentIds: {
+    DOCUMENT_ID_APP_SETTINGS: 'app:settings',
+    DOCUMENT_ID_BOT_SETTINGS: 'bot:settings',
+    DOCUMENT_ID_WELCOME_PAGE: 'welcome-page',
+    DOCUMENT_ID_MARKDOWN_PAGE: 'markdown-page',
+  },
+  EditorKeys: [EDITOR_KEY_PRIMARY, EDITOR_KEY_SECONDARY],
+  NavBarItems: {
+    NAVBAR_BOT_EXPLORER: 'navbar.botExplorer',
+    NAVBAR_SETTINGS: 'navbar.settings',
+    NAVBAR_NOTIFICATIONS: 'navbar.notifications',
+    NAVBAR_RESOURCES: 'navbar:resources',
   },
 };

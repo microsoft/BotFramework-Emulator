@@ -33,7 +33,7 @@
 
 import { connect } from 'react-redux';
 
-import { RootState } from '../../../data/store';
+import { RootState } from '../../../state/store';
 import { DialogService } from '../service';
 
 import { GetStartedWithCSDialog, GetStartedWithCSDialogProps } from './getStartedWithCSDialog';

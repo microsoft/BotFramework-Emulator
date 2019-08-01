@@ -53,7 +53,7 @@ import { MouseEvent } from 'react';
 import { ExtensionManager, GetInspectorResult, InspectorAPI } from '../../../../../extensions';
 import { logService } from '../../../../../platform/log/logService';
 import Panel, { PanelContent, PanelControls } from '../../../panel/panel';
-import { ChatDocument } from '../../../../../data/reducer/chat';
+import { ChatDocument } from '../../../../../state/reducers/chat';
 
 import * as styles from './inspector.scss';
 

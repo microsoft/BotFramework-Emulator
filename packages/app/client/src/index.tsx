@@ -39,7 +39,7 @@ import './commands';
 import interceptError from './interceptError';
 import interceptHyperlink from './interceptHyperlink';
 import Main from './ui/shell/mainContainer';
-import { store } from './data/store';
+import { store } from './state/store';
 import './ui/styles/globals.scss';
 
 interceptError();
