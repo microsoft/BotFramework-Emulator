@@ -38,10 +38,10 @@ import { app, clipboard, Menu, MenuItem, MenuItemConstructorOptions, shell } fro
 import { AppUpdater, UpdateStatus } from './appUpdater';
 import { BotHelpers } from './botHelpers';
 import { Emulator } from './emulator';
-import { rememberTheme } from './settingsData/actions/windowStateActions';
-import { getStore as getSettingsStore } from './settingsData/store';
+import { rememberTheme } from './state/actions/windowStateActions';
 import { TelemetryService } from './telemetry';
 import { isMac } from './utils';
+import { store } from './state';
 
 declare type MenuOpts = MenuItemConstructorOptions;
 
@@ -224,8 +224,7 @@ export class AppMenuBuilder {
       enabled: activeBot !== null,
     });
 
-    const settingsStore = getSettingsStore();
-    const settingsState = settingsStore.getState();
+    const settingsState = store.getState().settings;
     const { signedInUser } = settingsState.azure;
     const azureMenuItemLabel = signedInUser ? `Sign out (${signedInUser})` : 'Sign in with Azure';
 
@@ -260,7 +259,7 @@ export class AppMenuBuilder {
           type: isMac() ? 'radio' : 'checkbox',
           checked: theme === t.name,
           click: async () => {
-            settingsStore.dispatch(rememberTheme(t.name));
+            store.dispatch(rememberTheme(t.name));
 
             await AppMenuBuilder.commandService.call(SharedConstants.Commands.Electron.UpdateFileMenu);
           },

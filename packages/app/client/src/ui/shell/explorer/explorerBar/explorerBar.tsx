@@ -37,7 +37,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 
 import * as Constants from '../../../../constants';
-import { RootState } from '../../../../data/store';
+import { RootState } from '../../../../state/store';
 import { BotExplorerBarContainer } from '../botExplorerBar/botExplorerBarContainer';
 import { NotificationsExplorerBar } from '../notificationsExplorer/notificationsExplorerBar';
 import { ResourcesBarContainer } from '../resourcesBar/resourcesBarContainer';

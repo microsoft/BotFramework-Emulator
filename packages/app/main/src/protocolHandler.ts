@@ -47,7 +47,7 @@ import {
 
 import { Protocol } from './constants';
 import { Emulator } from './emulator';
-import { getSettings } from './settingsData/store';
+import { getSettings } from './state/store';
 import { sendNotificationToClient } from './utils/sendNotificationToClient';
 import { TelemetryService } from './telemetry';
 

@@ -34,10 +34,10 @@ import { connect } from 'react-redux';
 import { SharedConstants } from '@bfemulator/app-shared';
 
 import * as Constants from '../../constants';
-import * as PresentationActions from '../../data/action/presentationActions';
-import { RootState } from '../../data/store';
-import { executeCommand } from '../../data/action/commandAction';
-import { showWelcomePage } from '../../data/editorHelpers';
+import * as PresentationActions from '../../state/actions/presentationActions';
+import { RootState } from '../../state/store';
+import { executeCommand } from '../../state/actions/commandAction';
+import { showWelcomePage } from '../../state/helpers/editorHelpers';
 import { globalHandlers } from '../../utils/eventHandlers';
 
 import { Main, MainProps } from './main';

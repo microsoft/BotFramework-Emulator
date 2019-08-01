@@ -34,7 +34,7 @@
 import * as React from 'react';
 import { Activity } from 'botframework-schema';
 
-import { ChatDocument } from '../../../../../data/reducer/chat';
+import { ChatDocument } from '../../../../../state/reducers/chat';
 
 import * as styles from './log.scss';
 import { LogEntry } from './logEntryContainer';

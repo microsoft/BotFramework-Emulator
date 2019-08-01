@@ -35,8 +35,8 @@ import { SharedConstants } from '@bfemulator/app-shared';
 import { connect } from 'react-redux';
 import { Action } from 'redux';
 
-import { RootState } from '../../../data/store';
-import { executeCommand } from '../../../data/action/commandAction';
+import { RootState } from '../../../state/store';
+import { executeCommand } from '../../../state/actions/commandAction';
 
 import { WelcomePage, WelcomePageProps } from './welcomePage';
 

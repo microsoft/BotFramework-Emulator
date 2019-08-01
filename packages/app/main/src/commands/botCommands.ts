@@ -46,9 +46,9 @@ import { BotConfigurationBase } from 'botframework-config/lib';
 import { IConnectedService, IEndpointService, ServiceTypes } from 'botframework-config/lib/schema';
 import { dialog } from 'electron';
 
-import * as BotActions from '../data/actions/botActions';
-import { setActive } from '../data/actions/botActions';
-import { getStore } from '../data/store';
+import * as BotActions from '../state/actions/botActions';
+import { setActive } from '../state/actions/botActions';
+import { store } from '../state/store';
 import { BotHelpers } from '../botHelpers';
 import { Emulator } from '../emulator';
 import { TelemetryService } from '../telemetry';
@@ -74,7 +74,7 @@ export class BotCommands {
       transcriptsPath: path.join(dirName, './transcripts'),
       chatsPath: path.join(dirName, './dialogs'),
     };
-    await BotHelpers.patchBotsJson(bot.path, botsJsonEntry);
+    BotHelpers.patchBotsJson(bot.path, botsJsonEntry);
 
     // save the bot & secret
     try {
@@ -105,7 +105,6 @@ export class BotCommands {
   // Opens a bot file at specified path and returns the bot
   @Command(Bot.Open)
   protected async openBot(botPath: string, secret?: string): Promise<BotConfigWithPath> {
-    // try to get the bot secret from bots.json
     const botInfo = BotHelpers.pathExistsInRecentBots(botPath) ? BotHelpers.getBotInfoByPath(botPath) : null;
     if (botInfo) {
       const dirName = path.dirname(botPath);
@@ -119,8 +118,7 @@ export class BotCommands {
         syncWithClient = true;
       }
       if (syncWithClient) {
-        const store = getStore();
-        await this.commandService.remoteCall(SharedConstants.Commands.Bot.SyncBotList, store.getState().bot.botFiles);
+        BotHelpers.patchBotsJson(botPath, botInfo);
       }
     }
 
@@ -146,7 +144,6 @@ export class BotCommands {
     // set up the file watcher
     await botProjectFileWatcher.watch(bot.path);
     // set active bot and active directory
-    const store = getStore();
     const botDirectory = path.dirname(bot.path);
     store.dispatch(BotActions.setActive(bot));
     store.dispatch(BotActions.setDirectory(botDirectory));
@@ -219,7 +216,6 @@ export class BotCommands {
   @Command(Bot.Close)
   protected closeBot() {
     botProjectFileWatcher.unwatch();
-    const store = getStore();
     store.dispatch(BotActions.close());
   }
 
@@ -256,7 +252,7 @@ export class BotCommands {
         // The file watcher will not pick up this change immediately
         // making the value in the store stale and potentially incorrect
         // so we'll dispatch it right away
-        getStore().dispatch(setActive(botConfig));
+        store.dispatch(setActive(botConfig));
         await this.commandService.remoteCall(SharedConstants.Commands.Bot.SetActive, botConfig, botConfig.getPath());
       } catch (e) {
         // eslint-disable-next-line no-console
@@ -279,7 +275,7 @@ export class BotCommands {
       botConfig.disconnectService(id);
       try {
         await BotHelpers.saveBot(botConfig);
-        getStore().dispatch(setActive(botConfig));
+        store.dispatch(setActive(botConfig));
         await this.commandService.remoteCall(SharedConstants.Commands.Bot.SetActive, botConfig, botConfig.getPath());
       } catch (e) {
         // eslint-disable-next-line no-console
@@ -294,7 +290,7 @@ export class BotCommands {
   @Command(Bot.PatchBotList)
   protected async patchBotList(botPath: string, botInfo: BotInfo): Promise<boolean> {
     // patch bots.json and update the store
-    await BotHelpers.patchBotsJson(botPath, botInfo);
+    BotHelpers.patchBotsJson(botPath, botInfo);
 
     const dirName = path.dirname(botInfo.path);
 

@@ -35,9 +35,9 @@ import { connect } from 'react-redux';
 import { SharedConstants } from '@bfemulator/app-shared';
 import { Activity } from 'botframework-schema';
 
-import { RootState } from '../../../../../data/store';
-import { executeCommand } from '../../../../../data/action/commandAction';
-import { setHighlightedObjects, setInspectorObjects } from '../../../../../data/action/chatActions';
+import { RootState } from '../../../../../state/store';
+import { executeCommand } from '../../../../../state/actions/commandAction';
+import { setHighlightedObjects, setInspectorObjects } from '../../../../../state/actions/chatActions';
 
 import { Inspector } from './inspector';
 

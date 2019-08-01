@@ -36,8 +36,8 @@ import * as URL from 'url';
 
 import * as Electron from 'electron';
 
-import { rememberZoomLevel } from './settingsData/actions/windowStateActions';
-import { dispatch, getSettings } from './settingsData/store';
+import { rememberZoomLevel } from './state/actions/windowStateActions';
+import { dispatch, getSettings } from './state/store';
 
 export class WindowManager {
   private mainWindow: Electron.BrowserWindow;

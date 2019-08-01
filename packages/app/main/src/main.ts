@@ -34,33 +34,29 @@ import './commands';
 import * as path from 'path';
 import * as url from 'url';
 
-import { newNotification, Notification, PersistentSettings, Settings, SharedConstants } from '@bfemulator/app-shared';
+import { newNotification, Notification, PersistentSettings, SharedConstants } from '@bfemulator/app-shared';
 import { app, BrowserWindow, Rectangle, screen, systemPreferences } from 'electron';
-import { Store } from 'redux';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { AppUpdater } from './appUpdater';
-import { getStore } from './data/store';
 import * as commandLine from './commandLine';
 import { Protocol } from './constants';
 import { Emulator } from './emulator';
 import './fetchProxy';
 import { Window } from './platform/window';
-import { azureLoggedInUserChanged } from './settingsData/actions/azureAuthActions';
-import { rememberBounds, rememberTheme } from './settingsData/actions/windowStateActions';
-import { dispatch, getSettings, getStore as getSettingsStore } from './settingsData/store';
+import { azureLoggedInUserChanged } from './state/actions/azureAuthActions';
+import { rememberBounds, rememberTheme } from './state/actions/windowStateActions';
+import { dispatch, getSettings, store } from './state/store';
 import { TelemetryService } from './telemetry';
 import { botListsAreDifferent, ensureStoragePath, isMac, saveSettings, writeFile } from './utils';
 import { openFileFromCommandLine } from './utils/openFileFromCommandLine';
 import { sendNotificationToClient } from './utils/sendNotificationToClient';
 import { WindowManager } from './windowManager';
 import { ProtocolHandler } from './protocolHandler';
-import { setOpenUrl } from './data/actions/protocolActions';
+import { setOpenUrl } from './state/actions/protocolActions';
 
 // start app startup timer
 const beginStartupTime = Date.now();
-
-const store = getStore();
 
 // -----------------------------------------------------------------------------
 (process as NodeJS.EventEmitter).on('uncaughtException', (error: Error) => {
@@ -181,9 +177,8 @@ class EmulatorApplication {
     const { zoomLevel, theme, availableThemes } = getSettings().windowState;
     const themeInfo = availableThemes.find(availableTheme => availableTheme.name === theme);
     const isHighContrast = systemPreferences.isInvertedColorScheme();
-    const settingsStore: Store<Settings> = getSettingsStore();
     if (themeInfo) {
-      settingsStore.dispatch(rememberTheme(isHighContrast ? 'high-contrast' : themeInfo.name));
+      store.dispatch(rememberTheme(isHighContrast ? 'high-contrast' : themeInfo.name));
     }
     this.mainWindow.webContents.setZoomLevel(zoomLevel);
     SplashScreen.hide();
@@ -350,8 +345,7 @@ class EmulatorApplication {
   };
 
   private async renewArmToken() {
-    const settingsStore = getSettingsStore();
-    const { persistLogin, signedInUser } = settingsStore.getState().azure;
+    const { persistLogin, signedInUser } = getSettings().azure;
     if (persistLogin && signedInUser) {
       const result = await this.commandService.registry.getCommand(SharedConstants.Commands.Azure.RetrieveArmToken)(
         true
@@ -359,7 +353,7 @@ class EmulatorApplication {
       if (result && 'access_token' in result) {
         await this.commandService.remoteCall(SharedConstants.Commands.UI.ArmTokenReceivedOnStartup, result);
       } else if (!result) {
-        settingsStore.dispatch(azureLoggedInUserChanged(''));
+        store.dispatch(azureLoggedInUserChanged(''));
         await this.commandService.call(SharedConstants.Commands.Electron.UpdateFileMenu);
       }
     }

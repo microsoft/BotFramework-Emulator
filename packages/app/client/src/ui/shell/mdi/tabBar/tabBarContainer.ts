@@ -34,12 +34,12 @@
 import { connect } from 'react-redux';
 import { SharedConstants } from '@bfemulator/app-shared';
 
-import { closeConversation } from '../../../../data/action/chatActions';
-import { appendTab, close, setActiveTab, splitTab } from '../../../../data/action/editorActions';
-import { enable as enablePresentationMode } from '../../../../data/action/presentationActions';
-import { getTabGroupForDocument } from '../../../../data/editorHelpers';
-import { RootState } from '../../../../data/store';
-import { executeCommand } from '../../../../data/action/commandAction';
+import { closeConversation } from '../../../../state/actions/chatActions';
+import { appendTab, close, setActiveTab, splitTab } from '../../../../state/actions/editorActions';
+import { enable as enablePresentationMode } from '../../../../state/actions/presentationActions';
+import { getTabGroupForDocument } from '../../../../state/helpers/editorHelpers';
+import { RootState } from '../../../../state/store';
+import { executeCommand } from '../../../../state/actions/commandAction';
 
 import { TabBar, TabBarProps } from './tabBar';
 

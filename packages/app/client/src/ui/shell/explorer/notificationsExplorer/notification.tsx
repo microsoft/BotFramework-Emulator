@@ -36,7 +36,7 @@ import { PrimaryButton } from '@bfemulator/ui-react';
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import * as NotificationActions from '../../../../data/action/notificationActions';
+import * as NotificationActions from '../../../../state/actions/notificationActions';
 
 import * as styles from './notification.scss';
 

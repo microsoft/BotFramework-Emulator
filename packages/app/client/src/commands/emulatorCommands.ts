@@ -40,11 +40,11 @@ import { Command } from '@bfemulator/sdk-shared';
 import { EmulatorMode } from '@bfemulator/sdk-shared';
 
 import * as Constants from '../constants';
-import * as ChatActions from '../data/action/chatActions';
-import * as EditorActions from '../data/action/editorActions';
-import { beginAdd } from '../data/action/notificationActions';
-import { getTabGroupForDocument } from '../data/editorHelpers';
-import { store } from '../data/store';
+import * as ChatActions from '../state/actions/chatActions';
+import * as EditorActions from '../state/actions/editorActions';
+import { beginAdd } from '../state/actions/notificationActions';
+import { getTabGroupForDocument } from '../state/helpers/editorHelpers';
+import { store } from '../state/store';
 
 const {
   Emulator,

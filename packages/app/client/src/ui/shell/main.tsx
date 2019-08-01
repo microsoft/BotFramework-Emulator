@@ -35,11 +35,11 @@ import { Splitter } from '@bfemulator/ui-react';
 import * as React from 'react';
 
 import * as Constants from '../../constants';
-import { Editor } from '../../data/reducer/editor';
+import { Editor } from '../../state/reducers/editor';
 import { StoreVisualizer } from '../debug/storeVisualizer';
 import { DialogHostContainer, TabManagerContainer } from '../dialogs';
-import * as ExplorerActions from '../../data/action/explorerActions';
-import { store } from '../../data/store';
+import * as ExplorerActions from '../../state/actions/explorerActions';
+import { store } from '../../state/store';
 
 import { ExplorerBar } from './explorer';
 import * as styles from './main.scss';

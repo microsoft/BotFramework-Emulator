@@ -48,7 +48,7 @@ import {
 import { Emulator } from './emulator';
 import { emulatorApplication } from './main';
 import { NgrokInstance } from './ngrok';
-import { getStore } from './settingsData/store';
+import { getSettings } from './state/store';
 
 let ngrokServiceInstance: NgrokService;
 
@@ -78,7 +78,7 @@ export class NgrokService {
     if (this.ngrok.running()) {
       return this.serviceUrl;
     }
-    const { bypassNgrokLocalhost, runNgrokAtStartup } = getStore().getState().framework;
+    const { bypassNgrokLocalhost, runNgrokAtStartup } = getSettings().framework;
     // Use ngrok
     const local = !botUrl || isLocalHostUrl(botUrl);
     if (runNgrokAtStartup || !local || (local && !bypassNgrokLocalhost)) {
@@ -105,7 +105,7 @@ export class NgrokService {
     // otherwise, we need to spin up an auxillary ngrok instance that we can tear down when the token response comes back
     this.oauthNgrokInstance = new NgrokInstance();
     const port = Emulator.getInstance().framework.serverPort;
-    const ngrokPath = getStore().getState().framework.ngrokPath;
+    const ngrokPath = getSettings().framework.ngrokPath;
     const inspectUrl = new Promise<string>(async (resolve, reject) => {
       try {
         const { url } = await this.oauthNgrokInstance.connect({
@@ -147,7 +147,7 @@ export class NgrokService {
     this.ngrok.kill();
     const port = Emulator.getInstance().framework.serverPort;
 
-    this.ngrokPath = getStore().getState().framework.ngrokPath;
+    this.ngrokPath = getSettings().framework.ngrokPath;
     this.serviceUrl = `http://${this.localhost}:${port}`;
     this.inspectUrl = null;
     this.spawnErr = null;
@@ -197,7 +197,7 @@ export class NgrokService {
 
   /** Logs messages signifying that ngrok has reconnected in all active conversations */
   public broadcastNgrokReconnected(): void {
-    const bypassNgrokLocalhost = getStore().getState().framework.bypassNgrokLocalhost;
+    const bypassNgrokLocalhost = getSettings().framework.bypassNgrokLocalhost;
     const { broadcast } = this;
     broadcast(textItem(LogLevel.Debug, 'ngrok reconnected.'));
     broadcast(textItem(LogLevel.Debug, `ngrok listening on ${this.serviceUrl}`));
@@ -260,7 +260,7 @@ export class NgrokService {
 
   /** Logs messages that tell the user about ngrok's current running status */
   private reportRunning(conversationId: string): void {
-    const bypassNgrokLocalhost = getStore().getState().framework.bypassNgrokLocalhost;
+    const bypassNgrokLocalhost = getSettings().framework.bypassNgrokLocalhost;
     emulatorApplication.mainWindow.logService.logToChat(
       conversationId,
       textItem(LogLevel.Debug, `ngrok listening on ${this.serviceUrl}`)
@@ -285,7 +285,7 @@ export class NgrokService {
 
   private cacheSettings() {
     // Get framework from state
-    const framework = getStore().getState().framework;
+    const framework = getSettings().framework;
 
     // Cache host and port
     const localhost = framework.localhost || 'localhost';

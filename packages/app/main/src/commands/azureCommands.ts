@@ -34,8 +34,8 @@ import { SharedConstants } from '@bfemulator/app-shared';
 import { Command, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { AzureAuthWorkflowService } from '../services/azureAuthWorkflowService';
-import { azureLoggedInUserChanged, azurePersistLoginChanged } from '../settingsData/actions/azureAuthActions';
-import { getStore as getSettingsStore } from '../settingsData/store';
+import { azureLoggedInUserChanged, azurePersistLoginChanged } from '../state/actions/azureAuthActions';
+import { getSettings, store } from '../state/store';
 
 // eslint-disable-next-line typescript/no-var-requires
 const { session } = require('electron');
@@ -50,7 +50,6 @@ export class AzureCommands {
   // Retrieve the Azure ARM Token
   @Command(Azure.RetrieveArmToken)
   protected async retrieveArmToken(renew: boolean = false) {
-    const settingsStore = getSettingsStore();
     const workflow = AzureAuthWorkflowService.retrieveAuthToken(renew);
     let result = undefined;
     // eslint-disable-next-line no-constant-condition
@@ -68,11 +67,11 @@ export class AzureCommands {
     if (result && !result.error) {
       const [, payload] = (result.access_token as string).split('.');
       const pjson = JSON.parse(Buffer.from(payload, 'base64').toString());
-      settingsStore.dispatch(azureLoggedInUserChanged(pjson.upn || pjson.unique_name || pjson.name || pjson.email));
+      store.dispatch(azureLoggedInUserChanged(pjson.upn || pjson.unique_name || pjson.name || pjson.email));
       await this.commandService.call(SharedConstants.Commands.Electron.UpdateFileMenu);
       // Add the current persistLogin value which the UI can use
       // to bind to without retrieving the entire settingsStore
-      result.persistLogin = settingsStore.getState().azure.persistLogin;
+      result.persistLogin = getSettings().azure.persistLogin;
     }
     return result;
   }
@@ -83,7 +82,6 @@ export class AzureCommands {
   protected async signUserOutOfAzure(prompt: boolean = true) {
     await new Promise(resolve => session.defaultSession.clearStorageData({}, resolve));
 
-    const store = getSettingsStore();
     store.dispatch(azureLoggedInUserChanged(''));
     try {
       await this.commandService.call(SharedConstants.Commands.Electron.UpdateFileMenu);
@@ -108,6 +106,6 @@ export class AzureCommands {
   // User has changed the "Keep me signed in" selection after a successful login
   @Command(Azure.PersistAzureLoginChanged)
   protected persistAzureLoginChanged(persistLogin) {
-    getSettingsStore().dispatch(azurePersistLoginChanged(persistLogin));
+    store.dispatch(azurePersistLoginChanged(persistLogin));
   }
 }

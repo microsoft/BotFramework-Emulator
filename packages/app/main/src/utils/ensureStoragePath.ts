@@ -42,7 +42,7 @@ const electronRemote: Electron.Remote = electron.remote;
 
 /** Returns the app storage path, and creates the directory if it doesn't exist */
 export const ensureStoragePath = (): string => {
-  const commandLineArgs = globals.getGlobal('commandlineargs');
+  const commandLineArgs = globals.getGlobal('commandlineargs', {});
   const app = electronApp || electronRemote.app;
   const storagePath = commandLineArgs.storagepath || path.join(app.getPath('userData'), 'botframework-emulator');
   mkdirp.sync(storagePath);

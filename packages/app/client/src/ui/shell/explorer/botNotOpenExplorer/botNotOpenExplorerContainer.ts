@@ -36,10 +36,10 @@ import { connect } from 'react-redux';
 import { Action } from 'redux';
 import { newNotification } from '@bfemulator/app-shared';
 
-import { RootState } from '../../../../data/store';
+import { RootState } from '../../../../state/store';
 import { ActiveBotHelper } from '../../../helpers/activeBotHelper';
-import { executeCommand } from '../../../../data/action/commandAction';
-import { beginAdd } from '../../../../data/action/notificationActions';
+import { executeCommand } from '../../../../state/actions/commandAction';
+import { beginAdd } from '../../../../state/actions/notificationActions';
 
 import { BotNotOpenExplorer as BotNotOpenExplorerComp, BotNotOpenExplorerProps } from './botNotOpenExplorer';
 

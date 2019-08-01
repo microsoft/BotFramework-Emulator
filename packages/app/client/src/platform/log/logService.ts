@@ -34,9 +34,9 @@
 import { SharedConstants } from '@bfemulator/app-shared';
 import { Command, LogEntry } from '@bfemulator/sdk-shared';
 
-import * as ChatActions from '../../data/action/chatActions';
-import * as chatHelpers from '../../data/chatHelpers';
-import { store } from '../../data/store';
+import * as ChatActions from '../../state/actions/chatActions';
+import * as chatHelpers from '../../state/helpers/chatHelpers';
+import { store } from '../../state/store';
 
 class LogService {
   public logToChat(conversationId: string, entry: LogEntry): void {

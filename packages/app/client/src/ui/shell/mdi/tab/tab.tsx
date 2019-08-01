@@ -35,7 +35,7 @@ import { TruncateText } from '@bfemulator/ui-react';
 import * as React from 'react';
 import { DragEvent, KeyboardEvent, SyntheticEvent } from 'react';
 
-import { getTabGroupForDocument } from '../../../../data/editorHelpers';
+import { getTabGroupForDocument } from '../../../../state/helpers/editorHelpers';
 import { DOCUMENT_ID_APP_SETTINGS, DOCUMENT_ID_MARKDOWN_PAGE, DOCUMENT_ID_WELCOME_PAGE } from '../../../../constants';
 
 import * as styles from './tab.scss';

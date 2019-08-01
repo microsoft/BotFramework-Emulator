@@ -39,8 +39,8 @@ import {
   launchEndpointEditor,
   openEndpointExplorerContextMenu,
   openEndpointInEmulator,
-} from '../../../../data/action/endpointServiceActions';
-import { RootState } from '../../../../data/store';
+} from '../../../../state/actions/endpointServiceActions';
+import { RootState } from '../../../../state/store';
 
 import { EndpointEditor } from './endpointEditor/endpointEditor';
 import { EndpointExplorer } from './endpointExplorer';

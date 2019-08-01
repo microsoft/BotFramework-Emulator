@@ -48,7 +48,7 @@ import { ChangeEvent } from 'react';
 import * as React from 'react';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
-import { getBotInfoByPath } from '../../../data/botHelpers';
+import { getBotInfoByPath } from '../../../state/helpers/botHelpers';
 import { generateBotSecret } from '../../../utils';
 import { ActiveBotHelper } from '../../helpers/activeBotHelper';
 

@@ -36,9 +36,9 @@ import { DragEvent } from 'react';
 import { connect } from 'react-redux';
 
 import * as Constants from '../../../../../constants';
-import * as EditorActions from '../../../../../data/action/editorActions';
-import { Editor } from '../../../../../data/reducer/editor';
-import { RootState } from '../../../../../data/store';
+import * as EditorActions from '../../../../../state/actions/editorActions';
+import { Editor } from '../../../../../state/reducers/editor';
+import { RootState } from '../../../../../state/store';
 import * as overlay from '../overlay.scss';
 
 import * as styles from './rightContentOverlay.scss';

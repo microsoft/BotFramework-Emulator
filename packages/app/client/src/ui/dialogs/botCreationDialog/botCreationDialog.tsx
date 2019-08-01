@@ -49,8 +49,8 @@ import { ChangeEvent } from 'react';
 import * as React from 'react';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
-import { beginAdd } from '../../../data/action/notificationActions';
-import { store } from '../../../data/store';
+import { beginAdd } from '../../../state/actions/notificationActions';
+import { store } from '../../../state/store';
 import { generateBotSecret } from '../../../utils';
 import { ActiveBotHelper } from '../../helpers/activeBotHelper';
 import { DialogService } from '../service';

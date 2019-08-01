@@ -32,7 +32,7 @@
 //
 import { connect } from 'react-redux';
 
-import { RootState } from '../../../data/store';
+import { RootState } from '../../../state/store';
 
 import { MDIComponent } from './mdi';
 

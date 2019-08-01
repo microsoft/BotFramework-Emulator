@@ -33,7 +33,7 @@
 
 import * as React from 'react';
 
-import { Document } from '../../../../data/reducer/editor';
+import { Document } from '../../../../state/reducers/editor';
 import { EditorFactory } from '../../../editor';
 import { TabbedDocument } from '../tabbedDocument';
 

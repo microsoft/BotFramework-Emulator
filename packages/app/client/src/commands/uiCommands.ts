@@ -37,14 +37,18 @@ import { ServiceTypes } from 'botframework-config/lib/schema';
 import { ComponentClass } from 'react';
 
 import * as Constants from '../constants';
-import { azureArmTokenDataChanged, beginAzureAuthWorkflow, invalidateArmToken } from '../data/action/azureAuthActions';
-import * as EditorActions from '../data/action/editorActions';
-import * as NavBarActions from '../data/action/navBarActions';
-import { ProgressIndicatorPayload, updateProgressIndicator } from '../data/action/progressIndicatorActions';
-import { switchTheme } from '../data/action/themeActions';
-import { showMarkdownPage, showWelcomePage } from '../data/editorHelpers';
-import { AzureAuthState } from '../data/reducer/azureAuthReducer';
-import { store } from '../data/store';
+import {
+  azureArmTokenDataChanged,
+  beginAzureAuthWorkflow,
+  invalidateArmToken,
+} from '../state/actions/azureAuthActions';
+import * as EditorActions from '../state/actions/editorActions';
+import * as NavBarActions from '../state/actions/navBarActions';
+import { ProgressIndicatorPayload, updateProgressIndicator } from '../state/actions/progressIndicatorActions';
+import { switchTheme } from '../state/actions/themeActions';
+import { showMarkdownPage, showWelcomePage } from '../state/helpers/editorHelpers';
+import { AzureAuthState } from '../state/reducers/azureAuth';
+import { store } from '../state/store';
 import {
   AzureLoginFailedDialogContainer,
   AzureLoginPromptDialogContainer,
@@ -60,8 +64,8 @@ import {
   UpdateUnavailableDialogContainer,
   DataCollectionDialogContainer,
 } from '../ui/dialogs';
-import { openBotViaUrlAction } from '../data/action/botActions';
-import { beginAdd } from '../data/action/notificationActions';
+import { openBotViaUrlAction } from '../state/actions/botActions';
+import { beginAdd } from '../state/actions/notificationActions';
 import { OpenBotDialogProps } from '../ui/dialogs/openBotDialog/openBotDialog';
 
 const { UI, Telemetry } = SharedConstants.Commands;

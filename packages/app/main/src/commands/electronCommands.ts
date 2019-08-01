@@ -39,7 +39,7 @@ import { SharedConstants } from '@bfemulator/app-shared';
 import { Command } from '@bfemulator/sdk-shared';
 
 import { AppMenuBuilder } from '../appMenuBuilder';
-import { getStore } from '../data/store';
+import { store } from '../state/store';
 import { emulatorApplication } from '../main';
 import { ContextMenuService } from '../services/contextMenuService';
 import { TelemetryService } from '../telemetry';
@@ -47,7 +47,6 @@ import { showOpenDialog, showSaveDialog } from '../utils';
 
 const { shell } = Electron;
 
-const store = getStore();
 const Commands = SharedConstants.Commands.Electron;
 
 /** Registers electron commands */

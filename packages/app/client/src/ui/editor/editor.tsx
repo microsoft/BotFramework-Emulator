@@ -34,7 +34,7 @@
 import * as React from 'react';
 
 import * as Constants from '../../constants';
-import { Document } from '../../data/reducer/editor';
+import { Document } from '../../state/reducers/editor';
 
 import { MarkdownPage } from './markdownPage/markdownPage';
 

@@ -40,18 +40,17 @@ import * as fs from 'fs-extra';
 import { sync as mkdirpSync } from 'mkdirp';
 import { session } from 'electron';
 
-import * as BotActions from '../data/actions/botActions';
-import { getStore } from '../data/store';
+import * as BotActions from '../state/actions/botActions';
 import { BotHelpers } from '../botHelpers';
 import { Emulator } from '../emulator';
 import { emulatorApplication } from '../main';
-import { dispatch, getStore as getSettingsStore } from '../settingsData/store';
+import { dispatch, store, getSettings } from '../state/store';
 import { parseActivitiesFromChatFile, readFileSync, showSaveDialog, writeFile } from '../utils';
 import { cleanupId as cleanupActivityChannelAccountId, CustomActivity } from '../utils/conversation';
 import { botProjectFileWatcher } from '../watchers';
 import { TelemetryService } from '../telemetry';
-import { setCurrentUser } from '../settingsData/actions/userActions';
-import { pushClientAwareSettings } from '../settingsData/actions/frameworkActions';
+import { setCurrentUser } from '../state/actions/userActions';
+import { pushClientAwareSettings } from '../state/actions/frameworkSettingsActions';
 import { ProtocolHandler } from '../protocolHandler';
 import { CredentialManager } from '../credentialManager';
 
@@ -102,7 +101,6 @@ export class EmulatorCommands {
     // If there is no current bot directory, we should set the directory
     // that the transcript is saved in as the bot directory, copy the botfile over,
     // change the bots.json entry, and watch the directory.
-    const store = getStore();
     const { currentBotDirectory } = store.getState().bot;
     if (!currentBotDirectory && filename && filename.length) {
       const secret = await CredentialManager.getPassword(activeBot.path);
@@ -112,7 +110,7 @@ export class EmulatorCommands {
       botInfo = { ...botInfo, path: botPath };
 
       await saveableBot.save(botPath);
-      await BotHelpers.patchBotsJson(botPath, botInfo);
+      BotHelpers.patchBotsJson(botPath, botInfo);
       await botProjectFileWatcher.watch(botPath);
       store.dispatch(BotActions.setDirectory(botDirectory));
     }
@@ -187,14 +185,14 @@ export class EmulatorCommands {
     if (!bot) {
       bot = newBot();
       bot.services.push(newEndpoint());
-      getStore().dispatch(BotActions.mockAndSetActive(bot));
+      dispatch(BotActions.mockAndSetActive(bot));
     }
     const emulator = Emulator.getInstance();
     // TODO: Move away from the .users state on legacy emulator settings, and towards per-conversation users
     return emulator.framework.server.botEmulator.facilities.conversations.newConversation(
       emulator.framework.server.botEmulator,
       null,
-      { id: getSettingsStore().getState().users.currentUserId, name: 'User' },
+      { id: getSettings().users.currentUserId, name: 'User' },
       conversationId
     );
   }
@@ -260,7 +258,7 @@ export class EmulatorCommands {
       return;
     }
     await emulator.startup(port);
-    const { users: userSettings, framework } = getSettingsStore().getState();
+    const { users: userSettings, framework } = getSettings();
     const users = new Users();
     users.currentUserId = userSettings.currentUserId;
     users.users = userSettings.usersById;
@@ -274,7 +272,7 @@ export class EmulatorCommands {
   protected async openProtocolUrls() {
     const {
       protocol: { openUrls },
-    } = getStore().getState();
+    } = store.getState();
     if (openUrls.length) {
       await Promise.all(openUrls.map(url => ProtocolHandler.parseProtocolUrlAndDispatch(url)));
     }
@@ -283,9 +281,7 @@ export class EmulatorCommands {
 
   @Command(Commands.ClearState)
   protected async clearState() {
-    const settingsStore = getSettingsStore();
-    const settingsState = settingsStore.getState();
-    const { signedInUser } = settingsState.azure;
+    const { signedInUser } = getSettings().azure;
     const signedInMessage = signedInUser
       ? 'This will log you out of Azure and remove any session based data. Continue?'
       : 'This will remove any session based data. Continue?';

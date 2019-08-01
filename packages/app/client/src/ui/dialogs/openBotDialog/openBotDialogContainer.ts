@@ -34,9 +34,9 @@
 import { connect } from 'react-redux';
 import { Action } from 'redux';
 
-import { openBotViaFilePathAction, openBotViaUrlAction } from '../../../data/action/botActions';
+import { openBotViaFilePathAction, openBotViaUrlAction } from '../../../state/actions/botActions';
 import { DialogService } from '../service';
-import { RootState } from '../../../data/store';
+import { RootState } from '../../../state/store';
 
 import { OpenBotDialog, OpenBotDialogProps, OpenBotDialogState } from './openBotDialog';
 

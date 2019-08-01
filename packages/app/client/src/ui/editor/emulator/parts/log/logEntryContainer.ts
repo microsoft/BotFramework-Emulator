@@ -35,7 +35,7 @@ import { SharedConstants } from '@bfemulator/app-shared';
 import { connect } from 'react-redux';
 import { ServiceTypes } from 'botframework-config/lib/schema';
 
-import * as ConnectedServiceActions from '../../../../../data/action/connectedServiceActions';
+import * as ConnectedServiceActions from '../../../../../state/actions/connectedServiceActions';
 import {
   AzureLoginFailedDialogContainer,
   AzureLoginSuccessDialogContainer,
@@ -45,8 +45,8 @@ import {
 } from '../../../../dialogs';
 import { ConnectedServicePickerContainer } from '../../../../shell/explorer/servicesExplorer';
 import { ConnectedServiceEditorContainer } from '../../../../shell/explorer/servicesExplorer/connectedServiceEditor';
-import { setHighlightedObjects, setInspectorObjects } from '../../../../../data/action/chatActions';
-import { executeCommand } from '../../../../../data/action/commandAction';
+import { setHighlightedObjects, setInspectorObjects } from '../../../../../state/actions/chatActions';
+import { executeCommand } from '../../../../../state/actions/commandAction';
 
 import { LogEntry as LogEntryComponent, LogEntryProps } from './logEntry';
 

@@ -40,7 +40,7 @@ import { PrimaryButton } from '@bfemulator/ui-react';
 import { EmulatorMode } from '@bfemulator/sdk-shared';
 
 import { areActivitiesEqual, getActivityTargets } from '../../../../../utils';
-import { ChatDocument } from '../../../../../data/reducer/chat';
+import { ChatDocument } from '../../../../../state/reducers/chat';
 
 import ActivityWrapper from './activityWrapper';
 import * as styles from './chat.scss';

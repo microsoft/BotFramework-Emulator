@@ -34,9 +34,9 @@
 import { isChatFile, isTranscriptFile, SharedConstants } from '@bfemulator/app-shared';
 import { Command } from '@bfemulator/sdk-shared';
 
-import * as EditorActions from '../data/action/editorActions';
-import * as FileActions from '../data/action/fileActions';
-import { store } from '../data/store';
+import * as EditorActions from '../state/actions/editorActions';
+import * as FileActions from '../state/actions/fileActions';
+import { store } from '../state/store';
 
 const { File } = SharedConstants.Commands;
 

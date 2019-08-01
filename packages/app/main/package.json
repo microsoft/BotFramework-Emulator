@@ -153,7 +153,6 @@
     "node-uuid": "^1.4.8",
     "read-text-file": "^1.1.0",
     "redux": "^3.7.2",
-    "redux-promise-middleware": "^5.0.0",
     "redux-saga": "^0.16.0",
     "restify": "^5.0.0",
     "restify-cors-middleware": "^1.1.0",

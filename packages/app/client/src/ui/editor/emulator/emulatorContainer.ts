@@ -33,14 +33,14 @@
 import { connect } from 'react-redux';
 import { Notification, SharedConstants, ValueTypesMask } from '@bfemulator/app-shared';
 
-import { RootState } from '../../../data/store';
-import * as PresentationActions from '../../../data/action/presentationActions';
-import * as ChatActions from '../../../data/action/chatActions';
-import { Document } from '../../../data/reducer/editor';
-import { updateDocument } from '../../../data/action/editorActions';
-import { beginAdd } from '../../../data/action/notificationActions';
-import { executeCommand } from '../../../data/action/commandAction';
-import { restartConversation } from '../../../data/action/botActions';
+import { RootState } from '../../../state/store';
+import * as PresentationActions from '../../../state/actions/presentationActions';
+import * as ChatActions from '../../../state/actions/chatActions';
+import { Document } from '../../../state/reducers/editor';
+import { updateDocument } from '../../../state/actions/editorActions';
+import { beginAdd } from '../../../state/actions/notificationActions';
+import { executeCommand } from '../../../state/actions/commandAction';
+import { restartConversation } from '../../../state/actions/botActions';
 
 import { Emulator, EmulatorProps } from './emulator';
 
