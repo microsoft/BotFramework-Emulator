@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Added
 - [main] Added End-to-End tests using Spectron in PR [1696](https://github.com/microsoft/BotFramework-Emulator/pull/1696)
+- [main] New Conversation: send a single conversation update activity including bot and user as members added [1709](https://github.com/microsoft/BotFramework-Emulator/pull/1709)
 
 ## v4.5.2 - 2019 - 07 - 17
 ## Fixed
