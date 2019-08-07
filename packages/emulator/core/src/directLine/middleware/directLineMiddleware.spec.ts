@@ -129,6 +129,10 @@ describe('The directLine middleware', () => {
         type: 'conversationUpdate',
         membersAdded: [
           {
+            id: '0a441b55-d1d6-4015-bbb4-2e7f44fa9f42',
+            name: 'User',
+          },
+          {
             id: 'http://localhost:3978/api/messages',
             name: 'Bot',
           },
@@ -145,32 +149,6 @@ describe('The directLine middleware', () => {
           role: 'bot',
         },
         timestamp: '2018-09-20T15:47:08.895Z',
-        from: {
-          id: '0a441b55-d1d6-4015-bbb4-2e7f44fa9f42',
-          name: 'User',
-        },
-        serviceUrl: 'https://a457e760.ngrok.io',
-      },
-      {
-        type: 'conversationUpdate',
-        membersAdded: [
-          {
-            id: '0a441b55-d1d6-4015-bbb4-2e7f44fa9f42',
-            name: 'User',
-          },
-        ],
-        channelId: 'emulator',
-        conversation: {
-          id: '6e8b5950-bcec-11e8-97ca-bd586926880a|livechat',
-        },
-        id: '6e9fcbb0-bcec-11e8-a0e5-939fd8c687fd',
-        localTimestamp: '2018-09-20T08:47:08-07:00',
-        recipient: {
-          id: 'http://localhost:3978/api/messages',
-          name: 'Bot',
-          role: 'bot',
-        },
-        timestamp: '2018-09-20T15:47:08.907Z',
         from: {
           id: '0a441b55-d1d6-4015-bbb4-2e7f44fa9f42',
           name: 'User',

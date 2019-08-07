@@ -43,6 +43,10 @@ const mockTranscript = [
       type: 'conversationUpdate',
       membersAdded: [
         {
+          id: '5e1f1c4c-6a89-4880-8db0-0f222c07ae9a',
+          name: 'User',
+        },
+        {
           id: '1',
           name: 'Bot',
         },
@@ -59,36 +63,6 @@ const mockTranscript = [
         role: 'bot',
       },
       timestamp: '2019-01-23T20:30:30.111Z',
-      from: {
-        id: '5e1f1c4c-6a89-4880-8db0-0f222c07ae9a',
-        name: 'User',
-      },
-      locale: 'en-us',
-      serviceUrl: 'https://3a469f6b.ngrok.io',
-    },
-  },
-  {
-    type: 'activity add',
-    activity: {
-      type: 'conversationUpdate',
-      membersAdded: [
-        {
-          id: '5e1f1c4c-6a89-4880-8db0-0f222c07ae9a',
-          name: 'User',
-        },
-      ],
-      channelId: 'emulator',
-      conversation: {
-        id: 'b94a54f0-1f4d-11e9-a14a-49165b6799aa|livechat',
-      },
-      id: 'b9c50330-1f4d-11e9-bad7-9740f2a4e769',
-      localTimestamp: '2019-01-23T12:30:30-08:00',
-      recipient: {
-        id: '1',
-        name: 'Bot',
-        role: 'bot',
-      },
-      timestamp: '2019-01-23T20:30:30.115Z',
       from: {
         id: '5e1f1c4c-6a89-4880-8db0-0f222c07ae9a',
         name: 'User',
@@ -156,6 +130,10 @@ const mockTranscript = [
 const mockActivity = {
   type: 'conversationUpdate',
   membersAdded: [
+    {
+      id: '5e1f1c4c-6a89-4880-8db0-0f222c07ae9a',
+      name: 'User',
+    },
     {
       id: '1',
       name: 'Bot',
@@ -293,7 +271,7 @@ describe('Conversation class', () => {
   it('should get the transcript from the conversation', async () => {
     (conversation as any).transcript = mockTranscript;
     const transcripts = await conversation.getTranscript();
-    expect(transcripts.length).toBe(4);
+    expect(transcripts.length).toBe(3);
     let i = transcripts.length;
     while (i--) {
       expect(transcripts[i]).toEqual(mockTranscript[i].activity);
@@ -318,11 +296,15 @@ describe('Conversation class', () => {
       {
         membersAdded: [
           {
+            id: '5e1f1c4c-6a89-4880-8db0-0f222c07ae9a',
+            name: 'User',
+          },
+          {
             id: '1',
             name: 'Bot',
           },
         ],
-        membersRemoved: [{ id: '1', name: 'Bot' }],
+        membersRemoved: [{ id: '5e1f1c4c-6a89-4880-8db0-0f222c07ae9a', name: 'User' }, { id: '1', name: 'Bot' }],
         type: 'conversationUpdate',
       },
       false

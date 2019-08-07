@@ -60,10 +60,17 @@ export default function startConversation(botEmulator: BotEmulator) {
 
     if (!conversation) {
       conversation = conversations.newConversation(botEmulator, botEndpoint, currentUser, conversationId);
-      // Sends "bot added to conversation"
-      await conversation.sendConversationUpdate([{ id: botEndpoint.botId, name: 'Bot' }], undefined);
-      // Sends "user added to conversation"
-      await conversation.sendConversationUpdate([currentUser], undefined);
+
+      if (!currentUser) {
+        // New conversations should have a user. Since we don't have one, this is a bug. Report the error
+        res.send(HttpStatus.BAD_REQUEST, 'current user not provided');
+        res.end();
+        next();
+        return;
+      }
+
+      // Send a ConversationUpdate activity adding the bot and user to the conversation
+      await conversation.sendConversationUpdate([currentUser, { id: botEndpoint.botId, name: 'Bot' }], undefined);
       created = true;
     } else if (botEndpoint && !conversationId.endsWith('transcript')) {
       if (conversation.members.findIndex(user => user.id === botEndpoint.botId) === -1) {
