@@ -37,7 +37,7 @@ import { TelemetryService } from '../telemetry';
 
 import { openFileFromCommandLine } from './openFileFromCommandLine';
 
-jest.mock('../settingsData/store', () => ({
+jest.mock('../state/store', () => ({
   getSettings: () => null,
 }));
 jest.mock('./readFileSync', () => ({

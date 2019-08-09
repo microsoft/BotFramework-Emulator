@@ -30,6 +30,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 import { SettingsImpl, SharedConstants } from '@bfemulator/app-shared';
 import {
   BotConfigWithPathImpl,
@@ -39,25 +40,35 @@ import {
 } from '@bfemulator/sdk-shared';
 import { combineReducers, createStore } from 'redux';
 
-import { bot } from '../data/reducers/bot';
-import * as store from '../data/store';
-import reducers from '../settingsData/reducers';
+import { bot } from '../state/reducers/bot';
+import * as store from '../state/store';
+import { azureAuthSettings, framework, savedBotUrls, windowState, users } from '../state/reducers';
 
 import { ClientInitCommands } from './clientInitCommands';
 
-let mockSettingsStore;
-const mockCreateStore = () => createStore(reducers);
+const mockSettingsStore = createStore(
+  combineReducers({
+    settings: combineReducers({
+      azure: azureAuthSettings,
+      framework,
+      savedBotUrls,
+      windowState,
+      users,
+    }),
+  })
+);
 const mockSettingsImpl = SettingsImpl;
-jest.mock('../settingsData/store', () => ({
-  getStore: function() {
-    return mockSettingsStore || (mockSettingsStore = mockCreateStore());
+jest.mock('../state/store', () => ({
+  get store() {
+    return mockSettingsStore;
   },
-  getSettings: function() {
-    return new mockSettingsImpl(mockSettingsStore.getState());
-  },
-  get dispatch() {
-    return mockSettingsStore.dispatch;
-  },
+  getSettings: () => new mockSettingsImpl(mockSettingsStore.getState().settings),
+  dispatch: action => mockSettingsStore.dispatch(action),
+}));
+
+// had to mock to fix some very strange import error that was happening downstream
+jest.mock('../appMenuBuilder', () => ({
+  AppMenuBuilder: {},
 }));
 
 jest.mock('../emulator', () => ({
@@ -139,6 +150,7 @@ let mockStore;
 describe('The clientInitCommands', () => {
   let registry: CommandRegistry;
   let commandService: CommandServiceImpl;
+
   beforeAll(() => {
     new ClientInitCommands();
     const decorator = CommandServiceInstance();

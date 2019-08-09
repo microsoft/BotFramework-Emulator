@@ -39,7 +39,7 @@ import {
   openResource,
   openResourcesSettings,
   renameResource,
-} from '../../../../state/actions/resourcesAction';
+} from '../../../../state/actions/resourcesActions';
 import { RootState } from '../../../../state/store';
 
 import { ResourceExplorer, ResourceExplorerProps } from './resourceExplorer';

@@ -39,7 +39,7 @@ import * as EditorActions from '../../../state/actions/editorActions';
 import * as ExplorerActions from '../../../state/actions/explorerActions';
 import * as NavBarActions from '../../../state/actions/navBarActions';
 import { RootState } from '../../../state/store';
-import { executeCommand } from '../../../state/actions/commandAction';
+import { executeCommand } from '../../../state/actions/commandActions';
 
 import { NavBarComponent, NavBarProps } from './navBar';
 

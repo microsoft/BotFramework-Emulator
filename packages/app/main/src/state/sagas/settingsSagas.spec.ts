@@ -31,15 +31,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import '../../fetchProxy';
-import { Settings, settingsDefault, SharedConstants } from '@bfemulator/app-shared';
-import { applyMiddleware, createStore, Store } from 'redux';
+import { settingsDefault, SharedConstants } from '@bfemulator/app-shared';
+import { applyMiddleware, createStore, Store, combineReducers } from 'redux';
 import sagaMiddlewareFactory from 'redux-saga';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
-import reducers from '../reducers';
+import { azureAuthSettings, framework, savedBotUrls, windowState, users } from '../reducers';
 import { rememberTheme } from '../actions/windowStateActions';
 
 import { settingsSagas } from './settingsSagas';
+import { RootState } from '../store';
 
 const mockEmulator = {
   startup: async () => true,
@@ -59,7 +60,7 @@ jest.mock('../../botHelpers', () => ({
   getActiveBot: () => ({}),
 }));
 
-let mockStore: Store<Settings>;
+let mockStore: Store<RootState>;
 
 jest.mock('../store', () => ({
   get store() {
@@ -105,10 +106,20 @@ describe('The SettingsSagas', () => {
 
   beforeEach(() => {
     mockStore = createStore(
-      reducers,
+      combineReducers({
+        settings: combineReducers({
+          azure: azureAuthSettings,
+          framework,
+          savedBotUrls,
+          windowState,
+          users,
+        }),
+      }),
       {
-        ...settingsDefault,
-        windowState: { availableThemes: [{ href: 'myTheme.scss', name: 'myTheme' }] },
+        settings: {
+          ...settingsDefault,
+          windowState: { availableThemes: [{ href: 'myTheme.scss', name: 'myTheme' }] },
+        },
       },
       applyMiddleware(sagaMiddleWare)
     );

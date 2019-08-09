@@ -39,7 +39,7 @@ import * as React from 'react';
 import { Provider } from 'react-redux';
 import { combineReducers, createStore } from 'redux';
 
-import { azureAuth } from '../../../../../data/reducer/azureAuthReducer';
+import { azureAuth } from '../../../../../state/reducers/azureAuth';
 import { DialogService } from '../../../../dialogs/service';
 
 import { ConnectedServiceEditor } from './connectedServiceEditor';

@@ -37,11 +37,11 @@ import * as React from 'react';
 import { Provider } from 'react-redux';
 import { combineReducers, createStore } from 'redux';
 
-import { beginAdd } from '../../../../data/action/notificationActions';
-import { bot } from '../../../../data/reducer/bot';
-import { chat } from '../../../../data/reducer/chat';
+import { beginAdd } from '../../../../state/actions/notificationActions';
+import { bot } from '../../../../state/reducers/bot';
+import { chat } from '../../../../state/reducers/chat';
 import { ActiveBotHelper } from '../../../helpers/activeBotHelper';
-import { executeCommand } from '../../../../data/action/commandAction';
+import { executeCommand } from '../../../../state/actions/commandActions';
 
 import { BotNotOpenExplorer } from './botNotOpenExplorer';
 import { BotNotOpenExplorerContainer } from './botNotOpenExplorerContainer';
@@ -80,7 +80,7 @@ jest.mock('electron', () => ({
   ),
 }));
 
-jest.mock('../../../../data/store', () => ({
+jest.mock('../../../../state/store', () => ({
   get store() {
     return mockStore;
   },

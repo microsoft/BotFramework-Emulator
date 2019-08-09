@@ -46,16 +46,15 @@ import { BotConfiguration } from 'botframework-config';
 import { newBot, newEndpoint, SharedConstants, ValueTypesMask } from '@bfemulator/app-shared';
 import { Conversation } from '@bfemulator/emulator-core';
 
-import * as store from '../data/store';
-import { getStore as getSettingsStore } from '../settingsData/store';
+import { store } from '../state/store';
 import * as utils from '../utils';
 import { BotHelpers } from '../botHelpers';
-import { bot } from '../data/reducers/bot';
-import * as BotActions from '../data/actions/botActions';
+import { bot } from '../state/reducers/bot';
+import * as BotActions from '../state/actions/botActions';
 import { TelemetryService } from '../telemetry';
-import { setCurrentUser } from '../settingsData/actions/userActions';
-import { pushClientAwareSettings } from '../settingsData/actions/frameworkActions';
-import { azureLoggedInUserChanged } from '../settingsData/actions/azureAuthActions';
+import { setCurrentUser } from '../state/actions/userActions';
+import { pushClientAwareSettings } from '../state/actions/frameworkSettingsActions';
+import { azureLoggedInUserChanged } from '../state/actions/azureAuthActions';
 import { CredentialManager } from '../credentialManager';
 
 import { EmulatorCommands } from './emulatorCommands';
@@ -186,6 +185,11 @@ jest.mock('../main', () => ({
         remoteCall: async () => true,
       },
       browserWindow: {},
+    },
+    mainBrowserWindow: {
+      webContents: {
+        send: () => null,
+      },
     },
   },
 }));
@@ -522,7 +526,7 @@ describe('The emulatorCommands', () => {
 
   it('should create a new conversation object for transcript', async () => {
     const getActiveBotSpy = jest.spyOn(BotHelpers, 'getActiveBot').mockReturnValue(null);
-    const dispatchSpy = jest.spyOn(store.getStore(), 'dispatch');
+    const dispatchSpy = jest.spyOn(store, 'dispatch');
     const command = registry.getCommand(SharedConstants.Commands.Emulator.NewTranscript);
     const conversation = await command('1234');
 
@@ -535,7 +539,7 @@ describe('The emulatorCommands', () => {
   });
 
   it('should set current user', async () => {
-    const dispatchSpy = jest.spyOn(getSettingsStore(), 'dispatch');
+    const dispatchSpy = jest.spyOn(store, 'dispatch');
     await registry.getCommand(SharedConstants.Commands.Emulator.SetCurrentUser)('userId123');
 
     expect(mockUsers.currentUserId).toBe('userId123');
@@ -599,9 +603,9 @@ describe('The emulatorCommands', () => {
   });
 
   it('should clear state if user is signed in to Azure', async () => {
-    getSettingsStore().dispatch(azureLoggedInUserChanged('someone@microsoft.com'));
+    store.dispatch(azureLoggedInUserChanged('someone@microsoft.com'));
 
-    const signedInUser = getSettingsStore().getState().azure.signedInUser;
+    const signedInUser = store.getState().settings.azure.signedInUser;
     const signedInMessage = signedInUser
       ? 'This will log you out of Azure and remove any session based data. Continue?'
       : 'This will remove any session based data. Continue?';
@@ -623,9 +627,9 @@ describe('The emulatorCommands', () => {
   });
 
   it('should clear state if user is signed in to Azure', async () => {
-    getSettingsStore().dispatch(azureLoggedInUserChanged(''));
+    store.dispatch(azureLoggedInUserChanged(''));
 
-    const signedInUser = getSettingsStore().getState().azure.signedInUser;
+    const signedInUser = store.getState().settings.azure.signedInUser;
     const signedInMessage = signedInUser
       ? 'This will log you out of Azure and remove any session based data. Continue?'
       : 'This will remove any session based data. Continue?';

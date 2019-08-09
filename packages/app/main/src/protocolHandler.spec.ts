@@ -72,7 +72,7 @@ jest.mock('./globals', () => ({
 }));
 
 let mockNgrokPath;
-jest.mock('./settingsData/store', () => ({
+jest.mock('./state/store', () => ({
   getSettings: () => ({
     framework: {
       ngrokPath: mockNgrokPath,

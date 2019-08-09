@@ -36,10 +36,10 @@ import { mount } from 'enzyme';
 import { combineReducers, createStore } from 'redux';
 import { SharedConstants } from '@bfemulator/app-shared';
 
-import { bot } from '../../../data/reducer/bot';
-import { resources } from '../../../data/reducer/resourcesReducer';
-import { loadBotInfos, setActiveBot } from '../../../data/action/botActions';
-import { executeCommand } from '../../../data/action/commandAction';
+import { bot } from '../../../state/reducers/bot';
+import { resources } from '../../../state/reducers/resourcesReducer';
+import { load, setActive } from '../../../state/actions/botActions';
+import { executeCommand } from '../../../state/actions/commandActions';
 
 import { ResourcesSettings } from './resourcesSettings';
 import { ResourcesSettingsContainer } from './resourcesSettingsContainer';
@@ -78,14 +78,14 @@ jest.mock('../service', () => ({
   },
 }));
 
-jest.mock('../../../data/store', () => ({
+jest.mock('../../../state/store', () => ({
   RootState: () => ({}),
   get store() {
     return mockStore;
   },
 }));
 
-jest.mock('../../../data/botHelpers', () => ({
+jest.mock('../../../state/helpers/botHelpers', () => ({
   getBotInfoByPath: () => ({}),
 }));
 
@@ -109,8 +109,8 @@ describe('The ResourcesSettings component should', () => {
         }]
       }`);
 
-    mockStore.dispatch(loadBotInfos([mockBot]));
-    mockStore.dispatch(setActiveBot(mockBot));
+    mockStore.dispatch(load([mockBot]));
+    mockStore.dispatch(setActive(mockBot));
     dispatchSpy = jest.spyOn(mockStore, 'dispatch');
     parent = mount(
       <Provider store={mockStore}>

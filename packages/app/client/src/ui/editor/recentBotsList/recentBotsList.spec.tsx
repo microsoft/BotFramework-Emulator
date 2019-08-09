@@ -37,11 +37,11 @@ import * as React from 'react';
 import { Provider } from 'react-redux';
 import { combineReducers, createStore } from 'redux';
 
-import * as BotActions from '../../../data/action/botActions';
-import { beginAdd } from '../../../data/action/notificationActions';
-import { openContextMenuForBot } from '../../../data/action/welcomePageActions';
-import { bot } from '../../../data/reducer/bot';
-import { executeCommand } from '../../../data/action/commandAction';
+import * as BotActions from '../../../state/actions/botActions';
+import { beginAdd } from '../../../state/actions/notificationActions';
+import { openContextMenuForBot } from '../../../state/actions/welcomePageActions';
+import { bot } from '../../../state/reducers/bot';
+import { executeCommand } from '../../../state/actions/commandActions';
 
 import { RecentBotsList } from './recentBotsList';
 import { RecentBotsListContainer } from './recentBotsListContainer';
@@ -70,7 +70,7 @@ describe('The RecentBotsList', () => {
   const mockOnBotSelected = jest.fn();
 
   beforeEach(() => {
-    mockStore.dispatch(BotActions.loadBotInfos(bots));
+    mockStore.dispatch(BotActions.load(bots));
     mockDispatch = jest.spyOn(mockStore, 'dispatch');
     parent = mount(
       <Provider store={mockStore}>

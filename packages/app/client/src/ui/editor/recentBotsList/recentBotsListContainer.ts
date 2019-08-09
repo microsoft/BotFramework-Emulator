@@ -37,7 +37,7 @@ import { Action } from 'redux';
 
 import { openContextMenuForBot } from '../../../state/actions/welcomePageActions';
 import { RootState } from '../../../state/store';
-import { executeCommand } from '../../../state/actions/commandAction';
+import { executeCommand } from '../../../state/actions/commandActions';
 
 import { RecentBotsList, RecentBotsListProps } from './recentBotsList';
 

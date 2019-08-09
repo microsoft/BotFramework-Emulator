@@ -40,14 +40,14 @@ describe('Framework actions', () => {
     };
     expect(setFrameworkSettings(frameworkSettings)).toEqual({
       type: FrameworkActionType.SET_FRAMEWORK,
-      state: frameworkSettings,
+      payload: frameworkSettings,
     });
   });
 
   test('pushClientAwareSettings action', () => {
     expect(pushClientAwareSettings()).toEqual({
       type: FrameworkActionType.PUSH_CLIENT_AWARE_SETTINGS,
-      state: void 0,
+      payload: undefined,
     });
   });
 });

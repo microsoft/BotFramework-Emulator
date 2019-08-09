@@ -34,11 +34,11 @@ import { SharedConstants } from '@bfemulator/app-shared';
 import { CommandRegistry, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { CONTENT_TYPE_APP_SETTINGS, DOCUMENT_ID_APP_SETTINGS } from '../constants';
-import { AzureAuthAction, AzureAuthWorkflow, invalidateArmToken } from '../data/action/azureAuthActions';
-import { EditorActions, OpenEditorAction } from '../data/action/editorActions';
-import { NavBarActions, SelectNavBarAction } from '../data/action/navBarActions';
-import * as editorHelpers from '../data/editorHelpers';
-import { store } from '../data/store';
+import { AzureAuthAction, AzureAuthWorkflow, invalidateArmToken } from '../state/actions/azureAuthActions';
+import { EditorActions, OpenEditorAction } from '../state/actions/editorActions';
+import { NavBarActions, SelectNavBarAction } from '../state/actions/navBarActions';
+import * as editorHelpers from '../state/helpers/editorHelpers';
+import { store } from '../state/store';
 import {
   AzureLoginPromptDialogContainer,
   AzureLoginSuccessDialogContainer,

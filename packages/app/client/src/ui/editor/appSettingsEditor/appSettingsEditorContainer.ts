@@ -40,7 +40,7 @@ import { getTabGroupForDocument } from '../../../state/helpers/editorHelpers';
 import { RootState } from '../../../state/store';
 import { debounce } from '../../../utils';
 import { saveFrameworkSettings } from '../../../state/actions/frameworkSettingsActions';
-import { executeCommand } from '../../../state/actions/commandAction';
+import { executeCommand } from '../../../state/actions/commandActions';
 
 import { AppSettingsEditor, AppSettingsEditorProps } from './appSettingsEditor';
 

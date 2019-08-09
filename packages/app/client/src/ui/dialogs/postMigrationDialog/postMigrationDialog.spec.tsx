@@ -36,7 +36,7 @@ import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import { mount } from 'enzyme';
 
-import { navBar } from '../../../data/reducer/navBar';
+import { navBar } from '../../../state/reducers/navBar';
 
 import { PostMigrationDialogContainer } from './postMigrationDialogContainer';
 import { PostMigrationDialog } from './postMigrationDialog';

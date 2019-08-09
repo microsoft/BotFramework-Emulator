@@ -50,7 +50,7 @@ jest.mock('applicationinsights', () => ({
 }));
 
 let mockSettings;
-jest.mock('../settingsData/store', () => ({
+jest.mock('../state/store', () => ({
   getSettings: () => mockSettings,
 }));
 

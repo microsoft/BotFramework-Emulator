@@ -38,7 +38,7 @@ import { newNotification } from '@bfemulator/app-shared';
 
 import { RootState } from '../../../../state/store';
 import { ActiveBotHelper } from '../../../helpers/activeBotHelper';
-import { executeCommand } from '../../../../state/actions/commandAction';
+import { executeCommand } from '../../../../state/actions/commandActions';
 import { beginAdd } from '../../../../state/actions/notificationActions';
 
 import { BotNotOpenExplorer as BotNotOpenExplorerComp, BotNotOpenExplorerProps } from './botNotOpenExplorer';

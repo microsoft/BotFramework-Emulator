@@ -155,18 +155,6 @@ export function closeBot(): BotAction<{}> {
   };
 }
 
-export function loadBotInfos(bots: BotInfo[]): BotAction<BotInfosPayload> {
-  // prune bad bots
-  bots = bots.filter(bot => !!bot);
-
-  return {
-    type: BotActionType.load,
-    payload: {
-      bots,
-    },
-  };
-}
-
 export function openBotViaFilePathAction(path: string): BotAction<string> {
   return {
     type: BotActionType.openViaFilePath,

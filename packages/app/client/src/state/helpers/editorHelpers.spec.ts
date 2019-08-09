@@ -31,9 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as Constants from '../constants';
+import { SharedConstants } from '@bfemulator/app-shared';
 
-import { open } from './action/editorActions';
+import { open } from '../actions/editorActions';
 import {
   getOtherTabGroup,
   getTabGroupForDocument,
@@ -49,7 +49,7 @@ const mockStore = {
   getState: mockGetState,
   dispatch: mockDispatch,
 };
-jest.mock('./store', () => ({
+jest.mock('../store', () => ({
   get store() {
     return mockStore;
   },
@@ -115,8 +115,8 @@ describe('editorHelpers', () => {
   });
 
   test('getOtherTabGroup', () => {
-    expect(getOtherTabGroup(Constants.EDITOR_KEY_PRIMARY)).toBe(Constants.EDITOR_KEY_SECONDARY);
-    expect(getOtherTabGroup(Constants.EDITOR_KEY_SECONDARY)).toBe(Constants.EDITOR_KEY_PRIMARY);
+    expect(getOtherTabGroup(SharedConstants.EDITOR_KEY_PRIMARY)).toBe(SharedConstants.EDITOR_KEY_SECONDARY);
+    expect(getOtherTabGroup(SharedConstants.EDITOR_KEY_SECONDARY)).toBe(SharedConstants.EDITOR_KEY_PRIMARY);
   });
 
   test('showWelcomePage', () => {
@@ -124,8 +124,8 @@ describe('editorHelpers', () => {
 
     expect(mockDispatch).toHaveBeenCalledWith(
       open({
-        contentType: Constants.CONTENT_TYPE_WELCOME_PAGE,
-        documentId: Constants.DOCUMENT_ID_WELCOME_PAGE,
+        contentType: SharedConstants.ContentTypes.CONTENT_TYPE_WELCOME_PAGE,
+        documentId: SharedConstants.DocumentIds.DOCUMENT_ID_WELCOME_PAGE,
         isGlobal: true,
       })
     );

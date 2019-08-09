@@ -37,7 +37,7 @@ import { connect } from 'react-redux';
 import { beginAdd } from '../../../state/actions/notificationActions';
 import { RootState } from '../../../state/store';
 import { DialogService } from '../service';
-import { executeCommand } from '../../../state/actions/commandAction';
+import { executeCommand } from '../../../state/actions/commandActions';
 
 import { BotSettingsEditor, BotSettingsEditorProps } from './botSettingsEditor';
 

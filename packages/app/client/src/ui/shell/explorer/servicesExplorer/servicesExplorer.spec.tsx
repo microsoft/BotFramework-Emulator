@@ -36,15 +36,15 @@ import * as React from 'react';
 import { Provider } from 'react-redux';
 import { combineReducers, createStore } from 'redux';
 
-import { loadBotInfos, setActiveBot } from '../../../../data/action/botActions';
+import { load, setActive } from '../../../../state/actions/botActions';
 import {
   openAddServiceContextMenu,
   openContextMenuForConnectedService,
   openServiceDeepLink,
   openSortContextMenu,
-} from '../../../../data/action/connectedServiceActions';
-import { bot } from '../../../../data/reducer/bot';
-import { explorer } from '../../../../data/reducer/explorer';
+} from '../../../../state/actions/connectedServiceActions';
+import { bot } from '../../../../state/reducers/bot';
+import { explorer } from '../../../../state/reducers/explorer';
 import {
   AzureLoginFailedDialogContainer,
   AzureLoginSuccessDialogContainer,
@@ -91,8 +91,8 @@ describe('The ServicesExplorer component should', () => {
         }]
       }`);
     mockBot.services[0] = new LuisService(mockBot.services[0]);
-    mockStore.dispatch(loadBotInfos([mockBot]));
-    mockStore.dispatch(setActiveBot(mockBot));
+    mockStore.dispatch(load([mockBot]));
+    mockStore.dispatch(setActive(mockBot));
     mockDispatch = jest.spyOn(mockStore, 'dispatch');
     parent = mount(
       <Provider store={mockStore}>

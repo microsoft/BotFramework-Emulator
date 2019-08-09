@@ -40,8 +40,8 @@ import { BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
 import { SharedConstants } from '@bfemulator/app-shared';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
-import { bot } from '../../../data/reducer/bot';
-import { setActiveBot } from '../../../data/action/botActions';
+import { bot } from '../../../state/reducers/bot';
+import { setActive } from '../../../state/actions/botActions';
 
 import { BotSettingsEditor } from './botSettingsEditor';
 import { BotSettingsEditorContainer } from './botSettingsEditorContainer';
@@ -74,7 +74,7 @@ const mockWindow = {
   },
 };
 
-jest.mock('../../../data/store', () => ({
+jest.mock('../../../state/store', () => ({
   get store() {
     return mockStore;
   },
@@ -143,7 +143,7 @@ describe('The BotSettingsEditor dialog should', () => {
   let parent;
   let node;
   beforeEach(() => {
-    mockStore.dispatch(setActiveBot(mockBot));
+    mockStore.dispatch(setActive(mockBot));
     mockRemoteCommandsCalled.length = 0;
     parent = mount(
       <Provider store={mockStore}>

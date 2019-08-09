@@ -36,8 +36,8 @@ import { SharedConstants } from '@bfemulator/app-shared';
 import * as Electron from 'electron';
 import { CommandRegistry, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
-import { load } from '../data/actions/botActions';
-import { getStore } from '../data/store';
+import { load } from '../state/actions/botActions';
+import { store } from '../state/store';
 import { emulatorApplication } from '../main';
 import { TelemetryService } from '../telemetry';
 
@@ -103,6 +103,11 @@ jest.mock('../main', () => ({
       browserWindow: {
         setFullScreen: () => void 0,
         setTitle: (_name: string = '') => void 0,
+      },
+    },
+    mainBrowserWindow: {
+      webContents: {
+        send: () => null,
       },
     },
   },
@@ -201,7 +206,6 @@ describe('the electron commands', () => {
       displayName: 'AuthBot',
       secret: 'secret',
     };
-    const store = getStore();
     store.dispatch(load([mockBotInfo]));
 
     mockRefreshFileMenu = jest.fn(() => null);

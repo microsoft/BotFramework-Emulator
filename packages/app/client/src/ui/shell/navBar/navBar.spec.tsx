@@ -38,9 +38,9 @@ import { Provider } from 'react-redux';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import * as Constants from '../../../constants';
-import { select } from '../../../data/action/navBarActions';
-import { open } from '../../../data/action/editorActions';
-import { showExplorer } from '../../../data/action/explorerActions';
+import { select } from '../../../state/actions/navBarActions';
+import { open } from '../../../state/actions/editorActions';
+import { showExplorer } from '../../../state/actions/explorerActions';
 import { BotCommands } from '../../../commands/botCommands';
 
 import { NavBarComponent as NavBar } from './navBar';

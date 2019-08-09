@@ -46,7 +46,7 @@ import {
 import { ConnectedServicePickerContainer } from '../../../../shell/explorer/servicesExplorer';
 import { ConnectedServiceEditorContainer } from '../../../../shell/explorer/servicesExplorer/connectedServiceEditor';
 import { setHighlightedObjects, setInspectorObjects } from '../../../../../state/actions/chatActions';
-import { executeCommand } from '../../../../../state/actions/commandAction';
+import { executeCommand } from '../../../../../state/actions/commandActions';
 
 import { LogEntry as LogEntryComponent, LogEntryProps } from './logEntry';
 

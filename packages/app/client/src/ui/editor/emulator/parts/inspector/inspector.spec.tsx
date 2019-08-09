@@ -44,14 +44,14 @@ import * as React from 'react';
 import { Provider } from 'react-redux';
 import { combineReducers, createStore } from 'redux';
 
-import { loadBotInfos, setActiveBot } from '../../../../../data/action/botActions';
-import { switchTheme } from '../../../../../data/action/themeActions';
-import { bot } from '../../../../../data/reducer/bot';
-import { clientAwareSettings } from '../../../../../data/reducer/clientAwareSettingsReducer';
-import { theme } from '../../../../../data/reducer/themeReducer';
+import { load, setActive } from '../../../../../state/actions/botActions';
+import { switchTheme } from '../../../../../state/actions/themeActions';
+import { bot } from '../../../../../state/reducers/bot';
+import { clientAwareSettings } from '../../../../../state/reducers/clientAwareSettings';
+import { theme } from '../../../../../state/reducers/themeReducer';
 import { ExtensionManager } from '../../../../../extensions';
 import { logService } from '../../../../../platform/log/logService';
-import { executeCommand } from '../../../../../data/action/commandAction';
+import { executeCommand } from '../../../../../state/actions/commandActions';
 
 import { Inspector } from './inspector';
 import { InspectorContainer } from './inspectorContainer';
@@ -60,7 +60,7 @@ const mockStore = createStore(combineReducers({ theme, bot, clientAwareSettings 
   clientAwareSettings: { appPath: 'app-path' },
 });
 
-jest.mock('../../../../../data/store', () => ({
+jest.mock('../../../../../state/store', () => ({
   get store() {
     return mockStore;
   },
@@ -311,8 +311,8 @@ describe('The Inspector component', () => {
 
   beforeEach(() => {
     mockStore.dispatch(switchTheme('light', ['vars.css', 'light.css']));
-    mockStore.dispatch(loadBotInfos([mockState.bot]));
-    mockStore.dispatch(setActiveBot(mockState.bot as any));
+    mockStore.dispatch(load([mockState.bot]));
+    mockStore.dispatch(setActive(mockState.bot as any));
     mockRemoteCallsMade = [];
   });
 

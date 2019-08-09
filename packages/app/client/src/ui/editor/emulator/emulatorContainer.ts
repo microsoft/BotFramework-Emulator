@@ -39,7 +39,7 @@ import * as ChatActions from '../../../state/actions/chatActions';
 import { Document } from '../../../state/reducers/editor';
 import { updateDocument } from '../../../state/actions/editorActions';
 import { beginAdd } from '../../../state/actions/notificationActions';
-import { executeCommand } from '../../../state/actions/commandAction';
+import { executeCommand } from '../../../state/actions/commandActions';
 import { restartConversation } from '../../../state/actions/botActions';
 
 import { Emulator, EmulatorProps } from './emulator';

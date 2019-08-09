@@ -38,11 +38,11 @@ import { Provider } from 'react-redux';
 import { combineReducers, createStore } from 'redux';
 import { User } from '@bfemulator/sdk-shared';
 
-import * as botActions from '../../../data/action/botActions';
-import * as BotActions from '../../../data/action/botActions';
-import { clientAwareSettingsChanged } from '../../../data/action/clientAwareSettingsActions';
-import { bot } from '../../../data/reducer/bot';
-import { clientAwareSettings } from '../../../data/reducer/clientAwareSettingsReducer';
+import * as botActions from '../../../state/actions/botActions';
+import * as BotActions from '../../../state/actions/botActions';
+import { clientAwareSettingsChanged } from '../../../state/actions/clientAwareSettingsActions';
+import { bot } from '../../../state/reducers/bot';
+import { clientAwareSettings } from '../../../state/reducers/clientAwareSettings';
 import { DialogService } from '../service';
 
 import { OpenBotDialog } from './openBotDialog';
@@ -50,7 +50,7 @@ import { OpenBotDialogContainer } from './openBotDialogContainer';
 
 let mockStore;
 jest.mock('./openBotDialog.scss', () => ({}));
-jest.mock('../../../data/store', () => ({
+jest.mock('../../../state/store', () => ({
   get store() {
     return mockStore;
   },
@@ -80,7 +80,7 @@ describe('The OpenBotDialog', () => {
   let instance;
   beforeEach(() => {
     mockStore = createStore(combineReducers({ bot, clientAwareSettings }));
-    mockStore.dispatch(BotActions.loadBotInfos(bots));
+    mockStore.dispatch(BotActions.load(bots));
     mockStore.dispatch(
       clientAwareSettingsChanged({
         serverUrl: 'http://localhost:3543',

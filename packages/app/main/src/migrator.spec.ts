@@ -47,6 +47,7 @@ let mockAppDataPath = Path.join('%appdata%', '@bfemulator', 'main');
 jest.mock('electron', () => ({
   app: {
     getPath: () => mockAppDataPath,
+    setName: () => null,
   },
   ipcMain: new Proxy(
     {},
@@ -136,11 +137,22 @@ jest.mock('mkdirp', () => ({
   },
 }));
 
+jest.mock('./state/store', () => ({
+  store: {
+    dispatch: () => null,
+    getState: () => ({
+      bot: {
+        botFiles: [],
+      },
+    }),
+  },
+}));
+
 describe('Migrator tests', () => {
   let tempLeaveMigrationMarker;
   let tempMigrateBots;
-
   let commandService: CommandServiceImpl;
+
   beforeAll(() => {
     const decorator = CommandServiceInstance();
     const descriptor = decorator({ descriptor: {} }, 'none') as any;
@@ -232,26 +244,6 @@ describe('Migrator tests', () => {
     expect(
       mockSaveCalls.some(
         _call => _call.name === 'saveBot' && _call.args[0].path === Path.join(v4MigrationDir, 'bot1.bot')
-      )
-    ).toBe(true);
-
-    // SyncBotList should be called with 3 newly migrated bots
-    const { SyncBotList } = SharedConstants.Commands.Bot;
-    expect(
-      mockCalls.some(
-        _call =>
-          _call.name === 'remoteCall' &&
-          _call.args[0] === SyncBotList &&
-          _call.args[1].length === 3 &&
-          _call.args[1].some(
-            bot => bot.displayName === 'bot1' && bot.path === Path.join('v4path', 'migration', `${bot.displayName}.bot`)
-          ) &&
-          _call.args[1].some(
-            bot => bot.displayName === 'bot2' && bot.path === Path.join('v4path', 'migration', `${bot.displayName}.bot`)
-          ) &&
-          _call.args[1].some(
-            bot => bot.displayName === 'bot3' && bot.path === Path.join('v4path', 'migration', `${bot.displayName}.bot`)
-          )
       )
     ).toBe(true);
 

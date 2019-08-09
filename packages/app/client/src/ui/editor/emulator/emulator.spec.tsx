@@ -39,10 +39,10 @@ import { SharedConstants } from '@bfemulator/app-shared';
 import base64Url from 'base64url';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
-import { disable, enable } from '../../../data/action/presentationActions';
-import { clearLog, newConversation, setInspectorObjects } from '../../../data/action/chatActions';
-import { updateDocument } from '../../../data/action/editorActions';
-import { executeCommand } from '../../../data/action/commandAction';
+import { disable, enable } from '../../../state/actions/presentationActions';
+import { clearLog, newConversation, setInspectorObjects } from '../../../state/actions/chatActions';
+import { updateDocument } from '../../../state/actions/editorActions';
+import { executeCommand } from '../../../state/actions/commandActions';
 
 import { Emulator, RestartConversationOptions } from './emulator';
 import { EmulatorContainer } from './emulatorContainer';

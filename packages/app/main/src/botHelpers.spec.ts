@@ -39,11 +39,11 @@ import {
   CommandServiceImpl,
   CommandServiceInstance,
 } from '@bfemulator/sdk-shared';
-import { SharedConstants } from '@bfemulator/app-shared';
 import { BotConfiguration } from 'botframework-config';
 
 import { CredentialManager } from './credentialManager';
 import { BotHelpers } from './botHelpers';
+import { load } from './state/actions/botActions';
 
 jest.mock('electron', () => ({
   app: {
@@ -73,8 +73,9 @@ jest.mock('electron', () => ({
   ),
 }));
 
-jest.mock('./data/store', () => ({
-  getStore: () => ({
+const mockDispatch = jest.fn(_action => null);
+jest.mock('./state/store', () => ({
+  store: {
     getState: () => ({
       bot: {
         activeBot: {
@@ -92,16 +93,21 @@ jest.mock('./data/store', () => ({
         ],
       },
     }),
-    dispatch: () => null,
-  }),
+    dispatch: action => mockDispatch(action),
+  },
 }));
 
 describe('The botHelpers', () => {
   let commandService: CommandServiceImpl;
+
   beforeAll(() => {
     const decorator = CommandServiceInstance();
     const descriptor = decorator({ descriptor: {} }, 'none') as any;
     commandService = descriptor.descriptor.get();
+  });
+
+  beforeEach(() => {
+    mockDispatch.mockClear();
   });
 
   it('getActiveBot() should retrieve the active bot', () => {
@@ -126,15 +132,14 @@ describe('The botHelpers', () => {
   });
 
   it(`removeBotFromList() should remove the bot from the list based on the specified path`, async () => {
-    const spy = jest.spyOn(commandService, 'remoteCall').mockResolvedValueOnce(true);
-    await BotHelpers.removeBotFromList('path3');
+    await BotHelpers.removeBotFromList('path4');
 
-    // should have sync'd up list with remaining 2 bot entries (3rd was removed)
-    expect(spy).toHaveBeenCalledWith(SharedConstants.Commands.Bot.SyncBotList, [
+    const newBotsList = [
       { path: 'path1', displayName: 'name1', secret: '' },
       { path: 'path2', displayName: 'name2', secret: '' },
-      { displayName: 'name4', path: 'path4', secret: 'ffsafsdfdsa' },
-    ]);
+      { path: 'path3', displayName: 'name3', secret: '' },
+    ];
+    expect(mockDispatch).toHaveBeenCalledWith(load(newBotsList));
   });
 
   it('cloneBot() should clone the specified bot as expected', () => {

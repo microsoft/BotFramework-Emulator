@@ -35,12 +35,12 @@ import * as React from 'react';
 import { Provider } from 'react-redux';
 import { combineReducers, createStore } from 'redux';
 
-import { loadBotInfos, setActiveBot } from '../../../../data/action/botActions';
+import { load, setActive } from '../../../../state/actions/botActions';
 import {
   openEndpointExplorerContextMenu,
   openEndpointInEmulator,
-} from '../../../../data/action/endpointServiceActions';
-import { bot } from '../../../../data/reducer/bot';
+} from '../../../../state/actions/endpointServiceActions';
+import { bot } from '../../../../state/reducers/bot';
 
 import { EndpointEditorContainer } from './endpointEditor';
 import { EndpointExplorer } from './endpointExplorer';
@@ -58,7 +58,7 @@ jest.mock('../../../dialogs', () => ({
 jest.mock('../servicePane/servicePane.scss', () => ({}));
 jest.mock('./endpointExplorer.scss', () => ({}));
 jest.mock('./endpointEditor/endpointEditor.scss', () => ({}));
-jest.mock('../../../../data/store', () => ({
+jest.mock('../../../../state/store', () => ({
   get store() {
     return mockStore;
   },
@@ -99,8 +99,8 @@ describe('The EndpointExplorer component should', () => {
   let mockDispatch;
 
   beforeEach(() => {
-    mockStore.dispatch(loadBotInfos([mockBot as any]));
-    mockStore.dispatch(setActiveBot(mockBot as any));
+    mockStore.dispatch(load([mockBot as any]));
+    mockStore.dispatch(setActive(mockBot as any));
 
     parent = mount(
       <Provider store={mockStore}>

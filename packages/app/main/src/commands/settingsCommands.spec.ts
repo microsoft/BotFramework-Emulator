@@ -35,14 +35,13 @@ import { SharedConstants } from '@bfemulator/app-shared';
 import { CommandRegistry, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { TelemetryService } from '../telemetry';
-import { setFramework } from '../settingsData/actions/frameworkActions';
-import { addSavedBotUrl } from '../settingsData/actions/savedBotUrlsActions';
+import { addSavedBotUrl } from '../state/actions/savedBotUrlsActions';
 
 import { SettingsCommands } from './settingsCommands';
 
 const mockSettings = { framework: { ngrokPath: 'path/to/ngrok.exe' } };
 let mockDispatch;
-jest.mock('../settingsData/store', () => ({
+jest.mock('../state/store', () => ({
   get dispatch() {
     return mockDispatch;
   },
@@ -98,15 +97,6 @@ describe('The settings commands', () => {
 
   afterAll(() => {
     TelemetryService.trackEvent = trackEventBackup;
-  });
-
-  it('should save the global app settings', async () => {
-    const handler = registry.getCommand(Settings.SaveAppSettings);
-    const mockSettings = { ngrokPath: 'other/path/to/ngrok.exe' };
-    await handler(mockSettings);
-
-    expect(mockTrackEvent).toHaveBeenCalledWith('app_configureNgrok');
-    expect(mockDispatch).toHaveBeenCalledWith(setFramework(mockSettings));
   });
 
   it('should load the app settings from the store', async () => {

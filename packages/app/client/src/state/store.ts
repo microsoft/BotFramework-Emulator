@@ -133,8 +133,11 @@ function initStore(): Store<RootState> {
   );
   applicationSagas.forEach(saga => sagaMiddleware.run(saga));
   // sync the renderer process store with any updates on the main process
-  const logPath = join('C:', 'Users', 'tonya', 'Desktop', 'logs', 'renderer-inbound.txt');
-  appendFileSync(join('C:', 'Users', 'tonya', 'Desktop', 'logs', 'renderer-outbound.txt'), '\n=== START LOGGING ===\n');
+  const logPath = join('C:', 'Users', 'toanzian', 'Desktop', 'logs', 'renderer-inbound.txt');
+  appendFileSync(
+    join('C:', 'Users', 'toanzian', 'Desktop', 'logs', 'renderer-outbound.txt'),
+    '\n=== START LOGGING ===\n'
+  );
   appendFileSync(logPath, '\n=== START LOGGING ===\n');
   ipcRenderer.on('sync-store', (_ev, action) => {
     appendFileSync(logPath, `\n[${new Date().toLocaleTimeString()}] Action: ${action.type}\n`);

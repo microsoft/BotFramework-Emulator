@@ -35,7 +35,7 @@ import { Provider } from 'react-redux';
 import { mount } from 'enzyme';
 import { combineReducers, createStore } from 'redux';
 
-import { progressIndicator } from '../../../data/reducer/progressIndicator';
+import { progressIndicator } from '../../../state/reducers/progressIndicator';
 
 import { ProgressIndicatorContainer } from './progressIndicatorContainer';
 import { ProgressIndicator } from './progressIndicator';

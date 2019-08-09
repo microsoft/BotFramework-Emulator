@@ -39,22 +39,15 @@ import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shar
 import { CONTENT_TYPE_APP_SETTINGS, DOCUMENT_ID_APP_SETTINGS } from '../../constants';
 import * as EditorActions from '../actions/editorActions';
 import {
-  frameworkSettingsChanged,
-  GET_FRAMEWORK_SETTINGS,
-  getFrameworkSettings as getFrameworkSettingsAction,
-  SAVE_FRAMEWORK_SETTINGS,
+  FrameworkActionType,
   saveFrameworkSettings as saveFrameworkSettingsAction,
+  setFrameworkSettings,
 } from '../actions/frameworkSettingsActions';
 import { beginAdd } from '../actions/notificationActions';
 import { editor } from '../reducers/editor';
 import { framework } from '../reducers/framework';
 
-import {
-  activeDocumentSelector,
-  frameworkSettingsSagas,
-  FrameworkSettingsSagas,
-  normalizeSettingsData,
-} from './frameworkSettingsSagas';
+import { activeDocumentSelector, frameworkSettingsSagas, FrameworkSettingsSagas } from './frameworkSettingsSagas';
 
 jest.mock('electron', () => ({
   ipcMain: new Proxy(
@@ -109,47 +102,21 @@ describe('The frameworkSettingsSagas', () => {
 
   it('should register the expected generators', () => {
     const it = frameworkSettingsSagas();
-    expect(it.next().value).toEqual(takeEvery(GET_FRAMEWORK_SETTINGS, FrameworkSettingsSagas.getFrameworkSettings));
-    expect(it.next().value).toEqual(takeEvery(SAVE_FRAMEWORK_SETTINGS, FrameworkSettingsSagas.saveFrameworkSettings));
-  });
-
-  it('should get the framework settings when using the happy path', async () => {
-    const it = FrameworkSettingsSagas.getFrameworkSettings();
-    let next = it.next();
-    expect(next.value).toEqual(commandService.remoteCall(SharedConstants.Commands.Settings.LoadAppSettings));
-
-    next = it.next({});
-    const normalized = await next.value.CALL.fn({});
-    expect(it.next(normalized).value).toEqual(put(frameworkSettingsChanged(normalized)));
-  });
-
-  it('should send a notification when something goes wrong while getting the framework settings', () => {
-    const it = FrameworkSettingsSagas.getFrameworkSettings();
-    it.next();
-    const errMsg = `Error while loading emulator settings: oh noes!`;
-    const notification = newNotification(errMsg);
-    notification.timestamp = jasmine.any(Number) as any;
-    notification.id = jasmine.any(String) as any;
-    expect(it.throw('oh noes!').value).toEqual(put(beginAdd(notification)));
+    expect(it.next().value).toEqual(
+      takeEvery(FrameworkActionType.SAVE_FRAMEWORK_SETTINGS, FrameworkSettingsSagas.saveFrameworkSettings)
+    );
   });
 
   it('should save the framework settings', async () => {
     const it = FrameworkSettingsSagas.saveFrameworkSettings(saveFrameworkSettingsAction({}));
-    const normalize = it.next().value;
-    expect(normalize).toEqual(call(normalizeSettingsData, {}));
-    const normalized = await normalize.CALL.fn({});
-    // remote call to save the settings
-    expect(it.next(normalized).value).toEqual(
-      commandService.remoteCall(SharedConstants.Commands.Settings.SaveAppSettings, normalized)
-    );
-    // get the settings from the main side again
-    expect(it.next().value).toEqual(put(getFrameworkSettingsAction()));
     // selector to get the active document from the state
     const selector = it.next().value;
     expect(selector).toEqual(select(activeDocumentSelector));
     const value = selector.SELECT.selector(mockStore.getState());
     // put the dirty state to false
     expect(it.next(value).value).toEqual(put(EditorActions.setDirtyFlag(value.documentId, false)));
+    expect(it.next().value).toEqual(put(setFrameworkSettings({})));
+    expect(it.next().done).toBe(true);
   });
 
   it('should send a notification when saving the settings fails', () => {

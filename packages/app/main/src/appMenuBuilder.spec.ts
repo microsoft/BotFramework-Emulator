@@ -38,16 +38,22 @@ import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shar
 
 import { AppMenuBuilder } from './appMenuBuilder';
 
-jest.mock('./settingsData/store', () => ({
-  getStore: () => ({
+jest.mock('./state/store', () => ({
+  store: {
     getState: () => ({
-      azure: { signedInUser: 'TheAmazingAuthLad@hotmail.com' },
-      windowState: {
-        availableThemes: [{ name: 'light' }, { name: 'dark' }, { name: 'midnight' }],
-        theme: 'midnight',
+      bot: {
+        botFiles: [],
+      },
+      settings: {
+        azure: { signedInUser: 'TheAmazingAuthLad@hotmail.com' },
+        windowState: {
+          availableThemes: [{ name: 'light' }, { name: 'dark' }, { name: 'midnight' }],
+          theme: 'midnight',
+        },
       },
     }),
-  }),
+    subscribe: () => null,
+  },
 }));
 
 let mockBuildFromTemplate;
@@ -128,7 +134,18 @@ jest.mock('./appUpdater', () => ({
   },
 }));
 
-jest.mock('./emulator', () => ({}));
+jest.mock('./emulator', () => ({
+  Emulator: {
+    getInstance: () => ({
+      ngrok: {
+        broadcastNgrokExpired: () => null,
+        ngrokEmitter: {
+          on: () => null,
+        },
+      },
+    }),
+  },
+}));
 
 describe('AppMenuBuilder', () => {
   const mockSendActivityMenu = {

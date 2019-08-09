@@ -35,9 +35,9 @@ import * as React from 'react';
 import { Component } from 'react';
 import { combineReducers, createStore } from 'redux';
 
-import { bot } from '../../../data/reducer/bot';
-import { resources } from '../../../data/reducer/resourcesReducer';
-import * as DialogActions from '../../../data/action/dialogActions';
+import { bot } from '../../../state/reducers/bot';
+import { resources } from '../../../state/reducers/resourcesReducer';
+import * as DialogActions from '../../../state/actions/dialogActions';
 
 import { DialogService } from './dialogService';
 
@@ -51,7 +51,7 @@ const mockComponent = class extends Component<{}, {}> {
   }
 };
 const mockStore = createStore(combineReducers({ resources, bot }));
-jest.mock('../../../data/store', () => ({
+jest.mock('../../../state/store', () => ({
   get store() {
     return mockStore;
   },

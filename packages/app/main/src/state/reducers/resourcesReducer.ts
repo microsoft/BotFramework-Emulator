@@ -39,7 +39,7 @@ import {
   ResourcesAction,
   TRANSCRIPTS_DIRECTORY_UPDATED,
   TRANSCRIPTS_UPDATED,
-} from '../actions/resourcesAction';
+} from '../actions/resourcesActions';
 
 export interface ResourcesState {
   transcripts: IFileService[];
