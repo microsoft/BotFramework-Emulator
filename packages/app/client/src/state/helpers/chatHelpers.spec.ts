@@ -38,7 +38,7 @@ const mockGetState = jest.fn(() => mockState);
 const mockStore = {
   getState: mockGetState,
 };
-jest.mock('./store', () => ({
+jest.mock('../store', () => ({
   get store() {
     return mockStore;
   },

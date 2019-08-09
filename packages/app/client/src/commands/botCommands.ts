@@ -43,7 +43,7 @@ import {
   chatsDirectoryUpdated,
   transcriptDirectoryUpdated,
   transcriptsUpdated,
-} from '../state/actions/resourcesAction';
+} from '../state/actions/resourcesActions';
 import { pathExistsInRecentBots } from '../state/helpers/botHelpers';
 import { store } from '../state/store';
 import { ActiveBotHelper } from '../ui/helpers/activeBotHelper';

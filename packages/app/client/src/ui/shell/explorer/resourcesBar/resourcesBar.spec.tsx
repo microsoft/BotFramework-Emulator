@@ -37,10 +37,10 @@ import { combineReducers, createStore } from 'redux';
 import { ServiceTypes } from 'botframework-config/lib/schema';
 import { BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
 
-import { resources } from '../../../../data/reducer/resourcesReducer';
-import { bot } from '../../../../data/reducer/bot';
-import { chatFilesUpdated, transcriptsUpdated } from '../../../../data/action/resourcesAction';
-import { loadBotInfos, setActiveBot } from '../../../../data/action/botActions'; // important
+import { resources } from '../../../../state/reducers/resourcesReducer';
+import { bot } from '../../../../state/reducers/bot';
+import { chatFilesUpdated, transcriptsUpdated } from '../../../../state/actions/resourcesActions';
+import { load, setActive } from '../../../../state/actions/botActions'; // important
 
 import { ResourcesBar } from './resourcesBar';
 import { ResourcesBarContainer } from './resourcesBarContainer';
@@ -92,8 +92,8 @@ describe('The ServicesExplorer component should', () => {
       name: 'testTranscript',
     } as any);
 
-    mockStore.dispatch(loadBotInfos([mockBot]));
-    mockStore.dispatch(setActiveBot(mockBot));
+    mockStore.dispatch(load([mockBot]));
+    mockStore.dispatch(setActive(mockBot));
     mockStore.dispatch(transcriptsUpdated([mockTranscript]));
     mockStore.dispatch(chatFilesUpdated([mockChat]));
     parent = mount(

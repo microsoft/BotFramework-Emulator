@@ -51,10 +51,10 @@ export function setFrameworkSettings(frameworkSettings: FrameworkSettings): Fram
   };
 }
 
-export function pushClientAwareSettings(): FrameworkAction<{}> {
+export function pushClientAwareSettings(): FrameworkAction<void> {
   return {
     type: FrameworkActionType.PUSH_CLIENT_AWARE_SETTINGS,
-    payload: {},
+    payload: undefined,
   };
 }
 

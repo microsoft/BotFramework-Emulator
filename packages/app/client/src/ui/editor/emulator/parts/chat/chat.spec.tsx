@@ -40,16 +40,16 @@ import { ValueTypes } from '@bfemulator/app-shared';
 import { combineReducers, createStore } from 'redux';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
-import { bot } from '../../../../../data/reducer/bot';
-import { chat } from '../../../../../data/reducer/chat';
-import { editor } from '../../../../../data/reducer/editor';
-import { clientAwareSettings } from '../../../../../data/reducer/clientAwareSettingsReducer';
+import { bot } from '../../../../../state/reducers/bot';
+import { chat } from '../../../../../state/reducers/chat';
+import { editor } from '../../../../../state/reducers/editor';
+import { clientAwareSettings } from '../../../../../state/reducers/clientAwareSettings';
 import { BotCommands } from '../../../../../commands/botCommands';
 import {
   setInspectorObjects,
   showContextMenuForActivity,
   setHighlightedObjects,
-} from '../../../../../data/action/chatActions';
+} from '../../../../../state/actions/chatActions';
 
 import webChatStyleOptions from './webChatTheme';
 import { ChatContainer } from './chatContainer';
@@ -90,7 +90,7 @@ const mockStore = createStore(combineReducers({ bot, chat, clientAwareSettings, 
   },
 });
 
-jest.mock('../../../../../data/store', () => ({
+jest.mock('../../../../../state/store', () => ({
   get store() {
     return mockStore;
   },

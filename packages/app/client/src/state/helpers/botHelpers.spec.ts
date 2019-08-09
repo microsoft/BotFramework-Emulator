@@ -33,7 +33,7 @@
 
 import { getActiveBot, getBotInfoByPath, pathExistsInRecentBots } from './botHelpers';
 
-jest.mock('./store', () => ({
+jest.mock('../store', () => ({
   store: {
     getState: () => ({
       bot: {
@@ -86,5 +86,5 @@ describe('Bot helpers tests', () => {
   });
 
   // unmock store
-  jest.unmock('./store');
+  jest.unmock('../store');
 });

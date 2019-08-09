@@ -35,13 +35,13 @@ import { combineReducers, createStore } from 'redux';
 import { CommandRegistry, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { AzureAuthWorkflowService } from '../services/azureAuthWorkflowService';
-import { azureLoggedInUserChanged } from '../settingsData/actions/azureAuthActions';
-import { azureAuth } from '../settingsData/reducers/azureAuthReducer';
+import { azureLoggedInUserChanged } from '../state/actions/azureAuthActions';
+import { azureAuthSettings } from '../state/reducers/azureAuthSettings';
 
 import { AzureCommands } from './azureCommands';
 import { ElectronCommands } from './electronCommands';
 
-const mockStore = createStore(combineReducers({ azure: azureAuth }));
+const mockStore = createStore(combineReducers({ azure: azureAuthSettings }));
 const mockArmToken = 'bm90aGluZw==.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds';
 
 jest.mock('../services/azureAuthWorkflowService', () => ({
@@ -59,8 +59,13 @@ jest.mock('../services/azureAuthWorkflowService', () => ({
 
 jest.mock('../main', () => ({}));
 
-jest.mock('../settingsData/store', () => ({
+jest.mock('../state/store', () => ({
+  store: {
+    dispatch: action => mockStore.dispatch(action),
+    getState: () => mockStore.getState(),
+  },
   getStore: () => mockStore,
+  getSettings: () => mockStore.getState(),
 }));
 
 jest.mock('../emulator', () => ({
@@ -115,6 +120,7 @@ jest.mock('electron', () => ({
 describe('The azureCommand,', () => {
   let registry: CommandRegistry;
   let commandService: CommandServiceImpl;
+
   beforeAll(() => {
     new AzureCommands();
     new ElectronCommands();

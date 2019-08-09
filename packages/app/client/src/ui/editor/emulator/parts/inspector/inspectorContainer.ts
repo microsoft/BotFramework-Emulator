@@ -36,7 +36,7 @@ import { SharedConstants } from '@bfemulator/app-shared';
 import { Activity } from 'botframework-schema';
 
 import { RootState } from '../../../../../state/store';
-import { executeCommand } from '../../../../../state/actions/commandAction';
+import { executeCommand } from '../../../../../state/actions/commandActions';
 import { setHighlightedObjects, setInspectorObjects } from '../../../../../state/actions/chatActions';
 
 import { Inspector } from './inspector';

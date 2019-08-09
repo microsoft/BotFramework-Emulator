@@ -177,8 +177,7 @@ export function updatePendingSpeechTokenRetrieval(pending: boolean): ChatAction<
 export function newChat(
   documentId: string,
   mode: EmulatorMode,
-  additionalData?: Partial<ChatDocument>,
-  resolver?: Function
+  additionalData?: Partial<ChatDocument>
 ): ChatAction<Partial<ChatDocument & ClearLogPayload>> {
   return {
     type: ChatActions.newChat,

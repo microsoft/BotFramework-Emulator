@@ -36,7 +36,7 @@ import { Provider } from 'react-redux';
 import * as React from 'react';
 import { mount } from 'enzyme';
 
-import { navBar } from '../../../data/reducer/navBar';
+import { navBar } from '../../../state/reducers/navBar';
 
 import { UpdateUnavailableDialogContainer } from './updateUnavailableDialogContainer';
 import { UpdateUnavailableDialog } from './updateUnavailableDialog';

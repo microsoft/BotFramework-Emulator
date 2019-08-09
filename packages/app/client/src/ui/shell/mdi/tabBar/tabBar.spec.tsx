@@ -38,8 +38,8 @@ import { createStore } from 'redux';
 import { SharedConstants } from '@bfemulator/app-shared';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
-import { enable } from '../../../../data/action/presentationActions';
-import { appendTab, setActiveTab, splitTab } from '../../../../data/action/editorActions';
+import { enable } from '../../../../state/actions/presentationActions';
+import { appendTab, setActiveTab, splitTab } from '../../../../state/actions/editorActions';
 import {
   CONTENT_TYPE_APP_SETTINGS,
   CONTENT_TYPE_LIVE_CHAT,
@@ -47,7 +47,7 @@ import {
   CONTENT_TYPE_TRANSCRIPT,
   CONTENT_TYPE_WELCOME_PAGE,
 } from '../../../../constants';
-import { executeCommand } from '../../../../data/action/commandAction';
+import { executeCommand } from '../../../../state/actions/commandActions';
 
 import { TabBarContainer } from './tabBarContainer';
 import { TabBar } from './tabBar';
@@ -58,12 +58,12 @@ const mockTab = class Tab extends React.Component {
   }
 };
 
-jest.mock('../../../../data/reducer/editor', () => ({
+jest.mock('../../../../state/reducers/editor', () => ({
   Document: {},
   Editor: {},
 }));
 
-jest.mock('../../../../data/editorHelpers', () => ({
+jest.mock('../../../../state/helpers/editorHelpers', () => ({
   getTabGroupForDocument: () => null,
   getOtherTabGroup: (tabGroup: string) => (tabGroup === 'primary' ? 'secondary' : 'primary'),
 }));

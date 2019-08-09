@@ -36,7 +36,7 @@ import { mount } from 'enzyme';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 
-import { toggleDraggingTab } from '../../../../data/action/editorActions';
+import { toggleDraggingTab } from '../../../../state/actions/editorActions';
 
 import { TabContainer } from './tabContainer';
 import { Tab } from './tab';

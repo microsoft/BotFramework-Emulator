@@ -31,9 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { deepCopySlow } from '@bfemulator/app-shared';
+import { deepCopySlow, SharedConstants } from '@bfemulator/app-shared';
 
-import * as Constants from '../../constants';
 import {
   addDocPendingChange,
   appendTab,
@@ -64,22 +63,19 @@ import {
   setNewPrimaryEditor,
 } from './editor';
 
-let defaultState: EditorState;
-jest.mock('../../ui/dialogs', () => ({
-  AzureLoginPromptDialogContainer: function mock() {
-    return undefined;
-  },
-  AzureLoginSuccessDialogContainer: function mock() {
-    return undefined;
-  },
-  BotCreationDialog: function mock() {
-    return undefined;
-  },
-  DialogService: { showDialog: () => Promise.resolve(true) },
-  SecretPromptDialog: function mock() {
-    return undefined;
+jest.mock('../../state/store', () => ({
+  store: {
+    getState: () => ({
+      bot: {
+        botFiles: [],
+      },
+    }),
   },
 }));
+
+let defaultState: EditorState;
+const { EDITOR_KEY_PRIMARY, EDITOR_KEY_SECONDARY } = SharedConstants;
+
 describe('Editor reducer tests', () => {
   beforeEach(initializeDefaultState);
 
@@ -97,19 +93,19 @@ describe('Editor reducer tests', () => {
         draggingTab: true,
         editors: {
           ...defaultState.editors,
-          [Constants.EDITOR_KEY_PRIMARY]: {
-            ...defaultState.editors[Constants.EDITOR_KEY_PRIMARY],
+          [EDITOR_KEY_PRIMARY]: {
+            ...defaultState.editors[EDITOR_KEY_PRIMARY],
             tabOrder: ['doc1', 'doc2'],
           },
         },
       };
-      const srcEditorKey = Constants.EDITOR_KEY_PRIMARY;
-      const destEditorKey = Constants.EDITOR_KEY_PRIMARY;
+      const srcEditorKey = EDITOR_KEY_PRIMARY;
+      const destEditorKey = EDITOR_KEY_PRIMARY;
       const docIdToAppend = 'doc1';
       const action = appendTab(srcEditorKey, destEditorKey, docIdToAppend);
       const endingState = editor(startingState, action);
-      expect(endingState.editors[Constants.EDITOR_KEY_PRIMARY].tabOrder[0]).not.toBe(docIdToAppend);
-      expect(endingState.editors[Constants.EDITOR_KEY_PRIMARY].tabOrder[1]).toBe(docIdToAppend);
+      expect(endingState.editors[EDITOR_KEY_PRIMARY].tabOrder[0]).not.toBe(docIdToAppend);
+      expect(endingState.editors[EDITOR_KEY_PRIMARY].tabOrder[1]).toBe(docIdToAppend);
 
       // assert that draggingTab is toggled off
       expect(endingState.draggingTab).toBe(false);
@@ -118,11 +114,11 @@ describe('Editor reducer tests', () => {
     it('should append a tab to the destination editor', () => {
       const startingState: EditorState = {
         ...defaultState,
-        activeEditor: Constants.EDITOR_KEY_PRIMARY,
+        activeEditor: EDITOR_KEY_PRIMARY,
         editors: {
           ...defaultState.editors,
-          [Constants.EDITOR_KEY_PRIMARY]: {
-            ...defaultState.editors[Constants.EDITOR_KEY_PRIMARY],
+          [EDITOR_KEY_PRIMARY]: {
+            ...defaultState.editors[EDITOR_KEY_PRIMARY],
             documents: {
               doc1: {},
               doc2: {},
@@ -130,8 +126,8 @@ describe('Editor reducer tests', () => {
             tabOrder: ['doc1', 'doc2'],
             recentTabs: ['doc1', 'doc2'],
           },
-          [Constants.EDITOR_KEY_SECONDARY]: {
-            ...defaultState.editors[Constants.EDITOR_KEY_SECONDARY],
+          [EDITOR_KEY_SECONDARY]: {
+            ...defaultState.editors[EDITOR_KEY_SECONDARY],
             documents: {
               doc3: {},
             },
@@ -140,8 +136,8 @@ describe('Editor reducer tests', () => {
           },
         },
       };
-      const srcEditorKey = Constants.EDITOR_KEY_PRIMARY;
-      const destEditorKey = Constants.EDITOR_KEY_SECONDARY;
+      const srcEditorKey = EDITOR_KEY_PRIMARY;
+      const destEditorKey = EDITOR_KEY_SECONDARY;
       const action = appendTab(srcEditorKey, destEditorKey, 'doc2');
       const endingState = editor(startingState, action);
       const srcEditor = endingState.editors[srcEditorKey];
@@ -154,25 +150,25 @@ describe('Editor reducer tests', () => {
       expect(srcEditor.tabOrder).toEqual(['doc1']);
       expect(srcEditor.recentTabs).toEqual(['doc1']);
 
-      expect(endingState.activeEditor).toBe(Constants.EDITOR_KEY_PRIMARY);
+      expect(endingState.activeEditor).toBe(EDITOR_KEY_PRIMARY);
     });
 
     it('should handle appending the last document from secondary editor to the primary editor', () => {
       const startingState: EditorState = {
         ...defaultState,
-        activeEditor: Constants.EDITOR_KEY_SECONDARY,
+        activeEditor: EDITOR_KEY_SECONDARY,
         editors: {
           ...defaultState.editors,
-          [Constants.EDITOR_KEY_PRIMARY]: {
-            ...defaultState.editors[Constants.EDITOR_KEY_PRIMARY],
+          [EDITOR_KEY_PRIMARY]: {
+            ...defaultState.editors[EDITOR_KEY_PRIMARY],
             documents: {
               doc1: {},
             },
             tabOrder: ['doc1'],
             recentTabs: ['doc1'],
           },
-          [Constants.EDITOR_KEY_SECONDARY]: {
-            ...defaultState.editors[Constants.EDITOR_KEY_SECONDARY],
+          [EDITOR_KEY_SECONDARY]: {
+            ...defaultState.editors[EDITOR_KEY_SECONDARY],
             documents: {
               doc2: {},
             },
@@ -181,13 +177,13 @@ describe('Editor reducer tests', () => {
           },
         },
       };
-      const srcEditorKey = Constants.EDITOR_KEY_SECONDARY;
-      const destEditorKey = Constants.EDITOR_KEY_PRIMARY;
+      const srcEditorKey = EDITOR_KEY_SECONDARY;
+      const destEditorKey = EDITOR_KEY_PRIMARY;
       const action = appendTab(srcEditorKey, destEditorKey, 'doc2');
       const endingState = editor(startingState, action);
 
       // because secondary editor is now empty, the active editor should be set to primary
-      expect(endingState.activeEditor).toBe(Constants.EDITOR_KEY_PRIMARY);
+      expect(endingState.activeEditor).toBe(EDITOR_KEY_PRIMARY);
     });
 
     it('should have the secondary editor replace the primary if the primary no longer has documents', () => {
@@ -195,16 +191,16 @@ describe('Editor reducer tests', () => {
         ...defaultState,
         editors: {
           ...defaultState.editors,
-          [Constants.EDITOR_KEY_PRIMARY]: {
-            ...defaultState.editors[Constants.EDITOR_KEY_PRIMARY],
+          [EDITOR_KEY_PRIMARY]: {
+            ...defaultState.editors[EDITOR_KEY_PRIMARY],
             documents: {
               doc1: {},
             },
             tabOrder: ['doc1'],
             recentTabs: ['doc1'],
           },
-          [Constants.EDITOR_KEY_SECONDARY]: {
-            ...defaultState.editors[Constants.EDITOR_KEY_SECONDARY],
+          [EDITOR_KEY_SECONDARY]: {
+            ...defaultState.editors[EDITOR_KEY_SECONDARY],
             documents: {
               doc2: {},
             },
@@ -213,13 +209,13 @@ describe('Editor reducer tests', () => {
           },
         },
       };
-      const srcEditorKey = Constants.EDITOR_KEY_PRIMARY;
-      const destEditorKey = Constants.EDITOR_KEY_SECONDARY;
+      const srcEditorKey = EDITOR_KEY_PRIMARY;
+      const destEditorKey = EDITOR_KEY_SECONDARY;
       const action = appendTab(srcEditorKey, destEditorKey, 'doc1');
       const endingState = editor(startingState, action);
-      expect(endingState.activeEditor).toBe(Constants.EDITOR_KEY_PRIMARY);
-      expect(endingState.editors[Constants.EDITOR_KEY_PRIMARY].tabOrder).toEqual(['doc2', 'doc1']);
-      expect(endingState.editors[Constants.EDITOR_KEY_SECONDARY].tabOrder).toEqual([]);
+      expect(endingState.activeEditor).toBe(EDITOR_KEY_PRIMARY);
+      expect(endingState.editors[EDITOR_KEY_PRIMARY].tabOrder).toEqual(['doc2', 'doc1']);
+      expect(endingState.editors[EDITOR_KEY_SECONDARY].tabOrder).toEqual([]);
 
       // assert that draggingTab is toggled off
       expect(endingState.draggingTab).toBe(false);
@@ -232,8 +228,8 @@ describe('Editor reducer tests', () => {
         ...defaultState,
         editors: {
           ...defaultState.editors,
-          [Constants.EDITOR_KEY_PRIMARY]: {
-            ...defaultState.editors[Constants.EDITOR_KEY_PRIMARY],
+          [EDITOR_KEY_PRIMARY]: {
+            ...defaultState.editors[EDITOR_KEY_PRIMARY],
             activeDocumentId: 'doc1',
             documents: {
               doc1: {},
@@ -244,7 +240,7 @@ describe('Editor reducer tests', () => {
           },
         },
       };
-      const editorKey = Constants.EDITOR_KEY_PRIMARY;
+      const editorKey = EDITOR_KEY_PRIMARY;
       const action = close(editorKey, 'doc1');
       const endingState = editor(startingState, action);
       const modifiedEditor = endingState.editors[editorKey];
@@ -257,11 +253,11 @@ describe('Editor reducer tests', () => {
     it('should set a new primary editor if the old primary has no remaining documents', () => {
       const startingState: EditorState = {
         ...defaultState,
-        activeEditor: Constants.EDITOR_KEY_SECONDARY,
+        activeEditor: EDITOR_KEY_SECONDARY,
         editors: {
           ...defaultState.editors,
-          [Constants.EDITOR_KEY_PRIMARY]: {
-            ...defaultState.editors[Constants.EDITOR_KEY_PRIMARY],
+          [EDITOR_KEY_PRIMARY]: {
+            ...defaultState.editors[EDITOR_KEY_PRIMARY],
             activeDocumentId: 'doc1',
             documents: {
               doc1: {},
@@ -269,8 +265,8 @@ describe('Editor reducer tests', () => {
             recentTabs: ['doc1'],
             tabOrder: ['doc1'],
           },
-          [Constants.EDITOR_KEY_SECONDARY]: {
-            ...defaultState.editors[Constants.EDITOR_KEY_SECONDARY],
+          [EDITOR_KEY_SECONDARY]: {
+            ...defaultState.editors[EDITOR_KEY_SECONDARY],
             activeDocumentId: 'doc2',
             documents: {
               doc2: {},
@@ -280,15 +276,15 @@ describe('Editor reducer tests', () => {
           },
         },
       };
-      const editorKey = Constants.EDITOR_KEY_PRIMARY;
+      const editorKey = EDITOR_KEY_PRIMARY;
       const action = close(editorKey, 'doc1');
       const endingState = editor(startingState, action);
-      const primaryEditor = endingState.editors[Constants.EDITOR_KEY_PRIMARY];
-      expect(endingState.activeEditor).toBe(Constants.EDITOR_KEY_PRIMARY);
+      const primaryEditor = endingState.editors[EDITOR_KEY_PRIMARY];
+      expect(endingState.activeEditor).toBe(EDITOR_KEY_PRIMARY);
       expect(primaryEditor.recentTabs).toEqual(['doc2']);
       expect(primaryEditor.tabOrder).toEqual(['doc2']);
       expect(Object.keys(primaryEditor.documents)).toContain('doc2');
-      expect(Object.keys(endingState.editors[Constants.EDITOR_KEY_SECONDARY].documents)).not.toContain('doc1');
+      expect(Object.keys(endingState.editors[EDITOR_KEY_SECONDARY].documents)).not.toContain('doc1');
     });
   });
 
@@ -301,21 +297,21 @@ describe('Editor reducer tests', () => {
   it('should set the active editor', () => {
     const startingState: EditorState = {
       ...defaultState,
-      activeEditor: Constants.EDITOR_KEY_SECONDARY,
+      activeEditor: EDITOR_KEY_SECONDARY,
     };
-    const action = setActiveEditorAction(Constants.EDITOR_KEY_PRIMARY);
+    const action = setActiveEditorAction(EDITOR_KEY_PRIMARY);
     const endingState = editor(startingState, action);
-    expect(endingState.activeEditor).toBe(Constants.EDITOR_KEY_PRIMARY);
+    expect(endingState.activeEditor).toBe(EDITOR_KEY_PRIMARY);
   });
 
   it('should set the active tab', () => {
     const startingState: EditorState = {
       ...defaultState,
-      activeEditor: Constants.EDITOR_KEY_SECONDARY,
+      activeEditor: EDITOR_KEY_SECONDARY,
       editors: {
         ...defaultState.editors,
-        [Constants.EDITOR_KEY_PRIMARY]: {
-          ...defaultState.editors[Constants.EDITOR_KEY_PRIMARY],
+        [EDITOR_KEY_PRIMARY]: {
+          ...defaultState.editors[EDITOR_KEY_PRIMARY],
           activeDocumentId: 'doc1',
           documents: {
             doc1: {},
@@ -324,8 +320,8 @@ describe('Editor reducer tests', () => {
           recentTabs: ['doc1', 'doc2'],
           tabOrder: ['doc1', 'doc2'],
         },
-        [Constants.EDITOR_KEY_SECONDARY]: {
-          ...defaultState.editors[Constants.EDITOR_KEY_SECONDARY],
+        [EDITOR_KEY_SECONDARY]: {
+          ...defaultState.editors[EDITOR_KEY_SECONDARY],
           activeDocumentId: 'doc3',
           documents: {
             doc3: {},
@@ -337,8 +333,8 @@ describe('Editor reducer tests', () => {
     };
     const action = setActiveTab('doc2');
     const endingState = editor(startingState, action);
-    const newActiveEditor = endingState.editors[Constants.EDITOR_KEY_PRIMARY];
-    expect(endingState.activeEditor).toBe(Constants.EDITOR_KEY_PRIMARY);
+    const newActiveEditor = endingState.editors[EDITOR_KEY_PRIMARY];
+    expect(endingState.activeEditor).toBe(EDITOR_KEY_PRIMARY);
     expect(newActiveEditor.activeDocumentId).toBe('doc2');
     expect(newActiveEditor.recentTabs).toEqual(['doc2', 'doc1']);
   });
@@ -348,8 +344,8 @@ describe('Editor reducer tests', () => {
       ...defaultState,
       editors: {
         ...defaultState.editors,
-        [Constants.EDITOR_KEY_SECONDARY]: {
-          ...defaultState.editors[Constants.EDITOR_KEY_SECONDARY],
+        [EDITOR_KEY_SECONDARY]: {
+          ...defaultState.editors[EDITOR_KEY_SECONDARY],
           activeDocumentId: 'doc3',
           documents: {
             doc3: { dirty: false },
@@ -362,17 +358,17 @@ describe('Editor reducer tests', () => {
     const dirtyDocId = 'doc3';
     const action = setDirtyFlag(dirtyDocId, true);
     const endingState = editor(startingState, action);
-    expect(endingState.editors[Constants.EDITOR_KEY_SECONDARY].documents[dirtyDocId].dirty).toBe(true);
+    expect(endingState.editors[EDITOR_KEY_SECONDARY].documents[dirtyDocId].dirty).toBe(true);
   });
 
   it('should close all non-global tabs', () => {
     const startingState: EditorState = {
       ...defaultState,
-      activeEditor: Constants.EDITOR_KEY_PRIMARY,
+      activeEditor: EDITOR_KEY_PRIMARY,
       editors: {
         ...defaultState.editors,
-        [Constants.EDITOR_KEY_PRIMARY]: {
-          ...defaultState.editors[Constants.EDITOR_KEY_PRIMARY],
+        [EDITOR_KEY_PRIMARY]: {
+          ...defaultState.editors[EDITOR_KEY_PRIMARY],
           activeDocumentId: 'doc2',
           documents: {
             doc1: { isGlobal: true },
@@ -382,8 +378,8 @@ describe('Editor reducer tests', () => {
           recentTabs: ['doc2', 'doc1', 'doc3'],
           tabOrder: ['doc1', 'doc2', 'doc3'],
         },
-        [Constants.EDITOR_KEY_SECONDARY]: {
-          ...defaultState.editors[Constants.EDITOR_KEY_SECONDARY],
+        [EDITOR_KEY_SECONDARY]: {
+          ...defaultState.editors[EDITOR_KEY_SECONDARY],
           activeDocumentId: 'doc6',
           documents: {
             doc4: { isGlobal: false },
@@ -398,8 +394,8 @@ describe('Editor reducer tests', () => {
     };
     const action = closeNonGlobalTabs();
     const endingState = editor(startingState, action);
-    const primaryEditor = endingState.editors[Constants.EDITOR_KEY_PRIMARY];
-    const secondaryEditor = endingState.editors[Constants.EDITOR_KEY_SECONDARY];
+    const primaryEditor = endingState.editors[EDITOR_KEY_PRIMARY];
+    const secondaryEditor = endingState.editors[EDITOR_KEY_SECONDARY];
 
     expect(primaryEditor.activeDocumentId).toBe('doc1');
     expect(Object.keys(primaryEditor.documents)).toHaveLength(1);
@@ -418,8 +414,8 @@ describe('Editor reducer tests', () => {
       ...defaultState,
       editors: {
         ...defaultState.editors,
-        [Constants.EDITOR_KEY_PRIMARY]: {
-          ...defaultState.editors[Constants.EDITOR_KEY_PRIMARY],
+        [EDITOR_KEY_PRIMARY]: {
+          ...defaultState.editors[EDITOR_KEY_PRIMARY],
           activeDocumentId: 'doc1',
           documents: {
             doc1: { documentId: 'doc1' },
@@ -435,7 +431,7 @@ describe('Editor reducer tests', () => {
       dirty: true,
     });
     const endingState = editor(startingState, action);
-    expect(endingState.editors[Constants.EDITOR_KEY_PRIMARY].documents[docToUpdateId]).toEqual({
+    expect(endingState.editors[EDITOR_KEY_PRIMARY].documents[docToUpdateId]).toEqual({
       documentId: 'doc1',
       isGlobal: true,
       dirty: true,
@@ -446,11 +442,11 @@ describe('Editor reducer tests', () => {
     it('should focus an already existing document in other tab group', () => {
       const startingState: EditorState = {
         ...defaultState,
-        activeEditor: Constants.EDITOR_KEY_PRIMARY,
+        activeEditor: EDITOR_KEY_PRIMARY,
         editors: {
           ...defaultState.editors,
-          [Constants.EDITOR_KEY_PRIMARY]: {
-            ...defaultState.editors[Constants.EDITOR_KEY_PRIMARY],
+          [EDITOR_KEY_PRIMARY]: {
+            ...defaultState.editors[EDITOR_KEY_PRIMARY],
             activeDocumentId: 'doc1',
             documents: {
               doc1: {},
@@ -458,8 +454,8 @@ describe('Editor reducer tests', () => {
             recentTabs: ['doc1'],
             tabOrder: ['doc1'],
           },
-          [Constants.EDITOR_KEY_SECONDARY]: {
-            ...defaultState.editors[Constants.EDITOR_KEY_SECONDARY],
+          [EDITOR_KEY_SECONDARY]: {
+            ...defaultState.editors[EDITOR_KEY_SECONDARY],
             activeDocumentId: 'doc2',
             documents: {
               doc2: {},
@@ -471,23 +467,23 @@ describe('Editor reducer tests', () => {
         },
       };
       const action = open({
-        contentType: Constants.CONTENT_TYPE_APP_SETTINGS,
+        contentType: SharedConstants.ContentTypes.CONTENT_TYPE_APP_SETTINGS,
         documentId: 'doc2',
         isGlobal: true,
       });
       const endingState = editor(startingState, action);
-      expect(endingState.activeEditor).toBe(Constants.EDITOR_KEY_SECONDARY);
-      expect(endingState.editors[Constants.EDITOR_KEY_SECONDARY].recentTabs).toEqual(['doc2', 'doc3']);
+      expect(endingState.activeEditor).toBe(EDITOR_KEY_SECONDARY);
+      expect(endingState.editors[EDITOR_KEY_SECONDARY].recentTabs).toEqual(['doc2', 'doc3']);
     });
 
     it('should focus an already existing document in the same tab group', () => {
       const startingState: EditorState = {
         ...defaultState,
-        activeEditor: Constants.EDITOR_KEY_PRIMARY,
+        activeEditor: EDITOR_KEY_PRIMARY,
         editors: {
           ...defaultState.editors,
-          [Constants.EDITOR_KEY_PRIMARY]: {
-            ...defaultState.editors[Constants.EDITOR_KEY_PRIMARY],
+          [EDITOR_KEY_PRIMARY]: {
+            ...defaultState.editors[EDITOR_KEY_PRIMARY],
             activeDocumentId: 'doc1',
             documents: {
               doc1: {},
@@ -499,12 +495,12 @@ describe('Editor reducer tests', () => {
         },
       };
       const action = open({
-        contentType: Constants.CONTENT_TYPE_APP_SETTINGS,
+        contentType: SharedConstants.ContentTypes.CONTENT_TYPE_APP_SETTINGS,
         documentId: 'doc2',
         isGlobal: true,
       });
       const endingState = editor(startingState, action);
-      const primaryEditor = endingState.editors[Constants.EDITOR_KEY_PRIMARY];
+      const primaryEditor = endingState.editors[EDITOR_KEY_PRIMARY];
       expect(primaryEditor.activeDocumentId).toBe('doc2');
       expect(primaryEditor.recentTabs).toEqual(['doc2', 'doc1']);
       expect(primaryEditor.tabOrder).toEqual(['doc1', 'doc2']);
@@ -513,11 +509,11 @@ describe('Editor reducer tests', () => {
     it('should insert a new document after the current active document', () => {
       const startingState: EditorState = {
         ...defaultState,
-        activeEditor: Constants.EDITOR_KEY_PRIMARY,
+        activeEditor: EDITOR_KEY_PRIMARY,
         editors: {
           ...defaultState.editors,
-          [Constants.EDITOR_KEY_PRIMARY]: {
-            ...defaultState.editors[Constants.EDITOR_KEY_PRIMARY],
+          [EDITOR_KEY_PRIMARY]: {
+            ...defaultState.editors[EDITOR_KEY_PRIMARY],
             activeDocumentId: 'doc1',
             documents: {
               doc1: {},
@@ -529,12 +525,12 @@ describe('Editor reducer tests', () => {
         },
       };
       const action = open({
-        contentType: Constants.CONTENT_TYPE_APP_SETTINGS,
+        contentType: SharedConstants.ContentTypes.CONTENT_TYPE_APP_SETTINGS,
         documentId: 'doc3',
         isGlobal: true,
       });
       const endingState = editor(startingState, action);
-      const primaryEditor = endingState.editors[Constants.EDITOR_KEY_PRIMARY];
+      const primaryEditor = endingState.editors[EDITOR_KEY_PRIMARY];
       expect(primaryEditor.activeDocumentId).toBe('doc3');
       expect(primaryEditor.recentTabs).toEqual(['doc3', 'doc1', 'doc2']);
       expect(primaryEditor.tabOrder).toEqual(['doc1', 'doc3', 'doc2']);
@@ -544,11 +540,11 @@ describe('Editor reducer tests', () => {
     it("should append new document if current activeDocument isn't found", () => {
       const startingState: EditorState = {
         ...defaultState,
-        activeEditor: Constants.EDITOR_KEY_PRIMARY,
+        activeEditor: EDITOR_KEY_PRIMARY,
         editors: {
           ...defaultState.editors,
-          [Constants.EDITOR_KEY_PRIMARY]: {
-            ...defaultState.editors[Constants.EDITOR_KEY_PRIMARY],
+          [EDITOR_KEY_PRIMARY]: {
+            ...defaultState.editors[EDITOR_KEY_PRIMARY],
             activeDocumentId: 'doc1234',
             documents: {
               doc1: {},
@@ -560,12 +556,12 @@ describe('Editor reducer tests', () => {
         },
       };
       const action = open({
-        contentType: Constants.CONTENT_TYPE_APP_SETTINGS,
+        contentType: SharedConstants.ContentTypes.CONTENT_TYPE_APP_SETTINGS,
         documentId: 'doc3',
         isGlobal: true,
       });
       const endingState = editor(startingState, action);
-      const primaryEditor = endingState.editors[Constants.EDITOR_KEY_PRIMARY];
+      const primaryEditor = endingState.editors[EDITOR_KEY_PRIMARY];
       expect(primaryEditor.activeDocumentId).toBe('doc3');
       expect(primaryEditor.recentTabs).toEqual(['doc3', 'doc1', 'doc2']);
       expect(primaryEditor.tabOrder).toEqual(['doc1', 'doc2', 'doc3']);
@@ -576,12 +572,12 @@ describe('Editor reducer tests', () => {
   it('should split a tab to the other tab group', () => {
     const startingState: EditorState = {
       ...defaultState,
-      activeEditor: Constants.EDITOR_KEY_PRIMARY,
+      activeEditor: EDITOR_KEY_PRIMARY,
       draggingTab: true,
       editors: {
         ...defaultState.editors,
-        [Constants.EDITOR_KEY_PRIMARY]: {
-          ...defaultState.editors[Constants.EDITOR_KEY_PRIMARY],
+        [EDITOR_KEY_PRIMARY]: {
+          ...defaultState.editors[EDITOR_KEY_PRIMARY],
           activeDocumentId: 'doc2',
           documents: {
             doc1: {},
@@ -590,8 +586,8 @@ describe('Editor reducer tests', () => {
           recentTabs: ['doc1', 'doc2'],
           tabOrder: ['doc1', 'doc2'],
         },
-        [Constants.EDITOR_KEY_SECONDARY]: {
-          ...defaultState.editors[Constants.EDITOR_KEY_SECONDARY],
+        [EDITOR_KEY_SECONDARY]: {
+          ...defaultState.editors[EDITOR_KEY_SECONDARY],
           activeDocumentId: 'doc3',
           documents: {
             doc3: {},
@@ -602,14 +598,14 @@ describe('Editor reducer tests', () => {
       },
     };
     const action = splitTab(
-      Constants.CONTENT_TYPE_APP_SETTINGS,
+      SharedConstants.ContentTypes.CONTENT_TYPE_APP_SETTINGS,
       'doc2',
-      Constants.EDITOR_KEY_PRIMARY,
-      Constants.EDITOR_KEY_SECONDARY
+      EDITOR_KEY_PRIMARY,
+      EDITOR_KEY_SECONDARY
     );
     const endingState = editor(startingState, action);
-    const primaryEditor = endingState.editors[Constants.EDITOR_KEY_PRIMARY];
-    const secondaryEditor = endingState.editors[Constants.EDITOR_KEY_SECONDARY];
+    const primaryEditor = endingState.editors[EDITOR_KEY_PRIMARY];
+    const secondaryEditor = endingState.editors[EDITOR_KEY_SECONDARY];
 
     expect(Object.keys(primaryEditor.documents)).not.toContain('doc2');
     expect(primaryEditor.recentTabs).toEqual(['doc1']);
@@ -628,11 +624,11 @@ describe('Editor reducer tests', () => {
     it('should swap tabs within the same tab group', () => {
       const startingState: EditorState = {
         ...defaultState,
-        activeEditor: Constants.EDITOR_KEY_PRIMARY,
+        activeEditor: EDITOR_KEY_PRIMARY,
         editors: {
           ...defaultState.editors,
-          [Constants.EDITOR_KEY_PRIMARY]: {
-            ...defaultState.editors[Constants.EDITOR_KEY_PRIMARY],
+          [EDITOR_KEY_PRIMARY]: {
+            ...defaultState.editors[EDITOR_KEY_PRIMARY],
             documents: {
               doc1: {},
               doc2: {},
@@ -643,20 +639,20 @@ describe('Editor reducer tests', () => {
           },
         },
       };
-      const action = swapTabs(Constants.EDITOR_KEY_PRIMARY, Constants.EDITOR_KEY_PRIMARY, 'doc1', 'doc3');
+      const action = swapTabs(EDITOR_KEY_PRIMARY, EDITOR_KEY_PRIMARY, 'doc1', 'doc3');
       const endingState = editor(startingState, action);
-      const primaryEditor = endingState.editors[Constants.EDITOR_KEY_PRIMARY];
+      const primaryEditor = endingState.editors[EDITOR_KEY_PRIMARY];
       expect(primaryEditor.tabOrder).toEqual(['doc3', 'doc2', 'doc1']);
     });
 
     it('should move a tab to another tab group', () => {
       const startingState: EditorState = {
         ...defaultState,
-        activeEditor: Constants.EDITOR_KEY_SECONDARY,
+        activeEditor: EDITOR_KEY_SECONDARY,
         editors: {
           ...defaultState.editors,
-          [Constants.EDITOR_KEY_PRIMARY]: {
-            ...defaultState.editors[Constants.EDITOR_KEY_PRIMARY],
+          [EDITOR_KEY_PRIMARY]: {
+            ...defaultState.editors[EDITOR_KEY_PRIMARY],
             documents: {
               doc1: {},
               doc2: {},
@@ -664,8 +660,8 @@ describe('Editor reducer tests', () => {
             recentTabs: ['doc2', 'doc1'],
             tabOrder: ['doc1', 'doc2'],
           },
-          [Constants.EDITOR_KEY_SECONDARY]: {
-            ...defaultState.editors[Constants.EDITOR_KEY_SECONDARY],
+          [EDITOR_KEY_SECONDARY]: {
+            ...defaultState.editors[EDITOR_KEY_SECONDARY],
             activeDocumentId: 'doc3',
             documents: {
               doc3: {},
@@ -676,11 +672,11 @@ describe('Editor reducer tests', () => {
           },
         },
       };
-      const action = swapTabs(Constants.EDITOR_KEY_SECONDARY, Constants.EDITOR_KEY_PRIMARY, 'doc3', 'doc1');
+      const action = swapTabs(EDITOR_KEY_SECONDARY, EDITOR_KEY_PRIMARY, 'doc3', 'doc1');
       const endingState = editor(startingState, action);
-      const primaryEditor = endingState.editors[Constants.EDITOR_KEY_PRIMARY];
-      const secondaryEditor = endingState.editors[Constants.EDITOR_KEY_SECONDARY];
-      expect(endingState.activeEditor).toBe(Constants.EDITOR_KEY_SECONDARY);
+      const primaryEditor = endingState.editors[EDITOR_KEY_PRIMARY];
+      const secondaryEditor = endingState.editors[EDITOR_KEY_SECONDARY];
+      expect(endingState.activeEditor).toBe(EDITOR_KEY_SECONDARY);
 
       expect(Object.keys(primaryEditor.documents)).toContain('doc3');
       expect(primaryEditor.recentTabs).toEqual(['doc2', 'doc1', 'doc3']);
@@ -695,11 +691,11 @@ describe('Editor reducer tests', () => {
     it('should focus primary if secondary tab group has no remaining docs', () => {
       const startingState: EditorState = {
         ...defaultState,
-        activeEditor: Constants.EDITOR_KEY_SECONDARY,
+        activeEditor: EDITOR_KEY_SECONDARY,
         editors: {
           ...defaultState.editors,
-          [Constants.EDITOR_KEY_PRIMARY]: {
-            ...defaultState.editors[Constants.EDITOR_KEY_PRIMARY],
+          [EDITOR_KEY_PRIMARY]: {
+            ...defaultState.editors[EDITOR_KEY_PRIMARY],
             documents: {
               doc1: {},
               doc2: {},
@@ -707,8 +703,8 @@ describe('Editor reducer tests', () => {
             recentTabs: ['doc2', 'doc1'],
             tabOrder: ['doc1', 'doc2'],
           },
-          [Constants.EDITOR_KEY_SECONDARY]: {
-            ...defaultState.editors[Constants.EDITOR_KEY_SECONDARY],
+          [EDITOR_KEY_SECONDARY]: {
+            ...defaultState.editors[EDITOR_KEY_SECONDARY],
             activeDocumentId: 'doc3',
             documents: {
               doc3: {},
@@ -718,19 +714,19 @@ describe('Editor reducer tests', () => {
           },
         },
       };
-      const action = swapTabs(Constants.EDITOR_KEY_SECONDARY, Constants.EDITOR_KEY_PRIMARY, 'doc3', 'doc1');
+      const action = swapTabs(EDITOR_KEY_SECONDARY, EDITOR_KEY_PRIMARY, 'doc3', 'doc1');
       const endingState = editor(startingState, action);
-      expect(endingState.activeEditor).toBe(Constants.EDITOR_KEY_PRIMARY);
+      expect(endingState.activeEditor).toBe(EDITOR_KEY_PRIMARY);
     });
 
     it('should set secondary as new primary tab group if primary has no remaining docs', () => {
       const startingState: EditorState = {
         ...defaultState,
-        activeEditor: Constants.EDITOR_KEY_SECONDARY,
+        activeEditor: EDITOR_KEY_SECONDARY,
         editors: {
           ...defaultState.editors,
-          [Constants.EDITOR_KEY_PRIMARY]: {
-            ...defaultState.editors[Constants.EDITOR_KEY_PRIMARY],
+          [EDITOR_KEY_PRIMARY]: {
+            ...defaultState.editors[EDITOR_KEY_PRIMARY],
             activeDocumentId: 'doc1',
             documents: {
               doc1: {},
@@ -738,8 +734,8 @@ describe('Editor reducer tests', () => {
             recentTabs: ['doc1'],
             tabOrder: ['doc1'],
           },
-          [Constants.EDITOR_KEY_SECONDARY]: {
-            ...defaultState.editors[Constants.EDITOR_KEY_SECONDARY],
+          [EDITOR_KEY_SECONDARY]: {
+            ...defaultState.editors[EDITOR_KEY_SECONDARY],
             activeDocumentId: 'doc2',
             documents: {
               doc2: {},
@@ -749,11 +745,11 @@ describe('Editor reducer tests', () => {
           },
         },
       };
-      const action = swapTabs(Constants.EDITOR_KEY_PRIMARY, Constants.EDITOR_KEY_SECONDARY, 'doc1', 'doc2');
+      const action = swapTabs(EDITOR_KEY_PRIMARY, EDITOR_KEY_SECONDARY, 'doc1', 'doc2');
       const endingState = editor(startingState, action);
-      const primaryEditor = endingState.editors[Constants.EDITOR_KEY_PRIMARY];
-      const secondaryEditor = endingState.editors[Constants.EDITOR_KEY_SECONDARY];
-      expect(endingState.activeEditor).toBe(Constants.EDITOR_KEY_PRIMARY);
+      const primaryEditor = endingState.editors[EDITOR_KEY_PRIMARY];
+      const secondaryEditor = endingState.editors[EDITOR_KEY_SECONDARY];
+      expect(endingState.activeEditor).toBe(EDITOR_KEY_PRIMARY);
 
       expect(primaryEditor.activeDocumentId).toBe('doc2');
       expect(Object.keys(primaryEditor.documents)).toHaveLength(2);
@@ -811,10 +807,10 @@ describe('Editor reducer utility function tests', () => {
   it('setNewPrimaryEditor() functionality', () => {
     const startingState: EditorState = {
       ...defaultState,
-      activeEditor: Constants.EDITOR_KEY_SECONDARY,
+      activeEditor: EDITOR_KEY_SECONDARY,
       editors: {
         ...defaultState.editors,
-        [Constants.EDITOR_KEY_SECONDARY]: {
+        [EDITOR_KEY_SECONDARY]: {
           activeDocumentId: 'doc1',
           documents: {
             doc1: {},
@@ -835,16 +831,16 @@ describe('Editor reducer utility function tests', () => {
     };
 
     const endingState = setNewPrimaryEditor(newPrimaryEditor, startingState);
-    expect(endingState.activeEditor).toBe(Constants.EDITOR_KEY_PRIMARY);
-    expect(endingState.editors[Constants.EDITOR_KEY_PRIMARY].activeDocumentId).toEqual('doc2');
-    expect(endingState.editors[Constants.EDITOR_KEY_PRIMARY].tabOrder).toEqual(['doc2']);
-    expect(endingState.editors[Constants.EDITOR_KEY_PRIMARY].recentTabs).toEqual(['doc2']);
-    expect(Object.keys(endingState.editors[Constants.EDITOR_KEY_PRIMARY].documents)).toContain('doc2');
+    expect(endingState.activeEditor).toBe(EDITOR_KEY_PRIMARY);
+    expect(endingState.editors[EDITOR_KEY_PRIMARY].activeDocumentId).toEqual('doc2');
+    expect(endingState.editors[EDITOR_KEY_PRIMARY].tabOrder).toEqual(['doc2']);
+    expect(endingState.editors[EDITOR_KEY_PRIMARY].recentTabs).toEqual(['doc2']);
+    expect(Object.keys(endingState.editors[EDITOR_KEY_PRIMARY].documents)).toContain('doc2');
 
-    expect(endingState.editors[Constants.EDITOR_KEY_SECONDARY].activeDocumentId).toBe(null);
-    expect(endingState.editors[Constants.EDITOR_KEY_SECONDARY].documents).toEqual({});
-    expect(endingState.editors[Constants.EDITOR_KEY_SECONDARY].recentTabs).toEqual([]);
-    expect(endingState.editors[Constants.EDITOR_KEY_SECONDARY].tabOrder).toEqual([]);
+    expect(endingState.editors[EDITOR_KEY_SECONDARY].activeDocumentId).toBe(null);
+    expect(endingState.editors[EDITOR_KEY_SECONDARY].documents).toEqual({});
+    expect(endingState.editors[EDITOR_KEY_SECONDARY].recentTabs).toEqual([]);
+    expect(endingState.editors[EDITOR_KEY_SECONDARY].tabOrder).toEqual([]);
   });
 
   it('setActiveEditor() functionality', () => {
@@ -860,11 +856,11 @@ describe('Editor reducer utility function tests', () => {
       tabOrder: ['testing'],
       recentTabs: ['testing'],
     };
-    const newState = setEditorState(Constants.EDITOR_KEY_PRIMARY, updatedEditor, defaultState);
+    const newState = setEditorState(EDITOR_KEY_PRIMARY, updatedEditor, defaultState);
     expect(newState).not.toBe(defaultState);
-    expect(newState.editors[Constants.EDITOR_KEY_PRIMARY].activeDocumentId).toBe('testing');
-    expect(newState.editors[Constants.EDITOR_KEY_PRIMARY].tabOrder).toEqual(['testing']);
-    expect(newState.editors[Constants.EDITOR_KEY_PRIMARY].recentTabs).toEqual(['testing']);
+    expect(newState.editors[EDITOR_KEY_PRIMARY].activeDocumentId).toBe('testing');
+    expect(newState.editors[EDITOR_KEY_PRIMARY].tabOrder).toEqual(['testing']);
+    expect(newState.editors[EDITOR_KEY_PRIMARY].recentTabs).toEqual(['testing']);
   });
 
   describe('removeDocumentFromTabGroup() functionality', () => {
@@ -910,18 +906,18 @@ describe('Editor reducer utility function tests', () => {
     it('should set secondary tab group as primary & active if primary has no remaining docs', () => {
       const startingState: EditorState = {
         ...defaultState,
-        activeEditor: Constants.EDITOR_KEY_SECONDARY,
+        activeEditor: EDITOR_KEY_SECONDARY,
         editors: {
           ...defaultState.editors,
-          [Constants.EDITOR_KEY_PRIMARY]: {
-            ...defaultState.editors[Constants.EDITOR_KEY_PRIMARY],
+          [EDITOR_KEY_PRIMARY]: {
+            ...defaultState.editors[EDITOR_KEY_PRIMARY],
             activeDocumentId: null,
             documents: {},
             recentTabs: [],
             tabOrder: [],
           },
-          [Constants.EDITOR_KEY_SECONDARY]: {
-            ...defaultState.editors[Constants.EDITOR_KEY_SECONDARY],
+          [EDITOR_KEY_SECONDARY]: {
+            ...defaultState.editors[EDITOR_KEY_SECONDARY],
             activeDocumentId: 'doc2',
             documents: {
               doc2: {},
@@ -932,9 +928,9 @@ describe('Editor reducer utility function tests', () => {
         },
       };
       const endState = fixupTabGroups(startingState);
-      const primaryEditor = endState.editors[Constants.EDITOR_KEY_PRIMARY];
-      const secondaryEditor = endState.editors[Constants.EDITOR_KEY_SECONDARY];
-      expect(endState.activeEditor).toBe(Constants.EDITOR_KEY_PRIMARY);
+      const primaryEditor = endState.editors[EDITOR_KEY_PRIMARY];
+      const secondaryEditor = endState.editors[EDITOR_KEY_SECONDARY];
+      expect(endState.activeEditor).toBe(EDITOR_KEY_PRIMARY);
 
       expect(Object.keys(primaryEditor.documents)).toContain('doc2');
       expect(primaryEditor.activeDocumentId).toBe('doc2');
@@ -950,11 +946,11 @@ describe('Editor reducer utility function tests', () => {
     it('should set the primary tab group as active editor if secondary has no remaining docs', () => {
       const startingState: EditorState = {
         ...defaultState,
-        activeEditor: Constants.EDITOR_KEY_SECONDARY,
+        activeEditor: EDITOR_KEY_SECONDARY,
         editors: {
           ...defaultState.editors,
-          [Constants.EDITOR_KEY_PRIMARY]: {
-            ...defaultState.editors[Constants.EDITOR_KEY_PRIMARY],
+          [EDITOR_KEY_PRIMARY]: {
+            ...defaultState.editors[EDITOR_KEY_PRIMARY],
             activeDocumentId: 'doc1',
             documents: {
               doc1: {},
@@ -962,8 +958,8 @@ describe('Editor reducer utility function tests', () => {
             recentTabs: ['doc1'],
             tabOrder: ['doc1'],
           },
-          [Constants.EDITOR_KEY_SECONDARY]: {
-            ...defaultState.editors[Constants.EDITOR_KEY_SECONDARY],
+          [EDITOR_KEY_SECONDARY]: {
+            ...defaultState.editors[EDITOR_KEY_SECONDARY],
             activeDocumentId: null,
             documents: {},
             recentTabs: [],
@@ -972,17 +968,17 @@ describe('Editor reducer utility function tests', () => {
         },
       };
       const endState = fixupTabGroups(startingState);
-      expect(endState.activeEditor).toBe(Constants.EDITOR_KEY_PRIMARY);
+      expect(endState.activeEditor).toBe(EDITOR_KEY_PRIMARY);
     });
 
     it('should return state unaltered if both tab groups have documents', () => {
       const startingState: EditorState = {
         ...defaultState,
-        activeEditor: Constants.EDITOR_KEY_PRIMARY,
+        activeEditor: EDITOR_KEY_PRIMARY,
         editors: {
           ...defaultState.editors,
-          [Constants.EDITOR_KEY_PRIMARY]: {
-            ...defaultState.editors[Constants.EDITOR_KEY_PRIMARY],
+          [EDITOR_KEY_PRIMARY]: {
+            ...defaultState.editors[EDITOR_KEY_PRIMARY],
             activeDocumentId: 'doc1',
             documents: {
               doc1: {},
@@ -990,8 +986,8 @@ describe('Editor reducer utility function tests', () => {
             recentTabs: ['doc1'],
             tabOrder: ['doc1'],
           },
-          [Constants.EDITOR_KEY_SECONDARY]: {
-            ...defaultState.editors[Constants.EDITOR_KEY_SECONDARY],
+          [EDITOR_KEY_SECONDARY]: {
+            ...defaultState.editors[EDITOR_KEY_SECONDARY],
             activeDocumentId: 'doc2',
             documents: {
               doc2: {},
@@ -1009,9 +1005,9 @@ describe('Editor reducer utility function tests', () => {
   test('dropping a tab on the left side of the editor', () => {
     const startingState: EditorState = {
       ...defaultState,
-      activeEditor: Constants.EDITOR_KEY_PRIMARY,
+      activeEditor: EDITOR_KEY_PRIMARY,
       editors: {
-        [Constants.EDITOR_KEY_PRIMARY]: {
+        [EDITOR_KEY_PRIMARY]: {
           activeDocumentId: 'doc2',
           documents: {
             doc1: {},
@@ -1021,7 +1017,7 @@ describe('Editor reducer utility function tests', () => {
           recentTabs: ['doc2', 'doc1', 'doc3'],
           tabOrder: ['doc1', 'doc2', 'doc3'],
         },
-        [Constants.EDITOR_KEY_SECONDARY]: {},
+        [EDITOR_KEY_SECONDARY]: {},
       },
     };
 
@@ -1029,8 +1025,8 @@ describe('Editor reducer utility function tests', () => {
     const action = dropTabOnLeftOverlay(tabIdToDrop);
     const endingState = editor(startingState, action);
 
-    const primaryEditor = endingState.editors[Constants.EDITOR_KEY_PRIMARY];
-    const secondaryEditor = endingState.editors[Constants.EDITOR_KEY_SECONDARY];
+    const primaryEditor = endingState.editors[EDITOR_KEY_PRIMARY];
+    const secondaryEditor = endingState.editors[EDITOR_KEY_SECONDARY];
 
     expect(primaryEditor.activeDocumentId).toBe(tabIdToDrop);
     expect(primaryEditor.recentTabs).toHaveLength(1);
@@ -1055,13 +1051,13 @@ function initializeDefaultState() {
     activeEditor: null,
     draggingTab: false,
     editors: {
-      [Constants.EDITOR_KEY_PRIMARY]: {
+      [EDITOR_KEY_PRIMARY]: {
         activeDocumentId: null,
         documents: {},
         tabOrder: [],
         recentTabs: [],
       },
-      [Constants.EDITOR_KEY_SECONDARY]: {
+      [EDITOR_KEY_SECONDARY]: {
         activeDocumentId: null,
         documents: {},
         tabOrder: [],

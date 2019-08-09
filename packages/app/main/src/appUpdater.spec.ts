@@ -37,7 +37,7 @@ import { SharedConstants } from '@bfemulator/app-shared';
 import { AppUpdater } from './appUpdater';
 import { TelemetryService } from './telemetry';
 import { AppMenuBuilder } from './appMenuBuilder';
-import { setFramework } from './settingsData/actions/frameworkActions';
+import { setFrameworkSettings } from './state';
 
 let mockAutoUpdater: any = {
   quitAndInstall: null,
@@ -60,13 +60,27 @@ jest.mock('electron-updater', () => ({
   UpdateInfo: typeof {},
 }));
 
-const mockSettingsStore = {
-  getState: () => ({ framework: mockSettings }),
-  dispatch: () => null,
-};
-jest.mock('./settingsData/store', () => ({
-  getSettings: () => ({ framework: mockSettings }),
-  getStore: () => mockSettingsStore,
+const mockDispatch = jest.fn(() => null);
+jest.mock('./state/store', () => ({
+  getSettings: () => ({
+    get framework() {
+      return mockSettings;
+    },
+  }),
+  store: {
+    getState: () => ({
+      bot: {
+        botFiles: [],
+      },
+      get framework() {
+        return mockSettings;
+      },
+    }),
+    get dispatch() {
+      return mockDispatch;
+    },
+    subscribe: () => null,
+  },
 }));
 
 jest.mock('./telemetry', () => ({
@@ -375,17 +389,16 @@ describe('AppUpdater', () => {
       .mockResolvedValueOnce(undefined)
       // show progress indicator
       .mockResolvedValueOnce(undefined);
-    const dispatchSpy = jest.spyOn(mockSettingsStore, 'dispatch');
     AppUpdater.autoDownload = false;
     await (AppUpdater as any).onUpdateAvailable({ version: 'v4.5.0' });
 
     expect(remoteCallSpy).toHaveBeenCalledTimes(3);
     expect(downloadUpdateSpy).toHaveBeenCalledWith(true);
-    expect(dispatchSpy).toHaveBeenCalledWith(setFramework({ ...mockSettings, autoUpdate: true }));
+    expect(mockDispatch).toHaveBeenCalledWith(setFrameworkSettings({ ...mockSettings, autoUpdate: true }));
 
     remoteCallSpy.mockClear();
     downloadUpdateSpy.mockClear();
-    dispatchSpy.mockClear();
+    mockDispatch.mockClear();
   });
 
   it('should not show anything if the user closes the update available dialog', async () => {

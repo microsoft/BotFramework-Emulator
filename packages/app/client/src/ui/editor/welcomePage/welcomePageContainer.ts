@@ -36,7 +36,7 @@ import { connect } from 'react-redux';
 import { Action } from 'redux';
 
 import { RootState } from '../../../state/store';
-import { executeCommand } from '../../../state/actions/commandAction';
+import { executeCommand } from '../../../state/actions/commandActions';
 
 import { WelcomePage, WelcomePageProps } from './welcomePage';
 

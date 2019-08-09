@@ -44,10 +44,10 @@ export const forwardToMain: Middleware = _store => next => action => {
     return next(action);
   }
   // prevent an endless loop of forwarding the action over ipc
-  if ((action as any).meta && (action as any).meta.doNotFoward) {
+  if ((action as any).meta && (action as any).meta.doNotForward) {
     return next(action);
   }
-  const logPath = join('C:', 'Users', 'tonya', 'Desktop', 'logs', 'renderer-outbound.txt');
+  const logPath = join('C:', 'Users', 'toanzian', 'Desktop', 'logs', 'renderer-outbound.txt');
   appendFileSync(logPath, `\n[${new Date().toLocaleTimeString()}] Action: ${action.type} \n`);
   // forward the action over ipc to the main process
   ipcRenderer.sendSync('sync-store', action);

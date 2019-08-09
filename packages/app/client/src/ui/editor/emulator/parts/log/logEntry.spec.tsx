@@ -39,8 +39,8 @@ import { createStore } from 'redux';
 import { SharedConstants } from '@bfemulator/app-shared';
 import { ServiceTypes } from 'botframework-config/lib/schema';
 
-import { setHighlightedObjects, setInspectorObjects } from '../../../../../data/action/chatActions';
-import { launchConnectedServicePicker } from '../../../../../data/action/connectedServiceActions';
+import { setHighlightedObjects, setInspectorObjects } from '../../../../../state/actions/chatActions';
+import { launchConnectedServicePicker } from '../../../../../state/actions/connectedServiceActions';
 import {
   AzureLoginFailedDialogContainer,
   AzureLoginSuccessDialogContainer,
@@ -50,7 +50,7 @@ import {
 } from '../../../../dialogs';
 import { ConnectedServiceEditorContainer } from '../../../../shell/explorer/servicesExplorer/connectedServiceEditor';
 import { ConnectedServicePickerContainer } from '../../../../shell/explorer/servicesExplorer';
-import { executeCommand } from '../../../../../data/action/commandAction';
+import { executeCommand } from '../../../../../state/actions/commandActions';
 
 import { LogEntry as LogEntryContainer } from './logEntryContainer';
 import { LogEntry, LogEntryProps, number2, timestamp } from './logEntry';

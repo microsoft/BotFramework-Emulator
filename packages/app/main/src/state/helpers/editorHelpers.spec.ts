@@ -50,7 +50,7 @@ const mockStore = {
   getState: mockGetState,
   dispatch: mockDispatch,
 };
-jest.mock('./store', () => ({
+jest.mock('../store', () => ({
   get store() {
     return mockStore;
   },
@@ -125,8 +125,8 @@ describe('editorHelpers', () => {
 
     expect(mockDispatch).toHaveBeenCalledWith(
       open({
-        contentType: SharedConstants.CONTENT_TYPE_WELCOME_PAGE,
-        documentId: SharedConstants.DOCUMENT_ID_WELCOME_PAGE,
+        contentType: SharedConstants.ContentTypes.CONTENT_TYPE_WELCOME_PAGE,
+        documentId: SharedConstants.DocumentIds.DOCUMENT_ID_WELCOME_PAGE,
         isGlobal: true,
       })
     );

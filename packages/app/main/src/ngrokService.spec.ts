@@ -33,13 +33,12 @@
 import { SettingsImpl } from '@bfemulator/app-shared';
 import { combineReducers, createStore } from 'redux';
 
-import { bot } from './data/reducers/bot';
-import * as store from './data/store';
+import { bot } from './state/reducers/bot';
 import { Emulator } from './emulator';
 import { NgrokService } from './ngrokService';
-import { setFramework } from './settingsData/actions/frameworkActions';
-import reducers from './settingsData/reducers';
-import { getStore } from './settingsData/store';
+import { setFrameworkSettings } from './state/actions/frameworkSettingsActions';
+import { azureAuthSettings, framework, savedBotUrls, windowState, users } from './state/reducers';
+import { store } from './state/store';
 
 const mockEmulator = {
   framework: {
@@ -70,10 +69,19 @@ jest.mock('./emulator', () => ({
 }));
 
 let mockSettingsStore;
-const mockCreateStore = () => createStore(reducers);
+const mockCreateStore = () =>
+  createStore(
+    combineReducers({
+      azure: azureAuthSettings,
+      framework,
+      savedBotUrls,
+      windowState,
+      users,
+    })
+  );
 const mockSettingsImpl = SettingsImpl;
-jest.mock('./settingsData/store', () => ({
-  getStore: function() {
+jest.mock('./state/store', () => ({
+  get store() {
     return mockSettingsStore || (mockSettingsStore = mockCreateStore());
   },
   getSettings: function() {
@@ -83,11 +91,6 @@ jest.mock('./settingsData/store', () => ({
     return mockSettingsStore.dispatch;
   },
 }));
-
-let mockStore;
-(store as any).getStore = function() {
-  return mockStore || (mockStore = createStore(combineReducers({ bot })));
-};
 
 const mockCallsToLog = [];
 jest.mock('./main', () => ({
@@ -122,7 +125,7 @@ describe('The ngrokService', () => {
   const ngrokService = new NgrokService();
 
   beforeEach(() => {
-    getStore().dispatch(setFramework(Emulator.getInstance().framework as any));
+    store.dispatch(setFrameworkSettings(Emulator.getInstance().framework as any));
     mockCallsToLog.length = 0;
     mockRunning.mockClear();
     mockConnect.mockClear();

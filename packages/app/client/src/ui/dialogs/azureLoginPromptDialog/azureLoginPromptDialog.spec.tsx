@@ -35,7 +35,7 @@ import { Provider } from 'react-redux';
 import { mount } from 'enzyme';
 import { createStore } from 'redux';
 
-import { azureAuth } from '../../../data/reducer/azureAuthReducer';
+import { azureAuth } from '../../../state/reducers/azureAuth';
 
 import { AzureLoginPromptDialogContainer } from './azureLoginPromptDialogContainer';
 import { AzureLoginPromptDialog } from './azureLoginPromptDialog';

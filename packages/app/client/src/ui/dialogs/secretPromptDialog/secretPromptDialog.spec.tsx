@@ -36,8 +36,8 @@ import { mount } from 'enzyme';
 import { combineReducers, createStore } from 'redux';
 import { BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
 
-import { bot } from '../../../data/reducer/bot';
-import { setActiveBot } from '../../../data/action/botActions';
+import { bot } from '../../../state/reducers/bot';
+import { setActive } from '../../../state/actions/botActions';
 import { DialogService } from '../service';
 
 import { SecretPromptDialogContainer } from './secretPromptDialogContainer';
@@ -46,7 +46,7 @@ import { SecretPromptDialog } from './secretPromptDialog';
 const mockStore = createStore(combineReducers({ bot }));
 const mockBot = BotConfigWithPathImpl.fromJSON({});
 
-jest.mock('../../../data/store', () => ({
+jest.mock('../../../state/store', () => ({
   get store() {
     return mockStore;
   },
@@ -69,7 +69,7 @@ describe('The Secret prompt dialog', () => {
   let parent;
   let node;
   beforeEach(() => {
-    mockStore.dispatch(setActiveBot(mockBot));
+    mockStore.dispatch(setActive(mockBot));
     parent = mount(
       <Provider store={mockStore}>
         <SecretPromptDialogContainer />

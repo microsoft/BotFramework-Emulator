@@ -34,15 +34,15 @@ import { newNotification, SharedConstants } from '@bfemulator/app-shared';
 import { combineReducers, createStore } from 'redux';
 import { CommandRegistry, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
-import { clientAwareSettingsChanged } from '../data/action/clientAwareSettingsActions';
-import { beginAdd } from '../data/action/notificationActions';
-import { bot } from '../data/reducer/bot';
-import { chat } from '../data/reducer/chat';
-import { clientAwareSettings } from '../data/reducer/clientAwareSettingsReducer';
-import { editor } from '../data/reducer/editor';
-import { framework } from '../data/reducer/frameworkSettingsReducer';
-import { RootState } from '../data/store';
-import { frameworkSettingsChanged } from '../data/action/frameworkSettingsActions';
+import { clientAwareSettingsChanged } from '../state/actions/clientAwareSettingsActions';
+import { beginAdd } from '../state/actions/notificationActions';
+import { bot } from '../state/reducers/bot';
+import { chat } from '../state/reducers/chat';
+import { clientAwareSettings } from '../state/reducers/clientAwareSettings';
+import { editor } from '../state/reducers/editor';
+import { framework } from '../state/reducers/framework';
+import { RootState } from '../state/store';
+import { setFrameworkSettings } from '../state/actions/frameworkSettingsActions';
 
 import { EmulatorCommands } from './emulatorCommands';
 
@@ -51,7 +51,7 @@ const mockEndpoint = {
 };
 
 let mockStore;
-jest.mock('../data/store', () => ({
+jest.mock('../state/store', () => ({
   get store() {
     return mockStore;
   },
@@ -121,7 +121,7 @@ describe('The emulator commands', () => {
 
   it('should open a new emulator tabbed document for an endpoint and use the custom user id', () => {
     let state: RootState = mockStore.getState();
-    mockStore.dispatch(frameworkSettingsChanged({ ...state.framework, userGUID: 'customUserId' }));
+    mockStore.dispatch(setFrameworkSettings({ ...state.framework, userGUID: 'customUserId' }));
     const handler = registry.getCommand(SharedConstants.Commands.Emulator.NewLiveChat);
     const documentId = handler(mockEndpoint, false);
     state = mockStore.getState();

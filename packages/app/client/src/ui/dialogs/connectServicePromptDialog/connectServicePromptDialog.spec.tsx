@@ -36,7 +36,7 @@ import { mount } from 'enzyme';
 import { createStore } from 'redux';
 import { ServiceTypes } from 'botframework-config';
 
-import { azureAuth } from '../../../data/reducer/azureAuthReducer';
+import { azureAuth } from '../../../state/reducers/azureAuth';
 import { DialogService } from '../service';
 
 import { ConnectServicePromptDialog } from './connectServicePromptDialog';

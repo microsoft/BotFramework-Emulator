@@ -38,7 +38,7 @@ import { TelemetryService } from '../telemetry';
 
 import { TelemetryCommands } from './telemetryCommands';
 
-jest.mock('../settingsData/store', () => ({
+jest.mock('../state/store', () => ({
   getSettings: () => ({
     framework: {},
   }),

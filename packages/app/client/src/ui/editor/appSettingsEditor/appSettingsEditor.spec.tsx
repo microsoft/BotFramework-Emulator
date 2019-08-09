@@ -36,17 +36,14 @@ import * as React from 'react';
 import { combineReducers, createStore } from 'redux';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
-import * as EditorActions from '../../../data/action/editorActions';
-import {
-  frameworkSettingsChanged,
-  getFrameworkSettings,
-  saveFrameworkSettings,
-} from '../../../data/action/frameworkSettingsActions';
-import { getTabGroupForDocument } from '../../../data/editorHelpers';
-import { framework } from '../../../data/reducer/frameworkSettingsReducer';
+import * as EditorActions from '../../../state/actions/editorActions';
+import { setFrameworkSettings, saveFrameworkSettings } from '../../../state/actions/frameworkSettingsActions';
+import { getTabGroupForDocument } from '../../../state/helpers/editorHelpers';
+import { framework } from '../../../state/reducers/framework';
 
 import { AppSettingsEditor } from './appSettingsEditor';
-import { AppSettingsEditorContainer } from './appSettingsEditorConainer';
+import { AppSettingsEditorContainer } from './appSettingsEditorContainer';
+import { frameworkDefault } from '@bfemulator/app-shared';
 
 jest.mock('electron', () => ({
   ipcMain: new Proxy(
@@ -81,6 +78,7 @@ describe('The AppSettingsEditorContainer', () => {
   let commandService: CommandServiceImpl;
   const mockCallsMade = [];
   const mockRemoteCallsMade = [];
+
   beforeAll(() => {
     const decorator = CommandServiceInstance();
     const descriptor = decorator({ descriptor: {} }, 'none') as any;
@@ -94,14 +92,16 @@ describe('The AppSettingsEditorContainer', () => {
       return Promise.resolve('hai!') as any;
     };
   });
+
   beforeEach(() => {
     mockStore = createStore(combineReducers({ framework }));
     mockStore.dispatch(
-      frameworkSettingsChanged({
+      setFrameworkSettings({
         autoUpdate: true,
         bypassNgrokLocalhost: true,
         runNgrokAtStartup: false,
         collectUsageData: true,
+        hash: 'someHash',
         locale: '',
         localhost: '',
         ngrokPath: '',
@@ -115,10 +115,6 @@ describe('The AppSettingsEditorContainer', () => {
     const wrapper = mount(<AppSettingsEditorContainer store={mockStore} />);
     node = wrapper.find(AppSettingsEditor);
     instance = node.instance() as AppSettingsEditor;
-  });
-
-  it('should dispatch an action to retrieve the framework settings', () => {
-    expect(mockDispatch).toHaveBeenCalledWith(getFrameworkSettings());
   });
 
   it('should update the state when the value of a checkbox changes', () => {
@@ -168,6 +164,14 @@ describe('The AppSettingsEditorContainer', () => {
 
   it('should save the framework settings then get them again from main when the "onSaveClick" handler is called', async () => {
     await (instance as any).onSaveClick();
-    expect(mockDispatch).toHaveBeenLastCalledWith(saveFrameworkSettings(instance.state));
+
+    const keys = Object.keys(frameworkDefault).sort();
+    const normalizedState = keys.reduce((s, key) => ((s[key] = instance.state[key]), s), {}) as FrameworkSettings;
+    const saveSettingsAction = saveFrameworkSettings(normalizedState);
+    const savedSettings: any = {
+      ...saveSettingsAction.payload,
+      hash: jasmine.any(String),
+    };
+    expect(mockDispatch).toHaveBeenLastCalledWith(saveFrameworkSettings(savedSettings));
   });
 });

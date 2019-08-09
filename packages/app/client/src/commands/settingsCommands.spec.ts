@@ -35,14 +35,14 @@ import { CommandRegistry, CommandServiceImpl, CommandServiceInstance } from '@bf
 import { SharedConstants } from '@bfemulator/app-shared';
 import { combineReducers, createStore } from 'redux';
 
-import { clientAwareSettings } from '../data/reducer/clientAwareSettingsReducer';
-import { store } from '../data/store';
-import { clientAwareSettingsChanged } from '../data/action/clientAwareSettingsActions';
+import { clientAwareSettings } from '../state/reducers/clientAwareSettings';
+import { store } from '../state/store';
+import { clientAwareSettingsChanged } from '../state/actions/clientAwareSettingsActions';
 
 import { SettingsCommands } from './settingsCommands';
 
 const mockStore = createStore(combineReducers({ clientAwareSettings }));
-jest.mock('../data/store', () => ({
+jest.mock('../state/store', () => ({
   get store() {
     return mockStore;
   },

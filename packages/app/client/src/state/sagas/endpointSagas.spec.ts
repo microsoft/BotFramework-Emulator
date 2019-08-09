@@ -37,7 +37,7 @@ import { SharedConstants } from '@bfemulator/app-shared';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { bot } from '../reducers/bot';
-import { loadBotInfos, setActive } from '../actions/botActions';
+import { load, setActive } from '../actions/botActions';
 import { launchEndpointEditor, openEndpointExplorerContextMenu } from '../actions/endpointServiceActions';
 import { DialogService } from '../../ui/dialogs/service';
 
@@ -109,7 +109,7 @@ describe('The endpoint sagas', () => {
   });
 
   beforeEach(() => {
-    mockStore.dispatch(loadBotInfos([mockBot]));
+    mockStore.dispatch(load([mockBot]));
     mockStore.dispatch(setActive(mockBot));
   });
 

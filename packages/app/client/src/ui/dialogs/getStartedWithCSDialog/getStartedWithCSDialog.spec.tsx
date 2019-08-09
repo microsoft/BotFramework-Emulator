@@ -36,8 +36,8 @@ import * as React from 'react';
 import { Provider } from 'react-redux';
 import { combineReducers, createStore } from 'redux';
 
-import { azureArmTokenDataChanged } from '../../../data/action/azureAuthActions';
-import { azureAuth } from '../../../data/reducer/azureAuthReducer';
+import { azureArmTokenDataChanged } from '../../../state/actions/azureAuthActions';
+import { azureAuth } from '../../../state/reducers/azureAuth';
 import { DialogService } from '../service';
 
 import { GetStartedWithCSDialog } from './getStartedWithCSDialog';

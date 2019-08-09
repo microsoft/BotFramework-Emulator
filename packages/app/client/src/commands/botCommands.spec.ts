@@ -39,9 +39,9 @@ import {
 } from '@bfemulator/sdk-shared';
 import { combineReducers, createStore } from 'redux';
 
-import * as BotActions from '../data/action/botActions';
-import { bot } from '../data/reducer/bot';
-import { resources } from '../data/reducer/resourcesReducer';
+import * as BotActions from '../state/actions/botActions';
+import { bot } from '../state/reducers/bot';
+import { resources } from '../state/reducers/resourcesReducer';
 import { ActiveBotHelper } from '../ui/helpers/activeBotHelper';
 
 import { BotCommands } from './botCommands';
@@ -98,7 +98,7 @@ const mockStore = createStore(combineReducers({ bot, resources }), {
   bot: { botFiles: [mockBotInfo] },
 });
 
-jest.mock('../data/store', () => ({
+jest.mock('../state/store', () => ({
   get store() {
     return mockStore;
   },
@@ -154,16 +154,6 @@ describe('The bot commands', () => {
     handler({ path: 'some/path.bot' });
 
     expect(switchSpy).toHaveBeenCalledWith({ path: 'some/path.bot' });
-  });
-
-  it('should make the appropriate calls to sync the bot list', () => {
-    const dispatchSpy = jest.spyOn(mockStore, 'dispatch');
-    const remoteCallSpy = jest.spyOn(commandService, 'remoteCall');
-    const handler = registry.getCommand(SharedConstants.Commands.Bot.SyncBotList);
-    handler([{}]);
-
-    expect(dispatchSpy).toHaveBeenCalledWith(BotActions.loadBotInfos([{}]));
-    expect(remoteCallSpy).toHaveBeenCalledWith(SharedConstants.Commands.Electron.UpdateFileMenu);
   });
 
   it('should make the appropriate call when setting the active bot', async () => {

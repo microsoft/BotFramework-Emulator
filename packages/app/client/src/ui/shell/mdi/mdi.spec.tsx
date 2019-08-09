@@ -53,7 +53,7 @@ const mockStore = createStore((_state, _action) => ({
   presentation: { enabled: false },
 }));
 
-jest.mock('../../../data/store', () => ({
+jest.mock('../../../state/store', () => ({
   get store() {
     return mockStore;
   },

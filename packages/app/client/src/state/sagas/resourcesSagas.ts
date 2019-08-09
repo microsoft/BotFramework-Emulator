@@ -46,7 +46,7 @@ import {
   OPEN_RESOURCE_SETTINGS,
   RENAME_RESOURCE,
   ResourcesAction,
-} from '../actions/resourcesAction';
+} from '../actions/resourcesActions';
 
 export class ResourcesSagas {
   @CommandServiceInstance()

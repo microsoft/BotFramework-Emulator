@@ -80,3 +80,14 @@ window.MutationObserver = class {
   observe() {}
   disconnect() {}
 };
+
+jest.mock('electron', () => ({
+  ipcMain: {
+    on: () => null,
+    send: () => null,
+  },
+  ipcRenderer: {
+    on: () => null,
+    send: () => null,
+  },
+}));

@@ -36,7 +36,7 @@ import { connect } from 'react-redux';
 import { getBotInfoByPath } from '../../../state/helpers/botHelpers';
 import { RootState } from '../../../state/store';
 import { DialogService } from '../service';
-import { executeCommand } from '../../../state/actions/commandAction';
+import { executeCommand } from '../../../state/actions/commandActions';
 
 import { ResourcesSettings, ResourcesSettingsProps } from './resourcesSettings';
 

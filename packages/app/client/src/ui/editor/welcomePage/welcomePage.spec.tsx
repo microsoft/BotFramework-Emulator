@@ -36,19 +36,19 @@ import * as React from 'react';
 import { Provider } from 'react-redux';
 import { combineReducers, createStore } from 'redux';
 
-import { azureArmTokenDataChanged } from '../../../data/action/azureAuthActions';
-import * as BotActions from '../../../data/action/botActions';
-import { azureAuth } from '../../../data/reducer/azureAuthReducer';
-import { clientAwareSettings } from '../../../data/reducer/clientAwareSettingsReducer';
-import { bot } from '../../../data/reducer/bot';
-import { executeCommand } from '../../../data/action/commandAction';
+import { azureArmTokenDataChanged } from '../../../state/actions/azureAuthActions';
+import * as BotActions from '../../../state/actions/botActions';
+import { azureAuth } from '../../../state/reducers/azureAuth';
+import { clientAwareSettings } from '../../../state/reducers/clientAwareSettings';
+import { bot } from '../../../state/reducers/bot';
+import { executeCommand } from '../../../state/actions/commandActions';
 
 import { WelcomePage } from './welcomePage';
 import { WelcomePageContainer } from './welcomePageContainer';
 
 const mockStore = createStore(combineReducers({ azureAuth, bot, clientAwareSettings }));
 jest.mock('../../dialogs', () => ({}));
-jest.mock('../../../data/store', () => ({
+jest.mock('../../../state/store', () => ({
   get store() {
     return mockStore;
   },
@@ -101,7 +101,7 @@ describe('The AzureLoginFailedDialogContainer component should', () => {
   let mockDispatch;
   beforeEach(() => {
     mockStore.dispatch(azureArmTokenDataChanged(mockArmToken));
-    mockStore.dispatch(BotActions.loadBotInfos(bots));
+    mockStore.dispatch(BotActions.load(bots));
     mockDispatch = jest.spyOn(mockStore, 'dispatch');
     parent = mount(
       <Provider store={mockStore}>

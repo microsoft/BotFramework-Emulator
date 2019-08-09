@@ -36,7 +36,7 @@ import { SharedConstants } from '@bfemulator/app-shared';
 import * as Constants from '../../constants';
 import * as PresentationActions from '../../state/actions/presentationActions';
 import { RootState } from '../../state/store';
-import { executeCommand } from '../../state/actions/commandAction';
+import { executeCommand } from '../../state/actions/commandActions';
 import { showWelcomePage } from '../../state/helpers/editorHelpers';
 import { globalHandlers } from '../../utils/eventHandlers';
 

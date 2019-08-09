@@ -39,7 +39,7 @@ import { appendTab, close, setActiveTab, splitTab } from '../../../../state/acti
 import { enable as enablePresentationMode } from '../../../../state/actions/presentationActions';
 import { getTabGroupForDocument } from '../../../../state/helpers/editorHelpers';
 import { RootState } from '../../../../state/store';
-import { executeCommand } from '../../../../state/actions/commandAction';
+import { executeCommand } from '../../../../state/actions/commandActions';
 
 import { TabBar, TabBarProps } from './tabBar';
 

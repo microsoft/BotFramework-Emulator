@@ -41,7 +41,7 @@ import {
   showContextMenuForActivity,
 } from '../../../../../state/actions/chatActions';
 import { RootState } from '../../../../../state/store';
-import { executeCommand } from '../../../../../state/actions/commandAction';
+import { executeCommand } from '../../../../../state/actions/commandActions';
 
 import { Chat, ChatProps } from './chat';
 

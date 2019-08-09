@@ -43,7 +43,7 @@ import {
   openResource,
   openResourcesSettings,
   renameResource,
-} from '../actions/resourcesAction';
+} from '../actions/resourcesActions';
 import { resources } from '../reducers/resourcesReducer';
 
 import { resourceSagas } from './resourcesSagas';

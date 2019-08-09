@@ -38,13 +38,13 @@ import { ServiceTypes } from 'botframework-config/lib/schema';
 import { BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
 
 import { ResourcesSettingsContainer } from '../../../dialogs';
-import { resources } from '../../../../data/reducer/resourcesReducer';
+import { resources } from '../../../../state/reducers/resourcesReducer';
 import {
   openContextMenuForResource,
   openResource,
   openResourcesSettings,
   renameResource,
-} from '../../../../data/action/resourcesAction';
+} from '../../../../state/actions/resourcesActions';
 
 import { ResourceExplorerContainer } from './resourceExplorerContainer';
 import { ResourceExplorer } from './resourceExplorer';

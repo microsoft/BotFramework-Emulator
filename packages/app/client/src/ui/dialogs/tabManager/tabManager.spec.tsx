@@ -36,7 +36,7 @@ import { mount } from 'enzyme';
 import * as React from 'react';
 import { Provider } from 'react-redux';
 
-import { editor } from '../../../data/reducer/editor';
+import { editor } from '../../../state/reducers/editor';
 
 import { TabManagerContainer } from './tabManagerContainer';
 import { TabManager } from './tabManager';
@@ -86,7 +86,7 @@ const mockWindow = {
     windowEvents.push(event);
   },
 };
-jest.mock('../../../data/store', () => ({
+jest.mock('../../../state/store', () => ({
   get store() {
     return mockStore;
   },
