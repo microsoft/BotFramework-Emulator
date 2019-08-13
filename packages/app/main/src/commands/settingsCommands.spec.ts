@@ -34,18 +34,15 @@
 import { SharedConstants } from '@bfemulator/app-shared';
 import { CommandRegistry, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
-import { TelemetryService } from '../telemetry';
 import { addSavedBotUrl } from '../state/actions/savedBotUrlsActions';
 
 import { SettingsCommands } from './settingsCommands';
 
-const mockSettings = { framework: { ngrokPath: 'path/to/ngrok.exe' } };
 let mockDispatch;
 jest.mock('../state/store', () => ({
   get dispatch() {
     return mockDispatch;
   },
-  getSettings: () => mockSettings,
 }));
 
 jest.mock('electron', () => ({
@@ -74,13 +71,12 @@ jest.mock('electron', () => ({
 }));
 
 describe('The settings commands', () => {
-  let mockTrackEvent;
-  const trackEventBackup = TelemetryService.trackEvent;
   const {
     Commands: { Settings },
   } = SharedConstants;
   let registry: CommandRegistry;
   let commandService: CommandServiceImpl;
+
   beforeAll(() => {
     new SettingsCommands();
     const decorator = CommandServiceInstance();
@@ -90,20 +86,7 @@ describe('The settings commands', () => {
   });
 
   beforeEach(() => {
-    mockTrackEvent = jest.fn(() => Promise.resolve());
-    TelemetryService.trackEvent = mockTrackEvent;
     mockDispatch = jest.fn(() => null);
-  });
-
-  afterAll(() => {
-    TelemetryService.trackEvent = trackEventBackup;
-  });
-
-  it('should load the app settings from the store', async () => {
-    const handler = registry.getCommand(Settings.LoadAppSettings);
-    const appSettings = await handler();
-
-    expect(appSettings).toBe(mockSettings.framework);
   });
 
   it('should save a new bot url to disk', () => {

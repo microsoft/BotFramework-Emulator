@@ -331,7 +331,7 @@ describe('<EmulatorContainer/>', () => {
   it('should export a transcript', async () => {
     await instance.onExportTranscriptClick();
 
-    expect(mockRemoteCallsMade).toHaveLength(2);
+    expect(mockRemoteCallsMade).toHaveLength(1);
     expect(mockDispatch).toHaveBeenCalledWith(
       executeCommand(true, SharedConstants.Commands.Emulator.SaveTranscriptToFile, null, 32, 'convo1')
     );
@@ -514,11 +514,11 @@ describe('<EmulatorContainer/>', () => {
 
     await instance.startNewConversation(mockProps);
 
-    expect(mockRemoteCallsMade).toHaveLength(4);
-    expect(mockRemoteCallsMade[2].commandName).toBe(SharedConstants.Commands.Emulator.NewTranscript);
-    expect(mockRemoteCallsMade[2].args).toEqual(['someUniqueId|transcript']);
-    expect(mockRemoteCallsMade[3].commandName).toBe(SharedConstants.Commands.Emulator.FeedTranscriptFromMemory);
-    expect(mockRemoteCallsMade[3].args).toEqual(['someConvoId', 'someBotId', 'someUserId', []]);
+    expect(mockRemoteCallsMade).toHaveLength(3);
+    expect(mockRemoteCallsMade[1].commandName).toBe(SharedConstants.Commands.Emulator.NewTranscript);
+    expect(mockRemoteCallsMade[1].args).toEqual(['someUniqueId|transcript']);
+    expect(mockRemoteCallsMade[2].commandName).toBe(SharedConstants.Commands.Emulator.FeedTranscriptFromMemory);
+    expect(mockRemoteCallsMade[2].args).toEqual(['someConvoId', 'someBotId', 'someUserId', []]);
   });
 
   it('should start a new conversation from transcript on disk', async () => {
@@ -545,11 +545,11 @@ describe('<EmulatorContainer/>', () => {
 
     await instance.startNewConversation(mockProps);
 
-    expect(mockRemoteCallsMade).toHaveLength(4);
-    expect(mockRemoteCallsMade[2].commandName).toBe(SharedConstants.Commands.Emulator.NewTranscript);
-    expect(mockRemoteCallsMade[2].args).toEqual(['someUniqueId|transcript']);
-    expect(mockRemoteCallsMade[3].commandName).toBe(SharedConstants.Commands.Emulator.FeedTranscriptFromDisk);
-    expect(mockRemoteCallsMade[3].args).toEqual(['someConvoId', 'someBotId', 'someUserId', 'someDocId']);
+    expect(mockRemoteCallsMade).toHaveLength(3);
+    expect(mockRemoteCallsMade[1].commandName).toBe(SharedConstants.Commands.Emulator.NewTranscript);
+    expect(mockRemoteCallsMade[1].args).toEqual(['someUniqueId|transcript']);
+    expect(mockRemoteCallsMade[2].commandName).toBe(SharedConstants.Commands.Emulator.FeedTranscriptFromDisk);
+    expect(mockRemoteCallsMade[2].args).toEqual(['someConvoId', 'someBotId', 'someUserId', 'someDocId']);
     expect(mockDispatch).toHaveBeenCalledWith(updateDocument('someDocId', { meta: 'some file info' }));
   });
 });

@@ -31,9 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { appendFileSync } from 'fs';
-import { join } from 'path';
-
 import { applyMiddleware, createStore, combineReducers, Store } from 'redux';
 import { ipcRenderer } from 'electron';
 import sagaMiddlewareFactory from 'redux-saga';
@@ -98,8 +95,6 @@ export interface RootState {
 const DEFAULT_STATE = {};
 
 function initStore(): Store<RootState> {
-  // TODO: might need to add logic that ensures correct main-side settings are sent here
-  // (maybe add a main-side dispatch that re-sets the settings on main so it propagates here)
   const settingsReducer = combineReducers<Settings>({
     azure: azureAuthSettings,
     framework,
@@ -132,15 +127,9 @@ function initStore(): Store<RootState> {
     applyMiddleware(forwardToMain, sagaMiddleware)
   );
   applicationSagas.forEach(saga => sagaMiddleware.run(saga));
+
   // sync the renderer process store with any updates on the main process
-  const logPath = join('C:', 'Users', 'toanzian', 'Desktop', 'logs', 'renderer-inbound.txt');
-  appendFileSync(
-    join('C:', 'Users', 'toanzian', 'Desktop', 'logs', 'renderer-outbound.txt'),
-    '\n=== START LOGGING ===\n'
-  );
-  appendFileSync(logPath, '\n=== START LOGGING ===\n');
   ipcRenderer.on('sync-store', (_ev, action) => {
-    appendFileSync(logPath, `\n[${new Date().toLocaleTimeString()}] Action: ${action.type}\n`);
     // prevent an endless loop of forwarding the action over ipc
     action = { ...action, meta: { doNotForward: true } };
     _store.dispatch(action);

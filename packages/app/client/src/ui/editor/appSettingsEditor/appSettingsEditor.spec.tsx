@@ -35,6 +35,7 @@ import { mount } from 'enzyme';
 import * as React from 'react';
 import { combineReducers, createStore } from 'redux';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
+import { frameworkDefault } from '@bfemulator/app-shared';
 
 import * as EditorActions from '../../../state/actions/editorActions';
 import { setFrameworkSettings, saveFrameworkSettings } from '../../../state/actions/frameworkSettingsActions';
@@ -43,7 +44,6 @@ import { framework } from '../../../state/reducers/framework';
 
 import { AppSettingsEditor } from './appSettingsEditor';
 import { AppSettingsEditorContainer } from './appSettingsEditorContainer';
-import { frameworkDefault } from '@bfemulator/app-shared';
 
 jest.mock('electron', () => ({
   ipcMain: new Proxy(

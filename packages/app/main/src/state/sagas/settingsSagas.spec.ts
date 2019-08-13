@@ -30,6 +30,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 import '../../fetchProxy';
 import { settingsDefault, SharedConstants } from '@bfemulator/app-shared';
 import { applyMiddleware, createStore, Store, combineReducers } from 'redux';
@@ -38,9 +39,9 @@ import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shar
 
 import { azureAuthSettings, framework, savedBotUrls, windowState, users } from '../reducers';
 import { rememberTheme } from '../actions/windowStateActions';
+import { RootState } from '../store';
 
 import { settingsSagas } from './settingsSagas';
-import { RootState } from '../store';
 
 const mockEmulator = {
   startup: async () => true,

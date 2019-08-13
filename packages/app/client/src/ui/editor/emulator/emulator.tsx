@@ -75,6 +75,7 @@ export interface EmulatorProps {
   enablePresentationMode?: (enabled: boolean) => void;
   endpointId?: string;
   exportItems?: (types: ValueTypesMask, conversationId: string) => Promise<void>;
+  framework?: FrameworkSettings;
   mode?: EmulatorMode;
   newConversation?: (documentId: string, options: any) => void;
   presentationModeEnabled?: boolean;
@@ -163,10 +164,7 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
       userId = uniqueIdv4();
     } else {
       // use the previous id, or custom id
-      // TODO: REMOVE THIS COMMAND  AND CONNECT COMPONENT TO SETTINGS IN STORE
-      const framework: FrameworkSettings = await this.commandService.remoteCall(
-        SharedConstants.Commands.Settings.LoadAppSettings
-      );
+      const { framework = {} } = this.props;
       userId = props.document.userId || framework.userGUID;
     }
     await this.commandService.remoteCall(SharedConstants.Commands.Emulator.SetCurrentUser, userId);

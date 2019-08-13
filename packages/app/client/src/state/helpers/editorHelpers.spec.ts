@@ -34,6 +34,7 @@
 import { SharedConstants } from '@bfemulator/app-shared';
 
 import { open } from '../actions/editorActions';
+
 import {
   getOtherTabGroup,
   getTabGroupForDocument,

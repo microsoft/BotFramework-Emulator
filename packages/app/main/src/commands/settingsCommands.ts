@@ -31,23 +31,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { FrameworkSettings, SharedConstants } from '@bfemulator/app-shared';
+import { SharedConstants } from '@bfemulator/app-shared';
 import { Command } from '@bfemulator/sdk-shared';
 
 import { addSavedBotUrl } from '../state/actions/savedBotUrlsActions';
-import { dispatch, getSettings } from '../state/store';
+import { dispatch } from '../state/store';
 
 const Commands = SharedConstants.Commands.Settings;
 
 /** Registers settings commands */
 export class SettingsCommands {
-  // ---------------------------------------------------------------------------
-  // Get and return app settings from store
-  @Command(Commands.LoadAppSettings)
-  protected loadAppSettings(...args: any[]): FrameworkSettings {
-    return getSettings().framework;
-  }
-
   // ---------------------------------------------------------------------------
   // Save a new bot url to disk
   @Command(Commands.SaveBotUrl)
