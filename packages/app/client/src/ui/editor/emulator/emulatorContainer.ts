@@ -50,6 +50,7 @@ const mapStateToProps = (state: RootState, { documentId, ...ownProps }: { docume
   directLine: state.chat.chats[documentId].directLine,
   document: state.chat.chats[documentId],
   endpointId: state.chat.chats[documentId].endpointId,
+  framework: state.framework,
   presentationModeEnabled: state.presentation.enabled,
   url: state.clientAwareSettings.serverUrl,
   ...ownProps,

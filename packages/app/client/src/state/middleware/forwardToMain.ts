@@ -31,9 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { join } from 'path';
-import { appendFileSync } from 'fs';
-
 import { Middleware } from 'redux';
 import { ipcRenderer } from 'electron';
 
@@ -47,8 +44,6 @@ export const forwardToMain: Middleware = _store => next => action => {
   if ((action as any).meta && (action as any).meta.doNotForward) {
     return next(action);
   }
-  const logPath = join('C:', 'Users', 'toanzian', 'Desktop', 'logs', 'renderer-outbound.txt');
-  appendFileSync(logPath, `\n[${new Date().toLocaleTimeString()}] Action: ${action.type} \n`);
   // forward the action over ipc to the main process
   ipcRenderer.sendSync('sync-store', action);
   return next(action);

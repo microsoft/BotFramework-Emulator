@@ -31,9 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { join } from 'path';
-import { appendFileSync } from 'fs';
-
 import { Middleware } from 'redux';
 
 import { emulatorApplication } from '../../main';
@@ -48,8 +45,6 @@ export const forwardToRenderer: Middleware = _store => next => action => {
   if ((action as any).meta && (action as any).meta.doNotForward) {
     return next(action);
   }
-  const logPath = join('C:', 'Users', 'toanzian', 'Desktop', 'logs', 'main-outbound.txt');
-  appendFileSync(logPath, `\n[${new Date().toLocaleTimeString()}] Action: ${action.type} \n`);
   // forward the action over ipc to the client
   emulatorApplication.mainBrowserWindow.webContents.send('sync-store', action);
   return next(action);

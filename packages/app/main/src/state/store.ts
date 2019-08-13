@@ -31,9 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { appendFileSync } from 'fs';
-import { join } from 'path';
-
 import { Action, applyMiddleware, createStore, combineReducers, Store } from 'redux';
 import { ipcMain } from 'electron';
 import {
@@ -146,13 +143,9 @@ function initStore(): Store<RootState> {
   sagaMiddleware.run(settingsSagas);
 
   // sync the main process store with any updates on the renderer process
-  const logPath = join('C:', 'Users', 'toanzian', 'Desktop', 'logs', 'main-inbound.txt');
-  appendFileSync(join('C:', 'Users', 'toanzian', 'Desktop', 'logs', 'main-outbound.txt'), '\n=== START LOGGING ===\n');
-  appendFileSync(logPath, '\n=== START LOGGING ===\n');
   ipcMain.on('sync-store', (ev, action) => {
-    appendFileSync(logPath, `\n[${new Date().toLocaleTimeString()}] Action: ${action.type}\n`);
     // prevent an endless loop of forwarding the action over ipc
-    action = { ...action, meta: { doNotFoward: true } };
+    action = { ...action, meta: { doNotForward: true } };
     _store.dispatch(action);
     // unblock renderer process
     ev.returnValue = true;
