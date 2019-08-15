@@ -44,7 +44,7 @@ import {
   openResourcesSettings,
   renameResource,
 } from '../actions/resourcesActions';
-import { resources } from '../reducers/resourcesReducer';
+import { resources } from '../reducers/resources';
 
 import { resourceSagas } from './resourcesSagas';
 

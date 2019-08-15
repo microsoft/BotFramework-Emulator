@@ -38,7 +38,7 @@ import { ServiceTypes } from 'botframework-config/lib/schema';
 import { BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
 
 import { ResourcesSettingsContainer } from '../../../dialogs';
-import { resources } from '../../../../state/reducers/resourcesReducer';
+import { resources } from '../../../../state/reducers/resources';
 import {
   openContextMenuForResource,
   openResource,

@@ -39,7 +39,7 @@ export const REMOVE_USERS = 'REMOVE_USERS';
 
 export interface UserAction<P> extends Action {
   type: UserActionType;
-  state: P;
+  payload: P;
 }
 
 export interface UserPayload {
@@ -52,20 +52,20 @@ export declare type UserActionType = 'SET_CURRENT_USER' | 'ADD_USERS' | 'REMOVE_
 export function addUsers(users: User[]): UserAction<UserPayload> {
   return {
     type: ADD_USERS,
-    state: { users },
+    payload: { users },
   };
 }
 
 export function removeUsers(users: User[]): UserAction<UserPayload> {
   return {
     type: REMOVE_USERS,
-    state: { users },
+    payload: { users },
   };
 }
 
 export function setCurrentUser(user: User): UserAction<UserPayload> {
   return {
     type: SET_CURRENT_USER,
-    state: { user },
+    payload: { user },
   };
 }

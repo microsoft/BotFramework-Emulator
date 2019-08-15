@@ -31,47 +31,36 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { windowStateDefault, WindowStateSettings } from '@bfemulator/app-shared';
+import { windowStateDefault } from '@bfemulator/app-shared';
 
-import {
-  REMEMBER_BOUNDS,
-  REMEMBER_THEME,
-  REMEMBER_ZOOM_LEVEL,
-  RememberBoundsPayload,
-  RememberThemePayload,
-  RememberZoomLevelPayload,
-  WindowStateAction,
-  WindowStatePayload,
-} from '../actions/windowStateActions';
+import { rememberBounds, rememberTheme, rememberZoomLevel } from '../actions/windowStateActions';
 
-export function windowState(
-  state: WindowStateSettings = windowStateDefault,
-  action: WindowStateAction<WindowStatePayload>
-) {
-  switch (action.type) {
-    case REMEMBER_BOUNDS: {
-      const bounds = action.payload as RememberBoundsPayload;
-      return {
-        ...state,
-        displayId: bounds.displayId,
-        top: bounds.top,
-        left: bounds.left,
-        width: bounds.width,
-        height: bounds.height,
-      };
-    }
+import { windowState } from './windowState';
 
-    case REMEMBER_ZOOM_LEVEL: {
-      const { zoomLevel } = action.payload as RememberZoomLevelPayload;
-      return { ...state, zoomLevel };
-    }
+describe('windowState reducer', () => {
+  it('should return the unmodified state on unrecognized action', () => {
+    expect(windowState(undefined, { type: '' } as any)).toEqual(windowStateDefault);
+  });
 
-    case REMEMBER_THEME: {
-      const { theme } = action.payload as RememberThemePayload;
-      return { ...state, theme };
-    }
+  it('should handle a remember bounds action', () => {
+    const payload = { displayId: 0, top: 0, left: 0, width: 500, height: 500 };
+    const action = rememberBounds(payload);
+    const state = windowState({} as any, action);
 
-    default:
-      return state;
-  }
-}
+    expect(state).toEqual(payload);
+  });
+
+  it('should handle a remember zoom level action', () => {
+    const action = rememberZoomLevel({ zoomLevel: 100 });
+    const state = windowState({} as any, action);
+
+    expect(state).toEqual({ zoomLevel: 100 });
+  });
+
+  it('should handle a remember theme action', () => {
+    const action = rememberTheme('light');
+    const state = windowState({} as any, action);
+
+    expect(state).toEqual({ theme: 'light' });
+  });
+});

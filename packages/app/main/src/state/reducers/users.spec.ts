@@ -31,47 +31,44 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { windowStateDefault, WindowStateSettings } from '@bfemulator/app-shared';
+import { addUsers, setCurrentUser } from '../actions/userActions';
 
-import {
-  REMEMBER_BOUNDS,
-  REMEMBER_THEME,
-  REMEMBER_ZOOM_LEVEL,
-  RememberBoundsPayload,
-  RememberThemePayload,
-  RememberZoomLevelPayload,
-  WindowStateAction,
-  WindowStatePayload,
-} from '../actions/windowStateActions';
+import { users } from './users';
 
-export function windowState(
-  state: WindowStateSettings = windowStateDefault,
-  action: WindowStateAction<WindowStatePayload>
-) {
-  switch (action.type) {
-    case REMEMBER_BOUNDS: {
-      const bounds = action.payload as RememberBoundsPayload;
-      return {
-        ...state,
-        displayId: bounds.displayId,
-        top: bounds.top,
-        left: bounds.left,
-        width: bounds.width,
-        height: bounds.height,
-      };
-    }
+describe('users reducer', () => {
+  it('should return the unmodified state on unrecognized action', () => {
+    expect(users(undefined, { type: '' } as any)).toEqual({});
+  });
 
-    case REMEMBER_ZOOM_LEVEL: {
-      const { zoomLevel } = action.payload as RememberZoomLevelPayload;
-      return { ...state, zoomLevel };
-    }
+  it('should handle a set current user action', () => {
+    const user: any = { id: 'user1' };
+    const action = setCurrentUser(user);
+    const state = users({} as any, action);
 
-    case REMEMBER_THEME: {
-      const { theme } = action.payload as RememberThemePayload;
-      return { ...state, theme };
-    }
+    expect(state).toEqual({ currentUserId: 'user1', usersById: { user1: user } });
+  });
 
-    default:
-      return state;
-  }
-}
+  it('should handle an add users action', () => {
+    const initialState: any = {
+      usersById: {
+        user1: {},
+      },
+    };
+    const action = addUsers([{ name: '', id: 'user1' }, { name: '', id: 'user2' }, { name: '', id: 'user3' }]);
+    const state = users(initialState, action);
+
+    expect(state).toEqual({
+      usersById: {
+        user1: {},
+        user2: {
+          name: '',
+          id: 'user2',
+        },
+        user3: {
+          name: '',
+          id: 'user3',
+        },
+      },
+    });
+  });
+});

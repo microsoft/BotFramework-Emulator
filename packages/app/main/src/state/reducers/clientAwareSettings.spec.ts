@@ -31,47 +31,20 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { windowStateDefault, WindowStateSettings } from '@bfemulator/app-shared';
+import { clientAwareSettingsChanged } from '../actions/clientAwareSettingsActions';
 
-import {
-  REMEMBER_BOUNDS,
-  REMEMBER_THEME,
-  REMEMBER_ZOOM_LEVEL,
-  RememberBoundsPayload,
-  RememberThemePayload,
-  RememberZoomLevelPayload,
-  WindowStateAction,
-  WindowStatePayload,
-} from '../actions/windowStateActions';
+import { clientAwareSettings } from './clientAwareSettings';
 
-export function windowState(
-  state: WindowStateSettings = windowStateDefault,
-  action: WindowStateAction<WindowStatePayload>
-) {
-  switch (action.type) {
-    case REMEMBER_BOUNDS: {
-      const bounds = action.payload as RememberBoundsPayload;
-      return {
-        ...state,
-        displayId: bounds.displayId,
-        top: bounds.top,
-        left: bounds.left,
-        width: bounds.width,
-        height: bounds.height,
-      };
-    }
+describe('clientAwareSettings reducer', () => {
+  it('should return the unmodified state on unrecognized action', () => {
+    expect(clientAwareSettings(undefined, { type: '' } as any)).toEqual({});
+  });
 
-    case REMEMBER_ZOOM_LEVEL: {
-      const { zoomLevel } = action.payload as RememberZoomLevelPayload;
-      return { ...state, zoomLevel };
-    }
+  it('should handle a settings changed action', () => {
+    const mockSettings: any = { someSetting: 123 };
+    const action = clientAwareSettingsChanged(mockSettings);
+    const state = clientAwareSettings({} as any, action);
 
-    case REMEMBER_THEME: {
-      const { theme } = action.payload as RememberThemePayload;
-      return { ...state, theme };
-    }
-
-    default:
-      return state;
-  }
-}
+    expect(state).toEqual(mockSettings);
+  });
+});

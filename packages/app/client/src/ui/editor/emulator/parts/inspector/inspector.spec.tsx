@@ -48,7 +48,7 @@ import { load, setActive } from '../../../../../state/actions/botActions';
 import { switchTheme } from '../../../../../state/actions/themeActions';
 import { bot } from '../../../../../state/reducers/bot';
 import { clientAwareSettings } from '../../../../../state/reducers/clientAwareSettings';
-import { theme } from '../../../../../state/reducers/themeReducer';
+import { theme } from '../../../../../state/reducers/theme';
 import { ExtensionManager } from '../../../../../extensions';
 import { logService } from '../../../../../platform/log/logService';
 import { executeCommand } from '../../../../../state/actions/commandActions';
