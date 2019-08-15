@@ -37,7 +37,7 @@ import { combineReducers, createStore } from 'redux';
 import { ServiceTypes } from 'botframework-config/lib/schema';
 import { BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
 
-import { resources } from '../../../../state/reducers/resourcesReducer';
+import { resources } from '../../../../state/reducers/resources';
 import { bot } from '../../../../state/reducers/bot';
 import { chatFilesUpdated, transcriptsUpdated } from '../../../../state/actions/resourcesActions';
 import { load, setActive } from '../../../../state/actions/botActions'; // important

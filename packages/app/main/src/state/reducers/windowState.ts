@@ -50,7 +50,7 @@ export function windowState(
 ) {
   switch (action.type) {
     case REMEMBER_BOUNDS: {
-      const bounds = action.state as RememberBoundsPayload;
+      const bounds = action.payload as RememberBoundsPayload;
       return {
         ...state,
         displayId: bounds.displayId,
@@ -62,7 +62,7 @@ export function windowState(
     }
 
     case REMEMBER_ZOOM_LEVEL: {
-      const { zoomLevel } = action.state as RememberZoomLevelPayload;
+      const { zoomLevel } = action.payload as RememberZoomLevelPayload;
       return { ...state, zoomLevel };
     }
 

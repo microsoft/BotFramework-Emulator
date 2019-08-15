@@ -36,7 +36,7 @@ import { Component } from 'react';
 import { combineReducers, createStore } from 'redux';
 
 import { bot } from '../../../state/reducers/bot';
-import { resources } from '../../../state/reducers/resourcesReducer';
+import { resources } from '../../../state/reducers/resources';
 import * as DialogActions from '../../../state/actions/dialogActions';
 
 import { DialogService } from './dialogService';

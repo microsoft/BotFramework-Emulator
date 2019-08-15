@@ -30,46 +30,22 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+import { SWITCH_THEME, SwitchThemePayload, ThemeAction } from '../actions/themeActions';
 
-import { windowStateDefault, WindowStateSettings } from '@bfemulator/app-shared';
+export interface ThemeState {
+  themeName: string;
+  themeComponents: string[];
+}
 
-import {
-  REMEMBER_BOUNDS,
-  REMEMBER_THEME,
-  REMEMBER_ZOOM_LEVEL,
-  RememberBoundsPayload,
-  RememberThemePayload,
-  RememberZoomLevelPayload,
-  WindowStateAction,
-  WindowStatePayload,
-} from '../actions/windowStateActions';
+const initialState: ThemeState = {
+  themeName: null,
+  themeComponents: [],
+};
 
-export function windowState(
-  state: WindowStateSettings = windowStateDefault,
-  action: WindowStateAction<WindowStatePayload>
-) {
+export function theme(state: ThemeState = initialState, action: ThemeAction<SwitchThemePayload>): ThemeState {
   switch (action.type) {
-    case REMEMBER_BOUNDS: {
-      const bounds = action.payload as RememberBoundsPayload;
-      return {
-        ...state,
-        displayId: bounds.displayId,
-        top: bounds.top,
-        left: bounds.left,
-        width: bounds.width,
-        height: bounds.height,
-      };
-    }
-
-    case REMEMBER_ZOOM_LEVEL: {
-      const { zoomLevel } = action.payload as RememberZoomLevelPayload;
-      return { ...state, zoomLevel };
-    }
-
-    case REMEMBER_THEME: {
-      const { theme } = action.payload as RememberThemePayload;
-      return { ...state, theme };
-    }
+    case SWITCH_THEME:
+      return { ...state, ...action.payload };
 
     default:
       return state;

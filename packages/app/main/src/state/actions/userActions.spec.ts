@@ -45,21 +45,21 @@ describe('User actions', () => {
   test('addUsers action', () => {
     expect(userActions.addUsers(users)).toEqual({
       type: userActions.ADD_USERS,
-      state: { users },
+      payload: { users },
     });
   });
 
   test('removeUsers action', () => {
     expect(userActions.removeUsers(users)).toEqual({
       type: userActions.REMOVE_USERS,
-      state: { users },
+      payload: { users },
     });
   });
 
   test('setCurrentUser action', () => {
     expect(userActions.setCurrentUser(user)).toEqual({
       type: userActions.SET_CURRENT_USER,
-      state: { user },
+      payload: { user },
     });
   });
 });

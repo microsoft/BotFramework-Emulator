@@ -39,19 +39,19 @@ export function users(state: UserSettings = {}, action: UserAction<UserPayload>)
   switch (action.type) {
     case SET_CURRENT_USER: {
       const usersById = { ...state.usersById };
-      const { user } = action.state;
+      const { user } = action.payload;
       usersById[user.id] = user;
       return { currentUserId: user.id, usersById };
     }
 
     case ADD_USERS: {
-      const newUsersById = {};
-      for (const key in action.state.users) {
-        if (!action.state.users.hasOwnProperty(key)) {
+      const newUsersById = { ...state.usersById };
+      for (const i in action.payload.users) {
+        const user = action.payload.users[i];
+        if (newUsersById.hasOwnProperty(user.id)) {
           continue;
         }
-        const user1 = action.state.users[key];
-        newUsersById[user1.id] = user1;
+        newUsersById[user.id] = user;
       }
       return { ...state, usersById: newUsersById };
     }

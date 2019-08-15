@@ -37,7 +37,7 @@ import { combineReducers, createStore } from 'redux';
 import { SharedConstants } from '@bfemulator/app-shared';
 
 import { bot } from '../../../state/reducers/bot';
-import { resources } from '../../../state/reducers/resourcesReducer';
+import { resources } from '../../../state/reducers/resources';
 import { load, setActive } from '../../../state/actions/botActions';
 import { executeCommand } from '../../../state/actions/commandActions';
 

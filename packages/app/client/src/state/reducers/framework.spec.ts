@@ -31,47 +31,24 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { windowStateDefault, WindowStateSettings } from '@bfemulator/app-shared';
+import { frameworkDefault } from '@bfemulator/app-shared';
 
-import {
-  REMEMBER_BOUNDS,
-  REMEMBER_THEME,
-  REMEMBER_ZOOM_LEVEL,
-  RememberBoundsPayload,
-  RememberThemePayload,
-  RememberZoomLevelPayload,
-  WindowStateAction,
-  WindowStatePayload,
-} from '../actions/windowStateActions';
+import { setFrameworkSettings } from '../actions/frameworkSettingsActions';
 
-export function windowState(
-  state: WindowStateSettings = windowStateDefault,
-  action: WindowStateAction<WindowStatePayload>
-) {
-  switch (action.type) {
-    case REMEMBER_BOUNDS: {
-      const bounds = action.payload as RememberBoundsPayload;
-      return {
-        ...state,
-        displayId: bounds.displayId,
-        top: bounds.top,
-        left: bounds.left,
-        width: bounds.width,
-        height: bounds.height,
-      };
-    }
+import { framework } from './framework';
 
-    case REMEMBER_ZOOM_LEVEL: {
-      const { zoomLevel } = action.payload as RememberZoomLevelPayload;
-      return { ...state, zoomLevel };
-    }
+describe('framework settings reducer', () => {
+  it('should return the unmodified state on unrecognized action', () => {
+    const state = framework(undefined, { type: '' } as any);
 
-    case REMEMBER_THEME: {
-      const { theme } = action.payload as RememberThemePayload;
-      return { ...state, theme };
-    }
+    expect(state).toEqual(frameworkDefault);
+  });
 
-    default:
-      return state;
-  }
-}
+  it('should handle a set framework settings action', () => {
+    const mockSettings: any = { someSetting: 123 };
+    const action = setFrameworkSettings(mockSettings);
+    const state = framework({} as any, action);
+
+    expect(state).toEqual(mockSettings);
+  });
+});

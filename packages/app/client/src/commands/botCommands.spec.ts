@@ -41,7 +41,7 @@ import { combineReducers, createStore } from 'redux';
 
 import * as BotActions from '../state/actions/botActions';
 import { bot } from '../state/reducers/bot';
-import { resources } from '../state/reducers/resourcesReducer';
+import { resources } from '../state/reducers/resources';
 import { ActiveBotHelper } from '../ui/helpers/activeBotHelper';
 
 import { BotCommands } from './botCommands';

@@ -30,26 +30,29 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { SWITCH_THEME, SwitchThemePayload, ThemeAction } from '../actions/themeActions';
 
-export interface ThemeState {
-  themeName: string;
-  themeHref: string;
-  themeComponents: string[];
-}
+import { cancelCurrentProcess, updateProgressIndicator } from '../actions/progressIndicatorActions';
 
-const initialState: ThemeState = {
-  themeName: null,
-  themeHref: null,
-  themeComponents: [],
-};
+import { initialState, progressIndicator } from './progressIndicator';
 
-export function theme(state: ThemeState = initialState, action: ThemeAction<SwitchThemePayload>): ThemeState {
-  switch (action.type) {
-    case SWITCH_THEME:
-      return { ...state, ...action.payload };
+describe('progressIndicator reducer', () => {
+  it('should return the unmodified state on unrecognized action', () => {
+    const state = progressIndicator(undefined, { type: '' } as any);
 
-    default:
-      return state;
-  }
-}
+    expect(state).toEqual(initialState);
+  });
+
+  it('should handle an update progress indicator action', () => {
+    const payload: any = { label: 'Downloading...', progress: 66 };
+    const action = updateProgressIndicator(payload);
+    const state = progressIndicator({} as any, action);
+
+    expect(state).toEqual(payload);
+  });
+
+  it('should handle a cancel current progress action', () => {
+    const state = progressIndicator({} as any, cancelCurrentProcess() as any);
+
+    expect(state).toEqual({ canceled: true });
+  });
+});

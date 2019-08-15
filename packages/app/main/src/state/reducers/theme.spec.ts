@@ -31,47 +31,25 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { windowStateDefault, WindowStateSettings } from '@bfemulator/app-shared';
+import { switchTheme } from '../actions/themeActions';
 
-import {
-  REMEMBER_BOUNDS,
-  REMEMBER_THEME,
-  REMEMBER_ZOOM_LEVEL,
-  RememberBoundsPayload,
-  RememberThemePayload,
-  RememberZoomLevelPayload,
-  WindowStateAction,
-  WindowStatePayload,
-} from '../actions/windowStateActions';
+import { theme } from './theme';
 
-export function windowState(
-  state: WindowStateSettings = windowStateDefault,
-  action: WindowStateAction<WindowStatePayload>
-) {
-  switch (action.type) {
-    case REMEMBER_BOUNDS: {
-      const bounds = action.payload as RememberBoundsPayload;
-      return {
-        ...state,
-        displayId: bounds.displayId,
-        top: bounds.top,
-        left: bounds.left,
-        width: bounds.width,
-        height: bounds.height,
-      };
-    }
+describe('theme reducer', () => {
+  it('should return the unmodified state on unrecognized action', () => {
+    expect(theme(undefined, { type: '' } as any)).toEqual({
+      themeName: null,
+      themeComponents: [],
+    });
+  });
 
-    case REMEMBER_ZOOM_LEVEL: {
-      const { zoomLevel } = action.payload as RememberZoomLevelPayload;
-      return { ...state, zoomLevel };
-    }
+  it('should handle a switch theme action', () => {
+    const action = switchTheme('light', ['light.css']);
+    const state = theme({} as any, action);
 
-    case REMEMBER_THEME: {
-      const { theme } = action.payload as RememberThemePayload;
-      return { ...state, theme };
-    }
-
-    default:
-      return state;
-  }
-}
+    expect(state).toEqual({
+      themeName: 'light',
+      themeComponents: ['light.css'],
+    });
+  });
+});

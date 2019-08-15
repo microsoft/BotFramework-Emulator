@@ -31,47 +31,20 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { windowStateDefault, WindowStateSettings } from '@bfemulator/app-shared';
+import { setOpenUrl } from '../actions/protocolActions';
 
-import {
-  REMEMBER_BOUNDS,
-  REMEMBER_THEME,
-  REMEMBER_ZOOM_LEVEL,
-  RememberBoundsPayload,
-  RememberThemePayload,
-  RememberZoomLevelPayload,
-  WindowStateAction,
-  WindowStatePayload,
-} from '../actions/windowStateActions';
+import { protocol, ProtocolState } from './protocol';
 
-export function windowState(
-  state: WindowStateSettings = windowStateDefault,
-  action: WindowStateAction<WindowStatePayload>
-) {
-  switch (action.type) {
-    case REMEMBER_BOUNDS: {
-      const bounds = action.payload as RememberBoundsPayload;
-      return {
-        ...state,
-        displayId: bounds.displayId,
-        top: bounds.top,
-        left: bounds.left,
-        width: bounds.width,
-        height: bounds.height,
-      };
-    }
+describe('protocol reducer', () => {
+  it('should return the unmodified state on unrecognized action', () => {
+    expect(protocol(undefined, { type: '' } as any)).toEqual({ openUrls: [] });
+  });
 
-    case REMEMBER_ZOOM_LEVEL: {
-      const { zoomLevel } = action.payload as RememberZoomLevelPayload;
-      return { ...state, zoomLevel };
-    }
+  it('should handle a set open urls action', () => {
+    const initialState: ProtocolState = { openUrls: ['www.url.com'] };
+    const action = setOpenUrl('www.other-url.com');
+    const state = protocol(initialState, action);
 
-    case REMEMBER_THEME: {
-      const { theme } = action.payload as RememberThemePayload;
-      return { ...state, theme };
-    }
-
-    default:
-      return state;
-  }
-}
+    expect(state).toEqual({ openUrls: ['www.url.com', 'www.other-url.com'] });
+  });
+});

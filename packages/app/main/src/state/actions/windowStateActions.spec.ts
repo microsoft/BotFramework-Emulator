@@ -53,7 +53,7 @@ describe('Window state actions', () => {
     };
     expect(windowStateActions.rememberBounds(boundsState)).toEqual({
       type: windowStateActions.REMEMBER_BOUNDS,
-      state: boundsState,
+      payload: boundsState,
     });
   });
 
@@ -61,7 +61,7 @@ describe('Window state actions', () => {
     const zoomState = { zoomLevel: 200 };
     expect(windowStateActions.rememberZoomLevel(zoomState)).toEqual({
       type: windowStateActions.REMEMBER_ZOOM_LEVEL,
-      state: zoomState,
+      payload: zoomState,
     });
   });
 });
