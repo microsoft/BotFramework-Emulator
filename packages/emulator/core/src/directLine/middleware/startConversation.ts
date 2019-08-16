@@ -73,13 +73,7 @@ export default function startConversation(botEmulator: BotEmulator) {
       await conversation.sendConversationUpdate([currentUser, { id: botEndpoint.botId, name: 'Bot' }], undefined);
       created = true;
     } else if (botEndpoint && !conversationId.endsWith('transcript')) {
-      if (conversation.members.findIndex(user => user.id === botEndpoint.botId) === -1) {
-        // Adds bot to conversation and sends "bot added to conversation"
-        conversation.addMember(botEndpoint.botId, 'Bot');
-      } else {
-        // Sends "bot added to conversation"
-        await conversation.sendConversationUpdate([{ id: botEndpoint.botId, name: 'Bot' }], undefined);
-      }
+      const membersToAddInConversationUpdate = [];
 
       const userIsNotInConversation = conversation.members.findIndex(user => user.id === currentUser.id) === -1;
       if (userIsNotInConversation) {
@@ -87,7 +81,20 @@ export default function startConversation(botEmulator: BotEmulator) {
         conversation.addMember(currentUser.id, currentUser.name);
       } else {
         // Sends "user added to conversation"
-        await conversation.sendConversationUpdate([currentUser], undefined);
+        membersToAddInConversationUpdate.push(currentUser);
+      }
+
+      const botIsNotInConversation = conversation.members.findIndex(user => user.id === botEndpoint.botId) === -1;
+      if (botIsNotInConversation) {
+        // Adds bot to conversation and sends "bot added to conversation"
+        conversation.addMember(botEndpoint.botId, 'Bot');
+      } else {
+        // Sends "bot added to conversation"
+        membersToAddInConversationUpdate.push({ id: botEndpoint.botId, name: 'Bot' });
+      }
+
+      if (membersToAddInConversationUpdate.length) {
+        await conversation.sendConversationUpdate(membersToAddInConversationUpdate, undefined);
       }
     }
 
