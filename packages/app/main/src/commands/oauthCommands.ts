@@ -51,7 +51,7 @@ export class OauthCommands {
     if (!convo) {
       throw new Error(`oauth:send-token-response: Conversation ${conversationId} not found.`);
     }
-    await convo.sendTokenResponse(connectionName, conversationId, false);
+    await convo.sendTokenResponse(connectionName, token, false);
   }
 
   // ---------------------------------------------------------------------------
