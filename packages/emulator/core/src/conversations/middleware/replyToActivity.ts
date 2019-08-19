@@ -47,15 +47,8 @@ export default function replyToActivity(botEmulator: BotEmulator) {
     const conversationParameters: ConversationAPIPathParameters = req.params;
 
     try {
-      // TODO: Need to re-enable
-      // VersionManager.checkVersion(req.header("User-agent"));
-
       activity.id = activity.id || null;
       activity.replyToId = req.params.activityId;
-
-      // if we found the activity to reply to
-      // if (!conversation.activities.find((existingActivity, index, obj) => existingActivity.id == activity.replyToId))
-      // throw createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "replyToId is not a known activity id");
 
       const continuation = function(): void {
         const response: ResourceResponse = (req as any).conversation.postActivityToUser(activity);
@@ -64,20 +57,24 @@ export default function replyToActivity(botEmulator: BotEmulator) {
         res.end();
       };
 
-      const visitor = new OAuthLinkEncoder(
-        botEmulator,
-        req.headers.authorization as string,
-        activity,
-        conversationParameters.conversationId
-      );
-      visitor.resolveOAuthCards(activity).then(
-        (value?: any) => {
+      const { conversationId } = conversationParameters;
+      const visitor = new OAuthLinkEncoder(botEmulator, req.headers.authorization as string, activity, conversationId);
+      visitor
+        .resolveOAuthCards(activity)
+        .then(_ => {
           continuation();
-        },
-        (_reason: any) => {
-          continuation();
-        }
-      );
+        })
+        .catch(
+          // failed to generate an OAuth signin link
+          (reason: any) => {
+            botEmulator.facilities.logger.logException(conversationId, reason);
+            botEmulator.facilities.logger.logException(
+              conversationId,
+              new Error('Falling back to emulated OAuth token.')
+            );
+            continuation();
+          }
+        );
     } catch (err) {
       sendErrorResponse(req, res, next, err);
     }
