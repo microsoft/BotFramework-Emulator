@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [main] Added End-to-End tests using Spectron in PR [1696](https://github.com/microsoft/BotFramework-Emulator/pull/1696)
 - [main] New Conversation: send a single conversation update activity including bot and user as members added [1709](https://github.com/microsoft/BotFramework-Emulator/pull/1709)
 - [app] Consolidated application state store and removed the need for explicit state synchronization between the main and renderer processes in PR [1721](https://github.com/microsoft/BotFramework-Emulator/pull/1721)
+- [main] Added logging to OAuth signin link generation flow in PR [1745](https://github.com/microsoft/BotFramework-Emulator/pull/1745)
 
 ## Fixed
 - [main] Fixed bug where opening a chat via URL was sending two conversation updates in PR [1735](https://github.com/microsoft/BotFramework-Emulator/pull/1735)
