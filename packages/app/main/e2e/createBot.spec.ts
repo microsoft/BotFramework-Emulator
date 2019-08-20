@@ -79,7 +79,7 @@ describe('Creating a bot', () => {
     await app.client.click('button[name="create-bot-save"]');
 
     // wait for Web Chat to show up
-    await app.client.waitForExist('div[role="log"] + div[role="form"]', 2000);
+    await app.client.waitForExist('div[role="log"] + div[role="form"]', 3000);
 
     // verify that the bot was written to disk
     expect(existsSync(testBotPath)).toBe(true);

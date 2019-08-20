@@ -1,0 +1,18 @@
+{
+    "name": "e2e-test-bot",
+    "description": "",
+    "services": [
+        {
+            "type": "endpoint",
+            "appId": "",
+            "appPassword": "",
+            "endpoint": "http://localhost:3999/api/messages",
+            "id": "92e19130-c37f-11e9-aaf4-234c3b063205",
+            "name": "http://localhost:3999/api/messages"
+        }
+    ],
+    "padlock": "",
+    "version": "2.0",
+    "overrides": null,
+    "path": ""
+}
