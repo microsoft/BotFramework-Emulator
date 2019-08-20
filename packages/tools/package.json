@@ -1,0 +1,24 @@
+{
+  "name": "@bfemulator/tools",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start:test-bot": "node test-bot/index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "botbuilder": "4.5.1",
+    "dotenv": "8.0.0",
+    "restify": "8.3.3"
+  },
+  "devDependencies": {
+    "eslint": "6.0.1",
+    "eslint-config-standard": "13.0.1",
+    "eslint-plugin-import": "2.18.2",
+    "eslint-plugin-node": "9.1.0",
+    "eslint-plugin-promise": "4.2.1",
+    "eslint-plugin-standard": "4.0.0"
+  }
+}

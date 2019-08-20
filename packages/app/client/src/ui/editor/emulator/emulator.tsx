@@ -295,6 +295,7 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
             {mode === 'livechat' && (
               <>
                 <SplitButton
+                  id={'restart-conversation'}
                   defaultLabel="Restart conversation"
                   buttonClass={styles.restartIcon}
                   options={[NewUserId, SameUserId]}

@@ -218,7 +218,7 @@ export class LogEntry extends React.Component<LogEntryProps> {
     const summaryText = this.summaryText(obj) || '';
     return (
       <span key={key} onMouseOver={() => this.highlight(obj)} onMouseLeave={() => this.highlight({})}>
-        <span className={`${styles.spaced} ${styles.level0}`}>
+        <span className={`inspectable-item ${styles.spaced} ${styles.level0}`}>
           <button className={styles.link} onClick={() => this.inspectAndHighlightInWebchat(obj)}>
             {title}
           </button>
@@ -241,7 +241,7 @@ export class LogEntry extends React.Component<LogEntryProps> {
     }
     if (obj) {
       return (
-        <span key={key} className={`${styles.spaced} ${styles.level0}`}>
+        <span key={key} className={`network-req-item ${styles.spaced} ${styles.level0}`}>
           <button className={styles.link} onClick={() => this.inspect(obj)}>
             {method}
           </button>
@@ -249,7 +249,7 @@ export class LogEntry extends React.Component<LogEntryProps> {
       );
     } else {
       return (
-        <span key={key} className={`${styles.spaced} ${styles.level0}`}>
+        <span key={key} className={`network-req-item ${styles.spaced} ${styles.level0}`}>
           {method}
         </span>
       );
@@ -283,7 +283,7 @@ export class LogEntry extends React.Component<LogEntryProps> {
     }
     if (obj) {
       return (
-        <span key={key} className={`${styles.spaced} ${styles.level0}`}>
+        <span key={key} className={`network-res-item ${styles.spaced} ${styles.level0}`}>
           <button className={styles.link} onClick={() => this.inspect(obj)}>
             {statusCode}
           </button>
@@ -291,7 +291,7 @@ export class LogEntry extends React.Component<LogEntryProps> {
       );
     } else {
       return (
-        <span key={key} className={`${styles.spaced} ${styles.level0}`}>
+        <span key={key} className={`network-res-item ${styles.spaced} ${styles.level0}`}>
           {statusCode}
         </span>
       );
