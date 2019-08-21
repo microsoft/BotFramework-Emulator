@@ -129,5 +129,8 @@ export function isTranscriptFile(file: string = '') {
 
 export function traceContainsDebugData(trace: Activity): boolean {
   const valueTypeByte = trace ? ~~ValueTypesMask[trace.valueType] : 0;
-  return !!((ValueTypesMask.BotState | ValueTypesMask.Command | ValueTypesMask.Activity) & valueTypeByte);
+  return !!(
+    (ValueTypesMask.BotState | ValueTypesMask.Command | ValueTypesMask.Activity | ValueTypesMask.Trace) &
+    valueTypeByte
+  );
 }

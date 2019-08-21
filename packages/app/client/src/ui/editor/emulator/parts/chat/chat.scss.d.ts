@@ -5,3 +5,4 @@ export const selectedActivity: string;
 export const disconnected: string;
 export const startButton: string;
 export const botStateObject: string;
+export const traceObject: string;

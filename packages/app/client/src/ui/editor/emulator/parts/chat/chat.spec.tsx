@@ -230,6 +230,32 @@ describe('<ChatContainer />', () => {
       expect(activityWrapper.text()).toEqual('Bot State');
     });
 
+    it('should render a dialog trace activity as awhen the mode is set to "debug"', () => {
+      const next = () => (kids: any) => kids;
+      const webChat = render({ document: { ...defaultDocument, mode: 'debug' } as any }).find(ReactWebChat);
+      const card = {
+        activity: {
+          valueType: ValueTypes.Trace,
+          id: 'activity-id',
+          type: ActivityTypes.Trace,
+          value: { type: ActivityTypes.Event },
+          label: 'Test Trace',
+        },
+      };
+      const middleware = webChat.prop('activityMiddleware') as any;
+      const activityWrapper = mount(middleware()(next)(card)(null));
+      expect(activityWrapper.props()).toMatchObject({
+        'aria-selected': false,
+        children: 'Test Trace',
+        className: undefined,
+        'data-activity-id': 'activity-id',
+        onClick: jasmine.any(Function),
+        onContextMenu: jasmine.any(Function),
+        onKeyDown: jasmine.any(Function),
+      });
+      expect(activityWrapper.text()).toEqual('Test Trace');
+    });
+
     ['trace', 'endOfConversation'].forEach((type: string) => {
       it(`does not render ${type} activities`, () => {
         const next = () => (kids: any) => kids;

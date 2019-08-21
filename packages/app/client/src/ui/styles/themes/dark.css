@@ -58,6 +58,11 @@ html {
   --bot-state-button-color-focus: var(--neutral-1);
   --bot-state-diff-indicator-color: #A1260D;
 
+  /* trace button */
+  --trace-button-color: var(--neutral-6);
+  --trace-button-color-focus: var(--neutral-1);
+  --trace-diff-indicator-color: #A1260D;
+
   /* Log panel custom colors */
   --log-panel-timestamp: #47B07F;
   --log-panel-link: #9CDCFE;

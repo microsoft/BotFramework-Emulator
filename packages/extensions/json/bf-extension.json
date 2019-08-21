@@ -17,6 +17,10 @@
           {
             "path": "valueType",
             "value": "https://www.botframework.com/schemas/diff"
+          },
+          {
+            "path": "valueType",
+            "value": "https://www.botframework.com/schemas/trace"
           }
         ],
         "summaryText": [

@@ -239,7 +239,25 @@ export class Chat extends Component<ChatProps, ChatState> {
           onContextMenu={this.onContextMenu}
           aria-selected={this.shouldBeSelected(card.activity)}
         >
-          Bot State
+          {card.activity.label || 'Bot State'}
+        </PrimaryButton>
+      );
+    } else if (valueType == ValueTypes.Trace) {
+      const diffIndicatorIndex =
+        this.state.highlightedActivities.length > 1
+          ? this.state.highlightedActivities.findIndex(activity => areActivitiesEqual(activity, card.activity))
+          : -1;
+      return (
+        <PrimaryButton
+          className={styles.traceObject}
+          data-activity-id={card.activity.id}
+          data-diff-indicator-index={diffIndicatorIndex}
+          onKeyDown={this.onItemRendererKeyDown}
+          onClick={this.onItemRendererClick}
+          onContextMenu={this.onContextMenu}
+          aria-selected={this.shouldBeSelected(card.activity)}
+        >
+          {card.activity.label || 'Trace'}
         </PrimaryButton>
       );
     }

@@ -161,3 +161,50 @@ button.bot-state-object {
     }
   }
 }
+
+button.trace-object {
+  cursor: pointer;
+  margin: 0 16px;
+  min-width: initial;
+  background: transparent;
+  color: var(--trace-button-color);
+  font-weight: bold;
+
+  &:active {
+    color: var(--trace-button-color-focus);
+  }
+
+  &[aria-selected="false"] {
+    color: var(--trace-button-color);
+  }
+
+  &:hover:not([disabled]), &:focus {
+    background: transparent;
+    color: var(--trace-button-color-focus);
+  }
+
+  &[aria-selected="true"] {
+    color: var(--trace-button-color-focus);
+
+    &[data-diff-indicator-index='0'] {
+      color: var(--trace-button-color);
+
+      &:before {
+        background: var(--trace-diff-indicator-color);
+      }
+    }
+
+    &:before {
+      content: '';
+      position: absolute;
+      background: var(--split-button-icon-color);
+      border-radius: 7px;
+      width: 7px;
+      height: 7px;
+      z-index: 2;
+      top: 50%;
+      transform: translateY(-50%);
+      left: -10px;
+    }
+  }
+}
