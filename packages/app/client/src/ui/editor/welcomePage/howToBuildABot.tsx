@@ -67,11 +67,19 @@ export function HowToBuildABot() {
               </a>
               <br />
               Create a bot&nbsp;
-              <a className={styles.ctaLink} href="https://aka.ms/bot-framework-emulator-create-bot-azure">
+              <a
+                className={styles.ctaLink}
+                aria-label="Create a bot from Azure"
+                href="https://aka.ms/bot-framework-emulator-create-bot-azure"
+              >
                 from Azure
               </a>{' '}
               or&nbsp;
-              <a className={styles.ctaLink} href="https://aka.ms/bot-framework-emulator-create-bot-locally">
+              <a
+                className={styles.ctaLink}
+                aria-label="Create a bot locally"
+                href="https://aka.ms/bot-framework-emulator-create-bot-locally"
+              >
                 locally
               </a>
               <br />
