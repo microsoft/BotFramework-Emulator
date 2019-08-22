@@ -40,6 +40,7 @@ declare function fetch(input: RequestInfo, init?: RequestInit): Promise<Response
   const [urlOrRequest, requestInit = {}] = args;
 
   // Https localhost
+  // eslint-disable-next-line typescript/no-var-requires
   const https = require('https');
   const httpsAgent = new https.Agent({ rejectUnauthorized: false });
   if (args[0].includes('https://localhost')) {
