@@ -44,6 +44,7 @@ declare function fetch(input: RequestInfo, init?: RequestInit): Promise<Response
   const https = require('https');
   const httpsAgent = new https.Agent({ rejectUnauthorized: false });
   const allowLocalhost = 'https://localhost';
+
   if (args[0].includes(allowLocalhost)) {
     requestInit.agent = httpsAgent;
   }
