@@ -43,7 +43,8 @@ declare function fetch(input: RequestInfo, init?: RequestInit): Promise<Response
   // eslint-disable-next-line typescript/no-var-requires
   const https = require('https');
   const httpsAgent = new https.Agent({ rejectUnauthorized: false });
-  if (args[0].includes('https://localhost')) {
+  const allowLocalhost = 'https://localhost';
+  if (args[0].includes(allowLocalhost)) {
     requestInit.agent = httpsAgent;
   }
 
