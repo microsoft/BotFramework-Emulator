@@ -38,6 +38,14 @@ const nodeFetch = require('node-fetch');
 declare function fetch(input: RequestInfo, init?: RequestInit): Promise<Response>;
 (global as any).fetch = function(...args: any[]) {
   const [urlOrRequest, requestInit = {}] = args;
+
+  // Https localhost
+  const https = require('https');
+  const httpsAgent = new https.Agent({ rejectUnauthorized: false });
+  if (args[0].includes('https://localhost')) {
+    requestInit.agent = httpsAgent;
+  }
+
   // No Proxy
   const url: string = typeof urlOrRequest === 'string' ? urlOrRequest : urlOrRequest.url;
   if (!process.env.HTTPS_PROXY || (process.env.NO_PROXY && url.includes(process.env.NO_PROXY))) {
