@@ -32,16 +32,7 @@
 //
 
 import { FrameworkSettings, frameworkDefault } from '@bfemulator/app-shared';
-import {
-  Checkbox,
-  Column,
-  PrimaryButton,
-  Row,
-  RowAlignment,
-  RowJustification,
-  SmallHeader,
-  TextField,
-} from '@bfemulator/ui-react';
+import { Checkbox, Column, PrimaryButton, Row, RowAlignment, RowJustification, TextField } from '@bfemulator/ui-react';
 import * as React from 'react';
 import { ChangeEvent } from 'react';
 
@@ -112,142 +103,150 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
       <GenericDocument className={styles.appSettingsEditor}>
         <Row>
           <Column className={styles.spacing}>
-            <SmallHeader>Service</SmallHeader>
-            <p>
-              <a href="https://ngrok.com/" target="_blank" rel="noopener noreferrer">
-                ngrok
-              </a>{' '}
-              is network tunneling software. The Bot Framework Emulator works with ngrok to communicate with bots hosted
-              remotely. Read the{' '}
-              <a
-                href="https://github.com/Microsoft/BotFramework-Emulator/wiki/Tunneling-(ngrok)"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                wiki page
-              </a>{' '}
-              to learn more about using ngrok and how to download it.
-            </p>
-            <Row align={RowAlignment.Center} className={styles.marginBottomRow}>
-              <TextField
-                className={styles.appSettingsInput}
-                inputContainerClassName={styles.inputContainer}
-                readOnly={false}
-                value={ngrokPath}
-                onChange={this.onInputChange}
-                name="ngrokPath"
-                label={'Path to ngrok'}
+            <fieldset>
+              <legend>Service</legend>
+              <p>
+                <a href="https://ngrok.com/" target="_blank" rel="noopener noreferrer">
+                  ngrok
+                </a>{' '}
+                is network tunneling software. The Bot Framework Emulator works with ngrok to communicate with bots
+                hosted remotely. Read the{' '}
+                <a
+                  href="https://github.com/Microsoft/BotFramework-Emulator/wiki/Tunneling-(ngrok)"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  wiki page
+                </a>{' '}
+                to learn more about using ngrok and how to download it.
+              </p>
+              <Row align={RowAlignment.Center} className={styles.marginBottomRow}>
+                <TextField
+                  className={styles.appSettingsInput}
+                  inputContainerClassName={styles.inputContainer}
+                  readOnly={false}
+                  value={ngrokPath}
+                  onChange={this.onInputChange}
+                  name="ngrokPath"
+                  label={'Path to ngrok'}
+                />
+                <PrimaryButton onClick={this.onClickBrowse} text="Browse" className={styles.browseButton} />
+              </Row>
+              <Checkbox
+                className={styles.checkboxOverrides}
+                checked={bypassNgrokLocalhost}
+                onChange={this.onChangeCheckBox}
+                id="ngrok-bypass"
+                label="Bypass ngrok for local addresses"
+                name="bypassNgrokLocalhost"
               />
-              <PrimaryButton onClick={this.onClickBrowse} text="Browse" className={styles.browseButton} />
-            </Row>
-            <Checkbox
-              className={styles.checkboxOverrides}
-              checked={bypassNgrokLocalhost}
-              onChange={this.onChangeCheckBox}
-              id="ngrok-bypass"
-              label="Bypass ngrok for local addresses"
-              name="bypassNgrokLocalhost"
-            />
-            <Checkbox
-              className={styles.checkboxOverrides}
-              checked={runNgrokAtStartup}
-              onChange={this.onChangeCheckBox}
-              id="ngrok-startup"
-              label="Run ngrok when the Emulator starts up"
-              name="runNgrokAtStartup"
-            />
-            <Row align={RowAlignment.Center} className={styles.marginBottomRow}>
-              <TextField
-                className={styles.appSettingsInput}
-                inputContainerClassName={styles.inputContainer}
-                readOnly={false}
-                value={localhost}
-                onChange={this.onInputChange}
-                name="localhost"
-                label="localhost override"
+              <Checkbox
+                className={styles.checkboxOverrides}
+                checked={runNgrokAtStartup}
+                onChange={this.onChangeCheckBox}
+                id="ngrok-startup"
+                label="Run ngrok when the Emulator starts up"
+                name="runNgrokAtStartup"
               />
-            </Row>
-            <Row align={RowAlignment.Center}>
-              <TextField
-                className={styles.appSettingsInput}
-                inputContainerClassName={styles.inputContainer}
-                readOnly={false}
-                value={locale}
-                name="locale"
-                onChange={this.onInputChange}
-                label="Locale"
-              />
-            </Row>
+              <Row align={RowAlignment.Center} className={styles.marginBottomRow}>
+                <TextField
+                  className={styles.appSettingsInput}
+                  inputContainerClassName={styles.inputContainer}
+                  readOnly={false}
+                  value={localhost}
+                  onChange={this.onInputChange}
+                  name="localhost"
+                  label="localhost override"
+                />
+              </Row>
+              <Row align={RowAlignment.Center}>
+                <TextField
+                  className={styles.appSettingsInput}
+                  inputContainerClassName={styles.inputContainer}
+                  readOnly={false}
+                  value={locale}
+                  name="locale"
+                  onChange={this.onInputChange}
+                  label="Locale"
+                />
+              </Row>
+            </fieldset>
           </Column>
           <Column className={[styles.rightColumn, styles.spacing].join(' ')}>
-            <SmallHeader>User settings</SmallHeader>
-            <Checkbox
-              className={styles.checkboxOverrides}
-              checked={use10Tokens}
-              onChange={this.onChangeCheckBox}
-              id="auth-token-version"
-              label="Use version 1.0 authentication tokens"
-              name="use10Tokens"
-            />
-            <Checkbox
-              className={styles.checkboxOverrides}
-              checked={useCodeValidation}
-              onChange={this.onChangeCheckBox}
-              id="use-validation-code"
-              label="Use a sign-in verification code for OAuthCards"
-              name="useCodeValidation"
-            />
-            <Checkbox
-              className={styles.checkboxOverrides}
-              checked={useCustomId}
-              onChange={this.onChangeCheckBox}
-              id="use-custom-id"
-              label="Use your own user ID to communicate with the bot"
-              name="useCustomId"
-            />
-
-            <Row align={RowAlignment.Top}>
-              <TextField
-                {...inputProps}
-                label="User ID"
-                placeholder={useCustomId ? '' : 'There is no ID configured'}
-                className={styles.appSettingsInput}
-                inputContainerClassName={styles.inputContainer}
-                readOnly={false}
-                value={userGUID}
-                name="userGUID"
-                onChange={this.onInputChange}
-                required={useCustomId}
-                errorMessage={userGUID ? '' : 'Enter a User ID'}
+            <fieldset>
+              <legend>User settings</legend>
+              <Checkbox
+                className={styles.checkboxOverrides}
+                checked={use10Tokens}
+                onChange={this.onChangeCheckBox}
+                id="auth-token-version"
+                label="Use version 1.0 authentication tokens"
+                name="use10Tokens"
               />
-            </Row>
+              <Checkbox
+                className={styles.checkboxOverrides}
+                checked={useCodeValidation}
+                onChange={this.onChangeCheckBox}
+                id="use-validation-code"
+                label="Use a sign-in verification code for OAuthCards"
+                name="useCodeValidation"
+              />
+              <Checkbox
+                className={styles.checkboxOverrides}
+                checked={useCustomId}
+                onChange={this.onChangeCheckBox}
+                id="use-custom-id"
+                label="Use your own user ID to communicate with the bot"
+                name="useCustomId"
+              />
 
-            <SmallHeader>Application Updates</SmallHeader>
-            <Checkbox
-              className={styles.checkboxOverrides}
-              checked={autoUpdate}
-              onChange={this.onChangeCheckBox}
-              label="Automatically download and install updates"
-              name="autoUpdate"
-            />
-            <Checkbox
-              className={styles.checkboxOverrides}
-              checked={usePrereleases}
-              onChange={this.onChangeCheckBox}
-              label="Use pre-release versions"
-              name="usePrereleases"
-            />
-            <SmallHeader>Data Collection</SmallHeader>
-            <Checkbox
-              className={styles.checkboxOverrides}
-              checked={collectUsageData}
-              onChange={this.onChangeCheckBox}
-              label="Help improve the Emulator by allowing us to collect usage data."
-              name="collectUsageData"
-            />
-            <a target="_blank" href="https://privacy.microsoft.com/privacystatement" rel="noopener noreferrer">
-              Privacy statement
-            </a>
+              <Row className={styles.marginBottomRow} align={RowAlignment.Top}>
+                <TextField
+                  {...inputProps}
+                  label="User ID"
+                  placeholder={useCustomId ? '' : 'There is no ID configured'}
+                  className={styles.appSettingsInput}
+                  inputContainerClassName={styles.inputContainer}
+                  readOnly={false}
+                  value={userGUID}
+                  name="userGUID"
+                  onChange={this.onInputChange}
+                  required={useCustomId}
+                  errorMessage={userGUID ? '' : 'Enter a User ID'}
+                />
+              </Row>
+            </fieldset>
+
+            <fieldset>
+              <legend>Application Updates</legend>
+              <Checkbox
+                className={styles.checkboxOverrides}
+                checked={autoUpdate}
+                onChange={this.onChangeCheckBox}
+                label="Automatically download and install updates"
+                name="autoUpdate"
+              />
+              <Checkbox
+                className={styles.checkboxOverrides}
+                checked={usePrereleases}
+                onChange={this.onChangeCheckBox}
+                label="Use pre-release versions"
+                name="usePrereleases"
+              />
+            </fieldset>
+            <fieldset>
+              <legend>Data Collection</legend>
+              <Checkbox
+                className={styles.checkboxOverrides}
+                checked={collectUsageData}
+                onChange={this.onChangeCheckBox}
+                label="Help improve the Emulator by allowing us to collect usage data."
+                name="collectUsageData"
+              />
+              <a target="_blank" href="https://privacy.microsoft.com/privacystatement" rel="noopener noreferrer">
+                Privacy statement
+              </a>
+            </fieldset>
           </Column>
         </Row>
         <Row className={styles.buttonRow} justify={RowJustification.Right}>
