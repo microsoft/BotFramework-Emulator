@@ -264,7 +264,7 @@ class EmulatorApplication {
     Emulator.getInstance().ngrok.broadcastNgrokExpired();
   };
 
-  private onInvertedColorSchemeChanged = async () => {
+  private onInvertedColorSchemeChanged = () => {
     const { theme, availableThemes } = getSettings().windowState;
     const themeInfo = availableThemes.find(availableTheme => availableTheme.name === theme);
 
