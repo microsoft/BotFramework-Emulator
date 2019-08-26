@@ -123,7 +123,7 @@ export class TabBar extends React.Component<TabBarProps, TabBarState> {
         onDragLeave={this.onDragLeave}
         onDrop={this.onDrop}
       >
-        <div className={styles.tabBarTabs} ref={this.saveScrollable}>
+        <div className={styles.tabBarTabs} ref={this.saveScrollable} role="tablist">
           {this.tabs}
         </div>
         <div className={styles.tabBarWidgets}>{this.widgets}</div>
