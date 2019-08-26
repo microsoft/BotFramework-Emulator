@@ -117,18 +117,8 @@ jest.mock('electron', () => ({
     }
   ),
   systemPreferences: {
-    _handler: null,
-    _invertedColorScheme: false,
-    isInvertedColorScheme() {
-      return this._invertedColorScheme;
-    },
-    on(_, handler) {
-      this._handler = handler;
-    },
-    _setInvertedColorScheme(value) {
-      this._invertedColorScheme = value;
-      this._handler && this.handler({ type: 'inverted-color-scheme-changed' });
-    },
+    isInvertedColorScheme: jest.fn(() => true),
+    on: jest.fn(() => null),
   },
 }));
 

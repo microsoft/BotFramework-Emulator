@@ -74,11 +74,9 @@ jest.mock('electron', () => ({
 describe('main', () => {
   let commandService: CommandServiceImpl;
   let emulatorAppSpy;
-  let electron;
 
   beforeEach(() => {
     emulatorAppSpy = jest.spyOn(emulatorApplication as any, 'onInvertedColorSchemeChanged');
-    electron = require('electron');
     const decorator = CommandServiceInstance();
     const descriptor = decorator({ descriptor: {} }, 'none') as any;
     commandService = descriptor.descriptor.get();
@@ -89,11 +87,10 @@ describe('main', () => {
   });
 
   it('should call `onInvertedColorSchemeChanged` when `inverted-color-scheme-changed` event is triggered', () => {
-    const commandServiceSpy = jest.spyOn(commandService, 'remoteCall');
-
     const { systemPreferences } = require('electron');
 
     const onSpy = jest.spyOn(systemPreferences, 'on');
+
     (emulatorApplication as any).initializeSystemPreferencesListeners();
 
     expect(onSpy).toHaveBeenCalledWith('inverted-color-scheme-changed', jasmine.any(Function));
@@ -101,7 +98,7 @@ describe('main', () => {
     onSpy.mockClear();
   });
 
-  it('should invert colors on color scheme changed', () => {
+  it('should call command to invert colors `onInvertedColorSchemeChanged`', () => {
     const commandServiceSpy = jest.spyOn(commandService, 'remoteCall');
 
     (emulatorApplication as any).onInvertedColorSchemeChanged();
@@ -116,12 +113,14 @@ describe('main', () => {
     commandServiceSpy.mockClear();
   });
 
-  it('false test case', () => {
+  it('should not call `onInvertedColorSchemeChanged` when `inverted-color-scheme-changed` is not triggered', () => {
     const commandServiceSpy = jest.spyOn(commandService, 'remoteCall');
 
     const { systemPreferences } = require('electron');
-    const mockBlah = systemPreferences.isInvertedColorScheme as jest.Mock;
-    mockBlah.mockImplementationOnce(() => false);
+
+    const invertedColorSpy = systemPreferences.isInvertedColorScheme as jest.Mock;
+
+    invertedColorSpy.mockImplementationOnce(() => false);
 
     expect(commandServiceSpy).not.toBeCalled();
   });

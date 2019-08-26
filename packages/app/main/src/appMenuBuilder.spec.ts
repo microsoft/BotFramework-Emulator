@@ -114,6 +114,10 @@ jest.mock('electron', () => ({
       this.click = options.click;
     }
   },
+  systemPreferences: {
+    isInvertedColorScheme: jest.fn(() => true),
+    on: jest.fn(() => null),
+  },
 }));
 
 const mockUpdateStatus = {
