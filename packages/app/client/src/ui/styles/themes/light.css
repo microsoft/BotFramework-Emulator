@@ -1,4 +1,9 @@
 html {
+  /* Globals */
+  --global-focus-outline-width: 1px;
+  --global-focus-outline-style: solid;
+  --global-focus-outline-color: #1177BB;
+
   /* Highlight colors */
   --list-item-color: var(--neutral-9);
   --list-item-selected-color: var(--neutral-2);
