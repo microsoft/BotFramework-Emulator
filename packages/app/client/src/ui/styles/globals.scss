@@ -75,7 +75,9 @@
   }
 
   *:focus {
-    outline: var(--p-button-border-focus);
+    outline-width: var(--global-focus-outline-width);
+    outline-style: var(--global-focus-outline-style);
+    outline-color: var(--global-focus-outline-color);
   }
 
   ::-webkit-scrollbar {
