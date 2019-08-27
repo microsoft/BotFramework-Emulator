@@ -59,6 +59,13 @@ describe('<SplitButton>', () => {
     expect(node.html()).not.toBe(null);
   });
 
+  it('should pass the primary button ref to the buttonRef prop', () => {
+    const mockButtonRef = jest.fn(() => null);
+    wrapper = mount(<SplitButton buttonRef={mockButtonRef} />);
+
+    expect(mockButtonRef).toHaveBeenCalledWith(jasmine.any(HTMLButtonElement));
+  });
+
   it('should set a caret button ref', () => {
     const mockCaretRef = "I'm a caret button!";
     instance.setCaretRef(mockCaretRef);

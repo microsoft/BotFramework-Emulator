@@ -43,6 +43,7 @@ export interface SplitButtonProps {
   onChange?: (newValue: string) => any;
   onClick?: (value: string) => any;
   options?: string[];
+  buttonRef?: (ref: HTMLButtonElement) => void;
   selected?: number;
 }
 
@@ -66,13 +67,27 @@ export class SplitButton extends React.Component<SplitButtonProps, SplitButtonSt
   public render(): JSX.Element {
     const { buttonClass = '', defaultLabel = '', disabled = false, options = [] } = this.props;
     const { expanded, selected } = this.state;
-    const { caretRef, hidePanel, onClickOption, onClickDefault, onClickCaret, onKeyDown, setCaretRef } = this;
+    const {
+      caretRef,
+      hidePanel,
+      onClickOption,
+      onClickDefault,
+      onClickCaret,
+      onKeyDown,
+      setButtonRef,
+      setCaretRef,
+    } = this;
     const expandedClass = expanded ? ` ${styles.expanded}` : '';
 
     return (
       <>
         <div className={styles.container}>
-          <button className={`${styles.defaultButton} ${buttonClass}`} disabled={disabled} onClick={onClickDefault}>
+          <button
+            className={`${styles.defaultButton} ${buttonClass}`}
+            disabled={disabled}
+            onClick={onClickDefault}
+            ref={setButtonRef}
+          >
             <span>{defaultLabel}</span>
           </button>
           <div className={styles.separator} />
@@ -97,6 +112,13 @@ export class SplitButton extends React.Component<SplitButtonProps, SplitButtonSt
     );
   }
 
+  private setButtonRef = (ref: HTMLButtonElement): void => {
+    const { buttonRef } = this.props;
+    if (buttonRef && ref) {
+      buttonRef(ref);
+    }
+  };
+
   private setCaretRef = (ref: HTMLButtonElement): void => {
     this.caretRef = ref;
   };
@@ -107,7 +129,7 @@ export class SplitButton extends React.Component<SplitButtonProps, SplitButtonSt
     this.setState({ expanded: !expanded, selected: 0 });
   };
 
-  private onClickDefault = (e: React.SyntheticEvent<HTMLButtonElement>): void => {
+  private onClickDefault = (_e: React.SyntheticEvent<HTMLButtonElement>): void => {
     const { onClick, options = [] } = this.props;
     if (onClick && options.length) {
       onClick(options[0]);

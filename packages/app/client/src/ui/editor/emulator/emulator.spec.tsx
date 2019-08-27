@@ -552,4 +552,11 @@ describe('<EmulatorContainer/>', () => {
     expect(mockRemoteCallsMade[2].args).toEqual(['someConvoId', 'someBotId', 'someUserId', 'someDocId']);
     expect(mockDispatch).toHaveBeenCalledWith(updateDocument('someDocId', { meta: 'some file info' }));
   });
+
+  it('should set a restart button ref', () => {
+    const mockButtonRef: any = {};
+    instance.setRestartButtonRef(mockButtonRef);
+
+    expect(instance.restartButtonRef).toBe(mockButtonRef);
+  });
 });
