@@ -68,6 +68,7 @@ jest.mock('electron', () => ({
   systemPreferences: {
     isInvertedColorScheme: jest.fn(() => true),
     on: jest.fn(() => null),
+    onInvertedColorSchemeChanged: jest.fn(() => true),
   },
 }));
 
@@ -113,15 +114,23 @@ describe('main', () => {
     commandServiceSpy.mockClear();
   });
 
-  it('should not call `onInvertedColorSchemeChanged` when `inverted-color-scheme-changed` is not triggered', () => {
-    const commandServiceSpy = jest.spyOn(commandService, 'remoteCall');
-
+  it('should not change to high contrast when theme is not high contrast', () => {
     const { systemPreferences } = require('electron');
 
-    const invertedColorSpy = systemPreferences.isInvertedColorScheme as jest.Mock;
+    const commandServiceSpy = jest.spyOn(commandService, 'remoteCall');
 
-    invertedColorSpy.mockImplementationOnce(() => false);
+    (systemPreferences.isInvertedColorScheme as any).mockImplementationOnce(() => false);
 
-    expect(commandServiceSpy).not.toBeCalled();
+    (emulatorApplication as any).onInvertedColorSchemeChanged();
+
+    expect(commandServiceSpy).toBeCalledTimes(1);
+
+    expect(commandServiceSpy).toHaveBeenCalledWith(
+      SharedConstants.Commands.UI.SwitchTheme,
+      'Light',
+      './themes/light.css'
+    );
+
+    commandServiceSpy.mockClear();
   });
 });
