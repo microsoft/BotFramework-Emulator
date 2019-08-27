@@ -45,7 +45,7 @@ import { Emulator } from './emulator';
 import './fetchProxy';
 import { Window } from './platform/window';
 import { azureLoggedInUserChanged } from './state/actions/azureAuthActions';
-import { rememberBounds, rememberTheme } from './state/actions/windowStateActions';
+import { rememberBounds } from './state/actions/windowStateActions';
 import { dispatch, getSettings, store } from './state/store';
 import { TelemetryService } from './telemetry';
 import { botListsAreDifferent, ensureStoragePath, isMac, saveSettings, writeFile } from './utils';
@@ -139,6 +139,7 @@ class EmulatorApplication {
   constructor() {
     this.initializeNgrokListeners();
     this.initializeAppListeners();
+    this.initializeSystemPreferencesListeners();
     store.subscribe(this.storeSubscriptionHandler);
   }
 
@@ -153,6 +154,10 @@ class EmulatorApplication {
 
   private initializeNgrokListeners() {
     Emulator.getInstance().ngrok.ngrokEmitter.on('expired', this.onNgrokSessionExpired);
+  }
+
+  private initializeSystemPreferencesListeners() {
+    systemPreferences.on('inverted-color-scheme-changed', this.onInvertedColorSchemeChanged);
   }
 
   private initializeAppListeners() {
@@ -174,12 +179,8 @@ class EmulatorApplication {
   };
 
   private onBrowserWindowReadyToShow = async () => {
-    const { zoomLevel, theme, availableThemes } = getSettings().windowState;
-    const themeInfo = availableThemes.find(availableTheme => availableTheme.name === theme);
-    const isHighContrast = systemPreferences.isInvertedColorScheme();
-    if (themeInfo) {
-      store.dispatch(rememberTheme(isHighContrast ? 'high-contrast' : themeInfo.name));
-    }
+    this.onInvertedColorSchemeChanged();
+    const { zoomLevel } = getSettings().windowState;
     this.mainWindow.webContents.setZoomLevel(zoomLevel);
     SplashScreen.hide();
     this.mainBrowserWindow.show();
@@ -261,6 +262,18 @@ class EmulatorApplication {
     });
     await sendNotificationToClient(ngrokNotification, this.commandService);
     Emulator.getInstance().ngrok.broadcastNgrokExpired();
+  };
+
+  private onInvertedColorSchemeChanged = () => {
+    const { theme, availableThemes } = getSettings().windowState;
+    const themeInfo = availableThemes.find(availableTheme => availableTheme.name === theme);
+
+    const isHighContrast = systemPreferences.isInvertedColorScheme();
+
+    const themeName = isHighContrast ? 'high-contrast' : themeInfo.name;
+    const themeComponents = isHighContrast ? path.join('.', 'themes', 'high-contrast.css') : themeInfo.href;
+
+    this.commandService.remoteCall(SharedConstants.Commands.UI.SwitchTheme, themeName, themeComponents);
   };
 
   // App listeners

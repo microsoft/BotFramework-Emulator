@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [client] Fixed various accessibility issues in PRs:
   - [1775](https://github.com/microsoft/BotFramework-Emulator/pull/1775)
   - [1776](https://github.com/microsoft/BotFramework-Emulator/pull/1776)
+  - [1780](https://github.com/microsoft/BotFramework-Emulator/pull/1780)
   - [1781](https://github.com/microsoft/BotFramework-Emulator/pull/1781)
   - [1782](https://github.com/microsoft/BotFramework-Emulator/pull/1782)
 
