@@ -182,7 +182,7 @@ html {
 
   /* Welcome page */
   --welcome-page-bg: var(--tab-active-tab-bg);
-  --welcome-page-ver: var(--neutral-8);
+  --welcome-page-ver: #717171;
   --welcome-how-to-border: var(--neutral-6);
   --welcome-how-to-test: var(--p-button-bg);
   --welcome-beta-label: var(--warning-outline);
@@ -191,7 +191,8 @@ html {
   --my-bots-entry-bg: var(--neutral-4);
   --my-bots-entry-border: 1px solid transparent;
   --my-bots-entry-color: var(--neutral-12);
-  --my-bots-path-color: var(--neutral-12);
+  --my-bots-path-color: var(--neutral-10);
+  --my-bots-path-hover-color: var(--neutral-11);
   --my-bots-scrollbar-color: rgba(136, 136, 136, 0.5);
 
   /* Status Bar */
