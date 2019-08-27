@@ -183,7 +183,7 @@ html {
 
   /* Welcome page */
   --welcome-page-bg: var(--tab-active-tab-bg);
-  --welcome-page-ver: var(--neutral-8);
+  --welcome-page-ver: var(--neutral-6);
   --welcome-how-to-border: var(--neutral-6);
   --welcome-how-to-test: var(--p-button-bg);
   --welcome-beta-label: var(--warning-outline);
