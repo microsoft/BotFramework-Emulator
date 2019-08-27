@@ -35,6 +35,7 @@ import * as path from 'path';
 
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 import { SharedConstants } from '@bfemulator/app-shared';
+import { systemPreferences } from 'electron';
 
 import { emulatorApplication } from './main';
 
@@ -88,8 +89,6 @@ describe('main', () => {
   });
 
   it('should call `onInvertedColorSchemeChanged` when `inverted-color-scheme-changed` event is triggered', () => {
-    const { systemPreferences } = require('electron');
-
     const onSpy = jest.spyOn(systemPreferences, 'on');
 
     (emulatorApplication as any).initializeSystemPreferencesListeners();
@@ -115,8 +114,6 @@ describe('main', () => {
   });
 
   it('should not change to high contrast when theme is not high contrast', () => {
-    const { systemPreferences } = require('electron');
-
     const commandServiceSpy = jest.spyOn(commandService, 'remoteCall');
 
     (systemPreferences.isInvertedColorScheme as any).mockImplementationOnce(() => false);
