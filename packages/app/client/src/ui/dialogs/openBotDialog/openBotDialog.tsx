@@ -234,16 +234,17 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
   private get browseButton(): React.ReactNode {
     if (!this.state.isAzureGov && !this.state.isDebug) {
       return (
-        <PrimaryButton className={openBotStyles.browseButton}>
-          Browse
+        <div className={openBotStyles.browseButton}>
           <input
             accept=".bot"
             className={openBotStyles.fileInput}
+            id="openBotBrowse"
             name="botUrl"
             onChange={this.onInputChange}
             type="file"
           />
-        </PrimaryButton>
+          <label htmlFor="openBotBrowse">Browse</label>
+        </div>
       );
     }
     return null;

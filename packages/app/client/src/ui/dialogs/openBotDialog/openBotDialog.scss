@@ -52,12 +52,66 @@
   }
 }
 
-.file-input {
-  position: absolute;
-  left: 0;
-  height: 100%;
-  z-index: 2;
-  opacity: 0;
+/* Imitates <PrimaryButton /> component styles */
+.browse-button {
+  & > input {
+    position: absolute;
+    height: 0;
+    width: 0;
+    pointer-events: none;
+    opacity: 0;
+
+    &:focus ~ label {
+      outline: 1px solid var(--dialog-link-focus-color);
+      background-color: var(--p-button-bg-focus);
+    
+      &::after {
+        border: var(--p-button-border-focus);
+      }
+    }
+  }
+
+  & > label {
+    display: block;
+    border: none;
+    position: relative;
+    margin-bottom: 1px;
+    min-width: 104px;
+    min-height: 21px;
+    line-height: 21px;
+    font-size: 12px;
+    text-align: center;
+    font-weight: bold;
+    color: var(--p-button-color);
+    background-color: var(--p-button-bg);
+  
+    &::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      z-index: 1;
+      border: var(--p-button-border);
+    }
+  
+    &:hover {
+      background-color: var(--p-button-bg-hover);
+  
+      &::after {
+        border: var(--p-button-border-hover);
+      }
+    }
+  
+    &:active {
+      background-color: var(--p-button-bg-active);
+  
+      &::after {
+        border: var(--p-button-border-active);
+      }
+    }
+  }
 }
 
 .multi-input-row {

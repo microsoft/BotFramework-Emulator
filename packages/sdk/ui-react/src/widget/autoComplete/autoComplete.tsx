@@ -265,6 +265,7 @@ export class AutoComplete extends Component<AutoCompleteProps, AutoCompleteState
       // clears the textbox, selection, and closes the listbox
       case 'Escape': {
         event.preventDefault();
+        event.stopPropagation();
         const currentInput = '';
         if (this.props.onChange && typeof this.props.onChange === 'function') {
           this.props.onChange(currentInput);
