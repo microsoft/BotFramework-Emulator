@@ -91,6 +91,7 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
   @CommandServiceInstance()
   private commandService: CommandServiceImpl;
   private conversationInitRequested: boolean;
+  private restartButtonRef: HTMLButtonElement;
 
   private readonly onVerticalSizeChange = debounce((sizes: SplitterSize[]) => {
     this.props.document.ui = {
@@ -108,6 +109,12 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
 
   shouldStartNewConversation(props: EmulatorProps = this.props): boolean {
     return !props.directLine || props.document.conversationId !== (props.directLine as any).conversationId;
+  }
+
+  componentDidMount() {
+    if (this.restartButtonRef) {
+      this.restartButtonRef.focus();
+    }
   }
 
   componentWillMount() {
@@ -292,6 +299,7 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
                   buttonClass={styles.restartIcon}
                   options={[NewUserId, SameUserId]}
                   onClick={this.onStartOverClick}
+                  buttonRef={this.setRestartButtonRef}
                 />
                 <button
                   className={`${styles.saveIcon} ${styles.toolbarIcon || ''}`}
@@ -416,6 +424,10 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
   private onReconnectToDebugBotClick = () => {
     const { conversationId, document } = this.props;
     this.props.restartDebugSession(conversationId, document.documentId);
+  };
+
+  private setRestartButtonRef = (ref: HTMLButtonElement): void => {
+    this.restartButtonRef = ref;
   };
 
   private readonly keyboardEventListener: EventListener = async (event: KeyboardEvent): Promise<void> => {

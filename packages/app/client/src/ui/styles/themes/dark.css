@@ -1,4 +1,9 @@
 html {
+  /* Globals */
+  --global-focus-outline-width: 1px;
+  --global-focus-outline-style: solid;
+  --global-focus-outline-color: #75BEFF;
+
   /* Highlight colors */
   --list-item-color: var(--neutral-3);
   --list-item-selected-color: var(--neutral-2);
@@ -183,7 +188,7 @@ html {
 
   /* Welcome page */
   --welcome-page-bg: var(--tab-active-tab-bg);
-  --welcome-page-ver: var(--neutral-8);
+  --welcome-page-ver: var(--neutral-6);
   --welcome-how-to-border: var(--neutral-6);
   --welcome-how-to-test: var(--p-button-bg);
   --welcome-beta-label: var(--warning-outline);

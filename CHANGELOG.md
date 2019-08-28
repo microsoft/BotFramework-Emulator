@@ -15,7 +15,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Fixed
 - [main] Fixed bug where opening a chat via URL was sending two conversation updates in PR [1735](https://github.com/microsoft/BotFramework-Emulator/pull/1735)
 - [main] Fixed an issue where the Emulator was incorrectly sending the conversation id instead of an emulated OAuth token in PR [1738](https://github.com/microsoft/BotFramework-Emulator/pull/1738)
-- [client] Fixed various accessibility issues in PR [1775](https://github.com/microsoft/BotFramework-Emulator/pull/1775), [1776](https://github.com/microsoft/BotFramework-Emulator/pull/1776)
+- [client] Fixed various accessibility issues in PRs:
+  - [1775](https://github.com/microsoft/BotFramework-Emulator/pull/1775)
+  - [1776](https://github.com/microsoft/BotFramework-Emulator/pull/1776)
+  - [1780](https://github.com/microsoft/BotFramework-Emulator/pull/1780)
+  - [1781](https://github.com/microsoft/BotFramework-Emulator/pull/1781)
+  - [1782](https://github.com/microsoft/BotFramework-Emulator/pull/1782)
+  - [1783](https://github.com/microsoft/BotFramework-Emulator/pull/1783)
+  - [1784](https://github.com/microsoft/BotFramework-Emulator/pull/1784)
 
 ## v4.5.2 - 2019 - 07 - 17
 ## Fixed

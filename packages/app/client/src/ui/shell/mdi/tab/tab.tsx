@@ -66,9 +66,9 @@ export class Tab extends React.Component<TabProps, TabState> {
   }
 
   public render() {
-    const activeClassName = this.props.active ? styles.activeEditorTab : '';
+    const { active, label } = this.props;
+    const activeClassName = active ? styles.activeEditorTab : '';
     const draggedOverClassName = this.state.draggedOver ? styles.draggedOverEditorTab : '';
-    const { label } = this.props;
     const iconClass = this.iconClass;
 
     return (
@@ -81,12 +81,13 @@ export class Tab extends React.Component<TabProps, TabState> {
         onDrop={this.onDrop}
         onDragLeave={this.onDragLeave}
         onDragEnd={this.onDragEnd}
+        role="presentation"
       >
-        <span className={`${styles.editorTabIcon} ${iconClass}`} />
+        <span className={`${styles.editorTabIcon} ${iconClass}`} role="presentation" />
         <TruncateText className={styles.truncatedTabText}>{label}</TruncateText>
-        {this.props.dirty ? <span>*</span> : null}
-        <div className={styles.tabSeparator} />
-        <div className={styles.tabFocusTarget} role="button" tabIndex={0} aria-label={`${label}, tab`}>
+        {this.props.dirty ? <span role="presentation">*</span> : null}
+        <div className={styles.tabSeparator} role="presentation" />
+        <div className={styles.tabFocusTarget} role="tab" tabIndex={0} aria-label={`${label}`} aria-selected={active}>
           &nbsp;
         </div>
         <button

@@ -69,11 +69,6 @@
   font-size: 13px;
   white-space: normal;
 
-  &:focus {
-    outline: var(--p-button-border-focus);
-
-  }
-
   &:hover {
     text-decoration: underline;
   }

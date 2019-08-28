@@ -116,6 +116,10 @@ jest.mock('electron', () => ({
       },
     }
   ),
+  systemPreferences: {
+    isInvertedColorScheme: jest.fn(() => true),
+    on: jest.fn(() => null),
+  },
 }));
 
 const mockSendNotification = jest.fn().mockResolvedValue(undefined);
