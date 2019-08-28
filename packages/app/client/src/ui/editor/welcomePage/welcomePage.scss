@@ -22,7 +22,7 @@
   width: auto;
 
   a {
-    color: var(--focused-selected-list-item-bg);
+    color: var(--link-color);
     min-width: 0;
   }
 
@@ -62,7 +62,7 @@
 .cta-link {
   background-color: transparent;
   border: 1px solid transparent;
-  color: var(--focused-selected-list-item-bg);
+  color: var(--link-color);
   cursor: pointer;
   font-weight: 600;
   padding: 0;

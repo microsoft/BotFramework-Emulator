@@ -27,6 +27,14 @@
     font-size: 21px;
     font-weight: 100;
   }
+
+  a {
+    color: var(--dialog-link-color);
+
+    &:focus {
+      outline: 1px solid var(--dialog-link-focus-color);
+    }
+  }
 }
 
 .footer {
@@ -52,16 +60,31 @@
   }
 }
 
-.cancel-button {
+.cancel-button,
+.cancel-button-outline {
+  display: block;
   position: absolute;
   width: 21px;
   height: 21px;
   border: none;
   top: 12px;
   right: 12px;
+  outline: none;
+}
+
+.cancel-button-outline {
+  pointer-events: none;
+}
+
+.cancel-button {
   font: initial;
   -webkit-mask: url('../../media/ic_cancel.svg');
-  display: block;
-  background-color: var(--neutral-14);
+  background-color: var(--dialog-close-icon-color);
   cursor: pointer;
+
+  &:focus + .cancel-button-outline {
+    outline-width: var(--global-focus-outline-width);
+    outline-style: var(--global-focus-outline-style);
+    outline-color: var(--global-focus-outline-color);
+  }
 }
