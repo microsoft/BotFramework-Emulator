@@ -61,7 +61,17 @@ describe('fetch proxy support', () => {
   it('should not add the http-proxy-agent when the HTTPS_PROXY is omitted', () => {
     delete process.env.HTTPS_PROXY;
     delete process.env.NO_PROXY;
-    fetch('https://localhost').catch();
+    fetch('https://some.api.com').catch();
+    expect(mockFetchArgs.init).toBeUndefined();
+  });
+
+  it('should add the https-agent to localhost requests', async () => {
+    await fetch('https://localhost:3980');
+    expect(mockFetchArgs.init.agent).not.toBeUndefined();
+  });
+
+  it('should not add https-agent to the https requests', async () => {
+    await fetch('http://localhost:3980');
     expect(mockFetchArgs.init).toBeUndefined();
   });
 });
