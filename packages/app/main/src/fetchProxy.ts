@@ -40,20 +40,25 @@ declare function fetch(input: RequestInfo, init?: RequestInit): Promise<Response
   const [urlOrRequest, requestInit = {}] = args;
 
   // Https localhost
-  // eslint-disable-next-line typescript/no-var-requires
-  const https = require('https');
-  const httpsAgent = new https.Agent({ rejectUnauthorized: false });
   const allowLocalhost = 'https://localhost';
 
-  if (args[0].includes(allowLocalhost)) {
+  if (!process.env.HTTPS_PROXY && urlOrRequest.includes(allowLocalhost)) {
+    // eslint-disable-next-line typescript/no-var-requires
+    const https = require('https');
+    const httpsAgent = new https.Agent({ rejectUnauthorized: false });
+
     requestInit.agent = httpsAgent;
+
+    return nodeFetch(urlOrRequest, requestInit);
   }
 
   // No Proxy
   const url: string = typeof urlOrRequest === 'string' ? urlOrRequest : urlOrRequest.url;
+
   if (!process.env.HTTPS_PROXY || (process.env.NO_PROXY && url.includes(process.env.NO_PROXY))) {
     return nodeFetch(...args);
   }
+
   // URL is first param attach the proxy
   // to the RequestInit
   // eslint-disable-next-line typescript/no-var-requires
