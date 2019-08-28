@@ -47,7 +47,7 @@ export class AzureLoginPromptDialog extends Component<AzureLoginPromptDialogProp
       <Dialog cancel={this.props.cancel} title="Sign in with an Azure account" className={styles.dialogMedium}>
         <p>
           {'Use your Azure account to sign in to all your Azure services, ' +
-            'such as Azure Bot Service, Dispatch, LUIS, and QnA Maker.'}
+            'such as Azure Bot Service, Dispatch, LUIS, and QnA Maker. '}
           <a href="https://azure.microsoft.com/en-us/services/bot-service">{"Don't have an Azure Account? Sign up."}</a>
         </p>
         <p>
