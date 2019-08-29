@@ -519,12 +519,12 @@ describe('The Inspector component', () => {
       });
 
       it('"when the copy json button is clicked"', () => {
-        event.channel = 'proxy';
-        event.currentTarget.name = 'copyJson';
         const spy = jest.spyOn(instance, 'accessoryClick');
         const clipboardSpy = jest.spyOn(Electron.clipboard, 'writeText');
-        instance.accessoryClick(event);
 
+        event.channel = 'proxy';
+        event.currentTarget.name = 'copyJson';
+        instance.accessoryClick(event);
         expect(spy).toHaveBeenCalledWith(event);
         expect(clipboardSpy).toHaveBeenCalledWith(JSON.stringify(instance.state.inspectObj, null, 2));
       });
