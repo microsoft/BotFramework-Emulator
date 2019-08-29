@@ -30,6 +30,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+import * as Electron from 'electron';
 import {
   CommandServiceImpl,
   CommandServiceInstance,
@@ -89,6 +90,7 @@ jest.mock('electron', () => ({
       },
     }
   ),
+  clipboard: { writeText: (textFromActivity: string) => true },
 }));
 
 const mockState = {
@@ -504,6 +506,27 @@ describe('The Inspector component', () => {
         expect(dispatchSpy).toHaveBeenCalledWith(
           executeCommand(true, SharedConstants.Commands.Telemetry.TrackEvent, null, ...event.args)
         );
+      });
+    });
+
+    describe('should handle the accessory Click event', () => {
+      let instance;
+      let event;
+
+      beforeEach(() => {
+        instance = node.instance();
+        event = { channel: '', currentTarget: { dataset: { currentState: 'default' }, name: '' } };
+      });
+
+      it('"when the copy json button is clicked"', () => {
+        event.channel = 'proxy';
+        event.currentTarget.name = 'copyJson';
+        const spy = jest.spyOn(instance, 'accessoryClick');
+        const clipboardSpy = jest.spyOn(Electron.clipboard, 'writeText');
+        instance.accessoryClick(event);
+
+        expect(spy).toHaveBeenCalledWith(event);
+        expect(clipboardSpy).toHaveBeenCalledWith(JSON.stringify(instance.state.inspectObj, null, 2));
       });
     });
   });
