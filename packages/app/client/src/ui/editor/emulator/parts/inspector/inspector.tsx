@@ -370,6 +370,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     if (id == 'copyJson') {
       return Electron.clipboard.writeText(JSON.stringify(this.state.inspectObj, null, 2));
     }
+
     const { currentState } = event.currentTarget.dataset;
     this.sendToExtension(ExtensionChannel.AccessoryClick, id, currentState);
   };
