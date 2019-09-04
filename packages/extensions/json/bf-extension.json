@@ -81,6 +81,18 @@
                 "aria-disabled": true
               }
             }
+          },
+          {
+            "id": "copyJson",
+            "states": {
+              "default": {
+                "label": "Copy json"
+              },
+              "selected": {
+                "label": "Copy json",
+                "aria-selected": true
+              }
+            }
           }
         ]
       }

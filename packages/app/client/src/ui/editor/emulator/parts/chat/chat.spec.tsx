@@ -158,6 +158,23 @@ describe('<ChatContainer />', () => {
     });
   });
 
+  describe('activityWrapper', () => {
+    it('Should display the context menu for the activities in default mode', () => {
+      const dispatchSpy: jest.SpyInstance = jest.spyOn(mockStore, 'dispatch').mockReturnValue(true);
+      const next = () => (kids: any) => kids;
+      const card = { activity: { id: 'activity-id' } };
+      const children = 'a child node';
+      const webChat = render({} as any).find(ReactWebChat);
+      const middleware = webChat.prop('activityMiddleware') as any;
+      const activityWrapper = mount(middleware()(next)(card)(children));
+
+      // show context menu for activity
+      dispatchSpy.mockClear();
+      activityWrapper.simulate('contextmenu', { target: { tagName: 'DIV', classList: [] } });
+      expect(dispatchSpy).toHaveBeenCalledWith(showContextMenuForActivity(card.activity));
+    });
+  });
+
   describe('activity middleware', () => {
     it('renders an ActivityWrapper with the contents as children', () => {
       const next = () => (kids: any) => kids;
