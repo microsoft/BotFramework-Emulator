@@ -25,6 +25,7 @@ html {
   --error-text: #F48771;
   --error-bg: #F2DEDE;
   --error-outline: #BE1100;
+  --endpoint-warning: var(--neutral-1);
 
   /* webchat overridden colors */
   /* activity bubbles */
