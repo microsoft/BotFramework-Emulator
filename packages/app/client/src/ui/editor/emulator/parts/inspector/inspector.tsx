@@ -33,6 +33,7 @@
 
 // Cheating here and pulling in a module from node. Can be easily replaced if we ever move the emulator to the web.
 // @ts-ignore
+import { clipboard } from 'electron';
 import {
   EmulatorChannel,
   ExtensionChannel,
@@ -365,6 +366,11 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
 
   private accessoryClick = (event: MouseEvent<HTMLButtonElement>): void => {
     const id = event.currentTarget.name;
+
+    if (id == 'copyJson') {
+      return clipboard.writeText(JSON.stringify(this.state.inspectObj, null, 2));
+    }
+
     const { currentState } = event.currentTarget.dataset;
     this.sendToExtension(ExtensionChannel.AccessoryClick, id, currentState);
   };

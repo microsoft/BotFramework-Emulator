@@ -138,6 +138,7 @@ export class Chat extends Component<ChatProps, ChatState> {
         data-activity-id={card.activity.id}
         onClick={this.onItemRendererClick}
         onKeyDown={this.onItemRendererKeyDown}
+        onContextMenu={this.onContextMenu}
         isSelected={this.shouldBeSelected(card.activity)}
       >
         {next(card)(children)}
