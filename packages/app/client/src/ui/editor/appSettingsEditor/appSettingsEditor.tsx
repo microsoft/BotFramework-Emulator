@@ -300,6 +300,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
     const newState = keys.reduce((s, key) => ((s[key] = settings[key]), s), {}) as FrameworkSettings;
     newState.hash = await generateHash(newState);
 
+    this.setState({ dirty: false });
     this.props.saveFrameworkSettings(newState);
   };
 
