@@ -242,13 +242,15 @@ describe('<AutoComplete />', () => {
 
   it('should handle an escape key press', () => {
     const mockPreventDefault = jest.fn(() => null);
+    const mockStopPropagation = jest.fn(() => null);
     instance.setState({ selectedIndex: 2, showResults: true });
-    instance.onKeyDown({ key: 'Escape', preventDefault: mockPreventDefault });
+    instance.onKeyDown({ key: 'Escape', preventDefault: mockPreventDefault, stopPropagation: mockStopPropagation });
 
     expect(wrapper.state().currentInput).toBe('');
     expect(wrapper.state().selectedIndex).toBe(undefined);
     expect(wrapper.state().showResults).toBe(false);
     expect(mockPreventDefault).toHaveBeenCalled();
+    expect(mockStopPropagation).toHaveBeenCalled();
     expect(mockOnChange).toHaveBeenCalledWith('');
   });
 

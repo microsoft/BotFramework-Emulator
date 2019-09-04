@@ -54,10 +54,11 @@ export class Dialog extends Component<ModalProps, {}> {
     return (
       <>
         <div className={`${styles.modal} ${modalStyle}`}>&nbsp;</div>
-        <div className={`${className} ${styles.dialog} dialog`}>
+        <div className={`${className} ${styles.dialog} dialog`} onKeyDown={this.bodyKeyDownHandler}>
           <header className={`${titleClassName}`} role="heading">
             {title}
             <button className={styles.cancelButton} aria-label="Close" onClick={this.props.cancel} />
+            <div className={styles.cancelButtonOutline} role="presentation"></div>
           </header>
           {filterChildren(children, child => hmrSafeNameComparison(child.type, DialogFooter, true))}
           {filterChildren(children, child => hmrSafeNameComparison(child.type, DialogFooter))}
@@ -66,15 +67,7 @@ export class Dialog extends Component<ModalProps, {}> {
     );
   }
 
-  public componentWillMount(): void {
-    document.body.addEventListener('keydown', this.bodyKeyDownHandler);
-  }
-
-  public componentWillUnmount(): void {
-    document.body.removeEventListener('keydown', this.bodyKeyDownHandler);
-  }
-
-  private bodyKeyDownHandler = (event: KeyboardEvent): void => {
+  private bodyKeyDownHandler = (event: React.KeyboardEvent<HTMLDivElement>): void => {
     if (event.key !== 'Escape') {
       return;
     }
