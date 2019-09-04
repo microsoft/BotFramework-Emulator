@@ -141,6 +141,9 @@ html {
   --dialog-bg: var(--neutral-2);
   --dialog-color: var(--neutral-14);
   --dialog-error-color: var(--error-text);
+  --dialog-close-icon-color: var(--neutral-14);
+  --dialog-link-color: #0E639C;
+  --dialog-link-focus-color: #0E639C;
 
   /* Services Explorer */
   --explorer-panel-bg: var(--neutral-14);
