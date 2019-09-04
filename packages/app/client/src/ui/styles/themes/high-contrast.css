@@ -238,6 +238,7 @@ html {
 
   /* Auto Complete */
   --auto-complete-results-opacity: 1;
+  --auto-complete-warning-color: var(--endpoint-warning);
 
   /* Service Picker */
   --service-picker-list-bg-color: transparent;

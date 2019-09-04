@@ -239,6 +239,7 @@ html {
 
   /* Auto Complete */
   --auto-complete-results-opacity: 0.9;
+  --auto-complete-warning-color: var(--endpoint-warning);
 
   /* Service Picker */
   --service-picker-list-bg-color: var(--neutral-3);
