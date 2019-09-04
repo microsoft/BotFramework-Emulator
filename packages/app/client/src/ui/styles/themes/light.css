@@ -63,7 +63,7 @@ html {
   --bot-state-diff-indicator-color: #BE1100;
 
   /* Log panel custom colors */
-  --log-panel-timestamp: #47B07F;
+  --log-panel-timestamp: #327E36;
   --log-panel-link: #007ACC;
   --log-panel-entry-hover-bg: var(--neutral-4);
   --log-panel-entry-inspected-bg: var(--neutral-5);
@@ -211,6 +211,7 @@ html {
   /* Links */
   --link-color: #007ACC;
   --link-color-disabled: #C8C8C8;
+  --inspector-link-color: var(--link-color);
 
   /* Split Button */
   --split-button-color: var(--neutral-12);
