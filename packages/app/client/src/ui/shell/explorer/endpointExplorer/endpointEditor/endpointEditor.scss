@@ -39,44 +39,36 @@
   line-height: 11px;
 }
 
-.arrow {
-  position: relative;
-  padding-right: 20px;
+.abs-content-toggle {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  width: 100%;
+  padding: 0;
   margin-top: 28px;
-  display: block;
-  text-decoration: none;
-  &::before {
-    content: '';
-    position: absolute;
-    border-left: 1px solid blue;
-    width: 1px;
-    right: 0;
-    bottom: 3px;
-    height: 8px;
-    transform: skewX(-45deg);
-    transition: transform .25s ease-out;
-  }
+  -webkit-appearance: none;
+  border: 0;
+  background: 0;
+  color: var(--dialog-link-color);
+  font-family: var(--default-font-family);
+  font-weight: 600;
+  cursor: pointer;
 
-  &::after {
-    content: '';
-    position: absolute;
-    height: 8px;
-    border-right: 1px solid blue;
-    transform: skewX(45deg);
-    width: 1px;
-    right: 9.5px;
-    bottom: 3px;
-    transition: transform .25s ease-out;
+  > span {
+    flex-shrink: 0;
+    display: block;
+    width: 18px;
+    height: 18px;
+    margin-left: auto;
+    -webkit-mask: url('../../../../media/ic_chevron_down.svg') no-repeat 50% 50%;
+    -webkit-mask-size: 16px;
+    background-color: var(--dialog-link-color);
   }
 }
 
 .arrow-expanded {
-  &::before {
-    transform: skewX(45deg);
-  }
-
-  &::after {
-    transform: skewX(-45deg);
+  > span {
+    transform: rotateX(180deg);
   }
 }
 
@@ -88,10 +80,12 @@
 
 .abs-text-field-row {
   width: 100%;
+
   > div:first-child {
     width: 100%;
     margin-right: 5px;
   }
+
   > div:last-child {
     width: 100%;
     margin-left: 5px;
