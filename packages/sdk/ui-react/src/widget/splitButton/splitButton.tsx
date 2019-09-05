@@ -87,16 +87,20 @@ export class SplitButton extends React.Component<SplitButtonProps, SplitButtonSt
             disabled={disabled}
             onClick={onClickDefault}
             ref={setButtonRef}
+            role={'menuitem'}
           >
             <span>{defaultLabel}</span>
           </button>
           <div className={styles.separator} />
           <button
+            aria-label={defaultLabel}
             className={styles.caretButton + expandedClass}
             ref={setCaretRef}
             onClick={onClickCaret}
-            aria-haspopup={'listbox'}
+            aria-expanded={expanded}
+            aria-haspopup={true}
             disabled={disabled}
+            role={'menuitem'}
           />
         </div>
         <SplitButtonPanel
@@ -143,6 +147,13 @@ export class SplitButton extends React.Component<SplitButtonProps, SplitButtonSt
       onClick(newValue);
     }
     this.hidePanel();
+    this.caretRef.focus();
+    console.log(document.querySelector(':focus'));
+    console.log(document.querySelector(':focus').getAttribute('x-abc'));
+
+    setTimeout(() => {
+      console.log(document.querySelector(':focus'));
+    }, 1000);
   };
 
   private hidePanel = (): void => {
