@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - [1826](https://github.com/microsoft/BotFramework-Emulator/pull/1826)
   - [1827](https://github.com/microsoft/BotFramework-Emulator/pull/1827)
   - [1828](https://github.com/microsoft/BotFramework-Emulator/pull/1828)
+  - [1832](https://github.com/microsoft/BotFramework-Emulator/pull/1832)
   - [1835](https://github.com/microsoft/BotFramework-Emulator/pull/1835)
 
 ## v4.5.2 - 2019 - 07 - 17
