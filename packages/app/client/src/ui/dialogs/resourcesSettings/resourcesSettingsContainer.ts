@@ -50,8 +50,12 @@ const mapStateToProps = (state: RootState, ownProps: ResourcesSettingsProps) => 
 const mapDispatchToProps = dispatch => ({
   save: (settings: Partial<BotInfo>) => DialogService.hideDialog(settings),
   showOpenDialog: () =>
-    dispatch(
-      executeCommand(true, SharedConstants.Commands.Electron.ShowOpenDialog, null, { properties: ['openDirectory'] })
+    new Promise(resolve =>
+      dispatch(
+        executeCommand(true, SharedConstants.Commands.Electron.ShowOpenDialog, resolve, {
+          properties: ['openDirectory'],
+        })
+      )
     ),
   cancel: () => DialogService.hideDialog(0),
 });

@@ -37,9 +37,7 @@ const { dialog, ipcMain } = require('electron');
 function mockDialogFunction(options) {
   if (options.method && options.value) {
     dialog[options.method] = function() {
-      return new Promise(resolve => {
-        resolve(options.value);
-      });
+      return options.value;
     };
   } else {
     throw new Error('Options missing method or value keys.');

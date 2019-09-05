@@ -13,7 +13,8 @@
     "packages/extensions/qnamaker/client",
     "packages/extensions/luis",
     "packages/extensions/luis/client",
-    "packages/extensions/json"
+    "packages/extensions/json",
+    "packages/tools"
   ],
   "version": "independent"
 }

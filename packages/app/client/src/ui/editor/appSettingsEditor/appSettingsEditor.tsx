@@ -63,6 +63,7 @@ function shallowEqual(x: any, y: any) {
 
 export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, AppSettingsEditorState> {
   public state = {} as AppSettingsEditorState;
+  private pathToNgrokInputRef: HTMLInputElement;
 
   public static getDerivedStateFromProps(
     newProps: AppSettingsEditorProps,
@@ -77,6 +78,12 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
       dirty: newProps.dirty,
       pendingUpdate: false,
     };
+  }
+
+  public componentDidMount(): void {
+    if (this.pathToNgrokInputRef) {
+      this.pathToNgrokInputRef.focus();
+    }
   }
 
   public render(): JSX.Element {
@@ -124,6 +131,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
                 <TextField
                   className={styles.appSettingsInput}
                   inputContainerClassName={styles.inputContainer}
+                  inputRef={this.setNgrokInputRef}
                   readOnly={false}
                   value={ngrokPath}
                   onChange={this.onInputChange}
@@ -309,4 +317,8 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
     this.setState({ dirty });
     this.props.setDirtyFlag(dirty);
   }
+
+  private setNgrokInputRef = (ref: HTMLInputElement): void => {
+    this.pathToNgrokInputRef = ref;
+  };
 }

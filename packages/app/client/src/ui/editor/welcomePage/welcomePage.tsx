@@ -100,7 +100,12 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
           </a>
         </span>
         <Row>
-          <PrimaryButton className={styles.openBot} text="Open Bot" onClick={this.onOpenBotClick} />
+          <PrimaryButton
+            id={'open-bot-welcome'}
+            className={styles.openBot}
+            text="Open Bot"
+            onClick={this.onOpenBotClick}
+          />
         </Row>
         <span>
           If you don’t have a bot configuration,&nbsp;
