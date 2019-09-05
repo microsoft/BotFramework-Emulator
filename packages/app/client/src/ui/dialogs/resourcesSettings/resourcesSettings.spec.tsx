@@ -153,11 +153,15 @@ describe('The ResourcesSettings component should', () => {
 
   it('should open the browse dialog when the browse anchor is clicked', async () => {
     const instance = node.instance();
-    await instance.onBrowseClick({
+    // don't wait on this method because the resolver will never be called due
+    // to the fact that the actual command saga isn't being called
+    instance.onBrowseClick({
       currentTarget: { getAttribute: () => 'attr' },
     } as any);
     expect(dispatchSpy).toHaveBeenCalledWith(
-      executeCommand(true, SharedConstants.Commands.Electron.ShowOpenDialog, null, { properties: ['openDirectory'] })
+      executeCommand(true, SharedConstants.Commands.Electron.ShowOpenDialog, jasmine.any(Function), {
+        properties: ['openDirectory'],
+      })
     );
   });
 });

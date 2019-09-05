@@ -184,7 +184,7 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
             <DefaultButton type="button" onClick={this.props.onDialogCancel}>
               Cancel
             </DefaultButton>
-            <PrimaryButton type="submit" disabled={shouldBeDisabled}>
+            <PrimaryButton type="submit" disabled={shouldBeDisabled} id={'connect-open-bot'}>
               Connect
             </PrimaryButton>
           </DialogFooter>

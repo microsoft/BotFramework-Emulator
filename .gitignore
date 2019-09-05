@@ -10,3 +10,4 @@ coverage
 build/
 .vscode/*
 chrome-driver-log.txt
+.env
