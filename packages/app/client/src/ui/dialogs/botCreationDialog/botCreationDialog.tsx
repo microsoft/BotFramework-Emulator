@@ -148,7 +148,12 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
           </Row>
           <Row align={RowAlignment.Bottom}>
             <Checkbox label="Azure for US Government" checked={isAzureGov} onChange={this.onChannelServiceChange} />
-            <a href="https://aka.ms/bot-framework-emulator-azuregov">&nbsp;Learn more.</a>
+            <a
+              href="https://aka.ms/bot-framework-emulator-azuregov"
+              aria-label="Learn more about Azure for US Government"
+            >
+              &nbsp;Learn more.
+            </a>
           </Row>
           <Row align={RowAlignment.Bottom}>
             <Checkbox
@@ -157,7 +162,12 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
               checked={encryptKey}
               onChange={this.onEncryptKeyChange}
             />
-            <a href="https://aka.ms/bot-framework-bot-file-encryption">&nbsp;Learn more.</a>
+            <a
+              href="https://aka.ms/bot-framework-bot-file-encryption"
+              aria-label="Learn more about bot file encryption"
+            >
+              &nbsp;Learn more.
+            </a>
           </Row>
 
           <TextField

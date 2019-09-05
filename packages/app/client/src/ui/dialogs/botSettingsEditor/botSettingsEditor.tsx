@@ -114,7 +114,11 @@ export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, B
             checked={encryptKey}
             onChange={this.onEncryptKeyChange}
           />
-          <a href="javascript:void(0);" onClick={this.onLearnMoreEncryptionClick}>
+          <a
+            href="javascript:void(0);"
+            onClick={this.onLearnMoreEncryptionClick}
+            aria-label="Learn more about bot file encryption"
+          >
             &nbsp;Learn more.
           </a>
         </Row>
