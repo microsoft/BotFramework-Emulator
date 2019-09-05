@@ -150,12 +150,6 @@ export class SplitButton extends React.Component<SplitButtonProps, SplitButtonSt
     }
     this.hidePanel();
     this.caretRef.focus();
-    console.log(document.querySelector(':focus'));
-    console.log(document.querySelector(':focus').getAttribute('x-abc'));
-
-    setTimeout(() => {
-      console.log(document.querySelector(':focus'));
-    }, 1000);
   };
 
   private hidePanel = (): void => {
