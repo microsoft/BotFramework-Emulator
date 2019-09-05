@@ -42,10 +42,10 @@
             "states": {
               "default": {
                 "icon": "leftArrow",
-                "aria-label": "Left Arrow"   
+                "aria-label": "Previous"   
               },
               "selected": {
-                "aria-label": "Left Arrow",                
+                "aria-label": "Previous",                
                 "aria-selected": true
               },
               "disabled": {
@@ -58,10 +58,10 @@
             "states": {
               "default": {
                 "icon": "rightArrow",
-                "aria-label": "Right Arrow"
+                "aria-label": "Next"
               },
               "selected": {
-                "aria-label": "Right Arrow",                
+                "aria-label": "Next",                
                 "aria-selected": true
               },
               "disabled": {
