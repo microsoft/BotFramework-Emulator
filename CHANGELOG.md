@@ -36,10 +36,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - [1836](https://github.com/microsoft/BotFramework-Emulator/pull/1836)
   - [1838](https://github.com/microsoft/BotFramework-Emulator/pull/1838)
   - [1840](https://github.com/microsoft/BotFramework-Emulator/pull/1840)
+  - [1842](https://github.com/microsoft/BotFramework-Emulator/pull/1842)
   - [1843](https://github.com/microsoft/BotFramework-Emulator/pull/1843)
-
 - [client] Fixed an issue with the transcripts path input inside of the resource settings dialog in PR [1836](https://github.com/microsoft/BotFramework-Emulator/pull/1836)
-
 
 ## v4.5.2 - 2019 - 07 - 17
 ## Fixed
