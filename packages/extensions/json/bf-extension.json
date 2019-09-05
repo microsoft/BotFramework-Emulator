@@ -45,7 +45,7 @@
                 "aria-label": "Previous"   
               },
               "selected": {
-                "aria-label": "Previous",                
+                "aria-label": "Previous",
                 "aria-selected": true
               },
               "disabled": {
@@ -61,7 +61,7 @@
                 "aria-label": "Next"
               },
               "selected": {
-                "aria-label": "Next",                
+                "aria-label": "Next",
                 "aria-selected": true
               },
               "disabled": {
