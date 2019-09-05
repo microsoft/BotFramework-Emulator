@@ -210,6 +210,7 @@ html {
   /* Links */
   --link-color: #4080D0;
   --link-color-disabled: #C8C8C8;
+  --inspector-link-color: var(--link-color);
 
   /* Split Button */
   --split-button-color: var(--neutral-5);

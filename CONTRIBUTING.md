@@ -60,11 +60,13 @@ npm i -g lerna@3.4.0 webpack@4.8.x webpack-cli jest
 ### Install local dependencies
 
 ```
-lerna bootstrap --hoist
+npm run bootstrap
 ```
 
 > **IMPORTANT:** Do **not** run `npm install` in any of the directories; lerna will take care of that for you with the
  `bootstrap` command.
+
+> If you plan on running the end-to-end tests, please use `npm run bootstrap:dev` instead to bootstrap the `@bfemulator/tools` package.
 
 ### Build all packages
 
