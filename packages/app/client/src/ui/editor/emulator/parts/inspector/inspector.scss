@@ -58,6 +58,10 @@
 
 .nothing-inspected {
   padding: 0 16px;
+
+  & > a {
+    color: var(--inspector-link-color);
+  }
 }
 
 .left-arrow {
