@@ -42,7 +42,7 @@ export interface TextFieldProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   errorMessage?: string;
   inputContainerClassName?: string;
-  inputRef?: React.Ref<HTMLInputElement>;
+  inputRef?: (ref: HTMLInputElement) => void;
 }
 
 export class TextField extends Component<TextFieldProps, {}> {
@@ -58,7 +58,6 @@ export class TextField extends Component<TextFieldProps, {}> {
     const {
       inputContainerClassName = '',
       className = '',
-      label,
       errorMessage,
       children,
       inputRef,
@@ -71,12 +70,19 @@ export class TextField extends Component<TextFieldProps, {}> {
     return (
       <div className={`${styles.inputContainer} ${inputContainerClassName}`}>
         {this.labelNode}
-        <input className={inputClassName} id={this.inputId} ref={inputRef || undefined} {...inputProps} />
+        <input className={inputClassName} id={this.inputId} ref={this.setInputRef} {...inputProps} />
         {children}
         {this.errorNode}
       </div>
     );
   }
+
+  private setInputRef = (ref: HTMLInputElement): void => {
+    const { inputRef } = this.props;
+    if (inputRef) {
+      inputRef(ref);
+    }
+  };
 
   protected get labelNode(): ReactNode {
     const { label, required, disabled } = this.props;

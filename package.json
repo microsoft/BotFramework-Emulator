@@ -1,15 +1,17 @@
 {
   "scripts": {
-    "bootstrap": "lerna bootstrap --hoist",
+    "bootstrap": "lerna bootstrap --hoist --ignore @bfemulator/tools",
+    "bootstrap:dev": "lerna bootstrap --hoist",
     "build": "npm rebuild node-sass && npm run rebuild:keytar:electron && lerna run build",
     "lint": "lerna run lint --no-bail",
     "lint:fix": "lerna run lint:fix --no-bail",
     "rebuild:keytar:electron": "rimraf node_modules/keytar/build && electron-rebuild",
     "rebuild:keytar:node": "npm rebuild keytar",
     "start": "cd packages\\app\\client && npm run start",
+    "start:test-bot": "lerna run --scope @bfemulator/tools start:test-bot --stream",
     "test": "npm run rebuild:keytar:node && jest --no-cache --runInBand --testPathIgnorePatterns=/packages/app/main/e2e/",
     "test:coveralls": "jest --runInBand --coverage --coverageReporters=text-lcov | coveralls",
-    "test:e2e": "npm run rebuild:keytar:electron && jest --no-cache --runInBand --testPathPattern=/e2e/.*\\.spec\\.ts$",
+    "test:e2e": "npm run rebuild:keytar:electron && jest --no-cache --runInBand --forceExit --testPathPattern=/e2e/.*\\.spec\\.ts$",
     "test:gen-lcov": "npm run test -- --coverage --coverageReporters=lcov --coverageReporters=text",
     "uploadcoverage": "cat ./coverage/lcov.info | coveralls"
   },

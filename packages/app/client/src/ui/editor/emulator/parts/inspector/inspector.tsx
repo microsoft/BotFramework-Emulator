@@ -224,7 +224,10 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
                 {
                   'You can also inspect the JSON responses from your LUIS and QnA Maker services by selecting a "trace" activity. '
                 }
-                <a href="https://docs.microsoft.com/en-us/azure/bot-service/bot-service-debug-emulator?view=azure-bot-service-4.0">
+                <a
+                  href="https://docs.microsoft.com/en-us/azure/bot-service/bot-service-debug-emulator?view=azure-bot-service-4.0"
+                  aria-label="Learn more about debugging your bot with the Emulator"
+                >
                   Learn More.
                 </a>
               </div>

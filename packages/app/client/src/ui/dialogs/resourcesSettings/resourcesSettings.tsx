@@ -51,7 +51,7 @@ export interface ResourcesSettingsState {
 export interface ResourcesSettingsProps extends ResourcesSettingsState {
   cancel: () => void;
   save: (settings: BotInfo) => void;
-  showOpenDialog: () => Promise<any>;
+  showOpenDialog: () => Promise<string>;
 }
 
 export class ResourcesSettings extends Component<ResourcesSettingsProps, ResourcesSettingsState> {
@@ -88,7 +88,7 @@ export class ResourcesSettings extends Component<ResourcesSettingsProps, Resourc
             inputContainerClassName={styles.inputContainer}
             label="Locations for transcripts"
             value={transcriptsPath}
-            data-prop="z"
+            data-prop="transcriptsPath"
             required={true}
             onChange={this.onInputChange}
             errorMessage={transcriptsInputError}

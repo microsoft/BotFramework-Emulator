@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Fixed
 - [main] Fixed bug where opening a chat via URL was sending two conversation updates in PR [1735](https://github.com/microsoft/BotFramework-Emulator/pull/1735)
 - [main] Fixed an issue where the Emulator was incorrectly sending the conversation id instead of an emulated OAuth token in PR [1738](https://github.com/microsoft/BotFramework-Emulator/pull/1738)
+- [client] Fixed an issue with the transcripts path input inside of the resource settings dialog in PR [1836](https://github.com/microsoft/BotFramework-Emulator/pull/1836)
 - [client] Fixed various accessibility issues in PRs:
   - [1775](https://github.com/microsoft/BotFramework-Emulator/pull/1775)
   - [1776](https://github.com/microsoft/BotFramework-Emulator/pull/1776)
@@ -27,7 +28,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - [1787](https://github.com/microsoft/BotFramework-Emulator/pull/1787)
   - [1790](https://github.com/microsoft/BotFramework-Emulator/pull/1790)
   - [1791](https://github.com/microsoft/BotFramework-Emulator/pull/1791)
+  - [1826](https://github.com/microsoft/BotFramework-Emulator/pull/1826)
+  - [1827](https://github.com/microsoft/BotFramework-Emulator/pull/1827)
   - [1828](https://github.com/microsoft/BotFramework-Emulator/pull/1828)
+  - [1831](https://github.com/microsoft/BotFramework-Emulator/pull/1831)
+  - [1832](https://github.com/microsoft/BotFramework-Emulator/pull/1832)
+  - [1835](https://github.com/microsoft/BotFramework-Emulator/pull/1835)
+  - [1836](https://github.com/microsoft/BotFramework-Emulator/pull/1836)
+  - [1838](https://github.com/microsoft/BotFramework-Emulator/pull/1838)
+  - [1840](https://github.com/microsoft/BotFramework-Emulator/pull/1840)
+  - [1842](https://github.com/microsoft/BotFramework-Emulator/pull/1842)
+  - [1843](https://github.com/microsoft/BotFramework-Emulator/pull/1843)
+  - [1845](https://github.com/microsoft/BotFramework-Emulator/pull/1845)
 
 ## v4.5.2 - 2019 - 07 - 17
 ## Fixed
