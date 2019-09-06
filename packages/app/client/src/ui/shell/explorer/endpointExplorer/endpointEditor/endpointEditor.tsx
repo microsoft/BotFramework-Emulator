@@ -144,7 +144,7 @@ export class EndpointEditor extends Component<EndpointEditorProps, EndpointEdito
     } = this.state;
     const { name = '', endpoint = '', appId = '', appPassword = '' } = endpointService;
     const { tenantId = '', subscriptionId = '', resourceGroup = '', serviceName = '' } = botService;
-    const hasBotService = tenantId || subscriptionId || resourceGroup || serviceName;
+    const hasBotService = !!(tenantId || subscriptionId || resourceGroup || serviceName);
     const valid = !!endpoint && !!name;
     const isUsGov = EndpointEditor.isUsGov((endpointService as any).channelService);
     return (
@@ -195,14 +195,16 @@ export class EndpointEditor extends Component<EndpointEditorProps, EndpointEdito
             &nbsp;Learn more.
           </a>
         </Row>
-        <a
-          href="javascript:void(0)"
-          className={`${styles.arrow} ${hasBotService ? styles.arrowExpanded : ''}`}
+        <button
+          className={`${styles.absContentToggle} ${hasBotService ? styles.arrowExpanded : ''}`}
           onClick={this.onABSLinkClick}
+          aria-controls="abs-config-content"
+          aria-expanded={hasBotService}
         >
           Azure Bot Service configuration
-        </a>
-        <div className={styles.absContent} ref={this.absContentRef}>
+          <span role="presentation"></span>
+        </button>
+        <div id="abs-config-content" className={styles.absContent} ref={this.absContentRef} role="region">
           <div>
             <Row className={styles.absTextFieldRow}>
               <TextField
@@ -308,7 +310,7 @@ export class EndpointEditor extends Component<EndpointEditorProps, EndpointEdito
     this.setState({ botService });
   };
 
-  private onABSLinkClick = (event: MouseEvent<HTMLAnchorElement>) => {
+  private onABSLinkClick = (event: MouseEvent<HTMLButtonElement>) => {
     // Process this outside the react state
     const { currentTarget } = event;
     currentTarget.classList.toggle(styles.arrowExpanded);
@@ -316,6 +318,7 @@ export class EndpointEditor extends Component<EndpointEditorProps, EndpointEdito
     const { clientHeight } = this.absContent.firstElementChild as HTMLElement;
     const newHeight = expanded ? clientHeight : 0;
     this.absContent.style.height = `${newHeight}px`;
+    currentTarget.setAttribute('aria-expanded', expanded + '');
   };
 
   private absContentRef = (ref: HTMLDivElement): void => {
