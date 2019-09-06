@@ -227,7 +227,7 @@ describe('<EmulatorContainer/>', () => {
     const defaultView = instance.renderDefaultView();
 
     expect(defaultView).not.toBeNull();
-    expect(defaultView.key).toEqual('convo1');
+    expect(defaultView.props.children[1].key).toEqual('convo1');
   });
 
   it('should get the veritcal splitter sizes', () => {
