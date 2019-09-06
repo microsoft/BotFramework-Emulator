@@ -45,6 +45,7 @@
                 "aria-label": "Previous"   
               },
               "selected": {
+                "icon": "leftArrowSelected",
                 "aria-label": "Previous",
                 "aria-selected": true
               },
@@ -61,6 +62,7 @@
                 "aria-label": "Next"
               },
               "selected": {
+                "icon": "rightArrowSelected",
                 "aria-label": "Next",
                 "aria-selected": true
               },
