@@ -88,7 +88,7 @@ export class ResourcesSettings extends Component<ResourcesSettingsProps, Resourc
             inputContainerClassName={styles.inputContainer}
             label="Locations for transcripts"
             value={transcriptsPath}
-            data-prop="z"
+            data-prop="transcriptsPath"
             required={true}
             onChange={this.onInputChange}
             errorMessage={transcriptsInputError}
