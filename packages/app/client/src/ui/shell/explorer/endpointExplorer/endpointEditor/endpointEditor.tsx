@@ -188,7 +188,12 @@ export class EndpointEditor extends Component<EndpointEditorProps, EndpointEdito
         />
         <Row align={RowAlignment.Center}>
           <Checkbox label="Azure for US Government" checked={isUsGov} onChange={this.onChannelServiceChange} />
-          <a href="https://aka.ms/bot-framework-emulator-azuregov">&nbsp;Learn more.</a>
+          <a
+            href="https://aka.ms/bot-framework-emulator-azuregov"
+            aria-label="Learn more about Azure for US Government"
+          >
+            &nbsp;Learn more.
+          </a>
         </Row>
         <a
           href="javascript:void(0)"
