@@ -149,7 +149,6 @@ export class SplitButton extends React.Component<SplitButtonProps, SplitButtonSt
       onClick(newValue);
     }
     this.hidePanel();
-    this.caretRef.focus();
   };
 
   private hidePanel = (): void => {
