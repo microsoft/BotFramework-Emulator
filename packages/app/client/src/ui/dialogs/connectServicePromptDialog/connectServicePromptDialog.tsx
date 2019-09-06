@@ -97,7 +97,7 @@ export class ConnectServicePromptDialog extends Component<ConnectServicePromptDi
       <>
         <p>
           {`Sign in to your Azure account to select the LUIS applications you'd like to associate with this bot. `}
-          <a href="http://aka.ms/bot-framework-emulator-LUIS-docs-home" />
+          <a href="http://aka.ms/bot-framework-emulator-LUIS-docs-home">Learn more about LUIS.</a>
         </p>
         <p>
           {`Alternatively, you can `}
@@ -116,7 +116,7 @@ export class ConnectServicePromptDialog extends Component<ConnectServicePromptDi
         <p>
           {'Sign in to your Azure account to select the QnA ' +
             "Maker knowledge bases you'd like to associate with this bot. "}
-          <a href="http://aka.ms/bot-framework-emulator-qna-docs-home" />
+          <a href="http://aka.ms/bot-framework-emulator-qna-docs-home">Learn more about QnA Maker.</a>
         </p>
         <p>
           {`Alternatively, you can `}{' '}

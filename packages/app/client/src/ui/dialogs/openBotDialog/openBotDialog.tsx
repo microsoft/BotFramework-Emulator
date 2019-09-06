@@ -178,7 +178,12 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
               checked={isAzureGov}
               onClick={this.onChannelServiceCheckboxClick}
             />
-            <a href="https://aka.ms/bot-framework-emulator-azuregov">&nbsp;Learn more.</a>
+            <a
+              href="https://aka.ms/bot-framework-emulator-azuregov"
+              aria-label="Learn more about Azure for US Government"
+            >
+              &nbsp;Learn more.
+            </a>
           </Row>
           <DialogFooter>
             <DefaultButton type="button" onClick={this.props.onDialogCancel}>
