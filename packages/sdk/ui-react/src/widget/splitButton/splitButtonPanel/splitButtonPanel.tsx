@@ -84,7 +84,7 @@ export class SplitButtonPanel extends React.Component<SplitButtonPanelProps> {
           className={styles.panel}
           style={inlineStyle}
           ref={this.setPanelRef}
-          role={'listbox'}
+          role={'menu'}
           tabIndex={-1}
           aria-activedescendant={this.getOptionId(selected)}
           onKeyDown={onKeyDown}
@@ -97,7 +97,7 @@ export class SplitButtonPanel extends React.Component<SplitButtonPanelProps> {
                 id={this.getOptionId(index)}
                 key={option}
                 className={styles.option + selectedClass}
-                role={'option'}
+                role={'menuitem'}
                 aria-selected={isSelected}
                 onClick={e => this.onSelectOption(e, index)}
               >
