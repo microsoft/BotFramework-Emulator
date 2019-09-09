@@ -44,7 +44,6 @@
                 "icon": "leftArrow",
                 "aria-label": "Previous",
                 "title":"Previous"
-                 
               },
               "selected": {
                 "icon": "leftArrowSelected",
