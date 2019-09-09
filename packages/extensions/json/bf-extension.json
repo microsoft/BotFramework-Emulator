@@ -42,7 +42,9 @@
             "states": {
               "default": {
                 "icon": "leftArrow",
-                "aria-label": "Previous"   
+                "aria-label": "Previous",
+                "title":"Previous"
+                 
               },
               "selected": {
                 "icon": "leftArrowSelected",
@@ -59,7 +61,8 @@
             "states": {
               "default": {
                 "icon": "rightArrow",
-                "aria-label": "Next"
+                "aria-label": "Next",
+                "title":"Next"
               },
               "selected": {
                 "icon": "rightArrowSelected",
@@ -75,11 +78,13 @@
             "id": "diff",
             "states": {
               "default": {
-                "label": "Show diff"
+                "label": "Show diff",
+                "title":"Show diff"
               },
               "selected": {
                 "label": "Hide diff",
-                "aria-selected": true
+                "aria-selected": true,
+                "title":"Hide diff"
               },
               "disabled": {
                 "aria-disabled": true
