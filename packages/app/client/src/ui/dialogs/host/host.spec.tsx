@@ -78,7 +78,7 @@ describe('<DialogHost>', () => {
   it('should add an event listener on mount, and remove on unmount', () => {
     const mockAddEventListener = jest.fn(() => null);
     const mockRemoveEventLister = jest.fn(() => null);
-    instance._hostRef = {
+    instance.hostRef.current = {
       addEventListener: mockAddEventListener,
       removeEventListener: mockRemoveEventLister,
     };
@@ -108,11 +108,12 @@ describe('<DialogHost>', () => {
   });
 
   it('should save a host element reference', () => {
-    const mockElem = { name: 'I am a fake element!' };
-    instance.saveHostRef(mockElem);
+    const mockElem = { addEventListener: () => null, name: 'I am a fake element!' };
+    instance.hostRef.current = mockElem;
+    instance.componentDidMount();
 
     expect(mockSetHost).toHaveBeenCalledWith(mockElem);
-    expect(instance._hostRef).toBe(mockElem);
+    expect(instance.hostRef.current).toBe(mockElem);
   });
 
   it('should get all focusable elements in the modal', () => {
@@ -131,7 +132,7 @@ describe('<DialogHost>', () => {
     mockDialog.appendChild(mockSpan2);
     hostElement.append(mockDialog);
 
-    instance._hostRef = hostElement;
+    instance.hostRef.current = hostElement;
     const focusableElements = instance.getFocusableElementsInModal();
     expect(focusableElements.length).toBe(3);
   });
@@ -140,8 +141,8 @@ describe('<DialogHost>', () => {
     const mockFocus = jest.fn(() => null);
     const mockGetFocusableElementsInModal = jest.fn(() => {
       return [
-        { elem: 'elem1', focus: mockFocus }, // should be focused
-        { elem: 'elem2' },
+        { elem: 'elem1' }, // should be focused
+        { elem: 'elem2', focus: mockFocus },
         { elem: 'elem3' },
       ];
     });
@@ -158,7 +159,7 @@ describe('<DialogHost>', () => {
     const mockFocusDisabledElement = jest.fn(() => null);
     const mockGetFocusableElementsInModal = jest.fn(() => {
       return [
-        { elem: 'elem1' },
+        { elem: 'elem1', hasAttribute: () => true },
         {
           elem: 'elem2',
           hasAttribute: () => false,
@@ -171,7 +172,8 @@ describe('<DialogHost>', () => {
         },
       ];
     });
-    instance.getFocusableElementsInModal = mockGetFocusableElementsInModal;
+
+    instance.hostRef.current = { querySelectorAll: mockGetFocusableElementsInModal };
 
     instance.onFocusStartingSentinel(mockFocusEvent);
     expect(mockFocusEnabledElement).toHaveBeenCalled();
@@ -195,10 +197,11 @@ describe('<DialogHost>', () => {
           hasAttribute: () => false,
           focus: mockFocusEnabledElement,
         }, // should be focused
-        { elem: 'elem2' },
+        { elem: 'elem2', hasAttribute: () => true },
       ];
     });
-    instance.getFocusableElementsInModal = mockGetFocusableElementsInModal;
+
+    instance.hostRef.current = { querySelectorAll: mockGetFocusableElementsInModal };
 
     instance.onFocusEndingSentinel(mockFocusEvent);
     expect(mockFocusEnabledElement).toHaveBeenCalled();
