@@ -17,7 +17,7 @@
       background-color: transparent;
       position: relative;
 
-      &:after {
+      &:after, &:before {
         content:'';
         border: 1px solid var(--p-button-bg);
         position: absolute;
@@ -58,6 +58,10 @@
 
 .nothing-inspected {
   padding: 0 16px;
+
+  & > a {
+    color: var(--inspector-link-color);
+  }
 }
 
 .left-arrow {

@@ -57,9 +57,9 @@ export class Dialog extends Component<ModalProps, {}> {
         <div className={`${className} ${styles.dialog} dialog`} onKeyDown={this.bodyKeyDownHandler}>
           <header className={`${titleClassName}`} role="heading">
             {title}
-            <button className={styles.cancelButton} aria-label="Close" onClick={this.props.cancel} />
-            <div className={styles.cancelButtonOutline} role="presentation"></div>
           </header>
+          <button className={styles.cancelButton} aria-label="Close" onClick={this.props.cancel} />
+          <div className={styles.cancelButtonOutline} role="presentation"></div>
           {filterChildren(children, child => hmrSafeNameComparison(child.type, DialogFooter, true))}
           {filterChildren(children, child => hmrSafeNameComparison(child.type, DialogFooter))}
         </div>

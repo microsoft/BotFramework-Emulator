@@ -41,11 +41,13 @@
             "id": "leftArrow",
             "states": {
               "default": {
-                "icon": "leftArrow"
+                "icon": "leftArrow",
+                "aria-label": "Previous"   
               },
               "selected": {
-                "aria-selected": true,
-                "icon": "leftArrowSelected"
+                "icon": "leftArrowSelected",
+                "aria-label": "Previous",
+                "aria-selected": true
               },
               "disabled": {
                 "aria-disabled": true
@@ -56,11 +58,13 @@
             "id": "rightArrow",
             "states": {
               "default": {
-                "icon": "rightArrow"
+                "icon": "rightArrow",
+                "aria-label": "Next"
               },
               "selected": {
-                "aria-selected": true,
-                "icon": "rightArrowSelected"
+                "icon": "rightArrowSelected",
+                "aria-label": "Next",
+                "aria-selected": true
               },
               "disabled": {
                 "aria-disabled": true

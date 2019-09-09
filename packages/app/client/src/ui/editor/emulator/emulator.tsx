@@ -281,7 +281,7 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
 
     const { mode, document } = this.props;
     return (
-      <div className={styles.emulator} key={this.getConversationId()}>
+      <div className={styles.emulator}>
         <div className={styles.header}>
           <ToolBar>
             {mode === 'debug' && (
@@ -295,23 +295,26 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
             {mode === 'livechat' && (
               <>
                 <SplitButton
+                  id={'restart-conversation'}
                   defaultLabel="Restart conversation"
                   buttonClass={styles.restartIcon}
                   options={[NewUserId, SameUserId]}
                   onClick={this.onStartOverClick}
                   buttonRef={this.setRestartButtonRef}
                 />
-                <button
-                  className={`${styles.saveIcon} ${styles.toolbarIcon || ''}`}
-                  onClick={this.onExportTranscriptClick}
-                >
-                  Save transcript
-                </button>
+                <div role="menuitem">
+                  <button
+                    className={`${styles.saveIcon} ${styles.toolbarIcon || ''}`}
+                    onClick={this.onExportTranscriptClick}
+                  >
+                    Save transcript
+                  </button>
+                </div>
               </>
             )}
           </ToolBar>
         </div>
-        <div className={`${styles.content} ${styles.vertical}`}>
+        <div key={this.getConversationId()} className={`${styles.content} ${styles.vertical}`}>
           <Splitter
             orientation="vertical"
             primaryPaneIndex={0}

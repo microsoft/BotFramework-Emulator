@@ -25,6 +25,7 @@ html {
   --error-text: #F48771;
   --error-bg: #F2DEDE;
   --error-outline: #BE1100;
+  --endpoint-warning: var(--neutral-1);
 
   /* webchat overridden colors */
   /* activity bubbles */
@@ -209,6 +210,7 @@ html {
   /* Links */
   --link-color: #4080D0;
   --link-color-disabled: #C8C8C8;
+  --inspector-link-color: var(--link-color);
 
   /* Split Button */
   --split-button-color: var(--neutral-5);
@@ -237,6 +239,7 @@ html {
 
   /* Auto Complete */
   --auto-complete-results-opacity: 1;
+  --auto-complete-warning-color: var(--endpoint-warning);
 
   /* Service Picker */
   --service-picker-list-bg-color: transparent;
