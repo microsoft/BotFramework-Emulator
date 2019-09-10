@@ -2,6 +2,7 @@
   padding: 175px 20px 20px;
   position: relative;
   min-height: 450px;
+
   &::before {
     content: '';
     position: absolute;
@@ -13,4 +14,8 @@
     -webkit-mask-size: 175px;
     background-color: #007ACC;
   }
+}
+
+.markdown-container {
+  padding-left: 1px; // left side of focus outlines get cut off for top-level links
 }

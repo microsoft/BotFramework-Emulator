@@ -61,12 +61,13 @@ export class DialogHost extends React.Component<DialogHostProps, {}> {
   }
 
   public render() {
-    const visibilityClass = this.props.showing ? styles.dialogHostVisible : '';
+    const { showing } = this.props;
+    const visibilityClass = showing ? styles.dialogHostVisible : '';
     // sentinels shouldn't be tab-able when dialog is hidden
-    const sentinelTabIndex = this.props.showing ? 0 : -1;
+    const sentinelTabIndex = showing ? 0 : -1;
 
     return (
-      <div className={`${styles.host} ${visibilityClass}`} onClick={this.handleOverlayClick}>
+      <div aria-hidden={!showing} className={`${styles.host} ${visibilityClass}`} onClick={this.handleOverlayClick}>
         <span tabIndex={sentinelTabIndex} onFocus={this.onFocusStartingSentinel} className={styles.focusSentinel} />
         <div className={styles.dialogHostContent} onClick={this.handleContentClick} ref={this.hostRef} />
         <span tabIndex={sentinelTabIndex} onFocus={this.onFocusEndingSentinel} className={styles.focusSentinel} />
