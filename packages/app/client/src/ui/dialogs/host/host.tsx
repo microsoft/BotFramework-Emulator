@@ -88,7 +88,7 @@ export class DialogHost extends React.Component<DialogHostProps, {}> {
     if (this.hostRef.current) {
       const result = [].filter.call(
         this.hostRef.current.querySelectorAll('*'),
-        element => ~this.getTabIndex(element) && !element.hasAttribute('disabled')
+        element => this.getTabIndex(element) !== -1 && !element.hasAttribute('disabled')
       );
 
       return result;
@@ -98,7 +98,7 @@ export class DialogHost extends React.Component<DialogHostProps, {}> {
 
   private getTabIndex(element) {
     const { tabIndex } = element;
-    if (!~tabIndex) {
+    if (tabIndex === -1) {
       const attr = element.getAttribute('tabindex');
       if (attr === null) {
         return -1;
