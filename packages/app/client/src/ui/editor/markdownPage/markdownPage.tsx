@@ -76,7 +76,10 @@ export class MarkdownPage extends Component<MarkdownPageProps> {
     const children = !this.props.onLine ? (
       MarkdownPage.offlineElement
     ) : (
-      <div dangerouslySetInnerHTML={{ __html: MarkdownPage.renderMarkdown(this.props.markdown) }} />
+      <div
+        className={styles.markdownContainer}
+        dangerouslySetInnerHTML={{ __html: MarkdownPage.renderMarkdown(this.props.markdown) }}
+      />
     );
     return <GenericDocument>{children}</GenericDocument>;
   }
