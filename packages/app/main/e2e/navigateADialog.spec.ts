@@ -30,12 +30,11 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 
-import { existsSync, unlinkSync } from 'fs';
 import { Application } from 'spectron';
 
 import { appPath, chromeDriverLogPath, electronPath } from './utils';
 
-import { init, setupMock } from './mocks/electronDialog';
+import { init } from './mocks/electronDialog';
 
 describe('Navigating a dialog with focus trap', () => {
   let app: Application;
