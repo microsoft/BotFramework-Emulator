@@ -36,7 +36,6 @@ html {
   --webchat-user-bubble-bg: #3062D6;
   --webchat-user-bubble-text: var(--neutral-1);
   --webchat-selected-activity-bg: #B89500;
-  --webchat-selected-actvity-border: #0E369C;
   --webchat-selected-activity-text: var(--neutral-1);
   --webchat-timestamp-text: var(--neutral-6);
   --webchat-scrollbar-color: var(--scrollbar-color);
@@ -220,7 +219,6 @@ html {
   --split-button-icon-color: #00BCF2;
   --split-button-hover-bg-color: var(--neutral-14);
   --split-button-hover-outline: transparent;
-  --split-button-focus-outline: 1px solid #00BCF2;
   --split-button-selected-bg-color: var(--neutral-12);
   --split-button-selected-outline: transparent;
   --split-button-expanded-outline: transparent;
