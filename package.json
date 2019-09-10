@@ -31,7 +31,9 @@
     "prettier": "^1.15.3"
   },
   "jest": {
-    "setupFilesAfterEnv": ["./testSetup.js"],
+    "setupFilesAfterEnv": [
+      "./testSetup.js"
+    ],
     "transform": {
       "^.+\\.(tsx|ts|js|jsx)$": "./babel-jest-config"
     },

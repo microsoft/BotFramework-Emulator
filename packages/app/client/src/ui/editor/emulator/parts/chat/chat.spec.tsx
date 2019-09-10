@@ -34,7 +34,7 @@
 import * as React from 'react';
 import { mount, ReactWrapper, shallow } from 'enzyme';
 import { Provider } from 'react-redux';
-import ReactWebChat, { createDirectLine } from 'botframework-webchat';
+import ReactWebChat, { createDirectLine, createStyleSet } from 'botframework-webchat';
 import { ActivityTypes } from 'botframework-schema';
 import { ValueTypes } from '@bfemulator/app-shared';
 import { combineReducers, createStore } from 'redux';
@@ -145,13 +145,19 @@ describe('<ChatContainer />', () => {
   describe('when there is a direct line client', () => {
     it('renders the WebChat component with correct props', () => {
       const webChat = render().find(ReactWebChat);
+      const styleSet = createStyleSet({ ...webChatStyleOptions });
+
+      styleSet.uploadButton = {
+        ...styleSet.uploadButton,
+        padding: '1px',
+      };
 
       expect(webChat.props()).toMatchObject({
         activityMiddleware: expect.any(Function),
         bot: { id: defaultDocument.botId, name: 'Bot' },
         directLine: defaultDocument.directLine,
         locale: 'en-US',
-        styleOptions: webChatStyleOptions,
+        styleSet: styleSet,
         userID: '123',
         username: 'Current User',
       });
