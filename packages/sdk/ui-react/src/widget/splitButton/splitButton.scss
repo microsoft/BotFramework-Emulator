@@ -49,10 +49,6 @@
       outline: var(--split-button-hover-outline);
     }
 
-    &:focus {
-      outline: var(--split-button-focus-outline);
-    }
-
     &:active {
       background-color: var(--split-button-selected-bg-color);
       outline: var(--split-button-selected-outline);

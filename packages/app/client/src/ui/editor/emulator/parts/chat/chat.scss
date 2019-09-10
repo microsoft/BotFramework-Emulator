@@ -77,11 +77,6 @@
   padding: 4px;
   transition: color .1s linear, background .1s linear;
 
-  &:focus {
-    border: 1px solid var(--webchat-selected-actvity-border);
-    outline: none;
-  }
-
   & > * {
     margin: 0;
   }
