@@ -33,7 +33,7 @@
 import { ValueTypes } from '@bfemulator/app-shared';
 import { User } from '@bfemulator/sdk-shared';
 import { Activity, ActivityTypes } from 'botframework-schema';
-import ReactWebChat from 'botframework-webchat';
+import ReactWebChat, { createStyleSet } from 'botframework-webchat';
 import * as React from 'react';
 import { Component, KeyboardEvent, MouseEvent, ReactNode } from 'react';
 import { PrimaryButton } from '@bfemulator/ui-react';
@@ -97,6 +97,17 @@ export class Chat extends Component<ChatProps, ChatState> {
     this.activityMap = {};
     const { currentUser, document, locale, mode, webchatStore } = this.props;
 
+    const isDisabled = mode === 'transcript' || document.mode === 'debug';
+
+    // Due to needing to make idiosyncratic style changes, Emulator is using `createStyleSet` instead of `createStyleOptions`. The object below: {...webChatStyleOptions, hideSendBox...} was formerly passed into the `styleOptions` parameter of React Web Chat. If further styling modifications are desired using styleOptions, simply pass it into the same object in createStyleSet below.
+
+    const styleSet = createStyleSet({ ...webChatStyleOptions, hideSendBox: isDisabled });
+
+    styleSet.uploadButton = {
+      ...styleSet.uploadButton,
+      padding: '1px',
+    };
+
     if (this.props.pendingSpeechTokenRetrieval) {
       return <div className={styles.disconnected}>Connecting...</div>;
     }
@@ -106,7 +117,6 @@ export class Chat extends Component<ChatProps, ChatState> {
         id: document.botId || 'bot',
         name: 'Bot',
       };
-      const isDisabled = mode === 'transcript' || document.mode === 'debug';
 
       return (
         <div className={styles.chat}>
@@ -119,7 +129,7 @@ export class Chat extends Component<ChatProps, ChatState> {
             disabled={isDisabled}
             key={document.conversationId}
             locale={locale}
-            styleOptions={{ ...webChatStyleOptions, hideSendBox: isDisabled }}
+            styleSet={styleSet}
             userID={currentUser.id}
             username={currentUser.name || 'User'}
             webSpeechPonyfillFactory={this.props.webSpeechPonyfillFactory}
