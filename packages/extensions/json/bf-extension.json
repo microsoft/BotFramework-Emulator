@@ -94,11 +94,14 @@
             "id": "copyJson",
             "states": {
               "default": {
-                "label": "Copy json"
+                "label": "Copy json",
+                "aria-label": "Copy json",
+                "title":"Copy json"
               },
               "selected": {
                 "label": "Copy json",
-                "aria-selected": true
+                "aria-selected": true,
+                "aria-label": "Copy json"
               }
             }
           }
