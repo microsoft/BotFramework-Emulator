@@ -32,6 +32,7 @@
 //
 
 import * as React from 'react';
+import { SmallHeader } from '@bfemulator/ui-react';
 
 import * as styles from './welcomePage.scss';
 
@@ -39,7 +40,7 @@ export function HowToBuildABot() {
   return (
     <div className={styles.section}>
       <div className={styles.howToBuildSection}>
-        <h3>How to build a bot</h3>
+        <SmallHeader className={styles.howToTitle}>How to build a bot</SmallHeader>
         <div className={styles.stepContainer}>
           <div className={styles.stepIcon}>
             <div className={styles.buildPlan01} />

@@ -43,7 +43,7 @@ export interface SmallIHeaderProps {
 }
 
 export const SmallHeader = (props: SmallIHeaderProps): JSX.Element => (
-  <h3 className={`${styles.smallHeader} ${props.className || ''}`}>
+  <h2 className={`${styles.smallHeader} ${props.className || ''}`}>
     <TruncateText>{props.children}</TruncateText>
-  </h3>
+  </h2>
 );

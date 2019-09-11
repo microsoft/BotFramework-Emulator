@@ -7,6 +7,7 @@ export const well: string;
 export const openBot: string;
 export const ctaLink: string;
 export const howToBuildSection: string;
+export const howToTitle: string;
 export const stepContainer: string;
 export const stepIcon: string;
 export const buildPlan01: string;
