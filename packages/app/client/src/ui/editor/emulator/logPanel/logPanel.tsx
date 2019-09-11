@@ -45,7 +45,7 @@ interface LogPanelProps {
 export default class LogPanel extends React.Component<LogPanelProps, {}> {
   public render() {
     return (
-      <div className={styles.logPanel}>
+      <div aria-label="log panel" className={styles.logPanel} role="region">
         <Panel title="Log">
           <PanelContent>
             <Log document={this.props.document} />
