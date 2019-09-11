@@ -54,8 +54,14 @@ export class Dialog extends Component<ModalProps, {}> {
     return (
       <>
         <div className={`${styles.modal} ${modalStyle}`}>&nbsp;</div>
-        <div className={`${className} ${styles.dialog} dialog`} onKeyDown={this.bodyKeyDownHandler}>
-          <header className={`${titleClassName}`} role="heading">
+        <div
+          aria-labelledby="dialog-heading"
+          aria-modal="true"
+          className={`${className} ${styles.dialog} dialog`}
+          onKeyDown={this.bodyKeyDownHandler}
+          role="dialog"
+        >
+          <header className={`${titleClassName}`} id="dialog-heading">
             {title}
           </header>
           <button className={styles.cancelButton} aria-label="Close" onClick={this.props.cancel} />
