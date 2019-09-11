@@ -75,13 +75,8 @@
 }
 
 .how-to-build-section {
-  > h3 {
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 0.35px;
-    line-height: 16px;
-    margin: 0 0 24px 0;
-    text-transform: uppercase;
+  > .how-to-title {
+    margin: 18px 0 24px 0;
   }
 
   .step-container {
