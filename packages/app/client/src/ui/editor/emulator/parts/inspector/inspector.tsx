@@ -200,7 +200,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
   public render() {
     if (this.state.inspector && this.state.inspectObj) {
       return (
-        <div className={styles.detailPanel}>
+        <div aria-label="inspector panel" className={styles.detailPanel} role="region">
           <Panel title={['inspector', this.state.title].filter(s => s && s.length).join(' - ')}>
             {this.renderAccessoryButtons()}
             <PanelContent>
@@ -214,7 +214,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     } else {
       return (
         // No inspector was found.
-        <div className={styles.detailPanel}>
+        <div aria-label="inspector panel" className={styles.detailPanel} role="region">
           <Panel title={`inspector`}>
             <PanelContent>
               <div className={styles.nothingInspected}>

@@ -120,7 +120,7 @@ export class Main extends React.Component<MainProps, MainState> {
           {!this.props.presentationModeEnabled && (
             <NavBar selection={this.props.navBarSelection} explorerIsVisible={this.props.explorerIsVisible} />
           )}
-          <div className={styles.workbench}>
+          <main className={styles.workbench}>
             <Splitter
               orientation={'vertical'}
               primaryPaneIndex={0}
@@ -130,7 +130,7 @@ export class Main extends React.Component<MainProps, MainState> {
             >
               {workbenchChildren}
             </Splitter>
-          </div>
+          </main>
           <TabManagerContainer disabled={false} />
         </div>
         {!this.props.presentationModeEnabled && <StatusBar />}
