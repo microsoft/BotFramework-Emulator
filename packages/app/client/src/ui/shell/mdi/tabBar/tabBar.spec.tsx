@@ -159,13 +159,14 @@ describe('TabBar', () => {
     instance = node.instance();
   });
 
-  it('should enable presentation mode', async () => {
-    await instance.onPresentationModeClick();
-    expect(mockDispatch).toHaveBeenCalledWith(
-      executeCommand(true, SharedConstants.Commands.Telemetry.TrackEvent, null, 'tabBar_presentationMode')
-    );
-    expect(mockDispatch).toHaveBeenCalledWith(enable());
-  });
+  // Presentation Mode button has been disabled. For more information, please see https://github.com/microsoft/BotFramework-Emulator/issues/1866
+  // it('should enable presentation mode', async () => {
+  //   await instance.onPresentationModeClick();
+  //   expect(mockDispatch).toHaveBeenCalledWith(
+  //     executeCommand(true, SharedConstants.Commands.Telemetry.TrackEvent, null, 'tabBar_presentationMode')
+  //   );
+  //   expect(mockDispatch).toHaveBeenCalledWith(enable());
+  // });
 
   it('should load widgets', () => {
     // no widgets
@@ -190,7 +191,8 @@ describe('TabBar', () => {
     );
     dumbNode = dumbWrapper.find(TabBar);
     dumbInstance = dumbNode.instance() as any;
-    expect(dumbInstance.widgets).toHaveLength(2);
+    // The below line will need to be adjusted back to 2.
+    expect(dumbInstance.widgets).toHaveLength(1);
 
     dumbWrapper = mount(
       <TabBar
@@ -201,7 +203,8 @@ describe('TabBar', () => {
     );
     dumbNode = dumbWrapper.find(TabBar);
     dumbInstance = dumbNode.instance() as any;
-    expect(dumbInstance.widgets).toHaveLength(2);
+    // The below line will need to be adjusted back to 2.
+    expect(dumbInstance.widgets).toHaveLength(1);
   });
 
   it('should load tabs', () => {
