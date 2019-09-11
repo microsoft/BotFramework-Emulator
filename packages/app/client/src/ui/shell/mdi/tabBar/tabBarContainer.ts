@@ -61,6 +61,7 @@ const mapDispatchToProps = (dispatch): TabBarProps => ({
   },
   appendTab: (srcEditorKey: string, destEditorKey: string, tabId: string) =>
     dispatch(appendTab(srcEditorKey, destEditorKey, tabId)),
+  // Presentation Mode button has been disabled. For more information, please see https://github.com/microsoft/BotFramework-Emulator/issues/1866
   enablePresentationMode: async () => {
     dispatch(executeCommand(true, SharedConstants.Commands.Telemetry.TrackEvent, null, 'tabBar_presentationMode'));
     dispatch(enablePresentationMode());
