@@ -178,6 +178,7 @@ export class CollapsibleJsonViewer extends Component<CollapsibleJsonViewerProps,
     }
     const proposedAriaExpandedValue = !(ul.getAttribute('aria-expanded') === 'true');
     ul.setAttribute('aria-expanded', proposedAriaExpandedValue.toString());
+    target.setAttribute('aria-expanded', proposedAriaExpandedValue.toString());
   };
 
   private focusNext(event: KeyboardEvent): void {
