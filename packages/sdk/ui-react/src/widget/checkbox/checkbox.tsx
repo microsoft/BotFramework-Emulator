@@ -90,7 +90,14 @@ export class Checkbox extends React.Component<CheckboxProps, CheckboxState> {
     return (
       <label id={this.checkboxId} className={`${styles.label} ${disabledClass} ${className}`} data-checked={checked}>
         <span className={`${styles.checkMark} ${checkMarkStyles}`} />
-        <input type="checkbox" {...inputProps} className={styles.checkbox} ref={this.checkboxRef} readOnly={true} />
+        <input
+          aria-label={label}
+          type="checkbox"
+          {...inputProps}
+          className={styles.checkbox}
+          ref={this.checkboxRef}
+          readOnly={true}
+        />
         {label}
         {this.props.children}
       </label>
