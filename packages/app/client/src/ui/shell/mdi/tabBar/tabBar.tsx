@@ -35,7 +35,6 @@ import { BotConfigWithPath } from '@bfemulator/sdk-shared';
 import * as React from 'react';
 import { DragEvent, MouseEvent } from 'react';
 
-import * as Constants from '../../../../constants';
 import {
   CONTENT_TYPE_APP_SETTINGS,
   CONTENT_TYPE_DEBUG,
@@ -130,8 +129,8 @@ export class TabBar extends React.Component<TabBarProps, TabBarState> {
       </div>
     );
   }
-
-  private onPresentationModeClick = () => this.props.enablePresentationMode();
+  // Presentation Mode button has been disabled. For more information, please see https://github.com/microsoft/BotFramework-Emulator/issues/1866
+  // private onPresentationModeClick = () => this.props.enablePresentationMode();
 
   private onKeyDown = (event: KeyboardEvent): void => {
     // Meta corresponds to 'Command' on Mac
@@ -145,22 +144,22 @@ export class TabBar extends React.Component<TabBarProps, TabBarState> {
   };
 
   private get widgets(): JSX.Element[] {
-    const activeDoc = this.props.documents[this.props.activeDocumentId];
-    const presentationEnabled =
-      activeDoc &&
-      (activeDoc.contentType === Constants.CONTENT_TYPE_TRANSCRIPT ||
-        activeDoc.contentType === Constants.CONTENT_TYPE_LIVE_CHAT);
+    // const activeDoc = this.props.documents[this.props.activeDocumentId];
+    // const presentationEnabled =
+    //   activeDoc &&
+    //   (activeDoc.contentType === Constants.CONTENT_TYPE_TRANSCRIPT ||
+    //     activeDoc.contentType === Constants.CONTENT_TYPE_LIVE_CHAT);
     const splitEnabled = Object.keys(this.props.documents).length > 1;
 
     const widgets: JSX.Element[] = [];
 
-    if (presentationEnabled) {
-      widgets.push(
-        <button key={'presentation-widget'} title="Presentation Mode" onClick={this.onPresentationModeClick}>
-          <div className={`${styles.widget} ${styles.presentationWidget}`} />
-        </button>
-      );
-    }
+    // if (presentationEnabled) {
+    //   widgets.push(
+    //     <button key={'presentation-widget'} title="Presentation Mode" onClick={this.onPresentationModeClick}>
+    //       <div className={`${styles.widget} ${styles.presentationWidget}`} />
+    //     </button>
+    //   );
+    // }
     if (splitEnabled) {
       widgets.push(
         <button key={'split-widget'} title="Split Editor" onClick={this.onSplitClick}>
