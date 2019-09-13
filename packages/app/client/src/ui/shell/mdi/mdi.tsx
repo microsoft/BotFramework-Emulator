@@ -40,11 +40,11 @@ import { TabBarContainer } from './tabBar';
 
 export class MDIComponent extends React.Component<MDIProps> {
   public render(): React.ReactNode {
-    const { presentationModeEnabled } = this.props;
+    const { presentationModeEnabled, owningEditor = '' } = this.props;
     return (
-      <div className={styles.mdi}>
-        {!presentationModeEnabled && <TabBarContainer owningEditor={this.props.owningEditor} />}
-        <DocumentsContainer owningEditor={this.props.owningEditor} />
+      <div aria-label={`${owningEditor} editor`} className={styles.mdi} role="region">
+        {!presentationModeEnabled && <TabBarContainer owningEditor={owningEditor} />}
+        <DocumentsContainer owningEditor={owningEditor} />
       </div>
     );
   }
