@@ -72,12 +72,20 @@ export class CollapsibleJsonViewer extends Component<CollapsibleJsonViewerProps,
           node.setAttribute('role', 'treeitem');
           // If we have a nested <ul>, this is a node and
           // should have a tab index
-          node.tabIndex = node.querySelector('ul') ? 0 : -1;
+          if (node.querySelector('ul')) {
+            node.tabIndex = 0;
+            node.setAttribute('aria-expanded', 'false');
+          } else {
+            node.tabIndex = -1;
+          }
           if (node.children.length) {
             this.nodesAdded(node.childNodes);
           }
           if (node.parentElement.getAttribute('aria-expanded') === 'false') {
             node.parentElement.setAttribute('aria-expanded', 'true');
+          }
+          if (node.parentElement.getAttribute('role') === 'tree') {
+            node.setAttribute('aria-expanded', 'true');
           }
           break;
 
