@@ -191,6 +191,7 @@ describe('TabBar', () => {
     );
     dumbNode = dumbWrapper.find(TabBar);
     dumbInstance = dumbNode.instance() as any;
+    // Presentation Mode button has been disabled, which affects this test. For more information, please see https://github.com/microsoft/BotFramework-Emulator/issues/1866
     // The below line will need to be adjusted back to 2.
     expect(dumbInstance.widgets).toHaveLength(1);
 
@@ -203,6 +204,7 @@ describe('TabBar', () => {
     );
     dumbNode = dumbWrapper.find(TabBar);
     dumbInstance = dumbNode.instance() as any;
+    // Presentation Mode button has been disabled, which affects this test. For more information, please see https://github.com/microsoft/BotFramework-Emulator/issues/1866
     // The below line will need to be adjusted back to 2.
     expect(dumbInstance.widgets).toHaveLength(1);
   });
