@@ -133,7 +133,7 @@ export class WindowManager {
       height: 600,
       title: 'Sign In',
       webPreferences: {
-        nodeIntegration: false
+        nodeIntegration: false,
       }
     });
     this.add(win);
