@@ -10,7 +10,7 @@ The Bot Framework Emulator project tracks issues and feature requests using [Git
 
 First, please do a search in open issues to see if the issue or feature request has already been filed. If there is an existing issue, add your comments to that issue.
 
-If your issue is a question, consider asking it on Stack Overflow using the tag `botbuilder`.
+If your issue is a question, consider [asking it on Stack Overflow](https://stackoverflow.com/questions/ask?tags=botframework) using the tag `botframework`.
 
 ### Writing Great Issues and Suggestions
 * Provide reproducible steps, what the result of the steps was, and what you would have expected to happen.
