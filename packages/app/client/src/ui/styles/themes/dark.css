@@ -137,7 +137,7 @@ html {
   --s-button-bg-disabled: var(--neutral-2);
 
     /* link button */
-  --l-button-color: var(--dialog-link-color);
+  --l-button-color: var(--link-color);
   --l-button-background: transparent;
   --l-button-border: var(--p-button-border);
   --l-button-border-active: var(--s-button-border-active);
