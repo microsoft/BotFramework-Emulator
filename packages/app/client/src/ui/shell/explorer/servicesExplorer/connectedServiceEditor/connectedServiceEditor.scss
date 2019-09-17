@@ -73,3 +73,20 @@ ul.kv-pair-container {
 .no-border {
   border: none;
 }
+
+.link-button {
+  display: block;
+  background: 0;
+  border: 0;
+  color: var(--dialog-link-color);
+  font-weight: 600;
+
+  &:disabled {
+    color: var(--link-color-disabled);
+  }
+}
+
+.alert {
+  position: absolute;
+  top: -9999px;
+}
