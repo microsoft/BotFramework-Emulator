@@ -31,50 +31,63 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { mount } from 'enzyme';
+import { mount, ReactWrapper } from 'enzyme';
 import * as React from 'react';
 
 import { KvPair } from './kvPair';
 
-jest.mock('./connectedServiceEditor.scss', () => ({}));
 describe('The KvPair component', () => {
-  let node;
-  let mockKvs;
-  const mockOnChange = {
-    onKvPairChanged: () => null,
-  };
+  let node: ReactWrapper<{}, {}, any>;
+  const mockOnChange = jest.fn(() => null);
 
   beforeEach(() => {
-    mockKvs = {
-      someKey: 'someValue',
-    };
-
-    node = mount(<KvPair onChange={mockOnChange.onKvPairChanged} kvPairs={mockKvs} />);
+    node = mount(<KvPair onChange={mockOnChange} />);
   });
 
-  it('should render at least one empty row when at least one non-empty row exist in the data', () => {
-    const instance = node.instance();
-    expect(instance.render().props.children.length).toBe(2);
+  it('should render a key value pair row for each pair', () => {
+    node.setState({ kvPairs: [{ key: 'key1', value: 'val1' }, { key: 'key2', value: 'val2' }], numRows: 2 });
+
+    expect(node.find('ul').children()).toHaveLength(2);
   });
 
-  it('should call the given callback with the updated kv pairs when "onChange()" is called', () => {
-    const input = node.find('ul li:last-child input[data-prop="key"]');
-    const instance = input.instance();
-    instance.value = 'someKey2';
+  it('should call the onChange callback with the updated kv pairs', () => {
+    const kvPairs = [{ key: 'key1', value: 'val1' }, { key: '', value: '' }, { key: 'key3', value: 'val3' }];
+    node.setState({ kvPairs, numRows: 3 });
+    // update value of row 3
+    const mockChangeEvent = { target: { dataset: { index: 2, prop: 'value' }, value: 'updatedValue3' } };
+    node.instance().onChange(mockChangeEvent);
 
-    node.instance().onChange({ target: instance });
-    expect(node.state()).toEqual({
-      kvPairs: [
-        {
-          key: 'someKey',
-          value: undefined,
-        },
-        {
-          key: 'someKey2',
-          value: '',
-        },
-      ],
-      length: 2,
+    expect(mockOnChange).toHaveBeenCalledWith({
+      key1: 'val1',
+      // second kv pair should have been pruned because it was empty
+      key3: 'updatedValue3',
     });
+  });
+
+  it('should add a key value pair', () => {
+    const mockKvPairs = [{ key: 'key1', value: 'val1' }];
+    node.setState({ kvPairs: mockKvPairs, numRows: 1 });
+
+    node.instance().onAddKvPair();
+
+    expect(node.instance().state).toEqual({
+      alert: '',
+      kvPairs: [{ key: 'key1', value: 'val1' }, { key: '', value: '' }],
+      numRows: 2,
+    });
+  });
+
+  it('should remove a key value pair', () => {
+    const mockKvPairs = [{ key: 'key1', value: 'val1' }, { key: 'key2', value: 'val2' }];
+    node.setState({ kvPairs: mockKvPairs, numRows: 2 });
+
+    node.instance().onRemoveKvPair();
+
+    expect(node.instance().state).toEqual({
+      alert: 'Removed key value pair, row 1',
+      kvPairs: [{ key: 'key1', value: 'val1' }],
+      numRows: 1,
+    });
+    expect(mockOnChange).toHaveBeenCalledWith({ key1: 'val1' });
   });
 });
