@@ -134,6 +134,17 @@ html {
   --s-button-bg-active: var(--neutral-5);
   --s-button-bg-disabled: var(--neutral-2);
 
+  /* link button */
+  --l-button-color: var(--dialog-link-color);
+  --l-button-background: transparent;
+  --l-button-border: var(--p-button-border);
+  --l-button-border-active: var(--s-button-border-active);
+  --l-button-border-hover: var(--s-button-border-hover);
+  --l-button-border-disabled: var(--s-button-border-disabled);
+  --l-button-opacity-disabled: var(--s-button-opacity-disabled);
+  --l-button-border-focused: var(--p-button-border-focus);
+  --l-button-disabled-color: var(--neutral-9);
+
   /* Dialogs & Modals */
   --dialog-bg: var(--neutral-2);
   --dialog-color: var(--neutral-14);
