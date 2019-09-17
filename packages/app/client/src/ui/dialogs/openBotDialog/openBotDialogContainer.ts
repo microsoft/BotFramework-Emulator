@@ -37,11 +37,15 @@ import { Action } from 'redux';
 import { openBotViaFilePathAction, openBotViaUrlAction } from '../../../state/actions/botActions';
 import { DialogService } from '../service';
 import { RootState } from '../../../state/store';
+import { ariaAlertService } from '../../a11y';
 
 import { OpenBotDialog, OpenBotDialogProps, OpenBotDialogState } from './openBotDialog';
 
 const mapDispatchToProps = (dispatch: (action: Action) => void): OpenBotDialogProps => {
   return {
+    createAriaAlert: (msg: string) => {
+      ariaAlertService.alert(msg);
+    },
     openBot: (componentState: OpenBotDialogState) => {
       DialogService.hideDialog();
       const { appId = '', appPassword = '', botUrl = '', mode = 'livechat-url', isAzureGov } = componentState;

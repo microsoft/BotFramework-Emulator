@@ -80,6 +80,7 @@ interface IpcMessageEvent extends Event {
 
 interface InspectorProps {
   appPath?: string;
+  createAriaAlert?: (msg: string) => void;
   document: ChatDocument;
   themeInfo: { themeName: string; themeComponents: string[] };
   activeBot?: IBotConfiguration;
@@ -371,6 +372,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     const id = event.currentTarget.name;
 
     if (id == 'copyJson') {
+      this.props.createAriaAlert('Activity JSON copied to clipboard.');
       return clipboard.writeText(JSON.stringify(this.state.inspectObj, null, 2));
     }
 
@@ -397,6 +399,10 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     // TODO - localization
     const { channel } = event;
     switch (channel) {
+      case EmulatorChannel.CreateAriaAlert:
+        this.props.createAriaAlert(event.args[0]);
+        break;
+
       case EmulatorChannel.EnableAccessory:
         this.enableAccessory(event.args[0], event.args[1]);
         break;

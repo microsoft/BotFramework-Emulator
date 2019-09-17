@@ -53,6 +53,7 @@ import { theme } from '../../../../../state/reducers/theme';
 import { ExtensionManager } from '../../../../../extensions';
 import { logService } from '../../../../../platform/log/logService';
 import { executeCommand } from '../../../../../state/actions/commandActions';
+import { ariaAlertService } from '../../../../a11y';
 
 import { Inspector } from './inspector';
 import { InspectorContainer } from './inspectorContainer';
@@ -444,6 +445,15 @@ describe('The Inspector component', () => {
         event = { channel: '', args: [1, 2] };
       });
 
+      it('"create-aria-alert"', () => {
+        event.channel = 'create-aria-alert';
+        event.args = ['I am an alert!'];
+        const spy = jest.spyOn(ariaAlertService, 'alert').mockReturnValueOnce(undefined);
+        instance.ipcMessageEventHandler(event);
+
+        expect(spy).toHaveBeenCalledWith('I am an alert!');
+      });
+
       it('"enable-accessory"', () => {
         event.channel = 'enable-accessory';
         const spy = jest.spyOn(instance, 'enableAccessory');
@@ -518,8 +528,9 @@ describe('The Inspector component', () => {
         event = { channel: '', currentTarget: { dataset: { currentState: 'default' }, name: '' } };
       });
 
-      it('"when the copy json button is clicked"', () => {
+      it('when the copy json button is clicked', () => {
         const spy = jest.spyOn(instance, 'accessoryClick');
+        const alertServiceSpy = jest.spyOn(ariaAlertService, 'alert').mockReturnValueOnce(undefined);
         const clipboardSpy = jest.spyOn(Electron.clipboard, 'writeText');
 
         event.channel = 'proxy';
@@ -527,6 +538,7 @@ describe('The Inspector component', () => {
         instance.accessoryClick(event);
         expect(spy).toHaveBeenCalledWith(event);
         expect(clipboardSpy).toHaveBeenCalledWith(JSON.stringify(instance.state.inspectObj, null, 2));
+        expect(alertServiceSpy).toHaveBeenCalledWith('Activity JSON copied to clipboard.');
       });
     });
   });

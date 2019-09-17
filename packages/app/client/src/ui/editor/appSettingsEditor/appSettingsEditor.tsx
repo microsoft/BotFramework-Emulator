@@ -45,7 +45,7 @@ export interface AppSettingsEditorProps {
   documentId?: string;
   dirty?: boolean;
   framework?: FrameworkSettings;
-
+  createAriaAlert?: (msg: string) => void;
   discardChanges?: () => void;
   openBrowseForNgrok: () => Promise<string>;
   saveFrameworkSettings?: (framework: FrameworkSettings) => void;
@@ -310,6 +310,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
 
     this.setState({ dirty: false });
     this.props.saveFrameworkSettings(newState);
+    this.props.createAriaAlert('App settings saved.');
   };
 
   private updateDirtyFlag(change: { [prop: string]: any }) {
