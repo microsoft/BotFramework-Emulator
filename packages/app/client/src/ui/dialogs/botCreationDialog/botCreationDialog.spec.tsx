@@ -31,11 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { mount } from 'enzyme';
+import { mount, ReactWrapper } from 'enzyme';
 import * as React from 'react';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { ActiveBotHelper } from '../../helpers/activeBotHelper';
+import { ariaAlertService } from '../../a11y';
 
 import { BotCreationDialog, BotCreationDialogState } from './botCreationDialog';
 
@@ -85,7 +86,7 @@ describe('BotCreationDialog tests', () => {
     commandService = descriptor.descriptor.get();
   });
 
-  let testWrapper;
+  let testWrapper: ReactWrapper<any, any, any>;
   beforeEach(() => {
     testWrapper = mount(<BotCreationDialog />);
   });
@@ -141,9 +142,11 @@ describe('BotCreationDialog tests', () => {
     });
     (window.document.getElementById as any) = mockGetElementById;
     window.document.execCommand = mockExec;
+    const alertServiceSpy = jest.spyOn(ariaAlertService, 'alert').mockReturnValueOnce(undefined);
 
     (testWrapper.instance() as any).onCopyClick();
     expect(mockExec).toHaveBeenCalledWith('copy');
+    expect(alertServiceSpy).toHaveBeenCalledWith('Secret copied to clipboard.');
 
     // restore window functions
     window.document.execCommand = backupExec;
@@ -237,5 +240,25 @@ describe('BotCreationDialog tests', () => {
       },
       null
     );
+  });
+
+  it('should toggle the visibility of the secret', () => {
+    const spy = jest.spyOn(ariaAlertService, 'alert');
+    testWrapper.setState({ encryptKey: true, revealSecret: false });
+    testWrapper.instance().onRevealSecretClick();
+
+    expect(spy).toHaveBeenCalledWith('Secret showing.');
+    expect(testWrapper.instance().state.revealSecret).toBe(true);
+
+    testWrapper.instance().onRevealSecretClick();
+
+    expect(spy).toHaveBeenCalledWith('Secret hidden.');
+  });
+
+  it('should not toggle the visibility of the secret if the encryption is disabled', () => {
+    testWrapper.setState({ encryptKey: false, revealSecret: false });
+    testWrapper.instance().onRevealSecretClick();
+
+    expect(testWrapper.instance().state.revealSecret).toBe(false);
   });
 });

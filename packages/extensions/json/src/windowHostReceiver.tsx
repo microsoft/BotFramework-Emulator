@@ -69,8 +69,9 @@ interface JsonViewerExtensionAccessory {
 type AccessoryId = keyof JsonViewerExtensionAccessory;
 
 export function windowHostReceiver(WrappedComponent: ComponentClass<any>): ComponentClass {
-  @IpcHost(['setAccessoryState', 'setHighlightedObjects', 'setInspectorObjects'])
+  @IpcHost(['createAriaAlert', 'setAccessoryState', 'setHighlightedObjects', 'setInspectorObjects'])
   class WindowHostReceiver extends Component<{}, WindowHostReceiverState> {
+    private createAriaAlert: (msg: string) => void;
     private setAccessoryState: (accessoryId: AccessoryId, state: string) => void;
     private setHighlightedObjects: (documentId: string, items: Activity | Activity[]) => void;
     private setInspectorObjects: (documentId: string, items: Activity | Activity[]) => void;
@@ -160,8 +161,10 @@ export function windowHostReceiver(WrappedComponent: ComponentClass<any>): Compo
               newStateFragment.selectedDiffItem = previousBotState;
               inspectorObjects.push(buildDiff(nextBotState, previousBotState));
               highlightedObjects.push(previousBotState, nextBotState);
+              this.createAriaAlert('Showing bot state diff.');
             } else {
               inspectorObjects.push(selectedItem as Activity);
+              this.createAriaAlert('Hiding bot state diff.');
             }
             this.setAccessoryState('diff', newState);
           }
@@ -176,8 +179,10 @@ export function windowHostReceiver(WrappedComponent: ComponentClass<any>): Compo
               newStateFragment.selectedDiffItem = previousBotState;
               inspectorObjects.push(buildDiff(newSelectedItem, previousBotState));
               highlightedObjects.push(previousBotState, newSelectedItem);
+              this.createAriaAlert('Showing previous bot state diff.');
             } else if (!isDiff) {
               inspectorObjects.push(newSelectedItem || (selectedItem as Activity));
+              this.createAriaAlert('Showing previous bot state.');
             } else {
               return;
             }
@@ -193,8 +198,10 @@ export function windowHostReceiver(WrappedComponent: ComponentClass<any>): Compo
               newStateFragment.selectedDiffItem = previousBotState;
               inspectorObjects.push(buildDiff(newSelectedItem, previousBotState));
               highlightedObjects.push(newSelectedItem, previousBotState);
+              this.createAriaAlert('Showing next bot state diff.');
             } else if (!isDiff) {
               inspectorObjects.push(newSelectedItem || (selectedItem as Activity));
+              this.createAriaAlert('Showing next bot state.');
             } else {
               return;
             }

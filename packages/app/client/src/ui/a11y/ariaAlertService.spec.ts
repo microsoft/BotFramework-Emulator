@@ -30,27 +30,31 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// from the extension to Emulator
-export enum EmulatorChannel {
-  CreateAriaAlert = 'create-aria-alert',
-  EnableAccessory = 'enable-accessory',
-  Log = 'logger.log',
-  LogError = 'logger.error',
-  LogLuisDeepLink = 'logger.luis-editor-deep-link',
-  SetAccessoryState = 'set-accessory-state',
-  SetHightlightedObjects = 'set-highlighted-objects',
-  SetInspectorObjects = 'set-inspector-objects',
-  SetInspectorTitle = 'set-inspector-title',
-  TrackEvent = 'track-event',
-}
 
-// From the Emulator to the extension
-export enum ExtensionChannel {
-  AccessoryClick = 'accessory-click',
-  BotUpdated = 'bot-updated',
-  ChatLogUpdated = 'chat-log-updated',
-  HighlightedObjectsUpdated = 'highlighted-objects-updated',
-  Inspect = 'inspect',
-  Theme = 'theme',
-  ToggleDevTools = 'toggle-dev-tools',
-}
+import { ariaAlertService } from './ariaAlertService';
+
+describe('AriaAlertService', () => {
+  it('should create an aria alert and only one at a time', () => {
+    ariaAlertService.alert('I am an alert!');
+    const alertElement = document.querySelector('span#alert-from-service') as HTMLSpanElement;
+
+    expect(alertElement).toBeTruthy();
+    expect(alertElement.innerText).toBe('I am an alert!');
+
+    ariaAlertService.alert('I am another alert!');
+
+    const alertElements = document.querySelectorAll('span#alert-from-service');
+
+    expect(alertElements.length).toBe(1);
+  });
+
+  it('should not create an aria alert if there is no message', () => {
+    // make sure there are no leftover alerts from previous test(s)
+    const preExistingAlerts = document.querySelectorAll('span#alert-from-service');
+    preExistingAlerts.forEach(alert => alert.remove());
+    ariaAlertService.alert(undefined);
+    const alertElement = document.querySelector('span#alert-from-service') as HTMLSpanElement;
+
+    expect(alertElement).toBeFalsy();
+  });
+});

@@ -41,6 +41,7 @@ import * as EditorActions from '../../../state/actions/editorActions';
 import { setFrameworkSettings, saveFrameworkSettings } from '../../../state/actions/frameworkSettingsActions';
 import { getTabGroupForDocument } from '../../../state/helpers/editorHelpers';
 import { framework } from '../../../state/reducers/framework';
+import { ariaAlertService } from '../../a11y';
 
 import { AppSettingsEditor } from './appSettingsEditor';
 import { AppSettingsEditorContainer } from './appSettingsEditorContainer';
@@ -163,6 +164,8 @@ describe('The AppSettingsEditorContainer', () => {
   });
 
   it('should save the framework settings then get them again from main when the "onSaveClick" handler is called', async () => {
+    const alertServiceSpy = jest.spyOn(ariaAlertService, 'alert').mockReturnValueOnce(undefined);
+
     await (instance as any).onSaveClick();
 
     const keys = Object.keys(frameworkDefault).sort();
@@ -172,6 +175,8 @@ describe('The AppSettingsEditorContainer', () => {
       ...saveSettingsAction.payload,
       hash: jasmine.any(String),
     };
+
     expect(mockDispatch).toHaveBeenLastCalledWith(saveFrameworkSettings(savedSettings));
+    expect(alertServiceSpy).toHaveBeenCalledWith('App settings saved.');
   });
 });
