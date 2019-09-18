@@ -38,11 +38,28 @@ import { globalHandlers } from './eventHandlers';
 
 const {
   Commands: {
+    Electron: { ToggleDevTools },
+    Notifications,
     UI: { ShowBotCreationDialog, ShowOpenBotDialog },
   },
 } = SharedConstants;
 
 let mockLocalCommandsCalled = [];
+let mockRemoteCommandsCalled = [];
+const mockCurrentWebContents = {
+  undo: jest.fn(),
+  redo: jest.fn(),
+  cut: jest.fn(),
+  copy: jest.fn(),
+  paste: jest.fn(),
+  setZoomLevel: jest.fn(),
+  getZoomFactor: jest.fn(),
+  setZoomFactor: jest.fn(),
+};
+const mockCurrentWindow = {
+  isFullScreen: () => false,
+  setFullScreen: jest.fn(),
+};
 jest.mock('electron', () => ({
   ipcMain: new Proxy(
     {},
@@ -66,10 +83,15 @@ jest.mock('electron', () => ({
       },
     }
   ),
+  remote: {
+    getCurrentWebContents: () => mockCurrentWebContents,
+    getCurrentWindow: () => mockCurrentWindow,
+  },
 }));
 
 describe('#globalHandlers', () => {
   let commandService: CommandServiceImpl;
+
   beforeAll(() => {
     const decorator = CommandServiceInstance();
     const descriptor = decorator({ descriptor: {} }, 'none') as any;
@@ -79,9 +101,15 @@ describe('#globalHandlers', () => {
       mockLocalCommandsCalled.push({ commandName, args: args });
       return true as any;
     };
+    commandService.remoteCall = (commandName: string, ...args: any[]) => {
+      mockRemoteCommandsCalled.push({ commandName, args: args });
+      return true as any;
+    };
   });
+
   beforeEach(() => {
     mockLocalCommandsCalled = [];
+    mockRemoteCommandsCalled = [];
   });
 
   afterAll(() => {
@@ -131,9 +159,138 @@ describe('#globalHandlers', () => {
     const spy = jest.spyOn(commandService, 'call').mockRejectedValueOnce('oh noes!');
 
     await globalHandlers(event);
-    expect(spy).toHaveBeenLastCalledWith('notification:add', {
+    expect(spy).toHaveBeenLastCalledWith(Notifications.Add, {
       message: 'oh noes!',
       type: 1,
     });
+  });
+
+  it('should perform an undo when Ctrl+Z is pressed', async () => {
+    const event = new KeyboardEvent('keydown', { ctrlKey: true, key: 'z' });
+    await globalHandlers(event);
+
+    expect(mockCurrentWebContents.undo).toHaveBeenCalled();
+  });
+
+  it('should perform a redo when Ctrl+Y is pressed', async () => {
+    const event = new KeyboardEvent('keydown', { ctrlKey: true, key: 'y' });
+    await globalHandlers(event);
+
+    expect(mockCurrentWebContents.redo).toHaveBeenCalled();
+  });
+
+  it('should perform a cut when Ctrl+X is pressed', async () => {
+    const event = new KeyboardEvent('keydown', { ctrlKey: true, key: 'x' });
+    await globalHandlers(event);
+
+    expect(mockCurrentWebContents.cut).toHaveBeenCalled();
+  });
+
+  it('should perform a copy when Ctrl+C is pressed', async () => {
+    const event = new KeyboardEvent('keydown', { ctrlKey: true, key: 'c' });
+    await globalHandlers(event);
+
+    expect(mockCurrentWebContents.copy).toHaveBeenCalled();
+  });
+
+  it('should perform a paste when Ctrl+V is pressed', async () => {
+    const event = new KeyboardEvent('keydown', { ctrlKey: true, key: 'v' });
+    await globalHandlers(event);
+
+    expect(mockCurrentWebContents.paste).toHaveBeenCalled();
+  });
+
+  it('should reset the zoom level when Ctrl+0 is pressed', async () => {
+    const event = new KeyboardEvent('keydown', { ctrlKey: true, key: '0' });
+    await globalHandlers(event);
+
+    expect(mockCurrentWebContents.setZoomLevel).toHaveBeenCalledWith(0);
+  });
+
+  it('should zoom in when Ctrl+= is pressed', async () => {
+    const event = new KeyboardEvent('keydown', { ctrlKey: true, key: '=' });
+
+    // standard zoom from 1 to 1.1 zoom factor
+    mockCurrentWebContents.setZoomFactor.mockClear();
+    mockCurrentWebContents.getZoomFactor.mockImplementation(callback => callback(1));
+    await globalHandlers(event);
+
+    expect(mockCurrentWebContents.setZoomFactor).toHaveBeenCalledWith(1.1);
+
+    // trying to zoom past the max zoom factor (3) should not go above 3
+    mockCurrentWebContents.setZoomFactor.mockClear();
+    mockCurrentWebContents.getZoomFactor.mockImplementation(callback => callback(3.1));
+    await globalHandlers(event);
+
+    expect(mockCurrentWebContents.setZoomFactor).toHaveBeenCalledWith(3);
+  });
+
+  it('should zoom in when Ctrl+Shift+= is pressed', async () => {
+    const event = new KeyboardEvent('keydown', { ctrlKey: true, key: '+' });
+
+    // standard zoom from 1 to 1.1 zoom factor
+    mockCurrentWebContents.setZoomFactor.mockClear();
+    mockCurrentWebContents.getZoomFactor.mockImplementation(callback => callback(1));
+    await globalHandlers(event);
+
+    expect(mockCurrentWebContents.setZoomFactor).toHaveBeenCalledWith(1.1);
+
+    // trying to zoom past the max zoom factor (3) should not go above 3
+    mockCurrentWebContents.setZoomFactor.mockClear();
+    mockCurrentWebContents.getZoomFactor.mockImplementation(callback => callback(3.1));
+    await globalHandlers(event);
+
+    expect(mockCurrentWebContents.setZoomFactor).toHaveBeenCalledWith(3);
+  });
+
+  it('should zoom out when Ctrl+- is pressed', async () => {
+    const event = new KeyboardEvent('keydown', { ctrlKey: true, key: '-' });
+
+    // standard zoom from 1 to 0.9 zoom factor
+    mockCurrentWebContents.setZoomFactor.mockClear();
+    mockCurrentWebContents.getZoomFactor.mockImplementation(callback => callback(1));
+    await globalHandlers(event);
+
+    expect(mockCurrentWebContents.setZoomFactor).toHaveBeenCalledWith(0.9);
+
+    // trying to zoom past the minimum zoom factor (0.25) should not go below 0,25
+    mockCurrentWebContents.setZoomFactor.mockClear();
+    mockCurrentWebContents.getZoomFactor.mockImplementation(callback => callback(0.1));
+    await globalHandlers(event);
+
+    expect(mockCurrentWebContents.setZoomFactor).toHaveBeenCalledWith(0.25);
+  });
+
+  it('should zoom out when Ctrl+Shift+- is pressed', async () => {
+    const event = new KeyboardEvent('keydown', { ctrlKey: true, key: '_' });
+
+    // standard zoom from 1 to 0.9 zoom factor
+    mockCurrentWebContents.setZoomFactor.mockClear();
+    mockCurrentWebContents.getZoomFactor.mockImplementation(callback => callback(1));
+    await globalHandlers(event);
+
+    expect(mockCurrentWebContents.setZoomFactor).toHaveBeenCalledWith(0.9);
+
+    // trying to zoom past the minimum zoom factor (0.25) should not go below 0,25
+    mockCurrentWebContents.setZoomFactor.mockClear();
+    mockCurrentWebContents.getZoomFactor.mockImplementation(callback => callback(0.1));
+    await globalHandlers(event);
+
+    expect(mockCurrentWebContents.setZoomFactor).toHaveBeenCalledWith(0.25);
+  });
+
+  it('should toggle fullscreen when F11 is pressed', async () => {
+    const event = new KeyboardEvent('keydown', { key: 'f11' });
+    await globalHandlers(event);
+
+    expect(mockCurrentWindow.setFullScreen).toHaveBeenCalledWith(!mockCurrentWindow.isFullScreen());
+  });
+
+  it('should toggle dev tools when Ctrl+Shit+I is pressed', async () => {
+    const event = new KeyboardEvent('keydown', { ctrlKey: true, shiftKey: true, key: 'i' });
+    await globalHandlers(event);
+
+    expect(mockRemoteCommandsCalled).toHaveLength(1);
+    expect(mockRemoteCommandsCalled[0].commandName).toBe(ToggleDevTools);
   });
 });

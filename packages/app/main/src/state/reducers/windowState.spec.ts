@@ -33,7 +33,7 @@
 
 import { windowStateDefault } from '@bfemulator/app-shared';
 
-import { rememberBounds, rememberTheme, rememberZoomLevel } from '../actions/windowStateActions';
+import { rememberBounds, rememberTheme, rememberZoomLevel, setAvailableThemes } from '../actions/windowStateActions';
 
 import { windowState } from './windowState';
 
@@ -62,5 +62,13 @@ describe('windowState reducer', () => {
     const state = windowState({} as any, action);
 
     expect(state).toEqual({ theme: 'light' });
+  });
+
+  it('should handle a set available themes action', () => {
+    const themes = [{ name: 'light', href: './light.css' }, { name: 'dark', href: './dark.css' }];
+    const action = setAvailableThemes(themes);
+    const state = windowState({} as any, action);
+
+    expect(state.availableThemes).toEqual(themes);
   });
 });

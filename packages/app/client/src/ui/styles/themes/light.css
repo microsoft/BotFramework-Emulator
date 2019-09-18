@@ -266,4 +266,23 @@ html {
   /* MDI Component */
   --mdi-bg: var(--neutral-2);
   --mdi-img-bg: var(--neutral-2);
+
+  /* App Menu */
+  --app-menu-bg-color: #F4F4F4;
+  --app-menu-color: #2B2B2B;
+  --app-menu-hover-color: #2B2B2B;
+  --app-menu-hover-bg-color: #E8E8E8;
+  --app-menu-hover-border: 1px dashed transparent;
+
+  /* Menu Component */
+  --menu-box-shadow: rgb(168, 168, 168) 0px 2px 4px;
+  --menu-border: 0;
+  --menu-bg-color: #F4F4F4;
+  --menu-item-hover-bg-color: #007ACC;
+  --menu-item-color: #2B2B2B;
+  --menu-item-hover-color: #FFFFFF;
+  --menu-item-disabled-color: #8A8A8A;
+  --menu-item-hover-outline: none;
+  --menu-separator-color: #2B2B2B;
+  --menu-submenu-top-adjustment: -8px;
 }

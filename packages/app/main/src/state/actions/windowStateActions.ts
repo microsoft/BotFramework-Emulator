@@ -36,6 +36,7 @@ import { Action } from 'redux';
 export const REMEMBER_THEME = 'REMEMBER_THEME';
 export const REMEMBER_BOUNDS = 'REMEMBER_BOUNDS';
 export const REMEMBER_ZOOM_LEVEL = 'REMEMBER_ZOOM_LEVEL';
+export const SET_AVAILABLE_THEMES = 'SET_AVAILABLE_THEMES';
 
 export interface WindowStateAction<P> extends Action {
   type: WindowStateActionType;
@@ -43,11 +44,16 @@ export interface WindowStateAction<P> extends Action {
 }
 
 export declare type WindowStateActionType =
+  | 'DEBUG_MODE_CHANGED'
   | 'REMEMBER_THEME'
   | 'REMEMBER_BOUNDS'
   | 'REMEMBER_ZOOM_LEVEL'
-  | 'DEBUG_MODE_CHANGED';
-export declare type WindowStatePayload = RememberZoomLevelPayload | RememberBoundsPayload | RememberThemePayload;
+  | 'SET_AVAILABLE_THEMES';
+export declare type WindowStatePayload =
+  | RememberZoomLevelPayload
+  | RememberBoundsPayload
+  | RememberThemePayload
+  | SetAvailableThemesPayload;
 
 export interface RememberThemePayload {
   theme?: string;
@@ -63,6 +69,10 @@ export interface RememberBoundsPayload {
 
 export interface RememberZoomLevelPayload {
   zoomLevel?: number;
+}
+
+export interface SetAvailableThemesPayload {
+  availableThemes?: { name: string; href: string }[];
 }
 
 export function rememberTheme(theme: string): WindowStateAction<RememberThemePayload> {
@@ -85,5 +95,16 @@ export function rememberZoomLevel(state: WindowStateSettings): WindowStateAction
   return {
     type: REMEMBER_ZOOM_LEVEL,
     payload: state,
+  };
+}
+
+export function setAvailableThemes(
+  themes: { name: string; href: string }[]
+): WindowStateAction<SetAvailableThemesPayload> {
+  return {
+    type: SET_AVAILABLE_THEMES,
+    payload: {
+      availableThemes: themes,
+    },
   };
 }

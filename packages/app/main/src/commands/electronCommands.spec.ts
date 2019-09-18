@@ -40,6 +40,7 @@ import { load } from '../state/actions/botActions';
 import { store } from '../state/store';
 import { emulatorApplication } from '../main';
 import { TelemetryService } from '../telemetry';
+import { AppUpdater } from '../appUpdater';
 
 import { ElectronCommands } from './electronCommands';
 
@@ -97,6 +98,7 @@ jest.mock('electron', () => ({
   ),
 }));
 
+const mockToggleDevTools = jest.fn(() => null);
 jest.mock('../main', () => ({
   emulatorApplication: {
     mainWindow: {
@@ -108,6 +110,7 @@ jest.mock('../main', () => ({
     mainBrowserWindow: {
       webContents: {
         send: () => null,
+        toggleDevTools: () => mockToggleDevTools(),
       },
     },
   },
@@ -153,9 +156,9 @@ jest.mock('../appMenuBuilder', () => ({
 describe('the electron commands', () => {
   let mockTrackEvent;
   const trackEventBackup = TelemetryService.trackEvent;
-
   let registry: CommandRegistry;
   let commandService: CommandServiceImpl;
+
   beforeAll(() => {
     new ElectronCommands();
     const decorator = CommandServiceInstance();
@@ -167,6 +170,7 @@ describe('the electron commands', () => {
   beforeEach(() => {
     mockTrackEvent = jest.fn(() => Promise.resolve());
     TelemetryService.trackEvent = mockTrackEvent;
+    mockToggleDevTools.mockClear();
   });
 
   afterAll(() => {
@@ -302,5 +306,27 @@ describe('the electron commands', () => {
 
     expect(mockTrackEvent).toHaveBeenCalledWith('app_openLink', { url });
     expect(mockOpenExternal).toHaveBeenCalledWith(url, { activate: true });
+  });
+
+  it('should toggle dev tools', () => {
+    registry.getCommand(SharedConstants.Commands.Electron.ToggleDevTools)();
+
+    expect(mockToggleDevTools).toHaveBeenCalled();
+  });
+
+  it('should quit and install app updates', () => {
+    const quitAndInstallSpy = jest.spyOn(AppUpdater, 'quitAndInstall').mockReturnValue();
+    registry.getCommand(SharedConstants.Commands.Electron.QuitAndInstall)();
+
+    expect(quitAndInstallSpy).toHaveBeenCalled();
+    quitAndInstallSpy.mockClear();
+  });
+
+  it('should check for app updates', () => {
+    const checkForUpdatesSpy = jest.spyOn(AppUpdater, 'checkForUpdates').mockReturnValue(null);
+    registry.getCommand(SharedConstants.Commands.Electron.CheckForUpdates)();
+
+    expect(checkForUpdatesSpy).toHaveBeenCalledWith(true);
+    checkForUpdatesSpy.mockClear();
   });
 });

@@ -41,6 +41,7 @@ export * from './dialog';
 export * from './insetShadow/insetShadow';
 export * from './largeHeader/largeHeader';
 export * from './mediumHeader/mediumHeader';
+export * from './menu';
 export * from './smallHeader/smallHeader';
 export * from './spinner/spinner';
 export * from './splitButton';

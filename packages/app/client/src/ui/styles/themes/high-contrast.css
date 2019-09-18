@@ -262,8 +262,27 @@ html {
   --radio-border-color: var(--neutral-1);
   --radio-selected-border-color: #3B99FC;
 
-    /* MDI Component */
-    --mdi-bg: var(--neutral-16);
+  /* MDI Component */
+  --mdi-bg: var(--neutral-16);
+
+  /* App Menu */
+  --app-menu-bg-color: #000000;
+  --app-menu-color: #FFFFFF;
+  --app-menu-hover-color: #FFFFFF;
+  --app-menu-hover-bg-color: #000000;
+  --app-menu-hover-border: 1px dashed #F38518;
+
+  /* Menu Component */
+  --menu-box-shadow: none;
+  --menu-border: 2px solid #72C3DF;
+  --menu-bg-color: #000000;
+  --menu-item-hover-bg-color: transparent;
+  --menu-item-color: #CCCCCC;
+  --menu-item-hover-color: #FFFFFF;
+  --menu-item-disabled-color: #8A8A8A;
+  --menu-item-hover-outline: 1px solid #F38518;
+  --menu-separator-color: #72C3DF;
+  --menu-submenu-top-adjustment: -10px; /* 2 px lower than light & dark because of 2px menu border in HC mode */
 }
 
 .dialog .ms-Button-label {
