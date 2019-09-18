@@ -334,7 +334,6 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
       case ServiceTypes.Luis:
         return this.props.onAnchorClick('http://aka.ms/bot-framework-emulator-LUIS-docs-home');
       case ServiceTypes.QnA:
-        console.log('QnA');
         return this.props.onAnchorClick('http://aka.ms/bot-framework-emulator-qna-keys');
       case ServiceTypes.Dispatch:
         return this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-create-dispatch');

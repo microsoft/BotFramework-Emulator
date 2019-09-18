@@ -48,7 +48,6 @@ const mapDispatchToProps = dispatch => (
     cancel: () => DialogService.hideDialog(0),
     confirm: () => DialogService.hideDialog(1),
     addServiceManually: () => {
-      console.log('Container');
       DialogService.hideDialog(2);
     },
     onAnchorClick: (url: string) => {
