@@ -38,6 +38,7 @@ import {
   DefaultButton,
   Dialog,
   DialogFooter,
+  LinkButton,
   PrimaryButton,
   Row,
   RowAlignment,
@@ -52,7 +53,7 @@ import { getBotInfoByPath } from '../../../state/helpers/botHelpers';
 import { generateBotSecret } from '../../../utils';
 import { ActiveBotHelper } from '../../helpers/activeBotHelper';
 
-import * as styles from './botSettingsEditor.scss';
+import * as styles from '../dialogStyles.scss';
 
 export interface BotSettingsEditorProps {
   bot: BotConfigWithPath;
@@ -81,6 +82,7 @@ export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, B
     const { bot } = props;
     const botInfo = getBotInfoByPath(bot.path);
     const secret = botInfo && botInfo.secret;
+
     this.state = {
       ...bot,
       secret,
@@ -104,7 +106,7 @@ export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, B
     const disabled = !name || !dirty;
     const error = !name ? 'The bot name is required' : '';
     return (
-      <Dialog cancel={this.onCancel} title="Bot Settings" className={styles.botSettingsEditor}>
+      <Dialog cancel={this.onCancel} title="Bot Settings" className={styles.main}>
         <TextField label="Name" value={name} required={true} onChange={this.onInputChange} errorMessage={error} />
 
         <Row align={RowAlignment.Bottom}>
@@ -114,56 +116,49 @@ export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, B
             checked={encryptKey}
             onChange={this.onEncryptKeyChange}
           />
-          <a
-            href="javascript:void(0);"
-            onClick={this.onLearnMoreEncryptionClick}
+          <LinkButton
             aria-label="Learn more about bot file encryption"
+            className={styles.dialogLink}
+            linkRole={true}
+            onClick={this.onLearnMoreEncryptionClick}
           >
             &nbsp;Learn more.
-          </a>
+          </LinkButton>
+        </Row>
+        <Row align={RowAlignment.Bottom}>
+          <TextField
+            inputContainerClassName={styles.key}
+            label="Secret "
+            placeholder="Your keys are not encrypted"
+            value={secret}
+            disabled={true}
+            id="key-input"
+            type={revealSecret ? 'text' : 'password'}
+          />
+          <ul className={styles.actionsList}>
+            <li>
+              <LinkButton className={styles.dialogLink} disabled={!encryptKey} onClick={this.onRevealSecretClick}>
+                {revealSecret ? 'Hide' : 'Show'}
+              </LinkButton>
+            </li>
+            <li>
+              <LinkButton className={styles.dialogLink} disabled={!encryptKey} onClick={this.onCopyClick}>
+                Copy
+              </LinkButton>
+            </li>
+            {/* <li>
+              <LinkButton
+                className={styles.dialogLink}
+                onClick={this.onResetClick}>
+                Generate new secret
+              </LinkButton>
+            </li> */}
+          </ul>
         </Row>
 
-        <TextField
-          className={styles.key}
-          label="Secret"
-          placeholder="Your keys are not encrypted"
-          value={secret}
-          disabled={true}
-          id="key-input"
-          type={revealSecret ? 'text' : 'password'}
-        />
-        <ul className={styles.actionsList}>
-          <li>
-            <a
-              className={!encryptKey ? styles.disabledAction : ''}
-              href="javascript:void(0);"
-              onClick={this.onRevealSecretClick}
-            >
-              {revealSecret ? 'Hide' : 'Show'}
-            </a>
-          </li>
-          <li>
-            <a
-              className={!encryptKey ? styles.disabledAction : ''}
-              href="javascript:void(0);"
-              onClick={this.onCopyClick}
-            >
-              Copy
-            </a>
-          </li>
-          {/* <li>
-            <a
-              className={ !encryptKey ? styles.disabledAction : '' }
-              href="javascript:void(0);"
-              onClick={ this.onResetClick }>
-              Generate new secret
-            </a>
-          </li> */}
-        </ul>
-
         <DialogFooter>
-          <DefaultButton text="Cancel" onClick={this.onCancel} className={styles.cancelButton} />
-          <PrimaryButton text="Save" onClick={this.onSaveClick} className={styles.saveButton} disabled={disabled} />
+          <DefaultButton text="Cancel" onClick={this.onCancel} />
+          <PrimaryButton text="Save" onClick={this.onSaveClick} disabled={disabled} />
         </DialogFooter>
       </Dialog>
     );
