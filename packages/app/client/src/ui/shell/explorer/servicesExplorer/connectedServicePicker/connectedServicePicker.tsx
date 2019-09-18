@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Checkbox, DefaultButton, Dialog, DialogFooter, PrimaryButton } from '@bfemulator/ui-react';
+import { Checkbox, DefaultButton, Dialog, DialogFooter, LinkButton, PrimaryButton } from '@bfemulator/ui-react';
 import { IBlobStorageService, IConnectedService, ICosmosDBService, ServiceTypes } from 'botframework-config/lib/schema';
 import * as React from 'react';
 import { ChangeEvent, ChangeEventHandler, Component, ReactNode } from 'react';
@@ -56,9 +56,10 @@ interface ConnectedServicesPickerProps {
 
   connectedServices: IConnectedService[];
   availableServices: IConnectedService[];
-  launchServiceEditor: () => void;
   connectServices: (models: IConnectedService[]) => void;
   cancel: () => void;
+  launchServiceEditor: () => void;
+  onAnchorClick: (url: string) => void;
 }
 
 interface ConnectedServicesPickerState {
@@ -236,9 +237,7 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
     return (
       <p>
         {'Select a LUIS app below to store the app ID in your bot file or '}
-        <a href="javascript:void(0);" onClick={this.props.launchServiceEditor}>
-          add a LUIS app manually
-        </a>
+        <LinkButton onClick={this.props.launchServiceEditor}>add a LUIS app manually</LinkButton>
         {' by entering the app ID and key'}
       </p>
     );
@@ -248,9 +247,7 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
     return (
       <p>
         {' Select a knowledge base below to store the knowledge base Id in your bot file or '}
-        <a href="javascript:void(0);" onClick={this.props.launchServiceEditor}>
-          connect to a knowledge base manually
-        </a>
+        <LinkButton onClick={this.props.launchServiceEditor}>connect to a knowledge base manually</LinkButton>
         {' by entering the knowledge base ID and key.'}
       </p>
     );
@@ -260,9 +257,7 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
     return (
       <p>
         {'Select a Dispatch app below to store the app ID in your bot file or '}
-        <a href="javascript:void(0);" onClick={this.props.launchServiceEditor}>
-          connect to a Dispatch app manually
-        </a>
+        <LinkButton onClick={this.props.launchServiceEditor}>connect to a Dispatch app manually</LinkButton>
         {' by entering the app ID and key.'}
       </p>
     );
@@ -272,9 +267,9 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
     return (
       <p>
         {'Select a resource below or '}
-        <a href="javascript:void(0);" onClick={this.props.launchServiceEditor}>
+        <LinkButton onClick={this.props.launchServiceEditor}>
           connect to an Applications Insights resource manually.
-        </a>
+        </LinkButton>
       </p>
     );
   }
@@ -283,9 +278,7 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
     return (
       <p>
         {'Select a storage account below or '}
-        <a href="javascript:void(0);" onClick={this.props.launchServiceEditor}>
-          connect to an Azure storage account manually.
-        </a>
+        <LinkButton onClick={this.props.launchServiceEditor}>connect to an Azure storage account manually.</LinkButton>
       </p>
     );
   }
@@ -294,9 +287,9 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
     return (
       <p>
         {'Select a resource below or '}
-        <a href="javascript:void(0);" onClick={this.props.launchServiceEditor}>
+        <LinkButton onClick={this.props.launchServiceEditor}>
           connect to an Azure Cosmos DB resource manually.
-        </a>
+        </LinkButton>
       </p>
     );
   }
@@ -331,13 +324,13 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
   private get luisServiceContent(): ReactNode {
     return (
       <>
-        <a href="http://aka.ms/bot-framework-emulator-create-luis-app" className={styles.paddedLink}>
+        <LinkButton linkRole={true} onClick={this.onLUISDocsClick} className={styles.paddedLink}>
           Create a new LUIS app
-        </a>
+        </LinkButton>
         <p>
           {`Signed in as ${this.props.authenticatedUser}. You can link apps from a different LUIS `}
           {'account to this Azure account by adding yourself as a collaborator.'}
-          <a href="http://aka.ms/bot-framework-emulator-luis-collaboration">Learn more about collaborating.</a>
+          <LinkButton onClick={this.onLUISCollabDocsClick}>Learn more about collaborating.</LinkButton>
         </p>
       </>
     );
@@ -346,9 +339,9 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
   private get qnaServiceContent(): ReactNode {
     return (
       <>
-        <a href="http://aka.ms/bot-framework-emulator-create-qna-kb" className={styles.paddedLink}>
+        <LinkButton linkRole={true} onClick={this.onQnADBDocsClick} className={styles.paddedLink}>
           Create a new knowledge base.
-        </a>
+        </LinkButton>
         <p>{` Signed in as ${this.props.authenticatedUser}.`}</p>
       </>
     );
@@ -357,13 +350,15 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
   private get dispatchServiceContent(): ReactNode {
     return (
       <>
-        <a href="https://aka.ms/bot-framework-emulator-create-dispatch" className={styles.paddedLink}>
+        <LinkButton linkRole={true} onClick={this.onDispatchDocsClick} className={styles.paddedLink}>
           Learn more about using Dispatch apps.
-        </a>
+        </LinkButton>
         <p>
           {` Signed in as ${this.props.authenticatedUser}. You can link apps from a different LUIS `}
           {'account to this Azure account by adding yourself as a collaborator. '}
-          <a href="http://aka.ms/bot-framework-emulator-luis-collaboration">Learn more about collaborating.</a>
+          <LinkButton linkRole={true} onClick={this.onLUISCollabDocsClick}>
+            Learn more about collaborating.
+          </LinkButton>
         </p>
       </>
     );
@@ -372,9 +367,9 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
   private get blobStorageServiceContent(): ReactNode {
     return (
       <>
-        <a href="https://aka.ms/bot-framework-emulator-create-storage" className={styles.paddedLink}>
+        <LinkButton linkRole={true} onClick={this.onCreateStorageDocsClick} className={styles.paddedLink}>
           Create a new Azure storage account
-        </a>
+        </LinkButton>
         <p>{` Signed in as ${this.props.authenticatedUser}.`}</p>
       </>
     );
@@ -383,9 +378,9 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
   private get appInsightsServiceContent(): ReactNode {
     return (
       <>
-        <a href="https://aka.ms/bot-framework-emulator-create-appinsights" className={styles.paddedLink}>
+        <LinkButton linkRole={true} onClick={this.onAppInsightsDocClick} className={styles.paddedLink}>
           Create a new Azure storage account
-        </a>
+        </LinkButton>
         <p>{` Signed in as ${this.props.authenticatedUser}.`}</p>
       </>
     );
@@ -394,11 +389,35 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
   private get cosmosDbServiceContent(): ReactNode {
     return (
       <>
-        <a href="https://aka.ms/bot-framework-emulator-create-storage" className={styles.paddedLink}>
+        <LinkButton linkRole={true} onClick={this.onCreateStorageDocsClick} className={styles.paddedLink}>
           Create a new Azure Cosmos DB account.
-        </a>
+        </LinkButton>
         <p>{` Signed in as ${this.props.authenticatedUser}.`}</p>
       </>
     );
   }
+
+  private onAppInsightsDocClick = async () => {
+    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-create-appinsights');
+  };
+
+  private onCreateStorageDocsClick = async () => {
+    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-create-storage');
+  };
+
+  private onDispatchDocsClick = () => {
+    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-create-dispatch');
+  };
+
+  private onLUISCollabDocsClick = async () => {
+    this.props.onAnchorClick('http://aka.ms/bot-framework-emulator-luis-collaboration');
+  };
+
+  private onLUISDocsClick = async () => {
+    this.props.onAnchorClick('http://aka.ms/bot-framework-emulator-create-luis-app');
+  };
+
+  private onQnADBDocsClick = () => {
+    this.props.onAnchorClick('http://aka.ms/bot-framework-emulator-create-qna-kb');
+  };
 }

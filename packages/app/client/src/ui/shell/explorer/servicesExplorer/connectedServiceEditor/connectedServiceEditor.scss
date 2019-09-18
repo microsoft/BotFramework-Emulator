@@ -73,3 +73,9 @@ ul.kv-pair-container {
 .no-border {
   border: none;
 }
+
+.dialog-link {
+  color: var(--dialog-link-color);
+  text-decoration: none;
+  line-height: 20px;
+}

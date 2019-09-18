@@ -3,3 +3,4 @@ export const connectedServiceEditor: string;
 export const header: string;
 export const kvPairContainer: string;
 export const noBorder: string;
+export const dialogLink: string;

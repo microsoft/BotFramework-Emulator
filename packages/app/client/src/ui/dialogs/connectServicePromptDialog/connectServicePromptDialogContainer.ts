@@ -32,12 +32,14 @@
 //
 
 import { connect } from 'react-redux';
+import { SharedConstants } from '@bfemulator/app-shared';
 
 import { DialogService } from '../service';
+import { executeCommand } from '../../../state/actions/commandActions';
 
 import { ConnectServicePromptDialog, ConnectServicePromptDialogProps } from './connectServicePromptDialog';
 
-const mapDispatchToProps = (
+const mapDispatchToProps = dispatch => (
   _dispatch: () => void,
   ownProps: { [propName: string]: any }
 ): ConnectServicePromptDialogProps => {
@@ -45,7 +47,13 @@ const mapDispatchToProps = (
     ...ownProps,
     cancel: () => DialogService.hideDialog(0),
     confirm: () => DialogService.hideDialog(1),
-    addServiceManually: () => DialogService.hideDialog(2),
+    addServiceManually: () => {
+      console.log('Container');
+      DialogService.hideDialog(2);
+    },
+    onAnchorClick: (url: string) => {
+      dispatch(executeCommand(true, SharedConstants.Commands.Electron.OpenExternal, null, url));
+    },
   };
 };
 
