@@ -4,9 +4,6 @@
 .dialog-large {
   width: 600px;
 }
-.dialog-link {
-  color: var(--dialog-link-color);
-}
 
 :global {
   input {
@@ -18,7 +15,6 @@
 .main {
   min-width: 464px;
   width: 464px;
-  max-height: 314px;
 }
 
 .dialog-link {
