@@ -39,8 +39,10 @@ import {
   Dialog,
   DialogFooter,
   PrimaryButton,
+  LinkButton,
   Row,
   RowAlignment,
+  RowJustification,
   TextField,
 } from '@bfemulator/ui-react';
 import { EndpointService } from 'botframework-config/lib/models';
@@ -54,7 +56,9 @@ import { store } from '../../../state/store';
 import { generateBotSecret } from '../../../utils';
 import { ActiveBotHelper } from '../../helpers/activeBotHelper';
 import { DialogService } from '../service';
+import { executeCommand } from '../../../state/actions/commandActions';
 
+import * as dialogStyles from '../dialogStyles.scss';
 import * as styles from './botCreationDialog.scss';
 
 export interface BotCreationDialogState {
@@ -107,7 +111,7 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
 
     // TODO - localization
     return (
-      <Dialog className={styles.main} title="New bot configuration" cancel={this.onCancel} maxWidth={648}>
+      <Dialog className={dialogStyles.main} title="New bot configuration" cancel={this.onCancel}>
         <div className={styles.botCreateForm}>
           <TextField
             value={this.state.bot.name}
@@ -129,7 +133,7 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
           {endpointWarning && <span className={styles.endpointWarning}>{endpointWarning}</span>}
           <Row className={styles.multiInputRow}>
             <TextField
-              inputContainerClassName={styles.inputContainer}
+              inputContainerClassName={dialogStyles.inputContainer}
               data-prop="appId"
               label="Microsoft App ID"
               onChange={this.onInputChange}
@@ -137,7 +141,7 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
               value={endpoint.appId}
             />
             <TextField
-              inputContainerClassName={styles.inputContainer}
+              inputContainerClassName={dialogStyles.inputContainer}
               label="Microsoft App password"
               data-prop="appPassword"
               onChange={this.onInputChange}
@@ -148,65 +152,63 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
           </Row>
           <Row align={RowAlignment.Bottom}>
             <Checkbox label="Azure for US Government" checked={isAzureGov} onChange={this.onChannelServiceChange} />
-            <a
-              href="https://aka.ms/bot-framework-emulator-azuregov"
-              aria-label="Learn more about Azure for US Government"
+            <LinkButton
+              ariaLabel="Learn more about Azure for US Government"
+              className={dialogStyles.dialogLink}
+              linkRole={true}
+              onClick={this.onAzureGovLinkClick}
             >
               &nbsp;Learn more.
-            </a>
+            </LinkButton>
           </Row>
           <Row align={RowAlignment.Bottom}>
             <Checkbox
-              className={styles.encryptKeyCheckBox}
+              className={dialogStyles.encryptKeyCheckBox}
               label="Encrypt keys stored in your bot configuration."
               checked={encryptKey}
               onChange={this.onEncryptKeyChange}
             />
-            <a
-              href="https://aka.ms/bot-framework-bot-file-encryption"
-              aria-label="Learn more about bot file encryption"
+            <LinkButton
+              ariaLabel="Learn more about bot file encryption"
+              linkRole={true}
+              onClick={this.onBotEncryptionLinkClick}
             >
               &nbsp;Learn more.
-            </a>
+            </LinkButton>
           </Row>
-
-          <TextField
-            inputContainerClassName={styles.key}
-            label="Secret "
-            value={secret}
-            placeholder="Your keys are not encrypted"
-            disabled={true}
-            id="key-input"
-            type={revealSecret ? 'text' : 'password'}
-          />
-          <ul className={styles.actionsList}>
-            <li>
-              <a
-                className={!encryptKey ? styles.disabledAction : ''}
-                href="javascript:void(0);"
-                onClick={this.onRevealSecretClick}
-              >
-                {revealSecret ? 'Hide' : 'Show'}
-              </a>
-            </li>
-            <li>
-              <a
-                className={!encryptKey ? styles.disabledAction : ''}
-                href="javascript:void(0);"
-                onClick={this.onCopyClick}
-              >
-                Copy
-              </a>
-            </li>
-            {/* <li>
-              <a
-                className={ !encryptKey ? styles.disabledAction : '' }
-                href="javascript:void(0);"
-                onClick={ this.onResetClick }>
-                Generate new secret
-              </a>
-            </li> */}
-          </ul>
+          <Row align={RowAlignment.Bottom} justify={RowJustification.Left}>
+            <TextField
+              inputContainerClassName={dialogStyles.key}
+              label="Secret "
+              value={secret}
+              placeholder="Your keys are not encrypted"
+              disabled={true}
+              id="key-input"
+              type={revealSecret ? 'text' : 'password'}
+            />
+            <ul className={dialogStyles.actionsList}>
+              <li>
+                <LinkButton
+                  ariaLabel={revealSecret ? 'Hide secret' : 'Show secret'}
+                  disabled={!encryptKey}
+                  onClick={this.onRevealSecretClick}
+                >
+                  {revealSecret ? 'Hide' : 'Show'}
+                </LinkButton>
+              </li>
+              <li>
+                <LinkButton disabled={!encryptKey} onClick={this.onCopyClick}>
+                  Copy
+                </LinkButton>
+              </li>
+              {/* <li>
+                <LinkButton
+                  onClick={ this.onResetClick }>
+                  Generate new secret
+                </LinkButton>
+              </li> */}
+            </ul>
+          </Row>
         </div>
 
         <DialogFooter>
@@ -221,6 +223,28 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
       </Dialog>
     );
   }
+
+  private onAzureGovLinkClick = () => {
+    store.dispatch(
+      executeCommand(
+        true,
+        SharedConstants.Commands.Electron.OpenExternal,
+        null,
+        'https://aka.ms/bot-framework-emulator-azuregov'
+      )
+    );
+  };
+
+  private onBotEncryptionLinkClick = () => {
+    store.dispatch(
+      executeCommand(
+        true,
+        SharedConstants.Commands.Electron.OpenExternal,
+        null,
+        'https://aka.ms/bot-framework-bot-file-encryption'
+      )
+    );
+  };
 
   private onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;

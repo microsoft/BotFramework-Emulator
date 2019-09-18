@@ -61,12 +61,13 @@
 }
 
 .link-button {
-  color: var(--l-button-color);
   background-color: var(--l-button-background);
   border: 1px solid transparent;
+  color: var(--l-button-color);
+  font-size: 13px;
   font-weight: 600;
   padding: 0;
-  font-size: 13px;
+  text-align: left;
   white-space: normal;
 
   &::after {
