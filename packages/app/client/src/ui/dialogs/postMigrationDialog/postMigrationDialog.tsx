@@ -34,6 +34,7 @@
 import { Dialog, DialogFooter, LinkButton, PrimaryButton } from '@bfemulator/ui-react';
 import * as React from 'react';
 
+import * as dialogStyles from '../dialogStyles.scss';
 import * as styles from './postMigrationDialog.scss';
 
 export interface PostMigrationDialogProps {
@@ -56,14 +57,14 @@ export class PostMigrationDialog extends React.Component<PostMigrationDialogProp
 
   public render(): JSX.Element {
     return (
-      <Dialog cancel={this.onClose} title="Migration complete!">
+      <Dialog cancel={this.onClose} className={dialogStyles.dialogLarge} title="Migration complete!">
         <p className={styles.dialogText}>
           We’ve copied your bot endpoints from Emulator v3 and saved them as
           <strong className={styles.boldText}> .bot files</strong>. A
           <strong className={styles.boldText}> .bot file </strong>
           stores metadata about different services your bot consumes and enables you to edit these services directly
           from the Emulator v4.
-          <LinkButton className={styles.dialogLink} linkRole={true} onClick={this.onBotFileDocsClick}>
+          <LinkButton className={dialogStyles.dialogLink} linkRole={true} onClick={this.onBotFileDocsClick}>
             Learn more about bot configuration files.
           </LinkButton>
         </p>
@@ -72,7 +73,7 @@ export class PostMigrationDialog extends React.Component<PostMigrationDialogProp
           You can move a bot to any location by right-clicking the bot's name under My Bots.
         </p>
         <p>
-          <LinkButton className={styles.dialogLink} linkRole={true} onClick={this.onEmulatorv4OverviewDocsClick}>
+          <LinkButton className={dialogStyles.dialogLink} linkRole={true} onClick={this.onEmulatorv4OverviewDocsClick}>
             Learn more about new features in Bot Framework Emulator v4
           </LinkButton>
         </p>
