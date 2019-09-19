@@ -30,14 +30,26 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+import { SharedConstants } from '@bfemulator/app-shared';
 import { connect } from 'react-redux';
+import { Action } from 'redux';
 
 import { DialogService } from '../service';
+import { executeCommand } from '../../../state/actions/commandActions';
 
 import { SecretPromptDialog, SecretPromptDialogProps } from './secretPromptDialog';
 
-const mapStateToProps = (): SecretPromptDialogProps => ({
-  onCancelClick: () => DialogService.hideDialog(null),
-  onSaveClick: (newSecret: string) => DialogService.hideDialog(newSecret),
-});
-export const SecretPromptDialogContainer = connect(mapStateToProps)(SecretPromptDialog);
+function mapDispatchToProps(dispatch: (action: Action) => void): SecretPromptDialogProps {
+  return {
+    onAnchorClick: (url: string) => {
+      dispatch(executeCommand(true, SharedConstants.Commands.Electron.OpenExternal, null, url));
+    },
+    onCancelClick: () => DialogService.hideDialog(null),
+    onSaveClick: (newSecret: string) => DialogService.hideDialog(newSecret),
+  };
+}
+
+export const SecretPromptDialogContainer = connect(
+  undefined,
+  mapDispatchToProps
+)(SecretPromptDialog);
