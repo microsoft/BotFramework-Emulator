@@ -52,6 +52,9 @@ const mapStateToProps = (state: RootState, ownProps: AppSettingsEditorProps) => 
 const mapDispatchToProps = (dispatch: (action: Action) => void, ownProps: AppSettingsEditorProps) => ({
   discardChanges: () =>
     dispatch(EditorActions.close(getTabGroupForDocument(ownProps.documentId), DOCUMENT_ID_APP_SETTINGS)),
+  onAnchorClick: (url: string) => {
+    dispatch(executeCommand(true, SharedConstants.Commands.Electron.OpenExternal, null, url));
+  },
   openBrowseForNgrok: async () => {
     const dialogOptions = {
       title: 'Browse for ngrok',
