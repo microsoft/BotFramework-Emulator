@@ -37,6 +37,7 @@ import {
   DefaultButton,
   Dialog,
   DialogFooter,
+  LinkButton,
   PrimaryButton,
   Row,
   TextField,
@@ -50,6 +51,7 @@ import * as openBotStyles from './openBotDialog.scss';
 export interface OpenBotDialogProps {
   mode?: EmulatorMode;
   isDebug?: boolean;
+  onAnchorClick?: (url: string) => void;
   onDialogCancel?: () => void;
   openBot?: (state: OpenBotDialogState) => void;
   savedBotUrls?: { url: string; lastAccessed: string }[];
@@ -122,6 +124,10 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
     };
   }
 
+  private onEmulatorAzureGovDocsClick = async () => {
+    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-azuregov');
+  };
+
   public render(): ReactNode {
     const { savedBotUrls = [] } = this.props;
     const { botUrl, appId, appPassword, mode, isDebug, isAzureGov } = this.state;
@@ -178,12 +184,13 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
               checked={isAzureGov}
               onClick={this.onChannelServiceCheckboxClick}
             />
-            <a
-              href="https://aka.ms/bot-framework-emulator-azuregov"
+            <LinkButton
               aria-label="Learn more about Azure for US Government"
+              linkRole={true}
+              onClick={this.onEmulatorAzureGovDocsClick}
             >
               &nbsp;Learn more.
-            </a>
+            </LinkButton>
           </Row>
           <DialogFooter>
             <DefaultButton type="button" onClick={this.props.onDialogCancel}>
@@ -240,14 +247,7 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
     if (!this.state.isAzureGov && !this.state.isDebug) {
       return (
         <div className={openBotStyles.browseButton}>
-          <input
-            accept=".bot"
-            className={openBotStyles.fileInput}
-            id="openBotBrowse"
-            name="botUrl"
-            onChange={this.onInputChange}
-            type="file"
-          />
+          <input accept=".bot" id="openBotBrowse" name="botUrl" onChange={this.onInputChange} type="file" />
           <label htmlFor="openBotBrowse">Browse</label>
         </div>
       );

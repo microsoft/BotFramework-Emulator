@@ -31,17 +31,22 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { SharedConstants } from '@bfemulator/app-shared';
 import { connect } from 'react-redux';
 import { Action } from 'redux';
 
 import { openBotViaFilePathAction, openBotViaUrlAction } from '../../../state/actions/botActions';
 import { DialogService } from '../service';
 import { RootState } from '../../../state/store';
+import { executeCommand } from '../../../state/actions/commandActions';
 
 import { OpenBotDialog, OpenBotDialogProps, OpenBotDialogState } from './openBotDialog';
 
 const mapDispatchToProps = (dispatch: (action: Action) => void): OpenBotDialogProps => {
   return {
+    onAnchorClick: (url: string) => {
+      dispatch(executeCommand(true, SharedConstants.Commands.Electron.OpenExternal, null, url));
+    },
     openBot: (componentState: OpenBotDialogState) => {
       DialogService.hideDialog();
       const { appId = '', appPassword = '', botUrl = '', mode = 'livechat-url', isAzureGov } = componentState;
