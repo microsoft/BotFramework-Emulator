@@ -42,6 +42,10 @@
   padding: 0;
 }
 
+.dialog-link {
+  color: var(--dialog-link-color);
+}
+
 .explorer-empty-state {
   padding: 16px;
   margin-top: 13px;

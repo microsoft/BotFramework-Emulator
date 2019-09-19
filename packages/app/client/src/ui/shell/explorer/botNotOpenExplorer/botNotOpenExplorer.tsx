@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ExpandCollapse, ExpandCollapseContent } from '@bfemulator/ui-react';
+import { ExpandCollapse, ExpandCollapseContent, LinkButton } from '@bfemulator/ui-react';
 import * as React from 'react';
 
 import * as styles from './botNotOpenExplorer.scss';
@@ -52,13 +52,13 @@ export class BotNotOpenExplorer extends React.Component<BotNotOpenExplorerProps,
             <ExpandCollapseContent>
               <div className={styles.explorerEmptyState}>
                 {`To connect the Emulator services, `}
-                <a href="javascript:void(0);" onClick={this.onOpenBotFileClick}>
+                <LinkButton className={styles.dialogLink} onClick={this.onOpenBotFileClick}>
                   open a .bot file
-                </a>
+                </LinkButton>
                 {` or `}
-                <a href="javascript:void(0)" onClick={this.onCreateNewBotClick}>
+                <LinkButton className={styles.dialogLink} onClick={this.onCreateNewBotClick}>
                   create a new bot configuration
-                </a>
+                </LinkButton>
                 .
               </div>
             </ExpandCollapseContent>
