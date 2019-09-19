@@ -14,6 +14,12 @@ ul > li > input[type="text"] {
   line-height: inherit;
 }
 
+.dialog-link {
+  color: var(--dialog-link-color);
+  text-decoration: none;
+  line-height: 20px;
+}
+
 .empty-content {
   margin: 12px 25px;
   font-size: 13px;
