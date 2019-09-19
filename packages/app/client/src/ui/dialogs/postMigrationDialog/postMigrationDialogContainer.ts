@@ -30,18 +30,25 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
+import { SharedConstants } from '@bfemulator/app-shared';
 import { connect } from 'react-redux';
+import { Action } from 'redux';
 
 import { DialogService } from '../service';
+import { executeCommand } from '../../../state/actions/commandActions';
 
 import { PostMigrationDialog, PostMigrationDialogProps } from './postMigrationDialog';
 
 const mapStateToProps = (ownProps: PostMigrationDialogProps) => ownProps;
 
-function mapDispatchToProps(): PostMigrationDialogProps {
+function mapDispatchToProps(dispatch: (action: Action) => void): PostMigrationDialogProps {
   return {
     close: () => {
       DialogService.hideDialog();
+    },
+    onAnchorClick: (url: string) => {
+      dispatch(executeCommand(true, SharedConstants.Commands.Electron.OpenExternal, null, url));
     },
   };
 }

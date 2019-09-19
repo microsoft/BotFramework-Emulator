@@ -31,19 +31,28 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Dialog, DialogFooter, PrimaryButton } from '@bfemulator/ui-react';
+import { Dialog, DialogFooter, LinkButton, PrimaryButton } from '@bfemulator/ui-react';
 import * as React from 'react';
 
 import * as styles from './postMigrationDialog.scss';
 
 export interface PostMigrationDialogProps {
   close: () => void;
+  onAnchorClick: (url: string) => void;
 }
 
 export class PostMigrationDialog extends React.Component<PostMigrationDialogProps> {
   public constructor(props: PostMigrationDialogProps) {
     super(props);
   }
+
+  private onBotFileDocsClick = async () => {
+    this.props.onAnchorClick('https://aka.ms/about-bot-file');
+  };
+
+  private onEmulatorv4OverviewDocsClick = async () => {
+    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-v4-overview');
+  };
 
   public render(): JSX.Element {
     return (
@@ -54,16 +63,18 @@ export class PostMigrationDialog extends React.Component<PostMigrationDialogProp
           <strong className={styles.boldText}> .bot file </strong>
           stores metadata about different services your bot consumes and enables you to edit these services directly
           from the Emulator v4.
-          <a href="https://aka.ms/about-bot-file"> Learn more about bot configuration files.</a>
+          <LinkButton className={styles.dialogLink} linkRole={true} onClick={this.onBotFileDocsClick}>
+            Learn more about bot configuration files.
+          </LinkButton>
         </p>
         <p>
           {/* eslint-disable-next-line react/no-unescaped-entities */}
           You can move a bot to any location by right-clicking the bot's name under My Bots.
         </p>
         <p>
-          <a href="https://aka.ms/bot-framework-emulator-v4-overview">
+          <LinkButton className={styles.dialogLink} linkRole={true} onClick={this.onEmulatorv4OverviewDocsClick}>
             Learn more about new features in Bot Framework Emulator v4
-          </a>
+          </LinkButton>
         </p>
         <DialogFooter>
           <PrimaryButton text="Close" onClick={this.onClose} />
