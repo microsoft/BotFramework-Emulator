@@ -54,6 +54,9 @@ const mapStateToProps = (state: RootState, ownProps: any) => {
 
 const mapDispatchToProps = dispatch => {
   return {
+    onAnchorClick: (url: string) => {
+      dispatch(executeCommand(true, SharedConstants.Commands.Electron.OpenExternal, null, url));
+    },
     trackEvent: (name: string, properties?: { [key: string]: any }) => {
       dispatch(executeCommand(true, SharedConstants.Commands.Telemetry.TrackEvent, null, name, properties));
     },
