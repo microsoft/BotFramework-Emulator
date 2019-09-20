@@ -99,7 +99,6 @@ export default class Conversation extends EventEmitter {
   // when they try to write bot state data
   public stateApiDeprecationWarningShown: boolean = false;
   public codeVerifier: string = undefined;
-  // private speechToken: SpeechTokenInfo;
   public members: User[] = [];
   public nextWatermark = 0;
   // the list of activities in this conversation

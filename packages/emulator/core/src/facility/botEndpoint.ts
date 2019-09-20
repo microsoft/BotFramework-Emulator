@@ -33,7 +33,7 @@
 
 import { URL, URLSearchParams } from 'url';
 
-import { BotEndpointOptions, SpeechTokenInfo } from '@bfemulator/sdk-shared';
+import { BotEndpointOptions, SpeechAuthenticationToken } from '@bfemulator/sdk-shared';
 import * as HttpStatus from 'http-status-codes';
 
 import { authentication, speech as speechEndpoint, usGovernmentAuthentication } from '../authEndpoints';
@@ -45,9 +45,9 @@ const TIME_TO_REFRESH = 5 * 60 * 1000;
 export default class BotEndpoint {
   public accessToken?: string;
   public accessTokenExpires?: number;
-  public speechToken?: string;
   public appId?: string;
   public appPassword?: string;
+  public speechAuthenticationToken?: SpeechAuthenticationToken;
 
   constructor(
     public id?: string,
@@ -63,32 +63,56 @@ export default class BotEndpoint {
     this.appPassword = msaPassword;
   }
 
-  public async getSpeechToken(refresh: boolean = false, duration: number = 10) {
-    if (this.speechToken && !refresh) {
-      return this.speechToken;
-    }
+  private willTokenExpireWithin(millisecondsToExpire: number): boolean {
+    return Date.now() + millisecondsToExpire >= this.speechAuthenticationToken.expireAt;
+  }
 
-    if (!this.msaAppId || !this.msaPassword) {
-      throw new Error('bot must have Microsoft App ID and password');
-    }
-
-    const query = new URLSearchParams({ goodForInMinutes: duration } as any);
-    const res = await this.fetchWithAuth(new URL(`?${query.toString()}`, speechEndpoint.tokenEndpoint).toString());
-
+  private async fetchSpeechToken(): Promise<string> {
+    const res = await this.fetchWithAuth(new URL(speechEndpoint.tokenEndpoint).toString());
     if (statusCodeFamily(res.status, 200)) {
-      const body = (await res.json()) as SpeechTokenInfo;
+      let body;
+      try {
+        body = (await res.json()) as SpeechAuthenticationToken;
+      } catch (e) {
+        throw new Error(`Couldn't read speech token response: ${e}`);
+      }
 
       if (body.access_Token) {
-        this.speechToken = body.access_Token;
+        this.speechAuthenticationToken = {
+          accessToken: body.access_Token,
+          region: body.region,
+          expireAt: body.expireAt,
+          tokenLife: body.tokenLife,
+        };
 
-        return this.speechToken;
+        return this.speechAuthenticationToken.accessToken;
       } else {
-        throw new Error(body.error || 'could not retrieve speech token');
+        throw new Error(body.error || 'Could not retrieve speech token');
       }
     } else if (res.status === 401) {
-      throw new Error('not authorized to use Cognitive Services Speech API');
+      throw new Error('Not authorized to use Cognitive Services Speech API');
     } else {
-      throw new Error('cannot retrieve speech token');
+      throw new Error(`Can't retrieve speech token`);
+    }
+  }
+
+  public async getSpeechToken(refresh: boolean = false): Promise<string> {
+    if (!this.msaAppId || !this.msaPassword) {
+      throw new Error('Bot must have a valid Microsoft App ID and password');
+    }
+
+    if (this.speechAuthenticationToken && !refresh) {
+      const tokenIsExpired = Date.now() >= this.speechAuthenticationToken.expireAt;
+
+      // Refresh the token if it is expired, or if it is past its half life
+      if (tokenIsExpired || this.willTokenExpireWithin(this.speechAuthenticationToken.tokenLife / 2)) {
+        return this.fetchSpeechToken();
+      }
+
+      return this.speechAuthenticationToken.accessToken;
+    } else {
+      // refresh token
+      return this.fetchSpeechToken();
     }
   }
 
@@ -102,7 +126,7 @@ export default class BotEndpoint {
       } catch (e) {
         return {
           status: e.status,
-          message: "The bot's Microsoft App Id or Microsoft App Password is incorrect.",
+          message: "The bot's Microsoft App ID or Microsoft App Password is incorrect.",
         };
       }
     }
