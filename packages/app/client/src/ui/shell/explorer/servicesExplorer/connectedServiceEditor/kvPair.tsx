@@ -38,81 +38,83 @@ import { ChangeEvent, Component, ReactNode } from 'react';
 import * as styles from './connectedServiceEditor.scss';
 
 interface KvPairProps {
-  kvPairs?: { [propName: string]: string };
   onChange: (kvPairs: { [propName: string]: string }) => void;
 }
 
 interface KvPairState {
-  length: number;
+  alert: string;
   kvPairs: { key: string; value: string }[];
+  numRows: number;
 }
 
 export class KvPair extends Component<KvPairProps, KvPairState> {
-  public static getDerivedStateFromProps(nextProps: KvPairProps, prevState: KvPairState): KvPairState {
-    if (!prevState) {
-      prevState = { length: 0, kvPairs: [] };
-    }
-    // Convert non-indexed object to indexed array
-    // so we can track KV pairs when multiple
-    // empty rows are added.
-    const { kvPairs = {} } = nextProps;
-    const kvPairsKeys = Object.keys(kvPairs);
-    if (kvPairsKeys.length !== prevState.length) {
-      return {
-        kvPairs: kvPairsKeys.map(key => ({ key, value: nextProps[key] })),
-        length: kvPairsKeys.length,
-      };
-    }
-
-    return prevState;
-  }
-
-  // eslint-disable-next-line typescript/no-object-literal-type-assertion
   public constructor(props: KvPairProps = {} as KvPairProps) {
     super(props);
-    this.state = KvPair.getDerivedStateFromProps(props, null);
+    this.state = {
+      alert: '',
+      kvPairs: [{ key: '', value: '' }],
+      numRows: 1,
+    };
   }
 
   public render(): ReactNode {
-    const { length, kvPairs } = this.state;
-    const numEmptyRows = 1 + length - kvPairs.length;
-    const rows = [];
-
-    kvPairs.forEach((kvPair, index) => {
-      rows.push(<li key={index}>{this.getTextFieldPair(kvPair.key, kvPair.value)}</li>);
-    });
-
-    for (let i = 0; i < numEmptyRows; i++) {
-      rows.push(<li key={kvPairs.length + i}>{this.getTextFieldPair()}</li>);
-    }
+    const { numRows, kvPairs } = this.state;
 
     return (
       <div>
-        <header className={styles.header}>
+        <span className={styles.header}>
           <span>Key</span>
           <span>Value</span>
-        </header>
-        <ul className={styles.kvPairContainer}>{rows}</ul>
+        </span>
+        <ul className={styles.kvPairContainer}>
+          {kvPairs.map((pair, index) => (
+            <li key={index}>{this.getTextFieldPair(pair.key, pair.value, index)}</li>
+          ))}
+        </ul>
+        <button aria-label="Add key value pair" className={styles.linkButton} onClick={this.onAddKvPair}>
+          + Add key value pair
+        </button>
+        <button
+          aria-label="Remove key value pair"
+          className={styles.linkButton}
+          disabled={numRows === 1}
+          onClick={this.onRemoveKvPair}
+        >
+          - Remove key value pair
+        </button>
+        {this.alert}
       </div>
     );
   }
 
-  private getTextFieldPair(key: string = '', value: string = ''): ReactNode {
+  private getTextFieldPair(key: string = '', value: string = '', index: number): ReactNode {
+    let ref;
+    if (index === this.state.numRows - 1) {
+      ref = ref => {
+        ref && ref.focus();
+      };
+    }
+
     return (
       <>
         <TextField
+          aria-label={`key ${index}`}
           className={styles.noBorder}
           placeholder="Add a key (optional)"
           value={key}
           data-prop="key"
+          data-index={index}
           onChange={this.onChange}
+          inputRef={ref}
         />
         <TextField
+          aria-label={`value ${index}`}
           className={styles.noBorder}
           placeholder="Add a value (optional)"
           disabled={!key || !key.trim()}
           value={value}
           data-prop="value"
+          data-index={index}
           onChange={this.onChange}
         />
       </>
@@ -120,24 +122,46 @@ export class KvPair extends Component<KvPairProps, KvPairState> {
   }
 
   private onChange = (event: ChangeEvent<HTMLInputElement>): void => {
-    const { target } = event;
-    const { prop } = target.dataset;
-    const targetLi = target.parentElement.parentElement as HTMLOListElement;
-    const index = Array.prototype.findIndex.call(targetLi.parentElement.children, li => li === targetLi);
+    const { index, prop } = event.target.dataset;
     const { kvPairs } = this.state;
-    if (!kvPairs[index]) {
-      kvPairs[index] = { key: '', value: '' };
-    }
-    kvPairs[index][prop] = (target as HTMLInputElement).value;
-    this.setState({ kvPairs: [...kvPairs], length: kvPairs.length });
+    kvPairs[index][prop] = event.target.value;
+    this.setState({ alert: '', kvPairs, numRows: kvPairs.length });
 
-    this.props.onChange(
-      kvPairs.reduce((kvPairMap, kvPair) => {
-        if (kvPair.key && kvPair.key.trim()) {
-          kvPairMap[kvPair.key] = kvPair.value;
-        }
-        return kvPairMap;
-      }, {})
-    );
+    this.props.onChange(this.pruneIncompletePairs(kvPairs));
   };
+
+  private onAddKvPair = (): void => {
+    const { kvPairs = [] } = this.state;
+    const updatedPairs = [...kvPairs, { key: '', value: '' }];
+    this.setState({ alert: '', kvPairs: updatedPairs, numRows: updatedPairs.length });
+  };
+
+  private onRemoveKvPair = (): void => {
+    const { kvPairs = [] } = this.state;
+    kvPairs.pop();
+    this.setState({ alert: `Removed key value pair, row ${kvPairs.length}`, kvPairs, numRows: kvPairs.length });
+
+    this.props.onChange(this.pruneIncompletePairs(kvPairs));
+  };
+
+  // trims off any incomplete pairs
+  private pruneIncompletePairs(kvPairs: { key: string; value: string }[]): { [key: string]: string } {
+    return kvPairs.reduce(
+      (kvPairs, kvPair) => {
+        if (kvPair.key && kvPair.key.trim() && kvPair.value && kvPair.value.trim()) {
+          kvPairs[kvPair.key] = kvPair.value;
+        }
+        return kvPairs;
+      },
+      {} as any
+    );
+  }
+
+  private get alert(): ReactNode {
+    return (
+      <span aria-live={'polite'} className={styles.alert}>
+        {this.state.alert}
+      </span>
+    );
+  }
 }

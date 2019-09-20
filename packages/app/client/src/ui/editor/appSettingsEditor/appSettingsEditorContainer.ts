@@ -41,6 +41,7 @@ import { RootState } from '../../../state/store';
 import { debounce } from '../../../utils';
 import { saveFrameworkSettings } from '../../../state/actions/frameworkSettingsActions';
 import { executeCommand } from '../../../state/actions/commandActions';
+import { ariaAlertService } from '../../a11y';
 
 import { AppSettingsEditor, AppSettingsEditorProps } from './appSettingsEditor';
 
@@ -50,6 +51,9 @@ const mapStateToProps = (state: RootState, ownProps: AppSettingsEditorProps) => 
 });
 
 const mapDispatchToProps = (dispatch: (action: Action) => void, ownProps: AppSettingsEditorProps) => ({
+  createAriaAlert: (msg: string) => {
+    ariaAlertService.alert(msg);
+  },
   discardChanges: () =>
     dispatch(EditorActions.close(getTabGroupForDocument(ownProps.documentId), DOCUMENT_ID_APP_SETTINGS)),
   onAnchorClick: (url: string) => {

@@ -44,6 +44,7 @@ import { clientAwareSettingsChanged } from '../../../state/actions/clientAwareSe
 import { bot } from '../../../state/reducers/bot';
 import { clientAwareSettings } from '../../../state/reducers/clientAwareSettings';
 import { DialogService } from '../service';
+import { ariaAlertService } from '../../a11y';
 
 import { OpenBotDialog } from './openBotDialog';
 import { OpenBotDialogContainer } from './openBotDialogContainer';
@@ -242,5 +243,15 @@ describe('The OpenBotDialog', () => {
     instance.onBotUrlChange('http://localhost:3978');
 
     expect(instance.state.botUrl).toBe('http://localhost:3978');
+  });
+
+  it('should announce any validation error messages', () => {
+    // make sure there are no leftover alerts from previous test(s)
+    const preExistingAlerts = document.querySelectorAll('body > span');
+    preExistingAlerts.forEach(alert => alert.remove());
+    const spy = jest.spyOn(ariaAlertService, 'alert').mockReturnValueOnce(undefined);
+    instance.announceErrorMessage('Invalid bot url.');
+
+    expect(spy).toHaveBeenCalledWith('Invalid bot url.');
   });
 });

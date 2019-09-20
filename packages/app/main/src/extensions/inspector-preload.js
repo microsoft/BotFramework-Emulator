@@ -97,6 +97,10 @@ window.host = {
     };
   },
 
+  createAriaAlert: function(msg) {
+    ipcRenderer.sendToHost('create-aria-alert', msg);
+  },
+
   enableAccessory: function(id, enabled) {
     if (typeof id === 'string') {
       ipcRenderer.sendToHost('enable-accessory', id, !!enabled);

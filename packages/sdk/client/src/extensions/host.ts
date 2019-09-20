@@ -56,6 +56,9 @@ export interface InspectorHost {
     handler: (themeInfo: { themeName: string; themeComponents: string[] }) => void
   ): void;
 
+  // Creates an invisible ARIA alert to be announced by screen reader technology
+  createAriaAlert(msg: string): void;
+
   // Enable/disable an accessory button
   enableAccessory(id: string, enabled: boolean): void;
 

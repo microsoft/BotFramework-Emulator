@@ -56,6 +56,7 @@ import { store } from '../../../state/store';
 import { generateBotSecret } from '../../../utils';
 import { ActiveBotHelper } from '../../helpers/activeBotHelper';
 import { DialogService } from '../service';
+import { ariaAlertService } from '../../a11y';
 import { executeCommand } from '../../../state/actions/commandActions';
 import * as dialogStyles from '../dialogStyles.scss';
 
@@ -73,6 +74,8 @@ export interface BotCreationDialogState {
 export class BotCreationDialog extends React.Component<{}, BotCreationDialogState> {
   @CommandServiceInstance()
   public commandService: CommandServiceImpl;
+
+  private secretInputRef: HTMLInputElement;
 
   public constructor(props: {}, context: BotCreationDialogState) {
     super(props, context);
@@ -142,6 +145,7 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
             />
             <TextField
               inputContainerClassName={dialogStyles.inputContainer}
+              inputRef={this.setSecretInputRef}
               label="Microsoft App password"
               data-prop="appPassword"
               onChange={this.onInputChange}
@@ -285,21 +289,22 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
     if (!this.state.encryptKey) {
       return null;
     }
-    this.setState({ revealSecret: !this.state.revealSecret });
+    const revealSecret = !this.state.revealSecret;
+    ariaAlertService.alert(`Secret ${revealSecret ? 'showing' : 'hidden'}.`);
+    this.setState({ revealSecret });
   };
 
   private onCopyClick = (): void => {
     if (!this.state.encryptKey) {
       return null;
     }
-    const input: HTMLInputElement = window.document.getElementById('key-input') as HTMLInputElement;
-    input.removeAttribute('disabled');
-    const { type } = input;
-    input.type = 'text';
-    input.select();
+    const { secretInputRef } = this;
+    const { type } = secretInputRef;
+    secretInputRef.type = 'text';
+    secretInputRef.select();
     window.document.execCommand('copy');
-    input.type = type;
-    input.setAttribute('disabled', '');
+    secretInputRef.type = type;
+    ariaAlertService.alert('Secret copied to clipboard.');
   };
 
   // TODO: Re-enable ability to re-generate secret after 4.1
@@ -388,4 +393,8 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
     const controllerRegEx = /api\/messages\/?$/;
     return controllerRegEx.test(endpoint) ? '' : `Please include route if necessary: "/api/messages"`;
   }
+
+  private setSecretInputRef = (ref: HTMLInputElement): void => {
+    this.secretInputRef = ref;
+  };
 }

@@ -132,6 +132,9 @@ export class WindowManager {
       width: 800,
       height: 600,
       title: 'Sign In',
+      webPreferences: {
+        nodeIntegration: false,
+      },
     });
     this.add(win);
     const webContents = win.webContents;

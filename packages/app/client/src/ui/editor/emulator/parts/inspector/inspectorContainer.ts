@@ -38,6 +38,7 @@ import { Activity } from 'botframework-schema';
 import { RootState } from '../../../../../state/store';
 import { executeCommand } from '../../../../../state/actions/commandActions';
 import { setHighlightedObjects, setInspectorObjects } from '../../../../../state/actions/chatActions';
+import { ariaAlertService } from '../../../../a11y';
 
 import { Inspector } from './inspector';
 
@@ -54,9 +55,13 @@ const mapStateToProps = (state: RootState, ownProps: any) => {
 
 const mapDispatchToProps = dispatch => {
   return {
+    createAriaAlert: (msg: string) => {
+      ariaAlertService.alert(msg);
+    },
     onAnchorClick: (url: string) => {
       dispatch(executeCommand(true, SharedConstants.Commands.Electron.OpenExternal, null, url));
     },
+
     trackEvent: (name: string, properties?: { [key: string]: any }) => {
       dispatch(executeCommand(true, SharedConstants.Commands.Telemetry.TrackEvent, null, name, properties));
     },
