@@ -31,6 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { SharedConstants } from '@bfemulator/app-shared';
 import { IConnectedService, ServiceTypes } from 'botframework-config/lib/schema';
 import { ComponentClass } from 'react';
 import { connect } from 'react-redux';
@@ -43,6 +44,7 @@ import {
   openSortContextMenu,
 } from '../../../../state/actions/connectedServiceActions';
 import { CONNECTED_SERVICES_PANEL_ID } from '../../../../state/actions/explorerActions';
+import { executeCommand } from '../../../../state/actions/commandActions';
 import { RootState } from '../../../../state/store';
 
 import { ConnectedServiceEditor } from './connectedServiceEditor/connectedServiceEditor';
@@ -69,6 +71,9 @@ const mapStateToProps = (state: RootState): Partial<ServicesExplorerProps> => {
 
 const mapDispatchToProps = (dispatch): Partial<ServicesExplorerProps> => {
   return {
+    onAnchorClick: (url: string) => {
+      dispatch(executeCommand(true, SharedConstants.Commands.Electron.OpenExternal, null, url));
+    },
     openAddServiceContextMenu: (payload: ConnectedServicePickerPayload) => dispatch(openAddServiceContextMenu(payload)),
 
     openServiceDeepLink: (connectedService: IConnectedService) => dispatch(openServiceDeepLink(connectedService)),

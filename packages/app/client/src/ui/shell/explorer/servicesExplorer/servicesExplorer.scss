@@ -38,6 +38,12 @@ ul > li > svg {
   }
 }
 
+.dialog-link {
+  color: var(--dialog-link-color);
+  text-decoration: none;
+  line-height: 20px;
+}
+
 .empty-content {
   margin: 15px 13px;
   font-size: 13px;

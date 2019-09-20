@@ -40,6 +40,7 @@ import {
 } from 'botframework-config/lib/schema';
 import * as React from 'react';
 import { MouseEventHandler, SyntheticEvent } from 'react';
+import { LinkButton } from '@bfemulator/ui-react';
 
 import { ConnectedServicePickerPayload } from '../../../../state/actions/connectedServiceActions';
 import { serviceTypeLabels } from '../../../../utils/serviceTypeLables';
@@ -71,6 +72,7 @@ const iconMap = {
 export interface ServicesExplorerProps extends ServicePaneProps {
   services?: IConnectedService[];
   toAnimate?: { [serviceId: string]: boolean };
+  onAnchorClick: (url: string) => void;
   openAddServiceContextMenu: (payload: ConnectedServicePickerPayload) => void;
   openSortContextMenu: () => void;
   openServiceDeepLink: (service: IConnectedService) => void;
@@ -113,17 +115,42 @@ export class ServicesExplorer extends ServicePane<ServicesExplorerProps> {
     return state;
   }
 
+  private onDispatchDocsClick = async () => {
+    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-create-dispatch');
+  };
+
+  private onEmulatorServicesClick = async () => {
+    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-services');
+  };
+
+  private onLuisDocsClick = async () => {
+    this.props.onAnchorClick('http://aka.ms/bot-framework-emulator-LUIS-docs-home');
+  };
+
+  private onQnADocsClick = async () => {
+    this.props.onAnchorClick('http://aka.ms/bot-framework-emulator-qna-docs-home');
+  };
+
   protected get emptyContent(): JSX.Element {
     return (
       <div>
         <p className={styles.emptyContent}>
           {'You can connect your bot to services such as '}
-          <a href="https://aka.ms/bot-framework-emulator-LUIS-docs-home">{'Language Understanding (LUIS), '}</a>
-          <a href="https://aka.ms/bot-framework-emulator-qna-docs-home">{'QnA Maker, '}</a> {'and '}
-          <a href="https://aka.ms/bot-framework-emulator-create-dispatch">Dispatch.</a>
+          <LinkButton className={styles.dialogLink} linkRole={true} onClick={this.onLuisDocsClick}>
+            {'Language Understanding (LUIS), '}
+          </LinkButton>
+          <LinkButton className={styles.dialogLink} linkRole={true} onClick={this.onQnADocsClick}>
+            {'QnA Maker, '}
+          </LinkButton>
+          {'and '}
+          <LinkButton className={styles.dialogLink} linkRole={true} onClick={this.onDispatchDocsClick}>
+            Dispatch.
+          </LinkButton>
         </p>
         <p className={styles.emptyContent}>
-          <a href="https://aka.ms/bot-framework-emulator-services">Learn more about using services.</a>
+          <LinkButton className={styles.dialogLink} linkRole={true} onClick={this.onEmulatorServicesClick}>
+            Learn more about using services.
+          </LinkButton>
         </p>
       </div>
     );
