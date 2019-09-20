@@ -33,6 +33,7 @@
 
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { LinkButton } from '@bfemulator/ui-react';
 
 import * as NotificationActions from '../../../../state/actions/notificationActions';
 import { RootState } from '../../../../state/store';
@@ -75,13 +76,9 @@ class NotificationsExplorerComp extends React.Component<NotificationExplorerProp
 
   private renderClearAllButton = (): JSX.Element => {
     return (
-      <a
-        className={styles.clearAllNotificationsBtn}
-        onClick={() => this.props.clearNotifications()}
-        href="javascript:void(0);"
-      >
+      <LinkButton className={styles.clearAllNotificationsBtn} onClick={() => this.props.clearNotifications()}>
         Clear all
-      </a>
+      </LinkButton>
     );
   };
 }
