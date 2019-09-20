@@ -38,12 +38,58 @@ import { authentication, usGovernmentAuthentication } from '../authEndpoints';
 import BotEndpoint from './botEndpoint';
 
 describe('BotEndpoint', () => {
-  it('should return the speech token if it already exists', async () => {
+  it('should determine whether a token will expire within a time period', () => {
     const endpoint = new BotEndpoint();
-    endpoint.speechToken = 'someToken';
+    const currentTime = Date.now();
+    endpoint.speechAuthenticationToken = {
+      expireAt: currentTime + 100, // 100 ms in the future
+    } as any;
+
+    expect((endpoint as any).willTokenExpireWithin(5000)).toBe(true);
+  });
+
+  it('should return the speech token if it already exists', async () => {
+    const endpoint = new BotEndpoint('', '', '', 'msaAppId', 'msaAppPw');
+    endpoint.speechAuthenticationToken = {
+      accessToken: 'someToken',
+      region: 'westus2',
+      expireAt: Date.now() + 10 * 1000 * 60, // expires in 10 minutes
+      tokenLife: 10 * 1000 * 60, // token life of 10 minutes
+    };
     const refresh = false;
     const token = await endpoint.getSpeechToken(refresh);
     expect(token).toBe('someToken');
+  });
+
+  it('should return a new speech token if the current token is expired', async () => {
+    const endpoint = new BotEndpoint('', '', '', 'msaAppId', 'msaAppPw');
+    endpoint.speechAuthenticationToken = {
+      expireAt: Date.now() - 5000,
+    } as any;
+    jest.spyOn(endpoint as any, 'fetchSpeechToken').mockResolvedValueOnce('new speech token');
+    const token = await endpoint.getSpeechToken();
+
+    expect(token).toBe('new speech token');
+  });
+
+  it('should return a new speech token if the current token is past its half life', async () => {
+    const endpoint = new BotEndpoint('', '', '', 'msaAppId', 'msaAppPw');
+    endpoint.speechAuthenticationToken = {
+      expireAt: Date.now() + 4 * 1000 * 60, // expires in 4 minutes
+      tokenLife: 10 * 1000 * 60, // token life of 10 minutes
+    } as any;
+    jest.spyOn(endpoint as any, 'fetchSpeechToken').mockResolvedValueOnce('new speech token');
+    const token = await endpoint.getSpeechToken();
+
+    expect(token).toBe('new speech token');
+  });
+
+  it('should return a new speech token if there is no existing token or if the refresh flag is true', async () => {
+    const endpoint = new BotEndpoint('', '', '', 'msaAppId', 'msaAppPw');
+    jest.spyOn(endpoint as any, 'fetchSpeechToken').mockResolvedValueOnce('new speech token');
+    const token = await endpoint.getSpeechToken(true);
+
+    expect(token).toBe('new speech token');
   });
 
   it('should throw if there is no msa app id or password', async () => {
@@ -51,79 +97,98 @@ describe('BotEndpoint', () => {
     try {
       await endpoint.getSpeechToken();
     } catch (e) {
-      expect(e).toEqual(new Error('bot must have Microsoft App ID and password'));
+      expect(e).toEqual(new Error('Bot must have a valid Microsoft App ID and password'));
     }
   });
 
-  it('should return a speech token', async () => {
-    /* eslint-disable typescript/camelcase */
-    const mockResponse = {
-      json: async () => Promise.resolve({ access_Token: 'someSpeechToken' }),
+  it('should fetch a speech token', async () => {
+    const endpoint = new BotEndpoint();
+    jest.spyOn(endpoint as any, 'fetchWithAuth').mockResolvedValueOnce({
+      json: () =>
+        Promise.resolve({
+          // eslint-disable-next-line typescript/camelcase
+          access_Token: 'someSpeechToken',
+          region: 'westus2',
+          expireAt: 1234,
+          tokenLife: 9999,
+        }),
       status: 200,
-    };
-    const mockFetchWithAuth = jest.fn(() => Promise.resolve(mockResponse));
-    const endpoint = new BotEndpoint('', '', '', 'msaAppId', 'msaAppPw');
-    endpoint.fetchWithAuth = mockFetchWithAuth;
-    const token = await endpoint.getSpeechToken();
+    });
+    const token = await (endpoint as any).fetchSpeechToken();
+
     expect(token).toBe('someSpeechToken');
   });
 
-  it('should throw if there is no access_Token in the response', async () => {
-    /* eslint-disable typescript/camelcase */
-
-    // with error in response body
-    let mockResponse: any = {
-      json: async () => Promise.resolve({ error: 'someError' }),
+  it('should throw when failing to read the token response', async () => {
+    const endpoint = new BotEndpoint();
+    jest.spyOn(endpoint as any, 'fetchWithAuth').mockResolvedValueOnce({
+      json: async () => Promise.reject(new Error('Malformed response JSON.')),
       status: 200,
-    };
-    const mockFetchWithAuth = jest.fn(() => Promise.resolve(mockResponse));
-    const endpoint = new BotEndpoint('', '', '', 'msaAppId', 'msaAppPw');
-    endpoint.fetchWithAuth = mockFetchWithAuth;
-    try {
-      await endpoint.getSpeechToken();
-    } catch (e) {
-      expect(e).toEqual(new Error('someError'));
-    }
+    });
 
-    // with no error in response body
-    mockResponse = {
-      json: async () => Promise.resolve({}),
-      status: 200,
-    };
     try {
-      await endpoint.getSpeechToken();
+      await (endpoint as any).fetchSpeechToken();
+      expect(false).toBe(true); // make sure catch is hit
     } catch (e) {
-      expect(e).toEqual(new Error('could not retrieve speech token'));
+      expect(e).toEqual(new Error(`Couldn't read speech token response: ${new Error('Malformed response JSON.')}`));
     }
   });
 
-  it('should throw if the call to the speech service returns a 401', async () => {
-    /* eslint-disable typescript/camelcase */
-    const mockResponse: any = {
+  it(`should throw when the token response doesn't contain a token and has an error attached`, async () => {
+    const endpoint = new BotEndpoint();
+    jest.spyOn(endpoint as any, 'fetchWithAuth').mockResolvedValueOnce({
+      json: () => Promise.resolve({ error: 'Token was lost in transit.' }),
+      status: 200,
+    });
+
+    try {
+      await (endpoint as any).fetchSpeechToken();
+      expect(false).toBe(true); // make sure catch is hit
+    } catch (e) {
+      expect(e).toEqual(new Error('Token was lost in transit.'));
+    }
+  });
+
+  it(`should throw when the token response doesn't contain a token nor an error`, async () => {
+    const endpoint = new BotEndpoint();
+    jest.spyOn(endpoint as any, 'fetchWithAuth').mockResolvedValueOnce({
+      json: () => Promise.resolve({}),
+      status: 200,
+    });
+
+    try {
+      await (endpoint as any).fetchSpeechToken();
+      expect(false).toBe(true); // make sure catch is hit
+    } catch (e) {
+      expect(e).toEqual(new Error('Could not retrieve speech token'));
+    }
+  });
+
+  it(`should throw when the token endpoint returns a 401`, async () => {
+    const endpoint = new BotEndpoint();
+    jest.spyOn(endpoint as any, 'fetchWithAuth').mockResolvedValueOnce({
       status: 401,
-    };
-    const mockFetchWithAuth = jest.fn(() => Promise.resolve(mockResponse));
-    const endpoint = new BotEndpoint('', '', '', 'msaAppId', 'msaAppPw');
-    endpoint.fetchWithAuth = mockFetchWithAuth;
+    });
+
     try {
-      await endpoint.getSpeechToken();
+      await (endpoint as any).fetchSpeechToken();
+      expect(false).toBe(true); // make sure catch is hit
     } catch (e) {
-      expect(e).toEqual(new Error('not authorized to use Cognitive Services Speech API'));
+      expect(e).toEqual(new Error('Not authorized to use Cognitive Services Speech API'));
     }
   });
 
-  it('should throw if the call to the speech service returns a non-200', async () => {
-    /* eslint-disable typescript/camelcase */
-    const mockResponse: any = {
+  it(`should throw when the token endpoint returns an error response that is not a 401`, async () => {
+    const endpoint = new BotEndpoint();
+    jest.spyOn(endpoint as any, 'fetchWithAuth').mockResolvedValueOnce({
       status: 500,
-    };
-    const mockFetchWithAuth = jest.fn(() => Promise.resolve(mockResponse));
-    const endpoint = new BotEndpoint('', '', '', 'msaAppId', 'msaAppPw');
-    endpoint.fetchWithAuth = mockFetchWithAuth;
+    });
+
     try {
-      await endpoint.getSpeechToken();
+      await (endpoint as any).fetchSpeechToken();
+      expect(false).toBe(true); // make sure catch is hit
     } catch (e) {
-      expect(e).toEqual(new Error('cannot retrieve speech token'));
+      expect(e).toEqual(new Error(`Can't retrieve speech token`));
     }
   });
 
@@ -191,7 +256,7 @@ describe('BotEndpoint', () => {
     const accessTokenExpires = Date.now() * 2 + tokenRefreshTime;
     endpoint.accessTokenExpires = accessTokenExpires;
     // using non-v1.0 token & standard endpoint
-    const mockOauthResponse = { access_token: 'I am an access token!', expires_in: 10 };
+    const mockOauthResponse = { access_token: 'I am an access token!', expires_in: 10 }; // eslint-disable-line typescript/camelcase
     const mockResponse = { json: jest.fn(() => Promise.resolve(mockOauthResponse)), status: 200 };
     const mockFetch = jest.fn(() => Promise.resolve(mockResponse));
     (endpoint as any)._options = { fetch: mockFetch };
@@ -204,9 +269,9 @@ describe('BotEndpoint', () => {
     expect(mockFetch).toHaveBeenCalledWith(authentication.tokenEndpoint, {
       method: 'POST',
       body: new URLSearchParams({
-        grant_type: 'client_credentials',
-        client_id: msaAppId,
-        client_secret: msaPw,
+        grant_type: 'client_credentials', // eslint-disable-line typescript/camelcase
+        client_id: msaAppId, // eslint-disable-line typescript/camelcase
+        client_secret: msaPw, // eslint-disable-line typescript/camelcase
         scope: `${msaAppId}/.default`,
       } as { [key: string]: string }).toString(),
       headers: {
@@ -226,9 +291,9 @@ describe('BotEndpoint', () => {
     expect(mockFetch).toHaveBeenCalledWith(usGovernmentAuthentication.tokenEndpoint, {
       method: 'POST',
       body: new URLSearchParams({
-        grant_type: 'client_credentials',
-        client_id: msaAppId,
-        client_secret: msaPw,
+        grant_type: 'client_credentials', // eslint-disable-line typescript/camelcase
+        client_id: msaAppId, // eslint-disable-line typescript/camelcase
+        client_secret: msaPw, // eslint-disable-line typescript/camelcase
         scope: `${msaAppId}/.default`,
         atver: '1',
       } as { [key: string]: string }).toString(),
@@ -255,7 +320,8 @@ describe('BotEndpoint', () => {
     (endpoint as any)._options = { fetch: mockFetch };
 
     try {
-      const response = await (endpoint as any).getAccessToken();
+      await (endpoint as any).getAccessToken();
+      expect(false).toBe(true); // make sure catch is hit
     } catch (e) {
       expect(e).toEqual({ body: undefined, message: 'Refresh access token failed with status code: 404', status: 404 });
     }
