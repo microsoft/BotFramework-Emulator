@@ -128,19 +128,30 @@ export class GetStartedWithCSDialog extends Component<GetStartedWithCSDialogProp
 
   private get luisNoModelsFoundContent(): ReactNode {
     const label = serviceTypeLabels[this.props.serviceType];
+    const connectModalManuallyText = `Connect to a ${label} model manually`;
+    const learnMoreAbtModelsText = `Learn more about ${label} models`;
     return (
       <>
         <p>Signed in as {this.props.authenticatedUser}.</p>
         <p>
           {`You do not have any ${label} models associated with this account. `}
-          <LinkButton className={styles.dialogLink} onClick={this.props.launchConnectedServiceEditor}>
-            Connect to a {label} model manually
+          <LinkButton
+            ariaLabel={connectModalManuallyText}
+            className={styles.dialogLink}
+            onClick={this.props.launchConnectedServiceEditor}
+          >
+            {connectModalManuallyText}
           </LinkButton>{' '}
           by entering the app ID and key.
         </p>
         <p>
-          <LinkButton className={styles.dialogLink} linkRole={true} onClick={this.onLUISInfoClick}>
-            Learn more about {label} models
+          <LinkButton
+            ariaLabel={learnMoreAbtModelsText}
+            className={styles.dialogLink}
+            linkRole={true}
+            onClick={this.onLUISInfoClick}
+          >
+            {learnMoreAbtModelsText}
           </LinkButton>
           <br />
         </p>

@@ -52,7 +52,6 @@ export interface WelcomePageProps {
   onAnchorClick: (url: string) => void;
   openBotInspectorDocs: () => void;
   debugMode?: number;
-  onTestClick?: () => void;
 }
 
 export class WelcomePage extends React.Component<WelcomePageProps, {}> {

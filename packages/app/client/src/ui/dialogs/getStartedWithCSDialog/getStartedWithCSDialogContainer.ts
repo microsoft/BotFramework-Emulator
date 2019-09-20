@@ -48,7 +48,6 @@ const mapStateToProps = (state: RootState, ownProps) => {
 
   return {
     ...ownProps,
-    serviceType: 'blob',
     user: pJson.upn || pJson.unique_name || pJson.name || pJson.email,
   };
 };
