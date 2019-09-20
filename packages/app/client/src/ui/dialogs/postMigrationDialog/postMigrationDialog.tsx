@@ -35,6 +35,7 @@ import { Dialog, DialogFooter, LinkButton, PrimaryButton } from '@bfemulator/ui-
 import * as React from 'react';
 
 import * as dialogStyles from '../dialogStyles.scss';
+
 import * as styles from './postMigrationDialog.scss';
 
 export interface PostMigrationDialogProps {

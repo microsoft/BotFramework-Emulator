@@ -52,7 +52,6 @@ import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shar
 import { getBotInfoByPath } from '../../../state/helpers/botHelpers';
 import { generateBotSecret } from '../../../utils';
 import { ActiveBotHelper } from '../../helpers/activeBotHelper';
-
 import * as styles from '../dialogStyles.scss';
 
 export interface BotSettingsEditorProps {

@@ -36,8 +36,8 @@ import { connect } from 'react-redux';
 import { Action } from 'redux';
 
 import { DialogService } from '../service';
-
 import { executeCommand } from '../../../state/actions/commandActions';
+
 import { DataCollectionDialog, DataCollectionDialogProps } from './dataCollectionDialog';
 
 function mapDispatchToProps(dispatch: (action: Action) => void): DataCollectionDialogProps {

@@ -57,8 +57,8 @@ import { generateBotSecret } from '../../../utils';
 import { ActiveBotHelper } from '../../helpers/activeBotHelper';
 import { DialogService } from '../service';
 import { executeCommand } from '../../../state/actions/commandActions';
-
 import * as dialogStyles from '../dialogStyles.scss';
+
 import * as styles from './botCreationDialog.scss';
 
 export interface BotCreationDialogState {
