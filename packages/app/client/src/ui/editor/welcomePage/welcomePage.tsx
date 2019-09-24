@@ -130,15 +130,17 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
     );
   }
 
-  private onBotSelected = async (bot: BotInfo) => {
+  private createAnchorClickHandler = url => () => this.props.onAnchorClick(url);
+
+  private onBotSelected = (bot: BotInfo) => {
     this.props.switchToBot(bot.path);
   };
 
-  private onOpenBotClick = async () => {
+  private onOpenBotClick = () => {
     this.props.showOpenBotDialog();
   };
 
-  private onWorkingLocallyLinkClick = async () => {
-    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-create-bot-locally');
-  };
+  private onWorkingLocallyLinkClick = this.createAnchorClickHandler(
+    'https://aka.ms/bot-framework-emulator-create-bot-locally'
+  );
 }

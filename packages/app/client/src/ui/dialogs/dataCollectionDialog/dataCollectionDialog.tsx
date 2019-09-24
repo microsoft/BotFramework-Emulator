@@ -43,7 +43,7 @@ export interface DataCollectionDialogProps {
 }
 
 export class DataCollectionDialog extends Component<DataCollectionDialogProps, {}> {
-  private onPrivacyLinkClick = async () => {
+  private onPrivacyLinkClick = () => {
     this.props.onAnchorClick('https://privacy.microsoft.com/privacystatement');
   };
 

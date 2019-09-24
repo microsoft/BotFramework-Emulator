@@ -67,7 +67,7 @@ export class SecretPromptDialog extends React.Component<SecretPromptDialogProps,
         <p>
           {'If you encrypted your bot file with the MsBot command-line tool, your bot file secret was displayed ' +
             'when you ran MsBot. '}
-          <LinkButton className={styles.dialogLink} linkRole={true} onClick={this.onMSBotDocsClick}>
+          <LinkButton className={dialogStyles.dialogLink} linkRole={true} onClick={this.onMSBotDocsClick}>
             Learn more about MsBot.
           </LinkButton>
         </p>
@@ -82,7 +82,7 @@ export class SecretPromptDialog extends React.Component<SecretPromptDialogProps,
             type={this.state.revealSecret ? 'text' : 'password'}
           />
           <LinkButton
-            className={styles.show + ' ' + styles.dialogLink}
+            className={styles.show + ' ' + dialogStyles.dialogLink}
             aria-disabled={!this.state.secret}
             onClick={this.onRevealSecretClick}
           >
@@ -103,6 +103,8 @@ export class SecretPromptDialog extends React.Component<SecretPromptDialogProps,
     );
   }
 
+  private createAnchorClickHandler = url => () => this.props.onAnchorClick(url);
+
   private onChangeSecret = (event: ChangeEvent<HTMLInputElement>) => {
     const { value: secret } = event.target;
     this.setState({ secret });
@@ -112,9 +114,9 @@ export class SecretPromptDialog extends React.Component<SecretPromptDialogProps,
     this.props.onCancelClick();
   };
 
-  private onMSBotDocsClick = async () => {
-    this.props.onAnchorClick('https://github.com/Microsoft/botbuilder-tools/tree/master/packages/MSBot');
-  };
+  private onMSBotDocsClick = this.createAnchorClickHandler(
+    'https://github.com/Microsoft/botbuilder-tools/tree/master/packages/MSBot'
+  );
 
   private onRevealSecretClick = () => {
     this.setState({ revealSecret: !this.state.revealSecret });

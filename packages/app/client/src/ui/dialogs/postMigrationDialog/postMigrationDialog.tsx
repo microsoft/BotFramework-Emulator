@@ -48,14 +48,6 @@ export class PostMigrationDialog extends React.Component<PostMigrationDialogProp
     super(props);
   }
 
-  private onBotFileDocsClick = async () => {
-    this.props.onAnchorClick('https://aka.ms/about-bot-file');
-  };
-
-  private onEmulatorv4OverviewDocsClick = async () => {
-    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-v4-overview');
-  };
-
   public render(): JSX.Element {
     return (
       <Dialog cancel={this.onClose} className={dialogStyles.dialogLarge} title="Migration complete!">
@@ -85,7 +77,15 @@ export class PostMigrationDialog extends React.Component<PostMigrationDialogProp
     );
   }
 
+  private createAnchorClickHandler = url => () => this.props.onAnchorClick(url);
+
+  private onBotFileDocsClick = this.createAnchorClickHandler('https://aka.ms/about-bot-file');
+
   private onClose = () => {
     this.props.close();
   };
+
+  private onEmulatorv4OverviewDocsClick = this.createAnchorClickHandler(
+    'https://aka.ms/bot-framework-emulator-v4-overview'
+  );
 }

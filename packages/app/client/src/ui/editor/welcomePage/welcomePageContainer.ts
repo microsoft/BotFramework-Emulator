@@ -64,9 +64,6 @@ function mapDispatchToProps(dispatch: (action: Action) => void): WelcomePageProp
     switchToBot: (path: string) => dispatch(executeCommand(false, Commands.Bot.Switch, null, path)),
     openBotInspectorDocs: () =>
       dispatch(executeCommand(false, Commands.UI.ShowMarkdownPage, null, Channels.ReadmeUrl, Channels.HelpLabel)),
-    onTestClick: () => {
-      dispatch(executeCommand(null, Commands.UI.ShowSecretPromptDialog));
-    },
   };
 }
 

@@ -52,11 +52,11 @@ export class BotNotOpenExplorer extends React.Component<BotNotOpenExplorerProps,
             <ExpandCollapseContent>
               <div className={styles.explorerEmptyState}>
                 {`To connect the Emulator services, `}
-                <LinkButton className={styles.dialogLink} onClick={this.onOpenBotFileClick}>
+                <LinkButton className={styles.explorerLink} onClick={this.onOpenBotFileClick}>
                   open a .bot file
                 </LinkButton>
                 {` or `}
-                <LinkButton className={styles.dialogLink} onClick={this.onCreateNewBotClick}>
+                <LinkButton className={styles.explorerLink} onClick={this.onCreateNewBotClick}>
                   create a new bot configuration
                 </LinkButton>
                 .

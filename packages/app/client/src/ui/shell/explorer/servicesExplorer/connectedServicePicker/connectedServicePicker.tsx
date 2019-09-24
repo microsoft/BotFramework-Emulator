@@ -396,28 +396,23 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
       </>
     );
   }
+  private createAnchorClickHandler = url => () => this.props.onAnchorClick(url);
 
-  private onAppInsightsDocClick = async () => {
-    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-create-appinsights');
-  };
+  private onAppInsightsDocClick = this.createAnchorClickHandler(
+    'https://aka.ms/bot-framework-emulator-create-appinsights'
+  );
 
-  private onCreateStorageDocsClick = async () => {
-    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-create-storage');
-  };
+  private onCreateStorageDocsClick = this.createAnchorClickHandler(
+    'https://aka.ms/bot-framework-emulator-create-storage'
+  );
 
-  private onDispatchDocsClick = () => {
-    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-create-dispatch');
-  };
+  private onDispatchDocsClick = this.createAnchorClickHandler('https://aka.ms/bot-framework-emulator-create-dispatch');
 
-  private onLUISCollabDocsClick = async () => {
-    this.props.onAnchorClick('http://aka.ms/bot-framework-emulator-luis-collaboration');
-  };
+  private onLUISCollabDocsClick = this.createAnchorClickHandler(
+    'http://aka.ms/bot-framework-emulator-luis-collaboration'
+  );
 
-  private onLUISDocsClick = async () => {
-    this.props.onAnchorClick('http://aka.ms/bot-framework-emulator-create-luis-app');
-  };
+  private onLUISDocsClick = this.createAnchorClickHandler('http://aka.ms/bot-framework-emulator-create-luis-app');
 
-  private onQnADBDocsClick = () => {
-    this.props.onAnchorClick('http://aka.ms/bot-framework-emulator-create-qna-kb');
-  };
+  private onQnADBDocsClick = this.createAnchorClickHandler('http://aka.ms/bot-framework-emulator-create-qna-kb');
 }

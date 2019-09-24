@@ -125,7 +125,7 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
     };
   }
 
-  private onEmulatorAzureGovDocsClick = async () => {
+  private onEmulatorAzureGovDocsClick = () => {
     this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-azuregov');
   };
 

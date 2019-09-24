@@ -47,7 +47,6 @@ function mapDispatchToProps(dispatch: (action: Action) => void): HowToBuildABotP
   };
 }
 
-// export const HowToBuildABot = connect(mapStateToProps, mapDispatchToProps)(hot(module)(HowToBuildABot)) as any;
 export const HowToBuildABotContainer = connect(
   undefined,
   mapDispatchToProps

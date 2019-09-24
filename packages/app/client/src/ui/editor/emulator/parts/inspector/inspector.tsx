@@ -240,11 +240,11 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     }
   }
 
-  private onDebugDocsClick = async () => {
-    this.props.onAnchorClick(
-      'https://docs.microsoft.com/en-us/azure/bot-service/bot-service-debug-emulator?view=azure-bot-service-4.0'
-    );
-  };
+  private createAnchorClickHandler = url => () => this.props.onAnchorClick(url);
+
+  private onDebugDocsClick = this.createAnchorClickHandler(
+    'https://docs.microsoft.com/en-us/azure/bot-service/bot-service-debug-emulator?view=azure-bot-service-4.0'
+  );
 
   private renderAccessoryButton(button: AccessoryButton) {
     const { config, state, enabled } = button;

@@ -291,31 +291,31 @@ export class GetStartedWithCSDialog extends Component<GetStartedWithCSDialogProp
     );
   }
 
-  private onBlobStorageDocsClick = async () => {
+  private onBlobStorageDocsClick = () => {
     this.props.onAnchorClick('https://azure.microsoft.com/en-us/services/storage/blobs/');
   };
 
-  private onCosmosdbDocsClick = async () => {
+  private onCosmosdbDocsClick = () => {
     this.props.onAnchorClick('https://azure.microsoft.com/en-us/services/cosmos-db/');
   };
 
-  private onDispatchLinkClick = async () => {
+  private onDispatchLinkClick = () => {
     this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-create-dispatch');
   };
 
-  private onLUISDocsClick = async () => {
+  private onLUISDocsClick = () => {
     this.props.onAnchorClick('http://aka.ms/bot-framework-emulator-LUIS-docs-home');
   };
 
-  private onLUISCollabDocsClick = async () => {
+  private onLUISCollabDocsClick = () => {
     this.props.onAnchorClick('http://aka.ms/bot-framework-emulator-luis-collaboration');
   };
 
-  private onLUISInfoClick = async () => {
+  private onLUISInfoClick = () => {
     this.props.onAnchorClick('https://docs.microsoft.com/en-us/azure/cognitive-services/luis/what-is-luis');
   };
 
-  private onQnADocsClick = async () => {
+  private onQnADocsClick = () => {
     this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-qna-docs-home');
   };
 }

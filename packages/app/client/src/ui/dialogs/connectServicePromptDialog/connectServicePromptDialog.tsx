@@ -93,28 +93,21 @@ export class ConnectServicePromptDialog extends Component<ConnectServicePromptDi
     }
   }
 
-  private onAppInsightsClick = () => {
-    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-appinsights-docs');
-  };
+  private createAnchorClickHandler = url => () => this.props.onAnchorClick(url);
 
-  private onAzureCosmosDbDocsClick = () => {
-    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-cosmosdb-docs');
-  };
-  private onAzureStorageDocsClick = () => {
-    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-storage-docs');
-  };
+  private onAppInsightsClick = this.createAnchorClickHandler('https://aka.ms/bot-framework-emulator-appinsights-docs');
 
-  private onDispatchDocsClick = () => {
-    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-create-dispatch');
-  };
+  private onAzureCosmosDbDocsClick = this.createAnchorClickHandler(
+    'https://aka.ms/bot-framework-emulator-cosmosdb-docs'
+  );
 
-  private onLuisDocsClick = () => {
-    this.props.onAnchorClick('http://aka.ms/bot-framework-emulator-LUIS-docs-home');
-  };
+  private onAzureStorageDocsClick = this.createAnchorClickHandler('https://aka.ms/bot-framework-emulator-storage-docs');
 
-  private onQnADocsClick = () => {
-    this.props.onAnchorClick('http://aka.ms/bot-framework-emulator-qna-docs-home');
-  };
+  private onDispatchDocsClick = this.createAnchorClickHandler('https://aka.ms/bot-framework-emulator-create-dispatch');
+
+  private onLuisDocsClick = this.createAnchorClickHandler('http://aka.ms/bot-framework-emulator-LUIS-docs-home');
+
+  private onQnADocsClick = this.createAnchorClickHandler('http://aka.ms/bot-framework-emulator-qna-docs-home');
 
   private get luisContent(): ReactNode {
     return (

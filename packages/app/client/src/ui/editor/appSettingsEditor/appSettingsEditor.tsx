@@ -276,6 +276,8 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
     );
   }
 
+  private createAnchorClickHandler = url => () => this.props.onAnchorClick(url);
+
   private disableSaveButton(): boolean {
     return this.state.useCustomId ? !this.state.userGUID || !this.state.dirty : !this.state.dirty;
   }
@@ -307,17 +309,13 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
     this.updateDirtyFlag(change);
   };
 
-  private onNgrokDocsClick = async () => {
-    this.props.onAnchorClick('https://ngrok.com/');
-  };
+  private onNgrokDocsClick = this.createAnchorClickHandler('https://ngrok.com/');
 
-  private onNgrokTunnelingDocsClick = async () => {
-    this.props.onAnchorClick('https://github.com/Microsoft/BotFramework-Emulator/wiki/Tunneling-(ngrok)');
-  };
+  private onNgrokTunnelingDocsClick = this.createAnchorClickHandler(
+    'https://github.com/Microsoft/BotFramework-Emulator/wiki/Tunneling-(ngrok)'
+  );
 
-  private onPrivacyStatementClick = async () => {
-    this.props.onAnchorClick('https://privacy.microsoft.com/privacystatement');
-  };
+  private onPrivacyStatementClick = this.createAnchorClickHandler('https://privacy.microsoft.com/privacystatement');
 
   private onSaveClick = async () => {
     // trim keys that do not belong and generate a hash

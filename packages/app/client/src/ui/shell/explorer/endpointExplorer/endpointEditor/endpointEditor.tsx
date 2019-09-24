@@ -193,7 +193,7 @@ export class EndpointEditor extends Component<EndpointEditorProps, EndpointEdito
           &nbsp;
           <LinkButton
             aria-label="Learn more about Azure for US Government"
-            className={styles.dialogLink}
+            className={styles.endpointLink}
             linkRole={true}
             onClick={this.onAzureGovDocClick}
           >

@@ -49,13 +49,7 @@ export interface LinkButtonProps extends React.ButtonHTMLAttributes<HTMLButtonEl
 
 export class LinkButton extends React.Component<LinkButtonProps, {}> {
   public render(): React.ReactNode {
-    const {
-      className: propsClassName = '',
-      ariaLabel = undefined,
-      linkRole = false,
-      text = undefined,
-      ...buttonProps
-    } = this.props;
+    const { className: propsClassName = '', ariaLabel, linkRole = false, text, ...buttonProps } = this.props;
     const className = `${propsClassName} ${styles.linkButton}`;
 
     const ariaLabelText = ariaLabel || text || (typeof this.props.children === 'string' && this.props.children);

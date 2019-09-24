@@ -115,40 +115,34 @@ export class ServicesExplorer extends ServicePane<ServicesExplorerProps> {
     return state;
   }
 
-  private onDispatchDocsClick = async () => {
-    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-create-dispatch');
-  };
+  private createAnchorClickHandler = url => () => this.props.onAnchorClick(url);
 
-  private onEmulatorServicesClick = async () => {
-    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-services');
-  };
+  private onDispatchDocsClick = this.createAnchorClickHandler('https://aka.ms/bot-framework-emulator-create-dispatch');
 
-  private onLuisDocsClick = async () => {
-    this.props.onAnchorClick('http://aka.ms/bot-framework-emulator-LUIS-docs-home');
-  };
+  private onEmulatorServicesClick = this.createAnchorClickHandler('https://aka.ms/bot-framework-emulator-services');
 
-  private onQnADocsClick = async () => {
-    this.props.onAnchorClick('http://aka.ms/bot-framework-emulator-qna-docs-home');
-  };
+  private onLuisDocsClick = this.createAnchorClickHandler('http://aka.ms/bot-framework-emulator-LUIS-docs-home');
+
+  private onQnADocsClick = this.createAnchorClickHandler('http://aka.ms/bot-framework-emulator-qna-docs-home');
 
   protected get emptyContent(): JSX.Element {
     return (
       <div>
         <p className={styles.emptyContent}>
           {'You can connect your bot to services such as '}
-          <LinkButton className={styles.dialogLink} linkRole={true} onClick={this.onLuisDocsClick}>
+          <LinkButton className={styles.explorerLink} linkRole={true} onClick={this.onLuisDocsClick}>
             {'Language Understanding (LUIS), '}
           </LinkButton>
-          <LinkButton className={styles.dialogLink} linkRole={true} onClick={this.onQnADocsClick}>
+          <LinkButton className={styles.explorerLink} linkRole={true} onClick={this.onQnADocsClick}>
             {'QnA Maker, '}
           </LinkButton>
           {'and '}
-          <LinkButton className={styles.dialogLink} linkRole={true} onClick={this.onDispatchDocsClick}>
+          <LinkButton className={styles.explorerLink} linkRole={true} onClick={this.onDispatchDocsClick}>
             Dispatch.
           </LinkButton>
         </p>
         <p className={styles.emptyContent}>
-          <LinkButton className={styles.dialogLink} linkRole={true} onClick={this.onEmulatorServicesClick}>
+          <LinkButton className={styles.explorerLink} linkRole={true} onClick={this.onEmulatorServicesClick}>
             Learn more about using services.
           </LinkButton>
         </p>

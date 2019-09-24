@@ -202,51 +202,43 @@ export class HowToBuildABot extends React.Component<HowToBuildABotProps, {}> {
     );
   }
 
-  private onDesignGuidelinesDocClick = () => {
-    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-design-guidelines');
-  };
+  private createAnchorClickHandler = url => () => this.props.onAnchorClick(url);
 
-  private onEmulatorCreateBotAzureLinkClick = () => {
-    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-create-bot-azure');
-  };
+  private onDesignGuidelinesDocClick = this.createAnchorClickHandler(
+    'https://aka.ms/bot-framework-emulator-design-guidelines'
+  );
 
-  private onEmulatorCreateBotLocallyLinkClick = () => {
-    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-create-bot-locally');
-  };
+  private onEmulatorCreateBotAzureLinkClick = this.createAnchorClickHandler(
+    'https://aka.ms/bot-framework-emulator-create-bot-azure'
+  );
 
-  private onEmulatorToolsLinkClick = () => {
-    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-tools');
-  };
+  private onEmulatorCreateBotLocallyLinkClick = this.createAnchorClickHandler(
+    'https://aka.ms/bot-framework-emulator-create-bot-locally'
+  );
 
-  private onLUISDocsClick = () => {
-    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-LUIS-docs-home');
-  };
+  private onEmulatorToolsLinkClick = this.createAnchorClickHandler('https://aka.ms/bot-framework-emulator-tools');
 
-  private onQnADocsLinkClick = () => {
-    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-qna-docs-home');
-  };
+  private onLUISDocsClick = this.createAnchorClickHandler('https://aka.ms/bot-framework-emulator-LUIS-docs-home');
 
-  private onDispatchLinkClick = () => {
-    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-create-dispatch');
-  };
+  private onQnADocsLinkClick = this.createAnchorClickHandler('https://aka.ms/bot-framework-emulator-qna-docs-home');
 
-  private onDebugWithEmulatorLinkClick = () => {
-    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-debug-with-emulator');
-  };
+  private onDispatchLinkClick = this.createAnchorClickHandler('https://aka.ms/bot-framework-emulator-create-dispatch');
 
-  private onDebugWithWebChatLinkClick = () => {
-    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-debug-with-web-chat');
-  };
+  private onDebugWithEmulatorLinkClick = this.createAnchorClickHandler(
+    'https://aka.ms/bot-framework-emulator-debug-with-emulator'
+  );
 
-  private onContinuousDeploymentLinkClick = () => {
-    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-publish-continuous-deployment');
-  };
+  private onDebugWithWebChatLinkClick = this.createAnchorClickHandler(
+    'https://aka.ms/bot-framework-emulator-debug-with-web-chat'
+  );
 
-  private onConnectChannelsLinkClick = () => {
-    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-connect-channels');
-  };
+  private onContinuousDeploymentLinkClick = this.createAnchorClickHandler(
+    'https://aka.ms/bot-framework-emulator-publish-continuous-deployment'
+  );
 
-  private onAnalyticsLinkClick = () => {
-    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-bot-analytics');
-  };
+  private onConnectChannelsLinkClick = this.createAnchorClickHandler(
+    'https://aka.ms/bot-framework-emulator-connect-channels'
+  );
+
+  private onAnalyticsLinkClick = this.createAnchorClickHandler('https://aka.ms/bot-framework-emulator-bot-analytics');
 }

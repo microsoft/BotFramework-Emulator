@@ -85,6 +85,7 @@ export class Row extends React.Component<RowProps, {}> {
 
       case RowJustification.Right:
         return styles.justifyRight;
+
       case RowJustification.Left:
       default:
         return styles.justifyLeft;

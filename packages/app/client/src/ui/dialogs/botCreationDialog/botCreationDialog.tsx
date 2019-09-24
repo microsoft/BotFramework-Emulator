@@ -228,27 +228,12 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
     );
   }
 
-  private onAzureGovLinkClick = () => {
-    store.dispatch(
-      executeCommand(
-        true,
-        SharedConstants.Commands.Electron.OpenExternal,
-        null,
-        'https://aka.ms/bot-framework-emulator-azuregov'
-      )
-    );
-  };
+  private createAnchorClickHandler = url => () =>
+    store.dispatch(executeCommand(true, SharedConstants.Commands.Electron.OpenExternal, null, url));
 
-  private onBotEncryptionLinkClick = () => {
-    store.dispatch(
-      executeCommand(
-        true,
-        SharedConstants.Commands.Electron.OpenExternal,
-        null,
-        'https://aka.ms/bot-framework-bot-file-encryption'
-      )
-    );
-  };
+  private onAzureGovLinkClick = this.createAnchorClickHandler('https://aka.ms/bot-framework-emulator-azuregov');
+
+  private onBotEncryptionLinkClick = this.createAnchorClickHandler('https://aka.ms/bot-framework-bot-file-encryption');
 
   private onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;

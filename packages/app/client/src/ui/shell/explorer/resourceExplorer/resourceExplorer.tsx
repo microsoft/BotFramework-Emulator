@@ -148,7 +148,7 @@ export class ResourceExplorer extends ServicePane<ResourceExplorerProps, Resourc
       <p className={styles.emptyContent}>
         <LinkButton
           ariaLabel="Choose a different location."
-          className={styles.dialogLink}
+          className={styles.explorerLink}
           onClick={this.onChooseLocationClick}
         >
           <strong>Choose a different location.</strong>

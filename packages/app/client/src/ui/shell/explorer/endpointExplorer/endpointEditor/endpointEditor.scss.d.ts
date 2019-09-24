@@ -4,4 +4,4 @@ export const absContentToggle: string;
 export const arrowExpanded: string;
 export const absContent: string;
 export const absTextFieldRow: string;
-export const dialogLink: string;
+export const endpointLink: string;
