@@ -53,7 +53,7 @@ import {
   AzureLoginFailedDialogContainer,
   AzureLoginPromptDialogContainer,
   AzureLoginSuccessDialogContainer,
-  BotCreationDialog,
+  BotCreationDialogContainer,
   DialogService,
   OpenBotDialogContainer,
   OpenUrlDialogContainer,
@@ -113,7 +113,7 @@ export class UiCommands {
   // Shows a bot creation dialog
   @Command(UI.ShowBotCreationDialog)
   protected async showBotCreationPage() {
-    return await DialogService.showDialog(BotCreationDialog);
+    return await DialogService.showDialog(BotCreationDialogContainer);
   }
 
   // ---------------------------------------------------------------------------
