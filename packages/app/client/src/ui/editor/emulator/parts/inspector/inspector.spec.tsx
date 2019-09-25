@@ -426,6 +426,14 @@ describe('The Inspector component', () => {
       expect(eventSpy).toHaveBeenCalled();
     });
 
+    it('should call the appropriate command when onAnchorClick is called', async () => {
+      const instance = node.instance();
+      instance.props.onAnchorClick('http://blah');
+      expect(dispatchSpy).toHaveBeenCalledWith(
+        executeCommand(true, SharedConstants.Commands.Electron.OpenExternal, null, 'http://blah')
+      );
+    });
+
     describe('should handle the ipc message', () => {
       let instance;
       let event;

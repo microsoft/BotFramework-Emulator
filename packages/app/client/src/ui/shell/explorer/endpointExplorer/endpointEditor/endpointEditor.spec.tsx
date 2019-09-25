@@ -31,6 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import * as React from 'react';
+import { SharedConstants } from '@bfemulator/app-shared';
 import { Provider } from 'react-redux';
 import { mount } from 'enzyme';
 import { combineReducers, createStore } from 'redux';
@@ -38,6 +39,7 @@ import { combineReducers, createStore } from 'redux';
 import { bot } from '../../../../../state/reducers/bot';
 import { DialogService } from '../../../../dialogs/service';
 import { load, setActive } from '../../../../../state/actions/botActions';
+import { executeCommand } from '../../../../../state/actions/commandActions';
 
 import { EndpointEditor } from './endpointEditor';
 import { EndpointEditorContainer } from './endpointEditorContainer';
@@ -78,10 +80,12 @@ const mockBot = {
 describe('The EndpointExplorer component should', () => {
   let parent;
   let node;
+  let mockDispatch;
 
   beforeEach(() => {
     mockStore.dispatch(load([mockBot as any]));
     mockStore.dispatch(setActive(mockBot as any));
+    mockDispatch = jest.spyOn(mockStore, 'dispatch');
 
     parent = mount(
       <Provider store={mockStore}>
@@ -230,5 +234,13 @@ describe('The EndpointExplorer component should', () => {
 
     instance.onCancelClick();
     expect(hideDialogSpy).toHaveBeenCalled();
+  });
+
+  it('should call the appropriate command when onAnchorClick is called', async () => {
+    const instance = node.instance();
+    instance.props.onAnchorClick('http://blah');
+    expect(mockDispatch).toHaveBeenCalledWith(
+      executeCommand(true, SharedConstants.Commands.Electron.OpenExternal, null, 'http://blah')
+    );
   });
 });

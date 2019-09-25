@@ -31,6 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { SharedConstants } from '@bfemulator/app-shared';
 import { PrimaryButton } from '@bfemulator/ui-react';
 import { LuisService } from 'botframework-config/lib/models';
 import { ServiceTypes } from 'botframework-config/lib/schema';
@@ -40,7 +41,9 @@ import { Provider } from 'react-redux';
 import { combineReducers, createStore } from 'redux';
 
 import { azureAuth } from '../../../../../state/reducers/azureAuth';
+import { bot } from '../../../../../state/reducers/bot';
 import { DialogService } from '../../../../dialogs/service';
+import { executeCommand } from '../../../../../state/actions/commandActions';
 
 import { ConnectedServiceEditor } from './connectedServiceEditor';
 import { ConnectedServiceEditorContainer } from './connectedServiceEditorContainer';
@@ -63,11 +66,16 @@ jest.mock('../../../../dialogs/', () => ({
 jest.mock('./connectedServiceEditor.scss', () => ({}));
 
 describe('The ConnectedServiceEditor component ', () => {
+  let mockDispatch;
   let parent;
   let node;
+  let instance: any;
   let mockService;
+  let mockStore;
 
   beforeEach(() => {
+    mockStore = createStore(combineReducers({ azureAuth, bot }));
+    mockDispatch = jest.spyOn(mockStore, 'dispatch');
     mockService = JSON.parse(`{
             "type": "luis",
             "id": "b5af3f67-7ec8-444a-ae91-c4f02883c8f4",
@@ -78,11 +86,12 @@ describe('The ConnectedServiceEditor component ', () => {
             "subscriptionKey": "emoji"
         }`);
     parent = mount(
-      <Provider store={createStore(combineReducers({ azureAuth }))}>
+      <Provider store={mockStore}>
         <ConnectedServiceEditorContainer connectedService={mockService} serviceType={mockService.type} />
       </Provider>
     );
     node = parent.find(ConnectedServiceEditor);
+    instance = node.instance() as ConnectedServiceEditor;
   });
 
   it('should render deeply', () => {
@@ -152,6 +161,13 @@ describe('The ConnectedServiceEditor component ', () => {
     instance.onKvPairChange(mockData);
 
     expect(instance.state.connectedServiceCopy.configuration).toEqual(mockData);
+  });
+
+  it('should call the appropriate command when onAnchorClick is called', async () => {
+    instance.props.onAnchorClick('http://blah');
+    expect(mockDispatch).toHaveBeenCalledWith(
+      executeCommand(true, SharedConstants.Commands.Electron.OpenExternal, null, 'http://blah')
+    );
   });
 });
 

@@ -30,6 +30,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+import { SharedConstants } from '@bfemulator/app-shared';
 import { ServiceTypes } from 'botframework-config/lib/schema';
 import { mount } from 'enzyme';
 import * as React from 'react';
@@ -39,6 +40,7 @@ import { combineReducers, createStore } from 'redux';
 import { azureArmTokenDataChanged } from '../../../state/actions/azureAuthActions';
 import { azureAuth } from '../../../state/reducers/azureAuth';
 import { DialogService } from '../service';
+import { executeCommand } from '../../../state/actions/commandActions';
 
 import { GetStartedWithCSDialog } from './getStartedWithCSDialog';
 import { GetStartedWithCSDialogContainer } from './getStartedWithCSDialogContainer';
@@ -62,9 +64,11 @@ jest.mock('../../dialogs/', () => ({
 
 describe('The GetStartedWithCSDialog component should', () => {
   let mockStore;
+  let mockDispatch;
   const mockArmToken = 'bm90aGluZw==.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds';
   beforeEach(() => {
     mockStore = createStore(combineReducers({ azureAuth }));
+    mockDispatch = jest.spyOn(mockStore, 'dispatch');
     mockStore.dispatch(azureArmTokenDataChanged(mockArmToken));
   });
 
@@ -195,5 +199,19 @@ describe('The GetStartedWithCSDialog component should', () => {
     );
     const prompt = parent.find(GetStartedWithCSDialog);
     expect(prompt.instance().content).toBeNull();
+  });
+
+  it('should call the appropriate command when onAnchorClick is called', async () => {
+    const parent: any = mount(
+      <Provider store={mockStore}>
+        <GetStartedWithCSDialogContainer />
+      </Provider>
+    );
+    let node = parent.find(GetStartedWithCSDialog);
+    let instance = parent.find(GetStartedWithCSDialog).instance();
+    instance.props.onAnchorClick('http://blah');
+    expect(mockDispatch).toHaveBeenCalledWith(
+      executeCommand(true, SharedConstants.Commands.Electron.OpenExternal, null, 'http://blah')
+    );
   });
 });

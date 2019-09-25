@@ -30,12 +30,16 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+import { SharedConstants } from '@bfemulator/app-shared';
 import * as React from 'react';
 import { Provider } from 'react-redux';
 import { mount } from 'enzyme';
-import { createStore } from 'redux';
+import { combineReducers, createStore } from 'redux';
 
 import { azureAuth } from '../../../state/reducers/azureAuth';
+import { clientAwareSettings } from '../../../state/reducers/clientAwareSettings';
+import { bot } from '../../../state/reducers/bot';
+import { executeCommand } from '../../../state/actions/commandActions';
 
 import { AzureLoginPromptDialogContainer } from './azureLoginPromptDialogContainer';
 import { AzureLoginPromptDialog } from './azureLoginPromptDialog';
@@ -44,6 +48,13 @@ jest.mock('../service', () => ({
   DialogService: {
     showDialog: () => Promise.resolve(1),
     hideDialog: () => Promise.resolve(0),
+  },
+}));
+
+const mockStore = createStore(combineReducers({ azureAuth, bot, clientAwareSettings }));
+jest.mock('../../../state/store', () => ({
+  get store() {
+    return mockStore;
   },
 }));
 
@@ -57,24 +68,36 @@ jest.mock('../../dialogs/', () => ({
 }));
 
 describe('The AzureLoginPromptDialog component should', () => {
-  it('should render deeply', () => {
-    const parent = mount(
+  let mockDispatch;
+  let parent;
+  let node;
+  let instance: any;
+
+  beforeEach(() => {
+    mockDispatch = jest.spyOn(mockStore, 'dispatch');
+    parent = mount(
       <Provider store={createStore(azureAuth)}>
         <AzureLoginPromptDialogContainer />
       </Provider>
     );
+    node = parent.find(AzureLoginPromptDialog);
+    instance = node.instance() as AzureLoginPromptDialog;
+  });
+
+  it('should render deeply', () => {
     expect(parent.find(AzureLoginPromptDialogContainer)).not.toBe(null);
   });
 
   it('should contain both a cancel and confirm function in the props', () => {
-    const parent = mount(
-      <Provider store={createStore(azureAuth)}>
-        <AzureLoginPromptDialogContainer />
-      </Provider>
-    );
-
     const prompt = parent.find(AzureLoginPromptDialog);
     expect(typeof (prompt.props() as any).cancel).toBe('function');
     expect(typeof (prompt.props() as any).confirm).toBe('function');
+  });
+
+  it('should call the appropriate command when onAnchorClick is called', async () => {
+    instance.props.onAnchorClick('http://blah');
+    expect(mockDispatch).toHaveBeenCalledWith(
+      executeCommand(true, SharedConstants.Commands.Electron.OpenExternal, null, 'http://blah')
+    );
   });
 });

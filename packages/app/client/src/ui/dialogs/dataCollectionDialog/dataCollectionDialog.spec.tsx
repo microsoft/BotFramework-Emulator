@@ -31,26 +31,33 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { SharedConstants } from '@bfemulator/app-shared';
 import * as React from 'react';
 import { mount } from 'enzyme';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 
 import { DialogService } from '../service';
+import { executeCommand } from '../../../state/actions/commandActions';
 
 import { DataCollectionDialog } from './dataCollectionDialog';
 import { DataCollectionDialogContainer } from './dataCollectionDialogContainer';
 
 describe('<DataCollectionDialogContainer />', () => {
   let wrapper;
+  let mockDispatch;
+  let node;
   let instance;
 
   beforeEach(() => {
+    const mockStore = createStore((state, _action) => state);
+    mockDispatch = jest.spyOn(mockStore, 'dispatch');
     wrapper = mount(
-      <Provider store={createStore((state, _action) => state)}>
+      <Provider store={mockStore}>
         <DataCollectionDialogContainer />
       </Provider>
     );
+    node = wrapper.find(DataCollectionDialog);
     instance = wrapper.find(DataCollectionDialog).instance();
   });
 
@@ -63,5 +70,12 @@ describe('<DataCollectionDialogContainer />', () => {
     instance.onConfirmOrCancel({ target: { name: 'yes' } });
 
     expect(hideDialogSpy).toHaveBeenCalledWith(true);
+  });
+
+  it('should call the appropriate command when onAnchorClick is called', async () => {
+    instance.props.onAnchorClick('http://blah');
+    expect(mockDispatch).toHaveBeenCalledWith(
+      executeCommand(true, SharedConstants.Commands.Electron.OpenExternal, null, 'http://blah')
+    );
   });
 });

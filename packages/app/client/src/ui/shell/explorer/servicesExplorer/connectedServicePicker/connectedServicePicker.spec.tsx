@@ -30,6 +30,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+import { SharedConstants } from '@bfemulator/app-shared';
 import { ServiceTypes } from 'botframework-config/lib/schema';
 import { mount } from 'enzyme';
 import * as React from 'react';
@@ -38,6 +39,7 @@ import { combineReducers, createStore } from 'redux';
 
 import { load, setActive } from '../../../../../state/actions/botActions';
 import { bot } from '../../../../../state/reducers/bot';
+import { executeCommand } from '../../../../../state/actions/commandActions';
 import { DialogService } from '../../../../dialogs/service';
 
 import { ConnectedServicePicker } from './connectedServicePicker';
@@ -64,9 +66,11 @@ describe('The ConnectedServicePicker component', () => {
   let node;
   let mockStore;
   let mockBot;
+  let mockDispatch;
   let mockService;
   beforeEach(() => {
     mockStore = createStore(combineReducers({ bot }));
+    mockDispatch = jest.spyOn(mockStore, 'dispatch');
     mockBot = JSON.parse(`{
         "name": "TestBot",
         "description": "",
@@ -263,5 +267,13 @@ describe('The ConnectedServicePicker component', () => {
       expect(node.headerElements).toBe(node.cosmosDbHeader);
       expect(node.contentElements).toBe(node.cosmosDbServiceContent);
     });
+  });
+
+  it('should call the appropriate command when onAnchorClick is called', async () => {
+    const instance = node.instance();
+    instance.props.onAnchorClick('http://blah');
+    expect(mockDispatch).toHaveBeenCalledWith(
+      executeCommand(true, SharedConstants.Commands.Electron.OpenExternal, null, 'http://blah')
+    );
   });
 });

@@ -31,6 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { SharedConstants } from '@bfemulator/app-shared';
 import { mount } from 'enzyme';
 import * as React from 'react';
 import { combineReducers, createStore } from 'redux';
@@ -42,6 +43,7 @@ import { setFrameworkSettings, saveFrameworkSettings } from '../../../state/acti
 import { getTabGroupForDocument } from '../../../state/helpers/editorHelpers';
 import { framework } from '../../../state/reducers/framework';
 import { ariaAlertService } from '../../a11y';
+import { executeCommand } from '../../../state/actions/commandActions';
 
 import { AppSettingsEditor } from './appSettingsEditor';
 import { AppSettingsEditorContainer } from './appSettingsEditorContainer';
@@ -178,5 +180,12 @@ describe('The AppSettingsEditorContainer', () => {
 
     expect(mockDispatch).toHaveBeenLastCalledWith(saveFrameworkSettings(savedSettings));
     expect(alertServiceSpy).toHaveBeenCalledWith('App settings saved.');
+  });
+
+  it('should call the appropriate command when onAnchorClick is called', async () => {
+    instance.props.onAnchorClick('http://blah');
+    expect(mockDispatch).toHaveBeenCalledWith(
+      executeCommand(true, SharedConstants.Commands.Electron.OpenExternal, null, 'http://blah')
+    );
   });
 });

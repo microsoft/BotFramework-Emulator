@@ -30,6 +30,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+import { SharedConstants } from '@bfemulator/app-shared';
 import * as React from 'react';
 import { Provider } from 'react-redux';
 import { mount } from 'enzyme';
@@ -39,6 +40,7 @@ import { BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
 import { bot } from '../../../state/reducers/bot';
 import { setActive } from '../../../state/actions/botActions';
 import { DialogService } from '../service';
+import { executeCommand } from '../../../state/actions/commandActions';
 
 import { SecretPromptDialogContainer } from './secretPromptDialogContainer';
 import { SecretPromptDialog } from './secretPromptDialog';
@@ -68,14 +70,19 @@ jest.mock('../../../utils', () => ({
 describe('The Secret prompt dialog', () => {
   let parent;
   let node;
+  let mockDispatch;
+  let instance;
+
   beforeEach(() => {
     mockStore.dispatch(setActive(mockBot));
+    mockDispatch = jest.spyOn(mockStore, 'dispatch');
     parent = mount(
       <Provider store={mockStore}>
         <SecretPromptDialogContainer />
       </Provider>
     );
     node = parent.find(SecretPromptDialog);
+    instance = node.instance();
   });
 
   it('should render deeply', () => {
@@ -126,5 +133,12 @@ describe('The Secret prompt dialog', () => {
     instance.onDismissClick();
 
     expect(spy).toHaveBeenCalledWith(null);
+  });
+
+  it('should call the appropriate command when onAnchorClick is called', async () => {
+    instance.props.onAnchorClick('http://blah');
+    expect(mockDispatch).toHaveBeenCalledWith(
+      executeCommand(true, SharedConstants.Commands.Electron.OpenExternal, null, 'http://blah')
+    );
   });
 });
