@@ -37,21 +37,22 @@ import { mount } from 'enzyme';
 import { LinkButton } from './linkButton';
 
 describe('The LinkButton component', () => {
+  let parent;
+  let node;
+  beforeEach(() => {
+    parent = mount(<LinkButton>Learn more</LinkButton>);
+    node = parent.find(LinkButton);
+  });
+
   it('should render without any errors', () => {
-    const parent = mount(<LinkButton>Learn more</LinkButton>);
-    const node = parent.find(LinkButton);
     expect(node.html()).not.toBeFalsy();
   });
 
   it('should have an ariaLabel property', () => {
-    const parent = mount(<LinkButton>Learn more</LinkButton>);
-    const node = parent.find(LinkButton);
     expect(typeof (node.props() as any).ariaLabel).not.toBeFalsy();
   });
 
   it('should have an role property', () => {
-    const parent = mount(<LinkButton>Learn more</LinkButton>);
-    const node = parent.find(LinkButton);
     expect(typeof (node.props() as any).role).not.toBeFalsy();
   });
 });
