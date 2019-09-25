@@ -207,8 +207,8 @@ describe('The GetStartedWithCSDialog component should', () => {
         <GetStartedWithCSDialogContainer />
       </Provider>
     );
-    let node = parent.find(GetStartedWithCSDialog);
-    let instance = parent.find(GetStartedWithCSDialog).instance();
+    const node = parent.find(GetStartedWithCSDialog);
+    const instance = parent.find(GetStartedWithCSDialog).instance();
     instance.props.onAnchorClick('http://blah');
     expect(mockDispatch).toHaveBeenCalledWith(
       executeCommand(true, SharedConstants.Commands.Electron.OpenExternal, null, 'http://blah')

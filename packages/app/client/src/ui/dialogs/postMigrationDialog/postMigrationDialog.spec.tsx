@@ -38,10 +38,10 @@ import { createStore } from 'redux';
 import { mount } from 'enzyme';
 
 import { navBar } from '../../../state/reducers/navBar';
+import { executeCommand } from '../../../state/actions/commandActions';
 
 import { PostMigrationDialogContainer } from './postMigrationDialogContainer';
 import { PostMigrationDialog } from './postMigrationDialog';
-import { executeCommand } from '../../../state/actions/commandActions';
 
 jest.mock('../../dialogs', () => ({}));
 jest.mock('./postMigrationDialog.scss', () => ({}));
