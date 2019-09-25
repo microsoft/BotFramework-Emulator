@@ -45,6 +45,8 @@ import * as React from 'react';
 import { ChangeEvent, Component, MouseEvent, ReactNode } from 'react';
 import { EmulatorMode } from '@bfemulator/sdk-shared';
 
+import { debounce } from '../../../utils';
+
 import * as openBotStyles from './openBotDialog.scss';
 
 export interface OpenBotDialogProps {
@@ -258,11 +260,8 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
   }
 
   /** Announces the error message to screen reader technologies */
-  private announceErrorMessage(msg: string): void {
+  private announceErrorMessage = debounce((msg: string): void => {
     // ensure that we aren't spamming aria alerts each time the input is validated
-    const existingAlerts = document.querySelectorAll('span#alert-from-service');
-    if (!existingAlerts.length) {
-      this.props.createAriaAlert(msg);
-    }
-  }
+    this.props.createAriaAlert(`For Bot URL, ${msg}`);
+  }, 2000);
 }

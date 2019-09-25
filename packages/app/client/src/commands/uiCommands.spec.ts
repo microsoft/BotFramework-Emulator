@@ -42,7 +42,7 @@ import { store } from '../state/store';
 import {
   AzureLoginPromptDialogContainer,
   AzureLoginSuccessDialogContainer,
-  BotCreationDialog,
+  BotCreationDialogContainer,
   DialogService,
   OpenBotDialogContainer,
   SecretPromptDialogContainer,
@@ -97,7 +97,7 @@ describe('the uiCommands', () => {
   it('should call DialogService.showDialog when the ShowBotCreationDialog command is dispatched', async () => {
     const spy = jest.spyOn(DialogService, 'showDialog').mockResolvedValueOnce(true);
     const result = await registry.getCommand(Commands.ShowBotCreationDialog)();
-    expect(spy).toHaveBeenCalledWith(BotCreationDialog);
+    expect(spy).toHaveBeenCalledWith(BotCreationDialogContainer);
     expect(result).toBe(true);
   });
 
