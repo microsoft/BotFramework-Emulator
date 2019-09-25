@@ -189,28 +189,28 @@ describe('The ConnectedServiceEditor component should render the correct content
 
   it('ServiceTypes.Luis', () => {
     const instance = node.instance();
-    expect(instance.learnMoreLink).toEqual(expect.any(Function));
+    expect(instance.learnMoreLinkButton).not.toBeFalsy();
     expect(instance.editableFields).toEqual(['name', 'appId', 'authoringKey', 'version', 'region', 'subscriptionKey']);
     expect(instance.headerContent).toEqual(instance.luisAndDispatchHeader);
   });
 
   it('ServiceTypes.Dispatch', () => {
     const instance = node.instance();
-    expect(instance.learnMoreLink).toEqual(expect.any(Function));
+    expect(instance.learnMoreLinkButton).not.toBeFalsy();
     expect(instance.editableFields).toEqual(['name', 'appId', 'authoringKey', 'version', 'region', 'subscriptionKey']);
     expect(instance.headerContent).toEqual(instance.luisAndDispatchHeader);
   });
 
   it('ServiceTypes.QnA', () => {
     const instance = node.instance();
-    expect(instance.learnMoreLink).toEqual(expect.any(Function));
+    expect(instance.learnMoreLinkButton).not.toBeFalsy();
     expect(instance.editableFields).toEqual(['name', 'kbId', 'hostname', 'subscriptionKey', 'endpointKey']);
     expect(instance.headerContent).toEqual(instance.qnaHeader);
   });
 
   it('ServiceTypes.AppInsights', () => {
     const instance = node.instance();
-    expect(instance.learnMoreLink).toEqual(expect.any(Function));
+    expect(instance.learnMoreLinkButton).not.toBeFalsy();
     expect(instance.editableFields).toEqual([
       'name',
       'tenantId',
@@ -225,7 +225,7 @@ describe('The ConnectedServiceEditor component should render the correct content
 
   it('ServiceTypes.Blob', () => {
     const instance = node.instance();
-    expect(instance.learnMoreLink).toEqual(expect.any(Function));
+    expect(instance.learnMoreLinkButton).not.toBeFalsy();
     expect(instance.editableFields).toEqual([
       'name',
       'tenantId',
@@ -240,7 +240,7 @@ describe('The ConnectedServiceEditor component should render the correct content
 
   it('ServiceTypes.CosmosDB', () => {
     const instance = node.instance();
-    expect(instance.learnMoreLink).toEqual(expect.any(Function));
+    expect(instance.learnMoreLinkButton).not.toBeFalsy();
     expect(instance.editableFields).toEqual([
       'name',
       'tenantId',

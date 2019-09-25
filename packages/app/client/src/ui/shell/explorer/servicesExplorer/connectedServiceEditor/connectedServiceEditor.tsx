@@ -381,7 +381,7 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
           </LinkButton>
         );
       }
-      default: {
+      case ServiceTypes.CosmosDB: {
         const cosmosDBString = 'Learn more about ' + labelMap[serviceType].toString() + ' keys.';
         return (
           <LinkButton
@@ -394,6 +394,8 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
           </LinkButton>
         );
       }
+      default:
+        return '';
     }
   };
 
