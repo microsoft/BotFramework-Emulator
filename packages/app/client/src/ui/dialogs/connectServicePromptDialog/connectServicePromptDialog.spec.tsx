@@ -69,15 +69,17 @@ jest.mock('../../dialogs/', () => ({
 }));
 
 describe('The ConnectServicePromptDialog component should', () => {
+  let mockStore;
   let mockDispatch;
   let parent;
   let node;
   let instance: any;
 
   beforeEach(() => {
+    mockStore = createStore(azureAuth);
     mockDispatch = jest.spyOn(mockStore, 'dispatch');
     parent = mount(
-      <Provider store={createStore(azureAuth)}>
+      <Provider store={mockStore}>
         <ConnectServicePromptDialogContainer serviceType={ServiceTypes.Luis} />
       </Provider>
     );
