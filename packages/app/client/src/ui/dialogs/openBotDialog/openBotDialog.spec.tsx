@@ -251,12 +251,12 @@ describe('The OpenBotDialog', () => {
 
   it('should announce any validation error messages', () => {
     // make sure there are no leftover alerts from previous test(s)
-    const preExistingAlerts = document.querySelectorAll('body > span');
+    const preExistingAlerts = document.querySelectorAll('body > span#alert-from-service');
     preExistingAlerts.forEach(alert => alert.remove());
     const spy = jest.spyOn(ariaAlertService, 'alert').mockReturnValueOnce(undefined);
     instance.announceErrorMessage('Invalid bot url.');
 
-    expect(spy).toHaveBeenCalledWith('Invalid bot url.');
+    expect(spy).toHaveBeenCalledWith('For Bot URL, Invalid bot url.');
   });
 
   it('should call the appropriate command when onAnchorClick is called', async () => {

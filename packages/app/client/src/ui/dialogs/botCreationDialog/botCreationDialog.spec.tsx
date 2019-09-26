@@ -34,14 +34,17 @@
 import { mount, ReactWrapper } from 'enzyme';
 import * as React from 'react';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
+import { createStore } from 'redux';
 
 import { ActiveBotHelper } from '../../helpers/activeBotHelper';
 import { ariaAlertService } from '../../a11y';
 
 import { BotCreationDialog, BotCreationDialogState } from './botCreationDialog';
+import { BotCreationDialogContainer } from './botCreationDialogContainer';
 
 jest.mock('../index', () => null);
 jest.mock('../../../utils', () => ({
+  debounce: (func: () => any) => func,
   generateBotSecret: () => {
     return Math.random() + '';
   },
@@ -88,7 +91,8 @@ describe('BotCreationDialog tests', () => {
 
   let testWrapper: ReactWrapper<any, any, any>;
   beforeEach(() => {
-    testWrapper = mount(<BotCreationDialog />);
+    const parent = mount(<BotCreationDialogContainer store={createStore((_state, _action) => ({}))} />);
+    testWrapper = parent.find(BotCreationDialog);
   });
 
   it('should render without throwing an error', () => {
@@ -200,6 +204,7 @@ describe('BotCreationDialog tests', () => {
   });
 
   it('should validate the endpoint', () => {
+    expect((testWrapper.instance() as any).validateEndpoint('')).toBe('');
     expect((testWrapper.instance() as any).validateEndpoint('http://localhost:3000/api/messages')).toBe('');
     expect((testWrapper.instance() as any).validateEndpoint('http://localhost:3000')).toBe(
       `Please include route if necessary: "/api/messages"`
@@ -260,5 +265,15 @@ describe('BotCreationDialog tests', () => {
     testWrapper.instance().onRevealSecretClick();
 
     expect(testWrapper.instance().state.revealSecret).toBe(false);
+  });
+
+  it('should announce any validation warning messages', () => {
+    // make sure there are no leftover alerts from previous test(s)
+    const preExistingAlerts = document.querySelectorAll('body > span#alert-from-service');
+    preExistingAlerts.forEach(alert => alert.remove());
+    const spy = jest.spyOn(ariaAlertService, 'alert').mockReturnValueOnce(undefined);
+    testWrapper.instance().announceEndpointWarning('Invalid bot url.');
+
+    expect(spy).toHaveBeenCalledWith('For Endpoint URL, Invalid bot url.');
   });
 });
