@@ -58,8 +58,8 @@ import { ActiveBotHelper } from '../../helpers/activeBotHelper';
 import { DialogService } from '../service';
 import { ariaAlertService } from '../../a11y';
 import { executeCommand } from '../../../state/actions/commandActions';
-
 import * as dialogStyles from '../dialogStyles.scss';
+
 import * as styles from './botCreationDialog.scss';
 
 export interface BotCreationDialogProps {
