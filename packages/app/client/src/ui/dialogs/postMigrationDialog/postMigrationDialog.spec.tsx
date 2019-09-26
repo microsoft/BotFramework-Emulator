@@ -74,7 +74,7 @@ describe('The PostMigrationDialogContainer component', () => {
     expect(typeof (node.props() as any).close).toBe('function');
   });
 
-  it('should call the appropriate command when onAnchorClick is called', async () => {
+  it('should call the appropriate command when onAnchorClick is called', () => {
     instance.props.onAnchorClick('http://blah');
     expect(mockDispatch).toHaveBeenCalledWith(
       executeCommand(true, SharedConstants.Commands.Electron.OpenExternal, null, 'http://blah')

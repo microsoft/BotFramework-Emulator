@@ -72,7 +72,7 @@ describe('<DataCollectionDialogContainer />', () => {
     expect(hideDialogSpy).toHaveBeenCalledWith(true);
   });
 
-  it('should call the appropriate command when onAnchorClick is called', async () => {
+  it('should call the appropriate command when onAnchorClick is called', () => {
     instance.props.onAnchorClick('http://blah');
     expect(mockDispatch).toHaveBeenCalledWith(
       executeCommand(true, SharedConstants.Commands.Electron.OpenExternal, null, 'http://blah')

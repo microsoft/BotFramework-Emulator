@@ -291,31 +291,25 @@ export class GetStartedWithCSDialog extends Component<GetStartedWithCSDialogProp
     );
   }
 
-  private onBlobStorageDocsClick = () => {
-    this.props.onAnchorClick('https://azure.microsoft.com/en-us/services/storage/blobs/');
-  };
+  private createAnchorClickHandler = url => () => this.props.onAnchorClick(url);
 
-  private onCosmosdbDocsClick = () => {
-    this.props.onAnchorClick('https://azure.microsoft.com/en-us/services/cosmos-db/');
-  };
+  private onBlobStorageDocsClick = this.createAnchorClickHandler(
+    'https://azure.microsoft.com/en-us/services/storage/blobs/'
+  );
 
-  private onDispatchLinkClick = () => {
-    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-create-dispatch');
-  };
+  private onCosmosdbDocsClick = this.createAnchorClickHandler('https://azure.microsoft.com/en-us/services/cosmos-db/');
 
-  private onLUISDocsClick = () => {
-    this.props.onAnchorClick('http://aka.ms/bot-framework-emulator-LUIS-docs-home');
-  };
+  private onDispatchLinkClick = this.createAnchorClickHandler('https://aka.ms/bot-framework-emulator-create-dispatch');
 
-  private onLUISCollabDocsClick = () => {
-    this.props.onAnchorClick('http://aka.ms/bot-framework-emulator-luis-collaboration');
-  };
+  private onLUISDocsClick = this.createAnchorClickHandler('http://aka.ms/bot-framework-emulator-LUIS-docs-home');
 
-  private onLUISInfoClick = () => {
-    this.props.onAnchorClick('https://docs.microsoft.com/en-us/azure/cognitive-services/luis/what-is-luis');
-  };
+  private onLUISCollabDocsClick = this.createAnchorClickHandler(
+    'http://aka.ms/bot-framework-emulator-luis-collaboration'
+  );
 
-  private onQnADocsClick = () => {
-    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-qna-docs-home');
-  };
+  private onLUISInfoClick = this.createAnchorClickHandler(
+    'https://docs.microsoft.com/en-us/azure/cognitive-services/luis/what-is-luis'
+  );
+
+  private onQnADocsClick = this.createAnchorClickHandler('https://aka.ms/bot-framework-emulator-qna-docs-home');
 }

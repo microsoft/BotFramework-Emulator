@@ -150,7 +150,6 @@ export class BotCreationDialog extends React.Component<BotCreationDialogProps, B
             />
             <TextField
               inputContainerClassName={dialogStyles.inputContainer}
-              inputRef={this.setSecretInputRef}
               label="Microsoft App password"
               data-prop="appPassword"
               onChange={this.onInputChange}
@@ -188,6 +187,7 @@ export class BotCreationDialog extends React.Component<BotCreationDialogProps, B
           <Row align={RowAlignment.Bottom} justify={RowJustification.Left}>
             <TextField
               inputContainerClassName={dialogStyles.key}
+              inputRef={this.setSecretInputRef}
               label="Secret "
               value={secret}
               placeholder="Your keys are not encrypted"

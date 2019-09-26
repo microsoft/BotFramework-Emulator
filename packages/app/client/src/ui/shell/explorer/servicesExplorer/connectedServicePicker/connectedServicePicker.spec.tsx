@@ -269,7 +269,7 @@ describe('The ConnectedServicePicker component', () => {
     });
   });
 
-  it('should call the appropriate command when onAnchorClick is called', async () => {
+  it('should call the appropriate command when onAnchorClick is called', () => {
     const instance = node.instance();
     instance.props.onAnchorClick('http://blah');
     expect(mockDispatch).toHaveBeenCalledWith(

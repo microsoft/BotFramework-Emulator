@@ -201,7 +201,7 @@ describe('The GetStartedWithCSDialog component should', () => {
     expect(prompt.instance().content).toBeNull();
   });
 
-  it('should call the appropriate command when onAnchorClick is called', async () => {
+  it('should call the appropriate command when onAnchorClick is called', () => {
     const parent: any = mount(
       <Provider store={mockStore}>
         <GetStartedWithCSDialogContainer />
