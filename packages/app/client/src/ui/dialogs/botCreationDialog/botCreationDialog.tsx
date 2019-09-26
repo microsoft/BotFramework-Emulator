@@ -58,8 +58,8 @@ import { ActiveBotHelper } from '../../helpers/activeBotHelper';
 import { DialogService } from '../service';
 import { ariaAlertService } from '../../a11y';
 import { executeCommand } from '../../../state/actions/commandActions';
-import * as dialogStyles from '../dialogStyles.scss';
 
+import * as dialogStyles from '../dialogStyles.scss';
 import * as styles from './botCreationDialog.scss';
 
 export interface BotCreationDialogProps {
@@ -161,7 +161,7 @@ export class BotCreationDialog extends React.Component<BotCreationDialogProps, B
           <Row align={RowAlignment.Bottom}>
             <Checkbox label="Azure for US Government" checked={isAzureGov} onChange={this.onChannelServiceChange} />
             <LinkButton
-              ariaLabel="Learn more about Azure for US Government"
+              ariaLabel="Learn more about Azure for US Government.&nbsp;"
               className={dialogStyles.dialogLink}
               linkRole={true}
               onClick={this.onAzureGovLinkClick}
@@ -172,16 +172,17 @@ export class BotCreationDialog extends React.Component<BotCreationDialogProps, B
           <Row align={RowAlignment.Bottom}>
             <Checkbox
               className={dialogStyles.encryptKeyCheckBox}
-              label="Encrypt keys stored in your bot configuration."
+              label="Encrypt keys stored in your bot configuration.&nbsp;"
               checked={encryptKey}
               onChange={this.onEncryptKeyChange}
             />
             <LinkButton
               ariaLabel="Learn more about bot file encryption"
+              className={dialogStyles.dialogLink}
               linkRole={true}
               onClick={this.onBotEncryptionLinkClick}
             >
-              &nbsp;Learn more.
+              Learn more.
             </LinkButton>
           </Row>
           <Row align={RowAlignment.Bottom} justify={RowJustification.Left}>
@@ -199,6 +200,7 @@ export class BotCreationDialog extends React.Component<BotCreationDialogProps, B
               <li>
                 <LinkButton
                   ariaLabel={revealSecret ? 'Hide secret' : 'Show secret'}
+                  className={dialogStyles.dialogLink}
                   disabled={!encryptKey}
                   onClick={this.onRevealSecretClick}
                 >
@@ -206,12 +208,13 @@ export class BotCreationDialog extends React.Component<BotCreationDialogProps, B
                 </LinkButton>
               </li>
               <li>
-                <LinkButton disabled={!encryptKey} onClick={this.onCopyClick}>
+                <LinkButton className={dialogStyles.dialogLink} disabled={!encryptKey} onClick={this.onCopyClick}>
                   Copy
                 </LinkButton>
               </li>
               {/* <li>
                 <LinkButton
+                  className={dialogStyles.dialogLink}
                   onClick={ this.onResetClick }>
                   Generate new secret
                 </LinkButton>
