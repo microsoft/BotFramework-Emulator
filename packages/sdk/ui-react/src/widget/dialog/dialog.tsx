@@ -61,11 +61,11 @@ export class Dialog extends Component<ModalProps, {}> {
           onKeyDown={this.bodyKeyDownHandler}
           role="dialog"
         >
+          <button className={styles.cancelButton} aria-label="Close" onClick={this.props.cancel} />
+          <div className={styles.cancelButtonOutline} role="presentation"></div>
           <header className={`${titleClassName}`} id="dialog-heading">
             {title}
           </header>
-          <button className={styles.cancelButton} aria-label="Close" onClick={this.props.cancel} />
-          <div className={styles.cancelButtonOutline} role="presentation"></div>
           {filterChildren(children, child => hmrSafeNameComparison(child.type, DialogFooter, true))}
           {filterChildren(children, child => hmrSafeNameComparison(child.type, DialogFooter))}
         </div>
