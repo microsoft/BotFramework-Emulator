@@ -31,6 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { SharedConstants } from '@bfemulator/app-shared';
 import { PrimaryButton } from '@bfemulator/ui-react';
 import { LuisService } from 'botframework-config/lib/models';
 import { ServiceTypes } from 'botframework-config/lib/schema';
@@ -40,7 +41,9 @@ import { Provider } from 'react-redux';
 import { combineReducers, createStore } from 'redux';
 
 import { azureAuth } from '../../../../../state/reducers/azureAuth';
+import { bot } from '../../../../../state/reducers/bot';
 import { DialogService } from '../../../../dialogs/service';
+import { executeCommand } from '../../../../../state/actions/commandActions';
 
 import { ConnectedServiceEditor } from './connectedServiceEditor';
 import { ConnectedServiceEditorContainer } from './connectedServiceEditorContainer';
@@ -63,11 +66,16 @@ jest.mock('../../../../dialogs/', () => ({
 jest.mock('./connectedServiceEditor.scss', () => ({}));
 
 describe('The ConnectedServiceEditor component ', () => {
+  let mockDispatch;
   let parent;
   let node;
+  let instance: any;
   let mockService;
+  let mockStore;
 
   beforeEach(() => {
+    mockStore = createStore(combineReducers({ azureAuth, bot }));
+    mockDispatch = jest.spyOn(mockStore, 'dispatch');
     mockService = JSON.parse(`{
             "type": "luis",
             "id": "b5af3f67-7ec8-444a-ae91-c4f02883c8f4",
@@ -78,11 +86,12 @@ describe('The ConnectedServiceEditor component ', () => {
             "subscriptionKey": "emoji"
         }`);
     parent = mount(
-      <Provider store={createStore(combineReducers({ azureAuth }))}>
+      <Provider store={mockStore}>
         <ConnectedServiceEditorContainer connectedService={mockService} serviceType={mockService.type} />
       </Provider>
     );
     node = parent.find(ConnectedServiceEditor);
+    instance = node.instance() as ConnectedServiceEditor;
   });
 
   it('should render deeply', () => {
@@ -153,6 +162,13 @@ describe('The ConnectedServiceEditor component ', () => {
 
     expect(instance.state.connectedServiceCopy.configuration).toEqual(mockData);
   });
+
+  it('should call the appropriate command when onAnchorClick is called', () => {
+    instance.props.onAnchorClick('http://blah');
+    expect(mockDispatch).toHaveBeenCalledWith(
+      executeCommand(true, SharedConstants.Commands.Electron.OpenExternal, null, 'http://blah')
+    );
+  });
 });
 
 describe('The ConnectedServiceEditor component should render the correct content when the service type is', () => {
@@ -189,28 +205,28 @@ describe('The ConnectedServiceEditor component should render the correct content
 
   it('ServiceTypes.Luis', () => {
     const instance = node.instance();
-    expect(instance.learnMoreLink).toBe('http://aka.ms/bot-framework-emulator-LUIS-docs-home');
+    expect(instance.learnMoreLinkButton).not.toBeFalsy();
     expect(instance.editableFields).toEqual(['name', 'appId', 'authoringKey', 'version', 'region', 'subscriptionKey']);
     expect(instance.headerContent).toEqual(instance.luisAndDispatchHeader);
   });
 
   it('ServiceTypes.Dispatch', () => {
     const instance = node.instance();
-    expect(instance.learnMoreLink).toBe('https://aka.ms/bot-framework-emulator-create-dispatch');
+    expect(instance.learnMoreLinkButton).not.toBeFalsy();
     expect(instance.editableFields).toEqual(['name', 'appId', 'authoringKey', 'version', 'region', 'subscriptionKey']);
     expect(instance.headerContent).toEqual(instance.luisAndDispatchHeader);
   });
 
   it('ServiceTypes.QnA', () => {
     const instance = node.instance();
-    expect(instance.learnMoreLink).toBe('http://aka.ms/bot-framework-emulator-qna-keys');
+    expect(instance.learnMoreLinkButton).not.toBeFalsy();
     expect(instance.editableFields).toEqual(['name', 'kbId', 'hostname', 'subscriptionKey', 'endpointKey']);
     expect(instance.headerContent).toEqual(instance.qnaHeader);
   });
 
   it('ServiceTypes.AppInsights', () => {
     const instance = node.instance();
-    expect(instance.learnMoreLink).toBe('https://aka.ms/bot-framework-emulator-appinsights-keys');
+    expect(instance.learnMoreLinkButton).not.toBeFalsy();
     expect(instance.editableFields).toEqual([
       'name',
       'tenantId',
@@ -225,7 +241,7 @@ describe('The ConnectedServiceEditor component should render the correct content
 
   it('ServiceTypes.Blob', () => {
     const instance = node.instance();
-    expect(instance.learnMoreLink).toBe('https://aka.ms/bot-framework-emulator-storage-keys');
+    expect(instance.learnMoreLinkButton).not.toBeFalsy();
     expect(instance.editableFields).toEqual([
       'name',
       'tenantId',
@@ -240,7 +256,7 @@ describe('The ConnectedServiceEditor component should render the correct content
 
   it('ServiceTypes.CosmosDB', () => {
     const instance = node.instance();
-    expect(instance.learnMoreLink).toBe('https://aka.ms/bot-framework-emulator-cosmosdb-keys');
+    expect(instance.learnMoreLinkButton).not.toBeFalsy();
     expect(instance.editableFields).toEqual([
       'name',
       'tenantId',

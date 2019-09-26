@@ -31,11 +31,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { SharedConstants } from '@bfemulator/app-shared';
 import { IBotService, IEndpointService, ServiceTypes } from 'botframework-config/lib/schema';
 import { connect } from 'react-redux';
 
 import { RootState } from '../../../../../state/store';
 import { DialogService } from '../../../../dialogs/service';
+import { executeCommand } from '../../../../../state/actions/commandActions';
 
 import { EndpointEditor, EndpointEditorProps, UpdatedServicesPayload } from './endpointEditor';
 
@@ -54,10 +56,13 @@ const mapStateToProps = (state: RootState, ownProps: EndpointEditorProps): Endpo
   };
 };
 
-const mapDispatchToProps = (): Partial<EndpointEditorProps> => {
+const mapDispatchToProps = dispatch => (): Partial<EndpointEditorProps> => {
   return {
     updateEndpointService: (updatedServices: UpdatedServicesPayload) => DialogService.hideDialog(updatedServices),
     cancel: () => DialogService.hideDialog(),
+    onAnchorClick: (url: string) => {
+      dispatch(executeCommand(true, SharedConstants.Commands.Electron.OpenExternal, null, url));
+    },
   };
 };
 

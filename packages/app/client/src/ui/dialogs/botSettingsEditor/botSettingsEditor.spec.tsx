@@ -40,6 +40,7 @@ import { BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
 import { SharedConstants } from '@bfemulator/app-shared';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
+import { executeCommand } from '../../../state/actions/commandActions';
 import { bot } from '../../../state/reducers/bot';
 import { setActive } from '../../../state/actions/botActions';
 
@@ -122,6 +123,8 @@ jest.mock('../../../utils', () => ({
 
 describe('The BotSettingsEditor dialog should', () => {
   let commandService: CommandServiceImpl;
+  let mockDispatch;
+
   beforeAll(() => {
     const decorator = CommandServiceInstance();
     const descriptor = decorator({ descriptor: {} }, 'none') as any;
@@ -142,7 +145,9 @@ describe('The BotSettingsEditor dialog should', () => {
   });
   let parent;
   let node;
+  let instance: any;
   beforeEach(() => {
+    mockDispatch = jest.spyOn(mockStore, 'dispatch');
     mockStore.dispatch(setActive(mockBot));
     mockRemoteCommandsCalled.length = 0;
     parent = mount(
@@ -151,6 +156,7 @@ describe('The BotSettingsEditor dialog should', () => {
       </Provider>
     );
     node = parent.find(BotSettingsEditor);
+    instance = node.instance() as BotSettingsEditor;
   });
 
   it('should render deeply', () => {
@@ -307,5 +313,12 @@ describe('The BotSettingsEditor dialog should', () => {
         expect(mockRemoteCommandsCalled[index]).toEqual(command);
       });
     });
+  });
+
+  it('should call the appropriate command when onAnchorClick is called', () => {
+    instance.props.onAnchorClick('http://blah');
+    expect(mockDispatch).toHaveBeenCalledWith(
+      executeCommand(true, SharedConstants.Commands.Electron.OpenExternal, null, 'http://blah')
+    );
   });
 });

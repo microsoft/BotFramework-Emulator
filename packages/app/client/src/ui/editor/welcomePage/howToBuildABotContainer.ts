@@ -35,23 +35,19 @@ import { SharedConstants } from '@bfemulator/app-shared';
 import { connect } from 'react-redux';
 import { Action } from 'redux';
 
-import { DialogService } from '../service';
 import { executeCommand } from '../../../state/actions/commandActions';
 
-import { DataCollectionDialog, DataCollectionDialogProps } from './dataCollectionDialog';
+import { HowToBuildABot, HowToBuildABotProps } from './howToBuildABot';
 
-function mapDispatchToProps(dispatch: (action: Action) => void): DataCollectionDialogProps {
+function mapDispatchToProps(dispatch: (action: Action) => void): HowToBuildABotProps {
   return {
-    hideDialog: (collectData: boolean) => {
-      DialogService.hideDialog(collectData);
-    },
     onAnchorClick: (url: string) => {
       dispatch(executeCommand(true, SharedConstants.Commands.Electron.OpenExternal, null, url));
     },
   };
 }
 
-export const DataCollectionDialogContainer = connect(
-  null,
+export const HowToBuildABotContainer = connect(
+  undefined,
   mapDispatchToProps
-)(DataCollectionDialog);
+)(HowToBuildABot);

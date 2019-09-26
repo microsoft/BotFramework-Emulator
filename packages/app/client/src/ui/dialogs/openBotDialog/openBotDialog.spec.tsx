@@ -31,6 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { SharedConstants } from '@bfemulator/app-shared';
 import { ClientAwareSettings, UserSettings } from '@bfemulator/app-shared';
 import { mount } from 'enzyme';
 import * as React from 'react';
@@ -45,6 +46,7 @@ import { bot } from '../../../state/reducers/bot';
 import { clientAwareSettings } from '../../../state/reducers/clientAwareSettings';
 import { DialogService } from '../service';
 import { ariaAlertService } from '../../a11y';
+import { executeCommand } from '../../../state/actions/commandActions';
 
 import { OpenBotDialog } from './openBotDialog';
 import { OpenBotDialogContainer } from './openBotDialogContainer';
@@ -79,6 +81,7 @@ describe('The OpenBotDialog', () => {
   let node;
   let parent;
   let instance;
+  let mockDispatch;
   beforeEach(() => {
     mockStore = createStore(combineReducers({ bot, clientAwareSettings }));
     mockStore.dispatch(BotActions.load(bots));
@@ -91,6 +94,7 @@ describe('The OpenBotDialog', () => {
         } as UserSettings,
       } as ClientAwareSettings)
     );
+    mockDispatch = jest.spyOn(mockStore, 'dispatch');
     parent = mount(
       <Provider store={mockStore}>
         <OpenBotDialogContainer isDebug={false} mode={'livechat'} savedBotUrls={['http://localhost/api/messages']} />
@@ -253,5 +257,12 @@ describe('The OpenBotDialog', () => {
     instance.announceErrorMessage('Invalid bot url.');
 
     expect(spy).toHaveBeenCalledWith('For Bot URL, Invalid bot url.');
+  });
+
+  it('should call the appropriate command when onAnchorClick is called', () => {
+    instance.props.onAnchorClick('http://blah');
+    expect(mockDispatch).toHaveBeenCalledWith(
+      executeCommand(true, SharedConstants.Commands.Electron.OpenExternal, null, 'http://blah')
+    );
   });
 });

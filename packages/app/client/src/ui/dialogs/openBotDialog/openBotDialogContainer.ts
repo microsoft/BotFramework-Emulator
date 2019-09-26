@@ -31,6 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { SharedConstants } from '@bfemulator/app-shared';
 import { connect } from 'react-redux';
 import { Action } from 'redux';
 
@@ -38,6 +39,7 @@ import { openBotViaFilePathAction, openBotViaUrlAction } from '../../../state/ac
 import { DialogService } from '../service';
 import { RootState } from '../../../state/store';
 import { ariaAlertService } from '../../a11y';
+import { executeCommand } from '../../../state/actions/commandActions';
 
 import { OpenBotDialog, OpenBotDialogProps, OpenBotDialogState } from './openBotDialog';
 
@@ -45,6 +47,9 @@ const mapDispatchToProps = (dispatch: (action: Action) => void): OpenBotDialogPr
   return {
     createAriaAlert: (msg: string) => {
       ariaAlertService.alert(msg);
+    },
+    onAnchorClick: (url: string) => {
+      dispatch(executeCommand(true, SharedConstants.Commands.Electron.OpenExternal, null, url));
     },
     openBot: (componentState: OpenBotDialogState) => {
       DialogService.hideDialog();

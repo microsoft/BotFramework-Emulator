@@ -30,28 +30,37 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+import * as React from 'react';
 
-import { SharedConstants } from '@bfemulator/app-shared';
-import { connect } from 'react-redux';
-import { Action } from 'redux';
+import * as styles from './button.scss';
 
-import { DialogService } from '../service';
-import { executeCommand } from '../../../state/actions/commandActions';
-
-import { DataCollectionDialog, DataCollectionDialogProps } from './dataCollectionDialog';
-
-function mapDispatchToProps(dispatch: (action: Action) => void): DataCollectionDialogProps {
-  return {
-    hideDialog: (collectData: boolean) => {
-      DialogService.hideDialog(collectData);
-    },
-    onAnchorClick: (url: string) => {
-      dispatch(executeCommand(true, SharedConstants.Commands.Electron.OpenExternal, null, url));
-    },
-  };
+export interface LinkButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  ariaLabel?: string;
+  linkRole?: boolean;
+  text?: string;
 }
 
-export const DataCollectionDialogContainer = connect(
-  null,
-  mapDispatchToProps
-)(DataCollectionDialog);
+// This UI component is intended to function as a button but has the appearance of a link.
+// Since we want Emulator to open links the user's default browser, all anchors in this app
+// should be a <LinkButton>, which will maintain the desired UX. Otherwise, CTRL + Click
+// or middle-mouse button click will open a new instance of Emulator.
+// Instead of <a href="...">Link name</a>, please use:
+// <LinkButton linkRole={true} onClick={...}>Link name</LinkButton>
+
+export class LinkButton extends React.Component<LinkButtonProps, {}> {
+  public render(): React.ReactNode {
+    const { className: propsClassName = '', ariaLabel, linkRole = false, text, ...buttonProps } = this.props;
+    const className = `${propsClassName} ${styles.linkButton}`;
+
+    const ariaLabelText = ariaLabel || text || (typeof this.props.children === 'string' && this.props.children);
+
+    if (!ariaLabelText) throw new Error('<LinkButton must have aria-label');
+
+    return (
+      <button {...buttonProps} aria-label={ariaLabelText} className={className} role={linkRole ? 'link' : 'button'}>
+        {text}
+        {this.props.children}
+      </button>
+    );
+  }
+}

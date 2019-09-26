@@ -32,7 +32,16 @@
 //
 
 import { FrameworkSettings, frameworkDefault } from '@bfemulator/app-shared';
-import { Checkbox, Column, PrimaryButton, Row, RowAlignment, RowJustification, TextField } from '@bfemulator/ui-react';
+import {
+  Checkbox,
+  Column,
+  LinkButton,
+  PrimaryButton,
+  Row,
+  RowAlignment,
+  RowJustification,
+  TextField,
+} from '@bfemulator/ui-react';
 import * as React from 'react';
 import { ChangeEvent } from 'react';
 
@@ -47,6 +56,7 @@ export interface AppSettingsEditorProps {
   framework?: FrameworkSettings;
   createAriaAlert?: (msg: string) => void;
   discardChanges?: () => void;
+  onAnchorClick?: (url: string) => void;
   openBrowseForNgrok: () => Promise<string>;
   saveFrameworkSettings?: (framework: FrameworkSettings) => void;
   setDirtyFlag?: (dirty: boolean) => void;
@@ -113,18 +123,14 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
             <fieldset>
               <legend>Service</legend>
               <p>
-                <a href="https://ngrok.com/" target="_blank" rel="noopener noreferrer">
+                <LinkButton linkRole={true} onClick={this.onNgrokDocsClick}>
                   ngrok
-                </a>{' '}
+                </LinkButton>{' '}
                 is network tunneling software. The Bot Framework Emulator works with ngrok to communicate with bots
                 hosted remotely. Read the{' '}
-                <a
-                  href="https://github.com/Microsoft/BotFramework-Emulator/wiki/Tunneling-(ngrok)"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
+                <LinkButton linkRole={true} onClick={this.onNgrokTunnelingDocsClick}>
                   wiki page
-                </a>{' '}
+                </LinkButton>{' '}
                 to learn more about using ngrok and how to download it.
               </p>
               <Row align={RowAlignment.Center} className={styles.marginBottomRow}>
@@ -251,9 +257,9 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
                 label="Help improve the Emulator by allowing us to collect usage data."
                 name="collectUsageData"
               />
-              <a target="_blank" href="https://privacy.microsoft.com/privacystatement" rel="noopener noreferrer">
+              <LinkButton linkRole={true} onClick={this.onPrivacyStatementClick}>
                 Privacy statement
-              </a>
+              </LinkButton>
             </fieldset>
           </Column>
         </Row>
@@ -269,6 +275,8 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
       </GenericDocument>
     );
   }
+
+  private createAnchorClickHandler = url => () => this.props.onAnchorClick(url);
 
   private disableSaveButton(): boolean {
     return this.state.useCustomId ? !this.state.userGUID || !this.state.dirty : !this.state.dirty;
@@ -300,6 +308,14 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
     this.setState(change);
     this.updateDirtyFlag(change);
   };
+
+  private onNgrokDocsClick = this.createAnchorClickHandler('https://ngrok.com/');
+
+  private onNgrokTunnelingDocsClick = this.createAnchorClickHandler(
+    'https://github.com/Microsoft/BotFramework-Emulator/wiki/Tunneling-(ngrok)'
+  );
+
+  private onPrivacyStatementClick = this.createAnchorClickHandler('https://privacy.microsoft.com/privacystatement');
 
   private onSaveClick = async () => {
     // trim keys that do not belong and generate a hash

@@ -45,7 +45,7 @@ import {
   luisEditorDeepLinkItem,
   textItem,
 } from '@bfemulator/sdk-shared';
-import { PrimaryButton, Spinner } from '@bfemulator/ui-react';
+import { LinkButton, PrimaryButton, Spinner } from '@bfemulator/ui-react';
 import { IBotConfiguration } from 'botframework-config/lib/schema';
 import { Activity } from 'botframework-schema';
 import * as React from 'react';
@@ -85,6 +85,7 @@ interface InspectorProps {
   themeInfo: { themeName: string; themeComponents: string[] };
   activeBot?: IBotConfiguration;
   botHash?: string;
+  onAnchorClick?: (url: string) => void;
   trackEvent?: (name: string, properties?: { [key: string]: any }) => void;
   setHighlightedObjects: (documentId: string, objects: Activity[]) => void;
   setInspectorObjects: (documentId: string, inspectorObjects: Activity[]) => void;
@@ -225,12 +226,12 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
                 {
                   'You can also inspect the JSON responses from your LUIS and QnA Maker services by selecting a "trace" activity. '
                 }
-                <a
-                  href="https://docs.microsoft.com/en-us/azure/bot-service/bot-service-debug-emulator?view=azure-bot-service-4.0"
+                <LinkButton
+                  onClick={this.onDebugDocsClick}
                   aria-label="Learn more about debugging your bot with the Emulator"
                 >
                   Learn More.
-                </a>
+                </LinkButton>
               </div>
             </PanelContent>
           </Panel>
@@ -238,6 +239,12 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
       );
     }
   }
+
+  private createAnchorClickHandler = url => () => this.props.onAnchorClick(url);
+
+  private onDebugDocsClick = this.createAnchorClickHandler(
+    'https://docs.microsoft.com/en-us/azure/bot-service/bot-service-debug-emulator?view=azure-bot-service-4.0'
+  );
 
   private renderAccessoryButton(button: AccessoryButton) {
     const { config, state, enabled } = button;

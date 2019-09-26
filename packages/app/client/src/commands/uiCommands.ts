@@ -128,7 +128,7 @@ export class UiCommands {
   // ---------------------------------------------------------------------------
   // Shows a dialog prompting the user for a bot secret
   @Command(UI.ShowSecretPromptDialog)
-  protected async showSecretePromptDialog() {
+  protected async showSecretPromptDialog() {
     return await DialogService.showDialog(SecretPromptDialogContainer);
   }
 

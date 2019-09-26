@@ -36,6 +36,7 @@ import {
   DefaultButton,
   Dialog,
   DialogFooter,
+  LinkButton,
   PrimaryButton,
   Row,
   RowAlignment,
@@ -58,6 +59,7 @@ export interface EndpointEditorProps {
   endpointService?: IEndpointService;
   botService?: IBotService;
   cancel: () => void;
+  onAnchorClick: (url: string) => void;
   updateEndpointService: (updatedServices: UpdatedServicesPayload) => void;
 }
 
@@ -188,12 +190,15 @@ export class EndpointEditor extends Component<EndpointEditorProps, EndpointEdito
         />
         <Row align={RowAlignment.Center}>
           <Checkbox label="Azure for US Government" checked={isUsGov} onChange={this.onChannelServiceChange} />
-          <a
-            href="https://aka.ms/bot-framework-emulator-azuregov"
+          &nbsp;
+          <LinkButton
             aria-label="Learn more about Azure for US Government"
+            className={styles.endpointLink}
+            linkRole={true}
+            onClick={this.onAzureGovDocClick}
           >
-            &nbsp;Learn more.
-          </a>
+            Learn more.
+          </LinkButton>
         </Row>
         <button
           className={`${styles.absContentToggle} ${hasBotService ? styles.arrowExpanded : ''}`}
@@ -253,6 +258,10 @@ export class EndpointEditor extends Component<EndpointEditorProps, EndpointEdito
       JSON.stringify(originalBotService) !== JSON.stringify(botService)
     );
   }
+
+  private onAzureGovDocClick = () => {
+    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-azuregov');
+  };
 
   private onCancelClick = (): void => {
     this.props.cancel();

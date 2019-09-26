@@ -30,7 +30,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { DefaultButton, Dialog, DialogFooter, PrimaryButton } from '@bfemulator/ui-react';
+import { DefaultButton, Dialog, DialogFooter, LinkButton, PrimaryButton } from '@bfemulator/ui-react';
 import * as React from 'react';
 import { Component } from 'react';
 
@@ -39,6 +39,7 @@ import * as styles from '../dialogStyles.scss';
 export interface AzureLoginPromptDialogProps {
   cancel: () => void;
   confirm: () => void;
+  onAnchorClick: (url: string) => void;
 }
 
 export class AzureLoginPromptDialog extends Component<AzureLoginPromptDialogProps, {}> {
@@ -48,14 +49,18 @@ export class AzureLoginPromptDialog extends Component<AzureLoginPromptDialogProp
         <p>
           {'Use your Azure account to sign in to all your Azure services, ' +
             'such as Azure Bot Service, Dispatch, LUIS, and QnA Maker. '}
-          <a href="https://azure.microsoft.com/en-us/services/bot-service">{"Don't have an Azure Account? Sign up."}</a>
+          <LinkButton className={styles.dialogLink} linkRole={true} onClick={this.onSignUpLinkClick}>
+            {"Don't have an Azure Account? Sign up."}
+          </LinkButton>
         </p>
         <p>
           {'By signing in to your services, you can register any app in that ' +
             'service with your bot without having to enter in credentials manually.'}
         </p>
         <p>
-          <a href="https://aka.ms/about-bot-file">Learn more about registering services</a>
+          <LinkButton className={styles.dialogLink} linkRole={true} onClick={this.onRegisterServicesLinkClick}>
+            Learn more about registering services
+          </LinkButton>
         </p>
         <DialogFooter>
           <DefaultButton text="Cancel" onClick={this.props.cancel} />
@@ -64,4 +69,12 @@ export class AzureLoginPromptDialog extends Component<AzureLoginPromptDialogProp
       </Dialog>
     );
   }
+
+  private onRegisterServicesLinkClick = (): void => {
+    this.props.onAnchorClick('https://aka.ms/about-bot-file');
+  };
+
+  private onSignUpLinkClick = (): void => {
+    this.props.onAnchorClick('https://azure.microsoft.com/en-us/services/bot-service');
+  };
 }

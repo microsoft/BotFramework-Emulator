@@ -11,3 +11,48 @@
     line-height: 16px;
   }
 }
+
+.main {
+  min-width: 464px;
+  width: 464px;
+}
+
+.dialog-link {
+  color: var(--dialog-link-color);
+  text-decoration: none;
+  line-height: 20px;
+}
+
+.input-container {
+  margin-top: 10px;
+  width: 100%;
+  
+  & + div {
+    margin-left: 8px;
+  }
+}
+
+.encrypt-key-check-box {
+  margin-top: 15px;
+}
+
+.key {
+  flex: 1;
+  margin: 0 0 0 25px;
+}
+
+.actions-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 15px 0;
+
+  li {
+    display: inline;
+    padding: 2px 12px;
+    font-weight: 400;
+  }
+
+  li + li {
+    border-left: 1px solid var(--neutral-11);
+  }
+}

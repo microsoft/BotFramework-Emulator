@@ -58,6 +58,10 @@ const mapDispatchToProps = dispatch => {
     createAriaAlert: (msg: string) => {
       ariaAlertService.alert(msg);
     },
+    onAnchorClick: (url: string) => {
+      dispatch(executeCommand(true, SharedConstants.Commands.Electron.OpenExternal, null, url));
+    },
+
     trackEvent: (name: string, properties?: { [key: string]: any }) => {
       dispatch(executeCommand(true, SharedConstants.Commands.Telemetry.TrackEvent, null, name, properties));
     },

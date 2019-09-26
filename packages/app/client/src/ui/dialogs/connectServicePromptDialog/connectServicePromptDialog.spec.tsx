@@ -30,14 +30,16 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+import { SharedConstants } from '@bfemulator/app-shared';
 import * as React from 'react';
 import { Provider } from 'react-redux';
 import { mount } from 'enzyme';
-import { createStore } from 'redux';
+import { combineReducers, createStore } from 'redux';
 import { ServiceTypes } from 'botframework-config';
 
 import { azureAuth } from '../../../state/reducers/azureAuth';
 import { DialogService } from '../service';
+import { executeCommand } from '../../../state/actions/commandActions';
 
 import { ConnectServicePromptDialog } from './connectServicePromptDialog';
 import { ConnectServicePromptDialogContainer } from './connectServicePromptDialogContainer';
@@ -51,6 +53,13 @@ jest.mock('../service', () => ({
 
 jest.mock('../dialogStyles.scss', () => ({}));
 
+const mockStore = createStore(combineReducers({ azureAuth }));
+jest.mock('../../../state/store', () => ({
+  get store() {
+    return mockStore;
+  },
+}));
+
 jest.mock('../../dialogs/', () => ({
   AzureLoginPromptDialogContainer: () => undefined,
   AzureLoginSuccessDialogContainer: () => undefined,
@@ -60,16 +69,22 @@ jest.mock('../../dialogs/', () => ({
 }));
 
 describe('The ConnectServicePromptDialog component should', () => {
+  let mockStore;
+  let mockDispatch;
   let parent;
   let node;
+  let instance: any;
 
   beforeEach(() => {
+    mockStore = createStore(azureAuth);
+    mockDispatch = jest.spyOn(mockStore, 'dispatch');
     parent = mount(
-      <Provider store={createStore(azureAuth)}>
+      <Provider store={mockStore}>
         <ConnectServicePromptDialogContainer serviceType={ServiceTypes.Luis} />
       </Provider>
     );
     node = parent.find(ConnectServicePromptDialog);
+    instance = node.instance() as ConnectServicePromptDialog;
   });
 
   it('should render deeply', () => {
@@ -101,5 +116,12 @@ describe('The ConnectServicePromptDialog component should', () => {
     const instance = node.instance();
     instance.props.addServiceManually();
     expect(spy).toHaveBeenCalledWith(2);
+  });
+
+  it('should call the appropriate command when onAnchorClick is called', () => {
+    instance.props.onAnchorClick('http://blah');
+    expect(mockDispatch).toHaveBeenCalledWith(
+      executeCommand(true, SharedConstants.Commands.Electron.OpenExternal, null, 'http://blah')
+    );
   });
 });

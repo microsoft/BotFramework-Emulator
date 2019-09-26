@@ -31,29 +31,38 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { SharedConstants } from '@bfemulator/app-shared';
 import * as React from 'react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import { mount } from 'enzyme';
 
 import { navBar } from '../../../state/reducers/navBar';
+import { executeCommand } from '../../../state/actions/commandActions';
 
 import { PostMigrationDialogContainer } from './postMigrationDialogContainer';
 import { PostMigrationDialog } from './postMigrationDialog';
+
 jest.mock('../../dialogs', () => ({}));
 jest.mock('./postMigrationDialog.scss', () => ({}));
 
 describe('The PostMigrationDialogContainer component', () => {
   let wrapper;
   let node;
+  let mockStore;
+  let mockDispatch;
+  let instance;
 
   beforeEach(() => {
+    mockStore = createStore(navBar);
+    mockDispatch = jest.spyOn(mockStore, 'dispatch');
     wrapper = mount(
-      <Provider store={createStore(navBar)}>
+      <Provider store={mockStore}>
         <PostMigrationDialogContainer />
       </Provider>
     );
     node = wrapper.find(PostMigrationDialog);
+    instance = wrapper.find(PostMigrationDialog).instance();
   });
 
   it('should render deeply', () => {
@@ -63,5 +72,12 @@ describe('The PostMigrationDialogContainer component', () => {
 
   it('should contain a close function in the props', () => {
     expect(typeof (node.props() as any).close).toBe('function');
+  });
+
+  it('should call the appropriate command when onAnchorClick is called', () => {
+    instance.props.onAnchorClick('http://blah');
+    expect(mockDispatch).toHaveBeenCalledWith(
+      executeCommand(true, SharedConstants.Commands.Electron.OpenExternal, null, 'http://blah')
+    );
   });
 });

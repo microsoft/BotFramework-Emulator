@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import { BotInfo } from '@bfemulator/app-shared';
-import { DefaultButton, Dialog, DialogFooter, PrimaryButton, TextField } from '@bfemulator/ui-react';
+import { DefaultButton, Dialog, DialogFooter, LinkButton, PrimaryButton, TextField } from '@bfemulator/ui-react';
 import * as React from 'react';
 import { ChangeEvent, Component, MouseEvent } from 'react';
 
@@ -74,14 +74,13 @@ export class ResourcesSettings extends Component<ResourcesSettingsProps, Resourc
             data-prop="chatsPath"
             onChange={this.onInputChange}
           />
-          <a
-            href="javascript:void(0);"
+          <LinkButton
+            className={styles.browseButton + ' ' + dialogStyles.dialogLink}
             data-prop="chatsPath"
-            className={styles.browseAnchor}
             onClick={this.onBrowseClick}
           >
             Browse
-          </a>
+          </LinkButton>
         </div>
         <div className={styles.container}>
           <TextField
@@ -93,14 +92,13 @@ export class ResourcesSettings extends Component<ResourcesSettingsProps, Resourc
             onChange={this.onInputChange}
             errorMessage={transcriptsInputError}
           />
-          <a
-            href="javascript:void(0);"
+          <LinkButton
+            className={styles.browseButton + ' ' + dialogStyles.dialogLink}
             data-prop="transcriptsPath"
-            className={styles.browseAnchor}
             onClick={this.onBrowseClick}
           >
             Browse
-          </a>
+          </LinkButton>
         </div>
 
         <DialogFooter>
@@ -125,7 +123,7 @@ export class ResourcesSettings extends Component<ResourcesSettingsProps, Resourc
     this.props.save({ chatsPath, transcriptsPath, path });
   };
 
-  private onBrowseClick = async (event: MouseEvent<HTMLAnchorElement>) => {
+  private onBrowseClick = async (event: MouseEvent<HTMLButtonElement>) => {
     const prop = event.currentTarget.getAttribute('data-prop');
     const result = await this.props.showOpenDialog();
     if (result) {

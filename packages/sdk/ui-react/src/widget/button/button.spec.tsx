@@ -31,27 +31,28 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { SharedConstants } from '@bfemulator/app-shared';
-import { connect } from 'react-redux';
-import { Action } from 'redux';
+import * as React from 'react';
+import { mount } from 'enzyme';
 
-import { DialogService } from '../service';
-import { executeCommand } from '../../../state/actions/commandActions';
+import { LinkButton } from './linkButton';
 
-import { DataCollectionDialog, DataCollectionDialogProps } from './dataCollectionDialog';
+describe('The LinkButton component', () => {
+  let parent;
+  let node;
+  beforeEach(() => {
+    parent = mount(<LinkButton>Learn more</LinkButton>);
+    node = parent.find(LinkButton);
+  });
 
-function mapDispatchToProps(dispatch: (action: Action) => void): DataCollectionDialogProps {
-  return {
-    hideDialog: (collectData: boolean) => {
-      DialogService.hideDialog(collectData);
-    },
-    onAnchorClick: (url: string) => {
-      dispatch(executeCommand(true, SharedConstants.Commands.Electron.OpenExternal, null, url));
-    },
-  };
-}
+  it('should render without any errors', () => {
+    expect(node.html()).not.toBeFalsy();
+  });
 
-export const DataCollectionDialogContainer = connect(
-  null,
-  mapDispatchToProps
-)(DataCollectionDialog);
+  it('should have an ariaLabel property', () => {
+    expect(typeof (node.props() as any).ariaLabel).not.toBeFalsy();
+  });
+
+  it('should have an role property', () => {
+    expect(typeof (node.props() as any).role).not.toBeFalsy();
+  });
+});

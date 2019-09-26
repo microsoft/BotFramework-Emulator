@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { DefaultButton, Dialog, DialogFooter, PrimaryButton, TextField } from '@bfemulator/ui-react';
+import { DefaultButton, Dialog, DialogFooter, LinkButton, PrimaryButton, TextField } from '@bfemulator/ui-react';
 import { BotConfigurationBase } from 'botframework-config/lib/botConfigurationBase';
 import { ConnectedService } from 'botframework-config/lib/models';
 import { IConnectedService, IGenericService, ServiceTypes } from 'botframework-config/lib/schema';
@@ -204,32 +204,6 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
     }
   }
 
-  private get learnMoreLink(): string {
-    const { serviceType } = this.props;
-    switch (serviceType) {
-      case ServiceTypes.Luis:
-        return 'http://aka.ms/bot-framework-emulator-LUIS-docs-home';
-
-      case ServiceTypes.QnA:
-        return 'http://aka.ms/bot-framework-emulator-qna-keys';
-
-      case ServiceTypes.Dispatch:
-        return 'https://aka.ms/bot-framework-emulator-create-dispatch';
-
-      case ServiceTypes.AppInsights:
-        return 'https://aka.ms/bot-framework-emulator-appinsights-keys';
-
-      case ServiceTypes.BlobStorage:
-        return 'https://aka.ms/bot-framework-emulator-storage-keys';
-
-      case ServiceTypes.CosmosDB:
-        return 'https://aka.ms/bot-framework-emulator-cosmosdb-keys';
-
-      default:
-        return '';
-    }
-  }
-
   private get headerContent(): ReactNode {
     switch (this.props.serviceType) {
       case ServiceTypes.Luis:
@@ -264,44 +238,50 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
 
   private get luisAndDispatchHeader(): ReactNode {
     const { serviceType } = this.props;
+    const textString = 'Learn more about keys in ' + labelMap[serviceType].toString();
     return (
       <p>
         {`You can find your LUIS app ID and subscription key in ${portalMap[serviceType]}. `}
-        <a href={this.learnMoreLink}>Learn more about keys in {labelMap[serviceType]}</a>
+        <LinkButton className={styles.dialogLink} linkRole={true} onClick={this.learnMoreLinkButton}>
+          {textString}
+        </LinkButton>
       </p>
     );
   }
 
   private get qnaHeader(): ReactNode {
     const { serviceType } = this.props;
+
     return (
       <p>
         {`You can find your knowledge base ID and subscription key in ${portalMap[serviceType]}. `}
-        <a href={this.learnMoreLink}>Learn more about keys in {labelMap[serviceType]}</a>
+        {this.learnMoreLinkButton}
       </p>
     );
   }
 
   private get appInsightsAndBlobStorageHeader(): ReactNode {
-    const { serviceType } = this.props;
     return (
       <p>
         {`You can find your knowledge base ID and subscription key in the `}
-        <a href="https://portal.azure.com">Azure Portal.</a>
+        <LinkButton className={styles.dialogLink} linkRole={true} onClick={this.onAzurePortalClick}>
+          Azure Portal.
+        </LinkButton>
         <br />
-        <a href={this.learnMoreLink}>Learn more about {labelMap[serviceType]} keys.</a>
+        {this.learnMoreLinkButton}
       </p>
     );
   }
 
   private get cosmosDbHeader(): ReactNode {
-    const { serviceType } = this.props;
     return (
       <p>
         {`You can find the information below in the `}
-        <a href="https://portal.azure.com">Azure Portal.</a>
+        <LinkButton className={styles.dialogLink} linkRole={true} onClick={this.onAzurePortalClick}>
+          Azure Portal.
+        </LinkButton>
         <br />
-        <a href={this.learnMoreLink}>Learn more about {labelMap[serviceType]} keys.</a>
+        {this.learnMoreLinkButton}
       </p>
     );
   }
@@ -310,7 +290,9 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
     return <p>You can connect your bot to a generic service with key-value pairs.</p>;
   }
 
-  private isRequired(key: string): boolean {
+  private createAnchorClickHandler = url => () => this.props.onAnchorClick(url);
+
+  private isRequired = (key: string): boolean => {
     if (key === 'applicationId') {
       return false;
     }
@@ -327,7 +309,97 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
       default:
         return true;
     }
-  }
+  };
+
+  private learnMoreLinkButton = (): ReactNode => {
+    const { serviceType } = this.props;
+
+    switch (serviceType) {
+      case ServiceTypes.Luis: {
+        const luisString = 'Learn more about keys in ' + labelMap[serviceType].toString();
+        return (
+          <LinkButton
+            ariaLabel="Learn more about keys"
+            className={styles.dialogLink}
+            linkRole={true}
+            onClick={this.createAnchorClickHandler('http://aka.ms/bot-framework-emulator-LUIS-docs-home')}
+          >
+            {luisString}
+          </LinkButton>
+        );
+      }
+      case ServiceTypes.QnA: {
+        const qnaString = 'Learn more about keys in ' + labelMap[serviceType].toString();
+        return (
+          <LinkButton
+            ariaLabel="Learn more about keys"
+            className={styles.dialogLink}
+            linkRole={true}
+            onClick={this.createAnchorClickHandler('http://aka.ms/bot-framework-emulator-qna-keys')}
+          >
+            {qnaString}
+          </LinkButton>
+        );
+      }
+      case ServiceTypes.Dispatch: {
+        const dispatchString = 'Learn more about keys in ' + labelMap[serviceType].toString();
+        return (
+          <LinkButton
+            ariaLabel="Learn more about keys"
+            className={styles.dialogLink}
+            linkRole={true}
+            onClick={this.createAnchorClickHandler('https://aka.ms/bot-framework-emulator-create-dispatch')}
+          >
+            {dispatchString}
+          </LinkButton>
+        );
+      }
+      case ServiceTypes.AppInsights: {
+        const appInsightsString = 'Learn more about ' + labelMap[serviceType].toString() + ' keys.';
+        return (
+          <LinkButton
+            ariaLabel="Learn more about keys"
+            className={styles.dialogLink}
+            linkRole={true}
+            onClick={this.createAnchorClickHandler('https://aka.ms/bot-framework-emulator-appinsights-keys')}
+          >
+            {appInsightsString}
+          </LinkButton>
+        );
+      }
+      case ServiceTypes.BlobStorage: {
+        const blobStorageString = 'Learn more about ' + labelMap[serviceType].toString() + ' keys.';
+
+        return (
+          <LinkButton
+            ariaLabel="Learn more about keys"
+            className={styles.dialogLink}
+            linkRole={true}
+            onClick={this.createAnchorClickHandler('https://aka.ms/bot-framework-emulator-storage-keys')}
+          >
+            {blobStorageString}
+          </LinkButton>
+        );
+      }
+      case ServiceTypes.CosmosDB: {
+        const cosmosDBString = 'Learn more about ' + labelMap[serviceType].toString() + ' keys.';
+        return (
+          <LinkButton
+            ariaLabel="Learn more about keys"
+            className={styles.dialogLink}
+            linkRole={true}
+            onClick={this.createAnchorClickHandler('https://aka.ms/bot-framework-emulator-cosmosdb-keys')}
+          >
+            {cosmosDBString}
+          </LinkButton>
+        );
+      }
+      default:
+        return '';
+    }
+  };
+
+  private onAzurePortalClick = this.createAnchorClickHandler('https://portal.azure.com');
 
   private onSaveClick = (): void => {
     this.props.updateConnectedService(this.state.connectedServiceCopy);

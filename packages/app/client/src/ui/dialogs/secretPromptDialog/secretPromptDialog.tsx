@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { DefaultButton, Dialog, PrimaryButton, TextField } from '@bfemulator/ui-react';
+import { DefaultButton, Dialog, LinkButton, PrimaryButton, TextField } from '@bfemulator/ui-react';
 import { ChangeEvent } from 'react';
 import * as React from 'react';
 
@@ -45,6 +45,7 @@ interface SecretPromptDialogState {
 }
 
 export interface SecretPromptDialogProps {
+  onAnchorClick: (url: string) => void;
   onCancelClick: () => void;
   onSaveClick: (newSecret: string) => void;
 }
@@ -66,7 +67,9 @@ export class SecretPromptDialog extends React.Component<SecretPromptDialogProps,
         <p>
           {'If you encrypted your bot file with the MsBot command-line tool, your bot file secret was displayed ' +
             'when you ran MsBot. '}
-          <a href="https://github.com/Microsoft/botbuilder-tools/tree/master/packages/MSBot">Learn more about MsBot.</a>
+          <LinkButton className={dialogStyles.dialogLink} linkRole={true} onClick={this.onMSBotDocsClick}>
+            Learn more about MsBot.
+          </LinkButton>
         </p>
         <div className={styles.keyContainer}>
           <TextField
@@ -78,14 +81,13 @@ export class SecretPromptDialog extends React.Component<SecretPromptDialogProps,
             label={'Bot file secret'}
             type={this.state.revealSecret ? 'text' : 'password'}
           />
-          <a
-            href="javascript:void(0);"
-            className={styles.show}
+          <LinkButton
+            className={styles.show + ' ' + dialogStyles.dialogLink}
             aria-disabled={!this.state.secret}
             onClick={this.onRevealSecretClick}
           >
             {this.state.revealSecret ? 'Hide' : 'Show'}
-          </a>
+          </LinkButton>
         </div>
 
         <div className={styles.buttonRow}>
@@ -101,20 +103,26 @@ export class SecretPromptDialog extends React.Component<SecretPromptDialogProps,
     );
   }
 
-  private onRevealSecretClick = () => {
-    this.setState({ revealSecret: !this.state.revealSecret });
+  private createAnchorClickHandler = url => () => this.props.onAnchorClick(url);
+
+  private onChangeSecret = (event: ChangeEvent<HTMLInputElement>) => {
+    const { value: secret } = event.target;
+    this.setState({ secret });
   };
 
   private onDismissClick = () => {
     this.props.onCancelClick();
   };
 
-  private onSaveClick = () => {
-    this.props.onSaveClick(this.state.secret);
+  private onMSBotDocsClick = this.createAnchorClickHandler(
+    'https://github.com/Microsoft/botbuilder-tools/tree/master/packages/MSBot'
+  );
+
+  private onRevealSecretClick = () => {
+    this.setState({ revealSecret: !this.state.revealSecret });
   };
 
-  private onChangeSecret = (event: ChangeEvent<HTMLInputElement>) => {
-    const { value: secret } = event.target;
-    this.setState({ secret });
+  private onSaveClick = () => {
+    this.props.onSaveClick(this.state.secret);
   };
 }

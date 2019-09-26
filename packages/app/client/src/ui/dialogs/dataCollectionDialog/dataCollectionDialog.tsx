@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { DefaultButton, Dialog, DialogFooter, PrimaryButton } from '@bfemulator/ui-react';
+import { DefaultButton, Dialog, DialogFooter, LinkButton, PrimaryButton } from '@bfemulator/ui-react';
 import * as React from 'react';
 import { Component, ReactNode } from 'react';
 
@@ -39,9 +39,14 @@ import * as styles from '../dialogStyles.scss';
 
 export interface DataCollectionDialogProps {
   hideDialog: (dataCollectionEnabled: boolean) => void;
+  onAnchorClick: (url: string) => void;
 }
 
 export class DataCollectionDialog extends Component<DataCollectionDialogProps, {}> {
+  private onPrivacyLinkClick = () => {
+    this.props.onAnchorClick('https://privacy.microsoft.com/privacystatement');
+  };
+
   public render(): ReactNode {
     return (
       <Dialog className={styles.dialogMedium} cancel={this.onConfirmOrCancel} title="Help us improve?">
@@ -51,9 +56,9 @@ export class DataCollectionDialog extends Component<DataCollectionDialogProps, {
         </p>
         <p>You can turn data collection on or off at any time in your Emulator Settings.</p>
         <p>
-          <a target="__blank" href="https://privacy.microsoft.com/privacystatement">
+          <LinkButton linkRole={true} onClick={this.onPrivacyLinkClick}>
             Privacy statement
-          </a>
+          </LinkButton>
         </p>
         <DialogFooter>
           <DefaultButton text="Not now" onClick={this.onConfirmOrCancel} />

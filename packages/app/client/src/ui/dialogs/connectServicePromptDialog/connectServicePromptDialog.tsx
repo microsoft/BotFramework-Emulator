@@ -30,7 +30,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { DefaultButton, Dialog, DialogFooter, PrimaryButton } from '@bfemulator/ui-react';
+import { DefaultButton, Dialog, DialogFooter, LinkButton, PrimaryButton } from '@bfemulator/ui-react';
 import { ServiceTypes } from 'botframework-config/lib/schema';
 import * as React from 'react';
 import { Component, ReactNode } from 'react';
@@ -41,6 +41,7 @@ export interface ConnectServicePromptDialogProps {
   cancel: () => void;
   confirm: () => void;
   addServiceManually: () => void;
+  onAnchorClick: (url: string) => void;
   serviceType?: ServiceTypes;
 }
 
@@ -92,18 +93,34 @@ export class ConnectServicePromptDialog extends Component<ConnectServicePromptDi
     }
   }
 
+  private createAnchorClickHandler = url => () => this.props.onAnchorClick(url);
+
+  private onAppInsightsClick = this.createAnchorClickHandler('https://aka.ms/bot-framework-emulator-appinsights-docs');
+
+  private onAzureCosmosDbDocsClick = this.createAnchorClickHandler(
+    'https://aka.ms/bot-framework-emulator-cosmosdb-docs'
+  );
+
+  private onAzureStorageDocsClick = this.createAnchorClickHandler('https://aka.ms/bot-framework-emulator-storage-docs');
+
+  private onDispatchDocsClick = this.createAnchorClickHandler('https://aka.ms/bot-framework-emulator-create-dispatch');
+
+  private onLuisDocsClick = this.createAnchorClickHandler('http://aka.ms/bot-framework-emulator-LUIS-docs-home');
+
+  private onQnADocsClick = this.createAnchorClickHandler('http://aka.ms/bot-framework-emulator-qna-docs-home');
+
   private get luisContent(): ReactNode {
     return (
       <>
         <p>
           {`Sign in to your Azure account to select the LUIS applications you'd like to associate with this bot. `}
-          <a href="http://aka.ms/bot-framework-emulator-LUIS-docs-home">Learn more about LUIS.</a>
+          <LinkButton linkRole={true} onClick={this.onLuisDocsClick}>
+            Learn more about LUIS.
+          </LinkButton>
         </p>
         <p>
           {`Alternatively, you can `}
-          <a href="javascript:void(0);" onClick={this.props.addServiceManually}>
-            add a LUIS app manually
-          </a>
+          <LinkButton onClick={this.props.addServiceManually}>add a LUIS app manually</LinkButton>
           {` with the app ID, version, and authoring key.`}
         </p>
       </>
@@ -116,13 +133,15 @@ export class ConnectServicePromptDialog extends Component<ConnectServicePromptDi
         <p>
           {'Sign in to your Azure account to select the QnA ' +
             "Maker knowledge bases you'd like to associate with this bot. "}
-          <a href="http://aka.ms/bot-framework-emulator-qna-docs-home">Learn more about QnA Maker.</a>
+          <LinkButton linkRole={true} onClick={this.onQnADocsClick}>
+            Learn more about QnA Maker.
+          </LinkButton>
         </p>
         <p>
           {`Alternatively, you can `}{' '}
-          <a href="javascript:void(0);" onClick={this.props.addServiceManually}>
+          <LinkButton onClick={this.props.addServiceManually}>
             connect to a QnA Maker knowledge base manually
-          </a>
+          </LinkButton>
           {' with the app ID, version, and authoring key.'}
         </p>
       </>
@@ -134,13 +153,13 @@ export class ConnectServicePromptDialog extends Component<ConnectServicePromptDi
       <>
         <p>
           {`Sign in to your Azure account to select the Dispatch model you'd like to associate with this bot. `}
-          <a href="https://aka.ms/bot-framework-emulator-create-dispatch">Learn more about Dispatch models.</a>
+          <LinkButton linkRole={true} onClick={this.onDispatchDocsClick}>
+            Learn more about Dispatch models.
+          </LinkButton>
         </p>
         <p>
           {`Alternatively, you can `}
-          <a href="javascript:void(0);" onClick={this.props.addServiceManually}>
-            connect to a Dispatch model manually
-          </a>
+          <LinkButton onClick={this.props.addServiceManually}>connect to a Dispatch model manually</LinkButton>
           {` with the app ID, version, and authoring key.`}
         </p>
       </>
@@ -153,15 +172,15 @@ export class ConnectServicePromptDialog extends Component<ConnectServicePromptDi
         <p>
           {'Sign in to your Azure account to select the Azure Application ' +
             "Insights you'd like to associate with this bot. "}
-          <a href="https://aka.ms/bot-framework-emulator-appinsights-docs">
+          <LinkButton linkRole={true} onClick={this.onAppInsightsClick}>
             Learn more about Azure Application Insights.
-          </a>
+          </LinkButton>
         </p>
         <p>
           {`Alternatively, you can `}
-          <a href="javascript:void(0);" onClick={this.props.addServiceManually}>
+          <LinkButton onClick={this.props.addServiceManually}>
             connect to a Azure Application Insights manually
-          </a>
+          </LinkButton>
           {` with the app ID, version, and authoring key.`}
         </p>
       </>
@@ -174,13 +193,13 @@ export class ConnectServicePromptDialog extends Component<ConnectServicePromptDi
         <p>
           {'Sign in to your Azure account to select the Azure Storage ' +
             "accounts you'd like to associate with this bot. "}
-          <a href="https://aka.ms/bot-framework-emulator-storage-docs">Learn more about Azure Storage.</a>
+          <LinkButton linkRole={true} onClick={this.onAzureStorageDocsClick}>
+            Learn more about Azure Storage.
+          </LinkButton>
         </p>
         <p>
           {`Alternatively, you can `}
-          <a href="javascript:void(0);" onClick={this.props.addServiceManually}>
-            connect to a Azure Storage account manually.
-          </a>
+          <LinkButton onClick={this.props.addServiceManually}>connect to a Azure Storage account manually.</LinkButton>
         </p>
       </>
     );
@@ -192,13 +211,15 @@ export class ConnectServicePromptDialog extends Component<ConnectServicePromptDi
         <p>
           {'Sign in to your Azure account to select the Azure Cosmos DB ' +
             "accounts you'd like to associate with this bot. "}
-          <a href="https://aka.ms/bot-framework-emulator-cosmosdb-docs">Learn more about Azure Cosmos DB.</a>
+          <LinkButton linkRole={true} onClick={this.onAzureCosmosDbDocsClick}>
+            Learn more about Azure Cosmos DB.
+          </LinkButton>
         </p>
         <p>
           {`Alternatively, you can `}
-          <a href="javascript:void(0);" onClick={this.props.addServiceManually}>
+          <LinkButton onClick={this.props.addServiceManually}>
             connect to a Azure Cosmos DB account manually.
-          </a>
+          </LinkButton>
         </p>
       </>
     );

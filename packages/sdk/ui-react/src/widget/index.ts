@@ -32,15 +32,16 @@
 //
 
 export * from './autoComplete/autoComplete';
+export * from './button/defaultButton';
+export * from './button/linkButton';
+export * from './button/primaryButton';
+export * from './checkbox/checkbox';
+export * from './collapsibleJsonViewer/collapsibleJsonViewer';
+export * from './dialog';
+export * from './insetShadow/insetShadow';
 export * from './largeHeader/largeHeader';
 export * from './mediumHeader/mediumHeader';
 export * from './smallHeader/smallHeader';
-export * from './dialog';
-export * from './button/primaryButton';
-export * from './button/defaultButton';
-export * from './textField/textField';
-export * from './checkbox/checkbox';
-export * from './insetShadow/insetShadow';
 export * from './spinner/spinner';
 export * from './splitButton';
-export * from './collapsibleJsonViewer/collapsibleJsonViewer';
+export * from './textField/textField';

@@ -30,6 +30,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+import { SharedConstants } from '@bfemulator/app-shared';
 import { LuisService } from 'botframework-config/lib/models';
 import { mount } from 'enzyme';
 import * as React from 'react';
@@ -51,6 +52,7 @@ import {
   ConnectServicePromptDialogContainer,
   GetStartedWithCSDialogContainer,
 } from '../../../dialogs';
+import { executeCommand } from '../../../../state/actions/commandActions';
 
 import { ConnectedServiceEditorContainer } from './connectedServiceEditor';
 import { ConnectedServicePickerContainer } from './connectedServicePicker/connectedServicePickerContainer';
@@ -177,5 +179,13 @@ describe('The ServicesExplorer component should', () => {
     const state = c.getDerivedStateFromProps(nextProps, prevState);
     expect(state.toAnimate.newService).toBe(true);
     expect(state.toAnimate.existingService).toBeUndefined();
+  });
+
+  it('should call the appropriate command when onAnchorClick is called', () => {
+    const instance = node.instance();
+    instance.props.onAnchorClick('http://blah');
+    expect(mockDispatch).toHaveBeenCalledWith(
+      executeCommand(true, SharedConstants.Commands.Electron.OpenExternal, null, 'http://blah')
+    );
   });
 });

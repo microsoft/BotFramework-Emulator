@@ -31,20 +31,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { SharedConstants } from '@bfemulator/app-shared';
 import { connect } from 'react-redux';
+import { Action } from 'redux';
 
 import { RootState } from '../../../state/store';
 import { DialogService } from '../service';
+import { executeCommand } from '../../../state/actions/commandActions';
 
 import { GetStartedWithCSDialog, GetStartedWithCSDialogProps } from './getStartedWithCSDialog';
-
-const mapDispatchToProps = (_dispatch: () => void): GetStartedWithCSDialogProps => ({
-  cancel: () => DialogService.hideDialog(0),
-  confirm: () => DialogService.hideDialog(1),
-  launchConnectedServiceEditor: () => {
-    DialogService.hideDialog(2);
-  },
-});
 
 const mapStateToProps = (state: RootState, ownProps) => {
   const { access_token: token = '' } = state.azureAuth;
@@ -56,6 +51,17 @@ const mapStateToProps = (state: RootState, ownProps) => {
     user: pJson.upn || pJson.unique_name || pJson.name || pJson.email,
   };
 };
+
+const mapDispatchToProps = (dispatch: (action: Action) => void): GetStartedWithCSDialogProps => ({
+  cancel: () => DialogService.hideDialog(0),
+  confirm: () => DialogService.hideDialog(1),
+  launchConnectedServiceEditor: () => {
+    DialogService.hideDialog(2);
+  },
+  onAnchorClick: (url: string) => {
+    dispatch(executeCommand(true, SharedConstants.Commands.Electron.OpenExternal, null, url));
+  },
+});
 
 export const GetStartedWithCSDialogContainer = connect(
   mapStateToProps,

@@ -57,7 +57,7 @@ export class Row extends React.Component<RowProps, {}> {
   public render(): JSX.Element {
     const { className = '' } = this.props;
     return (
-      <div className={`${styles.row} ${this.getRowAlignment()} ${this.getRowAlignment()} ${className}`}>
+      <div className={`${styles.row} ${this.getRowJustification()} ${this.getRowAlignment()} ${className}`}>
         {this.props.children}
       </div>
     );
@@ -75,6 +75,20 @@ export class Row extends React.Component<RowProps, {}> {
       case RowAlignment.Top:
       default:
         return styles.alignTop;
+    }
+  }
+
+  private getRowJustification(): string {
+    switch (this.props.justify) {
+      case RowJustification.Center:
+        return styles.justifyCenter;
+
+      case RowJustification.Right:
+        return styles.justifyRight;
+
+      case RowJustification.Left:
+      default:
+        return styles.justifyLeft;
     }
   }
 }

@@ -31,13 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Column, LargeHeader, PrimaryButton, Row, SmallHeader } from '@bfemulator/ui-react';
+import { Column, LargeHeader, LinkButton, PrimaryButton, Row, SmallHeader } from '@bfemulator/ui-react';
 import * as React from 'react';
+import { BotInfo } from '@bfemulator/app-shared';
 
 import { GenericDocument } from '../../layout';
 import { RecentBotsListContainer } from '../recentBotsList/recentBotsListContainer';
 
-import { HowToBuildABot } from './howToBuildABot';
+import { HowToBuildABotContainer } from './howToBuildABotContainer';
 import * as styles from './welcomePage.scss';
 
 export interface WelcomePageProps {
@@ -48,6 +49,7 @@ export interface WelcomePageProps {
   signInWithAzure?: () => void;
   signOutWithAzure?: () => void;
   switchToBot?: (path: string) => void;
+  onAnchorClick: (url: string) => void;
   openBotInspectorDocs: () => void;
   debugMode?: number;
 }
@@ -72,7 +74,7 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
             </React.Fragment>
           </Column>
           <Column className={styles.rightColumn}>
-            <HowToBuildABot />
+            <HowToBuildABotContainer />
           </Column>
         </Row>
       </GenericDocument>
@@ -95,9 +97,9 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
         <span>
           {'Start talking to your bot by connecting to an endpoint.'}
           <br />
-          <a className={styles.ctaLink} href="https://aka.ms/bot-framework-emulator-create-bot-locally">
+          <LinkButton linkRole={true} onClick={this.onWorkingLocallyLinkClick}>
             More about working locally with a bot.
-          </a>
+          </LinkButton>
         </span>
         <Row>
           <PrimaryButton
@@ -109,36 +111,36 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
         </Row>
         <span>
           If you don’t have a bot configuration,&nbsp;
-          <button className={styles.ctaLink} onClick={this.props.onNewBotClick}>
-            create a new bot configuration.
-          </button>
+          <LinkButton onClick={this.props.onNewBotClick}>create a new bot configuration.</LinkButton>
         </span>
       </div>
     );
   }
-
-  private onBotSelected = async (bot: BotInfo) => {
-    this.props.switchToBot(bot.path);
-  };
-
-  private onOpenBotClick = async () => {
-    this.props.showOpenBotDialog();
-  };
 
   private get signInSection(): JSX.Element {
     const { accessToken, signInWithAzure, signOutWithAzure } = this.props;
     return (
       <div>
         {accessToken && !accessToken.startsWith('invalid') ? (
-          <button className={styles.ctaLink} onClick={signOutWithAzure}>
-            Sign out
-          </button>
+          <LinkButton onClick={signOutWithAzure}>Sign out</LinkButton>
         ) : (
-          <button className={styles.ctaLink} onClick={signInWithAzure}>
-            Sign in with your Azure account.
-          </button>
+          <LinkButton onClick={signInWithAzure}>Sign in with your Azure account.</LinkButton>
         )}
       </div>
     );
   }
+
+  private createAnchorClickHandler = url => () => this.props.onAnchorClick(url);
+
+  private onBotSelected = (bot: BotInfo) => {
+    this.props.switchToBot(bot.path);
+  };
+
+  private onOpenBotClick = () => {
+    this.props.showOpenBotDialog();
+  };
+
+  private onWorkingLocallyLinkClick = this.createAnchorClickHandler(
+    'https://aka.ms/bot-framework-emulator-create-bot-locally'
+  );
 }

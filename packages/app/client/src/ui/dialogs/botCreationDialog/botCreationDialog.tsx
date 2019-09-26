@@ -39,8 +39,10 @@ import {
   Dialog,
   DialogFooter,
   PrimaryButton,
+  LinkButton,
   Row,
   RowAlignment,
+  RowJustification,
   TextField,
 } from '@bfemulator/ui-react';
 import { EndpointService } from 'botframework-config/lib/models';
@@ -55,6 +57,8 @@ import { generateBotSecret, debounce } from '../../../utils';
 import { ActiveBotHelper } from '../../helpers/activeBotHelper';
 import { DialogService } from '../service';
 import { ariaAlertService } from '../../a11y';
+import { executeCommand } from '../../../state/actions/commandActions';
+import * as dialogStyles from '../dialogStyles.scss';
 
 import * as styles from './botCreationDialog.scss';
 
@@ -115,7 +119,7 @@ export class BotCreationDialog extends React.Component<BotCreationDialogProps, B
 
     // TODO - localization
     return (
-      <Dialog className={styles.main} title="New bot configuration" cancel={this.onCancel} maxWidth={648}>
+      <Dialog className={dialogStyles.main} title="New bot configuration" cancel={this.onCancel}>
         <div className={styles.botCreateForm}>
           <TextField
             value={this.state.bot.name}
@@ -137,7 +141,7 @@ export class BotCreationDialog extends React.Component<BotCreationDialogProps, B
           {endpointWarning && <span className={styles.endpointWarning}>{endpointWarning}</span>}
           <Row className={styles.multiInputRow}>
             <TextField
-              inputContainerClassName={styles.inputContainer}
+              inputContainerClassName={dialogStyles.inputContainer}
               data-prop="appId"
               label="Microsoft App ID"
               onChange={this.onInputChange}
@@ -145,7 +149,7 @@ export class BotCreationDialog extends React.Component<BotCreationDialogProps, B
               value={endpoint.appId}
             />
             <TextField
-              inputContainerClassName={styles.inputContainer}
+              inputContainerClassName={dialogStyles.inputContainer}
               label="Microsoft App password"
               data-prop="appPassword"
               onChange={this.onInputChange}
@@ -156,66 +160,67 @@ export class BotCreationDialog extends React.Component<BotCreationDialogProps, B
           </Row>
           <Row align={RowAlignment.Bottom}>
             <Checkbox label="Azure for US Government" checked={isAzureGov} onChange={this.onChannelServiceChange} />
-            <a
-              href="https://aka.ms/bot-framework-emulator-azuregov"
-              aria-label="Learn more about Azure for US Government"
+            <LinkButton
+              ariaLabel="Learn more about Azure for US Government.&nbsp;"
+              className={dialogStyles.dialogLink}
+              linkRole={true}
+              onClick={this.onAzureGovLinkClick}
             >
               &nbsp;Learn more.
-            </a>
+            </LinkButton>
           </Row>
           <Row align={RowAlignment.Bottom}>
             <Checkbox
-              className={styles.encryptKeyCheckBox}
-              label="Encrypt keys stored in your bot configuration."
+              className={dialogStyles.encryptKeyCheckBox}
+              label="Encrypt keys stored in your bot configuration.&nbsp;"
               checked={encryptKey}
               onChange={this.onEncryptKeyChange}
             />
-            <a
-              href="https://aka.ms/bot-framework-bot-file-encryption"
-              aria-label="Learn more about bot file encryption"
+            <LinkButton
+              ariaLabel="Learn more about bot file encryption"
+              className={dialogStyles.dialogLink}
+              linkRole={true}
+              onClick={this.onBotEncryptionLinkClick}
             >
-              &nbsp;Learn more.
-            </a>
+              Learn more.
+            </LinkButton>
           </Row>
-
-          <TextField
-            disabled={!encryptKey}
-            inputContainerClassName={styles.key}
-            inputRef={this.setSecretInputRef}
-            label="Secret"
-            value={secret}
-            placeholder="Your keys are not encrypted"
-            readOnly={true}
-            type={revealSecret ? 'text' : 'password'}
-          />
-          <ul className={styles.actionsList}>
-            <li>
-              <a
-                className={!encryptKey ? styles.disabledAction : ''}
-                href="javascript:void(0);"
-                onClick={this.onRevealSecretClick}
-              >
-                {revealSecret ? 'Hide' : 'Show'}
-              </a>
-            </li>
-            <li>
-              <a
-                className={!encryptKey ? styles.disabledAction : ''}
-                href="javascript:void(0);"
-                onClick={this.onCopyClick}
-              >
-                Copy
-              </a>
-            </li>
-            {/* <li>
-              <a
-                className={ !encryptKey ? styles.disabledAction : '' }
-                href="javascript:void(0);"
-                onClick={ this.onResetClick }>
-                Generate new secret
-              </a>
-            </li> */}
-          </ul>
+          <Row align={RowAlignment.Bottom} justify={RowJustification.Left}>
+            <TextField
+              inputContainerClassName={dialogStyles.key}
+              inputRef={this.setSecretInputRef}
+              label="Secret "
+              value={secret}
+              placeholder="Your keys are not encrypted"
+              disabled={true}
+              id="key-input"
+              type={revealSecret ? 'text' : 'password'}
+            />
+            <ul className={dialogStyles.actionsList}>
+              <li>
+                <LinkButton
+                  ariaLabel={revealSecret ? 'Hide secret' : 'Show secret'}
+                  className={dialogStyles.dialogLink}
+                  disabled={!encryptKey}
+                  onClick={this.onRevealSecretClick}
+                >
+                  {revealSecret ? 'Hide' : 'Show'}
+                </LinkButton>
+              </li>
+              <li>
+                <LinkButton className={dialogStyles.dialogLink} disabled={!encryptKey} onClick={this.onCopyClick}>
+                  Copy
+                </LinkButton>
+              </li>
+              {/* <li>
+                <LinkButton
+                  className={dialogStyles.dialogLink}
+                  onClick={ this.onResetClick }>
+                  Generate new secret
+                </LinkButton>
+              </li> */}
+            </ul>
+          </Row>
         </div>
 
         <DialogFooter>
@@ -230,6 +235,13 @@ export class BotCreationDialog extends React.Component<BotCreationDialogProps, B
       </Dialog>
     );
   }
+
+  private createAnchorClickHandler = url => () =>
+    store.dispatch(executeCommand(true, SharedConstants.Commands.Electron.OpenExternal, null, url));
+
+  private onAzureGovLinkClick = this.createAnchorClickHandler('https://aka.ms/bot-framework-emulator-azuregov');
+
+  private onBotEncryptionLinkClick = this.createAnchorClickHandler('https://aka.ms/bot-framework-bot-file-encryption');
 
   private onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;

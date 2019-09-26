@@ -51,6 +51,9 @@ function mapStateToProps(state: RootState, ownProps: WelcomePageProps): WelcomeP
 function mapDispatchToProps(dispatch: (action: Action) => void): WelcomePageProps {
   const { Commands, Channels } = SharedConstants;
   return {
+    onAnchorClick: (url: string) => {
+      dispatch(executeCommand(true, SharedConstants.Commands.Electron.OpenExternal, null, url));
+    },
     onNewBotClick: () => dispatch(executeCommand(false, Commands.UI.ShowBotCreationDialog)),
     showOpenBotDialog: () => dispatch(executeCommand(false, SharedConstants.Commands.UI.ShowOpenBotDialog)),
     signInWithAzure: () => dispatch(executeCommand(false, Commands.UI.SignInToAzure)),

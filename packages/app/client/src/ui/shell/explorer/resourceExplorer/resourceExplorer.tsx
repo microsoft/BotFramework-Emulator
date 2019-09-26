@@ -33,6 +33,7 @@
 import { IFileService } from 'botframework-config/lib/schema';
 import * as React from 'react';
 import { ChangeEvent, ComponentClass, KeyboardEvent, MouseEvent } from 'react';
+import { LinkButton } from '@bfemulator/ui-react';
 
 import { ResourcesSettingsContainer } from '../../../dialogs';
 import { ServicePane, ServicePaneProps, ServicePaneState } from '../servicePane/servicePane';
@@ -145,9 +146,13 @@ export class ResourceExplorer extends ServicePane<ResourceExplorerProps, Resourc
   protected get additionalContent(): JSX.Element {
     return (
       <p className={styles.emptyContent}>
-        <a href="javascript:void(0);" onClick={this.onChooseLocationClick}>
+        <LinkButton
+          ariaLabel="Choose a different location."
+          className={styles.explorerLink}
+          onClick={this.onChooseLocationClick}
+        >
           <strong>Choose a different location.</strong>
-        </a>
+        </LinkButton>
       </p>
     );
   }
