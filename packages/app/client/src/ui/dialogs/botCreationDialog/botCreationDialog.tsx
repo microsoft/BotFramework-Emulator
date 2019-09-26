@@ -51,12 +51,16 @@ import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shar
 
 import { beginAdd } from '../../../state/actions/notificationActions';
 import { store } from '../../../state/store';
-import { generateBotSecret } from '../../../utils';
+import { generateBotSecret, debounce } from '../../../utils';
 import { ActiveBotHelper } from '../../helpers/activeBotHelper';
 import { DialogService } from '../service';
 import { ariaAlertService } from '../../a11y';
 
 import * as styles from './botCreationDialog.scss';
+
+export interface BotCreationDialogProps {
+  createAriaAlert: (msg: string) => void;
+}
 
 export interface BotCreationDialogState {
   bot: BotConfigWithPath;
@@ -67,13 +71,13 @@ export interface BotCreationDialogState {
   isAzureGov: boolean;
 }
 
-export class BotCreationDialog extends React.Component<{}, BotCreationDialogState> {
+export class BotCreationDialog extends React.Component<BotCreationDialogProps, BotCreationDialogState> {
   @CommandServiceInstance()
   public commandService: CommandServiceImpl;
 
   private secretInputRef: HTMLInputElement;
 
-  public constructor(props: {}, context: BotCreationDialogState) {
+  public constructor(props: BotCreationDialogProps, context: BotCreationDialogState) {
     super(props, context);
 
     this.state = {
@@ -106,6 +110,7 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
     const requiredFieldsCompleted = bot && endpoint.endpoint && bot.name && secretCriteria;
 
     const endpointWarning = this.validateEndpoint(endpoint.endpoint);
+    endpointWarning && this.announceEndpointWarning(endpointWarning);
     const endpointPlaceholder = "Your bot's endpoint (ex: http://localhost:3978/api/messages)";
 
     // TODO - localization
@@ -366,6 +371,10 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
 
   /** Checks the endpoint to see if it has the correct route syntax at the end (/api/messages) */
   private validateEndpoint(endpoint: string): string {
+    if (!endpoint) {
+      // allow empty
+      return '';
+    }
     const controllerRegEx = /api\/messages\/?$/;
     return controllerRegEx.test(endpoint) ? '' : `Please include route if necessary: "/api/messages"`;
   }
@@ -373,4 +382,8 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
   private setSecretInputRef = (ref: HTMLInputElement): void => {
     this.secretInputRef = ref;
   };
+
+  private announceEndpointWarning = debounce((msg: string) => {
+    this.props.createAriaAlert(`For Endpoint URL, ${msg}`);
+  }, 2000);
 }

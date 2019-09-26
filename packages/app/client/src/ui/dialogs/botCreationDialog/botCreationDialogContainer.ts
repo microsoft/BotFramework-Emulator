@@ -31,23 +31,21 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './botCreationDialog/botCreationDialogContainer';
-export * from './host/hostContainer';
-export * from './secretPromptDialog/secretPromptDialogContainer';
-export * from './tabManager/tabManagerContainer';
-export * from './service';
-export * from './azureLoginSuccessDialog/azureLoginSuccessDialogContainer';
-export * from './azureLoginPromptDialog/azureLoginPromptDialogContainer';
-export * from './azureLoginFailedDialog/azureLoginFailedDialogContainer';
-export * from './connectServicePromptDialog/connectServicePromptDialogContainer';
-export * from './dataCollectionDialog/dataCollectionDialogContainer';
-export * from './getStartedWithCSDialog/getStartedWithCSDialogContainer';
-export * from './postMigrationDialog/postMigrationDialogContainer';
-export * from './progressIndicator/progressIndicatorContainer';
-export * from './botSettingsEditor/botSettingsEditorContainer';
-export * from './resourcesSettings/resourcesSettingsContainer';
-export * from './updateAvailableDialog';
-export * from './updateUnavailableDialog';
-export * from './openBotDialog/openBotDialogContainer';
-export * from './openUrlDialog/openUrlDialog';
-export * from './openUrlDialog/openUrlDialogContainer';
+import { connect } from 'react-redux';
+
+import { ariaAlertService } from '../../a11y';
+
+import { BotCreationDialog, BotCreationDialogProps } from './botCreationDialog';
+
+const mapDispatchToProps = (_dispatch): BotCreationDialogProps => {
+  return {
+    createAriaAlert: (msg: string) => {
+      ariaAlertService.alert(msg);
+    },
+  };
+};
+
+export const BotCreationDialogContainer = connect(
+  undefined,
+  mapDispatchToProps
+)(BotCreationDialog);
