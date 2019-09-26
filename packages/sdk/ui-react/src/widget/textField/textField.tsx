@@ -70,7 +70,13 @@ export class TextField extends Component<TextFieldProps, {}> {
     return (
       <div className={`${styles.inputContainer} ${inputContainerClassName}`}>
         {this.labelNode}
-        <input className={inputClassName} id={this.inputId} ref={this.setInputRef} {...inputProps} />
+        <input
+          aria-labelledby="errormessagesub"
+          className={inputClassName}
+          id={this.inputId}
+          ref={this.setInputRef}
+          {...inputProps}
+        />
         {children}
         {this.errorNode}
       </div>
@@ -96,6 +102,10 @@ export class TextField extends Component<TextFieldProps, {}> {
 
   protected get errorNode(): React.ReactNode {
     const { errorMessage } = this.props;
-    return errorMessage ? <sub className={styles.sub}>{errorMessage}</sub> : null;
+    return errorMessage ? (
+      <sub id="errormessagesub" className={styles.sub}>
+        {errorMessage}
+      </sub>
+    ) : null;
   }
 }
