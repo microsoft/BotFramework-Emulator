@@ -42,12 +42,12 @@
             "states": {
               "default": {
                 "icon": "leftArrow",
-                "aria-label": "Previous",
+                "aria-label": "Previous button bot state tooltip:previous",
                 "title":"Previous"
               },
               "selected": {
                 "icon": "leftArrowSelected",
-                "aria-label": "Previous",
+                "aria-label": "Previous button bot state tooltip:previous",
                 "aria-selected": true
               },
               "disabled": {
@@ -60,12 +60,12 @@
             "states": {
               "default": {
                 "icon": "rightArrow",
-                "aria-label": "Next",
+                "aria-label": "Next button bot state tooltip:next",
                 "title":"Next"
               },
               "selected": {
                 "icon": "rightArrowSelected",
-                "aria-label": "Next",
+                "aria-label": "Next button bot state tooltip:next",
                 "aria-selected": true
               },
               "disabled": {
@@ -76,14 +76,16 @@
           {
             "id": "diff",
             "states": {
-              "default": {
+              "default": {                
                 "label": "Show diff",
-                "title":"Show diff"
+                "title": "Show diff",
+                "aria-label": "Show diff button bot state tooltip:show diff"
               },
               "selected": {
                 "label": "Hide diff",
                 "aria-selected": true,
-                "title":"Hide diff"
+                "title": "Hide diff",
+                "aria-label": "Hide diff button bot state tooltip:hide diff"
               },
               "disabled": {
                 "aria-disabled": true
