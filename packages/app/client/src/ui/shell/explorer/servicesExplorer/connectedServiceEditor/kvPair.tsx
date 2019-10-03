@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { TextField } from '@bfemulator/ui-react';
+import { LinkButton, TextField } from '@bfemulator/ui-react';
 import * as React from 'react';
 import { ChangeEvent, Component, ReactNode } from 'react';
 
@@ -71,17 +71,21 @@ export class KvPair extends Component<KvPairProps, KvPairState> {
             <li key={index}>{this.getTextFieldPair(pair.key, pair.value, index)}</li>
           ))}
         </ul>
-        <button aria-label="Add key value pair" className={styles.linkButton} onClick={this.onAddKvPair}>
+        <LinkButton
+          aria-label="Add key value pair"
+          className={`${styles.link} ${styles.kvSpacing}`}
+          onClick={this.onAddKvPair}
+        >
           + Add key value pair
-        </button>
-        <button
+        </LinkButton>
+        <LinkButton
           aria-label="Remove key value pair"
-          className={styles.linkButton}
+          className={styles.link}
           disabled={numRows === 1}
           onClick={this.onRemoveKvPair}
         >
           - Remove key value pair
-        </button>
+        </LinkButton>
         {this.alert}
       </div>
     );

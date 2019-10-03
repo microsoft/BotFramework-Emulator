@@ -242,7 +242,7 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
     return (
       <p>
         {`You can find your LUIS app ID and subscription key in ${portalMap[serviceType]}. `}
-        <LinkButton className={styles.dialogLink} linkRole={true} onClick={this.learnMoreLinkButton}>
+        <LinkButton className={styles.link} linkRole={true} onClick={this.learnMoreLinkButton}>
           {textString}
         </LinkButton>
       </p>
@@ -264,7 +264,7 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
     return (
       <p>
         {`You can find your knowledge base ID and subscription key in the `}
-        <LinkButton className={styles.dialogLink} linkRole={true} onClick={this.onAzurePortalClick}>
+        <LinkButton className={styles.link} linkRole={true} onClick={this.onAzurePortalClick}>
           Azure Portal.
         </LinkButton>
         <br />
@@ -277,7 +277,7 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
     return (
       <p>
         {`You can find the information below in the `}
-        <LinkButton className={styles.dialogLink} linkRole={true} onClick={this.onAzurePortalClick}>
+        <LinkButton className={styles.link} linkRole={true} onClick={this.onAzurePortalClick}>
           Azure Portal.
         </LinkButton>
         <br />
@@ -320,7 +320,7 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
         return (
           <LinkButton
             ariaLabel="Learn more about keys"
-            className={styles.dialogLink}
+            className={styles.link}
             linkRole={true}
             onClick={this.createAnchorClickHandler('http://aka.ms/bot-framework-emulator-LUIS-docs-home')}
           >
@@ -333,7 +333,7 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
         return (
           <LinkButton
             ariaLabel="Learn more about keys"
-            className={styles.dialogLink}
+            className={styles.link}
             linkRole={true}
             onClick={this.createAnchorClickHandler('http://aka.ms/bot-framework-emulator-qna-keys')}
           >
@@ -346,7 +346,7 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
         return (
           <LinkButton
             ariaLabel="Learn more about keys"
-            className={styles.dialogLink}
+            className={styles.link}
             linkRole={true}
             onClick={this.createAnchorClickHandler('https://aka.ms/bot-framework-emulator-create-dispatch')}
           >
@@ -359,7 +359,7 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
         return (
           <LinkButton
             ariaLabel="Learn more about keys"
-            className={styles.dialogLink}
+            className={styles.link}
             linkRole={true}
             onClick={this.createAnchorClickHandler('https://aka.ms/bot-framework-emulator-appinsights-keys')}
           >
@@ -373,7 +373,7 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
         return (
           <LinkButton
             ariaLabel="Learn more about keys"
-            className={styles.dialogLink}
+            className={styles.link}
             linkRole={true}
             onClick={this.createAnchorClickHandler('https://aka.ms/bot-framework-emulator-storage-keys')}
           >
@@ -386,7 +386,7 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
         return (
           <LinkButton
             ariaLabel="Learn more about keys"
-            className={styles.dialogLink}
+            className={styles.link}
             linkRole={true}
             onClick={this.createAnchorClickHandler('https://aka.ms/bot-framework-emulator-cosmosdb-keys')}
           >
