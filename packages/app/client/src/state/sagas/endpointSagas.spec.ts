@@ -34,24 +34,31 @@ import { applyMiddleware, combineReducers, createStore } from 'redux';
 import sagaMiddlewareFactory from 'redux-saga';
 import { Component } from 'react';
 import { SharedConstants } from '@bfemulator/app-shared';
+import { takeEvery, takeLatest } from 'redux-saga/effects';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
+import { IEndpointService } from 'botframework-config';
 
 import { bot } from '../reducers/bot';
 import { load, setActive } from '../actions/botActions';
-import { launchEndpointEditor, openEndpointExplorerContextMenu } from '../actions/endpointServiceActions';
+import {
+  launchEndpointEditor,
+  openEndpointExplorerContextMenu,
+  LAUNCH_ENDPOINT_EDITOR,
+  OPEN_ENDPOINT_CONTEXT_MENU,
+  OPEN_ENDPOINT_IN_EMULATOR,
+  EndpointServicePayload,
+  EndpointServiceAction,
+} from '../actions/endpointServiceActions';
 import { DialogService } from '../../ui/dialogs/service';
+import { OPEN_ENDPOINT_EXPLORER_CONTEXT_MENU } from '../actions/endpointActions';
+import { executeCommand } from '../actions/commandActions';
 
-import { endpointSagas } from './endpointSagas';
+import { EndpointSagas, endpointSagas, getConnectedAbs } from './endpointSagas';
 
-const sagaMiddleWare = sagaMiddlewareFactory();
-const mockStore = createStore(combineReducers({ bot }), {}, applyMiddleware(sagaMiddleWare));
-sagaMiddleWare.run(endpointSagas);
-const mockComponentClass = class extends Component<{}, {}> {};
-jest.mock('../store', () => ({
-  get store() {
-    return mockStore;
-  },
+jest.mock('../../ui/dialogs', () => ({
+  DialogService: { showDialog: () => Promise.resolve(true) },
 }));
+
 const mockBot = JSON.parse(`{
   "name": "TestBot",
   "description": "",
@@ -99,19 +106,78 @@ jest.mock('electron', () => ({
     }
   ),
 }));
+let mockRemoteCommandsCalled = [];
 
-describe('The endpoint sagas', () => {
+const endpointService: IEndpointService = {
+  appId: 'appId',
+  name: 'service',
+  appPassword: 'password123',
+  endpoint: 'http://localendpoint',
+  channelService: 'channel service',
+};
+const resolver = jest.fn(() => {});
+
+const endpointPayload: EndpointServicePayload = {
+  endpointService,
+  resolver,
+};
+const endpointServiceAction: EndpointServiceAction<EndpointServicePayload> = {
+  type: OPEN_ENDPOINT_EXPLORER_CONTEXT_MENU,
+  payload: endpointPayload,
+};
+
+describe('The endpointSagas', () => {
   let commandService: CommandServiceImpl;
+  let sagaMiddleware;
+  let mockStore;
+  let mockComponentClass;
   beforeAll(() => {
     const decorator = CommandServiceInstance();
     const descriptor = decorator({ descriptor: {} }, 'none') as any;
     commandService = descriptor.descriptor.get();
+
+    commandService.remoteCall = async (commandName: string, ...args: any[]) => {
+      mockRemoteCommandsCalled.push({ commandName, args: args });
+
+      return Promise.resolve(true) as any;
+    };
   });
 
   beforeEach(() => {
+    sagaMiddleware = sagaMiddlewareFactory();
+    mockStore = createStore(combineReducers({ bot }), {}, applyMiddleware(sagaMiddleware));
+    sagaMiddleware.run(endpointSagas);
+    mockComponentClass = class extends Component<{}, {}> {};
+    jest.mock('../store', () => ({
+      get store() {
+        return mockStore;
+      },
+    }));
+    mockRemoteCommandsCalled = [];
     mockStore.dispatch(load([mockBot]));
     mockStore.dispatch(setActive(mockBot));
   });
+
+  it('should initialize the root saga', () => {
+    const gen = endpointSagas();
+
+    expect(gen.next().value).toEqual(takeLatest(LAUNCH_ENDPOINT_EDITOR, EndpointSagas.launchEndpointEditor));
+    expect(gen.next().value).toEqual(takeEvery(OPEN_ENDPOINT_CONTEXT_MENU, EndpointSagas.openEndpointContextMenu));
+    expect(gen.next().value).toEqual(takeEvery(OPEN_ENDPOINT_IN_EMULATOR, EndpointSagas.openEndpointInEmulator));
+
+    expect(gen.next().done).toBe(true);
+  });
+
+  it('should launch an endpoint editor', () => {
+    const gen = EndpointSagas.launchEndpointEditor(endpointServiceAction);
+    gen.next();
+    gen.next([endpointService]);
+    expect(gen.next().done).toBe(true);
+    expect(resolver).toHaveBeenCalledTimes(1);
+    expect(mockRemoteCommandsCalled.length).toEqual(1);
+  });
+
+  // OLD TESTS
 
   it('should launch the endpoint editor and execute a command to save the edited services', async () => {
     const remoteCallSpy = jest.spyOn(commandService, 'remoteCall');
@@ -134,15 +200,17 @@ describe('The endpoint sagas', () => {
 
     const { DisplayContextMenu, ShowMessageBox } = SharedConstants.Commands.Electron;
     const { NewLiveChat } = SharedConstants.Commands.Emulator;
-    it('should launch the endpoint editor when that menu option is chosen', () => {
+    it('should launch the endpoint editor when that menu option is chosen', async () => {
       const commandServiceSpy = jest.spyOn(commandService, 'remoteCall').mockResolvedValue({ id: 'edit' });
       const dialogServiceSpy = jest.spyOn(DialogService, 'showDialog').mockResolvedValue(mockBot.services);
-      mockStore.dispatch(openEndpointExplorerContextMenu(mockComponentClass, mockBot.services[0]));
+      await mockStore.dispatch(openEndpointExplorerContextMenu(mockComponentClass, mockBot.services[0]));
 
       expect(commandServiceSpy).toHaveBeenCalledWith(DisplayContextMenu, menuItems);
       expect(dialogServiceSpy).toHaveBeenCalledWith(mockComponentClass, {
         endpointService: mockBot.services[0],
       });
+      commandServiceSpy.mockClear();
+      dialogServiceSpy.mockClear();
     });
 
     it('should open a deep link when that menu option is chosen', async () => {
@@ -152,6 +220,8 @@ describe('The endpoint sagas', () => {
       await mockStore.dispatch(openEndpointExplorerContextMenu(mockComponentClass, mockBot.services[0]));
       expect(commandServiceRemoteCallSpy).toHaveBeenCalledWith(DisplayContextMenu, menuItems);
       expect(commandServiceCallSpy).toHaveBeenCalledWith(NewLiveChat, mockBot.services[0], false);
+      commandServiceRemoteCallSpy.mockClear();
+      commandServiceCallSpy.mockClear();
     });
 
     it('should forget the service when that menu item is chosen', async () => {

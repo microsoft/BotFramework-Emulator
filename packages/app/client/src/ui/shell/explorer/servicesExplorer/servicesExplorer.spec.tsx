@@ -35,7 +35,8 @@ import { LuisService } from 'botframework-config/lib/models';
 import { mount } from 'enzyme';
 import * as React from 'react';
 import { Provider } from 'react-redux';
-import { combineReducers, createStore } from 'redux';
+import { combineReducers, createStore, applyMiddleware } from 'redux';
+import sagaMiddlewareFactory from 'redux-saga';
 
 import { load, setActive } from '../../../../state/actions/botActions';
 import {
@@ -43,6 +44,8 @@ import {
   openContextMenuForConnectedService,
   openServiceDeepLink,
   openSortContextMenu,
+  OPEN_ADD_CONNECTED_SERVICE_CONTEXT_MENU,
+  OPEN_CONTEXT_MENU_FOR_CONNECTED_SERVICE,
 } from '../../../../state/actions/connectedServiceActions';
 import { bot } from '../../../../state/reducers/bot';
 import { explorer } from '../../../../state/reducers/explorer';
@@ -51,34 +54,34 @@ import {
   AzureLoginSuccessDialogContainer,
   ConnectServicePromptDialogContainer,
   GetStartedWithCSDialogContainer,
+  ProgressIndicatorContainer,
 } from '../../../dialogs';
-import { executeCommand } from '../../../../state/actions/commandActions';
+import { executeCommand, CommandAction, CommandActionPayload } from '../../../../state/actions/commandActions';
+import { ServicesExplorerSagas, servicesExplorerSagas } from '../../../../state/sagas/servicesExplorerSagas';
 
 import { ConnectedServiceEditorContainer } from './connectedServiceEditor';
 import { ConnectedServicePickerContainer } from './connectedServicePicker/connectedServicePickerContainer';
 import { ServicesExplorer } from './servicesExplorer';
 import { ServicesExplorerContainer } from './servicesExplorerContainer';
 
-jest.mock('../../../dialogs', () => ({
-  DialogService: {
-    showDialog: () => Promise.resolve(true),
-    hideDialog: () => Promise.resolve(false),
-  },
-}));
 jest.mock('./servicesExplorer.scss', () => ({}));
 jest.mock('../servicePane/servicePane.scss', () => ({}));
 jest.mock('./connectedServicePicker/connectedServicePicker.scss', () => ({}));
 jest.mock('./connectedServiceEditor/connectedServiceEditor.scss', () => ({}));
 jest.mock('./servicesExplorer.scss', () => ({}));
 
-describe('The ServicesExplorer component should', () => {
+describe('The ServicesExplorer component', () => {
+  const sagaMiddleware = sagaMiddlewareFactory();
   let parent;
   let node;
   let mockStore;
   let mockBot;
   let mockDispatch;
+  let instance;
+
   beforeEach(() => {
-    mockStore = createStore(combineReducers({ bot, explorer }));
+    mockStore = createStore(combineReducers({ bot, explorer }), {}, applyMiddleware(sagaMiddleware));
+    sagaMiddleware.run(servicesExplorerSagas);
     mockBot = JSON.parse(`{
         "name": "TestBot",
         "description": "",
@@ -95,13 +98,25 @@ describe('The ServicesExplorer component should', () => {
     mockBot.services[0] = new LuisService(mockBot.services[0]);
     mockStore.dispatch(load([mockBot]));
     mockStore.dispatch(setActive(mockBot));
-    mockDispatch = jest.spyOn(mockStore, 'dispatch');
+    const originalDispatch = mockStore.dispatch.bind(mockStore);
+    mockDispatch = jest
+      .spyOn(mockStore, 'dispatch')
+      .mockImplementation((action: CommandAction<CommandActionPayload>) => {
+        if (action.type === OPEN_ADD_CONNECTED_SERVICE_CONTEXT_MENU) {
+          action.payload.resolver();
+
+          return action;
+        }
+
+        return originalDispatch(action);
+      });
     parent = mount(
       <Provider store={mockStore}>
         <ServicesExplorerContainer />
       </Provider>
     );
     node = parent.find(ServicesExplorer);
+    instance = node.instance();
   });
 
   it('should render deeply', () => {
@@ -110,13 +125,11 @@ describe('The ServicesExplorer component should', () => {
   });
 
   it('should dispatch a request to open a luis deep link when a service is clicked', () => {
-    const instance = node.instance();
     instance.onLinkClick({ currentTarget: { dataset: { index: 0 } } });
     expect(mockDispatch).toHaveBeenCalledWith(openServiceDeepLink(mockBot.services[0]));
   });
 
   it('should dispatch a request to open the context menu when right clicking on a luis service', () => {
-    const instance = node.instance();
     const mockLi = document.createElement('li');
     mockLi.setAttribute('data-index', '0');
 
@@ -126,22 +139,35 @@ describe('The ServicesExplorer component should', () => {
     );
   });
 
-  it('should dispatch a request to open the connected service picker when the add icon is clicked', () => {
-    const instance = node.instance();
-    instance.onAddIconClick(null);
+  fit('should dispatch a request to open the connected service picker when the add icon is clicked', async () => {
+    const mockOnAddIconClick = {
+      focus: jest.fn(() => {
+        return null;
+      }),
+    };
+
+    instance.addIconButtonRef = mockOnAddIconClick;
+
+    await instance.onAddIconClick();
 
     expect(mockDispatch).toHaveBeenCalledWith(
-      openAddServiceContextMenu({
-        azureAuthWorkflowComponents: {
-          loginFailedDialog: AzureLoginFailedDialogContainer,
-          loginSuccessDialog: AzureLoginSuccessDialogContainer,
-          promptDialog: ConnectServicePromptDialogContainer,
+      openAddServiceContextMenu(
+        {
+          azureAuthWorkflowComponents: {
+            loginFailedDialog: AzureLoginFailedDialogContainer,
+            loginSuccessDialog: AzureLoginSuccessDialogContainer,
+            promptDialog: ConnectServicePromptDialogContainer,
+          },
+          getStartedDialog: GetStartedWithCSDialogContainer,
+          editorComponent: ConnectedServiceEditorContainer,
+          pickerComponent: ConnectedServicePickerContainer,
+          progressIndicatorComponent: ProgressIndicatorContainer,
         },
-        getStartedDialog: GetStartedWithCSDialogContainer,
-        editorComponent: ConnectedServiceEditorContainer,
-        pickerComponent: ConnectedServicePickerContainer,
-      })
+        jasmine.any(Function) as any
+      )
     );
+
+    expect(mockOnAddIconClick.focus).toHaveBeenCalled();
   });
 
   it('should dispatch to the store when a request to open the sort context menu is made', () => {
