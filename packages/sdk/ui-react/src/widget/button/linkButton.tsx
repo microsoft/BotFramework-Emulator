@@ -36,6 +36,7 @@ import * as styles from './button.scss';
 
 export interface LinkButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   ariaLabel?: string;
+  buttonRef?: (ref: HTMLButtonElement) => void;
   linkRole?: boolean;
   text?: string;
 }
@@ -49,7 +50,7 @@ export interface LinkButtonProps extends React.ButtonHTMLAttributes<HTMLButtonEl
 
 export class LinkButton extends React.Component<LinkButtonProps, {}> {
   public render(): React.ReactNode {
-    const { className: propsClassName = '', ariaLabel, linkRole = false, text, ...buttonProps } = this.props;
+    const { className: propsClassName = '', ariaLabel, buttonRef, linkRole = false, text, ...buttonProps } = this.props;
     const className = `${propsClassName} ${styles.linkButton}`;
 
     const ariaLabelText = ariaLabel || text || (typeof this.props.children === 'string' && this.props.children);
@@ -57,10 +58,21 @@ export class LinkButton extends React.Component<LinkButtonProps, {}> {
     if (!ariaLabelText) throw new Error('<LinkButton must have aria-label');
 
     return (
-      <button {...buttonProps} aria-label={ariaLabelText} className={className} role={linkRole ? 'link' : 'button'}>
+      <button
+        {...buttonProps}
+        aria-label={ariaLabelText}
+        className={className}
+        ref={this.setButtonRef}
+        role={linkRole ? 'link' : 'button'}
+      >
         {text}
         {this.props.children}
       </button>
     );
   }
+
+  private setButtonRef = (ref: HTMLButtonElement): void => {
+    const { buttonRef } = this.props;
+    buttonRef && buttonRef(ref);
+  };
 }
