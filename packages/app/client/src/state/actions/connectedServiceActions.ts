@@ -79,6 +79,10 @@ export interface ConnectedServicePickerPayload extends ConnectedServicePayload {
   progressIndicatorComponent?: ComponentClass<any>;
 }
 
+export interface OpenAddServiceContextMenuPayload extends ConnectedServicePickerPayload {
+  resolver: () => void;
+}
+
 export function launchConnectedServicePicker(
   payload: ConnectedServicePickerPayload
 ): ConnectedServiceAction<ConnectedServicePickerPayload> {
@@ -108,11 +112,15 @@ export function openContextMenuForConnectedService<T>(
 }
 
 export function openAddServiceContextMenu(
-  payload: ConnectedServicePickerPayload
-): ConnectedServiceAction<ConnectedServicePickerPayload> {
+  payload: ConnectedServicePickerPayload,
+  resolver: () => void
+): ConnectedServiceAction<OpenAddServiceContextMenuPayload> {
   return {
     type: OPEN_ADD_CONNECTED_SERVICE_CONTEXT_MENU,
-    payload,
+    payload: {
+      ...payload,
+      resolver,
+    },
   };
 }
 

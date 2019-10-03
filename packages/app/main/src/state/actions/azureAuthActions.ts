@@ -52,13 +52,15 @@ export interface AzureAuthWorkflow {
   promptDialogProps: { [propName: string]: any };
   loginSuccessDialog: any;
   loginFailedDialog: any;
+  resolver?: Function;
 }
 
 export function beginAzureAuthWorkflow(
   promptDialog: any,
   promptDialogProps: { [propName: string]: any },
   loginSuccessDialog: any,
-  loginFailedDialog: any
+  loginFailedDialog: any,
+  resolver: Function
 ): AzureAuthAction<AzureAuthWorkflow> {
   return {
     type: AZURE_BEGIN_AUTH_WORKFLOW,
@@ -67,6 +69,7 @@ export function beginAzureAuthWorkflow(
       promptDialogProps,
       loginSuccessDialog,
       loginFailedDialog,
+      resolver,
     },
   };
 }

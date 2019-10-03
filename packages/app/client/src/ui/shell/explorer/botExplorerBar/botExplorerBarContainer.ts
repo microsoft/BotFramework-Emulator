@@ -40,11 +40,7 @@ import BotExplorerBar from './botExplorerBar';
 
 const mapStateToProps = (state: RootState) => {
   return {
-    openBotSettings: () => {
-      DialogService.showDialog(BotSettingsEditorContainer, {
-        bot: state.bot.activeBot,
-      }).catch();
-    },
+    openBotSettings: () => DialogService.showDialog(BotSettingsEditorContainer, { bot: state.bot.activeBot }).catch(),
   };
 };
 export const BotExplorerBarContainer = connect(mapStateToProps)(BotExplorerBar);

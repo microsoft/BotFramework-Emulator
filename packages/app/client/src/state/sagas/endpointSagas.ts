@@ -60,7 +60,7 @@ export class EndpointSagas {
   private static commandService: CommandServiceImpl;
 
   public static *launchEndpointEditor(action: EndpointServiceAction<EndpointEditorPayload>): IterableIterator<any> {
-    const { endpointEditorComponent, endpointService = {} } = action.payload;
+    const { endpointEditorComponent, endpointService = {}, resolver } = action.payload;
     const servicesToUpdate = yield DialogService.showDialog<ComponentClass<any>, IEndpointService[]>(
       endpointEditorComponent,
       { endpointService }
@@ -85,6 +85,7 @@ export class EndpointSagas {
         );
       }
     }
+    resolver && resolver();
   }
 
   public static *openEndpointContextMenu(

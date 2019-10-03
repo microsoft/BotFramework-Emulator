@@ -57,7 +57,9 @@ const mapStateToProps = (state: RootState, ...ownProps: any[]) => {
 const mapDispatchToProps = dispatch => {
   return {
     launchEndpointEditor: (endpointEditor: ComponentClass<EndpointEditor>, endpointService: IEndpointService) =>
-      dispatch(launchEndpointEditor(endpointEditor, endpointService)),
+      new Promise(resolve => {
+        dispatch(launchEndpointEditor(endpointEditor, endpointService, resolve));
+      }),
     openEndpointInEmulator: (endpointService: IEndpointService) =>
       dispatch(openEndpointInEmulator(endpointService, true)),
     openContextMenuForService: (endpointService: IEndpointService, endpointEditor: ComponentClass<EndpointEditor>) =>

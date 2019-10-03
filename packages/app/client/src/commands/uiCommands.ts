@@ -176,14 +176,17 @@ export class UiCommands {
   // Azure sign in
   @Command(UI.SignInToAzure)
   protected signIntoAzure(serviceType: ServiceTypes) {
-    store.dispatch(
-      beginAzureAuthWorkflow(
-        AzureLoginPromptDialogContainer,
-        { serviceType },
-        AzureLoginSuccessDialogContainer,
-        AzureLoginFailedDialogContainer
-      )
-    );
+    return new Promise(async resolve => {
+      await store.dispatch(
+        beginAzureAuthWorkflow(
+          AzureLoginPromptDialogContainer,
+          { serviceType },
+          AzureLoginSuccessDialogContainer,
+          AzureLoginFailedDialogContainer,
+          resolve
+        )
+      );
+    });
   }
 
   @Command(UI.ArmTokenReceivedOnStartup)
