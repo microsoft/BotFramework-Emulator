@@ -43,7 +43,7 @@ import * as styles from './endpointExplorer.scss';
 
 export interface EndpointProps extends ServicePaneProps {
   endpointServices?: IEndpointService[];
-  launchEndpointEditor: (endpointEditor: ComponentClass<any>) => void;
+  launchEndpointEditor: (endpointEditor: ComponentClass<any>) => Promise<void>;
   openEndpointInEmulator: (endpointService: IEndpointService) => void;
 }
 
@@ -109,11 +109,16 @@ export class EndpointExplorer extends ServicePane<EndpointProps> {
     this.props.openContextMenuForService(new EndpointService(endpointService), EndpointEditorContainer);
   }
 
-  protected onAddIconClick = (_event: SyntheticEvent<HTMLButtonElement>): void => {
-    this.props.launchEndpointEditor(EndpointEditorContainer);
+  protected onAddIconClick = async (_event: SyntheticEvent<HTMLButtonElement>): Promise<void> => {
+    await this.props.launchEndpointEditor(EndpointEditorContainer);
+    this.addIconButtonRef && this.addIconButtonRef.focus();
   };
 
   protected onSortClick = (_event: SyntheticEvent<HTMLButtonElement>): void => {
     // TODO - Implement this.
+  };
+
+  protected setAddIconButtonRef = (ref: HTMLButtonElement): void => {
+    this.addIconButtonRef = ref;
   };
 }

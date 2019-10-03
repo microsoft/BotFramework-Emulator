@@ -57,6 +57,8 @@ export default class BotExplorerBar extends React.Component<BotExplorerBarProps,
     );
   }
 
+  private openBotSettingsButtonRef: HTMLButtonElement;
+
   public render() {
     const className = this.props.hidden ? styles.explorerOffScreen : '';
     const explorerBody = this.props.activeBot ? BotExplorerBar.activeBotJsx : <BotNotOpenExplorerContainer />;
@@ -68,7 +70,8 @@ export default class BotExplorerBar extends React.Component<BotExplorerBarProps,
             aria-label="Open bot settings"
             className={explorerStyles.botSettings}
             disabled={!this.props.activeBot}
-            onClick={this.props.openBotSettings}
+            onClick={this.openBotSettingsClick}
+            ref={this.setOpenBotSettingsRef}
           >
             <span />
           </button>
@@ -79,4 +82,15 @@ export default class BotExplorerBar extends React.Component<BotExplorerBarProps,
       </div>
     );
   }
+
+  private openBotSettingsClick = async () => {
+    const { openBotSettingsButtonRef } = this;
+
+    await this.props.openBotSettings();
+    openBotSettingsButtonRef.focus();
+  };
+
+  private setOpenBotSettingsRef = (ref: HTMLButtonElement): void => {
+    this.openBotSettingsButtonRef = ref;
+  };
 }

@@ -56,6 +56,8 @@ export abstract class ServicePane<
   T extends ServicePaneProps,
   S extends ServicePaneState = ServicePaneState
 > extends Component<T, S> {
+  protected addIconButtonRef: HTMLButtonElement;
+
   protected abstract onLinkClick: (event: SyntheticEvent<HTMLLIElement>) => void; // bound
   protected abstract onSortClick: (event: SyntheticEvent<HTMLButtonElement>) => void; // bound
   protected onAddIconClick: (event: SyntheticEvent<HTMLButtonElement>) => void; // bound
@@ -88,6 +90,7 @@ export abstract class ServicePane<
           onKeyPress={this.onControlKeyPress}
           onClick={this.onAddIconClick}
           className={`${styles.addIconButton} ${styles.serviceIcon}`}
+          ref={this.setAddIconButtonRef}
         >
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 25 25">
             <g>
@@ -185,4 +188,8 @@ export abstract class ServicePane<
     // so that the key press doesn't bubble up to the expand collapse and toggle expanded state
     ev.stopPropagation();
   }
+
+  protected setAddIconButtonRef = (ref: HTMLButtonElement): void => {
+    this.addIconButtonRef = ref;
+  };
 }

@@ -43,6 +43,8 @@ export interface BotNotOpenExplorerProps {
 }
 
 export class BotNotOpenExplorer extends React.Component<BotNotOpenExplorerProps, {}> {
+  private createNewBotButtonRef: HTMLButtonElement;
+
   public render() {
     const label = 'Services Not Available';
     return (
@@ -56,7 +58,11 @@ export class BotNotOpenExplorer extends React.Component<BotNotOpenExplorerProps,
                   open a .bot file
                 </LinkButton>
                 {` or `}
-                <LinkButton className={styles.explorerLink} onClick={this.onCreateNewBotClick}>
+                <LinkButton
+                  buttonRef={this.setCreateNewBotButtonRef}
+                  className={styles.explorerLink}
+                  onClick={this.onCreateNewBotClick}
+                >
                   create a new bot configuration
                 </LinkButton>
                 .
@@ -69,10 +75,17 @@ export class BotNotOpenExplorer extends React.Component<BotNotOpenExplorerProps,
   }
 
   private onCreateNewBotClick = async () => {
-    this.props.showCreateNewBotDialog();
+    const { createNewBotButtonRef } = this;
+    await this.props.showCreateNewBotDialog();
+
+    createNewBotButtonRef.focus();
   };
 
   private onOpenBotFileClick = async () => {
     await this.props.openBotFile();
+  };
+
+  private setCreateNewBotButtonRef = (ref: HTMLButtonElement): void => {
+    this.createNewBotButtonRef = ref;
   };
 }
