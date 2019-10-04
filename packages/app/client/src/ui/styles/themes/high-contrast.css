@@ -93,7 +93,7 @@ html {
   --input-label-color: #C8C8C8;
   --input-label-color-disabled: var(--neutral-7);
   --input-border: 1px solid #C8C8C8;
-  --input-border-focus: var(--p-button-border-focus);
+  --input-border-focus: 2px solid #F38518;
   --input-border-error: 1px solid #F38518;
   --input-placeholder-color: var(--neutral-7);
   --input-border-disabled: 1px solid var(--neutral-7);
