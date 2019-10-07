@@ -91,7 +91,7 @@ html {
   --input-label-color: var(--neutral-14);
   --input-label-color-disabled: var(--neutral-10);
   --input-border: 1px solid #C8C8C8;
-  --input-border-focus: var(--p-button-border-focus);
+  --input-border-focus: 2px solid #00BCF2;
   --input-border-error: 1px solid var(--error-outline);
   --input-placeholder-color: var(--neutral-9);
   --input-border-disabled: 1px solid var(--neutral-10);
@@ -174,7 +174,7 @@ html {
   --tab-hover-border: 1px solid transparent;
   --tab-active-tab-inner-border: 1px solid transparent;
   --tab-active-tab-bg: var(--neutral-1);
-  --tab-focus-border: var(--p-button-border-focus);
+  --tab-focus-border: 1px solid var(--global-focus-outline-color);
   --tab-separator-bg: var(--neutral-4);
   --tab-icon-color: var(--explorer-panel-group-title-color);
   --tab-icon-hover-color: var(--neutral-15);
