@@ -72,10 +72,11 @@ class ActivityWrapper extends Component<ActivityWrapperProps> {
     return (
       <div
         {...divProps}
+        aria-checked={isSelected}
         className={classes}
         onClick={this.setSelectedActivity}
         onKeyDown={this.onKeyDown}
-        role="button"
+        role="checkbox"
         tabIndex={0}
       >
         {children}
