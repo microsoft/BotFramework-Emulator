@@ -55,4 +55,8 @@ describe('The LinkButton component', () => {
   it('should have an role property', () => {
     expect(typeof (node.props() as any).role).not.toBeFalsy();
   });
+
+  it('should have an buttonRef property', () => {
+    expect(typeof (node.props() as any).buttonRef).not.toBeFalsy();
+  });
 });
