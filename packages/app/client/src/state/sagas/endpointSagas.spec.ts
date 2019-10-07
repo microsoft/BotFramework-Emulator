@@ -177,8 +177,6 @@ describe('The endpointSagas', () => {
     expect(mockRemoteCommandsCalled.length).toEqual(1);
   });
 
-  // OLD TESTS
-
   it('should launch the endpoint editor and execute a command to save the edited services', async () => {
     const remoteCallSpy = jest.spyOn(commandService, 'remoteCall');
     const dialogServiceSpy = jest.spyOn(DialogService, 'showDialog').mockResolvedValue(mockBot.services);

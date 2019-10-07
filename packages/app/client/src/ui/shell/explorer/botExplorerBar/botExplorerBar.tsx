@@ -84,10 +84,8 @@ export default class BotExplorerBar extends React.Component<BotExplorerBarProps,
   }
 
   private openBotSettingsClick = async () => {
-    const { openBotSettingsButtonRef } = this;
-
     await this.props.openBotSettings();
-    openBotSettingsButtonRef.focus();
+    this.openBotSettingsButtonRef.focus();
   };
 
   private setOpenBotSettingsRef = (ref: HTMLButtonElement): void => {

@@ -75,10 +75,9 @@ export class BotNotOpenExplorer extends React.Component<BotNotOpenExplorerProps,
   }
 
   private onCreateNewBotClick = async () => {
-    const { createNewBotButtonRef } = this;
     await this.props.showCreateNewBotDialog();
 
-    createNewBotButtonRef.focus();
+    this.createNewBotButtonRef.focus();
   };
 
   private onOpenBotFileClick = async () => {

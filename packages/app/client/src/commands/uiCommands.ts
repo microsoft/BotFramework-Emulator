@@ -176,8 +176,8 @@ export class UiCommands {
   // Azure sign in
   @Command(UI.SignInToAzure)
   protected signIntoAzure(serviceType: ServiceTypes) {
-    return new Promise(async resolve => {
-      await store.dispatch(
+    return new Promise(resolve => {
+      store.dispatch(
         beginAzureAuthWorkflow(
           AzureLoginPromptDialogContainer,
           { serviceType },

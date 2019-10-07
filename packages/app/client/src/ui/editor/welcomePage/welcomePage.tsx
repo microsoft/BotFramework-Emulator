@@ -116,7 +116,7 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
         </Row>
         <span>
           If you don’t have a bot configuration,&nbsp;
-          <LinkButton buttonRef={this.setNewBotButtonRef} onClick={this.onNewBotClickPromise}>
+          <LinkButton buttonRef={this.setNewBotButtonRef} onClick={this.onNewBotClick}>
             create a new bot configuration.
           </LinkButton>
         </span>
@@ -131,7 +131,7 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
         {accessToken && !accessToken.startsWith('invalid') ? (
           <LinkButton onClick={signOutWithAzure}>Sign out</LinkButton>
         ) : (
-          <LinkButton buttonRef={this.setSignInToAzureButtonRef} onClick={this.signInToAzurePromise}>
+          <LinkButton buttonRef={this.setSignInToAzureButtonRef} onClick={this.signInToAzure}>
             Sign in with your Azure account.
           </LinkButton>
         )}
@@ -146,23 +146,21 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
   };
 
   private onOpenBotClick = async () => {
-    const { openBotButtonRef } = this;
     await this.props.showOpenBotDialog();
 
-    openBotButtonRef.focus();
+    this.openBotButtonRef && this.openBotButtonRef.focus();
   };
 
-  private onNewBotClickPromise = async () => {
-    const { newBotButtonRef } = this;
+  private onNewBotClick = async () => {
     await this.props.onNewBotClick();
 
-    newBotButtonRef.focus();
+    this.newBotButtonRef && this.newBotButtonRef.focus();
   };
 
-  private signInToAzurePromise = async () => {
-    const { signIntoAzureButtonRef } = this;
+  private signInToAzure = async () => {
     await this.props.signInWithAzure();
-    signIntoAzureButtonRef.focus();
+
+    this.signIntoAzureButtonRef && this.signIntoAzureButtonRef.focus();
   };
 
   private setNewBotButtonRef = (ref: HTMLButtonElement): void => {

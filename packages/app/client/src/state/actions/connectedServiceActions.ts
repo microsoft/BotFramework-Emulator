@@ -80,7 +80,7 @@ export interface ConnectedServicePickerPayload extends ConnectedServicePayload {
 }
 
 export interface OpenAddServiceContextMenuPayload extends ConnectedServicePickerPayload {
-  resolver: () => void;
+  resolver: Function;
 }
 
 export function launchConnectedServicePicker(
@@ -113,7 +113,7 @@ export function openContextMenuForConnectedService<T>(
 
 export function openAddServiceContextMenu(
   payload: ConnectedServicePickerPayload,
-  resolver: () => void
+  resolver: Function
 ): ConnectedServiceAction<OpenAddServiceContextMenuPayload> {
   return {
     type: OPEN_ADD_CONNECTED_SERVICE_CONTEXT_MENU,
