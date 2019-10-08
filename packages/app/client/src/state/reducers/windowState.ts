@@ -40,8 +40,10 @@ import {
   RememberBoundsPayload,
   RememberThemePayload,
   RememberZoomLevelPayload,
+  SetAvailableThemesPayload,
   WindowStateAction,
   WindowStatePayload,
+  SET_AVAILABLE_THEMES,
 } from '../actions/windowStateActions';
 
 export function windowState(
@@ -69,6 +71,11 @@ export function windowState(
     case REMEMBER_THEME: {
       const { theme } = action.payload as RememberThemePayload;
       return { ...state, theme };
+    }
+
+    case SET_AVAILABLE_THEMES: {
+      const { availableThemes } = action.payload as SetAvailableThemesPayload;
+      return { ...state, availableThemes };
     }
 
     default:

@@ -67,8 +67,9 @@ import {
   resources,
   savedBotUrls,
   theme,
-  windowState,
+  update,
   users,
+  windowState,
   ChatState,
   DialogState,
   EditorState,
@@ -79,6 +80,7 @@ import {
   ProgressIndicatorState,
   ResourcesState,
   ThemeState,
+  UpdateState,
 } from './reducers';
 
 export interface RootState {
@@ -98,6 +100,7 @@ export interface RootState {
   resources?: ResourcesState;
   settings?: Settings;
   theme?: ThemeState;
+  update?: UpdateState;
 }
 
 export const DEFAULT_STATE = {
@@ -136,6 +139,7 @@ function initStore(): Store<RootState> {
       resources,
       settings: settingsReducer,
       theme,
+      update,
     }),
     DEFAULT_STATE,
     applyMiddleware(forwardToRenderer, sagaMiddleware)

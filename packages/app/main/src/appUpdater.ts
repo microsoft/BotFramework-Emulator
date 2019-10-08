@@ -37,7 +37,7 @@ import { ProgressInfo } from 'builder-util-runtime';
 import { autoUpdater as electronUpdater, UpdateInfo } from 'electron-updater';
 import { SharedConstants } from '@bfemulator/app-shared';
 import { app } from 'electron';
-import { newNotification } from '@bfemulator/app-shared';
+import { newNotification, UpdateStatus } from '@bfemulator/app-shared';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { TelemetryService } from './telemetry';
@@ -45,13 +45,7 @@ import { getSettings, store } from './state/store';
 import { AppMenuBuilder } from './appMenuBuilder';
 import { sendNotificationToClient } from './utils/sendNotificationToClient';
 import { setFrameworkSettings } from './state/actions/frameworkSettingsActions';
-
-export enum UpdateStatus {
-  Idle,
-  UpdateAvailable,
-  UpdateDownloading,
-  UpdateReadyToInstall,
-}
+import { setUpdateStatus } from './state/actions';
 
 class EmulatorUpdater extends EventEmitter {
   @CommandServiceInstance()
@@ -59,7 +53,7 @@ class EmulatorUpdater extends EventEmitter {
 
   private _userInitiated: boolean;
   private _autoDownload: boolean;
-  private _status: UpdateStatus = UpdateStatus.Idle;
+  private _updaterStatus: UpdateStatus = UpdateStatus.Idle;
   private _allowPrerelease: boolean;
   private _updateDownloaded: boolean;
   private _downloadProgress: number;
@@ -330,6 +324,15 @@ class EmulatorUpdater extends EventEmitter {
       }
     }
   };
+
+  private get _status(): UpdateStatus {
+    return this._updaterStatus;
+  }
+
+  private set _status(status: UpdateStatus) {
+    this._updaterStatus = status;
+    store.dispatch(setUpdateStatus(status));
+  }
 }
 
 export const AppUpdater = new EmulatorUpdater();

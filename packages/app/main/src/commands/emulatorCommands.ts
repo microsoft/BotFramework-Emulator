@@ -35,7 +35,13 @@ import * as path from 'path';
 
 import { newBot, newEndpoint, SharedConstants } from '@bfemulator/app-shared';
 import { Conversation, Users } from '@bfemulator/emulator-core';
-import { BotConfigWithPath, Command, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
+import {
+  BotConfigWithPath,
+  Command,
+  CommandServiceImpl,
+  CommandServiceInstance,
+  ConversationService,
+} from '@bfemulator/sdk-shared';
 import * as fs from 'fs-extra';
 import { sync as mkdirpSync } from 'mkdirp';
 import { session } from 'electron';
@@ -53,6 +59,8 @@ import { setCurrentUser } from '../state/actions/userActions';
 import { pushClientAwareSettings } from '../state/actions/frameworkSettingsActions';
 import { ProtocolHandler } from '../protocolHandler';
 import { CredentialManager } from '../credentialManager';
+import { getCurrentConversationId } from '../state/helpers/chatHelpers';
+import { getLocalhostServiceUrl } from '../utils/getLocalhostServiceUrl';
 
 const Commands = SharedConstants.Commands.Emulator;
 
@@ -303,5 +311,60 @@ export class EmulatorCommands {
     }
 
     return true;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Sends a conversation update activity for the addition of the user to the current conversation
+  @Command(Commands.SendConversationUpdateUserAdded)
+  protected async sendConversationUpdateUserAdded() {
+    ConversationService.addUser(getLocalhostServiceUrl(), getCurrentConversationId());
+    TelemetryService.trackEvent('sendActivity_addUser');
+  }
+
+  // ---------------------------------------------------------------------------
+  // Sends an activity for the addition of a bot contact to the current conversation
+  @Command(Commands.SendBotContactAdded)
+  protected async sendBotContactAdded() {
+    ConversationService.botContactAdded(getLocalhostServiceUrl(), getCurrentConversationId());
+    TelemetryService.trackEvent('sendActivity_botContactAdded');
+  }
+
+  // ---------------------------------------------------------------------------
+  // Sends an activity for the removal of a bot contact from the current conversation
+  @Command(Commands.SendBotContactRemoved)
+  protected async sendBotContactRemoved() {
+    ConversationService.botContactRemoved(getLocalhostServiceUrl(), getCurrentConversationId());
+    TelemetryService.trackEvent('sendActivity_botContactRemoved');
+  }
+
+  // ---------------------------------------------------------------------------
+  // Sends a typing activity to the current conversation
+  @Command(Commands.SendTyping)
+  protected async sendTyping() {
+    ConversationService.typing(getLocalhostServiceUrl(), getCurrentConversationId());
+    TelemetryService.trackEvent('sendActivity_typing');
+  }
+
+  // ---------------------------------------------------------------------------
+  // Sends a ping activity to the current conversation
+  @Command(Commands.SendPing)
+  protected async sendPing() {
+    ConversationService.ping(getLocalhostServiceUrl(), getCurrentConversationId());
+    TelemetryService.trackEvent('sendActivity_ping');
+  }
+
+  // ---------------------------------------------------------------------------
+  // Sends a delete user data activity to the current conversation
+  @Command(Commands.SendDeleteUserData)
+  protected async sendDeleteUserData() {
+    ConversationService.deleteUserData(getLocalhostServiceUrl(), getCurrentConversationId());
+    TelemetryService.trackEvent('sendActivity_deleteUserData');
+  }
+
+  // ---------------------------------------------------------------------------
+  // Returns the current Emulator's service url
+  @Command(Commands.GetServiceUrl)
+  protected async getServiceUrl() {
+    return Emulator.getInstance().ngrok.getServiceUrl('');
   }
 }

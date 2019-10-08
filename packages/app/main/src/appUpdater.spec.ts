@@ -32,12 +32,12 @@
 //
 
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
-import { SharedConstants } from '@bfemulator/app-shared';
+import { SharedConstants, UpdateStatus } from '@bfemulator/app-shared';
 
 import { AppUpdater } from './appUpdater';
 import { TelemetryService } from './telemetry';
 import { AppMenuBuilder } from './appMenuBuilder';
-import { setFrameworkSettings } from './state';
+import { setFrameworkSettings, setUpdateStatus } from './state';
 
 let mockAutoUpdater: any = {
   quitAndInstall: null,
@@ -157,6 +157,7 @@ describe('AppUpdater', () => {
     mockSettings = { ...defaultSettings };
     mockTrackEvent = jest.fn(() => Promise.resolve());
     TelemetryService.trackEvent = mockTrackEvent;
+    mockDispatch.mockClear();
     mockSendNotification.mockClear();
   });
 
@@ -449,5 +450,16 @@ describe('AppUpdater', () => {
     expect(mockSendNotification).toHaveBeenCalled();
 
     remoteCallSpy.mockClear();
+  });
+
+  it('should get and set _status', () => {
+    (AppUpdater as any)._updaterStatus = UpdateStatus.Idle;
+
+    expect((AppUpdater as any)._status).toBe(UpdateStatus.Idle);
+
+    (AppUpdater as any)._status = UpdateStatus.UpdateAvailable;
+
+    expect((AppUpdater as any)._updaterStatus).toBe(UpdateStatus.UpdateAvailable);
+    expect(mockDispatch).toHaveBeenCalledWith(setUpdateStatus(UpdateStatus.UpdateAvailable));
   });
 });
