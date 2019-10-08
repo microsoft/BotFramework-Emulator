@@ -38,16 +38,12 @@ import { Action } from 'redux';
 import { openBotViaFilePathAction, openBotViaUrlAction } from '../../../state/actions/botActions';
 import { DialogService } from '../service';
 import { RootState } from '../../../state/store';
-import { ariaAlertService } from '../../a11y';
 import { executeCommand } from '../../../state/actions/commandActions';
 
 import { OpenBotDialog, OpenBotDialogProps, OpenBotDialogState } from './openBotDialog';
 
 const mapDispatchToProps = (dispatch: (action: Action) => void): OpenBotDialogProps => {
   return {
-    createAriaAlert: (msg: string) => {
-      ariaAlertService.alert(msg);
-    },
     onAnchorClick: (url: string) => {
       dispatch(executeCommand(true, SharedConstants.Commands.Electron.OpenExternal, null, url));
     },
