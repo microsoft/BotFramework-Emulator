@@ -34,7 +34,51 @@
 import * as React from 'react';
 import { mount } from 'enzyme';
 
+import { DefaultButton } from './defaultButton';
 import { LinkButton } from './linkButton';
+import { PrimaryButton } from './PrimaryButton';
+
+describe('The DefaultButton component', () => {
+  let parent;
+  let node;
+  beforeEach(() => {
+    parent = mount(<DefaultButton>Learn more</DefaultButton>);
+    node = parent.find(DefaultButton);
+  });
+
+  it('should render without any errors', () => {
+    expect(node.html()).not.toBeFalsy();
+  });
+
+  it('should have an role property', () => {
+    expect(typeof (node.props() as any).role).not.toBeFalsy();
+  });
+
+  it('should have an buttonRef property', () => {
+    expect(typeof (node.props() as any).buttonRef).not.toBeFalsy();
+  });
+});
+
+describe('The PrimaryButton component', () => {
+  let parent;
+  let node;
+  beforeEach(() => {
+    parent = mount(<PrimaryButton>Learn more</PrimaryButton>);
+    node = parent.find(PrimaryButton);
+  });
+
+  it('should render without any errors', () => {
+    expect(node.html()).not.toBeFalsy();
+  });
+
+  it('should have an role property', () => {
+    expect(typeof (node.props() as any).role).not.toBeFalsy();
+  });
+
+  it('should have an buttonRef property', () => {
+    expect(typeof (node.props() as any).buttonRef).not.toBeFalsy();
+  });
+});
 
 describe('The LinkButton component', () => {
   let parent;
@@ -58,5 +102,11 @@ describe('The LinkButton component', () => {
 
   it('should have an buttonRef property', () => {
     expect(typeof (node.props() as any).buttonRef).not.toBeFalsy();
+  });
+});
+
+describe('The empty LinkButton component', () => {
+  it('should not render due to errors', () => {
+    expect(() => mount(<LinkButton></LinkButton>)).toThrowError('<LinkButton must have aria-label');
   });
 });

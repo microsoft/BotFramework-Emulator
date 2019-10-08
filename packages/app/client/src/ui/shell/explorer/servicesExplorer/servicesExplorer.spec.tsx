@@ -139,7 +139,7 @@ describe('The ServicesExplorer component', () => {
     );
   });
 
-  fit('should dispatch a request to open the connected service picker when the add icon is clicked', async () => {
+  it('should dispatch a request to open the connected service picker when the add icon is clicked', async () => {
     const mockOnAddIconClick = {
       focus: jest.fn(() => {
         return null;

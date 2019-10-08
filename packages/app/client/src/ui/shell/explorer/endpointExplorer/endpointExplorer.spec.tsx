@@ -30,6 +30,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 import { mount } from 'enzyme';
 import * as React from 'react';
 import { Provider } from 'react-redux';
@@ -93,7 +94,7 @@ const mockBot = {
     },
   ],
 };
-describe('The EndpointExplorer component should', () => {
+describe('The EndpointExplorer component', () => {
   let parent;
   let node;
   let mockDispatch;
@@ -139,5 +140,12 @@ describe('The EndpointExplorer component should', () => {
     node.instance().onLinkClick({ currentTarget: mockLi } as any);
 
     expect(mockDispatch).toHaveBeenCalledWith(openEndpointInEmulator(mockBot.services[0] as any, true));
+  });
+
+  it('should set a button ref', () => {
+    const mockButtonRef: any = {};
+    node.instance().setAddIconButtonRef(mockButtonRef);
+
+    expect(node.instance().addIconButtonRef).toBe(mockButtonRef);
   });
 });

@@ -52,6 +52,8 @@ import {
 
 import { WelcomePage } from './welcomePage';
 import { WelcomePageContainer } from './welcomePageContainer';
+import { HowToBuildABotContainer } from './howToBuildABotContainer';
+import { HowToBuildABot } from './howToBuildABot';
 
 jest.mock('../../dialogs', () => ({}));
 
@@ -103,7 +105,7 @@ const bots = [
     chatsPath: '/Users/microsoft/Documents/testbot/dialogs',
   },
 ];
-describe('The AzureLoginFailedDialogContainer component should', () => {
+describe('The WelcomePageContainer component should', () => {
   let parent;
   let node;
   let instance: any;
@@ -168,6 +170,56 @@ describe('The AzureLoginFailedDialogContainer component should', () => {
     expect(mockDispatch).toHaveBeenCalledWith(
       executeCommand(false, Commands.UI.ShowMarkdownPage, null, Channels.ReadmeUrl, Channels.HelpLabel)
     );
+  });
+
+  it('should call the appropriate command when onAnchorClick is called', () => {
+    instance.props.onAnchorClick('http://blah');
+    expect(mockDispatch).toHaveBeenCalledWith(
+      executeCommand(true, SharedConstants.Commands.Electron.OpenExternal, null, 'http://blah')
+    );
+  });
+
+  it('should set a button ref', () => {
+    const mockButtonRef: any = {};
+    instance.setOpenBotButtonRef(mockButtonRef);
+    instance.setNewBotButtonRef(mockButtonRef);
+    instance.setSignInToAzureButtonRef(mockButtonRef);
+
+    expect(instance.newBotButtonRef).toBe(mockButtonRef);
+    expect(instance.openBotButtonRef).toBe(mockButtonRef);
+    expect(instance.signIntoAzureButtonRef).toBe(mockButtonRef);
+  });
+});
+
+describe('The HowToBuildABotContainer', () => {
+  let parent;
+  let node;
+  let instance: any;
+  let mockDispatch;
+  beforeEach(() => {
+    mockStore.dispatch(azureArmTokenDataChanged(mockArmToken));
+    mockStore.dispatch(BotActions.load(bots));
+
+    mockDispatch = jest
+      .spyOn(mockStore, 'dispatch')
+      .mockImplementation((action: CommandAction<CommandActionPayload>) => {
+        if (
+          action.type === EXECUTE_COMMAND &&
+          action.payload.commandName === SharedConstants.Commands.UI.ShowOpenBotDialog
+        ) {
+          action.payload.resolver();
+        }
+
+        return action;
+      });
+
+    parent = mount(
+      <Provider store={mockStore}>
+        <HowToBuildABotContainer />
+      </Provider>
+    );
+    node = parent.find(HowToBuildABot);
+    instance = node.instance() as HowToBuildABot;
   });
 
   it('should call the appropriate command when onAnchorClick is called', () => {
