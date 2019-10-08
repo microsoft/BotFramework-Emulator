@@ -47,11 +47,6 @@ const {
 let mockLocalCommandsCalled = [];
 let mockRemoteCommandsCalled = [];
 const mockCurrentWebContents = {
-  undo: jest.fn(),
-  redo: jest.fn(),
-  cut: jest.fn(),
-  copy: jest.fn(),
-  paste: jest.fn(),
   setZoomLevel: jest.fn(),
   getZoomFactor: jest.fn(),
   setZoomFactor: jest.fn(),
@@ -163,41 +158,6 @@ describe('#globalHandlers', () => {
       message: 'oh noes!',
       type: 1,
     });
-  });
-
-  it('should perform an undo when Ctrl+Z is pressed', async () => {
-    const event = new KeyboardEvent('keydown', { ctrlKey: true, key: 'z' });
-    await globalHandlers(event);
-
-    expect(mockCurrentWebContents.undo).toHaveBeenCalled();
-  });
-
-  it('should perform a redo when Ctrl+Y is pressed', async () => {
-    const event = new KeyboardEvent('keydown', { ctrlKey: true, key: 'y' });
-    await globalHandlers(event);
-
-    expect(mockCurrentWebContents.redo).toHaveBeenCalled();
-  });
-
-  it('should perform a cut when Ctrl+X is pressed', async () => {
-    const event = new KeyboardEvent('keydown', { ctrlKey: true, key: 'x' });
-    await globalHandlers(event);
-
-    expect(mockCurrentWebContents.cut).toHaveBeenCalled();
-  });
-
-  it('should perform a copy when Ctrl+C is pressed', async () => {
-    const event = new KeyboardEvent('keydown', { ctrlKey: true, key: 'c' });
-    await globalHandlers(event);
-
-    expect(mockCurrentWebContents.copy).toHaveBeenCalled();
-  });
-
-  it('should perform a paste when Ctrl+V is pressed', async () => {
-    const event = new KeyboardEvent('keydown', { ctrlKey: true, key: 'v' });
-    await globalHandlers(event);
-
-    expect(mockCurrentWebContents.paste).toHaveBeenCalled();
   });
 
   it('should reset the zoom level when Ctrl+0 is pressed', async () => {
