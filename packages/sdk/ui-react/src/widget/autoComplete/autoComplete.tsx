@@ -74,7 +74,7 @@ export class AutoComplete extends Component<AutoCompleteProps, AutoCompleteState
   }
 
   public render(): ReactNode {
-    const { onBlur, onChange, onFocus, onKeyDown, value } = this;
+    const { errorMessageId, onBlur, onChange, onFocus, onKeyDown, value } = this;
     const { autoFocus, className = '', errorMessage, disabled, placeholder } = this.props;
     const invalidClassName = errorMessage ? styles.invalid : '';
 
@@ -102,6 +102,7 @@ export class AutoComplete extends Component<AutoCompleteProps, AutoCompleteState
           aria-activedescendant={this.getOptionId(this.state.selectedIndex)}
           aria-autocomplete="list"
           aria-controls={this.listboxId}
+          aria-labelledby={errorMessageId}
         />
         {this.errorMessage}
         {this.results}
@@ -148,9 +149,17 @@ export class AutoComplete extends Component<AutoCompleteProps, AutoCompleteState
   private get errorMessage(): ReactNode {
     const { errorMessage } = this.props;
     if (errorMessage) {
-      return <sub className={styles.errorMessage}>{errorMessage}</sub>;
+      return (
+        <sub id={this.errorMessageId} className={styles.errorMessage}>
+          {errorMessage}
+        </sub>
+      );
     }
     return undefined;
+  }
+
+  private get errorMessageId(): string {
+    return this.props.errorMessage ? `auto-complete-err-msg-${this.state.id}` : undefined;
   }
 
   private get labelId(): string {

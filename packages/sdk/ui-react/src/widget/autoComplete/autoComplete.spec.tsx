@@ -76,6 +76,13 @@ describe('<AutoComplete />', () => {
     expect(instance.errorMessage).toBeTruthy();
   });
 
+  it('should generate an error message id if there is an error message', () => {
+    expect(instance.errorMessageId).toBe(undefined);
+
+    wrapper.setProps({ errorMessage: 'something broke :(' });
+    expect(instance.errorMessageId).toBe(`auto-complete-err-msg-${wrapper.state().id}`);
+  });
+
   it('should generate a label id if a label has been provided', () => {
     expect(instance.labelId).toBe(undefined);
 
