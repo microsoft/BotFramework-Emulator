@@ -81,13 +81,13 @@
               "default": {                
                 "label": "Show diff",
                 "title": "Show diff",
-                "aria-label": "Show diff bot state"
+                "aria-label": "Show diff"
               },
               "selected": {
                 "label": "Hide diff",
                 "aria-selected": true,
                 "title": "Hide diff",
-                "aria-label": "Hide diff bot state"
+                "aria-label": "Hide diff"
               },
               "disabled": {
                 "aria-disabled": true
