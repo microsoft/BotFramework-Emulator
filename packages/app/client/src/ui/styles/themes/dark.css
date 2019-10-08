@@ -266,6 +266,25 @@ html {
   /* MDI Component */
   --mdi-bg: var(--neutral-13);
   --mdi-img-bg: var(--neutral-13);
+
+  /* App Menu */
+  --app-menu-bg-color: #444444;
+  --app-menu-color: #CCCCCC;
+  --app-menu-hover-color: #FFFFFF;
+  --app-menu-hover-bg-color: #757575;
+  --app-menu-hover-border: 1px dashed transparent;
+
+  /* Menu Component */
+  --menu-box-shadow: rgb(0, 0, 0) 0px 2px 4px;
+  --menu-border: 0;
+  --menu-bg-color: #444444;
+  --menu-item-hover-bg-color: #007ACC;
+  --menu-item-color: #CCCCCC;
+  --menu-item-hover-color: #FFFFFF;
+  --menu-item-disabled-color: #8A8A8A;
+  --menu-item-hover-outline: none;
+  --menu-separator-color: #CCCCCC;
+  --menu-submenu-top-adjustment: -8px;
 }
 
 .dialog {

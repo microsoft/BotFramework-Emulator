@@ -76,6 +76,7 @@ export const SharedConstants = {
     },
 
     Electron: {
+      CheckForUpdates: 'shell:check-for-updates',
       FetchRemote: 'shell:fetch-remote',
       ShowMessageBox: 'shell:showExplorer-message-box',
       ShowOpenDialog: 'shell:showExplorer-open-dialog',
@@ -93,12 +94,14 @@ export const SharedConstants = {
       OpenFileLocation: 'shell:open-file-location',
       UnlinkFile: 'shell:unlink-file',
       RenameFile: 'shell:rename-file',
+      QuitAndInstall: 'shell:quit-and-install',
     },
 
     Emulator: {
       SaveTranscriptToFile: 'emulator:save-transcript-to-file',
       FeedTranscriptFromDisk: 'emulator:feed-transcript:disk',
       FeedTranscriptFromMemory: 'emulator:feed-transcript:deep-link',
+      GetServiceUrl: 'shell:get-service-url',
       GetSpeechToken: 'speech-token:get',
       NewTranscript: 'transcript:new',
       NewLiveChat: 'livechat:new',
@@ -113,6 +116,12 @@ export const SharedConstants = {
       StartEmulator: 'emulator:start',
       OpenProtocolUrls: 'emulator:openProtocolUrls',
       ClearState: 'emulator:clear-state',
+      SendConversationUpdateUserAdded: 'emulator:send-activity:user-added',
+      SendBotContactAdded: 'emulator:send-activity:bot-contact-added',
+      SendBotContactRemoved: 'emulator:send-activity:bot-contact-removed',
+      SendTyping: 'emulator:send-activity:typing',
+      SendPing: 'emulator:send-activity:ping',
+      SendDeleteUserData: 'emulator:send-activity:delete-user-data',
     },
 
     Extension: {

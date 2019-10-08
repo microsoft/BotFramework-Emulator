@@ -40,10 +40,11 @@ import { ExtensionManagerImpl } from '../extensions';
 import { Migrator } from '../migrator';
 import { ProtocolHandler } from '../protocolHandler';
 import { dispatch, getSettings, store } from '../state/store';
-import { getBotsFromDisk } from '../utils';
+import { getBotsFromDisk, getThemes } from '../utils';
 import { openFileFromCommandLine } from '../utils/openFileFromCommandLine';
 import { pushClientAwareSettings, setFrameworkSettings } from '../state/actions/frameworkSettingsActions';
 import { AppMenuBuilder } from '../appMenuBuilder';
+import { setAvailableThemes, rememberTheme } from '../state/actions/windowStateActions';
 
 const Commands = SharedConstants.Commands;
 
@@ -68,7 +69,10 @@ export class ClientInitCommands {
     // Un-fullscreen the screen
     await this.commandService.call(Commands.Electron.SetFullscreen, false);
     // Send app settings to client
-    dispatch(setFrameworkSettings(store.getState().settings.framework));
+    const { framework, windowState } = store.getState().settings;
+    dispatch(rememberTheme(windowState.theme));
+    dispatch(setAvailableThemes(getThemes()));
+    dispatch(setFrameworkSettings(framework));
     dispatch(pushClientAwareSettings());
     // Load extensions
     ExtensionManagerImpl.unloadExtensions();

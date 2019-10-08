@@ -33,6 +33,7 @@
 
 import { Splitter } from '@bfemulator/ui-react';
 import * as React from 'react';
+import { remote } from 'electron';
 
 import * as Constants from '../../constants';
 import { Editor } from '../../state/reducers/editor';
@@ -46,6 +47,7 @@ import * as styles from './main.scss';
 import { MDI } from './mdi';
 import { NavBar } from './navBar';
 import { StatusBar } from './statusBar/statusBar';
+import { AppMenuContainer } from './appMenu/appMenuContainer';
 
 export interface MainProps {
   applicationMountComplete?: () => void;
@@ -62,12 +64,15 @@ export interface MainState {
 }
 
 export class Main extends React.Component<MainProps, MainState> {
+  private platform: string;
+
   constructor(props: MainProps) {
     super(props);
 
     this.state = {
       tabValue: 0,
     };
+    this.platform = process.platform;
   }
 
   public componentWillReceiveProps(newProps: any) {
@@ -115,28 +120,31 @@ export class Main extends React.Component<MainProps, MainState> {
     );
 
     return (
-      <div className={styles.main}>
-        <div className={styles.nav}>
-          {!this.props.presentationModeEnabled && (
-            <NavBar selection={this.props.navBarSelection} explorerIsVisible={this.props.explorerIsVisible} />
-          )}
-          <main className={styles.workbench}>
-            <Splitter
-              orientation={'vertical'}
-              primaryPaneIndex={0}
-              minSizes={{ 0: 175, 1: 40 }}
-              initialSizes={{ 0: 280 }}
-              onSizeChange={this.checkExplorerSize}
-            >
-              {workbenchChildren}
-            </Splitter>
-          </main>
-          <TabManagerContainer disabled={false} />
+      <>
+        {this.platform === 'win32' && <AppMenuContainer />}
+        <div className={styles.main}>
+          <div className={styles.nav}>
+            {!this.props.presentationModeEnabled && (
+              <NavBar selection={this.props.navBarSelection} explorerIsVisible={this.props.explorerIsVisible} />
+            )}
+            <main className={styles.workbench}>
+              <Splitter
+                orientation={'vertical'}
+                primaryPaneIndex={0}
+                minSizes={{ 0: 175, 1: 40 }}
+                initialSizes={{ 0: 280 }}
+                onSizeChange={this.checkExplorerSize}
+              >
+                {workbenchChildren}
+              </Splitter>
+            </main>
+            <TabManagerContainer disabled={false} />
+          </div>
+          {!this.props.presentationModeEnabled && <StatusBar />}
+          <DialogHostContainer />
+          <StoreVisualizer enabled={false} />
         </div>
-        {!this.props.presentationModeEnabled && <StatusBar />}
-        <DialogHostContainer />
-        <StoreVisualizer enabled={false} />
-      </div>
+      </>
     );
   }
 

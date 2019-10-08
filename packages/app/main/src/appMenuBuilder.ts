@@ -31,17 +31,19 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { BotInfo, SharedConstants } from '@bfemulator/app-shared';
+import { BotInfo, SharedConstants, UpdateStatus } from '@bfemulator/app-shared';
 import { CommandServiceImpl, CommandServiceInstance, ConversationService } from '@bfemulator/sdk-shared';
 import { app, clipboard, Menu, MenuItem, MenuItemConstructorOptions, shell } from 'electron';
 
-import { AppUpdater, UpdateStatus } from './appUpdater';
+import { AppUpdater } from './appUpdater';
 import { BotHelpers } from './botHelpers';
 import { Emulator } from './emulator';
 import { rememberTheme } from './state/actions/windowStateActions';
 import { TelemetryService } from './telemetry';
 import { isMac } from './utils';
 import { store } from './state';
+import { getLocalhostServiceUrl } from './utils/getLocalhostServiceUrl';
+import { getCurrentConversationId } from './state/helpers/chatHelpers';
 
 declare type MenuOpts = MenuItemConstructorOptions;
 
@@ -71,6 +73,12 @@ export class AppMenuBuilder {
 
   /** Called on app startup */
   public static async initAppMenu(): Promise<void> {
+    // show an HTML app menu on Windows (a11y)
+    if (process.platform === 'win32') {
+      Menu.setApplicationMenu(null);
+      return;
+    }
+
     const template: MenuOpts[] = [
       await this.initFileMenu(),
       this.initDebugMenu(),
@@ -201,13 +209,11 @@ export class AppMenuBuilder {
       { type: 'separator' },
       {
         label: 'Open Transcript...',
-        click: async () => {
-          try {
-            AppMenuBuilder.commandService.remoteCall(EmulatorCommands.PromptToOpenTranscript);
-          } catch (err) {
+        click: () => {
+          AppMenuBuilder.commandService.remoteCall(EmulatorCommands.PromptToOpenTranscript).catch(err => {
             // eslint-disable-next-line no-console
             console.error('Error opening transcript file from menu: ', err);
-          }
+          });
         },
       },
       { type: 'separator' },
@@ -283,17 +289,6 @@ export class AppMenuBuilder {
   private static async initConversationMenu(): Promise<MenuOpts> {
     const getState = () => AppMenuBuilder.commandService.remoteCall<any>(SharedConstants.Commands.Misc.GetStoreState);
 
-    const getConversationId = async () => {
-      const state = await getState();
-      if (!state.editor) {
-        return;
-      }
-      const { editors, activeEditor } = state.editor;
-      const { activeDocumentId } = editors[activeEditor];
-
-      return state.chat.chats[activeDocumentId].conversationId;
-    };
-
     const getActiveDocumentContentType = async () => {
       const state = await getState();
       if (!state.editor) {
@@ -308,11 +303,10 @@ export class AppMenuBuilder {
       }
     };
 
-    const getServiceUrl = () => Emulator.getInstance().framework.serverUrl.replace('[::]', 'localhost');
     const createClickHandler = (serviceFunction, callback?) => async () => {
-      const conversationId = await getConversationId();
+      const conversationId = getCurrentConversationId();
 
-      serviceFunction(getServiceUrl(), conversationId);
+      serviceFunction(getLocalhostServiceUrl(), conversationId);
       if (callback) {
         callback();
       }
@@ -332,13 +326,6 @@ export class AppMenuBuilder {
               label: 'conversationUpdate ( user added )',
               click: createClickHandler(ConversationService.addUser, () =>
                 TelemetryService.trackEvent('sendActivity_addUser')
-              ),
-              enabled,
-            },
-            {
-              label: 'conversationUpdate ( user removed )',
-              click: createClickHandler(ConversationService.removeUser, () =>
-                TelemetryService.trackEvent('sendActivity_removeUser')
               ),
               enabled,
             },
@@ -489,7 +476,7 @@ export class AppMenuBuilder {
         // will toggle visibility of auto update menu item states as workaround to non-dynamic labels in Electron
         {
           id: 'auto-update-restart',
-          label: 'Restart to Update...',
+          label: 'Restart to update...',
           click: () => AppUpdater.quitAndInstall(),
           enabled: true,
           visible: AppUpdater.status === UpdateStatus.UpdateReadyToInstall,
@@ -502,7 +489,7 @@ export class AppMenuBuilder {
         },
         {
           id: 'auto-update-check',
-          label: 'Check for Update...',
+          label: 'Check for update...',
           click: () => AppUpdater.checkForUpdates(true),
           enabled: true,
           visible: AppUpdater.status === UpdateStatus.Idle || AppUpdater.status === UpdateStatus.UpdateAvailable,

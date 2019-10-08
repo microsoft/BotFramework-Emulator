@@ -38,6 +38,7 @@
     &:focus {
       outline: none;
     }
+
     background-color: var(--dialog-bg);
     color: var(--input-label-color);
     cursor: default;
@@ -48,6 +49,14 @@
     min-height: 100%;
     overflow: hidden;
     user-select: none;
+  }
+
+  #root {
+    display: flex;
+    flex-flow: column nowrap;
+    // no-op that creates a local stacking context, so that elements outside of #root
+    // can float on top of elements inside of it (such as menus, modals, etc.)
+    transform: scale(1);
   }
 
   h1, h2 {
