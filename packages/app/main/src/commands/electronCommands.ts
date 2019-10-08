@@ -44,6 +44,7 @@ import { emulatorApplication } from '../main';
 import { ContextMenuService } from '../services/contextMenuService';
 import { TelemetryService } from '../telemetry';
 import { showOpenDialog, showSaveDialog } from '../utils';
+import { AppUpdater } from '../appUpdater';
 
 const { shell } = Electron;
 
@@ -213,5 +214,26 @@ export class ElectronCommands {
       fullPath += parts.ext;
     }
     return fs.rename(existingPath, fullPath); // let any errors propagate up the stack
+  }
+
+  // ---------------------------------------------------------------------------
+  // Toggles Chrome dev tools
+  @Command(Commands.ToggleDevTools)
+  protected toggleDevTools(): void {
+    emulatorApplication.mainBrowserWindow.webContents.toggleDevTools();
+  }
+
+  // ---------------------------------------------------------------------------
+  // Quits the app and installs updates
+  @Command(Commands.QuitAndInstall)
+  protected quitAndInstall(): void {
+    AppUpdater.quitAndInstall();
+  }
+
+  // ---------------------------------------------------------------------------
+  // Checks for app updates
+  @Command(Commands.CheckForUpdates)
+  protected checkForUpdates(userInitiated: boolean = true): void {
+    AppUpdater.checkForUpdates(userInitiated);
   }
 }

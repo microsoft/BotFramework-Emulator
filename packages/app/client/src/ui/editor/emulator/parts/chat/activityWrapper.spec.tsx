@@ -70,6 +70,7 @@ describe('<ActivityWrapper />', () => {
   it('adds selected class', () => {
     const component = render({ isSelected: true });
     expect(component.find('.selected-activity')).toHaveLength(1);
+    expect(component.find('.selected-activity').props()['aria-checked']).toBe(true);
   });
 
   describe('clicking on an activity', () => {
@@ -123,7 +124,7 @@ describe('<ActivityWrapper />', () => {
   it('has the right a11y attributes', () => {
     const component = render().find('.chat-activity');
 
-    expect(component.prop('role')).toEqual('button');
+    expect(component.prop('role')).toEqual('checkbox');
     expect(component.prop('tabIndex')).toEqual(0);
   });
 });

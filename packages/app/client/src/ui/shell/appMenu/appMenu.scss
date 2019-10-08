@@ -1,0 +1,41 @@
+.app-menu {
+  box-sizing: border-box;
+  display: flex;
+  flex-flow: row nowrap;
+  height: 30px;
+  width: 100%;
+  padding: 1px;
+  margin: 0;
+  list-style: none;
+  background-color: var(--app-menu-bg-color);
+
+  > * {
+    flex-shrink: 0;
+  }
+
+  > li {
+    box-sizing: border-box;
+
+    > button.app-menu-item {
+      box-sizing: border-box;
+      height: 28px;
+      padding: 1px 8px;
+      border: 0;
+      background: 0;
+      font-size: 13px;
+      line-height: 28px;
+      color: var(--app-menu-color);
+      border: 1px solid transparent;
+
+      &:hover,
+      &:focus {
+        background-color: var(--app-menu-hover-bg-color);
+        color: var(--app-menu-hover-color);
+      }
+
+      &:hover {
+        border: var(--app-menu-hover-border);
+      }
+    }
+  }
+}

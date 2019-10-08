@@ -1,0 +1,97 @@
+.menu {
+  box-sizing: border-box;
+  position: absolute;
+  display: flex;
+  flex-flow: column nowrap;
+  width: auto;
+  min-width: 100px;
+  padding: 8px 0;
+  margin: 0;
+  list-style: none;
+
+  // align non-top-level menus to the right of their parent
+  top: var(--menu-submenu-top-adjustment); // accounts for top padding on menu to align submenu items
+  left: 100%;
+
+  background-color: var(--menu-bg-color);
+  box-shadow: var(--menu-box-shadow);
+  border: var(--menu-border);
+}
+
+.menu-item {
+  box-sizing: border-box;
+  position: relative;
+  display: flex;
+  flex-wrap: nowrap;
+  height: 20px;
+  width: auto;
+  line-height: 20px;
+  padding: 0 16px;
+  white-space: nowrap;
+  color: var(--menu-item-color);
+
+  &:hover {
+    background-color: var(--menu-item-hover-bg-color);
+    color: var(--menu-item-hover-color);
+    outline: var(--menu-item-hover-outline);
+
+    &.disabled {
+      background-color: transparent;
+      color: var(--menu-item-disabled-color);
+      outline: none;
+    }
+
+    > .submenu-caret,
+    > .menu-item-check {
+      background-color: var(--menu-item-hover-color);
+    }
+  }
+
+  &.disabled {
+    color: var(--menu-item-disabled-color);
+
+    > .submenu-caret,
+    > .menu-item-check {
+      background-color: var(--menu-item-disabled-color);
+    }
+  }
+
+  > .menu-item-check {
+    box-sizing: border-box;
+    position: absolute;
+    padding: 2px 0;
+    height: 12px;
+    width: 12px;
+    left: 4px;
+    top: 4px;
+    background-color: var(--menu-item-color);
+    -webkit-mask: url('../../media/ic_check.svg') no-repeat;
+    -webkit-mask-size: 12px;
+  }
+}
+
+.menu-item-subtext {
+  margin-left: auto;
+  padding-left: 52px;
+}
+
+.menu-separator {
+  margin: 0 8px 4px 8px;
+  padding-top: 4px;
+  border-bottom: 1px solid var(--menu-separator-color);
+  opacity: 0.2;
+}
+
+.submenu-caret {
+  box-sizing: border-box;
+  position: absolute;
+  padding: 2px 0;
+  height: 10px;
+  width: 10px;
+  top: 6px;
+  right: 4px;
+  background-color: var(--menu-item-color);
+  -webkit-mask: url('../../media/ic_chevron_up.svg') no-repeat;
+  -webkit-mask-size: 10px;
+  transform: rotate(90deg);
+}

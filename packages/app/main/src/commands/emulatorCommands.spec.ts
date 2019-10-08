@@ -41,6 +41,7 @@ import {
   CommandRegistry,
   CommandServiceImpl,
   CommandServiceInstance,
+  ConversationService,
 } from '@bfemulator/sdk-shared';
 import { BotConfiguration } from 'botframework-config';
 import { newBot, newEndpoint, SharedConstants, ValueTypesMask } from '@bfemulator/app-shared';
@@ -66,6 +67,14 @@ let mockStore;
 (store as any).getStore = function() {
   return mockStore || (mockStore = createStore(combineReducers({ bot })));
 };
+
+jest.mock('../state/helpers/chatHelpers', () => ({
+  getCurrentConversationId: () => 'convo1',
+}));
+
+jest.mock('../utils/getLocalhostServiceUrl', () => ({
+  getLocalhostServiceUrl: () => 'localhost:1234',
+}));
 
 jest.mock('electron', () => ({
   app: { getAppPath: () => '' },
@@ -165,6 +174,9 @@ const mockEmulator = {
         getServiceUrl: () => 'http://localhost:6728',
       },
     },
+  },
+  ngrok: {
+    getServiceUrl: () => 'http://localhost:5678',
   },
 };
 jest.mock('../emulator', () => ({
@@ -435,6 +447,7 @@ describe('The emulatorCommands', () => {
   const trackEventBackup = TelemetryService.trackEvent;
   let registry: CommandRegistry;
   let commandService: CommandServiceImpl;
+
   beforeAll(() => {
     TelemetryService.trackEvent = trackEventBackup;
     new EmulatorCommands();
@@ -443,6 +456,7 @@ describe('The emulatorCommands', () => {
     commandService = descriptor.descriptor.get();
     registry = commandService.registry;
   });
+
   beforeEach(() => {
     mockUsers = { users: {} };
     mockTrackEvent = jest.fn(() => Promise.resolve());
@@ -648,5 +662,59 @@ describe('The emulatorCommands', () => {
       message: signedInMessage,
       type: 'question',
     });
+  });
+
+  it('should send an activity for adding a user', async () => {
+    const addUserSpy = jest.spyOn(ConversationService, 'addUser').mockImplementationOnce(() => null);
+    await registry.getCommand(SharedConstants.Commands.Emulator.SendConversationUpdateUserAdded)();
+
+    expect(addUserSpy).toHaveBeenCalledWith('localhost:1234', 'convo1');
+    expect(mockTrackEvent).toHaveBeenCalledWith('sendActivity_addUser');
+  });
+
+  it('should send an activity for adding a bot contact', async () => {
+    const addBotContactSpy = jest.spyOn(ConversationService, 'botContactAdded').mockImplementationOnce(() => null);
+    await registry.getCommand(SharedConstants.Commands.Emulator.SendBotContactAdded)();
+
+    expect(addBotContactSpy).toHaveBeenCalledWith('localhost:1234', 'convo1');
+    expect(mockTrackEvent).toHaveBeenCalledWith('sendActivity_botContactAdded');
+  });
+
+  it('should send an activity for removing a bot contact', async () => {
+    const removeBotContactSpy = jest.spyOn(ConversationService, 'botContactRemoved').mockImplementationOnce(() => null);
+    await registry.getCommand(SharedConstants.Commands.Emulator.SendBotContactRemoved)();
+
+    expect(removeBotContactSpy).toHaveBeenCalledWith('localhost:1234', 'convo1');
+    expect(mockTrackEvent).toHaveBeenCalledWith('sendActivity_botContactRemoved');
+  });
+
+  it('should send a typing activity', async () => {
+    const typingSpy = jest.spyOn(ConversationService, 'typing').mockImplementationOnce(() => null);
+    await registry.getCommand(SharedConstants.Commands.Emulator.SendTyping)();
+
+    expect(typingSpy).toHaveBeenCalledWith('localhost:1234', 'convo1');
+    expect(mockTrackEvent).toHaveBeenCalledWith('sendActivity_typing');
+  });
+
+  it('should send a ping activity', async () => {
+    const pingSpy = jest.spyOn(ConversationService, 'ping').mockImplementationOnce(() => null);
+    await registry.getCommand(SharedConstants.Commands.Emulator.SendPing)();
+
+    expect(pingSpy).toHaveBeenCalledWith('localhost:1234', 'convo1');
+    expect(mockTrackEvent).toHaveBeenCalledWith('sendActivity_ping');
+  });
+
+  it('should send an activity for deleting user data', async () => {
+    const deleteUserDataSpy = jest.spyOn(ConversationService, 'deleteUserData').mockImplementationOnce(() => null);
+    await registry.getCommand(SharedConstants.Commands.Emulator.SendDeleteUserData)();
+
+    expect(deleteUserDataSpy).toHaveBeenCalledWith('localhost:1234', 'convo1');
+    expect(mockTrackEvent).toHaveBeenCalledWith('sendActivity_deleteUserData');
+  });
+
+  it('should get the current ngrok service url', async () => {
+    const url = await registry.getCommand(SharedConstants.Commands.Emulator.GetServiceUrl)();
+
+    expect(url).toBe('http://localhost:5678');
   });
 });

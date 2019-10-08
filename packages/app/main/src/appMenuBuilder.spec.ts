@@ -322,7 +322,16 @@ describe('AppMenuBuilder', () => {
     expect(mockFileMenuAppend).toHaveBeenCalledWith(mockFileItems[2]);
   });
 
-  it('should initialize the app menu for Win / Linux', async () => {
+  it('should initialize the app menu for Windows', async () => {
+    Object.defineProperty(process, 'platform', { value: 'win32' });
+
+    const result = await AppMenuBuilder.initAppMenu();
+
+    expect(result).toBe(undefined);
+    expect(mockSetApplicationMenu).toHaveBeenCalledWith(null);
+  });
+
+  it('should initialize the app menu for Linux', async () => {
     let appMenuTemplate;
     mockBuildFromTemplate = jest.fn(template => {
       // when trying to build from the template, pull the template out
@@ -360,7 +369,7 @@ describe('AppMenuBuilder', () => {
       }
     });
     jest.spyOn(commandService, 'remoteCall').mockImplementation(mockRemoteCall);
-    Object.defineProperty(process, 'platform', { value: 'win32' });
+    Object.defineProperty(process, 'platform', { value: 'linux' });
     await AppMenuBuilder.initAppMenu();
 
     // verify that each section of the menu is the expected length
@@ -393,7 +402,7 @@ describe('AppMenuBuilder', () => {
     const convoMenuTemplate = appMenuTemplate[4].submenu;
     expect(convoMenuTemplate).toHaveLength(1);
     const sendActivityMenu = convoMenuTemplate[0].submenu;
-    expect(sendActivityMenu).toHaveLength(7);
+    expect(sendActivityMenu).toHaveLength(6);
 
     const helpMenuTemplate = appMenuTemplate[5].submenu;
     expect(helpMenuTemplate).toHaveLength(14);

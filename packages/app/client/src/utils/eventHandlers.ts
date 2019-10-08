@@ -33,6 +33,10 @@
 
 import { Notification, NotificationType, SharedConstants } from '@bfemulator/app-shared';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
+import { remote } from 'electron';
+
+const maxZoomFactor = 3; // 300%
+const minZoomFactor = 0.25; // 25%;
 
 class EventHandlers {
   @CommandServiceInstance()
@@ -41,21 +45,92 @@ class EventHandlers {
   public static async globalHandles(event: KeyboardEvent): Promise<any> {
     // Meta corresponds to 'Command' on Mac
     const ctrlOrCmdPressed = event.ctrlKey || event.metaKey;
+    const shiftPressed = event.shiftKey;
     const key = event.key.toLowerCase();
     const {
       Commands: {
+        Electron: { ToggleDevTools },
         UI: { ShowBotCreationDialog, ShowOpenBotDialog },
         Notifications: { Add },
       },
     } = SharedConstants;
 
     let awaitable: Promise<any>;
+    // Ctrl+O
     if (ctrlOrCmdPressed && key === 'o') {
       awaitable = EventHandlers.commandService.call(ShowOpenBotDialog);
     }
 
+    // Ctrl+N
     if (ctrlOrCmdPressed && key === 'n') {
       awaitable = EventHandlers.commandService.call(ShowBotCreationDialog);
+    }
+
+    // Ctrl+Z
+    if (ctrlOrCmdPressed && key === 'z') {
+      remote.getCurrentWebContents().undo();
+    }
+
+    // Ctrl+Y
+    if (ctrlOrCmdPressed && key === 'y') {
+      remote.getCurrentWebContents().redo();
+    }
+
+    // Ctrl+X
+    if (ctrlOrCmdPressed && key === 'x') {
+      remote.getCurrentWebContents().cut();
+    }
+
+    // Ctrl+C
+    if (ctrlOrCmdPressed && key === 'c') {
+      remote.getCurrentWebContents().copy();
+    }
+
+    // Ctrl+V
+    if (ctrlOrCmdPressed && key === 'v') {
+      remote.getCurrentWebContents().paste();
+    }
+
+    // Ctrl+0
+    if (ctrlOrCmdPressed && key === '0') {
+      remote.getCurrentWebContents().setZoomLevel(0);
+    }
+
+    // Ctrl+= or Ctrl+Shift+=
+    if (ctrlOrCmdPressed && (key === '=' || key === '+')) {
+      const webContents = remote.getCurrentWebContents();
+      webContents.getZoomFactor(zoomFactor => {
+        const newZoomFactor = zoomFactor + 0.1;
+        if (newZoomFactor >= maxZoomFactor) {
+          webContents.setZoomFactor(maxZoomFactor);
+        } else {
+          webContents.setZoomFactor(newZoomFactor);
+        }
+      });
+    }
+
+    // Ctrl+- or Ctrl+Shift+-
+    if (ctrlOrCmdPressed && (key === '-' || key === '_')) {
+      const webContents = remote.getCurrentWebContents();
+      webContents.getZoomFactor(zoomFactor => {
+        const newZoomFactor = zoomFactor - 0.1;
+        if (newZoomFactor <= minZoomFactor) {
+          webContents.setZoomFactor(minZoomFactor);
+        } else {
+          webContents.setZoomFactor(newZoomFactor);
+        }
+      });
+    }
+
+    // F11
+    if (key === 'f11') {
+      const currentWindow = remote.getCurrentWindow();
+      currentWindow.setFullScreen(!currentWindow.isFullScreen());
+    }
+
+    // Ctrl+Shift+I
+    if (ctrlOrCmdPressed && shiftPressed && key === 'i') {
+      awaitable = EventHandlers.commandService.remoteCall(ToggleDevTools);
     }
 
     if (awaitable) {
