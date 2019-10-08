@@ -88,7 +88,7 @@ jest.mock('electron', () => {
 
 jest.mock('botframework-webchat', () => {
   return {
-    createCognitiveServicesBingSpeechPonyfillFactory: () => () => 'Yay! ponyfill!',
+    createCognitiveServicesSpeechServicesPonyfillFactory: () => () => 'Yay! ponyfill!',
   };
 });
 

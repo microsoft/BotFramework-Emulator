@@ -46,12 +46,9 @@ import * as React from 'react';
 import { ChangeEvent, Component, MouseEvent, ReactNode } from 'react';
 import { EmulatorMode } from '@bfemulator/sdk-shared';
 
-import { debounce } from '../../../utils';
-
 import * as openBotStyles from './openBotDialog.scss';
 
 export interface OpenBotDialogProps {
-  createAriaAlert?: (msg: string) => void;
   mode?: EmulatorMode;
   isDebug?: boolean;
   onAnchorClick?: (url: string) => void;
@@ -136,7 +133,6 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
     const { botUrl, appId, appPassword, mode, isDebug, isAzureGov } = this.state;
     const validationResult = OpenBotDialog.validateEndpoint(botUrl);
     const errorMessage = OpenBotDialog.getErrorMessage(validationResult);
-    errorMessage && this.announceErrorMessage(errorMessage);
     const shouldBeDisabled =
       validationResult === ValidationResult.Invalid || validationResult === ValidationResult.Empty;
     const botUrlLabel = 'Bot URL';
@@ -258,10 +254,4 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
     }
     return null;
   }
-
-  /** Announces the error message to screen reader technologies */
-  private announceErrorMessage = debounce((msg: string): void => {
-    // ensure that we aren't spamming aria alerts each time the input is validated
-    this.props.createAriaAlert(`For Bot URL, ${msg}`);
-  }, 2000);
 }

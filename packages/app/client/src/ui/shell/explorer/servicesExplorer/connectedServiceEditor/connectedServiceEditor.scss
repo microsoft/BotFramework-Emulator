@@ -74,7 +74,7 @@ ul.kv-pair-container {
   border: none;
 }
 
-.dialog-link {
+.link {
   color: var(--dialog-link-color);
   text-decoration: none;
   line-height: 20px;
@@ -83,4 +83,8 @@ ul.kv-pair-container {
 .alert {
   position: absolute;
   top: -9999px;
+}
+
+.kv-spacing {
+  margin-right: 15px;
 }

@@ -167,6 +167,8 @@ describe('The AppSettingsEditorContainer', () => {
 
   it('should save the framework settings then get them again from main when the "onSaveClick" handler is called', async () => {
     const alertServiceSpy = jest.spyOn(ariaAlertService, 'alert').mockReturnValueOnce(undefined);
+    const mockPathToNgrokInputRef = { focus: jest.fn() };
+    (instance as any).pathToNgrokInputRef = mockPathToNgrokInputRef;
 
     await (instance as any).onSaveClick();
 
@@ -180,6 +182,7 @@ describe('The AppSettingsEditorContainer', () => {
 
     expect(mockDispatch).toHaveBeenLastCalledWith(saveFrameworkSettings(savedSettings));
     expect(alertServiceSpy).toHaveBeenCalledWith('App settings saved.');
+    expect(mockPathToNgrokInputRef.focus).toHaveBeenCalled();
   });
 
   it('should call the appropriate command when onAnchorClick is called', () => {

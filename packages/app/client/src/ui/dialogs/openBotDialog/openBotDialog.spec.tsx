@@ -249,16 +249,6 @@ describe('The OpenBotDialog', () => {
     expect(instance.state.botUrl).toBe('http://localhost:3978');
   });
 
-  it('should announce any validation error messages', () => {
-    // make sure there are no leftover alerts from previous test(s)
-    const preExistingAlerts = document.querySelectorAll('body > span#alert-from-service');
-    preExistingAlerts.forEach(alert => alert.remove());
-    const spy = jest.spyOn(ariaAlertService, 'alert').mockReturnValueOnce(undefined);
-    instance.announceErrorMessage('Invalid bot url.');
-
-    expect(spy).toHaveBeenCalledWith('For Bot URL, Invalid bot url.');
-  });
-
   it('should call the appropriate command when onAnchorClick is called', () => {
     instance.props.onAnchorClick('http://blah');
     expect(mockDispatch).toHaveBeenCalledWith(

@@ -36,7 +36,7 @@ import { Activity } from 'botframework-schema';
 import { SharedConstants, ValueTypes, newNotification } from '@bfemulator/app-shared';
 import { CommandServiceImpl, CommandServiceInstance, ConversationService } from '@bfemulator/sdk-shared';
 import { IEndpointService } from 'botframework-config/lib/schema';
-import { createCognitiveServicesBingSpeechPonyfillFactory } from 'botframework-webchat';
+import { createCognitiveServicesSpeechServicesPonyfillFactory } from 'botframework-webchat';
 import { createStore as createWebChatStore } from 'botframework-webchat-core';
 import { call, ForkEffect, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
 
@@ -157,23 +157,24 @@ export class ChatSagas {
     // If an existing factory is found, refresh the token
     const existingFactory: string = yield select(getWebSpeechFactoryForDocumentId, documentId);
     const { GetSpeechToken: command } = SharedConstants.Commands.Emulator;
-    let token;
+
     try {
-      token = yield call(
-        [ChatSagas.commandService, ChatSagas.commandService.remoteCall],
+      const speechAuthenticationToken: Promise<string> = ChatSagas.commandService.remoteCall(
         command,
         endpoint.id,
         !!existingFactory
       );
+
+      const factory = yield call(createCognitiveServicesSpeechServicesPonyfillFactory, {
+        authorizationToken: speechAuthenticationToken,
+        region: 'westus', // Currently, the prod speech service is only deployed to westus
+      });
+
+      yield put(webSpeechFactoryUpdated(documentId, factory)); // Provide the new factory to the store
     } catch (e) {
       // No-op - this appId/pass combo is not provisioned to use the speech api
     }
-    if (token) {
-      const factory = yield call(createCognitiveServicesBingSpeechPonyfillFactory, {
-        authorizationToken: token,
-      });
-      yield put(webSpeechFactoryUpdated(documentId, factory)); // Provide the new factory to the store
-    }
+
     yield put(updatePendingSpeechTokenRetrieval(false));
     if (resolver) {
       resolver();

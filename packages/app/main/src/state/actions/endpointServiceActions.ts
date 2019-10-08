@@ -46,6 +46,7 @@ export interface EndpointServiceAction<T> extends Action {
 export interface EndpointServicePayload {
   endpointService: IEndpointService;
   focusExistingChatIfAvailable?: boolean;
+  resolver?: Function;
 }
 
 export interface EndpointEditorPayload extends EndpointServicePayload {
@@ -54,11 +55,12 @@ export interface EndpointEditorPayload extends EndpointServicePayload {
 
 export function launchEndpointEditor(
   endpointEditorComponent: ComponentClass<any>,
-  endpointService?: IEndpointService
+  endpointService?: IEndpointService,
+  resolver?: Function
 ): EndpointServiceAction<EndpointEditorPayload> {
   return {
     type: LAUNCH_ENDPOINT_EDITOR,
-    payload: { endpointEditorComponent, endpointService },
+    payload: { endpointEditorComponent, endpointService, resolver },
   };
 }
 

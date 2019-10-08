@@ -35,18 +35,24 @@ import * as React from 'react';
 import * as styles from './button.scss';
 
 export interface PrimaryButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  buttonRef?: (ref: HTMLButtonElement) => void;
   text?: string;
 }
 
 export class PrimaryButton extends React.Component<PrimaryButtonProps, {}> {
   public render(): React.ReactNode {
-    const { className: propsClassName = '', text, ...buttonProps } = this.props;
+    const { className: propsClassName = '', text, buttonRef, ...buttonProps } = this.props;
     const className = `${propsClassName} ${styles.button} ${styles.primaryButton}`;
     return (
-      <button {...buttonProps} className={className}>
+      <button {...buttonProps} className={className} ref={this.setButtonRef}>
         {text}
         {this.props.children}
       </button>
     );
   }
+
+  private setButtonRef = (ref: HTMLButtonElement): void => {
+    const { buttonRef } = this.props;
+    buttonRef && buttonRef(ref);
+  };
 }

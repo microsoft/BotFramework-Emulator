@@ -327,6 +327,9 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
     this.setState({ dirty: false });
     this.props.saveFrameworkSettings(newState);
     this.props.createAriaAlert('App settings saved.');
+    if (this.pathToNgrokInputRef) {
+      this.pathToNgrokInputRef.focus();
+    }
   };
 
   private updateDirtyFlag(change: { [prop: string]: any }) {
