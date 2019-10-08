@@ -55,6 +55,10 @@ export interface WelcomePageProps {
 }
 
 export class WelcomePage extends React.Component<WelcomePageProps, {}> {
+  private newBotButtonRef: HTMLButtonElement;
+  private openBotButtonRef: HTMLButtonElement;
+  private signIntoAzureButtonRef: HTMLButtonElement;
+
   constructor(props: WelcomePageProps) {
     super(props);
   }
@@ -107,24 +111,29 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
             className={styles.openBot}
             text="Open Bot"
             onClick={this.onOpenBotClick}
+            buttonRef={this.setOpenBotButtonRef}
           />
         </Row>
         <span>
           If you don’t have a bot configuration,&nbsp;
-          <LinkButton onClick={this.props.onNewBotClick}>create a new bot configuration.</LinkButton>
+          <LinkButton buttonRef={this.setNewBotButtonRef} onClick={this.onNewBotClick}>
+            create a new bot configuration.
+          </LinkButton>
         </span>
       </div>
     );
   }
 
   private get signInSection(): JSX.Element {
-    const { accessToken, signInWithAzure, signOutWithAzure } = this.props;
+    const { accessToken, signOutWithAzure } = this.props;
     return (
       <div>
         {accessToken && !accessToken.startsWith('invalid') ? (
           <LinkButton onClick={signOutWithAzure}>Sign out</LinkButton>
         ) : (
-          <LinkButton onClick={signInWithAzure}>Sign in with your Azure account.</LinkButton>
+          <LinkButton buttonRef={this.setSignInToAzureButtonRef} onClick={this.signInToAzure}>
+            Sign in with your Azure account.
+          </LinkButton>
         )}
       </div>
     );
@@ -136,8 +145,34 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
     this.props.switchToBot(bot.path);
   };
 
-  private onOpenBotClick = () => {
-    this.props.showOpenBotDialog();
+  private onOpenBotClick = async () => {
+    await this.props.showOpenBotDialog();
+
+    this.openBotButtonRef && this.openBotButtonRef.focus();
+  };
+
+  private onNewBotClick = async () => {
+    await this.props.onNewBotClick();
+
+    this.newBotButtonRef && this.newBotButtonRef.focus();
+  };
+
+  private signInToAzure = async () => {
+    await this.props.signInWithAzure();
+
+    this.signIntoAzureButtonRef && this.signIntoAzureButtonRef.focus();
+  };
+
+  private setNewBotButtonRef = (ref: HTMLButtonElement): void => {
+    this.newBotButtonRef = ref;
+  };
+
+  private setOpenBotButtonRef = (ref: HTMLButtonElement): void => {
+    this.openBotButtonRef = ref;
+  };
+
+  private setSignInToAzureButtonRef = (ref: HTMLButtonElement): void => {
+    this.signIntoAzureButtonRef = ref;
   };
 
   private onWorkingLocallyLinkClick = this.createAnchorClickHandler(

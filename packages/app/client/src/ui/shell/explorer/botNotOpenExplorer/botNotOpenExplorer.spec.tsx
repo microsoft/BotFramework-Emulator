@@ -35,25 +35,23 @@ import { newNotification, SharedConstants } from '@bfemulator/app-shared';
 import { mount } from 'enzyme';
 import * as React from 'react';
 import { Provider } from 'react-redux';
-import { combineReducers, createStore } from 'redux';
+import { applyMiddleware, combineReducers, createStore } from 'redux';
+import sagaMiddlewareFactory from 'redux-saga';
 
+import { ActiveBotHelper } from '../../../helpers/activeBotHelper';
 import { beginAdd } from '../../../../state/actions/notificationActions';
 import { bot } from '../../../../state/reducers/bot';
 import { chat } from '../../../../state/reducers/chat';
-import { ActiveBotHelper } from '../../../helpers/activeBotHelper';
-import { executeCommand } from '../../../../state/actions/commandActions';
+import { commandSagas } from '../../../../state/sagas/commandSagas';
+import {
+  executeCommand,
+  EXECUTE_COMMAND,
+  CommandAction,
+  CommandActionPayload,
+} from '../../../../state/actions/commandActions';
 
 import { BotNotOpenExplorer } from './botNotOpenExplorer';
 import { BotNotOpenExplorerContainer } from './botNotOpenExplorerContainer';
-
-const mockStore = createStore(combineReducers({ bot, chat }), {});
-
-jest.mock('../../../dialogs', () => ({
-  DialogService: {
-    showDialog: () => Promise.resolve(true),
-    hideDialog: () => Promise.resolve(false),
-  },
-}));
 
 jest.mock('electron', () => ({
   ipcMain: new Proxy(
@@ -80,6 +78,10 @@ jest.mock('electron', () => ({
   ),
 }));
 
+const sagaMiddleware = sagaMiddlewareFactory();
+const mockStore = createStore(combineReducers({ bot, chat }), {}, applyMiddleware(sagaMiddleware));
+sagaMiddleware.run(commandSagas);
+
 jest.mock('../../../../state/store', () => ({
   get store() {
     return mockStore;
@@ -93,7 +95,19 @@ describe('The EndpointExplorer component should', () => {
   let instance;
 
   beforeEach(() => {
-    mockDispatch = jest.spyOn(mockStore, 'dispatch');
+    mockDispatch = jest
+      .spyOn(mockStore, 'dispatch')
+      .mockImplementation((action: CommandAction<CommandActionPayload>) => {
+        if (
+          action.type === EXECUTE_COMMAND &&
+          action.payload.commandName === SharedConstants.Commands.UI.ShowBotCreationDialog
+        ) {
+          action.payload.resolver();
+        }
+
+        return action;
+      });
+
     parent = mount(
       <Provider store={mockStore}>
         <BotNotOpenExplorerContainer />
@@ -104,10 +118,18 @@ describe('The EndpointExplorer component should', () => {
   });
 
   it('should make the appropriate calls when onCreateNewBotClick in called', async () => {
+    const mockCreateNewBotButton = {
+      focus: jest.fn(() => {
+        return null;
+      }),
+    };
+    instance.createNewBotButtonRef = mockCreateNewBotButton;
+
     await instance.onCreateNewBotClick();
-    expect(mockDispatch).toHaveBeenLastCalledWith(
-      executeCommand(false, SharedConstants.Commands.UI.ShowBotCreationDialog)
+    expect(mockDispatch).toHaveBeenCalledWith(
+      executeCommand(false, SharedConstants.Commands.UI.ShowBotCreationDialog, jasmine.any(Function))
     );
+    expect(mockCreateNewBotButton.focus).toHaveBeenCalledTimes(1);
   });
 
   it('should make the appropriate calls when onOpenBotFileClick in called', async () => {

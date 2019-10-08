@@ -58,6 +58,7 @@ import {
   OPEN_CONNECTED_SERVICE_SORT_CONTEXT_MENU,
   OPEN_CONTEXT_MENU_FOR_CONNECTED_SERVICE,
   OPEN_SERVICE_DEEP_LINK,
+  OpenAddServiceContextMenuPayload,
 } from '../actions/connectedServiceActions';
 import { sortExplorerContents } from '../actions/explorerActions';
 import { SortCriteria } from '../reducers/explorer';
@@ -77,7 +78,7 @@ const getSortSelection = (state: RootState): { [paneldId: string]: SortCriteria 
 
 export class ServicesExplorerSagas {
   @CommandServiceInstance()
-  private static commandService: CommandServiceImpl;
+  protected static commandService: CommandServiceImpl;
 
   public static *launchConnectedServicePicker(
     action: ConnectedServiceAction<ConnectedServicePickerPayload>
@@ -301,8 +302,9 @@ export class ServicesExplorerSagas {
   }
 
   public static *openAddConnectedServiceContextMenu(
-    action: ConnectedServiceAction<ConnectedServicePickerPayload>
+    action: ConnectedServiceAction<OpenAddServiceContextMenuPayload>
   ): IterableIterator<any> {
+    const { resolver } = action.payload;
     const menuItems = [
       { label: 'Add Language Understanding (LUIS)', id: ServiceTypes.Luis },
       { label: 'Add QnA Maker', id: ServiceTypes.QnA },
@@ -319,6 +321,7 @@ export class ServicesExplorerSagas {
       SharedConstants.Commands.Electron.DisplayContextMenu,
       menuItems
     );
+
     const { id: serviceType } = response;
     action.payload.serviceType = serviceType;
     if (serviceType === ServiceTypes.Generic || serviceType === ServiceTypes.AppInsights) {
@@ -326,6 +329,8 @@ export class ServicesExplorerSagas {
     } else {
       yield* ServicesExplorerSagas.launchConnectedServicePicker(action);
     }
+
+    resolver && resolver();
   }
 
   public static *openSortContextMenu(action: ConnectedServiceAction<ConnectedServicePayload>): IterableIterator<any> {

@@ -34,25 +34,28 @@ import { SharedConstants } from '@bfemulator/app-shared';
 import { mount } from 'enzyme';
 import * as React from 'react';
 import { Provider } from 'react-redux';
-import { combineReducers, createStore } from 'redux';
+import { combineReducers, createStore, applyMiddleware } from 'redux';
+import sagaMiddlewareFactory from 'redux-saga';
 
 import { azureArmTokenDataChanged } from '../../../state/actions/azureAuthActions';
 import * as BotActions from '../../../state/actions/botActions';
 import { azureAuth } from '../../../state/reducers/azureAuth';
 import { clientAwareSettings } from '../../../state/reducers/clientAwareSettings';
 import { bot } from '../../../state/reducers/bot';
-import { executeCommand } from '../../../state/actions/commandActions';
+import { commandSagas } from '../../../state/sagas/commandSagas';
+import {
+  executeCommand,
+  EXECUTE_COMMAND,
+  CommandAction,
+  CommandActionPayload,
+} from '../../../state/actions/commandActions';
 
 import { WelcomePage } from './welcomePage';
 import { WelcomePageContainer } from './welcomePageContainer';
+import { HowToBuildABotContainer } from './howToBuildABotContainer';
+import { HowToBuildABot } from './howToBuildABot';
 
-const mockStore = createStore(combineReducers({ azureAuth, bot, clientAwareSettings }));
 jest.mock('../../dialogs', () => ({}));
-jest.mock('../../../state/store', () => ({
-  get store() {
-    return mockStore;
-  },
-}));
 
 jest.mock('electron', () => ({
   ipcMain: new Proxy(
@@ -79,6 +82,14 @@ jest.mock('electron', () => ({
   ),
 }));
 
+const sagaMiddleware = sagaMiddlewareFactory();
+const mockStore = createStore(
+  combineReducers({ azureAuth, bot, clientAwareSettings }),
+  {},
+  applyMiddleware(sagaMiddleware)
+);
+sagaMiddleware.run(commandSagas);
+
 const mockArmToken = 'bm90aGluZw==.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds';
 const bots = [
   {
@@ -94,7 +105,7 @@ const bots = [
     chatsPath: '/Users/microsoft/Documents/testbot/dialogs',
   },
 ];
-describe('The AzureLoginFailedDialogContainer component should', () => {
+describe('The WelcomePageContainer component should', () => {
   let parent;
   let node;
   let instance: any;
@@ -102,7 +113,20 @@ describe('The AzureLoginFailedDialogContainer component should', () => {
   beforeEach(() => {
     mockStore.dispatch(azureArmTokenDataChanged(mockArmToken));
     mockStore.dispatch(BotActions.load(bots));
-    mockDispatch = jest.spyOn(mockStore, 'dispatch');
+
+    mockDispatch = jest
+      .spyOn(mockStore, 'dispatch')
+      .mockImplementation((action: CommandAction<CommandActionPayload>) => {
+        if (
+          action.type === EXECUTE_COMMAND &&
+          action.payload.commandName === SharedConstants.Commands.UI.ShowOpenBotDialog
+        ) {
+          action.payload.resolver();
+        }
+
+        return action;
+      });
+
     parent = mount(
       <Provider store={mockStore}>
         <WelcomePageContainer />
@@ -125,8 +149,19 @@ describe('The AzureLoginFailedDialogContainer component should', () => {
   });
 
   it('should call the appropriate command when onOpenBotClick is called', async () => {
+    const mockOnOpenBot = {
+      focus: jest.fn(() => {
+        return null;
+      }),
+    };
+
+    instance.openBotButtonRef = mockOnOpenBot;
+
     await instance.onOpenBotClick();
-    expect(mockDispatch).toHaveBeenCalledWith(executeCommand(false, SharedConstants.Commands.UI.ShowOpenBotDialog));
+    expect(mockDispatch).toHaveBeenCalledWith(
+      executeCommand(false, SharedConstants.Commands.UI.ShowOpenBotDialog, jasmine.any(Function))
+    );
+    expect(mockOnOpenBot.focus).toHaveBeenCalledTimes(1);
   });
 
   it('should call the appropriate command when openBotInspectorDocs is called', async () => {
@@ -135,6 +170,56 @@ describe('The AzureLoginFailedDialogContainer component should', () => {
     expect(mockDispatch).toHaveBeenCalledWith(
       executeCommand(false, Commands.UI.ShowMarkdownPage, null, Channels.ReadmeUrl, Channels.HelpLabel)
     );
+  });
+
+  it('should call the appropriate command when onAnchorClick is called', () => {
+    instance.props.onAnchorClick('http://blah');
+    expect(mockDispatch).toHaveBeenCalledWith(
+      executeCommand(true, SharedConstants.Commands.Electron.OpenExternal, null, 'http://blah')
+    );
+  });
+
+  it('should set a button ref', () => {
+    const mockButtonRef: any = {};
+    instance.setOpenBotButtonRef(mockButtonRef);
+    instance.setNewBotButtonRef(mockButtonRef);
+    instance.setSignInToAzureButtonRef(mockButtonRef);
+
+    expect(instance.newBotButtonRef).toBe(mockButtonRef);
+    expect(instance.openBotButtonRef).toBe(mockButtonRef);
+    expect(instance.signIntoAzureButtonRef).toBe(mockButtonRef);
+  });
+});
+
+describe('The HowToBuildABotContainer', () => {
+  let parent;
+  let node;
+  let instance: any;
+  let mockDispatch;
+  beforeEach(() => {
+    mockStore.dispatch(azureArmTokenDataChanged(mockArmToken));
+    mockStore.dispatch(BotActions.load(bots));
+
+    mockDispatch = jest
+      .spyOn(mockStore, 'dispatch')
+      .mockImplementation((action: CommandAction<CommandActionPayload>) => {
+        if (
+          action.type === EXECUTE_COMMAND &&
+          action.payload.commandName === SharedConstants.Commands.UI.ShowOpenBotDialog
+        ) {
+          action.payload.resolver();
+        }
+
+        return action;
+      });
+
+    parent = mount(
+      <Provider store={mockStore}>
+        <HowToBuildABotContainer />
+      </Provider>
+    );
+    node = parent.find(HowToBuildABot);
+    instance = node.instance() as HowToBuildABot;
   });
 
   it('should call the appropriate command when onAnchorClick is called', () => {

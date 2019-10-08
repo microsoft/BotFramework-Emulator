@@ -74,8 +74,8 @@ const mapDispatchToProps = (dispatch): Partial<ServicesExplorerProps> => {
     onAnchorClick: (url: string) => {
       dispatch(executeCommand(true, SharedConstants.Commands.Electron.OpenExternal, null, url));
     },
-    openAddServiceContextMenu: (payload: ConnectedServicePickerPayload) => dispatch(openAddServiceContextMenu(payload)),
-
+    openAddServiceContextMenu: (payload: ConnectedServicePickerPayload) =>
+      new Promise(resolve => dispatch(openAddServiceContextMenu(payload, resolve))),
     openServiceDeepLink: (connectedService: IConnectedService) => dispatch(openServiceDeepLink(connectedService)),
 
     openContextMenuForService: (

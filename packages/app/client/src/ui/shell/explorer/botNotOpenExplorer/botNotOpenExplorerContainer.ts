@@ -54,7 +54,10 @@ const mapDispatchToProps = (dispatch: (action: Action) => void): BotNotOpenExplo
       dispatch(beginAdd(newNotification(`An Error occurred on the Bot Not Open Explorer: ${e}`)));
     }
   },
-  showCreateNewBotDialog: () => dispatch(executeCommand(false, SharedConstants.Commands.UI.ShowBotCreationDialog)),
+  showCreateNewBotDialog: () =>
+    new Promise(resolve => {
+      dispatch(executeCommand(false, SharedConstants.Commands.UI.ShowBotCreationDialog, resolve));
+    }),
 });
 
 export const BotNotOpenExplorerContainer = connect(

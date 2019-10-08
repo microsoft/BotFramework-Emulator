@@ -30,17 +30,67 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { connect } from 'react-redux';
+import { mount } from 'enzyme';
+import * as React from 'react';
+import { Provider } from 'react-redux';
+import { combineReducers, createStore } from 'redux';
 
-import { RootState } from '../../../../state/store';
-import { BotSettingsEditorContainer } from '../../../dialogs';
-import { DialogService } from '../../../dialogs/service';
+import { bot } from '../../../../state/reducers/bot';
+import { chat } from '../../../../state/reducers/chat';
 
 import BotExplorerBar from './botExplorerBar';
+import { BotExplorerBarContainer } from './botExplorerBarContainer';
 
-const mapStateToProps = (state: RootState) => {
-  return {
-    openBotSettings: () => DialogService.showDialog(BotSettingsEditorContainer, { bot: state.bot.activeBot }).catch(),
-  };
-};
-export const BotExplorerBarContainer = connect(mapStateToProps)(BotExplorerBar);
+jest.mock('../../../dialogs', () => ({}));
+
+jest.mock('electron', () => ({
+  ipcMain: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+  ipcRenderer: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+}));
+
+const mockStore = createStore(combineReducers({ bot, chat }));
+
+describe('The BotExplorerBotContainer component', () => {
+  let parent;
+  let node;
+  beforeEach(() => {
+    parent = mount(
+      <Provider store={mockStore}>
+        <BotExplorerBarContainer />
+      </Provider>
+    );
+    node = parent.find(BotExplorerBar);
+  });
+
+  it('should render deeply', () => {
+    expect(parent.find(BotExplorerBarContainer)).not.toBe(null);
+    expect(parent.find(BotExplorerBar)).not.toBe(null);
+  });
+
+  it('should set a button ref', () => {
+    const mockButtonRef: any = {};
+    node.instance().setOpenBotSettingsRef(mockButtonRef);
+
+    expect(node.instance().openBotSettingsButtonRef).toBe(mockButtonRef);
+  });
+});

@@ -39,6 +39,7 @@ import {
   ICosmosDBService,
 } from 'botframework-config/lib/schema';
 import * as React from 'react';
+import { ComponentClass } from 'react';
 import { MouseEventHandler, SyntheticEvent } from 'react';
 import { LinkButton } from '@bfemulator/ui-react';
 
@@ -72,8 +73,9 @@ const iconMap = {
 export interface ServicesExplorerProps extends ServicePaneProps {
   services?: IConnectedService[];
   toAnimate?: { [serviceId: string]: boolean };
+  launchEndpointEditor: (serverEditor: ComponentClass<any>) => Promise<void>;
   onAnchorClick: (url: string) => void;
-  openAddServiceContextMenu: (payload: ConnectedServicePickerPayload) => void;
+  openAddServiceContextMenu: (payload: ConnectedServicePickerPayload) => Promise<void>;
   openSortContextMenu: () => void;
   openServiceDeepLink: (service: IConnectedService) => void;
 }
@@ -217,8 +219,8 @@ export class ServicesExplorer extends ServicePane<ServicesExplorerProps> {
     this.props.openSortContextMenu();
   };
 
-  protected onAddIconClick = (_event: SyntheticEvent<HTMLButtonElement>): void => {
-    this.props.openAddServiceContextMenu({
+  protected onAddIconClick = async (_event: SyntheticEvent<HTMLButtonElement>): Promise<void> => {
+    await this.props.openAddServiceContextMenu({
       azureAuthWorkflowComponents: {
         loginFailedDialog: AzureLoginFailedDialogContainer,
         loginSuccessDialog: AzureLoginSuccessDialogContainer,
@@ -229,5 +231,11 @@ export class ServicesExplorer extends ServicePane<ServicesExplorerProps> {
       pickerComponent: ConnectedServicePickerContainer,
       progressIndicatorComponent: ProgressIndicatorContainer,
     });
+
+    this.addIconButtonRef && this.addIconButtonRef.focus();
+  };
+
+  protected setAddIconButtonRef = (ref: HTMLButtonElement): void => {
+    this.addIconButtonRef = ref;
   };
 }
