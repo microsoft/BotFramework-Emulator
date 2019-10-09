@@ -187,12 +187,12 @@ export class BotCreationDialog extends React.Component<BotCreationDialogProps, B
           </Row>
           <Row align={RowAlignment.Bottom} justify={RowJustification.Left}>
             <TextField
-              ariaLabel="Bot encryption key"
+              aria-label="Bot encryption key"
               inputContainerClassName={dialogStyles.key}
               inputRef={this.setSecretInputRef}
               label="Secret "
               value={secret}
-              placeholder={encryptKey ? 'Key encryption' : 'Your keys are not encrypted'}
+              placeholder={encryptKey ? '' : 'Your keys are not encrypted'}
               disabled={true}
               id="key-input"
               type={revealSecret ? 'text' : 'password'}
