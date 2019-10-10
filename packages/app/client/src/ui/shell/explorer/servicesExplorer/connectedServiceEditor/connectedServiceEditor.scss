@@ -63,6 +63,17 @@ ul.kv-pair-container {
     > * {
       width: 100%;
     }
+
+    // key
+    > div {
+      margin-right: 4px;
+    }
+
+    // value
+    > div + div {
+      margin-right: 0;
+      margin-left: 4px;
+    }
   }
 
   input[disabled] {
