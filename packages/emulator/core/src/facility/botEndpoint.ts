@@ -67,7 +67,7 @@ export default class BotEndpoint {
     return Date.now() + millisecondsToExpire >= this.speechAuthenticationToken.expireAt;
   }
 
-  private async fetchSpeechToken(): Promise<string> {
+  private async fetchSpeechToken(): Promise<SpeechAuthenticationToken> {
     const res = await this.fetchWithAuth(new URL(speechEndpoint.tokenEndpoint).toString());
     if (statusCodeFamily(res.status, 200)) {
       let body;
@@ -85,7 +85,7 @@ export default class BotEndpoint {
           tokenLife: body.tokenLife,
         };
 
-        return this.speechAuthenticationToken.accessToken;
+        return this.speechAuthenticationToken;
       } else {
         throw new Error(body.error || 'Could not retrieve speech token');
       }
@@ -96,7 +96,7 @@ export default class BotEndpoint {
     }
   }
 
-  public async getSpeechToken(refresh: boolean = false): Promise<string> {
+  public async getSpeechToken(refresh: boolean = false): Promise<SpeechAuthenticationToken> {
     if (!this.msaAppId || !this.msaPassword) {
       throw new Error('Bot must have a valid Microsoft App ID and password');
     }
@@ -109,7 +109,7 @@ export default class BotEndpoint {
         return this.fetchSpeechToken();
       }
 
-      return this.speechAuthenticationToken.accessToken;
+      return this.speechAuthenticationToken;
     } else {
       // refresh token
       return this.fetchSpeechToken();

@@ -159,18 +159,21 @@ export class ChatSagas {
     const { GetSpeechToken: command } = SharedConstants.Commands.Emulator;
 
     try {
-      const speechAuthenticationToken: Promise<string> = ChatSagas.commandService.remoteCall(
+      const speechAuthenticationToken = yield call(
+        [ChatSagas.commandService, ChatSagas.commandService.remoteCall],
         command,
         endpoint.id,
         !!existingFactory
       );
 
-      const factory = yield call(createCognitiveServicesSpeechServicesPonyfillFactory, {
-        authorizationToken: speechAuthenticationToken,
-        region: 'westus', // Currently, the prod speech service is only deployed to westus
-      });
+      if (speechAuthenticationToken && speechAuthenticationToken.accessToken && speechAuthenticationToken.region) {
+        const factory = yield call(createCognitiveServicesSpeechServicesPonyfillFactory, {
+          authorizationToken: speechAuthenticationToken.accessToken,
+          region: speechAuthenticationToken.region,
+        });
 
-      yield put(webSpeechFactoryUpdated(documentId, factory)); // Provide the new factory to the store
+        yield put(webSpeechFactoryUpdated(documentId, factory)); // Provide the new factory to the store
+      }
     } catch (e) {
       // No-op - this appId/pass combo is not provisioned to use the speech api
     }
