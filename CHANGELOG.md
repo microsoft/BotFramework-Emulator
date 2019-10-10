@@ -67,10 +67,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - [1916](https://github.com/microsoft/BotFramework-Emulator/pull/1916)
   - [1917](https://github.com/microsoft/BotFramework-Emulator/pull/1917)
   - [1918](https://github.com/microsoft/BotFramework-Emulator/pull/1918)
+  - [1921](https://github.com/microsoft/BotFramework-Emulator/pull/1921)
  
  - [client] Fixed an issue with the transcripts path input inside of the resource settings dialog in PR [1836](https://github.com/microsoft/BotFramework-Emulator/pull/1836)
  - [client] Implemented HTML app menu for Windows in PR [1893](https://github.com/microsoft/BotFramework-Emulator/pull/1893) 
  - [client/main] Migrated from Bing Speech API to Cognitive Services Speech API in PR [1878](https://github.com/microsoft/BotFramework-Emulator/pull/1878)
+ - [client] Fixed issue with certain native browser functions (cut, copy, paste, etc.) firing twice in PR [1920](https://github.com/microsoft/BotFramework-Emulator/pull/1920)
+ - [client] Applied theming to InsetShadow component in PR [1922](https://github.com/microsoft/BotFramework-Emulator/pull/1922)
 
 
 ## v4.5.2 - 2019 - 07 - 17

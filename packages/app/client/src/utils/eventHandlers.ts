@@ -66,31 +66,6 @@ class EventHandlers {
       awaitable = EventHandlers.commandService.call(ShowBotCreationDialog);
     }
 
-    // Ctrl+Z
-    if (ctrlOrCmdPressed && key === 'z') {
-      remote.getCurrentWebContents().undo();
-    }
-
-    // Ctrl+Y
-    if (ctrlOrCmdPressed && key === 'y') {
-      remote.getCurrentWebContents().redo();
-    }
-
-    // Ctrl+X
-    if (ctrlOrCmdPressed && key === 'x') {
-      remote.getCurrentWebContents().cut();
-    }
-
-    // Ctrl+C
-    if (ctrlOrCmdPressed && key === 'c') {
-      remote.getCurrentWebContents().copy();
-    }
-
-    // Ctrl+V
-    if (ctrlOrCmdPressed && key === 'v') {
-      remote.getCurrentWebContents().paste();
-    }
-
     // Ctrl+0
     if (ctrlOrCmdPressed && key === '0') {
       remote.getCurrentWebContents().setZoomLevel(0);

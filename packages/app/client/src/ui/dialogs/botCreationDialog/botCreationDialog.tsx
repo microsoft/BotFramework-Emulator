@@ -187,11 +187,12 @@ export class BotCreationDialog extends React.Component<BotCreationDialogProps, B
           </Row>
           <Row align={RowAlignment.Bottom} justify={RowJustification.Left}>
             <TextField
+              aria-label="Bot encryption key"
               inputContainerClassName={dialogStyles.key}
               inputRef={this.setSecretInputRef}
               label="Secret "
               value={secret}
-              placeholder="Your keys are not encrypted"
+              placeholder={encryptKey ? '' : 'Your keys are not encrypted'}
               disabled={true}
               id="key-input"
               type={revealSecret ? 'text' : 'password'}
@@ -208,7 +209,12 @@ export class BotCreationDialog extends React.Component<BotCreationDialogProps, B
                 </LinkButton>
               </li>
               <li>
-                <LinkButton className={dialogStyles.dialogLink} disabled={!encryptKey} onClick={this.onCopyClick}>
+                <LinkButton
+                  ariaLabel="Copy secret"
+                  className={dialogStyles.dialogLink}
+                  disabled={!encryptKey}
+                  onClick={this.onCopyClick}
+                >
                   Copy
                 </LinkButton>
               </li>
