@@ -68,6 +68,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - [1917](https://github.com/microsoft/BotFramework-Emulator/pull/1917)
   - [1918](https://github.com/microsoft/BotFramework-Emulator/pull/1918)
   - [1921](https://github.com/microsoft/BotFramework-Emulator/pull/1921)
+  - [1923](https://github.com/microsoft/BotFramework-Emulator/pull/1923)
+  - [1924](https://github.com/microsoft/BotFramework-Emulator/pull/1924)
  
  - [client] Fixed an issue with the transcripts path input inside of the resource settings dialog in PR [1836](https://github.com/microsoft/BotFramework-Emulator/pull/1836)
  - [client] Implemented HTML app menu for Windows in PR [1893](https://github.com/microsoft/BotFramework-Emulator/pull/1893) 

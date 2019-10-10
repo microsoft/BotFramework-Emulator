@@ -63,8 +63,8 @@ export class KvPair extends Component<KvPairProps, KvPairState> {
     return (
       <div>
         <span className={styles.header}>
-          <span>Key</span>
-          <span>Value</span>
+          <label>Key</label>
+          <label>Value</label>
         </span>
         <ul className={styles.kvPairContainer}>
           {kvPairs.map((pair, index) => (
