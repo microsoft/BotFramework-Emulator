@@ -3,6 +3,7 @@ html {
   --global-focus-outline-width: 1px;
   --global-focus-outline-style: solid;
   --global-focus-outline-color: #F38518;
+  --box-shadow-color: #72C3DF;
   
   /* Highlight colors */
   --list-item-color: var(--neutral-1);

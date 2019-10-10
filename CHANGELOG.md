@@ -73,6 +73,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - [client] Implemented HTML app menu for Windows in PR [1893](https://github.com/microsoft/BotFramework-Emulator/pull/1893) 
  - [client/main] Migrated from Bing Speech API to Cognitive Services Speech API in PR [1878](https://github.com/microsoft/BotFramework-Emulator/pull/1878)
  - [client] Fixed issue with certain native browser functions (cut, copy, paste, etc.) firing twice in PR [1920](https://github.com/microsoft/BotFramework-Emulator/pull/1920)
+ - [client] Applied theming to InsetShadow component in PR [1922](https://github.com/microsoft/BotFramework-Emulator/pull/1922)
 
 
 ## v4.5.2 - 2019 - 07 - 17
