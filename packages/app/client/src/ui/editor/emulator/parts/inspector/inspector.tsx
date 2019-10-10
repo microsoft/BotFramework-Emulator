@@ -206,7 +206,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
           <Panel title={['inspector', this.state.title].filter(s => s && s.length).join(' - ')}>
             {this.renderAccessoryButtons()}
             <PanelContent>
-              <div className={styles.inspectorContainer} tabIndex={0}>
+              <div className={styles.inspectorContainer}>
                 <div ref={this.webViewContainer} className={styles.webViewContainer} />
               </div>
             </PanelContent>
