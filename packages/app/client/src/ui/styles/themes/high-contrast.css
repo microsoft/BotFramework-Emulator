@@ -111,7 +111,7 @@ html {
   --p-button-color: var(--neutral-2);
   --p-button-border: 1px solid #72C3DF;
   --p-button-border-focus: 1px solid #F38518;
-  --p-button-border-hover: 1px solid rgb(2, 2, 2);
+  --p-button-border-hover: 1px dashed #F38518;
   --p-button-border-active: var(--p-button-border);
   --p-button-border-disabled: var(--p-button-border);
   --p-button-opacity-disabled: .4;

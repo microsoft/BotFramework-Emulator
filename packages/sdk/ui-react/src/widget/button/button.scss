@@ -22,7 +22,7 @@
   background-color: var(--s-button-bg);
 
   &::after {
-    border: var(--p-button-border);
+    border: var(--s-button-border);
   }
 
   &[disabled], &[aria-disabled] {
