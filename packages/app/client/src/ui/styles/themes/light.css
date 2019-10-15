@@ -123,15 +123,15 @@ html {
   /* secondary button */
   --s-button-color: var(--neutral-15);
   --s-button-color-disabled: var(--neutral-3);
-  --s-button-border: 1px solid transparent;
-  --s-button-border-focused: var(--p-button-border-focus);
-  --s-button-border-hover: 1px solid transparent;
-  --s-button-border-active: 1px solid transparent;
+  --s-button-border: 1px solid #8A8886;
+  --s-button-border-focused: 1px solid transparent;
+  --s-button-border-hover: 1px solid #8A8886;
+  --s-button-border-active: 1px solid #8A8886;
   --s-button-border-disabled: 1px solid transparent;
   --s-button-opacity-disabled: 1;
-  --s-button-bg: var(--neutral-3);
-  --s-button-bg-focus: var(--neutral-3);
-  --s-button-bg-hover: var(--neutral-4);
+  --s-button-bg: var(--neutral-1);
+  --s-button-bg-focus: var(--neutral-1);
+  --s-button-bg-hover: #F3F2F1;
   --s-button-bg-active: var(--neutral-5);
   --s-button-bg-disabled: var(--neutral-2);
 
