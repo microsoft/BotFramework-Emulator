@@ -78,17 +78,18 @@ interface IpcMessageEvent extends Event {
   args: any[];
 }
 
-interface InspectorProps {
+export interface InspectorProps {
   appPath?: string;
   createAriaAlert?: (msg: string) => void;
-  document: ChatDocument;
-  themeInfo: { themeName: string; themeComponents: string[] };
+  document?: ChatDocument;
+  documentId?: string;
+  themeInfo?: { themeName: string; themeComponents: string[] };
   activeBot?: IBotConfiguration;
   botHash?: string;
   onAnchorClick?: (url: string) => void;
   trackEvent?: (name: string, properties?: { [key: string]: any }) => void;
-  setHighlightedObjects: (documentId: string, objects: Activity[]) => void;
-  setInspectorObjects: (documentId: string, inspectorObjects: Activity[]) => void;
+  setHighlightedObjects?: (documentId: string, objects: Activity[]) => void;
+  setInspectorObjects?: (documentId: string, inspectorObjects: Activity[]) => void;
 }
 
 interface InspectorState {
@@ -139,7 +140,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
   private domReadyByLocation = {};
 
   public static getDerivedStateFromProps(newProps: InspectorProps, prevState: InspectorState): InspectorState {
-    const { document = {} as ChatDocument } = newProps;
+    const { activeBot, botHash, document = {} as ChatDocument, themeInfo } = newProps;
     const inspectorResult = Inspector.getInspector(document.inspectorObjects);
     const { inspector = { name: '' } } = inspectorResult.response;
     const buttons = Inspector.getButtons(inspector.accessories);
@@ -150,14 +151,14 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     }
     return {
       ...prevState,
-      activeBot: newProps.activeBot,
-      logEntries: newProps.document.log.entries,
-      highlightedObjects: newProps.document.highlightedObjects,
-      botHash: newProps.botHash,
+      activeBot: activeBot,
+      logEntries: document.log.entries,
+      highlightedObjects: document.highlightedObjects,
+      botHash: botHash,
       inspector,
       inspectorSrc: inspector.src,
       inspectObj: inspectorResult.inspectObj,
-      themeInfo: newProps.themeInfo,
+      themeInfo: themeInfo,
       title: inspector.name,
       buttons,
     };
@@ -192,7 +193,11 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
 
   public componentDidMount() {
     window.addEventListener('toggle-inspector-devtools', this.toggleDevTools);
-    this.updateInspector(this.state).catch();
+    try {
+      this.updateInspector(this.state);
+    } catch (e) {
+      // do nothing
+    }
   }
 
   public componentWillUnmount() {
@@ -285,7 +290,11 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     }
 
     if (oldState.inspectorSrc !== newState.inspectorSrc || oldState.containerRef !== newState.containerRef) {
-      this.updateInspector(this.state).catch();
+      try {
+        this.updateInspector(this.state);
+      } catch (e) {
+        // do nothing
+      }
     }
 
     // Send these always
@@ -301,7 +310,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     }
   }
 
-  private async updateInspector(state: InspectorState): Promise<void> {
+  private updateInspector(state: InspectorState): void {
     const { src } = state.inspector || { src: '' };
     if (!src) {
       return;

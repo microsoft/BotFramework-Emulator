@@ -30,63 +30,33 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import * as React from 'react';
-import { shallow } from 'enzyme';
 
-import { Main } from './main';
+import { connect } from 'react-redux';
+import { ValueTypes } from '@bfemulator/app-shared';
 
-function mockProxy() {
-  return new Proxy(
-    {},
-    {
-      get() {
-        return () => ({});
-      },
-    }
-  );
+import { RootState } from '../../../../../state';
+import { getActivityTargets } from '../../../../../utils';
+
+import { OuterActivityWrapper } from './outerActivityWrapper';
+
+function mapStateToProps(state: RootState, { documentId }: { documentId: string }) {
+  const { highlightedObjects = [], inspectorObjects = [{}] } = state.chat.chats[documentId];
+  let selectedActivity = inspectorObjects[0];
+  // The log panel gives us the entire trace while
+  // WebChat gives us the nested activity. Determine
+  // if we should be targeting the nested activity
+  // within the selected activity.
+  if (selectedActivity && selectedActivity.valueType === ValueTypes.Activity) {
+    selectedActivity = selectedActivity.value;
+  }
+  const highlightedActivities = getActivityTargets([...highlightedObjects, selectedActivity]);
+
+  return {
+    highlightedActivities,
+  };
 }
 
-jest.mock('electron', () => ({
-  remote: {
-    app: {
-      isPackaged: false,
-    },
-  },
-  ipcMain: new Proxy(
-    {},
-    {
-      get(): any {
-        return () => ({});
-      },
-      has() {
-        return true;
-      },
-    }
-  ),
-  ipcRenderer: new Proxy(
-    {},
-    {
-      get(): any {
-        return () => ({});
-      },
-      has() {
-        return true;
-      },
-    }
-  ),
-}));
-jest.mock('./explorer', () => mockProxy());
-jest.mock('./mdi', () => mockProxy());
-jest.mock('./navBar', () => mockProxy());
-jest.mock('./statusBar/statusBar.scss', () => ({}));
-jest.mock('../debug/storeVisualizer.scss', () => ({}));
-jest.mock('../../ui/dialogs', () => ({
-  DialogService: { showDialog: () => Promise.resolve(true) },
-}));
-
-describe('The Main component', () => {
-  it('should pass an empty test', () => {
-    const parent = shallow(<Main applicationMountComplete={() => void 0} />);
-    expect(parent.find(Main)).not.toBe(null);
-  });
-});
+export const OuterActivityWrapperContainer = connect(
+  mapStateToProps,
+  undefined
+)(OuterActivityWrapper);

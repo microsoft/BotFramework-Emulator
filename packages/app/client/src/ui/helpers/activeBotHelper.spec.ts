@@ -42,6 +42,11 @@ import { store } from '../../state/store';
 import { ActiveBotHelper } from './activeBotHelper';
 
 jest.mock('electron', () => ({
+  remote: {
+    app: {
+      isPackaged: false,
+    },
+  },
   ipcMain: new Proxy(
     {},
     {

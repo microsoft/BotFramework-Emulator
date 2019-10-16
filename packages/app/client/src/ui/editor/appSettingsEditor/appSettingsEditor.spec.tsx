@@ -49,6 +49,11 @@ import { AppSettingsEditor } from './appSettingsEditor';
 import { AppSettingsEditorContainer } from './appSettingsEditorContainer';
 
 jest.mock('electron', () => ({
+  remote: {
+    app: {
+      isPackaged: false,
+    },
+  },
   ipcMain: new Proxy(
     {},
     {

@@ -51,6 +51,11 @@ import {
 import { UiCommands } from './uiCommands';
 
 jest.mock('electron', () => ({
+  remote: {
+    app: {
+      isPackaged: false,
+    },
+  },
   ipcMain: new Proxy(
     {},
     {

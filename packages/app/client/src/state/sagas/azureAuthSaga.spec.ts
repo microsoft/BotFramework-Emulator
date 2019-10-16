@@ -46,6 +46,11 @@ import {
 import { azureAuthSagas } from './azureAuthSaga';
 
 jest.mock('electron', () => ({
+  remote: {
+    app: {
+      isPackaged: false,
+    },
+  },
   ipcMain: new Proxy(
     {},
     {

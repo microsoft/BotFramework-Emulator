@@ -30,63 +30,20 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import * as React from 'react';
-import { shallow } from 'enzyme';
 
-import { Main } from './main';
+import { connect } from 'react-redux';
 
-function mockProxy() {
-  return new Proxy(
-    {},
-    {
-      get() {
-        return () => ({});
-      },
-    }
-  );
+import { RootState } from '../../../../../state';
+
+import { Log, LogProps } from './log';
+
+function mapStateToProps(state: RootState, { documentId }: { documentId: string }): LogProps {
+  return {
+    document: state.chat.chats[documentId],
+  };
 }
 
-jest.mock('electron', () => ({
-  remote: {
-    app: {
-      isPackaged: false,
-    },
-  },
-  ipcMain: new Proxy(
-    {},
-    {
-      get(): any {
-        return () => ({});
-      },
-      has() {
-        return true;
-      },
-    }
-  ),
-  ipcRenderer: new Proxy(
-    {},
-    {
-      get(): any {
-        return () => ({});
-      },
-      has() {
-        return true;
-      },
-    }
-  ),
-}));
-jest.mock('./explorer', () => mockProxy());
-jest.mock('./mdi', () => mockProxy());
-jest.mock('./navBar', () => mockProxy());
-jest.mock('./statusBar/statusBar.scss', () => ({}));
-jest.mock('../debug/storeVisualizer.scss', () => ({}));
-jest.mock('../../ui/dialogs', () => ({
-  DialogService: { showDialog: () => Promise.resolve(true) },
-}));
-
-describe('The Main component', () => {
-  it('should pass an empty test', () => {
-    const parent = shallow(<Main applicationMountComplete={() => void 0} />);
-    expect(parent.find(Main)).not.toBe(null);
-  });
-});
+export const LogContainer = connect(
+  mapStateToProps,
+  undefined
+)(Log);

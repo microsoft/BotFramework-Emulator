@@ -189,6 +189,7 @@ export function newChat(
       log: {
         entries: [],
       },
+      highlightedObjects: [],
       inspectorObjects: [],
       ui: {
         horizontalSplitter: [
@@ -212,6 +213,7 @@ export function newChat(
           },
         ],
       },
+      userId: '',
       ...additionalData,
     },
   };

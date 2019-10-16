@@ -45,6 +45,35 @@ import { PostMigrationDialog } from './postMigrationDialog';
 
 jest.mock('../../dialogs', () => ({}));
 jest.mock('./postMigrationDialog.scss', () => ({}));
+jest.mock('electron', () => ({
+  remote: {
+    app: {
+      isPackaged: false,
+    },
+  },
+  ipcMain: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+  ipcRenderer: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+}));
 
 describe('The PostMigrationDialogContainer component', () => {
   let wrapper;

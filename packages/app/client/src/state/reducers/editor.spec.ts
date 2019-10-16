@@ -80,6 +80,37 @@ jest.mock('../../ui/dialogs', () => ({
     return undefined;
   },
 }));
+
+jest.mock('electron', () => ({
+  remote: {
+    app: {
+      isPackaged: false,
+    },
+  },
+  ipcMain: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+  ipcRenderer: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+}));
+
 describe('Editor reducer tests', () => {
   beforeEach(initializeDefaultState);
 

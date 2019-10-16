@@ -126,6 +126,7 @@ describe('chat actions', () => {
       log: {
         entries: [],
       },
+      highlightedObjects: [],
       inspectorObjects: [],
       ui: {
         horizontalSplitter: [
@@ -149,6 +150,7 @@ describe('chat actions', () => {
           },
         ],
       },
+      userId: '',
       someOtherProperty: true,
     });
   });

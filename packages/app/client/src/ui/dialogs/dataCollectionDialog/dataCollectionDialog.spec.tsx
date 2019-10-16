@@ -43,6 +43,36 @@ import { executeCommand } from '../../../state/actions/commandActions';
 import { DataCollectionDialog } from './dataCollectionDialog';
 import { DataCollectionDialogContainer } from './dataCollectionDialogContainer';
 
+jest.mock('electron', () => ({
+  remote: {
+    app: {
+      isPackaged: false,
+    },
+  },
+  ipcMain: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+  ipcRenderer: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+}));
+
 describe('<DataCollectionDialogContainer />', () => {
   let wrapper;
   let mockDispatch;
