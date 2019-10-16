@@ -44,6 +44,11 @@ import { BotExplorerBarContainer } from './botExplorerBarContainer';
 jest.mock('../../../dialogs', () => ({}));
 
 jest.mock('electron', () => ({
+  remote: {
+    app: {
+      isPackaged: false,
+    },
+  },
   ipcMain: new Proxy(
     {},
     {

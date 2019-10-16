@@ -31,11 +31,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { createStore } from 'redux';
+import { Provider } from 'react-redux';
 import * as React from 'react';
-import { shallow } from 'enzyme';
+import { mount } from 'enzyme';
 
-import ChatPanel from './chatPanel';
+import { ChatPanel } from './chatPanel';
+import { ChatPanelContainer } from './chatPanelContainer';
 
+jest.mock('../parts/chat/chatContainer', () => ({
+  ChatContainer: () => <div />,
+}));
 jest.mock('./chatPanel.scss', () => ({}));
 jest.mock('../parts/chat/chat.scss', () => ({}));
 jest.mock('../../../dialogs', () => ({
@@ -46,39 +52,27 @@ jest.mock('../../../dialogs', () => ({
   SecretPromptDialog: () => ({}),
 }));
 
-const document = {
-  endpointUrl: 'my/awesome/bot',
-  selectedActivity$: {
-    _value: null,
-    _listeners: [],
-    next(newObj: any) {
-      this._value = newObj;
-      this._listeners.forEach(cb => cb(this._value));
-    },
-    subscribe(cb: any) {
-      this._listeners.push(cb);
-
-      return {
-        unsubscribe: () => (this._listeners = this._listeners.filter(l => l !== cb)),
-      };
-    },
-  },
-};
-
-function render() {
-  const props = {
-    document,
-  };
-
-  // @ts-ignore - mocking out BehaviorSubject
-  const component = shallow(<ChatPanel {...props} />);
-  component.setProps({});
-  return component;
-}
-
 describe('<ChatPanel />', () => {
-  it('should render', () => {
-    const component = render();
-    expect(component).not.toBeFalsy();
+  it('should render with a chat document', () => {
+    const wrapper = mount(
+      <Provider
+        store={createStore((state, action) => state, { chat: { chats: { doc1: { endpointUrl: 'someUrl' } } } })}
+      >
+        <ChatPanelContainer documentId={'doc1'} />
+      </Provider>
+    );
+    const node = wrapper.find(ChatPanel);
+
+    expect(node.exists()).toBe(true);
+  });
+  it('should render without a chat document', () => {
+    const wrapper = mount(
+      <Provider store={createStore((state, action) => state, { chat: { chats: {} } })}>
+        <ChatPanelContainer documentId={'doc1'} />
+      </Provider>
+    );
+    const node = wrapper.find(ChatPanel);
+
+    expect(node.exists()).toBe(true);
   });
 });

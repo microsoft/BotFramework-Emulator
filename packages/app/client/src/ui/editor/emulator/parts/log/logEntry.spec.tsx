@@ -65,6 +65,11 @@ let mockRemoteCallsMade;
 let mockCallsMade;
 
 jest.mock('electron', () => ({
+  remote: {
+    app: {
+      isPackaged: false,
+    },
+  },
   ipcMain: new Proxy(
     {},
     {

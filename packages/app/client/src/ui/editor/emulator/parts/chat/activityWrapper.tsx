@@ -60,7 +60,7 @@ function shouldSelectActivity(e: React.SyntheticEvent): boolean {
   return true;
 }
 
-class ActivityWrapper extends Component<ActivityWrapperProps> {
+export class ActivityWrapper extends Component<ActivityWrapperProps> {
   render() {
     const { activity: _, children, isSelected, ...divProps } = this.props;
     let classes = styles.chatActivity;
@@ -96,5 +96,3 @@ class ActivityWrapper extends Component<ActivityWrapperProps> {
     }
   };
 }
-
-export default ActivityWrapper;

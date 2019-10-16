@@ -44,17 +44,24 @@ import { restartConversation } from '../../../state/actions/botActions';
 
 import { Emulator, EmulatorProps } from './emulator';
 
-const mapStateToProps = (state: RootState, { documentId, ...ownProps }: { documentId: string }) => ({
-  activeDocumentId: state.editor.editors[state.editor.activeEditor].activeDocumentId,
-  conversationId: state.chat.chats[documentId].conversationId,
-  directLine: state.chat.chats[documentId].directLine,
-  document: state.chat.chats[documentId],
-  endpointId: state.chat.chats[documentId].endpointId,
-  framework: state.framework,
-  presentationModeEnabled: state.presentation.enabled,
-  url: state.clientAwareSettings.serverUrl,
-  ...ownProps,
-});
+const mapStateToProps = (state: RootState, { documentId, ...ownProps }: { documentId: string }): EmulatorProps => {
+  return {
+    activeDocumentId: state.editor.editors[state.editor.activeEditor].activeDocumentId,
+    activities: state.chat.chats[documentId].activities,
+    botId: state.chat.chats[documentId].botId,
+    conversationId: state.chat.chats[documentId].conversationId,
+    directLine: state.chat.chats[documentId].directLine,
+    documentId,
+    endpointId: state.chat.chats[documentId].endpointId,
+    framework: state.framework,
+    inMemory: state.chat.chats[documentId].inMemory,
+    presentationModeEnabled: state.presentation.enabled,
+    ui: state.chat.chats[documentId].ui,
+    url: state.clientAwareSettings.serverUrl,
+    userId: state.chat.chats[documentId].userId,
+    ...ownProps,
+  };
+};
 
 const mapDispatchToProps = (dispatch): EmulatorProps => ({
   enablePresentationMode: enable =>

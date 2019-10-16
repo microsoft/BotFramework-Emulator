@@ -51,9 +51,8 @@ import {
 } from '../actions/endpointServiceActions';
 import { DialogService } from '../../ui/dialogs/service';
 import { OPEN_ENDPOINT_EXPLORER_CONTEXT_MENU } from '../actions/endpointActions';
-import { executeCommand } from '../actions/commandActions';
 
-import { EndpointSagas, endpointSagas, getConnectedAbs } from './endpointSagas';
+import { EndpointSagas, endpointSagas } from './endpointSagas';
 
 jest.mock('../../ui/dialogs', () => ({
   DialogService: { showDialog: () => Promise.resolve(true) },
@@ -83,6 +82,11 @@ const mockBot = JSON.parse(`{
 }`);
 
 jest.mock('electron', () => ({
+  remote: {
+    app: {
+      isPackaged: false,
+    },
+  },
   ipcMain: new Proxy(
     {},
     {

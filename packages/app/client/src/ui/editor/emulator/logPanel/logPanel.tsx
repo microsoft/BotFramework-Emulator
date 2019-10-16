@@ -34,12 +34,12 @@
 import * as React from 'react';
 
 import Panel, { PanelContent } from '../../panel/panel';
-import { Log } from '../parts/log';
+import { LogContainer } from '../parts/log';
 
 import * as styles from './logPanel.scss';
 
 interface LogPanelProps {
-  document: any;
+  documentId: string;
 }
 
 export default class LogPanel extends React.Component<LogPanelProps, {}> {
@@ -48,7 +48,7 @@ export default class LogPanel extends React.Component<LogPanelProps, {}> {
       <div aria-label="log panel" className={styles.logPanel} role="region">
         <Panel title="Log">
           <PanelContent>
-            <Log document={this.props.document} />
+            <LogContainer documentId={this.props.documentId} />
           </PanelContent>
         </Panel>
       </div>

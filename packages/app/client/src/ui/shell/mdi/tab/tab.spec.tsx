@@ -47,6 +47,35 @@ jest.mock('./tab.scss', () => ({
   settings: 'settings',
 }));
 jest.mock('../../../dialogs', () => ({}));
+jest.mock('electron', () => ({
+  remote: {
+    app: {
+      isPackaged: false,
+    },
+  },
+  ipcMain: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+  ipcRenderer: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+}));
 
 describe('Tab', () => {
   const mockOnCloseClick = jest.fn(() => null);

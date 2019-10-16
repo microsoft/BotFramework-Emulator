@@ -40,15 +40,16 @@ import { executeCommand } from '../../../../../state/actions/commandActions';
 import { setHighlightedObjects, setInspectorObjects } from '../../../../../state/actions/chatActions';
 import { ariaAlertService } from '../../../../a11y';
 
-import { Inspector } from './inspector';
+import { Inspector, InspectorProps } from './inspector';
 
-const mapStateToProps = (state: RootState, ownProps: any) => {
+const mapStateToProps = (state: RootState, ownProps: InspectorProps): InspectorProps => {
   const { bot, theme, clientAwareSettings } = state;
   return {
     ...ownProps,
+    activeBot: bot.activeBot,
     appPath: clientAwareSettings.appPath,
     botHash: bot.activeBotDigest,
-    activeBot: bot.activeBot,
+    document: state.chat.chats[ownProps.documentId],
     themeInfo: theme,
   };
 };
@@ -61,7 +62,6 @@ const mapDispatchToProps = dispatch => {
     onAnchorClick: (url: string) => {
       dispatch(executeCommand(true, SharedConstants.Commands.Electron.OpenExternal, null, url));
     },
-
     trackEvent: (name: string, properties?: { [key: string]: any }) => {
       dispatch(executeCommand(true, SharedConstants.Commands.Telemetry.TrackEvent, null, name, properties));
     },
