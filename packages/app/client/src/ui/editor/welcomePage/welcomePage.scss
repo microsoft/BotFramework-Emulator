@@ -122,13 +122,13 @@
       }
     }
 
-    dl {
+    .step-section {
       border-left: 1px solid var(--welcome-how-to-border);
       display: block;
       margin: 0;
       padding: 0 24px;
 
-      > dt::before {
+      > .step-header::after {
         background-color: var(--welcome-page-bg);
         border: 1px solid var(--welcome-how-to-border);
         border-radius: 100%;
@@ -144,18 +144,20 @@
       }
 
 
-      > dt {
+      > .step-header {
         display: block;
         font-weight: 600;
         font-size: 13px;
         line-height: 18px;
+        padding: 0;
+        margin: 0;
       }
 
-      > dd {
+      > .step-content {
         font-size: 13px;
         line-height: 18px;
-        margin-left: 0;
-        padding-bottom: 22px;
+        padding: 0 0 22px 0;
+        margin: 0;
       }
     }
   }

@@ -54,9 +54,9 @@ export class HowToBuildABot extends React.Component<HowToBuildABotProps, {}> {
             <div className={styles.stepIcon}>
               <div className={styles.buildPlan01} />
             </div>
-            <dl>
-              <dt>Plan:</dt>
-              <dd>
+            <div className={styles.stepSection}>
+              <p className={styles.stepHeader}>Plan:</p>
+              <p className={styles.stepContent}>
                 Review the bot&nbsp;
                 <LinkButton
                   ariaLabel={'Learn more about design guidelines.'}
@@ -66,16 +66,16 @@ export class HowToBuildABot extends React.Component<HowToBuildABotProps, {}> {
                   design guidelines
                 </LinkButton>{' '}
                 for best practices&nbsp;
-              </dd>
-            </dl>
+              </p>
+            </div>
           </div>
           <div className={styles.stepContainer}>
             <div className={styles.stepIcon}>
               <div className={styles.buildPlan02} />
             </div>
-            <dl>
-              <dt>Build:</dt>
-              <dd>
+            <div className={styles.stepSection}>
+              <p className={styles.stepHeader}>Build:</p>
+              <p className={styles.stepContent}>
                 <LinkButton linkRole={true} onClick={this.onEmulatorToolsLinkClick}>
                   Download Command Line tools
                 </LinkButton>
@@ -114,16 +114,16 @@ export class HowToBuildABot extends React.Component<HowToBuildABotProps, {}> {
                 <LinkButton ariaLabel={'Learn more about Dispatch'} linkRole={true} onClick={this.onDispatchLinkClick}>
                   Dispatch
                 </LinkButton>
-              </dd>
-            </dl>
+              </p>
+            </div>
           </div>
           <div className={styles.stepContainer}>
             <div className={styles.stepIcon}>
               <div className={styles.buildPlan03} />
             </div>
-            <dl>
-              <dt className={styles.testBullet}>Test:</dt>
-              <dd>
+            <div className={styles.stepSection}>
+              <p className={styles.stepHeader}>Test:</p>
+              <p className={styles.stepContent}>
                 Test with the&nbsp;
                 <LinkButton
                   ariaLabel={'Test your bot on the Emulator.'}
@@ -141,16 +141,16 @@ export class HowToBuildABot extends React.Component<HowToBuildABotProps, {}> {
                 >
                   Web Chat
                 </LinkButton>
-              </dd>
-            </dl>
+              </p>
+            </div>
           </div>
           <div className={styles.stepContainer}>
             <div className={styles.stepIcon}>
               <div className={styles.buildPlan04} />
             </div>
-            <dl>
-              <dt>Publish:</dt>
-              <dd>
+            <div className={styles.stepSection}>
+              <p className={styles.stepHeader}>Publish:</p>
+              <p className={styles.stepContent}>
                 Publish directly to Azure or
                 <br />
                 Use&nbsp;
@@ -162,16 +162,16 @@ export class HowToBuildABot extends React.Component<HowToBuildABotProps, {}> {
                   Continuous Deployment
                 </LinkButton>
                 &nbsp;
-              </dd>
-            </dl>
+              </p>
+            </div>
           </div>
           <div className={styles.stepContainer}>
             <div className={styles.stepIcon}>
               <div className={styles.buildPlan05} />
             </div>
-            <dl>
-              <dt>Connect:</dt>
-              <dd>
+            <div className={styles.stepSection}>
+              <p className={styles.stepHeader}>Connect:</p>
+              <p className={styles.stepContent}>
                 Connect to&nbsp;
                 <LinkButton
                   ariaLabel={'Learn more connecting to channels.'}
@@ -181,21 +181,21 @@ export class HowToBuildABot extends React.Component<HowToBuildABotProps, {}> {
                   channels
                 </LinkButton>
                 &nbsp;
-              </dd>
-            </dl>
+              </p>
+            </div>
           </div>
           <div className={styles.stepContainer}>
             <div className={styles.stepIcon}>
               <div className={styles.buildPlan06} />
             </div>
-            <dl>
-              <dt>Evaluate:</dt>
-              <dd>
+            <div className={styles.stepSection}>
+              <p className={styles.stepHeader}>Evaluate:</p>
+              <p className={styles.stepContent}>
                 <LinkButton linkRole={true} onClick={this.onAnalyticsLinkClick}>
                   View analytics
                 </LinkButton>
-              </dd>
-            </dl>
+              </p>
+            </div>
           </div>
         </div>
       </div>
