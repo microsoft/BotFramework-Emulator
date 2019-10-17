@@ -50,6 +50,10 @@ class AriaAlertService {
     alert.setAttribute('role', 'alert');
     alert.setAttribute('style', 'position: absolute; top: -9999px; overflow: hidden;');
     document.body.appendChild(alert);
+
+    setTimeout(() => {
+      document.body.removeChild(alert);
+    }, 1000);
   }
 }
 
