@@ -122,7 +122,7 @@ export class HowToBuildABot extends React.Component<HowToBuildABotProps, {}> {
               <div className={styles.buildPlan03} />
             </div>
             <div className={styles.stepSection}>
-              <p className={styles.stepHeader}>Test:</p>
+              <p className={`${styles.stepHeader} ${styles.testBullet}`}>Test:</p>
               <p className={styles.stepContent}>
                 Test with the&nbsp;
                 <LinkButton
