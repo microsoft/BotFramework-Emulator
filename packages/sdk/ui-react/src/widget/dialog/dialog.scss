@@ -90,3 +90,11 @@
     outline-color: var(--global-focus-outline-color);
   }
 }
+
+.dialog-header {
+  font-family: var(--default-font-family);
+  font-size: 22px;
+  font-weight: 200;
+  margin: 0px 4px 0px 0px;
+  padding: 0;
+}

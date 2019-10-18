@@ -4,3 +4,4 @@ export const dialog: string;
 export const footer: string;
 export const cancelButton: string;
 export const cancelButtonOutline: string;
+export const dialogHeader: string;
