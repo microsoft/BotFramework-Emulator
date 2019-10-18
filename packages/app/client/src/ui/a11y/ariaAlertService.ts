@@ -52,8 +52,8 @@ class AriaAlertService {
     document.body.appendChild(alert);
 
     setTimeout(() => {
-      document.body.removeChild(alert);
-    }, 1000);
+      alert.setAttribute('aria-hidden', 'true');
+    }, 5000);
   }
 }
 
