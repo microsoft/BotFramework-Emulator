@@ -302,14 +302,13 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
                   onClick={this.onStartOverClick}
                   buttonRef={this.setRestartButtonRef}
                 />
-                <div role="menuitem">
-                  <button
-                    className={`${styles.saveIcon} ${styles.toolbarIcon || ''}`}
-                    onClick={this.onExportTranscriptClick}
-                  >
-                    Save transcript
-                  </button>
-                </div>
+                <button
+                  role={'menuitem'}
+                  className={`${styles.saveIcon} ${styles.toolbarIcon || ''}`}
+                  onClick={this.onExportTranscriptClick}
+                >
+                  Save transcript
+                </button>
               </>
             )}
           </ToolBar>
