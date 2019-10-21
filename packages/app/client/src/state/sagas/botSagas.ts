@@ -82,6 +82,7 @@ export class BotSagas {
       yield put(errorNotification);
     }
   }
+
   // Currently restarts a conversation with an unchanged ID
   public static *restartConversation(action: BotAction<RestartConversationPayload>): IterableIterator<any> {
     const serverUrl = yield select((state: RootState) => state.clientAwareSettings.serverUrl);
@@ -195,6 +196,11 @@ export class BotSagas {
         SharedConstants.Commands.Settings.SaveBotUrl,
         action.payload.endpoint
       );
+      BotSagas.commandService.remoteCall(SharedConstants.Commands.Telemetry.TrackEvent, 'bot_open', {
+        method: null, // this code path can be hit by multiple methods
+        numOfServices: 0,
+        source: 'url',
+      });
     }
   }
 }

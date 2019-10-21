@@ -68,6 +68,7 @@ export class BotCommands {
       await this.commandService.remoteCall(Commands.Telemetry.TrackEvent, 'bot_open', {
         method: 'bots_list',
         numOfServices,
+        source: 'path',
       });
       return ActiveBotHelper.confirmAndSwitchBots(bot);
     } catch (e) {

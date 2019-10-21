@@ -306,6 +306,7 @@ class ProtocolHandlerImpl implements ProtocolHandler {
     TelemetryService.trackEvent('bot_open', {
       method: 'protocol',
       numOfServices,
+      source: 'path',
     });
   }
 }
