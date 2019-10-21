@@ -130,6 +130,7 @@ describe('The bot commands', () => {
     expect(remoteCallArgs[0][2]).toEqual({
       method: 'bots_list',
       numOfServices: undefined,
+      source: 'path',
     });
   });
 

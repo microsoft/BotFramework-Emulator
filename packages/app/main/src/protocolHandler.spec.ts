@@ -403,6 +403,7 @@ describe('Protocol handler tests', () => {
     expect(mockTrackEvent).toHaveBeenCalledWith('bot_open', {
       method: 'protocol',
       numOfServices: 1,
+      source: 'path',
     });
   });
 
@@ -431,6 +432,7 @@ describe('Protocol handler tests', () => {
     expect(mockTrackEvent).toHaveBeenCalledWith('bot_open', {
       method: 'protocol',
       numOfServices: 1,
+      source: 'path',
     });
   });
 
@@ -459,6 +461,7 @@ describe('Protocol handler tests', () => {
     expect(mockTrackEvent).toHaveBeenCalledWith('bot_open', {
       method: 'protocol',
       numOfServices: 1,
+      source: 'path',
     });
   });
 

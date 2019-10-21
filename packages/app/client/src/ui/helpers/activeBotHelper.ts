@@ -215,6 +215,7 @@ export class ActiveBotHelper {
             .remoteCall(Telemetry.TrackEvent, `bot_open`, {
               method: 'file_browse',
               numOfServices,
+              source: 'path',
             })
             .catch(_e => void 0);
         }

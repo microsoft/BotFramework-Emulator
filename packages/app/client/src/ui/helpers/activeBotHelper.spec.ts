@@ -73,11 +73,13 @@ jest.mock('electron', () => ({
 
 describe('ActiveBotHelper tests', () => {
   let commandService: CommandServiceImpl;
+
   beforeAll(() => {
     const decorator = CommandServiceInstance();
     const descriptor = decorator({ descriptor: {} }, 'none') as any;
     commandService = descriptor.descriptor.get();
   });
+
   it('confirmSwitchBot() functionality', async () => {
     (editorHelpers as any).hasNonGlobalTabs = jest
       .fn()
@@ -287,6 +289,7 @@ describe('ActiveBotHelper tests', () => {
     expect(mockRemoteCall).toHaveBeenCalledWith(SharedConstants.Commands.Telemetry.TrackEvent, 'bot_open', {
       method: 'file_browse',
       numOfServices: 0,
+      source: 'path',
     });
 
     ActiveBotHelper.browseForBotFile = backupBrowseForBotFile;
