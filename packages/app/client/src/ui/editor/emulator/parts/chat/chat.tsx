@@ -30,32 +30,34 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 import { ValueTypes } from '@bfemulator/app-shared';
 import { User } from '@bfemulator/sdk-shared';
 import { Activity, ActivityTypes } from 'botframework-schema';
 import ReactWebChat, { createStyleSet } from 'botframework-webchat';
 import * as React from 'react';
-import { Component, KeyboardEvent, MouseEvent, ReactNode } from 'react';
-import { PrimaryButton } from '@bfemulator/ui-react';
+import { PureComponent, KeyboardEvent, MouseEvent, ReactNode } from 'react';
 import { EmulatorMode } from '@bfemulator/sdk-shared';
+import { DirectLine } from 'botframework-directlinejs';
 
-import { areActivitiesEqual, getActivityTargets } from '../../../../../utils';
-import { ChatDocument } from '../../../../../state/reducers/chat';
-
-import ActivityWrapper from './activityWrapper';
+import { OuterActivityWrapperContainer } from './outerActivityWrapperContainer';
 import * as styles from './chat.scss';
 import webChatStyleOptions from './webChatTheme';
+import { TraceActivityContainer } from './traceActivityContainer';
 
 export interface ChatProps {
-  document: ChatDocument;
-  mode: EmulatorMode;
-  currentUser: User;
-  locale: string;
+  botId?: string;
+  conversationId?: string;
+  directLine?: DirectLine;
+  documentId?: string;
+  mode?: EmulatorMode;
+  currentUser?: User;
+  locale?: string;
   webSpeechPonyfillFactory?: () => any;
   pendingSpeechTokenRetrieval?: boolean;
-  showContextMenuForActivity: (activity: Partial<Activity>) => void;
-  setInspectorObject: (documentId: string, activity: Partial<Activity & { showInInspector: true }>) => void;
-  webchatStore: any;
+  showContextMenuForActivity?: (activity: Partial<Activity>) => void;
+  setInspectorObject?: (documentId: string, activity: Partial<Activity & { showInInspector: true }>) => void;
+  webchatStore?: any;
   showOpenUrlDialog?: (url) => any;
 }
 
@@ -63,41 +65,24 @@ interface ChatState {
   highlightedActivities?: Activity[];
 }
 
-const adaptiveCardInputs = {
-  INPUT: null,
-  OPTION: null,
-  SELECT: null,
-  TEXTAREA: null,
-};
-
-export class Chat extends Component<ChatProps, ChatState> {
+export class Chat extends PureComponent<ChatProps, ChatState> {
   public state = { waitForSpeechToken: false } as ChatState;
   private activityMap: { [activityId: string]: Activity };
 
-  public static getDerivedStateFromProps(newProps: ChatProps): ChatState {
-    let selectedActivity =
-      'inspectorObjects' in newProps.document ? newProps.document.inspectorObjects[0] : ({} as Activity);
-    // The log panel gives us the entire trace while
-    // WebChat gives us the nested activity. Determine
-    // if we should be targeting the nested activity
-    // within the selected activity.
-    if (selectedActivity && selectedActivity.valueType === ValueTypes.Activity) {
-      selectedActivity = selectedActivity.value;
-    }
-    const highlightedActivities = getActivityTargets([
-      ...(newProps.document.highlightedObjects || []),
-      selectedActivity,
-    ]);
-    return {
-      highlightedActivities,
-    };
-  }
-
   public render() {
     this.activityMap = {};
-    const { currentUser, document, locale, mode, webchatStore } = this.props;
+    const {
+      botId,
+      currentUser,
+      conversationId,
+      directLine,
+      locale,
+      mode,
+      webchatStore,
+      webSpeechPonyfillFactory,
+    } = this.props;
 
-    const isDisabled = mode === 'transcript' || document.mode === 'debug';
+    const isDisabled = mode === 'transcript' || mode === 'debug';
 
     // Due to needing to make idiosyncratic style changes, Emulator is using `createStyleSet` instead of `createStyleOptions`. The object below: {...webChatStyleOptions, hideSendBox...} was formerly passed into the `styleOptions` parameter of React Web Chat. If further styling modifications are desired using styleOptions, simply pass it into the same object in createStyleSet below.
 
@@ -112,9 +97,9 @@ export class Chat extends Component<ChatProps, ChatState> {
       return <div className={styles.disconnected}>Connecting...</div>;
     }
 
-    if (document.directLine) {
+    if (directLine) {
       const bot = {
-        id: document.botId || 'bot',
+        id: botId || 'bot',
         name: 'Bot',
       };
 
@@ -125,14 +110,14 @@ export class Chat extends Component<ChatProps, ChatState> {
             activityMiddleware={this.createActivityMiddleware}
             cardActionMiddleware={this.cardActionMiddleware}
             bot={bot}
-            directLine={document.directLine}
+            directLine={directLine}
             disabled={isDisabled}
-            key={document.conversationId}
+            key={conversationId}
             locale={locale}
             styleSet={styleSet}
             userID={currentUser.id}
             username={currentUser.name || 'User'}
-            webSpeechPonyfillFactory={this.props.webSpeechPonyfillFactory}
+            webSpeechPonyfillFactory={webSpeechPonyfillFactory}
           />
         </div>
       );
@@ -143,16 +128,15 @@ export class Chat extends Component<ChatProps, ChatState> {
 
   private activityWrapper(next, card, children): ReactNode {
     return (
-      <ActivityWrapper
-        activity={card.activity}
-        data-activity-id={card.activity.id}
-        onClick={this.onItemRendererClick}
-        onKeyDown={this.onItemRendererKeyDown}
+      <OuterActivityWrapperContainer
+        card={card}
+        documentId={this.props.documentId}
         onContextMenu={this.onContextMenu}
-        isSelected={this.shouldBeSelected(card.activity)}
+        onItemRendererClick={this.onItemRendererClick}
+        onItemRendererKeyDown={this.onItemRendererKeyDown}
       >
         {next(card)(children)}
-      </ActivityWrapper>
+      </OuterActivityWrapperContainer>
     );
   }
 
@@ -203,88 +187,47 @@ export class Chat extends Component<ChatProps, ChatState> {
   };
 
   private renderTraceActivity(next, card, children): ReactNode {
-    if (this.props.document.mode !== 'debug') {
-      return null;
-    }
+    const { documentId, mode } = this.props;
+
+    // we should only render the underlying activity once using the middleware,
+    // and re-rendering should only be done at the wrapper level for highlighting
+    let activityChildren;
     const { valueType } = card.activity; // activities are nested
     if (valueType === ValueTypes.Activity) {
       const messageActivity = card.activity.value;
-      return (
-        <ActivityWrapper
-          activity={messageActivity}
-          data-activity-id={card.activity.id}
-          onKeyDown={this.onItemRendererKeyDown}
-          onClick={this.onItemRendererClick}
-          onContextMenu={this.onContextMenu}
-          isSelected={this.shouldBeSelected(messageActivity)}
-        >
-          {next({ activity: messageActivity, timestampClassName: 'transcript-timestamp' })(children)}
-        </ActivityWrapper>
-      );
+      activityChildren = next({ activity: messageActivity, timestampClassName: 'transcript-timestamp' })(children);
     } else if (valueType === ValueTypes.Command) {
       const messageActivity = { ...card.activity, type: ActivityTypes.Message, text: card.activity.value } as Activity;
-      return (
-        <ActivityWrapper
-          activity={messageActivity}
-          data-activity-id={card.activity.id}
-          onKeyDown={this.onItemRendererKeyDown}
-          onClick={this.onItemRendererClick}
-          onContextMenu={this.onContextMenu}
-          isSelected={this.shouldBeSelected(messageActivity)}
-        >
-          {next({ activity: messageActivity, timestampClassName: 'transcript-timestamp' })(children)}
-        </ActivityWrapper>
-      );
-    } else if (valueType === ValueTypes.BotState) {
-      const diffIndicatorIndex =
-        this.state.highlightedActivities.length > 1
-          ? this.state.highlightedActivities.findIndex(activity => areActivitiesEqual(activity, card.activity))
-          : -1;
-      return (
-        <PrimaryButton
-          className={styles.botStateObject}
-          data-activity-id={card.activity.id}
-          data-diff-indicator-index={diffIndicatorIndex}
-          onKeyDown={this.onItemRendererKeyDown}
-          onClick={this.onItemRendererClick}
-          onContextMenu={this.onContextMenu}
-          aria-selected={this.shouldBeSelected(card.activity)}
-        >
-          Bot State
-        </PrimaryButton>
-      );
+      activityChildren = next({ activity: messageActivity, timestampClassName: 'transcript-timestamp' })(children);
     }
-    return null;
+
+    return (
+      <TraceActivityContainer
+        card={card}
+        documentId={documentId}
+        mode={mode}
+        next={next}
+        onItemRendererKeyDown={this.onItemRendererKeyDown}
+        onItemRendererClick={this.onItemRendererClick}
+        onContextMenu={this.onContextMenu}
+      >
+        {activityChildren}
+      </TraceActivityContainer>
+    );
   }
 
   protected updateSelectedActivity(id: string): void {
     const selectedActivity: Activity & { showInInspector?: boolean } = this.activityMap[id];
-    this.props.setInspectorObject(this.props.document.documentId, { ...selectedActivity, showInInspector: true });
-  }
-
-  private shouldBeSelected(subject: Activity): boolean {
-    return this.state.highlightedActivities.some(activity => areActivitiesEqual(activity, subject));
+    this.props.setInspectorObject(this.props.documentId, { ...selectedActivity, showInInspector: true });
   }
 
   private onItemRendererClick = (event: MouseEvent<HTMLDivElement | HTMLButtonElement>): void => {
-    // if we click inside of an input within an adaptive card, we want to avoid selecting the activity
-    // because it will cause a Web Chat re-render which will wipe the adaptive card state
-    const { target = { tagName: '' } } = event;
-    if (this.elementIsAnAdaptiveCardInput(target as HTMLElement)) {
-      return;
-    }
     const { activityId } = (event.currentTarget as any).dataset;
     this.updateSelectedActivity(activityId);
   };
 
   private onItemRendererKeyDown = (event: KeyboardEvent<HTMLDivElement | HTMLButtonElement>): void => {
     if (event.key !== ' ' && event.key !== 'Enter') {
-      return;
-    }
-    // if we type inside of an input within an adaptive card, we want to avoid selecting the activity
-    // on spacebar because it will cause a Web Chat re-render which will wipe the adaptive card state
-    const { target = { tagName: '' } } = event;
-    if (event.key === ' ' && this.elementIsAnAdaptiveCardInput(target as HTMLElement)) {
       return;
     }
     const { activityId } = (event.currentTarget as any).dataset;
@@ -297,14 +240,5 @@ export class Chat extends Component<ChatProps, ChatState> {
 
     this.updateSelectedActivity(activityId);
     this.props.showContextMenuForActivity(activity);
-  };
-
-  private elementIsAnAdaptiveCardInput = (element: HTMLElement): boolean => {
-    const { tagName = '' } = element;
-    // adaptive cards embed <p> tags inside of input <labels>
-    if (element.parentElement && element.parentElement.tagName === 'LABEL') {
-      return true;
-    }
-    return tagName in adaptiveCardInputs;
   };
 }

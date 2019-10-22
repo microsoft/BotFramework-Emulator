@@ -31,6 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { Activity } from 'botframework-schema';
 import { createDirectLine } from 'botframework-webchat';
 import { DirectLine } from 'botframework-directlinejs';
 import { CommandServiceImpl, CommandServiceInstance, EmulatorMode, uniqueId, uniqueIdv4 } from '@bfemulator/sdk-shared';
@@ -47,9 +48,8 @@ import {
 
 import { Document, SplitterSize } from '../../../state/reducers/editor';
 import { debounce } from '../../../utils';
-import { ChatDocument } from '../../../state/reducers/chat';
 
-import ChatPanel from './chatPanel/chatPanel';
+import { ChatPanelContainer } from './chatPanel';
 import LogPanel from './logPanel/logPanel';
 import PlaybackBar from './playbackBar/playbackBar';
 import * as styles from './emulator.scss';
@@ -65,26 +65,30 @@ export const RestartConversationOptions = {
 
 export interface EmulatorProps {
   activeDocumentId?: string;
+  activities?: Activity[];
+  botId?: string;
   clearLog?: (documentId: string) => Promise<void>;
   conversationId?: string;
   createErrorNotification?: (notification: Notification) => void;
   directLine?: DirectLine;
   dirty?: boolean;
-  document?: Document;
   documentId?: string;
   enablePresentationMode?: (enabled: boolean) => void;
   endpointId?: string;
   exportItems?: (types: ValueTypesMask, conversationId: string) => Promise<void>;
   framework?: FrameworkSettings;
+  inMemory?: boolean;
   mode?: EmulatorMode;
   newConversation?: (documentId: string, options: any) => void;
   presentationModeEnabled?: boolean;
   restartDebugSession?: (conversationId: string, documentId: string) => void;
   setInspectorObjects?: (documentId: string, objects: any) => void;
   trackEvent?: (name: string, properties?: { [key: string]: any }) => void;
+  ui?: { horizontalSplitter: SplitterSize[]; verticalSplitter: SplitterSize[] };
   updateChat?: (documentId: string, updatedValues: any) => void;
   updateDocument?: (documentId: string, updatedValues: Partial<Document>) => void;
   url?: string;
+  userId?: string;
 }
 
 export class Emulator extends React.Component<EmulatorProps, {}> {
@@ -94,21 +98,21 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
   private restartButtonRef: HTMLButtonElement;
 
   private readonly onVerticalSizeChange = debounce((sizes: SplitterSize[]) => {
-    this.props.document.ui = {
-      ...this.props.document.ui,
+    this.props.ui = {
+      ...this.props.ui,
       verticalSplitter: sizes,
     };
   }, 500);
 
   private readonly onHorizontalSizeChange = debounce((sizes: SplitterSize[]) => {
-    this.props.document.ui = {
-      ...this.props.document.ui,
+    this.props.ui = {
+      ...this.props.ui,
       horizontalSplitter: sizes,
     };
   }, 500);
 
   shouldStartNewConversation(props: EmulatorProps = this.props): boolean {
-    return !props.directLine || props.document.conversationId !== (props.directLine as any).conversationId;
+    return !props.directLine || props.conversationId !== (props.directLine as any).conversationId;
   }
 
   componentDidMount() {
@@ -130,16 +134,16 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
 
   componentWillReceiveProps(nextProps: EmulatorProps) {
     const { props, keyboardEventListener, startNewConversation } = this;
-    const { document = {} as Document } = props;
-    const { directLine, document: nextDocument = {} as Document } = nextProps;
+    const { activeDocumentId, documentId } = props;
+    const { directLine, documentId: nextDocumentId } = nextProps;
 
-    const documentIdChanged = !directLine || document.documentId !== nextDocument.documentId;
+    const documentIdChanged = !directLine || documentId !== nextDocumentId;
 
     if (documentIdChanged) {
       startNewConversation(nextProps).catch();
     }
-    const switchedDocuments = props.activeDocumentId !== nextProps.activeDocumentId;
-    const switchedToThisDocument = nextProps.activeDocumentId === props.documentId;
+    const switchedDocuments = activeDocumentId !== nextProps.activeDocumentId;
+    const switchedToThisDocument = nextProps.activeDocumentId === documentId;
 
     if (switchedDocuments) {
       if (switchedToThisDocument) {
@@ -164,7 +168,7 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
     // otherwise, create a new one
     const conversationId = requireNewConvoId
       ? `${uniqueId()}|${props.mode}`
-      : props.document.conversationId || `${uniqueId()}|${props.mode}`;
+      : props.conversationId || `${uniqueId()}|${props.mode}`;
 
     let userId;
     if (requireNewUserId) {
@@ -172,7 +176,7 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
     } else {
       // use the previous id, or custom id
       const { framework = {} } = this.props;
-      userId = props.document.userId || framework.userGUID;
+      userId = props.userId || framework.userGUID;
     }
     await this.commandService.remoteCall(SharedConstants.Commands.Emulator.SetCurrentUser, userId);
 
@@ -191,17 +195,16 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
           SharedConstants.Commands.Emulator.NewTranscript,
           conversationId
         );
-
-        if (props.document && props.document.inMemory && props.document.activities) {
+        if (props.documentId && props.inMemory && props.activities) {
           try {
             // transcript was deep linked via protocol or is generated in-memory via chatdown,
             // and should just be fed its own activities attached to the document
             await this.commandService.remoteCall<any>(
               SharedConstants.Commands.Emulator.FeedTranscriptFromMemory,
               conversation.conversationId,
-              props.document.botId,
-              props.document.userId,
-              props.document.activities
+              props.botId,
+              props.userId,
+              props.activities
             );
           } catch (err) {
             throw new Error(`Error while feeding deep-linked transcript to conversation: ${err}`);
@@ -215,9 +218,9 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
             } = await this.commandService.remoteCall<any>(
               SharedConstants.Commands.Emulator.FeedTranscriptFromDisk,
               conversation.conversationId,
-              props.document.botId,
-              props.document.userId,
-              props.document.documentId
+              props.botId,
+              props.userId,
+              props.documentId
             );
 
             this.props.updateDocument(props.documentId, fileInfo);
@@ -268,7 +271,7 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
     return (
       <div className={styles.presentation}>
         <div className={styles.presentationContent}>
-          <ChatPanel mode={this.props.mode} document={this.props.document as ChatDocument} />
+          <ChatPanelContainer mode={this.props.mode} documentId={this.props.documentId} />
           {chatPanelChild}
         </div>
         <span className={styles.closePresentationIcon} onClick={() => this.onPresentationClick(false)} />
@@ -279,7 +282,7 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
   renderDefaultView(): JSX.Element {
     const { NewUserId, SameUserId } = RestartConversationOptions;
 
-    const { mode, document } = this.props;
+    const { mode, documentId } = this.props;
     return (
       <div className={styles.emulator}>
         <div className={styles.header}>
@@ -322,10 +325,10 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
             onSizeChange={this.onVerticalSizeChange}
           >
             <div className={styles.content}>
-              <ChatPanel
+              <ChatPanelContainer
                 mode={mode}
                 className={styles.chatPanel}
-                document={document as ChatDocument}
+                documentId={documentId}
                 onStartConversation={this.onStartOverClick}
               />
             </div>
@@ -337,8 +340,8 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
                 initialSizes={this.getHorizontalSplitterSizes}
                 onSizeChange={this.onHorizontalSizeChange}
               >
-                <InspectorContainer document={document} />
-                <LogPanel document={document} />
+                <InspectorContainer documentId={documentId} />
+                <LogPanel documentId={documentId} />
               </Splitter>
             </div>
           </Splitter>
@@ -349,24 +352,18 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
 
   private getVerticalSplitterSizes = (): { [0]: string } => {
     return {
-      0: '' + this.props.document.ui.verticalSplitter[0].percentage,
+      0: '' + this.props.ui.verticalSplitter[0].percentage,
     };
   };
 
   private getHorizontalSplitterSizes = (): { [0]: string } => {
     return {
-      0: '' + this.props.document.ui.horizontalSplitter[0].percentage,
+      0: '' + this.props.ui.horizontalSplitter[0].percentage,
     };
   };
 
   private getConversationId() {
-    const { document } = this.props;
-
-    if (document && document.conversationId) {
-      return document.conversationId;
-    }
-
-    return 'default-conversation';
+    return this.props.conversationId || 'default-conversation';
   }
 
   private onPresentationClick = (enabled: boolean): void => {
@@ -375,11 +372,11 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
 
   private onStartOverClick = async (option: string = RestartConversationOptions.NewUserId): Promise<void> => {
     const { NewUserId, SameUserId } = RestartConversationOptions;
-    this.props.setInspectorObjects(this.props.document.documentId, []);
-    if (this.props.document.directLine) {
-      this.props.document.directLine.end();
+    this.props.setInspectorObjects(this.props.documentId, []);
+    if (this.props.directLine) {
+      this.props.directLine.end();
     }
-    await this.props.clearLog(this.props.document.documentId);
+    await this.props.clearLog(this.props.documentId);
 
     switch (option) {
       case NewUserId: {
@@ -424,8 +421,8 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
   };
 
   private onReconnectToDebugBotClick = () => {
-    const { conversationId, document } = this.props;
-    this.props.restartDebugSession(conversationId, document.documentId);
+    const { conversationId, documentId } = this.props;
+    this.props.restartDebugSession(conversationId, documentId);
   };
 
   private setRestartButtonRef = (ref: HTMLButtonElement): void => {

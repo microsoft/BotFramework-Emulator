@@ -30,63 +30,42 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 import * as React from 'react';
-import { shallow } from 'enzyme';
+import { Activity } from 'botframework-schema';
 
-import { Main } from './main';
+import { areActivitiesEqual } from '../../../../../utils';
 
-function mockProxy() {
-  return new Proxy(
-    {},
-    {
-      get() {
-        return () => ({});
-      },
-    }
-  );
+import { ActivityWrapper } from './activityWrapper';
+
+export interface OuterActivityWrapperProps {
+  card?: any;
+  children?: any;
+  highlightedActivities?: Activity[];
+  onContextMenu?: (event: React.MouseEvent<HTMLElement>) => void;
+  onItemRendererClick?: (event: React.MouseEvent<HTMLElement>) => void;
+  onItemRendererKeyDown?: (event: React.KeyboardEvent<HTMLElement>) => void;
 }
 
-jest.mock('electron', () => ({
-  remote: {
-    app: {
-      isPackaged: false,
-    },
-  },
-  ipcMain: new Proxy(
-    {},
-    {
-      get(): any {
-        return () => ({});
-      },
-      has() {
-        return true;
-      },
-    }
-  ),
-  ipcRenderer: new Proxy(
-    {},
-    {
-      get(): any {
-        return () => ({});
-      },
-      has() {
-        return true;
-      },
-    }
-  ),
-}));
-jest.mock('./explorer', () => mockProxy());
-jest.mock('./mdi', () => mockProxy());
-jest.mock('./navBar', () => mockProxy());
-jest.mock('./statusBar/statusBar.scss', () => ({}));
-jest.mock('../debug/storeVisualizer.scss', () => ({}));
-jest.mock('../../ui/dialogs', () => ({
-  DialogService: { showDialog: () => Promise.resolve(true) },
-}));
+export class OuterActivityWrapper extends React.Component<OuterActivityWrapperProps, {}> {
+  public render() {
+    const { card, children, onContextMenu, onItemRendererClick, onItemRendererKeyDown } = this.props;
 
-describe('The Main component', () => {
-  it('should pass an empty test', () => {
-    const parent = shallow(<Main applicationMountComplete={() => void 0} />);
-    expect(parent.find(Main)).not.toBe(null);
-  });
-});
+    return (
+      <ActivityWrapper
+        activity={card.activity}
+        data-activity-id={card.activity.id}
+        onClick={onItemRendererClick}
+        onKeyDown={onItemRendererKeyDown}
+        onContextMenu={onContextMenu}
+        isSelected={this.shouldBeSelected(card.activity)}
+      >
+        {children}
+      </ActivityWrapper>
+    );
+  }
+
+  private shouldBeSelected(subject: Activity): boolean {
+    return this.props.highlightedActivities.some(activity => areActivitiesEqual(activity, subject));
+  }
+}

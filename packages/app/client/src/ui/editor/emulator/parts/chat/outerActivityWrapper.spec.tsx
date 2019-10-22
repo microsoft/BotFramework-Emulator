@@ -30,63 +30,43 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 import * as React from 'react';
-import { shallow } from 'enzyme';
+import { createStore } from 'redux';
+import { Provider } from 'react-redux';
+import { mount, shallow } from 'enzyme';
+import { ValueTypes } from '@bfemulator/app-shared';
 
-import { Main } from './main';
+import { OuterActivityWrapper } from './outerActivityWrapper';
+import { OuterActivityWrapperContainer } from './outerActivityWrapperContainer';
 
-function mockProxy() {
-  return new Proxy(
-    {},
-    {
-      get() {
-        return () => ({});
+describe('<OuterActivityWrapper />', () => {
+  it('should render', () => {
+    const storeState = {
+      chat: {
+        chats: {
+          doc1: {
+            highlightedObjects: [],
+            inspectorObjects: [{ value: {}, valueType: ValueTypes.Activity }],
+          },
+        },
       },
-    }
-  );
-}
+    };
+    const card = { activity: { id: 'card1' } };
+    const wrapper = mount(
+      <Provider store={createStore((state, action) => state, storeState)}>
+        <OuterActivityWrapperContainer card={card} documentId={'doc1'} />
+      </Provider>
+    );
 
-jest.mock('electron', () => ({
-  remote: {
-    app: {
-      isPackaged: false,
-    },
-  },
-  ipcMain: new Proxy(
-    {},
-    {
-      get(): any {
-        return () => ({});
-      },
-      has() {
-        return true;
-      },
-    }
-  ),
-  ipcRenderer: new Proxy(
-    {},
-    {
-      get(): any {
-        return () => ({});
-      },
-      has() {
-        return true;
-      },
-    }
-  ),
-}));
-jest.mock('./explorer', () => mockProxy());
-jest.mock('./mdi', () => mockProxy());
-jest.mock('./navBar', () => mockProxy());
-jest.mock('./statusBar/statusBar.scss', () => ({}));
-jest.mock('../debug/storeVisualizer.scss', () => ({}));
-jest.mock('../../ui/dialogs', () => ({
-  DialogService: { showDialog: () => Promise.resolve(true) },
-}));
+    expect(wrapper.find(OuterActivityWrapper).exists()).toBe(true);
+  });
 
-describe('The Main component', () => {
-  it('should pass an empty test', () => {
-    const parent = shallow(<Main applicationMountComplete={() => void 0} />);
-    expect(parent.find(Main)).not.toBe(null);
+  it('should determine if an activity should be selected', () => {
+    const card = { activity: { id: 'card1' } };
+    const wrapper = shallow(<OuterActivityWrapper card={card} highlightedActivities={[]} />);
+    const instance = wrapper.instance();
+
+    expect((instance as any).shouldBeSelected(card.activity)).toBe(false);
   });
 });

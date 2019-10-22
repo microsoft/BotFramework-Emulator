@@ -31,8 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { applyMiddleware, createStore, combineReducers, Store } from 'redux';
-import { ipcRenderer } from 'electron';
+import { applyMiddleware, createStore, combineReducers, compose, Store } from 'redux';
+import { ipcRenderer, remote } from 'electron';
 import sagaMiddlewareFactory from 'redux-saga';
 import { Settings, ClientAwareSettings, FrameworkSettings } from '@bfemulator/app-shared';
 
@@ -107,6 +107,12 @@ function initStore(): Store<RootState> {
   });
 
   const sagaMiddleware = sagaMiddlewareFactory();
+  let storeEnhancer = applyMiddleware(forwardToMain, sagaMiddleware);
+  if (!remote.app.isPackaged) {
+    // enable react & react-redux dev tools
+    const composeEnhancers = (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+    storeEnhancer = composeEnhancers(storeEnhancer);
+  }
   const _store: Store<RootState> = createStore(
     combineReducers({
       azureAuth,
@@ -128,7 +134,7 @@ function initStore(): Store<RootState> {
       update,
     }),
     DEFAULT_STATE,
-    applyMiddleware(forwardToMain, sagaMiddleware)
+    storeEnhancer
   );
   applicationSagas.forEach(saga => sagaMiddleware.run(saga));
 

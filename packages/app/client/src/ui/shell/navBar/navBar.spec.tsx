@@ -59,6 +59,11 @@ jest.mock('../../../notificationManager', () => ({
 }));
 
 jest.mock('electron', () => ({
+  remote: {
+    app: {
+      isPackaged: false,
+    },
+  },
   ipcMain: new Proxy(
     {},
     {

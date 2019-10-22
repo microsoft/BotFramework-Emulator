@@ -30,30 +30,30 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 import * as React from 'react';
 import { EmulatorMode } from '@bfemulator/sdk-shared';
 
 import { ChatContainer } from '../parts/chat/chatContainer';
-import { ChatDocument } from '../../../../state/reducers/chat';
 
 import * as styles from './chatPanel.scss';
 
-interface ChatPanelProps {
-  document?: ChatDocument;
+export interface ChatPanelProps {
+  documentId?: string;
+  endpointUrl?: string;
   mode?: EmulatorMode;
   onStartConversation?: () => any;
   className?: string;
 }
 
-export default class ChatPanel extends React.Component<ChatPanelProps> {
+export class ChatPanel extends React.Component<ChatPanelProps> {
   render() {
-    const { document, mode } = this.props;
-    const { endpointUrl } = document || { endpointUrl: '' };
+    const { documentId, endpointUrl = '', mode } = this.props;
 
     return (
       <div className={`${styles.chatPanel} ${this.props.className || ''}`}>
         <header>{endpointUrl}</header>
-        <ChatContainer document={document} mode={mode} />
+        <ChatContainer documentId={documentId} mode={mode} />
       </div>
     );
   }

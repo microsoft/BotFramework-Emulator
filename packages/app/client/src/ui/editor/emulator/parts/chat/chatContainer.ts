@@ -45,10 +45,15 @@ import { executeCommand } from '../../../../../state/actions/commandActions';
 
 import { Chat, ChatProps } from './chat';
 
-const mapStateToProps = (state: RootState, { document }): Partial<ChatProps> => {
-  const currentUserId = document.userId || state.clientAwareSettings.users.currentUserId;
-  const { documentId } = document;
+const mapStateToProps = (state: RootState, { documentId }): Partial<ChatProps> => {
+  const currentChat = state.chat.chats[documentId];
+  const currentUserId = currentChat.userId || state.clientAwareSettings.users.currentUserId;
+
   return {
+    botId: currentChat.botId,
+    conversationId: currentChat.conversationId,
+    directLine: currentChat.directLine,
+    mode: currentChat.mode,
     currentUser:
       state.clientAwareSettings.users.usersById[currentUserId] || ({ id: currentUserId, name: 'User' } as User),
     locale: state.clientAwareSettings.locale || 'en-us',
