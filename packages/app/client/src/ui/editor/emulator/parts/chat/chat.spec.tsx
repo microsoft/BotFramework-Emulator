@@ -32,7 +32,7 @@
 //
 
 import * as React from 'react';
-import { mount, ReactWrapper, shallow } from 'enzyme';
+import { mount, ReactWrapper, shallow, ShallowWrapper } from 'enzyme';
 import { Provider } from 'react-redux';
 import ReactWebChat, { createDirectLine, createStyleSet } from 'botframework-webchat';
 import { ActivityTypes } from 'botframework-schema';
@@ -80,22 +80,6 @@ jest.mock('electron', () => ({
   ),
 }));
 
-const mockStore = createStore(combineReducers({ bot, chat, clientAwareSettings, editor }), {
-  clientAwareSettings: {
-    currentUser: { id: '123', name: 'Current User' },
-    users: {
-      currentUserId: '123',
-      usersById: { '123': { id: '123', name: 'Current User' } },
-    },
-  },
-});
-
-jest.mock('../../../../../state/store', () => ({
-  get store() {
-    return mockStore;
-  },
-}));
-
 const defaultDocument = {
   directLine: createDirectLine({
     secret: '1234',
@@ -107,25 +91,35 @@ const defaultDocument = {
   mode: 'livechat',
 };
 
-function render(overrides: Partial<ChatProps> = {}): ReactWrapper {
-  const props = {
-    document: defaultDocument,
-    endpoint: {},
-    mode: 'livechat',
-    onStartConversation: jest.fn(),
-    locale: 'en-US',
-    selectedActivity: {},
-    ...overrides,
-  } as ChatProps;
+const mockStore = createStore(combineReducers({ bot, chat, clientAwareSettings, editor }), {
+  chat: {
+    chats: {
+      doc1: defaultDocument,
+    },
+    pendingSpeechTokenRetrieval: false,
+    webChatStores: {},
+    webSpeechFactories: {},
+  },
+  clientAwareSettings: {
+    currentUser: { id: '123', name: 'Current User' },
+    users: {
+      currentUserId: '123',
+      usersById: { '123': { id: '123', name: 'Current User' } },
+    },
+  },
+  directLine: {},
+});
 
-  return mount(
-    <Provider store={mockStore}>
-      <ChatContainer {...props} />
-    </Provider>
-  );
-}
+jest.mock('../../../../../state/store', () => ({
+  get store() {
+    return mockStore;
+  },
+}));
 
 describe('<ChatContainer />', () => {
+  let wrapper: ReactWrapper<any, any, Chat> | ShallowWrapper<any, any, Chat>;
+  let instance: Chat;
+
   let commandService: CommandServiceImpl;
   beforeAll(() => {
     new BotCommands();
@@ -134,17 +128,39 @@ describe('<ChatContainer />', () => {
     commandService = descriptor.descriptor.get();
   });
 
+  beforeEach(() => {
+    const props = {
+      documentId: 'doc1',
+      endpoint: {},
+      mode: 'livechat',
+      onStartConversation: jest.fn(),
+      locale: 'en-US',
+      selectedActivity: {},
+    } as ChatProps;
+    wrapper = mount(
+      <Provider store={mockStore}>
+        <ChatContainer {...props} />
+      </Provider>
+    );
+  });
+
   describe('when there is no direct line client', () => {
     it('renders a `not connected` message', () => {
-      const component = render({ document: {} } as any);
+      wrapper = shallow(<Chat directLine={undefined} />);
 
-      expect(component.text()).toEqual('Not Connected');
+      expect(wrapper.text()).toEqual('Not Connected');
     });
   });
 
   describe('when there is a direct line client', () => {
+    it('renders a connecting message', () => {
+      wrapper = shallow(<Chat pendingSpeechTokenRetrieval={true} />);
+
+      expect(wrapper.text()).toEqual('Connecting...');
+    });
+
     it('renders the WebChat component with correct props', () => {
-      const webChat = render().find(ReactWebChat);
+      const webChat = wrapper.find(ReactWebChat);
       const styleSet = createStyleSet({ ...webChatStyleOptions });
 
       styleSet.uploadButton = {
@@ -152,6 +168,7 @@ describe('<ChatContainer />', () => {
         padding: '1px',
       };
 
+      expect(webChat.exists()).toBe(true);
       expect(webChat.props()).toMatchObject({
         activityMiddleware: expect.any(Function),
         bot: { id: defaultDocument.botId, name: 'Bot' },
@@ -164,205 +181,110 @@ describe('<ChatContainer />', () => {
     });
   });
 
-  describe('activityWrapper', () => {
-    it('Should display the context menu for the activities in default mode', () => {
-      const dispatchSpy: jest.SpyInstance = jest.spyOn(mockStore, 'dispatch').mockReturnValue(true);
-      const next = () => (kids: any) => kids;
-      const card = { activity: { id: 'activity-id' } };
-      const children = 'a child node';
-      const webChat = render({} as any).find(ReactWebChat);
-      const middleware = webChat.prop('activityMiddleware') as any;
-      const activityWrapper = mount(middleware()(next)(card)(children));
-
-      // show context menu for activity
-      dispatchSpy.mockClear();
-      activityWrapper.simulate('contextmenu', { target: { tagName: 'DIV', classList: [] } });
-      expect(dispatchSpy).toHaveBeenCalledWith(showContextMenuForActivity(card.activity));
-    });
-  });
-
   describe('activity middleware', () => {
-    it('renders an ActivityWrapper with the contents as children', () => {
-      const next = () => (kids: any) => kids;
-      const card = { activity: { id: 'activity-id' } };
-      const children = 'a child node';
-      const webChat = render({} as any).find(ReactWebChat);
-
-      const middleware = webChat.prop('activityMiddleware') as any;
-      const activityWrapper = mount(middleware()(next)(card)(children));
-
-      expect(activityWrapper.props()).toMatchObject({
-        activity: { id: 'activity-id' },
-        children: 'a child node',
-        'data-activity-id': 'activity-id',
-        isSelected: false,
-        onClick: jasmine.any(Function),
-        onKeyDown: jasmine.any(Function),
-      });
-      expect(activityWrapper.text()).toEqual('a child node');
+    it('should render an activity wrapper', () => {
+      wrapper = shallow(<Chat />);
+      const middleware = card => children => <div>{children}</div>;
+      const mockCard = { activity: { type: ActivityTypes.Message, valueType: ValueTypes.Activity } };
+      const activityWrapper = (wrapper.instance() as any).createActivityMiddleware()(middleware)(mockCard)(<span />);
+      expect(activityWrapper).toBeTruthy();
     });
 
-    it('should render a trace activity as a message when the mode is set to "debug"', () => {
-      const next = () => (kids: any) => kids;
-      const webChat = render({ document: { ...defaultDocument, mode: 'debug' } as any }).find(ReactWebChat);
-      const card = {
-        activity: {
-          id: 'activity-id',
-          type: ActivityTypes.Trace,
-          value: { type: ActivityTypes.Message },
-          valueType: ValueTypes.Activity,
-        },
-      };
-      const middleware = webChat.prop('activityMiddleware') as any;
-      const children = 'a child node';
-      const activityWrapper = mount(middleware()(next)(card)(children));
-      expect(activityWrapper.props()).toMatchObject({
-        activity: { type: 'message' },
-        children: 'a child node',
-        'data-activity-id': 'activity-id',
-        isSelected: false,
-        onClick: jasmine.any(Function),
-        onContextMenu: jasmine.any(Function),
-        onKeyDown: jasmine.any(Function),
-      });
-      expect(activityWrapper.text()).toEqual('a child node');
+    it('should render nothing at the end of conversation', () => {
+      wrapper = shallow(<Chat />);
+      const middleware = card => children => <div>{children}</div>;
+      const mockCard = { activity: { type: ActivityTypes.EndOfConversation, valueType: ValueTypes.Activity } };
+      const activityWrapper = (wrapper.instance() as any).createActivityMiddleware()(middleware)(mockCard)(<span />);
+      expect(activityWrapper).toBe(null);
     });
 
-    it('should render a trace activity as a bot state when the mode is set to "debug"', () => {
-      const next = () => (kids: any) => kids;
-      const webChat = render({ document: { ...defaultDocument, mode: 'debug' } as any }).find(ReactWebChat);
-      const card = {
-        activity: {
-          valueType: ValueTypes.BotState,
-          id: 'activity-id',
-          type: ActivityTypes.Trace,
-          value: { type: ActivityTypes.Event },
-        },
-      };
-      const middleware = webChat.prop('activityMiddleware') as any;
-      const activityWrapper = mount(middleware()(next)(card)(null));
-      expect(activityWrapper.props()).toMatchObject({
-        'aria-selected': false,
-        children: 'Bot State',
-        className: undefined,
-        'data-activity-id': 'activity-id',
-        onClick: jasmine.any(Function),
-        onContextMenu: jasmine.any(Function),
-        onKeyDown: jasmine.any(Function),
-      });
-      expect(activityWrapper.text()).toEqual('Bot State');
+    it('should render a trace activity', () => {
+      wrapper = shallow(<Chat />);
+      const middleware = card => children => <div>{children}</div>;
+      const mockCard = { activity: { type: ActivityTypes.Trace, valueType: ValueTypes.Debug } };
+      const activityWrapper = (wrapper.instance() as any).createActivityMiddleware()(middleware)(mockCard)(<span />);
+      expect(activityWrapper).toBeTruthy();
     });
-
-    ['trace', 'endOfConversation'].forEach((type: string) => {
-      it(`does not render ${type} activities`, () => {
-        const next = () => (kids: any) => kids;
-        const card = { activity: { id: 'activity-id', type } };
-        const children = 'a child node';
-        const webChat = render().find(ReactWebChat);
-
-        const middleware = webChat.prop('activityMiddleware') as any;
-        const activityWrapper = middleware()(next)(card)(children);
-
-        expect(activityWrapper).toBeNull();
-      });
-    });
-  });
-
-  describe('speech services', () => {
-    it('displays a message when fetching the speech token', () => {
-      commandService.remoteCall = jest.fn().mockResolvedValueOnce(true);
-      const component = render({ pendingSpeechTokenRetrieval: true });
-      expect(component.find('div').text()).toEqual('Connecting...');
-    });
-  });
-
-  it('should be able to tell when a click within an activity was on an Adaptive Card input', () => {
-    const wrapper = shallow(
-      <Chat
-        document={{} as any}
-        mode={'livechat'}
-        currentUser={null}
-        locale={'en-US'}
-        showContextMenuForActivity={() => null}
-        setInspectorObject={() => null}
-        webchatStore={null}
-      />
-    );
-    const instance: any = wrapper.instance();
-    const mockElement = { tagName: 'SELECT', parentElement: undefined };
-
-    expect(instance.elementIsAnAdaptiveCardInput(mockElement)).toBe(true);
-
-    mockElement.tagName = 'OPTION';
-    expect(instance.elementIsAnAdaptiveCardInput(mockElement)).toBe(true);
-
-    mockElement.tagName = 'INPUT';
-    expect(instance.elementIsAnAdaptiveCardInput(mockElement)).toBe(true);
-
-    mockElement.tagName = 'TEXTAREA';
-    expect(instance.elementIsAnAdaptiveCardInput(mockElement)).toBe(true);
-
-    mockElement.tagName = 'P';
-    mockElement.parentElement = { tagName: 'LABEL' };
-    expect(instance.elementIsAnAdaptiveCardInput(mockElement)).toBe(true);
-
-    mockElement.parentElement = undefined;
-    mockElement.tagName = 'SPAN';
-    expect(instance.elementIsAnAdaptiveCardInput(mockElement)).toBe(false);
   });
 });
 
 describe('event handlers', () => {
   let dispatchSpy: jest.SpyInstance;
+  let wrapper: ReactWrapper<any, any, Chat> | ShallowWrapper<any, any, Chat>;
+  let instance: Chat;
 
-  beforeEach(() => {
-    dispatchSpy = jest.spyOn(mockStore, 'dispatch').mockReturnValue(true);
+  let commandService: CommandServiceImpl;
+  beforeAll(() => {
+    new BotCommands();
+    const decorator = CommandServiceInstance();
+    const descriptor = decorator({ descriptor: {} }, 'none') as any;
+    commandService = descriptor.descriptor.get();
+    dispatchSpy = jest.spyOn(mockStore, 'dispatch').mockImplementation((action: any) => {
+      // don't block on awaited commands
+      if (action.payload && action.payload.resolver) {
+        action.payload.resolver();
+        return action;
+      }
+    });
+    const props = {
+      documentId: 'doc1',
+      endpoint: {},
+      mode: 'livechat',
+      onStartConversation: jest.fn(),
+      locale: 'en-US',
+      selectedActivity: {},
+    } as ChatProps;
+    wrapper = mount(
+      <Provider store={mockStore}>
+        <ChatContainer {...props} />
+      </Provider>
+    );
+    instance = wrapper.find(Chat).instance();
   });
 
-  it('should invoke the appropriate functions defined in the props', () => {
-    const next = () => (kids: any) => kids;
-    const chat = render({ document: { ...defaultDocument, mode: 'debug' } as any });
-    const card = {
-      activity: {
-        valueType: ValueTypes.BotState,
-        id: 'activity-id',
-        type: ActivityTypes.Trace,
-        value: { type: ActivityTypes.Event },
-      },
-    };
-    const webChat = chat.find(ReactWebChat);
-    const middleware = webChat.prop('activityMiddleware') as any;
-    const children = 'a child node';
-    const activityWrapper = mount(middleware()(next)(card)(children));
+  beforeEach(() => {
+    dispatchSpy.mockClear();
+  });
 
-    // keydown on activity
-    activityWrapper.simulate('keyDown', { key: ' ', target: { tagName: 'DIV', classList: [] } });
-    expect(dispatchSpy).toHaveBeenCalledWith(setHighlightedObjects(undefined, []));
+  it('should handle an item renderer click', () => {
+    const selectedActivity = {};
+    (instance as any).activityMap = { activity1: selectedActivity };
+    const mockEvent = { currentTarget: { dataset: { activityId: 'activity1' } } };
+    (instance as any).onItemRendererClick(mockEvent);
+
+    expect(dispatchSpy).toHaveBeenCalledWith(setHighlightedObjects('doc1', []));
     expect(dispatchSpy).toHaveBeenCalledWith(
-      setInspectorObjects(undefined, { ...card.activity, showInInspector: true })
+      setInspectorObjects('doc1', { ...selectedActivity, showInInspector: true } as any)
     );
+  });
 
-    // hitting spacebar on input field within adaptive card
-    dispatchSpy.mockClear();
-    activityWrapper.simulate('keyDown', { key: ' ', target: { tagName: 'INPUT', classList: [] } });
+  it('should handle a non-space or -enter key press', () => {
+    (instance as any).onItemRendererKeyDown({ key: 'A' });
     expect(dispatchSpy).not.toHaveBeenCalled();
+  });
 
-    // click on activity
-    dispatchSpy.mockClear();
-    activityWrapper.simulate('click', { target: { tagName: 'DIV', classList: [] } });
-    expect(dispatchSpy).toHaveBeenCalledWith(setHighlightedObjects(undefined, []));
+  it('should handle a space or enter key press', () => {
+    const selectedActivity = {};
+    (instance as any).activityMap = { activity1: selectedActivity };
+    const mockEvent = { currentTarget: { dataset: { activityId: 'activity1' } }, key: 'Enter' };
+    (instance as any).onItemRendererKeyDown(mockEvent);
+
+    expect(dispatchSpy).toHaveBeenCalledWith(setHighlightedObjects('doc1', []));
     expect(dispatchSpy).toHaveBeenCalledWith(
-      setInspectorObjects(undefined, { ...card.activity, showInInspector: true })
+      setInspectorObjects('doc1', { ...selectedActivity, showInInspector: true } as any)
     );
+  });
 
-    // click on input field within adaptive card
-    dispatchSpy.mockClear();
-    activityWrapper.simulate('click', { target: { tagName: 'INPUT', classList: [] } });
-    expect(dispatchSpy).not.toHaveBeenCalled();
+  it('should open a context menu for an activity', () => {
+    const selectedActivity = {};
+    (instance as any).activityMap = { activity1: selectedActivity };
+    const mockEvent = { currentTarget: { dataset: { activityId: 'activity1' } } };
+    (instance as any).onContextMenu(mockEvent);
 
-    // show context menu for activity
-    dispatchSpy.mockClear();
-    activityWrapper.simulate('contextmenu', { target: { tagName: 'DIV', classList: [] } });
-    expect(dispatchSpy).toHaveBeenCalledWith(showContextMenuForActivity(card.activity));
+    expect(dispatchSpy).toHaveBeenCalledWith(setHighlightedObjects('doc1', []));
+    expect(dispatchSpy).toHaveBeenCalledWith(
+      setInspectorObjects('doc1', { ...selectedActivity, showInInspector: true } as any)
+    );
+    expect(dispatchSpy).toHaveBeenCalledWith(showContextMenuForActivity(selectedActivity));
   });
 });

@@ -72,6 +72,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - [1924](https://github.com/microsoft/BotFramework-Emulator/pull/1924)
   - [1925](https://github.com/microsoft/BotFramework-Emulator/pull/1925)
   - [1927](https://github.com/microsoft/BotFramework-Emulator/pull/1927)
+  - [1933](https://github.com/microsoft/BotFramework-Emulator/pull/1933)
+  - [1934](https://github.com/microsoft/BotFramework-Emulator/pull/1934)
+  - [1935](https://github.com/microsoft/BotFramework-Emulator/pull/1935)
  
  - [client] Fixed an issue with the transcripts path input inside of the resource settings dialog in PR [1836](https://github.com/microsoft/BotFramework-Emulator/pull/1836)
  - [client] Implemented HTML app menu for Windows in PR [1893](https://github.com/microsoft/BotFramework-Emulator/pull/1893) 
@@ -79,6 +82,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - [client] Fixed issue with certain native browser functions (cut, copy, paste, etc.) firing twice in PR [1920](https://github.com/microsoft/BotFramework-Emulator/pull/1920)
  - [client] Applied theming to InsetShadow component in PR [1922](https://github.com/microsoft/BotFramework-Emulator/pull/1922)
  - [client] Bumped Web Chat to v4.5.3 in PR [1925](https://github.com/microsoft/BotFramework-Emulator/pull/1925)
+ - [client] Fixed issue that was causing Web Chat interactions to clear Adaptive Card content in PR [1930](https://github.com/microsoft/BotFramework-Emulator/pull/1930)
 
 
 ## v4.5.2 - 2019 - 07 - 17

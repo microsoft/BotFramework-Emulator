@@ -35,7 +35,7 @@ import * as React from 'react';
 import { ReactNode } from 'react';
 import { mount, ReactWrapper } from 'enzyme';
 
-import ActivityWrapper from './activityWrapper';
+import { ActivityWrapper } from './activityWrapper';
 
 jest.mock('./chat.scss', () => ({
   chatActivity: 'chat-activity',

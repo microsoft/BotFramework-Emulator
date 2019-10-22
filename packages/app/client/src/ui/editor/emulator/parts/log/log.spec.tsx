@@ -36,10 +36,16 @@ import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import { mount, ReactWrapper } from 'enzyme';
 
-import { Log, LogProps } from './log';
+import { LogContainer } from './logContainer';
+import { Log } from './log';
 import { LogEntry } from './logEntry';
 
 jest.mock('electron', () => ({
+  remote: {
+    app: {
+      isPackaged: false,
+    },
+  },
   ipcMain: new Proxy(
     {},
     {
@@ -69,16 +75,20 @@ describe('log component', () => {
   let wrapper: ReactWrapper;
 
   beforeEach(() => {
-    const props: LogProps = {
-      document: {
-        log: {
-          entries: [{ items: [] }, { items: [] }, { items: [] }],
+    const storeState = {
+      chat: {
+        chats: {
+          doc1: {
+            log: {
+              entries: [{ items: [] }, { items: [] }, { items: [] }],
+            },
+          },
         },
       },
     };
     parent = mount(
-      <Provider store={createStore((_action, state) => state, {})}>
-        <Log {...props} />
+      <Provider store={createStore((state, action) => state, storeState)}>
+        <LogContainer documentId={'doc1'} />
       </Provider>
     );
     wrapper = parent.find(Log);

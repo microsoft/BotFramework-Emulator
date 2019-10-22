@@ -45,7 +45,6 @@ import {
   openServiceDeepLink,
   openSortContextMenu,
   OPEN_ADD_CONNECTED_SERVICE_CONTEXT_MENU,
-  OPEN_CONTEXT_MENU_FOR_CONNECTED_SERVICE,
 } from '../../../../state/actions/connectedServiceActions';
 import { bot } from '../../../../state/reducers/bot';
 import { explorer } from '../../../../state/reducers/explorer';
@@ -57,13 +56,42 @@ import {
   ProgressIndicatorContainer,
 } from '../../../dialogs';
 import { executeCommand, CommandAction, CommandActionPayload } from '../../../../state/actions/commandActions';
-import { ServicesExplorerSagas, servicesExplorerSagas } from '../../../../state/sagas/servicesExplorerSagas';
+import { servicesExplorerSagas } from '../../../../state/sagas/servicesExplorerSagas';
 
 import { ConnectedServiceEditorContainer } from './connectedServiceEditor';
 import { ConnectedServicePickerContainer } from './connectedServicePicker/connectedServicePickerContainer';
 import { ServicesExplorer } from './servicesExplorer';
 import { ServicesExplorerContainer } from './servicesExplorerContainer';
 
+jest.mock('electron', () => ({
+  remote: {
+    app: {
+      isPackaged: false,
+    },
+  },
+  ipcMain: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+  ipcRenderer: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+}));
 jest.mock('./servicesExplorer.scss', () => ({}));
 jest.mock('../servicePane/servicePane.scss', () => ({}));
 jest.mock('./connectedServicePicker/connectedServicePicker.scss', () => ({}));

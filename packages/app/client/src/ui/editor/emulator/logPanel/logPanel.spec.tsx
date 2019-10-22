@@ -30,63 +30,20 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 import * as React from 'react';
 import { shallow } from 'enzyme';
 
-import { Main } from './main';
+import LogPanel from './logPanel';
 
-function mockProxy() {
-  return new Proxy(
-    {},
-    {
-      get() {
-        return () => ({});
-      },
-    }
-  );
-}
-
-jest.mock('electron', () => ({
-  remote: {
-    app: {
-      isPackaged: false,
-    },
-  },
-  ipcMain: new Proxy(
-    {},
-    {
-      get(): any {
-        return () => ({});
-      },
-      has() {
-        return true;
-      },
-    }
-  ),
-  ipcRenderer: new Proxy(
-    {},
-    {
-      get(): any {
-        return () => ({});
-      },
-      has() {
-        return true;
-      },
-    }
-  ),
-}));
-jest.mock('./explorer', () => mockProxy());
-jest.mock('./mdi', () => mockProxy());
-jest.mock('./navBar', () => mockProxy());
-jest.mock('./statusBar/statusBar.scss', () => ({}));
-jest.mock('../debug/storeVisualizer.scss', () => ({}));
-jest.mock('../../ui/dialogs', () => ({
-  DialogService: { showDialog: () => Promise.resolve(true) },
+jest.mock('../parts/log', () => ({
+  LogContainer: () => <div />,
 }));
 
-describe('The Main component', () => {
-  it('should pass an empty test', () => {
-    const parent = shallow(<Main applicationMountComplete={() => void 0} />);
-    expect(parent.find(Main)).not.toBe(null);
+describe('<LogPanel />', () => {
+  it('should render', () => {
+    const wrapper = shallow(<LogPanel documentId={'someDocId'} />);
+
+    expect(wrapper.exists()).toBe(true);
   });
 });

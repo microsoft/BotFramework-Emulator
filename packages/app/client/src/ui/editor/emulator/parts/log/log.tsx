@@ -40,7 +40,8 @@ import * as styles from './log.scss';
 import { LogEntry } from './logEntryContainer';
 
 export interface LogProps {
-  document: ChatDocument;
+  document?: ChatDocument;
+  documentId?: string;
 }
 
 export interface LogState {

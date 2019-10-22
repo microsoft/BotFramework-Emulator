@@ -51,6 +51,11 @@ jest.mock('../../../utils', () => ({
 }));
 
 jest.mock('electron', () => ({
+  remote: {
+    app: {
+      isPackaged: false,
+    },
+  },
   ipcMain: new Proxy(
     {},
     {

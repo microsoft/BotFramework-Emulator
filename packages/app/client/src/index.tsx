@@ -30,12 +30,14 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// for hot reloading
+
+import { remote } from 'electron';
 import { Provider } from 'react-redux';
 import * as ReactDOM from 'react-dom';
 import * as React from 'react';
-import './commands';
+import installExtension, { REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS } from 'electron-devtools-installer';
 
+import './commands';
 import interceptError from './interceptError';
 import interceptHyperlink from './interceptHyperlink';
 import Main from './ui/shell/mainContainer';
@@ -44,6 +46,15 @@ import './ui/styles/globals.scss';
 
 interceptError();
 interceptHyperlink();
+
+if (!remote.app.isPackaged) {
+  // enable react & react-redux dev tools
+  installExtension([REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS])
+    /* eslint-disable no-console */
+    .then(installed => console.log('Successfully installed: ', installed.join(', ')))
+    .catch(err => console.error('Failed to install dev tools: ', err));
+  /* eslint-enable no-console */
+}
 
 // Start rendering the UI
 ReactDOM.render(

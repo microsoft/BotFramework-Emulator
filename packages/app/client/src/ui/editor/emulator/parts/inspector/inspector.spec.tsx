@@ -40,7 +40,7 @@ import {
   textItem,
 } from '@bfemulator/sdk-shared';
 import { SharedConstants } from '@bfemulator/app-shared';
-import { mount } from 'enzyme';
+import { mount, shallow } from 'enzyme';
 import * as React from 'react';
 import { Provider } from 'react-redux';
 import { combineReducers, createStore } from 'redux';
@@ -48,6 +48,7 @@ import { combineReducers, createStore } from 'redux';
 import { load, setActive } from '../../../../../state/actions/botActions';
 import { switchTheme } from '../../../../../state/actions/themeActions';
 import { bot } from '../../../../../state/reducers/bot';
+import { chat } from '../../../../../state/reducers/chat';
 import { clientAwareSettings } from '../../../../../state/reducers/clientAwareSettings';
 import { theme } from '../../../../../state/reducers/theme';
 import { ExtensionManager } from '../../../../../extensions';
@@ -58,7 +59,72 @@ import { ariaAlertService } from '../../../../a11y';
 import { Inspector } from './inspector';
 import { InspectorContainer } from './inspectorContainer';
 
-const mockStore = createStore(combineReducers({ theme, bot, clientAwareSettings }), {
+const mockStore = createStore(combineReducers({ theme, bot, chat, clientAwareSettings }), {
+  chat: {
+    chats: {
+      doc1: {
+        documentId: 'a00c2150-b6dc-11e8-9139-bbce58b6f97c',
+        log: {
+          entries: [],
+        },
+        inspectorObjects: [
+          {
+            accessories: [],
+            channelId: 'emulator',
+            conversation: {
+              id: 'd298cdb0-bad5-11e8-bffe-a55cd19d7f71|livechat',
+            },
+            from: {
+              id: 'http://localhost:3978/api/messages',
+              name: 'Bot',
+              role: 'bot',
+            },
+            id: 'ed50b550-bad5-11e8-b74d-8fc778b06796',
+            label: 'Luis Trace',
+            localTimestamp: '2018-09-17T17:01:00-07:00',
+            name: 'LuisRecognizer',
+            recipient: {
+              id: 'default-user',
+              role: 'user',
+            },
+            replyToId: 'ecba8fd0-bad5-11e8-b74d-8fc778b06796',
+            serviceUrl: 'http://localhost:54725',
+            timestamp: '2018-09-18T00:01:00.709Z',
+            type: 'trace',
+            value: {
+              luisModel: {
+                ModelID: 'cb904573-3d6f-46b0-80b9-b23a24e49152',
+              },
+              luisOptions: {
+                Staging: false,
+              },
+              luisResult: {
+                entities: [],
+                query: 'HI',
+                topScoringIntent: {
+                  intent: 'ChitChat',
+                  score: 0.8652684,
+                },
+              },
+              recognizerResult: {
+                entities: {
+                  $instance: {},
+                },
+                intents: {
+                  ChitChat: {
+                    score: 0.8652684,
+                  },
+                },
+                luisResult: null,
+                text: 'HI',
+              },
+            },
+            valueType: 'https://www.luis.ai/schemas/trace',
+          },
+        ],
+      },
+    },
+  },
   clientAwareSettings: { appPath: 'app-path' },
 });
 
@@ -320,23 +386,17 @@ describe('The Inspector component', () => {
   });
 
   describe('when there are no objects to be inspected', () => {
-    const docWithoutInspectorObjs = {
-      ...mockState.document,
-      inspectorObjects: [],
-    };
-
     beforeEach(() => {
-      parent = mount(
-        <Provider store={mockStore}>
-          <InspectorContainer document={docWithoutInspectorObjs} inspector={{ src }} />
-        </Provider>
+      node = shallow(
+        <Inspector
+          document={{ inspectorObjects: [], log: { entries: [] } } as any}
+          themeInfo={{ themeName: 'Light', themeComponents: [] }}
+        />
       );
-
-      node = parent.find(Inspector);
     });
 
     it('shows a helpful message', () => {
-      expect(node.text()).toMatch(/click on a log item/i);
+      expect(node.html().includes('Click on a log item')).toBe(true);
     });
 
     it('does not render a webview container', () => {
@@ -375,7 +435,7 @@ describe('The Inspector component', () => {
       dispatchSpy = jest.spyOn(mockStore, 'dispatch');
       parent = mount(
         <Provider store={mockStore}>
-          <InspectorContainer document={mockState.document} inspector={{ src }} />
+          <InspectorContainer documentId={'doc1'} inspector={{ src }} />
         </Provider>
       );
 

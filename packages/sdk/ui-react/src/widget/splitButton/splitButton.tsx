@@ -93,7 +93,7 @@ export class SplitButton extends React.Component<SplitButtonProps, SplitButtonSt
           >
             <span>{defaultLabel}</span>
           </button>
-          <div className={styles.separator} />
+          <div className={styles.separator} aria-hidden={'true'} />
           <button
             aria-label={defaultLabel}
             className={styles.caretButton + expandedClass}
