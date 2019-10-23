@@ -30,6 +30,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 import 'base64url';
 import 'botframework-config/lib/models';
 import 'botframework-config/lib/schema';
@@ -37,5 +38,4 @@ import 'botframework-webchat';
 import 'react';
 import 'react-dom';
 import 'redux';
-import 'redux-promise-middleware';
 import 'redux-saga';
