@@ -49,8 +49,12 @@ import { EmulatorMode } from '@bfemulator/sdk-shared';
 import * as openBotStyles from './openBotDialog.scss';
 
 export interface OpenBotDialogProps {
-  mode?: EmulatorMode;
+  appId?: string;
+  appPassword?: string;
+  botUrl?: string;
+  isAzureGov?: boolean;
   isDebug?: boolean;
+  mode?: EmulatorMode;
   onAnchorClick?: (url: string) => void;
   onDialogCancel?: () => void;
   openBot?: (state: OpenBotDialogState) => void;
@@ -98,29 +102,16 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
     return endpoint.endsWith('.bot') ? ValidationResult.Valid : ValidationResult.Invalid;
   }
 
-  public static getDerivedStateFromProps(
-    newProps: OpenBotDialogProps = {},
-    newState: OpenBotDialogState = {}
-  ): OpenBotDialogState {
-    let { mode = 'livechat' } = newProps;
-    const { isDebug } = newProps;
-    if (isDebug) {
-      mode = 'debug';
-      if (!(newState.botUrl || '').startsWith('http')) newState.botUrl = '';
-    }
-    return { ...newState, mode, isDebug };
-  }
-
   constructor(props: OpenBotDialogProps) {
     super(props);
-    const { mode = 'livechat' } = props;
+    const { appId = '', appPassword = '', botUrl = '', isAzureGov = false, isDebug = false, mode = 'livechat' } = props;
     this.state = {
-      botUrl: '',
-      appId: '',
-      appPassword: '',
-      isDebug: false,
+      appId,
+      appPassword,
+      botUrl,
+      isAzureGov,
+      isDebug,
       mode,
-      isAzureGov: false,
     };
   }
 
