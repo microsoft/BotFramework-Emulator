@@ -32,7 +32,7 @@
 //
 import * as React from 'react';
 import { Provider } from 'react-redux';
-import { mount } from 'enzyme';
+import { mount, ReactWrapper } from 'enzyme';
 import { combineReducers, createStore } from 'redux';
 import { ServiceTypes } from 'botframework-config/lib/schema';
 import { BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
@@ -62,7 +62,7 @@ jest.mock('../servicePane/servicePane.scss', () => ({}));
 jest.mock('./resourceExplorer.scss', () => ({}));
 
 describe('The ServicesExplorer component should', () => {
-  let parent;
+  let parent: ReactWrapper<any, any, any>;
   let node;
   let mockChat;
   let mockTranscript;
@@ -82,7 +82,7 @@ describe('The ServicesExplorer component should', () => {
 
     parent = mount(
       <Provider store={mockStore}>
-        <ResourceExplorerContainer files={[mockChat, mockTranscript]} />
+        <ResourceExplorerContainer files={[mockChat, mockTranscript]} fileToRename={mockTranscript} />
       </Provider>
     );
     node = parent.find(ResourceExplorer);
@@ -114,11 +114,18 @@ describe('The ServicesExplorer component should', () => {
     expect(mockDispatch).toHaveBeenCalledWith(openContextMenuForResource(mockChat));
   });
 
+  it('should dispatch to rename the resource when input is blurred', () => {
+    const instance = node.instance();
+    instance.setState({ modifiedFileName: 'newTestTranscript' });
+    instance.onInputBlur();
+    expect(mockDispatch).toHaveBeenCalledWith(renameResource({ ...mockTranscript, name: 'newTestTranscript' }));
+  });
+
   it('should dispatch to rename the resource when the enter key is pressed while focused in an input field', () => {
     const instance = node.instance();
-    instance.setState({ fileToRename: mockTranscript });
-    instance.onInputKeyUp({ which: 13 });
-    expect(mockDispatch).toHaveBeenCalledWith(renameResource(mockTranscript));
+    instance.setState({ modifiedFileName: 'newTestTranscript' });
+    instance.onInputKeyUp({ key: 'Enter' });
+    expect(mockDispatch).toHaveBeenCalledWith(renameResource({ ...mockTranscript, name: 'newTestTranscript' }));
   });
 
   it('should open the resource when the enter key is pressed while focused on a link', () => {
@@ -134,5 +141,13 @@ describe('The ServicesExplorer component should', () => {
     const spy = jest.spyOn(mockStore, 'dispatch');
     instance.onChooseLocationClick();
     expect(spy).toHaveBeenCalledWith(openResourcesSettings({ dialog: ResourcesSettingsContainer }));
+  });
+
+  it('should return the file to rename', () => {
+    const instance = node.instance();
+    expect(instance.fileToRename).toEqual(mockTranscript);
+
+    instance.setState({ modifiedFileName: 'newTestTranscript' });
+    expect(instance.fileToRename).toEqual({ ...mockTranscript, name: 'newTestTranscript' });
   });
 });

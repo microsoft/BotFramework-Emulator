@@ -120,8 +120,10 @@ export class UiCommands {
   // Shows a bot creation dialog
   @Command(UI.ShowOpenBotDialog)
   protected async showOpenBotDialog(isDebug: boolean = false): Promise<void> {
+    const mode = isDebug ? 'debug' : undefined;
     return await DialogService.showDialog<ComponentClass, void>(OpenBotDialogContainer, {
       isDebug,
+      mode,
     } as OpenBotDialogProps);
   }
 

@@ -51,11 +51,12 @@ function simpleNameSort(a: IFileService, b: IFileService): 0 | 1 | -1 {
 }
 
 export interface ResourceExplorerState extends ServicePaneState {
-  fileToRename?: IFileService;
+  modifiedFileName: string;
 }
 
 export interface ResourceExplorerProps extends ServicePaneProps, ResourceExplorerState {
   files?: IFileService[];
+  fileToRename?: IFileService;
   renameResource: (resource: IFileService) => void;
   openResource: (resource: IFileService) => void;
   resourcesPath?: string;
@@ -63,9 +64,11 @@ export interface ResourceExplorerProps extends ServicePaneProps, ResourceExplore
 }
 
 export class ResourceExplorer extends ServicePane<ResourceExplorerProps, ResourceExplorerState> {
-  public static getDerivedStateFromProps(newProps: ResourceExplorerProps) {
-    const { fileToRename = {} } = newProps;
-    return { fileToRename: { ...fileToRename } }; // Copies only
+  constructor(props: ResourceExplorerProps, context: ResourceExplorerState) {
+    super(props, context);
+    this.state = {
+      modifiedFileName: '',
+    };
   }
 
   protected get controls(): JSX.Element {
@@ -74,7 +77,8 @@ export class ResourceExplorer extends ServicePane<ResourceExplorerProps, Resourc
 
   protected get links() {
     const { files = [] } = this.props;
-    const fileToRename = this.state.fileToRename || { id: '', name: '' };
+    const fileToRename = this.fileToRename || { id: '', name: '' };
+
     return files.sort(simpleNameSort).map((file, index) => {
       const mutable = fileToRename.id === file.id;
       if (!mutable) {
@@ -162,20 +166,18 @@ export class ResourceExplorer extends ServicePane<ResourceExplorerProps, Resourc
   };
 
   private onInputChange = (event: ChangeEvent<HTMLInputElement>): void => {
-    const { fileToRename } = this.state;
-    fileToRename.name = event.target.value;
+    this.setState({ modifiedFileName: event.target.value });
   };
 
   private onInputBlur = (): void => {
-    this.props.renameResource(this.state.fileToRename);
+    this.props.renameResource(this.fileToRename);
   };
 
   private onInputKeyUp = (event: KeyboardEvent<HTMLInputElement>): void => {
-    if (event.which !== 13) {
+    if (event.key !== 'Enter') {
       return;
     }
-    const { fileToRename } = this.state;
-    this.props.renameResource(fileToRename);
+    this.props.renameResource(this.fileToRename);
   };
 
   private editableInputRef = (ref: HTMLInputElement): void => {
@@ -188,4 +190,12 @@ export class ResourceExplorer extends ServicePane<ResourceExplorerProps, Resourc
       });
     }
   };
+
+  private get fileToRename(): IFileService {
+    const { fileToRename } = this.props;
+    if (this.state.modifiedFileName) {
+      return { ...fileToRename, name: this.state.modifiedFileName };
+    }
+    return fileToRename;
+  }
 }

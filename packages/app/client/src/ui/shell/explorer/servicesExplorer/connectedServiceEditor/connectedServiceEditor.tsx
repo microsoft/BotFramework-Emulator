@@ -98,26 +98,16 @@ const portalMap = {
 };
 
 export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProps, ConnectedServiceEditorState> {
-  public state: ConnectedServiceEditorState = {} as ConnectedServiceEditorState;
-
-  public static getDerivedStateFromProps(props: ConnectedServiceEditorProps, state: ConnectedServiceEditorState) {
-    const connectedServiceCopy = BotConfigurationBase.serviceFromJSON(
-      props.connectedService || {
-        type: props.serviceType,
-        name: '',
-      }
-    );
-
-    if (JSON.stringify(connectedServiceCopy) !== JSON.stringify(state.connectedServiceCopy)) {
-      return { connectedServiceCopy };
-    }
-
-    return state;
-  }
-
   constructor(props: ConnectedServiceEditorProps, state: ConnectedServiceEditorState) {
     super(props, state);
-    this.state = ConnectedServiceEditor.getDerivedStateFromProps(props, state || ({} as ConnectedServiceEditorState));
+    this.state = {
+      connectedServiceCopy: BotConfigurationBase.serviceFromJSON(
+        props.connectedService || {
+          type: props.serviceType,
+          name: '',
+        }
+      ),
+    };
   }
 
   public render(): JSX.Element {
