@@ -127,10 +127,10 @@ describe('Exporting and importing transcripts', () => {
     await app.client.click('div[class*="resources-bar"] div[aria-label="transcripts"]');
 
     // click "Choose a different location"
-    await app.client.click('div[class*="resources-bar"] div[aria-label="transcripts"] ~ div[class*="body"] a');
+    await app.client.click('div[class*="resources-bar"] div[aria-label="transcripts"] ~ div[class*="body"] button');
 
     // browse for a new transcripts directory
-    await app.client.click('a[data-prop="transcriptsPath"]');
+    await app.client.click('button[data-prop="transcriptsPath"]');
 
     // click save if it's enabled, otherwise the path was already set to the e2e test path, and we should dismiss the dialog
     const disabled = await app.client.getAttribute(

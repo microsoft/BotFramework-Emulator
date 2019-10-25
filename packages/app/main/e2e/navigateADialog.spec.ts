@@ -33,7 +33,6 @@
 import { Application } from 'spectron';
 
 import { appPath, chromeDriverLogPath, electronPath } from './utils';
-
 import { init } from './mocks/electronDialog';
 
 describe('Navigating a dialog with focus trap', () => {
@@ -64,7 +63,7 @@ describe('Navigating a dialog with focus trap', () => {
     await app.client.keys(['\uE00C', '\uE00C']);
 
     await app.client.click('button*=Sign in with your Azure');
-    expect(await app.client.hasFocus("a*=Don't have an Azure Account?")).toBeTruthy();
+    expect(await app.client.hasFocus("button*=Don't have an Azure Account?")).toBeTruthy();
 
     // press tab to move focus within the dialog
     await app.client.keys(['\uE004', '\uE004', '\uE004']);
@@ -72,7 +71,7 @@ describe('Navigating a dialog with focus trap', () => {
 
     // press tab again to circle through the focus trap in the dialog
     await app.client.keys(['\uE004', '\uE004']);
-    expect(await app.client.hasFocus("a*=Don't have an Azure Account?")).toBeTruthy();
+    expect(await app.client.hasFocus("button*=Don't have an Azure Account?")).toBeTruthy();
 
     // TODO: Improving this test would be to include a SHIFT+TAB focus check, but webdriver.io v4 doesn't have the ability to press two buttons simultaneously.
   });

@@ -85,6 +85,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - [client] Bumped Web Chat to v4.5.3 in PR [1925](https://github.com/microsoft/BotFramework-Emulator/pull/1925)
  - [client] Fixed issue that was causing Web Chat interactions to clear Adaptive Card content in PR [1930](https://github.com/microsoft/BotFramework-Emulator/pull/1930)
  - [client/main] Added a new property, `source`, to the `bot_open` telemetry event to distinguish between bots opened via .bot file and via url, in PR [1937](https://github.com/microsoft/BotFramework-Emulator/pull/1937)
+ - [tools] Adjusted e2e tests for recent updates to application DOM in PR [1941](https://github.com/microsoft/BotFramework-Emulator/pull/1941)
 
 
 ## v4.5.2 - 2019 - 07 - 17
