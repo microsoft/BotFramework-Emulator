@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## Fixed
+- [client] Added an empty state for the recent bots submenu in the app menu for Windows in PR [1945](https://github.com/microsoft/BotFramework-Emulator/pull/1945)
 
 ## v4.6.0 - 2019 - 10 - 31
 ## Added
