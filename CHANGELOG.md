@@ -87,6 +87,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - [client/main] Added a new property, `source`, to the `bot_open` telemetry event to distinguish between bots opened via .bot file and via url, in PR [1937](https://github.com/microsoft/BotFramework-Emulator/pull/1937)
  - [client] Bumped `react` & `react-dom` to `^16.8.6` to sync with Web Chat in PR [1939](https://github.com/microsoft/BotFramework-Emulator/pull/1939)
  - [client] Fixed an issue with the `<AutoComplete />` component so that it can now accept an empty string as an input in "controlled mode" in PR [1939](https://github.com/microsoft/BotFramework-Emulator/pull/1939)
+ - [tools] Adjusted e2e tests for recent updates to application DOM in PR [1941](https://github.com/microsoft/BotFramework-Emulator/pull/1941)
 
 
 ## v4.5.2 - 2019 - 07 - 17

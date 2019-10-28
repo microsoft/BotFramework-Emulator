@@ -62,8 +62,8 @@ describe('Creating a bot', () => {
   // on welcome page
   it('should create a bot', async () => {
     // open the create bot modal
-    const ctaLinks = await app.client.$$('button[class*="cta-link"]');
-    const createBotLink = ctaLinks[0];
+    const ctaLinks = await app.client.$$('button[class*="link-button"]');
+    const createBotLink = ctaLinks[1];
     await app.client.elementIdClick(createBotLink.ELEMENT);
 
     // fill out the bot name and endpoint
