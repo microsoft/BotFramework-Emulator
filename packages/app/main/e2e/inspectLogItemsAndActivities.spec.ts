@@ -33,7 +33,7 @@
 
 import { Application } from 'spectron';
 
-import { appPath, chromeDriverLogPath, electronPath } from './utils';
+import { appPath, chromeDriverLogPath, electronPath, closeDialogsIfShowing } from './utils';
 
 describe('Inspecting log items and activities', () => {
   let app: Application;
@@ -46,6 +46,7 @@ describe('Inspecting log items and activities', () => {
       chromeDriverLogPath,
     });
     await app.start();
+    await closeDialogsIfShowing(app);
   });
 
   afterEach(async () => {

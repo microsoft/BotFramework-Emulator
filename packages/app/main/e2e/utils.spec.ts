@@ -31,21 +31,23 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { join } from 'path';
-import { Application } from 'spectron';
+import { closeDialogsIfShowing } from './utils';
 
-export const electronPath =
-  process.platform === 'win32'
-    ? join(__dirname, '..', 'node_modules', '.bin', 'electron.cmd')
-    : join(__dirname, '..', 'node_modules', '.bin', 'electron');
+describe('e2e utils', () => {
+  it('should close any dialogs if showing', async () => {
+    const mockApp: any = {
+      client: {
+        click: jest.fn().mockResolvedValue(undefined),
+        isExisting: jest
+          .fn()
+          .mockResolvedValueOnce(true) // imitate 2 dialogs shown consecutively
+          .mockResolvedValueOnce(true)
+          .mockResolvedValueOnce(false),
+      },
+    };
+    await closeDialogsIfShowing(mockApp);
 
-export const appPath = join(__dirname, '..', 'app', 'server', 'main.js');
-
-export const chromeDriverLogPath = join(__dirname, 'chrome-driver-log.txt');
-
-export async function closeDialogsIfShowing(app: Application): Promise<void> {
-  // closes any dialogs shown on startup so they don't interfere with tests
-  while (await app.client.isExisting('div[role="dialog"]')) {
-    await app.client.click('div[role="dialog"] button[aria-label="Close"]');
-  }
-}
+    // should close 2 dialogs
+    expect(mockApp.client.click).toHaveBeenCalledTimes(2);
+  });
+});

@@ -32,7 +32,7 @@
 
 import { Application } from 'spectron';
 
-import { appPath, chromeDriverLogPath, electronPath } from './utils';
+import { appPath, chromeDriverLogPath, electronPath, closeDialogsIfShowing } from './utils';
 import { init } from './mocks/electronDialog';
 
 describe('Navigating a dialog with focus trap', () => {
@@ -47,6 +47,7 @@ describe('Navigating a dialog with focus trap', () => {
     });
     init(app);
     await app.start();
+    await closeDialogsIfShowing(app);
   });
 
   afterEach(async () => {

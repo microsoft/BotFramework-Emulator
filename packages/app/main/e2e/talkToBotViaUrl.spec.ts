@@ -32,7 +32,7 @@
 
 import { Application } from 'spectron';
 
-import { appPath, chromeDriverLogPath, electronPath } from './utils';
+import { appPath, chromeDriverLogPath, electronPath, closeDialogsIfShowing } from './utils';
 
 describe('Talking to a bot via URL', () => {
   let app: Application;
@@ -45,6 +45,7 @@ describe('Talking to a bot via URL', () => {
       chromeDriverLogPath,
     });
     await app.start();
+    await closeDialogsIfShowing(app);
   });
 
   afterEach(async () => {
@@ -76,7 +77,7 @@ describe('Talking to a bot via URL', () => {
 
     // check the custom user id checkbox if it's unchecked
     const checked = await app.client.getAttribute('input#use-custom-id', 'checked');
-    if (checked === 'false') {
+    if (!checked) {
       await app.client.click('input#use-custom-id');
     }
 

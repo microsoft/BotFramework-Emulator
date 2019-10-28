@@ -35,7 +35,7 @@ import { join } from 'path';
 
 import { Application } from 'spectron';
 
-import { appPath, chromeDriverLogPath, electronPath } from './utils';
+import { appPath, chromeDriverLogPath, electronPath, closeDialogsIfShowing } from './utils';
 import { init, setupMock } from './mocks/electronDialog';
 
 describe('Creating a bot', () => {
@@ -50,6 +50,7 @@ describe('Creating a bot', () => {
     });
     init(app);
     await app.start();
+    await closeDialogsIfShowing(app);
   });
 
   afterEach(async () => {

@@ -36,7 +36,7 @@ import { join } from 'path';
 
 import { Application } from 'spectron';
 
-import { appPath, chromeDriverLogPath, electronPath } from './utils';
+import { appPath, chromeDriverLogPath, electronPath, closeDialogsIfShowing } from './utils';
 import { init, setupMock } from './mocks/electronDialog';
 
 describe('Exporting and importing transcripts', () => {
@@ -51,6 +51,7 @@ describe('Exporting and importing transcripts', () => {
     });
     init(app);
     await app.start();
+    await closeDialogsIfShowing(app);
   });
 
   afterEach(async () => {
