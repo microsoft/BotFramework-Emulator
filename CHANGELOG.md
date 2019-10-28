@@ -88,6 +88,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - [client] Bumped `react` & `react-dom` to `^16.8.6` to sync with Web Chat in PR [1939](https://github.com/microsoft/BotFramework-Emulator/pull/1939)
  - [client] Fixed an issue with the `<AutoComplete />` component so that it can now accept an empty string as an input in "controlled mode" in PR [1939](https://github.com/microsoft/BotFramework-Emulator/pull/1939)
  - [tools] Adjusted e2e tests for recent updates to application DOM in PR [1941](https://github.com/microsoft/BotFramework-Emulator/pull/1941)
+ - [tools] Made e2e tests more reliable across different machines in PR [1944](https://github.com/microsoft/BotFramework-Emulator/pull/1944)
 
 
 ## v4.5.2 - 2019 - 07 - 17
