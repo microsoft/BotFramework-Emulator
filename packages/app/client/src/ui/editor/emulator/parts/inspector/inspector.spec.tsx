@@ -472,7 +472,7 @@ describe('The Inspector component', () => {
       const instance = node.instance();
       instance.setInspectorTitle('Yo!');
 
-      expect(instance.state.title).toBe('Yo!');
+      expect(instance.state.titleOverride).toBe('Yo!');
     });
 
     it('should send the initialization stack to the inspector when the dom is ready', () => {

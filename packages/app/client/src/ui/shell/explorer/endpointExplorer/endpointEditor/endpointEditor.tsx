@@ -82,31 +82,6 @@ export class EndpointEditor extends Component<EndpointEditorProps, EndpointEdito
   private endpointWarningDelay: any;
   private absContent: HTMLDivElement;
 
-  public static getDerivedStateFromProps(nextProps: EndpointEditorProps) {
-    const { endpointService, botService } = nextProps;
-    const derivedState: EndpointEditorState = {} as EndpointEditorState;
-
-    if (endpointService) {
-      Object.assign(derivedState, {
-        endpointService: new EndpointService(endpointService),
-        nameError: '',
-        endpointError: '',
-        appPasswordError: '',
-        appIdError: '',
-        endpointWarning: '',
-        isDirty: false,
-      });
-    }
-
-    if (botService) {
-      Object.assign(derivedState, {
-        botService: new BotService(botService),
-      });
-    }
-
-    return derivedState;
-  }
-
   private static validateEndpoint(endpoint: string): string {
     const controllerRegEx = /api\/messages\/?$/;
     return controllerRegEx.test(endpoint) ? '' : `Please include route if necessary: "/api/messages"`;

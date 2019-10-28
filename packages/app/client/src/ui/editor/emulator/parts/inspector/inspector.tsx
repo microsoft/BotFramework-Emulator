@@ -111,6 +111,8 @@ declare type ElectronHTMLWebViewElement = HTMLWebViewElement & {
   send: (...args: any[]) => void;
 };
 
+// TODO: Component could be greatly simplified by storing inspector state
+// in the redux store referenced by owning document id.
 export class Inspector extends React.Component<InspectorProps, InspectorState> {
   private static renderAccessoryIcon(icon: string) {
     if (icon === 'Spinner') {
@@ -144,9 +146,11 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     const inspectorResult = Inspector.getInspector(document.inspectorObjects);
     const { inspector = { name: '' } } = inspectorResult.response;
     const buttons = Inspector.getButtons(inspector.accessories);
-    const { inspector: prevInspector = {} } = prevState;
+    const { inspector: prevInspector = {}, titleOverride } = prevState;
 
-    if (prevState.buttons && inspector.name === prevInspector.name) {
+    const inspectorChanged = inspector.name !== prevInspector.name;
+
+    if (prevState.buttons && !inspectorChanged) {
       Object.assign(buttons, prevState.buttons);
     }
     return {
@@ -160,6 +164,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
       inspectObj: inspectorResult.inspectObj,
       themeInfo: themeInfo,
       title: inspector.name,
+      titleOverride: inspectorChanged ? '' : titleOverride,
       buttons,
     };
   }
@@ -206,9 +211,10 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
 
   public render() {
     if (this.state.inspector && this.state.inspectObj) {
+      const { title, titleOverride } = this.state;
       return (
         <div aria-label="inspector panel" className={styles.detailPanel} role="region">
-          <Panel title={['inspector', this.state.title].filter(s => s && s.length).join(' - ')}>
+          <Panel title={['inspector', titleOverride || title].filter(s => s && s.length).join(' - ')}>
             {this.renderAccessoryButtons()}
             <PanelContent>
               <div className={styles.inspectorContainer}>
@@ -305,7 +311,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
       this.inspect(newState.inspectObj);
     }
 
-    if ((oldState.themeInfo || { themeName: '' }).themeName !== newState.themeInfo.themeName) {
+    if ((oldState.themeInfo || { themeName: '' }).themeName !== (newState.themeInfo || { themeName: '' }).themeName) {
       this.sendToExtension(ExtensionChannel.Theme, newState.themeInfo);
     }
   }
@@ -379,8 +385,8 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
   };
 
   private setInspectorTitle = (title: string) => {
-    if (this.state.title !== title) {
-      this.setState({ title });
+    if (this.state.titleOverride !== title) {
+      this.setState({ titleOverride: title });
     }
   };
 

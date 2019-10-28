@@ -45,7 +45,6 @@ import { clientAwareSettingsChanged } from '../../../state/actions/clientAwareSe
 import { bot } from '../../../state/reducers/bot';
 import { clientAwareSettings } from '../../../state/reducers/clientAwareSettings';
 import { DialogService } from '../service';
-import { ariaAlertService } from '../../a11y';
 import { executeCommand } from '../../../state/actions/commandActions';
 
 import { OpenBotDialog } from './openBotDialog';

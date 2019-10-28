@@ -114,10 +114,13 @@ describe('the uiCommands', () => {
   });
 
   it('should call DialogService.showDialog when the ShowOpenBotDialog command is dispatched', async () => {
-    const spy = jest.spyOn(DialogService, 'showDialog').mockResolvedValueOnce(true);
+    const spy = jest.spyOn(DialogService, 'showDialog').mockResolvedValue(true);
     const result = await registry.getCommand(Commands.ShowOpenBotDialog)();
-    expect(spy).toHaveBeenCalledWith(OpenBotDialogContainer, { isDebug: false });
+    expect(spy).toHaveBeenCalledWith(OpenBotDialogContainer, { isDebug: false, mode: undefined });
     expect(result).toBe(true);
+
+    await registry.getCommand(Commands.ShowOpenBotDialog)(true);
+    expect(spy).toHaveBeenCalledWith(OpenBotDialogContainer, { isDebug: true, mode: 'debug' });
   });
 
   describe('should dispatch the appropriate action to the store', () => {
