@@ -51,12 +51,27 @@ describe('fetch proxy support', () => {
     expect(mockFetchArgs.init.agent).not.toBeNull();
   });
 
-  it('should not add the https-proxy-agent when the HTTPS_PROXY env var exists but the NO_PROXY omits the url', () => {
-    process.env.HTTPS_PROXY = 'https://proxy';
-    process.env.NO_PROXY = 'localhost';
-    fetch('https://localhost').catch();
-    expect(mockFetchArgs.init).toBeUndefined();
-  });
+  it.each([
+    ['https://host1', true],
+    ['https://xhost1x', false],
+    ['https://another/host1', false],
+    ['https://host.domain1', true],
+    ['https://domain1', false],
+    ['https://host.domain2', true],
+    ['https://domain2', false],
+  ])(
+    'should not add the https-proxy-agent when the HTTPS_PROXY env var exists but the NO_PROXY omits the url (%#)',
+    (url: string, direct: boolean) => {
+      process.env.HTTPS_PROXY = 'https://proxy';
+      process.env.NO_PROXY = 'host1,.domain1,*.domain2';
+      fetch(url).catch();
+      if (direct) {
+        expect(mockFetchArgs.init).toBeUndefined();
+      } else {
+        expect(mockFetchArgs.init).not.toBeUndefined();
+      }
+    }
+  );
 
   it('should not add the http-proxy-agent when the HTTPS_PROXY is omitted', () => {
     delete process.env.HTTPS_PROXY;

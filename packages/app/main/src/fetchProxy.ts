@@ -53,9 +53,29 @@ declare function fetch(input: RequestInfo, init?: RequestInit): Promise<Response
   }
 
   // No Proxy
-  const url: string = typeof urlOrRequest === 'string' ? urlOrRequest : urlOrRequest.url;
 
-  if (!process.env.HTTPS_PROXY || (process.env.NO_PROXY && url.includes(process.env.NO_PROXY))) {
+  if (!process.env.HTTPS_PROXY) {
+    return nodeFetch(...args);
+  }
+
+  const url: URL = new URL(typeof urlOrRequest === 'string' ? urlOrRequest : urlOrRequest.url);
+
+  // Reference: https://www.gnu.org/software/emacs/manual/html_node/url/Proxies.html
+  const noProxyList = (process.env.NO_PROXY || '')
+    .split(',')
+    .map(x =>
+      x
+        .trim()
+        .toLowerCase()
+        .replace(/^\*/, '')
+    )
+    .filter(x => x)
+    .map(name => ({
+      name,
+      isDomain: name.startsWith('.'),
+    }));
+
+  if (noProxyList.some(x => (x.isDomain ? url.hostname.endsWith(x.name) : url.hostname === x.name))) {
     return nodeFetch(...args);
   }
 
