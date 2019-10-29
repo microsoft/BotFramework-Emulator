@@ -85,7 +85,4 @@ const mapDispatchToProps = (dispatch): EmulatorProps => ({
     ),
 });
 
-export const EmulatorContainer = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Emulator);
+export const EmulatorContainer = connect(mapStateToProps, mapDispatchToProps)(Emulator);

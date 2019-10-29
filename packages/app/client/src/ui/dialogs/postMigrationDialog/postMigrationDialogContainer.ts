@@ -53,7 +53,4 @@ function mapDispatchToProps(dispatch: (action: Action) => void): PostMigrationDi
   };
 }
 
-export const PostMigrationDialogContainer = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(PostMigrationDialog);
+export const PostMigrationDialogContainer = connect(mapStateToProps, mapDispatchToProps)(PostMigrationDialog);

@@ -4,8 +4,6 @@
     "packages/app/client",
     "packages/app/main",
     "packages/app/shared",
-    "packages/emulator/cli",
-    "packages/emulator/core",
     "packages/sdk/client",
     "packages/sdk/shared",
     "packages/sdk/ui-react",

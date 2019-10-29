@@ -44,7 +44,4 @@ function mapStateToProps(state: RootState, { documentId }: { documentId: string 
   };
 }
 
-export const ChatPanelContainer = connect(
-  mapStateToProps,
-  undefined
-)(ChatPanel);
+export const ChatPanelContainer = connect(mapStateToProps, undefined)(ChatPanel);

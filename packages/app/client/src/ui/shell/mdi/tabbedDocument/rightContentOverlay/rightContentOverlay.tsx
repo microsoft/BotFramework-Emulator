@@ -114,7 +114,4 @@ const mapDispatchToProps = (dispatch): RightContentOverlayProps => ({
     dispatch(EditorActions.splitTab(contentType, tabId, Constants.EDITOR_KEY_PRIMARY, Constants.EDITOR_KEY_SECONDARY)),
 });
 
-export const RightContentOverlay = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(RightContentOverlayComponent);
+export const RightContentOverlay = connect(mapStateToProps, mapDispatchToProps)(RightContentOverlayComponent);

@@ -43,7 +43,4 @@ const mapDispatchToProps = (dispatch, ownProps: TabProps): TabProps => ({
     dispatch(swapTabs(editorKey, owningEditor, tabId, ownProps.documentId)),
 });
 
-export const TabContainer = connect(
-  null,
-  mapDispatchToProps
-)(Tab);
+export const TabContainer = connect(null, mapDispatchToProps)(Tab);

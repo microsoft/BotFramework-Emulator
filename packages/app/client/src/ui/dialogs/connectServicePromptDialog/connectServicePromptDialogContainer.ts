@@ -56,7 +56,4 @@ const mapDispatchToProps = dispatch => (
   };
 };
 
-export const ConnectServicePromptDialogContainer = connect(
-  null,
-  mapDispatchToProps
-)(ConnectServicePromptDialog);
+export const ConnectServicePromptDialogContainer = connect(null, mapDispatchToProps)(ConnectServicePromptDialog);

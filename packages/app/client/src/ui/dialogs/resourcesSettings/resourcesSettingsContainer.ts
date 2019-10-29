@@ -59,7 +59,4 @@ const mapDispatchToProps = dispatch => ({
     ),
   cancel: () => DialogService.hideDialog(0),
 });
-export const ResourcesSettingsContainer = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ResourcesSettings);
+export const ResourcesSettingsContainer = connect(mapStateToProps, mapDispatchToProps)(ResourcesSettings);

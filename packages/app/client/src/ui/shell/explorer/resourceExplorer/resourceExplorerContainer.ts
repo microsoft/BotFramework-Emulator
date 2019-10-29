@@ -57,7 +57,4 @@ const mapDispatchToProps = (dispatch: (...args: any[]) => void): ResourceExplore
   window,
 });
 
-export const ResourceExplorerContainer = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ResourceExplorer);
+export const ResourceExplorerContainer = connect(mapStateToProps, mapDispatchToProps)(ResourceExplorer);

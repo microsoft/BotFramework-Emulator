@@ -43,7 +43,4 @@ function mapDispatchToProps(_dispatch: any): UpdateUnavailableDialogProps {
   };
 }
 
-export const UpdateUnavailableDialogContainer = connect(
-  null,
-  mapDispatchToProps
-)(UpdateUnavailableDialog);
+export const UpdateUnavailableDialogContainer = connect(null, mapDispatchToProps)(UpdateUnavailableDialog);

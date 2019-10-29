@@ -45,13 +45,23 @@ describe('The KvPair component', () => {
   });
 
   it('should render a key value pair row for each pair', () => {
-    node.setState({ kvPairs: [{ key: 'key1', value: 'val1' }, { key: 'key2', value: 'val2' }], numRows: 2 });
+    node.setState({
+      kvPairs: [
+        { key: 'key1', value: 'val1' },
+        { key: 'key2', value: 'val2' },
+      ],
+      numRows: 2,
+    });
 
     expect(node.find('ul').children()).toHaveLength(2);
   });
 
   it('should call the onChange callback with the updated kv pairs', () => {
-    const kvPairs = [{ key: 'key1', value: 'val1' }, { key: '', value: '' }, { key: 'key3', value: 'val3' }];
+    const kvPairs = [
+      { key: 'key1', value: 'val1' },
+      { key: '', value: '' },
+      { key: 'key3', value: 'val3' },
+    ];
     node.setState({ kvPairs, numRows: 3 });
     // update value of row 3
     const mockChangeEvent = { target: { dataset: { index: 2, prop: 'value' }, value: 'updatedValue3' } };
@@ -72,13 +82,19 @@ describe('The KvPair component', () => {
 
     expect(node.instance().state).toEqual({
       alert: '',
-      kvPairs: [{ key: 'key1', value: 'val1' }, { key: '', value: '' }],
+      kvPairs: [
+        { key: 'key1', value: 'val1' },
+        { key: '', value: '' },
+      ],
       numRows: 2,
     });
   });
 
   it('should remove a key value pair', () => {
-    const mockKvPairs = [{ key: 'key1', value: 'val1' }, { key: 'key2', value: 'val2' }];
+    const mockKvPairs = [
+      { key: 'key1', value: 'val1' },
+      { key: 'key2', value: 'val2' },
+    ];
     node.setState({ kvPairs: mockKvPairs, numRows: 2 });
 
     node.instance().onRemoveKvPair();

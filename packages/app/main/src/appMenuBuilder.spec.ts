@@ -140,6 +140,7 @@ jest.mock('./appUpdater', () => ({
 
 jest.mock('./emulator', () => ({
   Emulator: {
+    initialize: jest.fn(),
     getInstance: () => ({
       ngrok: {
         broadcastNgrokExpired: () => null,

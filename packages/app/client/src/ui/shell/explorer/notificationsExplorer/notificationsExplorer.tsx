@@ -97,7 +97,4 @@ const mapDispatchToProps = (dispatch): NotificationExplorerProps => {
   };
 };
 
-export const NotificationsExplorer = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(NotificationsExplorerComp);
+export const NotificationsExplorer = connect(mapStateToProps, mapDispatchToProps)(NotificationsExplorerComp);

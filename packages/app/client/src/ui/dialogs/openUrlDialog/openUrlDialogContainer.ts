@@ -44,7 +44,4 @@ const mapDispatchToProps = (_dispatch: () => void): OpenUrlDialogProps => {
   };
 };
 
-export const OpenUrlDialogContainer = connect(
-  null,
-  mapDispatchToProps
-)(OpenUrlDialog);
+export const OpenUrlDialogContainer = connect(null, mapDispatchToProps)(OpenUrlDialog);

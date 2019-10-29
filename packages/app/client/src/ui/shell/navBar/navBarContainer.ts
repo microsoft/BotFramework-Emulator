@@ -66,7 +66,4 @@ const mapDispatchToProps = (dispatch): NavBarProps => ({
     dispatch(executeCommand(true, SharedConstants.Commands.Telemetry.TrackEvent, null, name, properties)),
 });
 
-export const NavBar = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(NavBarComponent);
+export const NavBar = connect(mapStateToProps, mapDispatchToProps)(NavBarComponent);

@@ -178,8 +178,8 @@ export class BotCommands {
   @Command(Bot.RestartEndpointService)
   protected async restartEndpointService() {
     const bot = BotHelpers.getActiveBot();
-
-    Emulator.getInstance().framework.server.botEmulator.facilities.endpoints.reset();
+    const emulator = Emulator.getInstance();
+    emulator.server.state.endpoints.clear();
 
     const overridesArePresent = bot.overrides && bot.overrides.endpoint;
     let appliedOverrides = false;
@@ -201,7 +201,7 @@ export class BotCommands {
           }
         }
 
-        Emulator.getInstance().framework.server.botEmulator.facilities.endpoints.push(endpoint.id, {
+        emulator.server.state.endpoints.set(endpoint.id, {
           botId: endpoint.id,
           botUrl: endpoint.endpoint,
           msaAppId: endpoint.appId,

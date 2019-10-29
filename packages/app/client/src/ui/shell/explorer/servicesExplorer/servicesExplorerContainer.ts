@@ -87,7 +87,4 @@ const mapDispatchToProps = (dispatch): Partial<ServicesExplorerProps> => {
   };
 };
 
-export const ServicesExplorerContainer = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ServicesExplorer);
+export const ServicesExplorerContainer = connect(mapStateToProps, mapDispatchToProps)(ServicesExplorer);

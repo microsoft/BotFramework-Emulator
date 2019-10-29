@@ -49,7 +49,4 @@ function mapDispatchToProps(dispatch: (action: Action) => void): SecretPromptDia
   };
 }
 
-export const SecretPromptDialogContainer = connect(
-  undefined,
-  mapDispatchToProps
-)(SecretPromptDialog);
+export const SecretPromptDialogContainer = connect(undefined, mapDispatchToProps)(SecretPromptDialog);

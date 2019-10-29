@@ -137,6 +137,7 @@ class EmulatorApplication {
   private fileToOpen: string;
 
   constructor() {
+    Emulator.initialize();
     this.initializeNgrokListeners();
     this.initializeAppListeners();
     this.initializeSystemPreferencesListeners();
@@ -285,6 +286,7 @@ class EmulatorApplication {
     this.initializeBrowserWindowListeners();
 
     this.mainWindow = new Window(this.mainBrowserWindow);
+    Emulator.getInstance().initServer({ fetch, logService: this.mainWindow.logService });
 
     if (process.env.NODE_ENV !== 'test') {
       SplashScreen.show(this.mainBrowserWindow);

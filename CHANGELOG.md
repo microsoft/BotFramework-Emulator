@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - [1982](https://github.com/microsoft/BotFramework-Emulator/pull/1982)
   - [1983](https://github.com/microsoft/BotFramework-Emulator/pull/1983)
 
+- [main] Rewrote the `emulator/core` package and removed the `emulator/cli` package in PR [1989](https://github.com/microsoft/BotFramework-Emulator/pull/1989)
+
 ## v4.6.0 - 2019 - 10 - 31
 ## Added
 - [main] Added End-to-End tests using Spectron in PR [1696](https://github.com/microsoft/BotFramework-Emulator/pull/1696)
