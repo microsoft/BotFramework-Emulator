@@ -170,14 +170,21 @@ export class BotSagas {
             type: 'message',
             text: '/INSPECT open',
           };
-          const postActivityResponse: ResourceResponse & { statusCode: number } = yield call(
+          const postActivityResponse: ResourceResponse & {
+            statusCode: number;
+            response?: { message: string; status: number | string };
+          } = yield call(
             [BotSagas.commandService, BotSagas.commandService.remoteCall],
             SharedConstants.Commands.Emulator.PostActivityToConversation,
             conversationId,
             activity
           );
           if (postActivityResponse.statusCode > 399) {
-            error = `An error occurred while POSTing "/INSPECT open" command to conversation ${conversationId}`;
+            const { message = 'Message unavailable.', status = 'Status unavailable' } =
+              postActivityResponse.response || {};
+            error =
+              `An error occurred while POSTing "/INSPECT open" command to conversation ${conversationId}: ` +
+              `${status}: ${message}`;
           }
         } else {
           error = 'An error occurred while trying to grab conversation ID from the new conversation.';
