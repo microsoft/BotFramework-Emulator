@@ -6,12 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## v4.6.0 - 2019 - 10 - 31
 ## Added
 - [main] Added End-to-End tests using Spectron in PR [1696](https://github.com/microsoft/BotFramework-Emulator/pull/1696)
 - [main] New Conversation: send a single conversation update activity including bot and user as members added [1709](https://github.com/microsoft/BotFramework-Emulator/pull/1709)
 - [app] Consolidated application state store and removed the need for explicit state synchronization between the main and renderer processes in PR [1721](https://github.com/microsoft/BotFramework-Emulator/pull/1721)
 - [main] Added logging to OAuth signin link generation flow in PR [1745](https://github.com/microsoft/BotFramework-Emulator/pull/1745)
 - [client] Added a context menu item and inspector button to allow copying an activity's JSON in PR [1801](https://github.com/microsoft/BotFramework-Emulator/pull/1801)
+- [client/main] Added a new property, `source`, to the `bot_open` telemetry event to distinguish between bots opened via .bot file and via url, in PR [1937](https://github.com/microsoft/BotFramework-Emulator/pull/1937)
+- [client] Bumped Web Chat to v4.6.0 in PR [1958](https://github.com/microsoft/BotFramework-Emulator/pull/1958)
 
 ## Fixed
 - [main] Fixed bug where opening a chat via URL was sending two conversation updates in PR [1735](https://github.com/microsoft/BotFramework-Emulator/pull/1735)
@@ -84,7 +87,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - [client] Applied theming to InsetShadow component in PR [1922](https://github.com/microsoft/BotFramework-Emulator/pull/1922)
  - [client] Bumped Web Chat to v4.5.3 in PR [1925](https://github.com/microsoft/BotFramework-Emulator/pull/1925)
  - [client] Fixed issue that was causing Web Chat interactions to clear Adaptive Card content in PR [1930](https://github.com/microsoft/BotFramework-Emulator/pull/1930)
- - [client/main] Added a new property, `source`, to the `bot_open` telemetry event to distinguish between bots opened via .bot file and via url, in PR [1937](https://github.com/microsoft/BotFramework-Emulator/pull/1937)
  - [client] Bumped `react` & `react-dom` to `^16.8.6` to sync with Web Chat in PR [1939](https://github.com/microsoft/BotFramework-Emulator/pull/1939)
  - [client] Fixed an issue with the `<AutoComplete />` component so that it can now accept an empty string as an input in "controlled mode" in PR [1939](https://github.com/microsoft/BotFramework-Emulator/pull/1939)
  - [tools] Adjusted e2e tests for recent updates to application DOM in PR [1941](https://github.com/microsoft/BotFramework-Emulator/pull/1941)
