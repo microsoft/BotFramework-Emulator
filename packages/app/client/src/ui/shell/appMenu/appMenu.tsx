@@ -133,6 +133,9 @@ export class AppMenu extends React.Component<AppMenuProps, {}> {
       };
       bots.push(botItem);
     });
+    if (!bots.length) {
+      bots.push({ label: 'No recent bots', disabled: true });
+    }
     return bots;
   }
 

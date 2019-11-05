@@ -162,6 +162,17 @@ describe('<AppMenu />', () => {
     expect(dispatchSpy).toHaveBeenCalledWith(executeCommand(false, Bot.Switch, null, 'path1'));
   });
 
+  it('should generate the recent bots menu when there are no recent bots', () => {
+    instance.props = {
+      ...instance.props,
+      recentBots: [],
+    };
+    const recentBotsItems: MenuItem[] = (instance as any).getRecentBotsMenuItems();
+
+    expect(recentBotsItems).toHaveLength(1);
+    expect(recentBotsItems.reduce((labels, item) => [...labels, item.label], [])).toEqual(['No recent bots']);
+  });
+
   it('should get an app update menu item for when an update is ready to install', () => {
     instance.props = { ...instance.props, appUpdateStatus: UpdateStatus.UpdateReadyToInstall };
     const updateItem: MenuItem = (instance as any).getAppUpdateMenuItem();

@@ -226,7 +226,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
                   name="userGUID"
                   onChange={this.onInputChange}
                   required={useCustomId}
-                  errorMessage={userGUID ? '' : 'Enter a User ID'}
+                  errorMessage={useCustomId && !userGUID ? 'Enter a User ID' : ''}
                 />
               </Row>
             </fieldset>
