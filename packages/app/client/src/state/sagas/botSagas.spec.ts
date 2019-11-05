@@ -384,11 +384,15 @@ describe('The botSagas', () => {
     gen.next({ id: 'someConversationId' });
     // POSTing to the conversation should return a 400
     const errorNotification = beginAdd(
-      newNotification('An error occurred while POSTing "/INSPECT open" command to conversation someConversationId')
+      newNotification(
+        'An error occurred while POSTing "/INSPECT open" command to conversation someConversationId: Bad request: Something went wrong :('
+      )
     );
     (errorNotification as any).payload.notification.timestamp = jasmine.any(Number);
     (errorNotification as any).payload.notification.id = jasmine.any(String);
-    expect(gen.next({ statusCode: 400 }).value).toEqual(put(errorNotification));
+    expect(
+      gen.next({ response: { status: 'Bad request', message: 'Something went wrong :(' }, statusCode: 400 }).value
+    ).toEqual(put(errorNotification));
   });
 
   it('should spawn a notification if parsing the conversation id from the response fails', () => {
