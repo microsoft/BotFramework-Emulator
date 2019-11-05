@@ -71,7 +71,7 @@ export class TextField extends Component<TextFieldProps, {}> {
       <div className={`${styles.inputContainer} ${inputContainerClassName}`}>
         {this.labelNode}
         <input
-          aria-labelledby="errormessagesub"
+          aria-labelledby={errorMessage ? 'errormessagesub' : 'label'}
           className={inputClassName}
           id={this.inputId}
           ref={this.setInputRef}
