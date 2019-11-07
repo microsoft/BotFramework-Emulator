@@ -192,12 +192,14 @@ export class EndpointEditor extends Component<EndpointEditorProps, EndpointEdito
                 data-prop="serviceName"
                 value={serviceName}
                 label="Azure BotId"
+                tabIndex={-1}
               />
               <TextField
                 onChange={this.onBotInputChange}
                 data-prop="tenantId"
                 value={tenantId}
                 label="Azure Directory ID"
+                tabIndex={-1}
               />
             </Row>
             <Row className={styles.absTextFieldRow}>
@@ -206,12 +208,14 @@ export class EndpointEditor extends Component<EndpointEditorProps, EndpointEdito
                 value={subscriptionId}
                 data-prop="subscriptionId"
                 label="Azure Subscription ID"
+                tabIndex={-1}
               />
               <TextField
                 data-prop="resourceGroup"
                 onChange={this.onBotInputChange}
                 value={resourceGroup}
                 label="Azure Resource Group"
+                tabIndex={-1}
               />
             </Row>
           </div>
@@ -303,6 +307,11 @@ export class EndpointEditor extends Component<EndpointEditorProps, EndpointEdito
     const newHeight = expanded ? clientHeight : 0;
     this.absContent.style.height = `${newHeight}px`;
     currentTarget.setAttribute('aria-expanded', expanded + '');
+    this.absContent.querySelectorAll('input').forEach((node: HTMLElement) => {
+      if (node.hasAttribute('tabIndex')) {
+        node.setAttribute('tabIndex', expanded ? '0' : '-1');
+      }
+    });
   };
 
   private absContentRef = (ref: HTMLDivElement): void => {
