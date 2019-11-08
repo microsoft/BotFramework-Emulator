@@ -270,6 +270,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
         name={config.id}
         data-current-state={state}
         onClick={this.accessoryClick}
+        tabIndex={button.state === 'disabled' ? -1 : 0}
       >
         {Inspector.renderAccessoryIcon(icon)}
         {currentState.label}
