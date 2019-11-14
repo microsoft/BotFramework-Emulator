@@ -34,6 +34,7 @@
 import { Notification, NotificationType, SharedConstants } from '@bfemulator/app-shared';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 import { remote } from 'electron';
+import { isMac } from '../../../../app/main/src/utils/platform';
 
 const maxZoomFactor = 3; // 300%
 const minZoomFactor = 0.25; // 25%;
@@ -41,6 +42,16 @@ const minZoomFactor = 0.25; // 25%;
 class EventHandlers {
   @CommandServiceInstance()
   public static commandService: CommandServiceImpl;
+
+  public static getChildElements(element) {
+    var children = [].slice.call(element.children);
+    var found = 0;
+    while (children.length > found) {
+      children = children.concat([].slice.call(children[found].children));
+      found++;
+    }
+    return children;
+  }
 
   public static async globalHandles(event: KeyboardEvent): Promise<any> {
     // Meta corresponds to 'Command' on Mac
@@ -120,6 +131,29 @@ class EventHandlers {
           type: NotificationType.Error,
         } as Notification);
       }
+    }
+
+    if (isMac()) {
+      window.addEventListener('keydown', function(event) {
+        var KEYCODE_TAB = 9;
+        var firstElement = document.querySelector('nav').firstElementChild as HTMLElement;
+        var mainChildElements = EventHandlers.getChildElements(document.querySelector('main'));
+        var lastElement = mainChildElements[mainChildElements.length - 1] as HTMLElement;
+
+        if (event.key === 'Tab' || event.keyCode === KEYCODE_TAB) {
+          if (event.shiftKey) {
+            if (document.activeElement === firstElement) {
+              lastElement.focus();
+              event.preventDefault();
+            }
+          } else {
+            if (document.activeElement === lastElement) {
+              firstElement.focus();
+              event.preventDefault();
+            }
+          }
+        }
+      });
     }
   }
 }
