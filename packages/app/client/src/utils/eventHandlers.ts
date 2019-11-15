@@ -34,6 +34,7 @@
 import { Notification, NotificationType, SharedConstants } from '@bfemulator/app-shared';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 import { remote } from 'electron';
+
 import { isMac } from '../../../../app/main/src/utils/platform';
 
 const maxZoomFactor = 3; // 300%
@@ -43,14 +44,24 @@ class EventHandlers {
   @CommandServiceInstance()
   public static commandService: CommandServiceImpl;
 
-  public static getChildElements(element) {
-    var children = [].slice.call(element.children);
-    var found = 0;
-    while (children.length > found) {
-      children = children.concat([].slice.call(children[found].children));
-      found++;
+  public static getLastChildWithChildren(node) {
+    for (let index = node.children.length; index > 0; index--) {
+      if (node.children[index - 1].children.length > 0) {
+        return node.children[index - 1];
+      }
     }
-    return children;
+  }
+
+  public static getAllDecendants(node, list = []) {
+    list = list || [];
+    if (node.children.length > 0) {
+      var child = this.getLastChildWithChildren(node.children[node.children.length - 1]);
+      if (child) {
+        list.push(child);
+        this.getAllDecendants(child, list);
+      }
+    }
+    return list;
   }
 
   public static async globalHandles(event: KeyboardEvent): Promise<any> {
@@ -137,8 +148,8 @@ class EventHandlers {
       window.addEventListener('keydown', function(event) {
         var KEYCODE_TAB = 9;
         var firstElement = document.querySelector('nav').firstElementChild as HTMLElement;
-        var mainChildElements = EventHandlers.getChildElements(document.querySelector('main'));
-        var lastElement = mainChildElements[mainChildElements.length - 1] as HTMLElement;
+        var mainElement = EventHandlers.getAllDecendants(document.querySelector('main'));
+        var lastElement = mainElement[mainElement.length - 1].children as HTMLElement;
 
         if (event.key === 'Tab' || event.keyCode === KEYCODE_TAB) {
           if (event.shiftKey) {
