@@ -46,7 +46,7 @@ class EventHandlers {
 
   public static getLastChildWithChildren(node) {
     for (let index = node.children.length; index > 0; index--) {
-      if (node.children[index - 1].children.length > 0) {
+      if (node.children[index - 1].children.length > 0 && !node.children[index - 1].hidden) {
         return node.children[index - 1];
       }
     }
@@ -55,7 +55,7 @@ class EventHandlers {
   public static getAllDecendants(node, list = []) {
     list = list || [];
     if (node.children.length > 0) {
-      var child = this.getLastChildWithChildren(node.children[node.children.length - 1]);
+      var child = this.getLastChildWithChildren(node);
       if (child) {
         list.push(child);
         this.getAllDecendants(child, list);
@@ -149,7 +149,7 @@ class EventHandlers {
         var KEYCODE_TAB = 9;
         var firstElement = document.querySelector('nav').firstElementChild as HTMLElement;
         var mainElement = EventHandlers.getAllDecendants(document.querySelector('main'));
-        var lastElement = mainElement[mainElement.length - 1].children as HTMLElement;
+        var lastElement = mainElement[mainElement.length - 1].children[0] as HTMLElement;
 
         if (event.key === 'Tab' || event.keyCode === KEYCODE_TAB) {
           if (event.shiftKey) {
