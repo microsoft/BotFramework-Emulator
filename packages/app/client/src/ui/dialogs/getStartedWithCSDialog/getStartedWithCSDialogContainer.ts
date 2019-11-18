@@ -63,7 +63,4 @@ const mapDispatchToProps = (dispatch: (action: Action) => void): GetStartedWithC
   },
 });
 
-export const GetStartedWithCSDialogContainer = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(GetStartedWithCSDialog);
+export const GetStartedWithCSDialogContainer = connect(mapStateToProps, mapDispatchToProps)(GetStartedWithCSDialog);

@@ -43,7 +43,6 @@ export * from './response';
 export * from './apiException';
 export * from './botConfigWithPath';
 export * from './botData';
-export * from './botEmulatorOptions';
 export * from './botEndpointOptions';
 export * from './entity';
 export * from './error';

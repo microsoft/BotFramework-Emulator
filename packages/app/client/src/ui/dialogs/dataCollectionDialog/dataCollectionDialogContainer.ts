@@ -51,7 +51,4 @@ function mapDispatchToProps(dispatch: (action: Action) => void): DataCollectionD
   };
 }
 
-export const DataCollectionDialogContainer = connect(
-  null,
-  mapDispatchToProps
-)(DataCollectionDialog);
+export const DataCollectionDialogContainer = connect(null, mapDispatchToProps)(DataCollectionDialog);

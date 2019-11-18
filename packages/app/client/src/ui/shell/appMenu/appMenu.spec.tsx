@@ -127,7 +127,11 @@ describe('<AppMenu />', () => {
   it('should generate the theme menu items', () => {
     instance.props = {
       ...instance.props,
-      availableThemes: [{ name: 'Light', href: '' }, { name: 'Dark', href: '' }, { name: 'High contrast', href: '' }],
+      availableThemes: [
+        { name: 'Light', href: '' },
+        { name: 'Dark', href: '' },
+        { name: 'High contrast', href: '' },
+      ],
       currentTheme: 'Light',
     };
     const themeItems: MenuItem[] = (instance as any).getThemeMenuItems();

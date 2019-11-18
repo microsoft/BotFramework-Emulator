@@ -57,7 +57,4 @@ const mapDispatchToProps = dispatch => ({
   sendNotification: notification => dispatch(beginAdd(notification)),
 });
 
-export const BotSettingsEditorContainer = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(BotSettingsEditor);
+export const BotSettingsEditorContainer = connect(mapStateToProps, mapDispatchToProps)(BotSettingsEditor);

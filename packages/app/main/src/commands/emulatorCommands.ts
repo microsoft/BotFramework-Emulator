@@ -34,7 +34,6 @@
 import * as path from 'path';
 
 import { newBot, newEndpoint, SharedConstants } from '@bfemulator/app-shared';
-import { Conversation, Users } from '@bfemulator/emulator-core';
 import {
   BotConfigWithPath,
   Command,
@@ -61,6 +60,8 @@ import { ProtocolHandler } from '../protocolHandler';
 import { CredentialManager } from '../credentialManager';
 import { getCurrentConversationId } from '../state/helpers/chatHelpers';
 import { getLocalhostServiceUrl } from '../utils/getLocalhostServiceUrl';
+import { Conversation } from '../server/state/conversation';
+import { Users } from '../server/state/users';
 
 const Commands = SharedConstants.Commands.Emulator;
 
@@ -73,9 +74,7 @@ export class EmulatorCommands {
   @Command(Commands.SaveTranscriptToFile)
   protected async saveTranscriptToFile(valueTypes: number, conversationId: string): Promise<void> {
     const activeBot: BotConfigWithPath = BotHelpers.getActiveBot();
-    const conversation = Emulator.getInstance().framework.server.botEmulator.facilities.conversations.conversationById(
-      conversationId
-    );
+    const conversation = Emulator.getInstance().server.state.conversations.conversationById(conversationId);
     if (!conversation) {
       throw new Error(`${Commands.SaveTranscriptToFile}: Conversation ${conversationId} not found.`);
     }
@@ -163,9 +162,7 @@ export class EmulatorCommands {
       throw new Error('emulator:feed-transcript:deep-link: No active bot.');
     }
 
-    const convo = Emulator.getInstance().framework.server.botEmulator.facilities.conversations.conversationById(
-      conversationId
-    );
+    const convo = Emulator.getInstance().server.state.conversations.conversationById(conversationId);
     if (!convo) {
       throw new Error(`emulator:feed-transcript:deep-link: Conversation ${conversationId} not found.`);
     }
@@ -178,7 +175,7 @@ export class EmulatorCommands {
   // Get a speech token
   @Command(Commands.GetSpeechToken)
   protected getSpeechToken(endpointId: string, refresh: boolean) {
-    const endpoint = Emulator.getInstance().framework.server.botEmulator.facilities.endpoints.get(endpointId);
+    const endpoint = Emulator.getInstance().server.state.endpoints.get(endpointId);
 
     return endpoint && endpoint.getSpeechToken(refresh);
   }
@@ -197,8 +194,8 @@ export class EmulatorCommands {
     }
     const emulator = Emulator.getInstance();
     // TODO: Move away from the .users state on legacy emulator settings, and towards per-conversation users
-    return emulator.framework.server.botEmulator.facilities.conversations.newConversation(
-      emulator.framework.server.botEmulator,
+    return emulator.server.state.conversations.newConversation(
+      emulator.server,
       null,
       { id: getSettings().users.currentUserId, name: 'User' },
       conversationId
@@ -223,12 +220,12 @@ export class EmulatorCommands {
   // Sets the current user id (in memory)
   @Command(Commands.SetCurrentUser)
   protected async setCurrentUser(userId: string) {
-    const { facilities } = Emulator.getInstance().framework.server.botEmulator;
-    const { users } = facilities;
+    const emulator = Emulator.getInstance();
+    const { users } = emulator.server.state;
     const user = { id: userId, name: 'User' };
     users.currentUserId = userId;
     users.users[userId] = user;
-    facilities.users = users;
+    emulator.server.state.users = users;
 
     // update the settings state on both main and client
     dispatch(setCurrentUser(user));
@@ -239,18 +236,14 @@ export class EmulatorCommands {
   // Removes the conversation from the conversation set
   @Command(Commands.DeleteConversation)
   protected deleteConversation(conversationId: string) {
-    return Emulator.getInstance().framework.server.botEmulator.facilities.conversations.deleteConversation(
-      conversationId
-    );
+    return Emulator.getInstance().server.state.conversations.deleteConversation(conversationId);
   }
 
   // ---------------------------------------------------------------------------
   // Removes the conversation from the conversation set
   @Command(Commands.PostActivityToConversation)
   protected postActivityToConversation(conversationId: string, activity: any, toUser: boolean) {
-    const conversation = Emulator.getInstance().framework.server.botEmulator.facilities.conversations.conversationById(
-      conversationId
-    );
+    const conversation = Emulator.getInstance().server.state.conversations.conversationById(conversationId);
     if (toUser) {
       return conversation.postActivityToUser(activity, false);
     } else {
@@ -261,19 +254,18 @@ export class EmulatorCommands {
   @Command(Commands.StartEmulator)
   protected async startEmulator(forceRestart: boolean = false) {
     const emulator = Emulator.getInstance();
-    const port = emulator.framework.serverPort || null;
-    if (!forceRestart && emulator.framework.serverPort === port) {
+    if (!forceRestart && !!emulator.server.serverPort) {
       return;
     }
-    await emulator.startup(port);
+    await emulator.startup();
     const { users: userSettings, framework } = getSettings();
     const users = new Users();
     users.currentUserId = userSettings.currentUserId;
     users.users = userSettings.usersById;
 
-    const { facilities } = emulator.framework.server.botEmulator;
-    facilities.locale = framework.locale;
-    facilities.users = users;
+    const { state } = emulator.server;
+    state.locale = framework.locale;
+    state.users = users;
   }
 
   @Command(Commands.OpenProtocolUrls)

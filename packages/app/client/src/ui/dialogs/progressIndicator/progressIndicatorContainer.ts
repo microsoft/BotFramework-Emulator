@@ -55,7 +55,4 @@ const mapDispatchToProps = (dispatch: (action: Action) => void) => {
   };
 };
 
-export const ProgressIndicatorContainer = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ProgressIndicator);
+export const ProgressIndicatorContainer = connect(mapStateToProps, mapDispatchToProps)(ProgressIndicator);

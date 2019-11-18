@@ -93,7 +93,4 @@ function mapDispatchToProps(dispatch): AppMenuProps {
   };
 }
 
-export const AppMenuContainer = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(AppMenu);
+export const AppMenuContainer = connect(mapStateToProps, mapDispatchToProps)(AppMenu);

@@ -46,7 +46,4 @@ const mapStateToProps = (state: RootState, ownProps: MDIProps): MDIProps => ({
   presentationModeEnabled: state.presentation.enabled,
 });
 
-export const MDI = connect(
-  mapStateToProps,
-  null
-)(MDIComponent);
+export const MDI = connect(mapStateToProps, null)(MDIComponent);

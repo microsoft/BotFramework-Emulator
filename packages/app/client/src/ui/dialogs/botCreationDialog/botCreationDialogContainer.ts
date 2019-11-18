@@ -45,7 +45,4 @@ const mapDispatchToProps = (_dispatch): BotCreationDialogProps => {
   };
 };
 
-export const BotCreationDialogContainer = connect(
-  undefined,
-  mapDispatchToProps
-)(BotCreationDialog);
+export const BotCreationDialogContainer = connect(undefined, mapDispatchToProps)(BotCreationDialog);

@@ -50,7 +50,4 @@ const mapDispatchToProps = (_dispatch: () => void): AzureLoginPromptDialogProps 
   };
 };
 
-export const AzureLoginPromptDialogContainer = connect(
-  null,
-  mapDispatchToProps
-)(AzureLoginPromptDialog as any) as any;
+export const AzureLoginPromptDialogContainer = connect(null, mapDispatchToProps)(AzureLoginPromptDialog as any) as any;

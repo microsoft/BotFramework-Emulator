@@ -65,7 +65,10 @@ describe('windowState reducer', () => {
   });
 
   it('should handle a set available themes action', () => {
-    const themes = [{ name: 'light', href: './light.css' }, { name: 'dark', href: './dark.css' }];
+    const themes = [
+      { name: 'light', href: './light.css' },
+      { name: 'dark', href: './dark.css' },
+    ];
     const action = setAvailableThemes(themes);
     const state = windowState({} as any, action);
 

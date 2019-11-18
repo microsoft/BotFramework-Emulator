@@ -31,36 +31,66 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { BotFrameworkService } from './botFrameworkService';
 import { NgrokService } from './ngrokService';
+import { defaultRestServerOptions, EmulatorRestServer, EmulatorRestServerOptions } from './server/restServer';
 
 let emulator: Emulator;
-class SingletonEnforcer {}
 /**
  * Top-level state container for the Node process.
  */
 export class Emulator {
-  public ngrok = new NgrokService();
-  public framework = new BotFrameworkService();
+  public ngrok: NgrokService;
+  private _server: EmulatorRestServer;
 
-  private constructor(enforcer: SingletonEnforcer) {
-    if (!(enforcer instanceof SingletonEnforcer)) {
-      throw new Error('Emulator is a singleton. Please use Emulator.getInstance()');
+  private constructor() {
+    this.ngrok = new NgrokService();
+  }
+
+  public static initialize(): void {
+    if (!emulator) {
+      emulator = new Emulator();
     }
   }
 
-  public static getInstance() {
-    return emulator || (emulator = new Emulator(new SingletonEnforcer()));
+  public static getInstance(): Emulator {
+    if (!emulator) {
+      throw new Error(
+        'Emulator has not been initialized yet. Please instantiate a new instance of Emulator before calling getInstance()'
+      );
+    }
+    return emulator;
   }
+
+  public get server(): EmulatorRestServer {
+    if (!this._server) {
+      throw new Error('Emulator rest server has not been initialized yet. Please call initServer().');
+    }
+    return this._server;
+  }
+
+  /** Initializes the emulator rest server. No-op if already called. */
+  public initServer(options: EmulatorRestServerOptions = defaultRestServerOptions): void {
+    if (!this._server) {
+      this._server = new EmulatorRestServer({
+        ...options,
+        getServiceUrl: botUrl => this.ngrok.getServiceUrl(botUrl),
+        getServiceUrlForOAuth: () => this.ngrok.getServiceUrlForOAuth(),
+        shutDownOAuthNgrokInstance: () => this.ngrok.shutDownOAuthNgrokInstance(),
+      });
+    }
+  }
+
   /**
-   * Loads settings from disk and then creates the emulator.
+   * Starts the rest server and mounts all the routes.
+   * @param port Explicit port that the server will listen on.
+   * Omitting the port will automatically choose a free port.
    */
-  public async startup(port) {
-    await this.framework.recycle(port);
+  public async startup(port?: number) {
+    await this.server.start(port);
   }
 
   public async report(conversationId: string, botUrl: string): Promise<void> {
-    this.framework.report(conversationId);
+    this.server.report(conversationId);
     await this.ngrok.report(conversationId, botUrl);
   }
 }

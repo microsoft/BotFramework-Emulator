@@ -54,7 +54,11 @@ describe('users reducer', () => {
         user1: {},
       },
     };
-    const action = addUsers([{ name: '', id: 'user1' }, { name: '', id: 'user2' }, { name: '', id: 'user3' }]);
+    const action = addUsers([
+      { name: '', id: 'user1' },
+      { name: '', id: 'user2' },
+      { name: '', id: 'user3' },
+    ]);
     const state = users(initialState, action);
 
     expect(state).toEqual({

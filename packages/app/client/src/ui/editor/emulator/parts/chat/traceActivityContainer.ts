@@ -56,7 +56,4 @@ function mapStateToProps(state: RootState, { documentId }: { documentId: string 
   };
 }
 
-export const TraceActivityContainer = connect(
-  mapStateToProps,
-  undefined
-)(TraceActivity);
+export const TraceActivityContainer = connect(mapStateToProps, undefined)(TraceActivity);
