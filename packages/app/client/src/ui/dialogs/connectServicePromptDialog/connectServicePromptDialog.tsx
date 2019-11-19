@@ -112,13 +112,13 @@ export class ConnectServicePromptDialog extends Component<ConnectServicePromptDi
   private get luisContent(): ReactNode {
     return (
       <>
-        <p>
+        <p role="presentation">
           {`Sign in to your Azure account to select the LUIS applications you'd like to associate with this bot. `}
           <LinkButton linkRole={true} onClick={this.onLuisDocsClick}>
             Learn more about LUIS.
           </LinkButton>
         </p>
-        <p>
+        <p role="presentation">
           {`Alternatively, you can `}
           <LinkButton onClick={this.props.addServiceManually}>add a LUIS app manually</LinkButton>
           {` with the app ID, version, and authoring key.`}
@@ -130,14 +130,14 @@ export class ConnectServicePromptDialog extends Component<ConnectServicePromptDi
   private get qnaContent(): JSX.Element {
     return (
       <>
-        <p>
+        <p role="presentation">
           {'Sign in to your Azure account to select the QnA ' +
             "Maker knowledge bases you'd like to associate with this bot. "}
           <LinkButton linkRole={true} onClick={this.onQnADocsClick}>
             Learn more about QnA Maker.
           </LinkButton>
         </p>
-        <p>
+        <p role="presentation">
           {`Alternatively, you can `}{' '}
           <LinkButton onClick={this.props.addServiceManually}>
             connect to a QnA Maker knowledge base manually
@@ -151,13 +151,13 @@ export class ConnectServicePromptDialog extends Component<ConnectServicePromptDi
   private get dispatchContent(): JSX.Element {
     return (
       <>
-        <p>
+        <p role="presentation">
           {`Sign in to your Azure account to select the Dispatch model you'd like to associate with this bot. `}
           <LinkButton linkRole={true} onClick={this.onDispatchDocsClick}>
             Learn more about Dispatch models.
           </LinkButton>
         </p>
-        <p>
+        <p role="presentation">
           {`Alternatively, you can `}
           <LinkButton onClick={this.props.addServiceManually}>connect to a Dispatch model manually</LinkButton>
           {` with the app ID, version, and authoring key.`}
@@ -169,14 +169,14 @@ export class ConnectServicePromptDialog extends Component<ConnectServicePromptDi
   private get appInsightsContent(): JSX.Element {
     return (
       <>
-        <p>
+        <p role="presentation">
           {'Sign in to your Azure account to select the Azure Application ' +
             "Insights you'd like to associate with this bot. "}
           <LinkButton linkRole={true} onClick={this.onAppInsightsClick}>
             Learn more about Azure Application Insights.
           </LinkButton>
         </p>
-        <p>
+        <p role="presentation">
           {`Alternatively, you can `}
           <LinkButton onClick={this.props.addServiceManually}>
             connect to a Azure Application Insights manually
@@ -190,14 +190,14 @@ export class ConnectServicePromptDialog extends Component<ConnectServicePromptDi
   private get blobStorageContent(): ReactNode {
     return (
       <>
-        <p>
+        <p role="presentation">
           {'Sign in to your Azure account to select the Azure Storage ' +
             "accounts you'd like to associate with this bot. "}
           <LinkButton linkRole={true} onClick={this.onAzureStorageDocsClick}>
             Learn more about Azure Storage.
           </LinkButton>
         </p>
-        <p>
+        <p role="presentation">
           {`Alternatively, you can `}
           <LinkButton onClick={this.props.addServiceManually}>connect to a Azure Storage account manually.</LinkButton>
         </p>
@@ -208,14 +208,14 @@ export class ConnectServicePromptDialog extends Component<ConnectServicePromptDi
   private get cosmosDbContent(): ReactNode {
     return (
       <>
-        <p>
+        <p role="presentation">
           {'Sign in to your Azure account to select the Azure Cosmos DB ' +
             "accounts you'd like to associate with this bot. "}
           <LinkButton linkRole={true} onClick={this.onAzureCosmosDbDocsClick}>
             Learn more about Azure Cosmos DB.
           </LinkButton>
         </p>
-        <p>
+        <p role="presentation">
           {`Alternatively, you can `}
           <LinkButton onClick={this.props.addServiceManually}>
             connect to a Azure Cosmos DB account manually.

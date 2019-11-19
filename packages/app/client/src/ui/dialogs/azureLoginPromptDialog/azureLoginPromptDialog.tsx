@@ -46,7 +46,7 @@ export class AzureLoginPromptDialog extends Component<AzureLoginPromptDialogProp
   public render() {
     return (
       <Dialog cancel={this.props.cancel} title="Sign in with an Azure account" className={styles.dialogMedium}>
-        <p>
+        <p role="presentation">
           {'Use your Azure account to sign in to all your Azure services, ' +
             'such as Azure Bot Service, Dispatch, LUIS, and QnA Maker. '}
           <LinkButton className={styles.dialogLink} linkRole={true} onClick={this.onSignUpLinkClick}>
@@ -57,7 +57,7 @@ export class AzureLoginPromptDialog extends Component<AzureLoginPromptDialogProp
           {'By signing in to your services, you can register any app in that ' +
             'service with your bot without having to enter in credentials manually.'}
         </p>
-        <p>
+        <p role="presentation">
           <LinkButton className={styles.dialogLink} linkRole={true} onClick={this.onRegisterServicesLinkClick}>
             Learn more about registering services
           </LinkButton>

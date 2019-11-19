@@ -230,7 +230,7 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
     const { serviceType } = this.props;
     const textString = 'Learn more about keys in ' + labelMap[serviceType].toString();
     return (
-      <p>
+      <p role="presentation">
         {`You can find your LUIS app ID and subscription key in ${portalMap[serviceType]}. `}
         <LinkButton className={styles.link} linkRole={true} onClick={this.learnMoreLinkButton}>
           {textString}
@@ -243,7 +243,7 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
     const { serviceType } = this.props;
 
     return (
-      <p>
+      <p role="presentation">
         {`You can find your knowledge base ID and subscription key in ${portalMap[serviceType]}. `}
         {this.learnMoreLinkButton}
       </p>
@@ -252,7 +252,7 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
 
   private get appInsightsAndBlobStorageHeader(): ReactNode {
     return (
-      <p>
+      <p role="presentation">
         {`You can find your knowledge base ID and subscription key in the `}
         <LinkButton className={styles.link} linkRole={true} onClick={this.onAzurePortalClick}>
           Azure Portal.
@@ -265,7 +265,7 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
 
   private get cosmosDbHeader(): ReactNode {
     return (
-      <p>
+      <p role="presentation">
         {`You can find the information below in the `}
         <LinkButton className={styles.link} linkRole={true} onClick={this.onAzurePortalClick}>
           Azure Portal.
