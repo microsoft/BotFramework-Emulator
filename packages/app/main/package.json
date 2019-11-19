@@ -93,7 +93,7 @@
     "@types/ws": "^4.0.1",
     "asar-integrity": "^0.2.4",
     "babel-jest": "24.8.0",
-    "botbuilder": "^3.14.0",
+    "botbuilder": "^4.5.1",
     "chalk": "^2.4.1",
     "concurrently": "^3.5.1",
     "cross-env": "^5.1.3",
