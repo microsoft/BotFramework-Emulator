@@ -239,7 +239,9 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
       return (
         <div className={openBotStyles.browseButton}>
           <input accept=".bot" id="openBotBrowse" name="botUrl" onChange={this.onInputChange} type="file" />
-          <label htmlFor="openBotBrowse">Browse</label>
+          <label htmlFor="openBotBrowse" aria-hidden="true">
+            Browse
+          </label>
         </div>
       );
     }

@@ -32,6 +32,7 @@
 //
 
 .browse-button {
+  position: relative;
   margin-left: 8px;
   bottom: 1px;
 }
@@ -56,8 +57,7 @@
 .browse-button {
   & > input {
     position: absolute;
-    height: 0;
-    width: 0;
+    width: 100%;
     pointer-events: none;
     opacity: 0;
 
