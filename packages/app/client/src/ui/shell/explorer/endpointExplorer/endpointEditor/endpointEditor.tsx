@@ -184,7 +184,13 @@ export class EndpointEditor extends Component<EndpointEditorProps, EndpointEdito
           Azure Bot Service configuration
           <span role="presentation"></span>
         </button>
-        <div id="abs-config-content" className={styles.absContent} ref={this.absContentRef} role="region">
+        <div
+          id="abs-config-content"
+          className={styles.absContent}
+          ref={this.absContentRef}
+          role="region"
+          aria-hidden={true}
+        >
           <div>
             <Row className={styles.absTextFieldRow}>
               <TextField
@@ -307,6 +313,7 @@ export class EndpointEditor extends Component<EndpointEditorProps, EndpointEdito
     const newHeight = expanded ? clientHeight : 0;
     this.absContent.style.height = `${newHeight}px`;
     currentTarget.setAttribute('aria-expanded', expanded + '');
+    this.absContent.setAttribute('aria-hidden', expanded ? 'false' : 'true');
     this.absContent.querySelectorAll('input').forEach((node: HTMLElement) => {
       if (node.hasAttribute('tabIndex')) {
         node.setAttribute('tabIndex', expanded ? '0' : '-1');
