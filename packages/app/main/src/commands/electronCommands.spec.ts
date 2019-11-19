@@ -41,6 +41,7 @@ import { store } from '../state/store';
 import { emulatorApplication } from '../main';
 import { TelemetryService } from '../telemetry';
 import { AppUpdater } from '../appUpdater';
+import { ContextMenuService } from '../services/contextMenuService';
 
 import { ElectronCommands } from './electronCommands';
 
@@ -328,5 +329,17 @@ describe('the electron commands', () => {
 
     expect(checkForUpdatesSpy).toHaveBeenCalledWith(true);
     checkForUpdatesSpy.mockClear();
+  });
+
+  it('should display a context menu', async () => {
+    const showMenuSpy = jest.spyOn(ContextMenuService, 'showMenuAndWaitForInput').mockResolvedValueOnce(undefined);
+    const mockOptions = [{ id: 'option1', label: 'Option 1' }, { id: 'option2', label: 'Option 2' }];
+    const mockMenuCoords = { x: 150, y: 300 };
+    const handler = registry.getCommand(SharedConstants.Commands.Electron.DisplayContextMenu);
+    await handler(mockOptions, mockMenuCoords);
+
+    expect(showMenuSpy).toHaveBeenCalledWith(mockOptions, mockMenuCoords);
+
+    showMenuSpy.mockRestore();
   });
 });

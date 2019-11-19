@@ -42,6 +42,7 @@ import {
   openContextMenuForConnectedService,
   openServiceDeepLink,
   openSortContextMenu,
+  ContextMenuCoordinates,
 } from '../../../../state/actions/connectedServiceActions';
 import { CONNECTED_SERVICES_PANEL_ID } from '../../../../state/actions/explorerActions';
 import { executeCommand } from '../../../../state/actions/commandActions';
@@ -74,8 +75,8 @@ const mapDispatchToProps = (dispatch): Partial<ServicesExplorerProps> => {
     onAnchorClick: (url: string) => {
       dispatch(executeCommand(true, SharedConstants.Commands.Electron.OpenExternal, null, url));
     },
-    openAddServiceContextMenu: (payload: ConnectedServicePickerPayload) =>
-      new Promise(resolve => dispatch(openAddServiceContextMenu(payload, resolve))),
+    openAddServiceContextMenu: (payload: ConnectedServicePickerPayload, menuCoords?: ContextMenuCoordinates) =>
+      new Promise(resolve => dispatch(openAddServiceContextMenu(payload, resolve, menuCoords))),
     openServiceDeepLink: (connectedService: IConnectedService) => dispatch(openServiceDeepLink(connectedService)),
 
     openContextMenuForService: (
@@ -83,8 +84,11 @@ const mapDispatchToProps = (dispatch): Partial<ServicesExplorerProps> => {
       editorComponent: ComponentClass<ConnectedServiceEditor>
     ) => dispatch(openContextMenuForConnectedService(editorComponent, connectedService)),
 
-    openSortContextMenu: () => dispatch(openSortContextMenu()),
+    openSortContextMenu: (menuCoords?: ContextMenuCoordinates) => dispatch(openSortContextMenu(menuCoords)),
   };
 };
 
-export const ServicesExplorerContainer = connect(mapStateToProps, mapDispatchToProps)(ServicesExplorer);
+export const ServicesExplorerContainer = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ServicesExplorer);

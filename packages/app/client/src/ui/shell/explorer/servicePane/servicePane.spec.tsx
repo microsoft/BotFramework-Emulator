@@ -31,13 +31,25 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './botTypes';
-export * from './commandLineArgsTypes';
-export * from './contextMenuCoordinates';
-export * from './conversationTypes';
-export * from './fileTypes';
-export * from './notificationTypes';
-export * from './responseTypes';
-export * from './serverSettingsTypes';
-export * from './luisTypes';
-export * from './clientAwareSettings';
+import { mount, ReactWrapper } from 'enzyme';
+import * as React from 'react';
+
+import { ServicePane, ServicePaneProps, ServicePaneState } from './servicePane';
+
+// TODO: Test the rest of the component
+describe('<ServicePane />', () => {
+  let wrapper: ReactWrapper<ServicePaneProps, ServicePaneState, ServicePane<ServicePaneProps, ServicePaneState>>;
+  let instance: ServicePane<ServicePaneProps, ServicePaneState>;
+
+  beforeEach(() => {
+    wrapper = mount(<ServicePane openContextMenuForService={undefined} window={undefined} />);
+    instance = wrapper.instance();
+  });
+
+  it('should set the sort icon button ref', () => {
+    const mockSortButtonRef = {};
+    (instance as any).setSortIconButtonRef(mockSortButtonRef);
+
+    expect((instance as any).sortIconButtonRef).toEqual(mockSortButtonRef);
+  });
+});
