@@ -130,8 +130,8 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
 
     return (
       <Dialog cancel={this.props.onDialogCancel} className={openBotStyles.themeOverrides} title="Open a bot">
-        <form id="open-bot-dialog" onSubmit={this.onSubmit}>
-          <div className={openBotStyles.autoCompleteBar}>
+        <form id="open-bot-dialog" role="presentation" onSubmit={this.onSubmit}>
+          <div className={openBotStyles.autoCompleteBar} role="presentation">
             <AutoComplete
               autoFocus={true}
               errorMessage={errorMessage}
