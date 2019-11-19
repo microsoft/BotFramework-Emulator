@@ -52,16 +52,17 @@ class EventHandlers {
     }
   }
 
-  public static getAllDecendants(node, list = []) {
+  public static getLastDecendants(node, list = []) {
     list = list || [];
     if (node.children.length > 0) {
       var child = this.getLastChildWithChildren(node);
       if (child) {
         list.push(child);
-        this.getAllDecendants(child, list);
+        this.getLastDecendants(child, list);
       }
     }
-    return list;
+
+    return [].filter.call(list[list.length - 1].children, element => !element.hasAttribute('disabled'));
   }
 
   public static async globalHandles(event: KeyboardEvent): Promise<any> {
@@ -148,8 +149,8 @@ class EventHandlers {
       window.addEventListener('keydown', function(event) {
         var KEYCODE_TAB = 9;
         var firstElement = document.querySelector('nav').firstElementChild as HTMLElement;
-        var mainElement = EventHandlers.getAllDecendants(document.querySelector('main'));
-        var lastElement = mainElement[mainElement.length - 1].children[0] as HTMLElement;
+        var lastDecendants = EventHandlers.getLastDecendants(document.querySelector('main'));
+        var lastElement = lastDecendants[lastDecendants.length - 1];
 
         if (event.key === 'Tab' || event.keyCode === KEYCODE_TAB) {
           if (event.shiftKey) {
