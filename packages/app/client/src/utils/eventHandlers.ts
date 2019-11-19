@@ -53,7 +53,6 @@ class EventHandlers {
   }
 
   public static getLastDecendants(node, list = []) {
-    list = list || [];
     if (node.children.length > 0) {
       var child = this.getLastChildWithChildren(node);
       if (child) {
