@@ -67,7 +67,4 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export const EndpointExplorerContainer = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(EndpointExplorer as any) as any;
+export const EndpointExplorerContainer = connect(mapStateToProps, mapDispatchToProps)(EndpointExplorer as any) as any;

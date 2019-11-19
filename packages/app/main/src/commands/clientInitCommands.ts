@@ -42,7 +42,7 @@ import { ProtocolHandler } from '../protocolHandler';
 import { dispatch, getSettings, store } from '../state/store';
 import { getBotsFromDisk, getThemes } from '../utils';
 import { openFileFromCommandLine } from '../utils/openFileFromCommandLine';
-import { pushClientAwareSettings, setFrameworkSettings } from '../state/actions/frameworkSettingsActions';
+import { setFrameworkSettings } from '../state/actions/frameworkSettingsActions';
 import { AppMenuBuilder } from '../appMenuBuilder';
 import { setAvailableThemes, rememberTheme } from '../state/actions/windowStateActions';
 
@@ -72,8 +72,7 @@ export class ClientInitCommands {
     const { framework, windowState } = store.getState().settings;
     dispatch(rememberTheme(windowState.theme));
     dispatch(setAvailableThemes(getThemes()));
-    dispatch(setFrameworkSettings(framework));
-    dispatch(pushClientAwareSettings());
+    dispatch(setFrameworkSettings(framework)); // also calls pushClientAwareSettings(), which also starts the Emulator rest server (TODO: separate these out)
     // Load extensions
     ExtensionManagerImpl.unloadExtensions();
     ExtensionManagerImpl.loadExtensions();

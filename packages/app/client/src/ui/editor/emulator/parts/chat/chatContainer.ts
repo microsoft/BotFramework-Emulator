@@ -79,7 +79,4 @@ const mapDispatchToProps = (dispatch, ownProps: ChatProps): Partial<ChatProps> =
   };
 };
 
-export const ChatContainer = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Chat);
+export const ChatContainer = connect(mapStateToProps, mapDispatchToProps)(Chat);

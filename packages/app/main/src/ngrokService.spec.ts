@@ -30,34 +30,26 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 import { SettingsImpl } from '@bfemulator/app-shared';
 import { combineReducers, createStore } from 'redux';
 
-import { bot } from './state/reducers/bot';
-import { Emulator } from './emulator';
 import { NgrokService } from './ngrokService';
 import { setFrameworkSettings } from './state/actions/frameworkSettingsActions';
 import { azureAuthSettings, framework, savedBotUrls, windowState, users } from './state/reducers';
 import { store } from './state/store';
 
 const mockEmulator = {
-  framework: {
+  server: {
     serverUrl: 'http://localhost:3000',
-    locale: 'en-us',
-    bypassNgrokLocalhost: true,
     serverPort: 8080,
-    ngrokPath: '/usr/bin/ngrok',
-    server: {
-      botEmulator: {
-        facilities: {
-          conversations: {
-            getConversationIds: () => ['12', '123'],
-          },
-          endpoints: {
-            reset: () => null,
-            push: () => null,
-          },
-        },
+    state: {
+      conversations: {
+        getConversationIds: () => ['12', '123'],
+      },
+      endpoints: {
+        reset: () => null,
+        push: () => null,
       },
     },
   },
@@ -123,9 +115,14 @@ jest.mock('./ngrok', () => {
 
 describe('The ngrokService', () => {
   const ngrokService = new NgrokService();
+  const settings = {
+    locale: 'en-us',
+    bypassNgrokLocalhost: true,
+    ngrokPath: '/usr/bin/ngrok',
+  };
 
   beforeEach(() => {
-    store.dispatch(setFrameworkSettings(Emulator.getInstance().framework as any));
+    store.dispatch(setFrameworkSettings(settings as any));
     mockCallsToLog.length = 0;
     mockRunning.mockClear();
     mockConnect.mockClear();

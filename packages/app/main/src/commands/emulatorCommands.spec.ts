@@ -45,7 +45,6 @@ import {
 } from '@bfemulator/sdk-shared';
 import { BotConfiguration } from 'botframework-config';
 import { newBot, newEndpoint, SharedConstants, ValueTypesMask } from '@bfemulator/app-shared';
-import { Conversation } from '@bfemulator/emulator-core';
 
 import { store } from '../state/store';
 import * as utils from '../utils';
@@ -57,6 +56,7 @@ import { setCurrentUser } from '../state/actions/userActions';
 import { pushClientAwareSettings } from '../state/actions/frameworkSettingsActions';
 import { azureLoggedInUserChanged } from '../state/actions/azureAuthActions';
 import { CredentialManager } from '../credentialManager';
+import { Conversation } from '../server/state/conversation';
 
 import { EmulatorCommands } from './emulatorCommands';
 
@@ -146,34 +146,30 @@ jest.mock('../utils/ensureStoragePath', () => ({
 let mockUsers;
 const mockEmulator = {
   startup: () => ({}),
-  framework: {
-    server: {
-      botEmulator: {
-        facilities: {
-          logger: {
-            logActivity: () => true,
-            logMessage: () => true,
-          },
-          conversations: {
-            conversationById: () => mockConversation,
-            newConversation: (...args: any[]) =>
-              new mockConversationConstructor(args[0], args[1], args[3], args[2], 'livechat'),
-            deleteConversation: () => true,
-          },
-          endpoints: {
-            reset: () => null,
-            push: () => null,
-          },
-          get users() {
-            return mockUsers;
-          },
-          set users(users: any) {
-            mockUsers = users;
-          },
-        },
-        getServiceUrl: () => 'http://localhost:6728',
+  server: {
+    logger: {
+      logActivity: () => true,
+      logMessage: () => true,
+    },
+    state: {
+      conversations: {
+        conversationById: () => mockConversation,
+        newConversation: (...args: any[]) =>
+          new mockConversationConstructor(args[0], args[1], args[3], args[2], 'livechat'),
+        deleteConversation: () => true,
+      },
+      endpoints: {
+        reset: () => null,
+        push: () => null,
+      },
+      get users() {
+        return mockUsers;
+      },
+      set users(users: any) {
+        mockUsers = users;
       },
     },
+    getServiceUrl: () => 'http://localhost:6728',
   },
   ngrok: {
     getServiceUrl: () => 'http://localhost:5678',
@@ -230,8 +226,8 @@ const mockInfo = {
   chatsPath: mockNormalize('Users/blerg/Documents/testbot/dialogs'),
 };
 
-const mockConversation = mockEmulator.framework.server.botEmulator.facilities.conversations.newConversation(
-  mockEmulator.framework.server.botEmulator,
+const mockConversation = mockEmulator.server.state.conversations.newConversation(
+  mockEmulator.server,
   null,
   { id: '1234', name: 'User' },
   '1234'
@@ -468,7 +464,7 @@ describe('The emulatorCommands', () => {
     const getActiveBotSpy = jest.spyOn(BotHelpers, 'getActiveBot').mockReturnValue(mockBot);
 
     const conversationByIdSpy = jest
-      .spyOn(mockEmulator.framework.server.botEmulator.facilities.conversations, 'conversationById')
+      .spyOn(mockEmulator.server.state.conversations, 'conversationById')
       .mockReturnValue(mockConversation);
     const showSaveDialogSpy = jest.spyOn((utils as any).default, 'showSaveDialog').mockReturnValue('chosen/path');
 
@@ -566,10 +562,7 @@ describe('The emulatorCommands', () => {
   });
 
   it('should delete a conversation', () => {
-    const deleteSpy = jest.spyOn(
-      mockEmulator.framework.server.botEmulator.facilities.conversations,
-      'deleteConversation'
-    );
+    const deleteSpy = jest.spyOn(mockEmulator.server.state.conversations, 'deleteConversation');
     registry.getCommand(SharedConstants.Commands.Emulator.DeleteConversation)('convo1');
     expect(deleteSpy).toHaveBeenCalledWith('convo1');
   });

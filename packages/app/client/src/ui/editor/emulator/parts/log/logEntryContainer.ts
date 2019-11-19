@@ -83,7 +83,4 @@ function mapDispatchToProps(dispatch: any): Partial<LogEntryProps> {
   };
 }
 
-export const LogEntry = connect(
-  null,
-  mapDispatchToProps
-)(LogEntryComponent);
+export const LogEntry = connect(null, mapDispatchToProps)(LogEntryComponent);

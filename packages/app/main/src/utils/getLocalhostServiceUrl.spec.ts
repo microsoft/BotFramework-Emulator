@@ -36,7 +36,7 @@ import { getLocalhostServiceUrl } from './getLocalhostServiceUrl';
 jest.mock('../emulator', () => ({
   Emulator: {
     getInstance: () => ({
-      framework: {
+      server: {
         serverUrl: '[::]:52638',
       },
     }),

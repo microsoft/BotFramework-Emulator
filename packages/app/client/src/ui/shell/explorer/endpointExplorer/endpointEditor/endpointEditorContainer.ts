@@ -66,7 +66,4 @@ const mapDispatchToProps = dispatch => (): Partial<EndpointEditorProps> => {
   };
 };
 
-export const EndpointEditorContainer = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(EndpointEditor) as any;
+export const EndpointEditorContainer = connect(mapStateToProps, mapDispatchToProps)(EndpointEditor) as any;

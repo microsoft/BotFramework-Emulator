@@ -75,7 +75,4 @@ const mapStateToProps = (state: RootState, ownProps: OpenBotDialogProps): OpenBo
   };
 };
 
-export const OpenBotDialogContainer = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(OpenBotDialog);
+export const OpenBotDialogContainer = connect(mapStateToProps, mapDispatchToProps)(OpenBotDialog);

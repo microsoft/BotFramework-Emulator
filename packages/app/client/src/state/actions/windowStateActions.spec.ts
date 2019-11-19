@@ -66,7 +66,10 @@ describe('Window state actions', () => {
   });
 
   test('setAvailableThemes action', () => {
-    const themes = [{ name: 'light', href: './light.css' }, { name: 'dark', href: './dark.css' }];
+    const themes = [
+      { name: 'light', href: './light.css' },
+      { name: 'dark', href: './dark.css' },
+    ];
     expect(windowStateActions.setAvailableThemes(themes)).toEqual({
       type: windowStateActions.SET_AVAILABLE_THEMES,
       payload: { availableThemes: themes },

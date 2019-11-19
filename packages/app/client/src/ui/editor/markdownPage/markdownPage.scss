@@ -18,4 +18,8 @@
 
 .markdown-container {
   padding-left: 1px; // left side of focus outlines get cut off for top-level links
+
+  a {
+    color: var(--link-color);
+  }
 }

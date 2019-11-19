@@ -60,7 +60,4 @@ const mapDispatchToProps = (dispatch: (action: Action) => void) => {
   };
 };
 
-export const ConnectedServicePickerContainer = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ConnectedServicePicker);
+export const ConnectedServicePickerContainer = connect(mapStateToProps, mapDispatchToProps)(ConnectedServicePicker);

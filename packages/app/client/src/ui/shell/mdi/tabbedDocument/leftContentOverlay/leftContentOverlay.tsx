@@ -106,7 +106,4 @@ const mapDispatchToProps = (dispatch): LeftContentOverlayProps => ({
   },
 });
 
-export const LeftContentOverlay = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(LeftContentOverlayComponent);
+export const LeftContentOverlay = connect(mapStateToProps, mapDispatchToProps)(LeftContentOverlayComponent);

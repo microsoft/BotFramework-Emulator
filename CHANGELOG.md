@@ -13,6 +13,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - [1970](https://github.com/microsoft/BotFramework-Emulator/pull/1970)
   - [1982](https://github.com/microsoft/BotFramework-Emulator/pull/1982)
   - [1983](https://github.com/microsoft/BotFramework-Emulator/pull/1983)
+  - [1990](https://github.com/microsoft/BotFramework-Emulator/pull/1990)
+  - [1991](https://github.com/microsoft/BotFramework-Emulator/pull/1991)
+
+## Removed
+- [main] Removed unused `VersionManager` class in PR [1991](https://github.com/microsoft/BotFramework-Emulator/pull/1991)
+
+- [main] Rewrote the `emulator/core` package and removed the `emulator/cli` package in PR [1989](https://github.com/microsoft/BotFramework-Emulator/pull/1989)
 
 ## v4.6.0 - 2019 - 10 - 31
 ## Added

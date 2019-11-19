@@ -60,7 +60,4 @@ const mapDispatchToProps = (dispatch: (action: Action) => void): BotNotOpenExplo
     }),
 });
 
-export const BotNotOpenExplorerContainer = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(BotNotOpenExplorerComp);
+export const BotNotOpenExplorerContainer = connect(mapStateToProps, mapDispatchToProps)(BotNotOpenExplorerComp);

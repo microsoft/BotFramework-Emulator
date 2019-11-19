@@ -45,9 +45,7 @@ export class OauthCommands {
   // Sends an OAuth TokenResponse
   @Command(Commands.SendTokenResponse)
   protected async sendTokenResponse(connectionName: string, conversationId: string, token: string) {
-    const convo = Emulator.getInstance().framework.server.botEmulator.facilities.conversations.conversationById(
-      conversationId
-    );
+    const convo = Emulator.getInstance().server.state.conversations.conversationById(conversationId);
     if (!convo) {
       throw new Error(`oauth:send-token-response: Conversation ${conversationId} not found.`);
     }
@@ -58,9 +56,7 @@ export class OauthCommands {
   // Opens an OAuth login window
   @Command(Commands.CreateOAuthWindow)
   protected async createOauthWindow(url: string, conversationId: string) {
-    const convo = Emulator.getInstance().framework.server.botEmulator.facilities.conversations.conversationById(
-      conversationId
-    );
+    const convo = Emulator.getInstance().server.state.conversations.conversationById(conversationId);
     emulatorApplication.windowManager.createOAuthWindow(url, convo.codeVerifier);
   }
 }

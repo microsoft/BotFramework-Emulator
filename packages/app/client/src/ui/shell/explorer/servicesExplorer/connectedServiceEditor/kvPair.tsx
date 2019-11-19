@@ -150,15 +150,12 @@ export class KvPair extends Component<KvPairProps, KvPairState> {
 
   // trims off any incomplete pairs
   private pruneIncompletePairs(kvPairs: { key: string; value: string }[]): { [key: string]: string } {
-    return kvPairs.reduce(
-      (kvPairs, kvPair) => {
-        if (kvPair.key && kvPair.key.trim() && kvPair.value && kvPair.value.trim()) {
-          kvPairs[kvPair.key] = kvPair.value;
-        }
-        return kvPairs;
-      },
-      {} as any
-    );
+    return kvPairs.reduce((kvPairs, kvPair) => {
+      if (kvPair.key && kvPair.key.trim() && kvPair.value && kvPair.value.trim()) {
+        kvPairs[kvPair.key] = kvPair.value;
+      }
+      return kvPairs;
+    }, {} as any);
   }
 
   private get alert(): ReactNode {

@@ -56,7 +56,4 @@ const mapDispatchToProps = (dispatch: (action: Action) => void): RecentBotsListP
   };
 };
 
-export const RecentBotsListContainer = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(RecentBotsList);
+export const RecentBotsListContainer = connect(mapStateToProps, mapDispatchToProps)(RecentBotsList);

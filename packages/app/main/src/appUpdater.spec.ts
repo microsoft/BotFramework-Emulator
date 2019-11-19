@@ -53,6 +53,12 @@ const defaultSettings = {
 
 let mockSettings: any;
 
+jest.mock('./appMenuBuilder', () => ({
+  AppMenuBuilder: {
+    refreshAppUpdateMenu: jest.fn(),
+  },
+}));
+
 jest.mock('electron-updater', () => ({
   get autoUpdater() {
     return mockAutoUpdater;
@@ -131,6 +137,7 @@ jest.mock('./utils/sendNotificationToClient', () => ({
 
 jest.mock('./emulator', () => ({
   Emulator: {
+    initialize: jest.fn(),
     getInstance: () => ({
       ngrok: {
         ngrokEmitter: {

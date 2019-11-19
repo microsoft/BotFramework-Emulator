@@ -47,7 +47,4 @@ function mapStateToProps(state: RootState, ownProps: DocumentsProps): DocumentsP
   };
 }
 
-export const DocumentsContainer = connect(
-  mapStateToProps,
-  null
-)(Documents);
+export const DocumentsContainer = connect(mapStateToProps, null)(Documents);
