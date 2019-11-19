@@ -333,7 +333,10 @@ describe('the electron commands', () => {
 
   it('should display a context menu', async () => {
     const showMenuSpy = jest.spyOn(ContextMenuService, 'showMenuAndWaitForInput').mockResolvedValueOnce(undefined);
-    const mockOptions = [{ id: 'option1', label: 'Option 1' }, { id: 'option2', label: 'Option 2' }];
+    const mockOptions = [
+      { id: 'option1', label: 'Option 1' },
+      { id: 'option2', label: 'Option 2' },
+    ];
     const mockMenuCoords = { x: 150, y: 300 };
     const handler = registry.getCommand(SharedConstants.Commands.Electron.DisplayContextMenu);
     await handler(mockOptions, mockMenuCoords);
