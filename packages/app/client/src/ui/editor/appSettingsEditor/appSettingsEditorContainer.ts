@@ -73,7 +73,4 @@ const mapDispatchToProps = (dispatch: (action: Action) => void, ownProps: AppSet
   setDirtyFlag: debounce((dirty: boolean) => dispatch(EditorActions.setDirtyFlag(ownProps.documentId, dirty)), 300),
 });
 
-export const AppSettingsEditorContainer = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(AppSettingsEditor);
+export const AppSettingsEditorContainer = connect(mapStateToProps, mapDispatchToProps)(AppSettingsEditor);

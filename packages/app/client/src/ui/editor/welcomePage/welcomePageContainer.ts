@@ -70,7 +70,4 @@ function mapDispatchToProps(dispatch: (action: Action) => void): WelcomePageProp
 }
 
 // export const WelcomePage = connect(mapStateToProps, mapDispatchToProps)(hot(module)(WelcomePageComp)) as any;
-export const WelcomePageContainer = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(WelcomePage);
+export const WelcomePageContainer = connect(mapStateToProps, mapDispatchToProps)(WelcomePage);

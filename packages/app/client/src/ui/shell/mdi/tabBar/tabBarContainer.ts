@@ -73,7 +73,4 @@ const mapDispatchToProps = (dispatch): TabBarProps => ({
   },
 });
 
-export const TabBarContainer = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(TabBar);
+export const TabBarContainer = connect(mapStateToProps, mapDispatchToProps)(TabBar);

@@ -53,7 +53,11 @@ export class ResourcesSagas {
   private static commandService: CommandServiceImpl;
 
   public static *openContextMenuForResource(action: ResourcesAction<IFileService>): IterableIterator<any> {
-    const menuItems = [{ label: 'Open file location', id: 0 }, { label: 'Rename', id: 1 }, { label: 'Delete', id: 2 }];
+    const menuItems = [
+      { label: 'Open file location', id: 0 },
+      { label: 'Rename', id: 1 },
+      { label: 'Delete', id: 2 },
+    ];
 
     const result = yield ResourcesSagas.commandService.remoteCall(
       SharedConstants.Commands.Electron.DisplayContextMenu,

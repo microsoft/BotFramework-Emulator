@@ -34,5 +34,5 @@
 import { Emulator } from '../emulator';
 
 export function getLocalhostServiceUrl(): string {
-  return Emulator.getInstance().framework.serverUrl.replace('[::]', 'localhost');
+  return Emulator.getInstance().server.serverUrl.replace('[::]', 'localhost');
 }

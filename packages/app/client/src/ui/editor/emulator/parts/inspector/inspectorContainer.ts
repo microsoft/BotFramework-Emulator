@@ -72,7 +72,4 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export const InspectorContainer = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Inspector);
+export const InspectorContainer = connect(mapStateToProps, mapDispatchToProps)(Inspector);

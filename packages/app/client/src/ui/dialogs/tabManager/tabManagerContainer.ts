@@ -48,7 +48,4 @@ const mapDispatchToProps = (dispatch): TabManagerProps => ({
   },
 });
 
-export const TabManagerContainer = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(TabManager) as any;
+export const TabManagerContainer = connect(mapStateToProps, mapDispatchToProps)(TabManager) as any;

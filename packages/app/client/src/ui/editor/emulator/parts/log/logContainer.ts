@@ -43,7 +43,4 @@ function mapStateToProps(state: RootState, { documentId }: { documentId: string 
   };
 }
 
-export const LogContainer = connect(
-  mapStateToProps,
-  undefined
-)(Log);
+export const LogContainer = connect(mapStateToProps, undefined)(Log);

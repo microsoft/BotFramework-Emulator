@@ -56,7 +56,4 @@ function mapStateToProps(state: RootState, { documentId }: { documentId: string 
   };
 }
 
-export const OuterActivityWrapperContainer = connect(
-  mapStateToProps,
-  undefined
-)(OuterActivityWrapper);
+export const OuterActivityWrapperContainer = connect(mapStateToProps, undefined)(OuterActivityWrapper);

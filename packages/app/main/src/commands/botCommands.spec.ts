@@ -120,15 +120,11 @@ jest.mock('../utils/ensureStoragePath', () => ({
   ensureStoragePath: () => '',
 }));
 const mockEmulator = {
-  framework: {
-    server: {
-      botEmulator: {
-        facilities: {
-          endpoints: {
-            reset: () => null,
-            push: () => null,
-          },
-        },
+  server: {
+    state: {
+      endpoints: {
+        clear: jest.fn(),
+        set: jest.fn(),
       },
     },
   },
@@ -254,13 +250,13 @@ describe('The botCommands', () => {
   it('should restart the endpoint service', async () => {
     const emulator = Emulator.getInstance();
     store.dispatch(setActive(mockBot));
-    const resetSpy = jest.spyOn(emulator.framework.server.botEmulator.facilities.endpoints, 'reset');
-    const pushSpy = jest.spyOn(emulator.framework.server.botEmulator.facilities.endpoints, 'push');
+    const clearSpy = jest.spyOn(emulator.server.state.endpoints, 'clear');
+    const setSpy = jest.spyOn(emulator.server.state.endpoints, 'set');
     const command = registry.getCommand(Bot.RestartEndpointService);
     const result = await command();
 
-    expect(resetSpy).toHaveBeenCalled();
-    expect(pushSpy).toHaveBeenCalled();
+    expect(clearSpy).toHaveBeenCalled();
+    expect(setSpy).toHaveBeenCalled();
     expect(result).toBeUndefined();
   });
 

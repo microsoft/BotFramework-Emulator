@@ -234,9 +234,11 @@ html {
   --split-button-selected-outline: 1px solid #F38518;
   --split-button-expanded-outline: 1px solid #F38518;
   --split-button-separator-bg-color: #C8C8C8;
-  --split-button-panel-color: var(--neutral-16);
-  --split-button-panel-bg-color: var(--neutral-1);
-  --split-button-selected-item-bg-color: var(--neutral-3);
+  --split-button-panel-color: var(--neutral-1);
+  --split-button-panel-border: 1px solid #00BCF2;
+  --split-button-panel-bg-color: var(--neutral-16);
+  --split-button-selected-item-bg-color: var(--neutral-16);
+  --split-button-selected-item-border: 1px dashed #F38518;
 
   /* Icons */
   --cosmos-db-contrast: var(--neutral-1);

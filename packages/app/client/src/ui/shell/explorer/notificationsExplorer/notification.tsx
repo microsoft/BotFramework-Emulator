@@ -105,7 +105,4 @@ const mapDispatchToProps = (dispatch): NotificationProps => ({
 
 const mapStateToProps = (): NotificationProps => ({});
 
-export const Notification = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(NotificationComp);
+export const Notification = connect(mapStateToProps, mapDispatchToProps)(NotificationComp);

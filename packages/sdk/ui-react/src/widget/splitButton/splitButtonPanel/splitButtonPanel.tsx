@@ -75,7 +75,7 @@ export class SplitButtonPanel extends React.Component<SplitButtonPanelProps> {
     if (expanded) {
       const caretClientRect = caretRef.getBoundingClientRect();
       const inlineStyle = {
-        left: `${caretClientRect.left}px`,
+        left: `${caretClientRect.left - 1}px`,
         top: `${caretClientRect.bottom}px`,
       };
 

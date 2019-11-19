@@ -89,7 +89,7 @@ export class NgrokService {
       return this.serviceUrl;
     }
     // Do not use ngrok
-    return `http://${this.localhost}:${Emulator.getInstance().framework.serverPort}`;
+    return `http://${this.localhost}:${Emulator.getInstance().server.serverPort}`;
   }
 
   // OAuth sign-in flow must always use an ngrok url so that the BF token
@@ -104,7 +104,7 @@ export class NgrokService {
     }
     // otherwise, we need to spin up an auxillary ngrok instance that we can tear down when the token response comes back
     this.oauthNgrokInstance = new NgrokInstance();
-    const port = Emulator.getInstance().framework.serverPort;
+    const port = Emulator.getInstance().server.serverPort;
     const ngrokPath = getSettings().framework.ngrokPath;
     const inspectUrl = new Promise<string>(async (resolve, reject) => {
       try {
@@ -145,7 +145,7 @@ export class NgrokService {
     }
 
     this.ngrok.kill();
-    const port = Emulator.getInstance().framework.serverPort;
+    const port = Emulator.getInstance().server.serverPort;
 
     this.ngrokPath = getSettings().framework.ngrokPath;
     this.serviceUrl = `http://${this.localhost}:${port}`;
@@ -211,7 +211,7 @@ export class NgrokService {
 
   /** Logs an item to all open conversations */
   public broadcast(...logItems: LogItem[]): void {
-    const { conversations } = Emulator.getInstance().framework.server.botEmulator.facilities;
+    const { conversations } = Emulator.getInstance().server.state;
     const conversationIds: string[] = conversations.getConversationIds();
     conversationIds.forEach(id => {
       emulatorApplication.mainWindow.logService.logToChat(id, ...logItems);
@@ -286,6 +286,11 @@ export class NgrokService {
   private cacheSettings() {
     // Get framework from state
     const framework = getSettings().framework;
+
+    // ensure that a path to ngrok gets set initially
+    if (!this.ngrokPath && framework.ngrokPath) {
+      this.ngrokPath = framework.ngrokPath;
+    }
 
     // Cache host and port
     const localhost = framework.localhost || 'localhost';

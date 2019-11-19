@@ -50,7 +50,4 @@ const mapDispatchToProps = (dispatch: (action: Action) => void) => {
   };
 };
 
-export const ConnectedServiceEditorContainer = connect(
-  null,
-  mapDispatchToProps
-)(ConnectedServiceEditor) as any;
+export const ConnectedServiceEditorContainer = connect(null, mapDispatchToProps)(ConnectedServiceEditor) as any;
