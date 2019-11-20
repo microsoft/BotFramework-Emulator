@@ -239,7 +239,8 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
                 }
                 <LinkButton
                   onClick={this.onDebugDocsClick}
-                  aria-label="Learn more about debugging your bot with the Emulator"
+                  ariaLabel="Learn more about debugging your bot with the Emulator"
+                  linkRole={true}
                 >
                   Learn More.
                 </LinkButton>

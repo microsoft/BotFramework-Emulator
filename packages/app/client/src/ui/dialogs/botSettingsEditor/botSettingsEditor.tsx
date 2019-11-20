@@ -116,7 +116,7 @@ export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, B
             onChange={this.onEncryptKeyChange}
           />
           <LinkButton
-            aria-label="Learn more about bot file encryption"
+            ariaLabel="Learn more about bot file encryption"
             className={styles.dialogLink}
             linkRole={true}
             onClick={this.onLearnMoreEncryptionClick}

@@ -167,7 +167,7 @@ export class EndpointEditor extends Component<EndpointEditorProps, EndpointEdito
           <Checkbox label="Azure for US Government" checked={isUsGov} onChange={this.onChannelServiceChange} />
           &nbsp;
           <LinkButton
-            aria-label="Learn more about Azure for US Government"
+            ariaLabel="Learn more about Azure for US Government"
             className={styles.endpointLink}
             linkRole={true}
             onClick={this.onAzureGovDocClick}
