@@ -44,7 +44,12 @@ export class PrimaryButton extends React.Component<PrimaryButtonProps, {}> {
     const { className: propsClassName = '', text, buttonRef, ...buttonProps } = this.props;
     const className = `${propsClassName} ${styles.button} ${styles.primaryButton}`;
     return (
-      <button {...buttonProps} className={className} ref={this.setButtonRef}>
+      <button
+        {...buttonProps}
+        className={className}
+        ref={this.setButtonRef}
+        aria-hidden={this.props.disabled ? 'true' : undefined}
+      >
         {text}
         {this.props.children}
       </button>
