@@ -69,6 +69,7 @@ class EventHandlers {
     const ctrlOrCmdPressed = event.ctrlKey || event.metaKey;
     const shiftPressed = event.shiftKey;
     const key = event.key.toLowerCase();
+    const keyCode = event.keyCode;
     const {
       Commands: {
         Electron: { ToggleDevTools },
@@ -145,26 +146,24 @@ class EventHandlers {
     }
 
     if (isMac()) {
-      window.addEventListener('keydown', function(event) {
-        var KEYCODE_TAB = 9;
-        var firstElement = document.querySelector('nav').firstElementChild as HTMLElement;
-        var lastDecendants = EventHandlers.getLastDecendants(document.querySelector('main'));
-        var lastElement = lastDecendants[lastDecendants.length - 1];
+      var KEYCODE_TAB = 9;
+      var firstElement = document.querySelector('nav').firstElementChild as HTMLElement;
+      var lastDecendants = EventHandlers.getLastDecendants(document.querySelector('main'));
+      var lastElement = lastDecendants[lastDecendants.length - 1];
 
-        if (event.key === 'Tab' || event.keyCode === KEYCODE_TAB) {
-          if (event.shiftKey) {
-            if (document.activeElement === firstElement) {
-              lastElement.focus();
-              event.preventDefault();
-            }
-          } else {
-            if (document.activeElement === lastElement) {
-              firstElement.focus();
-              event.preventDefault();
-            }
+      if (key === 'Tab' || keyCode === KEYCODE_TAB) {
+        if (shiftPressed) {
+          if (document.activeElement === firstElement) {
+            lastElement.focus();
+            event.preventDefault();
+          }
+        } else {
+          if (document.activeElement === lastElement) {
+            firstElement.focus();
+            event.preventDefault();
           }
         }
-      });
+      }
     }
   }
 }
