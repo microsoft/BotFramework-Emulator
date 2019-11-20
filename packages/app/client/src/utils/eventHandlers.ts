@@ -151,7 +151,7 @@ class EventHandlers {
       var lastDecendants = EventHandlers.getLastDecendants(document.querySelector('main'));
       var lastElement = lastDecendants[lastDecendants.length - 1];
 
-      if (key === 'Tab' || keyCode === KEYCODE_TAB) {
+      if (key === 'tab' || keyCode === KEYCODE_TAB) {
         if (shiftPressed) {
           if (document.activeElement === firstElement) {
             lastElement.focus();
