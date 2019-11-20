@@ -168,13 +168,17 @@ describe('The ServicesExplorer component', () => {
   });
 
   it('should dispatch a request to open the connected service picker when the add icon is clicked', async () => {
-    const mockOnAddIconClick = {
+    const mockAddIconButtonRef = {
       focus: jest.fn(() => {
         return null;
       }),
+      getBoundingClientRect: jest.fn(() => ({
+        left: 150,
+        bottom: 200,
+      })),
     };
 
-    instance.addIconButtonRef = mockOnAddIconClick;
+    instance.addIconButtonRef = mockAddIconButtonRef;
 
     await instance.onAddIconClick();
 
@@ -191,17 +195,26 @@ describe('The ServicesExplorer component', () => {
           pickerComponent: ConnectedServicePickerContainer,
           progressIndicatorComponent: ProgressIndicatorContainer,
         },
-        jasmine.any(Function) as any
+        jasmine.any(Function) as any,
+        { x: 150, y: 200 }
       )
     );
 
-    expect(mockOnAddIconClick.focus).toHaveBeenCalled();
+    expect(mockAddIconButtonRef.focus).toHaveBeenCalled();
   });
 
   it('should dispatch to the store when a request to open the sort context menu is made', () => {
     const instance = node.instance();
+    const mockSortIconButtonRef = {
+      getBoundingClientRect: jest.fn(() => ({
+        left: 150,
+        bottom: 200,
+      })),
+    };
+
+    instance.sortIconButtonRef = mockSortIconButtonRef;
     instance.onSortClick();
-    expect(mockDispatch).toHaveBeenCalledWith(openSortContextMenu());
+    expect(mockDispatch).toHaveBeenCalledWith(openSortContextMenu({ x: 150, y: 200 }));
   });
 
   it('should open the service deep link when the enter key is pressed on a focused list item', () => {

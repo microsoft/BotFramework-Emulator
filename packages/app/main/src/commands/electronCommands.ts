@@ -35,7 +35,7 @@ import * as path from 'path';
 import * as fs from 'fs-extra';
 import * as Electron from 'electron';
 import { app, dialog, Menu, MessageBoxOptions } from 'electron';
-import { SharedConstants } from '@bfemulator/app-shared';
+import { ContextMenuCoordinates, SharedConstants } from '@bfemulator/app-shared';
 import { Command } from '@bfemulator/sdk-shared';
 
 import { AppMenuBuilder } from '../appMenuBuilder';
@@ -138,8 +138,8 @@ export class ElectronCommands {
   // ---------------------------------------------------------------------------
   // Displays the context menu for a given element
   @Command(Commands.DisplayContextMenu)
-  protected displayContextMenu(...args) {
-    return ContextMenuService.showMenuAndWaitForInput(...args);
+  protected displayContextMenu(menuItems: Electron.MenuItemConstructorOptions[], menuCoords?: ContextMenuCoordinates) {
+    return ContextMenuService.showMenuAndWaitForInput(menuItems, menuCoords);
   }
 
   // ---------------------------------------------------------------------------

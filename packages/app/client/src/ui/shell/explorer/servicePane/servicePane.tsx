@@ -57,6 +57,7 @@ export abstract class ServicePane<
   S extends ServicePaneState = ServicePaneState
 > extends Component<T, S> {
   protected addIconButtonRef: HTMLButtonElement;
+  protected sortIconButtonRef: HTMLButtonElement;
 
   protected abstract onLinkClick: (event: SyntheticEvent<HTMLLIElement>) => void; // bound
   protected abstract onSortClick: (event: SyntheticEvent<HTMLButtonElement>) => void; // bound
@@ -77,6 +78,7 @@ export abstract class ServicePane<
           onKeyPress={this.onControlKeyPress}
           onClick={this.onSortClick}
           className={`${styles.sortIconButton} ${styles.serviceIcon}`}
+          ref={this.setSortIconButtonRef}
         >
           <svg viewBox="0 0 34.761 26.892" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
             <g>
@@ -191,5 +193,9 @@ export abstract class ServicePane<
 
   protected setAddIconButtonRef = (ref: HTMLButtonElement): void => {
     this.addIconButtonRef = ref;
+  };
+
+  protected setSortIconButtonRef = (ref: HTMLButtonElement): void => {
+    this.sortIconButtonRef = ref;
   };
 }
