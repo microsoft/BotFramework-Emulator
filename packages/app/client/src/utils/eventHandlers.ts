@@ -30,21 +30,18 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
 import { Notification, NotificationType, SharedConstants } from '@bfemulator/app-shared';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 import { remote } from 'electron';
 
 import { isMac } from '../../../../app/main/src/utils/platform';
-
 const maxZoomFactor = 3; // 300%
 const minZoomFactor = 0.25; // 25%;
-
 class EventHandlers {
   @CommandServiceInstance()
   public static commandService: CommandServiceImpl;
 
-  public static getLastChildWithChildren(node) {
+  private static getLastChildWithChildren(node) {
     for (let index = node.children.length; index > 0; index--) {
       if (node.children[index - 1].children.length > 0 && !node.children[index - 1].hidden) {
         return node.children[index - 1];
@@ -52,16 +49,18 @@ class EventHandlers {
     }
   }
 
-  public static getLastDecendants(node, list = []) {
+  private static getLastDecendants(node, list = []) {
     if (node.children.length > 0) {
-      var child = this.getLastChildWithChildren(node);
+      const child = this.getLastChildWithChildren(node);
       if (child) {
         list.push(child);
         this.getLastDecendants(child, list);
       }
     }
 
-    return [].filter.call(list[list.length - 1].children, element => !element.hasAttribute('disabled'));
+    const result = [].filter.call(list[list.length - 1].children, element => !element.hasAttribute('disabled'));
+
+    return result;
   }
 
   public static async globalHandles(event: KeyboardEvent): Promise<any> {
@@ -77,23 +76,19 @@ class EventHandlers {
         Notifications: { Add },
       },
     } = SharedConstants;
-
     let awaitable: Promise<any>;
     // Ctrl+O
     if (ctrlOrCmdPressed && key === 'o') {
       awaitable = EventHandlers.commandService.call(ShowOpenBotDialog);
     }
-
     // Ctrl+N
     if (ctrlOrCmdPressed && key === 'n') {
       awaitable = EventHandlers.commandService.call(ShowBotCreationDialog);
     }
-
     // Ctrl+0
     if (ctrlOrCmdPressed && key === '0') {
       remote.getCurrentWebContents().setZoomLevel(0);
     }
-
     // Ctrl+= or Ctrl+Shift+=
     if (ctrlOrCmdPressed && (key === '=' || key === '+')) {
       const webContents = remote.getCurrentWebContents();
@@ -106,7 +101,6 @@ class EventHandlers {
         }
       });
     }
-
     // Ctrl+- or Ctrl+Shift+-
     if (ctrlOrCmdPressed && (key === '-' || key === '_')) {
       const webContents = remote.getCurrentWebContents();
@@ -119,18 +113,15 @@ class EventHandlers {
         }
       });
     }
-
     // F11
     if (key === 'f11') {
       const currentWindow = remote.getCurrentWindow();
       currentWindow.setFullScreen(!currentWindow.isFullScreen());
     }
-
     // Ctrl+Shift+I
     if (ctrlOrCmdPressed && shiftPressed && key === 'i') {
       awaitable = EventHandlers.commandService.remoteCall(ToggleDevTools);
     }
-
     if (awaitable) {
       // Prevents the char from showing up if an input is focused
       event.preventDefault();
@@ -146,26 +137,23 @@ class EventHandlers {
     }
 
     if (isMac()) {
-      var KEYCODE_TAB = 9;
-      var firstElement = document.querySelector('nav').firstElementChild as HTMLElement;
-      var lastDecendants = EventHandlers.getLastDecendants(document.querySelector('main'));
-      var lastElement = lastDecendants[lastDecendants.length - 1];
+      const tabPressed: boolean = key === 'tab' || keyCode === 9;
+      const lastDecendants = EventHandlers.getLastDecendants(document.querySelector('main'));
+      const firstElement = document.querySelector('nav').firstElementChild as HTMLElement;
+      const lastElement = lastDecendants[lastDecendants.length - 1] as HTMLElement;
+      const isFirstElement: boolean = document.activeElement === firstElement;
+      const isLastElement: boolean = document.activeElement === lastElement;
 
-      if (key === 'tab' || keyCode === KEYCODE_TAB) {
-        if (shiftPressed) {
-          if (document.activeElement === firstElement) {
-            lastElement.focus();
-            event.preventDefault();
-          }
-        } else {
-          if (document.activeElement === lastElement) {
-            firstElement.focus();
-            event.preventDefault();
-          }
+      if (tabPressed) {
+        if (shiftPressed && isFirstElement) {
+          lastElement.focus();
+          event.preventDefault();
+        } else if (!shiftPressed && isLastElement) {
+          firstElement.focus();
+          event.preventDefault();
         }
       }
     }
   }
 }
-
 export const globalHandlers = EventHandlers.globalHandles;
