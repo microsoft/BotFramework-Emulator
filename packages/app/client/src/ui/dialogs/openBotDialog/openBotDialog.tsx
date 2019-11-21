@@ -176,7 +176,7 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
               onClick={this.onChannelServiceCheckboxClick}
             />
             <LinkButton
-              aria-label="Learn more about Azure for US Government"
+              ariaLabel="Learn more about Azure for US Government"
               linkRole={true}
               onClick={this.onEmulatorAzureGovDocsClick}
             >

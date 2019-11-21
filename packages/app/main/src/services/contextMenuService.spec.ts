@@ -30,15 +30,22 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { MenuItemConstructorOptions } from 'electron';
+
+import { BrowserWindow, MenuItemConstructorOptions } from 'electron';
 
 import { ContextMenuService } from './contextMenuService';
 
+const mockPopup = jest.fn();
 jest.mock('electron', () => ({
+  BrowserWindow: class {
+    public static getFocusedWindow() {
+      return {};
+    }
+  },
   Menu: class {
     public static buildFromTemplate(...args: any[]) {
       return {
-        popup: () => void 0,
+        popup: (...args) => mockPopup(...args),
       };
     }
   },
@@ -48,18 +55,27 @@ jest.mock('electron', () => ({
 describe('The ContextMenuService', () => {
   beforeAll(() => {
     (ContextMenuService as any).currentMenu = { closePopup: () => void 0 };
+    mockPopup.mockClear();
   });
 
   it('should show the menu and wait for user input', async () => {
     const options: MenuItemConstructorOptions = {};
     let resolved = false;
     const closePopupSpy = jest.spyOn((ContextMenuService as any).currentMenu, 'closePopup');
-    ContextMenuService.showMenuAndWaitForInput([options]).then(() => {
+    const mockMenuCoords = { x: 150.234, y: 300.999 };
+    ContextMenuService.showMenuAndWaitForInput([options], mockMenuCoords).then(() => {
       resolved = true;
     });
+    const mockFocusedWindow: any = {};
+    const getFocusedWindowSpy = jest.spyOn(BrowserWindow, 'getFocusedWindow').mockReturnValueOnce(mockFocusedWindow);
+
     expect(closePopupSpy).toHaveBeenCalled();
     expect(options.click).not.toBeNull();
     await options.click({} as any, null, null);
     expect(resolved).toBeTruthy();
+    expect(mockPopup).toHaveBeenCalledWith({ x: 150, y: 301, window: mockFocusedWindow });
+
+    closePopupSpy.mockRestore();
+    getFocusedWindowSpy.mockRestore();
   });
 });

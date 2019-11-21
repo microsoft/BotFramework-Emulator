@@ -14,11 +14,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - [1982](https://github.com/microsoft/BotFramework-Emulator/pull/1982)
   - [1983](https://github.com/microsoft/BotFramework-Emulator/pull/1983)
   - [1990](https://github.com/microsoft/BotFramework-Emulator/pull/1990)
-  - [1991](https://github.com/microsoft/BotFramework-Emulator/pull/1991)
+  - [1992](https://github.com/microsoft/BotFramework-Emulator/pull/1992)
+  - [1993](https://github.com/microsoft/BotFramework-Emulator/pull/1993)
+  - [1994](https://github.com/microsoft/BotFramework-Emulator/pull/1994)
+  - [1997](https://github.com/microsoft/BotFramework-Emulator/pull/1997)
+
+- [main] Increased ngrok spawn timeout to 15 seconds to be more forgiving to slower networks in PR [1998](https://github.com/microsoft/BotFramework-Emulator/pull/1998)
 
 ## Removed
 - [main] Removed unused `VersionManager` class in PR [1991](https://github.com/microsoft/BotFramework-Emulator/pull/1991)
-
 - [main] Rewrote the `emulator/core` package and removed the `emulator/cli` package in PR [1989](https://github.com/microsoft/BotFramework-Emulator/pull/1989)
 
 ## v4.6.0 - 2019 - 10 - 31
