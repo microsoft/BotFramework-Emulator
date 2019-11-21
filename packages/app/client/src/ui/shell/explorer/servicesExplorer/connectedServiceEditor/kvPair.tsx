@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { LinkButton, TextField } from '@bfemulator/ui-react';
+import { LinkButton, TextField, Row } from '@bfemulator/ui-react';
 import * as React from 'react';
 import { ChangeEvent, Component, ReactNode } from 'react';
 
@@ -62,15 +62,9 @@ export class KvPair extends Component<KvPairProps, KvPairState> {
 
     return (
       <div>
-        <span className={styles.header}>
-          <label>Key</label>
-          <label>Value</label>
-        </span>
-        <ul className={styles.kvPairContainer}>
-          {kvPairs.map((pair, index) => (
-            <li key={index}>{this.getTextFieldPair(pair.key, pair.value, index)}</li>
-          ))}
-        </ul>
+        {kvPairs.map((pair, index) => (
+          <Row className={styles.kvInputRow}>{this.getTextFieldPair(pair.key, pair.value, index)}</Row>
+        ))}
         <LinkButton
           ariaLabel="Add key value pair"
           className={`${styles.link} ${styles.kvSpacing}`}
@@ -102,6 +96,8 @@ export class KvPair extends Component<KvPairProps, KvPairState> {
     return (
       <>
         <TextField
+          label={index === 0 ? 'Key' : undefined}
+          inputContainerClassName={styles.kvPairContainer}
           aria-label={`key ${index}`}
           className={styles.noBorder}
           placeholder="Add a key (optional)"
@@ -112,6 +108,8 @@ export class KvPair extends Component<KvPairProps, KvPairState> {
           inputRef={ref}
         />
         <TextField
+          label={index === 0 ? 'Value' : undefined}
+          inputContainerClassName={styles.kvPairContainer}
           aria-label={`value ${index}`}
           className={styles.noBorder}
           placeholder="Add a value (optional)"
