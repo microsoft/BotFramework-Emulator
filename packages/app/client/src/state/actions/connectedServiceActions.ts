@@ -34,6 +34,7 @@
 import { IConnectedService, ServiceTypes } from 'botframework-config/lib/schema';
 import { ComponentClass } from 'react';
 import { Action } from 'redux';
+import { ContextMenuCoordinates } from '@bfemulator/app-shared';
 
 import { CONNECTED_SERVICES_PANEL_ID } from './explorerActions';
 
@@ -80,7 +81,12 @@ export interface ConnectedServicePickerPayload extends ConnectedServicePayload {
 }
 
 export interface OpenAddServiceContextMenuPayload extends ConnectedServicePickerPayload {
+  menuCoords?: ContextMenuCoordinates;
   resolver: Function;
+}
+
+export interface OpenSortContextMenuPayload extends ConnectedServicePayload {
+  menuCoords?: ContextMenuCoordinates;
 }
 
 export function launchConnectedServicePicker(
@@ -113,12 +119,14 @@ export function openContextMenuForConnectedService<T>(
 
 export function openAddServiceContextMenu(
   payload: ConnectedServicePickerPayload,
-  resolver: Function
+  resolver: Function,
+  menuCoords?: ContextMenuCoordinates
 ): ConnectedServiceAction<OpenAddServiceContextMenuPayload> {
   return {
     type: OPEN_ADD_CONNECTED_SERVICE_CONTEXT_MENU,
     payload: {
       ...payload,
+      menuCoords,
       resolver,
     },
   };
@@ -131,9 +139,14 @@ export function launchExternalLink(payload: ConnectedServicePayload): ConnectedS
   };
 }
 
-export function openSortContextMenu(): ConnectedServiceAction<ConnectedServicePayload> {
+export function openSortContextMenu(
+  menuCoords?: ContextMenuCoordinates
+): ConnectedServiceAction<OpenSortContextMenuPayload> {
   return {
     type: OPEN_CONNECTED_SERVICE_SORT_CONTEXT_MENU,
-    payload: { panelId: CONNECTED_SERVICES_PANEL_ID },
+    payload: {
+      panelId: CONNECTED_SERVICES_PANEL_ID,
+      menuCoords,
+    },
   };
 }

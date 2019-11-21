@@ -59,6 +59,7 @@ import {
   OPEN_CONTEXT_MENU_FOR_CONNECTED_SERVICE,
   OPEN_SERVICE_DEEP_LINK,
   OpenAddServiceContextMenuPayload,
+  OpenSortContextMenuPayload,
 } from '../actions/connectedServiceActions';
 import { sortExplorerContents } from '../actions/explorerActions';
 import { SortCriteria } from '../reducers/explorer';
@@ -304,7 +305,7 @@ export class ServicesExplorerSagas {
   public static *openAddConnectedServiceContextMenu(
     action: ConnectedServiceAction<OpenAddServiceContextMenuPayload>
   ): IterableIterator<any> {
-    const { resolver } = action.payload;
+    const { menuCoords, resolver } = action.payload;
     const menuItems = [
       { label: 'Add Language Understanding (LUIS)', id: ServiceTypes.Luis },
       { label: 'Add QnA Maker', id: ServiceTypes.QnA },
@@ -319,7 +320,8 @@ export class ServicesExplorerSagas {
 
     const response = yield ServicesExplorerSagas.commandService.remoteCall(
       SharedConstants.Commands.Electron.DisplayContextMenu,
-      menuItems
+      menuItems,
+      menuCoords
     );
 
     const { id: serviceType } = response;
@@ -333,7 +335,10 @@ export class ServicesExplorerSagas {
     resolver && resolver();
   }
 
-  public static *openSortContextMenu(action: ConnectedServiceAction<ConnectedServicePayload>): IterableIterator<any> {
+  public static *openSortContextMenu(
+    action: ConnectedServiceAction<OpenSortContextMenuPayload>
+  ): IterableIterator<any> {
+    const { menuCoords } = action.payload;
     const sortSelectionByPanelId = yield select(getSortSelection);
     const currentSort = sortSelectionByPanelId[action.payload.panelId];
     const menuItems = [
@@ -350,9 +355,11 @@ export class ServicesExplorerSagas {
         checked: currentSort === 'type',
       },
     ];
-    const response = yield ServicesExplorerSagas.commandService.remoteCall(
+    const response = yield call(
+      [ServicesExplorerSagas.commandService, ServicesExplorerSagas.commandService.remoteCall],
       SharedConstants.Commands.Electron.DisplayContextMenu,
-      menuItems
+      menuItems,
+      menuCoords
     );
     yield response.id ? put(sortExplorerContents(action.payload.panelId, response.id)) : null;
   }

@@ -86,10 +86,10 @@ describe('connected service actions', () => {
 
   it('should create an openAddServiceContextMenu action', () => {
     const payload: any = { resolver: jasmine.any(Function) };
-    const action = openAddServiceContextMenu(payload, jasmine.any(Function) as any);
+    const action = openAddServiceContextMenu(payload, jasmine.any(Function) as any, { x: 150, y: 300 });
 
     expect(action.type).toBe(OPEN_ADD_CONNECTED_SERVICE_CONTEXT_MENU);
-    expect(action.payload).toEqual(payload);
+    expect(action.payload).toEqual({ ...payload, menuCoords: { x: 150, y: 300 } });
   });
 
   it('should create a launchExternalLink action', () => {
@@ -101,9 +101,9 @@ describe('connected service actions', () => {
   });
 
   it('should create an openSortContextMenu action', () => {
-    const action = openSortContextMenu();
+    const action = openSortContextMenu({ x: 150, y: 300 });
 
     expect(action.type).toBe(OPEN_CONNECTED_SERVICE_SORT_CONTEXT_MENU);
-    expect(action.payload).toEqual({ panelId: CONNECTED_SERVICES_PANEL_ID });
+    expect(action.payload).toEqual({ panelId: CONNECTED_SERVICES_PANEL_ID, menuCoords: { x: 150, y: 300 } });
   });
 });

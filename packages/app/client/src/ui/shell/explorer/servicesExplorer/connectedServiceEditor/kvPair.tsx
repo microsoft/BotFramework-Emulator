@@ -72,14 +72,14 @@ export class KvPair extends Component<KvPairProps, KvPairState> {
           ))}
         </ul>
         <LinkButton
-          aria-label="Add key value pair"
+          ariaLabel="Add key value pair"
           className={`${styles.link} ${styles.kvSpacing}`}
           onClick={this.onAddKvPair}
         >
           + Add key value pair
         </LinkButton>
         <LinkButton
-          aria-label="Remove key value pair"
+          ariaLabel="Remove key value pair"
           className={styles.link}
           disabled={numRows === 1}
           onClick={this.onRemoveKvPair}

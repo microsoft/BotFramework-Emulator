@@ -43,7 +43,10 @@ import { ComponentClass } from 'react';
 import { MouseEventHandler, SyntheticEvent } from 'react';
 import { LinkButton } from '@bfemulator/ui-react';
 
-import { ConnectedServicePickerPayload } from '../../../../state/actions/connectedServiceActions';
+import {
+  ConnectedServicePickerPayload,
+  ContextMenuCoordinates,
+} from '../../../../state/actions/connectedServiceActions';
 import { serviceTypeLabels } from '../../../../utils/serviceTypeLables';
 import {
   AzureLoginFailedDialogContainer,
@@ -75,8 +78,11 @@ export interface ServicesExplorerProps extends ServicePaneProps {
   toAnimate?: { [serviceId: string]: boolean };
   launchEndpointEditor: (serverEditor: ComponentClass<any>) => Promise<void>;
   onAnchorClick: (url: string) => void;
-  openAddServiceContextMenu: (payload: ConnectedServicePickerPayload) => Promise<void>;
-  openSortContextMenu: () => void;
+  openAddServiceContextMenu: (
+    payload: ConnectedServicePickerPayload,
+    menuCoords?: ContextMenuCoordinates
+  ) => Promise<void>;
+  openSortContextMenu: (menuCoords?: ContextMenuCoordinates) => void;
   openServiceDeepLink: (service: IConnectedService) => void;
 }
 
@@ -216,26 +222,29 @@ export class ServicesExplorer extends ServicePane<ServicesExplorerProps> {
   };
 
   protected onSortClick = (_event: SyntheticEvent<HTMLButtonElement>) => {
-    this.props.openSortContextMenu();
+    const sortIconRect = this.sortIconButtonRef.getBoundingClientRect();
+    const contextMenuCoords: ContextMenuCoordinates = { x: sortIconRect.left, y: sortIconRect.bottom };
+    this.props.openSortContextMenu(contextMenuCoords);
   };
 
   protected onAddIconClick = async (_event: SyntheticEvent<HTMLButtonElement>): Promise<void> => {
-    await this.props.openAddServiceContextMenu({
-      azureAuthWorkflowComponents: {
-        loginFailedDialog: AzureLoginFailedDialogContainer,
-        loginSuccessDialog: AzureLoginSuccessDialogContainer,
-        promptDialog: ConnectServicePromptDialogContainer,
+    const addIconRect = this.addIconButtonRef.getBoundingClientRect();
+    const contextMenuCoords: ContextMenuCoordinates = { x: addIconRect.left, y: addIconRect.bottom };
+    await this.props.openAddServiceContextMenu(
+      {
+        azureAuthWorkflowComponents: {
+          loginFailedDialog: AzureLoginFailedDialogContainer,
+          loginSuccessDialog: AzureLoginSuccessDialogContainer,
+          promptDialog: ConnectServicePromptDialogContainer,
+        },
+        getStartedDialog: GetStartedWithCSDialogContainer,
+        editorComponent: ConnectedServiceEditorContainer,
+        pickerComponent: ConnectedServicePickerContainer,
+        progressIndicatorComponent: ProgressIndicatorContainer,
       },
-      getStartedDialog: GetStartedWithCSDialogContainer,
-      editorComponent: ConnectedServiceEditorContainer,
-      pickerComponent: ConnectedServicePickerContainer,
-      progressIndicatorComponent: ProgressIndicatorContainer,
-    });
+      contextMenuCoords
+    );
 
     this.addIconButtonRef && this.addIconButtonRef.focus();
-  };
-
-  protected setAddIconButtonRef = (ref: HTMLButtonElement): void => {
-    this.addIconButtonRef = ref;
   };
 }

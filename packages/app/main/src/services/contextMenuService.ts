@@ -31,12 +31,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Menu, MenuItem, MenuItemConstructorOptions } from 'electron';
+import { Menu, MenuItem, MenuItemConstructorOptions, BrowserWindow } from 'electron';
+import { ContextMenuCoordinates } from '@bfemulator/app-shared';
 
 export class ContextMenuService {
   private static currentMenu: Menu;
 
-  public static showMenuAndWaitForInput(options: Partial<MenuItemConstructorOptions>[] = []): Promise<MenuItem> {
+  public static showMenuAndWaitForInput(
+    options: Partial<MenuItemConstructorOptions>[] = [],
+    menuCoords?: ContextMenuCoordinates
+  ): Promise<MenuItem> {
     if (ContextMenuService.currentMenu) {
       ContextMenuService.currentMenu.closePopup();
     }
@@ -52,7 +56,21 @@ export class ContextMenuService {
       });
       const menu = (ContextMenuService.currentMenu = Menu.buildFromTemplate(template));
 
-      menu.popup({});
+      const { roundToNearestInt } = this;
+      const menuOptions = menuCoords
+        ? {
+            x: roundToNearestInt(menuCoords.x),
+            y: roundToNearestInt(menuCoords.y),
+            window: BrowserWindow.getFocusedWindow(),
+          }
+        : {};
+
+      menu.popup(menuOptions);
     });
+  }
+
+  // menu.popup does not play nicely with long decimals
+  private static roundToNearestInt(n: number): number {
+    return n % 1 >= 0.5 ? Math.ceil(n) : Math.floor(n);
   }
 }

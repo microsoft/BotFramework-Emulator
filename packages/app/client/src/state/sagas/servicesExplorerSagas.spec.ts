@@ -34,7 +34,7 @@ import { ServiceCodes, SharedConstants } from '@bfemulator/app-shared';
 import { ServiceTypes } from 'botframework-config/lib/schema';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import sagaMiddlewareFactory from 'redux-saga';
-import { call } from 'redux-saga/effects';
+import { call, put } from 'redux-saga/effects';
 import { CommandServiceInstance } from '@bfemulator/sdk-shared';
 import { CommandServiceImpl } from '@bfemulator/sdk-shared';
 
@@ -58,9 +58,11 @@ import {
   launchExternalLink,
   openContextMenuForConnectedService,
   openServiceDeepLink,
+  OpenAddServiceContextMenuPayload,
 } from '../actions/connectedServiceActions';
 import { azureAuth } from '../reducers/azureAuth';
 import { bot } from '../reducers/bot';
+import { sortExplorerContents } from '../actions/explorerActions';
 
 import { ServicesExplorerSagas, servicesExplorerSagas } from './servicesExplorerSagas';
 
@@ -492,7 +494,7 @@ describe('The ServiceExplorerSagas', () => {
   });
 
   describe(' openAddConnectedServiceContextMenu', () => {
-    let action: ConnectedServiceAction<ConnectedServicePickerPayload>;
+    let action: ConnectedServiceAction<OpenAddServiceContextMenuPayload>;
     let contextMenuGen;
     beforeEach(() => {
       const sagaIt = servicesExplorerSagas();
@@ -508,7 +510,7 @@ describe('The ServiceExplorerSagas', () => {
         pickerComponent: ConnectedServicePickerContainer,
       };
 
-      action = openAddServiceContextMenu(payload);
+      action = openAddServiceContextMenu(payload, undefined);
       let i = 6;
       while (i--) {
         contextMenuGen = sagaIt.next().value.FORK.args[1];
@@ -644,5 +646,44 @@ describe('The ServiceExplorerSagas', () => {
       openConnectedServiceGen(action).next();
       expect(window.open).toHaveBeenCalledWith('https://www.qnamaker.ai/Edit/KnowledgeBase?kbId=45432');
     });
+  });
+
+  it('should open the sort context menu', () => {
+    const action: any = {
+      payload: {
+        panelId: 'servicesPanel',
+        menuCoords: {
+          x: 150,
+          y: 200,
+        },
+      },
+    };
+    const gen = ServicesExplorerSagas.openSortContextMenu(action);
+    gen.next();
+    // inject result of select() and check next yield
+    expect(gen.next({ servicesPanel: 'name' }).value).toEqual(
+      call(
+        [commandService, commandService.remoteCall],
+        SharedConstants.Commands.Electron.DisplayContextMenu,
+        [
+          {
+            label: 'Sort by name',
+            id: 'name',
+            type: 'checkbox',
+            checked: true,
+          },
+          {
+            label: 'Sort by type',
+            id: 'type',
+            type: 'checkbox',
+            checked: false,
+          },
+        ],
+        { x: 150, y: 200 }
+      )
+    );
+    // inject result of call() and check next yield
+    expect(gen.next({ id: 'someId' }).value).toEqual(put(sortExplorerContents(action.payload.panelId, 'someId')));
+    expect(gen.next().done).toBe(true);
   });
 });
