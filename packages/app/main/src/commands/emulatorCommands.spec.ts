@@ -586,7 +586,7 @@ describe('The emulatorCommands', () => {
       false
     );
 
-    expect(result.activityId).toBe('someId');
+    expect(result.activityId).toMatch(/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/i);
     expect(result.statusCode).toBe(200);
     expect(postActivitySpy).toHaveBeenCalled();
   });
@@ -605,7 +605,7 @@ describe('The emulatorCommands', () => {
       true
     );
 
-    expect(result.id).toBe('someId');
+    expect(result.id).toMatch(/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/i);
     expect(postActivitySpy).toHaveBeenCalled();
   });
 
