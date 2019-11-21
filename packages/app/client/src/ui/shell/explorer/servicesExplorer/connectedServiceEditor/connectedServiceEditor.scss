@@ -35,6 +35,19 @@
   width: 400px;
 }
 
+.header {
+  display: flex;
+  width: 100%;
+
+  > * {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 5px;
+    padding-left: 8px;
+    width: 100%;
+  }
+}
+
 .kv-pair-container {
   list-style: none;
   margin: 0;
