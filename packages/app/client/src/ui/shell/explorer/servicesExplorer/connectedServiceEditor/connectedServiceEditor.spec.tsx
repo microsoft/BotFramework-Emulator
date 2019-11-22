@@ -207,21 +207,21 @@ describe('The ConnectedServiceEditor component should render the correct content
     const instance = node.instance();
     expect(instance.learnMoreLinkButton).not.toBeFalsy();
     expect(instance.editableFields).toEqual(['name', 'appId', 'authoringKey', 'version', 'region', 'subscriptionKey']);
-    expect(instance.headerContent).toEqual(instance.luisAndDispatchHeader);
+    expect(JSON.stringify(instance.headerContent)).toEqual(JSON.stringify(instance.luisAndDispatchHeader));
   });
 
   it('ServiceTypes.Dispatch', () => {
     const instance = node.instance();
     expect(instance.learnMoreLinkButton).not.toBeFalsy();
     expect(instance.editableFields).toEqual(['name', 'appId', 'authoringKey', 'version', 'region', 'subscriptionKey']);
-    expect(instance.headerContent).toEqual(instance.luisAndDispatchHeader);
+    expect(JSON.stringify(instance.headerContent)).toEqual(JSON.stringify(instance.luisAndDispatchHeader));
   });
 
   it('ServiceTypes.QnA', () => {
     const instance = node.instance();
     expect(instance.learnMoreLinkButton).not.toBeFalsy();
     expect(instance.editableFields).toEqual(['name', 'kbId', 'hostname', 'subscriptionKey', 'endpointKey']);
-    expect(instance.headerContent).toEqual(instance.qnaHeader);
+    expect(JSON.stringify(instance.headerContent)).toEqual(JSON.stringify(instance.qnaHeader));
   });
 
   it('ServiceTypes.AppInsights', () => {
@@ -236,7 +236,7 @@ describe('The ConnectedServiceEditor component should render the correct content
       'instrumentationKey',
       'applicationId',
     ]);
-    expect(instance.headerContent).toEqual(instance.appInsightsAndBlobStorageHeader);
+    expect(JSON.stringify(instance.headerContent)).toEqual(JSON.stringify(instance.appInsightsAndBlobStorageHeader));
   });
 
   it('ServiceTypes.Blob', () => {
@@ -251,7 +251,7 @@ describe('The ConnectedServiceEditor component should render the correct content
       'connectionString',
       'container',
     ]);
-    expect(instance.headerContent).toEqual(instance.appInsightsAndBlobStorageHeader);
+    expect(JSON.stringify(instance.headerContent)).toEqual(JSON.stringify(instance.appInsightsAndBlobStorageHeader));
   });
 
   it('ServiceTypes.CosmosDB', () => {
@@ -267,13 +267,13 @@ describe('The ConnectedServiceEditor component should render the correct content
       'database',
       'collection',
     ]);
-    expect(instance.headerContent).toEqual(instance.cosmosDbHeader);
+    expect(JSON.stringify(instance.headerContent)).toEqual(JSON.stringify(instance.cosmosDbHeader));
   });
 
   it('ServiceTypes.Generic', () => {
     const instance = node.instance();
     expect(instance.editableFields).toEqual(['name', 'url']);
 
-    expect(instance.headerContent).toEqual(instance.genericHeader);
+    expect(JSON.stringify(instance.headerContent)).toEqual(JSON.stringify(instance.genericHeader));
   });
 });

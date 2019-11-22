@@ -769,7 +769,7 @@ export class Conversation extends EventEmitter {
       ...activity,
       channelId: 'emulator',
       conversation: activity.conversation || ({ id: this.conversationId } as ConversationAccount),
-      id: activity.id || uniqueId(),
+      id: uniqueId(),
       localTimestamp: date.format(),
       recipient,
       timestamp,
