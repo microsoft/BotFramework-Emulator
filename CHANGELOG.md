@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - [1993](https://github.com/microsoft/BotFramework-Emulator/pull/1993)
   - [1994](https://github.com/microsoft/BotFramework-Emulator/pull/1994)
   - [1997](https://github.com/microsoft/BotFramework-Emulator/pull/1997)
+  - [1999](https://github.com/microsoft/BotFramework-Emulator/pull/1999)
   - [2000](https://github.com/microsoft/BotFramework-Emulator/pull/2000)
   - [2001](https://github.com/microsoft/BotFramework-Emulator/pull/2001)
 
@@ -101,7 +102,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - [1934](https://github.com/microsoft/BotFramework-Emulator/pull/1934)
   - [1935](https://github.com/microsoft/BotFramework-Emulator/pull/1935)
   - [1936](https://github.com/microsoft/BotFramework-Emulator/pull/1936)
- 
+
  - [client] Fixed an issue with the transcripts path input inside of the resource settings dialog in PR [1836](https://github.com/microsoft/BotFramework-Emulator/pull/1836)
  - [client] Implemented HTML app menu for Windows in PR [1893](https://github.com/microsoft/BotFramework-Emulator/pull/1893) 
  - [client/main] Migrated from Bing Speech API to Cognitive Services Speech API in PR [1878](https://github.com/microsoft/BotFramework-Emulator/pull/1878)
