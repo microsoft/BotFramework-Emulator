@@ -64,6 +64,7 @@ export class LinkButton extends React.Component<LinkButtonProps, {}> {
         className={className}
         ref={this.setButtonRef}
         role={linkRole ? 'link' : 'button'}
+        aria-hidden={this.props.disabled ? 'true' : undefined}
       >
         {text}
         {this.props.children}
