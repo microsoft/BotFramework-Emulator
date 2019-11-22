@@ -54,7 +54,7 @@ export class Dialog extends Component<ModalProps, {}> {
       <>
         <div className={`${styles.modal} ${modalStyle}`}>&nbsp;</div>
         <div
-          aria-labelledby="dialog-heading"
+          aria-label={title}
           aria-modal="true"
           className={`${className} ${styles.dialog} dialog`}
           onKeyDown={this.bodyKeyDownHandler}
