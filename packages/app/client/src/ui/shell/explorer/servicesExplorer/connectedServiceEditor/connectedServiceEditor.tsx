@@ -34,7 +34,7 @@
 import { DefaultButton, Dialog, DialogFooter, LinkButton, PrimaryButton, TextField } from '@bfemulator/ui-react';
 import { BotConfigurationBase } from 'botframework-config/lib/botConfigurationBase';
 import { ConnectedService } from 'botframework-config/lib/models';
-import { IConnectedService, IGenericService, ServiceTypes } from 'botframework-config/lib/schema';
+import { IConnectedService, IGenericService, ServiceTypes, IQnAService } from 'botframework-config/lib/schema';
 import * as React from 'react';
 import { ChangeEvent, Component, ReactNode } from 'react';
 
@@ -100,13 +100,17 @@ const portalMap = {
 export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProps, ConnectedServiceEditorState> {
   constructor(props: ConnectedServiceEditorProps, state: ConnectedServiceEditorState) {
     super(props, state);
+    const connectedService = props.connectedService || {
+      type: props.serviceType,
+      name: '',
+    };
+    // if qnamaker, initialize with sample hostname so that botframework-config doesn't throw
+    if (props.serviceType === ServiceTypes.QnA) {
+      (connectedService as IQnAService).hostname =
+        (connectedService as IQnAService).hostname || 'https://myqna.azurewebsites.net';
+    }
     this.state = {
-      connectedServiceCopy: BotConfigurationBase.serviceFromJSON(
-        props.connectedService || {
-          type: props.serviceType,
-          name: '',
-        }
-      ),
+      connectedServiceCopy: BotConfigurationBase.serviceFromJSON(connectedService),
     };
   }
 
@@ -228,13 +232,10 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
 
   private get luisAndDispatchHeader(): ReactNode {
     const { serviceType } = this.props;
-    const textString = 'Learn more about keys in ' + labelMap[serviceType].toString();
     return (
       <p>
         {`You can find your LUIS app ID and subscription key in ${portalMap[serviceType]}. `}
-        <LinkButton className={styles.link} linkRole={true} onClick={this.learnMoreLinkButton}>
-          {textString}
-        </LinkButton>
+        {this.learnMoreLinkButton}
       </p>
     );
   }
@@ -301,7 +302,7 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
     }
   };
 
-  private learnMoreLinkButton = (): ReactNode => {
+  private get learnMoreLinkButton(): ReactNode {
     const { serviceType } = this.props;
 
     switch (serviceType) {
@@ -387,7 +388,7 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
       default:
         return '';
     }
-  };
+  }
 
   private onAzurePortalClick = this.createAnchorClickHandler('https://portal.azure.com');
 
