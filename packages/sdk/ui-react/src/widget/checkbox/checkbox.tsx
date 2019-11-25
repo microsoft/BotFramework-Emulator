@@ -74,7 +74,7 @@ export class Checkbox extends React.Component<CheckboxProps, CheckboxState> {
 
   public render(): React.ReactNode {
     // Trim off what we don't want to send to the input tag
-    const { className, label = '', ...inputProps } = this.props;
+    const { className, label = '', id, ...inputProps } = this.props;
     const { checked = false, indeterminate = false, focused } = this.state;
     const { disabled } = inputProps;
     const disabledClass = disabled ? styles.disabled : '';
@@ -88,19 +88,19 @@ export class Checkbox extends React.Component<CheckboxProps, CheckboxState> {
       checkMarkStyles += ` ${styles.focused}`;
     }
     return (
-      <label id={this.checkboxId} className={`${styles.label} ${disabledClass} ${className}`} data-checked={checked}>
+      <div className={`${styles.label} ${disabledClass} ${className}`} data-checked={checked} role="presentation">
         <span className={`${styles.checkMark} ${checkMarkStyles}`} />
         <input
-          aria-label={label}
-          type="checkbox"
-          {...inputProps}
           className={styles.checkbox}
+          id={id || this.checkboxId}
           ref={this.checkboxRef}
           readOnly={true}
+          type="checkbox"
+          {...inputProps}
         />
-        {label}
+        <label htmlFor={id || this.checkboxId}>{label}</label>
         {this.props.children}
-      </label>
+      </div>
     );
   }
 
