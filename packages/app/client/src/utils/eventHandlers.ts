@@ -137,7 +137,7 @@ class EventHandlers {
     }
 
     if (isMac()) {
-      const tabPressed: boolean = key === 'tab' || keyCode === 9;
+      const tabPressed: boolean = key === 'tab';
       const lastDecendants = EventHandlers.getLastDecendants(document.querySelector('main'));
       const firstElement = document.querySelector('nav').firstElementChild as HTMLElement;
       const lastElement = lastDecendants[lastDecendants.length - 1] as HTMLElement;
