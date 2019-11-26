@@ -84,6 +84,19 @@ jest.mock('electron', () => ({
   },
 }));
 
+const mockDOM = `
+<nav>
+  <button id="navBtn">NavBtn</button>
+</nav>
+<main>
+  <button id="btn1">btn 1</button>
+  <button id="btn2">btn 2</button>
+  <div>
+    <button id="btn3">btn 3</button>
+  </div>
+</main>
+`;
+
 describe('#globalHandlers', () => {
   let commandService: CommandServiceImpl;
 
@@ -252,5 +265,31 @@ describe('#globalHandlers', () => {
 
     expect(mockRemoteCommandsCalled).toHaveLength(1);
     expect(mockRemoteCommandsCalled[0].commandName).toBe(ToggleDevTools);
+  });
+
+  it('should move focus to first element when Tab is pressed', async () => {
+    const event = new KeyboardEvent('keydown', { key: 'Tab' });
+    Object.defineProperty(process, 'platform', { value: 'darwin' });
+
+    document.body.innerHTML = mockDOM;
+    var mockFirstElement = document.getElementById('navBtn');
+    var mockLastElement = document.getElementById('btn3');
+    mockLastElement.focus();
+    await globalHandlers(event);
+
+    expect(document.activeElement.id).toBe(mockFirstElement.id);
+  });
+
+  it('should move focus to last element when Shift+Tab is pressed', async () => {
+    const event = new KeyboardEvent('keydown', { shiftKey: true, key: 'Tab' });
+    Object.defineProperty(process, 'platform', { value: 'darwin' });
+
+    document.body.innerHTML = mockDOM;
+    var mockFirstElement = document.getElementById('navBtn');
+    var mockLastElement = document.getElementById('btn3');
+    mockFirstElement.focus();
+    await globalHandlers(event);
+
+    expect(document.activeElement.id).toBe(mockLastElement.id);
   });
 });
