@@ -71,7 +71,7 @@ export class TextField extends Component<TextFieldProps, {}> {
       <div className={`${styles.inputContainer} ${inputContainerClassName}`}>
         {this.labelNode}
         <input
-          aria-labelledby={errorMessage ? 'errormessagesub' : undefined}
+          aria-label={errorMessage ? this.props.label + ', ' + errorMessage : undefined}
           className={inputClassName}
           id={this.inputId}
           ref={this.setInputRef}
@@ -103,7 +103,7 @@ export class TextField extends Component<TextFieldProps, {}> {
   protected get errorNode(): React.ReactNode {
     const { errorMessage } = this.props;
     return errorMessage ? (
-      <sub id="errormessagesub" className={styles.sub}>
+      <sub id="errormessagesub" className={styles.sub} aria-live={'polite'}>
         {errorMessage}
       </sub>
     ) : null;

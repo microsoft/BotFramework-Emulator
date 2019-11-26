@@ -38,47 +38,48 @@
 .header {
   display: flex;
   width: 100%;
-
-  > * {
-    font-size: 13px;
-    font-weight: 600;
-    margin-bottom: 5px;
-    padding-left: 8px;
-    width: 100%;
-  }
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 5px;
+  padding-left: 8px;
 }
 
-ul.kv-pair-container {
+.kv-pair-container {
   list-style: none;
   margin: 0;
   padding: 0;
   position: relative;
   max-height: 180px;
   overflow: auto;
+  display: flex;
+  width: 100%;
+}
 
-  > li {
+.kv-input-row {
+  justify-content: space-between;
+  width: 100%;
+  display: flex;
+
+  >* {
     width: 100%;
-    display: flex;
-
-    > * {
-      width: 100%;
-    }
-
-    // key
-    > div {
-      margin-right: 4px;
-    }
-
-    // value
-    > div + div {
-      margin-right: 0;
-      margin-left: 4px;
-    }
   }
 
   input[disabled] {
     border: none;
   }
+}
+
+.kv-input-key {
+  display: flex;
+  width: 100%;
+  margin-right: 4px;
+}
+
+.kv-input-value {
+  display:flex;
+  width: 100%;
+  margin-right: 0;
+  margin-left: 4px;
 }
 
 .no-border {
