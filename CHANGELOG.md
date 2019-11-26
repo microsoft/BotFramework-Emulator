@@ -21,6 +21,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - [1999](https://github.com/microsoft/BotFramework-Emulator/pull/1999)
   - [2000](https://github.com/microsoft/BotFramework-Emulator/pull/2000)
   - [2002](https://github.com/microsoft/BotFramework-Emulator/pull/2002)
+  - [2009](https://github.com/microsoft/BotFramework-Emulator/pull/2009)
+  - [2010](https://github.com/microsoft/BotFramework-Emulator/pull/2010)
 
 - [main] Increased ngrok spawn timeout to 15 seconds to be more forgiving to slower networks in PR [1998](https://github.com/microsoft/BotFramework-Emulator/pull/1998)
 

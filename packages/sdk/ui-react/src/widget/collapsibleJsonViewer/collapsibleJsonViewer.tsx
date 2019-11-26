@@ -135,7 +135,6 @@ export class CollapsibleJsonViewer extends Component<CollapsibleJsonViewerProps,
       ref.firstElementChild.setAttribute('role', 'tree');
       // <ul><li>
       this.nodesAdded(ref.firstElementChild.childNodes);
-      (ref.firstElementChild as HTMLElement).tabIndex = 0;
     }
     this.jsonViewerElement = ref;
   };
