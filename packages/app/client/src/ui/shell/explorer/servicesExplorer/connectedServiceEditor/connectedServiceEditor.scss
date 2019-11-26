@@ -38,14 +38,10 @@
 .header {
   display: flex;
   width: 100%;
-
-  > * {
-    font-size: 13px;
-    font-weight: 600;
-    margin-bottom: 5px;
-    padding-left: 8px;
-    width: 100%;
-  }
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 5px;
+  padding-left: 8px;
 }
 
 .kv-pair-container {
@@ -55,42 +51,35 @@
   position: relative;
   max-height: 180px;
   overflow: auto;
+  display: flex;
+  width: 100%;
 }
 
 .kv-input-row {
   justify-content: space-between;
   width: 100%;
   display: flex;
-  margin-bottom: 4px;
 
-  > * {
+  >* {
     width: 100%;
-  }
-
-  // key
-  > div {
-    margin-right: 4px;
-  }
-
-  // value
-  > div + div {
-    margin-right: 0;
-    margin-left: 4px;
   }
 
   input[disabled] {
     border: none;
   }
+}
 
-  label {
-    font-size: 13px;
-    font-weight: 600;
-    padding-left: 8px;
+.kv-input-key {
+  display: flex;
+  width: 100%;
+  margin-right: 4px;
+}
 
-    &[disabled], &[aria-disabled="true"] {
-      color: var(--input-label-color);
-    }
-  }
+.kv-input-value {
+  display:flex;
+  width: 100%;
+  margin-right: 0;
+  margin-left: 4px;
 }
 
 .no-border {

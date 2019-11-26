@@ -62,9 +62,24 @@ export class KvPair extends Component<KvPairProps, KvPairState> {
 
     return (
       <div>
-        {kvPairs.map((pair, index) => (
-          <Row className={styles.kvInputRow}>{this.getTextFieldPair(pair.key, pair.value, index)}</Row>
-        ))}
+        <Row className={styles.kvInputRow}>
+          <div>
+            <th className={styles.header}>Key</th>
+            {kvPairs.map((pair, index) => (
+              <tr key={index} className={styles.kvPairContainer}>
+                {this.getTextFieldKey(pair.key, index)}
+              </tr>
+            ))}
+          </div>
+          <div>
+            <th className={styles.header}>Value</th>
+            {kvPairs.map((pair, index) => (
+              <tr key={index} className={styles.kvPairContainer}>
+                {this.getTextFieldValue(pair.key, pair.value, index)}
+              </tr>
+            ))}
+          </div>
+        </Row>
         <LinkButton
           ariaLabel="Add key value pair"
           className={`${styles.link} ${styles.kvSpacing}`}
@@ -85,7 +100,7 @@ export class KvPair extends Component<KvPairProps, KvPairState> {
     );
   }
 
-  private getTextFieldPair(key: string = '', value: string = '', index: number): ReactNode {
+  private getTextFieldKey(key: string = '', index: number): ReactNode {
     let ref;
     if (index === this.state.numRows - 1) {
       ref = ref => {
@@ -96,8 +111,7 @@ export class KvPair extends Component<KvPairProps, KvPairState> {
     return (
       <>
         <TextField
-          label={index === 0 ? 'Key' : undefined}
-          inputContainerClassName={styles.kvPairContainer}
+          inputContainerClassName={styles.kvInputKey}
           aria-label={`key ${index}`}
           className={styles.noBorder}
           placeholder="Add a key (optional)"
@@ -107,9 +121,15 @@ export class KvPair extends Component<KvPairProps, KvPairState> {
           onChange={this.onChange}
           inputRef={ref}
         />
+      </>
+    );
+  }
+
+  private getTextFieldValue(key: string = '', value: string = '', index: number): ReactNode {
+    return (
+      <>
         <TextField
-          label={index === 0 ? 'Value' : undefined}
-          inputContainerClassName={styles.kvPairContainer}
+          inputContainerClassName={styles.kvInputValue}
           aria-label={`value ${index}`}
           className={styles.noBorder}
           placeholder="Add a value (optional)"
