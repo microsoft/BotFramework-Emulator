@@ -55,6 +55,7 @@ import PlaybackBar from './playbackBar/playbackBar';
 import * as styles from './emulator.scss';
 import { InspectorContainer } from './parts';
 import { ToolBar } from './toolbar/toolbar';
+import { isMac } from '../../../../../main/src/utils/platform';
 
 const { encode } = base64Url;
 
@@ -304,6 +305,7 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
                   options={[NewUserId, SameUserId]}
                   onClick={this.onStartOverClick}
                   buttonRef={this.setRestartButtonRef}
+                  auxiliaryLabel={isMac() ? 'Restart conversation sub menu' : 'Restart conversation'}
                 />
                 <button
                   role={'menuitem'}
