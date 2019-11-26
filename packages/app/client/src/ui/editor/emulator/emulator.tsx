@@ -48,6 +48,7 @@ import {
 
 import { Document, SplitterSize } from '../../../state/reducers/editor';
 import { debounce } from '../../../utils';
+import { isMac } from '../../../../../main/src/utils/platform';
 
 import { ChatPanelContainer } from './chatPanel';
 import LogPanel from './logPanel/logPanel';
@@ -55,7 +56,6 @@ import PlaybackBar from './playbackBar/playbackBar';
 import * as styles from './emulator.scss';
 import { InspectorContainer } from './parts';
 import { ToolBar } from './toolbar/toolbar';
-import { isMac } from '../../../../../main/src/utils/platform';
 
 const { encode } = base64Url;
 
