@@ -103,7 +103,7 @@ export class TextField extends Component<TextFieldProps, {}> {
   protected get errorNode(): React.ReactNode {
     const { errorMessage } = this.props;
     return errorMessage ? (
-      <sub id="errormessagesub" className={styles.sub}>
+      <sub id="errormessagesub" className={styles.sub} aria-live={'polite'}>
         {errorMessage}
       </sub>
     ) : null;
