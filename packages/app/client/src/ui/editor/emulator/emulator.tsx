@@ -305,7 +305,7 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
                   options={[NewUserId, SameUserId]}
                   onClick={this.onStartOverClick}
                   buttonRef={this.setRestartButtonRef}
-                  auxiliaryLabel={isMac() ? 'Restart conversation sub menu' : 'Restart conversation'}
+                  submenuLabel={isMac() ? 'Restart conversation sub menu' : ''}
                 />
                 <button
                   role={'menuitem'}

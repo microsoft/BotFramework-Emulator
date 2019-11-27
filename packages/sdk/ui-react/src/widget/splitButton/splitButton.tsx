@@ -46,7 +46,7 @@ export interface SplitButtonProps {
   options?: string[];
   buttonRef?: (ref: HTMLButtonElement) => void;
   selected?: number;
-  auxiliaryLabel?: string;
+  submenuLabel?: string;
 }
 
 export interface SplitButtonState {
@@ -73,7 +73,7 @@ export class SplitButton extends React.Component<SplitButtonProps, SplitButtonSt
       disabled = false,
       id = '',
       options = [],
-      auxiliaryLabel = '',
+      submenuLabel = '',
     } = this.props;
     const { expanded, selected } = this.state;
     const {
@@ -103,7 +103,7 @@ export class SplitButton extends React.Component<SplitButtonProps, SplitButtonSt
           </button>
           <div className={styles.separator} aria-hidden={'true'} />
           <button
-            aria-label={auxiliaryLabel}
+            aria-label={submenuLabel || defaultLabel}
             className={styles.caretButton + expandedClass}
             ref={setCaretRef}
             onClick={onClickCaret}
