@@ -79,33 +79,35 @@ export class AutoComplete extends Component<AutoCompleteProps, AutoCompleteState
     const invalidClassName = errorMessage ? styles.invalid : '';
 
     return (
-      <div
-        className={`${styles.autoCompleteContainer} ${invalidClassName} ${className}`}
-        id={this.textboxId}
-        role="presentation"
-        aria-expanded={this.state.showResults}
-        aria-haspopup="listbox"
-        aria-owns={this.listboxId}
-      >
+      <div className={styles.container} role="presentation">
         {this.label}
-        <input
-          autoFocus={autoFocus}
-          disabled={disabled}
+        <div
+          className={`${styles.autoCompleteContainer} ${invalidClassName} ${className}`}
           id={this.textboxId}
-          onFocus={onFocus}
-          onBlur={onBlur}
-          onChange={onChange}
-          onKeyDown={onKeyDown}
-          placeholder={placeholder}
-          type="text"
-          value={value}
-          aria-activedescendant={this.getOptionId(this.state.selectedIndex)}
-          aria-autocomplete="list"
-          aria-controls={this.listboxId}
-          aria-labelledby={errorMessageId}
-        />
-        {this.errorMessage}
-        {this.results}
+          role="combobox"
+          aria-expanded={this.state.showResults}
+          aria-haspopup="listbox"
+          aria-owns={this.listboxId}
+        >
+          <input
+            autoFocus={autoFocus}
+            disabled={disabled}
+            id={this.textboxId}
+            onFocus={onFocus}
+            onBlur={onBlur}
+            onChange={onChange}
+            onKeyDown={onKeyDown}
+            placeholder={placeholder}
+            type="text"
+            value={value}
+            aria-activedescendant={this.getOptionId(this.state.selectedIndex)}
+            aria-autocomplete="list"
+            aria-controls={this.listboxId}
+            aria-labelledby={errorMessageId}
+          />
+          {this.errorMessage}
+          {this.results}
+        </div>
       </div>
     );
   }

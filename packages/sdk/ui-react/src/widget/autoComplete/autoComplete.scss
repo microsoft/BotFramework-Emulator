@@ -1,4 +1,4 @@
-.auto-complete-container {
+.container {
   box-sizing: border-box;
   position: relative;
   width: 100%;
@@ -7,7 +7,9 @@
     display: inline-block;
     margin-bottom: 5px;
   }
+}
 
+.auto-complete-container {
   > input {
     box-sizing: border-box;
     height: 24px;
