@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## Added
+- [client/main] Added Ngrok Debugger UI in PR [2032](https://github.com/microsoft/BotFramework-Emulator/pull/2032)
+- [client/main] Changed conversation infrastructure to use Web Sockets to communicate with Web Chat in PR [2034](https://github.com/microsoft/BotFramework-Emulator/pull/2034)
+
 ## v4.7.0 - 2019 - 12 - 13
 ## Fixed
 - [client] Added an empty state for the recent bots submenu in the app menu for Windows in PR [1945](https://github.com/microsoft/BotFramework-Emulator/pull/1945)

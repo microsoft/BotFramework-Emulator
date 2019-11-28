@@ -44,9 +44,6 @@ import {
 import { createServer, plugins, Server, Response, Route } from 'restify';
 import CORS from 'restify-cors-middleware';
 import { newNotification, SharedConstants } from '@bfemulator/app-shared';
-import { IEndpointService } from 'botframework-config/lib/schema';
-
-import { Emulator } from '../emulator';
 
 import { mountAllRoutes } from './routes/mountAllRoutes';
 import { ServerState } from './state/serverState';
@@ -54,7 +51,6 @@ import { LoggerAdapter } from './state/loggerAdapter';
 import { ConsoleLogService } from './state/consoleLogService';
 import { stripEmptyBearerTokenMiddleware } from './routes/handlers/stripEmptyBearerToken';
 import { Conversation } from './state/conversation';
-import { ConversationSet } from './state/conversationSet';
 
 export interface EmulatorRestServerOptions {
   fetch?: (url: string, options?: any) => Promise<any>;
@@ -104,6 +100,7 @@ const cors = CORS({
     'x-emulator-apppassword',
     'x-emulator-botendpoint',
     'x-emulator-channelservice',
+    'x-emulator-no-bot-file',
   ],
   exposeHeaders: [],
 });
@@ -141,7 +138,6 @@ export class EmulatorRestServer {
     };
     this.logger = new LoggerAdapter(this.options.logService);
     this.state = new ServerState(this.options.fetch);
-    this.state.conversations.on('new', this.onNewConversation);
     this.getServiceUrl = this.options.getServiceUrl;
     this.getServiceUrlForOAuth = this.options.getServiceUrlForOAuth;
     this.shutDownOAuthNgrokInstance = this.options.shutDownOAuthNgrokInstance;
@@ -209,7 +205,7 @@ export class EmulatorRestServer {
   }
 
   private onAfterRequest = (req: Request, res: Response, route: Route, err): void => {
-    const conversationId = getConversationId(req as ConversationAwareRequest); // route.spec.path: '/api/userToken/getUserData
+    const conversationId = getConversationId(req as ConversationAwareRequest);
     if (!shouldPostToChat(conversationId, req.method, route, req as any)) {
       return;
     }
@@ -225,43 +221,21 @@ export class EmulatorRestServer {
     this.options.logService.logToChat(
       conversationId,
       networkRequestItem(
-        routeSegments[1] || 'N/A' /* TODO: something else here instea of N/A? */,
+        routeSegments[1] || 'N/A' /* TODO: something else here instead of N/A? */,
         (req as any)._body,
         req.headers,
         req.method,
         req.url
       ),
       networkResponseItem((res as any)._data, res.headers, res.statusCode, res.statusMessage, req.url),
-      textItem(level, routeSegments.slice(1).join('.'))
+      textItem(
+        level,
+        routeSegments
+          .slice(1)
+          .map(seg => (seg.startsWith(':') ? `<${seg.substr(1)}>` : seg))
+          .join('/')
+      )
     );
-  };
-
-  private onNewConversation = async (conversation: Conversation = {} as Conversation) => {
-    const { conversationId = '' } = conversation;
-    if (!conversationId || conversationId.includes('transcript')) {
-      return;
-    }
-    // Check for an existing livechat window
-    // before creating a new one since "new"
-    // can also mean "restart".
-    const {
-      botEndpoint: { id, botUrl },
-      mode,
-    } = conversation;
-
-    await this.commandService.remoteCall(
-      SharedConstants.Commands.Emulator.NewLiveChat,
-      {
-        id,
-        endpoint: botUrl,
-      } as IEndpointService,
-      // replace this with some other logic that doesn't use this.botEmulator
-      hasLiveChat(conversationId, this.state.conversations),
-      conversationId,
-      mode
-    );
-    this.report(conversationId);
-    Emulator.getInstance().ngrok.report(conversationId, botUrl);
   };
 }
 
@@ -279,11 +253,4 @@ function shouldPostToChat(
 
 function getConversationId(req: ConversationAwareRequest): string {
   return req.conversation ? req.conversation.conversationId : req.params.conversationId;
-}
-
-function hasLiveChat(conversationId: string, conversationSet: ConversationSet): boolean {
-  if (conversationId.endsWith('|livechat')) {
-    return !!conversationSet.conversationById(conversationId);
-  }
-  return !!conversationSet.conversationById(conversationId + '|livechat');
 }

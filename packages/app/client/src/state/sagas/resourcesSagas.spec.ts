@@ -35,6 +35,7 @@ import { applyMiddleware, combineReducers, createStore } from 'redux';
 import { BotConfigWithPathImpl, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 import { ServiceTypes } from 'botframework-config/lib/schema';
 import sagaMiddlewareFactory from 'redux-saga';
+import { put } from 'redux-saga/effects';
 import { SharedConstants } from '@bfemulator/app-shared/built';
 import { Component } from 'react';
 
@@ -45,8 +46,9 @@ import {
   renameResource,
 } from '../actions/resourcesActions';
 import { resources } from '../reducers/resources';
+import { openTranscript } from '../actions/chatActions';
 
-import { resourceSagas } from './resourcesSagas';
+import { resourceSagas, ResourcesSagas } from './resourcesSagas';
 
 const sagaMiddleWare = sagaMiddlewareFactory();
 const mockStore = createStore(combineReducers({ resources }), {}, applyMiddleware(sagaMiddleWare));
@@ -274,37 +276,31 @@ describe('The ResourceSagas', () => {
     });
 
     it('should open a chat file', async () => {
-      await mockStore.dispatch(openResource(mockResource as any));
-      expect(mockLocalCommandsCalled).toEqual([
-        {
-          commandName: 'chat:open',
-          args: ['the/file/path/chat.chat', true],
+      const path = 'the/file/path/chat.chat';
+      const mockAction: any = {
+        payload: {
+          path,
         },
-      ]);
-      expect(mockRemoteCommandsCalled).toEqual([
-        {
-          commandName: SharedConstants.Commands.Telemetry.TrackEvent,
-          args: ['chatFile_open'],
-        },
-      ]);
+      };
+      const gen = ResourcesSagas.doOpenResource(mockAction);
+      const putValue = gen.next().value;
+
+      expect(putValue).toEqual(put(openTranscript(path)));
+      expect(gen.next().done).toBe(true);
     });
 
     it('should open a transcript file', async () => {
-      mockResource.path = 'the/file/path/transcript.transcript';
-      mockResource.name = 'transcript.transcript';
-      await mockStore.dispatch(openResource(mockResource as any));
-      expect(mockLocalCommandsCalled).toEqual([
-        {
-          commandName: 'transcript:open',
-          args: ['the/file/path/transcript.transcript', 'transcript.transcript'],
+      const path = 'the/file/path/chat.transcript';
+      const mockAction: any = {
+        payload: {
+          path,
         },
-      ]);
-      expect(mockRemoteCommandsCalled).toEqual([
-        {
-          commandName: SharedConstants.Commands.Telemetry.TrackEvent,
-          args: ['transcriptFile_open', { method: 'resources_pane' }],
-        },
-      ]);
+      };
+      const gen = ResourcesSagas.doOpenResource(mockAction);
+      const putValue = gen.next().value;
+
+      expect(putValue).toEqual(put(openTranscript(path)));
+      expect(gen.next().done).toBe(true);
     });
   });
 

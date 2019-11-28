@@ -61,10 +61,9 @@ export class ConversationSet extends EventEmitter {
     // we add the "|livechat" string to the end of the conversationId
     // so the emulator knows to open a new tab in the UI
     if (!/(\|livechat|\|transcript|\|debug)/.test(conversation.conversationId)) {
-      conversation.conversationId += '|livechat';
+      conversation.conversationId += `|${mode}`;
     }
     this.conversations[conversation.conversationId] = conversation;
-    this.emit('new', conversation);
 
     return conversation;
   }

@@ -44,6 +44,7 @@ import { OuterActivityWrapperContainer } from './outerActivityWrapperContainer';
 import * as styles from './chat.scss';
 import webChatStyleOptions from './webChatTheme';
 import { TraceActivityContainer } from './traceActivityContainer';
+import { ConnectionMessageContainer } from './connectionMessageContainer';
 
 export interface ChatProps {
   botId?: string;
@@ -54,7 +55,6 @@ export interface ChatProps {
   currentUser?: User;
   locale?: string;
   webSpeechPonyfillFactory?: () => any;
-  pendingSpeechTokenRetrieval?: boolean;
   showContextMenuForActivity?: (activity: Partial<Activity>) => void;
   setInspectorObject?: (documentId: string, activity: Partial<Activity & { showInInspector: true }>) => void;
   webchatStore?: any;
@@ -67,10 +67,9 @@ interface ChatState {
 
 export class Chat extends PureComponent<ChatProps, ChatState> {
   public state = { waitForSpeechToken: false } as ChatState;
-  private activityMap: { [activityId: string]: Activity };
+  private activityMap: { [activityId: string]: Activity } = {};
 
   public render() {
-    this.activityMap = {};
     const {
       botId,
       currentUser,
@@ -92,10 +91,6 @@ export class Chat extends PureComponent<ChatProps, ChatState> {
       ...styleSet.uploadButton,
       padding: '1px',
     };
-
-    if (this.props.pendingSpeechTokenRetrieval) {
-      return <div className={styles.disconnected}>Connecting...</div>;
-    }
 
     if (directLine) {
       const bot = {
@@ -119,6 +114,7 @@ export class Chat extends PureComponent<ChatProps, ChatState> {
             username={currentUser.name || 'User'}
             webSpeechPonyfillFactory={webSpeechPonyfillFactory}
           />
+          <ConnectionMessageContainer documentId={this.props.documentId} />
         </div>
       );
     }

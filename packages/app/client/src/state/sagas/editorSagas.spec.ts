@@ -143,12 +143,11 @@ describe('The Editor Sagas', () => {
 
     gen.next();
 
-    const { OpenChatFile } = SharedConstants.Commands.Emulator;
+    const { ReloadTranscript } = SharedConstants.Commands.Emulator;
 
     expect(mockLocalCommandsCalled).toHaveLength(1);
-    expect(mockLocalCommandsCalled[0].commandName).toEqual(OpenChatFile);
+    expect(mockLocalCommandsCalled[0].commandName).toEqual(ReloadTranscript);
     expect(mockLocalCommandsCalled[0].args[0]).toBe(mockChatFileName);
-    expect(mockLocalCommandsCalled[0].args[1]).toBe(true);
     expect(gen.next().done).toBe(true);
   });
 

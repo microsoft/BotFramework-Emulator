@@ -42,7 +42,7 @@ import { ProtocolHandler } from '../protocolHandler';
 import { dispatch, getSettings, store } from '../state/store';
 import { getBotsFromDisk, getThemes } from '../utils';
 import { openFileFromCommandLine } from '../utils/openFileFromCommandLine';
-import { setFrameworkSettings } from '../state/actions/frameworkSettingsActions';
+import { setFrameworkSettings, pushClientAwareSettings } from '../state/actions/frameworkSettingsActions';
 import { AppMenuBuilder } from '../appMenuBuilder';
 import { setAvailableThemes, rememberTheme } from '../state/actions/windowStateActions';
 
@@ -73,6 +73,7 @@ export class ClientInitCommands {
     dispatch(rememberTheme(windowState.theme));
     dispatch(setAvailableThemes(getThemes()));
     dispatch(setFrameworkSettings(framework)); // also calls pushClientAwareSettings(), which also starts the Emulator rest server (TODO: separate these out)
+    dispatch(pushClientAwareSettings());
     // Load extensions
     ExtensionManagerImpl.unloadExtensions();
     ExtensionManagerImpl.loadExtensions();
@@ -103,8 +104,8 @@ export class ClientInitCommands {
       ProtocolHandler.parseProtocolUrlAndDispatch(protocolArg);
     }
 
-    // Parse command line args to see if we are opening a .bot or .transcript file
-    const fileToBeOpened = args.find(arg => /(\.transcript)|(\.bot)$/.test(arg));
+    // Parse command line args to see if we are opening a .bot, .chat, or .transcript file
+    const fileToBeOpened = args.find(arg => /(\.transcript)|(\.chat)|(\.bot)$/.test(arg));
     if (fileToBeOpened) {
       await openFileFromCommandLine(fileToBeOpened, this.commandService);
     }

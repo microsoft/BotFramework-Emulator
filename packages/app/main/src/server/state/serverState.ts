@@ -34,13 +34,11 @@
 import { Attachments } from './attachments';
 import { ConversationSet } from './conversationSet';
 import { EndpointSet } from './endpointSet';
-import { Users } from './users';
 
 export class ServerState {
   public attachments = new Attachments();
   public conversations = new ConversationSet();
   public endpoints: EndpointSet;
-  public users = new Users();
   public locale?: string;
 
   constructor(fetch: (url: string, options?: any) => Promise<any>) {

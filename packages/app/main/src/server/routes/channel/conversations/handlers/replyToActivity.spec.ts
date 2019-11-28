@@ -42,13 +42,24 @@ jest.mock('../../../../utils/oauthLinkEncoder', () => ({
   }),
 }));
 
+jest.mock('../../../../webSocketServer', () => ({
+  WebSocketServer: {
+    getSocketByConversationId: () => ({
+      send: jest.fn(),
+    }),
+  },
+}));
+
 describe('replyToActivity route middleware', () => {
   const mockReq: any = {
     body: {
       id: 'someActivityId',
     },
     conversation: {
-      postActivityToUser: jest.fn(() => 'post activity to user response'),
+      prepActivityToBeSentToUser: jest.fn((_userId, activity) => activity),
+      user: {
+        id: 'someUserId',
+      },
     },
     headers: {
       authorization: 'Bearer <token>',
@@ -71,7 +82,7 @@ describe('replyToActivity route middleware', () => {
 
   beforeEach(() => {
     mockResolveOAuthCards.mockClear();
-    mockReq.conversation.postActivityToUser.mockClear();
+    mockReq.conversation.prepActivityToBeSentToUser.mockClear();
     mockRes.end.mockClear();
     mockRes.send.mockClear();
     mockNext.mockClear();
@@ -84,11 +95,11 @@ describe('replyToActivity route middleware', () => {
     // since the middleware is not an async function, wait for the async operations to complete
     await new Promise(resolve => setTimeout(resolve, 500));
 
-    expect(mockReq.conversation.postActivityToUser).toHaveBeenCalledWith({
+    expect(mockReq.conversation.prepActivityToBeSentToUser).toHaveBeenCalledWith('someUserId', {
       ...mockReq.body,
       replyToId: mockReq.params.activityId,
     });
-    expect(mockRes.send).toHaveBeenCalledWith(OK, 'post activity to user response');
+    expect(mockRes.send).toHaveBeenCalledWith(OK, { id: 'someActivityId' });
     expect(mockRes.end).toHaveBeenCalled();
     expect(mockNext).toHaveBeenCalled();
   });
@@ -101,12 +112,12 @@ describe('replyToActivity route middleware', () => {
     // since the middleware is not an async function, wait for the async operations to complete
     await new Promise(resolve => setTimeout(resolve, 500));
 
-    expect(mockReq.conversation.postActivityToUser).toHaveBeenCalledWith({
+    expect(mockReq.conversation.prepActivityToBeSentToUser).toHaveBeenCalledWith('someUserId', {
       ...mockReq.body,
       replyToId: mockReq.params.activityId,
       id: null,
     });
-    expect(mockRes.send).toHaveBeenCalledWith(OK, 'post activity to user response');
+    expect(mockRes.send).toHaveBeenCalledWith(OK, { id: null });
     expect(mockRes.end).toHaveBeenCalled();
     expect(mockNext).toHaveBeenCalled();
 
@@ -126,11 +137,11 @@ describe('replyToActivity route middleware', () => {
       'someConversationId',
       new Error('Falling back to emulated OAuth token.')
     );
-    expect(mockReq.conversation.postActivityToUser).toHaveBeenCalledWith({
+    expect(mockReq.conversation.prepActivityToBeSentToUser).toHaveBeenCalledWith('someUserId', {
       ...mockReq.body,
       replyToId: mockReq.params.activityId,
     });
-    expect(mockRes.send).toHaveBeenCalledWith(OK, 'post activity to user response');
+    expect(mockRes.send).toHaveBeenCalledWith(OK, { id: 'someActivityId' });
     expect(mockRes.end).toHaveBeenCalled();
     expect(mockNext).toHaveBeenCalled();
   });

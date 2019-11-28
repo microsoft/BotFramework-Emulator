@@ -44,16 +44,13 @@ import {
   ConversationService,
 } from '@bfemulator/sdk-shared';
 import { BotConfiguration } from 'botframework-config';
-import { newBot, newEndpoint, SharedConstants, ValueTypesMask } from '@bfemulator/app-shared';
+import { SharedConstants, ValueTypesMask } from '@bfemulator/app-shared';
 
 import { store } from '../state/store';
 import * as utils from '../utils';
 import { BotHelpers } from '../botHelpers';
 import { bot } from '../state/reducers/bot';
-import * as BotActions from '../state/actions/botActions';
 import { TelemetryService } from '../telemetry';
-import { setCurrentUser } from '../state/actions/userActions';
-import { pushClientAwareSettings } from '../state/actions/frameworkSettingsActions';
 import { azureLoggedInUserChanged } from '../state/actions/azureAuthActions';
 import { CredentialManager } from '../credentialManager';
 import { Conversation } from '../server/state/conversation';
@@ -109,8 +106,9 @@ jest.mock('chokidar', () => ({
   }),
 }));
 
+const mockIsFile = jest.fn(() => true);
 jest.mock('fs-extra', () => ({
-  stat: async () => ({ isFile: () => true }),
+  stat: async () => ({ isFile: () => mockIsFile() }),
 }));
 
 jest.mock('mkdirp', () => ({
@@ -130,8 +128,9 @@ jest.mock('../botHelpers', () => ({
   },
 }));
 
+const mockParsedActivites = [];
 jest.mock('../utils', () => ({
-  parseActivitiesFromChatFile: () => [],
+  parseActivitiesFromChatFile: () => mockParsedActivites,
   showSaveDialog: async () => 'save/to/this/path',
   writeFile: async () => true,
   loadSettings: () => ({ windowState: {} }),
@@ -501,112 +500,48 @@ describe('The emulatorCommands', () => {
     expect(mockTrackEvent).toHaveBeenCalledWith('transcript_save');
   });
 
-  it('should feed a transcript from disk to a conversation', async () => {
-    const commandServiceSpy = jest.spyOn(commandService, 'call');
-
-    const command = registry.getCommand(SharedConstants.Commands.Emulator.FeedTranscriptFromDisk);
-    const result = await command('12', '12', '12', 'file/path');
-
-    expect(commandServiceSpy).toHaveBeenCalledWith(
-      SharedConstants.Commands.Emulator.FeedTranscriptFromMemory,
-      '12',
-      '12',
-      '12',
-      (mockConversation as any).transcript
-    );
-    expect(result).toEqual({
-      fileName: 'path',
-      filePath: 'file/path',
-    });
-  });
-
-  it('should feed a deep-linked transcript (array of parsed activities) to a conversation', async () => {
-    const feedActivitiesSpy = jest.spyOn(mockConversation, 'feedActivities');
-    const activities = await mockConversation.getTranscript();
-    const id = 'http://localhost:3978/api/messages';
-    registry.getCommand(SharedConstants.Commands.Emulator.FeedTranscriptFromMemory)(
-      '0a441b55-d1d6-4015-bbb4-2e7f44fa9f4',
-      id,
-      '0a441b55-d1d6-4015-bbb4-2e7f44fa9f42',
-      activities
-    );
-
-    expect(feedActivitiesSpy).toHaveBeenCalledWith(activities);
-  });
-
-  it('should create a new conversation object for transcript', async () => {
-    const getActiveBotSpy = jest.spyOn(BotHelpers, 'getActiveBot').mockReturnValue(null);
-    const dispatchSpy = jest.spyOn(store, 'dispatch');
-    const command = registry.getCommand(SharedConstants.Commands.Emulator.NewTranscript);
-    const conversation = await command('1234');
-
-    const newbot = newBot();
-    newbot.services.push(newEndpoint());
-    (newbot.services[0] as any).id = jasmine.any(String);
-    expect(getActiveBotSpy).toHaveBeenCalled();
-    expect(dispatchSpy).toHaveBeenCalledWith(BotActions.mockAndSetActive(newbot));
-    expect(conversation).not.toBeNull();
-  });
-
-  it('should set current user', async () => {
-    const dispatchSpy = jest.spyOn(store, 'dispatch');
-    await registry.getCommand(SharedConstants.Commands.Emulator.SetCurrentUser)('userId123');
-
-    expect(mockUsers.currentUserId).toBe('userId123');
-    expect(mockUsers.users.userId123).toEqual({
-      id: 'userId123',
-      name: 'User',
-    });
-    expect(dispatchSpy).toHaveBeenCalledWith(setCurrentUser({ id: 'userId123', name: 'User' }));
-    expect(dispatchSpy).toHaveBeenCalledWith(pushClientAwareSettings());
-  });
-
   it('should delete a conversation', () => {
     const deleteSpy = jest.spyOn(mockEmulator.server.state.conversations, 'deleteConversation');
     registry.getCommand(SharedConstants.Commands.Emulator.DeleteConversation)('convo1');
     expect(deleteSpy).toHaveBeenCalledWith('convo1');
   });
 
-  it('shouold open a chat file', async () => {
-    const result = await registry.getCommand(SharedConstants.Commands.Emulator.OpenChatFile)('chats/myChat.chat');
-    expect(result).toEqual({ activities: [], fileName: 'myChat.chat' });
+  it('should extract activities from a .chat file', async () => {
+    const filename = '/dir/test.chat';
+    const handler = registry.getCommand(SharedConstants.Commands.Emulator.ExtractActivitiesFromFile);
+    const result = await handler(filename);
+
+    expect(result).toEqual({
+      activities: mockParsedActivites,
+      fileName: 'test.chat',
+      filePath: filename,
+    });
   });
 
-  it('should post an activity to the bot in a conversation', async () => {
-    mockConversation.botEndpoint = {
-      fetchWithAuth: async () => ({
-        status: 200,
-      }),
-    } as any;
-    const postActivitySpy = jest.spyOn(mockConversation, 'postActivityToBot');
-    const activity = { type: 'message', text: 'I am an activity!', id: 'someId' };
-    const result = await registry.getCommand(SharedConstants.Commands.Emulator.PostActivityToConversation)(
-      mockConversation.conversationId,
-      activity,
-      false
-    );
+  it('should extract activities from a .transcipt file', async () => {
+    const filename = '/dir/test.transcript';
+    const handler = registry.getCommand(SharedConstants.Commands.Emulator.ExtractActivitiesFromFile);
+    const result = await handler(filename);
 
-    expect(result.activityId).toMatch(/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/i);
-    expect(result.statusCode).toBe(200);
-    expect(postActivitySpy).toHaveBeenCalled();
+    expect(result).toEqual({
+      activities: (mockConversation as any).transcript,
+      fileName: 'test.transcript',
+      filePath: filename,
+    });
   });
 
-  it('should post an activity to the user in a conversation', async () => {
-    mockConversation.botEndpoint = {
-      fetchWithAuth: async () => ({
-        status: 200,
-      }),
-    } as any;
-    const postActivitySpy = jest.spyOn(mockConversation, 'postActivityToUser');
-    const activity = { type: 'message', text: 'I am an activity!', id: 'someId', from: {} };
-    const result = await registry.getCommand(SharedConstants.Commands.Emulator.PostActivityToConversation)(
-      mockConversation.conversationId,
-      activity,
-      true
-    );
-
-    expect(result.id).toMatch(/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/i);
-    expect(postActivitySpy).toHaveBeenCalled();
+  it('should throw if the transcript file does not exist', async () => {
+    const filename = '/dir/test.transcript';
+    mockIsFile.mockImplementationOnce(() => false);
+    const handler = registry.getCommand(SharedConstants.Commands.Emulator.ExtractActivitiesFromFile);
+    try {
+      await handler(filename);
+      expect(true).toBe(false); // ensure catch is hit
+    } catch (e) {
+      expect(e).toEqual(
+        new Error(`${SharedConstants.Commands.Emulator.ExtractActivitiesFromFile}: File ${filename} not found.`)
+      );
+    }
   });
 
   it('should clear state if user is signed in to Azure', async () => {

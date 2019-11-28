@@ -203,11 +203,6 @@ describe('Conversation class', () => {
   });
 
   it('should feed activities', () => {
-    const mockProcessActivity = jest.fn(activity => ({
-      ...activity,
-      processed: true,
-    }));
-    conversation.processActivity = mockProcessActivity;
     const fedActivities = [];
     const mockAddActivityToQueue = jest.fn(activity => {
       fedActivities.push(activity);
@@ -241,15 +236,14 @@ describe('Conversation class', () => {
       },
     ];
 
-    conversation.feedActivities(activities);
+    const preppedActivities = conversation.prepTranscriptActivities(activities);
 
-    expect(fedActivities).toEqual([
+    expect(preppedActivities).toEqual([
       {
         conversation: { id: 'someConversationId' },
         type: 'event',
         from: { role: 'bot' },
         recipient: { role: 'user', id: 'someUserId' },
-        processed: true,
       },
       {
         conversation: { id: 'someConversationId' },
@@ -262,7 +256,6 @@ describe('Conversation class', () => {
         type: 'messageReaction',
         from: { role: 'bot', id: 'someBotEndpointBotId' },
         recipient: { role: 'user' },
-        processed: true,
       },
       {
         conversation: { id: 'someConversationId' },
@@ -317,13 +310,6 @@ describe('Conversation class', () => {
       },
       false
     );
-  });
-
-  it('should post an activity to the user', async () => {
-    const activity = await conversation.postActivityToUser(mockUserActivity);
-    expect(activity).toEqual({
-      id: jasmine.any(String),
-    });
   });
 
   it('should update an activity', async () => {

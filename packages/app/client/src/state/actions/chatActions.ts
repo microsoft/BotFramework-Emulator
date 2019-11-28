@@ -40,23 +40,24 @@ import { ChatDocument } from '../reducers/chat';
 
 export enum ChatActions {
   activeInspectorChanged = 'CHAT/INSPECTOR/CHANGED',
-  newChat = 'CHAT/DOCUMENT/NEW',
-  openChat = 'CHAT/DOCUMENT/OPEN',
-  closeConversation = 'CHAT/CLOSE',
-  closeDocument = 'CHAT/DOCUMENT/CLOSE',
-  newConversation = 'CHAT/CONVERSATION/NEW',
+  addTranscript = 'CHAT/TRANSCRIPT/ADD',
   appendLog = 'CHAT/LOG/APPEND',
   clearLog = 'CHAT/LOG/CLEAR',
-  setInspectorObjects = 'CHAT/INSPECTOR/OBJECTS/SET',
-  setHighlightedObjects = 'CHAT/HIGHLIGHTED/OBJECTS/SET',
-  addTranscript = 'CHAT/TRANSCRIPT/ADD',
   clearTranscripts = 'CHAT/TRANSCRIPT/CLEAR',
+  closeConversation = 'CHAT/CLOSE',
+  closeDocument = 'CHAT/DOCUMENT/CLOSE',
+  newChat = 'CHAT/DOCUMENT/NEW',
+  openChat = 'CHAT/DOCUMENT/OPEN',
+  openTranscript = 'CHAT/TRANSCRIPT/OPEN',
   removeTranscript = 'CHAT/TRANSCRIPT/REMOVE',
-  updateChat = 'CHAT/DOCUMENT/UPDATE',
+  restartConversation = 'CHAT/RESTART',
+  setHighlightedObjects = 'CHAT/HIGHLIGHTED/OBJECTS/SET',
+  setInspectorObjects = 'CHAT/INSPECTOR/OBJECTS/SET',
   showContextMenuForActivity = 'CHAT/CONTEXT_MENU/SHOW',
+  updateChat = 'CHAT/DOCUMENT/UPDATE',
+  updatePendingSpeechTokenRetrieval = 'CHAT/SPEECH/TOKEN/PENDING/UPDATE',
   webSpeechFactoryUpdated = 'CHAT/SPEECH/TOKEN/RETRIEVED',
   webChatStoreUpdated = 'CHAT/STORE/UPDATED',
-  updatePendingSpeechTokenRetrieval = 'CHAT/SPEECH/TOKEN/PENDING/UPDATE',
 }
 
 export interface ActiveInspectorChangedPayload {
@@ -74,16 +75,12 @@ export interface WebChatStorePayload {
 }
 
 export interface PendingSpeechTokenRetrievalPayload {
+  documentId: string;
   pending: boolean;
 }
 
 export interface DocumentIdPayload {
   documentId: string;
-}
-
-export interface NewConversationPayload {
-  documentId: string;
-  options: any;
 }
 
 export interface AppendLogPayload {
@@ -93,7 +90,10 @@ export interface AppendLogPayload {
 
 export interface ClearLogPayload {
   documentId: string;
-  resolver?: Function;
+}
+
+export interface NewChatDocumentPayload extends Partial<ChatDocument> {
+  resolver?: () => Promise<any>;
 }
 
 export interface SetInspectorObjectsPayload {
@@ -106,6 +106,11 @@ export interface SetHighlightedObjectsPayload {
   objs: Activity[];
 }
 
+export interface OpenTranscriptPayload {
+  filename: string;
+  activities?: Activity[];
+}
+
 export interface AddTranscriptPayload extends RemoveTranscriptPayload {}
 
 export interface RemoveTranscriptPayload {
@@ -115,6 +120,12 @@ export interface RemoveTranscriptPayload {
 export interface UpdateChatPayload {
   documentId: string;
   updatedValues: any;
+}
+
+export interface RestartConversationPayload {
+  documentId: string;
+  requireNewConversationId: boolean;
+  requireNewUserId: boolean;
 }
 
 export interface ChatAction<T = any> extends Action {
@@ -153,6 +164,16 @@ export function removeTranscript(filename: string): ChatAction<RemoveTranscriptP
   };
 }
 
+export function openTranscript(filename: string, activities?: Activity[]): ChatAction<OpenTranscriptPayload> {
+  return {
+    type: ChatActions.openTranscript,
+    payload: {
+      filename,
+      activities,
+    },
+  };
+}
+
 export function webSpeechFactoryUpdated(documentId: string, factory: () => any): ChatAction<WebSpeechFactoryPayload> {
   return {
     type: ChatActions.webSpeechFactoryUpdated,
@@ -167,10 +188,13 @@ export function webChatStoreUpdated(documentId: string, store: any): ChatAction<
   };
 }
 
-export function updatePendingSpeechTokenRetrieval(pending: boolean): ChatAction<PendingSpeechTokenRetrievalPayload> {
+export function updatePendingSpeechTokenRetrieval(
+  documentId: string,
+  pending: boolean
+): ChatAction<PendingSpeechTokenRetrievalPayload> {
   return {
     type: ChatActions.updatePendingSpeechTokenRetrieval,
-    payload: { pending },
+    payload: { documentId, pending },
   };
 }
 
@@ -178,7 +202,7 @@ export function newChat(
   documentId: string,
   mode: EmulatorMode,
   additionalData?: Partial<ChatDocument>
-): ChatAction<Partial<ChatDocument & ClearLogPayload>> {
+): ChatAction<NewChatDocumentPayload> {
   return {
     type: ChatActions.newChat,
     payload: {
@@ -237,16 +261,6 @@ export function closeConversation(documentId: string): ChatAction<DocumentIdPayl
   };
 }
 
-export function newConversation(documentId: string, options: any): ChatAction<NewConversationPayload> {
-  return {
-    type: ChatActions.newConversation,
-    payload: {
-      documentId,
-      options,
-    },
-  };
-}
-
 export function appendToLog(documentId: string, entry: LogEntry): ChatAction<AppendLogPayload> {
   return {
     type: ChatActions.appendLog,
@@ -257,12 +271,11 @@ export function appendToLog(documentId: string, entry: LogEntry): ChatAction<App
   };
 }
 
-export function clearLog(documentId: string, resolver?: Function): ChatAction<ClearLogPayload> {
+export function clearLog(documentId: string): ChatAction<ClearLogPayload> {
   return {
     type: ChatActions.clearLog,
     payload: {
       documentId,
-      resolver,
     },
   };
 }
@@ -306,5 +319,20 @@ export function showContextMenuForActivity(activity: Partial<Activity>): ChatAct
   return {
     type: ChatActions.showContextMenuForActivity,
     payload: activity,
+  };
+}
+
+export function restartConversation(
+  documentId: string,
+  requireNewConversationId: boolean = false,
+  requireNewUserId: boolean = false
+): ChatAction<RestartConversationPayload> {
+  return {
+    type: ChatActions.restartConversation,
+    payload: {
+      documentId,
+      requireNewConversationId,
+      requireNewUserId,
+    },
   };
 }

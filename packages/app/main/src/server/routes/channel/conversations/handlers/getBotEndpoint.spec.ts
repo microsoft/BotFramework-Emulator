@@ -32,88 +32,115 @@
 //
 
 import { BotEndpoint } from '../../../../state/botEndpoint';
+import { authentication, usGovernmentAuthentication } from '../../../../constants/authEndpoints';
 
 import { createGetBotEndpointHandler } from './getBotEndpoint';
 
 describe('getBotEndpoint handler', () => {
-  it('should get the bot endpoint and attach it to the request if headers are present and the endpoint exists', () => {
-    const req: any = {
-      headers: {
-        'x-emulator-appid': 'someAppId',
-        'x-emulator-apppassword': 'someAppPw',
-        'x-emulator-botendpoint': 'someBotUrl',
-        'x-emulator-channelservice': 'azureusgovernment',
-      },
-    };
+  it('should get the bot endpoint by app ID if included in the jwt token', () => {
     const mockEndpoint = {};
-    const state: any = {
+    const mockServerState: any = {
       endpoints: {
-        get: jest.fn(() => mockEndpoint),
+        getByAppId: jest.fn(() => mockEndpoint),
       },
     };
-    const res: any = {};
-    const next = jest.fn();
-    const getBotEndpoint = createGetBotEndpointHandler(state);
-    getBotEndpoint(req, res, next);
-
-    expect(req.botEndpoint).toEqual({
-      ...mockEndpoint,
-      msaAppId: 'someAppId',
-      msaPassword: 'someAppPw',
-    });
-    expect(next).toHaveBeenCalled();
-  });
-
-  it('should get the bot endpoint and attach it to the request if headers are present and the endpoint exists', () => {
-    const req: any = {
-      body: {
-        bot: {
-          id: 'bot1',
-        },
-      },
-      headers: {
-        'x-emulator-appid': 'someAppId',
-        'x-emulator-apppassword': 'someAppPw',
-        'x-emulator-botendpoint': 'someBotUrl',
-        'x-emulator-channelservice': 'not gov',
-      },
-    };
-    const state: any = {
-      endpoints: {
-        get: jest.fn(() => undefined),
-        set: jest.fn((_id, endpoint) => endpoint),
-      },
-    };
-    const res: any = {};
-    const next = jest.fn();
-    const getBotEndpoint = createGetBotEndpointHandler(state);
-    getBotEndpoint(req, res, next);
-
-    const params = req.body;
-    expect(req.botEndpoint).toEqual(
-      new BotEndpoint(params.bot.id, params.bot.id, 'someBotUrl', 'someAppId', 'someAppPw', false, undefined)
-    );
-    expect(next).toHaveBeenCalled();
-  });
-
-  it('should get the bot endpoint and attach it to the request if no headers are present', () => {
     const req: any = {
       jwt: {
         appid: 'someAppId',
       },
     };
-    const mockEndpoint = {};
-    const state: any = {
+    const res: any = {};
+    const next = jest.fn();
+    const handler = createGetBotEndpointHandler(mockServerState);
+    handler(req, res, next);
+
+    expect(req.botEndpoint).toEqual(mockEndpoint);
+  });
+
+  it('should create a new bot endpoint if it does not exist', () => {
+    const mockServerState: any = {
       endpoints: {
-        getByAppId: jest.fn(() => mockEndpoint),
+        get: jest.fn(() => undefined),
+        set: jest.fn((_id, endpoint) => endpoint),
+      },
+    };
+    const req: any = {
+      body: {
+        bot: {
+          id: 'someBotId',
+        },
+        botUrl: 'http://localhost:3978/api/messages',
+        channelServiceType: 'public',
+        msaAppId: 'someAppId',
+        msaPassword: 'someAppPw',
+      },
+    };
+    const { bot, botUrl, msaAppId, msaPassword } = req.body;
+    const res: any = {};
+    const next = jest.fn();
+
+    const handler = createGetBotEndpointHandler(mockServerState);
+    handler(req, res, next);
+
+    expect(req.botEndpoint).toEqual(
+      new BotEndpoint(bot.id, bot.id, botUrl, msaAppId, msaPassword, false, authentication.channelService)
+    );
+  });
+
+  it('should create a new gov bot endpoint if it does not exist', () => {
+    const mockServerState: any = {
+      endpoints: {
+        get: jest.fn(() => undefined),
+        set: jest.fn((_id, endpoint) => endpoint),
+      },
+    };
+    const req: any = {
+      body: {
+        bot: {
+          id: 'someBotId',
+        },
+        botUrl: 'http://localhost:3978/api/messages',
+        channelServiceType: 'azureusgovernment',
+        msaAppId: 'someAppId',
+        msaPassword: 'someAppPw',
+      },
+    };
+    const { bot, botUrl, msaAppId, msaPassword } = req.body;
+    const res: any = {};
+    const next = jest.fn();
+
+    const handler = createGetBotEndpointHandler(mockServerState);
+    handler(req, res, next);
+
+    expect(req.botEndpoint).toEqual(
+      new BotEndpoint(bot.id, bot.id, botUrl, msaAppId, msaPassword, false, usGovernmentAuthentication.channelService)
+    );
+  });
+
+  it('should get the bot endpoint and attach it to the request if it exists', () => {
+    const mockEndpoint = {
+      botUrl: 'http://localhost:3978/api/messages',
+    };
+    const mockServerState: any = {
+      endpoints: {
+        get: jest.fn(() => mockEndpoint),
+      },
+    };
+    const req: any = {
+      body: {
+        msaAppId: 'someAppId',
+        msaPassword: 'someAppPw',
       },
     };
     const res: any = {};
     const next = jest.fn();
-    const getBotEndpoint = createGetBotEndpointHandler(state);
-    getBotEndpoint(req, res, next);
 
-    expect(req.botEndpoint).toEqual(mockEndpoint);
-    expect(next).toHaveBeenCalled();
+    const handler = createGetBotEndpointHandler(mockServerState);
+    handler(req, res, next);
+
+    expect(req.botEndpoint).toEqual({
+      ...mockEndpoint,
+      ...req.body,
+    });
   });
 });

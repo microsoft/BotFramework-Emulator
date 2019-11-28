@@ -51,7 +51,6 @@ export interface ChatState {
   webSpeechFactories?: { [documentId: string]: () => any };
   webChatStores: { [documentId: string]: any };
   transcripts?: string[];
-  pendingSpeechTokenRetrieval: boolean;
 }
 
 export interface ChatDocument<I = any> extends Document {
@@ -60,6 +59,7 @@ export interface ChatDocument<I = any> extends Document {
   highlightedObjects: Activity[];
   inspectorObjects: I[];
   log: ChatLog;
+  pendingSpeechTokenRetrieval: boolean;
   ui: DocumentUI;
 }
 
@@ -73,7 +73,6 @@ const DEFAULT_STATE: ChatState = {
   transcripts: [],
   webSpeechFactories: {},
   webChatStores: {},
-  pendingSpeechTokenRetrieval: false,
 };
 
 export function chat(state: ChatState = DEFAULT_STATE, action: ChatAction | EditorAction): ChatState {
@@ -136,10 +135,19 @@ export function chat(state: ChatState = DEFAULT_STATE, action: ChatAction | Edit
       break;
 
     case ChatActions.updatePendingSpeechTokenRetrieval:
-      state = {
-        ...state,
-        pendingSpeechTokenRetrieval: (action.payload as PendingSpeechTokenRetrievalPayload).pending,
-      };
+      {
+        const { documentId, pending } = action.payload as PendingSpeechTokenRetrievalPayload;
+        state = {
+          ...state,
+          chats: {
+            ...state.chats,
+            [documentId]: {
+              ...state.chats[documentId],
+              pendingSpeechTokenRetrieval: pending,
+            },
+          },
+        };
+      }
       break;
 
     case ChatActions.closeDocument: {
@@ -151,27 +159,6 @@ export function chat(state: ChatState = DEFAULT_STATE, action: ChatAction | Edit
         copy.changeKey += 1;
         delete copy.chats[documentId];
         state = { ...copy };
-      }
-      break;
-    }
-
-    case ChatActions.newConversation: {
-      const { payload } = action;
-      let document = state.chats[payload.documentId];
-      if (document) {
-        document = {
-          ...document,
-          ...payload.options,
-        };
-        state = {
-          ...state,
-          chats: {
-            ...state.chats,
-            [payload.documentId]: {
-              ...document,
-            },
-          },
-        };
       }
       break;
     }

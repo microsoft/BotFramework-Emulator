@@ -47,31 +47,39 @@ import { sendTyping } from './handlers/sendTyping';
 import { updateShippingAddress } from './handlers/updateShippingAddress';
 import { updateShippingOption } from './handlers/updateShippingOption';
 import { mountEmulatorRoutes } from './mountEmulatorRoutes';
+import { createUpdateConversationHandler } from './handlers/updateConversation';
+import { createFeedActivitiesAsTranscriptHandler } from './handlers/feedActivitiesAsTranscript';
+import { getWebSocketPort } from './handlers/getWebSocketPort';
 
-jest.mock('../../utils/jsonBodyParser', () => ({ createJsonBodyParserMiddleware: jest.fn(() => null) }));
-jest.mock('./handlers/addUsers', () => ({ addUsers: jest.fn(() => null) }));
-jest.mock('./handlers/contactAdded', () => ({ contactAdded: jest.fn(() => null) }));
-jest.mock('./handlers/contactRemoved', () => ({ contactRemoved: jest.fn(() => null) }));
-jest.mock('./handlers/deleteUserData', () => ({ deleteUserData: jest.fn(() => null) }));
-jest.mock('./handlers/getConversation', () => ({ createGetConversationHandler: jest.fn(() => null) }));
-jest.mock('./handlers/getUsers', () => ({ getUsers: jest.fn(() => null) }));
-jest.mock('./handlers/paymentComplete', () => ({ paymentComplete: jest.fn(() => null) }));
-jest.mock('./handlers/ping', () => ({ ping: jest.fn(() => null) }));
-jest.mock('./handlers/removeUsers', () => ({ removeUsers: jest.fn(() => null) }));
-jest.mock('./handlers/sendTokenResponse', () => ({ sendTokenResponse: jest.fn(() => null) }));
-jest.mock('./handlers/sendTyping', () => ({ sendTyping: jest.fn(() => null) }));
-jest.mock('./handlers/updateShippingAddress', () => ({ updateShippingAddress: jest.fn(() => null) }));
-jest.mock('./handlers/updateShippingOption', () => ({ updateShippingOption: jest.fn(() => null) }));
+jest.mock('../../utils/jsonBodyParser', () => ({ createJsonBodyParserMiddleware: jest.fn() }));
+jest.mock('./handlers/addUsers', () => ({ addUsers: jest.fn() }));
+jest.mock('./handlers/contactAdded', () => ({ contactAdded: jest.fn() }));
+jest.mock('./handlers/contactRemoved', () => ({ contactRemoved: jest.fn() }));
+jest.mock('./handlers/deleteUserData', () => ({ deleteUserData: jest.fn() }));
+jest.mock('./handlers/feedActivitiesAsTranscript', () => ({ createFeedActivitiesAsTranscriptHandler: jest.fn() }));
+jest.mock('./handlers/getConversation', () => ({ createGetConversationHandler: jest.fn() }));
+jest.mock('./handlers/getUsers', () => ({ getUsers: jest.fn() }));
+jest.mock('./handlers/initialReport', () => ({ createInitialReportHandler: jest.fn() }));
+jest.mock('./handlers/paymentComplete', () => ({ paymentComplete: jest.fn() }));
+jest.mock('./handlers/ping', () => ({ ping: jest.fn() }));
+jest.mock('./handlers/removeUsers', () => ({ removeUsers: jest.fn() }));
+jest.mock('./handlers/sendTokenResponse', () => ({ sendTokenResponse: jest.fn() }));
+jest.mock('./handlers/sendTyping', () => ({ sendTyping: jest.fn() }));
+jest.mock('./handlers/updateConversation', () => ({ createUpdateConversationHandler: jest.fn() }));
+jest.mock('./handlers/updateShippingAddress', () => ({ updateShippingAddress: jest.fn() }));
+jest.mock('./handlers/updateShippingOption', () => ({ updateShippingOption: jest.fn() }));
 
 describe('mountEmulatorRoutes', () => {
   it('should mount the routes', () => {
-    const get = jest.fn(() => null);
-    const post = jest.fn(() => null);
-    const del = jest.fn(() => null);
+    const get = jest.fn();
+    const post = jest.fn();
+    const del = jest.fn();
+    const put = jest.fn();
     const server: any = {
       get,
       post,
       del,
+      put,
     };
     const emulatorServer: any = {
       options: { fetch: () => null },
@@ -124,5 +132,19 @@ describe('mountEmulatorRoutes', () => {
       jsonBodyParser,
       sendTokenResponse
     );
+
+    expect(put).toHaveBeenCalledWith(
+      '/emulator/:conversationId',
+      jsonBodyParser,
+      createUpdateConversationHandler(emulatorServer.state)
+    );
+
+    expect(post).toHaveBeenCalledWith(
+      '/emulator/:conversationId/transcript',
+      jsonBodyParser,
+      createFeedActivitiesAsTranscriptHandler(emulatorServer)
+    );
+
+    expect(get).toHaveBeenCalledWith('/emulator/ws/port', getWebSocketPort);
   });
 });

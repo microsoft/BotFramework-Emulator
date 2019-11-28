@@ -205,9 +205,6 @@ export class ActiveBotHelper {
           if (!bot) {
             return;
           }
-          const state = store.getState();
-          const currentUserId = state.clientAwareSettings.users.currentUserId || state.framework.userGUID;
-          await this.commandService.remoteCall(SharedConstants.Commands.Emulator.SetCurrentUser, currentUserId);
           await this.commandService.remoteCall(SharedConstants.Commands.Bot.SetActive, bot);
           await this.commandService.call(SharedConstants.Commands.Bot.Load, bot);
           const numOfServices = bot.services && bot.services.length;

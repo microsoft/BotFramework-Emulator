@@ -221,7 +221,7 @@ describe('The endpointSagas', () => {
 
       await mockStore.dispatch(openEndpointExplorerContextMenu(mockComponentClass, mockBot.services[0]));
       expect(commandServiceRemoteCallSpy).toHaveBeenCalledWith(DisplayContextMenu, menuItems);
-      expect(commandServiceCallSpy).toHaveBeenCalledWith(NewLiveChat, mockBot.services[0], false);
+      expect(commandServiceCallSpy).toHaveBeenCalledWith(NewLiveChat, mockBot.services[0]);
       commandServiceRemoteCallSpy.mockClear();
       commandServiceCallSpy.mockClear();
     });

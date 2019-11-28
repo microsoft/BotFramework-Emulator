@@ -258,13 +258,6 @@ export class UiCommands {
   }
 
   // ---------------------------------------------------------------------------
-  // Connect to a bot via URL
-  @Command(UI.OpenBotViaUrl)
-  protected openBotViaURL(conversationParams: StartConversationParams): void {
-    store.dispatch(openBotViaUrlAction(conversationParams));
-  }
-
-  // ---------------------------------------------------------------------------
   // Shows the data collection dialog
   @Command(UI.ShowDataCollectionDialog)
   protected showDataCollectionDialog() {

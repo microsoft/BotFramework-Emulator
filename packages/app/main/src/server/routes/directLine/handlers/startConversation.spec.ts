@@ -41,15 +41,11 @@ describe('startConversation handler', () => {
       conversationId: 'convo1',
       sendConversationUpdate: jest.fn().mockResolvedValueOnce(undefined),
     };
-    const mockCurrentUser = {};
     const emulatorServer: any = {
       state: {
         conversations: {
           conversationById: jest.fn(() => undefined),
           newConversation: jest.fn(() => mockCreatedConversation),
-        },
-        users: {
-          usersById: jest.fn(() => mockCurrentUser),
         },
       },
     };
@@ -68,7 +64,10 @@ describe('startConversation handler', () => {
     await startConversation(req, res, next);
 
     expect(mockCreatedConversation.sendConversationUpdate).toHaveBeenCalledWith(
-      [mockCurrentUser, { id: req.botEndpoint.botId, name: 'Bot' }],
+      [
+        { id: jasmine.any(String), name: 'User' },
+        { id: req.botEndpoint.botId, name: 'Bot' },
+      ],
       undefined
     );
     expect(res.json).toHaveBeenCalledWith(HttpStatus.CREATED, {
@@ -82,43 +81,6 @@ describe('startConversation handler', () => {
     expect(next).toHaveBeenCalled();
   });
 
-  it('should send a 400 if there is no current user while trying to create a conversation', async () => {
-    const mockCreatedConversation = {
-      conversationId: 'convo1',
-      sendConversationUpdate: jest.fn().mockResolvedValueOnce(undefined),
-    };
-    const mockCurrentUser = undefined;
-    const emulatorServer: any = {
-      state: {
-        conversations: {
-          conversationById: jest.fn(() => undefined),
-          newConversation: jest.fn(() => mockCreatedConversation),
-        },
-        users: {
-          usersById: jest.fn(() => mockCurrentUser),
-        },
-      },
-    };
-    const req: any = {
-      botEndpoint: {
-        id: 'endpoint1',
-      },
-      header: jest.fn(() => ''),
-    };
-    const res: any = {
-      end: jest.fn(),
-      send: jest.fn(),
-    };
-    const next = jest.fn();
-    const startConversation = createStartConversationHandler(emulatorServer);
-    await startConversation(req, res, next);
-
-    expect(mockCreatedConversation.sendConversationUpdate).not.toHaveBeenCalled();
-    expect(res.send).toHaveBeenCalledWith(HttpStatus.BAD_REQUEST, 'current user not provided');
-    expect(res.end).toHaveBeenCalled();
-    expect(next).toHaveBeenCalled();
-  });
-
   it('should send a 200 with info about the conversation if it already exists, and should add members to the conversation', async () => {
     const mockCreatedConversation = {
       addMember: jest.fn(),
@@ -127,15 +89,12 @@ describe('startConversation handler', () => {
         findIndex: jest.fn(() => -1), // simulate not finding the bot or user in the current conversation
       },
       sendConversationUpdate: jest.fn().mockResolvedValueOnce(undefined),
+      user: { id: 'user1', name: 'User' },
     };
-    const mockCurrentUser = { id: 'user1', name: 'User' };
     const emulatorServer: any = {
       state: {
         conversations: {
           conversationById: jest.fn(() => mockCreatedConversation),
-        },
-        users: {
-          usersById: jest.fn(() => mockCurrentUser),
         },
       },
     };
@@ -173,15 +132,12 @@ describe('startConversation handler', () => {
         findIndex: jest.fn(() => 0), // simulate finding the bot and user in the current conversation
       },
       sendConversationUpdate: jest.fn().mockResolvedValueOnce(undefined),
+      user: { id: 'user1', name: 'User' },
     };
-    const mockCurrentUser = { id: 'user1', name: 'User' };
     const emulatorServer: any = {
       state: {
         conversations: {
           conversationById: jest.fn(() => mockCreatedConversation),
-        },
-        users: {
-          usersById: jest.fn(() => mockCurrentUser),
         },
       },
     };
@@ -201,7 +157,7 @@ describe('startConversation handler', () => {
 
     expect(mockCreatedConversation.addMember).not.toHaveBeenCalled();
     expect(mockCreatedConversation.sendConversationUpdate).toHaveBeenCalledWith(
-      [mockCurrentUser, { id: req.botEndpoint.botId, name: 'Bot' }],
+      [mockCreatedConversation.user, { id: req.botEndpoint.botId, name: 'Bot' }],
       undefined
     );
     expect(res.json).toHaveBeenCalledWith(HttpStatus.OK, {

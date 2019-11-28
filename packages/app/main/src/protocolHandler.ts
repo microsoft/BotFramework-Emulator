@@ -42,14 +42,15 @@ import {
   BotConfigWithPath,
   CommandServiceImpl,
   CommandServiceInstance,
-  StartConversationParams,
 } from '@bfemulator/sdk-shared';
 
 import { Protocol } from './constants';
 import { Emulator } from './emulator';
-import { getSettings } from './state/store';
+import { getSettings, store } from './state/store';
 import { sendNotificationToClient } from './utils/sendNotificationToClient';
 import { TelemetryService } from './telemetry';
+import { openTranscript } from './state/actions/chatActions';
+import { openBotViaUrlAction } from './state';
 
 enum ProtocolDomains {
   livechat,
@@ -148,13 +149,15 @@ class ProtocolHandlerImpl implements ProtocolHandler {
       msaAppPassword: appPassword,
       cloud: channelService,
     } = protocol.parsedArgs;
-    this.commandService.remoteCall(SharedConstants.Commands.UI.OpenBotViaUrl, {
-      endpoint,
-      appId,
-      appPassword,
-      mode: 'livechat',
-      channelService,
-    } as StartConversationParams);
+    store.dispatch(
+      openBotViaUrlAction({
+        endpoint,
+        appId,
+        appPassword,
+        mode: 'livechat',
+        channelService,
+      })
+    );
   }
 
   public performTranscriptAction(protocol: Protocol): void {
@@ -172,13 +175,15 @@ class ProtocolHandlerImpl implements ProtocolHandler {
       msaAppPassword: appPassword,
       cloud: channelService,
     } = protocol.parsedArgs;
-    this.commandService.remoteCall(SharedConstants.Commands.UI.OpenBotViaUrl, {
-      endpoint,
-      appId,
-      appPassword,
-      mode: 'debug',
-      channelService,
-    } as StartConversationParams);
+    store.dispatch(
+      openBotViaUrlAction({
+        endpoint,
+        appId,
+        appPassword,
+        mode: 'debug',
+        channelService,
+      })
+    );
   }
 
   /** Downloads a transcript from a URL provided in the protocol string,
@@ -195,19 +200,13 @@ class ProtocolHandlerImpl implements ProtocolHandler {
             try {
               // parse the activities from the downloaded transcript
               const transcriptString = res.body;
-              const conversationActivities = JSON.parse(transcriptString);
-              if (!Array.isArray(conversationActivities)) {
+              const activities = JSON.parse(transcriptString);
+              if (!Array.isArray(activities)) {
                 throw new Error('Invalid transcript file contents; should be an array of conversation activities.');
               }
               const { name, ext } = Path.parse(url);
-              const fileName = `${name}${ext}`;
-              // open a transcript on the client side and pass in some
-              // extra info to differentiate it from a transcript on disk
-              this.commandService.remoteCall(SharedConstants.Commands.Emulator.OpenTranscript, 'deepLinkedTranscript', {
-                activities: conversationActivities,
-                inMemory: true,
-                fileName,
-              });
+              const filename = `${name}${ext}`;
+              store.dispatch(openTranscript(filename, activities));
             } catch (e) {
               throw new Error(`Error occured while reading downloaded transcript: ${e}`);
             }

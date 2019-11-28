@@ -30,6 +30,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 import { loadSettings } from './loadSettings';
 
 const mockSettings = {
@@ -77,9 +78,15 @@ const mockSettings = {
   users: {},
   azure: {},
 };
+
+const mockLoadedSettings = {
+  framework: mockSettings.framework,
+  users: {},
+};
+const mockIsFile = jest.fn();
 jest.mock('fs-extra', () => ({
-  statSync: () => ({ isFile: () => true }),
-  readFileSync: () => '{}',
+  statSync: () => ({ isFile: () => mockIsFile() }),
+  readFileSync: () => JSON.stringify(mockLoadedSettings),
   writeFileSync: () => true,
 }));
 
@@ -88,25 +95,29 @@ jest.mock('./ensureStoragePath', () => ({
 }));
 
 describe('the loadSettings utility', () => {
-  it('should load the settings and provide a default user with a uuid', () => {
-    const settings = loadSettings('pathToFile', mockSettings);
-    expect(settings.users).not.toBeUndefined();
-    expect(settings.users.currentUserId).not.toBe('default-user');
-    expect(Object.keys(settings.users.usersById)[0]).toBe(settings.users.currentUserId);
+  it('should return the loaded settings with the user property removed', () => {
+    mockIsFile.mockReturnValueOnce(true);
+    const settings = loadSettings('appData/server.json', {});
+
+    expect(settings).toEqual({
+      ...mockLoadedSettings,
+      users: undefined,
+    });
   });
 
-  it('should convert users with an ID of "default-user" to use a uuid instead', () => {
-    mockSettings.users = {
-      currentUserId: 'default-user',
-      usersById: {
-        'default-user': {
-          id: 'default-user',
-          name: 'User',
-        },
-      },
-    };
-    const settings = loadSettings('pathToFile', mockSettings);
-    expect(settings.users.currentUserId).not.toBe('default-user');
-    expect(Object.keys(settings.users.usersById)[0]).toBe(settings.users.currentUserId);
+  it('should return the default settings when the requested settings file does not exist', () => {
+    mockIsFile.mockReturnValueOnce(false);
+    const settings = loadSettings('appData/server.json', mockSettings);
+
+    expect(settings).toEqual(mockSettings);
+  });
+
+  it('should return the default settings whenthere is an error trying to load the settings', () => {
+    mockIsFile.mockImplementationOnce(() => {
+      throw new Error('Invalid file path.');
+    });
+    const settings = loadSettings('appData/server.json', mockSettings);
+
+    expect(settings).toEqual(mockSettings);
   });
 });

@@ -37,6 +37,5 @@ export * from './frameworkSettingsActions';
 export * from './protocolActions';
 export * from './savedBotUrlsActions';
 export * from './updateActions';
-export * from './userActions';
 export * from './windowStateActions';
 export * from './ngrokTunnelActions';

@@ -33,38 +33,26 @@
 
 import * as path from 'path';
 
-import { SharedConstants } from '@bfemulator/app-shared';
+import { isChatFile, isTranscriptFile, SharedConstants } from '@bfemulator/app-shared';
 import { CommandServiceImpl } from '@bfemulator/sdk-shared';
 
-import { TelemetryService } from '../telemetry';
-
-import { readFileSync } from './readFileSync';
+import { store } from '../state';
+import { openTranscript } from '../state/actions/chatActions';
 
 export async function openFileFromCommandLine(
   fileToBeOpened: string,
   commandService: CommandServiceImpl
 ): Promise<void> {
-  const { Bot, Emulator } = SharedConstants.Commands;
+  const { Bot } = SharedConstants.Commands;
   if (path.extname(fileToBeOpened) === '.bot') {
     try {
       const bot = await commandService.call(Bot.Open, fileToBeOpened);
       await commandService.call(Bot.SetActive, bot);
       await commandService.remoteCall(Bot.Load, bot);
     } catch (e) {
-      throw new Error(`Error while trying to open a .bot file via double click at: ${fileToBeOpened}`);
+      throw new Error(`Error while trying to open a .bot file via double click at: ${fileToBeOpened}: ${e}`);
     }
-  } else if (path.extname(fileToBeOpened) === '.transcript') {
-    const transcript = readFileSync(fileToBeOpened);
-    const conversationActivities = JSON.parse(transcript);
-    if (!Array.isArray(conversationActivities)) {
-      throw new Error('Invalid transcript file contents; should be an array of conversation activities.');
-    }
-
-    const transcriptName = path.basename(fileToBeOpened);
-    await commandService.remoteCall(Emulator.OpenTranscript, fileToBeOpened, transcriptName, {
-      activities: conversationActivities,
-      inMemory: true,
-    });
-    TelemetryService.trackEvent('transcriptFile_open', { method: 'protocol' });
+  } else if (isTranscriptFile(fileToBeOpened) || isChatFile(fileToBeOpened)) {
+    store.dispatch(openTranscript(path.normalize(fileToBeOpened)));
   }
 }

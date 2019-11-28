@@ -63,6 +63,7 @@ import { sendNotificationToClient } from './utils/sendNotificationToClient';
 import { WindowManager } from './windowManager';
 import { ProtocolHandler } from './protocolHandler';
 import { setOpenUrl } from './state/actions/protocolActions';
+import { WebSocketServer } from './server/webSocketServer';
 
 // start app startup timer
 const beginStartupTime = Date.now();
@@ -173,10 +174,11 @@ class EmulatorApplication {
   }
 
   private initializeAppListeners() {
-    app.on('ready', this.onAppReady);
     app.on('activate', this.onAppActivate);
-    app.on('will-finish-launching', this.onAppWillFinishLaunching);
+    app.on('ready', this.onAppReady);
     app.on('open-file', this.onAppOpenFile);
+    app.on('will-finish-launching', this.onAppWillFinishLaunching);
+    app.on('will-quit', this.onAppWillQuit);
   }
 
   // Main browser window listeners
@@ -202,6 +204,8 @@ class EmulatorApplication {
 
     // Renew arm token
     await this.renewArmToken();
+
+    await WebSocketServer.init();
 
     if (this.fileToOpen) {
       await openFileFromCommandLine(this.fileToOpen, this.commandService);
@@ -337,6 +341,10 @@ class EmulatorApplication {
 
   private onAppWillFinishLaunching = () => {
     app.on('open-url', this.onAppOpenUrl);
+  };
+
+  private onAppWillQuit = () => {
+    WebSocketServer.cleanup();
   };
 
   private onAppOpenUrl = (event: Event, url: string): void => {

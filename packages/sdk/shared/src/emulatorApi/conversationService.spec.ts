@@ -31,6 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { ChannelService, EmulatorMode } from '../types';
+
 import { ConversationService, headers as headersInstance } from './conversationService';
 
 let mockFetchArgs: MockFetch;
@@ -59,6 +61,10 @@ interface MockFetch {
   url?: string;
   opts?: MockOpts;
 }
+
+jest.mock('../utils', () => ({
+  uniqueId: () => 'someId',
+}));
 
 describe('The ConversationService should call "fetch" with the expected parameters when executing', () => {
   test('the "addUser" function', () => {
@@ -161,48 +167,89 @@ describe('The ConversationService should call "fetch" with the expected paramete
   });
 
   test('the "startConversation" function', () => {
-    ConversationService.startConversation('http://localhost', {
-      appId: '123',
-      appPassword: '321',
-      endpoint: 'http://endpoint',
-      channelService: 'public',
-    });
+    const payload = {
+      botUrl: 'http://endpoint',
+      channelServiceType: 'public' as ChannelService,
+      members: [],
+      mode: 'livechat' as EmulatorMode,
+      msaAppId: '123',
+      msaPassword: '321',
+    };
+    ConversationService.startConversation('http://localhost', payload);
     const { url, opts } = mockFetchArgs;
     expect(url).toBe('http://localhost/v3/conversations');
 
     const { body, headers, method } = opts;
     expect(headers === headers).toBeTruthy();
     expect(method).toBe('POST');
-    expect(body).toBeTruthy();
+    expect(body).toEqual(
+      JSON.stringify({
+        ...payload,
+        bot: {
+          id: 'someId',
+          name: 'Bot',
+          role: 'bot',
+        },
+      })
+    );
     expect(headers).toEqual({
       'Content-Type': 'application/json',
-      'X-Emulator-AppId': '123',
-      'X-Emulator-AppPassword': '321',
-      'X-Emulator-BotEndpoint': 'http://endpoint',
-      'X-Emulator-ChannelService': 'public',
     });
   });
 
-  test('the "startConversation" function with Gov channelService', () => {
-    ConversationService.startConversation('http://localhost', {
-      appId: '123',
-      appPassword: '321',
-      endpoint: 'http://endpoint',
-      channelService: 'azureusgovernment',
-    });
+  test('the "sendActivityToBot" function', () => {
+    const mockActivity = {};
+    const mockConversationId = 'someConvoId';
+    const serverUrl = 'http://localhost';
+    ConversationService.sendActivityToBot(serverUrl, mockConversationId, mockActivity);
     const { url, opts } = mockFetchArgs;
-    expect(url).toBe('http://localhost/v3/conversations');
-
     const { body, headers, method } = opts;
-    expect(headers === headers).toBeTruthy();
+
+    expect(url).toBe('http://localhost/v3/directline/conversations/someConvoId/activities');
+    expect(body).toEqual(JSON.stringify(mockActivity));
+    expect(headers).toEqual({ 'Content-Type': 'application/json' });
     expect(method).toBe('POST');
-    expect(body).toBeTruthy();
-    expect(headers).toEqual({
-      'Content-Type': 'application/json',
-      'X-Emulator-AppId': '123',
-      'X-Emulator-AppPassword': '321',
-      'X-Emulator-BotEndpoint': 'http://endpoint',
-      'X-Emulator-ChannelService': 'azureusgovernment',
-    });
+  });
+
+  test('the "updateConversation" function', () => {
+    const mockPayload: any = {};
+    const mockConversationId = 'someConvoId';
+    const serverUrl = 'http://localhost';
+    ConversationService.updateConversation(serverUrl, mockConversationId, mockPayload);
+    const { url, opts } = mockFetchArgs;
+    const { body, headers, method } = opts;
+
+    expect(url).toBe('http://localhost/emulator/someConvoId');
+    expect(body).toEqual(JSON.stringify(mockPayload));
+    expect(headers).toEqual({ 'Content-Type': 'application/json' });
+    expect(method).toBe('PUT');
+  });
+
+  test('the "sendInitiallogReport" function', () => {
+    const mockBotUrl = 'http://localhost:3978/api/messages';
+    const mockConversationId = 'someConvoId';
+    const serverUrl = 'http://localhost';
+    ConversationService.sendInitialLogReport(serverUrl, mockConversationId, mockBotUrl);
+    const { url, opts } = mockFetchArgs;
+    const { body, headers, method } = opts;
+
+    expect(url).toBe('http://localhost/emulator/someConvoId/invoke/initialReport');
+    expect(body).toEqual(JSON.stringify(mockBotUrl));
+    expect(headers).toEqual({ 'Content-Type': 'application/json' });
+    expect(method).toBe('POST');
+  });
+
+  test('the "feedActivitiesAsTranscript" function', () => {
+    const mockActivities = [];
+    const mockConversationId = 'someConvoId';
+    const serverUrl = 'http://localhost';
+    ConversationService.feedActivitiesAsTranscript(serverUrl, mockConversationId, mockActivities);
+    const { url, opts } = mockFetchArgs;
+    const { body, headers, method } = opts;
+
+    expect(url).toBe('http://localhost/emulator/someConvoId/transcript');
+    expect(body).toEqual(JSON.stringify(mockActivities));
+    expect(headers).toEqual({ 'Content-Type': 'application/json' });
+    expect(method).toBe('POST');
   });
 });

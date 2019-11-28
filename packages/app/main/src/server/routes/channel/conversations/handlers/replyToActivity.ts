@@ -31,7 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ResourceResponse } from '@bfemulator/sdk-shared';
 import { Activity } from 'botframework-schema';
 import * as HttpStatus from 'http-status-codes';
 import { Next, Request, Response } from 'restify';
@@ -40,25 +39,33 @@ import { OAuthLinkEncoder } from '../../../../utils/oauthLinkEncoder';
 import { sendErrorResponse } from '../../../../utils/sendErrorResponse';
 import { ConversationAPIPathParameters } from '../types/conversationAPIPathParameters';
 import { EmulatorRestServer } from '../../../../restServer';
+import { WebSocketServer } from '../../../../webSocketServer';
+import { Conversation } from '../../../../state/conversation';
 
 export function createReplyToActivityHandler(emulatorServer: EmulatorRestServer) {
   return (req: Request, res: Response, next: Next): any => {
-    const activity = req.body as Activity;
+    let activity = req.body as Activity;
     const conversationParameters: ConversationAPIPathParameters = req.params;
     const { logger } = emulatorServer;
 
     try {
       activity.id = activity.id || null;
       activity.replyToId = req.params.activityId;
+      const { conversationId } = conversationParameters;
 
       const continuation = function(): void {
-        const response: ResourceResponse = (req as any).conversation.postActivityToUser(activity);
+        const { conversation }: { conversation: Conversation } = req as any;
 
-        res.send(HttpStatus.OK, response);
+        // post activity
+        activity = conversation.prepActivityToBeSentToUser(conversation.user.id, activity);
+        const payload = { activities: [activity] };
+        const socket = WebSocketServer.getSocketByConversationId(conversationId);
+        socket && socket.send(JSON.stringify(payload));
+
+        res.send(HttpStatus.OK, { id: activity.id });
         res.end();
       };
 
-      const { conversationId } = conversationParameters;
       const visitor = new OAuthLinkEncoder(
         emulatorServer,
         req.headers.authorization as string,

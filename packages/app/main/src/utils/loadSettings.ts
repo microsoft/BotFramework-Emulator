@@ -33,7 +33,6 @@
 
 import { mergeDeep, Settings } from '@bfemulator/app-shared';
 import * as fs from 'fs-extra';
-import uuidv4 from 'uuid/v4';
 
 import { ensureStoragePath } from './ensureStoragePath';
 
@@ -44,8 +43,10 @@ export const loadSettings = (filename: string, defaultSettings: Partial<Settings
     const stat = fs.statSync(filename);
     if (stat.isFile()) {
       const settingsJson = JSON.parse(fs.readFileSync(filename, 'utf8')) as Settings;
-      const settings = mergeDeep<Settings, Settings>(defaultSettings, settingsJson);
-      if (enforceNoDefaultUser(settings)) {
+      const settings: any = mergeDeep<Settings, Settings>(defaultSettings, settingsJson);
+      // wipe users property from settings (property has been deprecated)
+      if (settings.users) {
+        delete settings.users;
         fs.writeFileSync(filename, JSON.stringify(settings, null, 2));
       }
       return settings;
@@ -55,27 +56,3 @@ export const loadSettings = (filename: string, defaultSettings: Partial<Settings
     return defaultSettings;
   }
 };
-
-function enforceNoDefaultUser(settings: Settings): boolean {
-  const { users = {} } = settings; // default initialized here
-  if (!users.currentUserId || users.currentUserId === 'default-user') {
-    users.currentUserId = uuidv4();
-    if (!users.usersById) {
-      users.usersById = {};
-    }
-    const defaultUser = users.usersById['default-user'];
-    if (defaultUser) {
-      defaultUser.id = users.currentUserId;
-      users.usersById[users.currentUserId] = defaultUser;
-      delete users.usersById['default-user'];
-    } else if (!Object.keys(users.usersById).length) {
-      users.usersById[users.currentUserId] = {
-        id: users.currentUserId,
-        name: 'User',
-      };
-    }
-    settings.users = users;
-    return true;
-  }
-  return false;
-}

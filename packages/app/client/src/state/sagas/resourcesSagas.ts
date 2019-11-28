@@ -47,6 +47,7 @@ import {
   RENAME_RESOURCE,
   ResourcesAction,
 } from '../actions/resourcesActions';
+import { openTranscript } from '../actions/chatActions';
 
 export class ResourcesSagas {
   @CommandServiceInstance()
@@ -119,20 +120,11 @@ export class ResourcesSagas {
   }
 
   public static *doOpenResource(action: ResourcesAction<IFileService>): IterableIterator<any> {
-    const { OpenChatFile, OpenTranscript } = SharedConstants.Commands.Emulator;
-    const { TrackEvent } = SharedConstants.Commands.Telemetry;
-    const { path, name } = action.payload;
-    if (isChatFile(path)) {
-      yield ResourcesSagas.commandService.call(OpenChatFile, path, true);
-      ResourcesSagas.commandService.remoteCall(TrackEvent, 'chatFile_open').catch(_e => void 0);
-    } else if (isTranscriptFile(path)) {
-      yield ResourcesSagas.commandService.call(OpenTranscript, path, name);
-      ResourcesSagas.commandService
-        .remoteCall(TrackEvent, 'transcriptFile_open', {
-          method: 'resources_pane',
-        })
-        .catch();
+    const { path } = action.payload;
+    if (isChatFile(path) || isTranscriptFile(path)) {
+      yield put(openTranscript(path));
     }
+
     // unknown types just fall into the abyss
   }
 

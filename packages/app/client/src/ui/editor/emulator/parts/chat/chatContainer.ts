@@ -47,18 +47,16 @@ import { Chat, ChatProps } from './chat';
 
 const mapStateToProps = (state: RootState, { documentId }): Partial<ChatProps> => {
   const currentChat = state.chat.chats[documentId];
-  const currentUserId = currentChat.userId || state.clientAwareSettings.users.currentUserId;
+  const currentUserId = currentChat.userId || '';
 
   return {
     botId: currentChat.botId,
     conversationId: currentChat.conversationId,
     directLine: currentChat.directLine,
     mode: currentChat.mode,
-    currentUser:
-      state.clientAwareSettings.users.usersById[currentUserId] || ({ id: currentUserId, name: 'User' } as User),
+    currentUser: { id: currentUserId, name: 'User' } as User,
     locale: state.clientAwareSettings.locale || 'en-us',
     webSpeechPonyfillFactory: state.chat.webSpeechFactories[documentId],
-    pendingSpeechTokenRetrieval: state.chat.pendingSpeechTokenRetrieval,
     webchatStore: state.chat.webChatStores[documentId],
   };
 };

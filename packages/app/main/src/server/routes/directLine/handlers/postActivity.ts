@@ -40,6 +40,7 @@ import { Conversation } from '../../../state/conversation';
 import { sendErrorResponse } from '../../../utils/sendErrorResponse';
 import { statusCodeFamily } from '../../../utils/statusCodeFamily';
 import { EmulatorRestServer } from '../../../restServer';
+import { WebSocketServer } from '../../../webSocketServer';
 
 export function createPostActivityHandler(emulatorServer: EmulatorRestServer) {
   const { logMessage } = emulatorServer.logger;
@@ -68,6 +69,17 @@ export function createPostActivityHandler(emulatorServer: EmulatorRestServer) {
         res.send(statusCode || HttpStatus.INTERNAL_SERVER_ERROR, await response.text());
       } else {
         res.send(statusCode, { id: activityId });
+
+        // (filter out the /INSPECT open command because it doesn't originate from Web Chat)
+        if (activity.type === 'message' && activity.text === '/INSPECT open') {
+          res.end();
+          return next();
+        }
+
+        // satisfy the Web Chat echoback requirement
+        const payload = { activities: [{ ...activity, id: activityId }] };
+        const socket = WebSocketServer.getSocketByConversationId(conversation.conversationId);
+        socket && socket.send(JSON.stringify(payload));
       }
     } catch (err) {
       sendErrorResponse(req, res, next, err);

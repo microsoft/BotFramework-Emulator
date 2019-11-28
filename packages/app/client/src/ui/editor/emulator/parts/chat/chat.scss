@@ -34,13 +34,14 @@
 .chat {
   background-color: white;
   display: flex;
+  position: relative;
   height: 100%;
   width: 100%;
   user-select: text;
 
   // Webchat does not use box-sizing and 'border-box' results in
   // UI issues. (noticed with the sendbox buttons)
-  div {
+  div:not(.disconnected) {
     box-sizing: unset;
   }
 
@@ -87,7 +88,6 @@
   }
 }
 
-
 .selected-activity :global .bubble,
 .selected-activity :global .ac-container,
 .selected-activity :global .ac-textBlock {
@@ -100,14 +100,13 @@
   background-color: var(--webchat-bg);
   color: var(--webchat-bubble-text);
   display: flex;
-  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   padding: 16px;
-
-  & .startButton {
-    flex-grow: 1;
-    flex-shrink: 1;
-    flex-basis: 0;
-  }
+  box-sizing: border-box;
 }
 
 button.bot-state-object {

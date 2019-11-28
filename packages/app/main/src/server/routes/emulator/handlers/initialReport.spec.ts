@@ -31,39 +31,25 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as HttpStatus from 'http-status-codes';
+import { INTERNAL_SERVER_ERROR, OK } from 'http-status-codes';
 
-import { sendActivityToConversation } from './sendActivityToConversation';
+import { createInitialReportHandler } from './initialReport';
 
-jest.mock('../../../../webSocketServer', () => ({
-  WebSocketServer: {
-    getSocketByConversationId: () => ({
-      send: jest.fn(),
+jest.mock('../../../../emulator', () => ({
+  Emulator: {
+    getInstance: () => ({
+      ngrok: {
+        report: jest.fn(),
+      },
     }),
   },
 }));
 
-const mockSendErrorResponse = jest.fn();
-jest.mock('../../../../utils/sendErrorResponse', () => ({
-  sendErrorResponse: (...args) => mockSendErrorResponse(...args),
-}));
-
-describe('sendActivityToConversation handler', () => {
-  beforeEach(() => {
-    mockSendErrorResponse.mockClear();
-  });
-
-  it('should send a 200 with a response from posting the activity', () => {
+describe('the initialReport handler', () => {
+  it('should return a 200 when the initial report is sent successfully', () => {
     const req: any = {
-      body: {},
-      conversation: {
-        prepActivityToBeSentToUser: jest.fn(() => ({ id: 'activity1' })),
-        user: {
-          id: ' someUser',
-        },
-      },
       params: {
-        activityId: 'activity1',
+        conversationId: 'convoId1',
       },
     };
     const res: any = {
@@ -71,33 +57,35 @@ describe('sendActivityToConversation handler', () => {
       send: jest.fn(),
     };
     const next = jest.fn();
-    sendActivityToConversation(req, res, next);
+    const mockEmulatorServer: any = {
+      report: jest.fn(),
+    };
+    const handler = createInitialReportHandler(mockEmulatorServer);
+    handler(req, res, next);
 
-    expect(res.send).toHaveBeenCalledWith(HttpStatus.OK, { id: 'activity1' });
+    expect(res.send).toHaveBeenCalledWith(OK);
     expect(res.end).toHaveBeenCalled();
     expect(next).toHaveBeenCalled();
   });
 
-  it('should send an error response if something goes wrong', () => {
+  it('should return a 500 and an error when something fails', () => {
     const req: any = {
-      body: {},
-      conversation: {
-        prepActivityToBeSentToUser: jest.fn(() => {
-          throw new Error('Something went wrong.');
-        }),
-        user: {
-          id: ' someUser',
-        },
-      },
-      params: {
-        activityId: 'activity1',
-      },
+      params: {},
     };
-    const res: any = {};
+    const res: any = {
+      end: jest.fn(),
+      send: jest.fn(),
+    };
     const next = jest.fn();
-    sendActivityToConversation(req, res, next);
+    const mockEmulatorServer: any = {
+      report: jest.fn(() => {
+        throw new Error('Failed to report.');
+      }),
+    };
+    const handler = createInitialReportHandler(mockEmulatorServer);
+    handler(req, res, next);
 
-    expect(mockSendErrorResponse).toHaveBeenCalledWith(req, res, next, new Error('Something went wrong.'));
+    expect(res.send).toHaveBeenCalledWith(INTERNAL_SERVER_ERROR, new Error('Failed to report.'));
     expect(next).toHaveBeenCalled();
   });
 });
