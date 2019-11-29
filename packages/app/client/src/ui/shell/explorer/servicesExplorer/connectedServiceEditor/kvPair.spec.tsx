@@ -53,7 +53,7 @@ describe('The KvPair component', () => {
       numRows: 2,
     });
 
-    expect(node.find('ul').children()).toHaveLength(2);
+    expect(node.find('tr')).toHaveLength(4);
   });
 
   it('should call the onChange callback with the updated kv pairs', () => {
