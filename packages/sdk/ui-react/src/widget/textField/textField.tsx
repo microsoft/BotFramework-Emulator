@@ -68,7 +68,7 @@ export class TextField extends Component<TextFieldProps, {}> {
       inputClassName += styles.invalid;
     }
     return (
-      <div className={`${styles.inputContainer} ${inputContainerClassName}`}>
+      <div className={`${styles.inputContainer} ${inputContainerClassName}`} role="presentation">
         {this.labelNode}
         <input
           aria-label={errorMessage ? this.props.label + ', ' + errorMessage : undefined}

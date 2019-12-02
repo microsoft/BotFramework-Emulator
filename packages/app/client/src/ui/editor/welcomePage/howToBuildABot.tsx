@@ -50,13 +50,13 @@ export class HowToBuildABot extends React.Component<HowToBuildABotProps, {}> {
       <div className={styles.section}>
         <div className={styles.howToBuildSection}>
           <SmallHeader className={styles.howToTitle}>How to build a bot</SmallHeader>
-          <div className={styles.stepContainer}>
+          <div className={styles.stepContainer} role="presentation">
             <div className={styles.stepIcon}>
               <div className={styles.buildPlan01} />
             </div>
             <div className={styles.stepSection}>
               <p className={styles.stepHeader}>Plan:</p>
-              <p className={styles.stepContent}>
+              <p className={styles.stepContent} role="presentation">
                 Review the bot&nbsp;
                 <LinkButton
                   ariaLabel={'Learn more about design guidelines.'}
@@ -69,13 +69,13 @@ export class HowToBuildABot extends React.Component<HowToBuildABotProps, {}> {
               </p>
             </div>
           </div>
-          <div className={styles.stepContainer}>
+          <div className={styles.stepContainer} role="presentation">
             <div className={styles.stepIcon}>
               <div className={styles.buildPlan02} />
             </div>
             <div className={styles.stepSection}>
               <p className={styles.stepHeader}>Build:</p>
-              <p className={styles.stepContent}>
+              <p className={styles.stepContent} role="presentation">
                 <LinkButton linkRole={true} onClick={this.onEmulatorToolsLinkClick}>
                   Download Command Line tools
                 </LinkButton>
@@ -117,13 +117,13 @@ export class HowToBuildABot extends React.Component<HowToBuildABotProps, {}> {
               </p>
             </div>
           </div>
-          <div className={styles.stepContainer}>
+          <div className={styles.stepContainer} role="presentation">
             <div className={styles.stepIcon}>
               <div className={styles.buildPlan03} />
             </div>
             <div className={styles.stepSection}>
               <p className={`${styles.stepHeader} ${styles.testBullet}`}>Test:</p>
-              <p className={styles.stepContent}>
+              <p className={styles.stepContent} role="presentation">
                 Test with the&nbsp;
                 <LinkButton
                   ariaLabel={'Test your bot on the Emulator.'}
@@ -144,13 +144,13 @@ export class HowToBuildABot extends React.Component<HowToBuildABotProps, {}> {
               </p>
             </div>
           </div>
-          <div className={styles.stepContainer}>
+          <div className={styles.stepContainer} role="presentation">
             <div className={styles.stepIcon}>
               <div className={styles.buildPlan04} />
             </div>
             <div className={styles.stepSection}>
               <p className={styles.stepHeader}>Publish:</p>
-              <p className={styles.stepContent}>
+              <p className={styles.stepContent} role="presentation">
                 Publish directly to Azure or
                 <br />
                 Use&nbsp;
@@ -165,13 +165,13 @@ export class HowToBuildABot extends React.Component<HowToBuildABotProps, {}> {
               </p>
             </div>
           </div>
-          <div className={styles.stepContainer}>
+          <div className={styles.stepContainer} role="presentation">
             <div className={styles.stepIcon}>
               <div className={styles.buildPlan05} />
             </div>
             <div className={styles.stepSection}>
               <p className={styles.stepHeader}>Connect:</p>
-              <p className={styles.stepContent}>
+              <p className={styles.stepContent} role="presentation">
                 Connect to&nbsp;
                 <LinkButton
                   ariaLabel={'Learn more connecting to channels.'}
@@ -184,13 +184,13 @@ export class HowToBuildABot extends React.Component<HowToBuildABotProps, {}> {
               </p>
             </div>
           </div>
-          <div className={styles.stepContainer}>
+          <div className={styles.stepContainer} role="presentation">
             <div className={styles.stepIcon}>
               <div className={styles.buildPlan06} />
             </div>
             <div className={styles.stepSection}>
               <p className={styles.stepHeader}>Evaluate:</p>
-              <p className={styles.stepContent}>
+              <p className={styles.stepContent} role="presentation">
                 <LinkButton linkRole={true} onClick={this.onAnalyticsLinkClick}>
                   View analytics
                 </LinkButton>

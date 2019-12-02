@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - [1992](https://github.com/microsoft/BotFramework-Emulator/pull/1992)
   - [1993](https://github.com/microsoft/BotFramework-Emulator/pull/1993)
   - [1994](https://github.com/microsoft/BotFramework-Emulator/pull/1994)
+  - [1995](https://github.com/microsoft/BotFramework-Emulator/pull/1995)
   - [1997](https://github.com/microsoft/BotFramework-Emulator/pull/1997)
   - [1999](https://github.com/microsoft/BotFramework-Emulator/pull/1999)
   - [2000](https://github.com/microsoft/BotFramework-Emulator/pull/2000)
