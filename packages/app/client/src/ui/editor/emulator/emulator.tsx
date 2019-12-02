@@ -48,6 +48,7 @@ import {
 
 import { Document, SplitterSize } from '../../../state/reducers/editor';
 import { debounce } from '../../../utils';
+import { isMac } from '../../../../../main/src/utils/platform';
 
 import { ChatPanelContainer } from './chatPanel';
 import LogPanel from './logPanel/logPanel';
@@ -304,6 +305,7 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
                   options={[NewUserId, SameUserId]}
                   onClick={this.onStartOverClick}
                   buttonRef={this.setRestartButtonRef}
+                  submenuLabel={isMac() ? 'Restart conversation sub menu' : ''}
                 />
                 <button
                   role={'menuitem'}
