@@ -164,6 +164,7 @@ html {
   --explorer-panel-group-title-color: var(--neutral-4);
   --explorer-panel-group-border: 1px solid transparent;
   --explorer-panel-empty-message-color: var(--neutral-5);
+  --explorer-link-color: #40A6FF;
 
   /* Explorer Bar */
   --explorer-bar-header-bg: var(--neutral-14);
@@ -220,7 +221,7 @@ html {
   --status-bar-color: #FFFFFF;
 
   /* Links */
-  --link-color: #3062D6;
+  --link-color: #3794FF;
   --link-color-disabled: #C8C8C8;
   --inspector-link-color: #75BEFF;
 
@@ -249,6 +250,7 @@ html {
 
   /* accessory buttons */
   --accessory-button-color: var(--neutral-5);
+  --accessory-button-icon-color: var(--link-color);
 
   /* Auto Complete */
   --auto-complete-results-opacity: 0.9;
