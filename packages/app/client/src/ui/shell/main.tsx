@@ -33,7 +33,7 @@
 
 import { Splitter } from '@bfemulator/ui-react';
 import * as React from 'react';
-import { remote } from 'electron';
+import { isLinux, isWindows } from '@bfemulator/app-shared';
 
 import * as Constants from '../../constants';
 import { Editor } from '../../state/reducers/editor';
@@ -121,7 +121,7 @@ export class Main extends React.Component<MainProps, MainState> {
 
     return (
       <>
-        {this.platform === 'win32' && <AppMenuContainer />}
+        {(isWindows() || isLinux()) && <AppMenuContainer />}
         <div className={styles.main}>
           <div className={styles.nav}>
             {!this.props.presentationModeEnabled && (

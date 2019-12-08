@@ -333,82 +333,12 @@ describe('AppMenuBuilder', () => {
   });
 
   it('should initialize the app menu for Linux', async () => {
-    let appMenuTemplate;
-    mockBuildFromTemplate = jest.fn(template => {
-      // when trying to build from the template, pull the template out
-      // so that we can examine it and return some menu placeholder
-      appMenuTemplate = template;
-      return 'I am a menu';
-    });
-    const mockState = {
-      chat: {
-        chats: {
-          someDocId: {
-            conversationId: 'someConversationId',
-          },
-        },
-      },
-      editor: {
-        activeEditor: 'primary',
-        editors: {
-          primary: {
-            activeDocumentId: 'someDocId',
-            documents: {
-              someDocId: {
-                contentType: SharedConstants.ContentTypes.CONTENT_TYPE_LIVE_CHAT,
-              },
-            },
-          },
-        },
-      },
-    };
-    const mockRemoteCall = jest.fn(commandName => {
-      if (commandName === SharedConstants.Commands.Misc.GetStoreState) {
-        return Promise.resolve(mockState);
-      } else {
-        return Promise.resolve({});
-      }
-    });
-    jest.spyOn(commandService, 'remoteCall').mockImplementation(mockRemoteCall);
     Object.defineProperty(process, 'platform', { value: 'linux' });
-    await AppMenuBuilder.initAppMenu();
 
-    // verify that each section of the menu is the expected length
-    expect(appMenuTemplate).toHaveLength(6); // file, debug, edit, view, convo, help
+    const result = await AppMenuBuilder.initAppMenu();
 
-    const fileMenuTemplate = appMenuTemplate[0].submenu;
-    expect(fileMenuTemplate).toHaveLength(17);
-
-    // should show the currently signed in user
-    const azureSignInItem = fileMenuTemplate[9];
-    expect(azureSignInItem.label).toBe('Sign out (TheAmazingAuthLad@hotmail.com)');
-
-    // should list all available themes and selected theme (midnight) as checked
-    const themeMenu = fileMenuTemplate[12];
-    expect(themeMenu.label).toBe('Themes');
-    expect(themeMenu.submenu).toHaveLength(3); // light, dark, midnight
-    expect(themeMenu.submenu[2].type).toBe('checkbox');
-    expect(themeMenu.submenu[2].label).toBe('midnight');
-    expect(themeMenu.submenu[2].checked).toBe(true);
-
-    const debugMenuTemplate = appMenuTemplate[1].submenu;
-    expect(debugMenuTemplate).toHaveLength(1);
-
-    const editMenuTemplate = appMenuTemplate[2].submenu;
-    expect(editMenuTemplate).toHaveLength(7);
-
-    const viewMenuTemplate = appMenuTemplate[3].submenu;
-    expect(viewMenuTemplate).toHaveLength(6);
-
-    const convoMenuTemplate = appMenuTemplate[4].submenu;
-    expect(convoMenuTemplate).toHaveLength(1);
-    const sendActivityMenu = convoMenuTemplate[0].submenu;
-    expect(sendActivityMenu).toHaveLength(6);
-
-    const helpMenuTemplate = appMenuTemplate[5].submenu;
-    expect(helpMenuTemplate).toHaveLength(14);
-
-    expect(mockSetApplicationMenu).toHaveBeenCalledWith('I am a menu');
+    expect(result).toBe(undefined);
+    expect(mockSetApplicationMenu).toHaveBeenCalledWith(mockBuildFromTemplate([]));
   });
 
   it('should initialize the app menu for Mac', async () => {

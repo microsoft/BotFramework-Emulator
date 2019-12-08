@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { BotInfo, isMac, SharedConstants, UpdateStatus } from '@bfemulator/app-shared';
+import { BotInfo, isLinux, isMac, isWindows, SharedConstants, UpdateStatus } from '@bfemulator/app-shared';
 import { CommandServiceImpl, CommandServiceInstance, ConversationService } from '@bfemulator/sdk-shared';
 import { app, clipboard, Menu, MenuItem, MenuItemConstructorOptions, shell } from 'electron';
 
@@ -72,9 +72,16 @@ export class AppMenuBuilder {
 
   /** Called on app startup */
   public static async initAppMenu(): Promise<void> {
-    // show an HTML app menu on Windows (a11y)
-    if (process.platform === 'win32') {
+    // show an HTML app menu on Windows & Linux (a11y)
+    if (isWindows()) {
       Menu.setApplicationMenu(null);
+      return;
+    }
+
+    // Work-around for Linux. Menu.setApplicationMenu(null) does not work on v4.x (https://github.com/electron/electron/issues/16521)
+    // Comes with the side effect of having an empty app menu bar at the top of the window.
+    if (isLinux()) {
+      Menu.setApplicationMenu(Menu.buildFromTemplate([]));
       return;
     }
 
