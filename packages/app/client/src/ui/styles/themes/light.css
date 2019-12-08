@@ -36,7 +36,7 @@ html {
   --webchat-user-bubble-text: var(--neutral-1);
   --webchat-selected-activity-bg: #B89500;
   --webchat-selected-activity-text: var(--neutral-1);
-  --webchat-timestamp-text: var(--neutral-6);
+  --webchat-timestamp-text: var(--neutral-10);
   --webchat-scrollbar-color: var(--scrollbar-color);
 
   /* sendbox */
