@@ -39,6 +39,7 @@ import {
   deepCopySlow,
   isLinux,
   isMac,
+  isWindows,
   newBot,
   newEndpoint,
   getFirstBotEndpoint,
@@ -166,5 +167,15 @@ describe('isMac() and isLinux()', () => {
   it('returns false when platform is not linux', () => {
     Object.defineProperty(process, 'platform', { value: 'something-else' });
     expect(isLinux()).toBe(false);
+  });
+
+  it('returns true when platform is windows', () => {
+    Object.defineProperty(process, 'platform', { value: 'win32' });
+    expect(isWindows()).toBe(true);
+  });
+
+  it('returns false when platform is not windows', () => {
+    Object.defineProperty(process, 'platform', { value: 'something-else' });
+    expect(isWindows()).toBe(false);
   });
 });
