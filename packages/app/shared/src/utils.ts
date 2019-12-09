@@ -131,3 +131,11 @@ export function traceContainsDebugData(trace: Activity): boolean {
   const valueTypeByte = trace ? ~~ValueTypesMask[trace.valueType] : 0;
   return !!((ValueTypesMask.BotState | ValueTypesMask.Command | ValueTypesMask.Activity) & valueTypeByte);
 }
+
+export function isMac() {
+  return process.platform === 'darwin';
+}
+
+export function isLinux() {
+  return process.platform === 'linux';
+}

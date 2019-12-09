@@ -34,6 +34,7 @@
 import { Activity } from 'botframework-schema';
 import { createDirectLine } from 'botframework-webchat';
 import { DirectLine } from 'botframework-directlinejs';
+import { isMac } from '@bfemulator/app-shared';
 import { CommandServiceImpl, CommandServiceInstance, EmulatorMode, uniqueId, uniqueIdv4 } from '@bfemulator/sdk-shared';
 import { SplitButton, Splitter } from '@bfemulator/ui-react';
 import base64Url from 'base64url';
@@ -48,7 +49,6 @@ import {
 
 import { Document, SplitterSize } from '../../../state/reducers/editor';
 import { debounce } from '../../../utils';
-import { isMac } from '../../../../../main/src/utils/platform';
 
 import { ChatPanelContainer } from './chatPanel';
 import LogPanel from './logPanel/logPanel';

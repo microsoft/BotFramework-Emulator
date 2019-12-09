@@ -34,7 +34,7 @@ import './commands';
 import * as path from 'path';
 import * as url from 'url';
 
-import { newNotification, Notification, PersistentSettings, SharedConstants } from '@bfemulator/app-shared';
+import { isMac, newNotification, Notification, PersistentSettings, SharedConstants } from '@bfemulator/app-shared';
 import { app, BrowserWindow, Rectangle, screen, systemPreferences } from 'electron';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
@@ -48,7 +48,7 @@ import { azureLoggedInUserChanged } from './state/actions/azureAuthActions';
 import { rememberBounds } from './state/actions/windowStateActions';
 import { dispatch, getSettings, store } from './state/store';
 import { TelemetryService } from './telemetry';
-import { botListsAreDifferent, ensureStoragePath, isMac, saveSettings, writeFile } from './utils';
+import { botListsAreDifferent, ensureStoragePath, saveSettings, writeFile } from './utils';
 import { openFileFromCommandLine } from './utils/openFileFromCommandLine';
 import { sendNotificationToClient } from './utils/sendNotificationToClient';
 import { WindowManager } from './windowManager';

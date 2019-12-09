@@ -33,7 +33,7 @@
 
 import * as path from 'path';
 
-import { BotInfo, getBotDisplayName, SharedConstants } from '@bfemulator/app-shared';
+import { BotInfo, getBotDisplayName, isMac, SharedConstants } from '@bfemulator/app-shared';
 import {
   BotConfigWithPath,
   Command,
@@ -52,7 +52,6 @@ import { store } from '../state/store';
 import { BotHelpers } from '../botHelpers';
 import { Emulator } from '../emulator';
 import { TelemetryService } from '../telemetry';
-import { isMac } from '../utils';
 import { botProjectFileWatcher, chatWatcher, transcriptsWatcher } from '../watchers';
 import { CredentialManager } from '../credentialManager';
 
