@@ -30,11 +30,10 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { Notification, NotificationType, SharedConstants } from '@bfemulator/app-shared';
+import { isLinux, isMac, Notification, NotificationType, SharedConstants } from '@bfemulator/app-shared';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 import { remote } from 'electron';
 
-import { isMac } from '../../../../app/main/src/utils/platform';
 const maxZoomFactor = 3; // 300%
 const minZoomFactor = 0.25; // 25%;
 class EventHandlers {
@@ -136,7 +135,7 @@ class EventHandlers {
       }
     }
 
-    if (isMac()) {
+    if (isMac() || isLinux()) {
       const tabPressed: boolean = key === 'tab';
       const lastDecendants = EventHandlers.getLastDecendants(document.querySelector('main'));
       const firstElement = document.querySelector('nav').firstElementChild as HTMLElement;

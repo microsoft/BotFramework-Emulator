@@ -163,6 +163,7 @@ html {
   --explorer-panel-group-title-color: var(--neutral-1);
   --explorer-panel-group-border: 1px solid #72C3DF;
   --explorer-panel-empty-message-color: var(--neutral-4);
+  --explorer-link-color: var(--link-color);
 
   /* Explorer Bar */
   --explorer-bar-header-bg: var(--neutral-16);
@@ -248,6 +249,7 @@ html {
 
   /* Inspector accessory buttons */
   --accessory-button-color: var(--neutral-5);
+  --accessory-button-icon-color: #72C3DF;
 
   /* Auto Complete */
   --auto-complete-results-opacity: 1;
