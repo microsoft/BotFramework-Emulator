@@ -42,8 +42,8 @@ html {
   /* sendbox */
   --webchat-sendbox-bg: var(--neutral-1);
   --webchat-sendbox-text: initial;
-  --webchat-buttons-color: var(--neutral-6);
-  --webchat-buttons-color-focus: var(--neutral-9);
+  --webchat-buttons-color: var(--neutral-10);
+  --webchat-buttons-color-focus: var(--neutral-12);
   --webchat-buttons-dictate: #BE1100;
 
   /* transcript overlays */
