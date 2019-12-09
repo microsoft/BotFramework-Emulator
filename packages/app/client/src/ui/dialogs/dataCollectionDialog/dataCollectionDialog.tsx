@@ -56,7 +56,7 @@ export class DataCollectionDialog extends Component<DataCollectionDialogProps, {
         </p>
         <p>You can turn data collection on or off at any time in your Emulator Settings.</p>
         <p>
-          <LinkButton linkRole={true} onClick={this.onPrivacyLinkClick}>
+          <LinkButton className={styles.dialogLink} linkRole={true} onClick={this.onPrivacyLinkClick}>
             Privacy statement
           </LinkButton>
         </p>
