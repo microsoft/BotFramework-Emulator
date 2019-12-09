@@ -41,7 +41,6 @@ export * from './getSafeBotName';
 export * from './isDev';
 export * from './loadSettings';
 export * from './parseActivitiesFromChatFile';
-export * from './platform';
 export * from './readFileSync';
 export * from './saveSettings';
 export * from './sendErrorResponse';

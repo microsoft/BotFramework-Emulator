@@ -34,7 +34,16 @@
 import { BotConfigWithPath } from '@bfemulator/sdk-shared';
 import { IEndpointService, ServiceTypes } from 'botframework-config/lib/schema';
 
-import { isObject, deepCopySlow, newBot, newEndpoint, getFirstBotEndpoint, newNotification } from './utils';
+import {
+  isObject,
+  deepCopySlow,
+  isLinux,
+  isMac,
+  newBot,
+  newEndpoint,
+  getFirstBotEndpoint,
+  newNotification,
+} from './utils';
 import { NotificationType } from './types';
 
 describe('utility function tests', () => {
@@ -125,5 +134,37 @@ describe('utility function tests', () => {
 
     expect(notif.message).toBe('someMessage');
     expect(notif.type).toBe(NotificationType.Info);
+  });
+});
+
+describe('isMac() and isLinux()', () => {
+  let originalPlatform;
+
+  beforeEach(() => {
+    originalPlatform = process.platform;
+  });
+
+  afterEach(() => {
+    Object.defineProperty(process, 'platform', { value: originalPlatform });
+  });
+
+  it('returns true when platform is darwin', () => {
+    Object.defineProperty(process, 'platform', { value: 'darwin' });
+    expect(isMac()).toBe(true);
+  });
+
+  it('returns false when platform is not darwin', () => {
+    Object.defineProperty(process, 'platform', { value: 'something-else' });
+    expect(isMac()).toBe(false);
+  });
+
+  it('returns true when platform is linux', () => {
+    Object.defineProperty(process, 'platform', { value: 'linux' });
+    expect(isLinux()).toBe(true);
+  });
+
+  it('returns false when platform is not linux', () => {
+    Object.defineProperty(process, 'platform', { value: 'something-else' });
+    expect(isLinux()).toBe(false);
   });
 });

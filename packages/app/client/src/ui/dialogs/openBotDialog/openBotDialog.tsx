@@ -128,7 +128,6 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
     const errorMessage = OpenBotDialog.getErrorMessage(validationResult);
     const shouldBeDisabled =
       validationResult === ValidationResult.Invalid || validationResult === ValidationResult.Empty;
-    const botUrlLabel = 'Bot URL';
 
     return (
       <Dialog cancel={this.props.onDialogCancel} className={openBotStyles.themeOverrides} title="Open a bot">
@@ -137,10 +136,10 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
             <AutoComplete
               autoFocus={true}
               errorMessage={errorMessage}
-              label={botUrlLabel}
+              label={'Bot URL'}
               items={savedBotUrls.map(elem => elem.url).slice(0, 9)}
               onChange={this.onBotUrlChange}
-              placeholder={botUrlLabel}
+              placeholder={'Enter your bot URL'}
               value={this.state.botUrl}
             />
             {this.browseButton}
