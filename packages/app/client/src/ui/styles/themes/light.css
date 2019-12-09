@@ -36,7 +36,7 @@ html {
   --webchat-user-bubble-text: var(--neutral-1);
   --webchat-selected-activity-bg: #B89500;
   --webchat-selected-activity-text: var(--neutral-1);
-  --webchat-timestamp-text: var(--neutral-6);
+  --webchat-timestamp-text: var(--neutral-10);
   --webchat-scrollbar-color: var(--scrollbar-color);
 
   /* sendbox */
@@ -163,6 +163,7 @@ html {
   --explorer-panel-group-border: 1px solid transparent;
   --explorer-panel-empty-message-color: var(--neutral-15);
   --service-panescrollbar-color: var(--neutral-13);
+  --explorer-link-color: var(--dialog-link-color);
 
   /* Explorer Bar */
   --explorer-bar-header-bg: var(--neutral-3);
@@ -249,6 +250,7 @@ html {
 
   /* Inspector accessory buttons */
   --accessory-button-color: var(--s-button-color);
+  --accessory-button-icon-color: var(--link-color);
 
   /* Auto Complete */
   --auto-complete-results-opacity: 0.9;
