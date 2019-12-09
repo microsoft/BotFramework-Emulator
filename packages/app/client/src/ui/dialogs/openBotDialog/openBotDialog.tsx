@@ -46,6 +46,8 @@ import * as React from 'react';
 import { ChangeEvent, Component, MouseEvent, ReactNode } from 'react';
 import { EmulatorMode } from '@bfemulator/sdk-shared';
 
+import * as dialogStyles from '../dialogStyles.scss';
+
 import * as openBotStyles from './openBotDialog.scss';
 
 export interface OpenBotDialogProps {
@@ -176,6 +178,7 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
             />
             <LinkButton
               ariaLabel="Learn more about Azure for US Government"
+              className={dialogStyles.dialogLink}
               linkRole={true}
               onClick={this.onEmulatorAzureGovDocsClick}
             >
