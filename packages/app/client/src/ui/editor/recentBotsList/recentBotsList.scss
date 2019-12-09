@@ -57,8 +57,8 @@
       color: var(--my-bots-entry-hover-color);
     }
 
-    .recent-bot-action-bar {
-      display: block;
+    .recent-bot-action-bar > button {
+      opacity: 1;
     }
   }
 
@@ -75,34 +75,45 @@
         text-decoration: underline;
       }
     }
+
+    &:focus ~ .recent-bot-action-bar > button {
+      opacity: 1;
+    }
   }
 }
 
 
 .recent-bot-action-bar {
   background-color: transparent;
-  display: none;
+  display: flex;
+  align-items: center;
   height: 100%;
+  width: auto;
   min-width: 16px;
   position: absolute;
   right: 0;
-  top: 2px;
-  width: auto;
+  top: 0;
+  padding-right: 4px;
 
   > button {
     border: 0;
     cursor: pointer;
-    height: 0;
+    height: 16px;
     padding: 0;
-    width: 0;
+    width: 16px;
+    background-color: transparent;
+    opacity: 0;
 
-    &:after {
-      color: var(--my-bots-entry-color);
-      content: "\2716";
-      font-size: 12px;
+    &:focus {
+      opacity: 1;
+    }
+
+    > span {
+      -webkit-mask: url('../../media/ic_close.svg');
+      display: block;
       height: 16px;
-      width: 8px;
-      margin-right: 8px;
+      width: 16px;
+      background-color: var(--my-bots-entry-color);
     }
   }
 }
