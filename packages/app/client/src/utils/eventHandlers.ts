@@ -137,13 +137,20 @@ class EventHandlers {
 
     if (isMac() || isLinux()) {
       const tabPressed: boolean = key === 'tab';
-      const lastDecendants = EventHandlers.getLastDecendants(document.querySelector('main'));
-      const firstElement = document.querySelector('nav').firstElementChild as HTMLElement;
-      const lastElement = lastDecendants[lastDecendants.length - 1] as HTMLElement;
-      const isFirstElement: boolean = document.activeElement === firstElement;
-      const isLastElement: boolean = document.activeElement === lastElement;
 
       if (tabPressed) {
+        const lastDecendants = EventHandlers.getLastDecendants(document.querySelector('main'));
+        // TODO: More generalized approach to finding first and last focusable elements. This seems brittle.
+        let firstElement: HTMLElement;
+        if (isLinux()) {
+          firstElement = document.querySelector('[class*="app-menu"] button');
+        } else {
+          firstElement = document.querySelector('nav').firstElementChild as HTMLElement;
+        }
+        const lastElement = lastDecendants[lastDecendants.length - 1] as HTMLElement;
+        const isFirstElement: boolean = document.activeElement === firstElement;
+        const isLastElement: boolean = document.activeElement === lastElement;
+
         if (shiftPressed && isFirstElement) {
           lastElement.focus();
           event.preventDefault();
