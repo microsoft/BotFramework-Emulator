@@ -85,6 +85,10 @@ jest.mock('electron', () => ({
 }));
 
 const mockDOM = `
+<ul class="app-menu">
+  <button id="file-btn">File</button>
+  <button id="edit-btn">Edit</button>
+</ul>
 <nav>
   <button id="navBtn">NavBtn</button>
 </nav>
@@ -267,12 +271,25 @@ describe('#globalHandlers', () => {
     expect(mockRemoteCommandsCalled[0].commandName).toBe(ToggleDevTools);
   });
 
-  it('should move focus to first element when Tab is pressed', async () => {
+  it('should move focus to first element when Tab is pressed on Mac', async () => {
     const event = new KeyboardEvent('keydown', { key: 'Tab' });
     Object.defineProperty(process, 'platform', { value: 'darwin' });
 
     document.body.innerHTML = mockDOM;
     var mockFirstElement = document.getElementById('navBtn');
+    var mockLastElement = document.getElementById('btn3');
+    mockLastElement.focus();
+    await globalHandlers(event);
+
+    expect(document.activeElement.id).toBe(mockFirstElement.id);
+  });
+
+  it('should move focus to first element when Tab is pressed on Linux', async () => {
+    const event = new KeyboardEvent('keydown', { key: 'Tab' });
+    Object.defineProperty(process, 'platform', { value: 'linux' });
+
+    document.body.innerHTML = mockDOM;
+    var mockFirstElement = document.getElementById('file-btn');
     var mockLastElement = document.getElementById('btn3');
     mockLastElement.focus();
     await globalHandlers(event);
