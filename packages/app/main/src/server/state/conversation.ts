@@ -89,6 +89,7 @@ export class Conversation extends EventEmitter {
   public codeVerifier: string = undefined;
   public members: User[] = [];
   public nextWatermark = 0;
+  public childBotLocation: string;
   // the list of activities in this conversation
   private activities: ActivityBucket[] = [];
   private transcript: TranscriptRecord[] = [];
@@ -122,7 +123,7 @@ export class Conversation extends EventEmitter {
   /**
    * Sends the activity to the conversation's bot.
    */
-  public async postActivityToBot(activity: Activity, recordInConversation: boolean) {
+  public async postActivityToBot(activity: Activity, recordInConversation: boolean, botLocation?: string) {
     if (!this.botEndpoint) {
       return this.emulatorServer.logger.logMessage(
         this.conversationId,
@@ -169,7 +170,7 @@ export class Conversation extends EventEmitter {
     // If a message to the bot was triggered from a transcript, don't actually send it.
     // This can happen when clicking a button in an adaptive card, for instance.
     if (!this.conversationIsTranscript) {
-      resp = await this.botEndpoint.fetchWithAuth(this.botEndpoint.botUrl, options);
+      resp = await this.botEndpoint.fetchWithAuth(botLocation || this.botEndpoint.botUrl, options);
       status = resp.status;
     }
 
@@ -424,8 +425,10 @@ export class Conversation extends EventEmitter {
         token,
       },
     } as Activity;
+    const botLocation = this.childBotLocation || undefined;
+    this.childBotLocation = undefined;
 
-    return this.postActivityToBot(activity as Activity, false);
+    return this.postActivityToBot(activity as Activity, false, botLocation);
   }
 
   /**
@@ -581,7 +584,12 @@ export class Conversation extends EventEmitter {
       activity.recipient.role = 'bot';
     }
 
-    activity.serviceUrl = await this.emulatorServer.getServiceUrl(this.botEndpoint.botUrl);
+    const serviceUrl = await this.emulatorServer.getServiceUrl(this.botEndpoint.botUrl);
+    activity.serviceUrl = serviceUrl;
+    activity.channelData = {
+      ...activity.channelData,
+      emulatorUrl: serviceUrl,
+    };
 
     if (recordInConversation) {
       this.addActivityToQueue({ ...activity } as Activity);

@@ -75,11 +75,32 @@ export class OAuthLinkEncoder {
       const oauthCard: OAuthCard = attachment.content as OAuthCard;
       if (oauthCard.buttons && oauthCard.buttons.length === 1) {
         const cardAction = oauthCard.buttons[0];
-        if (cardAction.type === 'signin' && !cardAction.value && !OAuthLinkEncoder.EmulateOAuthCards) {
-          const link = await this.getSignInLink(oauthCard.connectionName, codeChallenge);
+        if (cardAction.type === 'signin' && !OAuthLinkEncoder.EmulateOAuthCards) {
+          let link;
+          if (!cardAction.value) {
+            link = await this.getSignInLink(oauthCard.connectionName, codeChallenge);
+          } else {
+            // skills flow
+            const conversation = this.emulatorServer.state.conversations.conversationById(this.conversationId);
+            const { channelData: { botUrl = '' } = {} } = activity;
+            conversation.childBotLocation = botUrl; // store child bot location for later
+            link = await this.decorateSignInLink(cardAction.value, codeChallenge);
+          }
           cardAction.value = link;
           cardAction.type = 'openUrl';
         }
+        // if (cardAction.type === 'signin' && !cardAction.value && !OAuthLinkEncoder.EmulateOAuthCards) {
+        //   const link = await this.getSignInLink(oauthCard.connectionName, codeChallenge);
+        //   cardAction.value = link;
+        //   cardAction.type = 'openUrl';
+        // }
+        // // this is the skills flow
+        // else if (cardAction.type === 'signin' && cardAction.value && !OAuthLinkEncoder.EmulateOAuthCards) {
+        //   const link = await this.decorateSignInLink(cardAction.value);
+        //   // we just want to decorate the link so we get the token back
+        //   cardAction.value = link;
+        //   cardAction.type = 'openUrl';
+        // }
       }
     }
     return true;
@@ -142,5 +163,15 @@ export class OAuthLinkEncoder {
     }
 
     throw new Error(errorMessage);
+  }
+
+  private decorateSignInLink(link: string, codeChallenge: string): string {
+    return (
+      OAuthLinkEncoder.OAuthUrlProtocol +
+      '//' +
+      `${link}${encodeURIComponent('&')}code_challenge=${codeChallenge}` +
+      '&&&' +
+      this.conversationId
+    );
   }
 }
