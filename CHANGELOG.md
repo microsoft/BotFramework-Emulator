@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## v4.7.0 - 2019 - 12 - 13
 ## Fixed
 - [client] Added an empty state for the recent bots submenu in the app menu for Windows in PR [1945](https://github.com/microsoft/BotFramework-Emulator/pull/1945)
 - [client] Fixed a bug that was showing the custom user ID validation message when disabled in PR [1946](https://github.com/microsoft/BotFramework-Emulator/pull/1946)
