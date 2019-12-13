@@ -1,0 +1,18 @@
+.ngrok-debugger-container {
+  height: 500px;
+
+  .input-output-stream {
+    background: black;
+    color: white;
+  }
+
+  .tunnel-health {
+    background: white;
+    color: black;
+  }
+}
+
+.spacing {
+  padding: 0 0 2px 3px;
+}
+
