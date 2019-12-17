@@ -34,6 +34,7 @@ import { ChildProcess, spawn } from 'child_process';
 import { EventEmitter } from 'events';
 import { platform } from 'os';
 import * as path from 'path';
+import { ensureStoragePath, writeFile } from './utils';
 import { existsSync } from 'fs';
 import { clearTimeout, setTimeout } from 'timers';
 
@@ -93,7 +94,21 @@ export class NgrokInstance {
       return this.pendingConnection;
     }
     await this.getNgrokInspectUrl(options);
-    return this.runTunnel(options);
+    const tunnelInfo: { url; inspectUrl } = await this.runTunnel(options);
+    setInterval(() => this.checkTunnelStatus.bind(this)(tunnelInfo.url), 60000);
+    return tunnelInfo;
+  }
+
+  private async checkTunnelStatus(inspectUrl: string): Promise<void> {
+    const response: Response = await fetch(inspectUrl, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    const isErrorResponse = response.status === 429 || response.status === 402 || response.status === 500;
+    if (isErrorResponse) {
+      this.ngrokEmitter.emit('tunnelError', response);
+    }
   }
 
   public async disconnect(url?: string) {
@@ -220,31 +235,45 @@ export class NgrokInstance {
   private spawnNgrok(opts: NgrokOptions): ChildProcess {
     const filename = `${opts.path ? path.basename(opts.path) : bin}`;
     const folder = opts.path ? path.dirname(opts.path) : path.join(__dirname, 'bin');
-    const args = ['start', '--none', '--log=stdout', `--region=${opts.region}`];
-    const ngrokPath = path.join(folder, filename);
-    if (!existsSync(ngrokPath)) {
-      throw new Error(
-        `Could not find ngrok executable at path: ${ngrokPath}. ` +
-          `Make sure that the correct path to ngrok is configured in the Emulator app settings. ` +
-          `Ngrok is required to receive a token from the Bot Framework token service.`
-      );
+    const ngrokLoggerPath = path.join(ensureStoragePath(), 'ngrok.log');
+    try {
+      writeFile(ngrokLoggerPath, 'Ngrok Logger starting');
+      console.log('Ngrok Logger starts', ngrokLoggerPath);
+      const args = ['start', '--none', `--log=stdout`, `--region=${opts.region}`];
+      const ngrokPath = path.join(folder, filename);
+      if (!existsSync(ngrokPath)) {
+        throw new Error(
+          `Could not find ngrok executable at path: ${ngrokPath}. ` +
+            `Make sure that the correct path to ngrok is configured in the Emulator app settings. ` +
+            `Ngrok is required to receive a token from the Bot Framework token service.`
+        );
+      }
+      const ngrok = spawn(ngrokPath, args, { cwd: folder });
+      // Errors are emitted instead of throwing since ngrok is a long running process
+      ngrok.on('error', e => this.ngrokEmitter.emit('error', e));
+
+      ngrok.on('exit', () => {
+        console.log('Inside exit');
+        this.tunnels = {};
+        this.cleanUpNgrokExpirationTimer();
+        this.ngrokEmitter.emit('disconnect');
+      });
+
+      ngrok.on('close', () => {
+        console.log('Inside close');
+        this.cleanUpNgrokExpirationTimer();
+        this.ngrokEmitter.emit('close');
+      });
+
+      ngrok.stdout.on('data', data => {
+        writeFile(ngrokLoggerPath, data.toString() + '\n');
+      });
+
+      ngrok.stderr.on('data', (data: Buffer) => this.ngrokEmitter.emit('error', data.toString()));
+      console.log(ngrok.pid);
+      return ngrok;
+    } catch (e) {
+      throw new Error(`Ngrok spawning failed`);
     }
-    const ngrok = spawn(ngrokPath, args, { cwd: folder });
-    // Errors are emitted instead of throwing since ngrok is a long running process
-    ngrok.on('error', e => this.ngrokEmitter.emit('error', e));
-
-    ngrok.on('exit', () => {
-      this.tunnels = {};
-      this.cleanUpNgrokExpirationTimer();
-      this.ngrokEmitter.emit('disconnect');
-    });
-
-    ngrok.on('close', () => {
-      this.cleanUpNgrokExpirationTimer();
-      this.ngrokEmitter.emit('close');
-    });
-
-    ngrok.stderr.on('data', (data: Buffer) => this.ngrokEmitter.emit('error', data.toString()));
-    return ngrok;
   }
 }

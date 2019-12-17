@@ -1,18 +1,81 @@
 .ngrok-debugger-container {
-  height: 500px;
+  :global {
+    input {
+      font-family: var(--default-font-family);
+    }
+    align-items: flex-center;
+    justify-content: flex-center;
+  }
 
-  .input-output-stream {
-    background: black;
-    color: white;
+  .tunnelDetailsList {
+    background-color: var(--my-bots-well-bg);
+    border: var(--my-bots-well-border);
+    padding: 10px;
+  
+    &::-webkit-scrollbar-thumb {
+      background-color: transparent;
+    }
+  
+    &:hover {
+      &::-webkit-scrollbar-thumb {
+        background-color: var(--my-bots-scrollbar-color);
+      }
+    }
+
+    legend {
+      display: block;
+      font-weight: bold;
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
   }
 
   .tunnel-health {
-    background: white;
-    color: black;
+    display: flex;
   }
-}
+  
+  .tunnel-health-indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    position: relative;
+    top: 1.5px;
+  }
+  
+  .console-viewer {
+    background: var(--success-bg);
+  }
+  
+  .health-status-good {
+    background: var(--success-bg);
+  }
 
-.spacing {
-  padding: 0 0 2px 3px;
+  .health-status-bad {
+    background: var(--error-bg);
+    border: 1px solid var(--error-outline);
+  }
+
+  .error-window {
+    margin: 0;
+    color: var(--error-outline);
+  }
+  
+  .spacing {
+    padding: 0 0 2px 3px;
+  }
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    &.well {
+      padding: 10px;
+    }
+  }
+  
 }
 

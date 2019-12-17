@@ -31,47 +31,47 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { remote } from 'electron';
-import { Provider } from 'react-redux';
-import * as ReactDOM from 'react-dom';
-import * as React from 'react';
-import installExtension, { REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS } from 'electron-devtools-installer';
+import {
+  NgrokTunnelActions,
+  NgrokTunnelAction,
+  TunnelInfo,
+  NgrokTunnelPayloadTypes,
+  TunnelError,
+} from '../actions/ngrokTunnelActions';
 
-import './commands';
-import interceptError from './interceptError';
-import interceptHyperlink from './interceptHyperlink';
-import Main from './ui/shell/mainContainer';
-import { store } from './state/store';
-import './ui/styles/globals.scss';
-
-interceptError();
-interceptHyperlink();
-
-if (!remote.app.isPackaged) {
-  // enable react & react-redux dev tools
-  installExtension([REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS])
-    /* eslint-disable no-console */
-    .then(installed => console.log('Successfully installed: ', installed.join(', ')))
-    .catch(err => console.error('Failed to install dev tools: ', err));
-  /* eslint-enable no-console */
+export interface ngrokTunnelState {
+  errors: any;
+  publicUrl: string;
+  inspectUrl: string;
+  logPath: string;
+  postmanCollectionPath: string;
 }
 
-// Start rendering the UI
-ReactDOM.render(
-  React.createElement(Provider, { store }, React.createElement(Main as any)),
-  document.getElementById('root')
-);
+const DEFAULT_STATE: ngrokTunnelState = {
+  inspectUrl: 'http://127.0.0.1:4040',
+  publicUrl: '',
+  logPath: '',
+  postmanCollectionPath: '',
+  errors: {},
+};
 
-if (module.hasOwnProperty('hot')) {
-  (module as any).hot.accept();
-}
-
-document.addEventListener('keydown', function(e) {
-  if (e.which === 123) {
-    require('remote')
-      .getCurrentWindow()
-      .toggleDevTools();
-  } else if (e.which === 116) {
-    location.reload();
+export function ngrokTunnel(
+  state: ngrokTunnelState = DEFAULT_STATE,
+  action: NgrokTunnelAction<NgrokTunnelPayloadTypes>
+): ngrokTunnelState {
+  switch (action.type) {
+    case NgrokTunnelActions.updateTunnelInfo:
+      const tunnelInfo: TunnelInfo = action.payload as TunnelInfo;
+      state.inspectUrl = tunnelInfo.inspectUrl;
+      state.publicUrl = tunnelInfo.publicUrl;
+      state.logPath = tunnelInfo.logPath;
+      state.postmanCollectionPath = tunnelInfo.postmanCollectionPath;
+      break;
+    case NgrokTunnelActions.updateTunnelError:
+      state.errors = action.payload as TunnelError;
+      break;
   }
-});
+  return state;
+}
+
+export default ngrokTunnel;

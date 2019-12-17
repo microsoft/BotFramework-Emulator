@@ -155,6 +155,7 @@ class EmulatorApplication {
 
   private initializeNgrokListeners() {
     Emulator.getInstance().ngrok.ngrokEmitter.on('expired', this.onNgrokSessionExpired);
+    Emulator.getInstance().ngrok.ngrokEmitter.on('tunnelError', this.onNgrokTunnelError);
   }
 
   private initializeSystemPreferencesListeners() {
@@ -242,6 +243,17 @@ class EmulatorApplication {
     dispatch(rememberBounds(bounds));
   };
 
+  private onNgrokTunnelError = async () => {
+    const ngrokNotification: Notification = newNotification(
+      'Your ngrok tunnel instance seems to have a glitch. Please check our Ngrok debug console for more details'
+    );
+
+    ngrokNotification.addButton('Take me to Ngrok Debugger', () => {
+      const { Commands } = SharedConstants;
+      this.commandService.remoteCall(Commands.Notifications.Remove, ngrokNotification.id);
+    });
+  };
+
   // ngrok listeners
   private onNgrokSessionExpired = async () => {
     // when ngrok expires, spawn notification to reconnect
@@ -282,7 +294,7 @@ class EmulatorApplication {
     if (this.mainBrowserWindow) {
       return;
     }
-    this.mainBrowserWindow = new BrowserWindow({ show: false, backgroundColor: '#f7f7f7', width: 1400, height: 920 });
+    this.mainBrowserWindow = new BrowserWindow({ show: true, backgroundColor: '#f7f7f7', width: 1400, height: 920 });
     this.initializeBrowserWindowListeners();
 
     this.mainWindow = new Window(this.mainBrowserWindow);
@@ -306,6 +318,7 @@ class EmulatorApplication {
 
     this.mainBrowserWindow.loadURL(page);
     this.mainBrowserWindow.setTitle(app.getName());
+    this.mainBrowserWindow.webContents.openDevTools();
   };
 
   private onAppActivate = () => {
