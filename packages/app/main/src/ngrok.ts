@@ -32,13 +32,15 @@
 //
 import { ChildProcess, spawn } from 'child_process';
 import { EventEmitter } from 'events';
+import { clearTimeout, setTimeout } from 'timers';
 import { platform } from 'os';
 import * as path from 'path';
 import { ensureStoragePath, writeFile } from './utils';
-import { existsSync } from 'fs';
-import { clearTimeout, setTimeout } from 'timers';
+import { existsSync, writeFileSync } from 'fs';
+import ngrokCollection from './utils/postmanNgrokCollection';
 
 import { uniqueId } from '@bfemulator/sdk-shared';
+import { TunnelInfo } from './state';
 
 /* eslint-enable typescript/no-var-requires */
 export interface NgrokOptions {
@@ -69,6 +71,8 @@ const defaultOptions: Partial<NgrokOptions> = {
 
 const bin = 'ngrok' + (platform() === 'win32' ? '.exe' : '');
 const addrRegExp = /starting web service.*addr=(\d+\.\d+\.\d+\.\d+:\d+)/;
+const logPath: string = path.join(ensureStoragePath(), 'ngrok.log');
+const postmanCollectionPath: string = path.join(ensureStoragePath(), 'ngrokCollection.json');
 
 export const intervals = { retry: 200, expirationPoll: 1000 * 60 * 5, expirationTime: 1000 * 60 * 60 * 8 };
 
@@ -105,7 +109,8 @@ export class NgrokInstance {
         'Content-Type': 'application/json',
       },
     });
-    const isErrorResponse = response.status === 429 || response.status === 402 || response.status === 500;
+    let isErrorResponse =
+      response.status === 429 || response.status === 402 || response.status === 500 || !response.headers.get('Server');
     if (isErrorResponse) {
       this.ngrokEmitter.emit('tunnelError', response);
     }
@@ -190,7 +195,14 @@ export class NgrokInstance {
     clearTimeout(this.ngrokExpirationTimer);
   }
 
-  private async runTunnel(opts: NgrokOptions): Promise<{ url; inspectUrl }> {
+  private updatePostmanCollectionWithNewUrls(inspectUrl: string): void {
+    const postmanCopy = JSON.stringify(ngrokCollection);
+    const collectionWithUrlReplaced = postmanCopy.replace(/127.0.0.1:4040/g, inspectUrl.replace(/(^\w+:|^)\/\//, ''));
+    writeFileSync(postmanCollectionPath, collectionWithUrlReplaced);
+    console.log(postmanCollectionPath);
+  }
+
+  private async runTunnel(opts: NgrokOptions): Promise<{ url: string; inspectUrl: string }> {
     let retries = 100;
     const url = `${this.inspectUrl}/api/tunnels`;
     const body = JSON.stringify(opts);
@@ -227,6 +239,14 @@ export class NgrokInstance {
       this.ngrokExpirationTimer = setTimeout(this.checkForNgrokExpiration.bind(this), intervals.expirationPoll);
 
       this.ngrokEmitter.emit('connect', publicUrl, this.inspectUrl);
+      this.updatePostmanCollectionWithNewUrls(this.inspectUrl);
+      const tunnelDetails: TunnelInfo = {
+        publicUrl,
+        inspectUrl: this.inspectUrl,
+        postmanCollectionPath,
+        logPath,
+      };
+      this.ngrokEmitter.emit('updateNewTunnelInfo', tunnelDetails);
       this.pendingConnection = null;
       return { url: publicUrl, inspectUrl: this.inspectUrl };
     }
@@ -235,10 +255,9 @@ export class NgrokInstance {
   private spawnNgrok(opts: NgrokOptions): ChildProcess {
     const filename = `${opts.path ? path.basename(opts.path) : bin}`;
     const folder = opts.path ? path.dirname(opts.path) : path.join(__dirname, 'bin');
-    const ngrokLoggerPath = path.join(ensureStoragePath(), 'ngrok.log');
     try {
-      writeFile(ngrokLoggerPath, 'Ngrok Logger starting');
-      console.log('Ngrok Logger starts', ngrokLoggerPath);
+      writeFile(logPath, 'Ngrok Logger starting');
+      console.log('Ngrok Logger starts', logPath);
       const args = ['start', '--none', `--log=stdout`, `--region=${opts.region}`];
       const ngrokPath = path.join(folder, filename);
       if (!existsSync(ngrokPath)) {
@@ -260,13 +279,12 @@ export class NgrokInstance {
       });
 
       ngrok.on('close', () => {
-        console.log('Inside close');
         this.cleanUpNgrokExpirationTimer();
         this.ngrokEmitter.emit('close');
       });
 
       ngrok.stdout.on('data', data => {
-        writeFile(ngrokLoggerPath, data.toString() + '\n');
+        writeFile(logPath, data.toString() + '\n');
       });
 
       ngrok.stderr.on('data', (data: Buffer) => this.ngrokEmitter.emit('error', data.toString()));

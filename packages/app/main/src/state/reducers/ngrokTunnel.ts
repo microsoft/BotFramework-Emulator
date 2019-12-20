@@ -60,7 +60,7 @@ export function ngrokTunnel(
   action: NgrokTunnelAction<NgrokTunnelPayloadTypes>
 ): ngrokTunnelState {
   switch (action.type) {
-    case NgrokTunnelActions.updateTunnelInfo:
+    case NgrokTunnelActions.updateNewTunnelInfo:
       const tunnelInfo: TunnelInfo = action.payload as TunnelInfo;
       state.inspectUrl = tunnelInfo.inspectUrl;
       state.publicUrl = tunnelInfo.publicUrl;

@@ -45,6 +45,7 @@ import { ContextMenuService } from '../services/contextMenuService';
 import { TelemetryService } from '../telemetry';
 import { showOpenDialog, showSaveDialog } from '../utils';
 import { AppUpdater } from '../appUpdater';
+import { copyFileAsync } from '../utils/copyFileAsync';
 
 const { shell } = Electron;
 
@@ -191,6 +192,18 @@ export class ElectronCommands {
   @Command(Commands.UnlinkFile)
   protected unlinkFile(filePath: string): boolean {
     return shell.moveItemToTrash(path.resolve(filePath));
+  }
+
+  // ---------------------------------------------------------------------------
+  // Given source path. Copies it to Destination Path
+  @Command(Commands.CopyFile)
+  protected async copyFile(sourcePath: string, destinationPath: string) {
+    try {
+      await copyFileAsync(sourcePath, destinationPath);
+      return true;
+    } catch (ex) {
+      return false;
+    }
   }
 
   // ---------------------------------------------------------------------------

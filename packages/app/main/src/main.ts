@@ -46,6 +46,8 @@ import './fetchProxy';
 import { Window } from './platform/window';
 import { azureLoggedInUserChanged } from './state/actions/azureAuthActions';
 import { rememberBounds } from './state/actions/windowStateActions';
+import { updateTunnelError, TunnelInfo, updateNewTunnelInfo } from './state/actions/ngrokTunnelActions';
+import * as EditorActions from './state/actions/editorActions';
 import { dispatch, getSettings, store } from './state/store';
 import { TelemetryService } from './telemetry';
 import { botListsAreDifferent, ensureStoragePath, saveSettings, writeFile } from './utils';
@@ -156,6 +158,7 @@ class EmulatorApplication {
   private initializeNgrokListeners() {
     Emulator.getInstance().ngrok.ngrokEmitter.on('expired', this.onNgrokSessionExpired);
     Emulator.getInstance().ngrok.ngrokEmitter.on('tunnelError', this.onNgrokTunnelError);
+    Emulator.getInstance().ngrok.ngrokEmitter.on('updateNewTunnelInfo', this.updateNewTunnelInfo);
   }
 
   private initializeSystemPreferencesListeners() {
@@ -243,15 +246,36 @@ class EmulatorApplication {
     dispatch(rememberBounds(bounds));
   };
 
-  private onNgrokTunnelError = async () => {
-    const ngrokNotification: Notification = newNotification(
-      'Your ngrok tunnel instance seems to have a glitch. Please check our Ngrok debug console for more details'
+  private updateNewTunnelInfo = async (tunnelInfo: TunnelInfo) => {
+    dispatch(updateNewTunnelInfo(tunnelInfo));
+  };
+
+  private onNgrokTunnelError = async response => {
+    const errorMessage = await response.json();
+    dispatch(
+      updateTunnelError({
+        statusCode: response.status,
+        errorMessage,
+      })
     );
 
+    const ngrokNotification: Notification = newNotification(
+      'Your ngrok tunnel instance seems to have a glitch. Please check the Ngrok debug console for more details'
+    );
     ngrokNotification.addButton('Take me to Ngrok Debugger', () => {
+      // Go to Ngrok from here
       const { Commands } = SharedConstants;
       this.commandService.remoteCall(Commands.Notifications.Remove, ngrokNotification.id);
+      dispatch(
+        EditorActions.open({
+          contentType: SharedConstants.ContentTypes.CONTENT_TYPE_NGROK_DEBUGGER,
+          documentId: SharedConstants.DocumentIds.DOCUMENT_ID_NGROK_DEBUGGER,
+          isGlobal: true,
+          meta: null,
+        })
+      );
     });
+    await sendNotificationToClient(ngrokNotification, this.commandService);
   };
 
   // ngrok listeners

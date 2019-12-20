@@ -33,7 +33,7 @@
 import { Action } from 'redux';
 
 export enum NgrokTunnelActions {
-  updateTunnelInfo = 'NgrokTunnel/UPDATE_INFO',
+  updateNewTunnelInfo = 'NgrokTunnel/UPDATE_INFO',
   updateTunnelError = 'NgrokTunnel/TUNNEL_ERROR',
 }
 
@@ -56,9 +56,9 @@ export interface TunnelError {
   errorMessage: string;
 }
 
-export function updateTunnelInfo(payload: TunnelInfo): NgrokTunnelAction<TunnelInfo> {
+export function updateNewTunnelInfo(payload: TunnelInfo): NgrokTunnelAction<TunnelInfo> {
   return {
-    type: NgrokTunnelActions.updateTunnelInfo,
+    type: NgrokTunnelActions.updateNewTunnelInfo,
     payload,
   };
 }

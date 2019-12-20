@@ -39,13 +39,12 @@ export const CONTENT_TYPE_APP_SETTINGS = 'application/vnd.microsoft.bfemulator.d
 export const CONTENT_TYPE_WELCOME_PAGE = 'application/vnd.microsoft.bfemulator.document.welcome';
 export const CONTENT_TYPE_TRANSCRIPT = 'application/vnd.microsoft.bfemulator.document.transcript';
 export const CONTENT_TYPE_LIVE_CHAT = SharedConstants.ContentTypes.CONTENT_TYPE_LIVE_CHAT;
-export const CONTENT_TYPE_NGROK_DEBUGGER = 'application/vnd.microsoft.bfemulator.document.ngrokDebugger';
 
 export const NAVBAR_BOT_EXPLORER = 'navbar.botExplorer';
 export const NAVBAR_SETTINGS = 'navbar.settings';
 export const NAVBAR_NOTIFICATIONS = 'navbar.notifications';
 export const NAVBAR_RESOURCES = 'navbar:resources';
-export const NAVBAR_NGROK_DEBUGGER = 'navbar.ngrokDebugger';
+export const NAVBAR_NGROK_DEBUGGER = 'navbar:ngrokDebugger';
 
 export const EDITOR_KEY_PRIMARY = 'primary';
 export const EDITOR_KEY_SECONDARY = 'secondary';
@@ -56,4 +55,3 @@ export const DOCUMENT_ID_APP_SETTINGS = 'app:settings';
 export const DOCUMENT_ID_BOT_SETTINGS = 'bot:settings';
 export const DOCUMENT_ID_WELCOME_PAGE = 'welcome-page';
 export const DOCUMENT_ID_MARKDOWN_PAGE = 'markdown-page';
-export const DOCUMENT_ID_NGROK_DEBUGGER = 'app:ngrokDebugger';

@@ -1,17 +1,81 @@
 import * as React from 'react';
+import { connect } from 'react-redux';
+import { Action } from 'redux';
 import { Column, Row, LinkButton, LargeHeader } from '@bfemulator/ui-react';
+import { SharedConstants } from '@bfemulator/app-shared';
+import { RootState } from '../../../state/store';
+import { TunnelError } from '../../../state';
+import { executeCommand } from '../../../state/actions/commandActions';
 import { GenericDocument } from '../../layout';
 import * as styles from './ngrokDebuggerContainer.scss';
 
-export interface ngrokDebugConsoleProps {
-  port: string;
+export interface NgrokDebuggerProps {
   inspectUrl: string;
+  errors: TunnelError;
+  publicUrl: string;
+  logPath: string;
+  postmanCollectionPath: string;
+  onAnchorClick: any;
+  onSaveFileClick: any;
 }
 
-export const NgrokDebuggerContainer = props => {
-  const convertToAnchorOnClick = link => {
-    this.createAnchorClickHandler(link);
+const dialogOptions: Electron.SaveDialogOptions = {
+  title: 'Save Postman collection to disk',
+  buttonLabel: 'Save',
+};
+
+export const NgrokDebugger = (props: NgrokDebuggerProps) => {
+  const convertToAnchorOnClick = (link: string) => {
+    props.onAnchorClick(link);
   };
+
+  const tunnelConnections = (
+    <section>
+      <h2>Tunnel Connections</h2>
+      <ul className={styles.tunnelDetailsList}>
+        <li>
+          <legend> Inspect Url </legend>
+          <LinkButton
+            ariaLabel="Ngrok Inspect Url.&nbsp;"
+            linkRole={true}
+            onClick={() => convertToAnchorOnClick(props.inspectUrl)}
+          >
+            {props.inspectUrl}
+          </LinkButton>
+        </li>
+        <li>
+          <legend>Public Url</legend>
+          <LinkButton
+            ariaLabel="Ngrok Public Url.&nbsp;"
+            linkRole={true}
+            onClick={() => convertToAnchorOnClick(props.publicUrl)}
+          >
+            {props.publicUrl}
+          </LinkButton>
+        </li>
+        <li>
+          <LinkButton
+            ariaLabel="Download Log file.&nbsp;"
+            linkRole={true}
+            onClick={() => props.onSaveFileClick(props.logPath, dialogOptions)}
+          >
+            Click here
+          </LinkButton>
+          &nbsp;to download the ngrok log file for this session
+        </li>
+        <li>
+          <LinkButton
+            ariaLabel="Download postman collection&nbsp;"
+            linkRole={true}
+            onClick={() => props.onSaveFileClick(props.postmanCollectionPath, dialogOptions)}
+          >
+            Click here
+          </LinkButton>
+          &nbsp;to download a Postman collection to additionally inspect your tunnels
+        </li>
+      </ul>
+    </section>
+  );
 
   return (
     <GenericDocument className={styles.ngrokDebuggerContainer}>
@@ -21,63 +85,76 @@ export const NgrokDebuggerContainer = props => {
           <section>
             <h2>Tunnel Health</h2>
             <ul className={styles.tunnelDetailsList}>
-              <li className={styles.details}>
+              <li>
                 <legend>Tunnel Status</legend>
                 <span> InActive </span>
                 <span className={[styles.tunnelHealthIndicator, styles.healthStatusBad].join(' ')} />
                 <span>&nbsp; (December 18th, 2020 2:34:34 PM)</span>
               </li>
-              <li className={styles.details}>
+              <li>
                 <LinkButton linkRole={true} onClick={() => convertToAnchorOnClick('http://53frcg.io/')}>
                   Click here
                 </LinkButton>
                 &nbsp;to ping the tunnel now
               </li>
-
-              <li className={styles.details}>
+              <li>
                 <div>
                   <legend>Tunnel Errors</legend>
-                  <p className={styles.errorWindow}>
-                    Too many connections! The tunnel session ‘UaRpp31VV1puVAVWBnIGYLfzZp’ has violated the rate-limit
-                    policy of 20 connections per minute by initiating 37 connections in the last 60 seconds. Please
-                    decrease your inbound connection volume or upgrade to a paid plan for additional capacity.
-                  </p>
+                  <p className={styles.errorWindow}>Test</p>
                 </div>
               </li>
             </ul>
           </section>
-          <section>
-            <h2>Tunnel Connections</h2>
-            <ul className={styles.tunnelDetailsList}>
-              <li className={styles.details}>
-                <legend> Inspect Url </legend>
-                <LinkButton linkRole={true} onClick={() => convertToAnchorOnClick('http://127.0.0.1:4040')}>
-                  http://127.0.0.1:4040
-                </LinkButton>
-              </li>
-              <li className={styles.details}>
-                <legend>Public Url</legend>
-                <LinkButton linkRole={true} onClick={() => convertToAnchorOnClick('http://53frcg.io/')}>
-                  http://53frcg.io/
-                </LinkButton>
-              </li>
-              <li className={styles.details}>
-                <LinkButton linkRole={true} onClick={() => convertToAnchorOnClick('http://53frcg.io/')}>
-                  Click here
-                </LinkButton>
-                &nbsp;to download the ngrok log file for this session
-              </li>
-
-              <li className={styles.details}>
-                <LinkButton linkRole={true} onClick={() => convertToAnchorOnClick('http://53frcg.io/')}>
-                  Click here
-                </LinkButton>
-                &nbsp;to download a Postman collection to additionally inspect your tunnels
-              </li>
-            </ul>
-          </section>
+          {props.publicUrl ? tunnelConnections : null}
         </Column>
       </Row>
     </GenericDocument>
   );
 };
+
+const mapStateToProps = (state: RootState, ownProps: {}): Partial<NgrokDebuggerProps> => {
+  const { inspectUrl, errors, publicUrl, logPath, postmanCollectionPath } = state.ngrokTunnel;
+
+  return {
+    inspectUrl,
+    errors,
+    publicUrl,
+    logPath,
+    postmanCollectionPath,
+    ...ownProps,
+  };
+};
+
+const onFileSaveCb = (result: boolean) => {
+  if (!result) {
+    console.error('An error occured trying to save the file to disk');
+  }
+};
+
+const mapDispatchToProps = (dispatch: (action: Action) => void) => ({
+  onAnchorClick: (url: string) => {
+    dispatch(executeCommand(true, SharedConstants.Commands.Electron.OpenExternal, null, url));
+  },
+  onSaveFileClick: (originalFilePath: string, dialogOptions: Electron.SaveDialogOptions) => {
+    dispatch(
+      executeCommand(
+        true,
+        SharedConstants.Commands.Electron.ShowSaveDialog,
+        (newFilePath: string) => {
+          dispatch(
+            executeCommand(
+              true,
+              SharedConstants.Commands.Electron.CopyFile,
+              onFileSaveCb,
+              originalFilePath,
+              newFilePath
+            )
+          );
+        },
+        dialogOptions
+      )
+    );
+  },
+});
+
+export const NgrokDebuggerContainer = connect(mapStateToProps, mapDispatchToProps)(NgrokDebugger);

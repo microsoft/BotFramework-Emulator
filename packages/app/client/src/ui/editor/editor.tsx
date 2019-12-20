@@ -39,6 +39,7 @@ import { Document } from '../../state/reducers/editor';
 import { MarkdownPage } from './markdownPage/markdownPage';
 
 import { AppSettingsEditorContainer, EmulatorContainer, WelcomePageContainer, NgrokDebuggerContainer } from './index';
+import { SharedConstants } from '@bfemulator/app-shared';
 
 interface EditorFactoryProps {
   document?: Document;
@@ -70,7 +71,7 @@ export class EditorFactory extends React.Component<EditorFactoryProps> {
       case Constants.CONTENT_TYPE_MARKDOWN:
         return <MarkdownPage markdown={document.meta.markdown} onLine={document.meta.onLine} />;
 
-      case Constants.CONTENT_TYPE_NGROK_DEBUGGER:
+      case SharedConstants.ContentTypes.CONTENT_TYPE_NGROK_DEBUGGER:
         return <NgrokDebuggerContainer documentId={document.documentId} dirty={this.props.document.dirty} />;
 
       default:

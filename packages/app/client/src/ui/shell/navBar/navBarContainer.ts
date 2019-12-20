@@ -65,11 +65,10 @@ const mapDispatchToProps = (dispatch): NavBarProps => ({
   trackEvent: (name: string, properties?: { [key: string]: any }) =>
     dispatch(executeCommand(true, SharedConstants.Commands.Telemetry.TrackEvent, null, name, properties)),
   openNgrokDebuggerPanel: () => {
-    const { CONTENT_TYPE_NGROK_DEBUGGER, DOCUMENT_ID_NGROK_DEBUGGER } = Constants;
     dispatch(
       EditorActions.open({
-        contentType: CONTENT_TYPE_NGROK_DEBUGGER,
-        documentId: DOCUMENT_ID_NGROK_DEBUGGER,
+        contentType: SharedConstants.ContentTypes.CONTENT_TYPE_NGROK_DEBUGGER,
+        documentId: SharedConstants.DocumentIds.DOCUMENT_ID_NGROK_DEBUGGER,
         isGlobal: true,
         meta: null,
       })

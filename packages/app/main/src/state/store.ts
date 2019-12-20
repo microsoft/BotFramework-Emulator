@@ -81,6 +81,7 @@ import {
   ResourcesState,
   ThemeState,
   UpdateState,
+  ngrokTunnel,
 } from './reducers';
 
 export interface RootState {
@@ -140,6 +141,7 @@ function initStore(): Store<RootState> {
       settings: settingsReducer,
       theme,
       update,
+      ngrokTunnel,
     }),
     DEFAULT_STATE,
     applyMiddleware(forwardToRenderer, sagaMiddleware)
