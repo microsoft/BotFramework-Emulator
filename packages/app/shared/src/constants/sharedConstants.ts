@@ -151,6 +151,7 @@ export const SharedConstants = {
     Ngrok: {
       Reconnect: 'ngrok:reconnect',
       KillProcess: 'ngrok:killProcess',
+      PingTunnel: 'ngrok:pingTunnel',
     },
 
     Notifications: {

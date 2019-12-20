@@ -46,7 +46,13 @@ import './fetchProxy';
 import { Window } from './platform/window';
 import { azureLoggedInUserChanged } from './state/actions/azureAuthActions';
 import { rememberBounds } from './state/actions/windowStateActions';
-import { updateTunnelError, TunnelInfo, updateNewTunnelInfo } from './state/actions/ngrokTunnelActions';
+import {
+  updateTunnelError,
+  TunnelInfo,
+  updateNewTunnelInfo,
+  TunnelStatus,
+  updateTunnelStatus,
+} from './state/actions/ngrokTunnelActions';
 import * as EditorActions from './state/actions/editorActions';
 import { dispatch, getSettings, store } from './state/store';
 import { TelemetryService } from './telemetry';
@@ -156,9 +162,9 @@ class EmulatorApplication {
   }
 
   private initializeNgrokListeners() {
-    Emulator.getInstance().ngrok.ngrokEmitter.on('expired', this.onNgrokSessionExpired);
-    Emulator.getInstance().ngrok.ngrokEmitter.on('tunnelError', this.onNgrokTunnelError);
-    Emulator.getInstance().ngrok.ngrokEmitter.on('updateNewTunnelInfo', this.updateNewTunnelInfo);
+    Emulator.getInstance().ngrok.ngrokEmitter.on('onTunnelError', this.onTunnelError);
+    Emulator.getInstance().ngrok.ngrokEmitter.on('onNewTunnelConnected', this.onNewTunnelConnected);
+    Emulator.getInstance().ngrok.ngrokEmitter.on('onTunnelStatusPing', this.onTunnelStatusPing);
   }
 
   private initializeSystemPreferencesListeners() {
@@ -246,23 +252,26 @@ class EmulatorApplication {
     dispatch(rememberBounds(bounds));
   };
 
-  private updateNewTunnelInfo = async (tunnelInfo: TunnelInfo) => {
+  private onTunnelStatusPing = async (status: TunnelStatus) => {
+    dispatch(updateTunnelStatus(status));
+  };
+
+  private onNewTunnelConnected = async (tunnelInfo: TunnelInfo) => {
     dispatch(updateNewTunnelInfo(tunnelInfo));
   };
 
-  private onNgrokTunnelError = async response => {
-    const errorMessage = await response.json();
+  private onTunnelError = async response => {
     dispatch(
       updateTunnelError({
         statusCode: response.status,
-        errorMessage,
+        errorMessage: response.errorMessage,
       })
     );
 
     const ngrokNotification: Notification = newNotification(
-      'Your ngrok tunnel instance seems to have a glitch. Please check the Ngrok debug console for more details'
+      'Oops.. Your ngrok tunnel seems to have an error. Please check the Ngrok Debug Console for more details'
     );
-    ngrokNotification.addButton('Take me to Ngrok Debugger', () => {
+    ngrokNotification.addButton('Debug Console', () => {
       // Go to Ngrok from here
       const { Commands } = SharedConstants;
       this.commandService.remoteCall(Commands.Notifications.Remove, ngrokNotification.id);
@@ -276,29 +285,6 @@ class EmulatorApplication {
       );
     });
     await sendNotificationToClient(ngrokNotification, this.commandService);
-  };
-
-  // ngrok listeners
-  private onNgrokSessionExpired = async () => {
-    // when ngrok expires, spawn notification to reconnect
-    const ngrokNotification: Notification = newNotification(
-      'Your ngrok tunnel instance has expired. Would you like to reconnect to a new tunnel?'
-    );
-    ngrokNotification.addButton('Dismiss', () => {
-      const { Commands } = SharedConstants;
-      this.commandService.remoteCall(Commands.Notifications.Remove, ngrokNotification.id);
-    });
-    ngrokNotification.addButton('Reconnect', async () => {
-      try {
-        const { Commands } = SharedConstants;
-        await this.commandService.call(Commands.Ngrok.Reconnect);
-        this.commandService.remoteCall(Commands.Notifications.Remove, ngrokNotification.id);
-      } catch (e) {
-        await sendNotificationToClient(newNotification(e), this.commandService);
-      }
-    });
-    await sendNotificationToClient(ngrokNotification, this.commandService);
-    Emulator.getInstance().ngrok.broadcastNgrokExpired();
   };
 
   private onInvertedColorSchemeChanged = () => {

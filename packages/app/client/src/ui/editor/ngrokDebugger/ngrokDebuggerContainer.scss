@@ -37,26 +37,43 @@
   }
   
   .tunnel-health-indicator {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
     display: inline-block;
     position: relative;
-    top: 1.5px;
+    padding: 3px;
+    margin-right: 2px;
+    color: var(--focused-list-item);
+
+    &.tunnel-error {
+      background-color: var(--error-outline);
+      &::before {
+        content: "Error";
+      }
+    }
+
+    &.tunnel-inactive {
+      background-color: var(--info-outline);
+      &::before {
+        content: "Inactive";
+      }
+    }
+
+    &.tunnel-active {
+      background-color: var(--success-bg);
+      &::before {
+        content: "Active";
+      }
+    }
+  }
+
+  .error-detailed-viewer {
+    border: 1px solid var(--focused-outline);
+    color: var(--error-text);
   }
   
   .console-viewer {
     background: var(--success-bg);
   }
   
-  .health-status-good {
-    background: var(--success-bg);
-  }
-
-  .health-status-bad {
-    background: var(--error-bg);
-    border: 1px solid var(--error-outline);
-  }
 
   .error-window {
     margin: 0;

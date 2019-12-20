@@ -12,6 +12,7 @@
     "emitDecoratorMetadata": true,
     "moduleResolution": "node",
     "forceConsistentCasingInFileNames": true,
+    "allowSyntheticDefaultImports": true,
     "noImplicitReturns": true,
     "noImplicitThis": false,
     "noImplicitAny": false,

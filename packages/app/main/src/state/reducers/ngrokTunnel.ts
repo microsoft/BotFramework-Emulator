@@ -37,6 +37,8 @@ import {
   TunnelInfo,
   NgrokTunnelPayloadTypes,
   TunnelError,
+  TunnelStatus,
+  TunnelStatusAndTs,
 } from '../actions/ngrokTunnelActions';
 
 export interface ngrokTunnelState {
@@ -45,6 +47,8 @@ export interface ngrokTunnelState {
   inspectUrl: string;
   logPath: string;
   postmanCollectionPath: string;
+  tunnelStatus: TunnelStatus;
+  lastTunnelStatusCheckTS: string;
 }
 
 const DEFAULT_STATE: ngrokTunnelState = {
@@ -53,6 +57,8 @@ const DEFAULT_STATE: ngrokTunnelState = {
   logPath: '',
   postmanCollectionPath: '',
   errors: {},
+  tunnelStatus: TunnelStatus.Inactive,
+  lastTunnelStatusCheckTS: '',
 };
 
 export function ngrokTunnel(
@@ -60,15 +66,26 @@ export function ngrokTunnel(
   action: NgrokTunnelAction<NgrokTunnelPayloadTypes>
 ): ngrokTunnelState {
   switch (action.type) {
-    case NgrokTunnelActions.updateNewTunnelInfo:
+    case NgrokTunnelActions.setDetails:
       const tunnelInfo: TunnelInfo = action.payload as TunnelInfo;
-      state.inspectUrl = tunnelInfo.inspectUrl;
-      state.publicUrl = tunnelInfo.publicUrl;
-      state.logPath = tunnelInfo.logPath;
-      state.postmanCollectionPath = tunnelInfo.postmanCollectionPath;
+      state = {
+        ...state,
+        ...tunnelInfo,
+      };
       break;
-    case NgrokTunnelActions.updateTunnelError:
-      state.errors = action.payload as TunnelError;
+    case NgrokTunnelActions.updateOnError:
+      state = {
+        ...state,
+        errors: action.payload as TunnelError,
+      };
+      break;
+    case NgrokTunnelActions.setStatus:
+      const info: TunnelStatusAndTs = action.payload as TunnelStatusAndTs;
+      state = {
+        ...state,
+        tunnelStatus: info.status,
+        lastTunnelStatusCheckTS: info.ts,
+      };
       break;
   }
   return state;

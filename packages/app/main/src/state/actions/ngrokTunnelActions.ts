@@ -33,16 +33,16 @@
 import { Action } from 'redux';
 
 export enum NgrokTunnelActions {
-  updateNewTunnelInfo = 'NgrokTunnel/UPDATE_INFO',
-  updateTunnelError = 'NgrokTunnel/TUNNEL_ERROR',
+  setDetails = 'NgrokTunnel/SET_DETAILS',
+  updateOnError = 'NgrokTunnel/TUNNEL_ERROR',
+  setStatus = 'NgrokTunnel/STATUS_CHECK'
 }
 
-export interface NgrokTunnelAction<T> extends Action {
-  type: NgrokTunnelActions;
-  payload: T;
+export enum TunnelStatus {
+  Active,
+  Inactive,
+  Error
 }
-
-export type NgrokTunnelPayloadTypes = TunnelError | TunnelInfo;
 
 export interface TunnelInfo {
   publicUrl: string;
@@ -56,16 +56,38 @@ export interface TunnelError {
   errorMessage: string;
 }
 
+export interface TunnelStatusAndTs {
+  status: TunnelStatus,
+  ts: string
+}
+
+export interface NgrokTunnelAction<T> extends Action {
+  type: NgrokTunnelActions;
+  payload: T;
+}
+
+export type NgrokTunnelPayloadTypes = TunnelError | TunnelInfo | TunnelStatusAndTs;
+
 export function updateNewTunnelInfo(payload: TunnelInfo): NgrokTunnelAction<TunnelInfo> {
   return {
-    type: NgrokTunnelActions.updateNewTunnelInfo,
+    type: NgrokTunnelActions.setDetails,
     payload,
   };
 }
 
+export function updateTunnelStatus(tunnelStatus: TunnelStatus): NgrokTunnelAction<TunnelStatusAndTs> {
+  return {
+    type: NgrokTunnelActions.setStatus,
+    payload: {
+      status: tunnelStatus,
+      ts: new Date().toLocaleString()
+    }
+  }
+}
+
 export function updateTunnelError(payload: TunnelError): NgrokTunnelAction<TunnelError> {
   return {
-    type: NgrokTunnelActions.updateTunnelError,
+    type: NgrokTunnelActions.updateOnError,
     payload,
   };
 }

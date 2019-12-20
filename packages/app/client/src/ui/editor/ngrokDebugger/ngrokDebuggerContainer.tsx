@@ -1,10 +1,11 @@
-import * as React from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { Action } from 'redux';
 import { Column, Row, LinkButton, LargeHeader } from '@bfemulator/ui-react';
+import NgrokErrorHandler from './ngrokErrorHandler';
 import { SharedConstants } from '@bfemulator/app-shared';
 import { RootState } from '../../../state/store';
-import { TunnelError } from '../../../state';
+import { TunnelError, TunnelStatus } from '../../../state';
 import { executeCommand } from '../../../state/actions/commandActions';
 import { GenericDocument } from '../../layout';
 import * as styles from './ngrokDebuggerContainer.scss';
@@ -15,8 +16,11 @@ export interface NgrokDebuggerProps {
   publicUrl: string;
   logPath: string;
   postmanCollectionPath: string;
-  onAnchorClick: any;
-  onSaveFileClick: any;
+  tunnelStatus: TunnelStatus;
+  lastTunnelStatusCheckTS: string;
+  onAnchorClick: (linkRef: string) => void;
+  onSaveFileClick: (originalFilePath: string, dialogOptions: Electron.SaveDialogOptions) => void;
+  onPingTunnelClick: () => void;
 }
 
 const dialogOptions: Electron.SaveDialogOptions = {
@@ -25,9 +29,32 @@ const dialogOptions: Electron.SaveDialogOptions = {
 };
 
 export const NgrokDebugger = (props: NgrokDebuggerProps) => {
+  const [statusDisplay, setStatusDisplay] = useState(styles.tunnelInactive);
+
   const convertToAnchorOnClick = (link: string) => {
     props.onAnchorClick(link);
   };
+
+  useEffect(() => {
+    switch (props.tunnelStatus) {
+      case TunnelStatus.Active:
+        setStatusDisplay(styles.tunnelActive);
+        break;
+      case TunnelStatus.Error:
+        setStatusDisplay(styles.tunnelError);
+        break;
+      default:
+        setStatusDisplay(styles.tunnelInactive);
+        break;
+    }
+  }, [props.lastTunnelStatusCheckTS]);
+
+  const errorDetailsContainer =
+    props.tunnelStatus === TunnelStatus.Error ? (
+      <section className={styles.errorDetailedViewer}>
+        <NgrokErrorHandler errors={props.errors} />
+      </section>
+    ) : null;
 
   const tunnelConnections = (
     <section>
@@ -79,7 +106,7 @@ export const NgrokDebugger = (props: NgrokDebuggerProps) => {
 
   return (
     <GenericDocument className={styles.ngrokDebuggerContainer}>
-      <LargeHeader>Ngrok Debug Console</LargeHeader>
+      <LargeHeader>Ngrok Debug Viewer</LargeHeader>
       <Row>
         <Column>
           <section>
@@ -87,22 +114,16 @@ export const NgrokDebugger = (props: NgrokDebuggerProps) => {
             <ul className={styles.tunnelDetailsList}>
               <li>
                 <legend>Tunnel Status</legend>
-                <span> InActive </span>
-                <span className={[styles.tunnelHealthIndicator, styles.healthStatusBad].join(' ')} />
-                <span>&nbsp; (December 18th, 2020 2:34:34 PM)</span>
+                <span className={[styles.tunnelHealthIndicator, statusDisplay].join(' ')} />
+                <span>{props.lastTunnelStatusCheckTS}</span>
               </li>
               <li>
-                <LinkButton linkRole={true} onClick={() => convertToAnchorOnClick('http://53frcg.io/')}>
+                <LinkButton linkRole={true} onClick={props.onPingTunnelClick}>
                   Click here
                 </LinkButton>
-                &nbsp;to ping the tunnel now
+                &nbsp;to ping the tunnel nows
               </li>
-              <li>
-                <div>
-                  <legend>Tunnel Errors</legend>
-                  <p className={styles.errorWindow}>Test</p>
-                </div>
-              </li>
+              {errorDetailsContainer}
             </ul>
           </section>
           {props.publicUrl ? tunnelConnections : null}
@@ -113,14 +134,23 @@ export const NgrokDebugger = (props: NgrokDebuggerProps) => {
 };
 
 const mapStateToProps = (state: RootState, ownProps: {}): Partial<NgrokDebuggerProps> => {
-  const { inspectUrl, errors, publicUrl, logPath, postmanCollectionPath } = state.ngrokTunnel;
-
+  const {
+    inspectUrl,
+    errors,
+    publicUrl,
+    logPath,
+    postmanCollectionPath,
+    tunnelStatus,
+    lastTunnelStatusCheckTS,
+  } = state.ngrokTunnel;
   return {
     inspectUrl,
     errors,
     publicUrl,
     logPath,
     postmanCollectionPath,
+    tunnelStatus,
+    lastTunnelStatusCheckTS,
     ...ownProps,
   };
 };
@@ -132,9 +162,9 @@ const onFileSaveCb = (result: boolean) => {
 };
 
 const mapDispatchToProps = (dispatch: (action: Action) => void) => ({
-  onAnchorClick: (url: string) => {
-    dispatch(executeCommand(true, SharedConstants.Commands.Electron.OpenExternal, null, url));
-  },
+  onAnchorClick: (url: string) =>
+    dispatch(executeCommand(true, SharedConstants.Commands.Electron.OpenExternal, null, url)),
+  onPingTunnelClick: () => dispatch(executeCommand(true, SharedConstants.Commands.Ngrok.PingTunnel, null)),
   onSaveFileClick: (originalFilePath: string, dialogOptions: Electron.SaveDialogOptions) => {
     dispatch(
       executeCommand(
