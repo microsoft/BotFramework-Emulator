@@ -42,7 +42,7 @@ import {
 } from '../actions/ngrokTunnelActions';
 
 export interface ngrokTunnelState {
-  errors: any;
+  errors: TunnelError;
   publicUrl: string;
   inspectUrl: string;
   logPath: string;
@@ -56,7 +56,7 @@ const DEFAULT_STATE: ngrokTunnelState = {
   publicUrl: '',
   logPath: '',
   postmanCollectionPath: '',
-  errors: {},
+  errors: {} as TunnelError,
   tunnelStatus: TunnelStatus.Inactive,
   lastTunnelStatusCheckTS: '',
 };

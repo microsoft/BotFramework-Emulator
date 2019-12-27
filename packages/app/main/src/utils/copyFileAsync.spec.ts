@@ -30,37 +30,26 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+import * as fs from 'fs';
+import { copyFileAsync } from './copyFileAsync';
 
-import {
-  updateNewTunnelInfo,
-  updateTunnelError,
-  updateTunnelStatus,
-  NgrokTunnelActions,
-  TunnelStatusAndTs,
-} from './ngrokTunnelActions';
+jest.mock('fs', () => ({
+  copyFile: (sourcePath: string, destinationPath: string, cb: Function) => {
+    if (!destinationPath || !sourcePath) {
+      cb('Error');
+    }
+    cb('');
+  },
+}));
 
-describe('file actions', () => {
-  it('should create an update tunnel info action', () => {
-    const payload: any = {};
-    const action = updateNewTunnelInfo(payload);
-
-    expect(action.type).toBe(NgrokTunnelActions.setDetails);
-    expect(action.payload).toEqual(payload);
+describe('copy files from source to destination asynchronously', () => {
+  it('should resolve promise if operation was successful', async done => {
+    await expect(copyFileAsync('1.txt', '2.txt')).resolves.toBeUndefined();
+    done();
   });
 
-  it('should create a update tunnel error action', () => {
-    const payload: any = {};
-    const action = updateTunnelError(payload);
-
-    expect(action.type).toBe(NgrokTunnelActions.updateOnError);
-    expect(action.payload).toEqual(payload);
-  });
-
-  it('should create tunnel status update action', () => {
-    const payload: any = {};
-    const action = updateTunnelStatus(payload);
-
-    expect(action.type).toBe(NgrokTunnelActions.setStatus);
-    expect(action.payload.ts).toBe(new Date().toLocaleString());
+  it('should reject promise if unsuccessful', async (done: any) => {
+    await expect(copyFileAsync('1.txt', '')).rejects.toBeUndefined();
+    done();
   });
 });
