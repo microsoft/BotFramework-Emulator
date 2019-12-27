@@ -40,7 +40,7 @@ import { existsSync } from 'fs';
 import ngrokCollection from './utils/postmanNgrokCollection';
 
 import { uniqueId } from '@bfemulator/sdk-shared';
-import { TunnelInfo, TunnelStatus } from './state';
+import { TunnelInfo, TunnelStatus } from './state/actions/ngrokTunnelActions';
 
 /* eslint-enable typescript/no-var-requires */
 export interface NgrokOptions {
@@ -99,11 +99,11 @@ export class NgrokInstance {
     }
     await this.getNgrokInspectUrl(options);
     const tunnelInfo: { url; inspectUrl } = await this.runTunnel(options);
-    this.intervalForHealthCheck = setInterval(() => this.checkTunnelStatus.bind(this)(tunnelInfo.url), 60000);
+    this.intervalForHealthCheck = setInterval(() => this.tunnelStatusCheck.bind(this)(tunnelInfo.url), 60000);
     return tunnelInfo;
   }
 
-  public async checkTunnelStatus(publicUrl: string): Promise<void> {
+  public async tunnelStatusCheck(publicUrl: string): Promise<void> {
     const response: Response = await fetch(publicUrl, {
       headers: {
         'Content-Type': 'application/json',
@@ -116,7 +116,7 @@ export class NgrokInstance {
       this.ws.write('Tunnel Error Response');
       this.ws.write(errorMessage);
       this.ngrokEmitter.emit('onTunnelError', {
-        status: response.status,
+        statusCode: response.status,
         errorMessage,
       });
     }
@@ -234,7 +234,7 @@ export class NgrokInstance {
         logPath,
       };
       this.ngrokEmitter.emit('onNewTunnelConnected', tunnelDetails);
-      this.checkTunnelStatus(publicUrl);
+      this.tunnelStatusCheck(publicUrl);
       this.pendingConnection = null;
       return { url: publicUrl, inspectUrl: this.inspectUrl };
     }
@@ -246,7 +246,6 @@ export class NgrokInstance {
     this.ws = writeStream(logPath);
     try {
       this.ws.write('Ngrok Logger starting');
-      console.log('Ngrok Logger starts', logPath);
       const args = ['start', '--none', `--log=stdout`, `--region=${opts.region}`];
       const ngrokPath = path.join(folder, filename);
       if (!existsSync(ngrokPath)) {
@@ -280,7 +279,7 @@ export class NgrokInstance {
       ngrok.stderr.on('data', (data: Buffer) => this.ngrokEmitter.emit('error', this.ws.write(data.toString())));
       return ngrok;
     } catch (e) {
-      throw new Error(`Ngrok spawning failed`);
+      throw e;
     }
   }
 }
