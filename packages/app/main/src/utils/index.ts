@@ -48,3 +48,4 @@ export * from './showOpenDialog';
 export * from './showSaveDialog';
 export * from './writeFile';
 export * from './getThemes';
+export * from './writeStream';

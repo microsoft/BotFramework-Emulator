@@ -208,7 +208,10 @@ export class NgrokService {
   }
 
   /** Logs messages signifying that ngrok has reconnected in all active conversations */
-  public broadcastNgrokError(): void {}
+  public broadcastNgrokError(errorMessage: string): void {
+    const { broadcast } = this;
+    broadcast(textItem(LogLevel.Error, errorMessage));
+  }
 
   /** Logs an item to all open conversations */
   public broadcast(...logItems: LogItem[]): void {

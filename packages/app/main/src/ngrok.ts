@@ -35,7 +35,7 @@ import { EventEmitter } from 'events';
 import { clearTimeout, setTimeout } from 'timers';
 import { platform } from 'os';
 import * as path from 'path';
-import { ensureStoragePath, writeFile } from './utils';
+import { ensureStoragePath, writeFile, writeStream, FileWriteStream } from './utils';
 import { existsSync } from 'fs';
 import ngrokCollection from './utils/postmanNgrokCollection';
 
@@ -86,6 +86,7 @@ export class NgrokInstance {
   private tunnels = {};
   private inspectUrl = '';
   private intervalForHealthCheck: NodeJS.Timer = null;
+  private ws: FileWriteStream = null;
 
   public running(): boolean {
     return this.ngrokProcess && !!this.ngrokProcess.pid;
@@ -112,6 +113,8 @@ export class NgrokInstance {
       response.status === 429 || response.status === 402 || response.status === 500 || !response.headers.get('Server');
     if (isErrorResponse) {
       const errorMessage = await response.text();
+      this.ws.write('Tunnel Error Response');
+      this.ws.write(errorMessage);
       this.ngrokEmitter.emit('onTunnelError', {
         status: response.status,
         errorMessage,
@@ -145,6 +148,7 @@ export class NgrokInstance {
     this.ngrokProcess.kill();
     this.ngrokProcess = null;
     this.tunnels = {};
+    this.ws.end();
     clearInterval(this.intervalForHealthCheck);
   }
 
@@ -230,6 +234,7 @@ export class NgrokInstance {
         logPath,
       };
       this.ngrokEmitter.emit('onNewTunnelConnected', tunnelDetails);
+      this.checkTunnelStatus(publicUrl);
       this.pendingConnection = null;
       return { url: publicUrl, inspectUrl: this.inspectUrl };
     }
@@ -238,8 +243,9 @@ export class NgrokInstance {
   private spawnNgrok(opts: NgrokOptions): ChildProcess {
     const filename = `${opts.path ? path.basename(opts.path) : bin}`;
     const folder = opts.path ? path.dirname(opts.path) : path.join(__dirname, 'bin');
+    this.ws = writeStream(logPath);
     try {
-      writeFile(logPath, 'Ngrok Logger starting');
+      this.ws.write('Ngrok Logger starting');
       console.log('Ngrok Logger starts', logPath);
       const args = ['start', '--none', `--log=stdout`, `--region=${opts.region}`];
       const ngrokPath = path.join(folder, filename);
@@ -256,6 +262,8 @@ export class NgrokInstance {
 
       ngrok.on('exit', () => {
         this.tunnels = {};
+        this.ws.end();
+        this.ws = null;
         clearInterval(this.intervalForHealthCheck);
         this.ngrokEmitter.emit('disconnect');
       });
@@ -266,10 +274,10 @@ export class NgrokInstance {
       });
 
       ngrok.stdout.on('data', data => {
-        writeFile(logPath, data.toString() + '\n');
+        this.ws.write(data.toString() + '\n');
       });
 
-      ngrok.stderr.on('data', (data: Buffer) => this.ngrokEmitter.emit('error', data.toString()));
+      ngrok.stderr.on('data', (data: Buffer) => this.ngrokEmitter.emit('error', this.ws.write(data.toString())));
       return ngrok;
     } catch (e) {
       throw new Error(`Ngrok spawning failed`);

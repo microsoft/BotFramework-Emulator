@@ -165,6 +165,7 @@ class EmulatorApplication {
     Emulator.getInstance().ngrok.ngrokEmitter.on('onTunnelError', this.onTunnelError);
     Emulator.getInstance().ngrok.ngrokEmitter.on('onNewTunnelConnected', this.onNewTunnelConnected);
     Emulator.getInstance().ngrok.ngrokEmitter.on('onTunnelStatusPing', this.onTunnelStatusPing);
+    Emulator.getInstance().ngrok.shutDownOAuthNgrokInstance;
   }
 
   private initializeSystemPreferencesListeners() {
@@ -261,6 +262,8 @@ class EmulatorApplication {
   };
 
   private onTunnelError = async response => {
+    const genericTunnelError: string =
+      'Oops.. Your ngrok tunnel seems to have an error. Please check the Ngrok Debug Console for more details';
     dispatch(
       updateTunnelError({
         statusCode: response.status,
@@ -268,9 +271,7 @@ class EmulatorApplication {
       })
     );
 
-    const ngrokNotification: Notification = newNotification(
-      'Oops.. Your ngrok tunnel seems to have an error. Please check the Ngrok Debug Console for more details'
-    );
+    const ngrokNotification: Notification = newNotification(genericTunnelError);
     ngrokNotification.addButton('Debug Console', () => {
       // Go to Ngrok from here
       const { Commands } = SharedConstants;
@@ -285,6 +286,7 @@ class EmulatorApplication {
       );
     });
     await sendNotificationToClient(ngrokNotification, this.commandService);
+    Emulator.getInstance().ngrok.broadcastNgrokError(genericTunnelError);
   };
 
   private onInvertedColorSchemeChanged = () => {
