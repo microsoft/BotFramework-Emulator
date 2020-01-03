@@ -31,8 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { NavBarAction, select } from '../actions/navBarActions';
-
 import { ngrokTunnel, ngrokTunnelState } from './ngrokTunnel';
 import {
   TunnelStatus,
@@ -70,13 +68,13 @@ describe('Ngrok Tunnel reducer', () => {
       logPath: 'logger.txt',
       postmanCollectionPath: 'postman.json',
     };
-
     const setDetailsAction: NgrokTunnelAction<NgrokTunnelPayloadTypes> = {
       type: NgrokTunnelActions.setDetails,
       payload,
     };
     const startingState = { ...DEFAULT_STATE };
     const endingState = ngrokTunnel(startingState, setDetailsAction);
+
     expect(endingState.publicUrl).toBe(payload.publicUrl);
     expect(endingState.logPath).toBe(payload.logPath);
     expect(endingState.postmanCollectionPath).toBe(payload.postmanCollectionPath);
@@ -88,13 +86,13 @@ describe('Ngrok Tunnel reducer', () => {
       statusCode: 422,
       errorMessage: '<h1>Too many connections<h1>',
     };
-
     const updateErrorAction: NgrokTunnelAction<NgrokTunnelPayloadTypes> = {
       type: NgrokTunnelActions.updateOnError,
       payload,
     };
     const startingState = { ...DEFAULT_STATE };
     const endingState = ngrokTunnel(startingState, updateErrorAction);
+
     expect(endingState.publicUrl).toBe(DEFAULT_STATE.publicUrl);
     expect(endingState.errors.statusCode).toBe(payload.statusCode);
     expect(endingState.errors.errorMessage).toBe(payload.errorMessage);
@@ -105,12 +103,10 @@ describe('Ngrok Tunnel reducer', () => {
       status: TunnelStatus.Active,
       ts: '12/27/2019, 1:30:00 PM',
     };
-
     const nextPayload: TunnelStatusAndTs = {
       status: TunnelStatus.Error,
       ts: '12/27/2019, 1:33:00 PM',
     };
-
     const actions: NgrokTunnelAction<NgrokTunnelPayloadTypes>[] = [
       {
         type: NgrokTunnelActions.setStatus,
@@ -121,7 +117,6 @@ describe('Ngrok Tunnel reducer', () => {
         payload: nextPayload,
       },
     ];
-
     const startingState = { ...DEFAULT_STATE };
     const transientState = ngrokTunnel(startingState, actions[0]);
     expect(transientState.tunnelStatus).toBe(payload.status);

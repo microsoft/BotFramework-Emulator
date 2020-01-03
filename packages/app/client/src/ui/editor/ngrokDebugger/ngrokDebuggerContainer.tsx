@@ -23,10 +23,10 @@ export interface NgrokDebuggerProps {
   onPingTunnelClick: () => void;
 }
 
-const dialogOptions: Electron.SaveDialogOptions = {
-  title: 'Save Postman collection to disk',
-  buttonLabel: 'Save',
-};
+const getDialogOptions = (title: string, buttonLabel: string = 'Save'): Electron.SaveDialogOptions => ({
+  title,
+  buttonLabel,
+});
 
 export const NgrokDebugger = (props: NgrokDebuggerProps) => {
   const [statusDisplay, setStatusDisplay] = useState(styles.tunnelInactive);
@@ -83,8 +83,8 @@ export const NgrokDebugger = (props: NgrokDebuggerProps) => {
         <li>
           <LinkButton
             ariaLabel="Download Log file.&nbsp;"
-            linkRole={true}
-            onClick={() => props.onSaveFileClick(props.logPath, dialogOptions)}
+            linkRole={false}
+            onClick={() => props.onSaveFileClick(props.logPath, getDialogOptions('Save log file to disk.'))}
           >
             Click here
           </LinkButton>
@@ -93,8 +93,10 @@ export const NgrokDebugger = (props: NgrokDebuggerProps) => {
         <li>
           <LinkButton
             ariaLabel="Download postman collection&nbsp;"
-            linkRole={true}
-            onClick={() => props.onSaveFileClick(props.postmanCollectionPath, dialogOptions)}
+            linkRole={false}
+            onClick={() =>
+              props.onSaveFileClick(props.postmanCollectionPath, getDialogOptions('Save Postman collection to disk.'))
+            }
           >
             Click here
           </LinkButton>
@@ -121,7 +123,7 @@ export const NgrokDebugger = (props: NgrokDebuggerProps) => {
                 <LinkButton linkRole={true} onClick={props.onPingTunnelClick}>
                   Click here
                 </LinkButton>
-                &nbsp;to ping the tunnel nows
+                &nbsp;to ping the tunnel now
               </li>
               {errorDetailsContainer}
             </ul>
@@ -143,6 +145,7 @@ const mapStateToProps = (state: RootState, ownProps: {}): Partial<NgrokDebuggerP
     tunnelStatus,
     lastTunnelStatusCheckTS,
   } = state.ngrokTunnel;
+
   return {
     inspectUrl,
     errors,
@@ -157,6 +160,7 @@ const mapStateToProps = (state: RootState, ownProps: {}): Partial<NgrokDebuggerP
 
 const onFileSaveCb = (result: boolean) => {
   if (!result) {
+    // TODO: Show error dialog here
     console.error('An error occured trying to save the file to disk');
   }
 };

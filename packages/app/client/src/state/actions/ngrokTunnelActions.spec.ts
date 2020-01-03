@@ -36,31 +36,39 @@ import {
   updateTunnelError,
   updateTunnelStatus,
   NgrokTunnelActions,
-  TunnelStatusAndTs,
+  TunnelInfo,
+  TunnelError,
+  TunnelStatus,
 } from './ngrokTunnelActions';
 
-describe('file actions', () => {
+describe('Ngrok Tunnel Actions', () => {
   it('should create an update tunnel info action', () => {
-    const payload: any = {};
+    const payload: TunnelInfo = {
+      publicUrl: 'https://d1a2bf16.ngrok.io',
+      inspectUrl: 'http://127.0.0.1:4041',
+      logPath: 'ngrok.log',
+      postmanCollectionPath: 'postman.json',
+    };
     const action = updateNewTunnelInfo(payload);
-
     expect(action.type).toBe(NgrokTunnelActions.setDetails);
     expect(action.payload).toEqual(payload);
   });
 
   it('should create a update tunnel error action', () => {
-    const payload: any = {};
+    const payload: TunnelError = {
+      statusCode: 402,
+      errorMessage: 'Tunnel has expired',
+    };
     const action = updateTunnelError(payload);
-
     expect(action.type).toBe(NgrokTunnelActions.updateOnError);
     expect(action.payload).toEqual(payload);
   });
 
-  it('should create tunnel status update action', () => {
-    const payload: any = {};
-    const action = updateTunnelStatus(payload);
-
+  it('should create a tunnel status update action', () => {
+    const expectedStatus: TunnelStatus = TunnelStatus.Active;
+    const action = updateTunnelStatus(expectedStatus);
     expect(action.type).toBe(NgrokTunnelActions.setStatus);
     expect(action.payload.ts).toBe(new Date().toLocaleString());
+    expect(action.payload.status).toBe(expectedStatus);
   });
 });

@@ -52,6 +52,7 @@ import {
   updateNewTunnelInfo,
   TunnelStatus,
   updateTunnelStatus,
+  TunnelError,
 } from './state/actions/ngrokTunnelActions';
 import * as EditorActions from './state/actions/editorActions';
 import { dispatch, getSettings, store } from './state/store';
@@ -261,15 +262,10 @@ class EmulatorApplication {
     dispatch(updateNewTunnelInfo(tunnelInfo));
   };
 
-  private onTunnelError = async response => {
+  private onTunnelError = async (response: TunnelError) => {
     const genericTunnelError: string =
       'Oops.. Your ngrok tunnel seems to have an error. Please check the Ngrok Debug Console for more details';
-    dispatch(
-      updateTunnelError({
-        statusCode: response.status,
-        errorMessage: response.errorMessage,
-      })
-    );
+    dispatch(updateTunnelError({ ...response }));
 
     const ngrokNotification: Notification = newNotification(genericTunnelError);
     ngrokNotification.addButton('Debug Console', () => {

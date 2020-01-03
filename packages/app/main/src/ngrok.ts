@@ -99,11 +99,11 @@ export class NgrokInstance {
     }
     await this.getNgrokInspectUrl(options);
     const tunnelInfo: { url; inspectUrl } = await this.runTunnel(options);
-    this.intervalForHealthCheck = setInterval(() => this.tunnelStatusCheck.bind(this)(tunnelInfo.url), 60000);
+    this.intervalForHealthCheck = setInterval(() => this.checkTunnelStatus.bind(this)(tunnelInfo.url), 60000);
     return tunnelInfo;
   }
 
-  public async tunnelStatusCheck(publicUrl: string): Promise<void> {
+  public async checkTunnelStatus(publicUrl: string): Promise<void> {
     const response: Response = await fetch(publicUrl, {
       headers: {
         'Content-Type': 'application/json',
@@ -234,7 +234,7 @@ export class NgrokInstance {
         logPath,
       };
       this.ngrokEmitter.emit('onNewTunnelConnected', tunnelDetails);
-      this.tunnelStatusCheck(publicUrl);
+      this.checkTunnelStatus(publicUrl);
       this.pendingConnection = null;
       return { url: publicUrl, inspectUrl: this.inspectUrl };
     }
