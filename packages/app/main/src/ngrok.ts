@@ -153,6 +153,7 @@ export class NgrokInstance {
   }
 
   private async getNgrokInspectUrl(opts: NgrokOptions): Promise<{ inspectUrl: string }> {
+    this.ws = writeStream(logPath);
     if (this.running()) {
       return { inspectUrl: this.inspectUrl };
     }
@@ -243,7 +244,6 @@ export class NgrokInstance {
   private spawnNgrok(opts: NgrokOptions): ChildProcess {
     const filename = `${opts.path ? path.basename(opts.path) : bin}`;
     const folder = opts.path ? path.dirname(opts.path) : path.join(__dirname, 'bin');
-    this.ws = writeStream(logPath);
     try {
       this.ws.write('Ngrok Logger starting');
       const args = ['start', '--none', `--log=stdout`, `--region=${opts.region}`];
@@ -261,7 +261,6 @@ export class NgrokInstance {
 
       ngrok.on('exit', () => {
         this.tunnels = {};
-        this.ws.end();
         this.ws = null;
         clearInterval(this.intervalForHealthCheck);
         this.ngrokEmitter.emit('disconnect');

@@ -74,7 +74,7 @@ import {
   ThemeState,
   UpdateState,
   ngrokTunnel,
-  ngrokTunnelState,
+  NgrokTunnelState,
 } from './reducers';
 
 export interface RootState {
@@ -95,7 +95,7 @@ export interface RootState {
   settings?: Settings;
   theme?: ThemeState;
   update?: UpdateState;
-  ngrokTunnel?: ngrokTunnelState;
+  ngrokTunnel?: NgrokTunnelState;
 }
 
 const DEFAULT_STATE = {};

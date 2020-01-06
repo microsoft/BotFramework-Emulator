@@ -21,6 +21,7 @@ export interface NgrokDebuggerProps {
   onAnchorClick: (linkRef: string) => void;
   onSaveFileClick: (originalFilePath: string, dialogOptions: Electron.SaveDialogOptions) => void;
   onPingTunnelClick: () => void;
+  onReconnectToNgrokClick: () => void;
 }
 
 const getDialogOptions = (title: string, buttonLabel: string = 'Save'): Electron.SaveDialogOptions => ({
@@ -51,9 +52,13 @@ export const NgrokDebugger = (props: NgrokDebuggerProps) => {
 
   const errorDetailsContainer =
     props.tunnelStatus === TunnelStatus.Error ? (
-      <section className={styles.errorDetailedViewer}>
-        <NgrokErrorHandler errors={props.errors} />
-      </section>
+      <div className={styles.errorDetailedViewer}>
+        <NgrokErrorHandler
+          errors={props.errors}
+          onExternalLinkClick={convertToAnchorOnClick}
+          onReconnectToNgrokClick={props.onReconnectToNgrokClick}
+        />
+      </div>
     ) : null;
 
   const tunnelConnections = (
@@ -119,12 +124,14 @@ export const NgrokDebugger = (props: NgrokDebuggerProps) => {
                 <span className={[styles.tunnelHealthIndicator, statusDisplay].join(' ')} />
                 <span>{props.lastTunnelStatusCheckTS}</span>
               </li>
-              <li>
-                <LinkButton linkRole={true} onClick={props.onPingTunnelClick}>
-                  Click here
-                </LinkButton>
-                &nbsp;to ping the tunnel now
-              </li>
+              {props.tunnelStatus !== TunnelStatus.Inactive ? (
+                <li>
+                  <LinkButton linkRole={true} onClick={props.onPingTunnelClick}>
+                    Click here
+                  </LinkButton>
+                  &nbsp;to ping the tunnel now
+                </li>
+              ) : null}
               {errorDetailsContainer}
             </ul>
           </section>
@@ -169,6 +176,7 @@ const mapDispatchToProps = (dispatch: (action: Action) => void) => ({
   onAnchorClick: (url: string) =>
     dispatch(executeCommand(true, SharedConstants.Commands.Electron.OpenExternal, null, url)),
   onPingTunnelClick: () => dispatch(executeCommand(true, SharedConstants.Commands.Ngrok.PingTunnel, null)),
+  onReconnectToNgrokClick: () => dispatch(executeCommand(true, SharedConstants.Commands.Ngrok.Reconnect, null)),
   onSaveFileClick: (originalFilePath: string, dialogOptions: Electron.SaveDialogOptions) => {
     dispatch(
       executeCommand(

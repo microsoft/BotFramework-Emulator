@@ -263,6 +263,10 @@ class EmulatorApplication {
   };
 
   private onTunnelError = async (response: TunnelError) => {
+    // Avoid reporting the same error again and again to avoid notification flooding
+    if (store.getState().ngrokTunnel.errors.statusCode === response.statusCode) {
+      return;
+    }
     const genericTunnelError: string =
       'Oops.. Your ngrok tunnel seems to have an error. Please check the Ngrok Debug Console for more details';
     dispatch(updateTunnelError({ ...response }));

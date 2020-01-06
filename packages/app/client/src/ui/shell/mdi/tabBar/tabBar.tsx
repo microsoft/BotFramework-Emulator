@@ -42,6 +42,7 @@ import {
   CONTENT_TYPE_MARKDOWN,
   CONTENT_TYPE_TRANSCRIPT,
   CONTENT_TYPE_WELCOME_PAGE,
+  CONTENT_TYPE_NGROK_DEBUGGER,
 } from '../../../../constants';
 import { getOtherTabGroup } from '../../../../state/helpers/editorHelpers';
 import { Document, Editor } from '../../../../state/reducers/editor';
@@ -284,6 +285,9 @@ export class TabBar extends React.Component<TabBarProps, TabBarState> {
 
       case CONTENT_TYPE_DEBUG:
         return 'Debug';
+
+      case CONTENT_TYPE_NGROK_DEBUGGER:
+        return 'Ngrok Debug';
 
       default:
         return '';

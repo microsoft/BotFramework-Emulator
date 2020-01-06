@@ -41,7 +41,7 @@ import {
   TunnelStatusAndTs,
 } from '../actions/ngrokTunnelActions';
 
-export interface ngrokTunnelState {
+export interface NgrokTunnelState {
   errors: any;
   publicUrl: string;
   inspectUrl: string;
@@ -51,7 +51,7 @@ export interface ngrokTunnelState {
   lastTunnelStatusCheckTS: string;
 }
 
-const DEFAULT_STATE: ngrokTunnelState = {
+const DEFAULT_STATE: NgrokTunnelState = {
   inspectUrl: 'http://127.0.0.1:4040',
   publicUrl: '',
   logPath: '',
@@ -62,9 +62,9 @@ const DEFAULT_STATE: ngrokTunnelState = {
 };
 
 export function ngrokTunnel(
-  state: ngrokTunnelState = DEFAULT_STATE,
+  state: NgrokTunnelState = DEFAULT_STATE,
   action: NgrokTunnelAction<NgrokTunnelPayloadTypes>
-): ngrokTunnelState {
+): NgrokTunnelState {
   switch (action.type) {
     case NgrokTunnelActions.setDetails:
       const tunnelInfo: TunnelInfo = action.payload as TunnelInfo;
