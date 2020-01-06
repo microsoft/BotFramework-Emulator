@@ -7,8 +7,19 @@
     justify-content: flex-center;
   }
 
-  .tunnel-health {
-    display: flex;
+  .tunnel-details-list {
+    background-color: var(--my-bots-well-bg);
+    border: var(--my-bots-well-border);
+    padding: 10px;
+
+    legend {
+      display: block;
+      font-weight: bold;
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
   }
   
   .tunnel-health-indicator {
@@ -44,11 +55,10 @@
     border: 1px solid var(--focused-outline);
     color: var(--error-text);
   }
-  
+
   .console-viewer {
     background: var(--success-bg);
   }
-  
 
   .error-window {
     margin: 0;
@@ -68,6 +78,5 @@
       padding: 10px;
     }
   }
-  
 }
 
