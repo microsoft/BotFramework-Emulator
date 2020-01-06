@@ -35,13 +35,13 @@ import { Action } from 'redux';
 export enum NgrokTunnelActions {
   setDetails = 'NgrokTunnel/SET_DETAILS',
   updateOnError = 'NgrokTunnel/TUNNEL_ERROR',
-  setStatus = 'NgrokTunnel/STATUS_CHECK'
+  setStatus = 'NgrokTunnel/STATUS_CHECK',
 }
 
 export enum TunnelStatus {
   Active,
   Inactive,
-  Error
+  Error,
 }
 
 export interface TunnelInfo {
@@ -57,8 +57,8 @@ export interface TunnelError {
 }
 
 export interface TunnelStatusAndTs {
-  status: TunnelStatus,
-  ts: string
+  status: TunnelStatus;
+  ts: string;
 }
 
 export interface NgrokTunnelAction<T> extends Action {
@@ -80,9 +80,9 @@ export function updateTunnelStatus(tunnelStatus: TunnelStatus): NgrokTunnelActio
     type: NgrokTunnelActions.setStatus,
     payload: {
       status: tunnelStatus,
-      ts: new Date().toLocaleString()
-    }
-  }
+      ts: new Date().toLocaleString(),
+    },
+  };
 }
 
 export function updateTunnelError(payload: TunnelError): NgrokTunnelAction<TunnelError> {

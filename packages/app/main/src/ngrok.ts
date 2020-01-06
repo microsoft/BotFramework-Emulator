@@ -35,11 +35,12 @@ import { EventEmitter } from 'events';
 import { clearTimeout, setTimeout } from 'timers';
 import { platform } from 'os';
 import * as path from 'path';
-import { ensureStoragePath, writeFile, writeStream, FileWriteStream } from './utils';
 import { existsSync } from 'fs';
-import ngrokCollection from './utils/postmanNgrokCollection';
 
 import { uniqueId } from '@bfemulator/sdk-shared';
+
+import { ensureStoragePath, writeFile, writeStream, FileWriteStream } from './utils';
+import ngrokCollection from './utils/postmanNgrokCollection';
 import { TunnelInfo, TunnelStatus } from './state/actions/ngrokTunnelActions';
 
 /* eslint-enable typescript/no-var-requires */
@@ -109,7 +110,7 @@ export class NgrokInstance {
         'Content-Type': 'application/json',
       },
     });
-    let isErrorResponse =
+    const isErrorResponse =
       response.status === 429 || response.status === 402 || response.status === 500 || !response.headers.get('Server');
     if (isErrorResponse) {
       const errorMessage = await response.text();

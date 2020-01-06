@@ -34,7 +34,6 @@
 import {
   NgrokTunnelActions,
   NgrokTunnelAction,
-  TunnelInfo,
   NgrokTunnelPayloadTypes,
   TunnelError,
   TunnelStatus,
@@ -67,10 +66,9 @@ export function ngrokTunnel(
 ): NgrokTunnelState {
   switch (action.type) {
     case NgrokTunnelActions.setDetails:
-      const tunnelInfo: TunnelInfo = action.payload as TunnelInfo;
       state = {
         ...state,
-        ...tunnelInfo,
+        ...action.payload,
       };
       break;
     case NgrokTunnelActions.updateOnError:
@@ -80,11 +78,10 @@ export function ngrokTunnel(
       };
       break;
     case NgrokTunnelActions.setStatus:
-      const info: TunnelStatusAndTs = action.payload as TunnelStatusAndTs;
       state = {
         ...state,
-        tunnelStatus: info.status,
-        lastTunnelStatusCheckTS: info.ts,
+        tunnelStatus: (action.payload as TunnelStatusAndTs).status,
+        lastTunnelStatusCheckTS: (action.payload as TunnelStatusAndTs).ts,
       };
       break;
   }

@@ -31,12 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import * as fs from 'fs';
+
 import { writeStream as writeStreamAsync, FileWriteStream } from './writeStream';
 
-let fileMock: string;
+// eslint-disable-next-line typescript/no-unused-vars
+let fileMock = '';
 
 jest.mock('fs', () => ({
-  createWriteStream: (path: string) => ({
+  createWriteStream: () => ({
     write: content => {
       fileMock += content;
     },
@@ -52,7 +54,7 @@ beforeEach(() => {
 
 describe('writing content file in chunks', () => {
   it('should write to file multiple chunks of content', () => {
-    const pathToFile: string = '/Documents/BorFramework-Emulator/logger.txt';
+    const pathToFile = '/Documents/BorFramework-Emulator/logger.txt';
     const createStreamSpy = jest.spyOn((fs as any).default, 'createWriteStream');
     const wsInstance: FileWriteStream = writeStreamAsync(pathToFile);
     const writeSpy = jest.spyOn(createStreamSpy.mock.results[0].value, 'write');
@@ -68,7 +70,7 @@ describe('writing content file in chunks', () => {
   });
 
   it('should call end on the stream', () => {
-    const pathToFile: string = '/Documents/BorFramework-Emulator/logger.txt';
+    const pathToFile = '/Documents/BorFramework-Emulator/logger.txt';
     const createStreamSpy = jest.spyOn((fs as any).default, 'createWriteStream');
     const wsInstance: FileWriteStream = writeStreamAsync(pathToFile);
     const endSpy = jest.spyOn(createStreamSpy.mock.results[0].value, 'end');
@@ -82,7 +84,7 @@ describe('writing content file in chunks', () => {
   });
 
   it('should call create stream with the correct path', () => {
-    const pathToFile: string = '/Documents/BorFramework-Emulator/logger.txt';
+    const pathToFile = '/Documents/BorFramework-Emulator/logger.txt';
     const createStreamSpy = jest.spyOn((fs as any).default, 'createWriteStream');
     writeStreamAsync(pathToFile);
     expect(createStreamSpy).toHaveBeenLastCalledWith(pathToFile);

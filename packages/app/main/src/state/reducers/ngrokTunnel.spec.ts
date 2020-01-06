@@ -31,7 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ngrokTunnel, ngrokTunnelState } from './ngrokTunnel';
 import {
   TunnelStatus,
   NgrokTunnelAction,
@@ -42,8 +41,10 @@ import {
   TunnelStatusAndTs,
 } from '../actions/ngrokTunnelActions';
 
+import { ngrokTunnel, NgrokTunnelState } from './ngrokTunnel';
+
 describe('Ngrok Tunnel reducer', () => {
-  const DEFAULT_STATE: ngrokTunnelState = {
+  const DEFAULT_STATE: NgrokTunnelState = {
     inspectUrl: 'http://127.0.0.1:4040',
     publicUrl: '',
     logPath: '',

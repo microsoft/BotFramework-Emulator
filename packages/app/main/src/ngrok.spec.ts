@@ -65,7 +65,7 @@ const connectToNgrokInstance = async (ngrok: NgrokInstance) => {
 };
 const mockSpawn = {
   on: () => {},
-  stdin: { on: (type, cb) => void 0 },
+  stdin: { on: () => void 0 },
   stdout: {
     pause: () => void 0,
     on: (type, cb) => {
@@ -75,7 +75,7 @@ const mockSpawn = {
     },
     removeListener: () => void 0,
   },
-  stderr: { on: (type, cb) => void 0, pause: () => void 0 },
+  stderr: { on: () => void 0, pause: () => void 0 },
   kill: () => void 0,
 };
 
@@ -95,7 +95,7 @@ jest.mock('fs', () => ({
 }));
 jest.mock('./utils/ensureStoragePath', () => ({ ensureStoragePath: () => '' }));
 jest.mock('node-fetch', () => {
-  const ngrokPublicUrl: string = 'https://d1a2bf16.ngrok.io';
+  const ngrokPublicUrl = 'https://d1a2bf16.ngrok.io';
   const mockJson = {
     name: 'e2cfb800-266f-11e9-bc59-e5847cdee2d1',
     uri: '/api/tunnels/e2cfb800-266f-11e9-bc59-e5847cdee2d1',
@@ -155,7 +155,7 @@ describe('the ngrok ', () => {
 
     it('should disconnect', async done => {
       let disconnected = false;
-      ngrok.ngrokEmitter.on('disconnect', (url: string) => {
+      ngrok.ngrokEmitter.on('disconnect', () => {
         disconnected = true;
         expect(disconnected).toBe(true);
         done();
@@ -283,7 +283,6 @@ describe('the ngrok ', () => {
     });
 
     it('should check tunnel status every minute.', async done => {
-      const emitterSpy = jest.fn();
       jest.useFakeTimers();
       await connectToNgrokInstance(ngrok);
       ngrok.ngrokEmitter.on('onTunnelStatusPing', (msg: TunnelStatus) => {

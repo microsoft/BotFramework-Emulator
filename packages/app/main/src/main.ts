@@ -267,7 +267,7 @@ class EmulatorApplication {
     if (store.getState().ngrokTunnel.errors.statusCode === response.statusCode) {
       return;
     }
-    const genericTunnelError: string =
+    const genericTunnelError =
       'Oops.. Your ngrok tunnel seems to have an error. Please check the Ngrok Debug Console for more details';
     dispatch(updateTunnelError({ ...response }));
 
@@ -341,7 +341,7 @@ class EmulatorApplication {
     app.on('open-url', this.onAppOpenUrl);
   };
 
-  private onAppOpenUrl = (event: any, url: string): void => {
+  private onAppOpenUrl = (event: Event, url: string): void => {
     event.preventDefault();
     if (isMac()) {
       protocolUsed = true;

@@ -36,8 +36,10 @@ import * as React from 'react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import { mount, ReactWrapper } from 'enzyme';
-import { NgrokDebugger, NgrokDebuggerContainer } from './ngrokDebuggerContainer';
+
 import { TunnelStatus } from '../../../state';
+
+import { NgrokDebugger, NgrokDebuggerContainer } from './ngrokDebuggerContainer';
 
 jest.mock('electron', () => ({
   remote: {
@@ -86,7 +88,7 @@ describe('Ngrok Debugger container', () => {
       },
     };
     parent = mount(
-      <Provider store={createStore((state, action) => state, storeState)}>
+      <Provider store={createStore(state => state, storeState)}>
         <NgrokDebuggerContainer />
       </Provider>
     );

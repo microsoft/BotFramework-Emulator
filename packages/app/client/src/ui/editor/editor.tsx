@@ -32,6 +32,7 @@
 //
 
 import * as React from 'react';
+import { SharedConstants } from '@bfemulator/app-shared';
 
 import * as Constants from '../../constants';
 import { Document } from '../../state/reducers/editor';
@@ -39,7 +40,6 @@ import { Document } from '../../state/reducers/editor';
 import { MarkdownPage } from './markdownPage/markdownPage';
 
 import { AppSettingsEditorContainer, EmulatorContainer, WelcomePageContainer, NgrokDebuggerContainer } from './index';
-import { SharedConstants } from '@bfemulator/app-shared';
 
 interface EditorFactoryProps {
   document?: Document;
