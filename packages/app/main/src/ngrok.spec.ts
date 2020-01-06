@@ -54,7 +54,7 @@ const connectToNgrokInstance = async (ngrok: NgrokInstance) => {
   try {
     const result = await ngrok.connect({
       addr: 61914,
-      path: '/Applications/ngrok',
+      path: 'Applications/ngrok',
       name: 'c87d3e60-266e-11e9-9528-5798e92fee89',
       proto: 'http',
     });
@@ -187,9 +187,8 @@ describe('the ngrok ', () => {
       } catch (e) {
         thrown = e;
       }
-
       expect(thrown.toString()).toBe(
-        `Error: Could not find ngrok executable at path: /${path}. Make sure that the correct path to ngrok is configured in the Emulator app settings. Ngrok is required to receive a token from the Bot Framework token service.`
+        `Error: Could not find ngrok executable at path: ${path}. Make sure that the correct path to ngrok is configured in the Emulator app settings. Ngrok is required to receive a token from the Bot Framework token service.`
       );
     });
   });
