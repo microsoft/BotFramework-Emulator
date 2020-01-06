@@ -12,7 +12,6 @@
     "emitDecoratorMetadata": true,
     "moduleResolution": "node",
     "forceConsistentCasingInFileNames": true,
-    "allowSyntheticDefaultImports": true,
     "noImplicitReturns": true,
     "noImplicitThis": false,
     "noImplicitAny": false,
@@ -20,7 +19,6 @@
     "suppressImplicitAnyIndexErrors": true,
     "noUnusedLocals": true,
     "skipLibCheck": true,
-    "resolveJsonModule": true,
     "declaration": true,
     "paths": {
       "@bfemulator/sdk-shared": ["./packages/sdk/shared/build"]

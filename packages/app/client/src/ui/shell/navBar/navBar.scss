@@ -104,6 +104,14 @@
     }
   }
 
+  &:nth-child(5) {
+    // Settings
+    > div {
+      -webkit-mask-size: 31px;
+      -webkit-mask: url('../../media/ic_bot_settings.svg') no-repeat;
+    }
+  }
+
   > div {
     position: absolute;
     width: 24px;
