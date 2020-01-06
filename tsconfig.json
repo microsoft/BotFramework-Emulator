@@ -15,6 +15,7 @@
     "noImplicitReturns": true,
     "noImplicitThis": false,
     "noImplicitAny": false,
+    "allowSyntheticDefaultImports": true,
     // "strictNullChecks": true,
     "suppressImplicitAnyIndexErrors": true,
     "noUnusedLocals": true,

@@ -64,7 +64,7 @@ export const NgrokDebugger = (props: NgrokDebuggerProps) => {
   const tunnelConnections = (
     <section>
       <h2>Tunnel Connections</h2>
-      <ul className={styles.tunnelDetailsList}>
+      <ul>
         <li>
           <legend> Inspect Url </legend>
           <LinkButton

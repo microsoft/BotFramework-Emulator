@@ -7,31 +7,6 @@
     justify-content: flex-center;
   }
 
-  .tunnelDetailsList {
-    background-color: var(--my-bots-well-bg);
-    border: var(--my-bots-well-border);
-    padding: 10px;
-  
-    &::-webkit-scrollbar-thumb {
-      background-color: transparent;
-    }
-  
-    &:hover {
-      &::-webkit-scrollbar-thumb {
-        background-color: var(--my-bots-scrollbar-color);
-      }
-    }
-
-    legend {
-      display: block;
-      font-weight: bold;
-    }
-
-    li {
-      margin-bottom: 10px;
-    }
-  }
-
   .tunnel-health {
     display: flex;
   }

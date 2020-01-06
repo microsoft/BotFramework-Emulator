@@ -1,6 +1,5 @@
 // This is a generated file. Changes are likely to result in being overwritten
 export const ngrokDebuggerContainer: string;
-export const tunnelDetailsList: string;
 export const tunnelHealth: string;
 export const tunnelHealthIndicator: string;
 export const tunnelError: string;

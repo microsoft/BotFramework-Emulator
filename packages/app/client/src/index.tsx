@@ -48,16 +48,6 @@ interceptError();
 interceptHyperlink();
 
 if (!remote.app.isPackaged) {
-  document.addEventListener('keydown', function(e: KeyboardEvent) {
-    if (e.which === 123) {
-      require('remote')
-        .getCurrentWindow()
-        .toggleDevTools();
-    } else if (e.which === 116) {
-      location.reload();
-    }
-  });
-
   // enable react & react-redux dev tools
   installExtension([REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS])
     /* eslint-disable no-console */
