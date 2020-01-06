@@ -129,7 +129,7 @@ describe('<NavBar/>', () => {
 
   it('should render links for each section', () => {
     expect(instance).not.toBeNull();
-    expect(instance.links).toHaveLength(4);
+    expect(instance.links).toHaveLength(5);
   });
 
   it('should render a notification badge', () => {
