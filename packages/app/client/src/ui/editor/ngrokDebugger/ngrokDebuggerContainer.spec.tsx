@@ -34,12 +34,41 @@
 //TODO: More UI tests to be added
 import * as React from 'react';
 import { Provider } from 'react-redux';
-import { createStore } from 'redux';
-import { mount, ReactWrapper } from 'enzyme';
+import { combineReducers, createStore } from 'redux';
+import { mount, ReactWrapper, HTMLAttributes } from 'enzyme';
 
-import { TunnelStatus } from '../../../state';
+import { ngrokTunnel } from '../../../state/reducers/ngrokTunnel';
+import {
+  updateNewTunnelInfo,
+  TunnelInfo,
+  TunnelStatus,
+  updateTunnelStatus,
+  updateTunnelError,
+} from '../../../state/actions/ngrokTunnelActions';
 
 import { NgrokDebugger, NgrokDebuggerContainer } from './ngrokDebuggerContainer';
+
+const mockClasses = jest.fn(() => ({
+  errorDetailedViewer: 'error-window',
+  tunnelActive: 'tunnel-active',
+  tunnelInactive: 'tunnel-inactive',
+  tunnelError: 'tunnel-error',
+}));
+
+jest.mock('./ngrokDebuggerContainer.scss', () => ({
+  get errorDetailedViewer() {
+    return mockClasses().errorDetailedViewer;
+  },
+  get tunnelActive() {
+    return mockClasses().tunnelActive;
+  },
+  get tunnelError() {
+    return mockClasses().tunnelError;
+  },
+  get tunnelInactive() {
+    return mockClasses().tunnelInactive;
+  },
+}));
 
 jest.mock('electron', () => ({
   remote: {
@@ -74,28 +103,93 @@ jest.mock('electron', () => ({
 describe('Ngrok Debugger container', () => {
   let parent: ReactWrapper;
   let wrapper: ReactWrapper;
+  const mockStore = createStore(combineReducers({ ngrokTunnel }));
+  let mockDispatch = null;
+  let instance = null;
+  const mockClassesImpl = mockClasses();
 
-  beforeEach(() => {
-    const storeState = {
-      ngrokTunnel: {
-        inspectUrl: 'http://127.0.0.1/',
-        errors: {},
-        publicUrl: 'https://dcfgh.ngrok.io/',
-        logPath: 'ngrok.log',
-        postmanCollectionPath: 'postman.json',
-        tunnelStatus: TunnelStatus.Inactive,
-        lastTunnelStatusCheckTS: 'Dec 30th 2019 5.30PM',
-      },
-    };
+  beforeAll(() => {
     parent = mount(
-      <Provider store={createStore(state => state, storeState)}>
+      <Provider store={mockStore}>
         <NgrokDebuggerContainer />
       </Provider>
     );
     wrapper = parent.find(NgrokDebugger);
+    instance = wrapper.instance();
+  });
+
+  beforeEach(() => {
+    const info: TunnelInfo = {
+      publicUrl: 'https://ncfdsd.ngrok.io/',
+      inspectUrl: 'http://127.0.0.1:4000',
+      logPath: 'ngrok.log',
+      postmanCollectionPath: 'postman.json',
+    };
+    mockDispatch = jest.spyOn(mockStore, 'dispatch');
+    mockStore.dispatch(updateNewTunnelInfo(info));
+    mockStore.dispatch(updateTunnelStatus(TunnelStatus.Inactive));
   });
 
   it('should render without errors', () => {
+    mockStore.dispatch(updateTunnelStatus(TunnelStatus.Active));
     expect(wrapper.find(NgrokDebugger)).toBeDefined();
+  });
+
+  it('should show the new tunnel status when tunnel status is changed from an action', () => {
+    expect(wrapper.find(mockClassesImpl.errorDetailedViewer)).toEqual({});
+    mockStore.dispatch(updateTunnelStatus(TunnelStatus.Error));
+    expect(wrapper.find(mockClassesImpl.errorDetailedViewer)).toBeDefined();
+  });
+
+  it('should update classes when tunnel status changes', () => {
+    expect(wrapper.find(mockClassesImpl.tunnelInactive)).toBeDefined();
+    mockStore.dispatch(updateTunnelStatus(TunnelStatus.Active));
+    expect(wrapper.find(mockClassesImpl.tunnelActive)).toBeDefined();
+    mockStore.dispatch(updateTunnelStatus(TunnelStatus.Error));
+    expect(wrapper.find(mockClassesImpl.tunnelError)).toBeDefined();
+  });
+
+  it('should show that tunnel has expired', () => {
+    mockStore.dispatch(updateTunnelStatus(TunnelStatus.Error));
+    mockStore.dispatch(
+      updateTunnelError({
+        statusCode: 402,
+        errorMessage: 'Tunnel has expired',
+      })
+    );
+    expect(wrapper.text().includes('ngrok tunnel has expired')).toBeTruthy();
+  });
+
+  it('should show that tunnel has too many connections', () => {
+    mockStore.dispatch(updateTunnelStatus(TunnelStatus.Error));
+    mockStore.dispatch(
+      updateTunnelError({
+        statusCode: 429,
+        errorMessage: 'Tunnel has too many connections',
+      })
+    );
+    expect(wrapper.html().includes('Signup for Ngrok account')).toBeTruthy();
+  });
+
+  it('should show that tunnel has expired', () => {
+    mockStore.dispatch(updateTunnelStatus(TunnelStatus.Error));
+    mockStore.dispatch(
+      updateTunnelError({
+        statusCode: 402,
+        errorMessage: 'Tunnel has expired',
+      })
+    );
+    expect(wrapper.html().includes('ngrok tunnel has expired.')).toBeTruthy();
+  });
+
+  it('should show a generic tunnel error message', () => {
+    mockStore.dispatch(updateTunnelStatus(TunnelStatus.Error));
+    mockStore.dispatch(
+      updateTunnelError({
+        statusCode: -9999,
+        errorMessage: 'Dummy tunnel error',
+      })
+    );
+    expect(wrapper.html().includes('Looks like the ngrok tunnel does not exist anymore.')).toBeTruthy();
   });
 });

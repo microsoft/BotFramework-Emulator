@@ -124,7 +124,7 @@ export const NgrokDebugger = (props: NgrokDebuggerProps) => {
           <LinkButton
             ariaLabel="Download Log file.&nbsp;"
             linkRole={false}
-            onClick={() => props.onSaveFileClick(props.logPath, getDialogOptions('Save log file to disk'))}
+            onClick={() => props.onSaveFileClick(props.logPath, getDialogOptions('Save log file to disk.'))}
           >
             Click here
           </LinkButton>
