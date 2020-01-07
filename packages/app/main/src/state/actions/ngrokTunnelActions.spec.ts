@@ -65,6 +65,8 @@ describe('Ngrok Tunnel Actions', () => {
   });
 
   it('should create a tunnel status update action', () => {
+    const mockDate = new Date(1466424490000);
+    jest.spyOn(global, 'Date').mockImplementation(() => mockDate as any);
     const expectedStatus: TunnelStatus = TunnelStatus.Active;
     const action = updateTunnelStatus(expectedStatus);
     expect(action.type).toBe(NgrokTunnelActions.setStatus);
