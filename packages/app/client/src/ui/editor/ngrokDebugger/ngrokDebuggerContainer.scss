@@ -7,6 +7,10 @@
     justify-content: flex-center;
   }
 
+  h2 {
+    font-weight: bold;
+  }
+
   .tunnel-details-list {
     background-color: var(--my-bots-well-bg);
     border: var(--my-bots-well-border);
@@ -15,6 +19,7 @@
     legend {
       display: block;
       font-weight: bold;
+      margin-bottom: 2px;
     }
 
     li {

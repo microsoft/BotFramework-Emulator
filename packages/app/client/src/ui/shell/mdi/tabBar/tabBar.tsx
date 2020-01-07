@@ -287,7 +287,7 @@ export class TabBar extends React.Component<TabBarProps, TabBarState> {
         return 'Debug';
 
       case CONTENT_TYPE_NGROK_DEBUGGER:
-        return 'Ngrok Debug';
+        return 'Ngrok Status';
 
       default:
         return '';

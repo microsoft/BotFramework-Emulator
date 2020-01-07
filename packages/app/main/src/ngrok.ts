@@ -114,8 +114,9 @@ export class NgrokInstance {
       response.status === 429 || response.status === 402 || response.status === 500 || !response.headers.get('Server');
     if (isErrorResponse) {
       const errorMessage = await response.text();
-      this.ws.write('Tunnel Error Response');
+      this.ws.write('-- Tunnel Error Response --');
       this.ws.write(errorMessage);
+      this.ws.write('-- End Response --');
       this.ngrokEmitter.emit('onTunnelError', {
         statusCode: response.status,
         errorMessage,
@@ -262,7 +263,6 @@ export class NgrokInstance {
 
       ngrok.on('exit', () => {
         this.tunnels = {};
-        this.ws = null;
         clearInterval(this.intervalForHealthCheck);
         this.ngrokEmitter.emit('disconnect');
       });

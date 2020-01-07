@@ -34,7 +34,7 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { Action } from 'redux';
-import { Column, Row, LinkButton, LargeHeader } from '@bfemulator/ui-react';
+import { Column, Row, LinkButton, MediumHeader, SmallHeader } from '@bfemulator/ui-react';
 import { SharedConstants } from '@bfemulator/app-shared';
 
 import { RootState } from '../../../state/store';
@@ -98,10 +98,10 @@ export const NgrokDebugger = (props: NgrokDebuggerProps) => {
 
   const tunnelConnections = (
     <section>
-      <h2>Tunnel Connections</h2>
+      <SmallHeader>Tunnel Connections</SmallHeader>
       <ul className={styles.tunnelDetailsList}>
         <li>
-          <legend> Inspect Url </legend>
+          <legend>Inspect Url</legend>
           <LinkButton
             ariaLabel="Ngrok Inspect Url.&nbsp;"
             linkRole={true}
@@ -124,11 +124,11 @@ export const NgrokDebugger = (props: NgrokDebuggerProps) => {
           <LinkButton
             ariaLabel="Download Log file.&nbsp;"
             linkRole={false}
-            onClick={() => props.onSaveFileClick(props.logPath, getDialogOptions('Save log file to disk.'))}
+            onClick={() => props.onSaveFileClick(props.logPath, getDialogOptions('Save log file to disk'))}
           >
             Click here
           </LinkButton>
-          &nbsp;to download the ngrok log file for this session
+          &nbsp;to download the ngrok log file for this tunnel session
         </li>
         <li>
           <LinkButton
@@ -148,11 +148,11 @@ export const NgrokDebugger = (props: NgrokDebuggerProps) => {
 
   return (
     <GenericDocument className={styles.ngrokDebuggerContainer}>
-      <LargeHeader>Ngrok Debug Viewer</LargeHeader>
+      <MediumHeader>Ngrok Status Viewer</MediumHeader>
       <Row>
         <Column>
           <section>
-            <h2>Tunnel Health</h2>
+            <SmallHeader>Tunnel Health</SmallHeader>
             <ul className={styles.tunnelDetailsList}>
               <li>
                 <legend>Tunnel Status</legend>
