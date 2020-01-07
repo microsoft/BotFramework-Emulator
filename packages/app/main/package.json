@@ -147,7 +147,7 @@
     "https-proxy-agent": "2.2.1",
     "jest-fetch-mock": "^1.6.2",
     "jsonwebtoken": "^8.3.0",
-    "keytar": "^4.13.0",
+    "keytar": "^4.7.0",
     "mkdirp": "^0.5.1",
     "moment": "^2.22.1",
     "node-fetch": "^2.3.0",
