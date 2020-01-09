@@ -60,10 +60,10 @@ const DEFAULT_STATE: NgrokTunnelState = {
   lastPingedTimestamp: '',
 };
 
-export function ngrokTunnel(
+export const ngrokTunnel = (
   state: NgrokTunnelState = DEFAULT_STATE,
   action: NgrokTunnelAction<NgrokTunnelPayloadTypes>
-): NgrokTunnelState {
+): NgrokTunnelState => {
   switch (action.type) {
     case NgrokTunnelActions.setDetails:
       state = {
@@ -71,12 +71,14 @@ export function ngrokTunnel(
         ...action.payload,
       };
       break;
+
     case NgrokTunnelActions.updateOnError:
       state = {
         ...state,
         errors: action.payload as TunnelError,
       };
       break;
+
     case NgrokTunnelActions.setStatus:
       state = {
         ...state,
@@ -86,6 +88,4 @@ export function ngrokTunnel(
       break;
   }
   return state;
-}
-
-export default ngrokTunnel;
+};

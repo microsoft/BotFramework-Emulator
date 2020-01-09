@@ -54,7 +54,7 @@ export const NgrokErrorHandler = (props: NgrokErrorHandlerProps) => {
               <span>
                 Try signing up here
                 <LinkButton
-                  ariaLabel="Signup for Ngrok account.&nbsp;"
+                  ariaLabel="Signup for Ngrok account."
                   linkRole={true}
                   onClick={() => props.onExternalLinkClick('https://dashboard.ngrok.com/signup')}
                 >
@@ -62,7 +62,7 @@ export const NgrokErrorHandler = (props: NgrokErrorHandlerProps) => {
                 </LinkButton>
                 and register your auth token as per the steps in
                 <LinkButton
-                  ariaLabel="Github link for tunnelling issues.&nbsp;"
+                  ariaLabel="Github link for tunnelling issues."
                   linkRole={true}
                   onClick={() =>
                     props.onExternalLinkClick('https://github.com/microsoft/botframework-solutions/issues/2406')
@@ -77,13 +77,14 @@ export const NgrokErrorHandler = (props: NgrokErrorHandlerProps) => {
           </ol>
         </>
       );
+
     case 402:
       return (
         <legend>
           Looks like the ngrok tunnel has expired. Try reconnecting to Ngrok or examine the logs for detailed
           explanation of the error.
           <LinkButton
-            ariaLabel="Click here to reconnect to ngrok.&nbsp;"
+            ariaLabel="Click here to reconnect to ngrok."
             linkRole={false}
             onClick={props.onReconnectToNgrokClick}
           >
@@ -91,13 +92,14 @@ export const NgrokErrorHandler = (props: NgrokErrorHandlerProps) => {
           </LinkButton>
         </legend>
       );
+
     default:
       return (
         <legend>
           Looks like the ngrok tunnel does not exist anymore. Try reconnecting to Ngrok or examine the logs for detailed
           explanation of the error.
           <LinkButton
-            ariaLabel="Click here to reconnect to ngrok.&nbsp;"
+            ariaLabel="Click here to reconnect to ngrok."
             linkRole={false}
             onClick={props.onReconnectToNgrokClick}
           >
