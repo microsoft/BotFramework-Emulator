@@ -70,7 +70,7 @@ describe('Ngrok Tunnel Actions', () => {
     const expectedStatus: TunnelStatus = TunnelStatus.Active;
     const action = updateTunnelStatus(expectedStatus);
     expect(action.type).toBe(NgrokTunnelActions.setStatus);
-    expect(action.payload.ts).toBe(new Date().toLocaleString());
+    expect(action.payload.timestamp).toBe(new Date().toLocaleString());
     expect(action.payload.status).toBe(expectedStatus);
   });
 });

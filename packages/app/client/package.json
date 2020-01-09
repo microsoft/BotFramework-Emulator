@@ -15,7 +15,8 @@
     "lint:fix": "npm run lint -- --fix",
     "start": "run-s build:shared:dev webpackdevServer:dev",
     "webpackdevServer:dev": "webpack-dev-server --mode development --hot --inline --progress --colors --content-base ./public",
-    "test": "jest"
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
   "jest": {
     "setupTestFrameworkScriptFile": "../../../../testSetup.js",

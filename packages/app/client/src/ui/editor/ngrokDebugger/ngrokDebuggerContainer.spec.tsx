@@ -35,7 +35,7 @@
 import * as React from 'react';
 import { Provider } from 'react-redux';
 import { combineReducers, createStore } from 'redux';
-import { mount, ReactWrapper, HTMLAttributes } from 'enzyme';
+import { mount, ReactWrapper } from 'enzyme';
 
 import { ngrokTunnel } from '../../../state/reducers/ngrokTunnel';
 import {
@@ -46,7 +46,8 @@ import {
   updateTunnelError,
 } from '../../../state/actions/ngrokTunnelActions';
 
-import { NgrokDebugger, NgrokDebuggerContainer } from './ngrokDebuggerContainer';
+import { NgrokDebuggerContainer } from './ngrokDebuggerContainer';
+import { NgrokDebugger } from './ngrokDebugger';
 
 const mockClasses = jest.fn(() => ({
   errorDetailedViewer: 'error-window',
