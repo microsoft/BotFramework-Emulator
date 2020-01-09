@@ -31,7 +31,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-export default {
+export const PostmanNgrokCollection = {
   info: {
     _postman_id: '52c791ee-59ed-4c8b-8ffa-5872edeffe2b',
     name: 'Emulator Ngrok Postman',

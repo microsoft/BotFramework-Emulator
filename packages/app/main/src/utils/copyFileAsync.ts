@@ -37,9 +37,7 @@ export const copyFileAsync = (sourcePath: string, destinationPath: string): Prom
   return new Promise((resolve, reject) => {
     fs.copyFile(sourcePath, destinationPath, err => {
       if (err) {
-        // eslint-disable-next-line no-console
-        console.error(`Error copying file: ${err}`);
-        reject();
+        reject(`Error copying file: ${err}`);
       }
       resolve();
     });

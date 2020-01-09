@@ -200,9 +200,8 @@ export class ElectronCommands {
   protected async copyFile(sourcePath: string, destinationPath: string) {
     try {
       await copyFileAsync(sourcePath, destinationPath);
-      return true;
     } catch (ex) {
-      return false;
+      return ex;
     }
   }
 

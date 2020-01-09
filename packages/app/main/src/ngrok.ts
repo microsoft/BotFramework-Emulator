@@ -41,7 +41,7 @@ import { uniqueId } from '@bfemulator/sdk-shared';
 
 import { TunnelInfo, TunnelStatus } from './state/actions/ngrokTunnelActions';
 import { ensureStoragePath, writeFile, writeStream, FileWriteStream } from './utils';
-import ngrokCollection from './utils/postmanNgrokCollection';
+import { PostmanNgrokCollection } from './utils/postmanNgrokCollection';
 
 /* eslint-enable typescript/no-var-requires */
 export interface NgrokOptions {
@@ -88,6 +88,14 @@ export class NgrokInstance {
   private inspectUrl = '';
   private intervalForHealthCheck: NodeJS.Timer = null;
   private ws: FileWriteStream = null;
+  private boundCheckTunnelStatus = null;
+
+  /**
+   *
+   */
+  constructor() {
+    this.boundCheckTunnelStatus = this.checkTunnelStatus.bind(this);
+  }
 
   public running(): boolean {
     return this.ngrokProcess && !!this.ngrokProcess.pid;
@@ -100,7 +108,7 @@ export class NgrokInstance {
     }
     await this.getNgrokInspectUrl(options);
     const tunnelInfo: { url; inspectUrl } = await this.runTunnel(options);
-    this.intervalForHealthCheck = setInterval(() => this.checkTunnelStatus.bind(this)(tunnelInfo.url), 60000);
+    this.intervalForHealthCheck = setInterval(() => this.boundCheckTunnelStatus(tunnelInfo.url), 60000);
     return tunnelInfo;
   }
 
@@ -190,7 +198,7 @@ export class NgrokInstance {
   }
 
   private updatePostmanCollectionWithNewUrls(inspectUrl: string): void {
-    const postmanCopy = JSON.stringify(ngrokCollection);
+    const postmanCopy = JSON.stringify(PostmanNgrokCollection);
     const collectionWithUrlReplaced = postmanCopy.replace(/127.0.0.1:4040/g, inspectUrl.replace(/(^\w+:|^)\/\//, ''));
     writeFile(postmanCollectionPath, collectionWithUrlReplaced);
   }

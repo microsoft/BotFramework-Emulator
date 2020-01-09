@@ -306,7 +306,7 @@ class EmulatorApplication {
     if (this.mainBrowserWindow) {
       return;
     }
-    this.mainBrowserWindow = new BrowserWindow({ show: true, backgroundColor: '#f7f7f7', width: 1400, height: 920 });
+    this.mainBrowserWindow = new BrowserWindow({ show: false, backgroundColor: '#f7f7f7', width: 1400, height: 920 });
     this.initializeBrowserWindowListeners();
 
     this.mainWindow = new Window(this.mainBrowserWindow);
@@ -330,7 +330,6 @@ class EmulatorApplication {
 
     this.mainBrowserWindow.loadURL(page);
     this.mainBrowserWindow.setTitle(app.getName());
-    this.mainBrowserWindow.webContents.openDevTools();
   };
 
   private onAppActivate = () => {

@@ -47,7 +47,7 @@ export interface NgrokTunnelState {
   logPath: string;
   postmanCollectionPath: string;
   tunnelStatus: TunnelStatus;
-  lastTunnelStatusCheckTS: string;
+  lastPingedTimestamp: string;
 }
 
 const DEFAULT_STATE: NgrokTunnelState = {
@@ -57,7 +57,7 @@ const DEFAULT_STATE: NgrokTunnelState = {
   postmanCollectionPath: '',
   errors: {} as TunnelError,
   tunnelStatus: TunnelStatus.Inactive,
-  lastTunnelStatusCheckTS: '',
+  lastPingedTimestamp: '',
 };
 
 export function ngrokTunnel(
@@ -81,7 +81,7 @@ export function ngrokTunnel(
       state = {
         ...state,
         tunnelStatus: (action.payload as TunnelStatusAndTimestamp).status,
-        lastTunnelStatusCheckTS: (action.payload as TunnelStatusAndTimestamp).timestamp,
+        lastPingedTimestamp: (action.payload as TunnelStatusAndTimestamp).timestamp,
       };
       break;
   }
