@@ -44,8 +44,8 @@ export const CONTENT_TYPE_NGROK_DEBUGGER = SharedConstants.ContentTypes.CONTENT_
 export const NAVBAR_BOT_EXPLORER = 'navbar.botExplorer';
 export const NAVBAR_SETTINGS = 'navbar.settings';
 export const NAVBAR_NOTIFICATIONS = 'navbar.notifications';
-export const NAVBAR_RESOURCES = 'navbar:resources';
-export const NAVBAR_NGROK_DEBUGGER = 'navbar:ngrokDebugger';
+export const NAVBAR_RESOURCES = 'navbar.resources';
+export const NAVBAR_NGROK_DEBUGGER = 'navbar.ngrokDebugger';
 
 export const EDITOR_KEY_PRIMARY = 'primary';
 export const EDITOR_KEY_SECONDARY = 'secondary';

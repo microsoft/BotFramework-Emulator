@@ -44,7 +44,6 @@ export interface NavBarProps {
   showExplorer?: (show: boolean) => void;
   navBarSelectionChanged?: (selection: string) => void;
   openEmulatorSettings?: () => void;
-  openNgrokDebuggerPanel?: () => void;
   notifications?: string[];
   explorerIsVisible?: boolean;
   botIsOpen?: boolean;
@@ -102,13 +101,7 @@ export class NavBarComponent extends React.Component<NavBarProps, NavBarState> {
           this.setState({ selection: selectionMap[index] });
         }
         break;
-      case 3:
-        this.props.openEmulatorSettings();
-        break;
-      case 4:
-        this.props.openNgrokDebuggerPanel();
-        break;
-      // Settings
+
       default:
         this.props.openEmulatorSettings();
         break;
@@ -119,7 +112,7 @@ export class NavBarComponent extends React.Component<NavBarProps, NavBarState> {
     const { selection } = this.state;
     const { explorerIsVisible, botIsOpen = false } = this.props;
 
-    return ['Bot Explorer', 'Resources', 'Notifications', 'Settings', 'Ngrok'].map((title, index) => {
+    return ['Bot Explorer', 'Resources', 'Notifications', 'Settings'].map((title, index) => {
       return (
         <button
           aria-selected={explorerIsVisible && selection === selectionMap[index]}

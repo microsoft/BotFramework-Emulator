@@ -11,3 +11,4 @@ build/
 .vscode/*
 chrome-driver-log.txt
 .env
+/packages/**/package-lock.json

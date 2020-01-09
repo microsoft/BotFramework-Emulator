@@ -39,9 +39,9 @@ import { existsSync } from 'fs';
 
 import { uniqueId } from '@bfemulator/sdk-shared';
 
+import { TunnelInfo, TunnelStatus } from './state/actions/ngrokTunnelActions';
 import { ensureStoragePath, writeFile, writeStream, FileWriteStream } from './utils';
 import ngrokCollection from './utils/postmanNgrokCollection';
-import { TunnelInfo, TunnelStatus } from './state/actions/ngrokTunnelActions';
 
 /* eslint-enable typescript/no-var-requires */
 export interface NgrokOptions {

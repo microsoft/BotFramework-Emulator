@@ -37,7 +37,7 @@ import {
   NgrokTunnelPayloadTypes,
   TunnelError,
   TunnelStatus,
-  TunnelStatusAndTs,
+  TunnelStatusAndTimestamp,
 } from '../actions/ngrokTunnelActions';
 
 export interface NgrokTunnelState {
@@ -80,8 +80,8 @@ export function ngrokTunnel(
     case NgrokTunnelActions.setStatus:
       state = {
         ...state,
-        tunnelStatus: (action.payload as TunnelStatusAndTs).status,
-        lastTunnelStatusCheckTS: (action.payload as TunnelStatusAndTs).ts,
+        tunnelStatus: (action.payload as TunnelStatusAndTimestamp).status,
+        lastTunnelStatusCheckTS: (action.payload as TunnelStatusAndTimestamp).timestamp,
       };
       break;
   }

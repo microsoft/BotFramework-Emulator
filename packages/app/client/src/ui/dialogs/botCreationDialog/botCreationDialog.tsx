@@ -161,7 +161,7 @@ export class BotCreationDialog extends React.Component<BotCreationDialogProps, B
           <Row align={RowAlignment.Bottom}>
             <Checkbox label="Azure for US Government" checked={isAzureGov} onChange={this.onChannelServiceChange} />
             <LinkButton
-              ariaLabel="Learn more about Azure for US Government.&nbsp;"
+              ariaLabel="Learn more about Azure for US Government."
               className={dialogStyles.dialogLink}
               linkRole={true}
               onClick={this.onAzureGovLinkClick}

@@ -105,10 +105,10 @@
   }
 
   &:nth-child(5) {
-    // Settings
+    // Ngrok Status Viewer
     > div {
       -webkit-mask-size: 31px;
-      -webkit-mask: url('../../media/ic_bot_settings.svg') no-repeat;
+      -webkit-mask: url('../../media/ic_wrench.svg') no-repeat;
     }
   }
 

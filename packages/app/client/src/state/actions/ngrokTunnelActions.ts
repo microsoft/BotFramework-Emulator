@@ -57,9 +57,9 @@ export interface TunnelError {
   errorMessage: string;
 }
 
-export interface TunnelStatusAndTs {
+export interface TunnelStatusAndTimestamp {
   status: TunnelStatus;
-  ts: string;
+  timestamp: string;
 }
 
 export interface NgrokTunnelAction<T> extends Action {
@@ -67,7 +67,7 @@ export interface NgrokTunnelAction<T> extends Action {
   payload: T;
 }
 
-export type NgrokTunnelPayloadTypes = TunnelError | TunnelInfo | TunnelStatusAndTs;
+export type NgrokTunnelPayloadTypes = TunnelError | TunnelInfo | TunnelStatusAndTimestamp;
 
 export function updateNewTunnelInfo(payload: TunnelInfo): NgrokTunnelAction<TunnelInfo> {
   return {
@@ -76,12 +76,12 @@ export function updateNewTunnelInfo(payload: TunnelInfo): NgrokTunnelAction<Tunn
   };
 }
 
-export function updateTunnelStatus(tunnelStatus: TunnelStatus): NgrokTunnelAction<TunnelStatusAndTs> {
+export function updateTunnelStatus(tunnelStatus: TunnelStatus): NgrokTunnelAction<TunnelStatusAndTimestamp> {
   return {
     type: NgrokTunnelActions.setStatus,
     payload: {
       status: tunnelStatus,
-      ts: new Date().toLocaleString(),
+      timestamp: new Date().toLocaleString(),
     },
   };
 }
