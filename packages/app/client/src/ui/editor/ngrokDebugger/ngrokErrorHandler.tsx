@@ -81,7 +81,7 @@ export const NgrokErrorHandler = (props: NgrokErrorHandlerProps) => {
     case 402:
       return (
         <legend>
-          Looks like the ngrok tunnel has expired. Try reconnecting to Ngrok or examine the logs for detailed
+          Looks like the ngrok tunnel has expired. Try reconnecting to Ngrok or examine the logs for a detailed
           explanation of the error.
           <LinkButton
             ariaLabel="Click here to reconnect to ngrok."
@@ -96,8 +96,8 @@ export const NgrokErrorHandler = (props: NgrokErrorHandlerProps) => {
     default:
       return (
         <legend>
-          Looks like the ngrok tunnel does not exist anymore. Try reconnecting to Ngrok or examine the logs for detailed
-          explanation of the error.
+          Looks like the ngrok tunnel does not exist anymore. Try reconnecting to Ngrok or examine the logs for a
+          detailed explanation of the error.
           <LinkButton
             ariaLabel="Click here to reconnect to ngrok."
             linkRole={false}

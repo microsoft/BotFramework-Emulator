@@ -90,9 +90,6 @@ export class NgrokInstance {
   private ws: FileWriteStream = null;
   private boundCheckTunnelStatus = null;
 
-  /**
-   *
-   */
   constructor() {
     this.boundCheckTunnelStatus = this.checkTunnelStatus.bind(this);
   }

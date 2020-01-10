@@ -166,7 +166,6 @@ class EmulatorApplication {
     Emulator.getInstance().ngrok.ngrokEmitter.on('onTunnelError', this.onTunnelError);
     Emulator.getInstance().ngrok.ngrokEmitter.on('onNewTunnelConnected', this.onNewTunnelConnected);
     Emulator.getInstance().ngrok.ngrokEmitter.on('onTunnelStatusPing', this.onTunnelStatusPing);
-    Emulator.getInstance().ngrok.shutDownOAuthNgrokInstance;
   }
 
   private initializeSystemPreferencesListeners() {
