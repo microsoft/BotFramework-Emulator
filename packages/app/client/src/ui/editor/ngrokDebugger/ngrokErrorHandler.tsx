@@ -47,7 +47,8 @@ export const NgrokErrorHandler = (props: NgrokErrorHandlerProps) => {
       return (
         <>
           <legend>
-            Looks like you have hit your free tier limit on connections to your tunnel. These are few solutions.
+            Looks like you have hit your free tier limit on connections to your tunnel. Below you will find several
+            possible solutions.
           </legend>
           <ol>
             <li>
