@@ -30,13 +30,64 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+import { Action } from 'redux';
 
-export * from './azureAuthActions';
-export * from './botActions';
-export * from './frameworkSettingsActions';
-export * from './protocolActions';
-export * from './savedBotUrlsActions';
-export * from './updateActions';
-export * from './userActions';
-export * from './windowStateActions';
-export * from './ngrokTunnelActions';
+export enum NgrokTunnelActions {
+  setDetails = 'NgrokTunnel/SET_DETAILS',
+  updateOnError = 'NgrokTunnel/TUNNEL_ERROR',
+  setStatus = 'NgrokTunnel/STATUS_CHECK',
+}
+
+export enum TunnelStatus {
+  Active,
+  Inactive,
+  Error,
+}
+
+export interface TunnelInfo {
+  publicUrl: string;
+  inspectUrl: string;
+  logPath: string;
+  postmanCollectionPath: string;
+}
+
+export interface TunnelError {
+  statusCode: number;
+  errorMessage: string;
+}
+
+export interface TunnelStatusAndTimestamp {
+  status: TunnelStatus;
+  timestamp: string;
+}
+
+export interface NgrokTunnelAction<T> extends Action {
+  type: NgrokTunnelActions;
+  payload: T;
+}
+
+export type NgrokTunnelPayloadTypes = TunnelError | TunnelInfo | TunnelStatusAndTimestamp;
+
+export function updateNewTunnelInfo(payload: TunnelInfo): NgrokTunnelAction<TunnelInfo> {
+  return {
+    type: NgrokTunnelActions.setDetails,
+    payload,
+  };
+}
+
+export function updateTunnelStatus(tunnelStatus: TunnelStatus): NgrokTunnelAction<TunnelStatusAndTimestamp> {
+  return {
+    type: NgrokTunnelActions.setStatus,
+    payload: {
+      status: tunnelStatus,
+      timestamp: new Date().toLocaleString(),
+    },
+  };
+}
+
+export function updateTunnelError(payload: TunnelError): NgrokTunnelAction<TunnelError> {
+  return {
+    type: NgrokTunnelActions.updateOnError,
+    payload,
+  };
+}

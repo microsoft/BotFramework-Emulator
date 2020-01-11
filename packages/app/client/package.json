@@ -15,7 +15,8 @@
     "lint:fix": "npm run lint -- --fix",
     "start": "run-s build:shared:dev webpackdevServer:dev",
     "webpackdevServer:dev": "webpack-dev-server --mode development --hot --inline --progress --colors --content-base ./public",
-    "test": "jest"
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
   "jest": {
     "setupTestFrameworkScriptFile": "../../../../testSetup.js",
@@ -51,8 +52,8 @@
     "@babel/preset-typescript": "^7.1.0",
     "@types/enzyme": "^3.1.10",
     "@types/jest": "24.0.13",
-    "@types/react": "~16.3.2",
-    "@types/react-dom": "^16.0.4",
+    "@types/react": "16.9.17",
+    "@types/react-dom": "16.9.4",
     "@types/request": "^2.47.0",
     "babel-eslint": "^10.0.1",
     "babel-jest": "24.8.0",
@@ -111,8 +112,8 @@
     "botframework-webchat-core": "4.7.1",
     "eslint-plugin-react": "^7.12.3",
     "markdown-it": "^8.4.2",
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6",
+    "react": "16.8.6",
+    "react-dom": "16.8.6",
     "react-redux": "^5.0.7",
     "react-router-dom": "^4.2.2",
     "redux": "^3.7.2",

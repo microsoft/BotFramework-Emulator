@@ -221,7 +221,7 @@ export class Splitter extends React.Component<SplitterProps, SplitterState> {
     this.panes[index].ref = ReactDom.findDOMNode(element);
   };
 
-  public onActuatorMouseDown = (e: MouseEvent<HTMLDivElement>, splitterIndex: number): void => {
+  private onActuatorMouseDown = (e: MouseEvent<HTMLDivElement>, splitterIndex: number): void => {
     clearSelection();
     // cache splitter dimensions
     this.splitters[splitterIndex].dimensions = this.splitters[splitterIndex].ref.getBoundingClientRect();

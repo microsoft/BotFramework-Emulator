@@ -24,6 +24,7 @@ html {
   --error-text: #A1260D;
   --error-bg: #F2DEDE;
   --error-outline: #BE1100;
+  --success-bg: #47B07F;
   --endpoint-warning: var(--neutral-14);
 
   /* webchat overridden colors */

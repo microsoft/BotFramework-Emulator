@@ -13,8 +13,8 @@
     "@bfemulator/sdk-client": "^1.0.0",
     "botframework-schema": "^4.3.4",
     "deep-diff": "^1.0.2",
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6",
+    "react": "16.8.6",
+    "react-dom": "16.8.6",
     "react-json-tree": "^0.11.2"
   },
   "scripts": {
@@ -36,8 +36,8 @@
     "@types/deep-diff": "^1.0.0",
     "@types/jest": "24.0.13",
     "@types/lscache": "^1.0.29",
-    "@types/react": "~16.3.2",
-    "@types/react-dom": "^16.0.4",
+    "@types/react": "16.9.17",
+    "@types/react-dom": "16.9.4",
     "babel-eslint": "^10.0.1",
     "babel-jest": "24.8.0",
     "babel-preset-react-app": "^3.1.1",

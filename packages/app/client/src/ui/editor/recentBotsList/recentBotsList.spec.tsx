@@ -31,14 +31,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { newNotification, SharedConstants } from '@bfemulator/app-shared';
+import { SharedConstants } from '@bfemulator/app-shared';
 import { mount } from 'enzyme';
 import * as React from 'react';
 import { Provider } from 'react-redux';
 import { combineReducers, createStore } from 'redux';
 
 import * as BotActions from '../../../state/actions/botActions';
-import { beginAdd } from '../../../state/actions/notificationActions';
 import { openContextMenuForBot } from '../../../state/actions/welcomePageActions';
 import { bot } from '../../../state/reducers/bot';
 import { executeCommand } from '../../../state/actions/commandActions';

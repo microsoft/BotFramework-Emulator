@@ -30,13 +30,25 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+import { copyFileAsync } from './copyFileAsync';
 
-export * from './azureAuthActions';
-export * from './botActions';
-export * from './frameworkSettingsActions';
-export * from './protocolActions';
-export * from './savedBotUrlsActions';
-export * from './updateActions';
-export * from './userActions';
-export * from './windowStateActions';
-export * from './ngrokTunnelActions';
+jest.mock('fs', () => ({
+  copyFile: (sourcePath: string, destinationPath: string, cb: Function) => {
+    if (!destinationPath || !sourcePath) {
+      cb('Incorrect folder permissions.');
+    }
+    cb('');
+  },
+}));
+
+describe('copy files from source to destination asynchronously', () => {
+  it('should resolve promise if operation was successful', async done => {
+    await expect(copyFileAsync('1.txt', '2.txt')).resolves.toBeUndefined();
+    done();
+  });
+
+  it('should reject promise if unsuccessful', async (done: any) => {
+    await expect(copyFileAsync('1.txt', '')).rejects.toBe('Error copying file: Incorrect folder permissions.');
+    done();
+  });
+});

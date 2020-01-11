@@ -31,12 +31,61 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './azureAuthActions';
-export * from './botActions';
-export * from './frameworkSettingsActions';
-export * from './protocolActions';
-export * from './savedBotUrlsActions';
-export * from './updateActions';
-export * from './userActions';
-export * from './windowStateActions';
-export * from './ngrokTunnelActions';
+import {
+  NgrokTunnelActions,
+  NgrokTunnelAction,
+  NgrokTunnelPayloadTypes,
+  TunnelError,
+  TunnelStatus,
+  TunnelStatusAndTimestamp,
+} from '../actions/ngrokTunnelActions';
+
+export interface NgrokTunnelState {
+  errors: TunnelError;
+  publicUrl: string;
+  inspectUrl: string;
+  logPath: string;
+  postmanCollectionPath: string;
+  tunnelStatus: TunnelStatus;
+  lastPingedTimestamp: string;
+}
+
+const DEFAULT_STATE: NgrokTunnelState = {
+  inspectUrl: 'http://127.0.0.1:4040',
+  publicUrl: '',
+  logPath: '',
+  postmanCollectionPath: '',
+  errors: {} as TunnelError,
+  tunnelStatus: TunnelStatus.Inactive,
+  lastPingedTimestamp: '',
+};
+
+export const ngrokTunnel = (
+  state: NgrokTunnelState = DEFAULT_STATE,
+  action: NgrokTunnelAction<NgrokTunnelPayloadTypes>
+): NgrokTunnelState => {
+  switch (action.type) {
+    case NgrokTunnelActions.setDetails:
+      state = {
+        ...state,
+        ...action.payload,
+      };
+      break;
+
+    case NgrokTunnelActions.updateOnError:
+      state = {
+        ...state,
+        errors: action.payload as TunnelError,
+      };
+      break;
+
+    case NgrokTunnelActions.setStatus:
+      state = {
+        ...state,
+        tunnelStatus: (action.payload as TunnelStatusAndTimestamp).status,
+        lastPingedTimestamp: (action.payload as TunnelStatusAndTimestamp).timestamp,
+      };
+      break;
+  }
+  return state;
+};

@@ -43,6 +43,7 @@ jest.mock('electron', () => ({
   app: {
     on: () => void 0,
     setName: () => void 0,
+    getPath: () => '',
   },
   ipcMain: new Proxy(
     {},

@@ -57,4 +57,9 @@ export class NgrokCommands {
   protected killNgrokProcess() {
     Emulator.getInstance().ngrok.kill();
   }
+
+  @Command(Commands.PingTunnel)
+  protected pingForStatusOfTunnel() {
+    Emulator.getInstance().ngrok.pingTunnel();
+  }
 }

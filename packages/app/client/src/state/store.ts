@@ -73,6 +73,8 @@ import {
   ResourcesState,
   ThemeState,
   UpdateState,
+  ngrokTunnel,
+  NgrokTunnelState,
 } from './reducers';
 
 export interface RootState {
@@ -93,6 +95,7 @@ export interface RootState {
   settings?: Settings;
   theme?: ThemeState;
   update?: UpdateState;
+  ngrokTunnel?: NgrokTunnelState;
 }
 
 const DEFAULT_STATE = {};
@@ -132,6 +135,7 @@ function initStore(): Store<RootState> {
       settings: settingsReducer,
       theme,
       update,
+      ngrokTunnel,
     }),
     DEFAULT_STATE,
     storeEnhancer

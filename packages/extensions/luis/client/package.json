@@ -14,8 +14,8 @@
     "botframework-schema": "^4.3.4",
     "lscache": "^1.1.0",
     "luis-apis": "2.5.1",
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6"
+    "react": "16.8.6",
+    "react-dom": "16.8.6"
   },
   "scripts": {
     "start": "webpack-dev-server --hot --inline --mode development --content-base ./public",
@@ -35,8 +35,8 @@
     "@babel/preset-typescript": "^7.1.0",
     "@types/jest": "24.0.13",
     "@types/lscache": "^1.0.29",
-    "@types/react": "~16.3.2",
-    "@types/react-dom": "^16.0.4",
+    "@types/react": "16.9.17",
+    "@types/react-dom": "16.9.4",
     "babel-jest": "24.8.0",
     "babel-loader": "^8.0.6",
     "copy-webpack-plugin": "^4.5.1",

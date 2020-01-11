@@ -31,12 +31,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './azureAuthActions';
-export * from './botActions';
-export * from './frameworkSettingsActions';
-export * from './protocolActions';
-export * from './savedBotUrlsActions';
-export * from './updateActions';
-export * from './userActions';
-export * from './windowStateActions';
-export * from './ngrokTunnelActions';
+import * as fs from 'fs';
+
+export const copyFileAsync = (sourcePath: string, destinationPath: string): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    fs.copyFile(sourcePath, destinationPath, err => {
+      if (err) {
+        reject(`Error copying file: ${err}`);
+      }
+      resolve();
+    });
+  });
+};

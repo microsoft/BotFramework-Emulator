@@ -29,14 +29,27 @@
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-//
 
-export * from './azureAuthActions';
-export * from './botActions';
-export * from './frameworkSettingsActions';
-export * from './protocolActions';
-export * from './savedBotUrlsActions';
-export * from './updateActions';
-export * from './userActions';
-export * from './windowStateActions';
-export * from './ngrokTunnelActions';
+import { createWriteStream } from 'fs';
+
+export interface FileWriteStream {
+  write: (content: string, newLine?: boolean) => void;
+  end: () => void;
+}
+
+export const writeStream = (pathToFile: string) => {
+  const stream = createWriteStream(pathToFile);
+
+  const write = (content: string, newLine: boolean = true) => {
+    stream.write(content + (newLine ? '\n' : ''));
+  };
+
+  const end = () => {
+    stream.end();
+  };
+
+  return {
+    write,
+    end,
+  };
+};

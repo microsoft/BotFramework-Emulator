@@ -104,6 +104,14 @@
     }
   }
 
+  &:nth-child(5) {
+    // Ngrok Status Viewer
+    > div {
+      -webkit-mask-size: 31px;
+      -webkit-mask: url('../../media/ic_wrench.svg') no-repeat;
+    }
+  }
+
   > div {
     position: absolute;
     width: 24px;

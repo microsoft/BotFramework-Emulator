@@ -46,6 +46,15 @@ import './fetchProxy';
 import { Window } from './platform/window';
 import { azureLoggedInUserChanged } from './state/actions/azureAuthActions';
 import { rememberBounds } from './state/actions/windowStateActions';
+import {
+  updateTunnelError,
+  TunnelInfo,
+  updateNewTunnelInfo,
+  TunnelStatus,
+  updateTunnelStatus,
+  TunnelError,
+} from './state/actions/ngrokTunnelActions';
+import * as EditorActions from './state/actions/editorActions';
 import { dispatch, getSettings, store } from './state/store';
 import { TelemetryService } from './telemetry';
 import { botListsAreDifferent, ensureStoragePath, saveSettings, writeFile } from './utils';
@@ -154,7 +163,9 @@ class EmulatorApplication {
   }
 
   private initializeNgrokListeners() {
-    Emulator.getInstance().ngrok.ngrokEmitter.on('expired', this.onNgrokSessionExpired);
+    Emulator.getInstance().ngrok.ngrokEmitter.on('onTunnelError', this.onTunnelError);
+    Emulator.getInstance().ngrok.ngrokEmitter.on('onNewTunnelConnected', this.onNewTunnelConnected);
+    Emulator.getInstance().ngrok.ngrokEmitter.on('onTunnelStatusPing', this.onTunnelStatusPing);
   }
 
   private initializeSystemPreferencesListeners() {
@@ -242,27 +253,39 @@ class EmulatorApplication {
     dispatch(rememberBounds(bounds));
   };
 
-  // ngrok listeners
-  private onNgrokSessionExpired = async () => {
-    // when ngrok expires, spawn notification to reconnect
-    const ngrokNotification: Notification = newNotification(
-      'Your ngrok tunnel instance has expired. Would you like to reconnect to a new tunnel?'
-    );
-    ngrokNotification.addButton('Dismiss', () => {
+  private onTunnelStatusPing = async (status: TunnelStatus) => {
+    dispatch(updateTunnelStatus(status));
+  };
+
+  private onNewTunnelConnected = async (tunnelInfo: TunnelInfo) => {
+    dispatch(updateNewTunnelInfo(tunnelInfo));
+  };
+
+  private onTunnelError = async (response: TunnelError) => {
+    // Avoid reporting the same error again and again to avoid notification flooding
+    if (store.getState().ngrokTunnel.errors.statusCode === response.statusCode) {
+      return;
+    }
+    const genericTunnelError =
+      'Oops.. Your ngrok tunnel seems to have an error. Please check the Ngrok Debug Console for more details';
+    dispatch(updateTunnelError({ ...response }));
+
+    const ngrokNotification: Notification = newNotification(genericTunnelError);
+    ngrokNotification.addButton('Debug Console', () => {
+      // Go to Ngrok from here
       const { Commands } = SharedConstants;
       this.commandService.remoteCall(Commands.Notifications.Remove, ngrokNotification.id);
-    });
-    ngrokNotification.addButton('Reconnect', async () => {
-      try {
-        const { Commands } = SharedConstants;
-        await this.commandService.call(Commands.Ngrok.Reconnect);
-        this.commandService.remoteCall(Commands.Notifications.Remove, ngrokNotification.id);
-      } catch (e) {
-        await sendNotificationToClient(newNotification(e), this.commandService);
-      }
+      dispatch(
+        EditorActions.open({
+          contentType: SharedConstants.ContentTypes.CONTENT_TYPE_NGROK_DEBUGGER,
+          documentId: SharedConstants.DocumentIds.DOCUMENT_ID_NGROK_DEBUGGER,
+          isGlobal: true,
+          meta: null,
+        })
+      );
     });
     await sendNotificationToClient(ngrokNotification, this.commandService);
-    Emulator.getInstance().ngrok.broadcastNgrokExpired();
+    Emulator.getInstance().ngrok.broadcastNgrokError(genericTunnelError);
   };
 
   private onInvertedColorSchemeChanged = () => {
@@ -316,7 +339,7 @@ class EmulatorApplication {
     app.on('open-url', this.onAppOpenUrl);
   };
 
-  private onAppOpenUrl = (event: any, url: string): void => {
+  private onAppOpenUrl = (event: Event, url: string): void => {
     event.preventDefault();
     if (isMac()) {
       protocolUsed = true;
