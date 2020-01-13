@@ -31,28 +31,19 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { AppMenuTemplate } from './appMenuTemplate';
+import { connect } from 'react-redux';
 
-jest.mock('electron', () => ({
-  remote: {
-    app: {
-      getName: () => 'Bot Framework Emulator',
-      getVersion: () => 'v4',
-    },
-  },
-}));
+import { RootState } from '../../../../state/index';
 
-describe('App menu template', () => {
-  it('should return a template with the correct number / order of items', () => {
-    const template = AppMenuTemplate.template;
+import { NgrokTab, NgrokTabProps } from './ngrokTab';
 
-    expect(Object.keys(template)).toEqual(['file', 'debug', 'edit', 'view', 'conversation', 'help']);
+const mapStateToProps = (state: RootState, ownProps: {}): Partial<NgrokTabProps> => {
+  const { tunnelStatus } = state.ngrokTunnel;
 
-    expect(template['file']).toHaveLength(19);
-    expect(template['debug']).toHaveLength(1);
-    expect(template['edit']).toHaveLength(7);
-    expect(template['view']).toHaveLength(6);
-    expect(template['conversation']).toHaveLength(1);
-    expect(template['help']).toHaveLength(12);
-  });
-});
+  return {
+    tunnelStatus,
+    ...ownProps,
+  };
+};
+
+export const NgrokTabContainer = connect(mapStateToProps, null)(NgrokTab);

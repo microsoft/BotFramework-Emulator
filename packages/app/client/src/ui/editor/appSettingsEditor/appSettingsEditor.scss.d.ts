@@ -1,5 +1,6 @@
 // This is a generated file. Changes are likely to result in being overwritten
 export const appSettingsEditor: string;
+export const tunnelStatus: string;
 export const marginBottomRow: string;
 export const rightColumn: string;
 export const buttonRow: string;

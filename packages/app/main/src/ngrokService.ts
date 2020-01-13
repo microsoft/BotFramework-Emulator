@@ -182,7 +182,7 @@ export class NgrokService {
   }
 
   public async pingTunnel(): Promise<void> {
-    await this.ngrok.checkTunnelStatus(this.serviceUrl);
+    await this.ngrok.checkTunnelStatus();
   }
 
   public get ngrokEmitter(): EventEmitter {

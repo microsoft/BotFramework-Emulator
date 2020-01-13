@@ -105,8 +105,7 @@ describe('Ngrok Debugger container', () => {
   let parent: ReactWrapper;
   let wrapper: ReactWrapper;
   const mockStore = createStore(combineReducers({ ngrokTunnel }));
-  let mockDispatch = null;
-  let instance = null;
+  let mockDispatch;
   const mockClassesImpl = mockClasses();
 
   beforeAll(() => {
@@ -116,7 +115,6 @@ describe('Ngrok Debugger container', () => {
       </Provider>
     );
     wrapper = parent.find(NgrokDebugger);
-    instance = wrapper.instance();
   });
 
   beforeEach(() => {
@@ -128,30 +126,54 @@ describe('Ngrok Debugger container', () => {
     };
     mockDispatch = jest.spyOn(mockStore, 'dispatch');
     mockStore.dispatch(updateNewTunnelInfo(info));
-    mockStore.dispatch(updateTunnelStatus(TunnelStatus.Inactive));
+    mockStore.dispatch(
+      updateTunnelStatus({
+        tunnelStatus: TunnelStatus.Inactive,
+      })
+    );
   });
 
   it('should render without errors', () => {
-    mockStore.dispatch(updateTunnelStatus(TunnelStatus.Active));
+    mockStore.dispatch(
+      updateTunnelStatus({
+        tunnelStatus: TunnelStatus.Active,
+      })
+    );
     expect(wrapper.find(NgrokDebugger)).toBeDefined();
   });
 
   it('should show the new tunnel status when tunnel status is changed from an action', () => {
     expect(wrapper.find(mockClassesImpl.errorDetailedViewer)).toEqual({});
-    mockStore.dispatch(updateTunnelStatus(TunnelStatus.Error));
+    mockStore.dispatch(
+      updateTunnelStatus({
+        tunnelStatus: TunnelStatus.Error,
+      })
+    );
     expect(wrapper.find(mockClassesImpl.errorDetailedViewer)).toBeDefined();
   });
 
   it('should update classes when tunnel status changes', () => {
     expect(wrapper.find(mockClassesImpl.tunnelInactive)).toBeDefined();
-    mockStore.dispatch(updateTunnelStatus(TunnelStatus.Active));
+    mockStore.dispatch(
+      updateTunnelStatus({
+        tunnelStatus: TunnelStatus.Active,
+      })
+    );
     expect(wrapper.find(mockClassesImpl.tunnelActive)).toBeDefined();
-    mockStore.dispatch(updateTunnelStatus(TunnelStatus.Error));
+    mockStore.dispatch(
+      updateTunnelStatus({
+        tunnelStatus: TunnelStatus.Error,
+      })
+    );
     expect(wrapper.find(mockClassesImpl.tunnelError)).toBeDefined();
   });
 
   it('should show that tunnel has expired', () => {
-    mockStore.dispatch(updateTunnelStatus(TunnelStatus.Error));
+    mockStore.dispatch(
+      updateTunnelStatus({
+        tunnelStatus: TunnelStatus.Error,
+      })
+    );
     mockStore.dispatch(
       updateTunnelError({
         statusCode: 402,
@@ -162,7 +184,11 @@ describe('Ngrok Debugger container', () => {
   });
 
   it('should show that tunnel has too many connections', () => {
-    mockStore.dispatch(updateTunnelStatus(TunnelStatus.Error));
+    mockStore.dispatch(
+      updateTunnelStatus({
+        tunnelStatus: TunnelStatus.Error,
+      })
+    );
     mockStore.dispatch(
       updateTunnelError({
         statusCode: 429,
@@ -173,7 +199,11 @@ describe('Ngrok Debugger container', () => {
   });
 
   it('should show that tunnel has expired', () => {
-    mockStore.dispatch(updateTunnelStatus(TunnelStatus.Error));
+    mockStore.dispatch(
+      updateTunnelStatus({
+        tunnelStatus: TunnelStatus.Error,
+      })
+    );
     mockStore.dispatch(
       updateTunnelError({
         statusCode: 402,
@@ -184,7 +214,11 @@ describe('Ngrok Debugger container', () => {
   });
 
   it('should show a generic tunnel error message', () => {
-    mockStore.dispatch(updateTunnelStatus(TunnelStatus.Error));
+    mockStore.dispatch(
+      updateTunnelStatus({
+        tunnelStatus: TunnelStatus.Error,
+      })
+    );
     mockStore.dispatch(
       updateTunnelError({
         statusCode: -9999,

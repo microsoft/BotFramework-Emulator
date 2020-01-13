@@ -38,7 +38,9 @@ import {
   NgrokTunnelPayloadTypes,
   NgrokTunnelActions,
   TunnelError,
-  TunnelStatusAndTs,
+  TunnelStatusAndTimestamp,
+  TunnelCheckTimeInterval,
+  clearAllNotifications,
 } from '../actions/ngrokTunnelActions';
 
 import { ngrokTunnel, NgrokTunnelState } from './ngrokTunnel';
@@ -51,7 +53,9 @@ describe('Ngrok Tunnel reducer', () => {
     postmanCollectionPath: '',
     errors: {} as TunnelError,
     tunnelStatus: TunnelStatus.Inactive,
-    lastTunnelStatusCheckTS: '',
+    lastPingedTimestamp: Date.now(),
+    timeIntervalSinceLastPing: TunnelCheckTimeInterval.Now,
+    ngrokNotificationIds: [],
   };
 
   afterEach(() => {
@@ -99,14 +103,50 @@ describe('Ngrok Tunnel reducer', () => {
     expect(endingState.errors.errorMessage).toBe(payload.errorMessage);
   });
 
-  it('Tunnel status should be set from payload', () => {
-    const payload: TunnelStatusAndTs = {
-      status: TunnelStatus.Active,
-      ts: '12/27/2019, 1:30:00 PM',
+  it('Last Ping time interval should be set from payload', () => {
+    const action = {
+      type: NgrokTunnelActions.setTimeIntervalSinceLastPing,
+      payload: TunnelCheckTimeInterval.SecondInterval,
     };
-    const nextPayload: TunnelStatusAndTs = {
+    const startingState = { ...DEFAULT_STATE };
+    const transientState = ngrokTunnel(startingState, action);
+    expect(transientState.timeIntervalSinceLastPing).toBe(action.payload);
+  });
+
+  it('should add notifications with add notification and clear should remove all ngrok notifications', () => {
+    const getNotificationAction = payload => ({
+      type: NgrokTunnelActions.addNotification,
+      payload,
+    });
+    const startingState = { ...DEFAULT_STATE };
+    const notifications: string[] = ['notification-1', 'notification-2', 'notification-3', 'notification-4'];
+    let transientState = ngrokTunnel(startingState, getNotificationAction(notifications[0]));
+    transientState = ngrokTunnel(transientState, getNotificationAction(notifications[1]));
+    transientState = ngrokTunnel(transientState, getNotificationAction(notifications[2]));
+    transientState = ngrokTunnel(transientState, getNotificationAction(notifications[3]));
+    expect(transientState.ngrokNotificationIds).toEqual(notifications);
+    transientState = ngrokTunnel(transientState, {
+      type: NgrokTunnelActions.clearAllNotifications,
+      payload: null,
+    });
+    expect(transientState.ngrokNotificationIds.length).toBe(0);
+    transientState = ngrokTunnel(transientState, getNotificationAction(notifications[3]));
+    expect(transientState.ngrokNotificationIds.length).toBe(1);
+    const finalState = ngrokTunnel(transientState, {
+      type: NgrokTunnelActions.clearAllNotifications,
+      payload: null,
+    });
+    expect(finalState.ngrokNotificationIds.length).toBe(0);
+  });
+
+  it('Tunnel status should be set from payload', () => {
+    const payload: TunnelStatusAndTimestamp = {
+      status: TunnelStatus.Active,
+      timestamp: Date.now(),
+    };
+    const nextPayload: TunnelStatusAndTimestamp = {
       status: TunnelStatus.Error,
-      ts: '12/27/2019, 1:33:00 PM',
+      timestamp: Date.now(),
     };
     const actions: NgrokTunnelAction<NgrokTunnelPayloadTypes>[] = [
       {
@@ -119,10 +159,22 @@ describe('Ngrok Tunnel reducer', () => {
       },
     ];
     const startingState = { ...DEFAULT_STATE };
-    const transientState = ngrokTunnel(startingState, actions[0]);
+    let transientState = ngrokTunnel(startingState, actions[0]);
     expect(transientState.tunnelStatus).toBe(payload.status);
 
-    const finalState = ngrokTunnel(startingState, actions[1]);
-    expect(finalState.tunnelStatus).toBe(nextPayload.status);
+    transientState = ngrokTunnel(transientState, actions[1]);
+    expect(transientState.tunnelStatus).toBe(nextPayload.status);
+
+    transientState = ngrokTunnel(transientState, {
+      type: NgrokTunnelActions.updateOnError,
+      payload: {
+        statusCode: 422,
+        errorMessage: 'Tunnel has too many connections',
+      },
+    });
+    expect(transientState.errors.statusCode).toBe(422);
+    transientState = ngrokTunnel(transientState, actions[0]);
+    expect(transientState.tunnelStatus).toEqual(TunnelStatus.Active);
+    expect(transientState.errors).toEqual({});
   });
 });

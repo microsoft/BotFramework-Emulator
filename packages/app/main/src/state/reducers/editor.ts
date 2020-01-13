@@ -223,6 +223,10 @@ export const editor = (state: EditorState = DEFAULT_STATE, action: EditorAction 
     }
 
     case EditorActions.open: {
+      let makeEditorActive = true;
+      if (action.payload.meta && action.payload.meta.makeActiveByDefault === false) {
+        makeEditorActive = false;
+      }
       const editorKey = state.activeEditor;
       const otherTabGroup = getOtherTabGroup(editorKey);
 
@@ -274,10 +278,13 @@ export const editor = (state: EditorState = DEFAULT_STATE, action: EditorAction 
         newDocs[action.payload.documentId] = {};
       }
       Object.assign(newDocs[action.payload.documentId], action.payload);
-
+      let activeDocumentId = state.editors[editorKey].activeDocumentId;
+      if (makeEditorActive) {
+        activeDocumentId = action.payload.documentId;
+      }
       const editorState: Editor = {
         ...state.editors[editorKey],
-        activeDocumentId: action.payload.documentId,
+        activeDocumentId,
         documents: newDocs,
         recentTabs: newRecentTabs,
         tabOrder: newTabOrder,

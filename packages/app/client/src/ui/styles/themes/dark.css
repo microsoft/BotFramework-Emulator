@@ -291,6 +291,12 @@ html {
   --menu-item-hover-outline: none;
   --menu-separator-color: #CCCCCC;
   --menu-submenu-top-adjustment: -8px;
+
+  /* Ngrok Colors */
+  --ngrok-inactive: #007ACC;
+  --ngrok-active: #47B07F;
+  --ngrok-error: #BE1100;
+  --ngrok-error-outline: #F5B1B1;
 }
 
 .dialog {

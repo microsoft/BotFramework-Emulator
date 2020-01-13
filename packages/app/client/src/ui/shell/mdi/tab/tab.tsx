@@ -48,6 +48,7 @@ export interface TabProps {
   toggleDraggingTab?: (toggle: boolean) => any;
   onCloseClick?: (documentId: string) => any;
   swapTabs?: (editorKey: string, owningEditor: string, tabId: string) => any;
+  hideIcon?: boolean;
 }
 
 export interface TabState {
@@ -83,7 +84,8 @@ export class Tab extends React.Component<TabProps, TabState> {
         onDragEnd={this.onDragEnd}
         role="presentation"
       >
-        <span className={`${styles.editorTabIcon} ${iconClass}`} role="presentation" />
+        {this.props.children}
+        {!this.props.hideIcon && <span className={`${styles.editorTabIcon} ${iconClass}`} role="presentation" />}
         <TruncateText className={styles.truncatedTabText}>{label}</TruncateText>
         {this.props.dirty ? <span role="presentation">*</span> : null}
         <div className={styles.tabSeparator} role="presentation" />

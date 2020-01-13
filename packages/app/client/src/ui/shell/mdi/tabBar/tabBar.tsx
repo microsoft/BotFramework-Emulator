@@ -34,6 +34,7 @@
 import { BotConfigWithPath } from '@bfemulator/sdk-shared';
 import * as React from 'react';
 import { DragEvent, MouseEvent } from 'react';
+import { SharedConstants } from '@bfemulator/app-shared';
 
 import {
   CONTENT_TYPE_APP_SETTINGS,
@@ -47,6 +48,7 @@ import {
 import { getOtherTabGroup } from '../../../../state/helpers/editorHelpers';
 import { Document, Editor } from '../../../../state/reducers/editor';
 import { Tab } from '../tab/tab';
+import { NgrokTabContainer } from '../tab/ngrokTabContainer';
 
 import * as styles from './tabBar.scss';
 
@@ -176,6 +178,13 @@ export class TabBar extends React.Component<TabBarProps, TabBarState> {
       const document = this.props.documents[documentId] || ({} as Document);
       const isActive = documentId === this.props.activeDocumentId;
 
+      const commonProps = {
+        active: isActive,
+        dirty: document.dirty,
+        documentId: documentId,
+        label: this.getTabLabel(document),
+        onCloseClick: this.props.closeTab,
+      };
       return (
         <div
           key={documentId}
@@ -186,13 +195,11 @@ export class TabBar extends React.Component<TabBarProps, TabBarState> {
           ref={this.setRef}
           role="presentation"
         >
-          <Tab
-            active={isActive}
-            dirty={document.dirty}
-            documentId={documentId}
-            label={this.getTabLabel(document)}
-            onCloseClick={this.props.closeTab}
-          />
+          {documentId === SharedConstants.DocumentIds.DOCUMENT_ID_NGROK_DEBUGGER ? (
+            <NgrokTabContainer {...commonProps} />
+          ) : (
+            <Tab {...commonProps} />
+          )}
         </div>
       );
     });

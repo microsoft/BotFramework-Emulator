@@ -189,7 +189,7 @@ export class AppMenuBuilder {
 
   /** Returns the template to construct a file menu that reflects updated state */
   private static getUpdatedFileMenuContent(recentBotsMenu: Menu = new Menu()): MenuOpts[] {
-    const { Azure, UI, Bot, Emulator: EmulatorCommands } = SharedConstants.Commands;
+    const { Azure, UI, Bot, Emulator: EmulatorCommands, Ngrok } = SharedConstants.Commands;
 
     // TODO - localization
     const subMenu: MenuOpts[] = [
@@ -216,13 +216,16 @@ export class AppMenuBuilder {
       {
         label: 'Open Transcript...',
         click: () => {
-          AppMenuBuilder.commandService.remoteCall(EmulatorCommands.PromptToOpenTranscript).catch(err => {
-            // eslint-disable-next-line no-console
-            console.error('Error opening transcript file from menu: ', err);
-          });
+          AppMenuBuilder.commandService.remoteCall(EmulatorCommands.PromptToOpenTranscript);
         },
       },
       { type: 'separator' },
+      {
+        label: 'Open Ngrok Status Viewer...',
+        click: () => {
+          AppMenuBuilder.commandService.call(Ngrok.OpenStatusViewer);
+        },
+      },
     ];
 
     const activeBot = BotHelpers.getActiveBot();

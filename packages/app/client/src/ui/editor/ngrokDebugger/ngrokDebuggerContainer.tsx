@@ -57,6 +57,7 @@ const mapStateToProps = (state: RootState, ownProps: {}): Partial<NgrokDebuggerP
     postmanCollectionPath,
     tunnelStatus,
     lastPingedTimestamp: lastTunnelStatusCheckTS,
+    timeIntervalSinceLastPing: timeIntervalSinceLastPing,
   } = state.ngrokTunnel;
 
   return {
@@ -67,6 +68,7 @@ const mapStateToProps = (state: RootState, ownProps: {}): Partial<NgrokDebuggerP
     postmanCollectionPath,
     tunnelStatus,
     lastPingedTimestamp: lastTunnelStatusCheckTS,
+    timeIntervalSinceLastPing,
     ...ownProps,
   };
 };

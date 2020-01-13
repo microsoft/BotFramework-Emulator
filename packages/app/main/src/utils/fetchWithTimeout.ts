@@ -30,29 +30,9 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
-import { AppMenuTemplate } from './appMenuTemplate';
-
-jest.mock('electron', () => ({
-  remote: {
-    app: {
-      getName: () => 'Bot Framework Emulator',
-      getVersion: () => 'v4',
-    },
-  },
-}));
-
-describe('App menu template', () => {
-  it('should return a template with the correct number / order of items', () => {
-    const template = AppMenuTemplate.template;
-
-    expect(Object.keys(template)).toEqual(['file', 'debug', 'edit', 'view', 'conversation', 'help']);
-
-    expect(template['file']).toHaveLength(19);
-    expect(template['debug']).toHaveLength(1);
-    expect(template['edit']).toHaveLength(7);
-    expect(template['view']).toHaveLength(6);
-    expect(template['conversation']).toHaveLength(1);
-    expect(template['help']).toHaveLength(12);
-  });
-});
+export const fetchWithTimeout = (url: string, options?: any, timeout: number = 7000): Promise<any> => {
+  return Promise.race([
+    fetch(url, options),
+    new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), timeout)),
+  ]);
+};
