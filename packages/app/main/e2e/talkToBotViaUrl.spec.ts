@@ -66,7 +66,7 @@ describe('Talking to a bot via URL', () => {
     await app.client.waitForExist('div.bubble:first-of-type');
 
     // grab the welcome message from the bot
-    const welcomeMsgBubble = await app.client.$('div.bubble:first-of-type');
+    const welcomeMsgBubble = await app.client.$('div.bubble:first-of-type > div > span');
     const welcomeMsgText = await app.client.elementIdText(welcomeMsgBubble.value.ELEMENT);
     expect(welcomeMsgText.value).toBe('Welcome to the e2e testing bot! :)');
   });
@@ -109,7 +109,7 @@ describe('Talking to a bot via URL', () => {
     await app.client.pause(1000);
 
     // grab the user id from the bot's response
-    let msgBubbles = await app.client.$$('div.bubble');
+    let msgBubbles = await app.client.$$('div.bubble > div > span');
     let msgBubble = await app.client.elementIdText(msgBubbles[2].ELEMENT);
     const initialUserId = msgBubble.value;
 
@@ -131,7 +131,7 @@ describe('Talking to a bot via URL', () => {
     await app.client.pause(1000);
 
     // grab the user id from the bot's response
-    msgBubbles = await app.client.$$('div.bubble');
+    msgBubbles = await app.client.$$('div.bubble > div > span');
     msgBubble = await app.client.elementIdText(msgBubbles[2].ELEMENT);
     const userIdAfterRestartingWithSame = msgBubble.value;
 
@@ -151,7 +151,7 @@ describe('Talking to a bot via URL', () => {
     await app.client.pause(1000);
 
     // grab the user id from the bot's response
-    msgBubbles = await app.client.$$('div.bubble');
+    msgBubbles = await app.client.$$('div.bubble > div > span');
     msgBubble = await app.client.elementIdText(msgBubbles[2].ELEMENT);
     const newUserId = msgBubble.value;
 

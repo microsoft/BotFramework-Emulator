@@ -151,22 +151,22 @@ describe('Exporting and importing transcripts', () => {
     await app.client.waitForExist('div.bubble:first-of-type', 5000);
 
     // there should be 5 chat bubbles visible
-    const msgBubbles = await app.client.$$('div.bubble');
+    const msgBubbles = await app.client.$$('div.bubble > div > span');
     expect(msgBubbles.length).toBe(5);
 
     const msgBubble0 = await app.client.elementIdText(msgBubbles[0].ELEMENT);
-    expect(msgBubble0.value).toBe('Welcome to the e2e testing bot! :)');
+    expect(msgBubble0.value).toEqual('Welcome to the e2e testing bot! :)');
 
     const msgBubble1 = await app.client.elementIdText(msgBubbles[1].ELEMENT);
-    expect(msgBubble1.value).toBe('Hello');
+    expect(msgBubble1.value).toEqual('Hello');
 
     const msgBubble2 = await app.client.elementIdText(msgBubbles[2].ELEMENT);
-    expect(msgBubble2.value).toBe('Hello! :)');
+    expect(msgBubble2.value).toEqual('Hello! :)');
 
     const msgBubble3 = await app.client.elementIdText(msgBubbles[3].ELEMENT);
-    expect(msgBubble3.value).toBe('How are you doing?');
+    expect(msgBubble3.value).toEqual('How are you doing?');
 
     const msgBubble4 = await app.client.elementIdText(msgBubbles[4].ELEMENT);
-    expect(msgBubble4.value).toBe("I'm doing great, thanks for asking!");
+    expect(msgBubble4.value).toEqual("I'm doing great, thanks for asking!");
   });
 });
