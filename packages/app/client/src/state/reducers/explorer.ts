@@ -46,7 +46,7 @@ export interface ExplorerState {
 export declare type SortCriteria = string;
 
 const DEFAULT_STATE: ExplorerState = {
-  showing: true,
+  showing: false,
   sortSelectionByPanelId: { [CONNECTED_SERVICES_PANEL_ID]: 'name' },
 };
 
