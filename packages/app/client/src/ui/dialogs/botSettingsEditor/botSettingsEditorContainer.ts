@@ -30,14 +30,13 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { SharedConstants } from '@bfemulator/app-shared';
+
+import { beginAdd, executeCommand, SharedConstants } from '@bfemulator/app-shared';
 import { BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
 import { connect } from 'react-redux';
 
-import { beginAdd } from '../../../state/actions/notificationActions';
 import { RootState } from '../../../state/store';
 import { DialogService } from '../service';
-import { executeCommand } from '../../../state/actions/commandActions';
 
 import { BotSettingsEditor, BotSettingsEditorProps } from './botSettingsEditor';
 

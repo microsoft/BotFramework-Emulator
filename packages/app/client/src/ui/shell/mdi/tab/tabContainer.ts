@@ -32,8 +32,7 @@
 //
 
 import { connect } from 'react-redux';
-
-import { swapTabs, toggleDraggingTab } from '../../../../state/actions/editorActions';
+import { swapTabs, toggleDraggingTab } from '@bfemulator/app-shared';
 
 import { Tab, TabProps } from './tab';
 

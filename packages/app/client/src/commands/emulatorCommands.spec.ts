@@ -31,13 +31,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { SharedConstants } from '@bfemulator/app-shared';
+import {
+  beginAdd,
+  close,
+  closeDocument as closeChatDocument,
+  openBotViaUrlAction,
+  openTranscript,
+  SharedConstants,
+} from '@bfemulator/app-shared';
 import { CommandRegistry, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
-
-import { beginAdd } from '../state/actions/notificationActions';
-import { close } from '../state/actions/editorActions';
-import { openTranscript, closeDocument } from '../state/actions/chatActions';
-import { openBotViaUrlAction } from '../state';
 
 import { EmulatorCommands } from './emulatorCommands';
 
@@ -159,7 +161,7 @@ describe('The emulator commands', () => {
     handler(mockFilePath, mockFilename);
 
     expect(mockStore.dispatch).toHaveBeenCalledWith(close(SharedConstants.EDITOR_KEY_PRIMARY, mockFilePath));
-    expect(mockStore.dispatch).toHaveBeenCalledWith(closeDocument(mockFilePath));
+    expect(mockStore.dispatch).toHaveBeenCalledWith(closeChatDocument(mockFilePath));
     expect(mockStore.dispatch).toHaveBeenCalledWith(openTranscript(mockFilename));
   });
 });

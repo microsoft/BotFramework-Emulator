@@ -34,12 +34,10 @@
 import * as React from 'react';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { setActiveEditor, tabGroupHasDocuments, Editor, SharedConstants } from '@bfemulator/app-shared';
 
-import * as Constants from '../../../../../constants';
-import * as EditorActions from '../../../../../state/actions/editorActions';
-import { getTabGroupForDocument, tabGroupHasDocuments } from '../../../../../state/helpers/editorHelpers';
-import { Editor } from '../../../../../state/reducers/editor';
 import { RootState } from '../../../../../state/store';
+import { getTabGroupForDocument } from '../../../../../state/helpers';
 import { ContentOverlay, LeftContentOverlay, RightContentOverlay } from '../index';
 
 import * as styles from './contentWrapper.scss';
@@ -105,12 +103,12 @@ class TabbedDocumentContentWrapperComponent extends Component<TabbedDocumentCont
 
 const mapStateToProps = (state: RootState): TabbedDocumentContentProps => ({
   activeEditor: state.editor.activeEditor,
-  primaryEditor: state.editor.editors[Constants.EDITOR_KEY_PRIMARY],
-  secondaryEditor: state.editor.editors[Constants.EDITOR_KEY_SECONDARY],
+  primaryEditor: state.editor.editors[SharedConstants.EDITOR_KEY_PRIMARY],
+  secondaryEditor: state.editor.editors[SharedConstants.EDITOR_KEY_SECONDARY],
 });
 
 const mapDispatchToProps = (dispatch): TabbedDocumentContentProps => ({
-  setActiveEditor: (editor: string) => dispatch(EditorActions.setActiveEditor(editor)),
+  setActiveEditor: (editor: string) => dispatch(setActiveEditor(editor)),
 });
 
 export const TabbedDocumentContentWrapper = connect(

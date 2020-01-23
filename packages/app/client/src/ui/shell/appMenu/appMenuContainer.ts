@@ -32,10 +32,9 @@
 //
 
 import { connect } from 'react-redux';
-import { SharedConstants } from '@bfemulator/app-shared';
+import { executeCommand, rememberTheme, SharedConstants } from '@bfemulator/app-shared';
 
-import { RootState, rememberTheme } from '../../../state';
-import { executeCommand } from '../../../state/actions/commandActions';
+import { RootState } from '../../../state';
 
 import { AppMenu, AppMenuProps } from './appMenu';
 

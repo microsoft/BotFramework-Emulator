@@ -34,8 +34,7 @@ import * as React from 'react';
 import { Provider } from 'react-redux';
 import { mount } from 'enzyme';
 import { createStore } from 'redux';
-
-import { azureAuth } from '../../../state/reducers/azureAuth';
+import { azureAuth } from '@bfemulator/app-shared';
 
 import { OpenUrlDialog } from './openUrlDialog';
 import { OpenUrlDialogContainer } from './openUrlDialogContainer';

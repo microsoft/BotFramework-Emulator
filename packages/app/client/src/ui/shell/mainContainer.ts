@@ -31,12 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import { connect } from 'react-redux';
-import { SharedConstants } from '@bfemulator/app-shared';
+import { disable as disablePresentationMode, executeCommand, SharedConstants } from '@bfemulator/app-shared';
 
 import * as Constants from '../../constants';
-import * as PresentationActions from '../../state/actions/presentationActions';
 import { RootState } from '../../state/store';
-import { executeCommand } from '../../state/actions/commandActions';
 import { showWelcomePage } from '../../state/helpers/editorHelpers';
 import { globalHandlers } from '../../utils/eventHandlers';
 
@@ -53,7 +51,7 @@ const mapStateToProps = (state: RootState): MainProps => ({
 const mapDispatchToProps = (dispatch): MainProps => ({
   exitPresentationMode: (e: KeyboardEvent) => {
     if (e.key === 'Escape') {
-      dispatch(PresentationActions.disable());
+      dispatch(disablePresentationMode());
     }
   },
   applicationMountComplete: async () => {

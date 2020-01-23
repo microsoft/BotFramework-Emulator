@@ -31,15 +31,23 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import { connect } from 'react-redux';
-import { Notification, SharedConstants, ValueTypesMask } from '@bfemulator/app-shared';
+import {
+  beginAdd,
+  clearLog,
+  disable as disablePresentationMode,
+  enable as enablePresentationMode,
+  executeCommand,
+  restartConversation,
+  setInspectorObjects,
+  updateChat,
+  updateDocument,
+  Document,
+  Notification,
+  SharedConstants,
+  ValueTypesMask,
+} from '@bfemulator/app-shared';
 
 import { RootState } from '../../../state/store';
-import * as PresentationActions from '../../../state/actions/presentationActions';
-import * as ChatActions from '../../../state/actions/chatActions';
-import { Document } from '../../../state/reducers/editor';
-import { updateDocument } from '../../../state/actions/editorActions';
-import { beginAdd } from '../../../state/actions/notificationActions';
-import { executeCommand } from '../../../state/actions/commandActions';
 
 import { Emulator, EmulatorProps } from './emulator';
 
@@ -63,21 +71,21 @@ const mapStateToProps = (state: RootState, { documentId, ...ownProps }: { docume
 
 const mapDispatchToProps = (dispatch): EmulatorProps => ({
   clearLog: (documentId: string) => {
-    dispatch(ChatActions.clearLog(documentId));
+    dispatch(clearLog(documentId));
   },
   createErrorNotification: (notification: Notification) => dispatch(beginAdd(notification)),
   enablePresentationMode: (enabled: boolean) =>
-    enabled ? dispatch(PresentationActions.enable()) : dispatch(PresentationActions.disable()),
+    enabled ? dispatch(enablePresentationMode()) : dispatch(disablePresentationMode()),
   exportItems: (valueTypes: ValueTypesMask, conversationId: string) =>
     dispatch(
       executeCommand(true, SharedConstants.Commands.Emulator.SaveTranscriptToFile, null, valueTypes, conversationId)
     ),
   restartConversation: (documentId: string, requireNewConversationId: boolean, requireNewUserId: boolean) =>
-    dispatch(ChatActions.restartConversation(documentId, requireNewConversationId, requireNewUserId)),
-  setInspectorObjects: (documentId, objects) => dispatch(ChatActions.setInspectorObjects(documentId, objects)),
+    dispatch(restartConversation(documentId, requireNewConversationId, requireNewUserId)),
+  setInspectorObjects: (documentId, objects) => dispatch(setInspectorObjects(documentId, objects)),
   trackEvent: (name: string, properties?: { [key: string]: any }) =>
     dispatch(executeCommand(true, SharedConstants.Commands.Telemetry.TrackEvent, null, name, properties)),
-  updateChat: (documentId: string, updatedValues: any) => dispatch(ChatActions.updateChat(documentId, updatedValues)),
+  updateChat: (documentId: string, updatedValues: any) => dispatch(updateChat(documentId, updatedValues)),
   updateDocument: (documentId, updatedValues: Partial<Document>) => dispatch(updateDocument(documentId, updatedValues)),
 });
 

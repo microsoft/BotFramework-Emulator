@@ -31,6 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { getOtherTabGroup, Document, Editor } from '@bfemulator/app-shared';
 import { BotConfigWithPath } from '@bfemulator/sdk-shared';
 import * as React from 'react';
 import { DragEvent, MouseEvent } from 'react';
@@ -45,8 +46,6 @@ import {
   CONTENT_TYPE_WELCOME_PAGE,
   CONTENT_TYPE_NGROK_DEBUGGER,
 } from '../../../../constants';
-import { getOtherTabGroup } from '../../../../state/helpers/editorHelpers';
-import { Document, Editor } from '../../../../state/reducers/editor';
 import { Tab } from '../tab/tab';
 import { NgrokTabContainer } from '../tab/ngrokTabContainer';
 

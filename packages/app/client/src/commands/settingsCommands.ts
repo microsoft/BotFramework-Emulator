@@ -31,10 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ClientAwareSettings, SharedConstants } from '@bfemulator/app-shared';
+import { clientAwareSettingsChanged, ClientAwareSettings, SharedConstants } from '@bfemulator/app-shared';
 import { Command } from '@bfemulator/sdk-shared';
 
-import { clientAwareSettingsChanged } from '../state/actions/clientAwareSettingsActions';
 import { store } from '../state/store';
 
 const { Settings } = SharedConstants.Commands;

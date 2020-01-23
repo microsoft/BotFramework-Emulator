@@ -32,10 +32,13 @@
 //
 import { ForkEffect, put, takeEvery } from 'redux-saga/effects';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
-import { newNotification } from '@bfemulator/app-shared';
-
-import { CommandAction, CommandActionPayload, EXECUTE_COMMAND } from '../actions/commandActions';
-import { beginAdd } from '../actions/notificationActions';
+import {
+  beginAdd,
+  newNotification,
+  CommandAction,
+  CommandActionPayload,
+  EXECUTE_COMMAND,
+} from '@bfemulator/app-shared';
 
 export class CommandSagas {
   @CommandServiceInstance()

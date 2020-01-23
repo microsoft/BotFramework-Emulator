@@ -34,8 +34,7 @@
 //TODO: More UI tests to be added
 import * as React from 'react';
 import { mount, ReactWrapper } from 'enzyme';
-
-import { TunnelStatus, TunnelCheckTimeInterval } from '../../../state/actions/ngrokTunnelActions';
+import { TunnelStatus, TunnelCheckTimeInterval } from '@bfemulator/app-shared';
 
 import { NgrokStatusIndicator } from './ngrokStatusIndicator';
 

@@ -32,17 +32,18 @@
 //
 import { join } from 'path';
 
+import {
+  ngrokTunnel,
+  updateTunnelError,
+  NgrokTunnelAction,
+  StatusCheckOnTunnel,
+  TunnelStatus,
+} from '@bfemulator/app-shared';
+
 import './fetchProxy';
 import { createStore, combineReducers } from 'redux';
 
 import { intervals, NgrokInstance } from './ngrok';
-import {
-  TunnelStatus,
-  StatusCheckOnTunnel,
-  NgrokTunnelAction,
-  updateTunnelError,
-} from './state/actions/ngrokTunnelActions';
-import { ngrokTunnel } from './state/reducers/ngrokTunnel';
 import { intervalForEachPing } from './state/sagas/ngrokSagas';
 
 const mockExistsSync = jest.fn(() => true);

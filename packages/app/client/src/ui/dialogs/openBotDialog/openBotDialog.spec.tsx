@@ -31,21 +31,22 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { SharedConstants } from '@bfemulator/app-shared';
-import { ClientAwareSettings, UserSettings } from '@bfemulator/app-shared';
+import {
+  bot,
+  clientAwareSettings,
+  clientAwareSettingsChanged,
+  executeCommand,
+  load,
+  ClientAwareSettings,
+  SharedConstants,
+} from '@bfemulator/app-shared';
+import * as botActions from '@bfemulator/app-shared/built/state/actions/botActions';
 import { mount } from 'enzyme';
 import * as React from 'react';
 import { Provider } from 'react-redux';
 import { combineReducers, createStore } from 'redux';
-import { User } from '@bfemulator/sdk-shared';
 
-import * as botActions from '../../../state/actions/botActions';
-import * as BotActions from '../../../state/actions/botActions';
-import { clientAwareSettingsChanged } from '../../../state/actions/clientAwareSettingsActions';
-import { bot } from '../../../state/reducers/bot';
-import { clientAwareSettings } from '../../../state/reducers/clientAwareSettings';
 import { DialogService } from '../service';
-import { executeCommand } from '../../../state/actions/commandActions';
 
 import { OpenBotDialog } from './openBotDialog';
 import { OpenBotDialogContainer } from './openBotDialogContainer';
@@ -83,14 +84,10 @@ describe('The OpenBotDialog', () => {
   let mockDispatch;
   beforeEach(() => {
     mockStore = createStore(combineReducers({ bot, clientAwareSettings }));
-    mockStore.dispatch(BotActions.load(bots));
+    mockStore.dispatch(load(bots));
     mockStore.dispatch(
       clientAwareSettingsChanged({
         serverUrl: 'http://localhost:3543',
-        users: {
-          usersById: { user1: {} as User },
-          currentUserId: 'user1',
-        } as UserSettings,
       } as ClientAwareSettings)
     );
     mockDispatch = jest.spyOn(mockStore, 'dispatch');

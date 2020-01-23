@@ -31,22 +31,22 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { SharedConstants } from '@bfemulator/app-shared';
+import {
+  openServiceDeepLink,
+  EndpointEditorPayload,
+  EndpointServiceAction,
+  EndpointServicePayload,
+  SharedConstants,
+  LAUNCH_ENDPOINT_EDITOR,
+  OPEN_ENDPOINT_CONTEXT_MENU,
+  OPEN_ENDPOINT_IN_EMULATOR,
+} from '@bfemulator/app-shared';
 import { IBotService, IEndpointService, ServiceTypes } from 'botframework-config/lib/schema';
 import { ComponentClass } from 'react';
 import { call, ForkEffect, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { DialogService } from '../../ui/dialogs/service';
-import { openServiceDeepLink } from '../actions/connectedServiceActions';
-import {
-  EndpointEditorPayload,
-  EndpointServiceAction,
-  EndpointServicePayload,
-  LAUNCH_ENDPOINT_EDITOR,
-  OPEN_ENDPOINT_CONTEXT_MENU,
-  OPEN_ENDPOINT_IN_EMULATOR,
-} from '../actions/endpointServiceActions';
 import { RootState } from '../store';
 
 const getConnectedAbs = (state: RootState, endpointAppId: string) => {

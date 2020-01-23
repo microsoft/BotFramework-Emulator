@@ -34,11 +34,11 @@
 import * as path from 'path';
 
 import { SharedConstants } from '@bfemulator/app-shared';
+import * as BotActions from '@bfemulator/app-shared/built/state/actions/botActions';
 import { WatchOptions } from 'chokidar';
 import { existsSync, readFileSync, Stats } from 'fs-extra';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
-import * as BotActions from '../state/actions/botActions';
 import { store } from '../state/store';
 import { BotHelpers } from '../botHelpers';
 

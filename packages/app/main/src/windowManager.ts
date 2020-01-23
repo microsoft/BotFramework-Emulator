@@ -32,8 +32,8 @@
 //
 
 import * as Electron from 'electron';
+import { rememberZoomLevel } from '@bfemulator/app-shared';
 
-import { rememberZoomLevel } from './state/actions/windowStateActions';
 import { dispatch, getSettings } from './state/store';
 
 export class WindowManager {

@@ -32,10 +32,9 @@
 //
 
 import { put } from 'redux-saga/effects';
+import { markAllAsRead, select } from '@bfemulator/app-shared';
 
-import { select } from '../actions/navBarActions';
 import * as Constants from '../../constants';
-import { markAllAsRead } from '../actions/notificationActions';
 
 import { markNotificationsAsRead } from './navBarSagas';
 

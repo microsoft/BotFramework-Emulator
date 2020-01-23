@@ -36,15 +36,14 @@ import * as React from 'react';
 import { Provider } from 'react-redux';
 import { combineReducers, createStore } from 'redux';
 import { mount, ReactWrapper } from 'enzyme';
-
-import { ngrokTunnel } from '../../../state/reducers/ngrokTunnel';
 import {
+  ngrokTunnel,
   updateNewTunnelInfo,
   TunnelInfo,
   TunnelStatus,
   updateTunnelStatus,
   updateTunnelError,
-} from '../../../state/actions/ngrokTunnelActions';
+} from '@bfemulator/app-shared';
 
 import { NgrokDebuggerContainer } from './ngrokDebuggerContainer';
 import { NgrokDebugger } from './ngrokDebugger';

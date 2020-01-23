@@ -30,13 +30,19 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { newNotification, FrameworkSettings } from '@bfemulator/app-shared';
+
+import {
+  beginAdd,
+  newNotification,
+  setDirtyFlag,
+  setFrameworkSettings,
+  Document,
+  FrameworkAction,
+  FrameworkActionType,
+  FrameworkSettings,
+} from '@bfemulator/app-shared';
 import { ForkEffect, put, select, takeEvery } from 'redux-saga/effects';
 
-import * as EditorActions from '../actions/editorActions';
-import { FrameworkAction, FrameworkActionType, setFrameworkSettings } from '../actions/frameworkSettingsActions';
-import { beginAdd } from '../actions/notificationActions';
-import { Document } from '../reducers/editor';
 import { RootState } from '../store';
 
 export const activeDocumentSelector = (state: RootState) => {
@@ -51,7 +57,7 @@ export class FrameworkSettingsSagas {
   public static *saveFrameworkSettings(action: FrameworkAction<FrameworkSettings>): IterableIterator<any> {
     try {
       const activeDoc: Document = yield select(activeDocumentSelector);
-      yield put(EditorActions.setDirtyFlag(activeDoc.documentId, false)); // mark as clean
+      yield put(setDirtyFlag(activeDoc.documentId, false)); // mark as clean
       yield put(setFrameworkSettings(action.payload));
     } catch (e) {
       const errMsg = `Error while saving emulator settings: ${e}`;

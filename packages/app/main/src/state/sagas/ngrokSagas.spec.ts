@@ -36,19 +36,19 @@ import '../../fetchProxy';
 import { applyMiddleware, createStore, Store, combineReducers } from 'redux';
 import sagaMiddlewareFactory from 'redux-saga';
 import { put } from 'redux-saga/effects';
-import { SharedConstants } from '@bfemulator/app-shared';
-
 import {
   checkOnTunnel,
+  ngrokTunnel,
+  setTimeIntervalSinceLastPing,
   updateNewTunnelInfo,
+  NgrokTunnelAction,
+  NgrokTunnelActions,
+  SharedConstants,
   StatusCheckOnTunnel,
   TunnelError,
-  NgrokTunnelAction,
-  setTimeIntervalSinceLastPing,
-  NgrokTunnelActions,
   TunnelCheckTimeInterval,
-} from '../actions/ngrokTunnelActions';
-import { ngrokTunnel } from '../reducers';
+} from '@bfemulator/app-shared';
+
 import { RootState } from '../store';
 
 import { ngrokSagas, NgrokSagas, intervalForEachPing, tunnelPingTimeout } from './ngrokSagas';

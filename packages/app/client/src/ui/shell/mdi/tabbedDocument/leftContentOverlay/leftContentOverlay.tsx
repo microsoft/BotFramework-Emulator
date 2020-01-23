@@ -34,8 +34,8 @@
 import * as React from 'react';
 import { DragEvent } from 'react';
 import { connect } from 'react-redux';
+import * as EditorActions from '@bfemulator/app-shared/built/state/actions/editorActions';
 
-import * as EditorActions from '../../../../../state/actions/editorActions';
 import { RootState } from '../../../../../state/store';
 import * as overlay from '../overlay.scss';
 

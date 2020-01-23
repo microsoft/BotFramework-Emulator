@@ -31,8 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { rememberZoomLevel } from '@bfemulator/app-shared';
+
 import { WindowManager } from './windowManager';
-import { rememberZoomLevel } from './state/actions/windowStateActions';
 
 const mockDispatch = jest.fn();
 const mockSettings = {

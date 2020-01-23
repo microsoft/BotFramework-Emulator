@@ -34,6 +34,7 @@
 import * as path from 'path';
 
 import { BotInfo, getBotDisplayName, isMac, SharedConstants } from '@bfemulator/app-shared';
+import * as BotActions from '@bfemulator/app-shared/built/state/actions/botActions';
 import {
   BotConfigWithPath,
   Command,
@@ -46,8 +47,6 @@ import { BotConfigurationBase } from 'botframework-config/lib';
 import { IConnectedService, IEndpointService, ServiceTypes } from 'botframework-config/lib/schema';
 import { dialog } from 'electron';
 
-import * as BotActions from '../state/actions/botActions';
-import { setActive } from '../state/actions/botActions';
 import { store } from '../state/store';
 import { BotHelpers } from '../botHelpers';
 import { Emulator } from '../emulator';
@@ -215,7 +214,7 @@ export class BotCommands {
   @Command(Bot.Close)
   protected closeBot() {
     botProjectFileWatcher.unwatch();
-    store.dispatch(BotActions.close());
+    store.dispatch(BotActions.closeBot());
   }
 
   // ---------------------------------------------------------------------------
@@ -251,7 +250,7 @@ export class BotCommands {
         // The file watcher will not pick up this change immediately
         // making the value in the store stale and potentially incorrect
         // so we'll dispatch it right away
-        store.dispatch(setActive(botConfig));
+        store.dispatch(BotActions.setActive(botConfig));
         await this.commandService.remoteCall(SharedConstants.Commands.Bot.SetActive, botConfig, botConfig.getPath());
       } catch (e) {
         // eslint-disable-next-line no-console
@@ -274,7 +273,7 @@ export class BotCommands {
       botConfig.disconnectService(id);
       try {
         await BotHelpers.saveBot(botConfig);
-        store.dispatch(setActive(botConfig));
+        store.dispatch(BotActions.setActive(botConfig));
         await this.commandService.remoteCall(SharedConstants.Commands.Bot.SetActive, botConfig, botConfig.getPath());
       } catch (e) {
         // eslint-disable-next-line no-console

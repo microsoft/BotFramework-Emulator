@@ -32,8 +32,6 @@
 //
 
 import { ForkEffect, put, takeEvery } from 'redux-saga/effects';
-
-import { NotificationManager } from '../../notificationManager';
 import {
   BeginAddNotificationAction,
   BeginRemoveNotificationAction,
@@ -41,7 +39,9 @@ import {
   finishClear,
   finishRemove,
   NotificationActions,
-} from '../actions/notificationActions';
+} from '@bfemulator/app-shared';
+
+import { NotificationManager } from '../../notificationManager';
 
 /** Adds a notification to the notification manager then
  *  adds it to the state store

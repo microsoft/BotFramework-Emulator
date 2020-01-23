@@ -31,10 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { SharedConstants } from '@bfemulator/app-shared';
+import { Editor, SharedConstants } from '@bfemulator/app-shared';
+import * as EditorActions from '@bfemulator/app-shared/built/state/actions/editorActions';
 
-import * as EditorActions from '../actions/editorActions';
-import { Editor } from '../reducers/editor';
 import { store } from '../store';
 
 export function hasNonGlobalTabs(tabGroups?: { [editorKey: string]: Editor }): number {
@@ -65,13 +64,6 @@ export function getTabGroupForDocument(documentId: string, tabGroups?: { [editor
   return undefined;
 }
 
-/** Takes a tab group key and returns the key of the other tab group */
-export function getOtherTabGroup(tabGroup: string): string {
-  return tabGroup === SharedConstants.EDITOR_KEY_PRIMARY
-    ? SharedConstants.EDITOR_KEY_SECONDARY
-    : SharedConstants.EDITOR_KEY_PRIMARY;
-}
-
 export function showWelcomePage(): void {
   store.dispatch(
     EditorActions.open({
@@ -91,8 +83,4 @@ export function showMarkdownPage(markdown: string, label: string, onLine: boolea
       meta: { markdown, label, onLine },
     })
   );
-}
-
-export function tabGroupHasDocuments(tabGroup: Editor): boolean {
-  return !!Object.keys(tabGroup.documents).length;
 }

@@ -33,15 +33,15 @@
 import delay from '@redux-saga/delay-p';
 import { takeLatest, select, put, call, all } from 'redux-saga/effects';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
-import { SharedConstants } from '@bfemulator/app-shared';
-
 import {
   NgrokTunnelActions,
   NgrokTunnelAction,
+  SharedConstants,
   StatusCheckOnTunnel,
   TunnelCheckTimeInterval,
   setTimeIntervalSinceLastPing,
-} from '../actions/ngrokTunnelActions';
+} from '@bfemulator/app-shared';
+
 import { fetchWithTimeout } from '../../utils/fetchWithTimeout';
 import { RootState } from '../store';
 

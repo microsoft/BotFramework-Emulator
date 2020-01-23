@@ -35,11 +35,9 @@ import * as React from 'react';
 import { mount } from 'enzyme';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
-import { SharedConstants } from '@bfemulator/app-shared';
+import { appendTab, executeCommand, setActiveTab, splitTab, SharedConstants } from '@bfemulator/app-shared';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
-import { enable } from '../../../../state/actions/presentationActions';
-import { appendTab, setActiveTab, splitTab } from '../../../../state/actions/editorActions';
 import {
   CONTENT_TYPE_APP_SETTINGS,
   CONTENT_TYPE_LIVE_CHAT,
@@ -47,7 +45,6 @@ import {
   CONTENT_TYPE_TRANSCRIPT,
   CONTENT_TYPE_WELCOME_PAGE,
 } from '../../../../constants';
-import { executeCommand } from '../../../../state/actions/commandActions';
 
 import { TabBarContainer } from './tabBarContainer';
 import { TabBar } from './tabBar';
@@ -57,11 +54,6 @@ const mockTab = class Tab extends React.Component {
     return <div />;
   }
 };
-
-jest.mock('../../../../state/reducers/editor', () => ({
-  Document: {},
-  Editor: {},
-}));
 
 jest.mock('../../../../state/helpers/editorHelpers', () => ({
   getTabGroupForDocument: () => null,

@@ -31,12 +31,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { SettingsImpl } from '@bfemulator/app-shared';
+import {
+  azureAuthSettings,
+  framework,
+  savedBotUrls,
+  setFrameworkSettings,
+  windowState,
+  SettingsImpl,
+} from '@bfemulator/app-shared';
 import { combineReducers, createStore } from 'redux';
 
 import { NgrokService } from './ngrokService';
-import { setFrameworkSettings } from './state/actions/frameworkSettingsActions';
-import { azureAuthSettings, framework, savedBotUrls, windowState, users } from './state/reducers';
 import { store } from './state/store';
 
 const mockEmulator = {
@@ -68,7 +73,6 @@ const mockCreateStore = () =>
       framework,
       savedBotUrls,
       windowState,
-      users,
     })
   );
 const mockSettingsImpl = SettingsImpl;

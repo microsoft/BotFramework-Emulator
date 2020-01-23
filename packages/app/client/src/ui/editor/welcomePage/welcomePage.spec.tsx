@@ -30,25 +30,26 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { SharedConstants } from '@bfemulator/app-shared';
+
+import {
+  azureAuth,
+  azureArmTokenDataChanged,
+  bot,
+  clientAwareSettings,
+  executeCommand,
+  load,
+  CommandAction,
+  CommandActionPayload,
+  SharedConstants,
+  EXECUTE_COMMAND,
+} from '@bfemulator/app-shared';
 import { mount } from 'enzyme';
 import * as React from 'react';
 import { Provider } from 'react-redux';
 import { combineReducers, createStore, applyMiddleware } from 'redux';
 import sagaMiddlewareFactory from 'redux-saga';
 
-import { azureArmTokenDataChanged } from '../../../state/actions/azureAuthActions';
-import * as BotActions from '../../../state/actions/botActions';
-import { azureAuth } from '../../../state/reducers/azureAuth';
-import { clientAwareSettings } from '../../../state/reducers/clientAwareSettings';
-import { bot } from '../../../state/reducers/bot';
 import { commandSagas } from '../../../state/sagas/commandSagas';
-import {
-  executeCommand,
-  EXECUTE_COMMAND,
-  CommandAction,
-  CommandActionPayload,
-} from '../../../state/actions/commandActions';
 
 import { WelcomePage } from './welcomePage';
 import { WelcomePageContainer } from './welcomePageContainer';
@@ -112,7 +113,7 @@ describe('The WelcomePageContainer component should', () => {
   let mockDispatch;
   beforeEach(() => {
     mockStore.dispatch(azureArmTokenDataChanged(mockArmToken));
-    mockStore.dispatch(BotActions.load(bots));
+    mockStore.dispatch(load(bots));
 
     mockDispatch = jest
       .spyOn(mockStore, 'dispatch')
@@ -198,7 +199,7 @@ describe('The HowToBuildABotContainer', () => {
   let mockDispatch;
   beforeEach(() => {
     mockStore.dispatch(azureArmTokenDataChanged(mockArmToken));
-    mockStore.dispatch(BotActions.load(bots));
+    mockStore.dispatch(load(bots));
 
     mockDispatch = jest
       .spyOn(mockStore, 'dispatch')

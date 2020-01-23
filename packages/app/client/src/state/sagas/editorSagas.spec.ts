@@ -31,11 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { SharedConstants } from '@bfemulator/app-shared';
+import { removeDocPendingChange, EditorActions, SharedConstants } from '@bfemulator/app-shared';
 import { call, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
-
-import { EditorActions, removeDocPendingChange } from '../actions/editorActions';
 
 import { editorSagas, EditorSagas } from './editorSagas';
 import { SharedSagas, editorSelector } from './sharedSagas';

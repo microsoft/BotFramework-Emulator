@@ -31,13 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { BotInfo, SharedConstants } from '@bfemulator/app-shared';
+import { executeCommand, openContextMenuForBot, BotInfo, SharedConstants } from '@bfemulator/app-shared';
 import { connect } from 'react-redux';
 import { Action } from 'redux';
 
-import { openContextMenuForBot } from '../../../state/actions/welcomePageActions';
 import { RootState } from '../../../state/store';
-import { executeCommand } from '../../../state/actions/commandActions';
 
 import { RecentBotsList, RecentBotsListProps } from './recentBotsList';
 

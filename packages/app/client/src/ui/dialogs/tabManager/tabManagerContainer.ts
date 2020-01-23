@@ -30,9 +30,10 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { connect } from 'react-redux';
 
-import * as EditorActions from '../../../state/actions/editorActions';
+import { connect } from 'react-redux';
+import { setActiveTab } from '@bfemulator/app-shared';
+
 import { RootState } from '../../../state/store';
 
 import { TabManager, TabManagerProps } from './tabManager';
@@ -44,7 +45,7 @@ const mapStateToProps = (state: RootState, ownProps: { [propName: string]: any }
 
 const mapDispatchToProps = (dispatch): TabManagerProps => ({
   setActiveTab: (tab: string) => {
-    dispatch(EditorActions.setActiveTab(tab));
+    dispatch(setActiveTab(tab));
   },
 });
 

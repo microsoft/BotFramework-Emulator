@@ -31,15 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { SharedConstants } from '@bfemulator/app-shared';
+import { beginAdd, executeCommand, newNotification, SharedConstants } from '@bfemulator/app-shared';
 import { connect } from 'react-redux';
 import { Action } from 'redux';
-import { newNotification } from '@bfemulator/app-shared';
 
 import { RootState } from '../../../../state/store';
 import { ActiveBotHelper } from '../../../helpers/activeBotHelper';
-import { executeCommand } from '../../../../state/actions/commandActions';
-import { beginAdd } from '../../../../state/actions/notificationActions';
 
 import { BotNotOpenExplorer as BotNotOpenExplorerComp, BotNotOpenExplorerProps } from './botNotOpenExplorer';
 

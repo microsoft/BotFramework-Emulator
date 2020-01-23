@@ -31,23 +31,22 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { newNotification, SharedConstants } from '@bfemulator/app-shared';
+import {
+  beginAdd,
+  botHashGenerated,
+  open as openEditorDocument,
+  openBotViaFilePathAction,
+  newNotification,
+  BotAction,
+  BotActionType,
+  SharedConstants,
+} from '@bfemulator/app-shared';
 import { BotConfigWithPath, ConversationService } from '@bfemulator/sdk-shared';
 import { call, put, takeEvery, takeLatest } from 'redux-saga/effects';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { ActiveBotHelper } from '../../ui/helpers/activeBotHelper';
-import {
-  BotAction,
-  BotActionType,
-  botHashGenerated,
-  openBotViaFilePathAction,
-  openBotViaUrlAction,
-} from '../actions/botActions';
-import { beginAdd } from '../actions/notificationActions';
 import { generateHash } from '../helpers/botHelpers';
-import * as ChatActions from '../actions/chatActions';
-import { open } from '../actions/editorActions';
 
 import { botSagas, BotSagas } from './botSagas';
 import { SharedSagas } from './sharedSagas';
@@ -232,7 +231,7 @@ describe('The botSagas', () => {
     const putOpenValue = next.value;
     expect(putOpenValue).toEqual(
       put(
-        open({
+        openEditorDocument({
           contentType: SharedConstants.ContentTypes.CONTENT_TYPE_LIVE_CHAT,
           documentId: 'someConvoId',
           isGlobal: false,
@@ -315,7 +314,7 @@ describe('The botSagas', () => {
     const putOpenValue = next.value;
     expect(putOpenValue).toEqual(
       put(
-        open({
+        openEditorDocument({
           contentType: SharedConstants.ContentTypes.CONTENT_TYPE_LIVE_CHAT,
           documentId: 'someConvoId',
           isGlobal: false,
@@ -367,7 +366,7 @@ describe('The botSagas', () => {
     const putOpenValue = next.value;
     expect(putOpenValue).toEqual(
       put(
-        open({
+        openEditorDocument({
           contentType: SharedConstants.ContentTypes.CONTENT_TYPE_LIVE_CHAT,
           documentId: 'someConvoId',
           isGlobal: false,

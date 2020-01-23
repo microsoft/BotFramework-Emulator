@@ -30,12 +30,12 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
-import { SharedConstants } from '@bfemulator/app-shared';
+import { azureArmTokenDataChanged, beginAzureAuthWorkflow, SharedConstants } from '@bfemulator/app-shared';
 import { ServiceTypes } from 'botframework-config/lib/schema';
 
 import { store } from '../store';
-import { azureArmTokenDataChanged, beginAzureAuthWorkflow } from '../actions/azureAuthActions';
 import {
   AzureLoginFailedDialogContainer,
   AzureLoginPromptDialogContainer,

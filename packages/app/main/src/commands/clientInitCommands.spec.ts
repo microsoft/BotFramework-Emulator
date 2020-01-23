@@ -31,7 +31,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { SettingsImpl, SharedConstants } from '@bfemulator/app-shared';
+import {
+  azureAuthSettings,
+  bot,
+  framework,
+  savedBotUrls,
+  windowState,
+  SettingsImpl,
+  SharedConstants,
+} from '@bfemulator/app-shared';
 import {
   BotConfigWithPathImpl,
   CommandRegistry,
@@ -40,9 +48,7 @@ import {
 } from '@bfemulator/sdk-shared';
 import { combineReducers, createStore } from 'redux';
 
-import { bot } from '../state/reducers/bot';
 import * as store from '../state/store';
-import { azureAuthSettings, framework, savedBotUrls, windowState } from '../state/reducers';
 
 import { ClientInitCommands } from './clientInitCommands';
 

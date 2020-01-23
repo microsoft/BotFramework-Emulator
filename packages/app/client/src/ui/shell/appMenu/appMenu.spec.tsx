@@ -31,11 +31,17 @@ import { mount, ReactWrapper } from 'enzyme';
 import { createStore, combineReducers } from 'redux';
 import { Provider } from 'react-redux';
 import { MenuItem } from '@bfemulator/ui-react';
-import { SharedConstants, UpdateStatus } from '@bfemulator/app-shared';
-
-import { bot, editor, azureAuthSettings, update, windowState } from '../../../state/reducers';
-import { executeCommand } from '../../../state/actions/commandActions';
-import { rememberTheme } from '../../../state';
+import {
+  azureAuthSettings,
+  bot,
+  editor,
+  executeCommand,
+  rememberTheme,
+  update,
+  windowState,
+  SharedConstants,
+  UpdateStatus,
+} from '@bfemulator/app-shared';
 
 import { AppMenuContainer } from './appMenuContainer';
 import { AppMenu, AppMenuProps } from './appMenu';

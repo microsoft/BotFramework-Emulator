@@ -35,7 +35,7 @@ import { EventEmitter } from 'events';
 
 import { ProgressInfo } from 'builder-util-runtime';
 import { autoUpdater as electronUpdater, UpdateInfo } from 'electron-updater';
-import { SharedConstants } from '@bfemulator/app-shared';
+import { setFrameworkSettings, setUpdateStatus, SharedConstants } from '@bfemulator/app-shared';
 import { app } from 'electron';
 import { newNotification, UpdateStatus } from '@bfemulator/app-shared';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
@@ -44,8 +44,6 @@ import { TelemetryService } from './telemetry';
 import { getSettings, store } from './state/store';
 import { AppMenuBuilder } from './appMenuBuilder';
 import { sendNotificationToClient } from './utils/sendNotificationToClient';
-import { setFrameworkSettings } from './state/actions/frameworkSettingsActions';
-import { setUpdateStatus } from './state/actions';
 
 class EmulatorUpdater extends EventEmitter {
   @CommandServiceInstance()

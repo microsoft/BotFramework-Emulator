@@ -31,10 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { SharedConstants } from '@bfemulator/app-shared';
+import { addSavedBotUrl, SharedConstants } from '@bfemulator/app-shared';
 import { Command } from '@bfemulator/sdk-shared';
 
-import { addSavedBotUrl } from '../state/actions/savedBotUrlsActions';
 import { dispatch } from '../state/store';
 
 const Commands = SharedConstants.Commands.Settings;

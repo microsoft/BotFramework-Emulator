@@ -37,12 +37,8 @@ import { Provider } from 'react-redux';
 import { mount } from 'enzyme';
 import { combineReducers, createStore } from 'redux';
 import { BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
-import { SharedConstants } from '@bfemulator/app-shared';
+import { bot, executeCommand, setActive, SharedConstants } from '@bfemulator/app-shared';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
-
-import { executeCommand } from '../../../state/actions/commandActions';
-import { bot } from '../../../state/reducers/bot';
-import { setActive } from '../../../state/actions/botActions';
 
 import { BotSettingsEditor } from './botSettingsEditor';
 import { BotSettingsEditorContainer } from './botSettingsEditorContainer';

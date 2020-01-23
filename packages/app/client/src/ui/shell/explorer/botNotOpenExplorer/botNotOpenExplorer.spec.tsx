@@ -31,24 +31,25 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { newNotification, SharedConstants } from '@bfemulator/app-shared';
+import {
+  beginAdd,
+  bot,
+  chat,
+  executeCommand,
+  newNotification,
+  CommandAction,
+  CommandActionPayload,
+  SharedConstants,
+  EXECUTE_COMMAND,
+} from '@bfemulator/app-shared';
 import { mount } from 'enzyme';
 import * as React from 'react';
 import { Provider } from 'react-redux';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import sagaMiddlewareFactory from 'redux-saga';
 
-import { ActiveBotHelper } from '../../../helpers/activeBotHelper';
-import { beginAdd } from '../../../../state/actions/notificationActions';
-import { bot } from '../../../../state/reducers/bot';
-import { chat } from '../../../../state/reducers/chat';
 import { commandSagas } from '../../../../state/sagas/commandSagas';
-import {
-  executeCommand,
-  EXECUTE_COMMAND,
-  CommandAction,
-  CommandActionPayload,
-} from '../../../../state/actions/commandActions';
+import { ActiveBotHelper } from '../../../helpers/activeBotHelper';
 
 import { BotNotOpenExplorer } from './botNotOpenExplorer';
 import { BotNotOpenExplorerContainer } from './botNotOpenExplorerContainer';

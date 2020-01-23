@@ -30,27 +30,28 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import sagaMiddlewareFactory from 'redux-saga';
 import { Component } from 'react';
-import { SharedConstants } from '@bfemulator/app-shared';
+import {
+  bot,
+  launchEndpointEditor,
+  load,
+  openEndpointExplorerContextMenu,
+  setActive,
+  EndpointServicePayload,
+  EndpointServiceAction,
+  SharedConstants,
+  LAUNCH_ENDPOINT_EDITOR,
+  OPEN_ENDPOINT_CONTEXT_MENU,
+  OPEN_ENDPOINT_IN_EMULATOR,
+} from '@bfemulator/app-shared';
 import { takeEvery, takeLatest } from 'redux-saga/effects';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 import { IEndpointService } from 'botframework-config';
 
-import { bot } from '../reducers/bot';
-import { load, setActive } from '../actions/botActions';
-import {
-  launchEndpointEditor,
-  openEndpointExplorerContextMenu,
-  LAUNCH_ENDPOINT_EDITOR,
-  OPEN_ENDPOINT_CONTEXT_MENU,
-  OPEN_ENDPOINT_IN_EMULATOR,
-  EndpointServicePayload,
-  EndpointServiceAction,
-} from '../actions/endpointServiceActions';
 import { DialogService } from '../../ui/dialogs/service';
-import { OPEN_ENDPOINT_EXPLORER_CONTEXT_MENU } from '../actions/endpointActions';
 
 import { EndpointSagas, endpointSagas } from './endpointSagas';
 
@@ -126,7 +127,7 @@ const endpointPayload: EndpointServicePayload = {
   resolver,
 };
 const endpointServiceAction: EndpointServiceAction<EndpointServicePayload> = {
-  type: OPEN_ENDPOINT_EXPLORER_CONTEXT_MENU,
+  type: OPEN_ENDPOINT_CONTEXT_MENU,
   payload: endpointPayload,
 };
 
