@@ -112,7 +112,7 @@ describe('the loadSettings utility', () => {
     expect(settings).toEqual(mockSettings);
   });
 
-  it('should return the default settings whenthere is an error trying to load the settings', () => {
+  it('should return the default settings when there is an error trying to load the settings', () => {
     mockIsFile.mockImplementationOnce(() => {
       throw new Error('Invalid file path.');
     });

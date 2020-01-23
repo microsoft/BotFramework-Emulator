@@ -112,7 +112,6 @@ jest.mock('../../../../../state/store', () => ({
 
 describe('<ChatContainer />', () => {
   let wrapper: ReactWrapper<any, any, Chat> | ShallowWrapper<any, any, Chat>;
-  let instance: Chat;
 
   let commandService: CommandServiceImpl;
   beforeAll(() => {
@@ -162,8 +161,8 @@ describe('<ChatContainer />', () => {
       expect(wcProps.directLine).toEqual(defaultDocument.directLine);
       expect(wcProps.locale).toBe('en-US');
       expect(wcProps.styleSet).toEqual(styleSet);
-      expect(wcProps.userID).toEqual('user1');
-      expect(wcProps.username).toEqual('User');
+      expect(wcProps.userID).toBe('user1');
+      expect(wcProps.username).toBe('User');
     });
   });
 

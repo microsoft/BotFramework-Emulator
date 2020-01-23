@@ -33,6 +33,14 @@
 
 import { WebSocketServer } from './webSocketServer';
 
+const mockWSServer = {
+  handleUpgrade: jest.fn(),
+  on: jest.fn(),
+};
+jest.mock('ws', () => ({
+  Server: jest.fn().mockImplementation(() => mockWSServer),
+}));
+
 const mockCreateServer = jest.fn();
 jest.mock('restify', () => ({
   createServer: (...args) => mockCreateServer(...args),
@@ -41,6 +49,8 @@ jest.mock('restify', () => ({
 describe('WebSocketServer', () => {
   beforeEach(() => {
     mockCreateServer.mockClear();
+    mockWSServer.handleUpgrade.mockClear();
+    mockWSServer.on.mockClear();
   });
 
   it('should return the corresponding socket for a conversation id', () => {
@@ -100,5 +110,47 @@ describe('WebSocketServer', () => {
     expect(mockRestServer.close).toHaveBeenCalled();
     expect(mockServer.close).toHaveBeenCalled();
     expect(mockSocket.close).toHaveBeenCalled();
+  });
+
+  it('should make sure that only a single WebSocket is created per conversation id', async () => {
+    const registeredRoutes = {};
+    const mockRestServer = {
+      address: () => ({ port: 55523 }),
+      get: (route, handler) => {
+        registeredRoutes[route] = handler;
+      },
+      listen: jest.fn((_port, cb) => {
+        cb();
+      }),
+      once: jest.fn(),
+    };
+    (WebSocketServer as any)._restServer = undefined;
+    (WebSocketServer as any)._servers = {};
+    (WebSocketServer as any)._sockets = {};
+    mockCreateServer.mockReturnValueOnce(mockRestServer);
+    await WebSocketServer.init();
+
+    const mockConversationId = 'convo1';
+    const getHandler = registeredRoutes['/ws/:conversationId'];
+    const req = {
+      params: {
+        conversationId: mockConversationId,
+      },
+    };
+    const res = {
+      claimUpgrade: () => ({ head: {}, socket: {} }),
+    };
+    const next = jest.fn();
+
+    // first request to generate a new WS connection
+    getHandler(req, res, next);
+
+    expect(Object.keys((WebSocketServer as any)._servers)).toEqual([mockConversationId]);
+
+    // second request to generate a new WS connection
+    getHandler(req, res, next);
+
+    expect(Object.keys((WebSocketServer as any)._servers)).toEqual([mockConversationId]);
+    expect(mockWSServer.handleUpgrade).toHaveBeenCalledTimes(1);
   });
 });

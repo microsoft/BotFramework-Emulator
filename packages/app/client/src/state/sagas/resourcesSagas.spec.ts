@@ -35,15 +35,18 @@ import { applyMiddleware, combineReducers, createStore } from 'redux';
 import { BotConfigWithPathImpl, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 import { ServiceTypes } from 'botframework-config/lib/schema';
 import sagaMiddlewareFactory from 'redux-saga';
-import { put } from 'redux-saga/effects';
+import { put, takeEvery } from 'redux-saga/effects';
 import { SharedConstants } from '@bfemulator/app-shared/built';
 import { Component } from 'react';
 
 import {
   openContextMenuForResource,
-  openResource,
   openResourcesSettings,
   renameResource,
+  OPEN_CONTEXT_MENU_FOR_RESOURCE,
+  OPEN_RESOURCE,
+  OPEN_RESOURCE_SETTINGS,
+  RENAME_RESOURCE,
 } from '../actions/resourcesActions';
 import { resources } from '../reducers/resources';
 import { openTranscript } from '../actions/chatActions';
@@ -126,6 +129,18 @@ describe('The ResourceSagas', () => {
   beforeEach(() => {
     mockRemoteCommandsCalled.length = 0;
     mockLocalCommandsCalled.length = 0;
+  });
+
+  it('should call the correct saga corresponding to the redux action', () => {
+    const gen = resourceSagas();
+
+    expect(gen.next().value).toEqual(
+      takeEvery(OPEN_CONTEXT_MENU_FOR_RESOURCE, ResourcesSagas.openContextMenuForResource)
+    );
+    expect(gen.next().value).toEqual(takeEvery(RENAME_RESOURCE, ResourcesSagas.doRename));
+    expect(gen.next().value).toEqual(takeEvery(OPEN_RESOURCE, ResourcesSagas.doOpenResource));
+    expect(gen.next().value).toEqual(takeEvery(OPEN_RESOURCE_SETTINGS, ResourcesSagas.launchResourcesSettingsModal));
+    expect(gen.next().done).toBe(true);
   });
 
   describe('should open the context menu for the specified resource', () => {

@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { createServer, Server, Request, Response } from 'restify';
+import { createServer, Next, Request, Response, Server } from 'restify';
 import { Server as WSServer } from 'ws';
 
 // can't import WebSocket type from ws types :|
@@ -55,16 +55,15 @@ export class WebSocketServer {
       this.cleanup();
     }
     this._restServer = createServer({ handleUpgrades: true, name: 'Emulator-WebSocket-Host' });
-    this._restServer.get('/ws/:conversationId', (req: Request, res: Response, next) => {
+    this._restServer.get('/ws/:conversationId', (req: Request, res: Response, next: Next) => {
       const conversationId = req.params.conversationId;
-      if (!(res as any).claimUpgrade) {
-        return next(new Error('Connection must upgrade for web sockets.'));
-      }
-
-      const { head, socket } = (res as any).claimUpgrade();
 
       // initialize a new web socket server for each new conversation
       if (conversationId && !this._servers[conversationId]) {
+        if (!(res as any).claimUpgrade) {
+          return next(new Error('Connection must upgrade for web sockets.'));
+        }
+        const { head, socket } = (res as any).claimUpgrade();
         const wsServer = new WSServer({
           noServer: true,
         });

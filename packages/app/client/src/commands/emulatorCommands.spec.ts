@@ -41,10 +41,6 @@ import { openBotViaUrlAction } from '../state';
 
 import { EmulatorCommands } from './emulatorCommands';
 
-const mockEndpoint = {
-  endpoint: 'https://localhost:8080/api/messages',
-};
-
 let mockState = {};
 const mockStore = {
   dispatch: jest.fn(),
