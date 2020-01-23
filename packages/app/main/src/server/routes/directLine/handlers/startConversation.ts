@@ -34,11 +34,14 @@
 import * as HttpStatus from 'http-status-codes';
 import onErrorResumeNext from 'on-error-resume-next';
 import { Next, Request, Response } from 'restify';
+import { uniqueIdv4 } from '@bfemulator/sdk-shared';
 
 import { BotEndpoint } from '../../../state/botEndpoint';
 import { uniqueId } from '../../../utils/uniqueId';
 import { EmulatorRestServer } from '../../../restServer';
 
+// TODO: Remove?
+// Not called anymore because of WebSocket flow
 export function createStartConversationHandler(emulatorServer: EmulatorRestServer) {
   return async (req: Request, res: Response, next: Next): Promise<any> => {
     const auth = req.header('Authorization');
@@ -52,8 +55,8 @@ export function createStartConversationHandler(emulatorServer: EmulatorRestServe
 
         return JSON.parse(optionsJson).conversationId;
       }) || uniqueId();
-    const { users, conversations } = emulatorServer.state;
-    const currentUser = users.usersById(users.currentUserId);
+    const { conversations } = emulatorServer.state;
+    let currentUser = { id: uniqueIdv4(), name: 'User' };
 
     let created = false;
     let conversation = conversations.conversationById(conversationId);
@@ -61,18 +64,11 @@ export function createStartConversationHandler(emulatorServer: EmulatorRestServe
     if (!conversation) {
       conversation = conversations.newConversation(emulatorServer, botEndpoint, currentUser, conversationId);
 
-      if (!currentUser) {
-        // New conversations should have a user. Since we don't have one, this is a bug. Report the error
-        res.send(HttpStatus.BAD_REQUEST, 'current user not provided');
-        res.end();
-        next();
-        return;
-      }
-
       // Send a ConversationUpdate activity adding the bot and user to the conversation
       await conversation.sendConversationUpdate([currentUser, { id: botEndpoint.botId, name: 'Bot' }], undefined);
       created = true;
     } else if (botEndpoint && !conversationId.endsWith('transcript')) {
+      currentUser = conversation.user;
       const membersToAddInConversationUpdate = [];
 
       const userIsNotInConversation = conversation.members.findIndex(user => user.id === currentUser.id) === -1;

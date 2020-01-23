@@ -44,6 +44,7 @@ export * from './apiException';
 export * from './botConfigWithPath';
 export * from './botData';
 export * from './botEndpointOptions';
+export * from './channelService';
 export * from './entity';
 export * from './error';
 export * from './errorCodes';

@@ -41,7 +41,6 @@ import {
   clearTranscripts,
   closeDocument,
   newChat,
-  newConversation,
   removeTranscript,
   setInspectorObjects,
   updateChat,
@@ -110,23 +109,6 @@ describe('Chat reducer tests', () => {
     const action = closeDocument(testChatId);
     state = chat(DEFAULT_STATE, action);
     expect(state.chats[testChatId]).toBeFalsy();
-  });
-
-  it('should create a new conversation', () => {
-    const action = newConversation(testChatId, { testing: true });
-    const startingState = {
-      ...DEFAULT_STATE,
-      chats: {
-        ...DEFAULT_STATE.chats,
-        [testChatId]: {},
-      },
-    };
-    const endingState = chat(startingState, action);
-    const expectedDoc = {
-      ...endingState.chats[testChatId],
-      testing: true,
-    };
-    expect(endingState.chats[testChatId]).toEqual(expectedDoc);
   });
 
   it('should append to the log', () => {

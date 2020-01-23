@@ -40,9 +40,19 @@ jest.mock('../../../utils/sendErrorResponse', () => ({
   sendErrorResponse: (...args) => mockSendErrorResponse(...args),
 }));
 
+const mockSocket = {
+  send: jest.fn(),
+};
+jest.mock('../../../webSocketServer', () => ({
+  WebSocketServer: {
+    getSocketByConversationId: () => mockSocket,
+  },
+}));
+
 describe('postActivity handler', () => {
   beforeEach(() => {
     mockSendErrorResponse.mockClear();
+    mockSocket.send.mockClear();
   });
 
   it('should return a 200 and the id of the posted activity', async () => {
@@ -77,6 +87,48 @@ describe('postActivity handler', () => {
     expect(res.send).toHaveBeenCalledWith(HttpStatus.OK, { id: 'activity1' });
     expect(res.end).toHaveBeenCalled();
     expect(next).toHaveBeenCalled();
+    expect(mockSocket.send).toHaveBeenCalledWith(
+      JSON.stringify({
+        activities: [{ ...req.body, id: 'activity1' }],
+      })
+    );
+  });
+
+  it('should return a 200 but not send the /INSPECT open command over the web socket', async () => {
+    const mockEmulatorServer: any = {
+      logger: {
+        logMessage: jest.fn(),
+      },
+    };
+    const req: any = {
+      body: {
+        id: 'activity1',
+        text: '/INSPECT open',
+        type: 'message',
+      },
+      conversation: {
+        postActivityToBot: jest.fn().mockResolvedValueOnce({
+          activityId: 'activity1',
+          response: {},
+          statusCode: HttpStatus.OK,
+        }),
+      },
+      params: {
+        conversationId: 'convo1',
+      },
+    };
+    const res: any = {
+      end: jest.fn(),
+      send: jest.fn(),
+    };
+    const next = jest.fn();
+    const postActivity = createPostActivityHandler(mockEmulatorServer);
+    await postActivity(req, res, next);
+
+    expect(res.send).toHaveBeenCalledWith(HttpStatus.OK, { id: 'activity1' });
+    expect(res.end).toHaveBeenCalled();
+    expect(next).toHaveBeenCalled();
+    expect(mockSocket.send).not.toHaveBeenCalled();
   });
 
   it('should return a 401 if the request is unauthorized', async () => {

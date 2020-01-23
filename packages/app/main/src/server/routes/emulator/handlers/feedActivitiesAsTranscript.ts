@@ -31,32 +31,39 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { UserSettings } from '@bfemulator/app-shared';
+import { Next, Request, Response } from 'restify';
+import { INTERNAL_SERVER_ERROR, NOT_FOUND, OK } from 'http-status-codes';
 
-import { ADD_USERS, SET_CURRENT_USER, UserAction, UserPayload } from '../actions/userActions';
+import { EmulatorRestServer } from '../../../restServer';
+import { WebSocketServer } from '../../../webSocketServer';
+import { Conversation } from '../../../state/conversation';
 
-export function users(state: UserSettings = {}, action: UserAction<UserPayload>) {
-  switch (action.type) {
-    case SET_CURRENT_USER: {
-      const usersById = { ...state.usersById };
-      const { user } = action.payload;
-      usersById[user.id] = user;
-      return { currentUserId: user.id, usersById };
-    }
+/** Feed activities into the conversation as a transcript */
+export function createFeedActivitiesAsTranscriptHandler(emulatorServer: EmulatorRestServer) {
+  return (req: Request, res: Response, next: Next): any => {
+    const { conversationId } = req.params;
+    let activities = req.body;
 
-    case ADD_USERS: {
-      const newUsersById = { ...state.usersById };
-      for (const i in action.payload.users) {
-        const user = action.payload.users[i];
-        if (newUsersById.hasOwnProperty(user.id)) {
-          continue;
-        }
-        newUsersById[user.id] = user;
+    try {
+      const conversation: Conversation = emulatorServer.state.conversations.conversationById(conversationId);
+      if (!conversation) {
+        res.send(NOT_FOUND, `Could not find conversation with id: ${conversationId}`);
+        return next();
       }
-      return { ...state, usersById: newUsersById };
+      activities = conversation.prepTranscriptActivities(activities);
+      activities.forEach(activity => {
+        const payload = { activities: [activity] };
+        const socket = WebSocketServer.getSocketByConversationId(conversation.conversationId);
+        socket && socket.send(JSON.stringify(payload));
+        emulatorServer.logger.logActivity(conversation.conversationId, activity, activity.recipient.role);
+      });
+    } catch (e) {
+      res.send(INTERNAL_SERVER_ERROR, e);
+      return next();
     }
 
-    default:
-      return state;
-  }
+    res.send(OK);
+    res.end();
+    next();
+  };
 }

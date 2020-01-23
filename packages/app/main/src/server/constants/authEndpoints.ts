@@ -32,6 +32,7 @@
 //
 
 export const authentication = {
+  channelService: 'https://dev.botframework.com/',
   tokenEndpoint: 'https://login.microsoftonline.com/botframework.com/oauth2/v2.0/token',
   openIdMetadata: 'https://login.microsoftonline.com/botframework.com/v2.0/.well-known/openid-configuration',
   botTokenAudience: 'https://api.botframework.com',

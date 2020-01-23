@@ -43,13 +43,14 @@ import {
   newChat,
   closeDocument,
   closeConversation,
-  newConversation,
   appendToLog,
   clearLog,
   setInspectorObjects,
   setHighlightedObjects,
   updateChat,
   showContextMenuForActivity,
+  openTranscript,
+  restartConversation,
 } from './chatActions';
 
 describe('chat actions', () => {
@@ -103,11 +104,12 @@ describe('chat actions', () => {
   });
 
   it('should create an updatePendingSpeechTokenRetrieval action', () => {
+    const documentId = 'someDocId';
     const pending = true;
-    const action = updatePendingSpeechTokenRetrieval(pending);
+    const action = updatePendingSpeechTokenRetrieval(documentId, pending);
 
     expect(action.type).toBe(ChatActions.updatePendingSpeechTokenRetrieval);
-    expect(action.payload).toEqual({ pending });
+    expect(action.payload).toEqual({ documentId, pending });
   });
 
   it('should create a newChat action', () => {
@@ -171,15 +173,6 @@ describe('chat actions', () => {
     expect(action.payload).toEqual({ documentId });
   });
 
-  it('should create a newConversation action', () => {
-    const documentId = 'someDocId';
-    const options = {};
-    const action = newConversation(documentId, options);
-
-    expect(action.type).toBe(ChatActions.newConversation);
-    expect(action.payload).toEqual({ documentId, options });
-  });
-
   it('should create an appendToLog action', () => {
     const documentId = 'someDocId';
     const entry: any = {};
@@ -191,11 +184,10 @@ describe('chat actions', () => {
 
   it('should create a clearLog action', () => {
     const documentId = 'someDocId';
-    const resolver = () => null;
-    const action = clearLog(documentId, resolver);
+    const action = clearLog(documentId);
 
     expect(action.type).toBe(ChatActions.clearLog);
-    expect(action.payload).toEqual({ documentId, resolver });
+    expect(action.payload).toEqual({ documentId });
   });
 
   it('should create a setInspectorObjects action', () => {
@@ -241,5 +233,29 @@ describe('chat actions', () => {
 
     expect(action.type).toBe(ChatActions.showContextMenuForActivity);
     expect(action.payload).toEqual(activity);
+  });
+
+  it('should create an openTranscript action', () => {
+    const filename = 'someFile.transcript';
+    const activities: any = [];
+    const action = openTranscript(filename, activities);
+
+    expect(action.type).toBe(ChatActions.openTranscript);
+    expect(action.payload).toEqual({
+      filename,
+      activities,
+    });
+  });
+
+  it('should create a restartConversation action', () => {
+    const documentId = 'someDocId';
+    const action = restartConversation(documentId);
+
+    expect(action.type).toBe(ChatActions.restartConversation);
+    expect(action.payload).toEqual({
+      documentId,
+      requireNewConversationId: false,
+      requireNewUserId: false,
+    });
   });
 });

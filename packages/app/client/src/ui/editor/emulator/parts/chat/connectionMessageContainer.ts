@@ -31,48 +31,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { addUsers, setCurrentUser } from '../actions/userActions';
+import { connect } from 'react-redux';
+import { RootState } from 'packages/app/client/src/state';
 
-import { users } from './users';
+import { ConnectionMessage, ConnectionMessageProps } from './connectionMessage';
 
-describe('users reducer', () => {
-  it('should return the unmodified state on unrecognized action', () => {
-    expect(users(undefined, { type: '' } as any)).toEqual({});
-  });
+function mapStateToProps(state: RootState, { documentId }: { documentId: string }): ConnectionMessageProps {
+  return {
+    pendingSpeechTokenRetrieval: state.chat.chats[documentId].pendingSpeechTokenRetrieval,
+  };
+}
 
-  it('should handle a set current user action', () => {
-    const user: any = { id: 'user1' };
-    const action = setCurrentUser(user);
-    const state = users({} as any, action);
-
-    expect(state).toEqual({ currentUserId: 'user1', usersById: { user1: user } });
-  });
-
-  it('should handle an add users action', () => {
-    const initialState: any = {
-      usersById: {
-        user1: {},
-      },
-    };
-    const action = addUsers([
-      { name: '', id: 'user1' },
-      { name: '', id: 'user2' },
-      { name: '', id: 'user3' },
-    ]);
-    const state = users(initialState, action);
-
-    expect(state).toEqual({
-      usersById: {
-        user1: {},
-        user2: {
-          name: '',
-          id: 'user2',
-        },
-        user3: {
-          name: '',
-          id: 'user3',
-        },
-      },
-    });
-  });
-});
+export const ConnectionMessageContainer = connect(mapStateToProps, undefined)(ConnectionMessage);

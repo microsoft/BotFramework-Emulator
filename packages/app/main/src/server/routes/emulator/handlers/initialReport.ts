@@ -31,19 +31,27 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Users } from './users';
+import { Next, Request, Response } from 'restify';
+import { INTERNAL_SERVER_ERROR, OK } from 'http-status-codes';
 
-describe('Users', () => {
-  it('should initialize with a default current user id', () => {
-    const users = new Users();
-    expect(users.currentUserId).toBe('default-user');
-  });
+import { EmulatorRestServer } from '../../../restServer';
+import { Emulator } from '../../../../emulator';
 
-  it('should return a user by id', () => {
-    const user: any = { data: 'I am a user!' };
-    const users = new Users();
-    users.users = { id1: user };
-    const retrievedUser = users.usersById('id1');
-    expect(retrievedUser).toBe(user);
-  });
-});
+/* sends the initial conversation report to the log panel (ngrok and server url) */
+export function createInitialReportHandler(emulatorServer: EmulatorRestServer) {
+  return (req: Request, res: Response, next: Next): any => {
+    const botUrl = req.body;
+    const { conversationId } = req.params;
+    try {
+      emulatorServer.report(conversationId);
+      Emulator.getInstance().ngrok.report(conversationId, botUrl);
+    } catch (e) {
+      res.send(INTERNAL_SERVER_ERROR, e);
+      return next();
+    }
+
+    res.send(OK);
+    res.end();
+    next();
+  };
+}

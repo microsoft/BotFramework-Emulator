@@ -89,6 +89,7 @@ const defaultDocument = {
   inspectorObjects: [],
   botId: '456',
   mode: 'livechat',
+  userId: 'user1',
 };
 
 const mockStore = createStore(combineReducers({ bot, chat, clientAwareSettings, editor }), {
@@ -99,13 +100,6 @@ const mockStore = createStore(combineReducers({ bot, chat, clientAwareSettings, 
     pendingSpeechTokenRetrieval: false,
     webChatStores: {},
     webSpeechFactories: {},
-  },
-  clientAwareSettings: {
-    currentUser: { id: '123', name: 'Current User' },
-    users: {
-      currentUserId: '123',
-      usersById: { '123': { id: '123', name: 'Current User' } },
-    },
   },
   directLine: {},
 });
@@ -118,7 +112,6 @@ jest.mock('../../../../../state/store', () => ({
 
 describe('<ChatContainer />', () => {
   let wrapper: ReactWrapper<any, any, Chat> | ShallowWrapper<any, any, Chat>;
-  let instance: Chat;
 
   let commandService: CommandServiceImpl;
   beforeAll(() => {
@@ -153,13 +146,7 @@ describe('<ChatContainer />', () => {
   });
 
   describe('when there is a direct line client', () => {
-    it('renders a connecting message', () => {
-      wrapper = shallow(<Chat pendingSpeechTokenRetrieval={true} />);
-
-      expect(wrapper.text()).toEqual('Connecting...');
-    });
-
-    it('renders the WebChat component with correct props', () => {
+    it('renders the WebChat component', () => {
       const webChat = wrapper.find(ReactWebChat);
       const styleSet = createStyleSet({ ...webChatStyleOptions });
 
@@ -169,15 +156,13 @@ describe('<ChatContainer />', () => {
       };
 
       expect(webChat.exists()).toBe(true);
-      expect(webChat.props()).toMatchObject({
-        activityMiddleware: expect.any(Function),
-        bot: { id: defaultDocument.botId, name: 'Bot' },
-        directLine: defaultDocument.directLine,
-        locale: 'en-US',
-        styleSet: styleSet,
-        userID: '123',
-        username: 'Current User',
-      });
+      const wcProps = webChat.props();
+      expect(wcProps.bot).toEqual({ id: defaultDocument.botId, name: 'Bot' });
+      expect(wcProps.directLine).toEqual(defaultDocument.directLine);
+      expect(wcProps.locale).toBe('en-US');
+      expect(wcProps.styleSet).toEqual(styleSet);
+      expect(wcProps.userID).toBe('user1');
+      expect(wcProps.username).toBe('User');
     });
   });
 

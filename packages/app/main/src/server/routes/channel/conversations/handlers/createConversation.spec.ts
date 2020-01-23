@@ -34,24 +34,12 @@
 import * as HttpStatus from 'http-status-codes';
 
 import { createCreateConversationHandler } from './createConversation';
-import * as validateCreateConversationRequest from './errorCondition/createConversationValidator';
-
-const mockSendErrorResponse = jest.fn();
-jest.mock('../../../../utils/sendErrorResponse', () => ({
-  sendErrorResponse: (...args) => mockSendErrorResponse(...args),
-}));
 
 describe('createConversation handler', () => {
-  beforeEach(() => {
-    mockSendErrorResponse.mockClear();
-  });
-
-  it('should send a 200 with a create conversation response when the conversation does not exist', () => {
-    const validateCreateConversationRequestSpy = jest
-      .spyOn(validateCreateConversationRequest, 'validateCreateConversationRequest')
-      .mockImplementation(() => false as any);
+  it('should send a 201 with a create conversation response when the conversation does not exist', () => {
     const mockNewConversation = {
       conversationId: 'convo1',
+      members: [],
       normalize: jest.fn(),
     };
     const emulatorServer: any = {
@@ -69,11 +57,12 @@ describe('createConversation handler', () => {
     const createConversation = createCreateConversationHandler(emulatorServer);
     const req: any = {
       body: {
+        bot: {},
         conversationId: 'convo1',
-        members: [{ id: 'member1' }],
+        members: [{ id: 'member1', role: 'user' }],
         mode: 'livechat',
       },
-      botEndpoint: { botId: 'bot1' },
+      botEndpoint: { botId: 'bot1', id: 'someEndpointId' },
     };
     const res: any = {
       end: jest.fn(),
@@ -82,28 +71,72 @@ describe('createConversation handler', () => {
     const next = jest.fn();
     createConversation(req, res, next);
 
-    expect(res.send).toHaveBeenCalledWith(HttpStatus.OK, { id: 'convo1' });
+    expect(res.send).toHaveBeenCalledWith(HttpStatus.CREATED, {
+      conversationId: mockNewConversation.conversationId,
+      endpointId: req.botEndpoint.id,
+      members: mockNewConversation.members,
+    });
     expect(res.end).toHaveBeenCalled();
     expect(next).toHaveBeenCalled();
-
-    validateCreateConversationRequestSpy.mockRestore();
   });
 
-  it('should send an error response if the request is invalid', () => {
-    const validateCreateConversationRequestSpy = jest
-      .spyOn(validateCreateConversationRequest, 'validateCreateConversationRequest')
-      .mockImplementation(() => ({ toAPIException: jest.fn(() => new Error('I am an error!')) } as any));
+  it('should send an error response if the request is invalid (missing bot)', () => {
     const createConversation = createCreateConversationHandler({} as any);
     const req: any = {
       body: {},
     };
-    const res: any = {};
+    const res: any = {
+      end: jest.fn(),
+      send: jest.fn(),
+    };
     const next = jest.fn();
     createConversation(req, res, next);
 
-    expect(mockSendErrorResponse).toHaveBeenCalledWith(req, res, next, new Error('I am an error!'));
+    expect(res.send).toHaveBeenCalledWith(HttpStatus.BAD_REQUEST, new Error('Missing bot object in request.'));
+    expect(res.end).toHaveBeenCalled();
     expect(next).toHaveBeenCalled();
+  });
 
-    validateCreateConversationRequestSpy.mockRestore();
+  it('should send an error response if the request is invalid (missing botEndpoint)', () => {
+    const createConversation = createCreateConversationHandler({} as any);
+    const req: any = {
+      body: {
+        bot: {},
+      },
+    };
+    const res: any = {
+      end: jest.fn(),
+      send: jest.fn(),
+    };
+    const next = jest.fn();
+    createConversation(req, res, next);
+
+    expect(res.send).toHaveBeenCalledWith(HttpStatus.BAD_REQUEST, new Error('Missing botEndpoint object in request.'));
+    expect(res.end).toHaveBeenCalled();
+    expect(next).toHaveBeenCalled();
+  });
+
+  it('should send an error response if the request is invalid (missing user)', () => {
+    const createConversation = createCreateConversationHandler({} as any);
+    const req: any = {
+      body: {
+        bot: {},
+        members: [],
+      },
+      botEndpoint: {},
+    };
+    const res: any = {
+      end: jest.fn(),
+      send: jest.fn(),
+    };
+    const next = jest.fn();
+    createConversation(req, res, next);
+
+    expect(res.send).toHaveBeenCalledWith(
+      HttpStatus.BAD_REQUEST,
+      new Error('Missing user inside of members array in request.')
+    );
+    expect(res.end).toHaveBeenCalled();
+    expect(next).toHaveBeenCalled();
   });
 });

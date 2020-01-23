@@ -83,7 +83,6 @@ export class SettingsSagas {
         appPath: app.getAppPath(),
         serverUrl: (Emulator.getInstance().server.serverUrl || '').replace('[::]', 'localhost'),
         cwd: (process.cwd() || '').replace(/\\/g, '/'),
-        users: settingsState.users,
         locale: settingsState.framework.locale,
         savedBotUrls: settingsState.savedBotUrls,
       } as ClientAwareSettings

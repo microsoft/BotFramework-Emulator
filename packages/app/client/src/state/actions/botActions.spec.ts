@@ -43,7 +43,6 @@ import {
   closeBot,
   openBotViaFilePathAction,
   openBotViaUrlAction,
-  restartConversation,
 } from './botActions';
 
 describe('bot actions', () => {
@@ -129,14 +128,5 @@ describe('bot actions', () => {
 
     expect(action.type).toBe(BotActionType.openViaUrl);
     expect(action.payload).toEqual({});
-  });
-
-  it('should create a restartConversation action', () => {
-    const conversationId = 'someConvoId';
-    const documentId = 'someDocId';
-    const action = restartConversation(conversationId, documentId);
-
-    expect(action.type).toBe(BotActionType.restartConversation);
-    expect(action.payload).toEqual({ conversationId, documentId });
   });
 });

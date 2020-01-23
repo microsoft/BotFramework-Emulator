@@ -31,27 +31,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { normalize } from 'path';
+
 import { CommandRegistry, CommandRegistryImpl } from '@bfemulator/sdk-shared';
 
-import { TelemetryService } from '../telemetry';
+import { openTranscript } from '../state/actions/chatActions';
 
 import { openFileFromCommandLine } from './openFileFromCommandLine';
 
-jest.mock('../state/store', () => ({
-  getSettings: () => null,
-}));
-jest.mock('./readFileSync', () => ({
-  readFileSync: file => {
-    if (file.includes('error.transcript')) {
-      return '{}';
-    }
-    if (file.includes('.transcript')) {
-      return '[]';
-    }
-    if (file.includes('bots.json')) {
-      return `{'bots':[]}`;
-    }
-    return null;
+const mockDispatch = jest.fn();
+jest.mock('../state', () => ({
+  store: {
+    dispatch: action => mockDispatch(action),
   },
 }));
 
@@ -77,17 +68,10 @@ class MockCommandService implements CommandService {
 
 describe('The openFileFromCommandLine util', () => {
   let commandService: MockCommandService;
-  let mockTrackEvent;
-  const trackEventBackup = TelemetryService.trackEvent;
 
   beforeEach(() => {
     commandService = new MockCommandService();
-    mockTrackEvent = jest.fn(() => null);
-    TelemetryService.trackEvent = mockTrackEvent;
-  });
-
-  afterAll(() => {
-    TelemetryService.trackEvent = trackEventBackup;
+    mockDispatch.mockClear();
   });
 
   it('should make the appropriate calls to open a .bot file', async () => {
@@ -99,32 +83,27 @@ describe('The openFileFromCommandLine util', () => {
     expect(commandService.remoteCalls).toEqual([['bot:load', null]]);
   });
 
-  it('should make the appropriate calls to open a .transcript file', async () => {
-    await openFileFromCommandLine('some/path.transcript', commandService);
-    expect(commandService.remoteCalls).toEqual([
-      [
-        'transcript:open',
-        'some/path.transcript',
-        'path.transcript',
-        {
-          activities: [],
-          inMemory: true,
-        },
-      ],
-    ]);
-    expect(mockTrackEvent).toHaveBeenCalledWith('transcriptFile_open', {
-      method: 'protocol',
-    });
+  it('should throw when there is an error trying to open a .bot file', async () => {
+    jest.spyOn(commandService, 'call').mockRejectedValueOnce('Something went wrong.');
+    try {
+      await openFileFromCommandLine('some/path.bot', commandService);
+      expect(true).toBe(false); // ensure catch is hit
+    } catch (e) {
+      expect(e).toEqual(
+        new Error('Error while trying to open a .bot file via double click at: some/path.bot: Something went wrong.')
+      );
+    }
   });
 
-  it('should throw when the transcript is not an array', async () => {
-    let thrown: boolean;
-    try {
-      await openFileFromCommandLine('some/error.transcript', commandService);
-    } catch (e) {
-      thrown = true;
-      expect(e.message).toEqual('Invalid transcript file contents; should be an array of conversation activities.');
-    }
-    expect(thrown).toBeTruthy();
+  it('should make the appropriate calls to open a .transcript file', async () => {
+    const filename = 'some/path.transcript';
+    await openFileFromCommandLine(filename, commandService);
+    expect(mockDispatch).toHaveBeenCalledWith(openTranscript(normalize(filename)));
+  });
+
+  it('should make the appropriate calls to open a .chat file', async () => {
+    const filename = 'some/path.chat';
+    await openFileFromCommandLine(filename, commandService);
+    expect(mockDispatch).toHaveBeenCalledWith(openTranscript(normalize(filename)));
   });
 });

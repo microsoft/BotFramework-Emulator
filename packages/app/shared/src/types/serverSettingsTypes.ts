@@ -31,8 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { User } from '@bfemulator/sdk-shared';
-
 import { Bot } from './botTypes';
 
 export interface FrameworkSettings {
@@ -78,12 +76,6 @@ export interface WindowStateSettings {
   availableThemes?: { name: string; href: string }[];
 }
 
-export interface UserSettings {
-  currentUserId?: string;
-  usersById?: { [id: string]: User };
-  users?: { [id: string]: User };
-}
-
 export interface AzureSettings {
   signedInUser?: string;
   armToken?: string;
@@ -94,7 +86,6 @@ export interface PersistentSettings {
   framework?: FrameworkSettings;
   savedBotUrls?: { url: string; lastAccessed: string }[];
   windowState?: WindowStateSettings;
-  users?: UserSettings;
 }
 
 export interface Settings extends PersistentSettings {
@@ -106,12 +97,11 @@ export class SettingsImpl implements Settings {
   public bots: Bot[];
   public savedBotUrls: { url: string; lastAccessed: string }[];
   public windowState: WindowStateSettings;
-  public users: UserSettings;
   public azure: AzureSettings;
 
   public constructor(source?: Settings) {
-    const { framework, savedBotUrls, windowState, users, azure }: Settings = source || {};
-    Object.assign(this, { framework, savedBotUrls, windowState, users, azure });
+    const { framework, savedBotUrls, windowState, azure }: Settings = source || {};
+    Object.assign(this, { framework, savedBotUrls, windowState, azure });
   }
 
   /**
@@ -119,10 +109,10 @@ export class SettingsImpl implements Settings {
    * @returns {Partial<Settings>}
    */
   public toJSON(): Partial<Settings> {
-    const { framework, savedBotUrls, windowState, users, azure = {} } = this;
+    const { framework, savedBotUrls, windowState, azure = {} } = this;
     // Do not write the armToken to disk
     const { armToken, ...azureProps } = azure;
-    return { framework, savedBotUrls, windowState, users, azure: azureProps };
+    return { framework, savedBotUrls, windowState, azure: azureProps };
   }
 }
 
@@ -158,5 +148,4 @@ export const settingsDefault: Settings = {
   framework: frameworkDefault,
   savedBotUrls: [],
   windowState: windowStateDefault,
-  users: { usersById: {} },
 };

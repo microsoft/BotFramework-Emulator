@@ -31,73 +31,62 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as HttpStatus from 'http-status-codes';
+import { INTERNAL_SERVER_ERROR, OK } from 'http-status-codes';
 
-import { sendActivityToConversation } from './sendActivityToConversation';
+import { getWebSocketPort } from './getWebSocketPort';
 
-jest.mock('../../../../webSocketServer', () => ({
-  WebSocketServer: {
-    getSocketByConversationId: () => ({
-      send: jest.fn(),
-    }),
+const mockWebSocketServer = {
+  init: jest.fn(async () => 56627),
+  port: 56626,
+};
+jest.mock('../../../webSocketServer', () => ({
+  get WebSocketServer() {
+    return mockWebSocketServer;
   },
 }));
 
-const mockSendErrorResponse = jest.fn();
-jest.mock('../../../../utils/sendErrorResponse', () => ({
-  sendErrorResponse: (...args) => mockSendErrorResponse(...args),
-}));
-
-describe('sendActivityToConversation handler', () => {
-  beforeEach(() => {
-    mockSendErrorResponse.mockClear();
-  });
-
-  it('should send a 200 with a response from posting the activity', () => {
-    const req: any = {
-      body: {},
-      conversation: {
-        prepActivityToBeSentToUser: jest.fn(() => ({ id: 'activity1' })),
-        user: {
-          id: ' someUser',
-        },
-      },
-      params: {
-        activityId: 'activity1',
-      },
-    };
+describe('getWebSocketPort handler', () => {
+  it('should return a 200 with the WS server port', async () => {
+    const req: any = {};
     const res: any = {
       end: jest.fn(),
       send: jest.fn(),
     };
     const next = jest.fn();
-    sendActivityToConversation(req, res, next);
+    await getWebSocketPort(req, res, next);
 
-    expect(res.send).toHaveBeenCalledWith(HttpStatus.OK, { id: 'activity1' });
+    expect(res.send).toHaveBeenCalledWith(OK, 56626);
     expect(res.end).toHaveBeenCalled();
     expect(next).toHaveBeenCalled();
   });
 
-  it('should send an error response if something goes wrong', () => {
-    const req: any = {
-      body: {},
-      conversation: {
-        prepActivityToBeSentToUser: jest.fn(() => {
-          throw new Error('Something went wrong.');
-        }),
-        user: {
-          id: ' someUser',
-        },
-      },
-      params: {
-        activityId: 'activity1',
-      },
+  it('should start the WS server and return a 200 with the server port', async () => {
+    const req: any = {};
+    const res: any = {
+      end: jest.fn(),
+      send: jest.fn(),
     };
-    const res: any = {};
     const next = jest.fn();
-    sendActivityToConversation(req, res, next);
+    mockWebSocketServer.port = undefined;
+    await getWebSocketPort(req, res, next);
 
-    expect(mockSendErrorResponse).toHaveBeenCalledWith(req, res, next, new Error('Something went wrong.'));
+    expect(res.send).toHaveBeenCalledWith(OK, 56627);
+    expect(res.end).toHaveBeenCalled();
+    expect(next).toHaveBeenCalled();
+  });
+
+  it('should return a 500 and an error', async () => {
+    const req: any = {};
+    const res: any = {
+      end: jest.fn(),
+      send: jest.fn(),
+    };
+    const next = jest.fn();
+    mockWebSocketServer.init.mockRejectedValueOnce(new Error('Failed to init WS server.'));
+    await getWebSocketPort(req, res, next);
+
+    expect(res.send).toHaveBeenCalledWith(INTERNAL_SERVER_ERROR, new Error('Failed to init WS server.'));
+    expect(res.end).toHaveBeenCalled();
     expect(next).toHaveBeenCalled();
   });
 });

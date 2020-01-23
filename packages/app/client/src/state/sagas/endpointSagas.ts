@@ -127,14 +127,9 @@ export class EndpointSagas {
     }
   }
 
-  // eslint-disable-next-line require-yield
   public static *openEndpointInEmulator(action: EndpointServiceAction<EndpointServicePayload>): IterableIterator<any> {
-    const { endpointService, focusExistingChatIfAvailable: focusExisting = false } = action.payload;
-    return EndpointSagas.commandService.call(
-      SharedConstants.Commands.Emulator.NewLiveChat,
-      endpointService,
-      focusExisting
-    );
+    const { endpointService } = action.payload;
+    yield EndpointSagas.commandService.call(SharedConstants.Commands.Emulator.NewLiveChat, endpointService);
   }
 
   public static *removeEndpointServiceFromActiveBot(endpointService: IEndpointService): IterableIterator<any> {

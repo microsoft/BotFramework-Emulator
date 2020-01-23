@@ -42,7 +42,7 @@ import { combineReducers, createStore } from 'redux';
 
 import { bot } from '../state/reducers/bot';
 import * as store from '../state/store';
-import { azureAuthSettings, framework, savedBotUrls, windowState, users } from '../state/reducers';
+import { azureAuthSettings, framework, savedBotUrls, windowState } from '../state/reducers';
 
 import { ClientInitCommands } from './clientInitCommands';
 
@@ -53,7 +53,6 @@ const mockSettingsStore = createStore(
       framework,
       savedBotUrls,
       windowState,
-      users,
     }),
   })
 );
@@ -142,6 +141,18 @@ jest.mock('../utils/readFileSync', () => ({
   },
 }));
 
+const mockParseProtocolUrlAndDispatch = jest.fn();
+jest.mock('../protocolHandler', () => ({
+  ProtocolHandler: {
+    parseProtocolUrlAndDispatch: (...args) => mockParseProtocolUrlAndDispatch(...args),
+  },
+}));
+
+const mockOpenFileFromCommandLine = jest.fn();
+jest.mock('../utils/openFileFromCommandLine', () => ({
+  openFileFromCommandLine: async (...args) => mockOpenFileFromCommandLine(...args),
+}));
+
 let mockStore;
 (store as any).getStore = function() {
   return mockStore || (mockStore = createStore(combineReducers({ bot })));
@@ -157,6 +168,8 @@ describe('The clientInitCommands', () => {
     const descriptor = decorator({ descriptor: {} }, 'none') as any;
     commandService = descriptor.descriptor.get();
     registry = commandService.registry;
+    mockParseProtocolUrlAndDispatch.mockClear();
+    mockOpenFileFromCommandLine.mockClear();
   });
 
   it('should retrieve the bots from disk when the client is done loading', async () => {
@@ -207,65 +220,12 @@ describe('The clientInitCommands', () => {
 
     const command = registry.getCommand(SharedConstants.Commands.ClientInit.PostWelcomeScreen);
     await command();
-    expect(localCommandArgs).toEqual([
-      ['menu:update-file-menu'],
-      ['bot:open', 'path/to/bot.bot', undefined],
-      [
-        'bot:set-active',
-        {
-          description: '',
-          name: 'AuthBot',
-          overrides: null,
-          padlock: '',
-          path: 'some/path',
-          services: [
-            {
-              appId: '4f8fde3f-48d3-4d8a-a954-393efe39809e',
-              appPassword: 'REDACTED',
-              endpoint: 'http://localhost:55697/api/messages',
-              id: 'cded37c0-83f2-11e8-ac6d-b7172cd24b28',
-              name: 'authsample',
-              type: 'endpoint',
-            },
-          ],
-          version: '2.0',
-        },
-      ],
-    ]);
+    expect(localCommandArgs).toEqual([['menu:update-file-menu']]);
 
-    expect(remoteCommandArgs).toEqual([
-      [SharedConstants.Commands.UI.ShowDataCollectionDialog],
-      [
-        'transcript:open',
-        '/path/to/transcript.transcript',
-        'transcript.transcript',
-        {
-          activities: [],
-          inMemory: true,
-        },
-      ],
-      [
-        'bot:load',
-        {
-          description: '',
-          name: 'AuthBot',
-          overrides: null,
-          padlock: '',
-          path: 'some/path',
-          services: [
-            {
-              appId: '4f8fde3f-48d3-4d8a-a954-393efe39809e',
-              appPassword: 'REDACTED',
-              endpoint: 'http://localhost:55697/api/messages',
-              id: 'cded37c0-83f2-11e8-ac6d-b7172cd24b28',
-              name: 'authsample',
-              type: 'endpoint',
-            },
-          ],
-          version: '2.0',
-        },
-      ],
-    ]);
+    expect(remoteCommandArgs).toEqual([[SharedConstants.Commands.UI.ShowDataCollectionDialog]]);
+
+    expect(mockOpenFileFromCommandLine).toHaveBeenCalledWith('/path/to/transcript.transcript', commandService);
+    expect(mockParseProtocolUrlAndDispatch).toHaveBeenCalledWith('bfemulator://bot.open?path=path/to/bot.bot');
 
     expect(dispatchSpy).toHaveBeenCalled();
   });

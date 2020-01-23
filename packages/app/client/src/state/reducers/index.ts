@@ -49,6 +49,5 @@ export * from './resources';
 export * from './savedBotUrls';
 export * from './theme';
 export * from './update';
-export * from './users';
 export * from './windowState';
 export * from './ngrokTunnel';

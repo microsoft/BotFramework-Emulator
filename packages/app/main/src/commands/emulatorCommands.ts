@@ -33,7 +33,7 @@
 
 import * as path from 'path';
 
-import { newBot, newEndpoint, SharedConstants } from '@bfemulator/app-shared';
+import { SharedConstants } from '@bfemulator/app-shared';
 import {
   BotConfigWithPath,
   Command,
@@ -49,19 +49,15 @@ import * as BotActions from '../state/actions/botActions';
 import { BotHelpers } from '../botHelpers';
 import { Emulator } from '../emulator';
 import { emulatorApplication } from '../main';
-import { dispatch, store, getSettings } from '../state/store';
+import { store, getSettings } from '../state/store';
 import { parseActivitiesFromChatFile, readFileSync, showSaveDialog, writeFile } from '../utils';
-import { cleanupId as cleanupActivityChannelAccountId, CustomActivity } from '../utils/conversation';
+import { CustomActivity } from '../utils/conversation';
 import { botProjectFileWatcher } from '../watchers';
 import { TelemetryService } from '../telemetry';
-import { setCurrentUser } from '../state/actions/userActions';
-import { pushClientAwareSettings } from '../state/actions/frameworkSettingsActions';
 import { ProtocolHandler } from '../protocolHandler';
 import { CredentialManager } from '../credentialManager';
 import { getCurrentConversationId } from '../state/helpers/chatHelpers';
 import { getLocalhostServiceUrl } from '../utils/getLocalhostServiceUrl';
-import { Conversation } from '../server/state/conversation';
-import { Users } from '../server/state/users';
 
 const Commands = SharedConstants.Commands.Emulator;
 
@@ -123,52 +119,32 @@ export class EmulatorCommands {
     }
   }
 
-  // ---------------------------------------------------------------------------
-  // Feeds a transcript from disk to a conversation
-  @Command(Commands.FeedTranscriptFromDisk)
-  protected async fedTranscriptFromDisk(conversationId: string, botId: string, userId: string, filePath: string) {
+  @Command(Commands.ExtractActivitiesFromFile)
+  protected async extractActivitiesFromDisk(
+    filePath: string
+  ): Promise<{ activities: CustomActivity[]; fileName: string; filePath: string }> {
     const transcriptPath = path.resolve(filePath);
     const stat = await fs.stat(transcriptPath);
 
     if (!stat || !stat.isFile()) {
-      throw new Error(`${Commands.FeedTranscriptFromDisk}: File ${filePath} not found.`);
+      throw new Error(`${Commands.ExtractActivitiesFromFile}: File ${filePath} not found.`);
     }
 
-    const activities = JSON.parse(readFileSync(transcriptPath));
-
-    await this.commandService.call(Commands.FeedTranscriptFromMemory, conversationId, botId, userId, activities);
-
+    let activities;
+    if (filePath.endsWith('.chat')) {
+      // use chatdown to convert the chat file to activities
+      activities = await parseActivitiesFromChatFile(filePath);
+    } else {
+      activities = JSON.parse(readFileSync(transcriptPath));
+    }
     const { name, ext } = path.parse(transcriptPath);
     const fileName = `${name}${ext}`;
 
     return {
+      activities,
       fileName,
       filePath,
     };
-  }
-
-  // ---------------------------------------------------------------------------
-  // Feeds a deep-linked transcript (array of parsed activities) to a conversation
-  @Command(Commands.FeedTranscriptFromMemory)
-  protected feedTranscriptFromMemory(
-    conversationId: string,
-    botId: string,
-    userId: string,
-    activities: CustomActivity[]
-  ): void {
-    const activeBot: BotConfigWithPath = BotHelpers.getActiveBot();
-
-    if (!activeBot) {
-      throw new Error('emulator:feed-transcript:deep-link: No active bot.');
-    }
-
-    const convo = Emulator.getInstance().server.state.conversations.conversationById(conversationId);
-    if (!convo) {
-      throw new Error(`emulator:feed-transcript:deep-link: Conversation ${conversationId} not found.`);
-    }
-
-    activities = cleanupActivityChannelAccountId(activities, botId, userId);
-    convo.feedActivities(activities);
   }
 
   // ---------------------------------------------------------------------------
@@ -181,74 +157,10 @@ export class EmulatorCommands {
   }
 
   // ---------------------------------------------------------------------------
-  // Creates a new conversation object for transcript
-  @Command(Commands.NewTranscript)
-  protected newTranscript(conversationId: string): Conversation {
-    // get the active bot or mock one
-    let bot: BotConfigWithPath = BotHelpers.getActiveBot();
-
-    if (!bot) {
-      bot = newBot();
-      bot.services.push(newEndpoint());
-      dispatch(BotActions.mockAndSetActive(bot));
-    }
-    const emulator = Emulator.getInstance();
-    // TODO: Move away from the .users state on legacy emulator settings, and towards per-conversation users
-    return emulator.server.state.conversations.newConversation(
-      emulator.server,
-      null,
-      { id: getSettings().users.currentUserId, name: 'User' },
-      conversationId
-    );
-  }
-
-  // ---------------------------------------------------------------------------
-  // Open the chat file in a tabbed document as a transcript
-  @Command(Commands.OpenChatFile)
-  protected async openChatFile(filePath: string): Promise<{ activities: CustomActivity[]; fileName: string }> {
-    try {
-      const activities = await parseActivitiesFromChatFile(filePath);
-      const { name, ext } = path.parse(filePath);
-      const fileName = `${name}${ext}`;
-      return { activities, fileName };
-    } catch (err) {
-      throw new Error(`${Commands.OpenChatFile}: Error calling parseActivitiesFromChatFile(): ${err}`);
-    }
-  }
-
-  // ---------------------------------------------------------------------------
-  // Sets the current user id (in memory)
-  @Command(Commands.SetCurrentUser)
-  protected async setCurrentUser(userId: string) {
-    const emulator = Emulator.getInstance();
-    const { users } = emulator.server.state;
-    const user = { id: userId, name: 'User' };
-    users.currentUserId = userId;
-    users.users[userId] = user;
-    emulator.server.state.users = users;
-
-    // update the settings state on both main and client
-    dispatch(setCurrentUser(user));
-    dispatch(pushClientAwareSettings());
-  }
-
-  // ---------------------------------------------------------------------------
   // Removes the conversation from the conversation set
   @Command(Commands.DeleteConversation)
   protected deleteConversation(conversationId: string) {
     return Emulator.getInstance().server.state.conversations.deleteConversation(conversationId);
-  }
-
-  // ---------------------------------------------------------------------------
-  // Removes the conversation from the conversation set
-  @Command(Commands.PostActivityToConversation)
-  protected postActivityToConversation(conversationId: string, activity: any, toUser: boolean) {
-    const conversation = Emulator.getInstance().server.state.conversations.conversationById(conversationId);
-    if (toUser) {
-      return conversation.postActivityToUser(activity, false);
-    } else {
-      return conversation.postActivityToBot(activity, false);
-    }
   }
 
   @Command(Commands.StartEmulator)
@@ -258,14 +170,10 @@ export class EmulatorCommands {
       return;
     }
     await emulator.startup();
-    const { users: userSettings, framework } = getSettings();
-    const users = new Users();
-    users.currentUserId = userSettings.currentUserId;
-    users.users = userSettings.usersById;
+    const { framework } = getSettings();
 
     const { state } = emulator.server;
     state.locale = framework.locale;
-    state.users = users;
   }
 
   @Command(Commands.OpenProtocolUrls)

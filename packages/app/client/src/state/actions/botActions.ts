@@ -32,7 +32,7 @@
 //
 
 import { BotInfo, newBot } from '@bfemulator/app-shared';
-import { BotConfigWithPath, StartConversationParams, User } from '@bfemulator/sdk-shared';
+import { BotConfigWithPath, StartConversationParams } from '@bfemulator/sdk-shared';
 import { Action } from 'redux';
 
 export enum BotActionType {
@@ -43,7 +43,6 @@ export enum BotActionType {
   open = 'BOT/OPEN',
   openViaUrl = 'BOT/OPEN_VIA_URL',
   openViaFilePath = 'BOT/OPEN_VIA_FILE_PATH',
-  restartConversation = 'BOT/RESTART_CONVERSATION',
   setActive = 'BOT/SET_ACTIVE',
   setDirectory = 'BOT/SET_DIRECTORY',
 }
@@ -75,12 +74,6 @@ export interface BotInfosPayload {
 
 export interface HashPayload {
   hash: string;
-}
-
-export interface RestartConversationPayload {
-  conversationId: string;
-  documentId: string;
-  user?: User;
 }
 
 export function load(bots: BotInfo[]): BotAction<LoadBotPayload> {
@@ -162,18 +155,15 @@ export function openBotViaFilePathAction(path: string): BotAction<string> {
   };
 }
 
+interface BotSource {
+  isFromBotFile?: boolean;
+}
+
 export function openBotViaUrlAction(
-  startConversationParams: Partial<StartConversationParams>
-): BotAction<Partial<StartConversationParams>> {
+  startConversationParams: Partial<StartConversationParams> & BotSource
+): BotAction<Partial<StartConversationParams> & BotSource> {
   return {
     type: BotActionType.openViaUrl,
     payload: startConversationParams,
-  };
-}
-
-export function restartConversation(conversationId: string, documentId: string): BotAction<RestartConversationPayload> {
-  return {
-    type: BotActionType.restartConversation,
-    payload: { conversationId, documentId },
   };
 }

@@ -74,6 +74,12 @@ jest.mock('electron', () => ({
   },
 }));
 
+jest.mock('./server/webSocketServer', () => ({
+  WebSocketServer: {
+    init: jest.fn(),
+  },
+}));
+
 describe('main', () => {
   let commandService: CommandServiceImpl;
   let emulatorAppSpy;

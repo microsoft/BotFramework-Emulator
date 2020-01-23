@@ -48,6 +48,10 @@ import { sendTyping } from './handlers/sendTyping';
 import { updateShippingAddress } from './handlers/updateShippingAddress';
 import { updateShippingOption } from './handlers/updateShippingOption';
 import { createGetConversationEndpointHandler } from './handlers/getConversationEndpoint';
+import { createUpdateConversationHandler } from './handlers/updateConversation';
+import { createInitialReportHandler } from './handlers/initialReport';
+import { createFeedActivitiesAsTranscriptHandler } from './handlers/feedActivitiesAsTranscript';
+import { getWebSocketPort } from './handlers/getWebSocketPort';
 
 export function mountEmulatorRoutes(emulatorServer: EmulatorRestServer) {
   const { server, state } = emulatorServer;
@@ -90,9 +94,19 @@ export function mountEmulatorRoutes(emulatorServer: EmulatorRestServer) {
 
   server.post('/emulator/:conversationId/invoke/sendTokenResponse', jsonBodyParser, sendTokenResponse);
 
-  server.get('/emulator/users', (req, res, next) => {
-    res.send(200, state.users);
-    res.end();
-    next();
-  });
+  server.put('/emulator/:conversationId', jsonBodyParser, createUpdateConversationHandler(state));
+
+  server.post(
+    '/emulator/:conversationId/invoke/initialReport',
+    jsonBodyParser,
+    createInitialReportHandler(emulatorServer)
+  );
+
+  server.post(
+    '/emulator/:conversationId/transcript',
+    jsonBodyParser,
+    createFeedActivitiesAsTranscriptHandler(emulatorServer)
+  );
+
+  server.get('/emulator/ws/port', getWebSocketPort);
 }

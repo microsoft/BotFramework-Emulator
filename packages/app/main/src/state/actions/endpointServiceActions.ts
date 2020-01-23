@@ -45,7 +45,6 @@ export interface EndpointServiceAction<T> extends Action {
 
 export interface EndpointServicePayload {
   endpointService: IEndpointService;
-  focusExistingChatIfAvailable?: boolean;
   resolver?: Function;
 }
 
@@ -65,12 +64,11 @@ export function launchEndpointEditor(
 }
 
 export function openEndpointInEmulator(
-  endpointService: IEndpointService,
-  focusExistingChatIfAvailable: boolean = false
+  endpointService: IEndpointService
 ): EndpointServiceAction<EndpointServicePayload> {
   return {
     type: OPEN_ENDPOINT_IN_EMULATOR,
-    payload: { endpointService, focusExistingChatIfAvailable },
+    payload: { endpointService },
   };
 }
 

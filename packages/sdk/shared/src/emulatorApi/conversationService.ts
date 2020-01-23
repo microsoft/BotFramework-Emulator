@@ -31,12 +31,34 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { StartConversationParams } from '../types/activity';
+import { Activity } from 'botframework-schema';
+
 import { uniqueId } from '../utils';
+import { ChannelService } from '../types/channelService';
+import { EmulatorMode, User } from '../types';
 
 export const headers = {
   'Content-Accept': 'application/json',
 };
+
+interface UpdateConversationPayload {
+  conversationId: string;
+  userId: string;
+}
+
+interface ConversationMember extends User {
+  role?: string;
+}
+
+interface StartConversationPayload {
+  bot?: ConversationMember;
+  botUrl: string;
+  channelServiceType: ChannelService;
+  members: ConversationMember[];
+  mode: EmulatorMode;
+  msaAppId?: string;
+  msaPassword?: string;
+}
 
 export class ConversationService {
   public static addUser(serviceUrl: string, conversationId: string, name?: string, id?: string) {
@@ -105,32 +127,73 @@ export class ConversationService {
     });
   }
 
-  public static getConversationEndpoint(serverUrl: string, conversationId: string): Promise<Response> {
-    const url = `${serverUrl}/emulator/${conversationId}/endpoint`;
-    return fetch(url);
-  }
-
-  public static startConversation(serverUrl: string, payload: Partial<StartConversationParams>): Promise<Response> {
-    const { endpoint, appId = '', appPassword = '', user, channelService, ...body } = payload;
-    const url = serverUrl + `/v3/conversations`;
+  public static startConversation(serverUrl: string, payload: StartConversationPayload): Promise<Response> {
+    const url = `${serverUrl}/v3/conversations`;
     return fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-Emulator-BotEndpoint': (endpoint || '').trim(),
-        'X-Emulator-AppId': (appId || '').trim(),
-        'X-Emulator-AppPassword': (appPassword || '').trim(),
-        'X-Emulator-ChannelService': (channelService || '').trim().toLowerCase(),
       },
       body: JSON.stringify({
+        ...payload,
         bot: {
           id: uniqueId(),
           name: 'Bot',
           role: 'bot',
         },
-        members: [user],
-        ...body,
       }),
+    });
+  }
+
+  public static sendActivityToBot(serverUrl: string, conversationId: string, activity: any): Promise<Response> {
+    const url = `${serverUrl}/v3/directline/conversations/${conversationId}/activities`;
+    return fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(activity),
+    });
+  }
+
+  public static updateConversation(
+    serverUrl: string,
+    conversationId: string,
+    payload: UpdateConversationPayload
+  ): Promise<Response> {
+    const url = `${serverUrl}/emulator/${conversationId}`;
+    return fetch(url, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+  }
+
+  public static sendInitialLogReport(serverUrl: string, conversationId: string, botUrl: string): Promise<Response> {
+    const url = `${serverUrl}/emulator/${conversationId}/invoke/initialReport`;
+    return fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(botUrl),
+    });
+  }
+
+  public static feedActivitiesAsTranscript(
+    serverUrl: string,
+    conversationId: string,
+    activities: Activity[]
+  ): Promise<Response> {
+    const url = `${serverUrl}/emulator/${conversationId}/transcript`;
+    return fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(activities),
     });
   }
 }

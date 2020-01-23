@@ -40,14 +40,15 @@ describe('The conversationSet', () => {
     conversationSet = new ConversationSet();
   });
 
-  it('should create a new conversation and append "|livechat" to the conversatioId', () => {
+  it('should create a new conversation and append "{mode}" to the conversationId', () => {
     const conversation = conversationSet.newConversation(
       {} as any,
       { botId: 'someBot' } as any,
       { id: 'user', name: 'User1' },
-      'conversationId'
+      'conversationId',
+      'debug'
     );
-    expect(conversation.conversationId).toBe('conversationId|livechat');
+    expect(conversation.conversationId).toBe('conversationId|debug');
   });
 
   it('should not append "|livechat" to the conversationId when the conversationId contains "|transcript"', () => {

@@ -55,7 +55,7 @@ describe('endpoint service actions', () => {
     const action = openEndpointInEmulator(endpointService);
 
     expect(action.type).toBe(OPEN_ENDPOINT_IN_EMULATOR);
-    expect(action.payload).toEqual({ endpointService, focusExistingChatIfAvailable: false });
+    expect(action.payload).toEqual({ endpointService });
   });
 
   it('should create an openEndpointExplorerContextMenu action', () => {
