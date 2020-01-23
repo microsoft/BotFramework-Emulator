@@ -40,13 +40,10 @@ import { contactRemoved } from './handlers/contactRemoved';
 import { deleteUserData } from './handlers/deleteUserData';
 import { createGetConversationHandler } from './handlers/getConversation';
 import { getUsers } from './handlers/getUsers';
-import { paymentComplete } from './handlers/paymentComplete';
 import { ping } from './handlers/ping';
 import { removeUsers } from './handlers/removeUsers';
 import { sendTokenResponse } from './handlers/sendTokenResponse';
 import { sendTyping } from './handlers/sendTyping';
-import { updateShippingAddress } from './handlers/updateShippingAddress';
-import { updateShippingOption } from './handlers/updateShippingOption';
 import { createGetConversationEndpointHandler } from './handlers/getConversationEndpoint';
 import { createUpdateConversationHandler } from './handlers/updateConversation';
 import { createInitialReportHandler } from './handlers/initialReport';
@@ -75,22 +72,6 @@ export function mountEmulatorRoutes(emulatorServer: EmulatorRestServer) {
   server.post('/emulator/:conversationId/ping', getConversation, ping);
 
   server.del('/emulator/:conversationId/userdata', getConversation, deleteUserData);
-
-  server.post(
-    '/emulator/:conversationId/invoke/updateShippingAddress',
-    jsonBodyParser,
-    getConversation,
-    updateShippingAddress
-  );
-
-  server.post(
-    '/emulator/:conversationId/invoke/updateShippingOption',
-    jsonBodyParser,
-    getConversation,
-    updateShippingOption
-  );
-
-  server.post('/emulator/:conversationId/invoke/paymentComplete', jsonBodyParser, getConversation, paymentComplete);
 
   server.post('/emulator/:conversationId/invoke/sendTokenResponse', jsonBodyParser, sendTokenResponse);
 
