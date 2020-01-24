@@ -125,7 +125,7 @@ describe('The Ngrok Sagas', () => {
     result = gen.next();
     result = gen.next();
     expect(result.value).toEqual(put(setTimeIntervalSinceLastPing(TunnelCheckTimeInterval.FirstInterval)));
-    result = gen.next('resolve');
+    result = gen.next();
     result = gen.next();
     expect(result.value).toEqual(put(setTimeIntervalSinceLastPing(TunnelCheckTimeInterval.SecondInterval)));
     expect(onSuccessMock).toHaveBeenCalled();

@@ -47,7 +47,6 @@ export const NgrokStatusIndicator = (props: NgrokTimeIntervalIndicatorProps) => 
   const [displayTimeInterval, setTimeIntervalDisplay] = useState('Last refreshed now');
 
   useEffect(() => {
-    console.log('TunnelStatus', props.tunnelStatus);
     switch (props.tunnelStatus) {
       case TunnelStatus.Active:
         setStatusDisplay(styles.tunnelActive);
