@@ -37,7 +37,6 @@ import * as HttpStatus from 'http-status-codes';
 import updateIn from 'simple-update-in';
 import {
   appSettingsItem,
-  CheckoutConversationSession,
   EmulatorMode,
   ErrorCodes,
   externalLinkItem,
@@ -45,10 +44,6 @@ import {
   LogLevel,
   networkRequestItem,
   networkResponseItem,
-  PaymentOperations,
-  PaymentRequest,
-  PaymentRequestComplete,
-  PaymentRequestUpdate,
   ResourceResponse,
   textItem,
   TranscriptRecord,
@@ -60,7 +55,6 @@ import {
   ChannelAccount,
   ConversationAccount,
   IContactRelationUpdateActivity,
-  IInvokeActivity,
   IMessageActivity,
 } from 'botframework-schema';
 import { traceContainsDebugData, ValueTypesMask } from '@bfemulator/app-shared';
@@ -436,107 +430,6 @@ export class Conversation extends EventEmitter {
     this.emit('transcriptupdate');
   }
 
-  public async sendUpdateShippingAddressOperation(
-    checkoutSession: CheckoutConversationSession,
-    request: PaymentRequest,
-    shippingAddress: PaymentAddress,
-    shippingOptionId: string
-  ) {
-    return this.sendUpdateShippingOperation(
-      checkoutSession,
-      PaymentOperations.UpdateShippingAddressOperationName,
-      request,
-      shippingAddress,
-      shippingOptionId
-    );
-  }
-
-  public async sendUpdateShippingOptionOperation(
-    checkoutSession: CheckoutConversationSession,
-    request: PaymentRequest,
-    shippingAddress: PaymentAddress,
-    shippingOptionId: string
-  ) {
-    return this.sendUpdateShippingOperation(
-      checkoutSession,
-      PaymentOperations.UpdateShippingOptionOperationName,
-      request,
-      shippingAddress,
-      shippingOptionId
-    );
-  }
-
-  public async sendPaymentCompleteOperation(
-    checkoutSession: CheckoutConversationSession,
-    request: PaymentRequest,
-    shippingAddress: PaymentAddress,
-    shippingOptionId: string,
-    payerEmail: string,
-    payerPhone: string
-  ) {
-    if (!this.botEndpoint) {
-      return this.emulatorServer.logger.logMessage(
-        this.conversationId,
-        textItem(
-          LogLevel.Error,
-          'Error: This conversation does not have an endpoint, cannot send payment complete activity.'
-        )
-      );
-    }
-
-    const paymentTokenHeader = {
-      amount: request.details.total.amount,
-      expiry: '1/1/2020',
-      format: 2,
-      merchantId: request.methodData[0].data.merchantId,
-      paymentRequestId: request.id,
-      timestamp: '4/27/2017',
-    };
-
-    const paymentTokenHeaderStr = JSON.stringify(paymentTokenHeader);
-    const pthBytes = Buffer.from(paymentTokenHeaderStr).toString('base64');
-
-    const paymentTokenSource = 'tok_18yWDMKVgMv7trmwyE21VqO';
-    const ptsBytes = Buffer.from(paymentTokenSource).toString('base64');
-
-    const ptsigBytes = Buffer.from('Emulator').toString('base64');
-
-    const updateValue: PaymentRequestComplete = {
-      id: request.id,
-      paymentRequest: request,
-      paymentResponse: {
-        details: {
-          paymentToken: pthBytes + '.' + ptsBytes + '.' + ptsigBytes,
-        },
-        methodName: request.methodData[0].supportedMethods[0],
-        payerEmail,
-        payerPhone,
-        shippingAddress,
-        shippingOption: shippingOptionId,
-      },
-    };
-
-    const activity = {
-      type: 'invoke',
-      name: PaymentOperations.PaymentCompleteOperationName,
-      from: { id: checkoutSession.checkoutFromId } as ChannelAccount,
-      conversation: { id: checkoutSession.checkoutConversationId } as ConversationAccount,
-      relatesTo: {
-        activityId: checkoutSession.paymentActivityId,
-        bot: { id: this.botEndpoint.botId } as ChannelAccount,
-        channelId: 'emulator',
-        conversation: { id: this.conversationId } as ConversationAccount,
-        serviceUrl: await this.emulatorServer.getServiceUrl(this.botEndpoint.botUrl),
-        user: undefined, // this code is never used and will be removed soon (https://github.com/microsoft/BotFramework-Emulator/issues/2033)
-      },
-      value: updateValue,
-    } as IInvokeActivity;
-
-    const { response } = await this.postActivityToBot(activity as Activity, false);
-
-    return response;
-  }
-
   public async sendTokenResponse(connectionName: string, token: string, doNotCache?: boolean) {
     const userId = this.user.id;
 
@@ -647,53 +540,6 @@ export class Conversation extends EventEmitter {
       await this.processActivityForDataUrls(activities[i]);
     }
     return activities;
-  }
-
-  private async sendUpdateShippingOperation(
-    checkoutSession: CheckoutConversationSession,
-    operation: string,
-    request: PaymentRequest,
-    shippingAddress: PaymentAddress,
-    shippingOptionId: string
-  ) {
-    if (!this.botEndpoint) {
-      return this.emulatorServer.logger.logMessage(
-        this.conversationId,
-        textItem(
-          LogLevel.Error,
-          'Error: This conversation does not have an endpoint, cannot send update shipping activity.'
-        )
-      );
-    }
-
-    const updateValue: PaymentRequestUpdate = {
-      id: request.id,
-      shippingAddress,
-      shippingOption: shippingOptionId,
-      details: request.details,
-    };
-
-    const activity = {
-      type: 'invoke',
-      name: operation,
-      from: { id: checkoutSession.checkoutFromId },
-      conversation: { id: checkoutSession.checkoutConversationId },
-      relatesTo: {
-        activityId: checkoutSession.paymentActivityId,
-        bot: { id: this.botEndpoint.botId },
-        channelId: 'emulator',
-        conversation: { id: this.conversationId },
-        serviceUrl: await this.emulatorServer.getServiceUrl(this.botEndpoint.botUrl),
-        user: undefined, // this code is never used and will be removed soon (https://github.com/microsoft/BotFramework-Emulator/issues/2033)
-      },
-      value: updateValue,
-    } as IInvokeActivity;
-
-    const { response } = await this.postActivityToBot(activity as Activity, false);
-
-    // TODO: Should we record this in transcript? It looks like normal IInvokeActivity
-
-    return response;
   }
 
   public postage(recipientId: string, activity: Partial<Activity>, isHistoric: boolean = false): Activity {

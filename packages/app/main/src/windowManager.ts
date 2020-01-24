@@ -31,9 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as path from 'path';
-import * as URL from 'url';
-
 import * as Electron from 'electron';
 
 import { rememberZoomLevel } from './state/actions/windowStateActions';
@@ -45,14 +42,6 @@ export class WindowManager {
 
   constructor() {
     this.windows = [];
-
-    Electron.ipcMain.on('createCheckoutWindow', (event, args) => {
-      this.createCheckoutWindow(args.payload, args.settings, args.serviceUrl);
-    });
-    Electron.ipcMain.on('getCheckoutState', (event, args) => {
-      const state = event.sender.checkoutState;
-      event.returnValue = state;
-    });
   }
 
   public addMainWindow(window: Electron.BrowserWindow) {
@@ -94,37 +83,6 @@ export class WindowManager {
     this.mainWindow.webContents.setZoomLevel(zoomLevel);
     this.windows.forEach(win => win.webContents.setZoomLevel(zoomLevel));
     dispatch(rememberZoomLevel({ zoomLevel }));
-  }
-
-  public createCheckoutWindow(payload: string, settings: any, serviceUrl: string) {
-    let page = URL.format({
-      protocol: 'file',
-      slashes: true,
-      pathname: path.join(__dirname, '../client/payments/index.html'),
-    });
-    page += '?' + payload;
-
-    const checkoutWindow = new Electron.BrowserWindow({
-      width: 1000,
-      height: 620,
-      title: 'Checkout with Microsoft Emulator',
-    });
-    this.add(checkoutWindow);
-    (checkoutWindow.webContents as any).checkoutState = {
-      settings,
-      serviceUrl,
-    };
-
-    checkoutWindow.on('closed', () => {
-      this.remove(checkoutWindow);
-    });
-
-    // checkoutWindow.webContents.openDevTools();
-
-    // Load a remote URL
-    checkoutWindow.loadURL(page);
-
-    checkoutWindow.webContents.setZoomLevel(getSettings().windowState.zoomLevel);
   }
 
   public createOAuthWindow(url: string, codeVerifier: string) {

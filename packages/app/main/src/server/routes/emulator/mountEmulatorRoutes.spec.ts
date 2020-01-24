@@ -39,13 +39,10 @@ import { contactRemoved } from './handlers/contactRemoved';
 import { deleteUserData } from './handlers/deleteUserData';
 import { createGetConversationHandler } from './handlers/getConversation';
 import { getUsers } from './handlers/getUsers';
-import { paymentComplete } from './handlers/paymentComplete';
 import { ping } from './handlers/ping';
 import { removeUsers } from './handlers/removeUsers';
 import { sendTokenResponse } from './handlers/sendTokenResponse';
 import { sendTyping } from './handlers/sendTyping';
-import { updateShippingAddress } from './handlers/updateShippingAddress';
-import { updateShippingOption } from './handlers/updateShippingOption';
 import { mountEmulatorRoutes } from './mountEmulatorRoutes';
 import { createUpdateConversationHandler } from './handlers/updateConversation';
 import { createFeedActivitiesAsTranscriptHandler } from './handlers/feedActivitiesAsTranscript';
@@ -60,14 +57,11 @@ jest.mock('./handlers/feedActivitiesAsTranscript', () => ({ createFeedActivities
 jest.mock('./handlers/getConversation', () => ({ createGetConversationHandler: jest.fn() }));
 jest.mock('./handlers/getUsers', () => ({ getUsers: jest.fn() }));
 jest.mock('./handlers/initialReport', () => ({ createInitialReportHandler: jest.fn() }));
-jest.mock('./handlers/paymentComplete', () => ({ paymentComplete: jest.fn() }));
 jest.mock('./handlers/ping', () => ({ ping: jest.fn() }));
 jest.mock('./handlers/removeUsers', () => ({ removeUsers: jest.fn() }));
 jest.mock('./handlers/sendTokenResponse', () => ({ sendTokenResponse: jest.fn() }));
 jest.mock('./handlers/sendTyping', () => ({ sendTyping: jest.fn() }));
 jest.mock('./handlers/updateConversation', () => ({ createUpdateConversationHandler: jest.fn() }));
-jest.mock('./handlers/updateShippingAddress', () => ({ updateShippingAddress: jest.fn() }));
-jest.mock('./handlers/updateShippingOption', () => ({ updateShippingOption: jest.fn() }));
 
 describe('mountEmulatorRoutes', () => {
   it('should mount the routes', () => {
@@ -105,27 +99,6 @@ describe('mountEmulatorRoutes', () => {
     expect(post).toHaveBeenCalledWith('/emulator/:conversationId/ping', getConversation, ping);
 
     expect(del).toHaveBeenCalledWith('/emulator/:conversationId/userdata', getConversation, deleteUserData);
-
-    expect(post).toHaveBeenCalledWith(
-      '/emulator/:conversationId/invoke/updateShippingAddress',
-      jsonBodyParser,
-      getConversation,
-      updateShippingAddress
-    );
-
-    expect(post).toHaveBeenCalledWith(
-      '/emulator/:conversationId/invoke/updateShippingOption',
-      jsonBodyParser,
-      getConversation,
-      updateShippingOption
-    );
-
-    expect(post).toHaveBeenCalledWith(
-      '/emulator/:conversationId/invoke/paymentComplete',
-      jsonBodyParser,
-      getConversation,
-      paymentComplete
-    );
 
     expect(post).toHaveBeenCalledWith(
       '/emulator/:conversationId/invoke/sendTokenResponse',

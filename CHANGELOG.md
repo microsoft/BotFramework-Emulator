@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Changed
 - [client] Hid services pane by default in PR [2059](https://github.com/microsoft/BotFramework-Emulator/pull/2059)
 
+## Removed
+- [client/main] Removed legacy payments code in PR [2058](https://github.com/microsoft/BotFramework-Emulator/pull/2058)
+
 ## v4.7.0 - 2019 - 12 - 13
 ## Fixed
 - [client] Added an empty state for the recent bots submenu in the app menu for Windows in PR [1945](https://github.com/microsoft/BotFramework-Emulator/pull/1945)
