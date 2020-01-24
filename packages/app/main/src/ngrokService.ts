@@ -229,7 +229,10 @@ export class NgrokService {
     if (this.spawnErr) {
       emulatorApplication.mainWindow.logService.logToChat(
         conversationId,
-        textItem(LogLevel.Error, 'Failed to spawn ngrok'),
+        textItem(
+          LogLevel.Error,
+          'Failed to spawn ngrok. Please go to Ngrok Status Viewer and download the log file for more detailed view of the error.'
+        ),
         exceptionItem(this.spawnErr)
       );
     } else if (!this.ngrokPath) {

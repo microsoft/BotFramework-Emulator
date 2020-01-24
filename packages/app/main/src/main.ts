@@ -66,7 +66,7 @@ import { setOpenUrl } from './state/actions/protocolActions';
 import { WebSocketServer } from './server/webSocketServer';
 
 const genericTunnelError =
-  'Oops.. Your ngrok tunnel seems to have an error. Please check the Ngrok Debug Console for more details';
+  'Oops.. Your ngrok tunnel seems to have an error. Please check the Ngrok Status Viewer for more details';
 // start app startup timer
 const beginStartupTime = Date.now();
 
