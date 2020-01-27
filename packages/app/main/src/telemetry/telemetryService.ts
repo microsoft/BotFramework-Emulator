@@ -50,6 +50,10 @@ export class TelemetryService {
       this.startup();
     }
     try {
+      properties = {
+        ...properties,
+        toolName: 'bf-emulator',
+      };
       this._client.trackEvent({ name, properties });
     } catch (e) {
       // swallow the exception; we don't want to crash the app
