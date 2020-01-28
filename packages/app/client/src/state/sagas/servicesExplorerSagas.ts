@@ -166,7 +166,8 @@ export class ServicesExplorerSagas {
     if (result === 1) {
       action.payload.connectedService = BotConfigurationBase.serviceFromJSON({
         type,
-        hostname: '' /* defect workaround */,
+        hostname:
+          'https://myqna.azurewebsites.net' /* a QnA maker service needs to be initialized with a valid hostname or msbot will throw */,
       } as any);
       result = yield* ServicesExplorerSagas.launchConnectedServiceEditor(action);
     }
