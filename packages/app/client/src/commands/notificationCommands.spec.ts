@@ -31,71 +31,52 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { CommandServiceImpl, CommandRegistry, CommandServiceInstance } from '@bfemulator/sdk-shared';
 import { SharedConstants } from '@bfemulator/app-shared';
-import { Command } from '@bfemulator/sdk-shared';
 
-export interface EmulatorSettings {
-  url?: string;
-  cwd?: string;
-  readonly cwdAsBase: string;
-}
+import { beginAdd, beginRemove } from '../state/actions/notificationActions';
 
-class EmulatorSettingsImpl implements EmulatorSettings {
-  private _url: string;
-  private _cwd: string;
+import { NotificationCommands } from './notificationCommands';
 
-  get url(): string {
-    if (!this._url || !this._url.length) {
-      throw new Error('Emulator url not set');
-    }
-    return this._url;
-  }
+const mockNotification: any = {};
+jest.mock('../utils', () => ({
+  getGlobal: () => mockNotification,
+}));
 
-  set url(value: string) {
-    this._url = value;
-  }
+const mockDispatch = jest.fn();
+jest.mock('../state/store', () => ({
+  store: {
+    dispatch: action => mockDispatch(action),
+  },
+}));
 
-  get cwd(): string {
-    if (!this._cwd || !this._cwd.length) {
-      throw new Error('Emulator cwd not set');
-    }
-    return this._cwd;
-  }
+describe('The notification commands', () => {
+  let commandService: CommandServiceImpl;
+  let registry: CommandRegistry;
+  const { Notifications } = SharedConstants.Commands;
 
-  set cwd(value: string) {
-    this._cwd = value;
-  }
+  beforeAll(() => {
+    new NotificationCommands();
+    const decorator = CommandServiceInstance();
+    const descriptor = decorator({ descriptor: {} }, 'none') as any;
+    commandService = descriptor.descriptor.get();
+    registry = commandService.registry;
+  });
 
-  get cwdAsBase(): string {
-    let base = this.cwd || '';
-    if (!base.startsWith('/')) {
-      base = `/${base}`;
-    }
+  beforeEach(mockDispatch.mockClear);
 
-    return base;
-  }
-}
+  it('should add a notifcation from the main process', () => {
+    const command = registry.getCommand(Notifications.Add);
+    command();
 
-class EmulatorSettingsService {
-  private _emulator: EmulatorSettingsImpl;
+    expect(mockDispatch).toHaveBeenCalledWith(beginAdd(mockNotification));
+  });
 
-  get emulator(): EmulatorSettingsImpl {
-    return this._emulator;
-  }
+  it('should remove a notification', () => {
+    const id = 'someId';
+    const command = registry.getCommand(Notifications.Remove);
+    command(id);
 
-  public init() {
-    return null;
-  }
-
-  constructor() {
-    this._emulator = new EmulatorSettingsImpl();
-  }
-
-  @Command(SharedConstants.Commands.Settings.ReceiveGlobalSettings)
-  protected receiveGlobalSettings(settings: { url: string; cwd: string }): any {
-    this.emulator.url = (settings.url || '').replace('[::]', 'localhost');
-    this.emulator.cwd = (settings.cwd || '').replace(/\\/g, '/');
-  }
-}
-
-export const SettingsService = new EmulatorSettingsService();
+    expect(mockDispatch).toHaveBeenCalledWith(beginRemove(id));
+  });
+});

@@ -31,17 +31,28 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { SharedConstants } from '@bfemulator/app-shared';
-import { Command } from '@bfemulator/sdk-shared';
+import { appendToLog } from '../../state/actions/chatActions';
 
-const { Electron } = SharedConstants.Commands;
+import { logService } from './logService';
 
-/** Registers electron commands */
-export class ElectronCommands {
-  // ---------------------------------------------------------------------------
-  // Toggle inspector dev tools for all open inspectors
-  @Command(Electron.ToggleDevTools)
-  protected toggleDevTools() {
-    window.dispatchEvent(new Event('toggle-inspector-devtools'));
-  }
-}
+const mockDispatch = jest.fn();
+jest.mock('../../state/store', () => ({
+  store: {
+    dispatch: action => mockDispatch(action),
+  },
+}));
+
+const mockDocumentId = 'someDocId';
+jest.mock('../../state/helpers/chatHelpers', () => ({
+  documentIdForConversation: () => mockDocumentId,
+}));
+
+describe('logService', () => {
+  it('should log to chat', () => {
+    const conversationId = 'someConvoId';
+    const logEntry: any = {};
+    (logService as any).appendToLog(conversationId, logEntry);
+
+    expect(mockDispatch).toHaveBeenCalledWith(appendToLog(mockDocumentId, logEntry));
+  });
+});

@@ -31,17 +31,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { SharedConstants } from '@bfemulator/app-shared';
-import { Command } from '@bfemulator/sdk-shared';
+import interceptError from './interceptError';
 
-const { Electron } = SharedConstants.Commands;
+describe('interceptError', () => {
+  it('should set up error handlers', () => {
+    const onSpy = jest.spyOn(process, 'on');
+    interceptError();
 
-/** Registers electron commands */
-export class ElectronCommands {
-  // ---------------------------------------------------------------------------
-  // Toggle inspector dev tools for all open inspectors
-  @Command(Electron.ToggleDevTools)
-  protected toggleDevTools() {
-    window.dispatchEvent(new Event('toggle-inspector-devtools'));
-  }
-}
+    expect(onSpy).toHaveBeenCalledWith('uncaughtException', jasmine.any(Function));
+    expect((window as any).onerror()).toBe(true);
+
+    onSpy.mockClear();
+  });
+});
