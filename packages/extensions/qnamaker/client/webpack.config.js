@@ -33,7 +33,6 @@
 
 const { WatchIgnorePlugin } = require('webpack');
 const TerserWebpackPlugin = require('terser-webpack-plugin');
-//const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const path = require('path');
 
 const buildConfig = mode => {
@@ -48,28 +47,6 @@ const buildConfig = mode => {
             return Object.assign({}, defaultCacheKeys, { terser: require('terser/package.json').version });
           },
         }),
-        // new UglifyJsPlugin({
-        //   cache: true,
-        //   cacheKeys(defaultCacheKeys) {
-        //     delete defaultCacheKeys['uglify-js'];
-
-        //     return Object.assign({}, defaultCacheKeys, { 'uglify-js': require('uglify-js/package.json').version });
-        //   },
-        //   minify(file, sourceMap) {
-        //     // https://github.com/mishoo/UglifyJS2#minify-options
-        //     const uglifyJsOptions = {
-        //       /* your `uglify-js` package options */
-        //     };
-
-        //     if (sourceMap) {
-        //       uglifyJsOptions.sourceMap = {
-        //         content: sourceMap,
-        //       };
-        //     }
-
-        //     return require('terser').minify(file, uglifyJsOptions);
-        //   },
-        // }),
       ],
     },
     entry: {
