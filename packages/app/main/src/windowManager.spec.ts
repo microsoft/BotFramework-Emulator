@@ -138,20 +138,20 @@ describe('WindowManager', () => {
 
   it('should close all windows', () => {
     const mockClose = jest.fn();
-    const mockWindow1: any = {
+    const firstMockWindow: any = {
       close: mockClose,
     };
-    const mockWindow2: any = {
+    const secondMockWindow: any = {
       close: mockClose,
     };
     const mockMainWindow: any = {};
     windowManager.addMainWindow(mockMainWindow);
-    windowManager.add(mockWindow1);
-    windowManager.add(mockWindow2);
+    windowManager.add(firstMockWindow);
+    windowManager.add(secondMockWindow);
     windowManager.closeAll();
 
     expect(mockClose).toHaveBeenCalledTimes(2);
     expect((windowManager as any).mainWindow).toBe(undefined);
-    expect((windowManager as any).windows).toEqual([]);
+    expect((windowManager as any).windows.length).toBe(0);
   });
 });
