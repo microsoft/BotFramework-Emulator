@@ -44,7 +44,7 @@ import sagaMiddlewareFactory from 'redux-saga';
 
 import { loadSettings, getThemes } from '../utils';
 
-import { settingsSagas } from './sagas';
+import { settingsSagas, ngrokSagas } from './sagas';
 import { forwardToRenderer } from './middleware/forwardToRenderer';
 import {
   AzureAuthState,
@@ -146,7 +146,9 @@ function initStore(): Store<RootState> {
     DEFAULT_STATE,
     applyMiddleware(forwardToRenderer, sagaMiddleware)
   );
-  sagaMiddleware.run(settingsSagas);
+
+  const sagas = [settingsSagas, ngrokSagas];
+  sagas.forEach(saga => sagaMiddleware.run(saga));
 
   // sync the main process store with any updates on the renderer process
   ipcMain.on('sync-store', (ev, action) => {

@@ -131,34 +131,42 @@ export class LogEntry extends React.Component<LogEntryProps> {
         const { level, text } = item.payload as TextLogItem;
         return this.renderTextItem(level, text, key);
       }
+
       case LogItemType.ExternalLink: {
         const { text, hyperlink } = item.payload as ExternalLinkLogItem;
         return this.renderExternalLinkItem(text, hyperlink, key);
       }
+
       case LogItemType.OpenAppSettings: {
         const { text } = item.payload as OpenAppSettingsLogItem;
         return this.renderAppSettingsItem(text, key);
       }
+
       case LogItemType.Exception: {
         const { err } = item.payload as ExceptionLogItem;
         return this.renderExceptionItem(err, key);
       }
+
       case LogItemType.InspectableObject: {
         const { obj } = item.payload as InspectableObjectLogItem;
         return this.renderInspectableItem(obj, key);
       }
+
       case LogItemType.NetworkRequest: {
         const { facility, body, headers, method, url } = item.payload as NetworkRequestLogItem;
         return this.renderNetworkRequestItem(facility, body, headers, method, url, key);
       }
+
       case LogItemType.LuisEditorDeepLink: {
         const { text } = item.payload as LuisEditorDeepLinkLogItem;
         return this.renderLuisEditorDeepLinkItem(text, key);
       }
+
       case LogItemType.NetworkResponse: {
         const { body, headers, statusCode, statusMessage, srcUrl } = item.payload as NetworkResponseLogItem;
         return this.renderNetworkResponseItem(body, headers, statusCode, statusMessage, srcUrl, key);
       }
+
       case LogItemType.NgrokExpiration: {
         const { text } = item.payload as NgrokExpirationLogItem;
         return this.renderNgrokExpirationItem(text, key);
@@ -347,10 +355,13 @@ function logLevelToClassName(level: LogLevel): string {
   switch (level) {
     case LogLevel.Debug:
       return styles.level1;
+
     case LogLevel.Info:
       return styles.level0;
+
     case LogLevel.Warn:
       return styles.level2;
+
     case LogLevel.Error:
       return styles.level3;
     default:

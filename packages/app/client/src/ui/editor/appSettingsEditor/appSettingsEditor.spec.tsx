@@ -42,6 +42,7 @@ import * as EditorActions from '../../../state/actions/editorActions';
 import { setFrameworkSettings, saveFrameworkSettings } from '../../../state/actions/frameworkSettingsActions';
 import { getTabGroupForDocument } from '../../../state/helpers/editorHelpers';
 import { framework } from '../../../state/reducers/framework';
+import { ngrokTunnel } from '../../../state/reducers/ngrokTunnel';
 import { ariaAlertService } from '../../a11y';
 import { executeCommand } from '../../../state/actions/commandActions';
 
@@ -102,7 +103,7 @@ describe('The AppSettingsEditorContainer', () => {
   });
 
   beforeEach(() => {
-    mockStore = createStore(combineReducers({ framework }));
+    mockStore = createStore(combineReducers({ framework, ngrokTunnel }));
     mockStore.dispatch(
       setFrameworkSettings({
         autoUpdate: true,

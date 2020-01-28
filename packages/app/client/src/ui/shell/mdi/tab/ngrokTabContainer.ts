@@ -31,50 +31,19 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { SharedConstants } from '@bfemulator/app-shared';
-import { Command } from '@bfemulator/sdk-shared';
+import { connect } from 'react-redux';
 
-import { store } from '../state/store';
-import { open as OpenInEditor } from '../state/actions/editorActions';
-import { Emulator } from '../emulator';
+import { RootState } from '../../../../state/index';
 
-const Commands = SharedConstants.Commands.Ngrok;
+import { NgrokTab, NgrokTabProps } from './ngrokTab';
 
-/** Registers ngrok commands */
-export class NgrokCommands {
-  // Attempts to reconnect to a new ngrok tunnel
-  @Command(Commands.Reconnect)
-  protected async reconnectToNgrok(): Promise<any> {
-    const emulator = Emulator.getInstance();
-    try {
-      await emulator.ngrok.recycle();
-      emulator.ngrok.broadcastNgrokReconnected();
-    } catch (e) {
-      throw new Error(`There was an error while trying to reconnect ngrok: ${e}`);
-    }
-  }
+const mapStateToProps = (state: RootState, ownProps: {}): Partial<NgrokTabProps> => {
+  const { tunnelStatus } = state.ngrokTunnel;
 
-  @Command(Commands.KillProcess)
-  protected killNgrokProcess() {
-    Emulator.getInstance().ngrok.kill();
-  }
+  return {
+    tunnelStatus,
+    ...ownProps,
+  };
+};
 
-  @Command(Commands.PingTunnel)
-  protected pingForStatusOfTunnel() {
-    Emulator.getInstance().ngrok.pingTunnel();
-  }
-
-  @Command(Commands.OpenStatusViewer)
-  protected openStatusViewer(makeActiveByDefault: boolean = true) {
-    store.dispatch(
-      OpenInEditor({
-        contentType: SharedConstants.ContentTypes.CONTENT_TYPE_NGROK_DEBUGGER,
-        documentId: SharedConstants.DocumentIds.DOCUMENT_ID_NGROK_DEBUGGER,
-        isGlobal: true,
-        meta: {
-          makeActiveByDefault,
-        },
-      })
-    );
-  }
-}
+export const NgrokTabContainer = connect(mapStateToProps, null)(NgrokTab);

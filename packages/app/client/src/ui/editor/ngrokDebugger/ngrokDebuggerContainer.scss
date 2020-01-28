@@ -26,35 +26,6 @@
       margin-bottom: 10px;
     }
   }
-  
-  .tunnel-health-indicator {
-    display: inline-block;
-    position: relative;
-    padding: 3px;
-    margin-right: 2px;
-    color: var(--focused-list-item);
-
-    &.tunnel-error {
-      background-color: var(--error-outline);
-      &::before {
-        content: "Error";
-      }
-    }
-
-    &.tunnel-inactive {
-      background-color: var(--info-outline);
-      &::before {
-        content: "Inactive";
-      }
-    }
-
-    &.tunnel-active {
-      background-color: var(--success-bg);
-      &::before {
-        content: "Active";
-      }
-    }
-  }
 
   .error-detailed-viewer {
     border: 1px solid var(--focused-outline);

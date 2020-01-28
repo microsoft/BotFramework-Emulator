@@ -38,6 +38,8 @@ import {
   TunnelError,
   TunnelStatus,
   TunnelStatusAndTimestamp,
+  TunnelInfo,
+  TunnelCheckTimeInterval,
 } from '../actions/ngrokTunnelActions';
 
 export interface NgrokTunnelState {
@@ -47,7 +49,9 @@ export interface NgrokTunnelState {
   logPath: string;
   postmanCollectionPath: string;
   tunnelStatus: TunnelStatus;
-  lastPingedTimestamp: string;
+  lastPingedTimestamp: number;
+  timeIntervalSinceLastPing: TunnelCheckTimeInterval;
+  ngrokNotificationIds: string[];
 }
 
 const DEFAULT_STATE: NgrokTunnelState = {
@@ -57,7 +61,9 @@ const DEFAULT_STATE: NgrokTunnelState = {
   postmanCollectionPath: '',
   errors: {} as TunnelError,
   tunnelStatus: TunnelStatus.Inactive,
-  lastPingedTimestamp: '',
+  lastPingedTimestamp: Date.now(),
+  timeIntervalSinceLastPing: TunnelCheckTimeInterval.Now,
+  ngrokNotificationIds: [],
 };
 
 export const ngrokTunnel = (
@@ -65,12 +71,14 @@ export const ngrokTunnel = (
   action: NgrokTunnelAction<NgrokTunnelPayloadTypes>
 ): NgrokTunnelState => {
   switch (action.type) {
-    case NgrokTunnelActions.setDetails:
+    case NgrokTunnelActions.setDetails: {
+      const payload: TunnelInfo = action.payload as TunnelInfo;
       state = {
         ...state,
-        ...action.payload,
+        ...payload,
       };
       break;
+    }
 
     case NgrokTunnelActions.updateOnError:
       state = {
@@ -84,6 +92,30 @@ export const ngrokTunnel = (
         ...state,
         tunnelStatus: (action.payload as TunnelStatusAndTimestamp).status,
         lastPingedTimestamp: (action.payload as TunnelStatusAndTimestamp).timestamp,
+      };
+      if (state.tunnelStatus !== TunnelStatus.Error && state.errors) {
+        state.errors = {} as TunnelError;
+      }
+      break;
+
+    case NgrokTunnelActions.setTimeIntervalSinceLastPing:
+      state = {
+        ...state,
+        timeIntervalSinceLastPing: action.payload as TunnelCheckTimeInterval,
+      };
+      break;
+
+    case NgrokTunnelActions.clearAllNotifications:
+      state = {
+        ...state,
+        ngrokNotificationIds: [],
+      };
+      break;
+
+    case NgrokTunnelActions.addNotification:
+      state = {
+        ...state,
+        ngrokNotificationIds: [...state.ngrokNotificationIds, action.payload as string],
       };
       break;
   }

@@ -393,7 +393,7 @@ describe('AppMenuBuilder', () => {
 
     // should set the theme menu type to radio
     const fileMenuTemplate = appMenuTemplate[1].submenu;
-    const themeMenu = fileMenuTemplate[12];
+    const themeMenu = fileMenuTemplate[13];
     expect(themeMenu.submenu[0].type).toBe('radio');
   });
 });

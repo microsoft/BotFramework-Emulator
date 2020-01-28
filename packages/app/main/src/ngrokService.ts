@@ -182,7 +182,7 @@ export class NgrokService {
   }
 
   public async pingTunnel(): Promise<void> {
-    await this.ngrok.checkTunnelStatus(this.serviceUrl);
+    await this.ngrok.checkTunnelStatus();
   }
 
   public get ngrokEmitter(): EventEmitter {
@@ -229,7 +229,10 @@ export class NgrokService {
     if (this.spawnErr) {
       emulatorApplication.mainWindow.logService.logToChat(
         conversationId,
-        textItem(LogLevel.Error, 'Failed to spawn ngrok'),
+        textItem(
+          LogLevel.Error,
+          'Failed to spawn ngrok. Please go to the Ngrok Status Viewer and download the log file for a more detailed view of the error.'
+        ),
         exceptionItem(this.spawnErr)
       );
     } else if (!this.ngrokPath) {

@@ -31,14 +31,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Column, Row, LinkButton, MediumHeader, SmallHeader } from '@bfemulator/ui-react';
 
-import { TunnelError, TunnelStatus } from '../../../state';
+import { TunnelError, TunnelStatus, TunnelCheckTimeInterval } from '../../../state/actions/ngrokTunnelActions';
 import { GenericDocument } from '../../layout';
 
 import { NgrokErrorHandler } from './ngrokErrorHandler';
 import * as styles from './ngrokDebuggerContainer.scss';
+import { NgrokStatusIndicator } from './ngrokStatusIndicator';
 
 export interface NgrokDebuggerProps {
   inspectUrl: string;
@@ -47,7 +48,8 @@ export interface NgrokDebuggerProps {
   logPath: string;
   postmanCollectionPath: string;
   tunnelStatus: TunnelStatus;
-  lastPingedTimestamp: string;
+  lastPingedTimestamp: number;
+  timeIntervalSinceLastPing: TunnelCheckTimeInterval;
   onAnchorClick: (linkRef: string) => void;
   onSaveFileClick: (originalFilePath: string, dialogOptions: Electron.SaveDialogOptions) => void;
   onPingTunnelClick: () => void;
@@ -60,27 +62,9 @@ const getDialogOptions = (title: string, buttonLabel: string = 'Save'): Electron
 });
 
 export const NgrokDebugger = (props: NgrokDebuggerProps) => {
-  const [statusDisplay, setStatusDisplay] = useState(styles.tunnelInactive);
-
   const convertToAnchorOnClick = (link: string) => {
     props.onAnchorClick(link);
   };
-
-  useEffect(() => {
-    switch (props.tunnelStatus) {
-      case TunnelStatus.Active:
-        setStatusDisplay(styles.tunnelActive);
-        break;
-
-      case TunnelStatus.Error:
-        setStatusDisplay(styles.tunnelError);
-        break;
-
-      default:
-        setStatusDisplay(styles.tunnelInactive);
-        break;
-    }
-  }, [props.lastPingedTimestamp]);
 
   const errorDetailsContainer =
     props.tunnelStatus === TunnelStatus.Error ? (
@@ -152,18 +136,20 @@ export const NgrokDebugger = (props: NgrokDebuggerProps) => {
             <SmallHeader>Tunnel Health</SmallHeader>
             <ul className={styles.tunnelDetailsList}>
               <li>
-                <legend>Tunnel Status</legend>
-                <span className={[styles.tunnelHealthIndicator, statusDisplay].join(' ')} />
-                <span>{props.lastPingedTimestamp}</span>
+                <span>
+                  <NgrokStatusIndicator
+                    tunnelStatus={props.tunnelStatus}
+                    timeIntervalSinceLastPing={props.timeIntervalSinceLastPing}
+                    header="Tunnel Status"
+                  />
+                </span>
               </li>
-              {props.tunnelStatus !== TunnelStatus.Inactive ? (
-                <li>
-                  <LinkButton linkRole={true} onClick={props.onPingTunnelClick}>
-                    Click here
-                  </LinkButton>
-                  &nbsp;to ping the tunnel now
-                </li>
-              ) : null}
+              <li>
+                <LinkButton linkRole={true} onClick={props.onPingTunnelClick}>
+                  Click here
+                </LinkButton>
+                &nbsp;to ping the tunnel now
+              </li>
               {errorDetailsContainer}
             </ul>
           </section>

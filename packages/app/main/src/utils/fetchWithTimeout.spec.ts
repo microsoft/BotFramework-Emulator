@@ -31,50 +31,54 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { SharedConstants } from '@bfemulator/app-shared';
-import { Command } from '@bfemulator/sdk-shared';
+import '../fetchProxy';
+import { fetchWithTimeout } from './fetchWithTimeout';
 
-import { store } from '../state/store';
-import { open as OpenInEditor } from '../state/actions/editorActions';
-import { Emulator } from '../emulator';
+const tunnelResponseGeneric = (status: number, body: string) => {
+  return {
+    text: async () => body,
+    status,
+    headers: {},
+  };
+};
 
-const Commands = SharedConstants.Commands.Ngrok;
+const mockTunnelStatusResponse = jest.fn(() => Promise.resolve(tunnelResponseGeneric(200, 'success')));
 
-/** Registers ngrok commands */
-export class NgrokCommands {
-  // Attempts to reconnect to a new ngrok tunnel
-  @Command(Commands.Reconnect)
-  protected async reconnectToNgrok(): Promise<any> {
-    const emulator = Emulator.getInstance();
-    try {
-      await emulator.ngrok.recycle();
-      emulator.ngrok.broadcastNgrokReconnected();
-    } catch (e) {
-      throw new Error(`There was an error while trying to reconnect ngrok: ${e}`);
-    }
-  }
+jest.mock('node-fetch', () => {
+  return async () => {
+    return mockTunnelStatusResponse();
+  };
+});
 
-  @Command(Commands.KillProcess)
-  protected killNgrokProcess() {
-    Emulator.getInstance().ngrok.kill();
-  }
+describe('fetch with timeout', () => {
+  beforeEach(() => {
+    jest.useRealTimers();
+  });
+  it('should return a response with status 200', async done => {
+    jest.useFakeTimers();
+    const result = await fetchWithTimeout('http://test.com', {});
+    expect(result.status).toBe(200);
+    done();
+  });
 
-  @Command(Commands.PingTunnel)
-  protected pingForStatusOfTunnel() {
-    Emulator.getInstance().ngrok.pingTunnel();
-  }
-
-  @Command(Commands.OpenStatusViewer)
-  protected openStatusViewer(makeActiveByDefault: boolean = true) {
-    store.dispatch(
-      OpenInEditor({
-        contentType: SharedConstants.ContentTypes.CONTENT_TYPE_NGROK_DEBUGGER,
-        documentId: SharedConstants.DocumentIds.DOCUMENT_ID_NGROK_DEBUGGER,
-        isGlobal: true,
-        meta: {
-          makeActiveByDefault,
-        },
+  it('should throw an error if promise not resolved within the timeout specified', async done => {
+    mockTunnelStatusResponse.mockImplementationOnce(() => {
+      return new Promise(resolve => {
+        setTimeout(() => {
+          resolve();
+        }, 80000);
+      });
+    });
+    jest.useFakeTimers();
+    fetchWithTimeout('http://test.com', {}, 40000)
+      .then(() => {
+        // Should not hit
+        expect(true).toBeFalsy();
       })
-    );
-  }
-}
+      .catch(er => {
+        expect(er).toBeDefined();
+        done();
+      });
+    jest.advanceTimersByTime(40001);
+  });
+});

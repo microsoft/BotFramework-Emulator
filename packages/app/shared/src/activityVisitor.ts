@@ -62,17 +62,26 @@ export abstract class ActivityVisitor {
     if (attachment) {
       switch (attachment.contentType) {
         case AttachmentContentTypes.animationCard:
+        // Falls through
+
         case AttachmentContentTypes.videoCard:
+        // Falls through
+
         case AttachmentContentTypes.audioCard:
           this.traverseMediaCard(attachment.content as MediaCard);
           break;
+
         case AttachmentContentTypes.heroCard:
+        // Falls through
+
         case AttachmentContentTypes.thumbnailCard:
           this.traverseThumbnailCard(attachment.content as ThumbnailCard);
           break;
+
         case AttachmentContentTypes.receiptCard:
           this.traverseReceiptCard(attachment.content as ReceiptCard);
           break;
+
         case AttachmentContentTypes.signInCard:
           this.traverseSignInCard(attachment.content as SigninCard);
           break;

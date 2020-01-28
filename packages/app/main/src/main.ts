@@ -53,8 +53,8 @@ import {
   TunnelStatus,
   updateTunnelStatus,
   TunnelError,
+  addNotification,
 } from './state/actions/ngrokTunnelActions';
-import * as EditorActions from './state/actions/editorActions';
 import { dispatch, getSettings, store } from './state/store';
 import { TelemetryService } from './telemetry';
 import { botListsAreDifferent, ensureStoragePath, saveSettings, writeFile } from './utils';
@@ -65,6 +65,8 @@ import { ProtocolHandler } from './protocolHandler';
 import { setOpenUrl } from './state/actions/protocolActions';
 import { WebSocketServer } from './server/webSocketServer';
 
+const genericTunnelError =
+  'Oops.. Your ngrok tunnel seems to have an error. Please check the Ngrok Status Viewer for more details';
 // start app startup timer
 const beginStartupTime = Date.now();
 
@@ -258,7 +260,7 @@ class EmulatorApplication {
   };
 
   private onTunnelStatusPing = async (status: TunnelStatus) => {
-    dispatch(updateTunnelStatus(status));
+    dispatch(updateTunnelStatus({ tunnelStatus: status }));
   };
 
   private onNewTunnelConnected = async (tunnelInfo: TunnelInfo) => {
@@ -266,27 +268,17 @@ class EmulatorApplication {
   };
 
   private onTunnelError = async (response: TunnelError) => {
-    // Avoid reporting the same error again and again to avoid notification flooding
-    if (store.getState().ngrokTunnel.errors.statusCode === response.statusCode) {
-      return;
-    }
-    const genericTunnelError =
-      'Oops.. Your ngrok tunnel seems to have an error. Please check the Ngrok Debug Console for more details';
+    const { Commands } = SharedConstants;
     dispatch(updateTunnelError({ ...response }));
 
     const ngrokNotification: Notification = newNotification(genericTunnelError);
+    dispatch(addNotification(ngrokNotification.id));
+
+    this.commandService.call(Commands.Ngrok.OpenStatusViewer, false);
+
     ngrokNotification.addButton('Debug Console', () => {
-      // Go to Ngrok from here
-      const { Commands } = SharedConstants;
       this.commandService.remoteCall(Commands.Notifications.Remove, ngrokNotification.id);
-      dispatch(
-        EditorActions.open({
-          contentType: SharedConstants.ContentTypes.CONTENT_TYPE_NGROK_DEBUGGER,
-          documentId: SharedConstants.DocumentIds.DOCUMENT_ID_NGROK_DEBUGGER,
-          isGlobal: true,
-          meta: null,
-        })
-      );
+      this.commandService.call(Commands.Ngrok.OpenStatusViewer);
     });
     await sendNotificationToClient(ngrokNotification, this.commandService);
     Emulator.getInstance().ngrok.broadcastNgrokError(genericTunnelError);

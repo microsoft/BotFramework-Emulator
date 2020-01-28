@@ -48,7 +48,7 @@ const mapStateToProps = (state: RootState): NavBarProps => ({
   botIsOpen: !!state.bot.activeBot,
 });
 
-const mapDispatchToProps = (dispatch): NavBarProps => ({
+const mapDispatchToProps = (dispatch): Partial<NavBarProps> => ({
   showExplorer: show => dispatch(ExplorerActions.showExplorer(show)),
   navBarSelectionChanged: newSelection => dispatch(NavBarActions.select(newSelection)),
   openEmulatorSettings: () => {
@@ -64,16 +64,6 @@ const mapDispatchToProps = (dispatch): NavBarProps => ({
   },
   trackEvent: (name: string, properties?: { [key: string]: any }) =>
     dispatch(executeCommand(true, SharedConstants.Commands.Telemetry.TrackEvent, null, name, properties)),
-  openNgrokDebuggerPanel: () => {
-    dispatch(
-      EditorActions.open({
-        contentType: SharedConstants.ContentTypes.CONTENT_TYPE_NGROK_DEBUGGER,
-        documentId: SharedConstants.DocumentIds.DOCUMENT_ID_NGROK_DEBUGGER,
-        isGlobal: true,
-        meta: null,
-      })
-    );
-  },
 });
 
 export const NavBar = connect(mapStateToProps, mapDispatchToProps)(NavBarComponent);

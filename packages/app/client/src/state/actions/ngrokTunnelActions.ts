@@ -35,7 +35,20 @@ import { Action } from 'redux';
 export enum NgrokTunnelActions {
   setDetails = 'NgrokTunnel/SET_DETAILS',
   updateOnError = 'NgrokTunnel/TUNNEL_ERROR',
-  setStatus = 'NgrokTunnel/STATUS_CHECK',
+  setStatus = 'NgrokTunnel/SET_STATUS',
+  checkOnTunnel = 'NgrokTunnel/CHECK_ON_TUNNEL',
+  setTimeIntervalSinceLastPing = 'NgrokTunnel/TIME_INTERVAL_SINCE_LAST_PING',
+  clearAllNotifications = 'NgrokTunnel/CLEAR_NOTIFICATIONS',
+  addNotification = 'NgrokTunnel/ADD_NOTIFICATION',
+}
+
+export enum TunnelCheckTimeInterval {
+  // 0 - 20 seconds
+  Now,
+  // 20 - 40 seconds
+  FirstInterval,
+  // 40 - 60 seconds
+  SecondInterval,
 }
 
 export enum TunnelStatus {
@@ -58,7 +71,12 @@ export interface TunnelError {
 
 export interface TunnelStatusAndTimestamp {
   status: TunnelStatus;
-  timestamp: string;
+  timestamp: number;
+}
+
+export interface StatusCheckOnTunnel {
+  onTunnelPingSuccess: Function;
+  onTunnelPingError: Function;
 }
 
 export interface NgrokTunnelAction<T> extends Action {
@@ -66,7 +84,13 @@ export interface NgrokTunnelAction<T> extends Action {
   payload: T;
 }
 
-export type NgrokTunnelPayloadTypes = TunnelError | TunnelInfo | TunnelStatusAndTimestamp;
+export type NgrokTunnelPayloadTypes =
+  | TunnelError
+  | TunnelInfo
+  | TunnelStatusAndTimestamp
+  | StatusCheckOnTunnel
+  | TunnelCheckTimeInterval
+  | string;
 
 export function updateNewTunnelInfo(payload: TunnelInfo): NgrokTunnelAction<TunnelInfo> {
   return {
@@ -75,12 +99,14 @@ export function updateNewTunnelInfo(payload: TunnelInfo): NgrokTunnelAction<Tunn
   };
 }
 
-export function updateTunnelStatus(tunnelStatus: TunnelStatus): NgrokTunnelAction<TunnelStatusAndTimestamp> {
+export function updateTunnelStatus(payload: {
+  tunnelStatus: TunnelStatus;
+}): NgrokTunnelAction<TunnelStatusAndTimestamp> {
   return {
     type: NgrokTunnelActions.setStatus,
     payload: {
-      status: tunnelStatus,
-      timestamp: new Date().toLocaleString(),
+      status: payload.tunnelStatus,
+      timestamp: new Date().getTime(),
     },
   };
 }
@@ -88,6 +114,36 @@ export function updateTunnelStatus(tunnelStatus: TunnelStatus): NgrokTunnelActio
 export function updateTunnelError(payload: TunnelError): NgrokTunnelAction<TunnelError> {
   return {
     type: NgrokTunnelActions.updateOnError,
+    payload,
+  };
+}
+
+export function checkOnTunnel(payload: StatusCheckOnTunnel): NgrokTunnelAction<StatusCheckOnTunnel> {
+  return {
+    type: NgrokTunnelActions.checkOnTunnel,
+    payload,
+  };
+}
+
+export function setTimeIntervalSinceLastPing(
+  payload: TunnelCheckTimeInterval
+): NgrokTunnelAction<TunnelCheckTimeInterval> {
+  return {
+    type: NgrokTunnelActions.setTimeIntervalSinceLastPing,
+    payload,
+  };
+}
+
+export function clearAllNotifications(): NgrokTunnelAction<void> {
+  return {
+    type: NgrokTunnelActions.clearAllNotifications,
+    payload: null,
+  };
+}
+
+export function addNotification(payload: string): NgrokTunnelAction<string> {
+  return {
+    type: NgrokTunnelActions.addNotification,
     payload,
   };
 }

@@ -47,6 +47,8 @@ import { ChangeEvent } from 'react';
 
 import { GenericDocument } from '../../layout';
 import { generateHash } from '../../../state/helpers/botHelpers';
+import { TunnelCheckTimeInterval, TunnelStatus } from '../../../state/actions/ngrokTunnelActions';
+import { NgrokStatusIndicator } from '../ngrokDebugger/ngrokStatusIndicator';
 
 import * as styles from './appSettingsEditor.scss';
 
@@ -54,12 +56,16 @@ export interface AppSettingsEditorProps {
   documentId?: string;
   dirty?: boolean;
   framework?: FrameworkSettings;
+  ngrokTunnelStatus?: TunnelStatus;
+  ngrokLastPingInterval?: TunnelCheckTimeInterval;
+
   createAriaAlert?: (msg: string) => void;
   discardChanges?: () => void;
   onAnchorClick?: (url: string) => void;
   openBrowseForNgrok: () => Promise<string>;
   saveFrameworkSettings?: (framework: FrameworkSettings) => void;
   setDirtyFlag?: (dirty: boolean) => void;
+  onOpenNgrokStatusViewerClick: () => void;
 }
 
 export interface AppSettingsEditorState extends Partial<FrameworkSettings> {
@@ -184,6 +190,16 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
                   label="Locale"
                 />
               </Row>
+              <div className={styles.tunnelStatus}>
+                <NgrokStatusIndicator
+                  tunnelStatus={this.props.ngrokTunnelStatus}
+                  timeIntervalSinceLastPing={this.props.ngrokLastPingInterval}
+                  header="Tunnel Status"
+                />
+                <LinkButton linkRole={true} onClick={this.props.onOpenNgrokStatusViewerClick}>
+                  Click here to go to the Ngrok Status viewer
+                </LinkButton>
+              </div>
             </fieldset>
           </Column>
           <Column className={[styles.rightColumn, styles.spacing].join(' ')}>

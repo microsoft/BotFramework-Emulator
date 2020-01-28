@@ -132,6 +132,7 @@ class ProtocolHandlerImpl implements ProtocolHandler {
       case ProtocolDomains.inspector:
         this.performInspectorAction(protocol);
         break;
+
       default:
         break;
     }

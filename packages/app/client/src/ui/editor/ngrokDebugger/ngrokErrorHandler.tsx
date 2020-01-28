@@ -53,9 +53,9 @@ export const NgrokErrorHandler = (props: NgrokErrorHandlerProps) => {
           <ol>
             <li>
               <span>
-                Try signing up here
+                Signup for an Ngrok Account&nbsp;
                 <LinkButton
-                  ariaLabel="Signup for Ngrok account."
+                  ariaLabel="Signup for Ngrok account"
                   linkRole={true}
                   onClick={() => props.onExternalLinkClick('https://dashboard.ngrok.com/signup')}
                 >

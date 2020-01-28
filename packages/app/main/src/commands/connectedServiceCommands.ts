@@ -54,6 +54,8 @@ export class ConnectedServiceCommands {
     let it;
     switch (serviceType) {
       case ServiceTypes.Luis:
+      // Falls through
+
       case ServiceTypes.Dispatch:
         it = LuisApi.getServices(armToken);
         break;

@@ -39,6 +39,11 @@ import {
   TunnelInfo,
   TunnelError,
   TunnelStatus,
+  checkOnTunnel,
+  setTimeIntervalSinceLastPing,
+  TunnelCheckTimeInterval,
+  clearAllNotifications,
+  addNotification,
 } from './ngrokTunnelActions';
 
 describe('Ngrok Tunnel Actions', () => {
@@ -68,9 +73,50 @@ describe('Ngrok Tunnel Actions', () => {
     const mockDate = new Date(1466424490000);
     jest.spyOn(global, 'Date').mockImplementation(() => mockDate as any);
     const expectedStatus: TunnelStatus = TunnelStatus.Active;
-    const action = updateTunnelStatus(expectedStatus);
+    const action = updateTunnelStatus({
+      tunnelStatus: expectedStatus,
+    });
     expect(action.type).toBe(NgrokTunnelActions.setStatus);
-    expect(action.payload.timestamp).toBe(new Date().toLocaleString());
+    expect(action.payload.timestamp).toBe(new Date().getTime());
     expect(action.payload.status).toBe(expectedStatus);
+  });
+
+  it('should create a tunnel status update action on TunnelError', () => {
+    const mockDate = new Date(1466424490000);
+    jest.spyOn(global, 'Date').mockImplementation(() => mockDate as any);
+    const expectedStatus: TunnelStatus = TunnelStatus.Error;
+    const action = updateTunnelStatus({
+      tunnelStatus: expectedStatus,
+    });
+    expect(action.type).toBe(NgrokTunnelActions.setStatus);
+    expect(action.payload.timestamp).toBe(new Date().getTime());
+    expect(action.payload.status).toBe(expectedStatus);
+  });
+
+  it('should create a checkOnTunnel action', () => {
+    const action = checkOnTunnel({
+      onTunnelPingError: jest.fn(),
+      onTunnelPingSuccess: jest.fn(),
+    });
+    expect(action.type).toBe(NgrokTunnelActions.checkOnTunnel);
+  });
+
+  it('should create a setTimeIntervalSinceLastPing action', () => {
+    const action = setTimeIntervalSinceLastPing(TunnelCheckTimeInterval.SecondInterval);
+    expect(action.type).toBe(NgrokTunnelActions.setTimeIntervalSinceLastPing);
+    expect(action.payload).toBe(TunnelCheckTimeInterval.SecondInterval);
+  });
+
+  it('should create a clear notifications action', () => {
+    const action = clearAllNotifications();
+    expect(action.type).toBe(NgrokTunnelActions.clearAllNotifications);
+    expect(action.payload).toBeNull;
+  });
+
+  it('should create add notification action', () => {
+    const notificationId = 'notification-1';
+    const action = addNotification(notificationId);
+    expect(action.type).toBe(NgrokTunnelActions.addNotification);
+    expect(action.payload).toBe(notificationId);
   });
 });
