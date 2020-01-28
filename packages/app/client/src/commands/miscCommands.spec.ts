@@ -31,17 +31,34 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { CommandServiceImpl, CommandRegistry, CommandServiceInstance } from '@bfemulator/sdk-shared';
 import { SharedConstants } from '@bfemulator/app-shared';
-import { Command } from '@bfemulator/sdk-shared';
 
-const { Electron } = SharedConstants.Commands;
+import { MiscCommands } from './miscCommands';
 
-/** Registers electron commands */
-export class ElectronCommands {
-  // ---------------------------------------------------------------------------
-  // Toggle inspector dev tools for all open inspectors
-  @Command(Electron.ToggleDevTools)
-  protected toggleDevTools() {
-    window.dispatchEvent(new Event('toggle-inspector-devtools'));
-  }
-}
+const mockState = {};
+jest.mock('../state/store', () => ({
+  store: {
+    getState: () => mockState,
+  },
+}));
+
+describe('The misc commands', () => {
+  let commandService: CommandServiceImpl;
+  let registry: CommandRegistry;
+
+  beforeAll(() => {
+    new MiscCommands();
+    const decorator = CommandServiceInstance();
+    const descriptor = decorator({ descriptor: {} }, 'none') as any;
+    commandService = descriptor.descriptor.get();
+    registry = commandService.registry;
+  });
+
+  it('should return the store state', () => {
+    const command = registry.getCommand(SharedConstants.Commands.Misc.GetStoreState);
+    const state = command();
+
+    expect(state).toEqual(mockState);
+  });
+});

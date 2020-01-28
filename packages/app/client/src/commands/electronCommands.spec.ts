@@ -31,17 +31,28 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { CommandServiceImpl, CommandRegistry, CommandServiceInstance } from '@bfemulator/sdk-shared';
 import { SharedConstants } from '@bfemulator/app-shared';
-import { Command } from '@bfemulator/sdk-shared';
 
-const { Electron } = SharedConstants.Commands;
+import { ElectronCommands } from './electronCommands';
 
-/** Registers electron commands */
-export class ElectronCommands {
-  // ---------------------------------------------------------------------------
-  // Toggle inspector dev tools for all open inspectors
-  @Command(Electron.ToggleDevTools)
-  protected toggleDevTools() {
-    window.dispatchEvent(new Event('toggle-inspector-devtools'));
-  }
-}
+describe('The misc commands', () => {
+  let commandService: CommandServiceImpl;
+  let registry: CommandRegistry;
+
+  beforeAll(() => {
+    new ElectronCommands();
+    const decorator = CommandServiceInstance();
+    const descriptor = decorator({ descriptor: {} }, 'none') as any;
+    commandService = descriptor.descriptor.get();
+    registry = commandService.registry;
+  });
+
+  it('should toggle the dev tools for open inspectors', () => {
+    const dispatchEventSpy = jest.spyOn(window, 'dispatchEvent').mockImplementationOnce(ev => null);
+    const command = registry.getCommand(SharedConstants.Commands.Electron.ToggleDevTools);
+    command();
+
+    expect(dispatchEventSpy).toHaveBeenCalledWith(new Event('toggle-inspector-devtools'));
+  });
+});

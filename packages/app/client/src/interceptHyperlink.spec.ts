@@ -31,17 +31,37 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { SharedConstants } from '@bfemulator/app-shared';
-import { Command } from '@bfemulator/sdk-shared';
+import interceptHyperlink from './interceptHyperlink';
 
-const { Electron } = SharedConstants.Commands;
+const mockNavigate = jest.fn();
+jest.mock('./hyperlinkHandler', () => ({
+  HyperlinkHandler: {
+    navigate: url => mockNavigate(url),
+  },
+}));
 
-/** Registers electron commands */
-export class ElectronCommands {
-  // ---------------------------------------------------------------------------
-  // Toggle inspector dev tools for all open inspectors
-  @Command(Electron.ToggleDevTools)
-  protected toggleDevTools() {
-    window.dispatchEvent(new Event('toggle-inspector-devtools'));
-  }
-}
+describe('interceptHyperlink', () => {
+  it('should set up hyperlink handlers', () => {
+    const mockUrl = 'http://some.url.com';
+    const mockEvent = {
+      preventDefault: jest.fn(),
+      target: {
+        href: 'http://some.other-url.com',
+        parentNode: {},
+      },
+    };
+    const addEventListenerSpy = jest
+      .spyOn(document, 'addEventListener')
+      .mockImplementationOnce((name, listener: (ev) => any) => listener(mockEvent));
+    interceptHyperlink();
+
+    expect(mockEvent.preventDefault).toHaveBeenCalled();
+    expect(mockNavigate).toHaveBeenCalledWith(mockEvent.target.href);
+
+    window.open(mockUrl);
+
+    expect(mockNavigate).toHaveBeenCalledWith(mockUrl);
+
+    addEventListenerSpy.mockClear();
+  });
+});
