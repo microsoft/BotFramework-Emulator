@@ -81,7 +81,7 @@ export const NgrokTab = (props: NgrokTabProps) => {
     }
   }, [props.tunnelStatus]);
 
-  const blinkerErrorClass = preventAddingBlinker === false ? styles.blinkerError : '';
+  const blinkerErrorClass = preventAddingBlinker ? '' : styles.blinkerError;
   return (
     <div className={[styles.ngrokTab, status.className, blinkerErrorClass].join(' ')}>
       <Tab

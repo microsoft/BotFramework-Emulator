@@ -35,14 +35,13 @@ import { SharedConstants } from '@bfemulator/app-shared';
 import { Command } from '@bfemulator/sdk-shared';
 
 import { store } from '../state/store';
-import { open as EditorActionsOpen } from '../state/actions/editorActions';
+import { open as OpenInEditor } from '../state/actions/editorActions';
 import { Emulator } from '../emulator';
 
 const Commands = SharedConstants.Commands.Ngrok;
 
 /** Registers ngrok commands */
 export class NgrokCommands {
-  // ---------------------------------------------------------------------------
   // Attempts to reconnect to a new ngrok tunnel
   @Command(Commands.Reconnect)
   protected async reconnectToNgrok(): Promise<any> {
@@ -68,7 +67,7 @@ export class NgrokCommands {
   @Command(Commands.OpenStatusViewer)
   protected openStatusViewer(makeActiveByDefault: boolean = true) {
     store.dispatch(
-      EditorActionsOpen({
+      OpenInEditor({
         contentType: SharedConstants.ContentTypes.CONTENT_TYPE_NGROK_DEBUGGER,
         documentId: SharedConstants.DocumentIds.DOCUMENT_ID_NGROK_DEBUGGER,
         isGlobal: true,

@@ -53,8 +53,6 @@ const getPublicUrl = (state: RootState): string => state.ngrokTunnel.publicUrl;
 
 const getStaleNotificationIds = (state: RootState): string[] => state.ngrokTunnel.ngrokNotificationIds;
 
-// const getCurrentTunnelStatus = (state: RootState): TunnelStatus => state.ngrokTunnel.tunnelStatus;
-
 const pingTunnel = async (
   publicUrl: string
 ): Promise<{ text: string; status: number; cancelPingInterval: boolean }> => {
@@ -85,7 +83,7 @@ const pingTunnel = async (
     return undefined;
   } catch (ex) {
     return {
-      text: 'Tunnel ping has taken more than acceptable time limit. Looks like it does not exist anymore.',
+      text: 'Tunnel ping has surpassed the acceptable time limit. Looks like it does not exist anymore.',
       status: 404,
       cancelPingInterval,
     };
@@ -115,7 +113,6 @@ export class NgrokSagas {
       yield delay(intervalForRefreshedStatus);
       yield put(setTimeIntervalSinceLastPing(TunnelCheckTimeInterval.FirstInterval));
       yield delay(intervalForRefreshedStatus);
-      // yield call(delay, intervalForRefreshedStatus);
       yield put(setTimeIntervalSinceLastPing(TunnelCheckTimeInterval.SecondInterval));
     } catch (ex) {
       action.payload.onTunnelPingError(ex);

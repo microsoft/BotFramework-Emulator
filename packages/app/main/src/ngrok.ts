@@ -108,7 +108,7 @@ export class NgrokInstance {
     await this.getNgrokInspectUrl(options);
     const tunnelInfo: { url; inspectUrl } = await this.runTunnel(options);
     this.checkTunnelStatus();
-    this.intervalForHealthCheck = setInterval(() => this.boundCheckTunnelStatus(false), intervalForEachPing);
+    this.intervalForHealthCheck = setInterval(() => this.boundCheckTunnelStatus(), intervalForEachPing);
     return tunnelInfo;
   }
 

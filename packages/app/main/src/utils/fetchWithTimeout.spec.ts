@@ -54,14 +54,14 @@ describe('fetch with timeout', () => {
   beforeEach(() => {
     jest.useRealTimers();
   });
-  it('should return succesful response body', async done => {
+  it('should return successful response body', async done => {
     jest.useFakeTimers();
     const result = await fetchWithTimeout('http://test.com', {});
     expect(result.status).toBe(200);
     done();
   });
 
-  it('should return succesful response body', async done => {
+  it('should return successful response body', async done => {
     mockTunnelStatusResponse.mockImplementationOnce(() => {
       return new Promise(resolve => {
         setTimeout(() => {
