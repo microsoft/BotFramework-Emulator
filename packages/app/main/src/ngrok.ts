@@ -118,7 +118,12 @@ export class NgrokInstance {
         onTunnelPingSuccess: () => {
           this.ngrokEmitter.emit('onTunnelStatusPing', TunnelStatus.Active);
         },
-        onTunnelPingError: async response => {
+        onTunnelPingError: async (response: { text: string; status: number; cancelPingInterval: boolean }) => {
+          if (!response || !response.status || response.cancelPingInterval) {
+            clearInterval(this.intervalForHealthCheck);
+            return;
+          }
+
           if (store.getState().ngrokTunnel.errors.statusCode === response.status) {
             return;
           }

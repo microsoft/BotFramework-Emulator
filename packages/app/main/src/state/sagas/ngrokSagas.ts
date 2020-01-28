@@ -55,7 +55,10 @@ const getStaleNotificationIds = (state: RootState): string[] => state.ngrokTunne
 
 // const getCurrentTunnelStatus = (state: RootState): TunnelStatus => state.ngrokTunnel.tunnelStatus;
 
-const pingTunnel = async (publicUrl: string): Promise<{ text: string; status: number }> => {
+const pingTunnel = async (
+  publicUrl: string
+): Promise<{ text: string; status: number; cancelPingInterval: boolean }> => {
+  let cancelPingInterval = false;
   try {
     //Make sure the request times out before the next ping which happens every minute. Cannot stop the heart beat as the tunnel might pick back up next minute
     const response: Response = await fetchWithTimeout(
@@ -69,10 +72,14 @@ const pingTunnel = async (publicUrl: string): Promise<{ text: string; status: nu
     );
     const isErrorResponse =
       response.status === 429 || response.status === 402 || response.status === 500 || !response.headers.get('Server');
+    if (response.status === 402) {
+      cancelPingInterval = true;
+    }
     if (isErrorResponse) {
       return {
         text: await response.text(),
         status: response.status,
+        cancelPingInterval,
       };
     }
     return undefined;
@@ -80,6 +87,7 @@ const pingTunnel = async (publicUrl: string): Promise<{ text: string; status: nu
     return {
       text: 'Tunnel ping has taken more than acceptable time limit. Looks like it does not exist anymore.',
       status: 404,
+      cancelPingInterval,
     };
   }
 };
