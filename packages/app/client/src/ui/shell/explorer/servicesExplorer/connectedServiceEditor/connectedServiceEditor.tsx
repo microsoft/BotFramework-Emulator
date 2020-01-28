@@ -158,6 +158,8 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
     const { serviceType } = this.props;
     switch (serviceType) {
       case ServiceTypes.Luis:
+      // Falls through
+
       case ServiceTypes.Dispatch:
         return ['name', 'appId', 'authoringKey', 'version', 'region', 'subscriptionKey'];
 
@@ -201,6 +203,8 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
   private get headerContent(): ReactNode {
     switch (this.props.serviceType) {
       case ServiceTypes.Luis:
+      // Falls through
+
       case ServiceTypes.Dispatch:
         return this.luisAndDispatchHeader;
 
@@ -208,6 +212,8 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
         return this.qnaHeader;
 
       case ServiceTypes.AppInsights:
+      // Falls through
+
       case ServiceTypes.BlobStorage:
         return this.appInsightsAndBlobStorageHeader;
 
@@ -294,6 +300,8 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
 
     switch (this.state.connectedServiceCopy.type) {
       case ServiceTypes.Dispatch:
+      // Falls through
+
       case ServiceTypes.Luis:
         return false;
 
@@ -319,6 +327,7 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
           </LinkButton>
         );
       }
+
       case ServiceTypes.QnA: {
         const qnaString = 'Learn more about keys in ' + labelMap[serviceType].toString();
         return (
@@ -332,6 +341,7 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
           </LinkButton>
         );
       }
+
       case ServiceTypes.Dispatch: {
         const dispatchString = 'Learn more about keys in ' + labelMap[serviceType].toString();
         return (
@@ -345,6 +355,7 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
           </LinkButton>
         );
       }
+
       case ServiceTypes.AppInsights: {
         const appInsightsString = 'Learn more about ' + labelMap[serviceType].toString() + ' keys.';
         return (
@@ -358,6 +369,7 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
           </LinkButton>
         );
       }
+
       case ServiceTypes.BlobStorage: {
         const blobStorageString = 'Learn more about ' + labelMap[serviceType].toString() + ' keys.';
 
@@ -372,6 +384,7 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
           </LinkButton>
         );
       }
+
       case ServiceTypes.CosmosDB: {
         const cosmosDBString = 'Learn more about ' + labelMap[serviceType].toString() + ' keys.';
         return (

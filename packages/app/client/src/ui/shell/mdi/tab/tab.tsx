@@ -159,6 +159,8 @@ export class Tab extends React.Component<TabProps, TabState> {
   private get iconClass(): string {
     switch (this.props.documentId) {
       case DOCUMENT_ID_WELCOME_PAGE:
+      // Falls through
+
       case DOCUMENT_ID_MARKDOWN_PAGE:
         return styles.generic;
 

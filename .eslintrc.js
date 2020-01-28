@@ -11,7 +11,11 @@ module.exports = {
     'no-dupe-class-members': 'off',
     'no-undef': 'off', // ts compiler catches this
     'prefer-const': 'error',
-
+    'padding-line-between-statements': [
+      1,
+      { blankLine: 'always', prev: '*', next: 'case' },
+      { blankLine: 'always', prev: '*', next: 'case' },
+    ],
     // plugin: import
     'import/first': 'error',
     'import/order': ['error', { 'newlines-between': 'always' }],

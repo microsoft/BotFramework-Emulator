@@ -119,11 +119,6 @@ export class NgrokInstance {
           this.ngrokEmitter.emit('onTunnelStatusPing', TunnelStatus.Active);
         },
         onTunnelPingError: async (response: { text: string; status: number; cancelPingInterval: boolean }) => {
-          if (!response || !response.status || response.cancelPingInterval) {
-            clearInterval(this.intervalForHealthCheck);
-            return;
-          }
-
           if (store.getState().ngrokTunnel.errors.statusCode === response.status) {
             return;
           }
@@ -137,6 +132,10 @@ export class NgrokInstance {
             errorMessage,
           });
           this.ngrokEmitter.emit('onTunnelStatusPing', TunnelStatus.Error);
+          if (!response || !response.status || response.cancelPingInterval) {
+            clearInterval(this.intervalForHealthCheck);
+            return;
+          }
         },
       })
     );

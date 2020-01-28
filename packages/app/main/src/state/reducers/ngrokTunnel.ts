@@ -71,14 +71,14 @@ export const ngrokTunnel = (
   action: NgrokTunnelAction<NgrokTunnelPayloadTypes>
 ): NgrokTunnelState => {
   switch (action.type) {
-    case NgrokTunnelActions.setDetails:
-      // eslint-disable-next-line no-case-declarations
+    case NgrokTunnelActions.setDetails: {
       const payload: TunnelInfo = action.payload as TunnelInfo;
       state = {
         ...state,
         ...payload,
       };
       break;
+    }
 
     case NgrokTunnelActions.updateOnError:
       state = {
@@ -97,18 +97,21 @@ export const ngrokTunnel = (
         state.errors = {} as TunnelError;
       }
       break;
+
     case NgrokTunnelActions.setTimeIntervalSinceLastPing:
       state = {
         ...state,
         timeIntervalSinceLastPing: action.payload as TunnelCheckTimeInterval,
       };
       break;
+
     case NgrokTunnelActions.clearAllNotifications:
       state = {
         ...state,
         ngrokNotificationIds: [],
       };
       break;
+
     case NgrokTunnelActions.addNotification:
       state = {
         ...state,

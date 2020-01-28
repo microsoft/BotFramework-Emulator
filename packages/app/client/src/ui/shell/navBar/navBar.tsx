@@ -83,7 +83,11 @@ export class NavBarComponent extends React.Component<NavBarProps, NavBarState> {
       // 1: Resources
       // 2: Notifications
       case 0:
+      // Falls through
+
       case 1:
+      // Falls through
+
       case 2:
         if (currentSelection === selectionMap[index]) {
           // toggle explorer when clicking the same navbar icon

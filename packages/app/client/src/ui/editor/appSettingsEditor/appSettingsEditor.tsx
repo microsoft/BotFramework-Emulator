@@ -197,7 +197,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
                   header="Tunnel Status"
                 />
                 <LinkButton linkRole={true} onClick={this.props.onOpenNgrokStatusViewerClick}>
-                  Click here to go to Ngrok Status viewer
+                  Click here to go to the Ngrok Status viewer
                 </LinkButton>
               </div>
             </fieldset>

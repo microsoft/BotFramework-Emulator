@@ -59,6 +59,8 @@ export function azureAuth(
 
   switch (type) {
     case AZURE_BEGIN_AUTH_WORKFLOW:
+    // Falls through
+
     case AZURE_INVALIDATE_ARM_TOKEN:
       return { ...state, access_token: '' };
 

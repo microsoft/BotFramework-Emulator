@@ -136,6 +136,7 @@ jest.mock('node-fetch', () => {
           };
         }
         return mockTunnelStatusResponse();
+
       default:
         return {
           ok: ++mockOk > 0,

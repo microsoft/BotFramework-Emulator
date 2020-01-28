@@ -55,9 +55,9 @@ export function savedBotUrls(state: BotUrl[] = [], action: SavedBotUrlsAction<Sa
           return new Date(curr.lastAccessed) > new Date(prev.lastAccessed) ? 1 : -1;
         });
       }
-
       break;
     }
+
     default:
       break;
   }

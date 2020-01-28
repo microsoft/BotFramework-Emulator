@@ -71,9 +71,11 @@ export const NgrokStatusIndicator = (props: NgrokTimeIntervalIndicatorProps) => 
       case TunnelCheckTimeInterval.FirstInterval:
         setTimeIntervalDisplay('Refreshed 20 seconds ago...');
         break;
+
       case TunnelCheckTimeInterval.SecondInterval:
         setTimeIntervalDisplay('Refreshed 40 seconds ago...');
         break;
+
       default:
         setTimeIntervalDisplay('Refreshed now...');
         break;
