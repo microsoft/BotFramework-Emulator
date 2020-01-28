@@ -61,7 +61,7 @@ describe('fetch with timeout', () => {
     done();
   });
 
-  it('should return successful response body', async done => {
+  it('should throw an error if promise not resolved withing the timeout specified', async done => {
     mockTunnelStatusResponse.mockImplementationOnce(() => {
       return new Promise(resolve => {
         setTimeout(() => {
