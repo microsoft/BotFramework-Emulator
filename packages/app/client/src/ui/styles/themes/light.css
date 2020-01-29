@@ -299,5 +299,6 @@ html {
   --ngrok-error-outline: #F5B1B1;
   --ngrok-text-color: #fff;
 
+  /* Webchat style overrides */
   --bubble-text-color: #fff;
 }
