@@ -92,6 +92,13 @@ export class Chat extends PureComponent<ChatProps, ChatState> {
       padding: '1px',
     };
 
+    styleSet.uploadAttachment = {
+      ...styleSet.uploadAttachment,
+      '& > .name, & > .size': {
+        color: styles.bubbleContentColor,
+      },
+    };
+
     if (directLine) {
       const bot = {
         id: botId || 'bot',
@@ -146,10 +153,19 @@ export class Chat extends PureComponent<ChatProps, ChatState> {
         popup.location.href = url;
         break;
       }
+
       case 'downloadFile':
+      //Fall through
+
       case 'playAudio':
+      //Fall through
+
       case 'playVideo':
+      //Fall through
+
       case 'showImage':
+      //Fall through
+
       case 'openUrl':
         if (value) {
           this.props.showOpenUrlDialog(value).then(result => {

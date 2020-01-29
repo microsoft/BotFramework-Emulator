@@ -38,6 +38,7 @@ export default {
   primaryFont: 'var(--default-font-family)',
 
   bubbleBackground: 'var(--webchat-bubble-bg)',
+  bubbleFromUserBackground: 'var(--webchat-user-bubble-bg)',
   bubbleFromUserTextColor: 'var(--webchat-user-bubble-text)',
   bubbleTextColor: 'var(--webchat-bubble-text)',
   bubbleMinHeight: 20,

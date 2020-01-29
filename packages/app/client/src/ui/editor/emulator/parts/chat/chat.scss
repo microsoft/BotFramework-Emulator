@@ -31,6 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+:export { bubbleContentColor: var(--bubble-text-color); }
+
 .chat {
   background-color: white;
   display: flex;
