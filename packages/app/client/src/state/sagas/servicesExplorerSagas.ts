@@ -64,6 +64,7 @@ import {
 import { sortExplorerContents } from '../actions/explorerActions';
 import { SortCriteria } from '../reducers/explorer';
 import { RootState } from '../store';
+import { QnAMakerSampleHostname } from '../../constants';
 
 import { AzureAuthSaga } from './azureAuthSaga';
 
@@ -166,7 +167,7 @@ export class ServicesExplorerSagas {
     if (result === 1) {
       action.payload.connectedService = BotConfigurationBase.serviceFromJSON({
         type,
-        hostname: '' /* defect workaround */,
+        hostname: QnAMakerSampleHostname,
       } as any);
       result = yield* ServicesExplorerSagas.launchConnectedServiceEditor(action);
     }

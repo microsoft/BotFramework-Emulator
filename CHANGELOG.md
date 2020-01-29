@@ -10,8 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [client/main] Added Ngrok Status Viewer in PR [2032](https://github.com/microsoft/BotFramework-Emulator/pull/2032)
 - [client/main] Changed conversation infrastructure to use Web Sockets to communicate with Web Chat in PR [2034](https://github.com/microsoft/BotFramework-Emulator/pull/2034)
 
-## Changed
+## Fixed
 - [client] Hid services pane by default in PR [2059](https://github.com/microsoft/BotFramework-Emulator/pull/2059)
+- [client] Fixed an issue where trying to add a QnA KB manually after signing into Azure was causing the app to crash in PR [2066](https://github.com/microsoft/BotFramework-Emulator/pull/2066)
 
 ## Removed
 - [client/main] Removed legacy payments code in PR [2058](https://github.com/microsoft/BotFramework-Emulator/pull/2058)
