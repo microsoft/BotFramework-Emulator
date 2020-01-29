@@ -39,6 +39,7 @@ import * as React from 'react';
 import { ChangeEvent, Component, ReactNode } from 'react';
 
 import { serviceTypeLabels } from '../../../../../utils/serviceTypeLables';
+import { QnAMakerSampleHostname } from '../../../../../constants';
 
 import * as styles from './connectedServiceEditor.scss';
 import { KvPair } from './kvPair';
@@ -106,8 +107,7 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
     };
     // if qnamaker, initialize with sample hostname so that botframework-config doesn't throw
     if (props.serviceType === ServiceTypes.QnA) {
-      (connectedService as IQnAService).hostname =
-        (connectedService as IQnAService).hostname || 'https://myqna.azurewebsites.net';
+      (connectedService as IQnAService).hostname = (connectedService as IQnAService).hostname || QnAMakerSampleHostname;
     }
     this.state = {
       connectedServiceCopy: BotConfigurationBase.serviceFromJSON(connectedService),

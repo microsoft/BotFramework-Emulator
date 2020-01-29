@@ -64,6 +64,7 @@ import {
 import { sortExplorerContents } from '../actions/explorerActions';
 import { SortCriteria } from '../reducers/explorer';
 import { RootState } from '../store';
+import { QnAMakerSampleHostname } from '../../constants';
 
 import { AzureAuthSaga } from './azureAuthSaga';
 
@@ -166,8 +167,7 @@ export class ServicesExplorerSagas {
     if (result === 1) {
       action.payload.connectedService = BotConfigurationBase.serviceFromJSON({
         type,
-        hostname:
-          'https://myqna.azurewebsites.net' /* a QnA maker service needs to be initialized with a valid hostname or msbot will throw */,
+        hostname: QnAMakerSampleHostname,
       } as any);
       result = yield* ServicesExplorerSagas.launchConnectedServiceEditor(action);
     }

@@ -56,3 +56,6 @@ export const DOCUMENT_ID_APP_SETTINGS = 'app:settings';
 export const DOCUMENT_ID_BOT_SETTINGS = 'bot:settings';
 export const DOCUMENT_ID_WELCOME_PAGE = 'welcome-page';
 export const DOCUMENT_ID_MARKDOWN_PAGE = 'markdown-page';
+
+/* a QnA maker service needs to be initialized with a valid hostname or msbot will throw */
+export const QnAMakerSampleHostname = 'https://myqna.azurewebsites.net';
