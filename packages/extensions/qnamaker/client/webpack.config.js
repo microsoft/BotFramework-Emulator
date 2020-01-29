@@ -1,31 +1,50 @@
+//
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license.
+//
+// Microsoft Bot Framework: http://botframework.com
+//
+// Bot Framework Emulator Github:
+// https://github.com/Microsoft/BotFramwork-Emulator
+//
+// Copyright (c) Microsoft Corporation
+// All rights reserved.
+//
+// MIT License:
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+//
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED ""AS IS"", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
+
 const { WatchIgnorePlugin } = require('webpack');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const TerserWebpackPlugin = require('terser-webpack-plugin');
 const path = require('path');
 
 const buildConfig = mode => {
   const config = {
     optimization: {
       minimizer: [
-        new UglifyJsPlugin({
+        new TerserWebpackPlugin({
           cache: true,
-          cacheKeys(defaultCacheKeys) {
-            delete defaultCacheKeys['uglify-js'];
+          cacheKeys: defaultCacheKeys => {
+            delete defaultCacheKeys['terser'];
 
-            return Object.assign({}, defaultCacheKeys, { 'uglify-js': require('uglify-js/package.json').version });
-          },
-          minify(file, sourceMap) {
-            // https://github.com/mishoo/UglifyJS2#minify-options
-            const uglifyJsOptions = {
-              /* your `uglify-js` package options */
-            };
-
-            if (sourceMap) {
-              uglifyJsOptions.sourceMap = {
-                content: sourceMap,
-              };
-            }
-
-            return require('terser').minify(file, uglifyJsOptions);
+            return Object.assign({}, defaultCacheKeys, { terser: require('terser/package.json').version });
           },
         }),
       ],

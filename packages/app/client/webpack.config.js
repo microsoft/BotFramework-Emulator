@@ -34,7 +34,7 @@
 const path = require('path');
 
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const TerserWebpackPlugin = require('terser-webpack-plugin');
 
 const webpack = require('webpack');
 const { DllPlugin, DllReferencePlugin, NamedModulesPlugin, DefinePlugin, WatchIgnorePlugin } = webpack;
@@ -166,26 +166,12 @@ const buildConfig = mode => {
   } else {
     config.optimization = {
       minimizer: [
-        new UglifyJsPlugin({
+        new TerserWebpackPlugin({
           cache: true,
-          cacheKeys(defaultCacheKeys) {
-            delete defaultCacheKeys['uglify-js'];
+          cacheKeys: defaultCacheKeys => {
+            delete defaultCacheKeys['terser'];
 
-            return Object.assign({}, defaultCacheKeys, { 'uglify-js': require('uglify-js/package.json').version });
-          },
-          minify(file, sourceMap) {
-            // https://github.com/mishoo/UglifyJS2#minify-options
-            const uglifyJsOptions = {
-              /* your `uglify-js` package options */
-            };
-
-            if (sourceMap) {
-              uglifyJsOptions.sourceMap = {
-                content: sourceMap,
-              };
-            }
-
-            return require('terser').minify(file, uglifyJsOptions);
+            return Object.assign({}, defaultCacheKeys, { terser: require('terser/package.json').version });
           },
         }),
       ],
