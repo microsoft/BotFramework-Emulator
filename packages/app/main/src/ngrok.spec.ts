@@ -30,6 +30,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 import { join } from 'path';
 
 import {
@@ -39,9 +40,9 @@ import {
   StatusCheckOnTunnel,
   TunnelStatus,
 } from '@bfemulator/app-shared';
+import { createStore, combineReducers } from 'redux';
 
 import './fetchProxy';
-import { createStore, combineReducers } from 'redux';
 
 import { intervals, NgrokInstance } from './ngrok';
 import { intervalForEachPing } from './state/sagas/ngrokSagas';
