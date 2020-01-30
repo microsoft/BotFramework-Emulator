@@ -168,6 +168,13 @@ describe('<ChatContainer />', () => {
         },
       };
 
+      const mutatedDownloadAttachment = {
+        ...styleSet.downloadAttachment,
+      };
+      mutatedDownloadAttachment['& > a']['& > .details']['& > .name'].color = '#fff';
+      mutatedDownloadAttachment['& > a']['& > .icon'].fill = '#fff';
+      styleSet.downloadAttachment = mutatedDownloadAttachment;
+
       expect(webChat.exists()).toBe(true);
       const wcProps = webChat.props();
       expect(wcProps.bot).toEqual({ id: defaultDocument.botId, name: 'Bot' });

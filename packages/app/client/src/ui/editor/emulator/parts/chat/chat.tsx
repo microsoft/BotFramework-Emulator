@@ -65,6 +65,19 @@ interface ChatState {
   highlightedActivities?: Activity[];
 }
 
+const updateDownloadAttachmentStyle = downloadAttachment => {
+  try {
+    const mutatedDownloadAttachment = {
+      ...downloadAttachment,
+    };
+    mutatedDownloadAttachment['& > a']['& > .details']['& > .name'].color = styles.bubbleContentColor;
+    mutatedDownloadAttachment['& > a']['& > .icon'].fill = styles.bubbleContentColor;
+    return mutatedDownloadAttachment;
+  } catch {
+    return downloadAttachment;
+  }
+};
+
 export class Chat extends PureComponent<ChatProps, ChatState> {
   public state = { waitForSpeechToken: false } as ChatState;
   private activityMap: { [activityId: string]: Activity } = {};
@@ -87,17 +100,18 @@ export class Chat extends PureComponent<ChatProps, ChatState> {
 
     const styleSet = createStyleSet({ ...webChatStyleOptions, hideSendBox: isDisabled });
 
+    // Overriding default styles of webchat as these properties are not exposed directly
     styleSet.uploadButton = {
       ...styleSet.uploadButton,
       padding: '1px',
     };
-
     styleSet.uploadAttachment = {
       ...styleSet.uploadAttachment,
       '& > .name, & > .size': {
         color: styles.bubbleContentColor,
       },
     };
+    styleSet.downloadAttachment = updateDownloadAttachmentStyle(styleSet.downloadAttachment);
 
     if (directLine) {
       const bot = {
