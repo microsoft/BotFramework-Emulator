@@ -112,11 +112,25 @@ describe('<AppMenu />', () => {
       ...instance.props,
       activeBot: undefined,
       activeDocumentType: SharedConstants.ContentTypes.CONTENT_TYPE_WELCOME_PAGE,
+      availableThemes: [
+        { name: 'Light', href: '' },
+        { name: 'Dark', href: '' },
+        { name: 'High contrast', href: '' },
+      ],
+      currentTheme: 'Light',
+      recentBots: [
+        { displayName: 'bot1', path: 'path1' },
+        { displayName: 'bot2', path: 'path2' },
+        { displayName: 'bot3', path: 'path3' },
+        { displayName: 'bot4', path: 'path4' },
+      ],
     };
     const menuTemplate = (instance as any).updateMenu(AppMenuTemplate.template);
 
     expect(Object.keys(menuTemplate)).toHaveLength(6);
+    expect(menuTemplate['file'][3].items.length).toBe(4); // recent bots menu should be populated
     expect(menuTemplate['file'][7].disabled).toBe(true); // "Close tab" should be disabled
+    expect(menuTemplate['file'][14].items.length).toBe(3); // themes menu should be populated
     expect(menuTemplate['conversation'][0].disabled).toBe(true); // send activity menu should be disabled on welcome page
   });
 

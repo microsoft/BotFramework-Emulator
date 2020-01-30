@@ -55,6 +55,12 @@ import webChatStyleOptions from './webChatTheme';
 import { ChatContainer } from './chatContainer';
 import { ChatProps, Chat } from './chat';
 
+jest.mock('./chat.scss', () => ({
+  get bubbleContentColor() {
+    return '#fff';
+  },
+}));
+
 jest.mock('electron', () => ({
   ipcMain: new Proxy(
     {},
@@ -154,6 +160,20 @@ describe('<ChatContainer />', () => {
         ...styleSet.uploadButton,
         padding: '1px',
       };
+
+      styleSet.uploadAttachment = {
+        ...styleSet.uploadAttachment,
+        '& > .name, & > .size': {
+          color: '#fff',
+        },
+      };
+
+      const mutatedDownloadAttachment = {
+        ...styleSet.downloadAttachment,
+      };
+      mutatedDownloadAttachment['& > a']['& > .details']['& > .name'].color = '#fff';
+      mutatedDownloadAttachment['& > a']['& > .icon'].fill = '#fff';
+      styleSet.downloadAttachment = mutatedDownloadAttachment;
 
       expect(webChat.exists()).toBe(true);
       const wcProps = webChat.props();

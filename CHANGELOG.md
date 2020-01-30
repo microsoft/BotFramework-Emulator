@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [client/main] Moved duplicate redux store code (actions / reducers / helpers) to `app/shared` package in PR [2060](https://github.com/microsoft/BotFramework-Emulator/pull/2060)
 - [client] Fixed an issue where trying to add a QnA KB manually after signing into Azure was causing the app to crash in PR [2066](https://github.com/microsoft/BotFramework-Emulator/pull/2066)
 - [client] Removed buble background on attachments [2067](https://github.com/microsoft/BotFramework-Emulator/pull/2067)
+- [client] Fixed an issue where the themes menu was empty on Windows & Linux in PR [2069](https://github.com/microsoft/BotFramework-Emulator/pull/2069)
 
 ## Removed
 - [client/main] Removed legacy payments code in PR [2058](https://github.com/microsoft/BotFramework-Emulator/pull/2058)

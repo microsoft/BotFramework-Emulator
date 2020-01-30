@@ -86,7 +86,7 @@ export class AppMenu extends React.Component<AppMenuProps, {}> {
 
   private updateMenu(template: { [key: string]: MenuItem[] }): { [key: string]: MenuItem[] } {
     const fileMenu = template['file'];
-    fileMenu[12].items = this.getThemeMenuItems();
+    fileMenu[14].items = this.getThemeMenuItems();
     fileMenu[3].items = this.getRecentBotsMenuItems();
     // disable / enable "Close tab" button
     fileMenu[7].disabled = !this.props.activeBot;
