@@ -40,7 +40,7 @@ import {
   FrameworkAction,
   FrameworkActionType,
   FrameworkSettings,
-  SharedConstants
+  SharedConstants,
 } from '@bfemulator/app-shared';
 import { ForkEffect, call, put, select, takeEvery } from 'redux-saga/effects';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
