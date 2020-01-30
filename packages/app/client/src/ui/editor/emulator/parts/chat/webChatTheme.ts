@@ -53,7 +53,9 @@ export default {
   timestampColor: 'var(--webchat-timestamp-text)',
 
   suggestedActionBackground: 'var(--webchat-sa-bg)',
-  suggestedActionBorder: 'var(--webchat-sa-border)',
+  suggestedActionBorderColor: 'var(--webchat-sa-border-color)',
+  suggestedActionBorderStyles: 'var(--webchat-sa-border-style)',
+  suggestedActionBorderWidth: 'var(--webchat-sa-border-width)',
   suggestedActionTextColor: 'var(--webchat-sa-text)',
 
   transcriptOverlayButtonBackground: 'var(--webchat-transcript-overlay-bg)',
