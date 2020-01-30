@@ -32,12 +32,10 @@
 //
 
 import { CommandRegistry, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
-import { SharedConstants } from '@bfemulator/app-shared';
+import { clientAwareSettings, clientAwareSettingsChanged, SharedConstants } from '@bfemulator/app-shared';
 import { combineReducers, createStore } from 'redux';
 
-import { clientAwareSettings } from '../state/reducers/clientAwareSettings';
 import { store } from '../state/store';
-import { clientAwareSettingsChanged } from '../state/actions/clientAwareSettingsActions';
 
 import { SettingsCommands } from './settingsCommands';
 

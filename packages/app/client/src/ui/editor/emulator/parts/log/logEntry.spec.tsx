@@ -36,11 +36,15 @@ import { mount, ReactWrapper } from 'enzyme';
 import * as React from 'react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
-import { SharedConstants } from '@bfemulator/app-shared';
+import {
+  executeCommand,
+  launchConnectedServicePicker,
+  setHighlightedObjects,
+  setInspectorObjects,
+  SharedConstants,
+} from '@bfemulator/app-shared';
 import { ServiceTypes } from 'botframework-config/lib/schema';
 
-import { setHighlightedObjects, setInspectorObjects } from '../../../../../state/actions/chatActions';
-import { launchConnectedServicePicker } from '../../../../../state/actions/connectedServiceActions';
 import {
   AzureLoginFailedDialogContainer,
   AzureLoginSuccessDialogContainer,
@@ -50,7 +54,6 @@ import {
 } from '../../../../dialogs';
 import { ConnectedServiceEditorContainer } from '../../../../shell/explorer/servicesExplorer/connectedServiceEditor';
 import { ConnectedServicePickerContainer } from '../../../../shell/explorer/servicesExplorer';
-import { executeCommand } from '../../../../../state/actions/commandActions';
 
 import { LogEntry as LogEntryContainer } from './logEntryContainer';
 import { LogEntry, LogEntryProps, number2, timestamp } from './logEntry';

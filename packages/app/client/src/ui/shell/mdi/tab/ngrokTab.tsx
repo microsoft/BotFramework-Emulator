@@ -32,8 +32,7 @@
 //
 
 import React, { useEffect, useState } from 'react';
-
-import { TunnelStatus } from '../../../../state/actions/ngrokTunnelActions';
+import { TunnelStatus } from '@bfemulator/app-shared';
 
 import * as styles from './ngrokTab.scss';
 import { Tab, TabProps } from './tab';

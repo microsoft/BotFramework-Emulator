@@ -38,9 +38,9 @@ import * as path from 'path';
 import { existsSync } from 'fs';
 
 import { uniqueId } from '@bfemulator/sdk-shared';
+import { checkOnTunnel, TunnelInfo, TunnelStatus } from '@bfemulator/app-shared';
 
 import { intervalForEachPing } from './state/sagas/ngrokSagas';
-import { TunnelInfo, TunnelStatus, checkOnTunnel } from './state/actions/ngrokTunnelActions';
 import { ensureStoragePath, writeFile, writeStream, FileWriteStream } from './utils';
 import { PostmanNgrokCollection } from './utils/postmanNgrokCollection';
 import { dispatch, store } from './state';

@@ -31,12 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Notification as NotificationType } from '@bfemulator/app-shared';
+import { beginRemove, Notification as NotificationType } from '@bfemulator/app-shared';
 import { PrimaryButton } from '@bfemulator/ui-react';
 import * as React from 'react';
 import { connect } from 'react-redux';
-
-import * as NotificationActions from '../../../../state/actions/notificationActions';
 
 import * as styles from './notification.scss';
 
@@ -99,7 +97,7 @@ class NotificationComp extends React.Component<NotificationProps, {}> {
 
 const mapDispatchToProps = (dispatch): NotificationProps => ({
   removeNotification: (id: string) => {
-    dispatch(NotificationActions.beginRemove(id));
+    dispatch(beginRemove(id));
   },
 });
 

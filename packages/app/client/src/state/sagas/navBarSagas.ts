@@ -32,10 +32,9 @@
 //
 
 import { ForkEffect, put, takeEvery } from 'redux-saga/effects';
+import { markAllAsRead, NavBarActions, SelectNavBarAction } from '@bfemulator/app-shared';
 
 import * as Constants from '../../constants';
-import { NavBarActions, SelectNavBarAction } from '../actions/navBarActions';
-import { markAllAsRead } from '../actions/notificationActions';
 
 /** Marks all notifications as read if the notifications pane is opened */
 export function* markNotificationsAsRead(action: SelectNavBarAction): IterableIterator<any> {

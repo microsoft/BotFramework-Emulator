@@ -33,11 +33,10 @@
 
 import * as path from 'path';
 
-import { isChatFile, isTranscriptFile, SharedConstants } from '@bfemulator/app-shared';
+import { isChatFile, isTranscriptFile, openTranscript, SharedConstants } from '@bfemulator/app-shared';
 import { CommandServiceImpl } from '@bfemulator/sdk-shared';
 
 import { store } from '../state';
-import { openTranscript } from '../state/actions/chatActions';
 
 export async function openFileFromCommandLine(
   fileToBeOpened: string,

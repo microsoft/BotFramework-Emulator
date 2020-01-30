@@ -39,21 +39,24 @@ import {
   luisEditorDeepLinkItem,
   textItem,
 } from '@bfemulator/sdk-shared';
-import { SharedConstants } from '@bfemulator/app-shared';
+import {
+  bot,
+  chat,
+  clientAwareSettings,
+  executeCommand,
+  load,
+  setActive,
+  switchTheme,
+  theme,
+  SharedConstants,
+} from '@bfemulator/app-shared';
 import { mount, shallow } from 'enzyme';
 import * as React from 'react';
 import { Provider } from 'react-redux';
 import { combineReducers, createStore } from 'redux';
 
-import { load, setActive } from '../../../../../state/actions/botActions';
-import { switchTheme } from '../../../../../state/actions/themeActions';
-import { bot } from '../../../../../state/reducers/bot';
-import { chat } from '../../../../../state/reducers/chat';
-import { clientAwareSettings } from '../../../../../state/reducers/clientAwareSettings';
-import { theme } from '../../../../../state/reducers/theme';
 import { ExtensionManager } from '../../../../../extensions';
 import { logService } from '../../../../../platform/log/logService';
-import { executeCommand } from '../../../../../state/actions/commandActions';
 import { ariaAlertService } from '../../../../a11y';
 
 import { Inspector } from './inspector';

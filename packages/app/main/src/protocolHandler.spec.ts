@@ -40,14 +40,12 @@
 // will be overwritten due to the call to "jest.mock('./main', ...)"
 
 import './fetchProxy';
-import { SharedConstants } from '@bfemulator/app-shared';
+import { openBotViaUrlAction, openTranscript, SharedConstants } from '@bfemulator/app-shared';
 import { applyBotConfigOverrides } from '@bfemulator/sdk-shared';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { parseEndpointOverrides, Protocol, ProtocolHandler } from './protocolHandler';
 import { TelemetryService } from './telemetry';
-import { openTranscript } from './state/actions/chatActions';
-import { openBotViaUrlAction } from './state';
 
 let mockCallsMade, mockRemoteCallsMade;
 let mockOpenedBot;

@@ -31,11 +31,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { newNotification, NotificationType } from '@bfemulator/app-shared';
+import {
+  beginAdd,
+  finishAdd,
+  finishClear,
+  beginRemove,
+  finishRemove,
+  newNotification,
+  NotificationType,
+} from '@bfemulator/app-shared';
 import { put } from 'redux-saga/effects';
 
 import { NotificationManager } from '../../notificationManager';
-import { beginAdd, finishAdd, finishClear, beginRemove, finishRemove } from '../actions/notificationActions';
 
 import { addNotification, clearNotifications, removeNotification, markAllAsRead } from './notificationSagas';
 

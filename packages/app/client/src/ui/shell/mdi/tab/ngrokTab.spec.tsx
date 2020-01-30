@@ -35,11 +35,14 @@ import * as React from 'react';
 import { mount } from 'enzyme';
 import { createStore, combineReducers } from 'redux';
 import { Provider } from 'react-redux';
-
-import { ngrokTunnel } from '../../../../state/reducers/ngrokTunnel';
-import { editor } from '../../../../state/reducers/editor';
-import { updateTunnelStatus, updateNewTunnelInfo, TunnelInfo } from '../../../../state/actions/ngrokTunnelActions';
-import { TunnelStatus } from '../../../../state';
+import {
+  editor,
+  ngrokTunnel,
+  updateNewTunnelInfo,
+  updateTunnelStatus,
+  TunnelInfo,
+  TunnelStatus,
+} from '@bfemulator/app-shared';
 
 import { NgrokTabContainer } from './ngrokTabContainer';
 import { NgrokTab } from './ngrokTab';

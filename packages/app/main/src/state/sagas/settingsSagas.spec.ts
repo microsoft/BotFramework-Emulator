@@ -32,13 +32,19 @@
 //
 
 import '../../fetchProxy';
-import { settingsDefault, SharedConstants } from '@bfemulator/app-shared';
+import {
+  azureAuthSettings,
+  framework,
+  rememberTheme,
+  savedBotUrls,
+  settingsDefault,
+  windowState,
+  SharedConstants,
+} from '@bfemulator/app-shared';
 import { applyMiddleware, createStore, Store, combineReducers } from 'redux';
 import sagaMiddlewareFactory from 'redux-saga';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
-import { azureAuthSettings, framework, savedBotUrls, windowState, users } from '../reducers';
-import { rememberTheme } from '../actions/windowStateActions';
 import { RootState } from '../store';
 
 import { settingsSagas } from './settingsSagas';
@@ -113,7 +119,6 @@ describe('The SettingsSagas', () => {
           framework,
           savedBotUrls,
           windowState,
-          users,
         }),
       }),
       {

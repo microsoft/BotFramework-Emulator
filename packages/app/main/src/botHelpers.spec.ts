@@ -40,10 +40,10 @@ import {
   CommandServiceInstance,
 } from '@bfemulator/sdk-shared';
 import { BotConfiguration } from 'botframework-config';
+import { load } from '@bfemulator/app-shared/built/state/actions/botActions';
 
 import { CredentialManager } from './credentialManager';
 import { BotHelpers } from './botHelpers';
-import { load } from './state/actions/botActions';
 
 jest.mock('electron', () => ({
   app: {

@@ -31,20 +31,23 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { SharedConstants } from '@bfemulator/app-shared';
+import {
+  close as closeEditorDocument,
+  executeCommand,
+  framework,
+  ngrokTunnel,
+  saveFrameworkSettings,
+  setFrameworkSettings,
+  SharedConstants,
+} from '@bfemulator/app-shared';
 import { mount } from 'enzyme';
 import * as React from 'react';
 import { combineReducers, createStore } from 'redux';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 import { frameworkDefault } from '@bfemulator/app-shared';
 
-import * as EditorActions from '../../../state/actions/editorActions';
-import { setFrameworkSettings, saveFrameworkSettings } from '../../../state/actions/frameworkSettingsActions';
 import { getTabGroupForDocument } from '../../../state/helpers/editorHelpers';
-import { framework } from '../../../state/reducers/framework';
-import { ngrokTunnel } from '../../../state/reducers/ngrokTunnel';
 import { ariaAlertService } from '../../a11y';
-import { executeCommand } from '../../../state/actions/commandActions';
 
 import { AppSettingsEditor } from './appSettingsEditor';
 import { AppSettingsEditorContainer } from './appSettingsEditorContainer';
@@ -167,7 +170,7 @@ describe('The AppSettingsEditorContainer', () => {
   it('should discard the changes when "discardChanges" is called', () => {
     instance.props.discardChanges();
     expect(mockDispatch).toHaveBeenCalledWith(
-      EditorActions.close(getTabGroupForDocument('app:settings'), 'app:settings')
+      closeEditorDocument(getTabGroupForDocument('app:settings'), 'app:settings')
     );
   });
 

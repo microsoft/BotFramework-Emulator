@@ -35,8 +35,8 @@ import * as React from 'react';
 import { ComponentClass, StatelessComponent } from 'react';
 import * as ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
+import { setShowing as setDialogShowing } from '@bfemulator/app-shared';
 
-import * as DialogActions from '../../../state/actions/dialogActions';
 import { store } from '../../../state/store';
 
 export interface DialogService {
@@ -61,7 +61,7 @@ class DialogServiceImpl implements DialogService {
     }
     const reactElement = React.createElement(Provider, { store }, React.createElement(dialog, props));
     ReactDOM.render(reactElement, this._hostElement, this.notifyHostOfRender);
-    store.dispatch(DialogActions.setShowing(true));
+    store.dispatch(setDialogShowing(true));
 
     // set up the dialog to return a value from the dialog
     return new Promise(resolve => {
@@ -75,7 +75,7 @@ class DialogServiceImpl implements DialogService {
     }
 
     ReactDOM.render(null, this._hostElement);
-    store.dispatch(DialogActions.setShowing(false));
+    store.dispatch(setDialogShowing(false));
 
     this._resolve(dialogReturnValue);
     this._resolve = null;

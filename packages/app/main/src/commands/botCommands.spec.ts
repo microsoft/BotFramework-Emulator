@@ -32,7 +32,8 @@
 //
 import * as path from 'path';
 
-import { SharedConstants } from '@bfemulator/app-shared';
+import { bot, SharedConstants } from '@bfemulator/app-shared';
+import * as BotActions from '@bfemulator/app-shared/built/state/actions/botActions';
 import {
   BotConfigWithPathImpl,
   CommandRegistry,
@@ -43,9 +44,6 @@ import { BotConfiguration } from 'botframework-config';
 import { ServiceTypes } from 'botframework-config/lib/schema';
 import { combineReducers, createStore } from 'redux';
 
-import * as BotActions from '../state/actions/botActions';
-import { setActive } from '../state/actions/botActions';
-import { bot } from '../state/reducers/bot';
 import { RootState, store } from '../state/store';
 import { BotHelpers } from '../botHelpers';
 import { Emulator } from '../emulator';
@@ -249,7 +247,7 @@ describe('The botCommands', () => {
 
   it('should restart the endpoint service', async () => {
     const emulator = Emulator.getInstance();
-    store.dispatch(setActive(mockBot));
+    store.dispatch(BotActions.setActive(mockBot));
     const clearSpy = jest.spyOn(emulator.server.state.endpoints, 'clear');
     const setSpy = jest.spyOn(emulator.server.state.endpoints, 'set');
     const command = registry.getCommand(Bot.RestartEndpointService);
@@ -366,6 +364,6 @@ describe('The botCommands', () => {
     const handler = registry.getCommand(SharedConstants.Commands.Bot.Close);
     const dispatchSpy = jest.spyOn(store, 'dispatch');
     await handler();
-    expect(dispatchSpy).toHaveBeenCalledWith(BotActions.close());
+    expect(dispatchSpy).toHaveBeenCalledWith(BotActions.closeBot());
   });
 });

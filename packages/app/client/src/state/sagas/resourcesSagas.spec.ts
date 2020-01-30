@@ -36,20 +36,19 @@ import { BotConfigWithPathImpl, CommandServiceImpl, CommandServiceInstance } fro
 import { ServiceTypes } from 'botframework-config/lib/schema';
 import sagaMiddlewareFactory from 'redux-saga';
 import { put, takeEvery } from 'redux-saga/effects';
-import { SharedConstants } from '@bfemulator/app-shared/built';
-import { Component } from 'react';
-
 import {
   openContextMenuForResource,
   openResourcesSettings,
+  openTranscript,
   renameResource,
+  resources,
+  SharedConstants,
   OPEN_CONTEXT_MENU_FOR_RESOURCE,
   OPEN_RESOURCE,
   OPEN_RESOURCE_SETTINGS,
   RENAME_RESOURCE,
-} from '../actions/resourcesActions';
-import { resources } from '../reducers/resources';
-import { openTranscript } from '../actions/chatActions';
+} from '@bfemulator/app-shared';
+import { Component } from 'react';
 
 import { resourceSagas, ResourcesSagas } from './resourcesSagas';
 

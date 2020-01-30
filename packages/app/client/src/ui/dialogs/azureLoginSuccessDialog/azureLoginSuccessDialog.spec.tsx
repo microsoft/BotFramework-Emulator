@@ -34,8 +34,7 @@ import * as React from 'react';
 import { Provider } from 'react-redux';
 import { mount } from 'enzyme';
 import { combineReducers, createStore } from 'redux';
-
-import { azureAuth } from '../../../state/reducers/azureAuth';
+import { azureAuth } from '@bfemulator/app-shared';
 
 import { AzureLoginSuccessDialogContainer } from './azureLoginSuccessDialogContainer';
 import { AzureLoginSuccessDialog } from './azureLoginSuccessDialog';

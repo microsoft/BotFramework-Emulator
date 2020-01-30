@@ -33,9 +33,8 @@
 
 import { normalize } from 'path';
 
+import { openTranscript } from '@bfemulator/app-shared';
 import { CommandRegistry, CommandRegistryImpl } from '@bfemulator/sdk-shared';
-
-import { openTranscript } from '../state/actions/chatActions';
 
 import { openFileFromCommandLine } from './openFileFromCommandLine';
 

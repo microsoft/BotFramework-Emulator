@@ -34,6 +34,7 @@
 import * as path from 'path';
 
 import { SharedConstants } from '@bfemulator/app-shared';
+import * as BotActions from '@bfemulator/app-shared/built/state/actions/botActions';
 import {
   BotConfigWithPath,
   Command,
@@ -45,7 +46,6 @@ import * as fs from 'fs-extra';
 import { sync as mkdirpSync } from 'mkdirp';
 import { session } from 'electron';
 
-import * as BotActions from '../state/actions/botActions';
 import { BotHelpers } from '../botHelpers';
 import { Emulator } from '../emulator';
 import { emulatorApplication } from '../main';

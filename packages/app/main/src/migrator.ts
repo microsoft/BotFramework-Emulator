@@ -34,13 +34,13 @@
 import * as Path from 'path';
 
 import { BotInfo, SharedConstants } from '@bfemulator/app-shared';
+import * as BotActions from '@bfemulator/app-shared/built/state/actions/botActions';
 import { BotConfiguration } from 'botframework-config';
 import { app } from 'electron';
 import * as Fs from 'fs-extra';
 import { sync as mkdirp } from 'mkdirp';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
-import * as BotActions from './state/actions/botActions';
 import { store } from './state/store';
 import { BotHelpers } from './botHelpers';
 import { ensureStoragePath, getFilesInDir, writeFile } from './utils';

@@ -35,8 +35,7 @@ import { combineReducers, createStore } from 'redux';
 import { mount } from 'enzyme';
 import * as React from 'react';
 import { Provider } from 'react-redux';
-
-import { editor } from '../../../state/reducers/editor';
+import { editor } from '@bfemulator/app-shared';
 
 import { TabManagerContainer } from './tabManagerContainer';
 import { TabManager } from './tabManager';

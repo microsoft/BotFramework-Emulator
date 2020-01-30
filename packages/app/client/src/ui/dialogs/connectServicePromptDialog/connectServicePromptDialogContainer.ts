@@ -32,10 +32,9 @@
 //
 
 import { connect } from 'react-redux';
-import { SharedConstants } from '@bfemulator/app-shared';
+import { executeCommand, SharedConstants } from '@bfemulator/app-shared';
 
 import { DialogService } from '../service';
-import { executeCommand } from '../../../state/actions/commandActions';
 
 import { ConnectServicePromptDialog, ConnectServicePromptDialogProps } from './connectServicePromptDialog';
 

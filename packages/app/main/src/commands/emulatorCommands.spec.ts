@@ -44,14 +44,12 @@ import {
   ConversationService,
 } from '@bfemulator/sdk-shared';
 import { BotConfiguration } from 'botframework-config';
-import { SharedConstants, ValueTypesMask } from '@bfemulator/app-shared';
+import { azureLoggedInUserChanged, bot, SharedConstants, ValueTypesMask } from '@bfemulator/app-shared';
 
 import { store } from '../state/store';
 import * as utils from '../utils';
 import { BotHelpers } from '../botHelpers';
-import { bot } from '../state/reducers/bot';
 import { TelemetryService } from '../telemetry';
-import { azureLoggedInUserChanged } from '../state/actions/azureAuthActions';
 import { CredentialManager } from '../credentialManager';
 import { Conversation } from '../server/state/conversation';
 

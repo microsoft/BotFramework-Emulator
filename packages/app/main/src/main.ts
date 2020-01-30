@@ -30,11 +30,28 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 import './commands';
 import * as path from 'path';
 import * as url from 'url';
 
-import { isMac, newNotification, Notification, PersistentSettings, SharedConstants } from '@bfemulator/app-shared';
+import {
+  addNotification,
+  azureLoggedInUserChanged,
+  isMac,
+  newNotification,
+  rememberBounds,
+  setOpenUrl,
+  updateNewTunnelInfo,
+  updateTunnelError,
+  updateTunnelStatus,
+  Notification,
+  PersistentSettings,
+  SharedConstants,
+  TunnelError,
+  TunnelInfo,
+  TunnelStatus,
+} from '@bfemulator/app-shared';
 import { app, BrowserWindow, Rectangle, screen, systemPreferences } from 'electron';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
@@ -44,17 +61,6 @@ import { Protocol } from './constants';
 import { Emulator } from './emulator';
 import './fetchProxy';
 import { Window } from './platform/window';
-import { azureLoggedInUserChanged } from './state/actions/azureAuthActions';
-import { rememberBounds } from './state/actions/windowStateActions';
-import {
-  updateTunnelError,
-  TunnelInfo,
-  updateNewTunnelInfo,
-  TunnelStatus,
-  updateTunnelStatus,
-  TunnelError,
-  addNotification,
-} from './state/actions/ngrokTunnelActions';
 import { dispatch, getSettings, store } from './state/store';
 import { TelemetryService } from './telemetry';
 import { botListsAreDifferent, ensureStoragePath, saveSettings, writeFile } from './utils';
@@ -62,7 +68,6 @@ import { openFileFromCommandLine } from './utils/openFileFromCommandLine';
 import { sendNotificationToClient } from './utils/sendNotificationToClient';
 import { WindowManager } from './windowManager';
 import { ProtocolHandler } from './protocolHandler';
-import { setOpenUrl } from './state/actions/protocolActions';
 import { WebSocketServer } from './server/webSocketServer';
 
 const genericTunnelError =

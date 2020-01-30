@@ -35,12 +35,10 @@ import * as React from 'react';
 import { mount, shallow } from 'enzyme';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
+import { open as openEditorDocument, select, showExplorer } from '@bfemulator/app-shared';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import * as Constants from '../../../constants';
-import { select } from '../../../state/actions/navBarActions';
-import { open } from '../../../state/actions/editorActions';
-import { showExplorer } from '../../../state/actions/explorerActions';
 import { BotCommands } from '../../../commands/botCommands';
 
 import { NavBarComponent as NavBar } from './navBar';
@@ -170,7 +168,7 @@ describe('<NavBar/>', () => {
     instance.onLinkClick(mockEvent);
 
     expect(mockDispatch).toHaveBeenCalledWith(
-      open({
+      openEditorDocument({
         contentType: Constants.CONTENT_TYPE_APP_SETTINGS,
         documentId: Constants.DOCUMENT_ID_APP_SETTINGS,
         isGlobal: true,

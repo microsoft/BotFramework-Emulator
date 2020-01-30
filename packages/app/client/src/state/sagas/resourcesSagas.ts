@@ -30,7 +30,21 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { BotInfo, isChatFile, isTranscriptFile, NotificationType, SharedConstants } from '@bfemulator/app-shared';
+import {
+  beginAdd,
+  editResource,
+  isChatFile,
+  isTranscriptFile,
+  openTranscript,
+  BotInfo,
+  NotificationType,
+  ResourcesAction,
+  SharedConstants,
+  OPEN_CONTEXT_MENU_FOR_RESOURCE,
+  OPEN_RESOURCE,
+  OPEN_RESOURCE_SETTINGS,
+  RENAME_RESOURCE,
+} from '@bfemulator/app-shared';
 import { newNotification } from '@bfemulator/app-shared/built';
 import { IFileService } from 'botframework-config/lib/schema';
 import { ComponentClass } from 'react';
@@ -38,16 +52,6 @@ import { ForkEffect, put, takeEvery } from 'redux-saga/effects';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { DialogService } from '../../ui/dialogs/service';
-import { beginAdd } from '../actions/notificationActions';
-import {
-  editResource,
-  OPEN_CONTEXT_MENU_FOR_RESOURCE,
-  OPEN_RESOURCE,
-  OPEN_RESOURCE_SETTINGS,
-  RENAME_RESOURCE,
-  ResourcesAction,
-} from '../actions/resourcesActions';
-import { openTranscript } from '../actions/chatActions';
 
 export class ResourcesSagas {
   @CommandServiceInstance()

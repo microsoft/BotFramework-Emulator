@@ -34,8 +34,7 @@ import * as React from 'react';
 import { Provider } from 'react-redux';
 import { mount } from 'enzyme';
 import { combineReducers, createStore } from 'redux';
-
-import { progressIndicator } from '../../../state/reducers/progressIndicator';
+import { progressIndicator } from '@bfemulator/app-shared';
 
 import { ProgressIndicatorContainer } from './progressIndicatorContainer';
 import { ProgressIndicator } from './progressIndicator';

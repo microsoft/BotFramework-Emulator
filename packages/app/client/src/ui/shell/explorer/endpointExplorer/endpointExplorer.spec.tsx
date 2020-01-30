@@ -35,13 +35,7 @@ import { mount } from 'enzyme';
 import * as React from 'react';
 import { Provider } from 'react-redux';
 import { combineReducers, createStore } from 'redux';
-
-import { load, setActive } from '../../../../state/actions/botActions';
-import {
-  openEndpointExplorerContextMenu,
-  openEndpointInEmulator,
-} from '../../../../state/actions/endpointServiceActions';
-import { bot } from '../../../../state/reducers/bot';
+import { bot, load, openEndpointExplorerContextMenu, openEndpointInEmulator, setActive } from '@bfemulator/app-shared';
 
 import { EndpointEditorContainer } from './endpointEditor';
 import { EndpointExplorer } from './endpointExplorer';
@@ -139,7 +133,7 @@ describe('The EndpointExplorer component', () => {
     mockLi.setAttribute('data-index', '0');
     node.instance().onLinkClick({ currentTarget: mockLi } as any);
 
-    expect(mockDispatch).toHaveBeenCalledWith(openEndpointInEmulator(mockBot.services[0] as any, true));
+    expect(mockDispatch).toHaveBeenCalledWith(openEndpointInEmulator(mockBot.services[0] as any));
   });
 
   it('should set a button ref', () => {

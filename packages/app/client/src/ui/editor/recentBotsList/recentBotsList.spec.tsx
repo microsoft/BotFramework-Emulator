@@ -31,16 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { SharedConstants } from '@bfemulator/app-shared';
+import { bot, executeCommand, load, openContextMenuForBot, SharedConstants } from '@bfemulator/app-shared';
 import { mount } from 'enzyme';
 import * as React from 'react';
 import { Provider } from 'react-redux';
 import { combineReducers, createStore } from 'redux';
-
-import * as BotActions from '../../../state/actions/botActions';
-import { openContextMenuForBot } from '../../../state/actions/welcomePageActions';
-import { bot } from '../../../state/reducers/bot';
-import { executeCommand } from '../../../state/actions/commandActions';
 
 import { RecentBotsList } from './recentBotsList';
 import { RecentBotsListContainer } from './recentBotsListContainer';
@@ -69,7 +64,7 @@ describe('The RecentBotsList', () => {
   const mockOnBotSelected = jest.fn();
 
   beforeEach(() => {
-    mockStore.dispatch(BotActions.load(bots));
+    mockStore.dispatch(load(bots));
     mockDispatch = jest.spyOn(mockStore, 'dispatch');
     parent = mount(
       <Provider store={mockStore}>

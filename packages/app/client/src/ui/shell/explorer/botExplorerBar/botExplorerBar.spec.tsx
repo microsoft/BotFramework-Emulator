@@ -34,9 +34,7 @@ import { mount } from 'enzyme';
 import * as React from 'react';
 import { Provider } from 'react-redux';
 import { combineReducers, createStore } from 'redux';
-
-import { bot } from '../../../../state/reducers/bot';
-import { chat } from '../../../../state/reducers/chat';
+import { bot, chat } from '@bfemulator/app-shared';
 
 import BotExplorerBar from './botExplorerBar';
 import { BotExplorerBarContainer } from './botExplorerBarContainer';

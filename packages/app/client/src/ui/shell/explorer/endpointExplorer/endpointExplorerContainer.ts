@@ -34,12 +34,8 @@
 import { IEndpointService, ServiceTypes } from 'botframework-config/lib/schema';
 import { ComponentClass } from 'react';
 import { connect } from 'react-redux';
+import { launchEndpointEditor, openEndpointExplorerContextMenu, openEndpointInEmulator } from '@bfemulator/app-shared';
 
-import {
-  launchEndpointEditor,
-  openEndpointExplorerContextMenu,
-  openEndpointInEmulator,
-} from '../../../../state/actions/endpointServiceActions';
 import { RootState } from '../../../../state/store';
 
 import { EndpointEditor } from './endpointEditor/endpointEditor';

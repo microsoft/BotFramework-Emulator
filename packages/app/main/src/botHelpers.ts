@@ -35,11 +35,11 @@ import * as path from 'path';
 
 import * as electron from 'electron';
 import { BotInfo, getBotDisplayName, SharedConstants } from '@bfemulator/app-shared';
+import * as BotActions from '@bfemulator/app-shared/built/state/actions/botActions';
 import { BotConfigWithPath, BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
 import { BotConfiguration } from 'botframework-config';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
-import * as BotActions from './state/actions/botActions';
 import { store } from './state/store';
 import { CredentialManager } from './credentialManager';
 import { Conversation } from './server/state/conversation';

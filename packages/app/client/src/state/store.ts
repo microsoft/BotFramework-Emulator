@@ -34,10 +34,6 @@
 import { applyMiddleware, createStore, combineReducers, compose, Store } from 'redux';
 import { ipcRenderer, remote } from 'electron';
 import sagaMiddlewareFactory from 'redux-saga';
-import { Settings, ClientAwareSettings, FrameworkSettings } from '@bfemulator/app-shared';
-
-import { forwardToMain } from './middleware/forwardToMain';
-import { applicationSagas } from './sagas';
 import {
   AzureAuthState,
   azureAuth,
@@ -45,11 +41,13 @@ import {
   bot,
   BotState,
   chat,
+  ClientAwareSettings,
   clientAwareSettings,
   dialog,
   editor,
   explorer,
   framework,
+  FrameworkSettings,
   navBar,
   notification,
   presentation,
@@ -70,11 +68,15 @@ import {
   PresentationState,
   ProgressIndicatorState,
   ResourcesState,
+  Settings,
   ThemeState,
   UpdateState,
   ngrokTunnel,
   NgrokTunnelState,
-} from './reducers';
+} from '@bfemulator/app-shared';
+
+import { forwardToMain } from './middleware/forwardToMain';
+import { applicationSagas } from './sagas';
 
 export interface RootState {
   azureAuth?: AzureAuthState;

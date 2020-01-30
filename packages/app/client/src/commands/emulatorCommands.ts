@@ -31,18 +31,22 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { newNotification, SharedConstants } from '@bfemulator/app-shared';
+import {
+  beginAdd,
+  closeDocument as closeChatDocument,
+  close as closeEditorDocument,
+  newNotification,
+  openBotViaUrlAction,
+  openTranscript,
+  SharedConstants,
+} from '@bfemulator/app-shared';
 import { ChannelService, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 import { IEndpointService } from 'botframework-config/lib/schema';
 import { Command } from '@bfemulator/sdk-shared';
 import { EmulatorMode } from '@bfemulator/sdk-shared';
 
-import * as ChatActions from '../state/actions/chatActions';
-import * as EditorActions from '../state/actions/editorActions';
-import { beginAdd } from '../state/actions/notificationActions';
 import { getTabGroupForDocument } from '../state/helpers/editorHelpers';
 import { store } from '../state/store';
-import { openBotViaUrlAction } from '../state';
 
 const {
   Emulator,
@@ -91,7 +95,7 @@ export class EmulatorCommands {
       const { ShowOpenDialog } = SharedConstants.Commands.Electron;
       const filename: string = await this.commandService.remoteCall(ShowOpenDialog, dialogOptions);
       if (filename) {
-        store.dispatch(ChatActions.openTranscript(filename));
+        store.dispatch(openTranscript(filename));
         this.commandService
           .remoteCall(TrackEvent, 'transcriptFile_open', {
             method: 'file_menu',
@@ -111,9 +115,9 @@ export class EmulatorCommands {
   protected reloadTranscript(filePath: string, filename: string) {
     const tabGroup = getTabGroupForDocument(filePath);
     if (tabGroup) {
-      store.dispatch(EditorActions.close(getTabGroupForDocument(filePath), filePath));
-      store.dispatch(ChatActions.closeDocument(filePath));
+      store.dispatch(closeEditorDocument(getTabGroupForDocument(filePath), filePath));
+      store.dispatch(closeChatDocument(filePath));
     }
-    store.dispatch(ChatActions.openTranscript(filename));
+    store.dispatch(openTranscript(filename));
   }
 }

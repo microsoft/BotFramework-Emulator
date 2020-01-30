@@ -36,15 +36,15 @@ import { mount, ReactWrapper } from 'enzyme';
 import { combineReducers, createStore } from 'redux';
 import { ServiceTypes } from 'botframework-config/lib/schema';
 import { BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
-
-import { ResourcesSettingsContainer } from '../../../dialogs';
-import { resources } from '../../../../state/reducers/resources';
 import {
   openContextMenuForResource,
   openResource,
   openResourcesSettings,
   renameResource,
-} from '../../../../state/actions/resourcesActions';
+  resources,
+} from '@bfemulator/app-shared';
+
+import { ResourcesSettingsContainer } from '../../../dialogs';
 
 import { ResourceExplorerContainer } from './resourceExplorerContainer';
 import { ResourceExplorer } from './resourceExplorer';

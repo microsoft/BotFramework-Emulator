@@ -34,10 +34,8 @@
 import * as React from 'react';
 import { DragEvent } from 'react';
 import { connect } from 'react-redux';
+import { splitTab, Editor, SharedConstants } from '@bfemulator/app-shared';
 
-import * as Constants from '../../../../../constants';
-import * as EditorActions from '../../../../../state/actions/editorActions';
-import { Editor } from '../../../../../state/reducers/editor';
 import { RootState } from '../../../../../state/store';
 import * as overlay from '../overlay.scss';
 
@@ -106,12 +104,12 @@ class RightContentOverlayComponent extends React.Component<RightContentOverlayPr
 
 const mapStateToProps = (state: RootState): RightContentOverlayProps => ({
   draggingTab: state.editor.draggingTab,
-  primaryEditor: state.editor.editors[Constants.EDITOR_KEY_PRIMARY],
+  primaryEditor: state.editor.editors[SharedConstants.EDITOR_KEY_PRIMARY],
 });
 
 const mapDispatchToProps = (dispatch): RightContentOverlayProps => ({
   splitTab: (contentType: string, tabId: string) =>
-    dispatch(EditorActions.splitTab(contentType, tabId, Constants.EDITOR_KEY_PRIMARY, Constants.EDITOR_KEY_SECONDARY)),
+    dispatch(splitTab(contentType, tabId, SharedConstants.EDITOR_KEY_PRIMARY, SharedConstants.EDITOR_KEY_SECONDARY)),
 });
 
 export const RightContentOverlay = connect(mapStateToProps, mapDispatchToProps)(RightContentOverlayComponent);

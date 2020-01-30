@@ -31,11 +31,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { isChatFile, isTranscriptFile, SharedConstants } from '@bfemulator/app-shared';
+import {
+  addDocPendingChange,
+  addFile,
+  clear,
+  isChatFile,
+  isTranscriptFile,
+  removeFile,
+  SharedConstants,
+} from '@bfemulator/app-shared';
 import { Command } from '@bfemulator/sdk-shared';
 
-import * as EditorActions from '../state/actions/editorActions';
-import * as FileActions from '../state/actions/fileActions';
 import { store } from '../state/store';
 
 const { File } = SharedConstants.Commands;
@@ -46,21 +52,21 @@ export class FileCommands {
   // Adds a file to the file store
   @Command(File.Add)
   protected addFileToStore(payload) {
-    store.dispatch(FileActions.addFile(payload));
+    store.dispatch(addFile(payload));
   }
 
   // ---------------------------------------------------------------------------
   // Removes a file from the file store
   @Command(File.Remove)
   protected removeFileFromStore(path) {
-    store.dispatch(FileActions.removeFile(path));
+    store.dispatch(removeFile(path));
   }
 
   // ---------------------------------------------------------------------------
   // Clears the file store
   @Command(File.Clear)
   protected clearFileStore() {
-    store.dispatch(FileActions.clear());
+    store.dispatch(clear());
   }
 
   // ---------------------------------------------------------------------------
@@ -69,7 +75,7 @@ export class FileCommands {
   protected fileChangedOnDisk(filename: string) {
     // add the filename to pending updates and prompt the user once the document is focused again
     if (isChatFile(filename) || isTranscriptFile(filename)) {
-      store.dispatch(EditorActions.addDocPendingChange(filename));
+      store.dispatch(addDocPendingChange(filename));
     }
   }
 }

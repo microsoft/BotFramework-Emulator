@@ -33,13 +33,11 @@
 
 import { Splitter } from '@bfemulator/ui-react';
 import * as React from 'react';
-import { isLinux, isWindows } from '@bfemulator/app-shared';
+import { isLinux, isWindows, showExplorer, Editor } from '@bfemulator/app-shared';
 
 import * as Constants from '../../constants';
-import { Editor } from '../../state/reducers/editor';
 import { StoreVisualizer } from '../debug/storeVisualizer';
 import { DialogHostContainer, TabManagerContainer } from '../dialogs';
-import * as ExplorerActions from '../../state/actions/explorerActions';
 import { store } from '../../state/store';
 
 import { ExplorerBar } from './explorer';
@@ -154,7 +152,7 @@ export class Main extends React.Component<MainProps, MainState> {
       const explorerSize = sizes[0];
       const minExplorerWidth = 175;
       if (explorerSize.absolute < minExplorerWidth) {
-        store.dispatch(ExplorerActions.showExplorer(false));
+        store.dispatch(showExplorer(false));
       }
     }
   }

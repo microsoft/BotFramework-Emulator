@@ -35,19 +35,18 @@ import * as React from 'react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import { mount, shallow, ReactWrapper, ShallowWrapper } from 'enzyme';
-import { SharedConstants } from '@bfemulator/app-shared';
+import {
+  disable as disablePresentationMode,
+  enable as enablePresentationMode,
+  executeCommand,
+  restartConversation,
+  SharedConstants,
+} from '@bfemulator/app-shared';
 import base64Url from 'base64url';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
-import { disable, enable } from '../../../state/actions/presentationActions';
-import { clearLog, setInspectorObjects, restartConversation } from '../../../state/actions/chatActions';
-import { updateDocument } from '../../../state/actions/editorActions';
-import { executeCommand } from '../../../state/actions/commandActions';
-
 import { Emulator, RestartConversationOptions } from './emulator';
 import { EmulatorContainer } from './emulatorContainer';
-
-const { encode } = base64Url;
 
 let mockCallsMade, mockRemoteCallsMade;
 const mockSharedConstants = SharedConstants;
@@ -297,13 +296,13 @@ describe('<EmulatorContainer/>', () => {
   it('should enable presentation mode', () => {
     instance.onPresentationClick(true);
 
-    expect(mockDispatch).toHaveBeenCalledWith(enable());
+    expect(mockDispatch).toHaveBeenCalledWith(enablePresentationMode());
   });
 
   it('should disable presentation mode', () => {
     instance.onPresentationClick(false);
 
-    expect(mockDispatch).toHaveBeenCalledWith(disable());
+    expect(mockDispatch).toHaveBeenCalledWith(disablePresentationMode());
   });
 
   it('should export a transcript', async () => {

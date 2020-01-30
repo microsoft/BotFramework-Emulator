@@ -32,10 +32,7 @@
 //
 
 import { CommandServiceImpl, CommandRegistry, CommandServiceInstance } from '@bfemulator/sdk-shared';
-import { SharedConstants } from '@bfemulator/app-shared';
-
-import { addFile, removeFile, clear } from '../state/actions/fileActions';
-import { addDocPendingChange } from '../state/actions/editorActions';
+import { addDocPendingChange, addFile, clear, removeFile, SharedConstants } from '@bfemulator/app-shared';
 
 import { FileCommands } from './fileCommands';
 

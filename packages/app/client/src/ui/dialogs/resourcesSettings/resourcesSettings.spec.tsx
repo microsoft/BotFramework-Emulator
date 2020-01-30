@@ -30,16 +30,12 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 import * as React from 'react';
 import { Provider } from 'react-redux';
 import { mount } from 'enzyme';
 import { combineReducers, createStore } from 'redux';
-import { SharedConstants } from '@bfemulator/app-shared';
-
-import { bot } from '../../../state/reducers/bot';
-import { resources } from '../../../state/reducers/resources';
-import { load, setActive } from '../../../state/actions/botActions';
-import { executeCommand } from '../../../state/actions/commandActions';
+import { bot, executeCommand, load, resources, setActive, SharedConstants } from '@bfemulator/app-shared';
 
 import { ResourcesSettings } from './resourcesSettings';
 import { ResourcesSettingsContainer } from './resourcesSettingsContainer';

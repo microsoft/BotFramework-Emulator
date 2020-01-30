@@ -30,11 +30,11 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { SharedConstants } from '@bfemulator/app-shared';
+
+import { azureLoggedInUserChanged, azurePersistLoginChanged, SharedConstants } from '@bfemulator/app-shared';
 import { Command, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { AzureAuthWorkflowService } from '../services/azureAuthWorkflowService';
-import { azureLoggedInUserChanged, azurePersistLoginChanged } from '../state/actions/azureAuthActions';
 import { getSettings, store } from '../state/store';
 
 // eslint-disable-next-line typescript/no-var-requires
