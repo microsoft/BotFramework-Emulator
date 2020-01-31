@@ -54,7 +54,7 @@ export default {
 
   suggestedActionBackground: 'var(--webchat-sa-bg)',
   suggestedActionBorderColor: 'var(--webchat-sa-border-color)',
-  suggestedActionBorderStyles: 'var(--webchat-sa-border-style)',
+  suggestedActionBorderStyle: 'var(--webchat-sa-border-style)',
   suggestedActionBorderWidth: 'var(--webchat-sa-border-width)',
   suggestedActionTextColor: 'var(--webchat-sa-text)',
 
