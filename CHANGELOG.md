@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [client] Removed buble background on attachments [2067](https://github.com/microsoft/BotFramework-Emulator/pull/2067)
 - [client] Fixed an issue where the themes menu was empty on Windows & Linux in PR [2069](https://github.com/microsoft/BotFramework-Emulator/pull/2069)
 
+- [client] Fixed an issue where pressing enter opens the Azure government website instead of connecting to the bot  [2073](https://github.com/microsoft/BotFramework-Emulator/pull/2073)
+
 ## Removed
 - [client/main] Removed legacy payments code in PR [2058](https://github.com/microsoft/BotFramework-Emulator/pull/2058)
 
