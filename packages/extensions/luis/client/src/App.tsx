@@ -270,6 +270,10 @@ export class App extends Component<any, AppState> {
           $host.logger.logLuisEditorDeepLink(message);
         }
       } catch (err) {
+        // Throw an auth error only if conversation is from a bot file instead of URL.
+        if (!$host.bot && err.statusCode === 401) {
+          return;
+        }
         $host.logger.error(err.message);
       }
     }
