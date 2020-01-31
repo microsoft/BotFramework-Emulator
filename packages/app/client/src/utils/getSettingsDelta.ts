@@ -31,9 +31,26 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './debounce';
-export * from './expandFlatTree';
-export * from './getGlobal';
-export * from './getSettingsDelta';
-export * from './generateBotSecret';
-export * from './chatUtils';
+import { FrameworkSettings } from '@bfemulator/app-shared';
+
+export function getSettingsDelta(
+  prevSettings: FrameworkSettings,
+  updatedSettings: FrameworkSettings
+): Partial<FrameworkSettings> {
+  const delta: Partial<FrameworkSettings> = {};
+  // get delta for keys present in updated settings
+  for (const key in updatedSettings) {
+    const prevVal = prevSettings[key];
+    const updatedVal = updatedSettings[key];
+    if (prevVal !== updatedVal) {
+      delta[key] = updatedVal;
+    }
+  }
+  // get delta for any keys that were deleted from updated settings
+  for (const key in prevSettings) {
+    if (!Object.prototype.hasOwnProperty.call(updatedSettings, key)) {
+      delta[key] = undefined;
+    }
+  }
+  return Object.keys(delta).length ? delta : undefined;
+}

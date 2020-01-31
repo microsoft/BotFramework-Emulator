@@ -112,7 +112,7 @@ describe('TelemetryService', () => {
   });
 
   it('should not track events if disabled or if no name is provided', () => {
-    const mockAITrackEvent = jest.fn((_name, _properties) => null);
+    const mockAITrackEvent = jest.fn(() => null);
     (TelemetryService as any)._client = { trackEvent: mockAITrackEvent };
 
     mockSettings = { framework: { collectUsageData: false } };
@@ -124,12 +124,11 @@ describe('TelemetryService', () => {
     expect(mockAITrackEvent).not.toHaveBeenCalled();
   });
 
-  // NOTE: Disabled for v4.3
-  /*
   it('should track events', () => {
+    global['__JEST_ENV__'] = false;
     const mockStartup = jest.fn(() => null);
     (TelemetryService as any).startup = mockStartup;
-    const mockAutoCollect = jest.fn(_config => mockAppInsights);
+    const mockAutoCollect = jest.fn(() => mockAppInsights);
     mockAppInsights = {
       setAutoCollectConsole: mockAutoCollect,
       setAutoCollectDependencies: mockAutoCollect,
@@ -137,15 +136,18 @@ describe('TelemetryService', () => {
       setAutoCollectPerformance: mockAutoCollect,
       setAutoCollectRequests: mockAutoCollect,
     };
-    const mockAITrackEvent = jest.fn((_name, _properties) => null);
+    const mockAITrackEvent = jest.fn(() => null);
     (TelemetryService as any)._client = { trackEvent: mockAITrackEvent };
 
     TelemetryService.trackEvent('someEvent', { some: 'property' });
     expect(mockStartup).toHaveBeenCalled;
     expect(mockAITrackEvent).toHaveBeenCalledWith({
       name: 'someEvent',
-      properties: { some: 'property' },
+      properties: {
+        some: 'property',
+        toolName: 'bf-emulator',
+      },
     });
+    global['__JEST_ENV__'] = true;
   });
-  */
 });

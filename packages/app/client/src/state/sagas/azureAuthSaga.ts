@@ -74,10 +74,12 @@ export class AzureAuthSaga {
           PersistAzureLoginChanged,
           persistLogin
         );
-        AzureAuthSaga.commandService.remoteCall(TrackEvent, 'signIn_success').catch(_e => void 0);
+        AzureAuthSaga.commandService
+          .remoteCall(TrackEvent, 'azure_signIn', { persistLogin: !!persistLogin, success: true })
+          .catch(_e => void 0);
       } else {
         yield DialogService.showDialog(action.payload.loginFailedDialog);
-        AzureAuthSaga.commandService.remoteCall(TrackEvent, 'signIn_failure').catch(_e => void 0);
+        AzureAuthSaga.commandService.remoteCall(TrackEvent, 'azure_signIn', { success: false }).catch(_e => void 0);
       }
       yield put(azureArmTokenDataChanged(azureAuth.access_token));
       return azureAuth;

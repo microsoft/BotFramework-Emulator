@@ -36,6 +36,7 @@ import { Command } from '@bfemulator/sdk-shared';
 
 import { store } from '../state/store';
 import { Emulator } from '../emulator';
+import { TelemetryService } from '../telemetry';
 
 const Commands = SharedConstants.Commands.Ngrok;
 
@@ -48,6 +49,7 @@ export class NgrokCommands {
     try {
       await emulator.ngrok.recycle();
       emulator.ngrok.broadcastNgrokReconnected();
+      TelemetryService.trackEvent('ngrok_reconnect');
     } catch (e) {
       throw new Error(`There was an error while trying to reconnect ngrok: ${e}`);
     }

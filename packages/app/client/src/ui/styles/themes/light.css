@@ -55,7 +55,9 @@ html {
 
   /* suggested actions */
   --webchat-sa-bg: var(--webchat-bubble-bg);
-  --webchat-sa-border: none;
+  --webchat-sa-border-color: transparent;
+  --webchat-sa-border-style: solid;
+  --webchat-sa-border-width: 0;
   --webchat-sa-text: #3794FF;
 
   /* bot state button */

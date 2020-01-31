@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Added
 - [client/main] Added Ngrok Status Viewer in PR [2032](https://github.com/microsoft/BotFramework-Emulator/pull/2032)
 - [client/main] Changed conversation infrastructure to use Web Sockets to communicate with Web Chat in PR [2034](https://github.com/microsoft/BotFramework-Emulator/pull/2034)
+- [client/main] Added new telemetry events and properties in PR [2063](https://github.com/microsoft/BotFramework-Emulator/pull/2063)
 
 ## Fixed
 - [client] Hid services pane by default in PR [2059](https://github.com/microsoft/BotFramework-Emulator/pull/2059)
@@ -16,6 +17,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [client] Fixed an issue where trying to add a QnA KB manually after signing into Azure was causing the app to crash in PR [2066](https://github.com/microsoft/BotFramework-Emulator/pull/2066)
 - [client] Removed buble background on attachments [2067](https://github.com/microsoft/BotFramework-Emulator/pull/2067)
 - [client] Fixed an issue where the themes menu was empty on Windows & Linux in PR [2069](https://github.com/microsoft/BotFramework-Emulator/pull/2069)
+- [client] Fixed Web Chat suggestedActionBorder deprecation warning in PR [2070](https://github.com/microsoft/BotFramework-Emulator/pull/2070)
+
+- [client] Fixed an issue where pressing enter opens the Azure government website instead of connecting to the bot  [2073](https://github.com/microsoft/BotFramework-Emulator/pull/2073)
 
 ## Removed
 - [client/main] Removed legacy payments code in PR [2058](https://github.com/microsoft/BotFramework-Emulator/pull/2058)
