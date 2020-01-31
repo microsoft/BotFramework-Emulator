@@ -31,14 +31,21 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { BotInfo, isLinux, isMac, isWindows, SharedConstants, UpdateStatus } from '@bfemulator/app-shared';
+import {
+  BotInfo,
+  isLinux,
+  isMac,
+  isWindows,
+  rememberTheme,
+  SharedConstants,
+  UpdateStatus,
+} from '@bfemulator/app-shared';
 import { CommandServiceImpl, CommandServiceInstance, ConversationService } from '@bfemulator/sdk-shared';
 import { app, clipboard, Menu, MenuItem, MenuItemConstructorOptions, shell } from 'electron';
 
 import { AppUpdater } from './appUpdater';
 import { BotHelpers } from './botHelpers';
 import { Emulator } from './emulator';
-import { rememberTheme } from './state/actions/windowStateActions';
 import { TelemetryService } from './telemetry';
 import { store } from './state';
 import { getLocalhostServiceUrl } from './utils/getLocalhostServiceUrl';

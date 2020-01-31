@@ -32,12 +32,11 @@
 //
 
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
-import { SharedConstants, UpdateStatus } from '@bfemulator/app-shared';
+import { setFrameworkSettings, setUpdateStatus, SharedConstants, UpdateStatus } from '@bfemulator/app-shared';
 
 import { AppUpdater } from './appUpdater';
 import { TelemetryService } from './telemetry';
 import { AppMenuBuilder } from './appMenuBuilder';
-import { setFrameworkSettings, setUpdateStatus } from './state';
 
 let mockAutoUpdater: any = {
   quitAndInstall: null,

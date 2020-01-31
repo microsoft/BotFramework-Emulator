@@ -32,12 +32,13 @@
 //
 
 export * from './botTypes';
+export * from './clientAwareSettings';
 export * from './commandLineArgsTypes';
 export * from './contextMenuCoordinates';
 export * from './conversationTypes';
 export * from './fileTypes';
+export * from './luisTypes';
 export * from './notificationTypes';
+export * from './reactComponentClass';
 export * from './responseTypes';
 export * from './serverSettingsTypes';
-export * from './luisTypes';
-export * from './clientAwareSettings';

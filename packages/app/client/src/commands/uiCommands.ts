@@ -31,23 +31,26 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { newNotification, SharedConstants } from '@bfemulator/app-shared';
-import { Command, CommandServiceImpl, CommandServiceInstance, StartConversationParams } from '@bfemulator/sdk-shared';
+import {
+  azureArmTokenDataChanged,
+  beginAdd,
+  beginAzureAuthWorkflow,
+  invalidateArmToken,
+  newNotification,
+  open as openDocument,
+  select as selectNavBar,
+  switchTheme,
+  updateProgressIndicator,
+  AzureAuthState,
+  ProgressIndicatorPayload,
+  SharedConstants,
+} from '@bfemulator/app-shared';
+import { Command, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 import { ServiceTypes } from 'botframework-config/lib/schema';
 import { ComponentClass } from 'react';
 
 import * as Constants from '../constants';
-import {
-  azureArmTokenDataChanged,
-  beginAzureAuthWorkflow,
-  invalidateArmToken,
-} from '../state/actions/azureAuthActions';
-import * as EditorActions from '../state/actions/editorActions';
-import * as NavBarActions from '../state/actions/navBarActions';
-import { ProgressIndicatorPayload, updateProgressIndicator } from '../state/actions/progressIndicatorActions';
-import { switchTheme } from '../state/actions/themeActions';
 import { showMarkdownPage, showWelcomePage } from '../state/helpers/editorHelpers';
-import { AzureAuthState } from '../state/reducers/azureAuth';
 import { store } from '../state/store';
 import {
   AzureLoginFailedDialogContainer,
@@ -64,8 +67,6 @@ import {
   UpdateUnavailableDialogContainer,
   DataCollectionDialogContainer,
 } from '../ui/dialogs';
-import { openBotViaUrlAction } from '../state/actions/botActions';
-import { beginAdd } from '../state/actions/notificationActions';
 import { OpenBotDialogProps } from '../ui/dialogs/openBotDialog/openBotDialog';
 
 const { UI, Telemetry } = SharedConstants.Commands;
@@ -138,7 +139,7 @@ export class UiCommands {
   // Switches navbar tab selection
   @Command(UI.SwitchNavBarTab)
   protected switchNavBar(tabName: string): void {
-    store.dispatch(NavBarActions.select(tabName));
+    store.dispatch(selectNavBar(tabName));
   }
 
   // ---------------------------------------------------------------------------
@@ -147,7 +148,7 @@ export class UiCommands {
   protected showAppSettings(): void {
     const { CONTENT_TYPE_APP_SETTINGS, DOCUMENT_ID_APP_SETTINGS } = Constants;
     store.dispatch(
-      EditorActions.open({
+      openDocument({
         contentType: CONTENT_TYPE_APP_SETTINGS,
         documentId: DOCUMENT_ID_APP_SETTINGS,
         isGlobal: true,

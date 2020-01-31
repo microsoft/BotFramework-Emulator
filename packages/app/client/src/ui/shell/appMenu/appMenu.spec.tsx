@@ -31,11 +31,17 @@ import { mount, ReactWrapper } from 'enzyme';
 import { createStore, combineReducers } from 'redux';
 import { Provider } from 'react-redux';
 import { MenuItem } from '@bfemulator/ui-react';
-import { SharedConstants, UpdateStatus } from '@bfemulator/app-shared';
-
-import { bot, editor, azureAuthSettings, update, windowState } from '../../../state/reducers';
-import { executeCommand } from '../../../state/actions/commandActions';
-import { rememberTheme } from '../../../state';
+import {
+  azureAuthSettings,
+  bot,
+  editor,
+  executeCommand,
+  rememberTheme,
+  update,
+  windowState,
+  SharedConstants,
+  UpdateStatus,
+} from '@bfemulator/app-shared';
 
 import { AppMenuContainer } from './appMenuContainer';
 import { AppMenu, AppMenuProps } from './appMenu';
@@ -106,11 +112,25 @@ describe('<AppMenu />', () => {
       ...instance.props,
       activeBot: undefined,
       activeDocumentType: SharedConstants.ContentTypes.CONTENT_TYPE_WELCOME_PAGE,
+      availableThemes: [
+        { name: 'Light', href: '' },
+        { name: 'Dark', href: '' },
+        { name: 'High contrast', href: '' },
+      ],
+      currentTheme: 'Light',
+      recentBots: [
+        { displayName: 'bot1', path: 'path1' },
+        { displayName: 'bot2', path: 'path2' },
+        { displayName: 'bot3', path: 'path3' },
+        { displayName: 'bot4', path: 'path4' },
+      ],
     };
     const menuTemplate = (instance as any).updateMenu(AppMenuTemplate.template);
 
     expect(Object.keys(menuTemplate)).toHaveLength(6);
+    expect(menuTemplate['file'][3].items.length).toBe(4); // recent bots menu should be populated
     expect(menuTemplate['file'][7].disabled).toBe(true); // "Close tab" should be disabled
+    expect(menuTemplate['file'][14].items.length).toBe(3); // themes menu should be populated
     expect(menuTemplate['conversation'][0].disabled).toBe(true); // send activity menu should be disabled on welcome page
   });
 

@@ -31,12 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { SharedConstants } from '@bfemulator/app-shared';
+import { executeCommand, SharedConstants } from '@bfemulator/app-shared';
 import { connect } from 'react-redux';
 
 import { DialogService } from '../service';
 import { store } from '../../../state/store';
-import { executeCommand } from '../../../state/actions/commandActions';
 
 import { AzureLoginPromptDialog, AzureLoginPromptDialogProps } from './azureLoginPromptDialog';
 

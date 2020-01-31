@@ -32,12 +32,10 @@
 //
 
 import { connect } from 'react-redux';
-import { SharedConstants } from '@bfemulator/app-shared';
+import { executeCommand, setHighlightedObjects, setInspectorObjects, SharedConstants } from '@bfemulator/app-shared';
 import { Activity } from 'botframework-schema';
 
 import { RootState } from '../../../../../state/store';
-import { executeCommand } from '../../../../../state/actions/commandActions';
-import { setHighlightedObjects, setInspectorObjects } from '../../../../../state/actions/chatActions';
 import { ariaAlertService } from '../../../../a11y';
 
 import { Inspector, InspectorProps } from './inspector';

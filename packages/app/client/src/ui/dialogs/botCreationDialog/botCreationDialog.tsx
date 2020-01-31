@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { newNotification, SharedConstants } from '@bfemulator/app-shared';
+import { beginAdd, executeCommand, newNotification, SharedConstants } from '@bfemulator/app-shared';
 import { BotConfigWithPath, BotConfigWithPathImpl, uniqueId } from '@bfemulator/sdk-shared';
 import {
   Checkbox,
@@ -51,13 +51,11 @@ import { ChangeEvent } from 'react';
 import * as React from 'react';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
-import { beginAdd } from '../../../state/actions/notificationActions';
 import { store } from '../../../state/store';
 import { generateBotSecret, debounce } from '../../../utils';
 import { ActiveBotHelper } from '../../helpers/activeBotHelper';
 import { DialogService } from '../service';
 import { ariaAlertService } from '../../a11y';
-import { executeCommand } from '../../../state/actions/commandActions';
 import * as dialogStyles from '../dialogStyles.scss';
 
 import * as styles from './botCreationDialog.scss';

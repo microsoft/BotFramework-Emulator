@@ -35,8 +35,7 @@ import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 import * as React from 'react';
 import { mount } from 'enzyme';
-
-import { navBar } from '../../../state/reducers/navBar';
+import { navBar } from '@bfemulator/app-shared';
 
 import { UpdateUnavailableDialogContainer } from './updateUnavailableDialogContainer';
 import { UpdateUnavailableDialog } from './updateUnavailableDialog';

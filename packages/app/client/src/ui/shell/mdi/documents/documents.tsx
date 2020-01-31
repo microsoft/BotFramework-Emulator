@@ -32,8 +32,8 @@
 //
 
 import * as React from 'react';
+import { Document } from '@bfemulator/app-shared';
 
-import { Document } from '../../../../state/reducers/editor';
 import { EditorFactory } from '../../../editor';
 import { TabbedDocument } from '../tabbedDocument';
 

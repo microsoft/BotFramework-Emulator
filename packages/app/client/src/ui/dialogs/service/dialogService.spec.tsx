@@ -34,10 +34,7 @@
 import * as React from 'react';
 import { Component } from 'react';
 import { combineReducers, createStore } from 'redux';
-
-import { bot } from '../../../state/reducers/bot';
-import { resources } from '../../../state/reducers/resources';
-import * as DialogActions from '../../../state/actions/dialogActions';
+import { bot, resources, setShowing as setDialogShowing } from '@bfemulator/app-shared';
 
 import { DialogService } from './dialogService';
 
@@ -73,6 +70,6 @@ describe('The DialogService', () => {
     const result = await DialogService.showDialog(mockComponent);
     expect(renderedToElementEvent).not.toBeUndefined();
     expect(result).toBe(1);
-    expect(dispatchSpy).toHaveBeenCalledWith(DialogActions.setShowing(true));
+    expect(dispatchSpy).toHaveBeenCalledWith(setDialogShowing(true));
   });
 });

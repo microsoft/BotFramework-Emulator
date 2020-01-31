@@ -30,22 +30,22 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { newNotification, SharedConstants } from '@bfemulator/app-shared';
+import {
+  beginAdd,
+  editor,
+  framework,
+  newNotification,
+  open as openEditorDocument,
+  saveFrameworkSettings as saveFrameworkSettingsAction,
+  setDirtyFlag,
+  setFrameworkSettings,
+  FrameworkActionType,
+  SharedConstants,
+} from '@bfemulator/app-shared';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import sagaMiddlewareFactory from 'redux-saga';
-import { call, put, select, takeEvery } from 'redux-saga/effects';
+import { put, select, takeEvery } from 'redux-saga/effects';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
-
-import { CONTENT_TYPE_APP_SETTINGS, DOCUMENT_ID_APP_SETTINGS } from '../../constants';
-import * as EditorActions from '../actions/editorActions';
-import {
-  FrameworkActionType,
-  saveFrameworkSettings as saveFrameworkSettingsAction,
-  setFrameworkSettings,
-} from '../actions/frameworkSettingsActions';
-import { beginAdd } from '../actions/notificationActions';
-import { editor } from '../reducers/editor';
-import { framework } from '../reducers/framework';
 
 import { activeDocumentSelector, frameworkSettingsSagas, FrameworkSettingsSagas } from './frameworkSettingsSagas';
 
@@ -85,9 +85,9 @@ jest.mock('../store', () => ({
 }));
 
 mockStore.dispatch(
-  EditorActions.open({
-    contentType: CONTENT_TYPE_APP_SETTINGS,
-    documentId: DOCUMENT_ID_APP_SETTINGS,
+  openEditorDocument({
+    contentType: SharedConstants.ContentTypes.CONTENT_TYPE_APP_SETTINGS,
+    documentId: SharedConstants.DocumentIds.DOCUMENT_ID_APP_SETTINGS,
     isGlobal: true,
     meta: null,
   })
@@ -114,7 +114,7 @@ describe('The frameworkSettingsSagas', () => {
     expect(selector).toEqual(select(activeDocumentSelector));
     const value = selector.SELECT.selector(mockStore.getState());
     // put the dirty state to false
-    expect(it.next(value).value).toEqual(put(EditorActions.setDirtyFlag(value.documentId, false)));
+    expect(it.next(value).value).toEqual(put(setDirtyFlag(value.documentId, false)));
     expect(it.next().value).toEqual(put(setFrameworkSettings({})));
     expect(it.next().done).toBe(true);
   });

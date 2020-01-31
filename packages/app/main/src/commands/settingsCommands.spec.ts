@@ -31,10 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { SharedConstants } from '@bfemulator/app-shared';
+import { addSavedBotUrl, SharedConstants } from '@bfemulator/app-shared';
 import { CommandRegistry, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
-
-import { addSavedBotUrl } from '../state/actions/savedBotUrlsActions';
 
 import { SettingsCommands } from './settingsCommands';
 

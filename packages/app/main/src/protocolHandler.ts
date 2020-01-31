@@ -33,7 +33,13 @@
 
 import * as Path from 'path';
 
-import { FrameworkSettings, newNotification, SharedConstants } from '@bfemulator/app-shared';
+import {
+  openBotViaUrlAction,
+  openTranscript,
+  FrameworkSettings,
+  newNotification,
+  SharedConstants,
+} from '@bfemulator/app-shared';
 import got from 'got';
 import { IEndpointService } from 'botframework-config/lib/schema';
 import {
@@ -49,8 +55,6 @@ import { Emulator } from './emulator';
 import { getSettings, store } from './state/store';
 import { sendNotificationToClient } from './utils/sendNotificationToClient';
 import { TelemetryService } from './telemetry';
-import { openTranscript } from './state/actions/chatActions';
-import { openBotViaUrlAction } from './state';
 
 enum ProtocolDomains {
   livechat,

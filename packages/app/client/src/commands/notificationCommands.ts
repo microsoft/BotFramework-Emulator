@@ -31,10 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Notification, SharedConstants } from '@bfemulator/app-shared';
+import { beginAdd, beginRemove, Notification, SharedConstants } from '@bfemulator/app-shared';
 import { Command } from '@bfemulator/sdk-shared';
 
-import * as NotificationActions from '../state/actions/notificationActions';
 import { store } from '../state/store';
 import { getGlobal } from '../utils';
 
@@ -50,13 +49,13 @@ export class NotificationCommands {
       notification = getGlobal(SharedConstants.NOTIFICATION_FROM_MAIN);
     }
 
-    store.dispatch(NotificationActions.beginAdd(notification));
+    store.dispatch(beginAdd(notification));
   }
 
   // ---------------------------------------------------------------------------
   // Removes a notification from the store / notification manager
   @Command(Commands.Remove)
   protected removeNotificationFromStore(id: string) {
-    store.dispatch(NotificationActions.beginRemove(id));
+    store.dispatch(beginRemove(id));
   }
 }

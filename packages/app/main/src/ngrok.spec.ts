@@ -30,19 +30,21 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 import { join } from 'path';
 
-import './fetchProxy';
+import {
+  ngrokTunnel,
+  updateTunnelError,
+  NgrokTunnelAction,
+  StatusCheckOnTunnel,
+  TunnelStatus,
+} from '@bfemulator/app-shared';
 import { createStore, combineReducers } from 'redux';
 
+import './fetchProxy';
+
 import { intervals, NgrokInstance } from './ngrok';
-import {
-  TunnelStatus,
-  StatusCheckOnTunnel,
-  NgrokTunnelAction,
-  updateTunnelError,
-} from './state/actions/ngrokTunnelActions';
-import { ngrokTunnel } from './state/reducers/ngrokTunnel';
 import { intervalForEachPing } from './state/sagas/ngrokSagas';
 
 const mockExistsSync = jest.fn(() => true);

@@ -31,10 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { SharedConstants } from '@bfemulator/app-shared';
+import { appendToLog, SharedConstants } from '@bfemulator/app-shared';
 import { Command, LogEntry } from '@bfemulator/sdk-shared';
 
-import * as ChatActions from '../../state/actions/chatActions';
 import * as chatHelpers from '../../state/helpers/chatHelpers';
 import { store } from '../../state/store';
 
@@ -48,7 +47,7 @@ class LogService {
   }
 
   public logToDocument(documentId: string, entry: LogEntry): void {
-    store.dispatch(ChatActions.appendToLog(documentId, entry));
+    store.dispatch(appendToLog(documentId, entry));
   }
 
   @Command(SharedConstants.Commands.Emulator.AppendToLog)

@@ -30,18 +30,19 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { SharedConstants } from '@bfemulator/app-shared';
+
+import {
+  azureArmTokenDataChanged,
+  AzureAuthAction,
+  AzureAuthState,
+  AzureAuthWorkflow,
+  SharedConstants,
+  AZURE_BEGIN_AUTH_WORKFLOW,
+} from '@bfemulator/app-shared';
 import { call, ForkEffect, put, select, takeEvery } from 'redux-saga/effects';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { DialogService } from '../../ui/dialogs';
-import {
-  AZURE_BEGIN_AUTH_WORKFLOW,
-  azureArmTokenDataChanged,
-  AzureAuthAction,
-  AzureAuthWorkflow,
-} from '../actions/azureAuthActions';
-import { AzureAuthState } from '../reducers/azureAuth';
 import { RootState } from '../store';
 
 const getArmTokenFromState = (state: RootState) => state.azureAuth;

@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { SharedConstants } from '@bfemulator/app-shared';
+import { azureAuth, bot, executeCommand, SharedConstants } from '@bfemulator/app-shared';
 import { PrimaryButton } from '@bfemulator/ui-react';
 import { LuisService } from 'botframework-config/lib/models';
 import { ServiceTypes } from 'botframework-config/lib/schema';
@@ -40,10 +40,7 @@ import * as React from 'react';
 import { Provider } from 'react-redux';
 import { combineReducers, createStore } from 'redux';
 
-import { azureAuth } from '../../../../../state/reducers/azureAuth';
-import { bot } from '../../../../../state/reducers/bot';
 import { DialogService } from '../../../../dialogs/service';
-import { executeCommand } from '../../../../../state/actions/commandActions';
 
 import { ConnectedServiceEditor } from './connectedServiceEditor';
 import { ConnectedServiceEditorContainer } from './connectedServiceEditorContainer';

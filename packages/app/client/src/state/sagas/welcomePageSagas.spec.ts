@@ -30,14 +30,10 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { SharedConstants } from '@bfemulator/app-shared';
+import { bot, notification, openContextMenuForBot, SharedConstants } from '@bfemulator/app-shared';
 import sagaMiddlewareFactory from 'redux-saga';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
-
-import { openContextMenuForBot } from '../actions/welcomePageActions';
-import { bot } from '../reducers/bot';
-import notification from '../reducers/notification';
 
 import { notificationSagas } from './notificationSagas';
 import { welcomePageSagas } from './welcomePageSagas';

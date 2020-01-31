@@ -30,24 +30,29 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { SharedConstants } from '@bfemulator/app-shared';
+
 import { LuisService } from 'botframework-config/lib/models';
 import { mount } from 'enzyme';
 import * as React from 'react';
 import { Provider } from 'react-redux';
 import { combineReducers, createStore, applyMiddleware } from 'redux';
 import sagaMiddlewareFactory from 'redux-saga';
-
-import { load, setActive } from '../../../../state/actions/botActions';
 import {
+  bot,
+  explorer,
+  executeCommand,
+  load,
   openAddServiceContextMenu,
   openContextMenuForConnectedService,
   openServiceDeepLink,
   openSortContextMenu,
+  setActive,
+  CommandAction,
+  CommandActionPayload,
+  SharedConstants,
   OPEN_ADD_CONNECTED_SERVICE_CONTEXT_MENU,
-} from '../../../../state/actions/connectedServiceActions';
-import { bot } from '../../../../state/reducers/bot';
-import { explorer } from '../../../../state/reducers/explorer';
+} from '@bfemulator/app-shared';
+
 import {
   AzureLoginFailedDialogContainer,
   AzureLoginSuccessDialogContainer,
@@ -55,7 +60,6 @@ import {
   GetStartedWithCSDialogContainer,
   ProgressIndicatorContainer,
 } from '../../../dialogs';
-import { executeCommand, CommandAction, CommandActionPayload } from '../../../../state/actions/commandActions';
 import { servicesExplorerSagas } from '../../../../state/sagas/servicesExplorerSagas';
 
 import { ConnectedServiceEditorContainer } from './connectedServiceEditor';

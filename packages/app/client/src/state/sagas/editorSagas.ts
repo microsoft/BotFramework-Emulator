@@ -31,11 +31,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { isChatFile, isTranscriptFile, SharedConstants } from '@bfemulator/app-shared';
+import {
+  isChatFile,
+  isTranscriptFile,
+  removeDocPendingChange,
+  EditorActions,
+  SharedConstants,
+} from '@bfemulator/app-shared';
 import { call, ForkEffect, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
-
-import { EditorActions, removeDocPendingChange } from '../actions/editorActions';
 
 import { editorSelector, SharedSagas } from './sharedSagas';
 

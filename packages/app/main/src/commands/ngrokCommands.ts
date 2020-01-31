@@ -31,11 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { SharedConstants } from '@bfemulator/app-shared';
+import { open as openInEditor, SharedConstants } from '@bfemulator/app-shared';
 import { Command } from '@bfemulator/sdk-shared';
 
 import { store } from '../state/store';
-import { open as OpenInEditor } from '../state/actions/editorActions';
 import { Emulator } from '../emulator';
 
 const Commands = SharedConstants.Commands.Ngrok;
@@ -67,7 +66,7 @@ export class NgrokCommands {
   @Command(Commands.OpenStatusViewer)
   protected openStatusViewer(makeActiveByDefault: boolean = true) {
     store.dispatch(
-      OpenInEditor({
+      openInEditor({
         contentType: SharedConstants.ContentTypes.CONTENT_TYPE_NGROK_DEBUGGER,
         documentId: SharedConstants.DocumentIds.DOCUMENT_ID_NGROK_DEBUGGER,
         isGlobal: true,

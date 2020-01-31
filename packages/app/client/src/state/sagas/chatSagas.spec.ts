@@ -34,20 +34,22 @@
 import { call, put, select, takeEvery } from 'redux-saga/effects';
 import { CommandServiceImpl, CommandServiceInstance, ConversationService } from '@bfemulator/sdk-shared';
 import * as sdkSharedUtils from '@bfemulator/sdk-shared/build/utils/misc';
-import { SharedConstants } from '@bfemulator/app-shared';
-import { createCognitiveServicesSpeechServicesPonyfillFactory } from 'botframework-webchat';
-
 import {
-  newChat,
-  ChatActions,
+  clearLog,
+  closeConversation,
   closeDocument,
+  newChat,
+  open as openDocument,
+  openTranscript,
+  restartConversation,
+  setInspectorObjects,
   webChatStoreUpdated,
   webSpeechFactoryUpdated,
   updatePendingSpeechTokenRetrieval,
-  clearLog,
-  setInspectorObjects,
-} from '../actions/chatActions';
-import { open as openDocument } from '../actions/editorActions';
+  ChatActions,
+  SharedConstants,
+} from '@bfemulator/app-shared';
+import { createCognitiveServicesSpeechServicesPonyfillFactory } from 'botframework-webchat';
 
 import {
   chatSagas,

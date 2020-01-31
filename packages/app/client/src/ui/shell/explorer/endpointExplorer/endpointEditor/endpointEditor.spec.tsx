@@ -31,15 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import * as React from 'react';
-import { SharedConstants } from '@bfemulator/app-shared';
+import { bot, executeCommand, load, setActive, SharedConstants } from '@bfemulator/app-shared';
 import { Provider } from 'react-redux';
 import { mount } from 'enzyme';
 import { combineReducers, createStore } from 'redux';
 
-import { bot } from '../../../../../state/reducers/bot';
 import { DialogService } from '../../../../dialogs/service';
-import { load, setActive } from '../../../../../state/actions/botActions';
-import { executeCommand } from '../../../../../state/actions/commandActions';
 
 import { EndpointEditor } from './endpointEditor';
 import { EndpointEditorContainer } from './endpointEditorContainer';

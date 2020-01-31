@@ -30,16 +30,11 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { SharedConstants } from '@bfemulator/app-shared';
+import { azureAuth, bot, clientAwareSettings, executeCommand, SharedConstants } from '@bfemulator/app-shared';
 import * as React from 'react';
 import { Provider } from 'react-redux';
 import { mount } from 'enzyme';
 import { combineReducers, createStore } from 'redux';
-
-import { azureAuth } from '../../../state/reducers/azureAuth';
-import { clientAwareSettings } from '../../../state/reducers/clientAwareSettings';
-import { bot } from '../../../state/reducers/bot';
-import { executeCommand } from '../../../state/actions/commandActions';
 
 import { AzureLoginPromptDialogContainer } from './azureLoginPromptDialogContainer';
 import { AzureLoginPromptDialog } from './azureLoginPromptDialog';

@@ -33,8 +33,8 @@
 
 import React from 'react';
 import { Column, Row, LinkButton, MediumHeader, SmallHeader } from '@bfemulator/ui-react';
+import { TunnelCheckTimeInterval, TunnelError, TunnelStatus } from '@bfemulator/app-shared';
 
-import { TunnelError, TunnelStatus, TunnelCheckTimeInterval } from '../../../state/actions/ngrokTunnelActions';
 import { GenericDocument } from '../../layout';
 
 import { NgrokErrorHandler } from './ngrokErrorHandler';

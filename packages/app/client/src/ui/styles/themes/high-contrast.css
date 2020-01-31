@@ -294,6 +294,10 @@ html {
   --ngrok-active: #47B07F;
   --ngrok-error: #BE1100;
   --ngrok-error-outline: #F5B1B1;
+  --ngrok-text-color: #000000;
+
+  /* Webchat style overrides */
+  --bubble-text-color: #000000;
 }
 
 .dialog .ms-Button-label {

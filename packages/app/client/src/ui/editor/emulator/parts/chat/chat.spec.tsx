@@ -36,24 +36,30 @@ import { mount, ReactWrapper, shallow, ShallowWrapper } from 'enzyme';
 import { Provider } from 'react-redux';
 import ReactWebChat, { createDirectLine, createStyleSet } from 'botframework-webchat';
 import { ActivityTypes } from 'botframework-schema';
-import { ValueTypes } from '@bfemulator/app-shared';
-import { combineReducers, createStore } from 'redux';
-import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
-
-import { bot } from '../../../../../state/reducers/bot';
-import { chat } from '../../../../../state/reducers/chat';
-import { editor } from '../../../../../state/reducers/editor';
-import { clientAwareSettings } from '../../../../../state/reducers/clientAwareSettings';
-import { BotCommands } from '../../../../../commands/botCommands';
 import {
+  bot,
+  chat,
+  clientAwareSettings,
+  editor,
   setInspectorObjects,
   showContextMenuForActivity,
   setHighlightedObjects,
-} from '../../../../../state/actions/chatActions';
+  ValueTypes,
+} from '@bfemulator/app-shared';
+import { combineReducers, createStore } from 'redux';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
+
+import { BotCommands } from '../../../../../commands/botCommands';
 
 import webChatStyleOptions from './webChatTheme';
 import { ChatContainer } from './chatContainer';
 import { ChatProps, Chat } from './chat';
+
+jest.mock('./chat.scss', () => ({
+  get bubbleContentColor() {
+    return '#fff';
+  },
+}));
 
 jest.mock('electron', () => ({
   ipcMain: new Proxy(
@@ -154,6 +160,20 @@ describe('<ChatContainer />', () => {
         ...styleSet.uploadButton,
         padding: '1px',
       };
+
+      styleSet.uploadAttachment = {
+        ...styleSet.uploadAttachment,
+        '& > .name, & > .size': {
+          color: '#fff',
+        },
+      };
+
+      const mutatedDownloadAttachment = {
+        ...styleSet.downloadAttachment,
+      };
+      mutatedDownloadAttachment['& > a']['& > .details']['& > .name'].color = '#fff';
+      mutatedDownloadAttachment['& > a']['& > .icon'].fill = '#fff';
+      styleSet.downloadAttachment = mutatedDownloadAttachment;
 
       expect(webChat.exists()).toBe(true);
       const wcProps = webChat.props();

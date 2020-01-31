@@ -30,10 +30,28 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 import * as Electron from 'electron';
 import { MenuItemConstructorOptions } from 'electron';
 import { Activity } from 'botframework-schema';
-import { SharedConstants, ValueTypes } from '@bfemulator/app-shared';
+import {
+  clearLog,
+  closeDocument,
+  newChat,
+  open as openDocument,
+  setInspectorObjects,
+  updatePendingSpeechTokenRetrieval,
+  webChatStoreUpdated,
+  webSpeechFactoryUpdated,
+  ChatAction,
+  ChatActions,
+  ChatDocument,
+  DocumentIdPayload,
+  OpenTranscriptPayload,
+  RestartConversationPayload,
+  SharedConstants,
+  ValueTypes,
+} from '@bfemulator/app-shared';
 import {
   CommandServiceImpl,
   CommandServiceInstance,
@@ -48,23 +66,7 @@ import { createStore as createWebChatStore } from 'botframework-webchat-core';
 import { call, ForkEffect, put, select, takeEvery } from 'redux-saga/effects';
 import { encode } from 'base64url';
 
-import {
-  ChatAction,
-  ChatActions,
-  closeDocument,
-  DocumentIdPayload,
-  updatePendingSpeechTokenRetrieval,
-  webChatStoreUpdated,
-  webSpeechFactoryUpdated,
-  RestartConversationPayload,
-  newChat,
-  clearLog,
-  setInspectorObjects,
-  OpenTranscriptPayload,
-} from '../actions/chatActions';
-import { open as openDocument } from '../actions/editorActions';
 import { RootState } from '../store';
-import { ChatDocument } from '../reducers/chat';
 
 export const getConversationIdFromDocumentId = (state: RootState, documentId: string) => {
   return (state.chat.chats[documentId] || { conversationId: null }).conversationId;

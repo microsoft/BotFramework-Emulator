@@ -55,7 +55,7 @@ jest.mock('../../../editor', () => ({
     return mockEditorFactory;
   },
 }));
-jest.mock('../../../../state/reducers/editor', () => ({}));
+
 jest.mock('../tabbedDocument', () => ({
   get TabbedDocument() {
     return mockTabbedDocument;

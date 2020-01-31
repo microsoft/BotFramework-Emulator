@@ -32,14 +32,15 @@
 //
 
 import { connect } from 'react-redux';
-import { SharedConstants } from '@bfemulator/app-shared';
+import {
+  executeCommand,
+  open as openEditorDocument,
+  select as selectNavBar,
+  showExplorer,
+  SharedConstants,
+} from '@bfemulator/app-shared';
 
-import * as Constants from '../../../constants';
-import * as EditorActions from '../../../state/actions/editorActions';
-import * as ExplorerActions from '../../../state/actions/explorerActions';
-import * as NavBarActions from '../../../state/actions/navBarActions';
 import { RootState } from '../../../state/store';
-import { executeCommand } from '../../../state/actions/commandActions';
 
 import { NavBarComponent, NavBarProps } from './navBar';
 
@@ -48,15 +49,14 @@ const mapStateToProps = (state: RootState): NavBarProps => ({
   botIsOpen: !!state.bot.activeBot,
 });
 
-const mapDispatchToProps = (dispatch): Partial<NavBarProps> => ({
-  showExplorer: show => dispatch(ExplorerActions.showExplorer(show)),
-  navBarSelectionChanged: newSelection => dispatch(NavBarActions.select(newSelection)),
+const mapDispatchToProps = (dispatch): NavBarProps => ({
+  showExplorer: show => dispatch(showExplorer(show)),
+  navBarSelectionChanged: newSelection => dispatch(selectNavBar(newSelection)),
   openEmulatorSettings: () => {
-    const { CONTENT_TYPE_APP_SETTINGS, DOCUMENT_ID_APP_SETTINGS } = Constants;
     dispatch(
-      EditorActions.open({
-        contentType: CONTENT_TYPE_APP_SETTINGS,
-        documentId: DOCUMENT_ID_APP_SETTINGS,
+      openEditorDocument({
+        contentType: SharedConstants.ContentTypes.CONTENT_TYPE_APP_SETTINGS,
+        documentId: SharedConstants.DocumentIds.DOCUMENT_ID_APP_SETTINGS,
         isGlobal: true,
         meta: null,
       })

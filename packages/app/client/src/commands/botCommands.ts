@@ -31,23 +31,24 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { getBotDisplayName, SharedConstants } from '@bfemulator/app-shared';
-import { BotConfigWithPath, Command, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
-import { IFileService } from 'botframework-config/lib/schema';
-import { newNotification } from '@bfemulator/app-shared';
-
-import * as BotActions from '../state/actions/botActions';
-import * as FileActions from '../state/actions/fileActions';
 import {
+  beginAdd,
   chatFilesUpdated,
   chatsDirectoryUpdated,
+  getBotDisplayName,
+  newNotification,
   transcriptDirectoryUpdated,
   transcriptsUpdated,
-} from '../state/actions/resourcesActions';
+  setActive,
+  setRoot,
+  SharedConstants,
+} from '@bfemulator/app-shared';
+import { BotConfigWithPath, Command, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
+import { IFileService } from 'botframework-config/lib/schema';
+
 import { pathExistsInRecentBots } from '../state/helpers/botHelpers';
 import { store } from '../state/store';
 import { ActiveBotHelper } from '../ui/helpers/activeBotHelper';
-import { beginAdd } from '../state/actions/notificationActions';
 
 const Commands = SharedConstants.Commands;
 
@@ -113,8 +114,8 @@ export class BotCommands {
   // Sets a bot as active (called from server-side)
   @Command(Commands.Bot.SetActive)
   protected async setActiveBot(bot: BotConfigWithPath, botDirectory: string) {
-    store.dispatch(BotActions.setActive(bot));
-    store.dispatch(FileActions.setRoot(botDirectory));
+    store.dispatch(setActive(bot));
+    store.dispatch(setRoot(botDirectory));
     await Promise.all([
       this.commandService.remoteCall(Commands.Electron.UpdateFileMenu),
       this.commandService.remoteCall(Commands.Electron.SetTitleBar, getBotDisplayName(bot)),

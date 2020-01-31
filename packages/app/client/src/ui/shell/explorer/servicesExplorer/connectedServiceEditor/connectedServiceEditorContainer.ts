@@ -31,12 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { SharedConstants } from '@bfemulator/app-shared';
+import { executeCommand, SharedConstants } from '@bfemulator/app-shared';
 import { connect } from 'react-redux';
 import { Action } from 'redux';
 
 import { DialogService } from '../../../../dialogs/service';
-import { executeCommand } from '../../../../../state/actions/commandActions';
 
 import { ConnectedServiceEditor } from './connectedServiceEditor';
 

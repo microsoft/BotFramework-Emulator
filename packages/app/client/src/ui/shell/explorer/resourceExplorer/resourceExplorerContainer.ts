@@ -33,13 +33,13 @@
 import { IFileService } from 'botframework-config/lib/schema';
 import { ComponentClass } from 'react';
 import { connect } from 'react-redux';
-
 import {
   openContextMenuForResource,
   openResource,
   openResourcesSettings,
   renameResource,
-} from '../../../../state/actions/resourcesActions';
+} from '@bfemulator/app-shared';
+
 import { RootState } from '../../../../state/store';
 
 import { ResourceExplorer, ResourceExplorerProps } from './resourceExplorer';

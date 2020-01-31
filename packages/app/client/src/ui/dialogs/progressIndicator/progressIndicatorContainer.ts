@@ -33,8 +33,8 @@
 
 import { connect } from 'react-redux';
 import { Action } from 'redux';
+import { cancelCurrentProcess } from '@bfemulator/app-shared';
 
-import { cancelCurrentProcess } from '../../../state/actions/progressIndicatorActions';
 import { RootState } from '../../../state/store';
 import { DialogService } from '../service';
 

@@ -31,14 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { SharedConstants } from '@bfemulator/app-shared';
+import { executeCommand, navBar, SharedConstants } from '@bfemulator/app-shared';
 import * as React from 'react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import { mount } from 'enzyme';
-
-import { navBar } from '../../../state/reducers/navBar';
-import { executeCommand } from '../../../state/actions/commandActions';
 
 import { PostMigrationDialogContainer } from './postMigrationDialogContainer';
 import { PostMigrationDialog } from './postMigrationDialog';

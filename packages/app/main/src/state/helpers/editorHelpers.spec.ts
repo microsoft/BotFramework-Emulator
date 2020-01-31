@@ -32,16 +32,9 @@
 //
 
 import { SharedConstants } from '@bfemulator/app-shared';
+import { open } from '@bfemulator/app-shared/built/state/actions/editorActions';
 
-import { open } from '../actions/editorActions';
-
-import {
-  getOtherTabGroup,
-  getTabGroupForDocument,
-  hasNonGlobalTabs,
-  showWelcomePage,
-  tabGroupHasDocuments,
-} from './editorHelpers';
+import { getTabGroupForDocument, hasNonGlobalTabs, showWelcomePage } from './editorHelpers';
 
 let mockState;
 const mockDispatch = jest.fn(() => null);
@@ -115,11 +108,6 @@ describe('editorHelpers', () => {
     expect(result).toBe(undefined);
   });
 
-  test('getOtherTabGroup', () => {
-    expect(getOtherTabGroup(SharedConstants.EDITOR_KEY_PRIMARY)).toBe(SharedConstants.EDITOR_KEY_SECONDARY);
-    expect(getOtherTabGroup(SharedConstants.EDITOR_KEY_SECONDARY)).toBe(SharedConstants.EDITOR_KEY_PRIMARY);
-  });
-
   test('showWelcomePage', () => {
     showWelcomePage();
 
@@ -130,9 +118,5 @@ describe('editorHelpers', () => {
         isGlobal: true,
       })
     );
-  });
-
-  test('tabGroupHasDocuments', () => {
-    expect(tabGroupHasDocuments({ documents: { doc1: {} } })).toBe(true);
   });
 });

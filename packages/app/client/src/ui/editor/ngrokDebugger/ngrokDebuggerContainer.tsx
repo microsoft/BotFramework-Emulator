@@ -33,9 +33,8 @@
 
 import { connect } from 'react-redux';
 import { Action } from 'redux';
-import { SharedConstants } from '@bfemulator/app-shared';
+import { executeCommand, SharedConstants } from '@bfemulator/app-shared';
 
-import { executeCommand } from '../../../state/actions/commandActions';
 import { RootState } from '../../../state/store';
 
 import { NgrokDebugger, NgrokDebuggerProps } from './ngrokDebugger';

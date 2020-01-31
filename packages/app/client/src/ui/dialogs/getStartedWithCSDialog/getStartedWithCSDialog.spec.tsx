@@ -30,17 +30,14 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { SharedConstants } from '@bfemulator/app-shared';
+import { azureAuth, azureArmTokenDataChanged, executeCommand, SharedConstants } from '@bfemulator/app-shared';
 import { ServiceTypes } from 'botframework-config/lib/schema';
 import { mount } from 'enzyme';
 import * as React from 'react';
 import { Provider } from 'react-redux';
 import { combineReducers, createStore } from 'redux';
 
-import { azureArmTokenDataChanged } from '../../../state/actions/azureAuthActions';
-import { azureAuth } from '../../../state/reducers/azureAuth';
 import { DialogService } from '../service';
-import { executeCommand } from '../../../state/actions/commandActions';
 
 import { GetStartedWithCSDialog } from './getStartedWithCSDialog';
 import { GetStartedWithCSDialogContainer } from './getStartedWithCSDialogContainer';

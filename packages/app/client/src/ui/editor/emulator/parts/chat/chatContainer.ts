@@ -33,15 +33,15 @@
 import { connect } from 'react-redux';
 import { User } from '@bfemulator/sdk-shared';
 import { Activity } from 'botframework-schema';
-import { SharedConstants } from '@bfemulator/app-shared';
-
 import {
+  executeCommand,
   setHighlightedObjects,
   setInspectorObjects,
   showContextMenuForActivity,
-} from '../../../../../state/actions/chatActions';
+  SharedConstants,
+} from '@bfemulator/app-shared';
+
 import { RootState } from '../../../../../state/store';
-import { executeCommand } from '../../../../../state/actions/commandActions';
 
 import { Chat, ChatProps } from './chat';
 

@@ -31,10 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as Constants from '../../constants';
+import { Editor, SharedConstants } from '@bfemulator/app-shared';
+import * as EditorActions from '@bfemulator/app-shared/built/state/actions/editorActions';
+
 import { store } from '../store';
-import * as EditorActions from '../actions/editorActions';
-import { Editor } from '../reducers/editor';
 
 export function hasNonGlobalTabs(tabGroups?: { [editorKey: string]: Editor }): number {
   tabGroups = tabGroups || store.getState().editor.editors;
@@ -64,16 +64,11 @@ export function getTabGroupForDocument(documentId: string, tabGroups?: { [editor
   return undefined;
 }
 
-/** Takes a tab group key and returns the key of the other tab group */
-export function getOtherTabGroup(tabGroup: string): string {
-  return tabGroup === Constants.EDITOR_KEY_PRIMARY ? Constants.EDITOR_KEY_SECONDARY : Constants.EDITOR_KEY_PRIMARY;
-}
-
 export function showWelcomePage(): void {
   store.dispatch(
     EditorActions.open({
-      contentType: Constants.CONTENT_TYPE_WELCOME_PAGE,
-      documentId: Constants.DOCUMENT_ID_WELCOME_PAGE,
+      contentType: SharedConstants.ContentTypes.CONTENT_TYPE_WELCOME_PAGE,
+      documentId: SharedConstants.DocumentIds.DOCUMENT_ID_WELCOME_PAGE,
       isGlobal: true,
     })
   );
@@ -82,14 +77,10 @@ export function showWelcomePage(): void {
 export function showMarkdownPage(markdown: string, label: string, onLine: boolean): void {
   store.dispatch(
     EditorActions.open({
-      contentType: Constants.CONTENT_TYPE_MARKDOWN,
-      documentId: Constants.DOCUMENT_ID_MARKDOWN_PAGE,
+      contentType: SharedConstants.ContentTypes.CONTENT_TYPE_MARKDOWN,
+      documentId: SharedConstants.DocumentIds.DOCUMENT_ID_MARKDOWN_PAGE,
       isGlobal: true,
       meta: { markdown, label, onLine },
     })
   );
-}
-
-export function tabGroupHasDocuments(tabGroup: Editor): boolean {
-  return !!Object.keys(tabGroup.documents).length;
 }

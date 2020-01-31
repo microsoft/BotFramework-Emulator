@@ -31,7 +31,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { newNotification, SharedConstants } from '@bfemulator/app-shared';
+import {
+  beginAdd,
+  botHashGenerated,
+  newNotification,
+  open as openEditorDocument,
+  BotAction,
+  BotActionType,
+  BotConfigWithPathPayload,
+  SharedConstants,
+} from '@bfemulator/app-shared';
 import {
   CommandServiceImpl,
   CommandServiceInstance,
@@ -44,11 +53,8 @@ import {
 import { call, ForkEffect, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
 
 import { ActiveBotHelper } from '../../ui/helpers/activeBotHelper';
-import { BotAction, BotActionType, BotConfigWithPathPayload, botHashGenerated } from '../actions/botActions';
-import { beginAdd } from '../actions/notificationActions';
 import { generateHash } from '../helpers/botHelpers';
 import { RootState } from '../store';
-import { open } from '../actions/editorActions';
 
 import { SharedSagas } from './sharedSagas';
 import { ChatSagas } from './chatSagas';
@@ -130,7 +136,7 @@ export class BotSagas {
     // add a document to the store so the livechat tab is rendered
     const { CONTENT_TYPE_DEBUG, CONTENT_TYPE_LIVE_CHAT } = SharedConstants.ContentTypes;
     yield put(
-      open({
+      openEditorDocument({
         contentType: action.payload.mode === 'debug' ? CONTENT_TYPE_DEBUG : CONTENT_TYPE_LIVE_CHAT,
         documentId,
         isGlobal: false,

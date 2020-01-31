@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { appendToLog } from '../../state/actions/chatActions';
+import { appendToLog } from '@bfemulator/app-shared';
 
 import { logService } from './logService';
 

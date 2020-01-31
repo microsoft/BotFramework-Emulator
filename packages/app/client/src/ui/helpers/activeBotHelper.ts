@@ -31,18 +31,22 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { getBotDisplayName, newNotification, SharedConstants } from '@bfemulator/app-shared';
+import {
+  beginAdd,
+  closeBot,
+  closeNonGlobalTabs,
+  getBotDisplayName,
+  newNotification,
+  select as selectNavBar,
+  setActive,
+  setRoot,
+  showExplorer,
+  SharedConstants,
+} from '@bfemulator/app-shared';
 import { BotConfigWithPath, mergeEndpoints } from '@bfemulator/sdk-shared';
 import { IEndpointService, ServiceTypes } from 'botframework-config/lib/schema';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
-import * as Constants from '../../constants';
-import * as BotActions from '../../state/actions/botActions';
-import * as EditorActions from '../../state/actions/editorActions';
-import * as ExplorerActions from '../../state/actions/explorerActions';
-import * as FileActions from '../../state/actions/fileActions';
-import * as NavBarActions from '../../state/actions/navBarActions';
-import { beginAdd } from '../../state/actions/notificationActions';
 import { getActiveBot } from '../../state/helpers/botHelpers';
 import { hasNonGlobalTabs } from '../../state/helpers/editorHelpers';
 import { store } from '../../state/store';
@@ -90,8 +94,8 @@ export class ActiveBotHelper {
     try {
       // set the bot as active on the server side
       const botDirectory = await this.commandService.remoteCall<string>(SharedConstants.Commands.Bot.SetActive, bot);
-      store.dispatch(BotActions.setActive(bot));
-      store.dispatch(FileActions.setRoot(botDirectory));
+      store.dispatch(setActive(bot));
+      store.dispatch(setRoot(botDirectory));
 
       // update the app file menu and title bar
       await Promise.all([
@@ -110,7 +114,7 @@ export class ActiveBotHelper {
   static async closeActiveBot(): Promise<void> {
     try {
       await this.commandService.remoteCall(Bot.Close);
-      store.dispatch(BotActions.closeBot());
+      store.dispatch(closeBot());
       await this.commandService.remoteCall(SharedConstants.Commands.Electron.SetTitleBar, '');
     } catch (err) {
       const errMsg = `Error while closing active bot: ${err}`;
@@ -137,7 +141,7 @@ export class ActiveBotHelper {
     const result = await this.confirmSwitchBot();
 
     if (result) {
-      store.dispatch(EditorActions.closeNonGlobalTabs());
+      store.dispatch(closeNonGlobalTabs());
 
       try {
         // create the bot and save to disk
@@ -157,8 +161,8 @@ export class ActiveBotHelper {
           this.commandService.call(SharedConstants.Commands.Emulator.NewLiveChat, endpoint);
         }
 
-        store.dispatch(NavBarActions.select(Constants.NAVBAR_BOT_EXPLORER));
-        store.dispatch(ExplorerActions.showExplorer(true));
+        store.dispatch(selectNavBar(SharedConstants.NavBarItems.NAVBAR_BOT_EXPLORER));
+        store.dispatch(showExplorer(true));
       } catch (err) {
         const errMsg = `Error during bot create: ${err}`;
         const notification = newNotification(errMsg);
@@ -197,7 +201,7 @@ export class ActiveBotHelper {
         const result = this.confirmSwitchBot();
 
         if (result) {
-          store.dispatch(EditorActions.closeNonGlobalTabs());
+          store.dispatch(closeNonGlobalTabs());
           const bot = await this.commandService.remoteCall<BotConfigWithPath>(
             SharedConstants.Commands.Bot.Open,
             filename
@@ -250,7 +254,7 @@ export class ActiveBotHelper {
       const result = await this.confirmSwitchBot();
 
       if (result) {
-        store.dispatch(EditorActions.closeNonGlobalTabs());
+        store.dispatch(closeNonGlobalTabs());
         // if we only have the bot path, we first need to open the bot file
         let newActiveBot: BotConfigWithPath;
         if (typeof bot === 'string') {
@@ -292,8 +296,8 @@ export class ActiveBotHelper {
           await this.commandService.call(SharedConstants.Commands.Emulator.NewLiveChat, endpoint);
         }
 
-        store.dispatch(NavBarActions.select(Constants.NAVBAR_BOT_EXPLORER));
-        store.dispatch(ExplorerActions.showExplorer(true));
+        store.dispatch(selectNavBar(SharedConstants.NavBarItems.NAVBAR_BOT_EXPLORER));
+        store.dispatch(showExplorer(true));
       }
     } catch (e) {
       const errMsg = `Error while trying to switch to bot: ${botPath}`;
@@ -315,7 +319,7 @@ export class ActiveBotHelper {
     return this.confirmCloseBot()
       .then(result => {
         if (result) {
-          store.dispatch(EditorActions.closeNonGlobalTabs());
+          store.dispatch(closeNonGlobalTabs());
           this.closeActiveBot().catch(err => new Error(err));
         }
       })

@@ -30,9 +30,9 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import React, { useEffect, useState } from 'react';
 
-import { TunnelCheckTimeInterval, TunnelStatus } from '../../../state/actions/ngrokTunnelActions';
+import React, { useEffect, useState } from 'react';
+import { TunnelCheckTimeInterval, TunnelStatus } from '@bfemulator/app-shared';
 
 import * as styles from './ngrokStatusIndicator.scss';
 

@@ -32,9 +32,7 @@
 //
 
 import { CommandServiceImpl, CommandRegistry, CommandServiceInstance } from '@bfemulator/sdk-shared';
-import { SharedConstants } from '@bfemulator/app-shared';
-
-import { beginAdd, beginRemove } from '../state/actions/notificationActions';
+import { beginAdd, beginRemove, SharedConstants } from '@bfemulator/app-shared';
 
 import { NotificationCommands } from './notificationCommands';
 

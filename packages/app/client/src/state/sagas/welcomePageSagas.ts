@@ -31,12 +31,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { BotInfo, newNotification, SharedConstants } from '@bfemulator/app-shared';
+import {
+  beginAdd,
+  newNotification,
+  BotInfo,
+  SharedConstants,
+  WelcomePageAction,
+  OPEN_CONTEXT_MENU_FOR_BOT,
+} from '@bfemulator/app-shared';
 import { ForkEffect, put, takeEvery } from 'redux-saga/effects';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
-
-import { beginAdd } from '../actions/notificationActions';
-import { OPEN_CONTEXT_MENU_FOR_BOT, WelcomePageAction } from '../actions/welcomePageActions';
 
 export class WelcomePageSagas {
   @CommandServiceInstance()

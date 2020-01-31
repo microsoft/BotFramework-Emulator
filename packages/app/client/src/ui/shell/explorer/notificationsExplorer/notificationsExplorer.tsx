@@ -34,8 +34,8 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { LinkButton } from '@bfemulator/ui-react';
+import { beginClear } from '@bfemulator/app-shared';
 
-import * as NotificationActions from '../../../../state/actions/notificationActions';
 import { RootState } from '../../../../state/store';
 import { NotificationManager } from '../../../../notificationManager';
 
@@ -92,7 +92,7 @@ const mapStateToProps = (state: RootState): NotificationExplorerProps => {
 const mapDispatchToProps = (dispatch): NotificationExplorerProps => {
   return {
     clearNotifications: () => {
-      dispatch(NotificationActions.beginClear());
+      dispatch(beginClear());
     },
   };
 };

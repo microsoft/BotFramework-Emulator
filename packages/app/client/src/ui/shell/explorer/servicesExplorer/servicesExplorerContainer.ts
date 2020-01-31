@@ -31,21 +31,21 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { SharedConstants } from '@bfemulator/app-shared';
 import { IConnectedService, ServiceTypes } from 'botframework-config/lib/schema';
 import { ComponentClass } from 'react';
 import { connect } from 'react-redux';
-
 import {
-  ConnectedServicePickerPayload,
+  executeCommand,
   openAddServiceContextMenu,
   openContextMenuForConnectedService,
   openServiceDeepLink,
   openSortContextMenu,
+  ConnectedServicePickerPayload,
   ContextMenuCoordinates,
-} from '../../../../state/actions/connectedServiceActions';
-import { CONNECTED_SERVICES_PANEL_ID } from '../../../../state/actions/explorerActions';
-import { executeCommand } from '../../../../state/actions/commandActions';
+  SharedConstants,
+  CONNECTED_SERVICES_PANEL_ID,
+} from '@bfemulator/app-shared';
+
 import { RootState } from '../../../../state/store';
 
 import { ConnectedServiceEditor } from './connectedServiceEditor/connectedServiceEditor';
