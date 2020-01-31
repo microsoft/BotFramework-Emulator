@@ -78,6 +78,7 @@ export class OAuthLinkEncoder {
         if (cardAction.type === 'signin' && !OAuthLinkEncoder.EmulateOAuthCards) {
           let link;
           if (!cardAction.value) {
+            // normal flow; generate a signin link
             link = await this.getSignInLink(oauthCard.connectionName, codeChallenge);
           } else {
             // skills flow
@@ -89,18 +90,6 @@ export class OAuthLinkEncoder {
           cardAction.value = link;
           cardAction.type = 'openUrl';
         }
-        // if (cardAction.type === 'signin' && !cardAction.value && !OAuthLinkEncoder.EmulateOAuthCards) {
-        //   const link = await this.getSignInLink(oauthCard.connectionName, codeChallenge);
-        //   cardAction.value = link;
-        //   cardAction.type = 'openUrl';
-        // }
-        // // this is the skills flow
-        // else if (cardAction.type === 'signin' && cardAction.value && !OAuthLinkEncoder.EmulateOAuthCards) {
-        //   const link = await this.decorateSignInLink(cardAction.value);
-        //   // we just want to decorate the link so we get the token back
-        //   cardAction.value = link;
-        //   cardAction.type = 'openUrl';
-        // }
       }
     }
     return true;

@@ -138,7 +138,7 @@ export class Conversation extends EventEmitter {
 
     if (
       !this.conversationIsTranscript &&
-      !isLocalHostUrl(this.botEndpoint.botUrl) &&
+      !isLocalHostUrl(botLocation || this.botEndpoint.botUrl) &&
       isLocalHostUrl(activity.serviceUrl)
     ) {
       this.emulatorServer.logger.logMessage(
@@ -588,7 +588,7 @@ export class Conversation extends EventEmitter {
     activity.serviceUrl = serviceUrl;
     activity.channelData = {
       ...activity.channelData,
-      emulatorUrl: serviceUrl,
+      emulatorUrl: serviceUrl, // append emulatorUrl to channelData for skills
     };
 
     if (recordInConversation) {

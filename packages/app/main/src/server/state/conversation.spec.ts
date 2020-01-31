@@ -33,6 +33,7 @@
 
 import { BotEndpoint } from './botEndpoint';
 import { Conversation } from './conversation';
+import { TokenCache } from '../routes/channel/userToken/tokenCache';
 
 const mockTranscript = [
   {
@@ -137,28 +138,6 @@ const mockActivity = {
       name: 'Bot',
     },
   ],
-};
-
-const mockUserActivity = {
-  type: 'message',
-  serviceUrl: 'https://70d0a286.ngrok.io',
-  channelId: 'emulator',
-  from: {
-    id: '1',
-    name: 'Bot',
-    role: 'bot',
-  },
-  conversation: {
-    id: '95d86570-1f5c-11e9-b075-774f2d8ccec5|livechat',
-  },
-  recipient: {
-    id: '5e1f1c4c-6a89-4880-8db0-0f222c07ae9a',
-    name: 'User',
-  },
-  text: '[conversationUpdate event detected]',
-  inputHint: 'acceptingInput',
-  replyToId: '96547340-1f5c-11e9-9b39-f387f690c8a4',
-  id: null,
 };
 
 describe('Conversation class', () => {
@@ -276,9 +255,70 @@ describe('Conversation class', () => {
     }
   });
 
-  it('should post an activity to the bot', async () => {
-    const result = await conversation.postActivityToBot(mockActivity, true);
-    expect(result.activityId).toEqual(jasmine.any(String));
+  fit('should post an activity to a bot with a specified bot location (skill)', async () => {
+    const mockEmulatorServer: any = {
+      getServiceUrl: jest.fn().mockResolvedValue('https://ngrok.io:52738'),
+      logger: {
+        logMessage: jest.fn(),
+      },
+      state: {
+        locale: 'en-us',
+      },
+    };
+    const localMockActivity: any = {
+      from: {
+        name: 'User',
+        id: 'user1',
+      },
+      id: 'activity1',
+      recipient: {}, // should be filled in by function
+    };
+    const mockBotEndpoint: any = {
+      botId: 'bot1',
+      botUrl: 'https://www.mybot.com/api/messages',
+      fetchWithAuth: jest.fn().mockResolvedValue({ status: 200 }),
+    };
+    const postageSpy = jest
+      .spyOn(conversation, 'postage')
+      .mockReturnValue({ ...localMockActivity, hasBeenPosted: true });
+    const addActivityToQueueSpy = jest.spyOn(conversation as any, 'addActivityToQueue').mockImplementation(jest.fn());
+    const emitSpy = jest.spyOn(conversation, 'emit').mockImplementation(jest.fn());
+    conversation.botEndpoint = mockBotEndpoint;
+    conversation.emulatorServer = mockEmulatorServer;
+    const result = await conversation.postActivityToBot(
+      localMockActivity,
+      true,
+      'https://www.myskillbot.com/api/messages'
+    );
+
+    const processedActivity = {
+      ...localMockActivity,
+      channelData: {
+        emulatorUrl: 'https://ngrok.io:52738',
+      },
+      hasBeenPosted: true,
+      locale: 'en-us',
+      recipient: {
+        name: 'Bot',
+        role: 'bot',
+      },
+      serviceUrl: 'https://ngrok.io:52738',
+    };
+    expect(mockBotEndpoint.fetchWithAuth).toHaveBeenCalledWith(
+      'https://www.myskillbot.com/api/messages',
+      jasmine.any(Object)
+    );
+    expect(addActivityToQueueSpy).toHaveBeenCalledWith(processedActivity);
+    expect(emitSpy).toHaveBeenCalledWith('transcriptupdate');
+    expect(result).toEqual({
+      activityId: 'activity1',
+      response: { status: 200 },
+      statusCode: 200,
+    });
+
+    postageSpy.mockRestore();
+    addActivityToQueueSpy.mockRestore();
+    emitSpy.mockRestore();
   });
 
   it('should send a conversation update', async () => {
@@ -342,5 +382,57 @@ describe('Conversation class', () => {
     expect((conversation as any).transcript[1].activity.type).toBe('ping');
   });
 
-  it('should send the delete user data activity', async () => {});
+  fit('should send the delete user data activity', async () => {
+    const emitSpy = jest.spyOn(conversation, 'emit');
+    const postActivityToBotSpy = jest.spyOn(conversation, 'postActivityToBot').mockResolvedValue(null);
+    await conversation.sendDeleteUserData();
+
+    expect(postActivityToBotSpy).toHaveBeenCalledWith(
+      {
+        type: 'deleteUserData',
+      },
+      false
+    );
+    expect((conversation as any).transcript).toEqual([
+      {
+        type: 'user data delete',
+        activity: {
+          type: 'deleteUserData',
+        },
+      },
+    ]);
+    expect(emitSpy).toHaveBeenCalledWith('transcriptupdate');
+    postActivityToBotSpy.mockRestore();
+  });
+
+  fit('should send a token response', async () => {
+    const mockUser: any = {
+      id: 'someUserId',
+    };
+    const mockChildBotLocation = 'http://localhost:3978/some/skill/api/messages';
+    conversation.childBotLocation = mockChildBotLocation;
+    conversation.user = mockUser;
+    const mockConnectionName = 'oauth:connection';
+    const mockToken = 'someToken';
+    const addTokenToCacheSpy = jest.spyOn(TokenCache, 'addTokenToCache').mockImplementation(() => null);
+    const postActivityToBotSpy = jest.spyOn(conversation, 'postActivityToBot').mockResolvedValue(null);
+    await conversation.sendTokenResponse(mockConnectionName, mockToken, false);
+
+    expect(addTokenToCacheSpy).toHaveBeenCalledWith(botEndpointBotId, mockUser.id, mockConnectionName, mockToken);
+    expect(postActivityToBotSpy).toHaveBeenCalledWith(
+      {
+        type: 'event',
+        name: 'tokens/response',
+        value: {
+          connectionName: mockConnectionName,
+          token: mockToken,
+        },
+      },
+      false,
+      mockChildBotLocation
+    );
+    expect(conversation.childBotLocation).toBe(undefined);
+    addTokenToCacheSpy.mockRestore();
+    postActivityToBotSpy.mockRestore();
+  });
 });
