@@ -198,7 +198,9 @@ describe('The azureAuthSaga', () => {
         ct++;
       }
       expect(ct).toBe(5);
-      expect(remoteCallSpy).toHaveBeenCalledWith(SharedConstants.Commands.Telemetry.TrackEvent, 'signIn_failure');
+      expect(remoteCallSpy).toHaveBeenCalledWith(SharedConstants.Commands.Telemetry.TrackEvent, 'azure_signIn', {
+        success: false,
+      });
     });
 
     it('should contain 6 steps when the Azure login dialog prompt is confirmed and auth succeeds', async () => {
@@ -267,7 +269,10 @@ describe('The azureAuthSaga', () => {
       }
       expect(ct).toBe(6);
       expect(store.getState().azureAuth.access_token).toBe('a valid access_token');
-      expect(remoteCallSpy).toHaveBeenCalledWith(SharedConstants.Commands.Telemetry.TrackEvent, 'signIn_success');
+      expect(remoteCallSpy).toHaveBeenCalledWith(SharedConstants.Commands.Telemetry.TrackEvent, 'azure_signIn', {
+        persistLogin: true,
+        success: true,
+      });
     });
   });
 });

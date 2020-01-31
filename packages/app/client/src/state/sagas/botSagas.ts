@@ -168,14 +168,20 @@ export class BotSagas {
 
     // telemetry
     if (!action.payload.isFromBotFile) {
-      BotSagas.commandService.remoteCall(SharedConstants.Commands.Telemetry.TrackEvent, 'bot_open', {
-        numOfServices: 0,
-        source: 'url',
-      });
+      BotSagas.commandService
+        .remoteCall(SharedConstants.Commands.Telemetry.TrackEvent, 'bot_open', {
+          numOfServices: 0,
+          source: 'url',
+        })
+        .catch(_ => void 0);
     }
-    if (!isLocalHostUrl(action.payload.endpoint)) {
-      BotSagas.commandService.remoteCall(SharedConstants.Commands.Telemetry.TrackEvent, 'livechat_openRemote').catch();
-    }
+    BotSagas.commandService
+      .remoteCall(SharedConstants.Commands.Telemetry.TrackEvent, 'livechat_open', {
+        isDebug: action.payload.mode === 'debug',
+        isGov: action.payload.channelService === 'azureusgovernment',
+        isRemote: !isLocalHostUrl(action.payload.endpoint),
+      })
+      .catch(_ => void 0);
   }
 }
 

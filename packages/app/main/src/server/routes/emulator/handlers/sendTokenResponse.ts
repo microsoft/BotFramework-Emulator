@@ -34,6 +34,8 @@
 import * as HttpStatus from 'http-status-codes';
 import { Next, Response } from 'restify';
 
+import { TelemetryService } from '../../../../telemetry';
+
 import { ConversationAwareRequest } from './getConversation';
 
 export async function sendTokenResponse(req: ConversationAwareRequest, res: Response, next: Next): Promise<any> {
@@ -46,6 +48,7 @@ export async function sendTokenResponse(req: ConversationAwareRequest, res: Resp
 
   if (statusCode === HttpStatus.OK) {
     res.send(HttpStatus.OK, body);
+    TelemetryService.trackEvent('oauth_sendToken');
   } else {
     res.send(statusCode);
   }

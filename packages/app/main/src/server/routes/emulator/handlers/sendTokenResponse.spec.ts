@@ -35,6 +35,12 @@ import * as HttpStatus from 'http-status-codes';
 
 import { sendTokenResponse } from './sendTokenResponse';
 
+jest.mock('../../../../telemetry', () => ({
+  TelemetryService: {
+    trackEvent: jest.fn(),
+  },
+}));
+
 describe('sendTokenResponse handler', () => {
   it('should send a 200 if the result of sending the token was a 200', async () => {
     const req: any = {

@@ -30,6 +30,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 import {
   beginAdd,
   editor,
@@ -40,14 +41,20 @@ import {
   setDirtyFlag,
   setFrameworkSettings,
   FrameworkActionType,
+  FrameworkSettings,
   SharedConstants,
 } from '@bfemulator/app-shared';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import sagaMiddlewareFactory from 'redux-saga';
-import { put, select, takeEvery } from 'redux-saga/effects';
+import { call, put, select, takeEvery } from 'redux-saga/effects';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
-import { activeDocumentSelector, frameworkSettingsSagas, FrameworkSettingsSagas } from './frameworkSettingsSagas';
+import {
+  activeDocumentSelector,
+  frameworkSettingsSagas,
+  FrameworkSettingsSagas,
+  getFrameworkSettings,
+} from './frameworkSettingsSagas';
 
 jest.mock('electron', () => ({
   ipcMain: new Proxy(
@@ -101,31 +108,59 @@ describe('The frameworkSettingsSagas', () => {
   });
 
   it('should register the expected generators', () => {
-    const it = frameworkSettingsSagas();
-    expect(it.next().value).toEqual(
+    const gen = frameworkSettingsSagas();
+    expect(gen.next().value).toEqual(
       takeEvery(FrameworkActionType.SAVE_FRAMEWORK_SETTINGS, FrameworkSettingsSagas.saveFrameworkSettings)
     );
   });
 
   it('should save the framework settings', async () => {
-    const it = FrameworkSettingsSagas.saveFrameworkSettings(saveFrameworkSettingsAction({}));
+    const currentSettings: Partial<FrameworkSettings> = {
+      autoUpdate: false,
+      useCustomId: false,
+      usePrereleases: false,
+      userGUID: '',
+      ngrokPath: 'some/path/to/ngrok',
+    };
+    const updatedSettings: Partial<FrameworkSettings> = {
+      autoUpdate: true,
+      useCustomId: true,
+      usePrereleases: false,
+      userGUID: 'some-user-id',
+      ngrokPath: 'some/different/path/to/ngrok',
+    };
+    const gen = FrameworkSettingsSagas.saveFrameworkSettings(saveFrameworkSettingsAction(updatedSettings));
     // selector to get the active document from the state
-    const selector = it.next().value;
+    const selector = gen.next().value;
     expect(selector).toEqual(select(activeDocumentSelector));
     const value = selector.SELECT.selector(mockStore.getState());
     // put the dirty state to false
-    expect(it.next(value).value).toEqual(put(setDirtyFlag(value.documentId, false)));
-    expect(it.next().value).toEqual(put(setFrameworkSettings({})));
-    expect(it.next().done).toBe(true);
+    expect(gen.next(value).value).toEqual(put(setDirtyFlag(value.documentId, false)));
+    expect(gen.next().value).toEqual(put(setFrameworkSettings(updatedSettings)));
+    expect(gen.next().value).toEqual(select(getFrameworkSettings));
+    expect(gen.next(currentSettings).value).toEqual(
+      call(
+        [commandService, commandService.remoteCall],
+        SharedConstants.Commands.Telemetry.TrackEvent,
+        'app_changeSettings',
+        {
+          autoUpdate: true,
+          useCustomId: true,
+          userGUID: 'some-user-id',
+          ngrokPath: 'some/different/path/to/ngrok',
+        }
+      )
+    );
+    expect(gen.next().done).toBe(true);
   });
 
   it('should send a notification when saving the settings fails', () => {
-    const it = FrameworkSettingsSagas.saveFrameworkSettings(saveFrameworkSettingsAction({}));
-    it.next();
+    const gen = FrameworkSettingsSagas.saveFrameworkSettings(saveFrameworkSettingsAction({}));
+    gen.next();
     const errMsg = `Error while saving emulator settings: oh noes!`;
     const notification = newNotification(errMsg);
     notification.timestamp = jasmine.any(Number) as any;
     notification.id = jasmine.any(String) as any;
-    expect(it.throw('oh noes!').value).toEqual(put(beginAdd(notification)));
+    expect(gen.throw('oh noes!').value).toEqual(put(beginAdd(notification)));
   });
 });
