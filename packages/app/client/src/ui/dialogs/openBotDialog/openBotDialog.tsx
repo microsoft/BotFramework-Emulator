@@ -181,6 +181,7 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
               className={dialogStyles.dialogLink}
               linkRole={true}
               onClick={this.onEmulatorAzureGovDocsClick}
+              type="button"
             >
               &nbsp;Learn more.
             </LinkButton>
