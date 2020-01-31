@@ -31,9 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { TokenCache } from '../routes/channel/userToken/tokenCache';
+
 import { BotEndpoint } from './botEndpoint';
 import { Conversation } from './conversation';
-import { TokenCache } from '../routes/channel/userToken/tokenCache';
 
 const mockTranscript = [
   {

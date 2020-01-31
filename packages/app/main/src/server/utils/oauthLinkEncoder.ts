@@ -77,12 +77,14 @@ export class OAuthLinkEncoder {
         const cardAction = oauthCard.buttons[0];
         if (cardAction.type === 'signin' && !OAuthLinkEncoder.EmulateOAuthCards) {
           let link;
+          const conversation = this.emulatorServer.state.conversations.conversationById(this.conversationId);
           if (!cardAction.value) {
             // normal flow; generate a signin link
+            conversation.childBotLocation = undefined;
             link = await this.getSignInLink(oauthCard.connectionName, codeChallenge);
           } else {
+            // TODO: add check here for botUrl in channelData?
             // skills flow
-            const conversation = this.emulatorServer.state.conversations.conversationById(this.conversationId);
             const { channelData: { botUrl = '' } = {} } = activity;
             conversation.childBotLocation = botUrl; // store child bot location for later
             link = await this.decorateSignInLink(cardAction.value, codeChallenge);
