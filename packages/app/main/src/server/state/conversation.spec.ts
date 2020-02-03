@@ -256,7 +256,67 @@ describe('Conversation class', () => {
     }
   });
 
-  fit('should post an activity to a bot with a specified bot location (skill)', async () => {
+  it('should post an activity to a bot (bot is remote, but the service url is local)', async () => {
+    const mockEmulatorServer: any = {
+      getServiceUrl: jest.fn().mockResolvedValue('http://localhost:52738'),
+      logger: {
+        logMessage: jest.fn(),
+      },
+      state: {
+        locale: 'en-us',
+      },
+    };
+    const localMockActivity: any = {
+      from: {
+        name: 'User',
+        id: 'user1',
+      },
+      id: 'activity1',
+      recipient: {}, // should be filled in by function
+    };
+    const mockBotEndpoint: any = {
+      botId: 'bot1',
+      botUrl: 'https://www.mybot.com/api/messages',
+      fetchWithAuth: jest.fn().mockResolvedValue({ status: 200 }),
+    };
+    const postageSpy = jest
+      .spyOn(conversation, 'postage')
+      .mockReturnValue({ ...localMockActivity, hasBeenPosted: true });
+    const addActivityToQueueSpy = jest.spyOn(conversation as any, 'addActivityToQueue').mockImplementation(jest.fn());
+    const emitSpy = jest.spyOn(conversation, 'emit').mockImplementation(jest.fn());
+    conversation.botEndpoint = mockBotEndpoint;
+    conversation.emulatorServer = mockEmulatorServer;
+    const result = await conversation.postActivityToBot(localMockActivity, true);
+
+    const processedActivity = {
+      ...localMockActivity,
+      channelData: {
+        emulatorUrl: 'http://localhost:52738',
+      },
+      hasBeenPosted: true,
+      locale: 'en-us',
+      recipient: {
+        name: 'Bot',
+        role: 'bot',
+      },
+      serviceUrl: 'http://localhost:52738',
+    };
+    expect(mockBotEndpoint.fetchWithAuth).toHaveBeenCalledWith(mockBotEndpoint.botUrl, jasmine.any(Object));
+    expect(addActivityToQueueSpy).toHaveBeenCalledWith(processedActivity);
+    expect(emitSpy).toHaveBeenCalledWith('transcriptupdate');
+    expect(result).toEqual({
+      activityId: 'activity1',
+      response: { status: 200 },
+      statusCode: 200,
+    });
+    expect(mockEmulatorServer.logger.logMessage).toHaveBeenCalledTimes(3);
+
+    postageSpy.mockRestore();
+    addActivityToQueueSpy.mockRestore();
+    emitSpy.mockRestore();
+  });
+
+  it('should post an activity to a bot with a specified bot location (skill)', async () => {
     const mockEmulatorServer: any = {
       getServiceUrl: jest.fn().mockResolvedValue('https://ngrok.io:52738'),
       logger: {
@@ -368,45 +428,122 @@ describe('Conversation class', () => {
     expect(activityDeleted).toBeTruthy();
   });
 
-  it('should send Contact Removed', async () => {
-    await conversation.sendContactRemoved();
-    expect((conversation as any).transcript[0].activity.action).toBe('remove');
-  });
-
-  it('should send the typing activity', async () => {
-    await conversation.sendTyping();
-    expect((conversation as any).transcript[1].activity.type).toBe('typing');
-  });
-
-  it('should send the ping activity', async () => {
-    await conversation.sendPing();
-    expect((conversation as any).transcript[1].activity.type).toBe('ping');
-  });
-
-  fit('should send the delete user data activity', async () => {
+  it('should send Contact added', async () => {
+    const postActivityToBotSpy = jest.spyOn(conversation, 'postActivityToBot').mockResolvedValueOnce(true);
     const emitSpy = jest.spyOn(conversation, 'emit');
-    const postActivityToBotSpy = jest.spyOn(conversation, 'postActivityToBot').mockResolvedValue(null);
+    await conversation.sendContactAdded();
+
+    expect(postActivityToBotSpy).toHaveBeenCalledWith({ action: 'add', type: 'contactRelationUpdate' }, false);
+    expect((conversation as any).transcript).toHaveLength(1);
+    expect(emitSpy).toHaveBeenCalledWith('transcriptupdate');
+  });
+
+  it('should log an exception when failing to send Contact added', async () => {
+    jest.spyOn(conversation, 'postActivityToBot').mockRejectedValue(new Error('Something went wrong.'));
+    const emitSpy = jest.spyOn(conversation, 'emit');
+    await conversation.sendContactAdded();
+
+    expect(conversation.emulatorServer.logger.logException).toHaveBeenCalledWith(
+      conversation.conversationId,
+      new Error('Something went wrong.')
+    );
+    expect((conversation as any).transcript).toHaveLength(1);
+    expect(emitSpy).toHaveBeenCalledWith('transcriptupdate');
+  });
+
+  it('should send Contact removed', async () => {
+    const postActivityToBotSpy = jest.spyOn(conversation, 'postActivityToBot').mockResolvedValueOnce(true);
+    const emitSpy = jest.spyOn(conversation, 'emit');
+    await conversation.sendContactRemoved();
+
+    expect(postActivityToBotSpy).toHaveBeenCalledWith({ action: 'remove', type: 'contactRelationUpdate' }, false);
+    expect((conversation as any).transcript).toHaveLength(1);
+    expect(emitSpy).toHaveBeenCalledWith('transcriptupdate');
+  });
+
+  it('should log an exception when failing to send Contact removed', async () => {
+    jest.spyOn(conversation, 'postActivityToBot').mockRejectedValue(new Error('Something went wrong.'));
+    const emitSpy = jest.spyOn(conversation, 'emit');
+    await conversation.sendContactRemoved();
+
+    expect(conversation.emulatorServer.logger.logException).toHaveBeenCalledWith(
+      conversation.conversationId,
+      new Error('Something went wrong.')
+    );
+    expect((conversation as any).transcript).toHaveLength(1);
+    expect(emitSpy).toHaveBeenCalledWith('transcriptupdate');
+  });
+
+  it('should send typing', async () => {
+    const postActivityToBotSpy = jest.spyOn(conversation, 'postActivityToBot').mockResolvedValueOnce(true);
+    const emitSpy = jest.spyOn(conversation, 'emit');
+    await conversation.sendTyping();
+
+    expect(postActivityToBotSpy).toHaveBeenCalledWith({ type: 'typing' }, false);
+    expect((conversation as any).transcript).toHaveLength(1);
+    expect(emitSpy).toHaveBeenCalledWith('transcriptupdate');
+  });
+
+  it('should log an exception when failing to send typing', async () => {
+    jest.spyOn(conversation, 'postActivityToBot').mockRejectedValue(new Error('Something went wrong.'));
+    const emitSpy = jest.spyOn(conversation, 'emit');
+    await conversation.sendTyping();
+
+    expect(conversation.emulatorServer.logger.logException).toHaveBeenCalledWith(
+      conversation.conversationId,
+      new Error('Something went wrong.')
+    );
+    expect((conversation as any).transcript).toHaveLength(1);
+    expect(emitSpy).toHaveBeenCalledWith('transcriptupdate');
+  });
+
+  it('should send ping', async () => {
+    const postActivityToBotSpy = jest.spyOn(conversation, 'postActivityToBot').mockResolvedValueOnce(true);
+    const emitSpy = jest.spyOn(conversation, 'emit');
+    await conversation.sendPing();
+
+    expect(postActivityToBotSpy).toHaveBeenCalledWith({ type: 'ping' }, false);
+    expect((conversation as any).transcript).toHaveLength(1);
+    expect(emitSpy).toHaveBeenCalledWith('transcriptupdate');
+  });
+
+  it('should log an exception when failing to send ping', async () => {
+    jest.spyOn(conversation, 'postActivityToBot').mockRejectedValue(new Error('Something went wrong.'));
+    const emitSpy = jest.spyOn(conversation, 'emit');
+    await conversation.sendPing();
+
+    expect(conversation.emulatorServer.logger.logException).toHaveBeenCalledWith(
+      conversation.conversationId,
+      new Error('Something went wrong.')
+    );
+    expect((conversation as any).transcript).toHaveLength(1);
+    expect(emitSpy).toHaveBeenCalledWith('transcriptupdate');
+  });
+
+  it('should send delete user data', async () => {
+    const postActivityToBotSpy = jest.spyOn(conversation, 'postActivityToBot').mockResolvedValueOnce(true);
+    const emitSpy = jest.spyOn(conversation, 'emit');
     await conversation.sendDeleteUserData();
 
-    expect(postActivityToBotSpy).toHaveBeenCalledWith(
-      {
-        type: 'deleteUserData',
-      },
-      false
-    );
-    expect((conversation as any).transcript).toEqual([
-      {
-        type: 'user data delete',
-        activity: {
-          type: 'deleteUserData',
-        },
-      },
-    ]);
+    expect(postActivityToBotSpy).toHaveBeenCalledWith({ type: 'deleteUserData' }, false);
+    expect((conversation as any).transcript).toHaveLength(1);
     expect(emitSpy).toHaveBeenCalledWith('transcriptupdate');
-    postActivityToBotSpy.mockRestore();
   });
 
-  fit('should send a token response', async () => {
+  it('should log an exception when failing to send delete user data', async () => {
+    jest.spyOn(conversation, 'postActivityToBot').mockRejectedValue(new Error('Something went wrong.'));
+    const emitSpy = jest.spyOn(conversation, 'emit');
+    await conversation.sendDeleteUserData();
+
+    expect(conversation.emulatorServer.logger.logException).toHaveBeenCalledWith(
+      conversation.conversationId,
+      new Error('Something went wrong.')
+    );
+    expect((conversation as any).transcript).toHaveLength(1);
+    expect(emitSpy).toHaveBeenCalledWith('transcriptupdate');
+  });
+
+  it('should send a token response', async () => {
     const mockUser: any = {
       id: 'someUserId',
     };
