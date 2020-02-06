@@ -1,11 +1,15 @@
 {
   "extends": "../../../tsconfig.json",
   "compilerOptions": {
-    "outDir": "build",
-    "lib": ["dom", "es2015.proxy", "es5", "esnext", "es7"],
+    "declaration": true,
+    "declarationDir": "build",
+    "declarationMap": true,
+    "emitDeclarationOnly": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "target": "esnext"
+    "lib": ["dom", "es2015.proxy", "es5", "esnext", "es7"],
+    "outDir": "build",
+    "target": "esnext",
   },
   "include": [
     "./src"
