@@ -49,6 +49,7 @@ import { createUpdateConversationHandler } from './handlers/updateConversation';
 import { createInitialReportHandler } from './handlers/initialReport';
 import { createFeedActivitiesAsTranscriptHandler } from './handlers/feedActivitiesAsTranscript';
 import { getWebSocketPort } from './handlers/getWebSocketPort';
+import { createTrackActivityHandler } from './handlers/trackActivity';
 
 export function mountEmulatorRoutes(emulatorServer: EmulatorRestServer) {
   const { server, state } = emulatorServer;
@@ -90,4 +91,6 @@ export function mountEmulatorRoutes(emulatorServer: EmulatorRestServer) {
   );
 
   server.get('/emulator/ws/port', getWebSocketPort);
+
+  server.post('/emulator/:conversationId/activity/track', jsonBodyParser, createTrackActivityHandler(state));
 }

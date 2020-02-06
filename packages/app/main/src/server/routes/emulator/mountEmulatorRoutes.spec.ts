@@ -47,6 +47,7 @@ import { mountEmulatorRoutes } from './mountEmulatorRoutes';
 import { createUpdateConversationHandler } from './handlers/updateConversation';
 import { createFeedActivitiesAsTranscriptHandler } from './handlers/feedActivitiesAsTranscript';
 import { getWebSocketPort } from './handlers/getWebSocketPort';
+import { createTrackActivityHandler } from './handlers/trackActivity';
 
 jest.mock('../../utils/jsonBodyParser', () => ({ createJsonBodyParserMiddleware: jest.fn() }));
 jest.mock('./handlers/addUsers', () => ({ addUsers: jest.fn() }));
@@ -61,6 +62,7 @@ jest.mock('./handlers/ping', () => ({ ping: jest.fn() }));
 jest.mock('./handlers/removeUsers', () => ({ removeUsers: jest.fn() }));
 jest.mock('./handlers/sendTokenResponse', () => ({ sendTokenResponse: jest.fn() }));
 jest.mock('./handlers/sendTyping', () => ({ sendTyping: jest.fn() }));
+jest.mock('./handlers/trackActivity', () => ({ createTrackActivityHandler: jest.fn() }));
 jest.mock('./handlers/updateConversation', () => ({ createUpdateConversationHandler: jest.fn() }));
 
 describe('mountEmulatorRoutes', () => {
@@ -119,5 +121,11 @@ describe('mountEmulatorRoutes', () => {
     );
 
     expect(get).toHaveBeenCalledWith('/emulator/ws/port', getWebSocketPort);
+
+    expect(post).toHaveBeenCalledWith(
+      '/emulator/:conversationId/activity/track',
+      jsonBodyParser,
+      createTrackActivityHandler(emulatorServer.state)
+    );
   });
 });

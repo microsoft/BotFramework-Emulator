@@ -30,20 +30,32 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { ConversationParameters } from 'botframework-schema';
 
-import { ChannelService } from '../channelService';
-import { EmulatorMode } from '../emulatorMode';
-import { User } from '../user';
+import { Next, Request, Response } from 'restify';
+import { INTERNAL_SERVER_ERROR, OK } from 'http-status-codes';
 
-export interface StartConversationParams extends ConversationParameters {
-  endpoint?: string;
-  appId?: string;
-  appPassword?: string;
-  user?: User;
-  mode?: EmulatorMode;
-  channelService?: ChannelService;
-  conversationId?: string;
-  speechKey?: string;
-  speechRegion?: string;
+import { ServerState } from '../../../state/serverState';
+
+export function createTrackActivityHandler(state: ServerState) {
+  return async (req: Request, res: Response, next: Next): Promise<any> => {
+    try {
+      const conversationId = req.params.conversationId;
+      const conversation = state.conversations.conversationById(conversationId);
+      const activity = req.body;
+      const sender = activity.from.role;
+
+      // perform logging / internal transcript bookkeeping
+      if (sender === 'bot') {
+        conversation.prepActivityToBeSentToUser(conversation.user.id, activity);
+      } else {
+        await conversation.prepActivityToBeSentToBot(activity, true);
+      }
+
+      res.send(OK);
+    } catch (e) {
+      res.send(INTERNAL_SERVER_ERROR, e);
+    }
+    res.end();
+    next();
+  };
 }

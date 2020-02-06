@@ -32,24 +32,25 @@
 //
 
 import { call, put, select, takeEvery } from 'redux-saga/effects';
-import { CommandServiceImpl, CommandServiceInstance, ConversationService } from '@bfemulator/sdk-shared';
+import { CommandServiceImpl, CommandServiceInstance, ConversationService, json2HTML } from '@bfemulator/sdk-shared';
 import * as sdkSharedUtils from '@bfemulator/sdk-shared/build/utils/misc';
 import {
   clearLog,
-  closeConversation,
   closeDocument,
   newChat,
   open as openDocument,
-  openTranscript,
-  restartConversation,
   setInspectorObjects,
   webChatStoreUpdated,
   webSpeechFactoryUpdated,
   updatePendingSpeechTokenRetrieval,
   ChatActions,
   SharedConstants,
+  updateSpeechAdapters,
 } from '@bfemulator/app-shared';
-import { createCognitiveServicesSpeechServicesPonyfillFactory } from 'botframework-webchat';
+import {
+  createCognitiveServicesSpeechServicesPonyfillFactory,
+  createDirectLineSpeechAdapters,
+} from 'botframework-webchat';
 
 import {
   chatSagas,
@@ -100,6 +101,7 @@ jest.mock('electron', () => {
 jest.mock('botframework-webchat', () => {
   return {
     createCognitiveServicesSpeechServicesPonyfillFactory: () => () => 'Yay! ponyfill!',
+    createDirectLineSpeechAdapters: () => undefined,
   };
 });
 
@@ -369,11 +371,16 @@ describe('The ChatSagas,', () => {
       );
 
       // res.json()
+      gen.next({ json: jest.fn(), ok: false, status: 500, statusText: 'INTERNAL SERVER ERROR', text: jest.fn() });
       try {
-        gen.next({ json: jest.fn(), ok: false, status: 500, statusText: 'INTERNAL SERVER ERROR' });
+        gen.next('The server could not handle your request.'); // response.text() inside throwErrorFromResponse()
         expect(true).toBe(false); // ensure catch is hit
       } catch (e) {
-        expect(e).toEqual(new Error('Error occurred while starting a new conversation: 500: INTERNAL SERVER ERROR'));
+        expect(e).toEqual(
+          new Error(
+            'Error occurred while starting a new conversation 500 INTERNAL SERVER ERROR: The server could not handle your request.'
+          )
+        );
       }
     });
 
@@ -454,12 +461,15 @@ describe('The ChatSagas,', () => {
         )
       );
 
+      gen.next({ ok: false, status: 500, statusText: 'INTERNAL SERVER ERROR', text: jest.fn() });
       try {
-        gen.next({ ok: false, status: 500, statusText: 'INTERNAL SERVER ERROR' });
+        gen.next('The server could not handle your request.'); // response.text() inside throwErrorFromResponse()
         expect(true).toBe(false); // ensure catch is hit
       } catch (e) {
         expect(e).toEqual(
-          new Error('Error occurred while feeding activities as a transcript: 500: INTERNAL SERVER ERROR')
+          new Error(
+            'Error occurred while feeding activities as a transcript 500 INTERNAL SERVER ERROR: The server could not handle your request.'
+          )
         );
       }
     });
@@ -476,6 +486,9 @@ describe('The ChatSagas,', () => {
       user: { id: 'user1' },
     };
     const gen = ChatSagas.bootstrapChat(payload);
+
+    // select(getServerUrl)
+    expect(gen.next().value).toEqual(select(getServerUrl));
 
     // put webChatStoreUpdated
     expect(gen.next().value).toEqual(put(webChatStoreUpdated(payload.documentId, mockWebChatStore)));
@@ -523,6 +536,77 @@ describe('The ChatSagas,', () => {
     // put webSpeechFactoryUpdated
     const factory: any = {};
     expect(gen.next(factory).value).toEqual(put(webSpeechFactoryUpdated(payload.documentId, factory)));
+
+    // put updatePendingSpeechTokenRetrieval
+    expect(gen.next().value).toEqual(put(updatePendingSpeechTokenRetrieval(payload.documentId, false)));
+
+    expect(gen.next().done).toBe(true);
+  });
+
+  it('should bootstrap a chat with DL Speech enabled', () => {
+    const payload: any = {
+      conversationId: 'someConvoId',
+      documentId: 'someDocId',
+      endpointId: 'someEndpointId',
+      mode: 'livechat',
+      speechKey: 'i-am-a-speech-key',
+      speechRegion: 'westus',
+      user: { id: 'user1' },
+    };
+    const gen = ChatSagas.bootstrapChat(payload);
+
+    // select(getServerUrl)
+    expect(gen.next().value).toEqual(select(getServerUrl));
+
+    // put webChatStoreUpdated
+    expect(gen.next().value).toEqual(put(webChatStoreUpdated(payload.documentId, mockWebChatStore)));
+
+    // put webSpeechFactoryUpdated
+    expect(gen.next().value).toEqual(put(webSpeechFactoryUpdated(payload.documentId, undefined)));
+
+    // call createDirectLineObject()
+    expect(gen.next().value).toEqual(
+      call(
+        [ChatSagas, (ChatSagas as any).createDirectLineObject],
+        payload.conversationId,
+        payload.mode,
+        payload.endpointId,
+        payload.user.id
+      )
+    );
+
+    // put newChat
+    const directLine: any = {};
+    expect(gen.next(directLine).value).toEqual(
+      put(
+        newChat(payload.documentId, payload.mode, {
+          conversationId: payload.conversationId,
+          directLine,
+          speechKey: payload.speechKey,
+          speechRegion: payload.speechRegion,
+          userId: payload.user.id,
+        })
+      )
+    );
+
+    // put updatePendingSpeechTokenRetrieval
+    expect(gen.next().value).toEqual(put(updatePendingSpeechTokenRetrieval(payload.documentId, true)));
+
+    // call createDirectLineSpeechAdapters
+    expect(gen.next().value).toEqual(
+      call(createDirectLineSpeechAdapters, {
+        fetchCredentials: {
+          region: 'westus',
+          subscriptionKey: 'i-am-a-speech-key',
+        },
+      })
+    );
+
+    // put updateSpeechAdapters
+    const webSpeechPonyfillFactory: any = {};
+    expect(gen.next({ directLine, webSpeechPonyfillFactory }).value).toEqual(
+      put(updateSpeechAdapters(payload.documentId, directLine, webSpeechPonyfillFactory))
+    );
 
     // put updatePendingSpeechTokenRetrieval
     expect(gen.next().value).toEqual(put(updatePendingSpeechTokenRetrieval(payload.documentId, false)));
@@ -631,12 +715,12 @@ describe('The ChatSagas,', () => {
       );
 
       // call sendInitialActivity
-      expect(gen.next().value).toEqual(
+      expect(gen.next({ ok: true }).value).toEqual(
         call([ChatSagas, ChatSagas.sendInitialActivity], { conversationId, members: json.members, mode: chat.mode })
       );
 
       // put updatePendingSpeechTokenRetrieval
-      expect(gen.next().value).toEqual(put(updatePendingSpeechTokenRetrieval(payload.documentId, true)));
+      expect(gen.next({ ok: true }).value).toEqual(put(updatePendingSpeechTokenRetrieval(payload.documentId, true)));
 
       // select web speech factory
       expect(gen.next().value).toEqual(select(getWebSpeechFactoryForDocumentId, payload.documentId));
@@ -761,12 +845,12 @@ describe('The ChatSagas,', () => {
       );
 
       // call sendInitialActivity
-      expect(gen.next().value).toEqual(
+      expect(gen.next({ ok: true }).value).toEqual(
         call([ChatSagas, ChatSagas.sendInitialActivity], { conversationId, members: json.members, mode: chat.mode })
       );
 
       // put updatePendingSpeechTokenRetrieval
-      expect(gen.next().value).toEqual(put(updatePendingSpeechTokenRetrieval(payload.documentId, true)));
+      expect(gen.next({ ok: true }).value).toEqual(put(updatePendingSpeechTokenRetrieval(payload.documentId, true)));
 
       // select web speech factory
       expect(gen.next().value).toEqual(select(getWebSpeechFactoryForDocumentId, payload.documentId));
@@ -783,6 +867,135 @@ describe('The ChatSagas,', () => {
       // put webSpeechFactoryUpdated
       const newFactory: any = {};
       expect(gen.next(newFactory).value).toEqual(put(webSpeechFactoryUpdated(payload.documentId, newFactory)));
+
+      // put updatePendingSpeechTokenRetrieval
+      expect(gen.next().value).toEqual(put(updatePendingSpeechTokenRetrieval(payload.documentId, false)));
+
+      expect(gen.next().done).toBe(true);
+    });
+
+    it('should restart a conversation with the same user and conversation ID and initialize DL Speech', () => {
+      const serverUrl = 'http://localhost:56273';
+      const payload = {
+        documentId: 'someDocId',
+        requireNewConversationId: false,
+        requireNewUserId: false,
+      };
+      const mockAction: any = {
+        payload,
+      };
+      const gen = ChatSagas.restartConversation(mockAction);
+
+      // select chat from document id
+      const chat = {
+        conversationId: 'someConvoId',
+        directLine: {
+          end: jest.fn(),
+        },
+        mode: 'livechat' as any,
+        speechKey: 'i-am-a-speech-key',
+        speechRegion: 'westus',
+        userId: 'someUserId',
+      };
+      expect(gen.next().value).toEqual(select(getChatFromDocumentId, payload.documentId));
+
+      // select server url
+      expect(gen.next(chat).value).toEqual(select(getServerUrl));
+
+      // put clearLog
+      expect(gen.next(serverUrl).value).toEqual(put(clearLog(payload.documentId)));
+      expect(chat.directLine.end).toHaveBeenCalled();
+
+      // put setInspectorObjects
+      expect(gen.next().value).toEqual(put(setInspectorObjects(payload.documentId, [])));
+
+      // put webChatStoreUpdated
+      expect(gen.next().value).toEqual(put(webChatStoreUpdated(payload.documentId, mockWebChatStore)));
+
+      // put webSpeechFactoryUpdated
+      expect(gen.next().value).toEqual(put(webSpeechFactoryUpdated(payload.documentId, undefined)));
+
+      // call updateConversation
+      const conversationId = chat.conversationId;
+      const userId = chat.userId;
+      expect(gen.next().value).toEqual(
+        call([ConversationService, ConversationService.updateConversation], serverUrl, chat.conversationId, {
+          conversationId,
+          userId,
+        })
+      );
+
+      // res.jon()
+      const response = {
+        botEndpoint: {},
+        json: jest.fn(),
+        members: [],
+        ok: true,
+      };
+      gen.next(response);
+
+      // call createDirectLineObject
+      const json = {
+        botEndpoint: {
+          botUrl: 'http://localhost:3978',
+          id: 'botEndpointId',
+          msaAppId: 'someAppId',
+          msaPassword: 'someAppPw',
+        },
+        members: [],
+      };
+      expect(gen.next(json).value).toEqual(
+        call(
+          [ChatSagas, (ChatSagas as any).createDirectLineObject],
+          conversationId,
+          chat.mode,
+          json.botEndpoint.id,
+          userId
+        )
+      );
+
+      // put newChat
+      const directLine: any = {};
+      expect(gen.next(directLine).value).toEqual(
+        put(
+          newChat(payload.documentId, chat.mode, {
+            conversationId,
+            directLine,
+            speechKey: chat.speechKey,
+            speechRegion: chat.speechRegion,
+            userId,
+          })
+        )
+      );
+
+      // call sendInitialLogReport
+      expect(gen.next().value).toEqual(
+        call(
+          [ConversationService, ConversationService.sendInitialLogReport],
+          serverUrl,
+          conversationId,
+          json.botEndpoint.botUrl
+        )
+      );
+
+      // put updatePendingSpeechTokenRetrieval
+      expect(gen.next({ ok: true }).value).toEqual(put(updatePendingSpeechTokenRetrieval(payload.documentId, true)));
+
+      // call createDirectLineSpeechAdapters
+      expect(gen.next().value).toEqual(
+        call(createDirectLineSpeechAdapters, {
+          fetchCredentials: {
+            region: 'westus',
+            subscriptionKey: 'i-am-a-speech-key',
+          },
+        })
+      );
+
+      // put updateSpeechAdapters
+      const webSpeechPonyfillFactory: any = {};
+      expect(gen.next({ directLine, webSpeechPonyfillFactory }).value).toEqual(
+        put(updateSpeechAdapters(payload.documentId, directLine, webSpeechPonyfillFactory))
+      );
 
       // put updatePendingSpeechTokenRetrieval
       expect(gen.next().value).toEqual(put(updatePendingSpeechTokenRetrieval(payload.documentId, false)));
@@ -838,11 +1051,16 @@ describe('The ChatSagas,', () => {
         })
       );
 
+      gen.next({ ok: false, status: 500, statusText: 'INTERNAL SERVER ERROR', text: jest.fn() });
       try {
-        gen.next({ ok: false, status: 500, statusText: 'INTERNAL SERVER ERROR' });
+        gen.next('The server could not handle your request.'); // response.text() inside throwErrorFromResponse()
         expect(true).toBe(false);
       } catch (e) {
-        expect(e).toEqual(new Error('Error occurred while updating a conversation: 500: INTERNAL SERVER ERROR'));
+        expect(e).toEqual(
+          new Error(
+            'Error occurred while updating a conversation 500 INTERNAL SERVER ERROR: The server could not handle your request.'
+          )
+        );
       }
     });
   });

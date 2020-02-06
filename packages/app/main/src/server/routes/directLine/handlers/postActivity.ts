@@ -66,7 +66,16 @@ export function createPostActivityHandler(emulatorServer: EmulatorRestServer) {
         if (statusCode === HttpStatus.UNAUTHORIZED || statusCode === HttpStatus.FORBIDDEN) {
           logMessage(req.params.conversationId, textItem(LogLevel.Error, 'Cannot post activity. Unauthorized.'));
         }
-        res.send(statusCode || HttpStatus.INTERNAL_SERVER_ERROR, await response.text());
+        let err;
+        if (response.text) {
+          err = await response.text();
+        } else {
+          err = {
+            message: response.message,
+            status: response.status,
+          };
+        }
+        res.send(statusCode || HttpStatus.INTERNAL_SERVER_ERROR, err);
       } else {
         res.send(statusCode, { id: activityId });
 

@@ -47,7 +47,15 @@ const mapDispatchToProps = (dispatch: (action: Action) => void): OpenBotDialogPr
     },
     openBot: (componentState: OpenBotDialogState) => {
       DialogService.hideDialog();
-      const { appId = '', appPassword = '', botUrl = '', mode = 'livechat-url', isAzureGov } = componentState;
+      const {
+        appId = '',
+        appPassword = '',
+        botUrl = '',
+        mode = 'livechat-url',
+        isAzureGov,
+        speechKey = '',
+        speechRegion = '',
+      } = componentState;
       if (botUrl.startsWith('http')) {
         dispatch(
           openBotViaUrlAction({
@@ -56,6 +64,8 @@ const mapDispatchToProps = (dispatch: (action: Action) => void): OpenBotDialogPr
             endpoint: botUrl,
             mode,
             channelService: isAzureGov ? 'azureusgovernment' : 'public',
+            speechKey,
+            speechRegion,
           })
         );
       } else {

@@ -30,20 +30,21 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { ConversationParameters } from 'botframework-schema';
 
-import { ChannelService } from '../channelService';
-import { EmulatorMode } from '../emulatorMode';
-import { User } from '../user';
-
-export interface StartConversationParams extends ConversationParameters {
-  endpoint?: string;
-  appId?: string;
-  appPassword?: string;
-  user?: User;
-  mode?: EmulatorMode;
-  channelService?: ChannelService;
-  conversationId?: string;
-  speechKey?: string;
-  speechRegion?: string;
+/**
+ * Throws an error with the format ${error}: ${status code}: ${status message} {response payload}
+ * Ex: There was an error starting the conversation: 400: BAD REQUEST { message: "The bot's credentials were incorrect." }
+ */
+export function* throwErrorFromResponse(error: string, response: Response): IterableIterator<any> {
+  let errText = '';
+  if (response.text) {
+    errText = yield response.text();
+  }
+  let responseStatus = '';
+  if (response.statusText) {
+    responseStatus = `${response.status} ${response.statusText}`;
+  } else {
+    responseStatus = response.status + '';
+  }
+  throw new Error(`${error || 'Error'} ${responseStatus}: ${errText}`);
 }

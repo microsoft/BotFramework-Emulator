@@ -72,6 +72,8 @@ export interface OpenBotDialogState {
   appId?: string;
   appPassword?: string;
   isAzureGov?: boolean;
+  speechKey?: string;
+  speechRegion?: string;
 }
 
 enum ValidationResult {
@@ -123,7 +125,7 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
 
   public render(): ReactNode {
     const { savedBotUrls = [] } = this.props;
-    const { botUrl, appId, appPassword, mode, isDebug, isAzureGov } = this.state;
+    const { botUrl, appId, appPassword, mode, isDebug, isAzureGov, speechKey, speechRegion } = this.state;
     const validationResult = OpenBotDialog.validateEndpoint(botUrl);
     const errorMessage = OpenBotDialog.getErrorMessage(validationResult);
     const shouldBeDisabled =
@@ -163,6 +165,27 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
               value={appPassword}
             />
           </Row>
+          {!isDebug && (
+            <Row className={openBotStyles.multiInputRow}>
+              <TextField
+                inputContainerClassName={openBotStyles.inputContainerRow}
+                name="speechRegion"
+                label="DL Speech Region"
+                onChange={this.onInputChange}
+                placeholder="Optional"
+                value={speechRegion}
+              />
+              <TextField
+                inputContainerClassName={openBotStyles.inputContainerRow}
+                label="DL Speech Key"
+                name="speechKey"
+                onChange={this.onInputChange}
+                placeholder="Optional"
+                type="password"
+                value={speechKey}
+              />
+            </Row>
+          )}
           <Row className={openBotStyles.rowOverride}>
             <Checkbox
               label="Open in debug mode"

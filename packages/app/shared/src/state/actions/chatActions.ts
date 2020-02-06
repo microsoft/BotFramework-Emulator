@@ -56,6 +56,7 @@ export enum ChatActions {
   showContextMenuForActivity = 'CHAT/CONTEXT_MENU/SHOW',
   updateChat = 'CHAT/DOCUMENT/UPDATE',
   updatePendingSpeechTokenRetrieval = 'CHAT/SPEECH/TOKEN/PENDING/UPDATE',
+  updateSpeechAdapters = 'CHAT/SPEECH/DL/ADAPTERS',
   webSpeechFactoryUpdated = 'CHAT/SPEECH/TOKEN/RETRIEVED',
   webChatStoreUpdated = 'CHAT/STORE/UPDATED',
 }
@@ -126,6 +127,12 @@ export interface RestartConversationPayload {
   documentId: string;
   requireNewConversationId: boolean;
   requireNewUserId: boolean;
+}
+
+export interface UpdateSpeechAdaptersPayload {
+  directLine: any;
+  documentId: string;
+  webSpeechPonyfillFactory: () => any;
 }
 
 export interface ChatAction<T = any> extends Action {
@@ -333,6 +340,21 @@ export function restartConversation(
       documentId,
       requireNewConversationId,
       requireNewUserId,
+    },
+  };
+}
+
+export function updateSpeechAdapters(
+  documentId: string,
+  directLine: any,
+  webSpeechPonyfillFactory: () => any
+): ChatAction<UpdateSpeechAdaptersPayload> {
+  return {
+    type: ChatActions.updateSpeechAdapters,
+    payload: {
+      directLine,
+      documentId,
+      webSpeechPonyfillFactory,
     },
   };
 }

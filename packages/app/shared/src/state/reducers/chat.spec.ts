@@ -44,6 +44,7 @@ import {
   removeTranscript,
   setInspectorObjects,
   updateChat,
+  updateSpeechAdapters,
 } from '../actions/chatActions';
 import { closeNonGlobalTabs } from '../actions/editorActions';
 
@@ -225,5 +226,29 @@ describe('Chat reducer tests', () => {
     const state = chat(startingState, action);
     expect(state.chats.chat1.id).toBe('updatedChatId');
     expect(state.chats.chat1.userId).toBe('updatedUserId');
+  });
+
+  it('should update the speech adapters for a chat', () => {
+    const startingState = {
+      ...DEFAULT_STATE,
+      chats: {
+        ...DEFAULT_STATE.chats,
+        chat1: {
+          directLine: undefined,
+          documentId: 'chat1',
+          userId: 'user1',
+        },
+      },
+      webSpeechFactories: {
+        chat1: undefined,
+      },
+    };
+    const directLine: any = {};
+    const webSpeechPonyfillFactory: any = {};
+    const action = updateSpeechAdapters('chat1', directLine, webSpeechPonyfillFactory);
+    const state = chat(startingState, action);
+
+    expect(state.chats.chat1.directLine).toEqual(directLine);
+    expect(state.webSpeechFactories.chat1).toEqual(webSpeechPonyfillFactory);
   });
 });
