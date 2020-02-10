@@ -46,6 +46,9 @@ export function createTokenResponseHandler(emulatorServer: EmulatorRestServer) {
 
     const conversationId = req.query.conversationId;
 
+    // TODO: Once token service change is done, we will need to first check if we should
+    // look up the conversation by the "relates-to" convo ID in the case of a skill, or default
+    // to the usual convo ID.
     const conversation = emulatorServer.state.conversations.conversationById(conversationId);
 
     try {
