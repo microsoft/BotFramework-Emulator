@@ -32,7 +32,9 @@
 //
 
 import { connect } from 'react-redux';
-import { ValueTypes } from '@bfemulator/app-shared';
+import { ValueTypes, restartConversation } from '@bfemulator/app-shared';
+import { Action } from 'redux';
+import { Activity } from 'botframework-schema';
 
 import { RootState } from '../../../../../state';
 import { getActivityTargets } from '../../../../../utils';
@@ -53,7 +55,14 @@ function mapStateToProps(state: RootState, { documentId }: { documentId: string 
 
   return {
     highlightedActivities,
+    documentId,
   };
 }
 
-export const OuterActivityWrapperContainer = connect(mapStateToProps, undefined)(OuterActivityWrapper);
+const mapDispatchToProps = (dispatch: (action: Action) => void) => ({
+  onRestartConversationFromActivityClick: (documentId: string, activity: Activity) => {
+    dispatch(restartConversation(documentId, true, false, activity, window.URL.createObjectURL));
+  },
+});
+
+export const OuterActivityWrapperContainer = connect(mapStateToProps, mapDispatchToProps)(OuterActivityWrapper);

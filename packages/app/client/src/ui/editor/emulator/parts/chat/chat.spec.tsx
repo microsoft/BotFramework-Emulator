@@ -45,6 +45,7 @@ import {
   showContextMenuForActivity,
   setHighlightedObjects,
   ValueTypes,
+  RestartConversationStatus,
 } from '@bfemulator/app-shared';
 import { combineReducers, createStore } from 'redux';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
@@ -106,6 +107,7 @@ const mockStore = createStore(combineReducers({ bot, chat, clientAwareSettings, 
     chats: {
       doc1: defaultDocument,
     },
+    restartStatus: {},
     pendingSpeechTokenRetrieval: false,
     webChatStores: {},
     webSpeechFactories: {},
@@ -130,20 +132,85 @@ describe('<ChatContainer />', () => {
     commandService = descriptor.descriptor.get();
   });
 
+  let props;
+
   beforeEach(() => {
-    const props = {
+    props = {
       documentId: 'doc1',
       endpoint: {},
       mode: 'livechat',
       onStartConversation: jest.fn(),
       locale: 'en-US',
       selectedActivity: {},
+      restartStatus: undefined,
     } as ChatProps;
     wrapper = mount(
       <Provider store={mockStore}>
         <ChatContainer {...props} />
       </Provider>
     );
+  });
+
+  it('should disable webchat if chat window is in restart conversation flow', () => {
+    let updatedProps = {
+      ...props,
+      restartStatus: RestartConversationStatus.Started,
+    };
+
+    wrapper.setProps({
+      children: <ChatContainer {...updatedProps} />,
+    });
+    expect(wrapper.find(ReactWebChat).props().disabled).toBeTruthy();
+
+    updatedProps = {
+      ...props,
+      restartStatus: RestartConversationStatus.Rejected,
+    };
+
+    wrapper.setProps({
+      children: <ChatContainer {...updatedProps} />,
+    });
+    expect(wrapper.find(ReactWebChat).props().disabled).toBeFalsy();
+
+    updatedProps = {
+      ...props,
+      restartStatus: RestartConversationStatus.Completed,
+    };
+
+    wrapper.setProps({
+      children: <ChatContainer {...updatedProps} />,
+    });
+    expect(wrapper.find(ReactWebChat).props().disabled).toBeFalsy();
+
+    updatedProps = {
+      ...props,
+      restartStatus: undefined,
+    };
+
+    wrapper.setProps({
+      children: <ChatContainer {...updatedProps} />,
+    });
+    expect(wrapper.find(ReactWebChat).props().disabled).toBeFalsy();
+
+    updatedProps = {
+      ...props,
+      restartStatus: RestartConversationStatus.Stop,
+    };
+
+    wrapper.setProps({
+      children: <ChatContainer {...updatedProps} />,
+    });
+    expect(wrapper.find(ReactWebChat).props().disabled).toBeFalsy();
+
+    updatedProps = {
+      ...props,
+      restartStatus: RestartConversationStatus.Started,
+    };
+
+    wrapper.setProps({
+      children: <ChatContainer {...updatedProps} />,
+    });
+    expect(wrapper.find(ReactWebChat).props().disabled).toBeTruthy();
   });
 
   describe('when there is no direct line client', () => {

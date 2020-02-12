@@ -266,4 +266,12 @@ describe('The ConversationService should call "fetch" with the expected paramete
     expect(headers).toEqual({ 'Content-Type': 'application/json' });
     expect(method).toBe('POST');
   });
+
+  test('Send request to get all activities given a conversation Id', () => {
+    const mockConversationId = 'someConvoId';
+    const serverUrl = 'http://localhost';
+    ConversationService.fetchActivitiesForAConversation(serverUrl, mockConversationId);
+    const { url } = mockFetchArgs;
+    expect(url).toBe('http://localhost/v3/conversations/someConvoId/activities');
+  });
 });

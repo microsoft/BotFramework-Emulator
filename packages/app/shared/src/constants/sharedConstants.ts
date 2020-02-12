@@ -215,4 +215,8 @@ export const SharedConstants = {
     NAVBAR_NOTIFICATIONS: 'navbar.notifications',
     NAVBAR_RESOURCES: 'navbar:resources',
   },
+  Activity: {
+    FROM_USER_ROLE: 'user',
+    FROM_BOT_ROLE: 'bot',
+  },
 };

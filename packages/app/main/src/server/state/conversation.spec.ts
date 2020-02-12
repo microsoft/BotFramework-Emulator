@@ -31,6 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { Activity } from 'botframework-schema';
+
 import { BotEndpoint } from './botEndpoint';
 import { Conversation } from './conversation';
 
@@ -137,7 +139,12 @@ const mockActivity = {
       name: 'Bot',
     },
   ],
-};
+} as Activity;
+
+jest.mock('moment', () => () => ({
+  format: () => '2020-02-24T14:55:52-08:00',
+  toISOString: () => '2020-02-24T14:55:52-08:00',
+}));
 
 const mockUserActivity = {
   type: 'message',
@@ -159,7 +166,7 @@ const mockUserActivity = {
   inputHint: 'acceptingInput',
   replyToId: '96547340-1f5c-11e9-9b39-f387f690c8a4',
   id: null,
-};
+} as Activity;
 
 describe('Conversation class', () => {
   let botEndpointBotId;
@@ -179,6 +186,7 @@ describe('Conversation class', () => {
     (fetch as any).Response = class {};
     return fetch as any;
   })();
+
   beforeEach(() => {
     botEndpointBotId = 'someBotEndpointBotId';
     botEndpoint = new BotEndpoint('123', botEndpointBotId, 'http://ngrok', null, null, null, null, { fetch });
@@ -276,9 +284,14 @@ describe('Conversation class', () => {
     }
   });
 
-  it('should post an activity to the bot', async () => {
+  fit('should post an activity to the bot', async () => {
+    const formattedDataStr = '2020-02-24T14:55:52-08:00';
+    const isoDateStr = '2020-02-24T14:55:52-08:00';
     const result = await conversation.postActivityToBot(mockActivity, true);
-    expect(result.activityId).toEqual(jasmine.any(String));
+
+    const postedActivity: Activity = result.updatedActivity;
+    expect(postedActivity.localTimestamp).toBe(formattedDataStr);
+    expect(postedActivity.timestamp).toBe(isoDateStr);
   });
 
   it('should send a conversation update', async () => {

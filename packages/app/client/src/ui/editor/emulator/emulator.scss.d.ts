@@ -5,6 +5,7 @@ export const header: string;
 export const toolbarIcon: string;
 export const restartIcon: string;
 export const saveIcon: string;
+export const cancelIcon: string;
 export const content: string;
 export const presentation: string;
 export const chatPanel: string;

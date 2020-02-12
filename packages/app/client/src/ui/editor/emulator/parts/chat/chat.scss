@@ -75,6 +75,7 @@
 }
 
 .chat-activity {
+  position: relative;
   border: 1px solid transparent;
   cursor: pointer;
   margin: 0 16px;
@@ -89,6 +90,16 @@
     font-family: var(--default-font-family);
     font-weight: var(--webchat-bubble-text-weight);
   }
+}
+
+.hidden {
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.replay-bubble {
+  display: block;
+  text-align: right;
 }
 
 .selected-activity :global .bubble,

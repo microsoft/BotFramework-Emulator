@@ -41,6 +41,9 @@ import {
   WebChatStorePayload,
   WebSpeechFactoryPayload,
   UpdateSpeechAdaptersPayload,
+  ActivityFromWebchatPayload,
+  RestartConversationStatus,
+  RestartConversationStatusPayload,
 } from '../actions/chatActions';
 import { EditorAction, EditorActions } from '../actions/editorActions';
 
@@ -52,6 +55,17 @@ export interface ChatState {
   webSpeechFactories?: { [documentId: string]: () => any };
   webChatStores: { [documentId: string]: any };
   transcripts?: string[];
+  restartStatus: { [chatId: string]: RestartConversationStatus };
+}
+
+export interface HasIdAndReplyId {
+  id: string;
+  replyToId?: string;
+}
+
+export interface ChatReplayData {
+  incomingActivities: HasIdAndReplyId[];
+  postActivitiesSlots: number[];
 }
 
 export interface ChatDocument<I = any> extends Document {
@@ -64,6 +78,8 @@ export interface ChatDocument<I = any> extends Document {
   speechKey: string;
   speechRegion: string;
   ui: DocumentUI;
+  replayData: ChatReplayData;
+  isDisabled: boolean;
 }
 
 export interface ChatLog {
@@ -76,6 +92,7 @@ const DEFAULT_STATE: ChatState = {
   transcripts: [],
   webSpeechFactories: {},
   webChatStores: {},
+  restartStatus: {},
 };
 
 export function chat(state: ChatState = DEFAULT_STATE, action: ChatAction | EditorAction): ChatState {
@@ -109,7 +126,7 @@ export function chat(state: ChatState = DEFAULT_STATE, action: ChatAction | Edit
         changeKey: state.changeKey + 1,
         chats: {
           ...state.chats,
-          [payload.documentId]: { ...payload },
+          [payload.documentId]: { ...payload, replayData: {}, isDisabled: false },
         },
       };
       break;
@@ -161,6 +178,7 @@ export function chat(state: ChatState = DEFAULT_STATE, action: ChatAction | Edit
         const copy = { ...state };
         copy.changeKey += 1;
         delete copy.chats[documentId];
+        delete copy.restartStatus[documentId];
         state = { ...copy };
       }
       break;
@@ -275,6 +293,71 @@ export function chat(state: ChatState = DEFAULT_STATE, action: ChatAction | Edit
           },
         };
       }
+      break;
+    }
+
+    case ChatActions.IncomingActivityFromWc: {
+      const { documentId, activity } = action.payload as ActivityFromWebchatPayload;
+      const replayData: ChatReplayData = state.chats[documentId].replayData;
+      let incomingActivities: HasIdAndReplyId[] = [];
+      if (replayData.incomingActivities) {
+        incomingActivities = [...replayData.incomingActivities];
+      }
+      incomingActivities.push({
+        id: activity.id,
+        replyToId: activity.replyToId,
+      });
+      state = {
+        ...state,
+        chats: {
+          ...state.chats,
+          [documentId]: {
+            ...state.chats[documentId],
+            replayData: {
+              ...state.chats[documentId].replayData,
+              incomingActivities,
+            },
+          },
+        },
+      };
+      break;
+    }
+
+    case ChatActions.PostActivityEventWc: {
+      const { documentId } = action.payload as ActivityFromWebchatPayload;
+      let postActivitiesSlots: number[] = [];
+      if (state.chats[documentId].replayData.postActivitiesSlots) {
+        postActivitiesSlots = [...state.chats[documentId].replayData.postActivitiesSlots];
+      }
+      const slot: number = state.chats[documentId].replayData.incomingActivities
+        ? state.chats[documentId].replayData.incomingActivities.length
+        : 0;
+      postActivitiesSlots.push(slot);
+      state = {
+        ...state,
+        chats: {
+          ...state.chats,
+          [documentId]: {
+            ...state.chats[documentId],
+            replayData: {
+              ...state.chats[documentId].replayData,
+              postActivitiesSlots,
+            },
+          },
+        },
+      };
+      break;
+    }
+
+    case ChatActions.SetRestartConversationStatus: {
+      const { documentId, status } = action.payload as RestartConversationStatusPayload;
+      state = {
+        ...state,
+        restartStatus: {
+          ...state.restartStatus,
+          [documentId]: status,
+        },
+      };
       break;
     }
 

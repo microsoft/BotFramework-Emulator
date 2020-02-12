@@ -30,7 +30,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
 import * as Electron from 'electron';
 import { MenuItemConstructorOptions } from 'electron';
 import { Activity } from 'botframework-schema';
@@ -41,17 +40,24 @@ import {
   open as openDocument,
   setInspectorObjects,
   updatePendingSpeechTokenRetrieval,
-  updateSpeechAdapters,
   webChatStoreUpdated,
   webSpeechFactoryUpdated,
   ChatAction,
-  ChatActions,
   ChatDocument,
   DocumentIdPayload,
   OpenTranscriptPayload,
   RestartConversationPayload,
   SharedConstants,
   ValueTypes,
+  incomingActivity,
+  postActivity,
+  RestartConversationStatus,
+  setRestartConversationStatus,
+  addNotification,
+  newNotification,
+  beginAdd,
+  NotificationType,
+  updateSpeechAdapters,
 } from '@bfemulator/app-shared';
 import {
   CommandServiceImpl,
@@ -61,18 +67,31 @@ import {
   uniqueId,
   EmulatorMode,
   User,
+  logEntry,
+  textItem,
+  LogLevel,
 } from '@bfemulator/sdk-shared';
+import { createStore as createWebChatStore } from 'botframework-webchat-core';
+import { call, ForkEffect, put, select, takeEvery, fork, take } from 'redux-saga/effects';
+import { encode } from 'base64url';
+import { ChatActions } from '@bfemulator/app-shared';
 import {
   createCognitiveServicesSpeechServicesPonyfillFactory,
   createDirectLine,
   createDirectLineSpeechAdapters,
 } from 'botframework-webchat';
-import { createStore as createWebChatStore } from 'botframework-webchat-core';
-import { call, ForkEffect, put, select, takeEvery } from 'redux-saga/effects';
-import { encode } from 'base64url';
 
+import { logService } from '../../platform/log/logService';
 import { RootState } from '../store';
+import { ConversationQueue, WebchatEvents, webchatEventsToWatch } from '../../utils/restartConversationQueue';
 import { throwErrorFromResponse } from '../utils/throwErrorFromResponse';
+
+import {
+  createWebchatActivityChannel,
+  WebChatActivityChannel,
+  ChannelPayload,
+  ReplayActivitySnifferProps,
+} from './webchatActivityChannel';
 
 export const getConversationIdFromDocumentId = (state: RootState, documentId: string) => {
   return (state.chat.chats[documentId] || { conversationId: null }).conversationId;
@@ -94,6 +113,71 @@ export const getServerUrl = (state: RootState): string => {
   return state.clientAwareSettings.serverUrl;
 };
 
+export const getChatStoreFromDocumentId = (state: RootState, documentId: string): string => {
+  return state.chat.webChatStores[documentId];
+};
+
+export const getRestartStatus = (state: RootState, documentId: string): RestartConversationStatus => {
+  if (!state.chat.restartStatus) {
+    return undefined;
+  }
+  return state.chat.restartStatus[documentId];
+};
+
+export const getCurrentEmulatorMode = (state: RootState, documentId: string): EmulatorMode => {
+  return state.chat.chats[documentId].mode;
+};
+
+export const create = (classToInstantiate, ...args) => call(() => new classToInstantiate(...args));
+
+const dispatchActivityToWebchat = (dispatch: Function, postActivity: Activity) => {
+  dispatch({
+    type: WebchatEvents.postActivity,
+    payload: {
+      activity: {
+        ...postActivity,
+      },
+    },
+    meta: {
+      method: 'keyboard',
+    },
+  });
+};
+
+function createDLSpeechBotSniffer(isDLSpeechBot: boolean, conversationId: string, serverUrl: string) {
+  return () => next => async action => {
+    if (isDLSpeechBot && action.type === 'DIRECT_LINE/INCOMING_ACTIVITY') {
+      const res = await ConversationService.performTrackingForActivity(
+        serverUrl,
+        conversationId,
+        action.payload.activity
+      );
+      if (!res.ok) {
+        let errText = '';
+        if (res.text) {
+          errText = await res.text();
+        }
+        console.error(`Failed to log DL Speech activity: ${errText}`); // eslint-disable-line no-console
+      }
+    }
+    return next(action);
+  };
+}
+
+function createReplayActivitySniffer(documentId: string, meta: ReplayActivitySnifferProps = undefined) {
+  return ({ dispatch }) => next => async action => {
+    if (action.payload && webchatEventsToWatch.includes(action.type)) {
+      ChatSagas.wcActivityChannel.sendWcEvents({
+        documentId,
+        action,
+        dispatch,
+        meta,
+      });
+    }
+    return next(action);
+  };
+}
+
 interface BootstrapChatPayload {
   conversationId: string;
   documentId: string;
@@ -101,14 +185,15 @@ interface BootstrapChatPayload {
   mode: EmulatorMode;
   msaAppId?: string;
   msaPassword?: string;
+  user: User;
   speechKey?: string;
   speechRegion?: string;
-  user: User;
 }
 
 export class ChatSagas {
   @CommandServiceInstance()
   private static commandService: CommandServiceImpl;
+  public static wcActivityChannel: WebChatActivityChannel;
 
   public static *showContextMenuForActivity(action: ChatAction<Activity>): IterableIterator<any> {
     const { payload: activity } = action;
@@ -226,101 +311,218 @@ export class ChatSagas {
     }
   }
 
-  public static *bootstrapChat(payload: BootstrapChatPayload): IterableIterator<any> {
-    const {
-      conversationId,
-      documentId,
-      endpointId,
-      mode,
-      msaAppId,
-      msaPassword,
-      speechKey,
-      speechRegion,
-      user,
-    } = payload;
-    const isDLSpeechBot = speechKey && speechRegion;
-    const serverUrl = yield select(getServerUrl);
-    const webChatStore = isDLSpeechBot
-      ? createWebChatStore({}, createWebChatActivitySniffer(conversationId, serverUrl))
-      : createWebChatStore();
-    // Create a new webchat store for this documentId
-    yield put(webChatStoreUpdated(documentId, webChatStore));
-    // Each time a new chat is open, retrieve the speech token
-    // if the endpoint is speech enabled and create a bound speech
-    // pony fill factory. This is consumed by WebChat...
-    yield put(webSpeechFactoryUpdated(documentId, undefined)); // remove the old factory
+  public static *handleReplayIfRequired({ documentId, action, dispatch, meta }: ChannelPayload): IterableIterator<any> {
+    const conversationQueue: ConversationQueue | undefined = meta ? meta.conversationQueue : undefined;
+    const replayStatus: RestartConversationStatus | undefined = yield select(getRestartStatus, documentId);
 
-    // create the DL object and update the chat in the store
-    const directLine = yield call(
-      [ChatSagas, ChatSagas.createDirectLineObject],
-      conversationId,
-      mode,
-      endpointId,
-      user.id
-    );
-    yield put(
-      newChat(documentId, mode, {
+    if (conversationQueue && conversationQueue.validateIfReplayFlow(replayStatus, action.type)) {
+      const activityFlowError: string = yield call(
+        [conversationQueue, conversationQueue.incomingActivity],
+        action.payload.activity
+      );
+
+      if (activityFlowError || action.type === WebchatEvents.rejectedActivity) {
+        yield put(setRestartConversationStatus(RestartConversationStatus.Rejected, documentId));
+        const errorMessage: string =
+          'There was an error replaying the conversation. ' +
+          'The Bot code seems to have changed causing an error while replaying.';
+
+        yield fork(logService.logToDocument, documentId, logEntry(textItem(LogLevel.Error, errorMessage)));
+
+        const replayErrorNotification = yield call(newNotification, errorMessage, NotificationType.Error);
+        yield put(beginAdd(replayErrorNotification));
+        return;
+      }
+      if (conversationQueue.replayComplete) {
+        yield put(setRestartConversationStatus(RestartConversationStatus.Completed, documentId));
+        return;
+      }
+
+      const postActivity: Activity | undefined = yield call([
+        meta.conversationQueue,
+        meta.conversationQueue.getNextActivityForPost,
+      ]);
+      if (postActivity) {
+        yield call(dispatchActivityToWebchat, dispatch, postActivity);
+      }
+    }
+  }
+
+  public static *watchForWcEvents() {
+    const wcEventChannel = ChatSagas.wcActivityChannel.getWebchatChannelSubscriber();
+    while (true) {
+      const { documentId, action, dispatch, meta }: ChannelPayload = yield take(wcEventChannel);
+      try {
+        switch (action.type) {
+          case WebchatEvents.postActivity: {
+            const activity: Activity = action.payload.activity;
+            yield put(postActivity(activity, documentId));
+            break;
+          }
+
+          case WebchatEvents.incomingActivity: {
+            const activity: Activity = action.payload.activity;
+            yield put(incomingActivity(activity, documentId));
+            break;
+          }
+        }
+      } catch (err) {
+        wcEventChannel.close();
+        // Restart the channel if error occurs
+        ChatSagas.wcActivityChannel = createWebchatActivityChannel();
+      } finally {
+        yield fork(ChatSagas.handleReplayIfRequired, { documentId, action, dispatch, meta });
+      }
+    }
+  }
+
+  public static *bootstrapChat(payload: BootstrapChatPayload): IterableIterator<any> {
+    try {
+      const {
         conversationId,
-        directLine,
+        documentId,
+        endpointId,
+        mode,
+        msaAppId,
+        msaPassword,
+        user,
         speechKey,
         speechRegion,
-        userId: user.id,
-      })
-    );
+      } = payload;
+      const isDLSpeechBot: boolean = !!(speechKey && speechRegion);
+      const serverUrl = yield select(getServerUrl);
 
-    // initialize DL speech
-    if (isDLSpeechBot) {
-      yield put(updatePendingSpeechTokenRetrieval(documentId, true));
-      try {
-        const { directLine, webSpeechPonyfillFactory } = yield call(createDirectLineSpeechAdapters, {
-          fetchCredentials: {
-            region: speechRegion,
-            subscriptionKey: speechKey,
-          },
-        });
-        yield put(updateSpeechAdapters(documentId, directLine, webSpeechPonyfillFactory));
-      } catch (e) {
-        throw new Error(`There was an error while initializing DL Speech: ${e}`);
-      } finally {
+      yield put(
+        webChatStoreUpdated(
+          documentId,
+          createWebChatStore(
+            {},
+            createDLSpeechBotSniffer(isDLSpeechBot, conversationId, serverUrl),
+            createReplayActivitySniffer(documentId)
+          )
+        )
+      );
+      yield put(webSpeechFactoryUpdated(documentId, undefined)); // remove the old factory
+
+      // create the DL object and update the chat in the store
+      const directLine = yield call(
+        [ChatSagas, ChatSagas.createDirectLineObject],
+        conversationId,
+        mode,
+        endpointId,
+        user.id
+      );
+      yield put(
+        newChat(documentId, mode, {
+          conversationId,
+          directLine,
+          userId: user.id,
+          speechKey,
+          speechRegion,
+        })
+      );
+
+      if (isDLSpeechBot) {
+        yield put(updatePendingSpeechTokenRetrieval(documentId, true));
+        try {
+          const { directLine, webSpeechPonyfillFactory } = yield call(createDirectLineSpeechAdapters, {
+            fetchCredentials: {
+              region: speechRegion,
+              subscriptionKey: speechKey,
+            },
+          });
+          yield put(updateSpeechAdapters(documentId, directLine, webSpeechPonyfillFactory));
+        } catch (e) {
+          throw new Error(`There was an error while initializing DL Speech: ${e}`);
+        } finally {
+          yield put(updatePendingSpeechTokenRetrieval(documentId, false));
+        }
+        return;
+      }
+
+      if (msaAppId && msaPassword) {
+        // Get a token for speech and setup speech integration with Web Chat
+        yield put(updatePendingSpeechTokenRetrieval(documentId, true));
+        // If an existing factory is found, refresh the token
+        const existingFactory: string = yield select(getWebSpeechFactoryForDocumentId, documentId);
+        const { GetSpeechToken: command } = SharedConstants.Commands.Emulator;
+
+        try {
+          const speechAuthenticationToken: Promise<string> = ChatSagas.commandService.remoteCall(
+            command,
+            endpointId,
+            !!existingFactory
+          );
+
+          const factory = yield call(createCognitiveServicesSpeechServicesPonyfillFactory, {
+            authorizationToken: speechAuthenticationToken,
+            region: 'westus', // Currently, the prod speech service is only deployed to westus
+          });
+
+          yield put(webSpeechFactoryUpdated(documentId, factory)); // Provide the new factory to the store
+        } catch (e) {
+          // No-op - this appId/pass combo is not provisioned to use the speech api
+        }
+
         yield put(updatePendingSpeechTokenRetrieval(documentId, false));
       }
-      return;
-    }
-
-    // initialize speech
-    if (msaAppId && msaPassword) {
-      // Get a token for speech and setup speech integration with Web Chat
-      yield put(updatePendingSpeechTokenRetrieval(documentId, true));
-      // If an existing factory is found, refresh the token
-      const existingFactory: string = yield select(getWebSpeechFactoryForDocumentId, documentId);
-      const { GetSpeechToken: command } = SharedConstants.Commands.Emulator;
-
-      try {
-        const speechAuthenticationToken: Promise<string> = ChatSagas.commandService.remoteCall(
-          command,
-          endpointId,
-          !!existingFactory
-        );
-
-        const factory = yield call(createCognitiveServicesSpeechServicesPonyfillFactory, {
-          authorizationToken: speechAuthenticationToken,
-          region: 'westus', // Currently, the prod speech service is only deployed to westus
-        });
-
-        yield put(webSpeechFactoryUpdated(documentId, factory)); // Provide the new factory to the store
-      } catch (e) {
-        // No-op - this appId/pass combo is not provisioned to use the speech api
-      }
-
-      yield put(updatePendingSpeechTokenRetrieval(documentId, false));
+    } catch (ex) {
+      throw new Error(`Error occurred while bootstrapping a new chat: ${ex}`);
     }
   }
 
   public static *restartConversation(action: ChatAction<RestartConversationPayload>): IterableIterator<any> {
-    const { documentId, requireNewConversationId, requireNewUserId } = action.payload;
+    const { documentId, requireNewConversationId, requireNewUserId, createObjectUrl } = action.payload;
+    const replayToActivity: Activity = action.payload.activity || undefined;
     const chat: ChatDocument = yield select(getChatFromDocumentId, documentId);
     const serverUrl = yield select(getServerUrl);
-    const isDLSpeechBot = chat.speechKey && chat.speechRegion;
+    const isDLSpeechBot: boolean = !!(chat.speechKey && chat.speechRegion);
+    let conversationQueue: ConversationQueue;
+
+    if (chat.directLine) {
+      chat.directLine.end();
+    }
+
+    let conversationId;
+    if (requireNewConversationId) {
+      conversationId = `${uniqueId()}|${chat.mode}`;
+    } else {
+      // preserve the current conversation id
+      conversationId = chat.conversationId || `${uniqueId()}|${chat.mode}`;
+    }
+    if (replayToActivity) {
+      const activities: Activity[] = yield call(
+        [ConversationService, ConversationService.fetchActivitiesForAConversation],
+        serverUrl,
+        chat.conversationId
+      );
+      yield put(setRestartConversationStatus(RestartConversationStatus.Started, documentId));
+      conversationQueue = yield create(
+        ConversationQueue,
+        activities,
+        chat.replayData,
+        conversationId,
+        replayToActivity,
+        createObjectUrl
+      );
+    }
+
+    yield put(clearLog(documentId));
+    yield put(setInspectorObjects(documentId, []));
+    yield put(
+      webChatStoreUpdated(
+        documentId,
+        createWebChatStore(
+          {},
+          createDLSpeechBotSniffer(isDLSpeechBot, conversationId, serverUrl),
+          createReplayActivitySniffer(documentId, {
+            conversationQueue,
+          })
+        )
+      )
+    );
+
+    yield put(webSpeechFactoryUpdated(documentId, undefined)); // remove old speech token factory
 
     // re-init new directline object & update conversation object in server state
     // set user id
@@ -331,25 +533,6 @@ export class ChatSagas {
       // use the previous id or the custom id from settings
       userId = chat.userId || (yield select(getCustomUserGUID));
     }
-
-    let conversationId;
-    if (requireNewConversationId) {
-      conversationId = `${uniqueId()}|${chat.mode}`;
-    } else {
-      // preserve the current conversation id
-      conversationId = chat.conversationId || `${uniqueId()}|${chat.mode}`;
-    }
-
-    if (chat.directLine) {
-      chat.directLine.end();
-    }
-    yield put(clearLog(documentId));
-    yield put(setInspectorObjects(documentId, []));
-    const webChatStore = isDLSpeechBot
-      ? createWebChatStore({}, createWebChatActivitySniffer(conversationId, serverUrl))
-      : createWebChatStore();
-    yield put(webChatStoreUpdated(documentId, webChatStore)); // reset web chat store
-    yield put(webSpeechFactoryUpdated(documentId, undefined)); // remove old speech token factory
 
     // update the main-side conversation object with conversation & user IDs,
     // and ensure that conversation is in a fresh state
@@ -495,7 +678,10 @@ export class ChatSagas {
     const secret = encode(JSON.stringify(options));
     const res: Response = yield fetch(`${serverUrl}/emulator/ws/port`);
     if (!res.ok) {
-      yield* throwErrorFromResponse('Error occurred while retrieving the web socket port', res);
+      throw new Error(
+        `Error occurred while retrieving the WebSocket server port: ${res.status}: ${res.statusText ||
+          'No status text'}`
+      );
     }
     const webSocketPort = yield res.text();
     const directLine = createDirectLine({
@@ -519,27 +705,9 @@ export class ChatSagas {
   }
 }
 
-function createWebChatActivitySniffer(conversationId: string, serverUrl: string) {
-  return () => next => async action => {
-    if (action.type === 'DIRECT_LINE/INCOMING_ACTIVITY') {
-      const res = await ConversationService.performTrackingForActivity(
-        serverUrl,
-        conversationId,
-        action.payload.activity
-      );
-      if (!res.ok) {
-        let errText = '';
-        if (res.text) {
-          errText = await res.text();
-        }
-        console.error(`Failed to log DL Speech activity: ${errText}`); // eslint-disable-line no-console
-      }
-    }
-    return next(action);
-  };
-}
-
 export function* chatSagas(): IterableIterator<ForkEffect> {
+  ChatSagas.wcActivityChannel = createWebchatActivityChannel();
+  yield fork(ChatSagas.watchForWcEvents);
   yield takeEvery(ChatActions.showContextMenuForActivity, ChatSagas.showContextMenuForActivity);
   yield takeEvery(ChatActions.closeConversation, ChatSagas.closeConversation);
   yield takeEvery(ChatActions.restartConversation, ChatSagas.restartConversation);

@@ -47,6 +47,7 @@ import { updateActivity } from './handlers/updateActivity';
 import { createUploadAttachmentHandler } from './handlers/uploadAttachment';
 import { createGetConversationsHandler } from './handlers/getConversations';
 import { createGetBotEndpointHandler } from './handlers/getBotEndpoint';
+import { getActivitiesForConversation } from './handlers/getActivitiesForConversation';
 
 export function mountConversationsRoutes(emulatorServer: EmulatorRestServer) {
   const { server, state } = emulatorServer;
@@ -122,5 +123,12 @@ export function mountConversationsRoutes(emulatorServer: EmulatorRestServer) {
     verifyBotFramework,
     jsonBodyParser,
     createUploadAttachmentHandler(state)
+  );
+
+  server.get(
+    '/v3/conversations/:conversationId/activities',
+    verifyBotFramework,
+    jsonBodyParser,
+    getActivitiesForConversation(state)
   );
 }

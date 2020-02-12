@@ -45,13 +45,18 @@ import {
   Notification,
   SharedConstants,
   ValueTypesMask,
+  setRestartConversationStatus,
+  RestartConversationStatus,
 } from '@bfemulator/app-shared';
 
 import { RootState } from '../../../state/store';
 
 import { Emulator, EmulatorProps } from './emulator';
 
-const mapStateToProps = (state: RootState, { documentId, ...ownProps }: { documentId: string }): EmulatorProps => {
+const mapStateToProps = (
+  state: RootState,
+  { documentId, ...ownProps }: { documentId: string }
+): Partial<EmulatorProps> => {
   return {
     activeDocumentId: state.editor.editors[state.editor.activeEditor].activeDocumentId,
     activities: state.chat.chats[documentId].activities,
@@ -65,11 +70,12 @@ const mapStateToProps = (state: RootState, { documentId, ...ownProps }: { docume
     ui: state.chat.chats[documentId].ui,
     url: state.clientAwareSettings.serverUrl,
     userId: state.chat.chats[documentId].userId,
+    restartStatus: state.chat.restartStatus[documentId],
     ...ownProps,
   };
 };
 
-const mapDispatchToProps = (dispatch): EmulatorProps => ({
+const mapDispatchToProps = (dispatch): Partial<EmulatorProps> => ({
   clearLog: (documentId: string) => {
     dispatch(clearLog(documentId));
   },
@@ -87,6 +93,8 @@ const mapDispatchToProps = (dispatch): EmulatorProps => ({
     dispatch(executeCommand(true, SharedConstants.Commands.Telemetry.TrackEvent, null, name, properties)),
   updateChat: (documentId: string, updatedValues: any) => dispatch(updateChat(documentId, updatedValues)),
   updateDocument: (documentId, updatedValues: Partial<Document>) => dispatch(updateDocument(documentId, updatedValues)),
+  onStopRestartConversationClick: (documentId: string) =>
+    dispatch(setRestartConversationStatus(RestartConversationStatus.Rejected, documentId)),
 });
 
 export const EmulatorContainer = connect(mapStateToProps, mapDispatchToProps)(Emulator);

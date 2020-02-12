@@ -35,7 +35,6 @@ const path = require('path');
 
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const TerserWebpackPlugin = require('terser-webpack-plugin');
-
 const webpack = require('webpack');
 const { DllPlugin, DllReferencePlugin, NamedModulesPlugin, DefinePlugin, WatchIgnorePlugin } = webpack;
 
@@ -107,7 +106,7 @@ const defaultConfig = {
     ],
   },
 
-  devtool: 'source-map',
+  devtool: 'eval-source-map',
 
   devServer: {
     hot: true,

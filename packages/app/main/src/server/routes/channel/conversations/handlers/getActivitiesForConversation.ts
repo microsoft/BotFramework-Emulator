@@ -30,45 +30,26 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+import * as HttpStatus from 'http-status-codes';
+import { Next, Request, Response } from 'restify';
+import { Activity } from 'botframework-schema';
 
-import { remote } from 'electron';
-import { Provider } from 'react-redux';
-import * as ReactDOM from 'react-dom';
-import * as React from 'react';
-import installExtension, { REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS } from 'electron-devtools-installer';
+import { sendErrorResponse } from '../../../../utils/sendErrorResponse';
+import { ServerState } from '../../../../state/serverState';
+import { ConversationAPIPathParameters } from '../types/conversationAPIPathParameters';
 
-import './commands';
-import interceptError from './interceptError';
-import interceptHyperlink from './interceptHyperlink';
-import Main from './ui/shell/mainContainer';
-import { store } from './state/store';
-import './ui/styles/globals.scss';
-
-interceptError();
-interceptHyperlink();
-
-if (!remote.app.isPackaged) {
-  // Enable reload
-  document.addEventListener('keydown', function(e) {
-    // Fn + f5 for reloading on dev
-    if (e.which === 116) {
-      location.reload();
+export function getActivitiesForConversation(state: ServerState) {
+  return async (req: Request, res: Response, next: Next): Promise<void> => {
+    try {
+      const conversationParameters: ConversationAPIPathParameters = req.params;
+      const conversation = state.conversations.conversationById(conversationParameters.conversationId);
+      const activities: Activity[] = await conversation.getTranscript();
+      res.send(HttpStatus.OK, activities);
+      res.end();
+    } catch (err) {
+      sendErrorResponse(req, res, next, err);
+    } finally {
+      next();
     }
-  });
-  // enable react & react-redux dev tools
-  installExtension([REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS])
-    /* eslint-disable no-console */
-    .then(installed => console.log('Successfully installed: ', installed.join(', ')))
-    .catch(err => console.error('Failed to install dev tools: ', err));
-  /* eslint-enable no-console */
-}
-
-// Start rendering the UI
-ReactDOM.render(
-  React.createElement(Provider, { store }, React.createElement(Main as any)),
-  document.getElementById('root')
-);
-
-if (module.hasOwnProperty('hot')) {
-  (module as any).hot.accept();
+  };
 }

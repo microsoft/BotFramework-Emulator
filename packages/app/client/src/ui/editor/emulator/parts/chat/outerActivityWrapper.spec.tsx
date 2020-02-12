@@ -49,13 +49,25 @@ describe('<OuterActivityWrapper />', () => {
             highlightedObjects: [],
             inspectorObjects: [{ value: {}, valueType: ValueTypes.Activity }],
           },
+          restartStatus: {},
         },
       },
     };
-    const card = { activity: { id: 'card1' } };
+    const card = {
+      activity: {
+        id: 'card1',
+        from: {
+          role: 'user',
+        },
+      },
+    };
     const wrapper = mount(
       <Provider store={createStore((state, action) => state, storeState)}>
-        <OuterActivityWrapperContainer card={card} documentId={'doc1'} />
+        <OuterActivityWrapperContainer
+          card={card}
+          documentId={'doc1'}
+          onRestartConversationFromActivityClick={jest.fn()}
+        />
       </Provider>
     );
 
@@ -63,10 +75,78 @@ describe('<OuterActivityWrapper />', () => {
   });
 
   it('should determine if an activity should be selected', () => {
-    const card = { activity: { id: 'card1' } };
-    const wrapper = shallow(<OuterActivityWrapper card={card} highlightedActivities={[]} />);
+    const card = {
+      activity: {
+        id: 'card1',
+        from: {
+          role: 'user',
+        },
+      },
+    };
+    const wrapper = shallow(
+      <OuterActivityWrapper card={card} highlightedActivities={[]} onRestartConversationFromActivityClick={jest.fn()} />
+    );
     const instance = wrapper.instance();
 
     expect((instance as any).shouldBeSelected(card.activity)).toBe(false);
+  });
+
+  it('should start restart flow from the selected activity when clicked', () => {
+    const card = {
+      activity: {
+        id: 'card1',
+        from: {
+          role: 'user',
+        },
+      },
+    };
+
+    const onRestartClick = jest.fn();
+    const wrapper = shallow(
+      <OuterActivityWrapper
+        card={card}
+        highlightedActivities={[]}
+        onRestartConversationFromActivityClick={onRestartClick}
+        documentId="some-id"
+      />
+    );
+    const instance = wrapper.instance();
+
+    (instance as any).propsBoundRestartActivityHandler();
+    expect(onRestartClick).toHaveBeenCalledWith('some-id', card.activity);
+  });
+
+  it('should determine if an activity is user activity or not', () => {
+    const userCard = {
+      activity: {
+        id: 'card1',
+        from: {
+          role: 'user',
+        },
+        channelData: {
+          test: true,
+        },
+      },
+    };
+
+    const botCard = {
+      activity: {
+        id: 'card1',
+        from: {
+          role: 'bot',
+        },
+      },
+    };
+    const wrapper = shallow(
+      <OuterActivityWrapper
+        card={userCard}
+        highlightedActivities={[]}
+        onRestartConversationFromActivityClick={jest.fn()}
+      />
+    );
+    const instance = wrapper.instance();
+
+    expect((instance as any).isUserActivity(userCard.activity)).toBe(true);
+    expect((instance as any).isUserActivity(botCard.activity)).toBe(false);
   });
 });

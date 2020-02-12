@@ -31,8 +31,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { call, put, select, takeEvery } from 'redux-saga/effects';
-import { CommandServiceImpl, CommandServiceInstance, ConversationService, json2HTML } from '@bfemulator/sdk-shared';
+import { call, put, select, takeEvery, fork } from 'redux-saga/effects';
+import {
+  CommandServiceImpl,
+  CommandServiceInstance,
+  ConversationService,
+  json2HTML,
+  logEntry,
+  textItem,
+  LogLevel,
+} from '@bfemulator/sdk-shared';
 import * as sdkSharedUtils from '@bfemulator/sdk-shared/build/utils/misc';
 import {
   clearLog,
@@ -46,11 +54,21 @@ import {
   ChatActions,
   SharedConstants,
   updateSpeechAdapters,
+  incomingActivity,
+  postActivity,
+  RestartConversationStatus,
+  setRestartConversationStatus,
+  RestartConversationPayload,
+  ChatReplayData,
 } from '@bfemulator/app-shared';
 import {
   createCognitiveServicesSpeechServicesPonyfillFactory,
   createDirectLineSpeechAdapters,
 } from 'botframework-webchat';
+import { Activity } from 'botframework-schema';
+
+import { WebchatEvents, ConversationQueue } from '../../utils/restartConversationQueue';
+import { logService } from '../../platform/log/logService';
 
 import {
   chatSagas,
@@ -61,13 +79,28 @@ import {
   getCustomUserGUID,
   getWebSpeechFactoryForDocumentId,
 } from './chatSagas';
+import { createWebchatActivityChannel, ChannelPayload, ReplayActivitySnifferProps } from './webchatActivityChannel';
 
+const mockChatStore = jest.fn(args => {
+  return {};
+});
 const mockWebChatStore = {};
+
 jest.mock('botframework-webchat-core', () => ({
-  createStore: () => mockWebChatStore,
+  createStore: (...args) => {
+    return mockChatStore({ ...args });
+  },
 }));
 
 jest.mock('../../ui/dialogs', () => ({}));
+
+jest.mock('../../platform/log/logService', () => {
+  return {
+    logService: {
+      logToDocument: jest.fn(),
+    },
+  };
+});
 
 const mockWriteText = jest.fn();
 jest.mock('electron', () => {
@@ -107,7 +140,9 @@ jest.mock('botframework-webchat', () => {
 
 describe('The ChatSagas,', () => {
   let commandService: CommandServiceImpl;
+  const oldDateNow = Date.now;
   beforeAll(() => {
+    Date.now = jest.fn();
     const decorator = CommandServiceInstance();
     const descriptor = decorator({ descriptor: {} }, 'none') as any;
     commandService = descriptor.descriptor.get();
@@ -117,13 +152,18 @@ describe('The ChatSagas,', () => {
     jest.spyOn(sdkSharedUtils, 'uniqueIdv4').mockReturnValue('someUniqueIdv4');
   });
 
+  afterAll(() => {
+    Date.now = oldDateNow;
+  });
+
   beforeEach(() => {
     mockWriteText.mockClear();
+    mockChatStore.mockClear();
   });
 
   it('should initialize the root saga', () => {
     const gen = chatSagas();
-
+    expect(gen.next().value).toEqual(fork(ChatSagas.watchForWcEvents));
     expect(gen.next().value).toEqual(
       takeEvery(ChatActions.showContextMenuForActivity, ChatSagas.showContextMenuForActivity)
     );
@@ -561,7 +601,8 @@ describe('The ChatSagas,', () => {
     expect(gen.next().value).toEqual(select(getServerUrl));
 
     // put webChatStoreUpdated
-    expect(gen.next().value).toEqual(put(webChatStoreUpdated(payload.documentId, mockWebChatStore)));
+    const result = gen.next();
+    expect(result.value).toEqual(put(webChatStoreUpdated(payload.documentId, mockWebChatStore)));
 
     // put webSpeechFactoryUpdated
     expect(gen.next().value).toEqual(put(webSpeechFactoryUpdated(payload.documentId, undefined)));
@@ -1111,5 +1152,321 @@ describe('The ChatSagas,', () => {
     expect(gen.next(serverUrl).value).toEqual(
       call([ConversationService, ConversationService.sendActivityToBot], serverUrl, payload.conversationId, activity)
     );
+  });
+
+  describe('Replay conversation upto selected activity', () => {
+    it('should watch for incoming activity events dispatched from webchat store', () => {
+      const wcMockChannel = createWebchatActivityChannel();
+      ChatSagas.wcActivityChannel = wcMockChannel;
+      const payload: ChannelPayload = {
+        documentId: 'some-id',
+        action: {
+          type: WebchatEvents.incomingActivity,
+          payload: {
+            activity: {
+              id: 'activity-1',
+            } as Activity,
+          },
+        },
+        dispatch: jest.fn(),
+        meta: undefined,
+      };
+      const gen = ChatSagas.watchForWcEvents();
+      gen.next();
+      expect(gen.next(payload).value).toEqual(
+        put(incomingActivity(payload.action.payload.activity, payload.documentId))
+      );
+    });
+
+    it('should watch for post activity events dispatched from webchat store', () => {
+      const wcMockChannel = createWebchatActivityChannel();
+      ChatSagas.wcActivityChannel = wcMockChannel;
+      const payload: ChannelPayload = {
+        documentId: 'some-id',
+        action: {
+          type: WebchatEvents.postActivity,
+          payload: {
+            activity: {
+              id: 'activity-1',
+            } as Activity,
+          },
+        },
+        dispatch: jest.fn(),
+        meta: undefined,
+      };
+      const gen = ChatSagas.watchForWcEvents();
+      gen.next();
+      expect(gen.next(payload).value).toEqual(put(postActivity(payload.action.payload.activity, payload.documentId)));
+    });
+
+    it('should not dispatch anything for other webchat activities', () => {
+      const wcMockChannel = createWebchatActivityChannel();
+      ChatSagas.wcActivityChannel = wcMockChannel;
+      const payload: ChannelPayload = {
+        documentId: 'some-id',
+        action: {
+          type: 'WEBCHAT/SEND_TYPING',
+          payload: {
+            activity: {
+              id: 'activity-1',
+            } as Activity,
+          },
+        },
+        dispatch: jest.fn(),
+        meta: undefined,
+      };
+      const gen = ChatSagas.watchForWcEvents();
+      let res = gen.next();
+      res = gen.next(payload);
+      expect(res.value).toEqual(fork(ChatSagas.handleReplayIfRequired, payload));
+    });
+
+    it('should fork a call to handle replay if conversation queue is available', () => {
+      const wcMockChannel = createWebchatActivityChannel();
+      ChatSagas.wcActivityChannel = wcMockChannel;
+      const payload: ChannelPayload = {
+        documentId: 'some-id',
+        action: {
+          type: WebchatEvents.postActivity,
+          payload: {
+            activity: {
+              id: 'activity-1',
+            } as Activity,
+          },
+        },
+        dispatch: jest.fn(),
+        meta: undefined,
+      };
+      const gen = ChatSagas.watchForWcEvents();
+      gen.next();
+      gen.next(payload);
+      expect(gen.next().value).toEqual(fork(ChatSagas.handleReplayIfRequired, { ...payload }));
+    });
+
+    it('should handle replay only if validateIfReplayFlow is true', () => {
+      const validateIfReplayFlow = jest.fn(() => false);
+      const mock: any = {
+        validateIfReplayFlow,
+      };
+      const dispatcherMock = jest.fn();
+      const payload: ChannelPayload = {
+        documentId: 'some-id',
+        action: {
+          type: WebchatEvents.postActivity,
+          payload: {
+            activity: {
+              id: 'activity-1',
+            } as Activity,
+          },
+        },
+        dispatch: dispatcherMock,
+        meta: {
+          conversationQueue: mock,
+        },
+      };
+      const gen = ChatSagas.handleReplayIfRequired({ ...payload });
+      gen.next();
+      gen.next();
+      expect(dispatcherMock).not.toHaveBeenCalled();
+    });
+
+    it('should not dispatch activity to webchat if no activity available to post', () => {
+      const mock: any = {
+        validateIfReplayFlow: jest.fn(() => true),
+        incomingActivity: jest.fn(),
+        getNextActivityForPost: jest.fn(() => undefined),
+      };
+      const dispatcherMock = jest.fn();
+      const payload: ChannelPayload = {
+        documentId: 'some-id',
+        action: {
+          type: WebchatEvents.postActivity,
+          payload: {
+            activity: {
+              id: 'activity-1',
+            } as Activity,
+          },
+        },
+        dispatch: dispatcherMock,
+        meta: {
+          conversationQueue: mock,
+        },
+      };
+      const gen = ChatSagas.handleReplayIfRequired({ ...payload });
+      let res;
+      res = gen.next();
+      res = gen.next(RestartConversationStatus.Started);
+      res = gen.next();
+      res = gen.next();
+      expect(res.done).toBeTruthy();
+      expect(dispatcherMock).not.toHaveBeenCalled();
+    });
+
+    it('should not dispatch activity to webchat if activity available to post', () => {
+      const activity: Activity = {
+        id: 'activity-1',
+      } as Activity;
+      const mock: any = {
+        validateIfReplayFlow: jest.fn(() => true),
+        incomingActivity: jest.fn(),
+        getNextActivityForPost: jest.fn(() => activity),
+      };
+      const dispatcherMock = jest.fn();
+      const payload: ChannelPayload = {
+        documentId: 'some-id',
+        action: {
+          type: WebchatEvents.postActivity,
+          payload: {
+            activity: {
+              id: '0',
+            } as Activity,
+          },
+        },
+        dispatch: dispatcherMock,
+        meta: {
+          conversationQueue: mock,
+        },
+      };
+      const gen = ChatSagas.handleReplayIfRequired({ ...payload });
+      let res = gen.next();
+      res = gen.next(RestartConversationStatus.Started);
+      res = gen.next();
+      res = gen.next(activity);
+      const args = [...res.value.CALL.args];
+      args[0].call(args[1]);
+      expect(dispatcherMock).toHaveBeenCalledTimes(1);
+      res = gen.next();
+      expect(res.done).toBeTruthy();
+    });
+
+    it('should throw an error if there was an error replaying the conversation', () => {
+      const activity: Activity = {
+        id: 'activity-1',
+      } as Activity;
+      const mock: any = {
+        validateIfReplayFlow: jest.fn(() => true),
+        incomingActivity: jest.fn(),
+        getNextActivityForPost: jest.fn(() => activity),
+      };
+      const dispatcherMock = jest.fn();
+      const payload: ChannelPayload = {
+        documentId: 'some-id',
+        action: {
+          type: WebchatEvents.postActivity,
+          payload: {
+            activity: {
+              id: '0',
+            } as Activity,
+          },
+        },
+        dispatch: dispatcherMock,
+        meta: {
+          conversationQueue: mock,
+        },
+      };
+      const gen = ChatSagas.handleReplayIfRequired({ ...payload });
+      let res = gen.next();
+      res = gen.next(RestartConversationStatus.Started);
+      res = gen.next({
+        ex: 'Failed replay',
+      });
+      expect(res.value).toEqual(
+        put(setRestartConversationStatus(RestartConversationStatus.Rejected, payload.documentId))
+      );
+      res = gen.next();
+      const errorMessage: string = `There was an error replaying the conversation. The Bot code seems to have changed causing an error while replaying.`;
+      expect(res.value).toEqual(
+        fork(logService.logToDocument, 'some-id', logEntry(textItem(LogLevel.Error, errorMessage)))
+      );
+    });
+
+    it('should send conversation queue object if its a Conversation replay flow to replayActivitySniffer middleware', done => {
+      const webChatEventExpected = {
+        type: WebchatEvents.incomingActivity,
+        payload: {
+          activity: {
+            id: '1',
+          },
+        },
+      };
+
+      const conversationQueue = new ConversationQueue(
+        [
+          {
+            id: '1',
+            from: {
+              role: 'user',
+            },
+          } as Activity,
+        ],
+        {
+          incomingActivities: [
+            {
+              id: '2',
+              replyToId: '1',
+            },
+          ],
+          postActivitiesSlots: [1, 3],
+        },
+        '123',
+        {
+          id: '2',
+        } as Activity,
+        jest.fn()
+      );
+
+      let eventReceivedCt = 0;
+      const channel: any = {
+        sendWcEvents: args => {
+          expect(args.action).toEqual(webChatEventExpected);
+          expect(args.meta.conversationQueue).toEqual(conversationQueue);
+          eventReceivedCt++;
+          if (eventReceivedCt === 1000) {
+            done();
+          }
+        },
+      };
+      ChatSagas.wcActivityChannel = channel;
+      const payload: RestartConversationPayload = {
+        documentId: 'someDocId',
+        requireNewConversationId: true,
+        requireNewUserId: true,
+        activity: {
+          id: 'act-1',
+        } as Activity,
+        createObjectUrl: jest.fn(),
+      };
+      const mockAction: any = {
+        payload,
+      };
+      const gen = ChatSagas.restartConversation(mockAction);
+
+      // select chat from document id
+      const chat = {
+        conversationId: 'someConvoId',
+        directLine: {
+          end: jest.fn(),
+        },
+        mode: 'livechat' as any,
+      };
+      gen.next();
+      gen.next(chat);
+      gen.next();
+      gen.next();
+      gen.next();
+      gen.next(conversationQueue);
+      gen.next();
+      gen.next();
+      const webchatStoreArgs = mockChatStore.mock.calls[0][0];
+      const replaySnifferFn = webchatStoreArgs[Object.keys(webchatStoreArgs).pop()];
+      const mockDispatcher = {
+        dispatch: jest.fn(),
+      };
+      const mockNext = jest.fn();
+      replaySnifferFn(mockDispatcher)(mockNext)(webChatEventExpected);
+      for (let i = 0; i < 999; i++) {
+        replaySnifferFn(mockDispatcher)(mockNext)(webChatEventExpected);
+      }
+    });
   });
 });

@@ -162,6 +162,7 @@ describe('<EmulatorContainer/>', () => {
         pendingSpeechTokenRetrieval: null,
         webChatStores: {},
         webSpeechFactories: {},
+        restartStatus: {},
       },
       editor: {
         activeEditor: 'primary',

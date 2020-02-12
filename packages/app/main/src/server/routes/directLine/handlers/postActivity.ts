@@ -57,10 +57,11 @@ export function createPostActivityHandler(emulatorServer: EmulatorRestServer) {
       return;
     }
 
-    const activity = req.body as Activity;
+    let activity = req.body as Activity;
 
     try {
-      const { activityId, response, statusCode } = await conversation.postActivityToBot(activity, true);
+      const { updatedActivity, response, statusCode } = await conversation.postActivityToBot(activity, true);
+      activity = updatedActivity;
 
       if (!statusCodeFamily(statusCode, 200)) {
         if (statusCode === HttpStatus.UNAUTHORIZED || statusCode === HttpStatus.FORBIDDEN) {
@@ -77,16 +78,14 @@ export function createPostActivityHandler(emulatorServer: EmulatorRestServer) {
         }
         res.send(statusCode || HttpStatus.INTERNAL_SERVER_ERROR, err);
       } else {
-        res.send(statusCode, { id: activityId });
+        res.send(statusCode, { id: activity.id });
 
         // (filter out the /INSPECT open command because it doesn't originate from Web Chat)
         if (activity.type === 'message' && activity.text === '/INSPECT open') {
           res.end();
           return next();
         }
-
-        // satisfy the Web Chat echoback requirement
-        const payload = { activities: [{ ...activity, id: activityId }] };
+        const payload = { activities: [{ ...activity, id: activity.id }] };
         const socket = WebSocketServer.getSocketByConversationId(conversation.conversationId);
         socket && socket.send(JSON.stringify(payload));
       }

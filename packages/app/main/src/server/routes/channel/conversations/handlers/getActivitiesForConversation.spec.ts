@@ -31,44 +31,40 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { remote } from 'electron';
-import { Provider } from 'react-redux';
-import * as ReactDOM from 'react-dom';
-import * as React from 'react';
-import installExtension, { REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS } from 'electron-devtools-installer';
+import { Activity } from 'botframework-schema';
+import { OK } from 'http-status-codes';
 
-import './commands';
-import interceptError from './interceptError';
-import interceptHyperlink from './interceptHyperlink';
-import Main from './ui/shell/mainContainer';
-import { store } from './state/store';
-import './ui/styles/globals.scss';
+import { getActivitiesForConversation } from './getActivitiesForConversation';
 
-interceptError();
-interceptHyperlink();
+describe('getActivitiesForConversation handler', () => {
+  it('should get all the activities for a conversation', async done => {
+    const transcripts: Activity[] = [
+      {
+        id: '1',
+      } as Activity,
+    ];
+    const state: any = {
+      conversations: {
+        conversationById: () => {
+          return {
+            getTranscript: () => transcripts,
+          };
+        },
+      },
+    };
 
-if (!remote.app.isPackaged) {
-  // Enable reload
-  document.addEventListener('keydown', function(e) {
-    // Fn + f5 for reloading on dev
-    if (e.which === 116) {
-      location.reload();
-    }
+    const req: any = {
+      params: {
+        conversationId: '123',
+      },
+    };
+    const res: any = {
+      end: jest.fn(),
+      send: jest.fn(),
+    };
+    const activityHandler = getActivitiesForConversation(state);
+    await activityHandler(req, res, jest.fn());
+    expect(res.send).toHaveBeenCalledWith(OK, transcripts);
+    done();
   });
-  // enable react & react-redux dev tools
-  installExtension([REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS])
-    /* eslint-disable no-console */
-    .then(installed => console.log('Successfully installed: ', installed.join(', ')))
-    .catch(err => console.error('Failed to install dev tools: ', err));
-  /* eslint-enable no-console */
-}
-
-// Start rendering the UI
-ReactDOM.render(
-  React.createElement(Provider, { store }, React.createElement(Main as any)),
-  document.getElementById('root')
-);
-
-if (module.hasOwnProperty('hot')) {
-  (module as any).hot.accept();
-}
+});

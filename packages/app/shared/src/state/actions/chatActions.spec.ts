@@ -31,6 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { Activity } from 'botframework-schema';
+
 import {
   ChatActions,
   inspectorChanged,
@@ -52,6 +54,10 @@ import {
   openTranscript,
   restartConversation,
   updateSpeechAdapters,
+  setRestartConversationStatus,
+  RestartConversationStatus,
+  postActivity,
+  incomingActivity,
 } from './chatActions';
 
 describe('chat actions', () => {
@@ -273,6 +279,66 @@ describe('chat actions', () => {
         documentId,
         webSpeechPonyfillFactory,
       },
+    });
+  });
+
+  it('should create a setRestartConversationStatus action', () => {
+    const expectedPayload = {
+      documentId: 'abc',
+      status: RestartConversationStatus.Started,
+    };
+    const action = setRestartConversationStatus(expectedPayload.status, expectedPayload.documentId);
+
+    expect(action).toEqual({
+      type: ChatActions.SetRestartConversationStatus,
+      payload: expectedPayload,
+    });
+  });
+
+  it('should create a postActivity action', () => {
+    const activity: Activity = {
+      id: 'activ-1',
+    } as Activity;
+
+    const expectedPayload = {
+      documentId: 'abc',
+      activity,
+    };
+    const action = postActivity(activity, 'abc');
+
+    expect(action).toEqual({
+      type: ChatActions.PostActivityEventWc,
+      payload: expectedPayload,
+    });
+  });
+
+  it('should create an incoming activity action', () => {
+    const activity: Activity = {
+      id: 'activ-1',
+    } as Activity;
+
+    const expectedPayload = {
+      documentId: 'abc',
+      activity,
+    };
+    const action = incomingActivity(activity, 'abc');
+
+    expect(action).toEqual({
+      type: ChatActions.IncomingActivityFromWc,
+      payload: expectedPayload,
+    });
+  });
+
+  it('should create a set restart conversation status action', () => {
+    const expectedPayload = {
+      documentId: 'abc',
+      status: RestartConversationStatus.Started,
+    };
+    const action = setRestartConversationStatus(expectedPayload.status, expectedPayload.documentId);
+
+    expect(action).toEqual({
+      type: ChatActions.SetRestartConversationStatus,
+      payload: expectedPayload,
     });
   });
 });

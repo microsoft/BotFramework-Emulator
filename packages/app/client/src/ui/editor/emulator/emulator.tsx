@@ -33,7 +33,7 @@
 
 import { Activity } from 'botframework-schema';
 import { DirectLine } from 'botframework-directlinejs';
-import { isMac } from '@bfemulator/app-shared';
+import { isMac, RestartConversationStatus } from '@bfemulator/app-shared';
 import { EmulatorMode } from '@bfemulator/sdk-shared';
 import { SplitButton, Splitter } from '@bfemulator/ui-react';
 import * as React from 'react';
@@ -79,6 +79,8 @@ export interface EmulatorProps {
   updateDocument?: (documentId: string, updatedValues: Partial<Document>) => void;
   url?: string;
   userId?: string;
+  restartStatus: RestartConversationStatus;
+  onStopRestartConversationClick: (documentId: string) => void;
 }
 
 export class Emulator extends React.Component<EmulatorProps, {}> {
@@ -138,6 +140,37 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
     const { NewUserId, SameUserId } = RestartConversationOptions;
 
     const { mode, documentId } = this.props;
+
+    const livechatRender =
+      this.props.restartStatus !== RestartConversationStatus.Started ? (
+        <>
+          <SplitButton
+            id={'restart-conversation'}
+            defaultLabel="Restart conversation"
+            buttonClass={styles.restartIcon}
+            options={[NewUserId, SameUserId]}
+            onClick={this.onStartOverClick}
+            buttonRef={this.setRestartButtonRef}
+            submenuLabel={isMac() ? 'Restart conversation sub menu' : ''}
+          />
+          <button
+            role={'menuitem'}
+            className={`${styles.saveIcon} ${styles.toolbarIcon || ''}`}
+            onClick={this.onExportTranscriptClick}
+          >
+            Save transcript
+          </button>
+        </>
+      ) : (
+        <button
+          role={'menuitem'}
+          className={`${styles.cancelIcon} ${styles.toolbarIcon || ''}`}
+          onClick={() => this.props.onStopRestartConversationClick(documentId)}
+        >
+          Stop Replaying Conversation
+        </button>
+      );
+
     return (
       <div className={styles.emulator}>
         <div className={styles.header}>
@@ -150,26 +183,7 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
                 Reconnect
               </button>
             )}
-            {mode === 'livechat' && (
-              <>
-                <SplitButton
-                  id={'restart-conversation'}
-                  defaultLabel="Restart conversation"
-                  buttonClass={styles.restartIcon}
-                  options={[NewUserId, SameUserId]}
-                  onClick={this.onStartOverClick}
-                  buttonRef={this.setRestartButtonRef}
-                  submenuLabel={isMac() ? 'Restart conversation sub menu' : ''}
-                />
-                <button
-                  role={'menuitem'}
-                  className={`${styles.saveIcon} ${styles.toolbarIcon || ''}`}
-                  onClick={this.onExportTranscriptClick}
-                >
-                  Save transcript
-                </button>
-              </>
-            )}
+            {mode === 'livechat' && livechatRender}
           </ToolBar>
         </div>
         <div key={this.getConversationId()} className={`${styles.content} ${styles.vertical}`}>

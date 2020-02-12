@@ -32,6 +32,7 @@
 //
 
 import { LogEntry, LogItemType } from '@bfemulator/sdk-shared';
+import { Activity } from 'botframework-schema';
 
 import {
   addTranscript,
@@ -45,10 +46,14 @@ import {
   setInspectorObjects,
   updateChat,
   updateSpeechAdapters,
+  incomingActivity,
+  RestartConversationStatus,
+  postActivity,
+  setRestartConversationStatus,
 } from '../actions/chatActions';
 import { closeNonGlobalTabs } from '../actions/editorActions';
 
-import { chat, ChatState } from './chat';
+import { chat, ChatState, HasIdAndReplyId } from './chat';
 
 describe('Chat reducer tests', () => {
   const testChatId = 'testChat1';
@@ -62,6 +67,9 @@ describe('Chat reducer tests', () => {
       },
     },
     transcripts: [],
+    restartStatus: {
+      [testChatId]: RestartConversationStatus.Started,
+    },
   } as any;
 
   it('should return unaltered state for non-matching action type', () => {
@@ -250,5 +258,143 @@ describe('Chat reducer tests', () => {
 
     expect(state.chats.chat1.directLine).toEqual(directLine);
     expect(state.webSpeechFactories.chat1).toEqual(webSpeechPonyfillFactory);
+  });
+
+  it('should add slots for post activity correctly', () => {
+    const documentId = 'chatId-1';
+    const startingState = {
+      ...DEFAULT_STATE,
+      chats: {
+        ...DEFAULT_STATE.chats,
+        'chatId-1': {
+          directLine: undefined,
+          documentId,
+          userId: 'user1',
+          replayData: {},
+        },
+      },
+      webSpeechFactories: {
+        chat1: undefined,
+      },
+    };
+    const activities: Activity[] = [
+      {
+        id: 'activ-1',
+        name: 'incoming-1',
+        replyToId: 'reply-to-1',
+      } as Activity,
+      {
+        id: 'activ-2',
+        name: 'incoming-2',
+        replyToId: 'reply-to-2',
+      } as Activity,
+      {
+        id: 'activ-3',
+        name: 'post-activity-1',
+      } as Activity,
+      {
+        id: 'activ-4',
+        name: 'incoming-3',
+        replyToId: 'post-activity-1',
+      } as Activity,
+      {
+        id: 'activ-5',
+        name: 'post-activity-2',
+      } as Activity,
+    ];
+
+    let transientState: ChatState = chat(startingState, incomingActivity(activities[0], documentId));
+    transientState = chat(transientState, incomingActivity(activities[1], documentId));
+    transientState = chat(transientState, postActivity(activities[2], documentId));
+    expect(transientState.chats['chatId-1'].replayData.postActivitiesSlots.length).toBe(1);
+    expect(transientState.chats['chatId-1'].replayData.postActivitiesSlots[0]).toBe(2);
+
+    transientState = chat(transientState, incomingActivity(activities[3], documentId));
+    const finalState = chat(transientState, postActivity(activities[4], documentId));
+    expect(finalState.chats['chatId-1'].replayData.postActivitiesSlots[1]).toBe(3);
+  });
+
+  it('should add an incoming activity inside the chatReplay object', () => {
+    const documentId = 'chatId-1';
+    const startingState = {
+      ...DEFAULT_STATE,
+      chats: {
+        ...DEFAULT_STATE.chats,
+        'chatId-1': {
+          directLine: undefined,
+          documentId,
+          userId: 'user1',
+          replayData: {},
+        },
+      },
+      webSpeechFactories: {
+        chat1: undefined,
+      },
+    };
+
+    const expectedActivity = {
+      id: 'activ-1',
+      name: 'test-activity-1',
+      replyToId: 'reply-to-1',
+    } as Activity;
+
+    let action = incomingActivity(expectedActivity, documentId);
+
+    const transientState = chat(startingState, action);
+    let incomingActivities = transientState.chats['chatId-1'].replayData.incomingActivities;
+    let lastActivity: HasIdAndReplyId = incomingActivities[incomingActivities.length - 1];
+    expect(lastActivity.id).toBe(expectedActivity.id);
+    expect(lastActivity.replyToId).toBe(expectedActivity.replyToId);
+
+    const anotherExpectedActivity = {
+      id: 'activ-2',
+      name: 'test-activity-2',
+      replyToId: 'reply-to-2',
+    } as Activity;
+
+    action = incomingActivity(anotherExpectedActivity, documentId);
+    const finalState = chat(transientState, action);
+    incomingActivities = finalState.chats['chatId-1'].replayData.incomingActivities;
+    lastActivity = incomingActivities[incomingActivities.length - 1];
+    expect(lastActivity.id).toBe(anotherExpectedActivity.id);
+    expect(lastActivity.replyToId).toBe(anotherExpectedActivity.replyToId);
+  });
+
+  it('should set restart conversation status', () => {
+    const documentId = 'chatId-1';
+    const startingState = {
+      ...DEFAULT_STATE,
+      chats: {
+        ...DEFAULT_STATE.chats,
+        'chatId-1': {
+          directLine: undefined,
+          documentId,
+          userId: 'user1',
+          replayData: {},
+        },
+      },
+      webSpeechFactories: {
+        chat1: undefined,
+      },
+    };
+
+    let transientState: ChatState = chat(
+      startingState,
+      setRestartConversationStatus(RestartConversationStatus.Started, documentId)
+    );
+    expect(transientState.restartStatus[documentId]).toBe(RestartConversationStatus.Started);
+    transientState = chat(
+      transientState,
+      setRestartConversationStatus(RestartConversationStatus.Completed, documentId)
+    );
+    expect(transientState.restartStatus[documentId]).toBe(RestartConversationStatus.Completed);
+
+    transientState = chat(transientState, setRestartConversationStatus(RestartConversationStatus.Rejected, documentId));
+    expect(transientState.restartStatus[documentId]).toBe(RestartConversationStatus.Rejected);
+
+    transientState = chat(transientState, setRestartConversationStatus(RestartConversationStatus.Stop, documentId));
+    expect(transientState.restartStatus[documentId]).toBe(RestartConversationStatus.Stop);
+
+    expect(transientState.restartStatus['abc']).toBeUndefined();
   });
 });

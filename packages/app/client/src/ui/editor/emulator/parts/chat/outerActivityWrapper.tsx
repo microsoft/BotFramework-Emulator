@@ -32,7 +32,9 @@
 //
 
 import * as React from 'react';
+import { SharedConstants } from '@bfemulator/app-shared';
 import { Activity } from 'botframework-schema';
+import { RestartConversationStatus } from '@bfemulator/app-shared';
 
 import { areActivitiesEqual } from '../../../../../utils';
 
@@ -42,14 +44,19 @@ export interface OuterActivityWrapperProps {
   card?: any;
   children?: any;
   highlightedActivities?: Activity[];
+  documentId: string;
   onContextMenu?: (event: React.MouseEvent<HTMLElement>) => void;
   onItemRendererClick?: (event: React.MouseEvent<HTMLElement>) => void;
   onItemRendererKeyDown?: (event: React.KeyboardEvent<HTMLElement>) => void;
+  onRestartConversationFromActivityClick?: (documentId: string, activity: Activity) => void;
 }
 
 export class OuterActivityWrapper extends React.Component<OuterActivityWrapperProps, {}> {
   public render() {
     const { card, children, onContextMenu, onItemRendererClick, onItemRendererKeyDown } = this.props;
+
+    const isSelected = this.shouldBeSelected(card.activity);
+    const isUserActivity = this.isUserActivity(card.activity);
 
     return (
       <ActivityWrapper
@@ -58,10 +65,24 @@ export class OuterActivityWrapper extends React.Component<OuterActivityWrapperPr
         onClick={onItemRendererClick}
         onKeyDown={onItemRendererKeyDown}
         onContextMenu={onContextMenu}
-        isSelected={this.shouldBeSelected(card.activity)}
+        isSelected={isSelected}
+        isUserActivity={isUserActivity}
+        onRestartConversationFromActivityClick={this.propsBoundRestartActivityHandler}
       >
         {children}
       </ActivityWrapper>
+    );
+  }
+
+  private propsBoundRestartActivityHandler = () => {
+    this.props.onRestartConversationFromActivityClick(this.props.documentId, this.props.card.activity);
+  };
+
+  private isUserActivity(activity: Activity) {
+    return !!(
+      activity.from.role === SharedConstants.Activity.FROM_USER_ROLE &&
+      !activity.replyToId &&
+      activity.channelData
     );
   }
 
