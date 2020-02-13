@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [client] Fixed Web Chat suggestedActionBorder deprecation warning in PR [2070](https://github.com/microsoft/BotFramework-Emulator/pull/2070)
 - [client] Fixed an issue where pressing enter opens the Azure government website instead of connecting to the bot  [2073](https://github.com/microsoft/BotFramework-Emulator/pull/2073)
 - [build] Changed one-click installer to assisted installer with new graphics. Also updated application icon in PR [2077](https://github.com/microsoft/BotFramework-Emulator/pull/2077)
+- [build] Locked `eslint-plugin-import@2.20.0` to avoid unecessary import linting changes in PR [2081](https://github.com/microsoft/BotFramework-Emulator/pull/2081)
 
 ## Removed
 - [client/main] Removed legacy payments code in PR [2058](https://github.com/microsoft/BotFramework-Emulator/pull/2058)
