@@ -376,11 +376,12 @@ describe('The ChatSagas,', () => {
         gen.next('The server could not handle your request.'); // response.text() inside throwErrorFromResponse()
         expect(true).toBe(false); // ensure catch is hit
       } catch (e) {
-        expect(e).toEqual(
-          new Error(
-            'Error occurred while starting a new conversation 500 INTERNAL SERVER ERROR: The server could not handle your request.'
-          )
-        );
+        expect(e).toEqual({
+          description: '500 INTERNAL SERVER ERROR',
+          message: 'Error occurred while starting a new conversation',
+          innerMessage: 'The server could not handle your request.',
+          status: 500,
+        });
       }
     });
 
@@ -466,11 +467,12 @@ describe('The ChatSagas,', () => {
         gen.next('The server could not handle your request.'); // response.text() inside throwErrorFromResponse()
         expect(true).toBe(false); // ensure catch is hit
       } catch (e) {
-        expect(e).toEqual(
-          new Error(
-            'Error occurred while feeding activities as a transcript 500 INTERNAL SERVER ERROR: The server could not handle your request.'
-          )
-        );
+        expect(e).toEqual({
+          description: '500 INTERNAL SERVER ERROR',
+          message: 'Error occurred while feeding activities as a transcript',
+          innerMessage: 'The server could not handle your request.',
+          status: 500,
+        });
       }
     });
   });
@@ -1056,11 +1058,12 @@ describe('The ChatSagas,', () => {
         gen.next('The server could not handle your request.'); // response.text() inside throwErrorFromResponse()
         expect(true).toBe(false);
       } catch (e) {
-        expect(e).toEqual(
-          new Error(
-            'Error occurred while updating a conversation 500 INTERNAL SERVER ERROR: The server could not handle your request.'
-          )
-        );
+        expect(e).toEqual({
+          description: '500 INTERNAL SERVER ERROR',
+          message: 'Error occurred while updating a conversation',
+          innerMessage: 'The server could not handle your request.',
+          status: 500,
+        });
       }
     });
   });

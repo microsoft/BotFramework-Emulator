@@ -281,11 +281,12 @@ describe('The botSagas', () => {
       gen.next('Cannot read property "id" of undefined.');
       expect(true).toBe(false); // ensure catch is hit
     } catch (e) {
-      expect(e).toEqual(
-        new Error(
-          'Error occurred while starting a new conversation 500 INTERNAL SERVER ERROR: Cannot read property "id" of undefined.'
-        )
-      );
+      expect(e).toEqual({
+        description: '500 INTERNAL SERVER ERROR',
+        message: 'Error occurred while starting a new conversation',
+        innerMessage: 'Cannot read property "id" of undefined.',
+        status: 500,
+      });
     }
   });
 
@@ -340,11 +341,12 @@ describe('The botSagas', () => {
       gen.next('Could not read property "id" of undefined.');
       expect(true).toBe(false); // ensure catch is hit
     } catch (e) {
-      expect(e).toEqual(
-        new Error(
-          'Error occurred while sending the initial log report 500 INTERNAL SERVER ERROR: Could not read property "id" of undefined.'
-        )
-      );
+      expect(e).toEqual({
+        description: '500 INTERNAL SERVER ERROR',
+        message: 'Error occurred while sending the initial log report',
+        innerMessage: 'Could not read property "id" of undefined.',
+        status: 500,
+      });
     }
   });
 
@@ -401,11 +403,12 @@ describe('The botSagas', () => {
       gen.next('Could not read property "id" of undefined.');
       expect(true).toBe(false); // ensure catch is hit
     } catch (e) {
-      expect(e).toEqual(
-        new Error(
-          'Error occurred while sending the initial activity 500 INTERNAL SERVER ERROR: Could not read property "id" of undefined.'
-        )
-      );
+      expect(e).toEqual({
+        description: '500 INTERNAL SERVER ERROR',
+        message: 'Error occurred while sending the initial activity',
+        innerMessage: 'Could not read property "id" of undefined.',
+        status: 500,
+      });
     }
   });
 });
