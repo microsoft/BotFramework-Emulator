@@ -47,26 +47,30 @@ describe('throwErrorFromResponse', () => {
       gen.next('The server could not handle your request.');
       expect(true).toBe(false); // ensure catch is hit
     } catch (e) {
-      expect(e).toEqual(
-        new Error(`Something went wrong! 500 INTERNAL SERVER ERROR: The server could not handle your request.`)
-      );
+      expect(e).toEqual({
+        description: '500 INTERNAL SERVER ERROR',
+        innerMessage: 'The server could not handle your request.',
+        message: 'Something went wrong!',
+        status: 500,
+      });
     }
   });
 
-  it('should throw a default error with the response text', () => {
+  it('should throw a default error', () => {
     const mockResponse: any = {
       status: 500,
-      statusText: undefined,
-      text: jest.fn(),
     };
     const gen = throwErrorFromResponse('', mockResponse);
-    gen.next();
 
     try {
-      gen.next('The server could not handle your request.');
+      gen.next();
       expect(true).toBe(false); // ensure catch is hit
     } catch (e) {
-      expect(e).toEqual(new Error(`Error 500: The server could not handle your request.`));
+      expect(e).toEqual({
+        description: '500',
+        message: 'Error',
+        status: 500,
+      });
     }
   });
 });

@@ -1,11 +1,7 @@
 {
   "extends": "../../../tsconfig.json",
   "compilerOptions": {
-    "declaration": true,
     "declarationDir": "build",
-    "declarationMap": true,
-    "emitDeclarationOnly": true,
-    "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "lib": ["dom", "es2015.proxy", "es5", "esnext", "es7"],
     "outDir": "build",

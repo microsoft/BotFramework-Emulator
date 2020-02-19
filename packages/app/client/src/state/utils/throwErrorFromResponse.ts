@@ -31,20 +31,32 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+interface ResponseError {
+  description: string;
+  innerMessage?: string;
+  message: string;
+  status: number;
+}
+
 /**
- * Throws an error with the format ${error}: ${status code}: ${status message} {response payload}
- * Ex: There was an error starting the conversation: 400: BAD REQUEST { message: "The bot's credentials were incorrect." }
+ * Throws an error object with the following shape:
+ * { description, innerMessage, message, status }
  */
-export function* throwErrorFromResponse(error: string, response: Response): IterableIterator<any> {
-  let errText = '';
-  if (response.text) {
-    errText = yield response.text();
+export function* throwErrorFromResponse(errorMessage: string, response: Response): IterableIterator<any> {
+  const { status, statusText, text } = response;
+  const error: ResponseError = {
+    description: '',
+    message: errorMessage || 'Error',
+    status,
+  };
+  if (text) {
+    const errText = yield text();
+    error.innerMessage = errText;
   }
-  let responseStatus = '';
-  if (response.statusText) {
-    responseStatus = `${response.status} ${response.statusText}`;
+  if (statusText) {
+    error.description = `${response.status} ${response.statusText}`;
   } else {
-    responseStatus = response.status + '';
+    error.description = response.status + '';
   }
-  throw new Error(`${error || 'Error'} ${responseStatus}: ${errText}`);
+  throw error;
 }

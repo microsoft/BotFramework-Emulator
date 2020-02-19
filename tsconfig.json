@@ -6,7 +6,6 @@
     "target": "es2017",
     "lib": ["es6", "dom", "es2015", "esnext"],
     "sourceMap": true,
-    // "allowJs": true,
     "jsx": "react",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
@@ -16,11 +15,12 @@
     "noImplicitThis": false,
     "noImplicitAny": false,
     "allowSyntheticDefaultImports": true,
-    // "strictNullChecks": true,
     "suppressImplicitAnyIndexErrors": true,
     "noUnusedLocals": true,
     "skipLibCheck": true,
     "declaration": true,
+    "declarationMap": true,
+    "emitDeclarationOnly": true,
     "paths": {
       "@bfemulator/sdk-shared": ["./packages/sdk/shared/build"]
     },

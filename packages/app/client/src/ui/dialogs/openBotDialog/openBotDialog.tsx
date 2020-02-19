@@ -170,14 +170,14 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
               <TextField
                 inputContainerClassName={openBotStyles.inputContainerRow}
                 name="speechRegion"
-                label="DL Speech Region"
+                label="Direct Line Speech Region"
                 onChange={this.onInputChange}
                 placeholder="Optional"
                 value={speechRegion}
               />
               <TextField
                 inputContainerClassName={openBotStyles.inputContainerRow}
-                label="DL Speech Key"
+                label="Direct Line Speech Key"
                 name="speechKey"
                 onChange={this.onInputChange}
                 placeholder="Optional"

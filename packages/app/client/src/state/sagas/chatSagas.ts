@@ -535,7 +535,6 @@ function createWebChatActivitySniffer(conversationId: string, serverUrl: string)
         console.error(`Failed to log DL Speech activity: ${errText}`); // eslint-disable-line no-console
       }
     }
-
     return next(action);
   };
 }
