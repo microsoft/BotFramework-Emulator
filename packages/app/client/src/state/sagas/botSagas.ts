@@ -55,6 +55,7 @@ import { call, ForkEffect, put, select, takeEvery, takeLatest } from 'redux-saga
 import { ActiveBotHelper } from '../../ui/helpers/activeBotHelper';
 import { generateHash } from '../helpers/botHelpers';
 import { RootState } from '../store';
+import { throwErrorFromResponse } from '../utils/throwErrorFromResponse';
 
 import { SharedSagas } from './sharedSagas';
 import { ChatSagas } from './chatSagas';
@@ -111,9 +112,7 @@ export class BotSagas {
     };
     let res: Response = yield ConversationService.startConversation(serverUrl, payload);
     if (!res.ok) {
-      throw new Error(
-        `Error occurred while starting a new conversation: ${res.status}: ${res.statusText || 'No status text'}`
-      );
+      yield* throwErrorFromResponse('Error occurred while starting a new conversation', res);
     }
     const {
       conversationId,
@@ -130,6 +129,8 @@ export class BotSagas {
       mode: action.payload.mode,
       msaAppId: action.payload.appId,
       msaPassword: action.payload.appPassword,
+      speechKey: action.payload.speechKey,
+      speechRegion: action.payload.speechRegion,
       user,
     });
 
@@ -146,17 +147,15 @@ export class BotSagas {
     // call emulator to report proper status to chat panel (listening / ngrok)
     res = yield ConversationService.sendInitialLogReport(serverUrl, conversationId, action.payload.endpoint);
     if (!res.ok) {
-      throw new Error(
-        `Error occurred while sending the initial log report: ${res.status}: ${res.statusText || 'No status text'}`
-      );
+      yield* throwErrorFromResponse('Error occurred while sending the initial log report', res);
     }
 
     // send CU or debug INSPECT message
-    res = yield ChatSagas.sendInitialActivity({ conversationId, members, mode: action.payload.mode });
-    if (!res.ok) {
-      throw new Error(
-        `Error occurred while sending the initial activity: ${res.status}: ${res.statusText || 'No status text'}`
-      );
+    if (!(action.payload.speechKey && action.payload.speechRegion)) {
+      res = yield ChatSagas.sendInitialActivity({ conversationId, members, mode: action.payload.mode });
+      if (!res.ok) {
+        yield* throwErrorFromResponse('Error occurred while sending the initial activity', res);
+      }
     }
 
     // remember the endpoint

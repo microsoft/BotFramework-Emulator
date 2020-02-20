@@ -196,4 +196,20 @@ export class ConversationService {
       body: JSON.stringify(activities),
     });
   }
+
+  /** Calls the main process to process the activity, save it to the conversation's transcript, and log the activity in the log panel */
+  public static performTrackingForActivity(
+    serverUrl: string,
+    conversationId: string,
+    activity: Activity
+  ): Promise<Response> {
+    const url = `${serverUrl}/emulator/${conversationId}/activity/track`;
+    return fetch(url, {
+      body: JSON.stringify(activity),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+    });
+  }
 }

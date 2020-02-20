@@ -252,4 +252,18 @@ describe('The ConversationService should call "fetch" with the expected paramete
     expect(headers).toEqual({ 'Content-Type': 'application/json' });
     expect(method).toBe('POST');
   });
+
+  test('the "performTrackingForActivity" function', () => {
+    const mockActivity: any = {};
+    const mockConversationId = 'someConvoId';
+    const serverUrl = 'http://localhost';
+    ConversationService.performTrackingForActivity(serverUrl, mockConversationId, mockActivity);
+    const { url, opts } = mockFetchArgs;
+    const { body, headers, method } = opts;
+
+    expect(url).toBe('http://localhost/emulator/someConvoId/activity/track');
+    expect(body).toEqual(JSON.stringify(mockActivity));
+    expect(headers).toEqual({ 'Content-Type': 'application/json' });
+    expect(method).toBe('POST');
+  });
 });

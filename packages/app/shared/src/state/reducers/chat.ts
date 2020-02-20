@@ -40,6 +40,7 @@ import {
   PendingSpeechTokenRetrievalPayload,
   WebChatStorePayload,
   WebSpeechFactoryPayload,
+  UpdateSpeechAdaptersPayload,
 } from '../actions/chatActions';
 import { EditorAction, EditorActions } from '../actions/editorActions';
 
@@ -60,6 +61,8 @@ export interface ChatDocument<I = any> extends Document {
   inspectorObjects: I[];
   log: ChatLog;
   pendingSpeechTokenRetrieval: boolean;
+  speechKey: string;
+  speechRegion: string;
   ui: DocumentUI;
 }
 
@@ -278,6 +281,29 @@ export function chat(state: ChatState = DEFAULT_STATE, action: ChatAction | Edit
     case EditorActions.closeAll: {
       // HACK. Need a better system.
       return DEFAULT_STATE;
+    }
+
+    case ChatActions.updateSpeechAdapters: {
+      const { payload } = action as ChatAction<UpdateSpeechAdaptersPayload>;
+      const { directLine, documentId, webSpeechPonyfillFactory } = payload;
+      let document = state.chats[documentId];
+      if (document) {
+        document = {
+          ...document,
+          directLine,
+        };
+        state = {
+          ...state,
+          chats: {
+            ...state.chats,
+            [payload.documentId]: {
+              ...document,
+            },
+          },
+          webSpeechFactories: { ...state.webSpeechFactories, [documentId]: webSpeechPonyfillFactory },
+        };
+      }
+      break;
     }
 
     default:

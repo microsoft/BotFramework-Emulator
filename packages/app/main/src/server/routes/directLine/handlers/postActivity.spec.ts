@@ -255,7 +255,8 @@ describe('postActivity handler', () => {
         postActivityToBot: jest.fn().mockResolvedValueOnce({
           activityId: 'activity1',
           response: {
-            text: jest.fn().mockResolvedValueOnce('Request failed'),
+            message: 'Request failed',
+            status: undefined,
           },
           statusCode: undefined,
         }),
@@ -272,7 +273,10 @@ describe('postActivity handler', () => {
     const postActivity = createPostActivityHandler(mockEmulatorServer);
     await postActivity(req, res, next);
 
-    expect(res.send).toHaveBeenCalledWith(HttpStatus.INTERNAL_SERVER_ERROR, 'Request failed');
+    expect(res.send).toHaveBeenCalledWith(HttpStatus.INTERNAL_SERVER_ERROR, {
+      message: 'Request failed',
+      status: undefined,
+    });
     expect(res.end).toHaveBeenCalled();
     expect(next).toHaveBeenCalled();
   });

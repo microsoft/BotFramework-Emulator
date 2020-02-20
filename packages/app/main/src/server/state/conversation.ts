@@ -133,21 +133,7 @@ export class Conversation extends EventEmitter {
       );
     }
 
-    // Do not make a shallow copy here before modifying
-    activity = this.postage(this.botEndpoint.botId, activity);
-    activity.from = activity.from || this.user;
-    activity.locale = this.emulatorServer.state.locale;
-
-    if (!activity.recipient.name) {
-      activity.recipient.name = 'Bot';
-    }
-
-    // Fill in role field, if missing
-    if (!activity.recipient.role) {
-      activity.recipient.role = 'bot';
-    }
-
-    activity.serviceUrl = await this.emulatorServer.getServiceUrl(this.botEndpoint.botUrl);
+    activity = await this.prepActivityToBeSentToBot(activity, recordInConversation);
 
     if (
       !this.conversationIsTranscript &&
@@ -176,13 +162,6 @@ export class Conversation extends EventEmitter {
       },
       method: 'POST',
     };
-
-    if (recordInConversation) {
-      this.addActivityToQueue({ ...activity } as Activity);
-    }
-
-    this.transcript = [...this.transcript, { type: 'activity add', activity }];
-    this.emit('transcriptupdate');
 
     let status = 200;
     let resp: any = { json: async () => ({}) };
@@ -583,6 +562,33 @@ export class Conversation extends EventEmitter {
     // internal tracking
     this.addActivityToQueue(activity);
     this.transcript = [...this.transcript, { type: 'activity add', activity }];
+
+    return activity;
+  }
+
+  public async prepActivityToBeSentToBot(activity: Activity, recordInConversation: boolean): Promise<Activity> {
+    // Do not make a shallow copy here before modifying
+    activity = this.postage(this.botEndpoint.botId, activity);
+    activity.from = activity.from || this.user;
+    activity.locale = this.emulatorServer.state.locale;
+
+    if (!activity.recipient.name) {
+      activity.recipient.name = 'Bot';
+    }
+
+    // Fill in role field, if missing
+    if (!activity.recipient.role) {
+      activity.recipient.role = 'bot';
+    }
+
+    activity.serviceUrl = await this.emulatorServer.getServiceUrl(this.botEndpoint.botUrl);
+
+    if (recordInConversation) {
+      this.addActivityToQueue({ ...activity } as Activity);
+    }
+
+    this.transcript = [...this.transcript, { type: 'activity add', activity }];
+    this.emit('transcriptupdate');
 
     return activity;
   }

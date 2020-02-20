@@ -41,6 +41,7 @@ import {
   open as openDocument,
   setInspectorObjects,
   updatePendingSpeechTokenRetrieval,
+  updateSpeechAdapters,
   webChatStoreUpdated,
   webSpeechFactoryUpdated,
   ChatAction,
@@ -61,12 +62,17 @@ import {
   EmulatorMode,
   User,
 } from '@bfemulator/sdk-shared';
-import { createCognitiveServicesSpeechServicesPonyfillFactory, createDirectLine } from 'botframework-webchat';
+import {
+  createCognitiveServicesSpeechServicesPonyfillFactory,
+  createDirectLine,
+  createDirectLineSpeechAdapters,
+} from 'botframework-webchat';
 import { createStore as createWebChatStore } from 'botframework-webchat-core';
 import { call, ForkEffect, put, select, takeEvery } from 'redux-saga/effects';
 import { encode } from 'base64url';
 
 import { RootState } from '../store';
+import { throwErrorFromResponse } from '../utils/throwErrorFromResponse';
 
 export const getConversationIdFromDocumentId = (state: RootState, documentId: string) => {
   return (state.chat.chats[documentId] || { conversationId: null }).conversationId;
@@ -95,6 +101,8 @@ interface BootstrapChatPayload {
   mode: EmulatorMode;
   msaAppId?: string;
   msaPassword?: string;
+  speechKey?: string;
+  speechRegion?: string;
   user: User;
 }
 
@@ -160,9 +168,7 @@ export class ChatSagas {
     };
     let res: Response = yield call([ConversationService, ConversationService.startConversation], serverUrl, payload);
     if (!res.ok) {
-      throw new Error(
-        `Error occurred while starting a new conversation: ${res.status}: ${res.statusText || 'No status text'}`
-      );
+      yield* throwErrorFromResponse('Error occurred while starting a new conversation', res);
     }
     const { conversationId, endpointId }: { conversationId: string; endpointId: string } = yield res.json();
     const documentId = `${conversationId}`;
@@ -206,9 +212,7 @@ export class ChatSagas {
       activities
     );
     if (!res.ok) {
-      throw new Error(
-        `Error occurred while feeding activities as a transcript: ${res.status}: ${res.statusText || 'No status text'}`
-      );
+      yield* throwErrorFromResponse('Error occurred while feeding activities as a transcript', res);
     }
 
     if (filename.endsWith('.chat')) {
@@ -223,9 +227,24 @@ export class ChatSagas {
   }
 
   public static *bootstrapChat(payload: BootstrapChatPayload): IterableIterator<any> {
-    const { conversationId, documentId, endpointId, mode, msaAppId, msaPassword, user } = payload;
+    const {
+      conversationId,
+      documentId,
+      endpointId,
+      mode,
+      msaAppId,
+      msaPassword,
+      speechKey,
+      speechRegion,
+      user,
+    } = payload;
+    const isDLSpeechBot = speechKey && speechRegion;
+    const serverUrl = yield select(getServerUrl);
+    const webChatStore = isDLSpeechBot
+      ? createWebChatStore({}, createWebChatActivitySniffer(conversationId, serverUrl))
+      : createWebChatStore();
     // Create a new webchat store for this documentId
-    yield put(webChatStoreUpdated(documentId, createWebChatStore()));
+    yield put(webChatStoreUpdated(documentId, webChatStore));
     // Each time a new chat is open, retrieve the speech token
     // if the endpoint is speech enabled and create a bound speech
     // pony fill factory. This is consumed by WebChat...
@@ -243,9 +262,30 @@ export class ChatSagas {
       newChat(documentId, mode, {
         conversationId,
         directLine,
+        speechKey,
+        speechRegion,
         userId: user.id,
       })
     );
+
+    // initialize DL speech
+    if (isDLSpeechBot) {
+      yield put(updatePendingSpeechTokenRetrieval(documentId, true));
+      try {
+        const { directLine, webSpeechPonyfillFactory } = yield call(createDirectLineSpeechAdapters, {
+          fetchCredentials: {
+            region: speechRegion,
+            subscriptionKey: speechKey,
+          },
+        });
+        yield put(updateSpeechAdapters(documentId, directLine, webSpeechPonyfillFactory));
+      } catch (e) {
+        throw new Error(`There was an error while initializing DL Speech: ${e}`);
+      } finally {
+        yield put(updatePendingSpeechTokenRetrieval(documentId, false));
+      }
+      return;
+    }
 
     // initialize speech
     if (msaAppId && msaPassword) {
@@ -280,14 +320,7 @@ export class ChatSagas {
     const { documentId, requireNewConversationId, requireNewUserId } = action.payload;
     const chat: ChatDocument = yield select(getChatFromDocumentId, documentId);
     const serverUrl = yield select(getServerUrl);
-
-    if (chat.directLine) {
-      chat.directLine.end();
-    }
-    yield put(clearLog(documentId));
-    yield put(setInspectorObjects(documentId, []));
-    yield put(webChatStoreUpdated(documentId, createWebChatStore())); // reset web chat store
-    yield put(webSpeechFactoryUpdated(documentId, undefined)); // remove old speech token factory
+    const isDLSpeechBot = chat.speechKey && chat.speechRegion;
 
     // re-init new directline object & update conversation object in server state
     // set user id
@@ -307,9 +340,20 @@ export class ChatSagas {
       conversationId = chat.conversationId || `${uniqueId()}|${chat.mode}`;
     }
 
+    if (chat.directLine) {
+      chat.directLine.end();
+    }
+    yield put(clearLog(documentId));
+    yield put(setInspectorObjects(documentId, []));
+    const webChatStore = isDLSpeechBot
+      ? createWebChatStore({}, createWebChatActivitySniffer(conversationId, serverUrl))
+      : createWebChatStore();
+    yield put(webChatStoreUpdated(documentId, webChatStore)); // reset web chat store
+    yield put(webSpeechFactoryUpdated(documentId, undefined)); // remove old speech token factory
+
     // update the main-side conversation object with conversation & user IDs,
     // and ensure that conversation is in a fresh state
-    const res: Response = yield call(
+    let res: Response = yield call(
       [ConversationService, ConversationService.updateConversation],
       serverUrl,
       chat.conversationId,
@@ -319,9 +363,7 @@ export class ChatSagas {
       }
     );
     if (!res.ok) {
-      throw new Error(
-        `Error occurred while updating a conversation: ${res.status}: ${res.statusText || 'No status text'}`
-      );
+      yield* throwErrorFromResponse('Error occurred while updating a conversation', res);
     }
     const { botEndpoint, members }: { botEndpoint: any; members: User[] } = yield res.json();
 
@@ -339,20 +381,49 @@ export class ChatSagas {
       newChat(documentId, chat.mode, {
         conversationId,
         directLine,
+        speechKey: chat.speechKey,
+        speechRegion: chat.speechRegion,
         userId,
       })
     );
 
     // initial report
-    yield call(
+    res = yield call(
       [ConversationService, ConversationService.sendInitialLogReport],
       serverUrl,
       conversationId,
       botEndpoint.botUrl
     );
+    if (!res.ok) {
+      yield* throwErrorFromResponse('Error occurred while sending the initial log report', res);
+    }
 
-    // send CU or /INSPECT open
-    yield call([ChatSagas, ChatSagas.sendInitialActivity], { conversationId, members, mode: chat.mode });
+    // send CU or /INSPECT open (DL Speech will do this automatically)
+    if (!isDLSpeechBot) {
+      res = yield call([ChatSagas, ChatSagas.sendInitialActivity], { conversationId, members, mode: chat.mode });
+      if (!res.ok) {
+        yield* throwErrorFromResponse('Error occurred while sending the initial activity', res);
+      }
+    }
+
+    // initialize DL speech
+    if (isDLSpeechBot) {
+      yield put(updatePendingSpeechTokenRetrieval(documentId, true));
+      try {
+        const { directLine, webSpeechPonyfillFactory } = yield call(createDirectLineSpeechAdapters, {
+          fetchCredentials: {
+            region: chat.speechRegion,
+            subscriptionKey: chat.speechKey,
+          },
+        });
+        yield put(updateSpeechAdapters(documentId, directLine, webSpeechPonyfillFactory));
+      } catch (e) {
+        throw new Error(`There was an error while initializing DL Speech: ${e}`);
+      } finally {
+        yield put(updatePendingSpeechTokenRetrieval(documentId, false));
+      }
+      return;
+    }
 
     // initialize speech
     if (botEndpoint.msaAppId && botEndpoint.msaPassword) {
@@ -424,10 +495,7 @@ export class ChatSagas {
     const secret = encode(JSON.stringify(options));
     const res: Response = yield fetch(`${serverUrl}/emulator/ws/port`);
     if (!res.ok) {
-      throw new Error(
-        `Error occurred while retrieving the WebSocket server port: ${res.status}: ${res.statusText ||
-          'No status text'}`
-      );
+      yield* throwErrorFromResponse('Error occurred while retrieving the web socket port', res);
     }
     const webSocketPort = yield res.text();
     const directLine = createDirectLine({
@@ -449,6 +517,26 @@ export class ChatSagas {
     }
     return activity.text || activity.label || '';
   }
+}
+
+function createWebChatActivitySniffer(conversationId: string, serverUrl: string) {
+  return () => next => async action => {
+    if (action.type === 'DIRECT_LINE/INCOMING_ACTIVITY') {
+      const res = await ConversationService.performTrackingForActivity(
+        serverUrl,
+        conversationId,
+        action.payload.activity
+      );
+      if (!res.ok) {
+        let errText = '';
+        if (res.text) {
+          errText = await res.text();
+        }
+        console.error(`Failed to log DL Speech activity: ${errText}`); // eslint-disable-line no-console
+      }
+    }
+    return next(action);
+  };
 }
 
 export function* chatSagas(): IterableIterator<ForkEffect> {

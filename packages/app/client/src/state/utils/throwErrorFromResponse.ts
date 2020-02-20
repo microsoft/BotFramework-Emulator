@@ -30,20 +30,33 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { ConversationParameters } from 'botframework-schema';
 
-import { ChannelService } from '../channelService';
-import { EmulatorMode } from '../emulatorMode';
-import { User } from '../user';
+interface ResponseError {
+  description: string;
+  innerMessage?: string;
+  message: string;
+  status: number;
+}
 
-export interface StartConversationParams extends ConversationParameters {
-  endpoint?: string;
-  appId?: string;
-  appPassword?: string;
-  user?: User;
-  mode?: EmulatorMode;
-  channelService?: ChannelService;
-  conversationId?: string;
-  speechKey?: string;
-  speechRegion?: string;
+/**
+ * Throws an error object with the following shape:
+ * { description, innerMessage, message, status }
+ */
+export function* throwErrorFromResponse(errorMessage: string, response: Response): IterableIterator<any> {
+  const { status, statusText, text } = response;
+  const error: ResponseError = {
+    description: '',
+    message: errorMessage || 'Error',
+    status,
+  };
+  if (text) {
+    const errText = yield text();
+    error.innerMessage = errText;
+  }
+  if (statusText) {
+    error.description = `${response.status} ${response.statusText}`;
+  } else {
+    error.description = response.status + '';
+  }
+  throw error;
 }

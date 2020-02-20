@@ -51,6 +51,7 @@ import {
   showContextMenuForActivity,
   openTranscript,
   restartConversation,
+  updateSpeechAdapters,
 } from './chatActions';
 
 describe('chat actions', () => {
@@ -256,6 +257,22 @@ describe('chat actions', () => {
       documentId,
       requireNewConversationId: false,
       requireNewUserId: false,
+    });
+  });
+
+  it('should create an updateSpeechAdapters action', () => {
+    const directLine: any = {};
+    const documentId = 'someDocId';
+    const webSpeechPonyfillFactory: any = {};
+    const action = updateSpeechAdapters(documentId, directLine, webSpeechPonyfillFactory);
+
+    expect(action).toEqual({
+      type: ChatActions.updateSpeechAdapters,
+      payload: {
+        directLine,
+        documentId,
+        webSpeechPonyfillFactory,
+      },
     });
   });
 });

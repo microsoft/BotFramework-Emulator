@@ -30,20 +30,47 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { ConversationParameters } from 'botframework-schema';
 
-import { ChannelService } from '../channelService';
-import { EmulatorMode } from '../emulatorMode';
-import { User } from '../user';
+import { throwErrorFromResponse } from './throwErrorFromResponse';
 
-export interface StartConversationParams extends ConversationParameters {
-  endpoint?: string;
-  appId?: string;
-  appPassword?: string;
-  user?: User;
-  mode?: EmulatorMode;
-  channelService?: ChannelService;
-  conversationId?: string;
-  speechKey?: string;
-  speechRegion?: string;
-}
+describe('throwErrorFromResponse', () => {
+  it('should throw a customized error with the response text', () => {
+    const mockResponse: any = {
+      status: 500,
+      statusText: 'INTERNAL SERVER ERROR',
+      text: jest.fn(),
+    };
+    const gen = throwErrorFromResponse('Something went wrong!', mockResponse);
+    gen.next();
+
+    try {
+      gen.next('The server could not handle your request.');
+      expect(true).toBe(false); // ensure catch is hit
+    } catch (e) {
+      expect(e).toEqual({
+        description: '500 INTERNAL SERVER ERROR',
+        innerMessage: 'The server could not handle your request.',
+        message: 'Something went wrong!',
+        status: 500,
+      });
+    }
+  });
+
+  it('should throw a default error', () => {
+    const mockResponse: any = {
+      status: 500,
+    };
+    const gen = throwErrorFromResponse('', mockResponse);
+
+    try {
+      gen.next();
+      expect(true).toBe(false); // ensure catch is hit
+    } catch (e) {
+      expect(e).toEqual({
+        description: '500',
+        message: 'Error',
+        status: 500,
+      });
+    }
+  });
+});

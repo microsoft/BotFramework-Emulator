@@ -201,6 +201,20 @@ describe('The OpenBotDialog', () => {
         value: 'http://localhost',
       },
     } as any);
+    instance.onInputChange({
+      target: {
+        name: 'speechRegion',
+        type: 'text',
+        value: 'westus',
+      },
+    } as any);
+    instance.onInputChange({
+      target: {
+        name: 'speechKey',
+        type: 'text',
+        value: 'i-am-a-speech-key',
+      },
+    } as any);
 
     const spy = jest.spyOn(botActions, 'openBotViaUrlAction');
     await instance.onSubmit();
@@ -211,6 +225,8 @@ describe('The OpenBotDialog', () => {
       channelService: 'public',
       endpoint: 'http://localhost',
       mode: 'livechat',
+      speechKey: 'i-am-a-speech-key',
+      speechRegion: 'westus',
     });
   });
 
@@ -236,6 +252,8 @@ describe('The OpenBotDialog', () => {
       channelService: 'azureusgovernment',
       endpoint: 'http://localhost',
       mode: 'livechat',
+      speechKey: '',
+      speechRegion: '',
     });
   });
 
