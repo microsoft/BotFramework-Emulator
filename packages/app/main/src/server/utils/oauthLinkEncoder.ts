@@ -83,10 +83,13 @@ export class OAuthLinkEncoder {
             conversation.childBotLocation = undefined;
             link = await this.getSignInLink(oauthCard.connectionName, codeChallenge);
           } else {
-            // TODO: add check here for botUrl in channelData?
             // skills flow
-            const { channelData: { botUrl = '' } = {} } = activity;
-            conversation.childBotLocation = botUrl; // store child bot location for later
+            const { channelData: { botUrl = '' } = {}, relatesTo } = activity;
+            if (botUrl && relatesTo) {
+              conversation.childBotLocation = botUrl; // store child bot location for later
+              conversation.relatedConversationId = relatesTo.conversation.id; // used to look up root conversation reference when receiving token for child skill
+            }
+
             link = await this.decorateSignInLink(cardAction.value, codeChallenge);
           }
           cardAction.value = link;

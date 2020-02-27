@@ -90,6 +90,7 @@ export class Conversation extends EventEmitter {
   public members: User[] = [];
   public nextWatermark = 0;
   public childBotLocation: string;
+  public relatedConversationId?: string;
   // the list of activities in this conversation
   private activities: ActivityBucket[] = [];
   private transcript: TranscriptRecord[] = [];

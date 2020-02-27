@@ -36,6 +36,7 @@ import * as Restify from 'restify';
 
 import { EmulatorRestServer } from '../../../../restServer';
 import { sendErrorResponse } from '../../../../utils/sendErrorResponse';
+import { Conversation } from '../../../../state/conversation';
 
 export function createTokenResponseHandler(emulatorServer: EmulatorRestServer) {
   return async (req: Restify.Request, res: Restify.Response, next: Restify.Next): Promise<any> => {
@@ -46,10 +47,14 @@ export function createTokenResponseHandler(emulatorServer: EmulatorRestServer) {
 
     const conversationId = req.query.conversationId;
 
-    // TODO: Once token service change is done, we will need to first check if we should
-    // look up the conversation by the "relates-to" convo ID in the case of a skill, or default
-    // to the usual convo ID.
-    const conversation = emulatorServer.state.conversations.conversationById(conversationId);
+    // first check to see if we are getting a token back for a child bot (skill)
+    const conversations = emulatorServer.state.conversations.getConversations();
+    let conversation: Conversation;
+    conversation = conversations.find(convo => convo.relatedConversationId === conversationId);
+    if (!conversation) {
+      // default to regular flow where we are delivering the token to the parent bot
+      conversation = emulatorServer.state.conversations.conversationById(conversationId);
+    }
 
     try {
       const response = await conversation.sendTokenResponse(body.connectionName, body.token, false);
