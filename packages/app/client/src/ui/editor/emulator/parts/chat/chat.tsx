@@ -65,19 +65,6 @@ interface ChatState {
   highlightedActivities?: Activity[];
 }
 
-const updateDownloadAttachmentStyle = downloadAttachment => {
-  try {
-    const mutatedDownloadAttachment = {
-      ...downloadAttachment,
-    };
-    mutatedDownloadAttachment['& > a']['& > .details']['& > .name'].color = styles.bubbleContentColor;
-    mutatedDownloadAttachment['& > a']['& > .icon'].fill = styles.bubbleContentColor;
-    return mutatedDownloadAttachment;
-  } catch {
-    return downloadAttachment;
-  }
-};
-
 export class Chat extends PureComponent<ChatProps, ChatState> {
   public state = { waitForSpeechToken: false } as ChatState;
   private activityMap: { [activityId: string]: Activity } = {};
