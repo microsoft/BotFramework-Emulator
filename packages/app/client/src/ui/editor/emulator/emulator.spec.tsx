@@ -41,6 +41,7 @@ import {
   executeCommand,
   restartConversation,
   SharedConstants,
+  RestartConversationStatus,
 } from '@bfemulator/app-shared';
 import base64Url from 'base64url';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
@@ -63,9 +64,7 @@ jest.mock('./emulator.scss', () => ({}));
 jest.mock('./parts', () => ({
   InspectorContainer: jest.fn(() => <div />),
 }));
-jest.mock('./toolbar/toolbar', () => ({
-  ToolBar: jest.fn(() => <div />),
-}));
+
 jest.mock('@bfemulator/sdk-shared/build/utils/misc', () => ({
   uniqueId: () => 'someUniqueId',
   uniqueIdv4: () => 'newUserId',
@@ -341,5 +340,61 @@ describe('<EmulatorContainer/>', () => {
     instance.setRestartButtonRef(mockButtonRef);
 
     expect(instance.restartButtonRef).toBe(mockButtonRef);
+  });
+
+  it('should show "Stop Replaying Conversation" when in Replay mode', () => {
+    let emulatorProps = {
+      documentId: 'doc1',
+      url: 'some-url',
+      mode: 'livechat',
+      conversationId: '123',
+      presentationModeEnabled: false,
+      restartStatus: RestartConversationStatus.Started,
+      ui: {},
+    };
+    const mockStore = createStore((_state, _action) => mockStoreState);
+    wrapper = mount(
+      <Provider store={mockStore}>
+        <Emulator {...emulatorProps} />
+      </Provider>
+    );
+    node = wrapper.find(Emulator);
+    expect(wrapper.text().includes('Stop Replaying Conversation')).toBeTruthy();
+
+    emulatorProps = {
+      ...emulatorProps,
+      restartStatus: RestartConversationStatus.Stop,
+    };
+    wrapper.setProps({
+      children: <Emulator {...emulatorProps} />,
+    });
+    expect(wrapper.text().includes('Stop Replaying Conversation')).toBeFalsy();
+
+    emulatorProps = {
+      ...emulatorProps,
+      restartStatus: undefined,
+    };
+    wrapper.setProps({
+      children: <Emulator {...emulatorProps} />,
+    });
+    expect(wrapper.text().includes('Stop Replaying Conversation')).toBeFalsy();
+
+    emulatorProps = {
+      ...emulatorProps,
+      restartStatus: RestartConversationStatus.Rejected,
+    };
+    wrapper.setProps({
+      children: <Emulator {...emulatorProps} />,
+    });
+    expect(wrapper.text().includes('Stop Replaying Conversation')).toBeFalsy();
+
+    emulatorProps = {
+      ...emulatorProps,
+      restartStatus: RestartConversationStatus.Started,
+    };
+    wrapper.setProps({
+      children: <Emulator {...emulatorProps} />,
+    });
+    expect(wrapper.text().includes('Stop Replaying Conversation')).toBeTruthy();
   });
 });

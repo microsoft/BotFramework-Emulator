@@ -221,15 +221,19 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
   }
 
   private getVerticalSplitterSizes = (): { [0]: string } => {
-    return {
-      0: '' + this.props.ui.verticalSplitter[0].percentage,
-    };
+    if (this.props.ui.verticalSplitter) {
+      return {
+        0: '' + this.props.ui.verticalSplitter[0].percentage,
+      };
+    }
   };
 
   private getHorizontalSplitterSizes = (): { [0]: string } => {
-    return {
-      0: '' + this.props.ui.horizontalSplitter[0].percentage,
-    };
+    if (this.props.ui.horizontalSplitter) {
+      return {
+        0: '' + this.props.ui.horizontalSplitter[0].percentage,
+      };
+    }
   };
 
   private getConversationId() {

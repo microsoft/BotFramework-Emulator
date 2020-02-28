@@ -48,13 +48,6 @@ interceptError();
 interceptHyperlink();
 
 if (!remote.app.isPackaged) {
-  // Enable reload
-  document.addEventListener('keydown', function(e) {
-    // Fn + f5 for reloading on dev
-    if (e.which === 116) {
-      location.reload();
-    }
-  });
   // enable react & react-redux dev tools
   installExtension([REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS])
     /* eslint-disable no-console */

@@ -114,10 +114,24 @@ describe('Chat reducer tests', () => {
   });
 
   it('should close a chat', () => {
-    let state = chat(DEFAULT_STATE, newChat(testChatId, 'livechat'));
+    let transientState = chat(DEFAULT_STATE, newChat(testChatId, 'livechat'));
+    transientState = chat(
+      transientState,
+      incomingActivity(
+        {
+          id: 'act-1',
+        } as Activity,
+        testChatId
+      )
+    );
+
+    transientState = chat(transientState, setRestartConversationStatus(RestartConversationStatus.Started, testChatId));
+    expect(transientState.restartStatus[testChatId]).not.toBeUndefined();
+    expect(transientState.chats[testChatId].replayData.incomingActivities.length > 0).toBeTruthy();
     const action = closeDocument(testChatId);
-    state = chat(DEFAULT_STATE, action);
-    expect(state.chats[testChatId]).toBeFalsy();
+    transientState = chat(DEFAULT_STATE, action);
+    expect(transientState.chats[testChatId]).toBeFalsy();
+    expect(transientState.restartStatus[testChatId]).toBeFalsy();
   });
 
   it('should append to the log', () => {
