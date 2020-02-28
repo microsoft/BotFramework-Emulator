@@ -101,17 +101,22 @@ export class Chat extends PureComponent<ChatProps, ChatState> {
     const styleSet = createStyleSet({ ...webChatStyleOptions, hideSendBox: isDisabled });
 
     // Overriding default styles of webchat as these properties are not exposed directly
-    styleSet.uploadButton = {
-      ...styleSet.uploadButton,
-      padding: '1px',
-    };
-    styleSet.uploadAttachment = {
-      ...styleSet.uploadAttachment,
-      '& > .name, & > .size': {
+    styleSet.fileContent = {
+      ...styleSet.fileContent,
+      background: styles.bubbleBackground,
+      '& .webchat__fileContent__fileName': {
         color: styles.bubbleContentColor,
       },
+      '& .webchat__fileContent__size': {
+        color: styles.bubbleContentColor,
+      },
+      '& .webchat__fileContent__downloadIcon': {
+        fill: styles.bubbleContentColor,
+      },
+      '& .webchat__fileContent__badge': {
+        padding: '4px',
+      },
     };
-    styleSet.downloadAttachment = updateDownloadAttachmentStyle(styleSet.downloadAttachment);
 
     if (directLine) {
       const bot = {
