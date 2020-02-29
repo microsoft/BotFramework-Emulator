@@ -43,23 +43,27 @@ import {
   SharedConstants,
   RestartConversationStatus,
 } from '@bfemulator/app-shared';
-import base64Url from 'base64url';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { Emulator, RestartConversationOptions } from './emulator';
 import { EmulatorContainer } from './emulatorContainer';
 
 let mockCallsMade, mockRemoteCallsMade;
+const replayConversationText = 'Stop Replaying Conversation';
 const mockSharedConstants = SharedConstants;
+
 jest.mock('./chatPanel/chatPanel', () => ({
   ChatPanel: jest.fn(() => <div />),
 }));
+
 jest.mock('./logPanel/logPanel', () => {
   return jest.fn(() => <div />);
 });
+
 jest.mock('./playbackBar/playbackBar', () => {
   return jest.fn(() => <div />);
 });
+
 jest.mock('./emulator.scss', () => ({}));
 jest.mock('./parts', () => ({
   InspectorContainer: jest.fn(() => <div />),
@@ -359,7 +363,7 @@ describe('<EmulatorContainer/>', () => {
       </Provider>
     );
     node = wrapper.find(Emulator);
-    expect(wrapper.text().includes('Stop Replaying Conversation')).toBeTruthy();
+    expect(wrapper.text().includes(replayConversationText)).toBeTruthy();
 
     emulatorProps = {
       ...emulatorProps,
@@ -368,7 +372,7 @@ describe('<EmulatorContainer/>', () => {
     wrapper.setProps({
       children: <Emulator {...emulatorProps} />,
     });
-    expect(wrapper.text().includes('Stop Replaying Conversation')).toBeFalsy();
+    expect(wrapper.text().includes(replayConversationText)).toBeFalsy();
 
     emulatorProps = {
       ...emulatorProps,
@@ -377,7 +381,7 @@ describe('<EmulatorContainer/>', () => {
     wrapper.setProps({
       children: <Emulator {...emulatorProps} />,
     });
-    expect(wrapper.text().includes('Stop Replaying Conversation')).toBeFalsy();
+    expect(wrapper.text().includes(replayConversationText)).toBeFalsy();
 
     emulatorProps = {
       ...emulatorProps,
@@ -386,7 +390,7 @@ describe('<EmulatorContainer/>', () => {
     wrapper.setProps({
       children: <Emulator {...emulatorProps} />,
     });
-    expect(wrapper.text().includes('Stop Replaying Conversation')).toBeFalsy();
+    expect(wrapper.text().includes(replayConversationText)).toBeFalsy();
 
     emulatorProps = {
       ...emulatorProps,
@@ -395,6 +399,6 @@ describe('<EmulatorContainer/>', () => {
     wrapper.setProps({
       children: <Emulator {...emulatorProps} />,
     });
-    expect(wrapper.text().includes('Stop Replaying Conversation')).toBeTruthy();
+    expect(wrapper.text().includes(replayConversationText)).toBeTruthy();
   });
 });

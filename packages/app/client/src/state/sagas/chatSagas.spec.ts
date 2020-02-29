@@ -1151,9 +1151,11 @@ describe('The ChatSagas,', () => {
   });
 
   describe('Replay conversation upto selected activity', () => {
-    it('should watch for incoming activity events dispatched from webchat store', () => {
+    beforeEach(() => {
       const wcMockChannel = createWebchatActivityChannel();
       ChatSagas.wcActivityChannel = wcMockChannel;
+    });
+    it('should watch for incoming activity events dispatched from webchat store', () => {
       const payload: ChannelPayload = {
         documentId: 'some-id',
         action: {
@@ -1176,8 +1178,6 @@ describe('The ChatSagas,', () => {
     });
 
     it('should watch for post activity events dispatched from webchat store', () => {
-      const wcMockChannel = createWebchatActivityChannel();
-      ChatSagas.wcActivityChannel = wcMockChannel;
       const payload: ChannelPayload = {
         documentId: 'some-id',
         action: {
@@ -1198,8 +1198,6 @@ describe('The ChatSagas,', () => {
     });
 
     it('should not dispatch anything for other webchat activities', () => {
-      const wcMockChannel = createWebchatActivityChannel();
-      ChatSagas.wcActivityChannel = wcMockChannel;
       const payload: ChannelPayload = {
         documentId: 'some-id',
         action: {
@@ -1278,7 +1276,7 @@ describe('The ChatSagas,', () => {
       expect(dispatcherMock).not.toHaveBeenCalled();
     });
 
-    it('should not dispatch activity to webchat if activity available to post', () => {
+    it('should dispatch activity to webchat if activity available to post', () => {
       const activity: Activity = {
         id: 'activity-1',
       } as Activity;
