@@ -59,6 +59,9 @@ jest.mock('./chat.scss', () => ({
   get bubbleContentColor() {
     return '#fff';
   },
+  get bubbleBackground() {
+    return '#ff0000';
+  },
 }));
 
 jest.mock('electron', () => ({
@@ -156,24 +159,14 @@ describe('<ChatContainer />', () => {
       const webChat = wrapper.find(ReactWebChat);
       const styleSet = createStyleSet({ ...webChatStyleOptions });
 
-      styleSet.uploadButton = {
-        ...styleSet.uploadButton,
-        padding: '1px',
+      styleSet.fileContent = {
+        ...styleSet.fileContent,
+        background: '#ff0000',
+        '& .webchat__fileContent__badge': { padding: '4px' },
+        '& .webchat__fileContent__downloadIcon': { fill: '#fff' },
+        '& .webchat__fileContent__fileName': { color: '#fff' },
+        '& .webchat__fileContent__size': { color: '#fff' },
       };
-
-      styleSet.uploadAttachment = {
-        ...styleSet.uploadAttachment,
-        '& > .name, & > .size': {
-          color: '#fff',
-        },
-      };
-
-      const mutatedDownloadAttachment = {
-        ...styleSet.downloadAttachment,
-      };
-      mutatedDownloadAttachment['& > a']['& > .details']['& > .name'].color = '#fff';
-      mutatedDownloadAttachment['& > a']['& > .icon'].fill = '#fff';
-      styleSet.downloadAttachment = mutatedDownloadAttachment;
 
       expect(webChat.exists()).toBe(true);
       const wcProps = webChat.props();
