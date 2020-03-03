@@ -76,21 +76,27 @@ describe('<SplitButton>', () => {
   it('should handle clicking the caret button', () => {
     const mockStopPropagation = jest.fn(() => null);
     const mockEvent = { stopPropagation: mockStopPropagation };
-    instance.setState({ expanded: false, selected: 1 });
+    instance.setState({ expanded: false });
     instance.onClickCaret(mockEvent);
 
     expect(mockStopPropagation).toHaveBeenCalledTimes(1);
     expect(instance.state.expanded).toBe(true);
-    expect(instance.state.selected).toBe(0);
   });
 
   it('should handle clicking the default button', () => {
     const mockOnClick = jest.fn((_value: number) => null);
-    wrapper = mount(<SplitButton options={mockOptions} onClick={mockOnClick} />);
+    const mockDefaultClick = jest.fn((_value: number) => null);
+    wrapper = mount(
+      <SplitButton options={mockOptions} onClick={mockOnClick} onDefaultButtonClick={mockDefaultClick} />
+    );
     instance = wrapper.instance();
     instance.onClickDefault();
-
-    expect(mockOnClick).toHaveBeenCalledWith('option1');
+    expect(mockOnClick).not.toHaveBeenCalled();
+    expect(mockDefaultClick).toHaveBeenCalledWith('option1');
+    instance.setState({ selected: 1 });
+    instance.onClickDefault();
+    expect(mockOnClick).not.toHaveBeenCalled();
+    expect(mockDefaultClick).toHaveBeenCalledWith('option2');
   });
 
   it('should handle clicking an option', () => {
@@ -107,11 +113,10 @@ describe('<SplitButton>', () => {
   it('should hide panel', () => {
     const mockFocus = jest.fn(() => null);
     instance.caretRef = { focus: mockFocus };
-    instance.setState({ expanded: true, selected: 1 });
+    instance.setState({ expanded: true });
     instance.hidePanel();
 
     expect(instance.state.expanded).toBe(false);
-    expect(instance.state.selected).toBe(0);
     expect(mockFocus).toHaveBeenCalledTimes(1);
   });
 
