@@ -62,6 +62,7 @@ export enum ChatActions {
   PostActivityEventWc = 'CHAT/POST_ACTIVITY_WEBCHAT',
   IncomingActivityFromWc = 'CHAT/INCOMING_ACTIVITY_WEBCHAT',
   SetRestartConversationStatus = 'CHAT/RESTART/ACTIVITY/STATUS',
+  SetRestartConversationOption = 'CHAT/RESTART/CONVERSATION_OPTION',
 }
 
 export enum RestartConversationStatus {
@@ -69,6 +70,11 @@ export enum RestartConversationStatus {
   Rejected,
   Completed,
   Stop,
+}
+
+export enum RestartConversationOptions {
+  SameUserId,
+  NewUserId,
 }
 
 export interface ActiveInspectorChangedPayload {
@@ -83,6 +89,11 @@ export interface WebSpeechFactoryPayload {
 export interface WebChatStorePayload {
   documentId: string;
   store: any;
+}
+
+export interface SetRestartConversationOptionPayload {
+  documentId: string;
+  option: RestartConversationOptions;
 }
 
 export interface PendingSpeechTokenRetrievalPayload {
@@ -414,6 +425,19 @@ export function updateSpeechAdapters(
       directLine,
       documentId,
       webSpeechPonyfillFactory,
+    },
+  };
+}
+
+export function setRestartConversationOption(
+  documentId: string,
+  option: RestartConversationOptions
+): ChatAction<SetRestartConversationOptionPayload> {
+  return {
+    type: ChatActions.SetRestartConversationOption,
+    payload: {
+      documentId,
+      option,
     },
   };
 }

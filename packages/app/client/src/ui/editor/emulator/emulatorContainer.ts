@@ -47,6 +47,8 @@ import {
   ValueTypesMask,
   setRestartConversationStatus,
   RestartConversationStatus,
+  RestartConversationOptions,
+  setRestartConversationOption,
 } from '@bfemulator/app-shared';
 
 import { RootState } from '../../../state/store';
@@ -71,6 +73,7 @@ const mapStateToProps = (
     url: state.clientAwareSettings.serverUrl,
     userId: state.chat.chats[documentId].userId,
     restartStatus: state.chat.restartStatus[documentId],
+    currentRestartConversationOption: state.chat.chats[documentId].restartConversationOption,
     ...ownProps,
   };
 };
@@ -95,6 +98,8 @@ const mapDispatchToProps = (dispatch): Partial<EmulatorProps> => ({
   updateDocument: (documentId, updatedValues: Partial<Document>) => dispatch(updateDocument(documentId, updatedValues)),
   onStopRestartConversationClick: (documentId: string) =>
     dispatch(setRestartConversationStatus(RestartConversationStatus.Rejected, documentId)),
+  onSetRestartConversationOptionClick: (documentId: string, option: RestartConversationOptions) =>
+    dispatch(setRestartConversationOption(documentId, option)),
 });
 
 export const EmulatorContainer = connect(mapStateToProps, mapDispatchToProps)(Emulator);

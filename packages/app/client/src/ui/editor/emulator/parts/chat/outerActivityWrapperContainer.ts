@@ -32,7 +32,7 @@
 //
 
 import { connect } from 'react-redux';
-import { ValueTypes, restartConversation } from '@bfemulator/app-shared';
+import { ValueTypes, restartConversation, RestartConversationOptions } from '@bfemulator/app-shared';
 import { Action } from 'redux';
 import { Activity } from 'botframework-schema';
 
@@ -56,12 +56,21 @@ function mapStateToProps(state: RootState, { documentId }: { documentId: string 
   return {
     highlightedActivities,
     documentId,
+    currentRestartConversationOption: state.chat.chats[documentId].restartConversationOption,
   };
 }
 
 const mapDispatchToProps = (dispatch: (action: Action) => void) => ({
-  onRestartConversationFromActivityClick: (documentId: string, activity: Activity) => {
-    dispatch(restartConversation(documentId, true, false, activity, window.URL.createObjectURL));
+  onRestartConversationFromActivityClick: (
+    documentId: string,
+    activity: Activity,
+    restartOption: RestartConversationOptions
+  ) => {
+    let requireUserId = true;
+    if (restartOption === RestartConversationOptions.SameUserId) {
+      requireUserId = false;
+    }
+    dispatch(restartConversation(documentId, true, requireUserId, activity, window.URL.createObjectURL));
   },
 });
 

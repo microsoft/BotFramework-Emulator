@@ -50,6 +50,8 @@ import {
   RestartConversationStatus,
   postActivity,
   setRestartConversationStatus,
+  setRestartConversationOption,
+  RestartConversationOptions,
 } from '../actions/chatActions';
 import { closeNonGlobalTabs } from '../actions/editorActions';
 
@@ -372,6 +374,33 @@ describe('Chat reducer tests', () => {
     lastActivity = incomingActivities[incomingActivities.length - 1];
     expect(lastActivity.id).toBe(anotherExpectedActivity.id);
     expect(lastActivity.replyToId).toBe(anotherExpectedActivity.replyToId);
+  });
+
+  it('should update restart type option correctly', () => {
+    const documentId = 'chatId-1';
+    const startingState = {
+      ...DEFAULT_STATE,
+      chats: {
+        ...DEFAULT_STATE.chats,
+        'chatId-1': {
+          directLine: undefined,
+          documentId,
+          userId: 'user1',
+          replayData: {},
+        },
+      },
+      webSpeechFactories: {
+        chat1: undefined,
+      },
+    };
+
+    let action = setRestartConversationOption(documentId, RestartConversationOptions.NewUserId);
+    let transientState = chat(startingState, action);
+    expect(transientState.chats['chatId-1'].restartConversationOption).toBe(RestartConversationOptions.NewUserId);
+
+    action = setRestartConversationOption(documentId, RestartConversationOptions.SameUserId);
+    transientState = chat(transientState, action);
+    expect(transientState.chats['chatId-1'].restartConversationOption).toBe(RestartConversationOptions.SameUserId);
   });
 
   it('should set restart conversation status', () => {

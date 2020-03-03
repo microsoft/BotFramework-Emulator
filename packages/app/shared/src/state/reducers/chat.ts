@@ -44,6 +44,8 @@ import {
   ActivityFromWebchatPayload,
   RestartConversationStatus,
   RestartConversationStatusPayload,
+  RestartConversationOptions,
+  SetRestartConversationOptionPayload,
 } from '../actions/chatActions';
 import { EditorAction, EditorActions } from '../actions/editorActions';
 
@@ -80,6 +82,7 @@ export interface ChatDocument<I = any> extends Document {
   ui: DocumentUI;
   replayData: ChatReplayData;
   isDisabled: boolean;
+  restartConversationOption: RestartConversationOptions;
 }
 
 export interface ChatLog {
@@ -364,6 +367,21 @@ export function chat(state: ChatState = DEFAULT_STATE, action: ChatAction | Edit
     case EditorActions.closeAll: {
       // HACK. Need a better system.
       return DEFAULT_STATE;
+    }
+
+    case ChatActions.SetRestartConversationOption: {
+      const { documentId, option } = action.payload as SetRestartConversationOptionPayload;
+      state = {
+        ...state,
+        chats: {
+          ...state.chats,
+          [documentId]: {
+            ...state.chats[documentId],
+            restartConversationOption: option,
+          },
+        },
+      };
+      break;
     }
 
     case ChatActions.updateSpeechAdapters: {

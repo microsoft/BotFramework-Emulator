@@ -35,7 +35,7 @@ import * as React from 'react';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 import { mount, shallow } from 'enzyme';
-import { ValueTypes } from '@bfemulator/app-shared';
+import { ValueTypes, RestartConversationOptions } from '@bfemulator/app-shared';
 
 import { OuterActivityWrapper } from './outerActivityWrapper';
 import { OuterActivityWrapperContainer } from './outerActivityWrapperContainer';
@@ -107,13 +107,14 @@ describe('<OuterActivityWrapper />', () => {
         card={card}
         highlightedActivities={[]}
         onRestartConversationFromActivityClick={onRestartClick}
+        currentRestartConversationOption={RestartConversationOptions.SameUserId}
         documentId="some-id"
       />
     );
     const instance = wrapper.instance();
 
     (instance as any).propsBoundRestartActivityHandler();
-    expect(onRestartClick).toHaveBeenCalledWith('some-id', card.activity);
+    expect(onRestartClick).toHaveBeenCalledWith('some-id', card.activity, RestartConversationOptions.SameUserId);
   });
 
   it('should determine if an activity is user activity or not', () => {

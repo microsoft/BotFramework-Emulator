@@ -32,7 +32,7 @@
 //
 
 import * as React from 'react';
-import { SharedConstants } from '@bfemulator/app-shared';
+import { SharedConstants, RestartConversationOptions } from '@bfemulator/app-shared';
 import { Activity } from 'botframework-schema';
 import { RestartConversationStatus } from '@bfemulator/app-shared';
 
@@ -48,7 +48,12 @@ export interface OuterActivityWrapperProps {
   onContextMenu?: (event: React.MouseEvent<HTMLElement>) => void;
   onItemRendererClick?: (event: React.MouseEvent<HTMLElement>) => void;
   onItemRendererKeyDown?: (event: React.KeyboardEvent<HTMLElement>) => void;
-  onRestartConversationFromActivityClick?: (documentId: string, activity: Activity) => void;
+  onRestartConversationFromActivityClick?: (
+    documentId: string,
+    activity: Activity,
+    restartOption: RestartConversationOptions
+  ) => void;
+  currentRestartConversationOption: RestartConversationOptions;
 }
 
 export class OuterActivityWrapper extends React.Component<OuterActivityWrapperProps, {}> {
@@ -75,7 +80,11 @@ export class OuterActivityWrapper extends React.Component<OuterActivityWrapperPr
   }
 
   private propsBoundRestartActivityHandler = () => {
-    this.props.onRestartConversationFromActivityClick(this.props.documentId, this.props.card.activity);
+    this.props.onRestartConversationFromActivityClick(
+      this.props.documentId,
+      this.props.card.activity,
+      this.props.currentRestartConversationOption
+    );
   };
 
   private isUserActivity(activity: Activity) {

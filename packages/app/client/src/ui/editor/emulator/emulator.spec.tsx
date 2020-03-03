@@ -44,8 +44,9 @@ import {
   RestartConversationStatus,
 } from '@bfemulator/app-shared';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
+import { RestartConversationOptions } from '@bfemulator/app-shared';
 
-import { Emulator, RestartConversationOptions } from './emulator';
+import { Emulator } from './emulator';
 import { EmulatorContainer } from './emulatorContainer';
 
 let mockCallsMade, mockRemoteCallsMade;
@@ -318,7 +319,28 @@ describe('<EmulatorContainer/>', () => {
   });
 
   it('should start over a conversation with a new user id on click', () => {
-    instance.onStartOverClick(RestartConversationOptions.NewUserId);
+    const mockStore = createStore((_state, _action) => mockStoreState);
+    mockDispatch = jest.spyOn(mockStore, 'dispatch').mockImplementation((action: any) => {
+      if (action && action.payload && action.payload.resolver) {
+        action.payload.resolver();
+      }
+      return action;
+    });
+    wrapper = mount(
+      <Provider store={mockStore}>
+        <EmulatorContainer
+          documentId={'doc1'}
+          url={'someUrl'}
+          mode={'livechat'}
+          conversationId={'convo1'}
+          currentRestartConversationOption={RestartConversationOptions.NewUserId}
+        />
+      </Provider>
+    );
+
+    node = wrapper.find(Emulator);
+    instance = node.instance();
+    instance.onStartOverClick();
 
     expect(mockDispatch).toHaveBeenCalledWith(
       executeCommand(true, SharedConstants.Commands.Telemetry.TrackEvent, null, 'conversation_restart', {
@@ -329,7 +351,28 @@ describe('<EmulatorContainer/>', () => {
   });
 
   it('should start over a conversation with the same user id on click', () => {
-    instance.onStartOverClick(RestartConversationOptions.SameUserId);
+    const mockStore = createStore((_state, _action) => mockStoreState);
+    mockDispatch = jest.spyOn(mockStore, 'dispatch').mockImplementation((action: any) => {
+      if (action && action.payload && action.payload.resolver) {
+        action.payload.resolver();
+      }
+      return action;
+    });
+    wrapper = mount(
+      <Provider store={mockStore}>
+        <EmulatorContainer
+          documentId={'doc1'}
+          url={'someUrl'}
+          mode={'livechat'}
+          conversationId={'convo1'}
+          currentRestartConversationOption={RestartConversationOptions.SameUserId}
+        />
+      </Provider>
+    );
+
+    node = wrapper.find(Emulator);
+    instance = node.instance();
+    instance.onStartOverClick();
 
     expect(mockDispatch).toHaveBeenCalledWith(
       executeCommand(true, SharedConstants.Commands.Telemetry.TrackEvent, null, 'conversation_restart', {

@@ -33,13 +33,19 @@
 
 import { Activity } from 'botframework-schema';
 import { DirectLine } from 'botframework-directlinejs';
-import { isMac, RestartConversationStatus } from '@bfemulator/app-shared';
+import {
+  isMac,
+  RestartConversationStatus,
+  RestartConversationOptions,
+  setRestartConversationOption,
+  Document,
+  SplitterSize,
+} from '@bfemulator/app-shared';
 import { EmulatorMode } from '@bfemulator/sdk-shared';
 import { SplitButton, Splitter } from '@bfemulator/ui-react';
 import * as React from 'react';
-import { FrameworkSettings, newNotification, Notification, ValueTypesMask } from '@bfemulator/app-shared';
+import { FrameworkSettings, newNotification, Notification, ValueTypesMask, Rest } from '@bfemulator/app-shared';
 
-import { Document, SplitterSize } from '../../../state/reducers/editor';
 import { debounce } from '../../../utils';
 
 import { ChatPanelContainer } from './chatPanel';
@@ -49,7 +55,7 @@ import * as styles from './emulator.scss';
 import { InspectorContainer } from './parts';
 import { ToolBar } from './toolbar/toolbar';
 
-export const RestartConversationOptions = {
+export const restartOptions = {
   NewUserId: 'Restart with new user ID',
   SameUserId: 'Restart with same user ID',
 };
@@ -81,6 +87,8 @@ export interface EmulatorProps {
   userId?: string;
   restartStatus: RestartConversationStatus;
   onStopRestartConversationClick: (documentId: string) => void;
+  currentRestartConversationOption: RestartConversationOptions;
+  onSetRestartConversationOptionClick: (documentId: string, option: RestartConversationOptions) => void;
 }
 
 export class Emulator extends React.Component<EmulatorProps, {}> {
@@ -137,7 +145,7 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
   }
 
   renderDefaultView(): JSX.Element {
-    const { NewUserId, SameUserId } = RestartConversationOptions;
+    const { NewUserId, SameUserId } = restartOptions;
 
     const { mode, documentId } = this.props;
 
@@ -149,7 +157,8 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
             defaultLabel="Restart conversation"
             buttonClass={styles.restartIcon}
             options={[NewUserId, SameUserId]}
-            onClick={this.onStartOverClick}
+            onClick={this.onRestartOptionSelected}
+            onDefaultButtonClick={this.onStartOverClick}
             buttonRef={this.setRestartButtonRef}
             submenuLabel={isMac() ? 'Restart conversation sub menu' : ''}
           />
@@ -244,33 +253,40 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
     this.props.enablePresentationMode(enabled);
   };
 
-  private onStartOverClick = (option: string = RestartConversationOptions.NewUserId): void => {
-    const { NewUserId, SameUserId } = RestartConversationOptions;
-    const { documentId } = this.props;
-
+  private onRestartOptionSelected = (option: string = restartOptions.NewUserId): void => {
+    const { NewUserId, SameUserId } = restartOptions;
+    const { documentId, onSetRestartConversationOptionClick } = this.props;
     switch (option) {
       case NewUserId: {
-        this.props.trackEvent('conversation_restart', {
-          userId: 'new',
-        });
-        // start conversation with new convo id & user id
-        this.props.restartConversation(documentId, true, true);
+        onSetRestartConversationOptionClick(documentId, RestartConversationOptions.NewUserId);
         break;
       }
 
       case SameUserId: {
-        this.props.trackEvent('conversation_restart', {
-          userId: 'same',
-        });
-        // start conversation with new convo id
-        this.props.restartConversation(documentId, true, false);
+        onSetRestartConversationOptionClick(documentId, RestartConversationOptions.SameUserId);
         break;
       }
-
-      default:
-        break;
     }
   };
+
+  private onStartOverClick = (): void => {
+    const { documentId } = this.props;
+
+    if (this.props.currentRestartConversationOption === RestartConversationOptions.NewUserId) {
+      this.props.trackEvent('conversation_restart', {
+        userId: 'new',
+      });
+      this.props.restartConversation(documentId, true, true);
+    }
+
+    if (this.props.currentRestartConversationOption === RestartConversationOptions.SameUserId) {
+      this.props.trackEvent('conversation_restart', {
+        userId: 'same',
+      });
+      this.props.restartConversation(documentId, true, false);
+    }
+  };
+
   // Uncomment when ready to export bot state
   // private onExportBotStateClick = async (): Promise<void> => {
   //   try {

@@ -58,6 +58,8 @@ import {
   RestartConversationStatus,
   postActivity,
   incomingActivity,
+  setRestartConversationOption,
+  RestartConversationOptions,
 } from './chatActions';
 
 describe('chat actions', () => {
@@ -338,6 +340,19 @@ describe('chat actions', () => {
 
     expect(action).toEqual({
       type: ChatActions.SetRestartConversationStatus,
+      payload: expectedPayload,
+    });
+  });
+
+  it('should set correct restart conversation option', () => {
+    const expectedPayload = {
+      documentId: 'abc',
+      option: RestartConversationOptions.NewUserId,
+    };
+    const action = setRestartConversationOption(expectedPayload.documentId, expectedPayload.option);
+
+    expect(action).toEqual({
+      type: ChatActions.SetRestartConversationOption,
       payload: expectedPayload,
     });
   });
