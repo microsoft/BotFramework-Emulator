@@ -88,11 +88,7 @@ export class OuterActivityWrapper extends React.Component<OuterActivityWrapperPr
   };
 
   private isUserActivity(activity: Activity) {
-    return !!(
-      activity.from.role === SharedConstants.Activity.FROM_USER_ROLE &&
-      !activity.replyToId &&
-      activity.channelData
-    );
+    return !!(activity.from.role === SharedConstants.Activity.USER_ROLE && !activity.replyToId && activity.channelData);
   }
 
   private shouldBeSelected(subject: Activity): boolean {

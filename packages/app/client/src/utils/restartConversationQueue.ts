@@ -59,7 +59,7 @@ export class ConversationQueue {
   ) {
     // Get all user activities
     this.userActivities = activities.filter(
-      (activity: Activity) => activity.from.role === SharedConstants.Activity.FROM_USER_ROLE && activity.channelData
+      (activity: Activity) => activity.from.role === SharedConstants.Activity.USER_ROLE && activity.channelData
     );
 
     const trimActivityIndex: number = this.userActivities.findIndex(activity => activity.id === replayToActivity.id);
