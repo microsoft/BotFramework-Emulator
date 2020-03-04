@@ -213,14 +213,7 @@ export class ConversationService {
     });
   }
 
-  public static async fetchActivitiesForAConversation(serverUrl: string, conversationId: string): Promise<Activity[]> {
-    try {
-      const url = `${serverUrl}/v3/conversations/${conversationId}/activities`;
-      const resp = await fetch(url);
-      const activities = await resp.json();
-      return activities;
-    } catch (ex) {
-      return [];
-    }
+  public static async fetchActivitiesForAConversation(serverUrl: string, conversationId: string): Promise<Response> {
+    return fetch(`${serverUrl}/v3/conversations/${conversationId}/activities`);
   }
 }

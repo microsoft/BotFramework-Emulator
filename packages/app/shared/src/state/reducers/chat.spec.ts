@@ -55,7 +55,7 @@ import {
 } from '../actions/chatActions';
 import { closeNonGlobalTabs } from '../actions/editorActions';
 
-import { chat, ChatState, HasIdAndReplyId } from './chat';
+import { chat, ChatState, IncomingActivityRecord } from './chat';
 
 describe('Chat reducer tests', () => {
   const testChatId = 'testChat1';
@@ -358,7 +358,7 @@ describe('Chat reducer tests', () => {
 
     const transientState = chat(startingState, action);
     let incomingActivities = transientState.chats['chatId-1'].replayData.incomingActivities;
-    let lastActivity: HasIdAndReplyId = incomingActivities[incomingActivities.length - 1];
+    let lastActivity: IncomingActivityRecord = incomingActivities[incomingActivities.length - 1];
     expect(lastActivity.id).toBe(expectedActivity.id);
     expect(lastActivity.replyToId).toBe(expectedActivity.replyToId);
 

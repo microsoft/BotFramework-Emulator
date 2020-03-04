@@ -60,13 +60,13 @@ export interface ChatState {
   restartStatus: { [chatId: string]: RestartConversationStatus };
 }
 
-export interface HasIdAndReplyId {
+export interface IncomingActivityRecord {
   id: string;
   replyToId?: string;
 }
 
 export interface ChatReplayData {
-  incomingActivities: HasIdAndReplyId[];
+  incomingActivities: IncomingActivityRecord[];
   postActivitiesSlots: number[];
 }
 
@@ -302,7 +302,7 @@ export function chat(state: ChatState = DEFAULT_STATE, action: ChatAction | Edit
     case ChatActions.IncomingActivityFromWc: {
       const { documentId, activity } = action.payload as ActivityFromWebChatPayload;
       const replayData: ChatReplayData = state.chats[documentId].replayData;
-      let incomingActivities: HasIdAndReplyId[] = [];
+      let incomingActivities: IncomingActivityRecord[] = [];
       if (replayData.incomingActivities) {
         incomingActivities = [...replayData.incomingActivities];
       }

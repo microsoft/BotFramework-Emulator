@@ -70,7 +70,7 @@ const mapDispatchToProps = (dispatch: (action: Action) => void) => ({
     if (restartOption === RestartConversationOptions.SameUserId) {
       requireUserId = false;
     }
-    dispatch(restartConversation(documentId, true, requireUserId, activity, window.URL.createObjectURL));
+    dispatch(restartConversation(documentId, true, requireUserId, activity));
   },
 });
 

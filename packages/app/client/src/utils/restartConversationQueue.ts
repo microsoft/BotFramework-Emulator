@@ -32,7 +32,7 @@
 //
 import { Activity } from 'botframework-schema';
 import { SharedConstants, RestartConversationStatus } from '@bfemulator/app-shared';
-import { ChatReplayData, HasIdAndReplyId } from '@bfemulator/app-shared';
+import { ChatReplayData, IncomingActivityRecord } from '@bfemulator/app-shared';
 
 export enum WebChatEvents {
   postActivity = 'DIRECT_LINE/POST_ACTIVITY',
@@ -106,7 +106,7 @@ export class ConversationQueue {
 
       const matchIndexes = [];
       this.replayDataFromOldConversation.incomingActivities.forEach(
-        (incomingActivity: HasIdAndReplyId, index: number) => {
+        (incomingActivity: IncomingActivityRecord, index: number) => {
           if (incomingActivity.replyToId === activity.id) {
             matchIndexes.push(index);
           }

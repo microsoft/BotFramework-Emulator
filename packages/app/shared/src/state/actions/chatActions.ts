@@ -149,7 +149,6 @@ export interface RestartConversationPayload {
   requireNewConversationId: boolean;
   requireNewUserId: boolean;
   activity?: Activity;
-  createObjectUrl: Function;
 }
 
 export interface ActivityFromWebChatPayload {
@@ -366,8 +365,7 @@ export function restartConversation(
   documentId: string,
   requireNewConversationId: boolean = false,
   requireNewUserId: boolean = false,
-  activity: Activity = undefined,
-  createObjectUrl: Function = undefined
+  activity: Activity = undefined
 ): ChatAction<RestartConversationPayload> {
   return {
     type: ChatActions.restartConversation,
@@ -376,7 +374,6 @@ export function restartConversation(
       requireNewConversationId,
       requireNewUserId,
       activity,
-      createObjectUrl,
     },
   };
 }

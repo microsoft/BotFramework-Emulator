@@ -472,7 +472,7 @@ export class ChatSagas {
   }
 
   public static *restartConversation(action: ChatAction<RestartConversationPayload>): IterableIterator<any> {
-    const { documentId, requireNewConversationId, requireNewUserId, createObjectUrl } = action.payload;
+    const { documentId, requireNewConversationId, requireNewUserId } = action.payload;
     const replayToActivity: Activity = action.payload.activity || undefined;
     const chat: ChatDocument = yield select(getChatFromDocumentId, documentId);
     const serverUrl = yield select(getServerUrl);
@@ -491,19 +491,24 @@ export class ChatSagas {
       conversationId = chat.conversationId || `${uniqueId()}|${chat.mode}`;
     }
     if (replayToActivity) {
-      const activities: Activity[] = yield call(
+      const res = yield call(
         [ConversationService, ConversationService.fetchActivitiesForAConversation],
         serverUrl,
         chat.conversationId
       );
+
+      if (!res.ok) {
+        yield* throwErrorFromResponse('Error occurred while fetching activities in transcript while replaying', res);
+      }
+      const activities: Activity[] = yield res.json();
       yield put(setRestartConversationStatus(RestartConversationStatus.Started, documentId));
+
       conversationQueue = yield create(
         ConversationQueue,
         activities,
         chat.replayData,
         conversationId,
-        replayToActivity,
-        createObjectUrl
+        replayToActivity
       );
     }
 
