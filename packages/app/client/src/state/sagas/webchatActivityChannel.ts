@@ -30,20 +30,17 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// import { EventEmitter } from 'events';
-
-// import { Activity } from 'botframework-schema';
 import { eventChannel, Channel, buffers } from 'redux-saga';
 import { Activity } from 'botframework-schema';
 
 import { ConversationQueue } from '../../utils/restartConversationQueue';
 
 export interface WebChatActivityChannel {
-  sendWcEvents: (args: ChannelPayload) => void;
-  getWebchatChannelSubscriber: () => Channel<ChannelPayload>;
+  sendWebChatEvents: (args: ChannelPayload) => void;
+  getWebChatChannelSubscriber: () => Channel<ChannelPayload>;
 }
 
-export interface WebchatEventPayload {
+export interface WebChatEventPayload {
   type: string;
   payload: {
     activity: Activity;
@@ -56,12 +53,12 @@ export interface ReplayActivitySnifferProps {
 
 export interface ChannelPayload {
   documentId: string;
-  action: WebchatEventPayload;
-  dispatch: Function;
+  action: WebChatEventPayload;
+  dispatch: () => void;
   meta: ReplayActivitySnifferProps;
 }
 
-export function createWebchatActivityChannel(): WebChatActivityChannel {
+export function createWebChatActivityChannel(): WebChatActivityChannel {
   let emitterBoundWcStore: (args: ChannelPayload) => void;
   let unsubscribeToEvents = false;
 
@@ -71,7 +68,7 @@ export function createWebchatActivityChannel(): WebChatActivityChannel {
     }
   }
 
-  const getWebchatChannelSubscriber = (): Channel<ChannelPayload> => {
+  const getWebChatChannelSubscriber = (): Channel<ChannelPayload> => {
     return eventChannel(emitter => {
       const self = {
         emitter,
@@ -83,12 +80,14 @@ export function createWebchatActivityChannel(): WebChatActivityChannel {
     }, buffers.expanding(20));
   };
 
-  const sendWcEvents = async (args: ChannelPayload) => {
-    emitterBoundWcStore.call(null, { ...args });
+  const sendWebChatEvents = async (args: ChannelPayload) => {
+    if (emitterBoundWcStore) {
+      emitterBoundWcStore.call(null, { ...args });
+    }
   };
 
   return {
-    getWebchatChannelSubscriber,
-    sendWcEvents,
+    getWebChatChannelSubscriber,
+    sendWebChatEvents,
   };
 }

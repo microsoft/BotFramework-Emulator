@@ -34,34 +34,29 @@ import { Activity } from 'botframework-schema';
 import { SharedConstants, RestartConversationStatus } from '@bfemulator/app-shared';
 import { ChatReplayData, HasIdAndReplyId } from '@bfemulator/app-shared';
 
-export enum WebchatEvents {
+export enum WebChatEvents {
   postActivity = 'DIRECT_LINE/POST_ACTIVITY',
   incomingActivity = 'DIRECT_LINE/INCOMING_ACTIVITY',
   rejectedActivity = 'DIRECT_LINE/POST_ACTIVITY_REJECTED',
 }
 
-export const webchatEventsToWatch: string[] = [WebchatEvents.postActivity, WebchatEvents.incomingActivity];
+export const webChatEventsToWatch: string[] = [WebChatEvents.postActivity, WebChatEvents.incomingActivity];
 
 export class ConversationQueue {
   private userActivities: Activity[] = [];
   private replayDataFromOldConversation: ChatReplayData;
   private receivedActivities: Activity[];
   private conversationId: string;
-  private nextActivityToBePosted = undefined;
-  private isReplayComplete = false;
-  private createObjectUrl;
-  private progressiveResponseValidationMap: Map<number, string>;
-
-  // private createObjectUrlFromWindow: Function;
+  private nextActivityToBePosted: Activity = undefined;
+  private isReplayComplete: boolean = false;
+  private proactiveResponseValidationMap: Map<number, string>;
 
   constructor(
     activities: Activity[],
     chatReplayData: ChatReplayData,
     conversationId: string,
-    replayToActivity: Activity,
-    createObjectUrl: Function
+    replayToActivity: Activity
   ) {
-    this.createObjectUrl = createObjectUrl;
     // Get all user activities
     this.userActivities = activities.filter(
       (activity: Activity) => activity.from.role === SharedConstants.Activity.FROM_USER_ROLE && activity.channelData
@@ -75,18 +70,21 @@ export class ConversationQueue {
     this.conversationId = conversationId;
     this.replayDataFromOldConversation = chatReplayData;
     this.receivedActivities = [];
-    this.progressiveResponseValidationMap = new Map();
+    this.proactiveResponseValidationMap = new Map();
 
     this.checkIfActivityToBePosted = this.checkIfActivityToBePosted.bind(this);
-    this.incomingActivity = this.incomingActivity.bind(this);
+    this.handleIncomingActivity = this.handleIncomingActivity.bind(this);
   }
 
   private static dataURLtoFile(dataurl: string, filename: string) {
-    var arr = dataurl.split(','),
-      mime = arr[0].match(/:(.*?);/)[1],
-      bstr = atob(arr[1]),
-      n = bstr.length,
-      u8arr = new Uint8Array(n);
+    const arr: string[] = dataurl.split(',');
+    if (arr.length !== 2) {
+      return undefined;
+    }
+    const mime = arr[0].match(/:(.*?);/)[1];
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
 
     while (n--) {
       u8arr[n] = bstr.charCodeAt(n);
@@ -117,11 +115,10 @@ export class ConversationQueue {
 
       if (activity.attachments && activity.attachments.length >= 1) {
         const mutatedAttachments = activity.attachments.map(attachment => {
-          // Convert back to file and create a temporary link using object URL
           const fileFormat: File = ConversationQueue.dataURLtoFile(attachment.contentUrl, attachment.name);
           return {
             ...attachment,
-            contentUrl: this.createObjectUrl ? this.createObjectUrl(fileFormat) : fileFormat,
+            contentUrl: fileFormat ? window.URL.createObjectURL(fileFormat) : '',
           };
         });
         activity.attachments = mutatedAttachments;
@@ -148,7 +145,7 @@ export class ConversationQueue {
   public validateIfReplayFlow(replayStatus: RestartConversationStatus, actionType: string) {
     return !!(
       typeof replayStatus !== undefined &&
-      actionType === WebchatEvents.incomingActivity &&
+      actionType === WebChatEvents.incomingActivity &&
       replayStatus === RestartConversationStatus.Started
     );
   }
@@ -161,19 +158,19 @@ export class ConversationQueue {
     return this.isReplayComplete;
   }
 
-  public incomingActivity(activity: Activity) {
+  public handleIncomingActivity(activity: Activity) {
     if (this.isReplayComplete) {
       return;
     }
     try {
       const indexToBeInserted: number = this.receivedActivities.length;
       if (
-        this.progressiveResponseValidationMap.has(indexToBeInserted) &&
-        this.progressiveResponseValidationMap.get(indexToBeInserted) !== activity.replyToId
+        this.proactiveResponseValidationMap.has(indexToBeInserted) &&
+        this.proactiveResponseValidationMap.get(indexToBeInserted) !== activity.replyToId
       ) {
         throw new Error('Replayed activities not in order of original conversation');
       } else {
-        this.progressiveResponseValidationMap.delete(indexToBeInserted);
+        this.proactiveResponseValidationMap.delete(indexToBeInserted);
       }
       this.receivedActivities.push(activity);
 
@@ -182,7 +179,7 @@ export class ConversationQueue {
         if (matchIndexes) {
           matchIndexes.forEach((index: number) => {
             if (!this.receivedActivities[index]) {
-              this.progressiveResponseValidationMap.set(index, activity.id);
+              this.proactiveResponseValidationMap.set(index, activity.id);
             } else if (this.receivedActivities[index].replyToId !== activity.id) {
               throw new Error('Replayed activities not in order of original conversation');
             }

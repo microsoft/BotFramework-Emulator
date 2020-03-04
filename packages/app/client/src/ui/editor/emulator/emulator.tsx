@@ -149,7 +149,7 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
 
     const { mode, documentId } = this.props;
 
-    const livechatRender =
+    const livechatHeaderRender =
       this.props.restartStatus !== RestartConversationStatus.Started ? (
         <>
           <SplitButton
@@ -192,7 +192,7 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
                 Reconnect
               </button>
             )}
-            {mode === 'livechat' && livechatRender}
+            {mode === 'livechat' && livechatHeaderRender}
           </ToolBar>
         </div>
         <div key={this.getConversationId()} className={`${styles.content} ${styles.vertical}`}>

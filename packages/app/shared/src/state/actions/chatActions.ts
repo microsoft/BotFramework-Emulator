@@ -152,7 +152,7 @@ export interface RestartConversationPayload {
   createObjectUrl: Function;
 }
 
-export interface ActivityFromWebchatPayload {
+export interface ActivityFromWebChatPayload {
   documentId: string;
   activity: Activity;
 }
@@ -381,7 +381,7 @@ export function restartConversation(
   };
 }
 
-export function postActivity(activity: Activity, documentId: string): ChatAction<ActivityFromWebchatPayload> {
+export function postActivity(activity: Activity, documentId: string): ChatAction<ActivityFromWebChatPayload> {
   return {
     type: ChatActions.PostActivityEventWc,
     payload: {
@@ -391,7 +391,7 @@ export function postActivity(activity: Activity, documentId: string): ChatAction
   };
 }
 
-export function incomingActivity(activity: Activity, documentId: string): ChatAction<ActivityFromWebchatPayload> {
+export function incomingActivity(activity: Activity, documentId: string): ChatAction<ActivityFromWebChatPayload> {
   return {
     type: ChatActions.IncomingActivityFromWc,
     payload: {

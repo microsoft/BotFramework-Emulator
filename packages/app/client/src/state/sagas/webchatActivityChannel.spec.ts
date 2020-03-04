@@ -32,14 +32,14 @@
 //
 import { Activity } from 'botframework-schema';
 
-import { createWebchatActivityChannel, WebChatActivityChannel, ChannelPayload } from './webchatActivityChannel';
+import { createWebChatActivityChannel, WebChatActivityChannel, ChannelPayload } from './webchatActivityChannel';
 
 describe('Webchat activity channel', () => {
   let activityChannel: WebChatActivityChannel;
   let emitterSubscriber;
   beforeEach(() => {
-    activityChannel = createWebchatActivityChannel();
-    emitterSubscriber = activityChannel.getWebchatChannelSubscriber();
+    activityChannel = createWebChatActivityChannel();
+    emitterSubscriber = activityChannel.getWebChatChannelSubscriber();
   });
 
   it('Receive events through emitter when sent to webchat channel exactly the same without mutation.', async () => {
@@ -66,7 +66,7 @@ describe('Webchat activity channel', () => {
     }
 
     for (let i = 0; i < numOfEventsToSend; i++) {
-      activityChannel.sendWcEvents(payloads[i]);
+      activityChannel.sendWebChatEvents(payloads[i]);
     }
 
     const receivedEvents: ChannelPayload[] = await Promise.all(promiseResolvers);
@@ -92,7 +92,7 @@ describe('Webchat activity channel', () => {
     const eventsReceived = new Promise(resolve => emitterSubscriber.take(resolve));
 
     const unresolved = await eventsReceived;
-    activityChannel.sendWcEvents(channelPayload);
+    activityChannel.sendWebChatEvents(channelPayload);
     expect(unresolved).not.toEqual(channelPayload);
   });
 });

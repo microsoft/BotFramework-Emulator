@@ -83,15 +83,15 @@ import {
 
 import { logService } from '../../platform/log/logService';
 import { RootState } from '../store';
-import { ConversationQueue, WebchatEvents, webchatEventsToWatch } from '../../utils/restartConversationQueue';
+import { ConversationQueue, WebChatEvents, webChatEventsToWatch } from '../../utils/restartConversationQueue';
 import { throwErrorFromResponse } from '../utils/throwErrorFromResponse';
 
 import {
-  createWebchatActivityChannel,
+  createWebChatActivityChannel,
   WebChatActivityChannel,
   ChannelPayload,
   ReplayActivitySnifferProps,
-} from './webchatActivityChannel';
+} from './webChatActivityChannel';
 
 export const getConversationIdFromDocumentId = (state: RootState, documentId: string) => {
   return (state.chat.chats[documentId] || { conversationId: null }).conversationId;
@@ -130,9 +130,9 @@ export const getCurrentEmulatorMode = (state: RootState, documentId: string): Em
 
 export const create = (classToInstantiate, ...args) => call(() => new classToInstantiate(...args));
 
-const dispatchActivityToWebchat = (dispatch: Function, postActivity: Activity) => {
+const dispatchActivityToWebChat = (dispatch: Function, postActivity: Activity) => {
   dispatch({
-    type: WebchatEvents.postActivity,
+    type: WebChatEvents.postActivity,
     payload: {
       activity: {
         ...postActivity,
@@ -165,9 +165,9 @@ function createDLSpeechBotSniffer(isDLSpeechBot: boolean, conversationId: string
 }
 
 function createReplayActivitySniffer(documentId: string, meta: ReplayActivitySnifferProps = undefined) {
-  return ({ dispatch }) => next => async action => {
-    if (action.payload && webchatEventsToWatch.includes(action.type)) {
-      ChatSagas.wcActivityChannel.sendWcEvents({
+  return ({ dispatch }) => next => action => {
+    if (action.payload && webChatEventsToWatch.includes(action.type)) {
+      ChatSagas.wcActivityChannel.sendWebChatEvents({
         documentId,
         action,
         dispatch,
@@ -185,9 +185,9 @@ interface BootstrapChatPayload {
   mode: EmulatorMode;
   msaAppId?: string;
   msaPassword?: string;
-  user: User;
   speechKey?: string;
   speechRegion?: string;
+  user: User;
 }
 
 export class ChatSagas {
@@ -317,11 +317,11 @@ export class ChatSagas {
 
     if (conversationQueue && conversationQueue.validateIfReplayFlow(replayStatus, action.type)) {
       const activityFlowError: string = yield call(
-        [conversationQueue, conversationQueue.incomingActivity],
+        [conversationQueue, conversationQueue.handleIncomingActivity],
         action.payload.activity
       );
 
-      if (activityFlowError || action.type === WebchatEvents.rejectedActivity) {
+      if (activityFlowError || action.type === WebChatEvents.rejectedActivity) {
         yield put(setRestartConversationStatus(RestartConversationStatus.Rejected, documentId));
         const errorMessage: string =
           'There was an error replaying the conversation. ' +
@@ -343,33 +343,33 @@ export class ChatSagas {
         meta.conversationQueue.getNextActivityForPost,
       ]);
       if (postActivity) {
-        yield call(dispatchActivityToWebchat, dispatch, postActivity);
+        yield call(dispatchActivityToWebChat, dispatch, postActivity);
       }
     }
   }
 
-  public static *watchForWcEvents() {
-    const wcEventChannel = ChatSagas.wcActivityChannel.getWebchatChannelSubscriber();
+  public static *watchForWebchatEvents() {
+    const webChatEventChannel = ChatSagas.wcActivityChannel.getWebChatChannelSubscriber();
     while (true) {
-      const { documentId, action, dispatch, meta }: ChannelPayload = yield take(wcEventChannel);
+      const { documentId, action, dispatch, meta }: ChannelPayload = yield take(webChatEventChannel);
       try {
         switch (action.type) {
-          case WebchatEvents.postActivity: {
+          case WebChatEvents.postActivity: {
             const activity: Activity = action.payload.activity;
             yield put(postActivity(activity, documentId));
             break;
           }
 
-          case WebchatEvents.incomingActivity: {
+          case WebChatEvents.incomingActivity: {
             const activity: Activity = action.payload.activity;
             yield put(incomingActivity(activity, documentId));
             break;
           }
         }
       } catch (err) {
-        wcEventChannel.close();
+        webChatEventChannel.close();
         // Restart the channel if error occurs
-        ChatSagas.wcActivityChannel = createWebchatActivityChannel();
+        ChatSagas.wcActivityChannel = createWebChatActivityChannel();
       } finally {
         yield fork(ChatSagas.handleReplayIfRequired, { documentId, action, dispatch, meta });
       }
@@ -678,10 +678,7 @@ export class ChatSagas {
     const secret = encode(JSON.stringify(options));
     const res: Response = yield fetch(`${serverUrl}/emulator/ws/port`);
     if (!res.ok) {
-      throw new Error(
-        `Error occurred while retrieving the WebSocket server port: ${res.status}: ${res.statusText ||
-          'No status text'}`
-      );
+      yield* throwErrorFromResponse('Error occurred while retrieving the web socket port', res);
     }
     const webSocketPort = yield res.text();
     const directLine = createDirectLine({
@@ -706,8 +703,8 @@ export class ChatSagas {
 }
 
 export function* chatSagas(): IterableIterator<ForkEffect> {
-  ChatSagas.wcActivityChannel = createWebchatActivityChannel();
-  yield fork(ChatSagas.watchForWcEvents);
+  ChatSagas.wcActivityChannel = createWebChatActivityChannel();
+  yield fork(ChatSagas.watchForWebchatEvents);
   yield takeEvery(ChatActions.showContextMenuForActivity, ChatSagas.showContextMenuForActivity);
   yield takeEvery(ChatActions.closeConversation, ChatSagas.closeConversation);
   yield takeEvery(ChatActions.restartConversation, ChatSagas.restartConversation);

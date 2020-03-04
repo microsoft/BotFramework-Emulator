@@ -113,7 +113,7 @@ describe('<OuterActivityWrapper />', () => {
     );
     const instance = wrapper.instance();
 
-    (instance as any).propsBoundRestartActivityHandler();
+    (instance as any).onRestartConversationFromActivityClick();
     expect(onRestartClick).toHaveBeenCalledWith('some-id', card.activity, RestartConversationOptions.SameUserId);
   });
 

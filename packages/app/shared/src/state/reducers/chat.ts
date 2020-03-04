@@ -41,7 +41,7 @@ import {
   WebChatStorePayload,
   WebSpeechFactoryPayload,
   UpdateSpeechAdaptersPayload,
-  ActivityFromWebchatPayload,
+  ActivityFromWebChatPayload,
   RestartConversationStatus,
   RestartConversationStatusPayload,
   RestartConversationOptions,
@@ -300,7 +300,7 @@ export function chat(state: ChatState = DEFAULT_STATE, action: ChatAction | Edit
     }
 
     case ChatActions.IncomingActivityFromWc: {
-      const { documentId, activity } = action.payload as ActivityFromWebchatPayload;
+      const { documentId, activity } = action.payload as ActivityFromWebChatPayload;
       const replayData: ChatReplayData = state.chats[documentId].replayData;
       let incomingActivities: HasIdAndReplyId[] = [];
       if (replayData.incomingActivities) {
@@ -327,7 +327,7 @@ export function chat(state: ChatState = DEFAULT_STATE, action: ChatAction | Edit
     }
 
     case ChatActions.PostActivityEventWc: {
-      const { documentId } = action.payload as ActivityFromWebchatPayload;
+      const { documentId } = action.payload as ActivityFromWebChatPayload;
       let postActivitiesSlots: number[] = [];
       if (state.chats[documentId].replayData.postActivitiesSlots) {
         postActivitiesSlots = [...state.chats[documentId].replayData.postActivitiesSlots];

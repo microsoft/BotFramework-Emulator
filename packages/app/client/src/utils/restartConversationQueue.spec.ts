@@ -32,7 +32,7 @@ import { Activity } from 'botframework-schema';
 
 import { replayScenarios } from '../../mocks/conversationQueueMocks';
 
-import { ConversationQueue, WebchatEvents } from './restartConversationQueue';
+import { ConversationQueue, WebChatEvents } from './restartConversationQueue';
 
 describe('Restart Conversation Queue', () => {
   let scenarios;
@@ -52,10 +52,10 @@ describe('Restart Conversation Queue', () => {
       activitiesToBePosted[activitiesToBePosted.length - 1],
       jest.fn()
     );
-    expect(queue.validateIfReplayFlow(RestartConversationStatus.Started, WebchatEvents.incomingActivity)).toBeTruthy();
-    expect(queue.validateIfReplayFlow(RestartConversationStatus.Rejected, WebchatEvents.incomingActivity)).toBeFalsy();
-    expect(queue.validateIfReplayFlow(undefined, WebchatEvents.incomingActivity)).toBeFalsy();
-    expect(queue.validateIfReplayFlow(RestartConversationStatus.Started, WebchatEvents.postActivity)).toBeFalsy();
+    expect(queue.validateIfReplayFlow(RestartConversationStatus.Started, WebChatEvents.incomingActivity)).toBeTruthy();
+    expect(queue.validateIfReplayFlow(RestartConversationStatus.Rejected, WebChatEvents.incomingActivity)).toBeFalsy();
+    expect(queue.validateIfReplayFlow(undefined, WebChatEvents.incomingActivity)).toBeFalsy();
+    expect(queue.validateIfReplayFlow(RestartConversationStatus.Started, WebChatEvents.postActivity)).toBeFalsy();
     expect(queue.validateIfReplayFlow(RestartConversationStatus.Started, 'WEBCHAT/SEND_TYPING')).toBeFalsy();
   });
 
@@ -70,20 +70,20 @@ describe('Restart Conversation Queue', () => {
     expect(queue.getNextActivityForPost()).toBeUndefined();
     expect(queue.replayComplete).toBeFalsy();
 
-    queue.incomingActivity(chatReplayData.incomingActivities[0] as Activity);
+    queue.handleIncomingActivity(chatReplayData.incomingActivities[0] as Activity);
 
     const postActivity: Activity = queue.getNextActivityForPost();
     expect(postActivity.channelData.matchIndexes).toEqual([1, 2]);
 
     const botResponsesForActivity: Activity[] = scenarios[0].botResponsesForActivity;
 
-    queue.incomingActivity(botResponsesForActivity[1]);
+    queue.handleIncomingActivity(botResponsesForActivity[1]);
     expect(queue.getNextActivityForPost()).toBeUndefined();
 
-    queue.incomingActivity(botResponsesForActivity[2]);
+    queue.handleIncomingActivity(botResponsesForActivity[2]);
     expect(queue.getNextActivityForPost()).toBeUndefined();
 
-    const err = queue.incomingActivity(botResponsesForActivity[3]);
+    const err = queue.handleIncomingActivity(botResponsesForActivity[3]);
     expect(err).toBeUndefined();
     expect(queue.getNextActivityForPost()).toBeDefined();
   });
@@ -97,15 +97,15 @@ describe('Restart Conversation Queue', () => {
 
     const queue: ConversationQueue = new ConversationQueue(activities, chatReplayData, '123', activities[1], jest.fn());
     // Conversation Update
-    queue.incomingActivity(chatReplayData.incomingActivities[0] as Activity);
+    queue.handleIncomingActivity(chatReplayData.incomingActivities[0] as Activity);
 
     const botResponsesForActivity: Activity[] = scenarios[0].botResponsesForActivity;
 
-    queue.incomingActivity(botResponsesForActivity[1]);
+    queue.handleIncomingActivity(botResponsesForActivity[1]);
     expect(queue.getNextActivityForPost()).toBeUndefined();
 
     // The original conversation had 2 bot responses for the activity before an echoback
-    const err = queue.incomingActivity(botResponsesForActivity[3]);
+    const err = queue.handleIncomingActivity(botResponsesForActivity[3]);
     expect(err).toBeDefined();
     expect(queue.replayComplete).toBeFalsy();
   });
@@ -124,26 +124,26 @@ describe('Restart Conversation Queue', () => {
     );
     // Conversation Update
     let err;
-    err = queue.incomingActivity(incomingActivities[0]);
+    err = queue.handleIncomingActivity(incomingActivities[0]);
     expect(err).toBeUndefined();
     expect(queue.getNextActivityForPost()).toBeUndefined();
-    queue.incomingActivity(incomingActivities[1]);
+    queue.handleIncomingActivity(incomingActivities[1]);
 
     let activity = queue.getNextActivityForPost();
     expect(activity).toBeDefined();
-    err = queue.incomingActivity(botResponsesForActivity[2]);
-    err = queue.incomingActivity(botResponsesForActivity[3]);
+    err = queue.handleIncomingActivity(botResponsesForActivity[2]);
+    err = queue.handleIncomingActivity(botResponsesForActivity[3]);
     expect(err).toBeUndefined();
-    err = queue.incomingActivity(botResponsesForActivity[4]);
-    err = queue.incomingActivity(botResponsesForActivity[5]);
+    err = queue.handleIncomingActivity(botResponsesForActivity[4]);
+    err = queue.handleIncomingActivity(botResponsesForActivity[5]);
     expect(err).toBeUndefined();
 
     activity = queue.getNextActivityForPost();
     expect(activity).toBeDefined();
-    err = queue.incomingActivity(botResponsesForActivity[6]);
-    err = queue.incomingActivity(botResponsesForActivity[7]);
+    err = queue.handleIncomingActivity(botResponsesForActivity[6]);
+    err = queue.handleIncomingActivity(botResponsesForActivity[7]);
     expect(err).toBeUndefined();
-    err = queue.incomingActivity(botResponsesForActivity[8]);
+    err = queue.handleIncomingActivity(botResponsesForActivity[8]);
     expect(err).toBeUndefined();
     expect(queue.replayComplete).toBeTruthy();
   });
@@ -162,28 +162,28 @@ describe('Restart Conversation Queue', () => {
     );
 
     let err;
-    queue.incomingActivity(botResponsesForActivity[0]);
+    queue.handleIncomingActivity(botResponsesForActivity[0]);
 
     const postActivity2: Activity = queue.getNextActivityForPost();
     expect(postActivity2).toBeDefined();
     expect(postActivity2.channelData.matchIndexes).toEqual([1, 4, 7, 8]);
-    err = queue.incomingActivity(botResponsesForActivity[1]);
+    err = queue.handleIncomingActivity(botResponsesForActivity[1]);
     expect(err).toBeUndefined();
 
     const postActivity3: Activity = queue.getNextActivityForPost();
     expect(postActivity3.channelData.matchIndexes).toEqual([2, 3, 5]);
 
-    queue.incomingActivity(botResponsesForActivity[2]);
-    queue.incomingActivity(botResponsesForActivity[3]);
-    queue.incomingActivity(botResponsesForActivity[4]);
-    queue.incomingActivity(botResponsesForActivity[5]);
+    queue.handleIncomingActivity(botResponsesForActivity[2]);
+    queue.handleIncomingActivity(botResponsesForActivity[3]);
+    queue.handleIncomingActivity(botResponsesForActivity[4]);
+    queue.handleIncomingActivity(botResponsesForActivity[5]);
     //Act3 completed
-    err = queue.incomingActivity(botResponsesForActivity[6]);
+    err = queue.handleIncomingActivity(botResponsesForActivity[6]);
     expect(err).toBeUndefined();
     expect(queue.getNextActivityForPost()).toBeUndefined();
 
-    queue.incomingActivity(botResponsesForActivity[7]);
-    err = queue.incomingActivity(botResponsesForActivity[8]);
+    queue.handleIncomingActivity(botResponsesForActivity[7]);
+    err = queue.handleIncomingActivity(botResponsesForActivity[8]);
     expect(err).toBeUndefined();
     expect(queue.getNextActivityForPost()).toBeUndefined();
     expect(queue.replayComplete).toBeFalsy();
@@ -202,11 +202,11 @@ describe('Restart Conversation Queue', () => {
       jest.fn()
     );
 
-    queue.incomingActivity(botResponsesForActivity[0]);
+    queue.handleIncomingActivity(botResponsesForActivity[0]);
     queue.getNextActivityForPost();
-    queue.incomingActivity(botResponsesForActivity[1]);
+    queue.handleIncomingActivity(botResponsesForActivity[1]);
     queue.getNextActivityForPost();
-    queue.incomingActivity(botResponsesForActivity[2]);
+    queue.handleIncomingActivity(botResponsesForActivity[2]);
     // We have asked the queue to stop after posting 2 activities
     expect(queue.replayComplete).toBeTruthy();
   });
@@ -224,20 +224,20 @@ describe('Restart Conversation Queue', () => {
       jest.fn()
     );
 
-    queue.incomingActivity(botResponsesForActivity[0]);
-    queue.incomingActivity(botResponsesForActivity[1]);
-    queue.incomingActivity(botResponsesForActivity[2]);
-    queue.incomingActivity(botResponsesForActivity[3]);
-    queue.incomingActivity(botResponsesForActivity[4]);
-    queue.incomingActivity(botResponsesForActivity[5]);
-    queue.incomingActivity(botResponsesForActivity[6]);
-    queue.incomingActivity(botResponsesForActivity[7]);
+    queue.handleIncomingActivity(botResponsesForActivity[0]);
+    queue.handleIncomingActivity(botResponsesForActivity[1]);
+    queue.handleIncomingActivity(botResponsesForActivity[2]);
+    queue.handleIncomingActivity(botResponsesForActivity[3]);
+    queue.handleIncomingActivity(botResponsesForActivity[4]);
+    queue.handleIncomingActivity(botResponsesForActivity[5]);
+    queue.handleIncomingActivity(botResponsesForActivity[6]);
+    queue.handleIncomingActivity(botResponsesForActivity[7]);
     expect(queue.replayComplete).toBeFalsy();
-    queue.incomingActivity(botResponsesForActivity[8]);
-    queue.incomingActivity(botResponsesForActivity[9]);
+    queue.handleIncomingActivity(botResponsesForActivity[8]);
+    queue.handleIncomingActivity(botResponsesForActivity[9]);
     const postActivity = queue.getNextActivityForPost();
     expect(postActivity).toBeDefined();
-    queue.incomingActivity(botResponsesForActivity[10]);
+    queue.handleIncomingActivity(botResponsesForActivity[10]);
     expect(queue.replayComplete).toBeTruthy();
   });
 
@@ -254,23 +254,23 @@ describe('Restart Conversation Queue', () => {
       jest.fn()
     );
 
-    queue.incomingActivity(botResponsesForActivity[0]);
-    queue.incomingActivity(botResponsesForActivity[1]);
-    queue.incomingActivity(botResponsesForActivity[2]);
-    queue.incomingActivity(botResponsesForActivity[3]);
-    queue.incomingActivity(botResponsesForActivity[4]);
-    queue.incomingActivity(botResponsesForActivity[5]);
-    queue.incomingActivity(botResponsesForActivity[6]);
-    queue.incomingActivity(botResponsesForActivity[7]);
-    queue.incomingActivity(botResponsesForActivity[8]);
-    queue.incomingActivity(botResponsesForActivity[9]);
-    queue.incomingActivity(botResponsesForActivity[10]);
-    queue.incomingActivity(botResponsesForActivity[11]);
-    queue.incomingActivity(botResponsesForActivity[12]);
-    let err = queue.incomingActivity(botResponsesForActivity[13]);
+    queue.handleIncomingActivity(botResponsesForActivity[0]);
+    queue.handleIncomingActivity(botResponsesForActivity[1]);
+    queue.handleIncomingActivity(botResponsesForActivity[2]);
+    queue.handleIncomingActivity(botResponsesForActivity[3]);
+    queue.handleIncomingActivity(botResponsesForActivity[4]);
+    queue.handleIncomingActivity(botResponsesForActivity[5]);
+    queue.handleIncomingActivity(botResponsesForActivity[6]);
+    queue.handleIncomingActivity(botResponsesForActivity[7]);
+    queue.handleIncomingActivity(botResponsesForActivity[8]);
+    queue.handleIncomingActivity(botResponsesForActivity[9]);
+    queue.handleIncomingActivity(botResponsesForActivity[10]);
+    queue.handleIncomingActivity(botResponsesForActivity[11]);
+    queue.handleIncomingActivity(botResponsesForActivity[12]);
+    let err = queue.handleIncomingActivity(botResponsesForActivity[13]);
     // Progressive response for Act2 arrived at the correct spot
     expect(err).toBeUndefined();
-    err = queue.incomingActivity(botResponsesForActivity[14]);
+    err = queue.handleIncomingActivity(botResponsesForActivity[14]);
     // Another Progressive response for Act2 arrived at the correct spot
     expect(err).toBeUndefined();
   });

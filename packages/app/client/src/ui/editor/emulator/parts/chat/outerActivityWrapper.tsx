@@ -72,14 +72,14 @@ export class OuterActivityWrapper extends React.Component<OuterActivityWrapperPr
         onContextMenu={onContextMenu}
         isSelected={isSelected}
         isUserActivity={isUserActivity}
-        onRestartConversationFromActivityClick={this.propsBoundRestartActivityHandler}
+        onRestartConversationFromActivityClick={this.onRestartConversationFromActivityClick}
       >
         {children}
       </ActivityWrapper>
     );
   }
 
-  private propsBoundRestartActivityHandler = () => {
+  private onRestartConversationFromActivityClick = () => {
     this.props.onRestartConversationFromActivityClick(
       this.props.documentId,
       this.props.card.activity,
