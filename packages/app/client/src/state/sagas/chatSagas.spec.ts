@@ -1365,16 +1365,17 @@ describe('The ChatSagas,', () => {
           },
         },
       };
+      const activitiesFetched = [
+        {
+          id: '1',
+          from: {
+            role: 'user',
+          },
+        } as Activity,
+      ];
 
       const conversationQueue = new ConversationQueue(
-        [
-          {
-            id: '1',
-            from: {
-              role: 'user',
-            },
-          } as Activity,
-        ],
+        activitiesFetched,
         {
           incomingActivities: [
             {
@@ -1387,8 +1388,7 @@ describe('The ChatSagas,', () => {
         '123',
         {
           id: '2',
-        } as Activity,
-        jest.fn()
+        } as Activity
       );
 
       let eventReceivedCt = 0;
@@ -1410,7 +1410,6 @@ describe('The ChatSagas,', () => {
         activity: {
           id: 'act-1',
         } as Activity,
-        createObjectUrl: jest.fn(),
       };
       const mockAction: any = {
         payload,
@@ -1428,7 +1427,8 @@ describe('The ChatSagas,', () => {
       gen.next();
       gen.next(chat);
       gen.next();
-      gen.next();
+      gen.next({ ok: true, json: jest.fn() });
+      gen.next(activitiesFetched);
       gen.next();
       gen.next(conversationQueue);
       gen.next();

@@ -84,7 +84,7 @@ describe('The LinkButton component', () => {
   let parent;
   let node;
   beforeEach(() => {
-    parent = mount(<LinkButton>Learn more</LinkButton>);
+    parent = mount(<LinkButton ariaLabel="Learn more">Learn more</LinkButton>);
     node = parent.find(LinkButton);
   });
 

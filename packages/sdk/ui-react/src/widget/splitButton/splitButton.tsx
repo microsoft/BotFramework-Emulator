@@ -63,8 +63,11 @@ export class SplitButton extends React.Component<SplitButtonProps, SplitButtonSt
 
     this.state = {
       expanded: false,
-      selected: props.selected || 0,
     };
+  }
+
+  componentDidMount() {
+    this.onClickOption(0);
   }
 
   public render(): JSX.Element {
@@ -100,7 +103,7 @@ export class SplitButton extends React.Component<SplitButtonProps, SplitButtonSt
             ref={setButtonRef}
             role={'menuitem'}
           >
-            <span>{defaultLabel}</span>
+            <span>{options[this.state.selected]}</span>
           </button>
           <div className={styles.separator} aria-hidden={'true'} />
           <button
@@ -157,7 +160,7 @@ export class SplitButton extends React.Component<SplitButtonProps, SplitButtonSt
 
   private onClickOption = (index: number): void => {
     const { onClick, options = [] } = this.props;
-    if (onClick) {
+    if (onClick && options.length > 0) {
       const newValue = options[index] || null;
       this.setState({ selected: index });
       onClick(newValue);

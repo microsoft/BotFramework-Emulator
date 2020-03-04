@@ -397,6 +397,7 @@ describe('<EmulatorContainer/>', () => {
       conversationId: '123',
       presentationModeEnabled: false,
       restartStatus: RestartConversationStatus.Started,
+      onSetRestartConversationOptionClick: jest.fn(),
       ui: {},
     };
     const mockStore = createStore((_state, _action) => mockStoreState);

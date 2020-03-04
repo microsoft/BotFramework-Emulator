@@ -59,6 +59,18 @@ describe('<SplitButton>', () => {
     expect(node.html()).not.toBe(null);
   });
 
+  it('should select first option by default', () => {
+    const mockOnClick = jest.fn((value: string) => {
+      expect(value).toBe('option1');
+    });
+    const mockDefaultClick = jest.fn((value: number) => null);
+    wrapper = mount(
+      <SplitButton options={mockOptions} onClick={mockOnClick} onDefaultButtonClick={mockDefaultClick} />
+    );
+    instance = wrapper.instance();
+    expect(instance.state.selected).toBe(0);
+  });
+
   it('should pass the primary button ref to the buttonRef prop', () => {
     const mockButtonRef = jest.fn(() => null);
     wrapper = mount(<SplitButton buttonRef={mockButtonRef} />);
@@ -91,11 +103,9 @@ describe('<SplitButton>', () => {
     );
     instance = wrapper.instance();
     instance.onClickDefault();
-    expect(mockOnClick).not.toHaveBeenCalled();
     expect(mockDefaultClick).toHaveBeenCalledWith('option1');
     instance.setState({ selected: 1 });
     instance.onClickDefault();
-    expect(mockOnClick).not.toHaveBeenCalled();
     expect(mockDefaultClick).toHaveBeenCalledWith('option2');
   });
 

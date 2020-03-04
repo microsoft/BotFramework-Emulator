@@ -56,8 +56,8 @@ import { InspectorContainer } from './parts';
 import { ToolBar } from './toolbar/toolbar';
 
 export const restartOptions = {
-  NewUserId: 'Restart with new user ID',
-  SameUserId: 'Restart with same user ID',
+  NewUserId: 'Restart Conversation - New User ID',
+  SameUserId: 'Restart Conversation - Same User ID',
 };
 
 export interface EmulatorProps {
