@@ -47,14 +47,13 @@ import { Chat, ChatProps } from './chat';
 
 const mapStateToProps = (state: RootState, { documentId }): Partial<ChatProps> => {
   const currentChat = state.chat.chats[documentId];
-  const currentUserId = currentChat.userId || '';
 
   return {
     botId: currentChat.botId,
     conversationId: currentChat.conversationId,
     directLine: currentChat.directLine,
     mode: currentChat.mode,
-    currentUser: { id: currentUserId, name: 'User' } as User,
+    currentUserId: currentChat.userId || '',
     locale: state.clientAwareSettings.locale || 'en-us',
     webSpeechPonyfillFactory: state.chat.webSpeechFactories[documentId],
     webchatStore: state.chat.webChatStores[documentId],

@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [build] Locked `eslint-plugin-import@2.20.0` to avoid unecessary import linting changes in PR [2081](https://github.com/microsoft/BotFramework-Emulator/pull/2081)
 - [client] Thrown errors in client-side sagas will now be logged in their entirety to the dev tools console in PR [2087](https://github.com/microsoft/BotFramework-Emulator/pull/2087)
 - [client] Upload and download attachments bubble texts and background in webchat were hidden. The adjustments have been made to override FileContent class in PR [2088](https://github.com/microsoft/BotFramework-Emulator/pull/2088)
+- [client] Fixed an issue that was causing adaptive card focus to be blurred when clicking on an activity in PR [2090](https://github.com/microsoft/BotFramework-Emulator/pull/2090)
 
 
 ## Removed
