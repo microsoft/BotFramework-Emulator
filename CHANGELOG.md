@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [client] Thrown errors in client-side sagas will now be logged in their entirety to the dev tools console in PR [2087](https://github.com/microsoft/BotFramework-Emulator/pull/2087)
 - [client] Upload and download attachments bubble texts and background in webchat were hidden. The adjustments have been made to override FileContent class in PR [2088](https://github.com/microsoft/BotFramework-Emulator/pull/2088)
 - [client] Fixed an issue that was causing adaptive card focus to be blurred when clicking on an activity in PR [2090](https://github.com/microsoft/BotFramework-Emulator/pull/2090)
+- [client] Fixed an accessibility issue with the recent bots list remove button in PR [2091](https://github.com/microsoft/BotFramework-Emulator/pull/2091)
 
 
 ## Removed
