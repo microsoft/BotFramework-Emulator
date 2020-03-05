@@ -80,16 +80,11 @@ export class Chat extends PureComponent<ChatProps, ChatState> {
       mode,
       webchatStore,
       webSpeechPonyfillFactory,
-      restartStatus,
     } = this.props;
 
-<<<<<<< HEAD
     const currentUser = { id: currentUserId, name: 'User' };
     const isDisabled =
       mode === 'transcript' || mode === 'debug' || this.props.restartStatus === RestartConversationStatus.Started;
-=======
-    const isDisabled = mode === 'transcript' || mode === 'debug' || restartStatus === RestartConversationStatus.Started;
->>>>>>> PR feedback addressed
 
     // Due to needing to make idiosyncratic style changes, Emulator is using `createStyleSet` instead of `createStyleOptions`. The object below: {...webChatStyleOptions, hideSendBox...} was formerly passed into the `styleOptions` parameter of React Web Chat. If further styling modifications are desired using styleOptions, simply pass it into the same object in createStyleSet below.
 
