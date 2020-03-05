@@ -68,7 +68,7 @@ export class RecentBotsList extends Component<RecentBotsListProps, {}> {
                       {bot.path}
                     </TruncateText>
                     <div className={styles.recentBotActionBar}>
-                      <button data-index={index} onClick={this.onDeleteBotClick}>
+                      <button data-index={index} onClick={this.onDeleteBotClick} aria-label={'Remove bot'}>
                         <span />
                       </button>
                     </div>
