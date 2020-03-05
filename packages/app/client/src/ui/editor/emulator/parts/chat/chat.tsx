@@ -49,10 +49,10 @@ import { ConnectionMessageContainer } from './connectionMessageContainer';
 export interface ChatProps {
   botId?: string;
   conversationId?: string;
+  currentUserId?: string;
   directLine?: DirectLine;
   documentId?: string;
   mode?: EmulatorMode;
-  currentUser?: User;
   locale?: string;
   webSpeechPonyfillFactory?: () => any;
   showContextMenuForActivity?: (activity: Partial<Activity>) => void;
@@ -72,8 +72,8 @@ export class Chat extends PureComponent<ChatProps, ChatState> {
   public render() {
     const {
       botId,
-      currentUser,
       conversationId,
+      currentUserId = '',
       directLine,
       locale,
       mode,
@@ -81,6 +81,7 @@ export class Chat extends PureComponent<ChatProps, ChatState> {
       webSpeechPonyfillFactory,
     } = this.props;
 
+    const currentUser = { id: currentUserId, name: 'User' };
     const isDisabled = mode === 'transcript' || mode === 'debug';
 
     // Due to needing to make idiosyncratic style changes, Emulator is using `createStyleSet` instead of `createStyleOptions`. The object below: {...webChatStyleOptions, hideSendBox...} was formerly passed into the `styleOptions` parameter of React Web Chat. If further styling modifications are desired using styleOptions, simply pass it into the same object in createStyleSet below.
