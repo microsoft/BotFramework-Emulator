@@ -41,31 +41,35 @@ import {
   executeCommand,
   restartConversation,
   SharedConstants,
+  RestartConversationStatus,
 } from '@bfemulator/app-shared';
-import base64Url from 'base64url';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
+import { RestartConversationOptions } from '@bfemulator/app-shared';
 
-import { Emulator, RestartConversationOptions } from './emulator';
+import { Emulator } from './emulator';
 import { EmulatorContainer } from './emulatorContainer';
 
 let mockCallsMade, mockRemoteCallsMade;
+const replayConversationText = 'Stop Replaying Conversation';
 const mockSharedConstants = SharedConstants;
+
 jest.mock('./chatPanel/chatPanel', () => ({
   ChatPanel: jest.fn(() => <div />),
 }));
+
 jest.mock('./logPanel/logPanel', () => {
   return jest.fn(() => <div />);
 });
+
 jest.mock('./playbackBar/playbackBar', () => {
   return jest.fn(() => <div />);
 });
+
 jest.mock('./emulator.scss', () => ({}));
 jest.mock('./parts', () => ({
   InspectorContainer: jest.fn(() => <div />),
 }));
-jest.mock('./toolbar/toolbar', () => ({
-  ToolBar: jest.fn(() => <div />),
-}));
+
 jest.mock('@bfemulator/sdk-shared/build/utils/misc', () => ({
   uniqueId: () => 'someUniqueId',
   uniqueIdv4: () => 'newUserId',
@@ -162,6 +166,7 @@ describe('<EmulatorContainer/>', () => {
         pendingSpeechTokenRetrieval: null,
         webChatStores: {},
         webSpeechFactories: {},
+        restartStatus: {},
       },
       editor: {
         activeEditor: 'primary',
@@ -314,7 +319,28 @@ describe('<EmulatorContainer/>', () => {
   });
 
   it('should start over a conversation with a new user id on click', () => {
-    instance.onStartOverClick(RestartConversationOptions.NewUserId);
+    const mockStore = createStore((_state, _action) => mockStoreState);
+    mockDispatch = jest.spyOn(mockStore, 'dispatch').mockImplementation((action: any) => {
+      if (action && action.payload && action.payload.resolver) {
+        action.payload.resolver();
+      }
+      return action;
+    });
+    wrapper = mount(
+      <Provider store={mockStore}>
+        <EmulatorContainer
+          documentId={'doc1'}
+          url={'someUrl'}
+          mode={'livechat'}
+          conversationId={'convo1'}
+          currentRestartConversationOption={RestartConversationOptions.NewUserId}
+        />
+      </Provider>
+    );
+
+    node = wrapper.find(Emulator);
+    instance = node.instance();
+    instance.onStartOverClick();
 
     expect(mockDispatch).toHaveBeenCalledWith(
       executeCommand(true, SharedConstants.Commands.Telemetry.TrackEvent, null, 'conversation_restart', {
@@ -325,7 +351,28 @@ describe('<EmulatorContainer/>', () => {
   });
 
   it('should start over a conversation with the same user id on click', () => {
-    instance.onStartOverClick(RestartConversationOptions.SameUserId);
+    const mockStore = createStore((_state, _action) => mockStoreState);
+    mockDispatch = jest.spyOn(mockStore, 'dispatch').mockImplementation((action: any) => {
+      if (action && action.payload && action.payload.resolver) {
+        action.payload.resolver();
+      }
+      return action;
+    });
+    wrapper = mount(
+      <Provider store={mockStore}>
+        <EmulatorContainer
+          documentId={'doc1'}
+          url={'someUrl'}
+          mode={'livechat'}
+          conversationId={'convo1'}
+          currentRestartConversationOption={RestartConversationOptions.SameUserId}
+        />
+      </Provider>
+    );
+
+    node = wrapper.find(Emulator);
+    instance = node.instance();
+    instance.onStartOverClick();
 
     expect(mockDispatch).toHaveBeenCalledWith(
       executeCommand(true, SharedConstants.Commands.Telemetry.TrackEvent, null, 'conversation_restart', {
@@ -340,5 +387,62 @@ describe('<EmulatorContainer/>', () => {
     instance.setRestartButtonRef(mockButtonRef);
 
     expect(instance.restartButtonRef).toBe(mockButtonRef);
+  });
+
+  it('should show "Stop Replaying Conversation" when in Replay mode', () => {
+    let emulatorProps = {
+      documentId: 'doc1',
+      url: 'some-url',
+      mode: 'livechat',
+      conversationId: '123',
+      presentationModeEnabled: false,
+      restartStatus: RestartConversationStatus.Started,
+      onSetRestartConversationOptionClick: jest.fn(),
+      ui: {},
+    };
+    const mockStore = createStore((_state, _action) => mockStoreState);
+    wrapper = mount(
+      <Provider store={mockStore}>
+        <Emulator {...emulatorProps} />
+      </Provider>
+    );
+    node = wrapper.find(Emulator);
+    expect(wrapper.text().includes(replayConversationText)).toBeTruthy();
+
+    emulatorProps = {
+      ...emulatorProps,
+      restartStatus: RestartConversationStatus.Stop,
+    };
+    wrapper.setProps({
+      children: <Emulator {...emulatorProps} />,
+    });
+    expect(wrapper.text().includes(replayConversationText)).toBeFalsy();
+
+    emulatorProps = {
+      ...emulatorProps,
+      restartStatus: undefined,
+    };
+    wrapper.setProps({
+      children: <Emulator {...emulatorProps} />,
+    });
+    expect(wrapper.text().includes(replayConversationText)).toBeFalsy();
+
+    emulatorProps = {
+      ...emulatorProps,
+      restartStatus: RestartConversationStatus.Rejected,
+    };
+    wrapper.setProps({
+      children: <Emulator {...emulatorProps} />,
+    });
+    expect(wrapper.text().includes(replayConversationText)).toBeFalsy();
+
+    emulatorProps = {
+      ...emulatorProps,
+      restartStatus: RestartConversationStatus.Started,
+    };
+    wrapper.setProps({
+      children: <Emulator {...emulatorProps} />,
+    });
+    expect(wrapper.text().includes(replayConversationText)).toBeTruthy();
   });
 });

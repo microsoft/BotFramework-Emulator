@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ValueTypes } from '@bfemulator/app-shared';
+import { ValueTypes, RestartConversationStatus } from '@bfemulator/app-shared';
 import { User } from '@bfemulator/sdk-shared';
 import { Activity, ActivityTypes } from 'botframework-schema';
 import ReactWebChat, { createStyleSet } from 'botframework-webchat';
@@ -59,6 +59,7 @@ export interface ChatProps {
   setInspectorObject?: (documentId: string, activity: Partial<Activity & { showInInspector: true }>) => void;
   webchatStore?: any;
   showOpenUrlDialog?: (url) => any;
+  restartStatus: RestartConversationStatus;
 }
 
 interface ChatState {
@@ -82,7 +83,8 @@ export class Chat extends PureComponent<ChatProps, ChatState> {
     } = this.props;
 
     const currentUser = { id: currentUserId, name: 'User' };
-    const isDisabled = mode === 'transcript' || mode === 'debug';
+    const isDisabled =
+      mode === 'transcript' || mode === 'debug' || this.props.restartStatus === RestartConversationStatus.Started;
 
     // Due to needing to make idiosyncratic style changes, Emulator is using `createStyleSet` instead of `createStyleOptions`. The object below: {...webChatStyleOptions, hideSendBox...} was formerly passed into the `styleOptions` parameter of React Web Chat. If further styling modifications are desired using styleOptions, simply pass it into the same object in createStyleSet below.
 
@@ -144,6 +146,7 @@ export class Chat extends PureComponent<ChatProps, ChatState> {
         onContextMenu={this.onContextMenu}
         onItemRendererClick={this.onItemRendererClick}
         onItemRendererKeyDown={this.onItemRendererKeyDown}
+        restartStatusForActivity={this.props.restartStatus}
       >
         {next(card)(children)}
       </OuterActivityWrapperContainer>

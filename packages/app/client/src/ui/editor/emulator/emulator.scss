@@ -87,8 +87,12 @@
     }
     .save-icon {
       margin-left: 20px;
-
       &::before { -webkit-mask: url(../../media/ic_save.svg); }
+    }
+
+    .cancel-icon {
+      margin-left: 20px;
+      &::before { -webkit-mask: url(../../media/ic_cancel.svg); }
     }
   }
 

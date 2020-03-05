@@ -41,6 +41,11 @@ import {
   WebChatStorePayload,
   WebSpeechFactoryPayload,
   UpdateSpeechAdaptersPayload,
+  ActivityFromWebChatPayload,
+  RestartConversationStatus,
+  RestartConversationStatusPayload,
+  RestartConversationOptions,
+  SetRestartConversationOptionPayload,
 } from '../actions/chatActions';
 import { EditorAction, EditorActions } from '../actions/editorActions';
 
@@ -52,6 +57,17 @@ export interface ChatState {
   webSpeechFactories?: { [documentId: string]: () => any };
   webChatStores: { [documentId: string]: any };
   transcripts?: string[];
+  restartStatus: { [chatId: string]: RestartConversationStatus };
+}
+
+export interface IncomingActivityRecord {
+  id: string;
+  replyToId?: string;
+}
+
+export interface ChatReplayData {
+  incomingActivities: IncomingActivityRecord[];
+  postActivitiesSlots: number[];
 }
 
 export interface ChatDocument<I = any> extends Document {
@@ -64,6 +80,9 @@ export interface ChatDocument<I = any> extends Document {
   speechKey: string;
   speechRegion: string;
   ui: DocumentUI;
+  replayData: ChatReplayData;
+  isDisabled: boolean;
+  restartConversationOption: RestartConversationOptions;
 }
 
 export interface ChatLog {
@@ -76,6 +95,7 @@ const DEFAULT_STATE: ChatState = {
   transcripts: [],
   webSpeechFactories: {},
   webChatStores: {},
+  restartStatus: {},
 };
 
 export function chat(state: ChatState = DEFAULT_STATE, action: ChatAction | EditorAction): ChatState {
@@ -109,7 +129,7 @@ export function chat(state: ChatState = DEFAULT_STATE, action: ChatAction | Edit
         changeKey: state.changeKey + 1,
         chats: {
           ...state.chats,
-          [payload.documentId]: { ...payload },
+          [payload.documentId]: { ...payload, replayData: {}, isDisabled: false },
         },
       };
       break;
@@ -161,6 +181,7 @@ export function chat(state: ChatState = DEFAULT_STATE, action: ChatAction | Edit
         const copy = { ...state };
         copy.changeKey += 1;
         delete copy.chats[documentId];
+        delete copy.restartStatus[documentId];
         state = { ...copy };
       }
       break;
@@ -278,9 +299,89 @@ export function chat(state: ChatState = DEFAULT_STATE, action: ChatAction | Edit
       break;
     }
 
+    case ChatActions.IncomingActivityFromWc: {
+      const { documentId, activity } = action.payload as ActivityFromWebChatPayload;
+      const replayData: ChatReplayData = state.chats[documentId].replayData;
+      let incomingActivities: IncomingActivityRecord[] = [];
+      if (replayData.incomingActivities) {
+        incomingActivities = [...replayData.incomingActivities];
+      }
+      incomingActivities.push({
+        id: activity.id,
+        replyToId: activity.replyToId,
+      });
+      state = {
+        ...state,
+        chats: {
+          ...state.chats,
+          [documentId]: {
+            ...state.chats[documentId],
+            replayData: {
+              ...state.chats[documentId].replayData,
+              incomingActivities,
+            },
+          },
+        },
+      };
+      break;
+    }
+
+    case ChatActions.PostActivityEventWc: {
+      const { documentId } = action.payload as ActivityFromWebChatPayload;
+      let postActivitiesSlots: number[] = [];
+      if (state.chats[documentId].replayData.postActivitiesSlots) {
+        postActivitiesSlots = [...state.chats[documentId].replayData.postActivitiesSlots];
+      }
+      const slot: number = state.chats[documentId].replayData.incomingActivities
+        ? state.chats[documentId].replayData.incomingActivities.length
+        : 0;
+      postActivitiesSlots.push(slot);
+      state = {
+        ...state,
+        chats: {
+          ...state.chats,
+          [documentId]: {
+            ...state.chats[documentId],
+            replayData: {
+              ...state.chats[documentId].replayData,
+              postActivitiesSlots,
+            },
+          },
+        },
+      };
+      break;
+    }
+
+    case ChatActions.SetRestartConversationStatus: {
+      const { documentId, status } = action.payload as RestartConversationStatusPayload;
+      state = {
+        ...state,
+        restartStatus: {
+          ...state.restartStatus,
+          [documentId]: status,
+        },
+      };
+      break;
+    }
+
     case EditorActions.closeAll: {
       // HACK. Need a better system.
       return DEFAULT_STATE;
+    }
+
+    case ChatActions.SetRestartConversationOption: {
+      const { documentId, option } = action.payload as SetRestartConversationOptionPayload;
+      state = {
+        ...state,
+        chats: {
+          ...state.chats,
+          [documentId]: {
+            ...state.chats[documentId],
+            restartConversationOption: option,
+          },
+        },
+      };
+      break;
     }
 
     case ChatActions.updateSpeechAdapters: {

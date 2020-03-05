@@ -212,4 +212,8 @@ export class ConversationService {
       method: 'POST',
     });
   }
+
+  public static async fetchActivitiesForAConversation(serverUrl: string, conversationId: string): Promise<Response> {
+    return fetch(`${serverUrl}/v3/conversations/${conversationId}/activities`);
+  }
 }

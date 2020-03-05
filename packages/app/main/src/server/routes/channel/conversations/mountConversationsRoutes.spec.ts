@@ -46,6 +46,7 @@ import { sendActivityToConversation } from './handlers/sendActivityToConversatio
 import { sendHistoryToConversation } from './handlers/sendHistoryToConversation';
 import { updateActivity } from './handlers/updateActivity';
 import { createUploadAttachmentHandler } from './handlers/uploadAttachment';
+import { getActivitiesForConversation } from './handlers/getActivitiesForConversation';
 
 jest.mock('../../handlers/botFrameworkAuthentication', () => ({
   createBotFrameworkAuthenticationMiddleware: jest.fn(),
@@ -83,6 +84,9 @@ jest.mock('./handlers/updateActivity', () => ({
 }));
 jest.mock('./handlers/uploadAttachment', () => ({
   createUploadAttachmentHandler: jest.fn(),
+}));
+jest.mock('./handlers/getActivitiesForConversation', () => ({
+  getActivitiesForConversation: jest.fn(),
 }));
 
 describe('mountConversationsRoutes', () => {
@@ -167,6 +171,13 @@ describe('mountConversationsRoutes', () => {
       verifyBotFramework,
       fetchConversation,
       getActivityMembers
+    );
+
+    expect(get).toHaveBeenCalledWith(
+      '/v3/conversations/:conversationId/activities',
+      verifyBotFramework,
+      jsonBodyParser,
+      getActivitiesForConversation(emulatorServer)
     );
 
     expect(post).toHaveBeenCalledWith(

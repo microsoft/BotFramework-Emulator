@@ -34,6 +34,7 @@
 import * as React from 'react';
 import { Component, HTMLAttributes, KeyboardEvent, MouseEvent, ReactNode } from 'react';
 import { Activity } from 'botframework-schema';
+import { LinkButton } from '@bfemulator/ui-react';
 
 import * as styles from './chat.scss';
 
@@ -41,6 +42,8 @@ interface ActivityWrapperProps extends HTMLAttributes<HTMLDivElement> {
   activity: Activity;
   children: ReactNode;
   isSelected: boolean;
+  isUserActivity: boolean;
+  onRestartConversationFromActivityClick: () => void;
 }
 
 // Returns false if the event target is normally an interactive element.
@@ -62,8 +65,15 @@ function shouldSelectActivity(e: React.SyntheticEvent): boolean {
 
 export class ActivityWrapper extends Component<ActivityWrapperProps> {
   render() {
-    const { activity: _, children, isSelected, ...divProps } = this.props;
+    const { activity: _, children, isSelected, isUserActivity, ...divProps } = this.props;
     let classes = styles.chatActivity;
+    const restartConversationBubble = (
+      <div className={[styles.replayBubble, isUserActivity && isSelected ? '' : styles.hidden].join(' ')}>
+        <LinkButton ariaLabel="Restart from activity." linkRole={false} onClick={this.replayConversation}>
+          Restart conversation from here
+        </LinkButton>
+      </div>
+    );
 
     if (isSelected) {
       classes = `${classes} ${styles.selectedActivity}`;
@@ -80,9 +90,14 @@ export class ActivityWrapper extends Component<ActivityWrapperProps> {
         tabIndex={0}
       >
         {children}
+        {restartConversationBubble}
       </div>
     );
   }
+
+  private replayConversation = () => {
+    this.props.onRestartConversationFromActivityClick();
+  };
 
   private setSelectedActivity = (e: MouseEvent<HTMLDivElement>) => {
     if (shouldSelectActivity(e)) {

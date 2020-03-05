@@ -47,6 +47,7 @@ export interface SplitButtonProps {
   buttonRef?: (ref: HTMLButtonElement) => void;
   selected?: number;
   submenuLabel?: string;
+  onDefaultButtonClick?: (value: string) => any;
 }
 
 export interface SplitButtonState {
@@ -62,8 +63,11 @@ export class SplitButton extends React.Component<SplitButtonProps, SplitButtonSt
 
     this.state = {
       expanded: false,
-      selected: props.selected || 0,
     };
+  }
+
+  componentDidMount() {
+    this.onClickOption(0);
   }
 
   public render(): JSX.Element {
@@ -99,7 +103,7 @@ export class SplitButton extends React.Component<SplitButtonProps, SplitButtonSt
             ref={setButtonRef}
             role={'menuitem'}
           >
-            <span>{defaultLabel}</span>
+            <span>{options[this.state.selected]}</span>
           </button>
           <div className={styles.separator} aria-hidden={'true'} />
           <button
@@ -140,20 +144,25 @@ export class SplitButton extends React.Component<SplitButtonProps, SplitButtonSt
   private onClickCaret = (e: React.SyntheticEvent<HTMLButtonElement>): void => {
     e.stopPropagation();
     const { expanded } = this.state;
-    this.setState({ expanded: !expanded, selected: 0 });
+    this.setState({ expanded: !expanded });
   };
 
-  private onClickDefault = (_e: React.SyntheticEvent<HTMLButtonElement>): void => {
-    const { onClick, options = [] } = this.props;
-    if (onClick && options.length) {
-      onClick(options[0]);
+  private onClickDefault = (): void => {
+    const { onDefaultButtonClick, options = [] } = this.props;
+    if (onDefaultButtonClick && options.length) {
+      if (!this.state.selected) {
+        onDefaultButtonClick(options[0]);
+      } else {
+        onDefaultButtonClick(options[this.state.selected]);
+      }
     }
   };
 
   private onClickOption = (index: number): void => {
     const { onClick, options = [] } = this.props;
-    if (onClick) {
+    if (onClick && options.length > 0) {
       const newValue = options[index] || null;
+      this.setState({ selected: index });
       onClick(newValue);
     }
     this.hidePanel();
@@ -161,7 +170,7 @@ export class SplitButton extends React.Component<SplitButtonProps, SplitButtonSt
 
   private hidePanel = (): void => {
     this.caretRef.focus();
-    this.setState({ expanded: false, selected: 0 });
+    this.setState({ expanded: false });
   };
 
   private moveSelectionUp = (): void => {

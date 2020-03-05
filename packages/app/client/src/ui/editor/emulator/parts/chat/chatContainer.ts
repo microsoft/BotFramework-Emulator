@@ -47,7 +47,6 @@ import { Chat, ChatProps } from './chat';
 
 const mapStateToProps = (state: RootState, { documentId }): Partial<ChatProps> => {
   const currentChat = state.chat.chats[documentId];
-
   return {
     botId: currentChat.botId,
     conversationId: currentChat.conversationId,
@@ -57,6 +56,7 @@ const mapStateToProps = (state: RootState, { documentId }): Partial<ChatProps> =
     locale: state.clientAwareSettings.locale || 'en-us',
     webSpeechPonyfillFactory: state.chat.webSpeechFactories[documentId],
     webchatStore: state.chat.webChatStores[documentId],
+    restartStatus: state.chat.restartStatus[documentId],
   };
 };
 

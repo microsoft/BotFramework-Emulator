@@ -61,13 +61,14 @@ describe('postActivity handler', () => {
         logMessage: jest.fn(),
       },
     };
+    const activity = {
+      id: 'activity1',
+    };
     const req: any = {
-      body: {
-        id: 'activity1',
-      },
+      body: activity,
       conversation: {
         postActivityToBot: jest.fn().mockResolvedValueOnce({
-          activityId: 'activity1',
+          updatedActivity: activity,
           response: {},
           statusCode: HttpStatus.OK,
         }),
@@ -84,7 +85,7 @@ describe('postActivity handler', () => {
     const postActivity = createPostActivityHandler(mockEmulatorServer);
     await postActivity(req, res, next);
 
-    expect(res.send).toHaveBeenCalledWith(HttpStatus.OK, { id: 'activity1' });
+    expect(res.send).toHaveBeenCalledWith(HttpStatus.OK, activity);
     expect(res.end).toHaveBeenCalled();
     expect(next).toHaveBeenCalled();
     expect(mockSocket.send).toHaveBeenCalledWith(
@@ -100,15 +101,16 @@ describe('postActivity handler', () => {
         logMessage: jest.fn(),
       },
     };
+    const activity = {
+      id: 'activity1',
+      text: '/INSPECT open',
+      type: 'message',
+    };
     const req: any = {
-      body: {
-        id: 'activity1',
-        text: '/INSPECT open',
-        type: 'message',
-      },
+      body: activity,
       conversation: {
         postActivityToBot: jest.fn().mockResolvedValueOnce({
-          activityId: 'activity1',
+          updatedActivity: activity,
           response: {},
           statusCode: HttpStatus.OK,
         }),
@@ -143,7 +145,7 @@ describe('postActivity handler', () => {
       },
       conversation: {
         postActivityToBot: jest.fn().mockResolvedValueOnce({
-          activityId: 'activity1',
+          updatedActivity: {},
           response: {
             text: jest.fn().mockResolvedValueOnce('Unauthorized'),
           },
@@ -253,7 +255,7 @@ describe('postActivity handler', () => {
       },
       conversation: {
         postActivityToBot: jest.fn().mockResolvedValueOnce({
-          activityId: 'activity1',
+          activity: undefined,
           response: {
             message: 'Request failed',
             status: undefined,

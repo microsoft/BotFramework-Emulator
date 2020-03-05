@@ -59,6 +59,22 @@ export enum ChatActions {
   updateSpeechAdapters = 'CHAT/SPEECH/DL/ADAPTERS',
   webSpeechFactoryUpdated = 'CHAT/SPEECH/TOKEN/RETRIEVED',
   webChatStoreUpdated = 'CHAT/STORE/UPDATED',
+  PostActivityEventWc = 'CHAT/POST_ACTIVITY_WEBCHAT',
+  IncomingActivityFromWc = 'CHAT/INCOMING_ACTIVITY_WEBCHAT',
+  SetRestartConversationStatus = 'CHAT/RESTART/ACTIVITY/STATUS',
+  SetRestartConversationOption = 'CHAT/RESTART/CONVERSATION_OPTION',
+}
+
+export enum RestartConversationStatus {
+  Started,
+  Rejected,
+  Completed,
+  Stop,
+}
+
+export enum RestartConversationOptions {
+  SameUserId,
+  NewUserId,
 }
 
 export interface ActiveInspectorChangedPayload {
@@ -73,6 +89,11 @@ export interface WebSpeechFactoryPayload {
 export interface WebChatStorePayload {
   documentId: string;
   store: any;
+}
+
+export interface SetRestartConversationOptionPayload {
+  documentId: string;
+  option: RestartConversationOptions;
 }
 
 export interface PendingSpeechTokenRetrievalPayload {
@@ -127,6 +148,17 @@ export interface RestartConversationPayload {
   documentId: string;
   requireNewConversationId: boolean;
   requireNewUserId: boolean;
+  activity?: Activity;
+}
+
+export interface ActivityFromWebChatPayload {
+  documentId: string;
+  activity: Activity;
+}
+
+export interface RestartConversationStatusPayload {
+  documentId: string;
+  status: RestartConversationStatus;
 }
 
 export interface UpdateSpeechAdaptersPayload {
@@ -332,7 +364,8 @@ export function showContextMenuForActivity(activity: Partial<Activity>): ChatAct
 export function restartConversation(
   documentId: string,
   requireNewConversationId: boolean = false,
-  requireNewUserId: boolean = false
+  requireNewUserId: boolean = false,
+  activity: Activity = undefined
 ): ChatAction<RestartConversationPayload> {
   return {
     type: ChatActions.restartConversation,
@@ -340,6 +373,40 @@ export function restartConversation(
       documentId,
       requireNewConversationId,
       requireNewUserId,
+      activity,
+    },
+  };
+}
+
+export function postActivity(activity: Activity, documentId: string): ChatAction<ActivityFromWebChatPayload> {
+  return {
+    type: ChatActions.PostActivityEventWc,
+    payload: {
+      documentId,
+      activity,
+    },
+  };
+}
+
+export function incomingActivity(activity: Activity, documentId: string): ChatAction<ActivityFromWebChatPayload> {
+  return {
+    type: ChatActions.IncomingActivityFromWc,
+    payload: {
+      documentId,
+      activity,
+    },
+  };
+}
+
+export function setRestartConversationStatus(
+  status: RestartConversationStatus,
+  documentId: string
+): ChatAction<RestartConversationStatusPayload> {
+  return {
+    type: ChatActions.SetRestartConversationStatus,
+    payload: {
+      documentId,
+      status,
     },
   };
 }
@@ -355,6 +422,19 @@ export function updateSpeechAdapters(
       directLine,
       documentId,
       webSpeechPonyfillFactory,
+    },
+  };
+}
+
+export function setRestartConversationOption(
+  documentId: string,
+  option: RestartConversationOptions
+): ChatAction<SetRestartConversationOptionPayload> {
+  return {
+    type: ChatActions.SetRestartConversationOption,
+    payload: {
+      documentId,
+      option,
     },
   };
 }
