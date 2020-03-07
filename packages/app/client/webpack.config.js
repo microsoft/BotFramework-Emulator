@@ -106,7 +106,7 @@ const defaultConfig = {
     ],
   },
 
-  devtool: 'eval-cheap-module-source-map',
+  devtool: 'source-map',
 
   devServer: {
     hot: true,
