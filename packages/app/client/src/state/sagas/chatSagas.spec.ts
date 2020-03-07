@@ -60,6 +60,7 @@ import {
   RestartConversationStatus,
   setRestartConversationStatus,
   RestartConversationPayload,
+  RestartConversationOptions,
 } from '@bfemulator/app-shared';
 import {
   createCognitiveServicesSpeechServicesPonyfillFactory,
@@ -803,6 +804,7 @@ describe('The ChatSagas,', () => {
         },
         mode: 'livechat' as any,
         userId: 'someUserId',
+        restartConversationOption: RestartConversationOptions.NewUserId,
       };
       expect(gen.next().value).toEqual(select(getChatFromDocumentId, payload.documentId));
 
@@ -869,6 +871,7 @@ describe('The ChatSagas,', () => {
             conversationId,
             directLine,
             userId,
+            restartConversationOption: chat.restartConversationOption,
           })
         )
       );
