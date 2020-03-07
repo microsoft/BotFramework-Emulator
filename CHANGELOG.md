@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [client/main] Added new telemetry events and properties in PR [2063](https://github.com/microsoft/BotFramework-Emulator/pull/2063)
 - [client] Added support for talking to remote Direct Line Speech bots in PR [2079](https://github.com/microsoft/BotFramework-Emulator/pull/2079)
 - [client/main] Added support to restart conversation from any point in PR [2089](https://github.com/microsoft/BotFramework-Emulator/pull/2089)
+- [client] - Bumped `botframework-webchat` to v4.8.0 in PR [2094](https://github.com/microsoft/BotFramework-Emulator/pull/2094)
 
 ## Fixed
 - [client] Hid services pane by default in PR [2059](https://github.com/microsoft/BotFramework-Emulator/pull/2059)
