@@ -571,6 +571,7 @@ export class ChatSagas {
         speechKey: chat.speechKey,
         speechRegion: chat.speechRegion,
         userId,
+        restartConversationOption: chat.restartConversationOption,
       })
     );
 
