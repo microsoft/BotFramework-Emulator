@@ -277,9 +277,7 @@ export class Emulator extends React.Component<EmulatorProps, {}> {
         userId: 'new',
       });
       this.props.restartConversation(documentId, true, true);
-    }
-
-    if (this.props.currentRestartConversationOption === RestartConversationOptions.SameUserId) {
+    } else if (this.props.currentRestartConversationOption === RestartConversationOptions.SameUserId) {
       this.props.trackEvent('conversation_restart', {
         userId: 'same',
       });

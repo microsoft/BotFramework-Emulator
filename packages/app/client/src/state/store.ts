@@ -34,6 +34,7 @@
 import { applyMiddleware, createStore, combineReducers, compose, Store } from 'redux';
 import { ipcRenderer, remote } from 'electron';
 import sagaMiddlewareFactory from 'redux-saga';
+import { call, all, spawn } from 'redux-saga/effects';
 import {
   AzureAuthState,
   azureAuth,
@@ -140,7 +141,24 @@ function initStore(): Store<RootState> {
     DEFAULT_STATE,
     storeEnhancer
   );
-  applicationSagas.forEach(saga => sagaMiddleware.run(saga));
+
+  function* rootSaga() {
+    yield all(
+      applicationSagas.map(saga =>
+        spawn(function*() {
+          while (true) {
+            try {
+              yield call(saga);
+              break;
+            } catch (error) {
+              console.error('Saga error: ', error); // eslint-disable-line
+            }
+          }
+        })
+      )
+    );
+  }
+  sagaMiddleware.run(rootSaga);
 
   // sync the renderer process store with any updates on the main process
   ipcRenderer.on('sync-store', (_ev, action) => {

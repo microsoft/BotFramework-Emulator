@@ -62,6 +62,5 @@ export function* throwErrorFromResponse(errorMessage: string, response: Response
    * temporary way to surface saga errors until we update to redux-saga@^1.0.0 and can use top-level onError hook
    * (see https://github.com/redux-saga/redux-saga/issues/1308)
    */
-  console.error('Saga error: ', error); // eslint-disable-line
   throw error;
 }
