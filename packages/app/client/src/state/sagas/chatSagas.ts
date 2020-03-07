@@ -53,7 +53,6 @@ import {
   postActivity,
   RestartConversationStatus,
   setRestartConversationStatus,
-  addNotification,
   newNotification,
   beginAdd,
   NotificationType,
