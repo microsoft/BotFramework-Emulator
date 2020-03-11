@@ -52,7 +52,7 @@ import * as React from 'react';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { store } from '../../../state/store';
-import { generateBotSecret, debounce } from '../../../utils';
+import { generateBotSecret, debounce, copyTextToClipboard } from '../../../utils';
 import { ActiveBotHelper } from '../../helpers/activeBotHelper';
 import { DialogService } from '../service';
 import { ariaAlertService } from '../../a11y';
@@ -295,13 +295,14 @@ export class BotCreationDialog extends React.Component<BotCreationDialogProps, B
     if (!this.state.encryptKey) {
       return null;
     }
-    const { secretInputRef } = this;
-    const { type } = secretInputRef;
-    secretInputRef.type = 'text';
-    secretInputRef.select();
-    window.document.execCommand('copy');
-    secretInputRef.type = type;
-    ariaAlertService.alert('Secret copied to clipboard.');
+    if (copyTextToClipboard(this.secretInputRef.value)) {
+      ariaAlertService.alert('Secret copied to clipboard.');
+    } else {
+      const err = 'Failed to copy secret to clipboard.';
+      ariaAlertService.alert(err);
+      // eslint-disable-next-line no-console
+      console.error(err);
+    }
   };
 
   // TODO: Re-enable ability to re-generate secret after 4.1

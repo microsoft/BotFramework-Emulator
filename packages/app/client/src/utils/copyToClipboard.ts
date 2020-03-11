@@ -29,12 +29,13 @@
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-//
+import { clipboard } from 'electron';
 
-export * from './debounce';
-export * from './expandFlatTree';
-export * from './getGlobal';
-export * from './getSettingsDelta';
-export * from './generateBotSecret';
-export * from './chatUtils';
-export * from './copyToClipboard';
+export const copyTextToClipboard = (textValue: string): boolean => {
+  try {
+    clipboard.writeText(textValue, 'selection');
+    return true;
+  } catch (ex) {
+    return false;
+  }
+};

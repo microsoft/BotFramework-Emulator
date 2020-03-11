@@ -54,14 +54,16 @@ export interface OuterActivityWrapperProps {
     restartOption: RestartConversationOptions
   ) => void;
   currentRestartConversationOption: RestartConversationOptions;
+  isWebChatDisabled: boolean;
 }
 
 export class OuterActivityWrapper extends React.Component<OuterActivityWrapperProps, {}> {
   public render() {
-    const { card, children, onContextMenu, onItemRendererClick, onItemRendererKeyDown } = this.props;
+    const { card, children, onContextMenu, onItemRendererClick, onItemRendererKeyDown, isWebChatDisabled } = this.props;
 
     const isSelected = this.shouldBeSelected(card.activity);
     const isUserActivity = this.isUserActivity(card.activity);
+    const showRestartBubble = isUserActivity && isSelected && !isWebChatDisabled;
 
     return (
       <ActivityWrapper
@@ -71,8 +73,8 @@ export class OuterActivityWrapper extends React.Component<OuterActivityWrapperPr
         onKeyDown={onItemRendererKeyDown}
         onContextMenu={onContextMenu}
         isSelected={isSelected}
-        isUserActivity={isUserActivity}
         onRestartConversationFromActivityClick={this.onRestartConversationFromActivityClick}
+        showRestartBubble={showRestartBubble}
       >
         {children}
       </ActivityWrapper>
