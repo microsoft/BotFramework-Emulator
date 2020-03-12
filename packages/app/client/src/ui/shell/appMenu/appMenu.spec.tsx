@@ -129,7 +129,7 @@ describe('<AppMenu />', () => {
 
     expect(Object.keys(menuTemplate)).toHaveLength(6);
     expect(menuTemplate['file'][3].items.length).toBe(4); // recent bots menu should be populated
-    expect(menuTemplate['file'][7].disabled).toBe(true); // "Close tab" should be disabled
+    expect(menuTemplate['file'][9].disabled).toBe(true); // "Close tab" should be disabled
     expect(menuTemplate['file'][14].items.length).toBe(3); // themes menu should be populated
     expect(menuTemplate['conversation'][0].disabled).toBe(true); // send activity menu should be disabled on welcome page
   });
