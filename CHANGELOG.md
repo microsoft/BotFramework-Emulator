@@ -4,8 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
-
+## v4.8.0 - 2019 - 03 - 12
 ## Added
 - [client/main] Added Ngrok Status Viewer in PR [2032](https://github.com/microsoft/BotFramework-Emulator/pull/2032)
 - [client/main] Changed conversation infrastructure to use Web Sockets to communicate with Web Chat in PR [2034](https://github.com/microsoft/BotFramework-Emulator/pull/2034)
