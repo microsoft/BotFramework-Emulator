@@ -42,8 +42,8 @@ interface ActivityWrapperProps extends HTMLAttributes<HTMLDivElement> {
   activity: Activity;
   children: ReactNode;
   isSelected: boolean;
-  isUserActivity: boolean;
   onRestartConversationFromActivityClick: () => void;
+  showRestartBubble: boolean;
 }
 
 // Returns false if the event target is normally an interactive element.
@@ -65,10 +65,10 @@ function shouldSelectActivity(e: React.SyntheticEvent): boolean {
 
 export class ActivityWrapper extends Component<ActivityWrapperProps> {
   render() {
-    const { activity: _, children, isSelected, isUserActivity, ...divProps } = this.props;
+    const { activity: _, children, isSelected, showRestartBubble, ...divProps } = this.props;
     let classes = styles.chatActivity;
     const restartConversationBubble = (
-      <div className={[styles.replayBubble, isUserActivity && isSelected ? '' : styles.hidden].join(' ')}>
+      <div className={[styles.replayBubble, showRestartBubble ? '' : styles.hidden].join(' ')}>
         <LinkButton ariaLabel="Restart from activity." linkRole={false} onClick={this.replayConversation}>
           Restart conversation from here
         </LinkButton>

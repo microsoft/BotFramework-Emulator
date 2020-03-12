@@ -31,10 +31,29 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './debounce';
-export * from './expandFlatTree';
-export * from './getGlobal';
-export * from './getSettingsDelta';
-export * from './generateBotSecret';
-export * from './chatUtils';
-export * from './copyToClipboard';
+import { copyTextToClipboard } from './copyToClipboard';
+
+const mockWrite = jest.fn(args => true);
+
+jest.mock('electron', () => ({
+  clipboard: {
+    writeText: args => {
+      mockWrite(args);
+    },
+  },
+}));
+
+describe('Copy To Clipboard', () => {
+  beforeEach(() => {
+    mockWrite.mockReset();
+  });
+
+  it('should copy text to clipboard', async () => {
+    let expected = 'Hello';
+    copyTextToClipboard(expected);
+    expect(mockWrite).toHaveBeenCalledWith(expected);
+    expected = 'Hello Check Again';
+    copyTextToClipboard(expected);
+    expect(mockWrite).toHaveBeenCalledWith(expected);
+  });
+});

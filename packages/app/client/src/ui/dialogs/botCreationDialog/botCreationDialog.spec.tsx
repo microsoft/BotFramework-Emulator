@@ -42,12 +42,14 @@ import { ariaAlertService } from '../../a11y';
 import { BotCreationDialog, BotCreationDialogState } from './botCreationDialog';
 import { BotCreationDialogContainer } from './botCreationDialogContainer';
 
+const mockCopyToClipboard = jest.fn(args => true);
 jest.mock('../index', () => null);
 jest.mock('../../../utils', () => ({
   debounce: (func: () => any) => func,
   generateBotSecret: () => {
     return Math.random() + '';
   },
+  copyTextToClipboard: args => mockCopyToClipboard(args),
 }));
 
 jest.mock('electron', () => ({
@@ -140,26 +142,13 @@ describe('BotCreationDialog tests', () => {
 
   it('should execute a window copy command when copy is clicked', () => {
     testWrapper.instance().setState({ encryptKey: true });
-    // mock window functions
-    const backupExec = window.document.execCommand;
-    const mockExec = jest.fn((_command: string) => null);
-    const backupGetElementById = window.document.getElementById;
-    const mockGetElementById = _selector => ({
-      removeAttribute: () => null,
-      select: () => null,
-      setAttribute: () => null,
-    });
-    (window.document.getElementById as any) = mockGetElementById;
-    window.document.execCommand = mockExec;
     const alertServiceSpy = jest.spyOn(ariaAlertService, 'alert').mockReturnValueOnce(undefined);
 
     (testWrapper.instance() as any).onCopyClick();
-    expect(mockExec).toHaveBeenCalledWith('copy');
     expect(alertServiceSpy).toHaveBeenCalledWith('Secret copied to clipboard.');
-
-    // restore window functions
-    window.document.execCommand = backupExec;
-    window.document.getElementById = backupGetElementById;
+    mockCopyToClipboard.mockReturnValueOnce(false);
+    (testWrapper.instance() as any).onCopyClick();
+    expect(alertServiceSpy).toHaveBeenCalledWith('Failed to copy secret to clipboard.');
   });
 
   it('should set state via input change handlers', () => {
