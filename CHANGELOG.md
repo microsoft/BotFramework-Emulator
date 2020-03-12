@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [client] Fixed an issue that was causing adaptive card focus to be blurred when clicking on an activity in PR [2090](https://github.com/microsoft/BotFramework-Emulator/pull/2090)
 - [client] Fixed an accessibility issue with the recent bots list remove button in PR [2091](https://github.com/microsoft/BotFramework-Emulator/pull/2091)
 - [client] Copy secret key button now copies the secret key to the clipboar when creating a new bot file in PR [2098](https://github.com/microsoft/BotFramework-Emulator/pull/2098)
+- [client] Fixed an issue on Windows & Linux where the "Close tab" item was missing in the File menu in PR [2099](https://github.com/microsoft/BotFramework-Emulator/pull/2099)
 
 ## Removed
 - [client/main] Removed legacy payments code in PR [2058](https://github.com/microsoft/BotFramework-Emulator/pull/2058)
