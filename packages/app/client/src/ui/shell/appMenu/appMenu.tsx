@@ -89,8 +89,8 @@ export class AppMenu extends React.Component<AppMenuProps, {}> {
     fileMenu[14].items = this.getThemeMenuItems();
     fileMenu[3].items = this.getRecentBotsMenuItems();
     // disable / enable "Close tab" button
-    fileMenu[7].disabled = !this.props.activeBot;
-    fileMenu[9] = this.getSignInMenuItem();
+    fileMenu[9].disabled = !this.props.activeBot;
+    fileMenu[11] = this.getSignInMenuItem();
 
     // disable / enable send conversation activities menu
     template['conversation'][0].disabled =
