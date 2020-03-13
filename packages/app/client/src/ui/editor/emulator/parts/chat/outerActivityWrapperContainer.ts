@@ -59,6 +59,7 @@ function mapStateToProps(state: RootState, { documentId }: { documentId: string 
     currentRestartConversationOption: state.chat.chats[documentId].restartConversationOption,
     mode: state.chat.chats[documentId].mode,
     restartStatus: state.chat.restartStatus[documentId],
+    isDLSpeechBot: !!(state.chat.chats[documentId].speechKey && state.chat.chats[documentId].speechRegion),
   };
 }
 
