@@ -35,7 +35,7 @@ import * as React from 'react';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 import { mount, shallow } from 'enzyme';
-import { ValueTypes, RestartConversationOptions } from '@bfemulator/app-shared';
+import { ValueTypes, RestartConversationOptions, RestartConversationStatus } from '@bfemulator/app-shared';
 
 import { OuterActivityWrapper } from './outerActivityWrapper';
 import { OuterActivityWrapperContainer } from './outerActivityWrapperContainer';
@@ -49,7 +49,9 @@ describe('<OuterActivityWrapper />', () => {
             highlightedObjects: [],
             inspectorObjects: [{ value: {}, valueType: ValueTypes.Activity }],
           },
-          restartStatus: {},
+        },
+        restartStatus: {
+          doc1: RestartConversationStatus.Stop,
         },
       },
     };
