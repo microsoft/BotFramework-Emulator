@@ -6,7 +6,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## v4.8.1 - 2019 - 03 - 16
 ## Fixed
-
 - [client] Fixed an issue where Restart activity wont appear on selected activity after restarting once in PR [2103](https://github.com/microsoft/BotFramework-Emulator/pull/2103)
 - [build] Replaced a missing .icns file that was deleted by mistake in a previous PR. Fixes the app icon on Linux & Mac in PR [2104](https://github.com/microsoft/BotFramework-Emulator/pull/2104)
 
