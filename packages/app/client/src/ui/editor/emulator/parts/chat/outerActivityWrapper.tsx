@@ -57,6 +57,7 @@ export interface OuterActivityWrapperProps {
   currentRestartConversationOption: RestartConversationOptions;
   mode: EmulatorMode;
   restartStatus: RestartConversationStatus;
+  isDLSpeechBot: boolean;
 }
 
 export class OuterActivityWrapper extends React.Component<OuterActivityWrapperProps, {}> {
@@ -69,6 +70,7 @@ export class OuterActivityWrapper extends React.Component<OuterActivityWrapperPr
       onItemRendererKeyDown,
       mode,
       restartStatus,
+      isDLSpeechBot,
     } = this.props;
 
     const isSelected = this.shouldBeSelected(card.activity);
@@ -76,7 +78,7 @@ export class OuterActivityWrapper extends React.Component<OuterActivityWrapperPr
     const isWebChatDisabled =
       mode === 'transcript' || mode === 'debug' || restartStatus === RestartConversationStatus.Started;
 
-    const showRestartBubble = isUserActivity && isSelected && !isWebChatDisabled;
+    const showRestartBubble = !isDLSpeechBot && isUserActivity && isSelected && !isWebChatDisabled;
 
     return (
       <ActivityWrapper

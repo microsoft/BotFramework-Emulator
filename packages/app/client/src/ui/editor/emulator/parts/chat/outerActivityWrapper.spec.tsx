@@ -40,6 +40,10 @@ import { ValueTypes, RestartConversationOptions, RestartConversationStatus } fro
 import { OuterActivityWrapper } from './outerActivityWrapper';
 import { OuterActivityWrapperContainer } from './outerActivityWrapperContainer';
 
+jest.mock('./chat.scss', () => ({
+  hidden: 'hidden-restart',
+}));
+
 describe('<OuterActivityWrapper />', () => {
   it('should render', () => {
     const storeState = {
@@ -151,5 +155,202 @@ describe('<OuterActivityWrapper />', () => {
 
     expect((instance as any).isUserActivity(userCard.activity)).toBe(true);
     expect((instance as any).isUserActivity(botCard.activity)).toBe(false);
+  });
+
+  describe('Restart conversation bubble in OuterActivityWrapper', () => {
+    it('should show restart bubble if a)not Speech bot; b) Webchat is enabled; c)User activity is selected', () => {
+      const card = {
+        activity: {
+          id: 'card1',
+          from: {
+            role: 'user',
+          },
+          channelData: {
+            test: true,
+          },
+        },
+      };
+      const storeState = {
+        chat: {
+          chats: {
+            doc1: {
+              highlightedObjects: [],
+              inspectorObjects: [{ value: { ...card.activity }, valueType: ValueTypes.Activity }],
+              mode: 'livechat',
+            },
+          },
+          restartStatus: {
+            doc1: RestartConversationStatus.Stop,
+          },
+        },
+      };
+
+      const wrapper = mount(
+        <Provider store={createStore((state, action) => state, storeState)}>
+          <OuterActivityWrapperContainer
+            card={card}
+            documentId={'doc1'}
+            onRestartConversationFromActivityClick={jest.fn()}
+          />
+        </Provider>
+      );
+      expect(wrapper.find('hidden-restart').length).toBe(0);
+    });
+
+    it('should hide restart bubble if activity not selected', () => {
+      const card = {
+        activity: {
+          id: 'card1',
+          from: {
+            role: 'user',
+          },
+          channelData: {
+            test: true,
+          },
+        },
+      };
+      const storeState = {
+        chat: {
+          chats: {
+            doc1: {
+              highlightedObjects: [],
+              inspectorObjects: [{ value: {}, valueType: ValueTypes.Activity }],
+              mode: 'livechat',
+            },
+          },
+          restartStatus: {
+            doc1: RestartConversationStatus.Stop,
+          },
+        },
+      };
+
+      const wrapper = mount(
+        <Provider store={createStore((state, action) => state, storeState)}>
+          <OuterActivityWrapperContainer
+            card={card}
+            documentId={'doc1'}
+            onRestartConversationFromActivityClick={jest.fn()}
+          />
+        </Provider>
+      );
+      expect(wrapper.find('.hidden-restart').length).toBe(1);
+    });
+
+    it('should hide restart bubble if it is a speech bot', () => {
+      const card = {
+        activity: {
+          id: 'card1',
+          from: {
+            role: 'user',
+          },
+          channelData: {
+            test: true,
+          },
+        },
+      };
+      const storeState = {
+        chat: {
+          chats: {
+            doc1: {
+              highlightedObjects: [],
+              inspectorObjects: [{ value: { ...card.activity }, valueType: ValueTypes.Activity }],
+              mode: 'livechat',
+              speechKey: 'abc',
+              speechRegion: 'westus',
+            },
+          },
+          restartStatus: {
+            doc1: RestartConversationStatus.Stop,
+          },
+        },
+      };
+
+      const wrapper = mount(
+        <Provider store={createStore((state, action) => state, storeState)}>
+          <OuterActivityWrapperContainer
+            card={card}
+            documentId={'doc1'}
+            onRestartConversationFromActivityClick={jest.fn()}
+          />
+        </Provider>
+      );
+      expect(wrapper.find('.hidden-restart').length).toBe(1);
+    });
+
+    it('should hide restart bubble if restart conversation has a status of "Started" for chat', () => {
+      const card = {
+        activity: {
+          id: 'card1',
+          from: {
+            role: 'user',
+          },
+          channelData: {
+            test: true,
+          },
+        },
+      };
+      const storeState = {
+        chat: {
+          chats: {
+            doc1: {
+              highlightedObjects: [],
+              inspectorObjects: [{ value: { ...card.activity }, valueType: ValueTypes.Activity }],
+              mode: 'livechat',
+            },
+          },
+          restartStatus: {
+            doc1: RestartConversationStatus.Started,
+          },
+        },
+      };
+
+      const wrapper = mount(
+        <Provider store={createStore((state, action) => state, storeState)}>
+          <OuterActivityWrapperContainer
+            card={card}
+            documentId={'doc1'}
+            onRestartConversationFromActivityClick={jest.fn()}
+          />
+        </Provider>
+      );
+      expect(wrapper.find('.hidden-restart').length).toBe(1);
+    });
+
+    it('should hide restart bubble if chat in transcript mode', () => {
+      const card = {
+        activity: {
+          id: 'card1',
+          from: {
+            role: 'user',
+          },
+          channelData: {
+            test: true,
+          },
+        },
+      };
+      const storeState = {
+        chat: {
+          chats: {
+            doc1: {
+              highlightedObjects: [],
+              inspectorObjects: [{ value: { ...card.activity }, valueType: ValueTypes.Activity }],
+              mode: 'transcript',
+            },
+          },
+          restartStatus: {},
+        },
+      };
+
+      const wrapper = mount(
+        <Provider store={createStore((state, action) => state, storeState)}>
+          <OuterActivityWrapperContainer
+            card={card}
+            documentId={'doc1'}
+            onRestartConversationFromActivityClick={jest.fn()}
+          />
+        </Provider>
+      );
+      expect(wrapper.find('.hidden-restart').length).toBe(1);
+    });
   });
 });
