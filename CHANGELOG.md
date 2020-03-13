@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v4.8.1 - 2019 - 03 - 16
+## Fixed
+
+- [client] Fixed an issue where Restart activity wont appear on selected activity after restarting once in PR [2103](https://github.com/microsoft/BotFramework-Emulator/pull/2103)
+
+
 ## v4.8.0 - 2019 - 03 - 12
 ## Added
 - [client/main] Added Ngrok Status Viewer in PR [2032](https://github.com/microsoft/BotFramework-Emulator/pull/2032)
