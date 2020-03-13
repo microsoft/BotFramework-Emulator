@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Fixed
 - [build] Replaced a missing .icns file that was deleted by mistake in a previous PR. Fixes the app icon on Linux & Mac in PR [2104](https://github.com/microsoft/BotFramework-Emulator/pull/2104)
 - [client] Fixed an issue where Restart activity wont appear on selected activity after restarting once in PR [2105](https://github.com/microsoft/BotFramework-Emulator/pull/2105)
-
+- [client] Disable "Restart conversation from here" bubble on DL Speech bots [2107](https://github.com/microsoft/BotFramework-Emulator/pull/2107)
 
 ## v4.8.0 - 2019 - 03 - 12
 ## Added
