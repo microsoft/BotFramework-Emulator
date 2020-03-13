@@ -35,6 +35,7 @@ import * as React from 'react';
 import { SharedConstants, RestartConversationOptions } from '@bfemulator/app-shared';
 import { Activity } from 'botframework-schema';
 import { RestartConversationStatus } from '@bfemulator/app-shared';
+import { EmulatorMode } from '@bfemulator/sdk-shared';
 
 import { areActivitiesEqual } from '../../../../../utils';
 
@@ -54,15 +55,27 @@ export interface OuterActivityWrapperProps {
     restartOption: RestartConversationOptions
   ) => void;
   currentRestartConversationOption: RestartConversationOptions;
-  isWebChatDisabled: boolean;
+  mode: EmulatorMode;
+  restartStatus: RestartConversationStatus;
 }
 
 export class OuterActivityWrapper extends React.Component<OuterActivityWrapperProps, {}> {
   public render() {
-    const { card, children, onContextMenu, onItemRendererClick, onItemRendererKeyDown, isWebChatDisabled } = this.props;
+    const {
+      card,
+      children,
+      onContextMenu,
+      onItemRendererClick,
+      onItemRendererKeyDown,
+      mode,
+      restartStatus,
+    } = this.props;
 
     const isSelected = this.shouldBeSelected(card.activity);
     const isUserActivity = this.isUserActivity(card.activity);
+    const isWebChatDisabled =
+      mode === 'transcript' || mode === 'debug' || restartStatus === RestartConversationStatus.Started;
+
     const showRestartBubble = isUserActivity && isSelected && !isWebChatDisabled;
 
     return (

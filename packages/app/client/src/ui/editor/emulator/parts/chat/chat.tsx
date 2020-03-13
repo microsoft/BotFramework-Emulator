@@ -139,9 +139,6 @@ export class Chat extends PureComponent<ChatProps, ChatState> {
   }
 
   private activityWrapper(next, card, children): ReactNode {
-    const { mode, restartStatus } = this.props;
-    const isWebChatDisabled =
-      mode === 'transcript' || mode === 'debug' || restartStatus === RestartConversationStatus.Started;
     return (
       <OuterActivityWrapperContainer
         card={card}
@@ -149,8 +146,6 @@ export class Chat extends PureComponent<ChatProps, ChatState> {
         onContextMenu={this.onContextMenu}
         onItemRendererClick={this.onItemRendererClick}
         onItemRendererKeyDown={this.onItemRendererKeyDown}
-        restartStatusForActivity={this.props.restartStatus}
-        isWebChatDisabled={isWebChatDisabled}
       >
         {next(card)(children)}
       </OuterActivityWrapperContainer>
