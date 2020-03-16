@@ -96,8 +96,9 @@ export class BotSagas {
   public static *openBotViaUrl(
     action: BotAction<StartConversationParams & { isFromBotFile?: boolean }>
   ): IterableIterator<any> {
+    const customUserId = yield select(getCustomUserGUID);
     const user = {
-      id: yield select(getCustomUserGUID) || uniqueIdv4(), // use custom id or generate new one
+      id: customUserId || uniqueIdv4(), // use custom id or generate new one
       name: 'User',
       role: 'user',
     };
@@ -110,7 +111,7 @@ export class BotSagas {
       msaAppId: action.payload.appId,
       msaPassword: action.payload.appPassword,
     };
-    let res: Response = yield ConversationService.startConversation(serverUrl, payload);
+    let res: Response = yield call([ConversationService, ConversationService.startConversation], serverUrl, payload);
     if (!res.ok) {
       yield* throwErrorFromResponse('Error occurred while starting a new conversation', res);
     }
