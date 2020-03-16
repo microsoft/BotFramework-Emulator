@@ -111,7 +111,7 @@ export class BotSagas {
       msaAppId: action.payload.appId,
       msaPassword: action.payload.appPassword,
     };
-    let res: Response = yield ConversationService.startConversation(serverUrl, payload);
+    let res: Response = yield call([ConversationService, ConversationService.startConversation], serverUrl, payload);
     if (!res.ok) {
       yield* throwErrorFromResponse('Error occurred while starting a new conversation', res);
     }
