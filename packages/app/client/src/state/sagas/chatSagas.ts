@@ -241,7 +241,8 @@ export class ChatSagas {
     const { filename } = action.payload;
     // start a conversation
     const serverUrl = yield select(getServerUrl);
-    const user = { id: yield select(getCustomUserGUID) || uniqueIdv4(), name: 'User', role: 'user' };
+    const customUserId = yield select(getCustomUserGUID);
+    const user = { id: customUserId || uniqueIdv4(), name: 'User', role: 'user' };
     const payload = {
       botUrl: '',
       channelServiceType: '' as any,
@@ -535,7 +536,8 @@ export class ChatSagas {
       userId = uniqueIdv4();
     } else {
       // use the previous id or the custom id from settings
-      userId = chat.userId || (yield select(getCustomUserGUID));
+      const customUserId = yield select(getCustomUserGUID);
+      userId = chat.userId || customUserId;
     }
 
     // update the main-side conversation object with conversation & user IDs,

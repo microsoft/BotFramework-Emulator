@@ -96,8 +96,9 @@ export class BotSagas {
   public static *openBotViaUrl(
     action: BotAction<StartConversationParams & { isFromBotFile?: boolean }>
   ): IterableIterator<any> {
+    const customUserId = yield select(getCustomUserGUID);
     const user = {
-      id: yield select(getCustomUserGUID) || uniqueIdv4(), // use custom id or generate new one
+      id: customUserId || uniqueIdv4(), // use custom id or generate new one
       name: 'User',
       role: 'user',
     };
