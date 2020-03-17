@@ -74,9 +74,7 @@ export class NgrokService {
     if (this.pendingRecycle) {
       await this.pendingRecycle;
     }
-    if (this.ngrok.running()) {
-      return this.serviceUrl;
-    }
+
     const { bypassNgrokLocalhost, runNgrokAtStartup } = getSettings().framework;
     // Use ngrok
     const local = !botUrl || isLocalHostUrl(botUrl);
