@@ -824,10 +824,13 @@ describe('The ChatSagas,', () => {
       // put webSpeechFactoryUpdated
       expect(gen.next().value).toEqual(put(webSpeechFactoryUpdated(payload.documentId, undefined)));
 
+      // select custom user GUID
+      expect(gen.next().value).toEqual(select(getCustomUserGUID));
+
       // call updateConversation
       const conversationId = chat.conversationId;
       const userId = chat.userId;
-      expect(gen.next().value).toEqual(
+      expect(gen.next('').value).toEqual(
         call([ConversationService, ConversationService.updateConversation], serverUrl, chat.conversationId, {
           conversationId,
           userId,
@@ -957,10 +960,13 @@ describe('The ChatSagas,', () => {
       // put webSpeechFactoryUpdated
       expect(gen.next().value).toEqual(put(webSpeechFactoryUpdated(payload.documentId, undefined)));
 
+      // select custom user GUID
+      expect(gen.next().value).toEqual(select(getCustomUserGUID));
+
       // call updateConversation
       const conversationId = chat.conversationId;
       const userId = chat.userId;
-      expect(gen.next().value).toEqual(
+      expect(gen.next('').value).toEqual(
         call([ConversationService, ConversationService.updateConversation], serverUrl, chat.conversationId, {
           conversationId,
           userId,

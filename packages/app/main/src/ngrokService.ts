@@ -74,13 +74,7 @@ export class NgrokService {
     if (this.pendingRecycle) {
       await this.pendingRecycle;
     }
-    if (this.ngrok.running()) {
-      return this.serviceUrl;
-    }
-    const { bypassNgrokLocalhost, runNgrokAtStartup } = getSettings().framework;
-    // Use ngrok
-    const local = !botUrl || isLocalHostUrl(botUrl);
-    if (runNgrokAtStartup || !local || (local && !bypassNgrokLocalhost)) {
+    if (this.isUsingNgrok(botUrl)) {
       if (!this.ngrok.running()) {
         await this.startup();
       }
@@ -237,7 +231,7 @@ export class NgrokService {
       );
     } else if (!this.ngrokPath) {
       this.reportNotConfigured(conversationId);
-    } else if (this.ngrok.running()) {
+    } else if (this.isUsingNgrok(botUrl)) {
       this.reportRunning(conversationId);
     } else {
       emulatorApplication.mainWindow.logService.logToChat(
@@ -311,5 +305,11 @@ export class NgrokService {
       // port = +parts[1].trim();
     }
     this.localhost = hostname;
+  }
+
+  private isUsingNgrok(botUrl: string) {
+    const { bypassNgrokLocalhost, runNgrokAtStartup } = getSettings().framework;
+    const local = !botUrl || isLocalHostUrl(botUrl);
+    return runNgrokAtStartup || !local || (local && !bypassNgrokLocalhost);
   }
 }

@@ -200,7 +200,7 @@ describe('The botSagas', () => {
     expect(putNotification.value).toEqual(put(errorNotification));
   });
 
-  it('should open a bot via url', () => {
+  it('should open a bot via url with the custom user ID', () => {
     const mockAction: any = {
       payload: {
         endpoint: 'http://localhost:3978/api/messages',
@@ -213,13 +213,86 @@ describe('The botSagas', () => {
     const gen = BotSagas.openBotViaUrl(mockAction);
     gen.next();
     gen.next('userId'); // select custom user GUID
-    gen.next('http://localhost:52673'); // select server url
+
+    // select server url
+    expect(gen.next('http://localhost:52673').value).toEqual(
+      call([ConversationService, ConversationService.startConversation], 'http://localhost:52673', {
+        botUrl: mockAction.payload.endpoint,
+        channelServiceType: mockAction.payload.channelService,
+        members: [{ id: 'userId', name: 'User', role: 'user' }],
+        mode: mockAction.payload.mode,
+        msaAppId: mockAction.payload.appId,
+        msaPassword: mockAction.payload.appPassword,
+      })
+    );
 
     const mockStartConvoResponse = {
       json: async () => undefined,
       ok: true,
     };
-    gen.next(mockStartConvoResponse); // startConversation
+
+    // startConversation
+    gen.next(mockStartConvoResponse);
+    gen.next({
+      conversationId: 'someConvoId',
+      endpointId: 'someEndpointId',
+      members: [],
+    }); //res.json()
+
+    let next = gen.next(); // bootstrapChat()
+
+    const putOpenValue = next.value;
+    expect(putOpenValue).toEqual(
+      put(
+        openEditorDocument({
+          contentType: SharedConstants.ContentTypes.CONTENT_TYPE_LIVE_CHAT,
+          documentId: 'someConvoId',
+          isGlobal: false,
+        })
+      )
+    );
+    gen.next(); // put open()
+
+    gen.next({ ok: true }); // sendInitialLogReport()
+    next = gen.next({ ok: true }); // sendInitialActivity()
+
+    const callValue = next.value;
+    expect(callValue).toEqual(
+      call(
+        [commandService, commandService.remoteCall],
+        SharedConstants.Commands.Settings.SaveBotUrl,
+        'http://localhost:3978/api/messages'
+      )
+    );
+    expect(gen.next().done).toBe(true);
+  });
+
+  it('should open a bot via url with a newly generated user GUID', () => {
+    const mockAction: any = {
+      payload: {
+        endpoint: 'http://localhost:3978/api/messages',
+        channelService: 'public',
+        mode: 'livechat',
+        appId: 'someAppId',
+        appPassword: 'someAppPw',
+      },
+    };
+    const gen = BotSagas.openBotViaUrl(mockAction);
+    gen.next();
+    gen.next(''); // select custom user GUID (force generation of new GUID)
+
+    // select server url
+    const startConversationCall = gen.next('http://localhost:52673').value;
+    const startConversationPayload = startConversationCall.CALL.args[1];
+    expect(startConversationPayload.members[0].id.length).toBeGreaterThan(0);
+
+    const mockStartConvoResponse = {
+      json: async () => undefined,
+      ok: true,
+    };
+
+    // startConversation
+    gen.next(mockStartConvoResponse);
     gen.next({
       conversationId: 'someConvoId',
       endpointId: 'someEndpointId',

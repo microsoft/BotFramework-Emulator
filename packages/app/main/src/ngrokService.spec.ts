@@ -44,24 +44,26 @@ import { combineReducers, createStore } from 'redux';
 import { NgrokService } from './ngrokService';
 import { store } from './state/store';
 
-const mockEmulator = {
-  server: {
-    serverUrl: 'http://localhost:3000',
-    serverPort: 8080,
-    state: {
-      conversations: {
-        getConversationIds: () => ['12', '123'],
-      },
-      endpoints: {
-        reset: () => null,
-        push: () => null,
+const mockEmulator = jest.fn(() => {
+  return {
+    server: {
+      serverUrl: 'http://localhost:3000',
+      serverPort: 8080,
+      state: {
+        conversations: {
+          getConversationIds: () => ['12', '123'],
+        },
+        endpoints: {
+          reset: () => null,
+          push: () => null,
+        },
       },
     },
-  },
-};
+  };
+});
 jest.mock('./emulator', () => ({
   Emulator: {
-    getInstance: () => mockEmulator,
+    getInstance: () => mockEmulator(),
   },
 }));
 
@@ -208,5 +210,81 @@ describe('The ngrokService', () => {
     expect(mockKill).toHaveBeenCalled();
 
     (ngrokService as any).oauthNgrokInstance = undefined;
+  });
+
+  describe('Conditions where service url returned is an ngrok url', () => {
+    it('should always return ngrok url if runNgrokAtStartup is selected', async () => {
+      const settings = {
+        locale: 'en-us',
+        bypassNgrokLocalhost: true,
+        runNgrokAtStartup: true,
+        ngrokPath: '/usr/bin/ngrok',
+      };
+      store.dispatch(setFrameworkSettings(settings as any));
+      const serviceUrl = await ngrokService.getServiceUrl('http://my-azure.com/speech-bot/');
+      expect(serviceUrl).toBe('http://fdsfds.ngrok.io');
+    });
+
+    it('should always return ngrok url if remote bot irrespective of options selected', async () => {
+      const settings = {
+        locale: 'en-us',
+        bypassNgrokLocalhost: false,
+        runNgrokAtStartup: false,
+        ngrokPath: '/usr/bin/ngrok',
+      };
+      store.dispatch(setFrameworkSettings(settings as any));
+      const serviceUrl = await ngrokService.getServiceUrl('http://my-azure/api/messages');
+      expect(serviceUrl).toBe('http://fdsfds.ngrok.io');
+    });
+
+    it('should always return ngrok url if bypassNgrokLocalhost is not selected and ngrok is configured', async () => {
+      const settings = {
+        locale: 'en-us',
+        bypassNgrokLocalhost: false,
+        runNgrokAtStartup: false,
+        ngrokPath: '/usr/bin/ngrok',
+      };
+      store.dispatch(setFrameworkSettings(settings as any));
+      const serviceUrl = await ngrokService.getServiceUrl('http://localhost:3978');
+      expect(serviceUrl).toBe('http://fdsfds.ngrok.io');
+    });
+  });
+
+  describe('Conditions where service url returned is a localhost url', () => {
+    it('should always return localhost url if local bot and bypassNgrokLocalhost is selected', async () => {
+      const settings = {
+        locale: 'en-us',
+        bypassNgrokLocalhost: true,
+        runNgrokAtStartup: false,
+        ngrokPath: '/usr/bin/ngrok',
+      };
+      store.dispatch(setFrameworkSettings(settings as any));
+      const serviceUrl = await ngrokService.getServiceUrl('http://localhost:3978');
+      expect(serviceUrl).toBe('http://localhost:8080');
+    });
+
+    it('should always return localhost url if bypassNgrokLocalhost is not selected and ngrok is not configured and its a local bot', async () => {
+      const settings = {
+        locale: 'en-us',
+        bypassNgrokLocalhost: false,
+        runNgrokAtStartup: false,
+        ngrokPath: '',
+      };
+      store.dispatch(setFrameworkSettings(settings as any));
+      const serviceUrl = await ngrokService.getServiceUrl('http://localhost:3978');
+      expect(serviceUrl).toBe('http://localhost:8080');
+    });
+
+    it('should always return localhost url if ngrok is not configured', async () => {
+      const settings = {
+        locale: 'en-us',
+        bypassNgrokLocalhost: false,
+        runNgrokAtStartup: false,
+        ngrokPath: '',
+      };
+      store.dispatch(setFrameworkSettings(settings as any));
+      const serviceUrl = await ngrokService.getServiceUrl('http://my-azure/api/messages');
+      expect(serviceUrl).toBe('http://localhost:8080');
+    });
   });
 });
