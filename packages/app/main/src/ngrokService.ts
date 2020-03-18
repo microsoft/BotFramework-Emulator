@@ -309,9 +309,7 @@ export class NgrokService {
 
   private isUsingNgrok(botUrl: string) {
     const { bypassNgrokLocalhost, runNgrokAtStartup } = getSettings().framework;
-    // Use ngrok
     const local = !botUrl || isLocalHostUrl(botUrl);
-
     return runNgrokAtStartup || !local || (local && !bypassNgrokLocalhost);
   }
 }
