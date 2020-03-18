@@ -4,12 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## v4.8.1 - 2019 - 03 - 16
+## v4.8.1 - 2019 - 03 - 18
 ## Fixed
 - [build] Replaced a missing .icns file that was deleted by mistake in a previous PR. Fixes the app icon on Linux & Mac in PR [2104](https://github.com/microsoft/BotFramework-Emulator/pull/2104)
 - [client] Fixed an issue where Restart activity wont appear on selected activity after restarting once in PR [2105](https://github.com/microsoft/BotFramework-Emulator/pull/2105)
 - [client] Disable "Restart conversation from here" bubble on DL Speech bots [2107](https://github.com/microsoft/BotFramework-Emulator/pull/2107)
 - [client] Fixed an issue where starting a conversation with an unset custom user ID was causing the User member of the conversation to have a blank `id` field in PR [2108](https://github.com/microsoft/BotFramework-Emulator/pull/2108)
+- [main] Fixed an issue where the setting `Bypass Ngrok for local addresses` was continuing to use the ngrok tunnel even for local bots in PR [2111](https://github.com/microsoft/BotFramework-Emulator/pull/2111)
+
 
 ## v4.8.0 - 2019 - 03 - 12
 ## Added
