@@ -44,9 +44,11 @@ describe('sendHistoryToConversation handler', () => {
         activities: ['activity1', 'activity2', 'activity3'],
       },
       conversation: {
-        postActivityToUser: jest.fn().mockImplementationOnce(() => {
-          throw new Error('Something went wrong.');
-        }),
+        prepActivityToBeSentToUser: jest.fn((_userId, activity) => activity),
+        user: {
+          id: 'user',
+        },
+        conversationId: 'conversationId',
       },
     };
     const res: any = {
@@ -58,7 +60,7 @@ describe('sendHistoryToConversation handler', () => {
 
     expect(res.send).toHaveBeenCalledWith(
       HttpStatus.OK,
-      createResourceResponse(`Processed ${2} of ${3} activities successfully.${new Error('Something went wrong.')}`)
+      createResourceResponse(`Processed ${3} of ${3} activities successfully.`)
     );
     expect(res.end).toHaveBeenCalled();
     expect(next).toHaveBeenCalled();
