@@ -36,15 +36,20 @@ import * as HttpStatus from 'http-status-codes';
 import { Next, Request, Response } from 'restify';
 
 import { createResourceResponse } from '../../../../utils/createResponse/createResourceResponse';
+import { WebSocketServer } from '../../../../webSocketServer';
+import { Conversation } from '../../../../state/conversation';
 
 export function sendHistoryToConversation(req: Request, res: Response, next: Next): any {
   const { activities }: { activities: Activity[] } = req.body;
   let successCount = 0;
   let firstErrorMessage = '';
-
+  const { conversation }: { conversation: Conversation } = req as any;
   for (const activity of activities) {
     try {
-      (req as any).conversation.postActivityToUser(activity, true);
+      const updatedActivity = conversation.prepActivityToBeSentToUser(conversation.user.id, activity);
+      const payload = { activities: [updatedActivity] };
+      const socket = WebSocketServer.getSocketByConversationId(conversation.conversationId);
+      socket && socket.send(JSON.stringify(payload));
       successCount++;
     } catch (err) {
       if (firstErrorMessage === '') {
