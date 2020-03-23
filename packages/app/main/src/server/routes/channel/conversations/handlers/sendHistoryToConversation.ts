@@ -44,10 +44,10 @@ export function sendHistoryToConversation(req: Request, res: Response, next: Nex
   let successCount = 0;
   let firstErrorMessage = '';
   const { conversation }: { conversation: Conversation } = req as any;
-  for (var activity of activities) {
+  for (const activity of activities) {
     try {
-      activity = conversation.prepActivityToBeSentToUser(conversation.user.id, activity);
-      const payload = { activities: [activity] };
+      const updatedActivity = conversation.prepActivityToBeSentToUser(conversation.user.id, activity);
+      const payload = { activities: [updatedActivity] };
       const socket = WebSocketServer.getSocketByConversationId(conversation.conversationId);
       socket && socket.send(JSON.stringify(payload));
       successCount++;
