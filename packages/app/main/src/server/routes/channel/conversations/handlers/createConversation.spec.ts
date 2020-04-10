@@ -38,6 +38,7 @@ import { createCreateConversationHandler } from './createConversation';
 describe('createConversation handler', () => {
   it('should send a 201 with a create conversation response when the conversation does not exist', () => {
     const mockNewConversation = {
+      id: 'convo1',
       conversationId: 'convo1',
       members: [],
       normalize: jest.fn(),
@@ -75,6 +76,7 @@ describe('createConversation handler', () => {
       conversationId: mockNewConversation.conversationId,
       endpointId: req.botEndpoint.id,
       members: mockNewConversation.members,
+      id: mockNewConversation.conversationId,
     });
     expect(res.end).toHaveBeenCalled();
     expect(next).toHaveBeenCalled();

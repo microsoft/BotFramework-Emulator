@@ -74,6 +74,7 @@ export function createCreateConversationHandler(emulatorServer: EmulatorRestServ
       conversationId: conversation.conversationId,
       endpointId: botEndpoint.id,
       members: conversation.members,
+      id: conversation.conversationId,
     });
     res.end();
     next();
