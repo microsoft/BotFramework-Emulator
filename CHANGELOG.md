@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Added
 - [main] Exposed `id` field on response object returned from `/v3/conversations` endpoint in PR [2129](https://github.com/microsoft/BotFramework-Emulator/pull/2129)
 
-- [client] - Bumped `botframework-webchat` to v4.9.0 in PR [2094](https://github.com/microsoft/BotFramework-Emulator/pull/2142)
+- [client] - Bumped `botframework-webchat` to v4.9.0 in PR [2142](https://github.com/microsoft/BotFramework-Emulator/pull/2142)
 
 ## Fixed
 - [build] Fixed system dialog on Mac OS warning about being unable to check for malicious code in PR [2135](https://github.com/microsoft/BotFramework-Emulator/pull/2135)
