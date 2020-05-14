@@ -22,6 +22,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [main] Fixed an issue where the setting `Bypass Ngrok for local addresses` was continuing to use the ngrok tunnel even for local bots in PR [2111](https://github.com/microsoft/BotFramework-Emulator/pull/2111)
 - [main] Ngrok Reporting made accurate in PR [2113](https://github.com/microsoft/BotFramework-Emulator/pull/2113)
 
+## Added
+- [client] - Bumped `botframework-webchat` to v4.9.0 in PR [2094](https://github.com/microsoft/BotFramework-Emulator/pull/2142)
+
+
 ## v4.8.0 - 2019 - 03 - 12
 ## Added
 - [client/main] Added Ngrok Status Viewer in PR [2032](https://github.com/microsoft/BotFramework-Emulator/pull/2032)
