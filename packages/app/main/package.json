@@ -1,7 +1,7 @@
 {
   "name": "@bfemulator/main",
   "packagename": "BotFramework-Emulator",
-  "version": "4.8.1",
+  "version": "4.9.0",
   "private": true,
   "description": "Development tool for the Microsoft Bot Framework. Allows developers to test and debug bots on localhost.",
   "main": "./app/server/main.js",
@@ -253,7 +253,11 @@
             "x64"
           ]
         }
-      ]
+      ],
+      "extendInfo": {
+        "NSMicrophoneUsageDescription": "This app requires microphone access to record audio."
+      },
+      "entitlements": "./scripts/config/resources/entitlements.plist"
     },
     "dmg": {
       "background": "./scripts/config/resources/background.tiff",

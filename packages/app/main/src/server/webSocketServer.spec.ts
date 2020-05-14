@@ -51,6 +51,7 @@ describe('WebSocketServer', () => {
     mockCreateServer.mockClear();
     mockWSServer.handleUpgrade.mockClear();
     mockWSServer.on.mockClear();
+    (WebSocketServer as any)._restServer = undefined;
   });
 
   it('should return the corresponding socket for a conversation id', () => {
@@ -65,8 +66,6 @@ describe('WebSocketServer', () => {
   });
 
   it('should initialize the server', async () => {
-    const cleanupSpy = jest.spyOn(WebSocketServer, 'cleanup').mockImplementationOnce(() => null);
-    (WebSocketServer as any)._restServer = {};
     (WebSocketServer as any)._servers = {};
     (WebSocketServer as any)._sockets = {};
     const mockRestServer = {
@@ -83,8 +82,13 @@ describe('WebSocketServer', () => {
     expect(port).toBe(56273);
     expect(mockRestServer.get).toHaveBeenCalledWith('/ws/:conversationId', jasmine.any(Function));
     expect((WebSocketServer as any)._restServer).toEqual(mockRestServer);
-    expect(cleanupSpy).toHaveBeenCalled();
-    cleanupSpy.mockRestore();
+  });
+
+  it('should not re-initialize if already initialized', async () => {
+    (WebSocketServer as any)._restServer = {}; // server initialized
+    await WebSocketServer.init();
+
+    expect(mockCreateServer).not.toHaveBeenCalled();
   });
 
   it('should clean up the rest server, web sockets, and web socket servers', () => {

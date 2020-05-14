@@ -6,6 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## v4.9.0 - 2020 - 05 - 11
+## Added
+- [main] Exposed `id` field on response object returned from `/v3/conversations` endpoint in PR [2129](https://github.com/microsoft/BotFramework-Emulator/pull/2129)
+
+- [client] - Bumped `botframework-webchat` to v4.9.0 in PR [2142](https://github.com/microsoft/BotFramework-Emulator/pull/2142)
+
+## Fixed
+- [build] Fixed system dialog on Mac OS warning about being unable to check for malicious code in PR [2135](https://github.com/microsoft/BotFramework-Emulator/pull/2135)
+- [client / main] Fixed an issue where starting a conversation via deeplink was initializing the WebSocket server twice and closing previously established connections in PR [2146](https://github.com/microsoft/BotFramework-Emulator/pull/2146)
+
 ## v4.8.1 - 2019 - 03 - 18
 ## Fixed
 - [build] Replaced a missing .icns file that was deleted by mistake in a previous PR. Fixes the app icon on Linux & Mac in PR [2104](https://github.com/microsoft/BotFramework-Emulator/pull/2104)
