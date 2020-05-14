@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Added
 - [main] Exposed `id` field on response object returned from `/v3/conversations` endpoint in PR [2129](https://github.com/microsoft/BotFramework-Emulator/pull/2129)
 
+- [client] - Bumped `botframework-webchat` to v4.9.0 in PR [2094](https://github.com/microsoft/BotFramework-Emulator/pull/2142)
+
 ## Fixed
 - [build] Fixed system dialog on Mac OS warning about being unable to check for malicious code in PR [2135](https://github.com/microsoft/BotFramework-Emulator/pull/2135)
 
@@ -21,10 +23,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [client] Fixed an issue where starting a conversation with an unset custom user ID was causing the User member of the conversation to have a blank `id` field in PR [2108](https://github.com/microsoft/BotFramework-Emulator/pull/2108)
 - [main] Fixed an issue where the setting `Bypass Ngrok for local addresses` was continuing to use the ngrok tunnel even for local bots in PR [2111](https://github.com/microsoft/BotFramework-Emulator/pull/2111)
 - [main] Ngrok Reporting made accurate in PR [2113](https://github.com/microsoft/BotFramework-Emulator/pull/2113)
-
-## Added
-- [client] - Bumped `botframework-webchat` to v4.9.0 in PR [2094](https://github.com/microsoft/BotFramework-Emulator/pull/2142)
-
 
 ## v4.8.0 - 2019 - 03 - 12
 ## Added
