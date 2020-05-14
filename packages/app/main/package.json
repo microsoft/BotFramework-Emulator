@@ -253,7 +253,11 @@
             "x64"
           ]
         }
-      ]
+      ],
+      "extendInfo": {
+        "NSMicrophoneUsageDescription": "This app requires microphone access to record audio."
+      },
+      "entitlements": "./scripts/config/resources/entitlements.plist"
     },
     "dmg": {
       "background": "./scripts/config/resources/background.tiff",
