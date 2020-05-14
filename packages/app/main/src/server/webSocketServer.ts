@@ -50,48 +50,50 @@ export class WebSocketServer {
     return this._sockets[conversationId];
   }
 
-  public static async init(): Promise<number> {
-    if (this._restServer) {
-      this.cleanup();
-    }
-    this._restServer = createServer({ handleUpgrades: true, name: 'Emulator-WebSocket-Host' });
-    this._restServer.get('/ws/:conversationId', (req: Request, res: Response, next: Next) => {
-      const conversationId = req.params.conversationId;
+  /** Initializes the server and returns the port it is listening on, or if already initialized,
+   *  is a no-op.
+   */
+  public static async init(): Promise<number | void> {
+    if (!this._restServer) {
+      this._restServer = createServer({ handleUpgrades: true, name: 'Emulator-WebSocket-Host' });
+      this._restServer.get('/ws/:conversationId', (req: Request, res: Response, next: Next) => {
+        const conversationId = req.params.conversationId;
 
-      // initialize a new web socket server for each new conversation
-      if (conversationId && !this._servers[conversationId]) {
-        if (!(res as any).claimUpgrade) {
-          return next(new Error('Connection must upgrade for web sockets.'));
-        }
-        const { head, socket } = (res as any).claimUpgrade();
-        const wsServer = new WSServer({
-          noServer: true,
-        });
-        wsServer.on('connection', (socket, req) => {
-          this._sockets[conversationId] = socket;
-          socket.on('close', (code, reason) => {
-            delete this._servers[conversationId];
-            delete this._sockets[conversationId];
+        // initialize a new web socket server for each new conversation
+        if (conversationId && !this._servers[conversationId]) {
+          if (!(res as any).claimUpgrade) {
+            return next(new Error('Connection must upgrade for web sockets.'));
+          }
+          const { head, socket } = (res as any).claimUpgrade();
+          const wsServer = new WSServer({
+            noServer: true,
           });
-        });
-        // upgrade the connection to a ws connection
-        wsServer.handleUpgrade(req, socket, head, socket => {
-          wsServer.emit('connection', socket, req);
-        });
-        this._servers[conversationId] = wsServer;
-      }
-    });
-    // dynamically generate the web socket server port
-    const port = await new Promise<number>((resolve, reject) => {
-      this._restServer.once('error', err => reject(err));
-      this._restServer.listen(null, () => {
-        resolve(this._restServer.address().port);
+          wsServer.on('connection', (socket, req) => {
+            this._sockets[conversationId] = socket;
+            socket.on('close', (code, reason) => {
+              delete this._servers[conversationId];
+              delete this._sockets[conversationId];
+            });
+          });
+          // upgrade the connection to a ws connection
+          wsServer.handleUpgrade(req, socket, head, socket => {
+            wsServer.emit('connection', socket, req);
+          });
+          this._servers[conversationId] = wsServer;
+        }
       });
-    });
-    this.port = port;
-    // eslint-disable-next-line no-console
-    console.log(`Web Socket host server listening on ${port}...`);
-    return port;
+      // dynamically generate the web socket server port
+      const port = await new Promise<number>((resolve, reject) => {
+        this._restServer.once('error', err => reject(err));
+        this._restServer.listen(null, () => {
+          resolve(this._restServer.address().port);
+        });
+      });
+      this.port = port;
+      // eslint-disable-next-line no-console
+      console.log(`Web Socket host server listening on ${port}...`);
+      return port;
+    }
   }
 
   public static cleanup(): void {
