@@ -184,6 +184,13 @@ export class EmulatorRestServer {
   }
 
   public report(conversationId: string): void {
+    const conversation = this.state.conversations.conversationById(conversationId);
+    if (conversation && conversation.botEndpoint && conversation.botEndpoint.botUrl) {
+      this.options.logService.logToChat(
+        conversationId,
+        textItem(LogLevel.Debug, `Connecting to bot on ${conversation.botEndpoint.botUrl}`)
+      );
+    }
     this.options.logService.logToChat(
       conversationId,
       textItem(LogLevel.Debug, `Emulator listening on ${this.serverUrl}`)
