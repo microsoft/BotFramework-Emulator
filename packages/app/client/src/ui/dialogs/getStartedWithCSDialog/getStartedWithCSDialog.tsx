@@ -53,6 +53,7 @@ const titleMap = {
   [ServiceTypes.Dispatch]: 'Connect to a Dispatch model',
   [ServiceTypes.QnA]: 'Create a QnA Maker knowledge base',
   [ServiceTypes.BlobStorage]: 'Create a Blob Storage Container',
+  [ServiceTypes.CosmosDB]: 'Connect to a Cosmos DB account',
 };
 
 const buttonTextMap = {
@@ -60,6 +61,7 @@ const buttonTextMap = {
   [ServiceTypes.Dispatch]: 'Dispatch',
   [ServiceTypes.QnA]: 'QnA Maker',
   [ServiceTypes.BlobStorage]: 'Blob Storage',
+  [ServiceTypes.CosmosDB]: 'Cosmos DB',
 };
 
 export class GetStartedWithCSDialog extends Component<GetStartedWithCSDialogProps, {}> {
