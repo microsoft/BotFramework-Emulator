@@ -37,10 +37,12 @@ cd BotFramework-Emulator
 
 ### Install global dependencies
 
-> npm version 5.6.0 or greater is required.
+> **NOTE:** Due to the version of Electron that the Emulator uses, it's recommended to use **Node v10.14.2** when building the project from source. Later versions might result in build or runtime errors.
+>
+> **npm version 5.6.0** or greater is also required. (Node v10.14.x includes 6.4.1)
 
 ```
-npm i -g lerna@3.4.0 webpack@4.8.x webpack-cli jest
+npm i -g lerna@3.4.0
 ```
 
 > **NOTE:** If you are using Linux, building the Emulator might result in an error due to a missing package: **libXScrnSaver**. If you run into this error, install the package using your OS's package manager and retry: 
