@@ -34,6 +34,7 @@
 import { AttachmentContentTypes } from '@bfemulator/sdk-shared';
 
 import { OAuthLinkEncoder } from './oauthLinkEncoder';
+import { SharedConstants } from '@bfemulator/app-shared';
 
 jest.mock('./uniqueId', () => ({
   uniqueId: () => 'fgfdsggf5432534',
@@ -111,7 +112,7 @@ describe('The OauthLinkEncoder', () => {
     });
   });
 
-  it('should throw when an error occurs retrieving the link while calling resolveOAuthCards', async () => {
+  it('should throw when an error occurs retrieving the link while calling resolveOAuthCards, but should also generate an emulated oauth link', async () => {
     ok = false;
     statusText = 'oh noes!';
     const mockActivity = {
@@ -119,7 +120,8 @@ describe('The OauthLinkEncoder', () => {
         {
           contentType: AttachmentContentTypes.oAuthCard,
           content: {
-            buttons: [{ type: 'signin' }],
+            buttons: [{ type: 'signin', value: undefined }],
+            connectionName: 'oauth-connection',
           },
         },
       ],
@@ -129,7 +131,11 @@ describe('The OauthLinkEncoder', () => {
       await encoder.resolveOAuthCards(mockActivity);
       expect(false);
     } catch (e) {
-      expect(e.message).toEqual(statusText);
+      expect(e.message).toEqual(`Failed to generate an actual sign-in link: Error: ${statusText}`);
+      expect(mockActivity.attachments[0].content.buttons[0].type).toBe('openUrl');
+      expect(mockActivity.attachments[0].content.buttons[0].value).toBe(
+        SharedConstants.EmulatedOAuthUrlProtocol + '//' + 'oauth-connection' + '&&&' + 'testConversation'
+      );
     }
   });
 
@@ -150,7 +156,7 @@ describe('The OauthLinkEncoder', () => {
       await encoder.resolveOAuthCards(mockActivity);
       expect(false);
     } catch (e) {
-      expect(e.message).toEqual("I'm in your throw!");
+      expect(e.message).toEqual(`Failed to generate an actual sign-in link: Error: ${"I'm in your throw!"}`);
     }
   });
 

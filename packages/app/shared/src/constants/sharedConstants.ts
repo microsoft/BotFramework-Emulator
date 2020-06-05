@@ -39,6 +39,8 @@ export const SharedConstants = {
   TEMP_BOT_IN_MEMORY_PATH: 'TEMP_BOT_IN_MEMORY',
   EDITOR_KEY_PRIMARY,
   EDITOR_KEY_SECONDARY,
+  EmulatedOAuthUrlProtocol: 'oauth:',
+  OAuthUrlProtocol: 'oauthlink:',
 
   /** Names of commands used in both main and client */
   Commands: {
