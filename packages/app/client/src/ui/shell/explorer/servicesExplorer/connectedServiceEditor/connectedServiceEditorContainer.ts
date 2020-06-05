@@ -45,7 +45,7 @@ const mapDispatchToProps = (dispatch: (action: Action) => void) => {
     onAnchorClick: (url: string) => {
       dispatch(executeCommand(true, SharedConstants.Commands.Electron.OpenExternal, null, url));
     },
-    updateConnectedService: updatedLuisService => DialogService.hideDialog([updatedLuisService]),
+    updateConnectedService: (updatedLuisService) => DialogService.hideDialog([updatedLuisService]),
   };
 };
 

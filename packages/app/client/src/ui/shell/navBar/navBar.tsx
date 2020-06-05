@@ -137,9 +137,9 @@ export class NavBarComponent extends React.Component<NavBarProps, NavBarState> {
     if (navSelection === 'Notifications') {
       const { notifications } = this.props;
       const numUnreadNotifications = notifications
-        .map(notificationId => NotificationManager.get(notificationId))
-        .map(notification => notification.read)
-        .filter(notificationHasBeenRead => !notificationHasBeenRead).length;
+        .map((notificationId) => NotificationManager.get(notificationId))
+        .map((notification) => notification.read)
+        .filter((notificationHasBeenRead) => !notificationHasBeenRead).length;
 
       return numUnreadNotifications ? <span className={styles.badge}>{numUnreadNotifications}</span> : null;
     }

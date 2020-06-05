@@ -49,7 +49,7 @@ describe('The misc commands', () => {
   });
 
   it('should toggle the dev tools for open inspectors', () => {
-    const dispatchEventSpy = jest.spyOn(window, 'dispatchEvent').mockImplementationOnce(ev => null);
+    const dispatchEventSpy = jest.spyOn(window, 'dispatchEvent').mockImplementationOnce((ev) => null);
     const command = registry.getCommand(SharedConstants.Commands.Electron.ToggleDevTools);
     command();
 

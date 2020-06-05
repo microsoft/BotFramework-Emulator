@@ -71,7 +71,7 @@ export function createStartConversationHandler(emulatorServer: EmulatorRestServe
       currentUser = conversation.user;
       const membersToAddInConversationUpdate = [];
 
-      const userIsNotInConversation = conversation.members.findIndex(user => user.id === currentUser.id) === -1;
+      const userIsNotInConversation = conversation.members.findIndex((user) => user.id === currentUser.id) === -1;
       if (userIsNotInConversation) {
         // Adds user to conversation and sends "user added to conversation"
         conversation.addMember(currentUser.id, currentUser.name);
@@ -80,7 +80,7 @@ export function createStartConversationHandler(emulatorServer: EmulatorRestServe
         membersToAddInConversationUpdate.push(currentUser);
       }
 
-      const botIsNotInConversation = conversation.members.findIndex(user => user.id === botEndpoint.botId) === -1;
+      const botIsNotInConversation = conversation.members.findIndex((user) => user.id === botEndpoint.botId) === -1;
       if (botIsNotInConversation) {
         // Adds bot to conversation and sends "bot added to conversation"
         conversation.addMember(botEndpoint.botId, 'Bot');

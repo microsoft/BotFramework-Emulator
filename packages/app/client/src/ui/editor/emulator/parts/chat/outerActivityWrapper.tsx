@@ -109,6 +109,6 @@ export class OuterActivityWrapper extends React.Component<OuterActivityWrapperPr
   }
 
   private shouldBeSelected(subject: Activity): boolean {
-    return this.props.highlightedActivities.some(activity => areActivitiesEqual(activity, subject));
+    return this.props.highlightedActivities.some((activity) => areActivitiesEqual(activity, subject));
   }
 }

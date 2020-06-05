@@ -62,8 +62,8 @@ export const bot = (state: BotState = DEFAULT_STATE, action: BotAction): BotStat
 
     case BotActionType.setActive: {
       // move active bot up to the top of the recent bots list
-      const mostRecentBot = state.botFiles.find(bot2 => bot2 && bot2.path === action.payload.bot.path);
-      const recentBots = state.botFiles.filter(bot3 => bot3 && bot3.path !== action.payload.bot.path);
+      const mostRecentBot = state.botFiles.find((bot2) => bot2 && bot2.path === action.payload.bot.path);
+      const recentBots = state.botFiles.filter((bot3) => bot3 && bot3.path !== action.payload.bot.path);
       if (mostRecentBot) {
         recentBots.unshift(mostRecentBot);
       }

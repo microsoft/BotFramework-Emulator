@@ -82,7 +82,7 @@ describe('hyperlinkHandler', () => {
     commandService = descriptor.descriptor.get();
   });
   beforeEach(() => {
-    mockParse = jest.fn(url => {
+    mockParse = jest.fn((url) => {
       if (url) {
         const parts = url.split(':');
         return { protocol: parts[0] + ':' || '' };

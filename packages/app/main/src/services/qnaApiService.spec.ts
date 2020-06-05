@@ -328,7 +328,7 @@ describe('The QnAMakerApi sad path', () => {
   });
 
   it('should return an empty payload if endpointKey request fails', async () => {
-    (fetch as any).mockImplementation(url => {
+    (fetch as any).mockImplementation((url) => {
       let ok = true;
 
       if (url.includes('endpointkeys')) {
@@ -348,7 +348,7 @@ describe('The QnAMakerApi sad path', () => {
   });
 
   it('should return an empty payload if knowledgebase request fails', async () => {
-    (fetch as any).mockImplementation(url => {
+    (fetch as any).mockImplementation((url) => {
       let ok = true;
 
       if (url.includes('knowledgebases')) {

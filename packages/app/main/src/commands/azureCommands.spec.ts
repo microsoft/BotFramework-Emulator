@@ -45,12 +45,12 @@ const mockArmToken = 'bm90aGluZw==.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjd
 
 jest.mock('../services/azureAuthWorkflowService', () => ({
   AzureAuthWorkflowService: {
-    retrieveAuthToken: function*() {
+    retrieveAuthToken: function* () {
       // eslint-disable-next-line typescript/camelcase
       yield { access_token: mockArmToken };
     },
 
-    enterSignOutWorkflow: function*() {
+    enterSignOutWorkflow: function* () {
       yield true;
     },
   },
@@ -60,7 +60,7 @@ jest.mock('../main', () => ({}));
 
 jest.mock('../state/store', () => ({
   store: {
-    dispatch: action => mockStore.dispatch(action),
+    dispatch: (action) => mockStore.dispatch(action),
     getState: () => mockStore.getState(),
   },
   getStore: () => mockStore,
@@ -137,7 +137,7 @@ describe('The azureCommand,', () => {
     });
 
     it('should return false if the azure auth fails', async () => {
-      AzureAuthWorkflowService.retrieveAuthToken = function*() {
+      AzureAuthWorkflowService.retrieveAuthToken = function* () {
         yield false;
       } as any;
       const result = await registry.getCommand(SharedConstants.Commands.Azure.RetrieveArmToken)();

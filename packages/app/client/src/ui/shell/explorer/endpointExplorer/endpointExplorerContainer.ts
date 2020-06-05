@@ -44,16 +44,16 @@ import { EndpointExplorer } from './endpointExplorer';
 const mapStateToProps = (state: RootState, ...ownProps: any[]) => {
   const { services } = state.bot.activeBot;
   return {
-    endpointServices: services.filter(service => service.type === ServiceTypes.Endpoint),
+    endpointServices: services.filter((service) => service.type === ServiceTypes.Endpoint),
     window,
     ...ownProps,
   };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
     launchEndpointEditor: (endpointEditor: ComponentClass<EndpointEditor>, endpointService: IEndpointService) =>
-      new Promise(resolve => {
+      new Promise((resolve) => {
         dispatch(launchEndpointEditor(endpointEditor, endpointService, resolve));
       }),
     openEndpointInEmulator: (endpointService: IEndpointService) =>

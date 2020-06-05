@@ -361,9 +361,9 @@ describe('The Inspector component', () => {
   let parent;
   let node;
   const documentCreateElement = document.createElement.bind(document);
-  document.createElement = function(...args: any[]): any {
+  document.createElement = function (...args: any[]): any {
     const el = documentCreateElement(...args);
-    el.send = function() {
+    el.send = function () {
       return true;
     };
     return el;

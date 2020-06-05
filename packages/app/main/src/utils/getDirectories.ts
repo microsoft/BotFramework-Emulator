@@ -35,7 +35,7 @@ import { lstatSync, readdirSync } from 'fs';
 import { join } from 'path';
 
 /** Returns a list of subfolders */
-export const getDirectories = source =>
+export const getDirectories = (source) =>
   readdirSync(source)
-    .map(name => join(source, name))
+    .map((name) => join(source, name))
     .filter((sourceArg: any) => lstatSync(sourceArg).isDirectory());

@@ -55,11 +55,11 @@ const mapDispatchToProps = (dispatch): MainProps => ({
     }
   },
   applicationMountComplete: async () => {
-    await new Promise(resolve => {
+    await new Promise((resolve) => {
       dispatch(executeCommand(true, SharedConstants.Commands.ClientInit.Loaded, resolve));
     });
     showWelcomePage();
-    await new Promise(resolve => {
+    await new Promise((resolve) => {
       dispatch(executeCommand(true, SharedConstants.Commands.ClientInit.PostWelcomeScreen, resolve));
     });
     window.addEventListener('keydown', globalHandlers, true);

@@ -65,7 +65,7 @@ describe('UpdateAvailableDialog', () => {
 
     node = wrapper.find(UpdateAvailableDialog);
     instance = node.instance();
-    mockHideDialog = jest.fn(_ => null);
+    mockHideDialog = jest.fn((_) => null);
   });
 
   it('should render deeply', () => {

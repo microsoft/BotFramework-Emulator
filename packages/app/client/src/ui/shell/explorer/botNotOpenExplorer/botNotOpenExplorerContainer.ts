@@ -52,7 +52,7 @@ const mapDispatchToProps = (dispatch: (action: Action) => void): BotNotOpenExplo
     }
   },
   showCreateNewBotDialog: () =>
-    new Promise(resolve => {
+    new Promise((resolve) => {
       dispatch(executeCommand(false, SharedConstants.Commands.UI.ShowBotCreationDialog, resolve));
     }),
 });

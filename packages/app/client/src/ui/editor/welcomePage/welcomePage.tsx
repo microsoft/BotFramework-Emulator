@@ -139,7 +139,7 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
     );
   }
 
-  private createAnchorClickHandler = url => () => this.props.onAnchorClick(url);
+  private createAnchorClickHandler = (url) => () => this.props.onAnchorClick(url);
 
   private onBotSelected = (bot: BotInfo) => {
     this.props.switchToBot(bot.path);

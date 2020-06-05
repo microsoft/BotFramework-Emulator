@@ -83,7 +83,7 @@ describe('TelemetryService', () => {
   });
 
   it('should startup', () => {
-    const mockAutoCollect = jest.fn(_config => mockAppInsights);
+    const mockAutoCollect = jest.fn((_config) => mockAppInsights);
     mockAppInsights = {
       setAutoCollectConsole: mockAutoCollect,
       setAutoCollectDependencies: mockAutoCollect,

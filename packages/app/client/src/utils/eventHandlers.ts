@@ -57,7 +57,7 @@ class EventHandlers {
       }
     }
 
-    const result = [].filter.call(list[list.length - 1].children, element => !element.hasAttribute('disabled'));
+    const result = [].filter.call(list[list.length - 1].children, (element) => !element.hasAttribute('disabled'));
 
     return result;
   }
@@ -91,7 +91,7 @@ class EventHandlers {
     // Ctrl+= or Ctrl+Shift+=
     if (ctrlOrCmdPressed && (key === '=' || key === '+')) {
       const webContents = remote.getCurrentWebContents();
-      webContents.getZoomFactor(zoomFactor => {
+      webContents.getZoomFactor((zoomFactor) => {
         const newZoomFactor = zoomFactor + 0.1;
         if (newZoomFactor >= maxZoomFactor) {
           webContents.setZoomFactor(maxZoomFactor);
@@ -103,7 +103,7 @@ class EventHandlers {
     // Ctrl+- or Ctrl+Shift+-
     if (ctrlOrCmdPressed && (key === '-' || key === '_')) {
       const webContents = remote.getCurrentWebContents();
-      webContents.getZoomFactor(zoomFactor => {
+      webContents.getZoomFactor((zoomFactor) => {
         const newZoomFactor = zoomFactor - 0.1;
         if (newZoomFactor <= minZoomFactor) {
           webContents.setZoomFactor(minZoomFactor);

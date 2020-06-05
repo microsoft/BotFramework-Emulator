@@ -64,7 +64,7 @@ export function createGetConversationsHandler(state: ServerState) {
         []
       );
     } else {
-      response.conversations = conversations.map(convo => ({ id: convo.conversationId, members: convo.members }));
+      response.conversations = conversations.map((convo) => ({ id: convo.conversationId, members: convo.members }));
     }
 
     try {

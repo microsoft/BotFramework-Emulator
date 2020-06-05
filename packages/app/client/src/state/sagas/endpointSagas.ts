@@ -50,7 +50,7 @@ import { DialogService } from '../../ui/dialogs/service';
 import { RootState } from '../store';
 
 const getConnectedAbs = (state: RootState, endpointAppId: string) => {
-  return (state.bot.activeBot.services || []).find(service => {
+  return (state.bot.activeBot.services || []).find((service) => {
     return service.type === ServiceTypes.Bot && (service as IBotService).appId === endpointAppId;
   });
 };

@@ -38,9 +38,9 @@ import { ValueTypes } from '@bfemulator/app-shared/built/enums/valueTypes';
 import { diff } from 'deep-diff';
 
 export function IpcHandler(type: ExtensionChannel): MethodDecorator {
-  return function(elementDescriptor: any) {
+  return function (elementDescriptor: any) {
     const { key, descriptor } = elementDescriptor;
-    const initializer = function() {
+    const initializer = function () {
       const host = (window as any).host as InspectorHost;
       const bound = this[key].bind(this);
       host.on(type as any, bound);
@@ -61,13 +61,13 @@ export function IpcHandler(type: ExtensionChannel): MethodDecorator {
 }
 
 export function IpcHost(mixins: (keyof InspectorHost)[]) {
-  return function(elementDescriptor: any) {
+  return function (elementDescriptor: any) {
     const { elements } = elementDescriptor;
     const host = (window as any).host as InspectorHost;
-    mixins.forEach(mixin => {
+    mixins.forEach((mixin) => {
       const value = typeof host[mixin] === 'function' ? (host[mixin] as Function).bind(host) : host[mixin];
 
-      const element = elements.find(element => element.key === mixin);
+      const element = elements.find((element) => element.key === mixin);
       const descriptor = {
         key: mixin,
         kind: 'method',
@@ -95,10 +95,10 @@ export async function updateTheme(themeInfo: { themeName: string; themeComponent
   const fragment = document.createDocumentFragment();
   const promises = [];
   // Create the new links for each theme component
-  themeInfo.themeComponents.forEach(themeComponent => {
+  themeInfo.themeComponents.forEach((themeComponent) => {
     const link = document.createElement('link');
     promises.push(
-      new Promise(resolve => {
+      new Promise((resolve) => {
         link.addEventListener('load', resolve);
       })
     );
@@ -111,7 +111,7 @@ export async function updateTheme(themeInfo: { themeName: string; themeComponent
   // Wait for all the links to load their css
   await Promise.all(promises);
   // Remove the old links
-  oldThemeComponents.forEach(themeComponent => {
+  oldThemeComponents.forEach((themeComponent) => {
     if (themeComponent.parentElement) {
       themeComponent.parentElement.removeChild(themeComponent);
     }
@@ -127,7 +127,7 @@ export function getBotState(
     return null;
   }
   const allBotStates = extractBotStateActivitiesFromLogEntries(entries);
-  const index = allBotStates.findIndex(botState => botState.id === referenceBotState.id) + offset;
+  const index = allBotStates.findIndex((botState) => botState.id === referenceBotState.id) + offset;
   return allBotStates[index];
 }
 
@@ -148,7 +148,7 @@ export function buildDiff(a: Activity, b: Activity): Activity {
   const lhs = [];
   const rhs = [];
   const deltas = diff(b.value, a.value);
-  (deltas || []).forEach(diff => {
+  (deltas || []).forEach((diff) => {
     switch (diff.kind) {
       case 'A':
         {
@@ -194,11 +194,11 @@ export function buildDiff(a: Activity, b: Activity): Activity {
   );
   botStateClone.valueType = ValueTypes.Diff;
   // values that were added
-  rhs.forEach(path => {
+  rhs.forEach((path) => {
     buildDiffNode('+', path, botStateClone.value, botStateClone.value);
   });
   // values that were removed
-  lhs.forEach(path => {
+  lhs.forEach((path) => {
     buildDiffNode('-', path, botStateClone.value, b.value);
   });
   return botStateClone;

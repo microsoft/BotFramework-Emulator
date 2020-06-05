@@ -108,7 +108,7 @@ export class ElectronCommands {
       enabled = contentType && contentType === SharedConstants.ContentTypes.CONTENT_TYPE_LIVE_CHAT;
     }
 
-    sendActivityMenuItems.forEach(item => {
+    sendActivityMenuItems.forEach((item) => {
       item.enabled = enabled;
     });
   }

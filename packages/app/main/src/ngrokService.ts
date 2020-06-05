@@ -147,7 +147,7 @@ export class NgrokService {
     this.triedToSpawn = false;
 
     if (this.ngrokPath && this.ngrokPath.length) {
-      return (this.pendingRecycle = new Promise(async resolve => {
+      return (this.pendingRecycle = new Promise(async (resolve) => {
         try {
           this.triedToSpawn = true;
           const { inspectUrl, url } = await this.ngrok.connect({
@@ -211,7 +211,7 @@ export class NgrokService {
   public broadcast(...logItems: LogItem[]): void {
     const { conversations } = Emulator.getInstance().server.state;
     const conversationIds: string[] = conversations.getConversationIds();
-    conversationIds.forEach(id => {
+    conversationIds.forEach((id) => {
       emulatorApplication.mainWindow.logService.logToChat(id, ...logItems);
     });
   }

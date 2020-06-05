@@ -102,7 +102,7 @@ export class TraceActivity extends React.Component<TraceActivityProps, {}> {
     } else if (valueType === ValueTypes.BotState) {
       const diffIndicatorIndex =
         highlightedActivities.length > 1
-          ? highlightedActivities.findIndex(activity => areActivitiesEqual(activity, card.activity))
+          ? highlightedActivities.findIndex((activity) => areActivitiesEqual(activity, card.activity))
           : -1;
       return (
         <PrimaryButton
@@ -122,6 +122,6 @@ export class TraceActivity extends React.Component<TraceActivityProps, {}> {
   }
 
   private shouldBeSelected(subject: Activity): boolean {
-    return this.props.highlightedActivities.some(activity => areActivitiesEqual(activity, subject));
+    return this.props.highlightedActivities.some((activity) => areActivitiesEqual(activity, subject));
   }
 }

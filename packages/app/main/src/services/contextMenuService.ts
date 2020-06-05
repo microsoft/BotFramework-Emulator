@@ -44,13 +44,13 @@ export class ContextMenuService {
     if (ContextMenuService.currentMenu) {
       ContextMenuService.currentMenu.closePopup();
     }
-    return new Promise(resolve => {
-      const clickHandler = menuItem => {
+    return new Promise((resolve) => {
+      const clickHandler = (menuItem) => {
         ContextMenuService.currentMenu = null;
         resolve(menuItem);
       };
 
-      const template = options.map(option => {
+      const template = options.map((option) => {
         option.click = clickHandler;
         return option;
       });

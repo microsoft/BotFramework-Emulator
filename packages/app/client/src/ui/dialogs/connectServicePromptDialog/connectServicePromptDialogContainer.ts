@@ -38,7 +38,7 @@ import { DialogService } from '../service';
 
 import { ConnectServicePromptDialog, ConnectServicePromptDialogProps } from './connectServicePromptDialog';
 
-const mapDispatchToProps = dispatch => (
+const mapDispatchToProps = (dispatch) => (
   _dispatch: () => void,
   ownProps: { [propName: string]: any }
 ): ConnectServicePromptDialogProps => {

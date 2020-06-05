@@ -191,7 +191,7 @@ export class Conversation extends EventEmitter {
     };
 
     // don't send if it has already been sent
-    if (this.activities.some(act => act.activity == activity)) {
+    if (this.activities.some((act) => act.activity == activity)) {
       return;
     }
 
@@ -236,7 +236,7 @@ export class Conversation extends EventEmitter {
   // updateActivity with replacement
   public updateActivity(updatedActivity: Activity): ResourceResponse {
     const { id } = updatedActivity;
-    const index = this.activities.findIndex(entry => entry.activity.id === id);
+    const index = this.activities.findIndex((entry) => entry.activity.id === id);
 
     if (index === -1) {
       // The activity may already flushed to the client, thus, not found anymore
@@ -244,7 +244,10 @@ export class Conversation extends EventEmitter {
       throw createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, 'not a known activity id');
     }
 
-    this.activities = updateIn(this.activities, [index, 'activity'], activity => ({ ...activity, ...updatedActivity }));
+    this.activities = updateIn(this.activities, [index, 'activity'], (activity) => ({
+      ...activity,
+      ...updatedActivity,
+    }));
     updatedActivity = this.activities[index].activity;
     this.emit('activitychange', { activity: updatedActivity });
 
@@ -256,7 +259,7 @@ export class Conversation extends EventEmitter {
 
   public deleteActivity(id: string) {
     // if we found the activity to reply to
-    const activityIndex = this.activities.findIndex(entry => entry.activity.id === id);
+    const activityIndex = this.activities.findIndex((entry) => entry.activity.id === id);
 
     if (activityIndex === -1) {
       // The activity may already flushed to the client
@@ -305,7 +308,7 @@ export class Conversation extends EventEmitter {
   }
 
   public async removeMember(id: string) {
-    const index = this.members.findIndex(val => val.id === id);
+    const index = this.members.findIndex((val) => val.id === id);
 
     if (index !== -1) {
       const user = this.members[index];
@@ -432,10 +435,10 @@ export class Conversation extends EventEmitter {
    * Returns activities since the watermark.
    */
   public getActivitiesSince(watermark: number): { activities: Activity[]; watermark: number } {
-    this.activities = watermark ? this.activities.filter(entry => entry.watermark >= watermark) : this.activities;
+    this.activities = watermark ? this.activities.filter((entry) => entry.watermark >= watermark) : this.activities;
 
     return {
-      activities: this.activities.map(entry => entry.activity),
+      activities: this.activities.map((entry) => entry.activity),
       watermark: this.nextWatermark,
     };
   }
@@ -454,7 +457,7 @@ export class Conversation extends EventEmitter {
 
     // Get original botId and userId
     // Fixup conversationId
-    activities.forEach(activity => {
+    activities.forEach((activity) => {
       if (activity.conversation) {
         activity.conversation.id = this.conversationId;
       }
@@ -477,7 +480,7 @@ export class Conversation extends EventEmitter {
 
     // Fixup recipient and from ids
     if (this.botEndpoint && origUserId && origBotId) {
-      activities.forEach(activity => {
+      activities.forEach((activity) => {
         if (activity.recipient.id === origBotId) {
           activity.recipient.id = this.botEndpoint.botId;
         }
@@ -508,8 +511,8 @@ export class Conversation extends EventEmitter {
    */
   public async getTranscript(valueTypesToExtract: number = 0): Promise<Activity[]> {
     const activities = this.transcript
-      .filter(record => record.type === 'activity add')
-      .map(record => {
+      .filter((record) => record.type === 'activity add')
+      .map((record) => {
         const { activity } = record;
         const extractValue =
           valueTypesToExtract && activity.valueType && !!(valueTypesToExtract & ValueTypesMask[activity.valueType]); // bitwise intentional

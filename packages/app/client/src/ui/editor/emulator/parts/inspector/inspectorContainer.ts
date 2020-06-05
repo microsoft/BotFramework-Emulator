@@ -52,7 +52,7 @@ const mapStateToProps = (state: RootState, ownProps: InspectorProps): InspectorP
   };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
     createAriaAlert: (msg: string) => {
       ariaAlertService.alert(msg);

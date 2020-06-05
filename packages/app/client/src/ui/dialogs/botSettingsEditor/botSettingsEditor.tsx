@@ -196,7 +196,7 @@ export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, B
       services,
     });
 
-    const endpointService: IConnectedService = bot.services.find(service => service.type === ServiceTypes.Endpoint);
+    const endpointService: IConnectedService = bot.services.find((service) => service.type === ServiceTypes.Endpoint);
 
     if (bot.path === SharedConstants.TEMP_BOT_IN_MEMORY_PATH) {
       // we are currently using a mocked bot for livechat opened via protocol URI

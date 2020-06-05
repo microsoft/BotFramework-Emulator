@@ -90,8 +90,8 @@ export class Log extends React.Component<LogProps, LogState> {
   render() {
     let key = 0;
     return (
-      <div className={styles.log} ref={ref => (this.scrollMe = ref)}>
-        {this.props.document.log.entries.map(entry => (
+      <div className={styles.log} ref={(ref) => (this.scrollMe = ref)}>
+        {this.props.document.log.entries.map((entry) => (
           <LogEntry
             currentlyInspectedActivity={this.state.currentlyInspectedActivity}
             document={this.props.document}

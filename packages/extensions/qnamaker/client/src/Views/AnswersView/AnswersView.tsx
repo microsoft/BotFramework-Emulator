@@ -51,7 +51,7 @@ export default class AnswersView extends Component<AnswersViewProps, {}> {
   }
 
   public render(): JSX.Element {
-    const answersRendered: JSX.Element[] = this.props.answers.map(answer => this.renderAnswer(answer));
+    const answersRendered: JSX.Element[] = this.props.answers.map((answer) => this.renderAnswer(answer));
     return (
       <div className={`${styles.answersColumn} answers-column`}>
         <h3>Answer</h3>
@@ -61,7 +61,7 @@ export default class AnswersView extends Component<AnswersViewProps, {}> {
           type="text"
           id="new-answer"
           placeholder="Enter a new answer here"
-          onKeyPress={e => this.answerInputKeyPress(e)}
+          onKeyPress={(e) => this.answerInputKeyPress(e)}
         />
       </div>
     );

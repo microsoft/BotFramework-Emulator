@@ -153,7 +153,7 @@ describe('The EndpointExplorer component should', () => {
     expect(instance.state.nameError).not.toBeUndefined();
   });
 
-  it('should validate the endpoint when an endpoint is entered and display a message after 500ms', done => {
+  it('should validate the endpoint when an endpoint is entered and display a message after 500ms', (done) => {
     const endpointValidationSpy = jest.spyOn(EndpointEditor as any, 'validateEndpoint').mockReturnValue(false);
     const instance = node.instance();
     const mockEvent = {

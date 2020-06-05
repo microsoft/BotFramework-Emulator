@@ -50,7 +50,7 @@ export function mergeDeep<T extends {}, R extends {}>(target: T, source: R): T &
   const output: T & R = { ...{}, ...target };
   // if (isObject(target) && isObject(source)) {
   {
-    Object.keys(source).forEach(key => {
+    Object.keys(source).forEach((key) => {
       if (isObject(source[key])) {
         if (!(key in target)) {
           Object.assign(output, { [key]: source[key] });
@@ -85,7 +85,7 @@ export const newBot = (...bots: BotConfigWithPath[]): BotConfigWithPath => {
 /** Returns the first endpoint service of a bot */
 export const getFirstBotEndpoint = (bot: BotConfigWithPath): IEndpointService => {
   if (bot.services && bot.services.length) {
-    return bot.services.find(service => service.type === ServiceTypes.Endpoint) as IEndpointService;
+    return bot.services.find((service) => service.type === ServiceTypes.Endpoint) as IEndpointService;
   }
   return null;
 };

@@ -113,7 +113,7 @@ describe('Ngrok Tunnel reducer', () => {
   });
 
   it('should add notifications with add notification and clear should remove all ngrok notifications', () => {
-    const getNotificationAction = payload => ({
+    const getNotificationAction = (payload) => ({
       type: NgrokTunnelActions.addNotification,
       payload,
     });

@@ -66,5 +66,5 @@ export function isLocalHostUrl(url: string): boolean {
       return false;
     }
   }
-  return localhostNames.some(name => parsedUrl.hostname === name);
+  return localhostNames.some((name) => parsedUrl.hostname === name);
 }

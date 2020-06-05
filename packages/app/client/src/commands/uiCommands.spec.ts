@@ -133,7 +133,7 @@ describe('the uiCommands', () => {
     it('when the SwitchNavBarTab command is dispatched', () => {
       // eslint-disable-next-line prefer-const
       let arg: SelectNavBarAction = {} as SelectNavBarAction;
-      store.dispatch = action => ((arg as any) = action);
+      store.dispatch = (action) => ((arg as any) = action);
       registry.getCommand(Commands.SwitchNavBarTab)('Do it Nauuuw!');
       expect(arg.type).toBe(NavBarActions.select);
       expect(arg.payload.selection).toBe('Do it Nauuuw!');
@@ -142,7 +142,7 @@ describe('the uiCommands', () => {
     it('when the ShowAppSettings command is dispatched', () => {
       // eslint-disable-next-line prefer-const
       let arg: OpenEditorAction = {} as OpenEditorAction;
-      store.dispatch = action => ((arg as any) = action);
+      store.dispatch = (action) => ((arg as any) = action);
       registry.getCommand(Commands.ShowAppSettings)();
       expect(arg.type).toBe(EditorActions.open);
       expect(arg.payload.contentType).toBe(CONTENT_TYPE_APP_SETTINGS);
@@ -153,7 +153,7 @@ describe('the uiCommands', () => {
     it('when the SignInToAzure command is dispatched', async () => {
       // eslint-disable-next-line prefer-const
       let arg: AzureAuthAction<AzureAuthWorkflow> = {} as AzureAuthAction<AzureAuthWorkflow>;
-      store.dispatch = action => ((arg as any) = action);
+      store.dispatch = (action) => ((arg as any) = action);
       registry.getCommand(Commands.SignInToAzure)();
       expect(arg.payload.loginSuccessDialog).toBe(AzureLoginSuccessDialogContainer);
       expect(arg.payload.promptDialog).toBe(AzureLoginPromptDialogContainer);
@@ -162,7 +162,7 @@ describe('the uiCommands', () => {
     it('when the InvalidateArmToken command is dispatched', async () => {
       // eslint-disable-next-line prefer-const
       let arg: AzureAuthAction<void> = {} as AzureAuthAction<void>;
-      store.dispatch = action => ((arg as any) = action);
+      store.dispatch = (action) => ((arg as any) = action);
       registry.getCommand(Commands.InvalidateAzureArmToken)();
       expect(arg).toEqual(invalidateArmToken());
     });
@@ -183,7 +183,7 @@ describe('the uiCommands', () => {
   describe('when showing the markdow page', () => {
     it('should detect when the user is offline', async () => {
       const dispatchedActions = [];
-      store.dispatch = action => {
+      store.dispatch = (action) => {
         dispatchedActions.push(action);
         return action;
       };
@@ -198,7 +198,7 @@ describe('the uiCommands', () => {
 
     it('should detect when the user has no internet even though they are connected to a network', async () => {
       const dispatchedActions = [];
-      store.dispatch = action => {
+      store.dispatch = (action) => {
         dispatchedActions.push(action);
         return action;
       };
@@ -214,7 +214,7 @@ describe('the uiCommands', () => {
 
     it('should attempt to fetch the markdown and decode it from a Uint8Array', async () => {
       const dispatchedActions = [];
-      store.dispatch = action => {
+      store.dispatch = (action) => {
         dispatchedActions.push(action);
         return action;
       };

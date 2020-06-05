@@ -108,7 +108,7 @@ jest.mock('electron', () => ({
 
 jest.mock('./azureAuthSaga', () => ({
   AzureAuthSaga: {
-    getArmToken: function*() {
+    getArmToken: function* () {
       // eslint-disable-next-line typescript/camelcase
       yield { access_token: mockArmToken };
     },
@@ -151,9 +151,7 @@ describe('The ServiceExplorerSagas', () => {
     });
 
     it('should retrieve the arm token from the store', () => {
-      const token = launchConnectedServicePickerGen()
-        .next()
-        .value.SELECT.selector(mockStore.getState());
+      const token = launchConnectedServicePickerGen().next().value.SELECT.selector(mockStore.getState());
       expect(token.access_token).toBe(mockArmToken);
     });
 
@@ -220,7 +218,7 @@ describe('The ServiceExplorerSagas', () => {
       const botConfig = it.next(newModels).value.SELECT.selector(mockStore.getState());
       let _type;
       let _args;
-      commandService.remoteCall = function(type: string, ...args: any[]) {
+      commandService.remoteCall = function (type: string, ...args: any[]) {
         _type = type;
         _args = args;
         return Promise.resolve(true);

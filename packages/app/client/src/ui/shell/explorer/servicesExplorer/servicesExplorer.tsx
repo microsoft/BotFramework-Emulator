@@ -103,7 +103,7 @@ export class ServicesExplorer extends ServicePane<ServicesExplorerProps> {
       state.expanded = true;
       state.toAnimate = {};
       const servicesMap = services.reduce((map, service) => ((map[service.id] = true), map), {});
-      newServices.forEach(service => {
+      newServices.forEach((service) => {
         if (!servicesMap[service.id]) {
           state.toAnimate[service.id] = true;
         }
@@ -123,7 +123,7 @@ export class ServicesExplorer extends ServicePane<ServicesExplorerProps> {
     return state;
   }
 
-  private createAnchorClickHandler = url => () => this.props.onAnchorClick(url);
+  private createAnchorClickHandler = (url) => () => this.props.onAnchorClick(url);
 
   private onDispatchDocsClick = this.createAnchorClickHandler('https://aka.ms/bot-framework-emulator-create-dispatch');
 
@@ -172,8 +172,9 @@ export class ServicesExplorer extends ServicePane<ServicesExplorerProps> {
       if (service.type === ServiceTypes.BlobStorage || service.type === ServiceTypes.CosmosDB) {
         // Both IBlobStorageService and ICosmosDBService extend IAzureService
         label = (service as IAzureService).serviceName;
-        containerName += `-  ${(service as IBlobStorageService).container ||
-          (service as ICosmosDBService).collection} `;
+        containerName += `-  ${
+          (service as IBlobStorageService).container || (service as ICosmosDBService).collection
+        } `;
       }
 
       if ('version' in service) {

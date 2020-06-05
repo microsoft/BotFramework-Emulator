@@ -57,14 +57,14 @@ class DialogServiceImpl implements DialogService {
    */
   showDialog<T extends ComponentClass | StatelessComponent, R = any>(dialog: T, props: {} = {}): Promise<R> {
     if (!this._hostElement) {
-      return new Promise(resolve => resolve(null));
+      return new Promise((resolve) => resolve(null));
     }
     const reactElement = React.createElement(Provider, { store }, React.createElement(dialog, props));
     ReactDOM.render(reactElement, this._hostElement, this.notifyHostOfRender);
     store.dispatch(setDialogShowing(true));
 
     // set up the dialog to return a value from the dialog
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       this._resolve = resolve;
     });
   }

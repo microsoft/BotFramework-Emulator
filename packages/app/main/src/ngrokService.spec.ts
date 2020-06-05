@@ -82,7 +82,7 @@ jest.mock('./state/store', () => ({
   get store() {
     return mockSettingsStore || (mockSettingsStore = mockCreateStore());
   },
-  getSettings: function() {
+  getSettings: function () {
     return new mockSettingsImpl(mockSettingsStore.getState());
   },
   get dispatch() {
@@ -171,7 +171,7 @@ describe('The ngrokService', () => {
 
   it('should use the current ngrok instance for an oauth postback url if already running', async () => {
     (ngrokService as any).serviceUrl = 'someServiceUrl';
-    (ngrokService as any).pendingRecycle = new Promise(resolve => resolve());
+    (ngrokService as any).pendingRecycle = new Promise((resolve) => resolve());
     mockRunning.mockReturnValueOnce(true);
     const serviceUrl = await ngrokService.getServiceUrlForOAuth();
 

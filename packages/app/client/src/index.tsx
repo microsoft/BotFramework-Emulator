@@ -51,8 +51,8 @@ if (!remote.app.isPackaged) {
   // enable react & react-redux dev tools
   installExtension([REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS])
     /* eslint-disable no-console */
-    .then(installed => console.log('Successfully installed: ', installed.join(', ')))
-    .catch(err => console.error('Failed to install dev tools: ', err));
+    .then((installed) => console.log('Successfully installed: ', installed.join(', ')))
+    .catch((err) => console.error('Failed to install dev tools: ', err));
   /* eslint-enable no-console */
 }
 

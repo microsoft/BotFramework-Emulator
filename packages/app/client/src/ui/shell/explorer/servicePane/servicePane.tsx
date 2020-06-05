@@ -113,7 +113,7 @@ export abstract class ServicePane<
     }
     return (
       <ExpandCollapseContent>
-        <ul className={styles.servicePaneList} ref={ul => (this.listRef = ul)}>
+        <ul className={styles.servicePaneList} ref={(ul) => (this.listRef = ul)}>
           {links}
         </ul>
         {additionalContent}
@@ -160,7 +160,7 @@ export abstract class ServicePane<
     const { window } = this.props;
     const { document } = window;
     li.setAttributeNode(document.createAttribute('data-selected')); // Boolean attribute
-    const deselectLiElement = function() {
+    const deselectLiElement = function () {
       window.removeEventListener('click', deselectLiElement, true);
       window.removeEventListener('contextmenu', deselectLiElement, true);
       li.removeAttribute('data-selected');

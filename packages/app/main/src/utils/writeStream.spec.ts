@@ -39,7 +39,7 @@ let fileMock = '';
 
 jest.mock('fs', () => ({
   createWriteStream: () => ({
-    write: content => {
+    write: (content) => {
       fileMock += content;
     },
     end: () => {

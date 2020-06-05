@@ -1,0 +1,161 @@
+Arguments: 
+  /Users/srravich/.nvs/node/10.14.2/x64/bin/node /Users/srravich/.nvs/node/10.14.2/x64/bin/yarn add node-sass
+
+PATH: 
+  /Users/srravich/.nvs/node/10.14.2/x64/bin:/usr/local/opt/sqlite/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/share/dotnet:~/.dotnet/tools:/Library/Apple/usr/bin:/Library/Frameworks/Mono.framework/Versions/Current/Commands
+
+Yarn version: 
+  1.22.4
+
+Node version: 
+  10.14.2
+
+Platform: 
+  darwin x64
+
+Trace: 
+  Error: https://registry.yarnpkg.com/@bfemulator%2fapp-shared: Not found
+      at Request.params.callback [as _callback] (/Users/srravich/.nvs/node/10.14.2/x64/lib/node_modules/yarn/lib/cli.js:66987:18)
+      at Request.self.callback (/Users/srravich/.nvs/node/10.14.2/x64/lib/node_modules/yarn/lib/cli.js:140748:22)
+      at Request.emit (events.js:182:13)
+      at Request.<anonymous> (/Users/srravich/.nvs/node/10.14.2/x64/lib/node_modules/yarn/lib/cli.js:141720:10)
+      at Request.emit (events.js:182:13)
+      at IncomingMessage.<anonymous> (/Users/srravich/.nvs/node/10.14.2/x64/lib/node_modules/yarn/lib/cli.js:141642:12)
+      at Object.onceWrapper (events.js:273:13)
+      at IncomingMessage.emit (events.js:187:15)
+      at endReadableNT (_stream_readable.js:1094:12)
+      at process._tickCallback (internal/process/next_tick.js:63:19)
+
+npm manifest: 
+  {
+    "name": "@bfemulator/client",
+    "version": "1.0.0",
+    "private": true,
+    "main": "./public/index.html",
+    "homepage": "./",
+    "scripts": {
+      "build:vendors": "webpack --mode production",
+      "build:shared": "webpack --mode production",
+      "build:app": "webpack --mode production",
+      "build:shared:dev": "webpack --mode development --progress --colors",
+      "build:app:dev": "webpack --mode development --progress --colors",
+      "build": "run-s build:vendors build:shared build:app",
+      "lint": "eslint --color --quiet --ext .js,.jsx,.ts,.tsx ./src",
+      "lint:fix": "npm run lint -- --fix",
+      "start": "run-s build:shared:dev webpackdevServer:dev",
+      "webpackdevServer:dev": "webpack-dev-server --mode development --hot --inline --progress --colors --content-base ./public",
+      "test": "jest",
+      "test:watch": "jest --watch"
+    },
+    "jest": {
+      "setupTestFrameworkScriptFile": "../../../../testSetup.js",
+      "transform": {
+        "^.+\\.(tsx?|jsx?)$": "babel-jest"
+      },
+      "testURL": "http://localhost",
+      "rootDir": "./src",
+      "testMatch": [
+        "**/?(*.)(spec|test).(ts)?(x)"
+      ],
+      "moduleNameMapper": {
+        ".\\.scss$": "<rootDir>/../../../../jestMocks/styleMock.js"
+      },
+      "moduleFileExtensions": [
+        "ts",
+        "tsx",
+        "js",
+        "jsx",
+        "json",
+        "node"
+      ]
+    },
+    "devDependencies": {
+      "@babel/cli": "^7.1.0",
+      "@babel/core": "^7.1.0",
+      "@babel/plugin-proposal-class-properties": "^7.1.0",
+      "@babel/plugin-proposal-decorators": "^7.4.0",
+      "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
+      "@babel/plugin-transform-react-jsx": "^7.0.0",
+      "@babel/plugin-transform-runtime": "^7.4.4",
+      "@babel/preset-env": "^7.1.0",
+      "@babel/preset-typescript": "^7.1.0",
+      "@types/enzyme": "^3.1.10",
+      "@types/jest": "^25.2.3",
+      "@types/react": "16.9.17",
+      "@types/react-dom": "16.9.4",
+      "@types/request": "^2.47.0",
+      "babel-core": "^6.26.3",
+      "babel-eslint": "^10.0.1",
+      "babel-jest": "24.8.0",
+      "babel-loader": "^8.0.6",
+      "babel-preset-react-app": "^3.1.1",
+      "copy-webpack-plugin": "5.0.5",
+      "coveralls": "^3.0.1",
+      "cross-env": "^5.1.3",
+      "css-loader": "^1.0.1",
+      "electron-devtools-installer": "^2.2.4",
+      "enzyme": "^3.3.0",
+      "enzyme-adapter-react-16": "^1.1.1",
+      "eslint": "^5.12.0",
+      "eslint-config-prettier": "^3.5.0",
+      "eslint-plugin-import": "2.20.0",
+      "eslint-plugin-notice": "^0.7.7",
+      "eslint-plugin-prettier": "^3.0.1",
+      "eslint-plugin-typescript": "^1.0.0-rc.3",
+      "file-loader": "^1.1.11",
+      "hard-source-webpack-plugin": "^0.12.0",
+      "husky": "^4.2.5",
+      "jest": "^26.0.1",
+      "jest-enzyme": "^7.0.0",
+      "jsdom-global": "^3.0.2",
+      "keytar": "^6.0.1",
+      "lint-staged": "^10.2.9",
+      "mini-css-extract-plugin": "^0.4.0",
+      "node-sass": "^4.12.0",
+      "npm-run-all": "^4.1.5",
+      "prettier": "^2.0.5",
+      "react-app-rewired": "^1.4.1",
+      "react-dev-utils": "^5.0.0",
+      "react-hot-loader": "^4.1.3",
+      "resolve-url-loader": "^2.3.0",
+      "rimraf": "^2.6.2",
+      "sass-loader": "^7.1.0",
+      "style-loader": "^0.21.0",
+      "terser-webpack-plugin": "2.3.3",
+      "typescript": "3.1.1",
+      "typings-for-css-modules-loader": "^1.7.0",
+      "url-loader": "^1.0.1",
+      "webpack": "^4.32.2",
+      "webpack-cli": "^3.3.2",
+      "webpack-dev-server": "^3.4.1"
+    },
+    "dependencies": {
+      "@babel/runtime": "^7.1.5",
+      "@bfemulator/app-shared": "^1.0.0",
+      "@bfemulator/sdk-client": "^1.0.0",
+      "@bfemulator/sdk-shared": "^1.0.0",
+      "@bfemulator/ui-react": "^1.0.0",
+      "@uifabric/icons": "^5.6.0",
+      "@uifabric/merge-styles": "^6.2.0",
+      "@uifabric/styling": "^5.20.0",
+      "base64url": "3.0.0",
+      "botframework-config": "4.4.0",
+      "botframework-schema": "^4.3.4",
+      "botframework-webchat": "4.9.0",
+      "botframework-webchat-core": "4.9.0",
+      "eslint-plugin-react": "^7.12.3",
+      "markdown-it": "^8.4.2",
+      "react": "16.8.6",
+      "react-dom": "16.8.6",
+      "react-redux": "^5.0.7",
+      "react-router-dom": "^4.2.2",
+      "redux": "^3.7.2",
+      "redux-saga": "^0.16.0"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile

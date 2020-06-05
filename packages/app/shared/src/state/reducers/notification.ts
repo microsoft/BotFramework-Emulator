@@ -46,7 +46,7 @@ export function notification(state: NotificationState = DEFAULT_STATE, action: N
     case NotificationActions.finishAdd: {
       const { id: idToAdd } = action.payload.notification;
       let allIds;
-      if (!state.allIds.some(id => id === idToAdd)) {
+      if (!state.allIds.some((id) => id === idToAdd)) {
         allIds = [...state.allIds, idToAdd];
       } else {
         allIds = state.allIds;
@@ -59,7 +59,7 @@ export function notification(state: NotificationState = DEFAULT_STATE, action: N
 
     case NotificationActions.finishRemove: {
       const { id: idToRemove } = action.payload;
-      const allIds = state.allIds.filter(id => id !== idToRemove);
+      const allIds = state.allIds.filter((id) => id !== idToRemove);
       state = {
         allIds,
       };

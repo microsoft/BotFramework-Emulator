@@ -37,7 +37,7 @@ import { OK } from 'http-status-codes';
 import { getActivitiesForConversation } from './getActivitiesForConversation';
 
 describe('getActivitiesForConversation handler', () => {
-  it('should get all the activities for a conversation', async done => {
+  it('should get all the activities for a conversation', async (done) => {
     const transcripts: Activity[] = [
       {
         id: '1',

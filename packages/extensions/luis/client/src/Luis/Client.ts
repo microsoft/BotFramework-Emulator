@@ -169,7 +169,7 @@ export class LuisClient {
     const exampleLabelObject: LuisAuthoringModels.ExampleLabelObject = {
       text: luisResponse.query,
       intentName: newIntent,
-      entityLabels: luisResponse.entities.map(e => {
+      entityLabels: luisResponse.entities.map((e) => {
         return {
           entityName: LuisClient.getNormalizedEntityType(e.type || ''),
           startCharIndex: e.startIndex,
@@ -253,7 +253,7 @@ export class LuisClient {
 
         if (
           trainStatusResponse.every(
-            s => s.details.statusId === TrainStatus.UpToDate || s.details.statusId === TrainStatus.Success
+            (s) => s.details.statusId === TrainStatus.UpToDate || s.details.statusId === TrainStatus.Success
           )
         ) {
           clearInterval(intervalId);

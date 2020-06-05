@@ -51,8 +51,8 @@ const mapStateToProps = (state: RootState, ownProps: ResourceExplorerProps): Res
 
 const mapDispatchToProps = (dispatch: (...args: any[]) => void): ResourceExplorerProps => ({
   openContextMenuForService: (resource: IFileService) => dispatch(openContextMenuForResource(resource)),
-  renameResource: resource => dispatch(renameResource(resource)),
-  openResource: resource => dispatch(openResource(resource)),
+  renameResource: (resource) => dispatch(renameResource(resource)),
+  openResource: (resource) => dispatch(openResource(resource)),
   openResourcesSettings: (dialog: ComponentClass<any>) => dispatch(openResourcesSettings({ dialog })),
   window,
 });

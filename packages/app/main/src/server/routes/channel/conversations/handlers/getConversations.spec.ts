@@ -102,7 +102,7 @@ describe('getConversations handler', () => {
     getConversations(req, res, next);
 
     expect(res.send).toHaveBeenCalledWith(HttpStatus.OK, {
-      conversations: mockConversations.map(convo => ({
+      conversations: mockConversations.map((convo) => ({
         id: convo.conversationId,
         members: convo.members,
       })),

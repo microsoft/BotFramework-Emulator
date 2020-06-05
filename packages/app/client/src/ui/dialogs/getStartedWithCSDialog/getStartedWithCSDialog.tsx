@@ -291,7 +291,7 @@ export class GetStartedWithCSDialog extends Component<GetStartedWithCSDialogProp
     );
   }
 
-  private createAnchorClickHandler = url => () => this.props.onAnchorClick(url);
+  private createAnchorClickHandler = (url) => () => this.props.onAnchorClick(url);
 
   private onBlobStorageDocsClick = this.createAnchorClickHandler(
     'https://azure.microsoft.com/en-us/services/storage/blobs/'

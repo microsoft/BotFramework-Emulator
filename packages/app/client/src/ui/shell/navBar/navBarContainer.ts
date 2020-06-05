@@ -50,8 +50,8 @@ const mapStateToProps = (state: RootState): NavBarProps => ({
 });
 
 const mapDispatchToProps = (dispatch): NavBarProps => ({
-  showExplorer: show => dispatch(showExplorer(show)),
-  navBarSelectionChanged: newSelection => dispatch(selectNavBar(newSelection)),
+  showExplorer: (show) => dispatch(showExplorer(show)),
+  navBarSelectionChanged: (newSelection) => dispatch(selectNavBar(newSelection)),
   openEmulatorSettings: () => {
     dispatch(
       openEditorDocument({

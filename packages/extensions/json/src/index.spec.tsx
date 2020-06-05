@@ -55,12 +55,12 @@ let hostCalls: any = {};
       }
     ),
 
-    on: function(event, handler) {
+    on: function (event, handler) {
       if (handler && Array.isArray(this.handlers[event]) && !this.handlers[event].includes(handler)) {
         this.handlers[event].push(handler);
       }
       return () => {
-        this.handlers[event] = this.handlers[event].filter(item => item !== handler);
+        this.handlers[event] = this.handlers[event].filter((item) => item !== handler);
       };
     },
   },
@@ -142,7 +142,7 @@ describe('The JsonViewerExtension', () => {
     (host as any).handlers[ExtensionChannel.AccessoryClick][0]('diff', 'default');
     (host as any).handlers[ExtensionChannel.HighlightedObjectsUpdated][0]([]);
     const botStates = extractBotStateActivitiesFromLogEntries(mockChatLogs as any);
-    await new Promise(resolve => setTimeout(resolve, 1100));
+    await new Promise((resolve) => setTimeout(resolve, 1100));
     expect(hostCalls.setHighlightedObjects[1]).toEqual(['1234', botStates.slice(0, 2)]);
   });
 });

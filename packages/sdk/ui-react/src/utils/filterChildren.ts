@@ -34,7 +34,7 @@
 import * as React from 'react';
 
 export function filterChildren(children: any, predicate: any) {
-  return React.Children.map(children, child => (child && predicate(child) ? child : false));
+  return React.Children.map(children, (child) => (child && predicate(child) ? child : false));
 }
 
 let uid = Date.now();

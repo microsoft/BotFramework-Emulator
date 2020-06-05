@@ -77,7 +77,7 @@ export class PostMigrationDialog extends React.Component<PostMigrationDialogProp
     );
   }
 
-  private createAnchorClickHandler = url => () => this.props.onAnchorClick(url);
+  private createAnchorClickHandler = (url) => () => this.props.onAnchorClick(url);
 
   private onBotFileDocsClick = this.createAnchorClickHandler('https://aka.ms/about-bot-file');
 

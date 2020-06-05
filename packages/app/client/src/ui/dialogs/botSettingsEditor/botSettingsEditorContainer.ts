@@ -48,12 +48,12 @@ const mapStateToProps = (state: RootState, ownProps: {}): Partial<BotSettingsEdi
   };
 };
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
   cancel: () => DialogService.hideDialog(0),
   onAnchorClick: (url: string) => {
     dispatch(executeCommand(true, SharedConstants.Commands.Electron.OpenExternal, null, url));
   },
-  sendNotification: notification => dispatch(beginAdd(notification)),
+  sendNotification: (notification) => dispatch(beginAdd(notification)),
 });
 
 export const BotSettingsEditorContainer = connect(mapStateToProps, mapDispatchToProps)(BotSettingsEditor);

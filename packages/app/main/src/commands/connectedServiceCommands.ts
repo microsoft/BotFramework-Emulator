@@ -95,7 +95,7 @@ export class ConnectedServiceCommands {
         break;
       }
     }
-    result.services = result.services.filter(service => service.type === serviceType);
+    result.services = result.services.filter((service) => service.type === serviceType);
     return result;
   }
 }

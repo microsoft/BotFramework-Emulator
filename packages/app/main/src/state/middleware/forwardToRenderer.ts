@@ -36,7 +36,7 @@ import { Middleware } from 'redux';
 import { emulatorApplication } from '../../main';
 
 /* eslint-disable typescript/no-explicit-any */
-export const forwardToRenderer: Middleware = _store => next => action => {
+export const forwardToRenderer: Middleware = (_store) => (next) => (action) => {
   // ensure that the action is FSA compliant (https://github.com/redux-utilities/flux-standard-action#actions)
   if (!action.type) {
     return next(action);

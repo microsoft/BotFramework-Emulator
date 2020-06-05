@@ -199,7 +199,7 @@ class ProtocolHandlerImpl implements ProtocolHandler {
     const options = { url };
 
     return got(options)
-      .then(res => {
+      .then((res) => {
         if (/^2\d\d$/.test(res.statusCode)) {
           if (res.body) {
             try {
@@ -228,7 +228,7 @@ class ProtocolHandlerImpl implements ProtocolHandler {
           }
         }
       })
-      .catch(err => {
+      .catch((err) => {
         const errMsg = `Error downloading and parsing transcript file: ${err}`;
         const notification = newNotification(errMsg);
         sendNotificationToClient(notification, this.commandService);

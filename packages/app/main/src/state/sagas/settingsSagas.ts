@@ -59,7 +59,7 @@ export class SettingsSagas {
     const availableThemes = yield select(getAvailableThemes);
     const theme = yield select(getCurrentTheme);
 
-    const themeInfo = availableThemes.find(availableTheme => availableTheme.name === theme);
+    const themeInfo = availableThemes.find((availableTheme) => availableTheme.name === theme);
     const { commandService } = SettingsSagas;
     const { SwitchTheme } = SharedConstants.Commands.UI;
     yield call([commandService, commandService.remoteCall], SwitchTheme, themeInfo.name, themeInfo.href);

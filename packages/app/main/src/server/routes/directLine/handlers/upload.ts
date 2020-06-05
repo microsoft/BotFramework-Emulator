@@ -89,7 +89,7 @@ export function createUploadHandler(emulatorServer: EmulatorRestServer) {
         if (uploads && uploads.length) {
           const serviceUrl = await emulatorServer.getServiceUrl(botEndpoint.botUrl);
           activity.attachments = [];
-          uploads.forEach(upload1 => {
+          uploads.forEach((upload1) => {
             const name = (upload1 as any).name || 'file.dat';
             const type = upload1.type;
             const path = upload1.path;

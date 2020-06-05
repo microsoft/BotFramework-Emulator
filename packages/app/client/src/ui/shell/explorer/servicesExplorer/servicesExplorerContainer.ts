@@ -56,7 +56,7 @@ const mapStateToProps = (state: RootState): Partial<ServicesExplorerProps> => {
   const { [CONNECTED_SERVICES_PANEL_ID]: sortCriteria } = state.explorer.sortSelectionByPanelId;
   return {
     services: services.filter(
-      service =>
+      (service) =>
         service.type === ServiceTypes.QnA ||
         service.type === ServiceTypes.Dispatch ||
         service.type === ServiceTypes.AppInsights ||
@@ -76,7 +76,7 @@ const mapDispatchToProps = (dispatch): Partial<ServicesExplorerProps> => {
       dispatch(executeCommand(true, SharedConstants.Commands.Electron.OpenExternal, null, url));
     },
     openAddServiceContextMenu: (payload: ConnectedServicePickerPayload, menuCoords?: ContextMenuCoordinates) =>
-      new Promise(resolve => dispatch(openAddServiceContextMenu(payload, resolve, menuCoords))),
+      new Promise((resolve) => dispatch(openAddServiceContextMenu(payload, resolve, menuCoords))),
     openServiceDeepLink: (connectedService: IConnectedService) => dispatch(openServiceDeepLink(connectedService)),
 
     openContextMenuForService: (

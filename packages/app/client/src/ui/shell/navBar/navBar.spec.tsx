@@ -52,7 +52,7 @@ const mockNotifications = {
 };
 jest.mock('../../../notificationManager', () => ({
   NotificationManager: {
-    get: id => mockNotifications[id],
+    get: (id) => mockNotifications[id],
   },
 }));
 

@@ -49,11 +49,11 @@ function getCommandService(channelId: string): CommandServiceImpl {
 }
 
 export function CommandServiceInstance(channelId = 'command-service'): PropertyDecorator {
-  return function(descriptor: any) {
+  return function (descriptor: any) {
     descriptor.kind = 'method';
-    descriptor.descriptor = (function(propertyDescriptor = {}) {
+    descriptor.descriptor = (function (propertyDescriptor = {}) {
       return {
-        get: function() {
+        get: function () {
           return getCommandService(channelId);
         },
 
@@ -67,9 +67,9 @@ export function CommandServiceInstance(channelId = 'command-service'): PropertyD
 }
 
 export function Command(id: string, channelId: string = 'command-service'): MethodDecorator {
-  return function(elementDescriptor: any) {
+  return function (elementDescriptor: any) {
     const { key, descriptor } = elementDescriptor;
-    const initializer = function() {
+    const initializer = function () {
       const bound = this[key].bind(this);
       const { registry } = getCommandService(channelId);
       registry.registerCommand(id, bound);

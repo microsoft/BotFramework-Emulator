@@ -41,7 +41,7 @@ interface BotUrl {
 export function savedBotUrls(state: BotUrl[] = [], action: SavedBotUrlsAction<SavedBotUrlsActionPayload>): BotUrl[] {
   switch (action.type) {
     case ADD_SAVED_BOT_URL: {
-      const foundAtIndex = state.findIndex(element => element.url === action.payload);
+      const foundAtIndex = state.findIndex((element) => element.url === action.payload);
       if (foundAtIndex === -1) {
         state.push({ url: action.payload, lastAccessed: new Date().toUTCString() });
       } else {

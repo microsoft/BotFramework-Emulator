@@ -112,7 +112,7 @@ export class CommandServiceImpl {
     if (process.type === 'browser' && !this.ipcSender) {
       // We're in main and need the ipcSender from the
       // render process.
-      this.ipcListener.once('ping', event => {
+      this.ipcListener.once('ping', (event) => {
         this.ipcSender = event.sender;
       });
     } else {

@@ -61,8 +61,8 @@ function readGitIgnore(filePath: string): string[] {
   const text = readFileSync(filePath, 'utf-8');
   return text
     .split(/[\n\r]/)
-    .map(x => x.trim())
-    .filter(x => x && !(x || '').startsWith('#'));
+    .map((x) => x.trim())
+    .filter((x) => x && !(x || '').startsWith('#'));
 }
 
 /** Singleton class that will watch one bot project directory at a time */

@@ -98,7 +98,7 @@ describe('The WelcomePageSagas', () => {
   describe(', when invoking a context menu over a bot in the list', () => {
     it('should call the series of commands that move the bot file to a new location.', async () => {
       const remoteCalls = [];
-      commandService.remoteCall = async function(...args: any[]) {
+      commandService.remoteCall = async function (...args: any[]) {
         remoteCalls.push(args);
         switch (args[0]) {
           case SharedConstants.Commands.Electron.DisplayContextMenu:
@@ -165,7 +165,7 @@ describe('The WelcomePageSagas', () => {
     });
 
     it('should add a notification if a remote command fails when moving a bot file', async () => {
-      commandService.remoteCall = async function(...args: any[]) {
+      commandService.remoteCall = async function (...args: any[]) {
         switch (args[0]) {
           case SharedConstants.Commands.Electron.DisplayContextMenu:
             return { id: 0 };
@@ -189,7 +189,7 @@ describe('The WelcomePageSagas', () => {
 
     it('should call the appropriate command when opening the bot file location', async () => {
       let openFileLocationArgs;
-      commandService.remoteCall = async function(...args: any[]) {
+      commandService.remoteCall = async function (...args: any[]) {
         switch (args[0]) {
           case SharedConstants.Commands.Electron.DisplayContextMenu:
             return { id: 1 };
@@ -209,7 +209,7 @@ describe('The WelcomePageSagas', () => {
 
     it('should call the appropriate command when removing a bot from the list', async () => {
       let removeBotFromListArgs = null;
-      commandService.remoteCall = async function(...args: any[]) {
+      commandService.remoteCall = async function (...args: any[]) {
         switch (args[0]) {
           case SharedConstants.Commands.Electron.DisplayContextMenu:
             return { id: 2 };

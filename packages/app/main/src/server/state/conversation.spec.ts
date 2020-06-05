@@ -174,7 +174,7 @@ describe('Conversation class', () => {
   let conversation: Conversation;
   let conversationId;
   let user: any;
-  const fetch = (function() {
+  const fetch = (function () {
     const fetch = () => {
       return {
         ok: true,
@@ -212,7 +212,7 @@ describe('Conversation class', () => {
 
   it('should feed activities', () => {
     const fedActivities = [];
-    const mockAddActivityToQueue = jest.fn(activity => {
+    const mockAddActivityToQueue = jest.fn((activity) => {
       fedActivities.push(activity);
     });
     (conversation as any).addActivityToQueue = mockAddActivityToQueue;

@@ -41,8 +41,8 @@ interface PanelProps {
   title?: string;
 }
 
-export const PanelControls = props => props.children;
-export const PanelContent = props => props.children;
+export const PanelControls = (props) => props.children;
+export const PanelContent = (props) => props.children;
 
 export default class Panel extends React.Component<PanelProps, {}> {
   public constructor(props: PanelProps, context: {}) {
@@ -54,11 +54,11 @@ export default class Panel extends React.Component<PanelProps, {}> {
       <div className={styles.panel}>
         <div className={styles.panelHeader}>
           <div className={styles.accessories}>
-            {filterChildren(this.props.children, child => hmrSafeNameComparison(child.type, PanelControls))}
+            {filterChildren(this.props.children, (child) => hmrSafeNameComparison(child.type, PanelControls))}
           </div>
         </div>
         <div className={styles.panelBody}>
-          {filterChildren(this.props.children, child => hmrSafeNameComparison(child.type, PanelContent))}
+          {filterChildren(this.props.children, (child) => hmrSafeNameComparison(child.type, PanelContent))}
         </div>
       </div>
     );

@@ -117,7 +117,7 @@ export class AutoComplete extends Component<AutoCompleteProps, AutoCompleteState
           className={`${index === this.state.selectedIndex ? styles.selected : ''}`}
           id={this.getOptionId(index)}
           key={result}
-          onMouseDown={ev => this.onSelectResult(ev, result)}
+          onMouseDown={(ev) => this.onSelectResult(ev, result)}
           role="option"
           aria-selected={index === this.state.selectedIndex}
         >
@@ -178,7 +178,7 @@ export class AutoComplete extends Component<AutoCompleteProps, AutoCompleteState
 
   private get filteredItems(): string[] {
     const unfilteredItems = this.props.items || [];
-    const filteredItems = unfilteredItems.filter(item => this.fuzzysearch(this.value, item));
+    const filteredItems = unfilteredItems.filter((item) => this.fuzzysearch(this.value, item));
 
     return filteredItems;
   }

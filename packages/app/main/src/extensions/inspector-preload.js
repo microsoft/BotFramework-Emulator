@@ -77,49 +77,49 @@ window.host = {
     }
   ),
   logger: {
-    error: function(message) {
+    error: function (message) {
       ipcRenderer.sendToHost('logger.error', message);
     },
-    log: function(message) {
+    log: function (message) {
       ipcRenderer.sendToHost('logger.log', message);
     },
-    logLuisEditorDeepLink: function(message) {
+    logLuisEditorDeepLink: function (message) {
       ipcRenderer.sendToHost('logger.luis-editor-deep-link', message);
     },
   },
 
-  on: function(event, handler) {
+  on: function (event, handler) {
     if (handler && Array.isArray(this.handlers[event]) && !this.handlers[event].includes(handler)) {
       this.handlers[event].push(handler);
     }
     return () => {
-      this.handlers[event] = this.handlers[event].filter(item => item !== handler);
+      this.handlers[event] = this.handlers[event].filter((item) => item !== handler);
     };
   },
 
-  createAriaAlert: function(msg) {
+  createAriaAlert: function (msg) {
     ipcRenderer.sendToHost('create-aria-alert', msg);
   },
 
-  enableAccessory: function(id, enabled) {
+  enableAccessory: function (id, enabled) {
     if (typeof id === 'string') {
       ipcRenderer.sendToHost('enable-accessory', id, !!enabled);
     }
   },
 
-  setAccessoryState: function(id, state) {
+  setAccessoryState: function (id, state) {
     if (typeof id === 'string' && typeof state === 'string') {
       ipcRenderer.sendToHost('set-accessory-state', id, state);
     }
   },
 
-  setInspectorTitle: function(title) {
+  setInspectorTitle: function (title) {
     if (typeof title === 'string') {
       ipcRenderer.sendToHost('set-inspector-title', title);
     }
   },
 
-  trackEvent: function(name, properties) {
+  trackEvent: function (name, properties) {
     ipcRenderer.sendToHost('track-event', name, properties);
   },
 
@@ -131,7 +131,7 @@ window.host = {
     ipcRenderer.sendToHost('set-inspector-objects', documentId, objects);
   },
 
-  dispatch: function(event, ...args) {
-    this.handlers[event].forEach(handler => handler(...args));
+  dispatch: function (event, ...args) {
+    this.handlers[event].forEach((handler) => handler(...args));
   },
 };

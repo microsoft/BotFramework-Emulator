@@ -76,7 +76,7 @@ export class WebSocketServer {
             });
           });
           // upgrade the connection to a ws connection
-          wsServer.handleUpgrade(req, socket, head, socket => {
+          wsServer.handleUpgrade(req, socket, head, (socket) => {
             wsServer.emit('connection', socket, req);
           });
           this._servers[conversationId] = wsServer;
@@ -84,7 +84,7 @@ export class WebSocketServer {
       });
       // dynamically generate the web socket server port
       const port = await new Promise<number>((resolve, reject) => {
-        this._restServer.once('error', err => reject(err));
+        this._restServer.once('error', (err) => reject(err));
         this._restServer.listen(null, () => {
           resolve(this._restServer.address().port);
         });

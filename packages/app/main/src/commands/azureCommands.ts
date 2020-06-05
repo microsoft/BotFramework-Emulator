@@ -80,7 +80,7 @@ export class AzureCommands {
   // Sign the user out of Azure
   @Command(Azure.SignUserOutOfAzure)
   protected async signUserOutOfAzure(prompt: boolean = true) {
-    await new Promise(resolve => session.defaultSession.clearStorageData({}, resolve));
+    await new Promise((resolve) => session.defaultSession.clearStorageData({}, resolve));
 
     store.dispatch(azureLoggedInUserChanged(''));
     try {

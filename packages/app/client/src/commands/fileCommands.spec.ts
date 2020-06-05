@@ -39,7 +39,7 @@ import { FileCommands } from './fileCommands';
 const mockDispatch = jest.fn();
 jest.mock('../state/store', () => ({
   store: {
-    dispatch: action => mockDispatch(action),
+    dispatch: (action) => mockDispatch(action),
   },
 }));
 

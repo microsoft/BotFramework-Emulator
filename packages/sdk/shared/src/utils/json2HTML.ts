@@ -38,10 +38,7 @@ export function json2HTML(obj: { [key: string]: any }, isDiff: boolean = false):
   // Hide ampersands we don't want replaced
   json = json.replace(/&(amp|apos|copy|gt|lt|nbsp|quot|#x?\d+|[\w\d]+);/g, '\x01');
   // Escape remaining ampersands and other HTML special characters
-  json = json
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
+  json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   // Restore hidden ampersands
   // eslint-disable-next-line no-control-regex
   json = json.replace(/\x01/g, '&');
@@ -50,7 +47,7 @@ export function json2HTML(obj: { [key: string]: any }, isDiff: boolean = false):
   json = json.replace(
     // eslint-disable-next-line no-useless-escape
     /"(\\u[a-fA-F0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,
-    match => {
+    (match) => {
       // Default to "number"
       let className = isDiff ? 'default' : 'number';
       // Detect the type of the JSON part

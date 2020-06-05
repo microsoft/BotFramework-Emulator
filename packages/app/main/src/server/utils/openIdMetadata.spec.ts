@@ -34,7 +34,7 @@
 import { OpenIdMetadata } from './openIdMetadata';
 
 jest.mock('base64url', () => ({
-  toBase64: jest.fn(value => `${value}_base64`),
+  toBase64: jest.fn((value) => `${value}_base64`),
 }));
 jest.mock('rsa-pem-from-mod-exp', () => jest.fn((n, e) => `${n}_${e}_pem`));
 

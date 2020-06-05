@@ -287,7 +287,7 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
     return <p>You can connect your bot to a generic service with key-value pairs.</p>;
   }
 
-  private createAnchorClickHandler = url => () => this.props.onAnchorClick(url);
+  private createAnchorClickHandler = (url) => () => this.props.onAnchorClick(url);
 
   private isRequired = (key: string): boolean => {
     if (key === 'applicationId') {

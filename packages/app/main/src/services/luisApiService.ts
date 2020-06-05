@@ -51,9 +51,9 @@ export class LuisApi {
         'https://api.eu.luis.ai/api/v2.0/bots/programmatickey',
         'https://api.au.luis.ai/api/v2.0/bots/programmatickey',
       ];
-      const requests = urls.map(url => fetch(url, req));
+      const requests = urls.map((url) => fetch(url, req));
       const authoringKeyResponses: Response[] = yield Promise.all(requests);
-      authoringKeys = yield Promise.all(authoringKeyResponses.map(async response => await response.json()));
+      authoringKeys = yield Promise.all(authoringKeyResponses.map(async (response) => await response.json()));
     } catch (e) {
       payload.code = ServiceCodes.AccountNotFound;
       return payload;
@@ -75,7 +75,7 @@ export class LuisApi {
     // Filter out errors then combine all results into
     // a single array of LuisModel[]
     const luisModels = results
-      .filter(result => !('error' in result))
+      .filter((result) => !('error' in result))
       .reduce((agg: LuisModel[], models) => (agg.push(...(models as LuisModel[])), agg), []) as LuisModel[];
     // 4.
     // Mutate the list into an array of ILuisService[]
@@ -116,7 +116,7 @@ export class LuisApi {
     }
     const luisModels = (await response.json()) as LuisModel[];
     if (luisModels instanceof Array) {
-      return luisModels.map(luisModel => ((luisModel.region = region), luisModel));
+      return luisModels.map((luisModel) => ((luisModel.region = region), luisModel));
     }
     return luisModels;
   }

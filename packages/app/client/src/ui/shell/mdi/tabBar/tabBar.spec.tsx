@@ -298,7 +298,7 @@ describe('TabBar', () => {
     const mockElement = { isTabElement: 'yes!' };
     instance.setRef(mockElement);
 
-    expect(instance.childRefs.some(elem => elem === mockElement)).toBe(true);
+    expect(instance.childRefs.some((elem) => elem === mockElement)).toBe(true);
   });
 
   it('should get a tab label based on the document', () => {

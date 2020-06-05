@@ -92,13 +92,13 @@ export class App extends Component<any, AppState> {
     const dispatchServices = bot.services.filter(
       (s: IConnectedService) => s.type === ServiceTypes.Dispatch
     ) as IDispatchService[];
-    const dispatchService = dispatchServices.find(ds => ds.appId.toLowerCase() === lcAppId);
+    const dispatchService = dispatchServices.find((ds) => ds.appId.toLowerCase() === lcAppId);
     if (dispatchService) {
       return dispatchService.authoringKey;
     }
 
     const luisServices = bot.services.filter((s: IConnectedService) => s.type === ServiceTypes.Luis) as ILuisService[];
-    const luisService = luisServices.find(ls => ls.appId.toLowerCase() === lcAppId);
+    const luisService = luisServices.find((ls) => ls.appId.toLowerCase() === lcAppId);
     if (luisService) {
       return luisService.authoringKey;
     }
@@ -186,10 +186,10 @@ export class App extends Component<any, AppState> {
       const fragment = document.createDocumentFragment();
       const promises: Promise<any>[] = [];
       // Create the new links for each theme component
-      themeInfo.themeComponents.forEach(themeComponent => {
+      themeInfo.themeComponents.forEach((themeComponent) => {
         const link = document.createElement<'link'>('link');
         promises.push(
-          new Promise(resolve => {
+          new Promise((resolve) => {
             link.addEventListener('load', resolve);
           })
         );
@@ -201,7 +201,7 @@ export class App extends Component<any, AppState> {
       // Create the link for luis-specific themed styles
       const luisStyleLink = document.createElement<'link'>('link');
       promises.push(
-        new Promise(resolve => {
+        new Promise((resolve) => {
           luisStyleLink.addEventListener('load', resolve);
         })
       );

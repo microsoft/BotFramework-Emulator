@@ -240,7 +240,7 @@ export class BotCreationDialog extends React.Component<BotCreationDialogProps, B
     );
   }
 
-  private createAnchorClickHandler = url => () =>
+  private createAnchorClickHandler = (url) => () =>
     store.dispatch(executeCommand(true, SharedConstants.Commands.Electron.OpenExternal, null, url));
 
   private onAzureGovLinkClick = this.createAnchorClickHandler('https://aka.ms/bot-framework-emulator-azuregov');

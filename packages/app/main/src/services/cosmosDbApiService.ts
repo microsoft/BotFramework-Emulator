@@ -93,7 +93,7 @@ export class CosmosDbApiService {
       }
       const responseJson = yield response.json();
       if (responseJson.Databases || [].length) {
-        responseJson.Databases.forEach(db => cosmosDbs.push({ db, account: databaseAccounts[i] }));
+        responseJson.Databases.forEach((db) => cosmosDbs.push({ db, account: databaseAccounts[i] }));
       }
     }
 
@@ -103,7 +103,7 @@ export class CosmosDbApiService {
     // the documented API was returning a 401 no matter what params and
     // auth headers where used.
     yield { label: 'Retrieving collections from Azure…', progress: 85 };
-    const collectionRequests = cosmosDbs.map(info => {
+    const collectionRequests = cosmosDbs.map((info) => {
       const { db, account } = info;
       const { id, name, properties, subscriptionId } = account as AzureResource;
       const req = AzureManagementApiService.getRequestInit(armToken);
@@ -129,7 +129,7 @@ export class CosmosDbApiService {
       }
       const { db, account } = cosmosDbs[i];
       const collectionResponseJson = yield collectionResponse.json();
-      (collectionResponseJson.DocumentCollections || []).forEach(collection => {
+      (collectionResponseJson.DocumentCollections || []).forEach((collection) => {
         payload.services.push(buildServiceModel(account, db, collection));
       });
     }
@@ -161,10 +161,7 @@ function getAuthorizationTokenUsingMasterKey(masterKey: string = '', resourceId:
   const text = 'get\n' + 'dbs\n' + resourceId + '\n' + new Date().toUTCString().toLowerCase() + '\n' + '' + '\n';
 
   const body = Buffer.from(text);
-  const signature = crypto
-    .createHmac('sha256', key)
-    .update(body)
-    .digest('base64');
+  const signature = crypto.createHmac('sha256', key).update(body).digest('base64');
 
   return encodeURIComponent('type=master&ver=1.0&sig=' + signature);
 }

@@ -104,13 +104,13 @@ export class ClientInitCommands {
 
     // Parse command line args for a protocol url
     const args = process.argv.length ? process.argv.slice(1) : [];
-    if (args.some(arg => arg.includes(Protocol))) {
-      const protocolArg = args.find(arg => arg.includes(Protocol));
+    if (args.some((arg) => arg.includes(Protocol))) {
+      const protocolArg = args.find((arg) => arg.includes(Protocol));
       ProtocolHandler.parseProtocolUrlAndDispatch(protocolArg);
     }
 
     // Parse command line args to see if we are opening a .bot, .chat, or .transcript file
-    const fileToBeOpened = args.find(arg => /(\.transcript)|(\.chat)|(\.bot)$/.test(arg));
+    const fileToBeOpened = args.find((arg) => /(\.transcript)|(\.chat)|(\.bot)$/.test(arg));
     if (fileToBeOpened) {
       await openFileFromCommandLine(fileToBeOpened, this.commandService);
     }

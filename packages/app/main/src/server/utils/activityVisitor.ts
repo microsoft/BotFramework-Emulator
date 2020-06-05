@@ -50,7 +50,7 @@ export abstract class ActivityVisitor {
       return;
     }
     if (messageActivity && messageActivity.attachments) {
-      messageActivity.attachments.forEach(attachment => {
+      messageActivity.attachments.forEach((attachment) => {
         this.traverseAttachment(attachment);
       });
     }
@@ -108,7 +108,7 @@ export abstract class ActivityVisitor {
   public traverseOAuthCard(oauthCard: OAuthCard) {
     const buttons = oauthCard.buttons;
     if (buttons) {
-      buttons.forEach(cardAction => this.visitOAuthCardAction(oauthCard.connectionName, cardAction));
+      buttons.forEach((cardAction) => this.visitOAuthCardAction(oauthCard.connectionName, cardAction));
     }
   }
 
@@ -119,13 +119,13 @@ export abstract class ActivityVisitor {
 
   public traverseButtons(buttons: CardAction[]) {
     if (buttons) {
-      buttons.forEach(cardAction => this.visitCardAction(cardAction));
+      buttons.forEach((cardAction) => this.visitCardAction(cardAction));
     }
   }
 
   public traverseCardImages(cardImages: CardImage[]) {
     if (cardImages) {
-      cardImages.forEach(image => {
+      cardImages.forEach((image) => {
         this.traverseCardImage(image);
       });
     }

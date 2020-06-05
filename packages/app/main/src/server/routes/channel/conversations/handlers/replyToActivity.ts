@@ -53,7 +53,7 @@ export function createReplyToActivityHandler(emulatorServer: EmulatorRestServer)
       activity.replyToId = req.params.activityId;
       const { conversationId } = conversationParameters;
 
-      const continuation = function(): void {
+      const continuation = function (): void {
         const { conversation }: { conversation: Conversation } = req as any;
 
         // post activity
@@ -74,7 +74,7 @@ export function createReplyToActivityHandler(emulatorServer: EmulatorRestServer)
       );
       visitor
         .resolveOAuthCards(activity)
-        .then(_ => {
+        .then((_) => {
           continuation();
         })
         .catch(

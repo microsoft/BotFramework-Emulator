@@ -103,7 +103,7 @@ export class KvPair extends Component<KvPairProps, KvPairState> {
   private getTextFieldKey(key: string = '', index: number): ReactNode {
     let ref;
     if (index === this.state.numRows - 1) {
-      ref = ref => {
+      ref = (ref) => {
         ref && ref.focus();
       };
     }

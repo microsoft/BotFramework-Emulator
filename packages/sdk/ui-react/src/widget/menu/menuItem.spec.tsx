@@ -36,7 +36,7 @@ import { mount, ReactWrapper } from 'enzyme';
 
 import { MenuItemComp, MenuItemProps } from './menuItem';
 
-const mockFocusHandler = jest.fn(_index => jest.fn());
+const mockFocusHandler = jest.fn((_index) => jest.fn());
 
 describe('<MenuItem />', () => {
   let wrapper: ReactWrapper<MenuItemProps, {}, MenuItemComp>;

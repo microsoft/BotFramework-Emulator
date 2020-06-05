@@ -116,7 +116,7 @@ export class Tab extends React.Component<TabProps, TabState> {
     this.props.onCloseClick(this.props.documentId);
   };
 
-  private onDragStart = e => {
+  private onDragStart = (e) => {
     const dragData = {
       tabId: this.props.documentId,
       editorKey: this.state.owningEditor,

@@ -74,10 +74,10 @@ describe('Checkbox', () => {
   });
 
   it('should assign a new checkbox ref with event listeners', () => {
-    const mockRemoveListener = jest.fn(_event => null);
+    const mockRemoveListener = jest.fn((_event) => null);
     const oldRef = { removeEventListener: mockRemoveListener };
 
-    const mockAddListener = jest.fn(_event => null);
+    const mockAddListener = jest.fn((_event) => null);
     const newRef = { addEventListener: mockAddListener };
 
     const mockEventHandler = () => null;

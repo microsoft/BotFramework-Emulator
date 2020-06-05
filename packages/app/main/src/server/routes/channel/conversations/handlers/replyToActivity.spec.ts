@@ -93,7 +93,7 @@ describe('replyToActivity route middleware', () => {
     createReplyToActivityHandler(mockEmulatorServer)(mockReq, mockRes, mockNext);
 
     // since the middleware is not an async function, wait for the async operations to complete
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 500));
 
     expect(mockReq.conversation.prepActivityToBeSentToUser).toHaveBeenCalledWith('someUserId', {
       ...mockReq.body,
@@ -110,7 +110,7 @@ describe('replyToActivity route middleware', () => {
     createReplyToActivityHandler(mockEmulatorServer)(mockReq, mockRes, mockNext);
 
     // since the middleware is not an async function, wait for the async operations to complete
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 500));
 
     expect(mockReq.conversation.prepActivityToBeSentToUser).toHaveBeenCalledWith('someUserId', {
       ...mockReq.body,
@@ -130,7 +130,7 @@ describe('replyToActivity route middleware', () => {
     createReplyToActivityHandler(mockEmulatorServer)(mockReq, mockRes, mockNext);
 
     // since the middleware is not an async function, wait for the async operations to complete
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 500));
 
     expect(mockEmulatorServer.logger.logException).toHaveBeenCalledWith('someConversationId', ngrokError);
     expect(mockEmulatorServer.logger.logException).toHaveBeenCalledWith(

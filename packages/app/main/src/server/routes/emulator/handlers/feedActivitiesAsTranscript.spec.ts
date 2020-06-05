@@ -72,7 +72,7 @@ describe('feedActivitiesAsTranscript handler', () => {
     const next = jest.fn();
     const mockConversation = {
       conversationId: 'convoId1',
-      prepTranscriptActivities: jest.fn(activities => activities),
+      prepTranscriptActivities: jest.fn((activities) => activities),
     };
     const mockEmulatorServer: any = {
       logger: {

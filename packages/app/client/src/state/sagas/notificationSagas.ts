@@ -71,7 +71,7 @@ export function* removeNotification(action: BeginRemoveNotificationAction): Iter
 
 /** Marks all notifications as read */
 export function markAllAsRead(): void {
-  NotificationManager.forEach(notification => {
+  NotificationManager.forEach((notification) => {
     notification.read = true;
   });
 }

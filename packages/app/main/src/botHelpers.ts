@@ -103,11 +103,11 @@ export class BotHelpers {
   }
 
   static getBotInfoByPath(path: string): BotInfo {
-    return store.getState().bot.botFiles.find(bot => bot && bot.path === path);
+    return store.getState().bot.botFiles.find((bot) => bot && bot.path === path);
   }
 
   static pathExistsInRecentBots(path: string): boolean {
-    return store.getState().bot.botFiles.some(bot => bot && bot.path === path);
+    return store.getState().bot.botFiles.some((bot) => bot && bot.path === path);
   }
 
   /** Prompts the user for a secret and retries the bot load flow */
@@ -152,7 +152,7 @@ export class BotHelpers {
   public static patchBotsJson(botPath: string, bot: BotInfo): BotInfo[] {
     const state = store.getState();
     const bots = [...state.bot.botFiles];
-    const botIndex = bots.findIndex(bot1 => bot1.path === botPath);
+    const botIndex = bots.findIndex((bot1) => bot1.path === botPath);
     if (botIndex > -1) {
       bots[botIndex] = { ...bots[botIndex], ...bot };
     } else {
@@ -178,7 +178,7 @@ export class BotHelpers {
   /** Removes a bot from bots.json (doesn't delete the bot file) */
   public static async removeBotFromList(botPath: string): Promise<void> {
     const state = store.getState();
-    const bots = [...state.bot.botFiles].filter(bot => bot.path !== botPath);
+    const bots = [...state.bot.botFiles].filter((bot) => bot.path !== botPath);
     store.dispatch(BotActions.load(bots));
   }
 

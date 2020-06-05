@@ -152,7 +152,7 @@ export class EmulatorRestServer {
       await this.createServer();
       // start listening
       const actualPort = await new Promise<number>((resolve, reject) => {
-        this.server.once('error', err => reject(err));
+        this.server.once('error', (err) => reject(err));
         this.server.listen(port, () => {
           resolve(this.server.address().port);
         });
@@ -174,7 +174,7 @@ export class EmulatorRestServer {
   }
 
   public close(): Promise<void> {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       if (this.server) {
         this.server.close(resolve);
       } else {
@@ -216,7 +216,7 @@ export class EmulatorRestServer {
     }
 
     // /api/conversation/activities => [api, conversation, activities]
-    const routeSegments = ((route.spec.path as string) || '').split('/').filter(segment => !!segment);
+    const routeSegments = ((route.spec.path as string) || '').split('/').filter((segment) => !!segment);
 
     this.options.logService.logToChat(
       conversationId,
@@ -232,7 +232,7 @@ export class EmulatorRestServer {
         level,
         routeSegments
           .slice(1)
-          .map(seg => (seg.startsWith(':') ? `<${seg.substr(1)}>` : seg))
+          .map((seg) => (seg.startsWith(':') ? `<${seg.substr(1)}>` : seg))
           .join('/')
       )
     );

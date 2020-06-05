@@ -237,7 +237,7 @@ describe('AppUpdater', () => {
     mockAutoUpdater.setFeedURL = mockSetFeedURL;
 
     const tmp = AppUpdater.checkForUpdates;
-    const mockCheckForUpdates = jest.fn(_ => Promise.resolve(true));
+    const mockCheckForUpdates = jest.fn((_) => Promise.resolve(true));
     AppUpdater.checkForUpdates = mockCheckForUpdates;
 
     await AppUpdater.startup();

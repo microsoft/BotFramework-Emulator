@@ -79,7 +79,7 @@ export class TabBar extends React.Component<TabBarProps, TabBarState> {
   constructor(props: TabBarProps) {
     super(props);
 
-    const activeIndex = props.tabOrder.findIndex(docId => docId === props.activeDocumentId);
+    const activeIndex = props.tabOrder.findIndex((docId) => docId === props.activeDocumentId);
     this.activeIndex = activeIndex === -1 ? 0 : activeIndex;
 
     this.state = {
@@ -97,7 +97,7 @@ export class TabBar extends React.Component<TabBarProps, TabBarState> {
 
   public componentDidUpdate(prevProps: TabBarProps) {
     const scrollable = this._scrollable;
-    const activeIndex = this.props.tabOrder.findIndex(docId => docId === this.props.activeDocumentId);
+    const activeIndex = this.props.tabOrder.findIndex((docId) => docId === this.props.activeDocumentId);
     this.activeIndex = activeIndex === -1 ? 0 : activeIndex;
 
     if (scrollable) {
@@ -255,7 +255,7 @@ export class TabBar extends React.Component<TabBarProps, TabBarState> {
     }
   };
 
-  private saveScrollable = ref => {
+  private saveScrollable = (ref) => {
     this._scrollable = ref;
   };
 
@@ -278,7 +278,7 @@ export class TabBar extends React.Component<TabBarProps, TabBarState> {
         let label = 'Live Chat';
         const { services = [] } = this.props.activeBot || {};
         const { endpointId = null } = this.props.chats[document.documentId] || {};
-        const botEndpoint = services.find(s => s.id === endpointId);
+        const botEndpoint = services.find((s) => s.id === endpointId);
 
         if (botEndpoint) {
           label += ` (${botEndpoint.name})`;

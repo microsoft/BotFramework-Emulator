@@ -83,7 +83,7 @@ export class AzureAuthWorkflowService {
   }
 
   private static async waitForAuthResult(browserWindow: BrowserWindow, redirectUri: string): Promise<AuthResponse> {
-    const response = await new Promise<AuthResponse>(resolve => {
+    const response = await new Promise<AuthResponse>((resolve) => {
       // eslint-disable-next-line prefer-const
       let interval;
       const poller = () => {
@@ -164,7 +164,7 @@ export class AzureAuthWorkflowService {
 
     const url = bits.join('&');
     browserWindow.loadURL(url);
-    return new Promise<BrowserWindow>(resolve => {
+    return new Promise<BrowserWindow>((resolve) => {
       browserWindow.once('ready-to-show', () => resolve(browserWindow));
     });
   }
@@ -196,7 +196,7 @@ export class AzureAuthWorkflowService {
 
     try {
       const jwks = await this.getJwks();
-      const jwk = jwks.keys.find(key => key.x5t === headers.x5t);
+      const jwk = jwks.keys.find((key) => key.x5t === headers.x5t);
       jwt.verify(token, getPem(jwk.n, jwk.e));
       return true;
     } catch (e) {

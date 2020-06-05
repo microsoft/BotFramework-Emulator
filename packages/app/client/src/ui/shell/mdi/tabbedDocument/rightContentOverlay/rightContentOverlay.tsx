@@ -75,7 +75,7 @@ class RightContentOverlayComponent extends React.Component<RightContentOverlayPr
     );
   }
 
-  private onDragEnter = e => {
+  private onDragEnter = (e) => {
     e.preventDefault();
     e.stopPropagation();
   };

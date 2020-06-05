@@ -160,7 +160,7 @@ describe('AppMenuBuilder', () => {
   };
   const mockRecentBotsMenuClear = jest.fn(() => null);
   let mockAppendedBots;
-  const mockRecentBotsMenuAppend = jest.fn(botItem => mockAppendedBots.push(botItem));
+  const mockRecentBotsMenuAppend = jest.fn((botItem) => mockAppendedBots.push(botItem));
   const mockRecentBotsMenu = {
     enabled: false,
     submenu: {
@@ -173,7 +173,7 @@ describe('AppMenuBuilder', () => {
   const mockAutoUpdateCheckMenuItem = { visible: false };
   const mockAutoUpdateDownloadingMenuItem = { visible: false };
   let appendedFileMenuItems;
-  const mockFileMenuAppend = jest.fn(fileMenuItem => appendedFileMenuItems.push(fileMenuItem));
+  const mockFileMenuAppend = jest.fn((fileMenuItem) => appendedFileMenuItems.push(fileMenuItem));
   const mockFileMenuClear = jest.fn(() => null);
   const mockFileMenu = {
     submenu: {
@@ -291,10 +291,10 @@ describe('AppMenuBuilder', () => {
 
     expect(mockRecentBotsMenuClear).toHaveBeenCalled();
     expect(mockRecentBotsMenuAppend).toHaveBeenCalledTimes(mockRecentBots.length);
-    expect(mockAppendedBots.some(bot => bot.label === 'bot1')).toBe(true);
-    expect(mockAppendedBots.some(bot => bot.label === 'bot2')).toBe(true);
-    expect(mockAppendedBots.some(bot => bot.label === 'bot3')).toBe(true);
-    const botWithPath = mockAppendedBots.find(bot => bot.label === 'bot1');
+    expect(mockAppendedBots.some((bot) => bot.label === 'bot1')).toBe(true);
+    expect(mockAppendedBots.some((bot) => bot.label === 'bot2')).toBe(true);
+    expect(mockAppendedBots.some((bot) => bot.label === 'bot3')).toBe(true);
+    const botWithPath = mockAppendedBots.find((bot) => bot.label === 'bot1');
     botWithPath.click();
     expect(mockRemoteCall).toHaveBeenCalledWith(SharedConstants.Commands.Bot.Switch, mockBotPath);
     expect(mockRecentBotsMenu.enabled).toBe(true);
@@ -343,7 +343,7 @@ describe('AppMenuBuilder', () => {
 
   it('should initialize the app menu for Mac', async () => {
     let appMenuTemplate;
-    mockBuildFromTemplate = jest.fn(template => {
+    mockBuildFromTemplate = jest.fn((template) => {
       // when trying to build from the template, pull the template out
       // so that we can examine it and return some menu placeholder
       appMenuTemplate = template;
@@ -371,7 +371,7 @@ describe('AppMenuBuilder', () => {
         },
       },
     };
-    const mockRemoteCall = jest.fn(commandName => {
+    const mockRemoteCall = jest.fn((commandName) => {
       if (commandName === SharedConstants.Commands.Misc.GetStoreState) {
         return Promise.resolve(mockState);
       } else {

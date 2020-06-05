@@ -52,7 +52,7 @@ export function createUpdateConversationHandler(state: ServerState) {
     state.conversations.deleteConversation(currentConversationId);
     currentConversation.conversationId = conversationId;
     currentConversation.user.id = userId;
-    const user: User = currentConversation.members.find(member => member.name === 'User');
+    const user: User = currentConversation.members.find((member) => member.name === 'User');
     if (!user) {
       return next(new Error(`Conversation ${currentConversationId} is missing the user in the members array.`));
     }

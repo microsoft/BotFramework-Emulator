@@ -152,7 +152,7 @@ describe('The AppSettingsEditorContainer', () => {
   });
 
   it('should call a remote command to open a browse window when "onClickBrowse" is called', async () => {
-    const dispatchSpy = jest.spyOn(mockStore, 'dispatch').mockImplementation(action => {
+    const dispatchSpy = jest.spyOn(mockStore, 'dispatch').mockImplementation((action) => {
       if (action.payload.resolver) {
         action.payload.resolver('some/path');
       }

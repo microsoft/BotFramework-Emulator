@@ -74,7 +74,7 @@ export class EditorSagas {
 
     // if currently active document has pending changes, prompt the user to reload it
     const activeDocId = stateData.editors[stateData.activeEditor].activeDocumentId;
-    if (stateData.docsWithPendingChanges.some(doc => doc === activeDocId)) {
+    if (stateData.docsWithPendingChanges.some((doc) => doc === activeDocId)) {
       // TODO: active document ID is not always the filename
       yield call(EditorSagas.promptUserToReloadDocument, activeDocId);
     }

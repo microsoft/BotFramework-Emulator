@@ -42,7 +42,7 @@ jest.mock('fs', () => ({
 }));
 
 describe('copy files from source to destination asynchronously', () => {
-  it('should resolve promise if operation was successful', async done => {
+  it('should resolve promise if operation was successful', async (done) => {
     await expect(copyFileAsync('1.txt', '2.txt')).resolves.toBeUndefined();
     done();
   });

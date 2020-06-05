@@ -144,8 +144,8 @@ function initStore(): Store<RootState> {
 
   function* rootSaga() {
     yield all(
-      applicationSagas.map(saga =>
-        spawn(function*() {
+      applicationSagas.map((saga) =>
+        spawn(function* () {
           while (true) {
             try {
               yield call(saga);

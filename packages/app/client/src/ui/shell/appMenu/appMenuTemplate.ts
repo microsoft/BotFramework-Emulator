@@ -151,7 +151,7 @@ export class AppMenuTemplate {
         label: 'Zoom In',
         onClick: () => {
           const webContents = remote.getCurrentWebContents();
-          webContents.getZoomFactor(zoomFactor => {
+          webContents.getZoomFactor((zoomFactor) => {
             const newZoomFactor = zoomFactor + 0.1;
             if (newZoomFactor >= maxZoomFactor) {
               webContents.setZoomFactor(maxZoomFactor);
@@ -166,7 +166,7 @@ export class AppMenuTemplate {
         label: 'Zoom Out',
         onClick: () => {
           const webContents = remote.getCurrentWebContents();
-          webContents.getZoomFactor(zoomFactor => {
+          webContents.getZoomFactor((zoomFactor) => {
             const newZoomFactor = zoomFactor - 0.1;
             if (newZoomFactor <= minZoomFactor) {
               webContents.setZoomFactor(minZoomFactor);

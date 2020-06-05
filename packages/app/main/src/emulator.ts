@@ -73,7 +73,7 @@ export class Emulator {
     if (!this._server) {
       this._server = new EmulatorRestServer({
         ...options,
-        getServiceUrl: botUrl => this.ngrok.getServiceUrl(botUrl),
+        getServiceUrl: (botUrl) => this.ngrok.getServiceUrl(botUrl),
         getServiceUrlForOAuth: () => this.ngrok.getServiceUrlForOAuth(),
         shutDownOAuthNgrokInstance: () => this.ngrok.shutDownOAuthNgrokInstance(),
       });

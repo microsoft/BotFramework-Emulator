@@ -49,7 +49,7 @@ export class OpenIdMetadata {
     // If keys are more than 5 days old, refresh them
     const now = new Date().getTime();
     if (this.lastUpdated < now - 1000 * 60 * 60 * 24 * 5) {
-      this.refreshCache(err => {
+      this.refreshCache((err) => {
         if (err) {
           // fall through and return cached key on error
         }
@@ -75,7 +75,7 @@ export class OpenIdMetadata {
     };
 
     got(options)
-      .then(resp => {
+      .then((resp) => {
         if (resp.statusCode >= 400 || !resp.body) {
           throw new Error('Failed to load openID config: ' + resp.statusCode);
         }
@@ -101,11 +101,11 @@ export class OpenIdMetadata {
 
             cb(null);
           })
-          .catch(err => {
+          .catch((err) => {
             cb(err);
           });
       })
-      .catch(err => {
+      .catch((err) => {
         cb(err);
       });
   }

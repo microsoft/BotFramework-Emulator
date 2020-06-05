@@ -182,7 +182,7 @@ export class EmulatorCommands {
       protocol: { openUrls },
     } = store.getState();
     if (openUrls.length) {
-      await Promise.all(openUrls.map(url => ProtocolHandler.parseProtocolUrlAndDispatch(url)));
+      await Promise.all(openUrls.map((url) => ProtocolHandler.parseProtocolUrlAndDispatch(url)));
     }
     openUrls.length = 0;
   }
@@ -207,7 +207,7 @@ export class EmulatorCommands {
         message: 'You have successfully cleared state.',
         title: 'Success!',
       });
-      await new Promise(resolve => session.defaultSession.clearStorageData({}, resolve));
+      await new Promise((resolve) => session.defaultSession.clearStorageData({}, resolve));
     }
 
     return true;

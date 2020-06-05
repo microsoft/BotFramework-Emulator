@@ -81,13 +81,13 @@ export class RecognizerResultAdapter implements RecognizerResult {
 
     // We start by populating composite entities so that entities covered by them are removed from the entities list
     if (compositeEntities) {
-      compositeEntityTypes = compositeEntities.map(compositeEntity => compositeEntity.parentType);
-      compositeEntities.forEach(compositeEntity => {
+      compositeEntityTypes = compositeEntities.map((compositeEntity) => compositeEntity.parentType);
+      compositeEntities.forEach((compositeEntity) => {
         entities = this.populateCompositeEntity(compositeEntity, entities, entitiesAndMetadata, verbose);
       });
     }
 
-    entities.forEach(entity => {
+    entities.forEach((entity) => {
       // we'll address composite entities separately
       if (compositeEntityTypes.indexOf(entity.type) > -1) {
         return;
@@ -190,7 +190,7 @@ export class RecognizerResultAdapter implements RecognizerResult {
     let childrenEntitiesMetadata: any = {};
 
     // This is now implemented as O(n^2) search and can be reduced to O(2n) using a map as an optimization if n grows
-    const compositeEntityMetadata: Entity | undefined = entities.find(entity => {
+    const compositeEntityMetadata: Entity | undefined = entities.find((entity) => {
       // For now we are matching by value, which can be ambiguous if the same composite entity
       // shows up with the same text multiple times within an utterance, but this is just a
       // stop gap solution till the indices are included in composite entities
@@ -206,7 +206,7 @@ export class RecognizerResultAdapter implements RecognizerResult {
     // This is now implemented as O(n*k) search and can be reduced to O(n + k)
     // using a map as an optimization if n or k grow
     const coveredSet = new Set();
-    compositeEntity.children.forEach(childEntity => {
+    compositeEntity.children.forEach((childEntity) => {
       for (let i = 0; i < entities.length; i++) {
         const entity = entities[i];
         if (

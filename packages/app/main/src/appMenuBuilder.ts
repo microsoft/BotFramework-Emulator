@@ -126,12 +126,12 @@ export class AppMenuBuilder {
         const recentBotsMenuItems = this.recentBotsMenuItems;
         const recentBotsMenu = new Menu();
         // must append 1-by-1 due to Electron limitations
-        recentBotsMenuItems.forEach(item => {
+        recentBotsMenuItems.forEach((item) => {
           recentBotsMenu.append(item);
         });
         const fileMenuContent = Menu.buildFromTemplate(this.getUpdatedFileMenuContent(recentBotsMenu));
         fileMenu.submenu.clear();
-        fileMenuContent.items.forEach(item => {
+        fileMenuContent.items.forEach((item) => {
           fileMenu.submenu.append(item);
         });
       }
@@ -147,7 +147,7 @@ export class AppMenuBuilder {
         const recentBots = this.getRecentBotsList(updatedBots);
         // we have to reconstruct the menu due to Electron menu item limitations
         recentBotsMenu.submenu.clear();
-        recentBots.forEach(bot => recentBotsMenu.submenu.append(bot));
+        recentBots.forEach((bot) => recentBotsMenu.submenu.append(bot));
         recentBotsMenu.enabled = !!updatedBots.length;
       }
     }
@@ -181,11 +181,11 @@ export class AppMenuBuilder {
       .filter(Boolean)
       .slice(0, 9)
       .map(
-        bot =>
+        (bot) =>
           new MenuItem({
             label: bot.displayName,
             click: () => {
-              AppMenuBuilder.commandService.remoteCall(SharedConstants.Commands.Bot.Switch, bot.path).catch(err =>
+              AppMenuBuilder.commandService.remoteCall(SharedConstants.Commands.Bot.Switch, bot.path).catch((err) =>
                 // eslint-disable-next-line no-console
                 console.error('Error while switching bots from file menu recent bots list: ', err)
               );
@@ -276,7 +276,7 @@ export class AppMenuBuilder {
       { type: 'separator' },
       {
         label: 'Themes',
-        submenu: availableThemes.map(t => ({
+        submenu: availableThemes.map((t) => ({
           label: t.name,
           type: isMac() ? 'radio' : 'checkbox',
           checked: theme === t.name,
@@ -414,7 +414,7 @@ export class AppMenuBuilder {
         { role: 'copy' },
         { role: 'paste' },
         { role: 'delete' },
-      ].filter(item => item) as any[],
+      ].filter((item) => item) as any[],
     };
   }
 

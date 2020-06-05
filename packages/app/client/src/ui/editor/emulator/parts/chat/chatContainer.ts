@@ -68,7 +68,7 @@ const mapDispatchToProps = (dispatch, ownProps: ChatProps): Partial<ChatProps> =
     },
     showContextMenuForActivity: (activity: Partial<Activity>) => dispatch(showContextMenuForActivity(activity)),
     showOpenUrlDialog: async (url: string) => {
-      return new Promise(resolve => {
+      return new Promise((resolve) => {
         dispatch(executeCommand(false, SharedConstants.Commands.UI.ShowOpenUrlDialog, resolve, url));
       });
     },

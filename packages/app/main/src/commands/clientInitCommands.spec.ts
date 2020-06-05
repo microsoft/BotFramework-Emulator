@@ -68,7 +68,7 @@ jest.mock('../state/store', () => ({
     return mockSettingsStore;
   },
   getSettings: () => new mockSettingsImpl(mockSettingsStore.getState().settings),
-  dispatch: action => mockSettingsStore.dispatch(action),
+  dispatch: (action) => mockSettingsStore.dispatch(action),
 }));
 
 // had to mock to fix some very strange import error that was happening downstream
@@ -136,7 +136,7 @@ jest.mock('mkdirp', () => ({
 }));
 const mockReadFileSyncResponses = [`{"bots":[]}`, '[]'];
 jest.mock('../utils/readFileSync', () => ({
-  readFileSync: file => {
+  readFileSync: (file) => {
     if (file.includes('.transcript')) {
       return '[]';
     }
@@ -160,7 +160,7 @@ jest.mock('../utils/openFileFromCommandLine', () => ({
 }));
 
 let mockStore;
-(store as any).getStore = function() {
+(store as any).getStore = function () {
   return mockStore || (mockStore = createStore(combineReducers({ bot })));
 };
 

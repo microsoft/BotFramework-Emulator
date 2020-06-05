@@ -52,7 +52,7 @@ export class HyperlinkHandler {
       } else if (parsed.protocol.startsWith('oauthlink:')) {
         this.navigateOAuthUrl(url.substring(12));
       } else {
-        this.commandService.remoteCall(TrackEvent, 'app_openLink', { url }).catch(_e => void 0);
+        this.commandService.remoteCall(TrackEvent, 'app_openLink', { url }).catch((_e) => void 0);
         // manually create and click a download link for data url's
         if (url.startsWith('data:')) {
           const a = document.createElement('a');
@@ -64,7 +64,7 @@ export class HyperlinkHandler {
         }
       }
     } catch (e) {
-      this.commandService.remoteCall(TrackEvent, 'app_openLink', { url }).catch(_e => void 0);
+      this.commandService.remoteCall(TrackEvent, 'app_openLink', { url }).catch((_e) => void 0);
       shell.openExternal(url, { activate: true });
     }
   }

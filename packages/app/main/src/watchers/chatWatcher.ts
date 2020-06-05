@@ -89,7 +89,7 @@ export class ChatWatcher extends FileWatcher {
   }
 
   private validateChatFiles = () => {
-    const chatFiles: IFileService[] = Object.keys(this.chatFiles).map(key => {
+    const chatFiles: IFileService[] = Object.keys(this.chatFiles).map((key) => {
       const { name, ext } = path.parse(key);
       return {
         name: `${name}${ext}`,

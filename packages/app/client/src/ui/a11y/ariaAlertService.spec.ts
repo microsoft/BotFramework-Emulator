@@ -51,7 +51,7 @@ describe('AriaAlertService', () => {
   it('should not create an aria alert if there is no message', () => {
     // make sure there are no leftover alerts from previous test(s)
     const preExistingAlerts = document.querySelectorAll('span#alert-from-service');
-    preExistingAlerts.forEach(alert => alert.remove());
+    preExistingAlerts.forEach((alert) => alert.remove());
     ariaAlertService.alert(undefined);
     const alertElement = document.querySelector('span#alert-from-service') as HTMLSpanElement;
 

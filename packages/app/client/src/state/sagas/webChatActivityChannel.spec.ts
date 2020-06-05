@@ -47,7 +47,7 @@ describe('Webchat activity channel', () => {
     const promiseResolvers = [];
     const numOfEventsToSend = 150;
     for (let i = 0; i < numOfEventsToSend; i++) {
-      promiseResolvers.push(new Promise(resolve => emitterSubscriber.take(resolve)));
+      promiseResolvers.push(new Promise((resolve) => emitterSubscriber.take(resolve)));
       const channelPayload: ChannelPayload = {
         documentId: 'some-id' + i,
         action: {
@@ -89,7 +89,7 @@ describe('Webchat activity channel', () => {
       dispatch: jest.fn(),
     };
     emitterSubscriber.close();
-    const eventsReceived = new Promise(resolve => emitterSubscriber.take(resolve));
+    const eventsReceived = new Promise((resolve) => emitterSubscriber.take(resolve));
 
     const unresolved = await eventsReceived;
     activityChannel.sendWebChatEvents(channelPayload);

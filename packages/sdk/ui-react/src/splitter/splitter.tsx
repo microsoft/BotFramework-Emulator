@@ -135,7 +135,7 @@ export class Splitter extends React.Component<SplitterProps, SplitterState> {
       // subtract initial sizes from container size and distribute the remaining size equally
       let remainingContainerSize = this.containerSize;
       let defaultPanes = numberOfPanes;
-      Object.keys(initialSizes).forEach(key => {
+      Object.keys(initialSizes).forEach((key) => {
         // convert percentage to absolute value if necessary
         initialSizes[key] =
           typeof initialSizes[key] === 'string'
@@ -300,7 +300,7 @@ export class Splitter extends React.Component<SplitterProps, SplitterState> {
     currentPaneSizes[pane2Index] = secondarySize;
     if (this.props.onSizeChange) {
       const globalContainerSize = this.getContainerSize();
-      const paneSizes = currentPaneSizes.map(size => ({
+      const paneSizes = currentPaneSizes.map((size) => ({
         absolute: size,
         percentage: (size / globalContainerSize) * 100,
       }));
@@ -336,7 +336,7 @@ export class Splitter extends React.Component<SplitterProps, SplitterState> {
           key={`pane${paneIndex}`}
           orientation={this.props.orientation}
           size={this.state.paneSizes[paneIndex]}
-          ref={x => this.savePaneRef(x, paneIndex)}
+          ref={(x) => this.savePaneRef(x, paneIndex)}
         >
           {child}
         </SplitterPane>
@@ -354,8 +354,8 @@ export class Splitter extends React.Component<SplitterProps, SplitterState> {
           this.props.orientation === 'horizontal' ? styles.horizontalSplitter : styles.verticalSplitter;
         // add a splitter
         const splitter = (
-          <div className={splitterCss} key={`splitter${splitIndex}`} ref={x => this.saveSplitterRef(x, splitIndex)}>
-            <div onMouseDown={e => this.onActuatorMouseDown(e, splitIndex)} />
+          <div className={splitterCss} key={`splitter${splitIndex}`} ref={(x) => this.saveSplitterRef(x, splitIndex)}>
+            <div onMouseDown={(e) => this.onActuatorMouseDown(e, splitIndex)} />
           </div>
         );
         splitChildren.push(splitter);

@@ -69,7 +69,7 @@ export function createWebChatActivityChannel(): WebChatActivityChannel {
   }
 
   const getWebChatChannelSubscriber = (): Channel<ChannelPayload> => {
-    return eventChannel(emitter => {
+    return eventChannel((emitter) => {
       const self = {
         emitter,
       };

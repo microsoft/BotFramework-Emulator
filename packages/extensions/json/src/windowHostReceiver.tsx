@@ -225,7 +225,7 @@ export function windowHostReceiver(WrappedComponent: ComponentClass<any>): Compo
     private updateButtonStates(): void {
       const groupStates: Partial<AccessoryId>[] = ['leftArrow', 'rightArrow'];
       const { containsBotStateActivities, isDiff } = this.state;
-      groupStates.forEach(accessoryId =>
+      groupStates.forEach((accessoryId) =>
         this.setAccessoryState(accessoryId, containsBotStateActivities ? 'default' : 'disabled')
       );
       this.setAccessoryState('json', isDiff ? 'default' : 'selected');

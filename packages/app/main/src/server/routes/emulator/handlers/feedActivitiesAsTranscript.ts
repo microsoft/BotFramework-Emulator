@@ -51,7 +51,7 @@ export function createFeedActivitiesAsTranscriptHandler(emulatorServer: Emulator
         return next();
       }
       activities = conversation.prepTranscriptActivities(activities);
-      activities.forEach(activity => {
+      activities.forEach((activity) => {
         const payload = { activities: [activity] };
         const socket = WebSocketServer.getSocketByConversationId(conversation.conversationId);
         socket && socket.send(JSON.stringify(payload));

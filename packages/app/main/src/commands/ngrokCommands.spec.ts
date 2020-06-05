@@ -104,7 +104,7 @@ describe('The Ngrok commands', () => {
     registry = commandService.registry;
   });
 
-  it('should fire editor with the correct makeActiveByDefalt default value', done => {
+  it('should fire editor with the correct makeActiveByDefalt default value', (done) => {
     const makeActiveByDefalt = true;
     jest.spyOn(mockStore, 'dispatch').mockImplementationOnce((args: OpenEditorAction) => {
       expect(args.payload.meta.makeActiveByDefault).toBe(makeActiveByDefalt);
@@ -114,7 +114,7 @@ describe('The Ngrok commands', () => {
     handler();
   });
 
-  it('should fire editor action with the correct makeActiveByDefalt set as false', done => {
+  it('should fire editor action with the correct makeActiveByDefalt set as false', (done) => {
     const makeActiveByDefalt = false;
     jest.spyOn(mockStore, 'dispatch').mockImplementationOnce((args: OpenEditorAction) => {
       expect(args.payload.meta.makeActiveByDefault).toBe(makeActiveByDefalt);

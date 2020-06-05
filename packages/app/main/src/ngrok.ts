@@ -143,9 +143,9 @@ export class NgrokInstance {
 
   public async disconnect(url?: string) {
     const tunnelsToDisconnect = url ? [this.tunnels[url]] : Object.keys(this.tunnels);
-    const requests = tunnelsToDisconnect.map(tunnel => fetch(tunnel, { method: 'DELETE' }));
+    const requests = tunnelsToDisconnect.map((tunnel) => fetch(tunnel, { method: 'DELETE' }));
     const responses: Response[] = await Promise.all(requests);
-    responses.forEach(response => {
+    responses.forEach((response) => {
       if (!response.ok || response.status === 204) {
         // Not sure why a 204 is a failure
         return;
@@ -227,7 +227,7 @@ export class NgrokInstance {
 
       if (!resp.ok) {
         const error = await resp.text();
-        await new Promise(resolve => setTimeout(resolve, ~~intervals.retry));
+        await new Promise((resolve) => setTimeout(resolve, ~~intervals.retry));
         if (!retries) {
           throw new Error(error);
         }
@@ -274,7 +274,7 @@ export class NgrokInstance {
       }
       const ngrok = spawn(ngrokPath, args, { cwd: folder });
       // Errors are emitted instead of throwing since ngrok is a long running process
-      ngrok.on('error', e => this.ngrokEmitter.emit('error', e));
+      ngrok.on('error', (e) => this.ngrokEmitter.emit('error', e));
 
       ngrok.on('exit', () => {
         this.tunnels = {};
@@ -287,7 +287,7 @@ export class NgrokInstance {
         this.ngrokEmitter.emit('close');
       });
 
-      ngrok.stdout.on('data', data => {
+      ngrok.stdout.on('data', (data) => {
         this.ws.write(data.toString() + '\n');
       });
 

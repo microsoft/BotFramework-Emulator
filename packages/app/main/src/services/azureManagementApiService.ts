@@ -141,7 +141,7 @@ export class AzureManagementApiService {
   ): Promise<AzureResource[]> {
     const url = `${baseUrl}{id}/providers/${provider}/${identifier}`;
     const req = AzureManagementApiService.getRequestInit(armToken);
-    const calls = subs.map(subscription => fetch(url.replace('{id}', subscription.id), req));
+    const calls = subs.map((subscription) => fetch(url.replace('{id}', subscription.id), req));
 
     const accountsResponses: Response[] = await Promise.all(calls);
     const accounts: AzureResource[] = [];
@@ -154,12 +154,12 @@ export class AzureManagementApiService {
           value: AzureResource[];
         } = await accountResponse.json();
         const filteredValues = kind
-          ? accountResponseJson.value.filter(account => (account.kind || '').includes(kind))
+          ? accountResponseJson.value.filter((account) => (account.kind || '').includes(kind))
           : accountResponseJson.value;
         // Amend the data with the tenant and subscription Ids since we lose
         // this fidelity when the response comes back with multiple resources
         // per subscriptionId.
-        filteredValues.forEach(resource => {
+        filteredValues.forEach((resource) => {
           resource.tenantId = subscription.tenantId;
           resource.subscriptionId = subscription.subscriptionId;
         });
@@ -190,7 +190,7 @@ export class AzureManagementApiService {
     const req = AzureManagementApiService.getRequestInit(armToken);
     const url = `${baseUrl}{id}/listKeys?api-version=${apiVersion}`;
     req.method = 'POST'; // Not sure why this is required by the endpoint...
-    const calls = accounts.map(account => fetch(url.replace('{id}', account.id), req));
+    const calls = accounts.map((account) => fetch(url.replace('{id}', account.id), req));
     const keyResponses: Response[] = await Promise.all(calls);
     let i = keyResponses.length;
     while (i--) {

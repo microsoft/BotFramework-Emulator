@@ -100,7 +100,7 @@ export class EmulatorCommands {
           .remoteCall(TrackEvent, 'transcriptFile_open', {
             method: 'file_menu',
           })
-          .catch(_e => void 0);
+          .catch((_e) => void 0);
       }
     } catch (e) {
       const errMsg = `Error while opening transcript file: ${e}`;

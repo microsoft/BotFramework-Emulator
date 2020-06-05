@@ -39,7 +39,7 @@ import { ConnectedServiceCommands } from './connectedServiceCommands';
 const mockServiceTypes = ServiceTypes;
 jest.mock('../services/luisApiService', () => ({
   LuisApi: {
-    getServices: function*() {
+    getServices: function* () {
       yield { label: 'Retrieving luis models', progress: 50 };
       return { services: [{ type: mockServiceTypes.Luis }] };
     },
@@ -48,7 +48,7 @@ jest.mock('../services/luisApiService', () => ({
 
 jest.mock('../services/qnaApiService', () => ({
   QnaApiService: {
-    getKnowledgeBases: function*() {
+    getKnowledgeBases: function* () {
       yield { label: 'Retrieving knowledge bases', progress: 50 };
       return { services: [{ type: mockServiceTypes.QnA }] };
     },
@@ -57,7 +57,7 @@ jest.mock('../services/qnaApiService', () => ({
 
 jest.mock('../services/storageAccountApiService', () => ({
   StorageAccountApiService: {
-    getBlobStorageServices: function*() {
+    getBlobStorageServices: function* () {
       yield { label: 'Retrieving Blob Containers', progress: 50 };
       return { services: [{ type: mockServiceTypes.BlobStorage }] };
     },

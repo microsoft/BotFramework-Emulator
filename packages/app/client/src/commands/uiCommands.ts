@@ -166,7 +166,7 @@ export class UiCommands {
     if (themeTag) {
       themeTag.href = themeHref;
     }
-    const themeComponents = Array.prototype.map.call(linkTags, link => link.href); // href is fully qualified
+    const themeComponents = Array.prototype.map.call(linkTags, (link) => link.href); // href is fully qualified
     store.dispatch(switchTheme(themeName, themeComponents));
     this.commandService
       .remoteCall(Telemetry.TrackEvent, 'app_chooseTheme', {
@@ -179,7 +179,7 @@ export class UiCommands {
   // Azure sign in
   @Command(UI.SignInToAzure)
   protected signIntoAzure(serviceType: ServiceTypes) {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       store.dispatch(
         beginAzureAuthWorkflow(
           AzureLoginPromptDialogContainer,

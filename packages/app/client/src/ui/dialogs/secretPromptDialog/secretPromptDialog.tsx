@@ -103,7 +103,7 @@ export class SecretPromptDialog extends React.Component<SecretPromptDialogProps,
     );
   }
 
-  private createAnchorClickHandler = url => () => this.props.onAnchorClick(url);
+  private createAnchorClickHandler = (url) => () => this.props.onAnchorClick(url);
 
   private onChangeSecret = (event: ChangeEvent<HTMLInputElement>) => {
     const { value: secret } = event.target;

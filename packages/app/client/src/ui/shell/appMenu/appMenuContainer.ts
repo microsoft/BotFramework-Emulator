@@ -69,18 +69,18 @@ function mapDispatchToProps(dispatch): AppMenuProps {
       dispatch(executeCommand(true, CheckForUpdates, null));
     },
     invalidateAzureArmToken: () =>
-      new Promise(resolve => {
+      new Promise((resolve) => {
         dispatch(executeCommand(false, InvalidateAzureArmToken, resolve));
       }),
     openBot: (path: string) => {
       dispatch(executeCommand(false, Bot.Switch, null, path));
     },
     signUserIn: () =>
-      new Promise(resolve => {
+      new Promise((resolve) => {
         dispatch(executeCommand(false, SignInToAzure, resolve));
       }),
     signUserOut: () =>
-      new Promise(resolve => {
+      new Promise((resolve) => {
         dispatch(executeCommand(true, SignUserOutOfAzure, resolve));
       }),
     switchTheme: (themeName: string) => {

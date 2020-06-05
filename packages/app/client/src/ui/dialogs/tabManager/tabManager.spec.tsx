@@ -81,7 +81,7 @@ const mockState = {
 const mockStore = createStore(combineReducers({ editor }), mockState);
 const windowEvents = [];
 const mockWindow = {
-  addEventListener: event => {
+  addEventListener: (event) => {
     windowEvents.push(event);
   },
 };

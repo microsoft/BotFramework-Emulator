@@ -84,7 +84,7 @@ export class TabManager extends React.Component<TabManagerProps, TabManagerState
             // name from store using documentId
             const tabClassName = index === this.state.selectedIndex ? styles.selectedTab : '';
             return (
-              <li className={tabClassName} ref={x => this.saveTabRef(x, index)} key={tabId} tabIndex={0}>
+              <li className={tabClassName} ref={(x) => this.saveTabRef(x, index)} key={tabId} tabIndex={0}>
                 {tabId}
               </li>
             );

@@ -81,10 +81,7 @@ describe('ActiveBotHelper tests', () => {
   });
 
   it('confirmSwitchBot() functionality', async () => {
-    (editorHelpers as any).hasNonGlobalTabs = jest
-      .fn()
-      .mockReturnValueOnce(true)
-      .mockReturnValueOnce(false);
+    (editorHelpers as any).hasNonGlobalTabs = jest.fn().mockReturnValueOnce(true).mockReturnValueOnce(false);
     commandService.remoteCall = jest.fn().mockResolvedValue('done');
 
     const result1 = await ActiveBotHelper.confirmSwitchBot();
@@ -95,10 +92,7 @@ describe('ActiveBotHelper tests', () => {
   });
 
   it('confirmCloseBot() functionality', async () => {
-    (editorHelpers as any).hasNonGlobalTabs = jest
-      .fn()
-      .mockReturnValueOnce(true)
-      .mockReturnValueOnce(false);
+    (editorHelpers as any).hasNonGlobalTabs = jest.fn().mockReturnValueOnce(true).mockReturnValueOnce(false);
 
     commandService.remoteCall = jest.fn().mockResolvedValue('done');
 
@@ -145,10 +139,7 @@ describe('ActiveBotHelper tests', () => {
     const backupConfirmCloseBot = ActiveBotHelper.confirmCloseBot;
     const backupCloseActiveBot = ActiveBotHelper.closeActiveBot;
 
-    (botHelpers as any).getActiveBot = jest
-      .fn()
-      .mockReturnValueOnce(null)
-      .mockReturnValue({});
+    (botHelpers as any).getActiveBot = jest.fn().mockReturnValueOnce(null).mockReturnValue({});
     ActiveBotHelper.confirmCloseBot = jest.fn().mockResolvedValue({});
     ActiveBotHelper.closeActiveBot = jest.fn().mockResolvedValue(null);
 
@@ -271,10 +262,7 @@ describe('ActiveBotHelper tests', () => {
     ActiveBotHelper.browseForBotFile = () => new Promise((resolve, reject) => resolve('someOtherPath'));
     ActiveBotHelper.confirmSwitchBot = () => new Promise((resolve, reject) => resolve(true));
 
-    const mockRemoteCall = jest
-      .fn()
-      .mockResolvedValueOnce(bot)
-      .mockResolvedValue(null);
+    const mockRemoteCall = jest.fn().mockResolvedValueOnce(bot).mockResolvedValue(null);
     const mockCall = jest.fn().mockResolvedValue(null);
     commandService.remoteCall = mockRemoteCall;
     commandService.call = mockCall;

@@ -222,7 +222,7 @@ class EmulatorApplication {
     // log app startup time in seconds
     const endStartupTime = Date.now();
     const startupTime = (endStartupTime - beginStartupTime) / 1000;
-    const launchedByProtocol = process.argv.some(arg => arg.includes(Protocol)) || protocolUsed;
+    const launchedByProtocol = process.argv.some((arg) => arg.includes(Protocol)) || protocolUsed;
     TelemetryService.trackEvent('app_launch', {
       method: launchedByProtocol ? 'protocol' : 'binary',
       startupTime,
@@ -232,7 +232,7 @@ class EmulatorApplication {
   private onBrowserWindowRestore = () => {
     if (windowIsOffScreen(this.mainWindow.browserWindow.getBounds())) {
       const currentBounds = this.mainWindow.browserWindow.getBounds();
-      let display = screen.getAllDisplays().find(displayArg => displayArg.id === getSettings().windowState.displayId);
+      let display = screen.getAllDisplays().find((displayArg) => displayArg.id === getSettings().windowState.displayId);
       display = display || screen.getDisplayMatching(currentBounds);
       this.mainWindow.browserWindow.setPosition(display.workArea.x, display.workArea.y);
       const bounds = {
@@ -291,7 +291,7 @@ class EmulatorApplication {
 
   private onInvertedColorSchemeChanged = () => {
     const { theme, availableThemes } = getSettings().windowState;
-    const themeInfo = availableThemes.find(availableTheme => availableTheme.name === theme);
+    const themeInfo = availableThemes.find((availableTheme) => availableTheme.name === theme);
 
     const isHighContrast = systemPreferences.isInvertedColorScheme();
 
@@ -370,7 +370,7 @@ class EmulatorApplication {
     const state = store.getState();
 
     // if the bots list changed, write it to disk
-    const bots = state.bot.botFiles.filter(botFile => !!botFile);
+    const bots = state.bot.botFiles.filter((botFile) => !!botFile);
     if (botListsAreDifferent(this.botsRef, bots)) {
       const botsJson = { bots };
       const botsJsonPath = path.join(ensureStoragePath(), 'bots.json');

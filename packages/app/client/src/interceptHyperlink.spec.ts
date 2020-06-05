@@ -36,7 +36,7 @@ import interceptHyperlink from './interceptHyperlink';
 const mockNavigate = jest.fn();
 jest.mock('./hyperlinkHandler', () => ({
   HyperlinkHandler: {
-    navigate: url => mockNavigate(url),
+    navigate: (url) => mockNavigate(url),
   },
 }));
 

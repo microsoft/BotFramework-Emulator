@@ -60,7 +60,7 @@ jest.mock('electron', () => ({
     getVersion: () => '4.x',
   },
   Menu: {
-    setApplicationMenu: _a => void 0,
+    setApplicationMenu: (_a) => void 0,
     buildFromTemplate: () => void 0,
   },
   dialog: {
@@ -245,7 +245,7 @@ describe('the electron commands', () => {
     await handler(mockEditorState);
 
     // should enable all send activity menu items
-    expect(mockSendActivityMenuItems.some(item => !item.enabled)).toBe(false);
+    expect(mockSendActivityMenuItems.some((item) => !item.enabled)).toBe(false);
   });
 
   it('should set full screen mode and set the application menu to null', async () => {

@@ -71,7 +71,7 @@ class LeftContentOverlayComponent extends React.Component<LeftContentOverlayProp
     );
   }
 
-  private onDragEnter = e => {
+  private onDragEnter = (e) => {
     e.preventDefault();
     e.stopPropagation();
   };

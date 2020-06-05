@@ -1365,7 +1365,7 @@ describe('The ChatSagas,', () => {
       );
     });
 
-    it('should send conversation queue object if its a Conversation replay flow to replayActivitySniffer middleware', done => {
+    it('should send conversation queue object if its a Conversation replay flow to replayActivitySniffer middleware', (done) => {
       const webChatEventExpected = {
         type: WebChatEvents.incomingActivity,
         payload: {
@@ -1402,7 +1402,7 @@ describe('The ChatSagas,', () => {
 
       let eventReceivedCt = 0;
       const channel: any = {
-        sendWebChatEvents: args => {
+        sendWebChatEvents: (args) => {
           expect(args.action).toEqual(webChatEventExpected);
           expect(args.meta.conversationQueue).toEqual(conversationQueue);
           eventReceivedCt++;

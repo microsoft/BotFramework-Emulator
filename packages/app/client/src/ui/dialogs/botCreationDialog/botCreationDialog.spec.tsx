@@ -42,14 +42,14 @@ import { ariaAlertService } from '../../a11y';
 import { BotCreationDialog, BotCreationDialogState } from './botCreationDialog';
 import { BotCreationDialogContainer } from './botCreationDialogContainer';
 
-const mockCopyToClipboard = jest.fn(args => true);
+const mockCopyToClipboard = jest.fn((args) => true);
 jest.mock('../index', () => null);
 jest.mock('../../../utils', () => ({
   debounce: (func: () => any) => func,
   generateBotSecret: () => {
     return Math.random() + '';
   },
-  copyTextToClipboard: args => mockCopyToClipboard(args),
+  copyTextToClipboard: (args) => mockCopyToClipboard(args),
 }));
 
 jest.mock('electron', () => ({
@@ -264,7 +264,7 @@ describe('BotCreationDialog tests', () => {
   it('should announce any validation warning messages', () => {
     // make sure there are no leftover alerts from previous test(s)
     const preExistingAlerts = document.querySelectorAll('body > span#alert-from-service');
-    preExistingAlerts.forEach(alert => alert.remove());
+    preExistingAlerts.forEach((alert) => alert.remove());
     const spy = jest.spyOn(ariaAlertService, 'alert').mockReturnValueOnce(undefined);
     testWrapper.instance().announceEndpointWarning('Invalid bot url.');
 

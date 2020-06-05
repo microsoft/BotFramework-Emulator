@@ -36,7 +36,7 @@
 const nodeFetch = require('node-fetch');
 
 declare function fetch(input: RequestInfo, init?: RequestInit): Promise<Response>;
-(global as any).fetch = function(...args: any[]) {
+(global as any).fetch = function (...args: any[]) {
   const [urlOrRequest, requestInit = {}] = args;
 
   // Https localhost
@@ -63,19 +63,14 @@ declare function fetch(input: RequestInfo, init?: RequestInit): Promise<Response
   // Reference: https://www.gnu.org/software/emacs/manual/html_node/url/Proxies.html
   const noProxyList = (process.env.NO_PROXY || '')
     .split(',')
-    .map(x =>
-      x
-        .trim()
-        .toLowerCase()
-        .replace(/^\*/, '')
-    )
-    .filter(x => x)
-    .map(name => ({
+    .map((x) => x.trim().toLowerCase().replace(/^\*/, ''))
+    .filter((x) => x)
+    .map((name) => ({
       name,
       isDomain: name.startsWith('.'),
     }));
 
-  if (noProxyList.some(x => (x.isDomain ? url.hostname.endsWith(x.name) : url.hostname === x.name))) {
+  if (noProxyList.some((x) => (x.isDomain ? url.hostname.endsWith(x.name) : url.hostname === x.name))) {
     return nodeFetch(...args);
   }
 

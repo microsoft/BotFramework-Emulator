@@ -52,7 +52,7 @@ function logLevel(logLevelArg: LogLevel) {
 
 export class ConsoleLogService implements LogService {
   public logToChat(conversationId: string, ...items: LogItem<TextLogItem>[]) {
-    items.forEach(message => {
+    items.forEach((message) => {
       if (message.type === LogItemType.Text) {
         logLevel(message.payload.level)(conversationId ? conversationId : '', message.payload.text);
       }

@@ -54,7 +54,7 @@ describe('filterChildren', () => {
   it('should filterChildren according to a predicate', () => {
     const child1 = { name: 'someChild' };
     const child2 = { name: 'otherChild' };
-    const predicate = child => child.name.startsWith('some');
+    const predicate = (child) => child.name.startsWith('some');
 
     const filteredChildren = filterChildren([child1, child2], predicate);
 

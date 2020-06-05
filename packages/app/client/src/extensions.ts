@@ -48,7 +48,7 @@ export class Extension {
 
   public inspectorForObject(obj: any): GetInspectorResult | null {
     const inspectors = this.config.client.inspectors || [];
-    const inspector = inspectors.find(inspectorArg => InspectorAPI.canInspect(inspectorArg, obj));
+    const inspector = inspectors.find((inspectorArg) => InspectorAPI.canInspect(inspectorArg, obj));
     return inspector
       ? {
           extension: this,
@@ -72,7 +72,7 @@ export class InspectorAPI {
     if (!Array.isArray(criterias)) {
       criterias = [criterias];
     }
-    return criterias.some(criteria => {
+    return criterias.some((criteria) => {
       // Path is a json-path
       const value = getValueFromPath(obj, criteria.path);
       if (typeof value === 'undefined') {
@@ -148,17 +148,17 @@ class EmulatorExtensionManager {
   }
 
   public findExtension(name: string): Extension {
-    return this.getExtensions().find(extension => extension.config.name === name);
+    return this.getExtensions().find((extension) => extension.config.name === name);
   }
 
   public getExtensions(): Extension[] {
-    return Object.keys(this.extensions).map(key => this.extensions[key]) || [];
+    return Object.keys(this.extensions).map((key) => this.extensions[key]) || [];
   }
 
   public inspectorForObject(obj: any, defaultToJson: boolean): GetInspectorResult | null {
     let result = this.getExtensions()
-      .map(extension => extension.inspectorForObject(obj))
-      .filter(resultArg => !!resultArg)
+      .map((extension) => extension.inspectorForObject(obj))
+      .filter((resultArg) => !!resultArg)
       .shift();
     if (!result && defaultToJson) {
       // Default to the JSON inspector

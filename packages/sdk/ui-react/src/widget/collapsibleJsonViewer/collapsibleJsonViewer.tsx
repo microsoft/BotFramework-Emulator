@@ -140,7 +140,7 @@ export class CollapsibleJsonViewer extends Component<CollapsibleJsonViewerProps,
   };
 
   private mutationObserverCallback = (mutations: MutationRecord[]) => {
-    mutations.forEach(mutationRecord => {
+    mutations.forEach((mutationRecord) => {
       this.nodesAdded(mutationRecord.addedNodes);
     });
   };

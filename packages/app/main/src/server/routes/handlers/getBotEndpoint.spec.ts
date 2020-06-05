@@ -40,10 +40,10 @@ describe('The getBotEndpoint', () => {
     endpoints: {},
   } as any;
 
-  const mockNext = function() {
+  const mockNext = function () {
     return null;
   };
-  mockNext.ifError = function() {
+  mockNext.ifError = function () {
     return null;
   };
 

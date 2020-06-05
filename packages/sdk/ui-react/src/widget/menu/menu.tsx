@@ -124,7 +124,7 @@ export class Menu extends React.Component<MenuProps, MenuState> {
   private focusPreviousItem(): void {
     const { items = [] } = this.props;
     const numItems = items.length;
-    const focusableItems = items.filter(item => item.type !== 'separator');
+    const focusableItems = items.filter((item) => item.type !== 'separator');
     if (!numItems || !focusableItems.length) {
       // nothing to focus
       return;
@@ -151,7 +151,7 @@ export class Menu extends React.Component<MenuProps, MenuState> {
   private focusNextItem(): void {
     const { items = [] } = this.props;
     const numItems = items.length;
-    const focusableItems = items.filter(item => item.type !== 'separator');
+    const focusableItems = items.filter((item) => item.type !== 'separator');
     if (!numItems || !focusableItems.length) {
       // nothing to focus
       return;

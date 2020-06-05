@@ -146,7 +146,7 @@ function initStore(): Store<RootState> {
   );
 
   const sagas = [settingsSagas, ngrokSagas];
-  sagas.forEach(saga => sagaMiddleware.run(saga));
+  sagas.forEach((saga) => sagaMiddleware.run(saga));
 
   // sync the main process store with any updates on the renderer process
   ipcMain.on('sync-store', (ev, action) => {

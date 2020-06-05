@@ -157,7 +157,7 @@ describe('Ngrok Tab', () => {
     expect(wrapper.find('.blinker').length).toBe(0);
   });
 
-  it('should switch to active class when tunnel status changes', done => {
+  it('should switch to active class when tunnel status changes', (done) => {
     expect(wrapper.html().includes('active')).toBeTruthy();
     mockStore.dispatch(
       updateTunnelStatus({

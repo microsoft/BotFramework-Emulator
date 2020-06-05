@@ -62,7 +62,7 @@ export class ConversationQueue {
       (activity: Activity) => activity.from.role === SharedConstants.Activity.USER_ROLE && activity.channelData
     );
 
-    const trimActivityIndex: number = this.userActivities.findIndex(activity => activity.id === replayToActivity.id);
+    const trimActivityIndex: number = this.userActivities.findIndex((activity) => activity.id === replayToActivity.id);
     if (trimActivityIndex !== -1) {
       this.userActivities = this.userActivities.splice(0, trimActivityIndex + 1);
     }
@@ -114,7 +114,7 @@ export class ConversationQueue {
       );
 
       if (activity.attachments && activity.attachments.length >= 1) {
-        const mutatedAttachments = activity.attachments.map(attachment => {
+        const mutatedAttachments = activity.attachments.map((attachment) => {
           const fileFormat: File = ConversationQueue.dataURLtoFile(attachment.contentUrl, attachment.name);
           return {
             ...attachment,

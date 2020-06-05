@@ -81,7 +81,7 @@ export class WindowManager {
 
   public zoomTo(zoomLevel: number) {
     this.mainWindow.webContents.setZoomLevel(zoomLevel);
-    this.windows.forEach(win => win.webContents.setZoomLevel(zoomLevel));
+    this.windows.forEach((win) => win.webContents.setZoomLevel(zoomLevel));
     dispatch(rememberZoomLevel({ zoomLevel }));
   }
 
@@ -125,8 +125,8 @@ export class WindowManager {
 
   public closeAll() {
     const openWindows = [];
-    this.windows.forEach(win => openWindows.push(win));
-    openWindows.forEach(win => win.close());
+    this.windows.forEach((win) => openWindows.push(win));
+    openWindows.forEach((win) => win.close());
     this.windows = [];
     this.mainWindow = undefined;
   }

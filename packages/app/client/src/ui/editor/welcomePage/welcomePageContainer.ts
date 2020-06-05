@@ -54,10 +54,11 @@ function mapDispatchToProps(dispatch: (action: Action) => void): WelcomePageProp
       dispatch(executeCommand(true, SharedConstants.Commands.Electron.OpenExternal, null, url));
     },
     onNewBotClick: () =>
-      new Promise(resolve => dispatch(executeCommand(false, Commands.UI.ShowBotCreationDialog, resolve))),
+      new Promise((resolve) => dispatch(executeCommand(false, Commands.UI.ShowBotCreationDialog, resolve))),
     showOpenBotDialog: () =>
-      new Promise(resolve => dispatch(executeCommand(false, SharedConstants.Commands.UI.ShowOpenBotDialog, resolve))),
-    signInWithAzure: () => new Promise(resolve => dispatch(executeCommand(false, Commands.UI.SignInToAzure, resolve))),
+      new Promise((resolve) => dispatch(executeCommand(false, SharedConstants.Commands.UI.ShowOpenBotDialog, resolve))),
+    signInWithAzure: () =>
+      new Promise((resolve) => dispatch(executeCommand(false, Commands.UI.SignInToAzure, resolve))),
     signOutWithAzure: () => {
       dispatch(executeCommand(true, Commands.Azure.SignUserOutOfAzure));
       dispatch(executeCommand(false, Commands.UI.InvalidateAzureArmToken));

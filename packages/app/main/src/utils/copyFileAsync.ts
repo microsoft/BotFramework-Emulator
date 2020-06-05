@@ -35,7 +35,7 @@ import * as fs from 'fs';
 
 export const copyFileAsync = (sourcePath: string, destinationPath: string): Promise<void> => {
   return new Promise((resolve, reject) => {
-    fs.copyFile(sourcePath, destinationPath, err => {
+    fs.copyFile(sourcePath, destinationPath, (err) => {
       if (err) {
         reject(`Error copying file: ${err}`);
       }

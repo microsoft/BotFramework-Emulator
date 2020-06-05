@@ -80,7 +80,7 @@ class ExtManagerImpl implements ExtensionManager {
       // do nothing
     }
     // Load each extension
-    folders.forEach(folder => {
+    folders.forEach((folder) => {
       try {
         this.spawnExtension(folder);
       } catch (ex) {
@@ -124,10 +124,10 @@ class ExtManagerImpl implements ExtensionManager {
     // Get the list of inspectors
     const inspectors = extension.config.client.inspectors || [];
     // Cleanup inspector paths
-    inspectors.forEach(inspector => {
+    inspectors.forEach((inspector) => {
       inspector.src = (inspector.src || '').replace(/\\/g, '/');
     });
-    inspectors.forEach(inspector => {
+    inspectors.forEach((inspector) => {
       let folder = path.resolve(configPath).replace(/\\/g, '/');
       if (folder[0] !== '/') {
         folder = `/${folder}`;

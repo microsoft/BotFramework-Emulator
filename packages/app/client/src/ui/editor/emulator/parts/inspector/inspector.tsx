@@ -181,7 +181,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
 
   private static getButtons(accessories: InspectorAccessory[] = []): AccessoryButton[] {
     return accessories
-      .map(config => {
+      .map((config) => {
         // Accessory must have a "default" state to be added
         if (config && config.states.default) {
           return {
@@ -193,7 +193,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
           return null;
         }
       })
-      .filter(accessoryState => !!accessoryState);
+      .filter((accessoryState) => !!accessoryState);
   }
 
   public componentDidMount() {
@@ -214,7 +214,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
       const { title, titleOverride } = this.state;
       return (
         <div aria-label="inspector panel" className={styles.detailPanel} role="region">
-          <Panel title={['inspector', titleOverride || title].filter(s => s && s.length).join(' - ')}>
+          <Panel title={['inspector', titleOverride || title].filter((s) => s && s.length).join(' - ')}>
             {this.renderAccessoryButtons()}
             <PanelContent>
               <div className={styles.inspectorContainer}>
@@ -252,7 +252,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     }
   }
 
-  private createAnchorClickHandler = url => () => this.props.onAnchorClick(url);
+  private createAnchorClickHandler = (url) => () => this.props.onAnchorClick(url);
 
   private onDebugDocsClick = this.createAnchorClickHandler(
     'https://docs.microsoft.com/en-us/azure/bot-service/bot-service-debug-emulator?view=azure-bot-service-4.0'
@@ -284,7 +284,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
   private renderAccessoryButtons() {
     return (
       <PanelControls>
-        {this.state.buttons.map(accessoryButton => this.renderAccessoryButton(accessoryButton))}
+        {this.state.buttons.map((accessoryButton) => this.renderAccessoryButton(accessoryButton))}
       </PanelControls>
     );
   }
@@ -342,7 +342,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
       containerRef.appendChild(nextInspector);
       nextInspector.addEventListener('dom-ready', this.onWebViewDOMReady);
     }
-    Array.prototype.forEach.call(containerRef.children, child => {
+    Array.prototype.forEach.call(containerRef.children, (child) => {
       if (child !== nextInspector) {
         child.style.display = 'none';
       }
@@ -367,7 +367,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
   };
 
   private enableAccessory = (id: string, enable: boolean) => {
-    const button = this.state.buttons.find(buttonArg => buttonArg.config.id === id);
+    const button = this.state.buttons.find((buttonArg) => buttonArg.config.id === id);
     if (button) {
       if (button.enabled !== enable) {
         button.enabled = enable;
@@ -377,7 +377,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
   };
 
   private setAccessoryState = (id: string, state: string) => {
-    const button = this.state.buttons.find(buttonArg => buttonArg.config.id === id);
+    const button = this.state.buttons.find((buttonArg) => buttonArg.config.id === id);
     if (button && button.state !== state) {
       const { config } = button;
       if (config.states[state]) {

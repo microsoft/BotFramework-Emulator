@@ -154,7 +154,7 @@ export class ActiveBotHelper {
         await this.setActiveBot(botToCreate);
         // open a livechat session with the bot
         const endpoint: IEndpointService = bot.services.find(
-          service => service.type === ServiceTypes.Endpoint
+          (service) => service.type === ServiceTypes.Endpoint
         ) as IEndpointService;
 
         if (endpoint) {
@@ -218,7 +218,7 @@ export class ActiveBotHelper {
               numOfServices,
               source: 'path',
             })
-            .catch(_e => void 0);
+            .catch((_e) => void 0);
         }
       }
     } catch (err) {
@@ -280,10 +280,12 @@ export class ActiveBotHelper {
         // if an endpoint id was specified, use that endpoint, otherwise use the first endpoint found
         if (overridesArePresent && newActiveBot.overrides.endpoint.id) {
           endpoint = newActiveBot.services.find(
-            service => service.type === ServiceTypes.Endpoint && service.id === newActiveBot.overrides.endpoint.id
+            (service) => service.type === ServiceTypes.Endpoint && service.id === newActiveBot.overrides.endpoint.id
           ) as IEndpointService;
         } else {
-          endpoint = newActiveBot.services.find(service => service.type === ServiceTypes.Endpoint) as IEndpointService;
+          endpoint = newActiveBot.services.find(
+            (service) => service.type === ServiceTypes.Endpoint
+          ) as IEndpointService;
         }
 
         // apply endpoint overrides here
@@ -317,13 +319,13 @@ export class ActiveBotHelper {
     console.log(`Closing active bot`);
 
     return this.confirmCloseBot()
-      .then(result => {
+      .then((result) => {
         if (result) {
           store.dispatch(closeNonGlobalTabs());
-          this.closeActiveBot().catch(err => new Error(err));
+          this.closeActiveBot().catch((err) => new Error(err));
         }
       })
-      .catch(err => {
+      .catch((err) => {
         const errMsg = `Error while closing active bot: ${err}`;
         const notification = newNotification(errMsg);
         store.dispatch(beginAdd(notification));

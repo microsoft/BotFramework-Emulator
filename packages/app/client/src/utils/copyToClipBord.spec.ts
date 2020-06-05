@@ -33,11 +33,11 @@
 
 import { copyTextToClipboard } from './copyToClipboard';
 
-const mockWrite = jest.fn(args => true);
+const mockWrite = jest.fn((args) => true);
 
 jest.mock('electron', () => ({
   clipboard: {
-    writeText: args => {
+    writeText: (args) => {
       mockWrite(args);
     },
   },

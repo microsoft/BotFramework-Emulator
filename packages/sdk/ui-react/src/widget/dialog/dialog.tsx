@@ -65,8 +65,8 @@ export class Dialog extends Component<ModalProps, {}> {
           </h1>
           <button className={styles.cancelButton} aria-label="Close" onClick={this.props.cancel} />
           <div className={styles.cancelButtonOutline} role="presentation"></div>
-          {filterChildren(children, child => hmrSafeNameComparison(child.type, DialogFooter, true))}
-          {filterChildren(children, child => hmrSafeNameComparison(child.type, DialogFooter))}
+          {filterChildren(children, (child) => hmrSafeNameComparison(child.type, DialogFooter, true))}
+          {filterChildren(children, (child) => hmrSafeNameComparison(child.type, DialogFooter))}
         </div>
       </>
     );

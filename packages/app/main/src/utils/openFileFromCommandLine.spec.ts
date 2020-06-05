@@ -41,7 +41,7 @@ import { openFileFromCommandLine } from './openFileFromCommandLine';
 const mockDispatch = jest.fn();
 jest.mock('../state', () => ({
   store: {
-    dispatch: action => mockDispatch(action),
+    dispatch: (action) => mockDispatch(action),
   },
 }));
 

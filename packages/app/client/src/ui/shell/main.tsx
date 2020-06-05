@@ -102,7 +102,7 @@ export class Main extends React.Component<MainProps, MainState> {
     // If falsy children aren't filtered out, splitter won't recognize change in number of children
     // (i.e. [child1, child2] -> [false, child2] is still seen as 2 children by the splitter)
     // TODO: Move this logic to splitter-side
-    const tabGroups = [tabGroup1, tabGroup2].filter(tG => !!tG);
+    const tabGroups = [tabGroup1, tabGroup2].filter((tG) => !!tG);
 
     // Explorer & TabGroup(s) pane
     const workbenchChildren = [];

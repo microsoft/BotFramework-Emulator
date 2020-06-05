@@ -224,7 +224,7 @@ class EmulatorUpdater extends EventEmitter {
       }
     } else {
       // download the update silently and update on app quit
-      this.downloadUpdate(false).catch(e => this.emit('error', e, e.toString()));
+      this.downloadUpdate(false).catch((e) => this.emit('error', e, e.toString()));
     }
   };
 

@@ -96,7 +96,7 @@ export class QnaApiService {
     yield { label: 'Checking for knowledge bases…', progress: 80 };
     const endpointKeyUrl = 'https://westus.api.cognitive.microsoft.com/qnamaker/v4.0/endpointkeys/';
     const kbUrl = 'https://westus.api.cognitive.microsoft.com/qnamaker/v4.0/knowledgebases/';
-    const calls = subscriptionKeys.map(key => {
+    const calls = subscriptionKeys.map((key) => {
       const qnaReq: RequestInit = {
         headers: {
           'Ocp-Apim-Subscription-Key': key,
@@ -125,7 +125,7 @@ export class QnaApiService {
       } = yield kbResponse.json();
 
       const subscriptionKey = subscriptionKeys[i];
-      const qnas = knowledgebases.map(kb => knowledgeBaseToQnaService(kb, subscriptionKey, primaryEndpointKey));
+      const qnas = knowledgebases.map((kb) => knowledgeBaseToQnaService(kb, subscriptionKey, primaryEndpointKey));
       payload.services.push(...qnas);
     }
 

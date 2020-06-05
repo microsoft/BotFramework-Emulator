@@ -80,14 +80,14 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
   ) {
     const state = {} as ConnectedServicesPickerState;
     const { availableServices, connectedServices } = nextProps;
-    connectedServices.forEach(service => (state[service.id] = connected));
-    availableServices.forEach(service => {
+    connectedServices.forEach((service) => (state[service.id] = connected));
+    availableServices.forEach((service) => {
       const { id } = service;
       if (prevState[id] !== connected && state[service.id] !== connected) {
         state[id] = prevState[id] || false;
       }
     });
-    state.checkAllChecked = Object.keys(state).every(key => !!state[key]);
+    state.checkAllChecked = Object.keys(state).every((key) => !!state[key]);
     return state;
   }
 
@@ -151,7 +151,7 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
   private get addButtonEnabled(): boolean {
     const { state } = this;
     const { checkAllChecked: _discarded, ...selectedModels } = state;
-    return Object.keys(selectedModels).some(key => !!state[key] && state[key] !== connected);
+    return Object.keys(selectedModels).some((key) => !!state[key] && state[key] !== connected);
   }
 
   private onChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -159,7 +159,7 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
     const { index } = event.target.dataset;
     const service = this.props.availableServices[index];
     newState[service.id] = !this.state[service.id] ? service : false;
-    newState.checkAllChecked = Object.keys(newState).every(key => !!newState[key]);
+    newState.checkAllChecked = Object.keys(newState).every((key) => !!newState[key]);
     this.setState(newState);
   };
 
@@ -169,7 +169,7 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
     const newState = {} as ConnectedServicesPickerState;
     const checked = (newState.checkAllChecked = !this.state.checkAllChecked);
 
-    availableServices.forEach(service => {
+    availableServices.forEach((service) => {
       if (state[service.id] !== connected) {
         newState[service.id] = checked ? service : false;
       }
@@ -396,7 +396,7 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
       </>
     );
   }
-  private createAnchorClickHandler = url => () => this.props.onAnchorClick(url);
+  private createAnchorClickHandler = (url) => () => this.props.onAnchorClick(url);
 
   private onAppInsightsDocClick = this.createAnchorClickHandler(
     'https://aka.ms/bot-framework-emulator-create-appinsights'

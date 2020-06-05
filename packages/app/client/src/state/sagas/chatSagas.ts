@@ -144,7 +144,7 @@ const dispatchActivityToWebChat = (dispatch: Function, postActivity: Activity) =
 };
 
 function createDLSpeechBotSniffer(isDLSpeechBot: boolean, conversationId: string, serverUrl: string) {
-  return () => next => async action => {
+  return () => (next) => async (action) => {
     if (isDLSpeechBot && action.type === 'DIRECT_LINE/INCOMING_ACTIVITY') {
       const res = await ConversationService.performTrackingForActivity(
         serverUrl,
@@ -164,7 +164,7 @@ function createDLSpeechBotSniffer(isDLSpeechBot: boolean, conversationId: string
 }
 
 function createReplayActivitySniffer(documentId: string, meta: ReplayActivitySnifferProps = undefined) {
-  return ({ dispatch }) => next => action => {
+  return ({ dispatch }) => (next) => (action) => {
     if (action.payload && webChatEventsToWatch.includes(action.type)) {
       ChatSagas.wcActivityChannel.sendWebChatEvents({
         documentId,
@@ -303,11 +303,11 @@ export class ChatSagas {
     if (filename.endsWith('.chat')) {
       ChatSagas.commandService
         .remoteCall(SharedConstants.Commands.Telemetry.TrackEvent, 'chatFile_open')
-        .catch(_e => void 0);
+        .catch((_e) => void 0);
     } else if (filename.endsWith('.transcript')) {
       ChatSagas.commandService
         .remoteCall(SharedConstants.Commands.Telemetry.TrackEvent, 'transcriptFile_open')
-        .catch(_e => void 0);
+        .catch((_e) => void 0);
     }
   }
 

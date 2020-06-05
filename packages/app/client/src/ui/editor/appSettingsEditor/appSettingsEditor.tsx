@@ -74,7 +74,9 @@ export interface AppSettingsEditorState extends Partial<FrameworkSettings> {
 }
 
 function shallowEqual(x: any, y: any) {
-  return Object.keys(x).length === Object.keys(y).length && Object.keys(x).every(key => key in y && x[key] === y[key]);
+  return (
+    Object.keys(x).length === Object.keys(y).length && Object.keys(x).every((key) => key in y && x[key] === y[key])
+  );
 }
 
 export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, AppSettingsEditorState> {
@@ -292,7 +294,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
     );
   }
 
-  private createAnchorClickHandler = url => () => this.props.onAnchorClick(url);
+  private createAnchorClickHandler = (url) => () => this.props.onAnchorClick(url);
 
   private disableSaveButton(): boolean {
     return this.state.useCustomId ? !this.state.userGUID || !this.state.dirty : !this.state.dirty;

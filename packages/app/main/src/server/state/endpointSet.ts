@@ -92,7 +92,7 @@ export class EndpointSet {
 
   // TODO: Check if this can be deprecated, try to deprecate this
   public getByAppId(msaAppId: string): BotEndpoint {
-    return this._endpoints[Object.keys(this._endpoints).find(id => this._endpoints[id].msaAppId === msaAppId)];
+    return this._endpoints[Object.keys(this._endpoints).find((id) => this._endpoints[id].msaAppId === msaAppId)];
   }
 
   public getAll(): { [key: string]: BotEndpoint } {

@@ -46,7 +46,7 @@ const mapStateToProps = (state: RootState, ownProps: EndpointEditorProps): Endpo
   let botService: IBotService;
   if (endpointService.appId) {
     botService = services.find(
-      service => service.type === ServiceTypes.Bot && (service as IBotService).appId === endpointService.appId
+      (service) => service.type === ServiceTypes.Bot && (service as IBotService).appId === endpointService.appId
     ) as IBotService;
   }
   return {
@@ -55,7 +55,7 @@ const mapStateToProps = (state: RootState, ownProps: EndpointEditorProps): Endpo
   };
 };
 
-const mapDispatchToProps = dispatch => (): Partial<EndpointEditorProps> => {
+const mapDispatchToProps = (dispatch) => (): Partial<EndpointEditorProps> => {
   return {
     updateEndpointService: (updatedServices: UpdatedServicesPayload) => DialogService.hideDialog(updatedServices),
     cancel: () => DialogService.hideDialog(),

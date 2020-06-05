@@ -49,8 +49,8 @@ export interface ExpandCollapseState {
   expanded: boolean;
 }
 
-export const ExpandCollapseControls = props => props.children;
-export const ExpandCollapseContent = props => props.children;
+export const ExpandCollapseControls = (props) => props.children;
+export const ExpandCollapseContent = (props) => props.children;
 
 export class ExpandCollapse extends React.Component<ExpandCollapseProps, ExpandCollapseState> {
   public constructor(props: ExpandCollapseProps) {
@@ -78,11 +78,11 @@ export class ExpandCollapse extends React.Component<ExpandCollapseProps, ExpandC
             {title}
           </h3>
           <div className={styles.accessories}>
-            {filterChildren(children, child => hmrSafeNameComparison(child.type, ExpandCollapseControls))}
+            {filterChildren(children, (child) => hmrSafeNameComparison(child.type, ExpandCollapseControls))}
           </div>
         </div>
         <div className={styles.body}>
-          {expanded && filterChildren(children, child => hmrSafeNameComparison(child.type, ExpandCollapseContent))}
+          {expanded && filterChildren(children, (child) => hmrSafeNameComparison(child.type, ExpandCollapseContent))}
         </div>
       </div>
     );
@@ -111,7 +111,7 @@ export class ExpandCollapse extends React.Component<ExpandCollapseProps, ExpandC
   }
 
   private onToggleExpandedButtonClick = () => {
-    this.setState(state => ({ expanded: !state.expanded }));
+    this.setState((state) => ({ expanded: !state.expanded }));
   };
 
   private onHeaderKeyPress = (event: KeyboardEvent<HTMLDivElement>) => {

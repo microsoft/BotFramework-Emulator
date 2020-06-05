@@ -42,7 +42,7 @@ const mockSettings = {
   },
 };
 jest.mock('./state/store', () => ({
-  dispatch: action => mockDispatch(action),
+  dispatch: (action) => mockDispatch(action),
   getSettings: () => mockSettings,
 }));
 

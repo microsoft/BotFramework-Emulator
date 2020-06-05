@@ -183,7 +183,7 @@ describe('the ngrok ', () => {
       expect(mockOk).toBe(1);
     });
 
-    it('should disconnect', async done => {
+    it('should disconnect', async (done) => {
       let disconnected = false;
       ngrok.ngrokEmitter.on('disconnect', () => {
         disconnected = true;
@@ -224,7 +224,7 @@ describe('the ngrok ', () => {
   });
 
   describe('ngrok tunnel heath status check operations', () => {
-    it('should check tunnel status every minute and report success if tunnel ping was a success.', async done => {
+    it('should check tunnel status every minute and report success if tunnel ping was a success.', async (done) => {
       jest.useFakeTimers();
       await connectToNgrokInstance(ngrok);
       ngrok.ngrokEmitter.on('onTunnelStatusPing', (msg: TunnelStatus) => {
@@ -235,7 +235,7 @@ describe('the ngrok ', () => {
     });
 
     // First minute generates a Too many connections error. Second minute the tunnel resets back to an active state
-    it('Should not emit onTunnel error if ngrok tunnel error state has not changed to prevent notification flooding.', async done => {
+    it('Should not emit onTunnel error if ngrok tunnel error state has not changed to prevent notification flooding.', async (done) => {
       //Situation where ngrok saga does the ping and calls onTunnelPingError with status 400. Before the next ping happens dispatching an action to set the state to reflect the same. Hence, no notificaiton flooding.
       jest.useFakeTimers();
       const tunnelErrorMock = jest.fn();
@@ -260,7 +260,7 @@ describe('the ngrok ', () => {
     });
 
     // // First minute generates a Too many connections error for first minute. Second minute the tunnel resets back to an active state
-    it('Should dynamically check for status change every minute. ', async done => {
+    it('Should dynamically check for status change every minute. ', async (done) => {
       jest.useFakeTimers();
       mockDispatch.mockImplementationOnce((args: NgrokTunnelAction<StatusCheckOnTunnel>) => {
         args.payload.onTunnelPingError({
@@ -268,7 +268,7 @@ describe('the ngrok ', () => {
           status: 422,
         });
       });
-      ngrok.ngrokEmitter.on('onTunnelError', err => {
+      ngrok.ngrokEmitter.on('onTunnelError', (err) => {
         expect(err.statusCode).toEqual(422);
         expect(err.errorMessage).toBe('Tunnel has too many connections');
       });

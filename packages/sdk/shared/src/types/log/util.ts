@@ -58,7 +58,7 @@ export function makeEnumerableObject(src: any) {
   }
   const dst = {};
   const keys = Object.getOwnPropertyNames(src);
-  keys.forEach(key => (dst[key] = src[key]));
+  keys.forEach((key) => (dst[key] = src[key]));
   return dst;
 }
 

@@ -103,7 +103,7 @@ export function chat(state: ChatState = DEFAULT_STATE, action: ChatAction | Edit
     case ChatActions.addTranscript: {
       const { payload } = action;
       const transcriptsCopy = [...state.transcripts];
-      const transcripts = transcriptsCopy.filter(xs => xs !== payload.filename);
+      const transcripts = transcriptsCopy.filter((xs) => xs !== payload.filename);
       transcripts.push(payload.filename);
       state = setTranscriptsState(transcripts, state);
       break;
@@ -117,7 +117,7 @@ export function chat(state: ChatState = DEFAULT_STATE, action: ChatAction | Edit
     case ChatActions.removeTranscript: {
       const { payload } = action;
       const transcriptsCopy = [...state.transcripts];
-      const transcripts = transcriptsCopy.filter(xs => xs !== payload.filename);
+      const transcripts = transcriptsCopy.filter((xs) => xs !== payload.filename);
       state = setTranscriptsState(transcripts, state);
       break;
     }

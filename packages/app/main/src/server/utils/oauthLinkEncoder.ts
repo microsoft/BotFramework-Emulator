@@ -93,10 +93,7 @@ export class OAuthLinkEncoder {
     const conversation = this.emulatorServer.state.conversations.conversationById(conversationId);
     conversation.codeVerifier = codeVerifier;
 
-    return crypto
-      .createHash('sha256')
-      .update(codeVerifier)
-      .digest('hex');
+    return crypto.createHash('sha256').update(codeVerifier).digest('hex');
   }
 
   private async getSignInLink(connectionName: string, codeChallenge: string): Promise<string> {

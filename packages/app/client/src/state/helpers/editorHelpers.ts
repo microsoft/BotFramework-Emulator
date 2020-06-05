@@ -42,8 +42,8 @@ export function hasNonGlobalTabs(tabGroups?: { [editorKey: string]: Editor }): n
   for (const key in tabGroups) {
     if (tabGroups[key]) {
       count += Object.keys(tabGroups[key].documents)
-        .map(documentId => tabGroups[key].documents[documentId])
-        .filter(document => !document.isGlobal).length;
+        .map((documentId) => tabGroups[key].documents[documentId])
+        .filter((document) => !document.isGlobal).length;
     }
   }
   return count;

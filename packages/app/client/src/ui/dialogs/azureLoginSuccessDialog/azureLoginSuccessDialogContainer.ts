@@ -48,7 +48,7 @@ const mapStateToProps = (state: RootState, ownProps: { [propName: string]: any }
 
 const mapDispatchToProps = (_dispatch: () => void): AzureLoginSuccessDialogProps => {
   return {
-    cancel: persistLogin => DialogService.hideDialog(persistLogin),
+    cancel: (persistLogin) => DialogService.hideDialog(persistLogin),
   };
 };
 

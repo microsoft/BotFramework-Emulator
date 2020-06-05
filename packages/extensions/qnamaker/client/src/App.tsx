@@ -79,8 +79,8 @@ export class App extends React.Component<any, AppState> {
     }
 
     kbId = kbId.toLowerCase();
-    const qnaServices = bot.services.filter(s => s.type === ServiceTypes.QnA) as IQnAService[];
-    const qnaService = qnaServices.find(ls => ls.kbId.toLowerCase() === kbId);
+    const qnaServices = bot.services.filter((s) => s.type === ServiceTypes.QnA) as IQnAService[];
+    const qnaService = qnaServices.find((ls) => ls.kbId.toLowerCase() === kbId);
     if (qnaService) {
       return qnaService;
     }
@@ -164,10 +164,10 @@ export class App extends React.Component<any, AppState> {
         const fragment = document.createDocumentFragment();
         const promises: Promise<any>[] = [];
         // Create the new links for each theme component
-        themeInfo.themeComponents.forEach(themeComponent => {
+        themeInfo.themeComponents.forEach((themeComponent) => {
           const link = document.createElement<'link'>('link');
           promises.push(
-            new Promise(resolve => {
+            new Promise((resolve) => {
               link.addEventListener('load', resolve);
             })
           );

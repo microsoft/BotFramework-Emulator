@@ -47,10 +47,10 @@ const mapStateToProps = (state: RootState, ownProps: ResourcesSettingsProps) => 
   return { transcriptsPath, chatsPath, path, ...ownProps };
 };
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
   save: (settings: Partial<BotInfo>) => DialogService.hideDialog(settings),
   showOpenDialog: () =>
-    new Promise(resolve =>
+    new Promise((resolve) =>
       dispatch(
         executeCommand(true, SharedConstants.Commands.Electron.ShowOpenDialog, resolve, {
           properties: ['openDirectory'],

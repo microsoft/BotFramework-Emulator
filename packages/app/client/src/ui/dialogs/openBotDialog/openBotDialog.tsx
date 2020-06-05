@@ -139,7 +139,7 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
               autoFocus={true}
               errorMessage={errorMessage}
               label={'Bot URL'}
-              items={savedBotUrls.map(elem => elem.url).slice(0, 9)}
+              items={savedBotUrls.map((elem) => elem.url).slice(0, 9)}
               onChange={this.onBotUrlChange}
               placeholder={'Enter your bot URL'}
               value={this.state.botUrl}

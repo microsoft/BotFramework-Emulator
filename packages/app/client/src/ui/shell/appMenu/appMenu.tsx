@@ -69,7 +69,7 @@ export class AppMenu extends React.Component<AppMenuProps, {}> {
 
     return (
       <ul className={styles.appMenu}>
-        {['File', 'Debug', 'Edit', 'View', 'Conversation', 'Help'].map(menuItem => {
+        {['File', 'Debug', 'Edit', 'View', 'Conversation', 'Help'].map((menuItem) => {
           const menuItemKey = menuItem.toLowerCase();
 
           return (
@@ -108,7 +108,7 @@ export class AppMenu extends React.Component<AppMenuProps, {}> {
       return [];
     }
     const themes: MenuItem[] = [];
-    availableThemes.forEach(theme => {
+    availableThemes.forEach((theme) => {
       const themeMenuItem: MenuItem = {
         label: theme.name,
         checked: theme.name === currentTheme,
@@ -124,7 +124,7 @@ export class AppMenu extends React.Component<AppMenuProps, {}> {
   private getRecentBotsMenuItems(): MenuItem[] {
     const { recentBots = [] } = this.props;
     const bots: MenuItem[] = [];
-    recentBots.slice(0, 9).forEach(bot => {
+    recentBots.slice(0, 9).forEach((bot) => {
       const botItem: MenuItem = {
         label: bot.displayName,
         onClick: () => {

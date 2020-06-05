@@ -88,7 +88,7 @@ export class StorageAccountApiService {
     yield { label: 'Retrieving Blob Containers from Azure…', progress: 75 };
     const req = AzureManagementApiService.getRequestInit(armToken);
     const url = 'https://management.azure.com{id}/blobServices/default/containers?api-version=2018-07-01';
-    const requests = accounts.map(account => fetch(url.replace('{id}', account.id), req));
+    const requests = accounts.map((account) => fetch(url.replace('{id}', account.id), req));
     const blobContainerResponses: Response[] = yield Promise.all(requests);
     const blobContainerInfos: {
       account: AzureResource;
@@ -117,7 +117,7 @@ export class StorageAccountApiService {
     // Do not retrieve keys for accounts without blob containers
     const keys: KeyEntry[][] = yield AzureManagementApiService.getKeysForAccounts(
       armToken,
-      blobContainerInfos.map(info => info.account),
+      blobContainerInfos.map((info) => info.account),
       '2018-07-01',
       'keys'
     );
@@ -130,7 +130,7 @@ export class StorageAccountApiService {
       }
       const firstKey = keysEntry[0];
       const { account, containers } = blobContainerInfos[i];
-      const blobStorageServices = containers.map(container => buildServiceModel(firstKey, account, container));
+      const blobStorageServices = containers.map((container) => buildServiceModel(firstKey, account, container));
       payload.services.push(...blobStorageServices);
     }
     return payload;

@@ -57,13 +57,13 @@ describe('Notification reducer tests', () => {
     let endingState = notification(defaultState, action);
 
     expect(endingState.allIds.length).toBe(1);
-    expect(endingState.allIds.some(id => id === notification1.id)).toBe(true);
+    expect(endingState.allIds.some((id) => id === notification1.id)).toBe(true);
 
     // should not add duplicates
     endingState = notification(endingState, action);
 
     expect(endingState.allIds.length).toBe(1);
-    expect(endingState.allIds.some(id => id === notification1.id)).toBe(true);
+    expect(endingState.allIds.some((id) => id === notification1.id)).toBe(true);
   });
 
   test('finishRemove', () => {
@@ -75,13 +75,13 @@ describe('Notification reducer tests', () => {
     let endingState = notification(startingState, action);
 
     expect(endingState.allIds.length).toBe(1);
-    expect(endingState.allIds.some(id => id === idToRemove)).toBe(false);
+    expect(endingState.allIds.some((id) => id === idToRemove)).toBe(false);
 
     // removing non-existent id should be a no-op
     endingState = notification(endingState, action);
 
     expect(endingState.allIds.length).toBe(1);
-    expect(endingState.allIds.some(id => id === idToRemove)).toBe(false);
+    expect(endingState.allIds.some((id) => id === idToRemove)).toBe(false);
   });
 
   test('finishClear', () => {

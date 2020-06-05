@@ -152,7 +152,7 @@ export class Chat extends PureComponent<ChatProps, ChatState> {
     );
   }
 
-  private cardActionMiddleware = () => next => async ({ cardAction, getSignInUrl }) => {
+  private cardActionMiddleware = () => (next) => async ({ cardAction, getSignInUrl }) => {
     const { type, value } = cardAction;
 
     switch (type) {
@@ -177,7 +177,7 @@ export class Chat extends PureComponent<ChatProps, ChatState> {
 
       case 'openUrl':
         if (value) {
-          this.props.showOpenUrlDialog(value).then(result => {
+          this.props.showOpenUrlDialog(value).then((result) => {
             if (result == 1) {
               window.open(value, '_blank');
             }
@@ -190,7 +190,7 @@ export class Chat extends PureComponent<ChatProps, ChatState> {
     }
   };
 
-  private createActivityMiddleware = () => next => card => children => {
+  private createActivityMiddleware = () => (next) => (card) => (children) => {
     const { valueType } = card.activity;
 
     this.activityMap[card.activity.id] = valueType === ValueTypes.Activity ? card.activity.value : card.activity;

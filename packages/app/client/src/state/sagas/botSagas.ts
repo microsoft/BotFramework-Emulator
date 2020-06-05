@@ -173,7 +173,7 @@ export class BotSagas {
           numOfServices: 0,
           source: 'url',
         })
-        .catch(_ => void 0);
+        .catch((_) => void 0);
     }
     BotSagas.commandService
       .remoteCall(SharedConstants.Commands.Telemetry.TrackEvent, 'livechat_open', {
@@ -181,7 +181,7 @@ export class BotSagas {
         isGov: action.payload.channelService === 'azureusgovernment',
         isRemote: !isLocalHostUrl(action.payload.endpoint),
       })
-      .catch(_ => void 0);
+      .catch((_) => void 0);
   }
 }
 

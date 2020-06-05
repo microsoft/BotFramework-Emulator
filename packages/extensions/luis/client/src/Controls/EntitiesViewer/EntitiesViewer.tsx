@@ -47,11 +47,11 @@ interface EntitiesViewerProps {
 export class EntitiesViewer extends Component<EntitiesViewerProps, {}> {
   public render() {
     let entities: any[];
-    const filteredEntityKeys = Object.keys(this.props.entities || {}).filter(entityKey => {
+    const filteredEntityKeys = Object.keys(this.props.entities || {}).filter((entityKey) => {
       return entityKey !== INSTANCE_KEY;
     });
     if (filteredEntityKeys.length > 0) {
-      entities = filteredEntityKeys.map(entityKey => {
+      entities = filteredEntityKeys.map((entityKey) => {
         const entity: EntityInfo = {
           name: entityKey,
           value: this.props.entities[entityKey],

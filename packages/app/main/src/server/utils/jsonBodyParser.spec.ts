@@ -38,7 +38,7 @@ import { createJsonBodyParserMiddleware } from './jsonBodyParser';
 let mockBodyParser = jest.fn(() => null);
 jest.mock('restify', () => ({
   plugins: {
-    bodyReader: jest.fn(options => options),
+    bodyReader: jest.fn((options) => options),
     jsonBodyParser: jest.fn(() => [mockBodyParser]),
   },
 }));

@@ -63,7 +63,7 @@ describe('The DialogService', () => {
     const hostElement = document.createElement('div');
     const dispatchSpy = jest.spyOn(mockStore, 'dispatch');
     let renderedToElementEvent = undefined;
-    hostElement.addEventListener('dialogRendered', event => {
+    hostElement.addEventListener('dialogRendered', (event) => {
       renderedToElementEvent = event;
     });
     DialogService.setHost(hostElement);

@@ -249,7 +249,7 @@ describe('<ChatContainer />', () => {
   describe('activity middleware', () => {
     it('should render an activity wrapper', () => {
       wrapper = shallow(<Chat />);
-      const middleware = card => children => <div>{children}</div>;
+      const middleware = (card) => (children) => <div>{children}</div>;
       const mockCard = { activity: { type: ActivityTypes.Message, valueType: ValueTypes.Activity } };
       const activityWrapper = (wrapper.instance() as any).createActivityMiddleware()(middleware)(mockCard)(<span />);
       expect(activityWrapper).toBeTruthy();
@@ -257,7 +257,7 @@ describe('<ChatContainer />', () => {
 
     it('should render nothing at the end of conversation', () => {
       wrapper = shallow(<Chat />);
-      const middleware = card => children => <div>{children}</div>;
+      const middleware = (card) => (children) => <div>{children}</div>;
       const mockCard = { activity: { type: ActivityTypes.EndOfConversation, valueType: ValueTypes.Activity } };
       const activityWrapper = (wrapper.instance() as any).createActivityMiddleware()(middleware)(mockCard)(<span />);
       expect(activityWrapper).toBe(null);
@@ -265,7 +265,7 @@ describe('<ChatContainer />', () => {
 
     it('should render a trace activity', () => {
       wrapper = shallow(<Chat />);
-      const middleware = card => children => <div>{children}</div>;
+      const middleware = (card) => (children) => <div>{children}</div>;
       const mockCard = { activity: { type: ActivityTypes.Trace, valueType: ValueTypes.Debug } };
       const activityWrapper = (wrapper.instance() as any).createActivityMiddleware()(middleware)(mockCard)(<span />);
       expect(activityWrapper).toBeTruthy();

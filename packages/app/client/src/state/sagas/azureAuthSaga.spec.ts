@@ -90,11 +90,9 @@ describe('The azureAuthSaga', () => {
   it('should contain a single step if the token in the store is valid', () => {
     store.dispatch(azureArmTokenDataChanged('a valid access_token'));
 
-    const it = azureAuthSagas()
-      .next()
-      .value.FORK.args[1]({
-        payload: 'blargh',
-      });
+    const it = azureAuthSagas().next().value.FORK.args[1]({
+      payload: 'blargh',
+    });
     let val;
     let ct = 0;
     // eslint-disable-next-line no-constant-condition
@@ -207,7 +205,7 @@ describe('The azureAuthSaga', () => {
       store.dispatch(azureArmTokenDataChanged(''));
       // @ts-ignore
       DialogService.showDialog = () => Promise.resolve(1);
-      commandService.remoteCall = args => {
+      commandService.remoteCall = (args) => {
         switch (args[0]) {
           case SharedConstants.Commands.Azure.RetrieveArmToken:
             // eslint-disable-next-line typescript/camelcase

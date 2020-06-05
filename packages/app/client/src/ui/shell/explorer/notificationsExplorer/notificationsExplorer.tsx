@@ -62,7 +62,7 @@ class NotificationsExplorerComp extends React.Component<NotificationExplorerProp
         {clearAllButton}
         <ul className={styles.notificationsExplorer}>
           {notifications.length ? (
-            notifications.map(n => {
+            notifications.map((n) => {
               const notification = NotificationManager.get(n);
               return <Notification key={notification.id} notification={notification} />;
             })

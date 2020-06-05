@@ -76,7 +76,7 @@ jest.mock('@bfemulator/sdk-shared/build/utils/misc', () => ({
 }));
 
 jest.mock('botframework-webchat', () => ({
-  createDirectLine: args => ({ ...args }),
+  createDirectLine: (args) => ({ ...args }),
 }));
 
 jest.mock('electron', () => ({
@@ -268,7 +268,7 @@ describe('<EmulatorContainer/>', () => {
     instance = wrapper.instance();
     const mockOnStartOverClick = jest.fn(() => null);
     instance.onStartOverClick = mockOnStartOverClick;
-    let mockGetModifierState = jest.fn(modifier => {
+    let mockGetModifierState = jest.fn((modifier) => {
       if (modifier === 'Control') {
         return true;
       } else if (modifier === 'Shift') {
@@ -284,7 +284,7 @@ describe('<EmulatorContainer/>', () => {
 
     expect(mockOnStartOverClick).toHaveBeenCalledTimes(1);
 
-    mockGetModifierState = jest.fn(modifier => {
+    mockGetModifierState = jest.fn((modifier) => {
       if (modifier === 'Control') {
         return false;
       } else if (modifier === 'Shift') {

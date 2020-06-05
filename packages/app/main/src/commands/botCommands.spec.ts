@@ -55,7 +55,7 @@ import { BotCommands } from './botCommands';
 
 const mockBotConfig = BotConfiguration;
 let mockStore;
-(store as any).getStore = function() {
+(store as any).getStore = function () {
   return mockStore || (mockStore = createStore(combineReducers({ bot })));
 };
 

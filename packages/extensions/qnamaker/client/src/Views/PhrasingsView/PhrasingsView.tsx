@@ -55,7 +55,7 @@ export default class PhrasingsView extends Component<PhrasingsViewProps, {}> {
       <div className={styles.questionColumn}>
         <h3>Alternative phrasing</h3>
         {phrasingsElems}
-        <input id="phrasing-input" placeholder="Add alternative here" onKeyPress={e => this.phraseInputKeyPress(e)} />
+        <input id="phrasing-input" placeholder="Add alternative here" onKeyPress={(e) => this.phraseInputKeyPress(e)} />
         <button id="add-phrase-btn" className={styles.plusBtn} onClick={() => this.handleAddPhraseClick()} />
       </div>
     );

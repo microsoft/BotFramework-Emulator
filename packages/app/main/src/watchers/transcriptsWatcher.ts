@@ -86,7 +86,7 @@ export class TranscriptsWatcher extends FileWatcher {
   }
 
   private validateChatFiles = () => {
-    const transcriptFiles: IFileService[] = Object.keys(this.transcriptFiles).map(key => {
+    const transcriptFiles: IFileService[] = Object.keys(this.transcriptFiles).map((key) => {
       const { name, ext } = path.parse(key);
       return {
         name: `${name}${ext}`,

@@ -202,7 +202,7 @@ export class HowToBuildABot extends React.Component<HowToBuildABotProps, {}> {
     );
   }
 
-  private createAnchorClickHandler = url => () => this.props.onAnchorClick(url);
+  private createAnchorClickHandler = (url) => () => this.props.onAnchorClick(url);
 
   private onDesignGuidelinesDocClick = this.createAnchorClickHandler(
     'https://aka.ms/bot-framework-emulator-design-guidelines'

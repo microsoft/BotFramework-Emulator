@@ -45,7 +45,7 @@ export const getBotsFromDisk = (): BotInfo[] => {
     const botsJsonContents = readFileSync(botsJsonPath);
     const botsJson = botsJsonContents ? JSON.parse(botsJsonContents) : null;
     if (botsJson && botsJson.bots && Array.isArray(botsJson.bots)) {
-      return botsJson.bots.map(bot => {
+      return botsJson.bots.map((bot) => {
         delete bot.secret;
         return bot;
       });

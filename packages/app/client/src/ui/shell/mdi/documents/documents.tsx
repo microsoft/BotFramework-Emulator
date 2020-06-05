@@ -48,7 +48,7 @@ export class Documents extends React.Component<DocumentsProps> {
   public render(): JSX.Element[] {
     const { activeDocumentId = '', tabOrder = [], documents = {} } = this.props;
 
-    return tabOrder.map(documentId => {
+    return tabOrder.map((documentId) => {
       const isActive = activeDocumentId === documentId;
       const document = documents[documentId];
 

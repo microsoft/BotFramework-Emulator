@@ -82,7 +82,7 @@ jest.mock('electron', () => ({
   ),
 }));
 
-(global as any).fetch = (function() {
+(global as any).fetch = (function () {
   const fetch = (url, opts) => {
     return {
       ok: true,

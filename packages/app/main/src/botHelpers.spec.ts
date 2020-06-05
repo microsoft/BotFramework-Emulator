@@ -73,7 +73,7 @@ jest.mock('electron', () => ({
   ),
 }));
 
-const mockDispatch = jest.fn(_action => null);
+const mockDispatch = jest.fn((_action) => null);
 jest.mock('./state/store', () => ({
   store: {
     getState: () => ({
@@ -93,7 +93,7 @@ jest.mock('./state/store', () => ({
         ],
       },
     }),
-    dispatch: action => mockDispatch(action),
+    dispatch: (action) => mockDispatch(action),
   },
 }));
 

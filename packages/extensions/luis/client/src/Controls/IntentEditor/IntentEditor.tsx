@@ -102,7 +102,7 @@ export class IntentEditor extends Component<IntentEditorProps, IntentEditorState
     } else if (this.props.mode === IntentEditorMode.Disabled) {
       return <div className={styles.disabled}>Please add your LUIS service to enable reassigning.</div>;
     }
-    const options = this.props.intentInfo.map(i => {
+    const options = this.props.intentInfo.map((i) => {
       return (
         <option key={i.id} value={i.name} label={i.name}>
           {i.name}

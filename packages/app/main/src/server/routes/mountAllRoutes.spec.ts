@@ -41,31 +41,31 @@ import { mountAllRoutes } from './mountAllRoutes';
 
 const mockMountAttachmentsRoutes = jest.fn();
 jest.mock('./channel/attachments/mountAttachmentsRoutes', () => ({
-  mountAttachmentsRoutes: server => mockMountAttachmentsRoutes(server),
+  mountAttachmentsRoutes: (server) => mockMountAttachmentsRoutes(server),
 }));
 const mockMountBotStateRoutes = jest.fn();
 jest.mock('./channel/botState/mountBotStateRoutes', () => ({
-  mountBotStateRoutes: server => mockMountBotStateRoutes(server),
+  mountBotStateRoutes: (server) => mockMountBotStateRoutes(server),
 }));
 const mockMountConversationsRoutes = jest.fn();
 jest.mock('./channel/conversations/mountConversationsRoutes', () => ({
-  mountConversationsRoutes: server => mockMountConversationsRoutes(server),
+  mountConversationsRoutes: (server) => mockMountConversationsRoutes(server),
 }));
 const mockMountDirectLineRoutes = jest.fn();
 jest.mock('./directLine/mountDirectLineRoutes', () => ({
-  mountDirectLineRoutes: server => mockMountDirectLineRoutes(server),
+  mountDirectLineRoutes: (server) => mockMountDirectLineRoutes(server),
 }));
 const mockMountEmulatorRoutes = jest.fn();
 jest.mock('./emulator/mountEmulatorRoutes', () => ({
-  mountEmulatorRoutes: server => mockMountEmulatorRoutes(server),
+  mountEmulatorRoutes: (server) => mockMountEmulatorRoutes(server),
 }));
 const mockMountSessionRoutes = jest.fn();
 jest.mock('./channel/session/mountSessionRoutes', () => ({
-  mountSessionRoutes: server => mockMountSessionRoutes(server),
+  mountSessionRoutes: (server) => mockMountSessionRoutes(server),
 }));
 const mockMountUserTokenRoutes = jest.fn();
 jest.mock('./channel/userToken/mountUserTokenRoutes', () => ({
-  mountUserTokenRoutes: server => mockMountUserTokenRoutes(server),
+  mountUserTokenRoutes: (server) => mockMountUserTokenRoutes(server),
 }));
 
 describe('mountAllRoutes', () => {

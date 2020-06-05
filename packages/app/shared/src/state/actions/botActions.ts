@@ -80,7 +80,7 @@ export interface HashPayload {
 
 export function load(bots: BotInfo[]): BotAction<LoadBotPayload> {
   // prune bad bots
-  bots = bots.filter(bot => !!bot);
+  bots = bots.filter((bot) => !!bot);
 
   return {
     type: BotActionType.load,

@@ -183,8 +183,8 @@ export class BotCommands {
     let appliedOverrides = false;
 
     bot.services
-      .filter(s => s.type === ServiceTypes.Endpoint)
-      .forEach(service => {
+      .filter((s) => s.type === ServiceTypes.Endpoint)
+      .forEach((service) => {
         let endpoint = service as IEndpointService;
 
         if (overridesArePresent && !appliedOverrides) {
@@ -229,7 +229,7 @@ export class BotCommands {
     if (botInfo) {
       const secret = await CredentialManager.getPassword(activeBot.path);
       const botConfig = BotHelpers.toSavableBot(activeBot, secret);
-      const index = botConfig.services.findIndex(s => s.id === service.id && s.type === service.type);
+      const index = botConfig.services.findIndex((s) => s.id === service.id && s.type === service.type);
       const existing = botConfig.services[index];
       if (existing) {
         // Patch existing service

@@ -70,7 +70,7 @@ jest.mock('electron', () => ({
     };
 
     private static report(...args: any[]) {
-      this.reporters.forEach(r => r(args));
+      this.reporters.forEach((r) => r(args));
     }
 
     constructor(...args: any[]) {
@@ -91,7 +91,7 @@ jest.mock('electron', () => ({
             history: [`http://localhost/#t=13&access_token=${mockArmToken}`],
           };
           setTimeout(() => {
-            this.listeners.forEach(l => l.type === evt.type && l.handler(evt));
+            this.listeners.forEach((l) => l.type === evt.type && l.handler(evt));
           }, 25 * index);
         });
       }
@@ -103,7 +103,7 @@ jest.mock('electron', () => ({
     }
 
     dispatch(event: any) {
-      this.listeners.forEach(l => l.type === event.type && l.handler(event));
+      this.listeners.forEach((l) => l.type === event.type && l.handler(event));
       MockBrowserWindow.report('dispatch', event);
     }
 
@@ -119,7 +119,7 @@ jest.mock('electron', () => ({
       MockBrowserWindow.report('loadURL', url);
       const evt = new mockEvent('ready-to-show');
       setTimeout(() => {
-        this.listeners.forEach(l => l.type === evt.type && l.handler(evt));
+        this.listeners.forEach((l) => l.type === evt.type && l.handler(evt));
       });
     }
   },
@@ -143,7 +143,7 @@ describe('The azureAuthWorkflowService', () => {
 
   it('should make the appropriate calls and receive the expected values with the "retrieveAuthToken"', async () => {
     const reportedValues = [];
-    const reporter = v => reportedValues.push(v);
+    const reporter = (v) => reportedValues.push(v);
     (BrowserWindow as any).reporters.push(reporter);
     const it = AzureAuthWorkflowService.retrieveAuthToken(false);
     let value = undefined;

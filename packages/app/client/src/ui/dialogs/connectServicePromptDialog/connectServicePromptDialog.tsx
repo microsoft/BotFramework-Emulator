@@ -93,7 +93,7 @@ export class ConnectServicePromptDialog extends Component<ConnectServicePromptDi
     }
   }
 
-  private createAnchorClickHandler = url => () => this.props.onAnchorClick(url);
+  private createAnchorClickHandler = (url) => () => this.props.onAnchorClick(url);
 
   private onAppInsightsClick = this.createAnchorClickHandler('https://aka.ms/bot-framework-emulator-appinsights-docs');
 

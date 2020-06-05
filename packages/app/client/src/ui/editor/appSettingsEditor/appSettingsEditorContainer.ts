@@ -72,7 +72,7 @@ const mapDispatchToProps = (dispatch: (action: Action) => void, ownProps: AppSet
       buttonLabel: 'Select ngrok',
       properties: ['openFile'],
     };
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       dispatch(executeCommand(true, SharedConstants.Commands.Electron.ShowOpenDialog, resolve, dialogOptions));
     });
   },

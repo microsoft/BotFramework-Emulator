@@ -37,7 +37,7 @@ import { ConversationService, headers as headersInstance } from './conversationS
 
 let mockFetchArgs: MockFetch;
 
-(global as any).fetch = (function() {
+(global as any).fetch = (function () {
   const fetch = (url, opts) => {
     mockFetchArgs = { url, opts };
     return {
