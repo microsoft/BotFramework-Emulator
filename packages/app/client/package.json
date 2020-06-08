@@ -116,7 +116,6 @@
     "botframework-webchat-core": "4.9.0",
     "eslint-plugin-react": "^7.12.3",
     "markdown-it": "^8.4.2",
-    "npm-force-resolutions": "^0.0.3",
     "react": "16.8.6",
     "react-dom": "16.8.6",
     "react-redux": "^5.0.7",

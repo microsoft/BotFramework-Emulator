@@ -11,7 +11,6 @@
   "dependencies": {
     "botbuilder": "4.5.1",
     "dotenv": "8.0.0",
-    "npm-force-resolutions": "^0.0.3",
     "restify": "8.3.3"
   },
   "devDependencies": {

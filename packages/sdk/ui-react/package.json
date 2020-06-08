@@ -63,7 +63,6 @@
   "dependencies": {
     "@babel/runtime": "^7.1.5",
     "@bfemulator/app-shared": "^1.0.0",
-    "npm-force-resolutions": "^0.0.3",
     "react": "16.8.6",
     "react-dom": "16.8.6"
   },

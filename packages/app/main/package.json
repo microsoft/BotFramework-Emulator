@@ -156,7 +156,6 @@
     "moment": "^2.22.1",
     "node-fetch": "^2.3.0",
     "node-uuid": "^1.4.8",
-    "npm-force-resolutions": "^0.0.3",
     "read-text-file": "^1.1.0",
     "redux": "^3.7.2",
     "redux-saga": "^0.16.0",

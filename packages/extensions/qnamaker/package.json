@@ -29,7 +29,6 @@
     "webpack-cli": "^3.3.2"
   },
   "dependencies": {
-    "@babel/runtime": "^7.1.5",
-    "npm-force-resolutions": "^0.0.3"
+    "@babel/runtime": "^7.1.5"
   }
 }
