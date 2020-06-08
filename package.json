@@ -61,7 +61,7 @@
     ]
   },
   "dependencies": {
-    "keytar": "^4.13.0",
+    "keytar": "^4.7.0",
     "lerna": "^3.22.0"
   }
 }
