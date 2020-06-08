@@ -267,6 +267,14 @@ export class ServicesExplorerSagas {
         );
         break;
 
+      case ServiceTypes.CosmosDB:
+        yield call(
+          [ServicesExplorerSagas.commandService, ServicesExplorerSagas.commandService.remoteCall],
+          SharedConstants.Commands.Electron.OpenExternal,
+          'https://azure.microsoft.com/services/cosmos-db/'
+        );
+        break;
+
       default:
         return;
     }

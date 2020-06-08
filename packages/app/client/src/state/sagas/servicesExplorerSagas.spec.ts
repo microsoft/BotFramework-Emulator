@@ -465,7 +465,7 @@ describe('The ServiceExplorerSagas', () => {
       );
     });
 
-    it(' should open a QnA maker external link', () => {
+    it('should open a QnA maker external link', () => {
       const payload = {
         azureAuthWorkflowComponents: {
           loginFailedDialog: AzureLoginFailedDialogContainer,
@@ -489,6 +489,34 @@ describe('The ServiceExplorerSagas', () => {
           [commandService, commandService.remoteCall],
           SharedConstants.Commands.Electron.OpenExternal,
           'https://www.qnamaker.ai/'
+        )
+      );
+    });
+
+    it('should open a Cosmos DB external link', () => {
+      const payload = {
+        azureAuthWorkflowComponents: {
+          loginFailedDialog: AzureLoginFailedDialogContainer,
+          loginSuccessDialog: AzureLoginSuccessDialogContainer,
+          promptDialog: ConnectServicePromptDialogContainer,
+        },
+        getStartedDialog: GetStartedWithCSDialogContainer,
+        editorComponent: ConnectedServiceEditorContainer,
+        pickerComponent: ConnectedServicePickerContainer,
+        serviceType: ServiceTypes.CosmosDB,
+      };
+
+      action = launchExternalLink(payload as any);
+      sagaIt = ServicesExplorerSagas.launchExternalLink;
+
+      const it = sagaIt(action);
+      const result = it.next().value;
+
+      expect(result).toEqual(
+        call(
+          [commandService, commandService.remoteCall],
+          SharedConstants.Commands.Electron.OpenExternal,
+          'https://azure.microsoft.com/services/cosmos-db/'
         )
       );
     });

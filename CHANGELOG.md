@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## Added
+- [client] Added a log panel entry at the start of a conversation that displays the bot endpoint in PR [2149](https://github.com/microsoft/BotFramework-Emulator/pull/2149)
+
+## Fixed
+- [client] Added missing content to signed in view of Cosmos DB service dialog and fixed product page link in PR [2150](https://github.com/microsoft/BotFramework-Emulator/pull/2150)
+- [docs] Modified CONTRIBUTING.md to include updated information about global dependencies required to build from source in PR [2153](https://github.com/microsoft/BotFramework-Emulator/pull/2153)
 
 ## v4.9.0 - 2020 - 05 - 11
 ## Added
