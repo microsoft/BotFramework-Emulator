@@ -32,9 +32,9 @@
 //
 
 import { AttachmentContentTypes } from '@bfemulator/sdk-shared';
+import { SharedConstants } from '@bfemulator/app-shared';
 
 import { OAuthLinkEncoder } from './oauthLinkEncoder';
-import { SharedConstants } from '@bfemulator/app-shared';
 
 jest.mock('./uniqueId', () => ({
   uniqueId: () => 'fgfdsggf5432534',
