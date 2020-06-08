@@ -36,7 +36,6 @@ import { createBotFrameworkAuthenticationMiddleware } from '../../handlers/botFr
 import { createJsonBodyParserMiddleware } from '../../../utils/jsonBodyParser';
 
 import { mountUserTokenRoutes } from './mountUserTokenRoutes';
-import { emulateOAuthCards } from './handlers/emulateOAuthCards';
 import { getToken } from './handlers/getToken';
 import { signOut } from './handlers/signOut';
 import { createTokenResponseHandler } from './handlers/tokenResponse';
@@ -75,12 +74,6 @@ describe('mountUserTokenRoutes', () => {
       botFrameworkAuthentication,
       getBotEndpoint,
       getToken
-    );
-
-    expect(emulatorServer.server.post).toHaveBeenCalledWith(
-      '/api/usertoken/emulateOAuthCards',
-      botFrameworkAuthentication,
-      emulateOAuthCards
     );
 
     expect(emulatorServer.server.del).toHaveBeenCalledWith(
