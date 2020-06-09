@@ -76,7 +76,7 @@
     "file-loader": "^1.1.11",
     "hard-source-webpack-plugin": "^0.12.0",
     "husky": "^4.2.5",
-    "jest": "25.2.0",
+    "jest": "25.1.0",
     "jest-enzyme": "^7.0.0",
     "jsdom-global": "^3.0.2",
     "lint-staged": "^10.2.9",
