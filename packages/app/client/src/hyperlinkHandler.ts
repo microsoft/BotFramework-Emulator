@@ -47,9 +47,9 @@ export class HyperlinkHandler {
     const { TrackEvent } = SharedConstants.Commands.Telemetry;
     try {
       const parsed = URL.parse(url) || { protocol: '' };
-      if ((parsed.protocol || '').startsWith('oauth:')) {
+      if ((parsed.protocol || '').startsWith(SharedConstants.EmulatedOAuthUrlProtocol)) {
         this.navigateEmulatedOAuthUrl(url.substring(8));
-      } else if (parsed.protocol.startsWith('oauthlink:')) {
+      } else if (parsed.protocol.startsWith(SharedConstants.OAuthUrlProtocol)) {
         this.navigateOAuthUrl(url.substring(12));
       } else {
         this.commandService.remoteCall(TrackEvent, 'app_openLink', { url }).catch(_e => void 0);

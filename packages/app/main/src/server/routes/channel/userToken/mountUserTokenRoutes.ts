@@ -36,7 +36,6 @@ import { createBotFrameworkAuthenticationMiddleware } from '../../handlers/botFr
 import { createJsonBodyParserMiddleware } from '../../../utils/jsonBodyParser';
 import { EmulatorRestServer } from '../../../restServer';
 
-import { emulateOAuthCards } from './handlers/emulateOAuthCards';
 import { getToken } from './handlers/getToken';
 import { signOut } from './handlers/signOut';
 import { createTokenResponseHandler } from './handlers/tokenResponse';
@@ -48,8 +47,6 @@ export function mountUserTokenRoutes(emulatorServer: EmulatorRestServer) {
   const getBotEndpoint = createGetBotEndpointMiddleware(state);
 
   server.get('/api/usertoken/GetToken', botFrameworkAuthentication, getBotEndpoint, getToken);
-
-  server.post('/api/usertoken/emulateOAuthCards', botFrameworkAuthentication, emulateOAuthCards);
 
   server.del('/api/usertoken/SignOut', botFrameworkAuthentication, getBotEndpoint, signOut);
 

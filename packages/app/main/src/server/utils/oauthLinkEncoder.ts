@@ -34,6 +34,7 @@
 import * as crypto from 'crypto';
 
 import { Attachment, OAuthCard } from 'botframework-schema';
+import { SharedConstants } from '@bfemulator/app-shared';
 import { AttachmentContentTypes } from '@bfemulator/sdk-shared';
 import { Activity } from 'botframework-schema';
 
@@ -42,9 +43,6 @@ import { EmulatorRestServer } from '../restServer';
 import { uniqueId } from './uniqueId';
 
 export class OAuthLinkEncoder {
-  public static OAuthUrlProtocol: string = 'oauthlink:';
-  public static EmulateOAuthCards: boolean = false;
-
   private readonly authorizationHeader: string;
   private readonly conversationId: string;
   private activity: Activity;
@@ -75,10 +73,21 @@ export class OAuthLinkEncoder {
       const oauthCard: OAuthCard = attachment.content as OAuthCard;
       if (oauthCard.buttons && oauthCard.buttons.length === 1) {
         const cardAction = oauthCard.buttons[0];
-        if (cardAction.type === 'signin' && !cardAction.value && !OAuthLinkEncoder.EmulateOAuthCards) {
-          const link = await this.getSignInLink(oauthCard.connectionName, codeChallenge);
-          cardAction.value = link;
-          cardAction.type = 'openUrl';
+        if (cardAction.type === 'signin' && !cardAction.value) {
+          // generate a sign-in link for the oauth card and assign it to the button
+          try {
+            const link = await this.getSignInLink(oauthCard.connectionName, codeChallenge);
+            cardAction.value = link;
+            cardAction.type = 'openUrl';
+          } catch (e) {
+            // failed to generate a sign-in link, fall back to an emulated sign-in token
+            const link =
+              SharedConstants.EmulatedOAuthUrlProtocol + '//' + oauthCard.connectionName + '&&&' + this.conversationId;
+            cardAction.value = link;
+            cardAction.type = 'openUrl';
+
+            throw new Error(`Failed to generate an actual sign-in link: ${e}`);
+          }
         }
       }
     }
@@ -134,7 +143,7 @@ export class OAuthLinkEncoder {
       });
       if (response.ok) {
         const link = await response.text();
-        return OAuthLinkEncoder.OAuthUrlProtocol + '//' + link + '&&&' + this.conversationId;
+        return SharedConstants.OAuthUrlProtocol + '//' + link + '&&&' + this.conversationId;
       }
       errorMessage = response.statusText;
     } catch (e) {
