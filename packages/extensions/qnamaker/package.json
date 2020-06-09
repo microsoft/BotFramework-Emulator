@@ -21,7 +21,7 @@
     "babel-core": "^6.26.3",
     "babel-jest": "24.8.0",
     "husky": "^4.2.5",
-    "jest": "24.8.0",
+    "jest": "25.2.0",
     "lint-staged": "^10.2.9",
     "node-sass": "^4.14.1",
     "prettier": "^2.0.5",
