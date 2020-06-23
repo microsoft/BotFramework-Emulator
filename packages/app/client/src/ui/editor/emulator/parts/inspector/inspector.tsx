@@ -420,9 +420,17 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     this.sendInitializationStackToInspector();
   };
 
+  private handleLoggingFromExtension = (logLevel: LogLevel, argument: string): void => {
+    const { documentId } = this.props.document;
+    const inspectorName = this._state.titleOverride || this.state.inspector.name || 'inspector';
+    const text = `[${inspectorName}] ${argument}`;
+    logService.logToDocument(documentId, logEntry(textItem(logLevel, text)));
+  };
+
   private ipcMessageEventHandler = (event: IpcMessageEvent): void => {
     // TODO - localization
     const { channel } = event;
+    console.log(channel);
     switch (channel) {
       case EmulatorChannel.CreateAriaAlert:
         this.props.createAriaAlert(event.args[0]);
@@ -442,14 +450,16 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
         break;
 
       case EmulatorChannel.Log:
-      case EmulatorChannel.LogError: {
-        const logLevel = channel === 'logger.log' ? LogLevel.Info : LogLevel.Error;
-        const { documentId } = this.props.document;
-        const inspectorName = this._state.titleOverride || this.state.inspector.name || 'inspector';
-        const text = `[${inspectorName}] ${event.args[0]}`;
-        logService.logToDocument(documentId, logEntry(textItem(logLevel, text)));
+        this.handleLoggingFromExtension(LogLevel.Info, event.args[0]);
         break;
-      }
+
+      case EmulatorChannel.LogError:
+        this.handleLoggingFromExtension(LogLevel.Error, event.args[0]);
+        break;
+
+      case EmulatorChannel.LogWarn:
+        this.handleLoggingFromExtension(LogLevel.Warn, event.args[0]);
+        break;
 
       case EmulatorChannel.LogLuisDeepLink: {
         const { documentId } = this.props.document;
