@@ -430,7 +430,6 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
   private ipcMessageEventHandler = (event: IpcMessageEvent): void => {
     // TODO - localization
     const { channel } = event;
-    console.log(channel);
     switch (channel) {
       case EmulatorChannel.CreateAriaAlert:
         this.props.createAriaAlert(event.args[0]);
