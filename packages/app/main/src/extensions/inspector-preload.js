@@ -86,6 +86,9 @@ window.host = {
     logLuisEditorDeepLink: function(message) {
       ipcRenderer.sendToHost('logger.luis-editor-deep-link', message);
     },
+    warn: function(message) {
+      ipcRenderer.sendToHost('logger.warn', message);
+    },
   },
 
   on: function(event, handler) {

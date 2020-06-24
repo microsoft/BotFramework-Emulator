@@ -36,6 +36,7 @@ export enum EmulatorChannel {
   EnableAccessory = 'enable-accessory',
   Log = 'logger.log',
   LogError = 'logger.error',
+  LogWarn = 'logger.warn',
   LogLuisDeepLink = 'logger.luis-editor-deep-link',
   SetAccessoryState = 'set-accessory-state',
   SetHightlightedObjects = 'set-highlighted-objects',

@@ -41,6 +41,7 @@ export interface InspectorHost {
   readonly logger: {
     log(message: string): () => void;
     error(message: string): () => void;
+    warn(message: string): () => void;
     logLuisEditorDeepLink(message: string): () => void;
   };
 

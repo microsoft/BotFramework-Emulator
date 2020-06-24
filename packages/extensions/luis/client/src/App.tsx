@@ -271,7 +271,10 @@ export class App extends Component<any, AppState> {
         }
       } catch (err) {
         // Throw an auth error only if conversation is from a bot file instead of URL.
-        if (!$host.bot && err.statusCode === 401) {
+        if (err.statusCode === 401) {
+          if ($host.bot) {
+            $host.logger.warn(err.message);
+          }
           return;
         }
         $host.logger.error(err.message);
