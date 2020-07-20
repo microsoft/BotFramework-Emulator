@@ -43,7 +43,7 @@ Checkout the [Wiki](https://github.com/Microsoft/BotFramework-Emulator/wiki) for
 
 ## Related
 
-* [Microsoft Bot Framework](https://github.com/Microsoft/botframework)
+* [Microsoft Bot Framework](https://dev.botframework.com/)
 * [Bot Framework SDK](https://github.com/Microsoft/BotBuilder)
 * [Bot Framework Tools](https://github.com/Microsoft/BotBuilder-Tools)
 * [Bot Framework Web Chat](https://github.com/Microsoft/BotFramework-WebChat)
