@@ -3,12 +3,12 @@
 ### [Find out what's new with Bot Framework](https://github.com/Microsoft/botframework/blob/master/whats-new.md#whats-new)
 
 # Bot Framework Emulator
+
 [![Build Status](https://fuselabs.visualstudio.com/BotFramework-Emulator/_apis/build/status/%5BV4%20-%20Nightly%5D%20Master%20Build?branchName=master)](https://fuselabs.visualstudio.com/BotFramework-Emulator/_build/latest?definitionId=419&branchName=master) [![Coverage Status](https://coveralls.io/repos/github/Microsoft/BotFramework-Emulator/badge.svg?branch=master)](https://coveralls.io/github/Microsoft/BotFramework-Emulator?branch=master)
 
 The Bot Framework Emulator is a desktop application that allows bot developers to test and debug bots built using the [Bot Framework SDK](https://github.com/microsoft/botbuilder). You can use the Bot Framework Emulator to test bots running either locally on your machine or connect to bots running remotely through a tunnel.
 
 This repo is part the [Microsoft Bot Framework](https://github.com/microsoft/botframework) - a comprehensive framework for building enterprise-grade conversational AI experiences.
-
 
 ## Download
 
@@ -18,7 +18,7 @@ This repo is part the [Microsoft Bot Framework](https://github.com/microsoft/bot
 
 * Windows
 * OS X
-* Linux 
+* Linux
 
   **Note for Linux users:**
 
@@ -29,7 +29,7 @@ This repo is part the [Microsoft Bot Framework](https://github.com/microsoft/bot
   Debian/Ubuntu: `sudo apt-get install libsecret-1-dev`
 
   Red Hat-based: `sudo yum install libsecret-devel`
-  
+
   Arch Linux: `sudo pacman -S libsecret`
 
 ## Documentation
@@ -45,7 +45,7 @@ Checkout the [Wiki](https://github.com/Microsoft/BotFramework-Emulator/wiki) for
 
 * [Microsoft Bot Framework](https://github.com/Microsoft/botframework)
 * [Bot Framework SDK](https://github.com/Microsoft/BotBuilder)
-* [Bot Framework Tools](https://github.com/Microsoft/BotBuilder-Tools)
+* [Bot Framework CLI](https://github.com/microsoft/botframework-cli)
 * [Bot Framework Web Chat](https://github.com/Microsoft/BotFramework-WebChat)
 
 ## Nightly builds
@@ -67,6 +67,7 @@ For more information see the [Code of Conduct FAQ](https://opensource.microsoft.
 contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
 
 ## Reporting Security Issues
+
 Security issues and bugs should be reported privately, via email, to the Microsoft Security Response Center (MSRC) at [secure@microsoft.com](mailto:secure@microsoft.com). You should receive a response within 24 hours. If for some reason you do not, please follow up via email to ensure we received your original message. Further information, including the [MSRC PGP](https://technet.microsoft.com/en-us/security/dn606155) key, can be found in the [Security TechCenter](https://technet.microsoft.com/en-us/security/default).
 
 Copyright (c) Microsoft Corporation. All rights reserved.
