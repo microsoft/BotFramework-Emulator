@@ -32,7 +32,6 @@
 //
 
 import { ValueTypes, RestartConversationStatus } from '@bfemulator/app-shared';
-import { User } from '@bfemulator/sdk-shared';
 import { Activity, ActivityTypes } from 'botframework-schema';
 import ReactWebChat, { createStyleSet } from 'botframework-webchat';
 import * as React from 'react';
@@ -139,6 +138,11 @@ export class Chat extends PureComponent<ChatProps, ChatState> {
   }
 
   private activityWrapper(next, card, children): ReactNode {
+    let childrenContents = null;
+    const middlewareResult = next(card);
+    if (middlewareResult) {
+      childrenContents = middlewareResult(children);
+    }
     return (
       <OuterActivityWrapperContainer
         card={card}
@@ -147,7 +151,7 @@ export class Chat extends PureComponent<ChatProps, ChatState> {
         onItemRendererClick={this.onItemRendererClick}
         onItemRendererKeyDown={this.onItemRendererKeyDown}
       >
-        {next(card)(children)}
+        {childrenContents}
       </OuterActivityWrapperContainer>
     );
   }
@@ -203,6 +207,7 @@ export class Chat extends PureComponent<ChatProps, ChatState> {
         return null;
 
       default:
+        debugger;
         return this.activityWrapper(next, card, children);
     }
   };
