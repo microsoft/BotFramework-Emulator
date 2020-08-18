@@ -207,7 +207,6 @@ export class Chat extends PureComponent<ChatProps, ChatState> {
         return null;
 
       default:
-        debugger;
         return this.activityWrapper(next, card, children);
     }
   };
