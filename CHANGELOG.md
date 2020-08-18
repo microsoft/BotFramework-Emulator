@@ -7,14 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## v4.10.0 - 2020 - 08 - 18
 ## Added
 - [client] Added a log panel entry at the start of a conversation that displays the bot endpoint in PR [2149](https://github.com/microsoft/BotFramework-Emulator/pull/2149)
-- [client] - Bumped `botframework-webchat` to v4.10.0 in PR [2142](https://github.com/microsoft/BotFramework-Emulator/pull/2142)
+- [client] - Bumped `botframework-webchat` to v4.10.0 in PR [2177](https://github.com/microsoft/BotFramework-Emulator/pull/2177)
 
 ## Fixed
 - [client] Added missing content to signed in view of Cosmos DB service dialog and fixed product page link in PR [2150](https://github.com/microsoft/BotFramework-Emulator/pull/2150)
 - [docs] Modified CONTRIBUTING.md to include updated information about global dependencies required to build from source in PR [2153](https://github.com/microsoft/BotFramework-Emulator/pull/2153)
 - [client] Fixed a bug where trying to open the sign-in link on an OAuth card would open the file explorer if ngrok was not configured in PR [2155](https://github.com/microsoft/BotFramework-Emulator/pull/2155)
 - [client] Change to a warning message in inspector when clicking on LUIS trace [2160](https://github.com/microsoft/BotFramework-Emulator/pull/2160)
-- [client] Handle result from webchat middleware gracefully [2160](https://github.com/microsoft/BotFramework-Emulator/pull/2160)
+- [client] Handle result from webchat middleware gracefully [2177](https://github.com/microsoft/BotFramework-Emulator/pull/2177)
 
 ## v4.9.0 - 2020 - 05 - 11
 ## Added
