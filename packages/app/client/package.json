@@ -48,7 +48,7 @@
     "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
     "@babel/plugin-transform-react-jsx": "^7.0.0",
     "@babel/plugin-transform-runtime": "^7.4.4",
-    "@babel/preset-env": "^7.11.0",
+    "@babel/preset-env": "^7.1.0",
     "@babel/preset-typescript": "^7.1.0",
     "@types/enzyme": "^3.1.10",
     "@types/jest": "24.0.13",
@@ -93,10 +93,10 @@
     "url-loader": "^1.0.1",
     "webpack": "^4.32.2",
     "webpack-cli": "^3.3.2",
-    "webpack-dev-server": "^3.4.1"
+    "webpack-dev-server": "^3.4.1",
+    "@babel/runtime": "^7.1.5"
   },
   "dependencies": {
-    "@babel/runtime": "^7.1.5",
     "@bfemulator/app-shared": "^1.0.0",
     "@bfemulator/sdk-client": "^1.0.0",
     "@bfemulator/sdk-shared": "^1.0.0",
