@@ -31,8 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { WebSocketServer } from './webSocketServer';
 import { Activity } from 'botframework-schema';
+
+import { WebSocketServer } from './webSocketServer';
 
 const mockWSServer = {
   handleUpgrade: jest.fn(),
