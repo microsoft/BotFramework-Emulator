@@ -46,12 +46,12 @@ export class WebSocketServer {
   private static _restServer: Server;
   private static _servers: { [conversationId: string]: WSServer } = {};
   private static _sockets: { [conversationId: string]: WebSocket } = {};
-  private static _backedUpMessages: { [conversationId: string]: Activity[] } = {};
+  private static queuedMessages: { [conversationId: string]: Activity[] } = {};
 
   private static sendBackedUpMessages(conversationId: string, socket: WebSocket) {
-    if (this._backedUpMessages[conversationId]) {
-      while (this._backedUpMessages[conversationId].length > 0) {
-        const activity: Activity = this._backedUpMessages[conversationId].shift();
+    if (this.queuedMessages[conversationId]) {
+      while (this.queuedMessages[conversationId].length > 0) {
+        const activity: Activity = this.queuedMessages[conversationId].shift();
         const payload = { activities: [activity] };
         socket.send(JSON.stringify(payload));
       }
@@ -63,10 +63,10 @@ export class WebSocketServer {
   }
 
   public static queueActivities(conversationId: string, activity: Activity): void {
-    if (!this._backedUpMessages[conversationId]) {
-      this._backedUpMessages[conversationId] = [];
+    if (!this.queuedMessages[conversationId]) {
+      this.queuedMessages[conversationId] = [];
     }
-    this._backedUpMessages[conversationId].push(activity);
+    this.queuedMessages[conversationId].push(activity);
   }
 
   public static sendToSubscribers(conversationId: string, activity: Activity): void {
@@ -99,18 +99,13 @@ export class WebSocketServer {
             noServer: true,
           });
           wsServer.on('connection', async (socket, req) => {
-            await new Promise(resolve => {
-              setTimeout(() => {
-                resolve();
-              }, 5000);
-            });
             this.sendBackedUpMessages(conversationId, socket);
             this._sockets[conversationId] = socket;
 
             socket.on('close', (code, reason) => {
               delete this._servers[conversationId];
               delete this._sockets[conversationId];
-              delete this._backedUpMessages[conversationId];
+              delete this.queuedMessages[conversationId];
             });
           });
           // upgrade the connection to a ws connection
