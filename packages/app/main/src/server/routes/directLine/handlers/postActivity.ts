@@ -86,8 +86,14 @@ export function createPostActivityHandler(emulatorServer: EmulatorRestServer) {
           return next();
         }
         const payload = { activities: [{ ...activity, id: activity.id }] };
+
         const socket = WebSocketServer.getSocketByConversationId(conversation.conversationId);
-        socket && socket.send(JSON.stringify(payload));
+        if (!socket) {
+          logMessage(req.params.conversationId, textItem(LogLevel.Error, 'Bas situation'));
+          WebSocketServer.queueActivities(conversation.conversationId, activity);
+        } else {
+          socket.send(JSON.stringify(payload));
+        }
       }
     } catch (err) {
       sendErrorResponse(req, res, next, err);

@@ -60,8 +60,11 @@ export function createReplyToActivityHandler(emulatorServer: EmulatorRestServer)
         activity = conversation.prepActivityToBeSentToUser(conversation.user.id, activity);
         const payload = { activities: [activity] };
         const socket = WebSocketServer.getSocketByConversationId(conversationId);
-        socket && socket.send(JSON.stringify(payload));
-
+        if (!socket) {
+          WebSocketServer.queueActivities(conversationId, activity);
+        } else {
+          socket.send(JSON.stringify(payload));
+        }
         res.send(HttpStatus.OK, { id: activity.id });
         res.end();
       };

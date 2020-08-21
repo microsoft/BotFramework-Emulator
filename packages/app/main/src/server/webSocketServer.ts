@@ -33,6 +33,7 @@
 
 import { createServer, Next, Request, Response, Server } from 'restify';
 import { Server as WSServer } from 'ws';
+import { Activity } from 'botframework-schema';
 
 // can't import WebSocket type from ws types :|
 interface WebSocket {
@@ -45,9 +46,34 @@ export class WebSocketServer {
   private static _restServer: Server;
   private static _servers: { [conversationId: string]: WSServer } = {};
   private static _sockets: { [conversationId: string]: WebSocket } = {};
+  private static _backedUpMessages: { [conversationId: string]: Activity[] } = {};
+
+  private static sendBackedUpMessages(conversationId: string, socket: WebSocket) {
+    do {
+      const activity: Activity = this._backedUpMessages[conversationId].shift();
+      const payload = { activities: [activity] };
+      socket.send(JSON.stringify(payload));
+    } while (this._backedUpMessages[conversationId] && this._backedUpMessages[conversationId].length > 0);
+  }
 
   public static getSocketByConversationId(conversationId: string): WebSocket {
     return this._sockets[conversationId];
+  }
+
+  public static queueActivities(conversationId: string, activity: Activity): void {
+    if (!this._backedUpMessages[conversationId]) {
+      this._backedUpMessages[conversationId] = [];
+    }
+    this._backedUpMessages[conversationId].push(activity);
+  }
+
+  public static sendToSubscribers(conversationId: string, activity: Activity): void {
+    const socket = this._sockets[conversationId];
+    if (socket) {
+      const payload = { activities: [activity] };
+      this.sendBackedUpMessages(conversationId, socket);
+      socket.send(JSON.stringify(payload));
+    }
   }
 
   /** Initializes the server and returns the port it is listening on, or if already initialized,
@@ -68,11 +94,14 @@ export class WebSocketServer {
           const wsServer = new WSServer({
             noServer: true,
           });
-          wsServer.on('connection', (socket, req) => {
+          wsServer.on('connection', async (socket, req) => {
+            this.sendBackedUpMessages(conversationId, socket);
             this._sockets[conversationId] = socket;
+
             socket.on('close', (code, reason) => {
               delete this._servers[conversationId];
               delete this._sockets[conversationId];
+              delete this._backedUpMessages[conversationId];
             });
           });
           // upgrade the connection to a ws connection
