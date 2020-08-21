@@ -49,11 +49,13 @@ export class WebSocketServer {
   private static _backedUpMessages: { [conversationId: string]: Activity[] } = {};
 
   private static sendBackedUpMessages(conversationId: string, socket: WebSocket) {
-    do {
-      const activity: Activity = this._backedUpMessages[conversationId].shift();
-      const payload = { activities: [activity] };
-      socket.send(JSON.stringify(payload));
-    } while (this._backedUpMessages[conversationId] && this._backedUpMessages[conversationId].length > 0);
+    if (this._backedUpMessages[conversationId]) {
+      while (this._backedUpMessages[conversationId].length > 0) {
+        const activity: Activity = this._backedUpMessages[conversationId].shift();
+        const payload = { activities: [activity] };
+        socket.send(JSON.stringify(payload));
+      }
+    }
   }
 
   public static getSocketByConversationId(conversationId: string): WebSocket {
@@ -73,6 +75,8 @@ export class WebSocketServer {
       const payload = { activities: [activity] };
       this.sendBackedUpMessages(conversationId, socket);
       socket.send(JSON.stringify(payload));
+    } else {
+      this.queueActivities(conversationId, activity);
     }
   }
 
@@ -95,6 +99,11 @@ export class WebSocketServer {
             noServer: true,
           });
           wsServer.on('connection', async (socket, req) => {
+            await new Promise(resolve => {
+              setTimeout(() => {
+                resolve();
+              }, 5000);
+            });
             this.sendBackedUpMessages(conversationId, socket);
             this._sockets[conversationId] = socket;
 
