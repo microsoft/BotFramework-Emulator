@@ -35,13 +35,17 @@ import * as HttpStatus from 'http-status-codes';
 
 import { sendActivityToConversation } from './sendActivityToConversation';
 
-jest.mock('../../../../webSocketServer', () => ({
-  WebSocketServer: {
-    getSocketByConversationId: () => ({
-      send: jest.fn(),
-    }),
-  },
-}));
+const mockSocket = {
+  send: jest.fn(),
+};
+
+jest.mock('../../../../webSocketServer', () => {
+  return {
+    WebSocketServer: {
+      sendToSubscribers: (...args) => mockSocket.send(...args),
+    },
+  };
+});
 
 const mockSendErrorResponse = jest.fn();
 jest.mock('../../../../utils/sendErrorResponse', () => ({

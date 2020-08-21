@@ -43,11 +43,14 @@ jest.mock('../../../utils/sendErrorResponse', () => ({
 const mockSocket = {
   send: jest.fn(),
 };
-jest.mock('../../../webSocketServer', () => ({
-  WebSocketServer: {
-    getSocketByConversationId: () => mockSocket,
-  },
-}));
+
+jest.mock('../../../webSocketServer', () => {
+  return {
+    WebSocketServer: {
+      sendToSubscribers: (...args) => mockSocket.send(...args),
+    },
+  };
+});
 
 describe('postActivity handler', () => {
   beforeEach(() => {
@@ -56,14 +59,16 @@ describe('postActivity handler', () => {
   });
 
   it('should return a 200 and the id of the posted activity', async () => {
+    const activity = {
+      id: 'activity1',
+    };
+
     const mockEmulatorServer: any = {
       logger: {
         logMessage: jest.fn(),
       },
     };
-    const activity = {
-      id: 'activity1',
-    };
+
     const req: any = {
       body: activity,
       conversation: {
@@ -72,6 +77,7 @@ describe('postActivity handler', () => {
           response: {},
           statusCode: HttpStatus.OK,
         }),
+        conversationId: 'convo1',
       },
       params: {
         conversationId: 'convo1',
@@ -88,11 +94,7 @@ describe('postActivity handler', () => {
     expect(res.send).toHaveBeenCalledWith(HttpStatus.OK, activity);
     expect(res.end).toHaveBeenCalled();
     expect(next).toHaveBeenCalled();
-    expect(mockSocket.send).toHaveBeenCalledWith(
-      JSON.stringify({
-        activities: [{ ...req.body, id: 'activity1' }],
-      })
-    );
+    expect(mockSocket.send).toHaveBeenCalledWith(req.params.conversationId, activity);
   });
 
   it('should return a 200 but not send the /INSPECT open command over the web socket', async () => {
