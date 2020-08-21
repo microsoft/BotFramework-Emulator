@@ -32,6 +32,7 @@
 //
 
 import { WebSocketServer } from './webSocketServer';
+import { Activity } from 'botframework-schema';
 
 const mockWSServer = {
   handleUpgrade: jest.fn(),
@@ -156,5 +157,85 @@ describe('WebSocketServer', () => {
 
     expect(Object.keys((WebSocketServer as any)._servers)).toEqual([mockConversationId]);
     expect(mockWSServer.handleUpgrade).toHaveBeenCalledTimes(1);
+  });
+
+  it('should clear the messages backed up before websocket connection is started', async () => {
+    let onConnectionFunction = null;
+    let websocketHandler = null;
+
+    (WebSocketServer as any)._restServer = undefined;
+    (WebSocketServer as any)._servers = {};
+    (WebSocketServer as any)._sockets = {};
+
+    mockWSServer.on.mockImplementation((event, implementation) => {
+      if (event === 'connection') {
+        onConnectionFunction = implementation;
+      }
+    });
+
+    mockCreateServer.mockReturnValueOnce({
+      address: () => ({ port: 55523 }),
+      get: (route, handler) => {
+        websocketHandler = handler;
+      },
+      listen: jest.fn((_port, cb) => {
+        cb();
+      }),
+      once: jest.fn(),
+    });
+    await WebSocketServer.init();
+
+    WebSocketServer.queueActivities('conv-123', { id: 'activity-1' } as Activity);
+    WebSocketServer.queueActivities('conv-234', { id: 'activity-1' } as Activity);
+
+    WebSocketServer.queueActivities('conv-123', { id: 'activity-2' } as Activity);
+    WebSocketServer.queueActivities('conv-234', { id: 'activity-2' } as Activity);
+    websocketHandler(
+      {
+        params: {
+          conversationId: 'conv-234',
+        },
+      },
+      {
+        claimUpgrade: jest.fn(() => {
+          return {
+            head: jest.fn(),
+            socket: jest.fn(),
+          };
+        }),
+      }
+    );
+    const socketSendMock = jest.fn();
+    onConnectionFunction({
+      send: socketSendMock,
+      on: jest.fn(),
+    });
+    expect(socketSendMock).toHaveBeenCalledTimes(2);
+    expect(socketSendMock).toHaveBeenNthCalledWith(1, JSON.stringify({ activities: [{ id: 'activity-1' }] }));
+    expect(socketSendMock).toHaveBeenNthCalledWith(2, JSON.stringify({ activities: [{ id: 'activity-2' }] }));
+    socketSendMock.mockClear();
+
+    websocketHandler(
+      {
+        params: {
+          conversationId: 'conv-123',
+        },
+      },
+      {
+        claimUpgrade: jest.fn(() => {
+          return {
+            head: jest.fn(),
+            socket: jest.fn(),
+          };
+        }),
+      }
+    );
+    onConnectionFunction({
+      send: socketSendMock,
+      on: jest.fn(),
+    });
+    expect(socketSendMock).toHaveBeenCalledTimes(2);
+    expect(socketSendMock).toHaveBeenNthCalledWith(1, JSON.stringify({ activities: [{ id: 'activity-1' }] }));
+    expect(socketSendMock).toHaveBeenNthCalledWith(2, JSON.stringify({ activities: [{ id: 'activity-2' }] }));
   });
 });

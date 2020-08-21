@@ -98,7 +98,7 @@ export class WebSocketServer {
           const wsServer = new WSServer({
             noServer: true,
           });
-          wsServer.on('connection', async (socket, req) => {
+          wsServer.on('connection', (socket, req) => {
             this.sendBackedUpMessages(conversationId, socket);
             this._sockets[conversationId] = socket;
 
