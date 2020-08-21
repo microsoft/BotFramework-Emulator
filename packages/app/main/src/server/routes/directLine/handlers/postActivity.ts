@@ -85,9 +85,7 @@ export function createPostActivityHandler(emulatorServer: EmulatorRestServer) {
           res.end();
           return next();
         }
-        const payload = { activities: [{ ...activity, id: activity.id }] };
-        const socket = WebSocketServer.getSocketByConversationId(conversation.conversationId);
-        socket && socket.send(JSON.stringify(payload));
+        WebSocketServer.sendToSubscribers(conversation.conversationId, activity);
       }
     } catch (err) {
       sendErrorResponse(req, res, next, err);
