@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [client] Fixed a bug where trying to open the sign-in link on an OAuth card would open the file explorer if ngrok was not configured in PR [2155](https://github.com/microsoft/BotFramework-Emulator/pull/2155)
 - [client] Change to a warning message in inspector when clicking on LUIS trace [2160](https://github.com/microsoft/BotFramework-Emulator/pull/2160)
 - [client] Handle result from webchat middleware gracefully [2177](https://github.com/microsoft/BotFramework-Emulator/pull/2177)
+- [client] Handle Webchat socket instantiation delay [2179](https://github.com/microsoft/BotFramework-Emulator/pull/2179)
 
 ## v4.9.0 - 2020 - 05 - 11
 ## Added
