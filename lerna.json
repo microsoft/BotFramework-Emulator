@@ -14,5 +14,12 @@
     "packages/extensions/json",
     "packages/tools"
   ],
+  "command": {
+    "bootstrap": {
+      "nohoist": [
+        "@microsoft/bf-chatdown"
+      ]
+    }
+  },
   "version": "independent"
 }

@@ -47,9 +47,7 @@ export function sendHistoryToConversation(req: Request, res: Response, next: Nex
   for (const activity of activities) {
     try {
       const updatedActivity = conversation.prepActivityToBeSentToUser(conversation.user.id, activity);
-      const payload = { activities: [updatedActivity] };
-      const socket = WebSocketServer.getSocketByConversationId(conversation.conversationId);
-      socket && socket.send(JSON.stringify(payload));
+      WebSocketServer.sendToSubscribers(conversation.conversationId, updatedActivity);
       successCount++;
     } catch (err) {
       if (firstErrorMessage === '') {

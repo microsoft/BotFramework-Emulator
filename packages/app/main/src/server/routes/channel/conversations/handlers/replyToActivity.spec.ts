@@ -42,13 +42,17 @@ jest.mock('../../../../utils/oauthLinkEncoder', () => ({
   }),
 }));
 
-jest.mock('../../../../webSocketServer', () => ({
-  WebSocketServer: {
-    getSocketByConversationId: () => ({
-      send: jest.fn(),
-    }),
-  },
-}));
+const mockSocket = {
+  send: jest.fn(),
+};
+
+jest.mock('../../../../webSocketServer', () => {
+  return {
+    WebSocketServer: {
+      sendToSubscribers: (...args) => mockSocket.send(...args),
+    },
+  };
+});
 
 describe('replyToActivity route middleware', () => {
   const mockReq: any = {

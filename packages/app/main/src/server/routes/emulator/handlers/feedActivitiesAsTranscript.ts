@@ -52,9 +52,7 @@ export function createFeedActivitiesAsTranscriptHandler(emulatorServer: Emulator
       }
       activities = conversation.prepTranscriptActivities(activities);
       activities.forEach(activity => {
-        const payload = { activities: [activity] };
-        const socket = WebSocketServer.getSocketByConversationId(conversation.conversationId);
-        socket && socket.send(JSON.stringify(payload));
+        WebSocketServer.sendToSubscribers(conversation.conversationId, activity);
         emulatorServer.logger.logActivity(conversation.conversationId, activity, activity.recipient.role);
       });
     } catch (e) {

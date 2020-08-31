@@ -1,7 +1,7 @@
 {
   "name": "@bfemulator/main",
   "packagename": "BotFramework-Emulator",
-  "version": "4.9.0",
+  "version": "4.10.0",
   "private": true,
   "description": "Development tool for the Microsoft Bot Framework. Allows developers to test and debug bots on localhost.",
   "main": "./app/server/main.js",
@@ -79,7 +79,7 @@
     "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
     "@babel/plugin-transform-react-jsx": "^7.0.0",
     "@babel/plugin-transform-runtime": "^7.4.4",
-    "@babel/preset-env": "^7.1.0",
+    "@babel/preset-env": "^7.11.0",
     "@babel/preset-typescript": "^7.1.0",
     "@types/async": "^2.0.47",
     "@types/chokidar": "^1.7.5",

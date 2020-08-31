@@ -38,11 +38,14 @@ import { createFeedActivitiesAsTranscriptHandler } from './feedActivitiesAsTrans
 const mockSocket = {
   send: jest.fn(),
 };
-jest.mock('../../../webSocketServer', () => ({
-  WebSocketServer: {
-    getSocketByConversationId: () => mockSocket,
-  },
-}));
+
+jest.mock('../../../webSocketServer', () => {
+  return {
+    WebSocketServer: {
+      sendToSubscribers: (...args) => mockSocket.send(...args),
+    },
+  };
+});
 
 describe('feedActivitiesAsTranscript handler', () => {
   it('should send a 200 after sending all activities over the web socket connection', () => {
