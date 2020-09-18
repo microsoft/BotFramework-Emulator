@@ -1,10 +1,10 @@
 # ![Bot Framework Emulator](./docs/media/BotFrameworkEmulator_header.png)
 
-### [Find out what's new with Bot Framework](https://github.com/Microsoft/botframework/blob/master/whats-new.md#whats-new)
+### [Find out what's new with Bot Framework](https://github.com/Microsoft/botframework/blob/main/whats-new.md#whats-new)
 
 # Bot Framework Emulator
 
-[![Build Status](https://fuselabs.visualstudio.com/BotFramework-Emulator/_apis/build/status/%5BV4%20-%20Nightly%5D%20Master%20Build?branchName=master)](https://fuselabs.visualstudio.com/BotFramework-Emulator/_build/latest?definitionId=419&branchName=master) [![Coverage Status](https://coveralls.io/repos/github/Microsoft/BotFramework-Emulator/badge.svg?branch=master)](https://coveralls.io/github/Microsoft/BotFramework-Emulator?branch=master)
+[![Build Status](https://fuselabs.visualstudio.com/BotFramework-Emulator/_apis/build/status/%5BV4%20-%20Nightly%5D%20Main%20Build?branchName=main)](https://fuselabs.visualstudio.com/BotFramework-Emulator/_build/latest?definitionId=419&branchName=main) [![Coverage Status](https://coveralls.io/repos/github/Microsoft/BotFramework-Emulator/badge.svg?branch=main)](https://coveralls.io/github/Microsoft/BotFramework-Emulator?branch=main)
 
 The Bot Framework Emulator is a desktop application that allows bot developers to test and debug bots built using the [Bot Framework SDK](https://github.com/microsoft/botbuilder). You can use the Bot Framework Emulator to test bots running either locally on your machine or connect to bots running remotely through a tunnel.
 

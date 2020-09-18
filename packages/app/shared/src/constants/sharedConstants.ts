@@ -200,7 +200,7 @@ export const SharedConstants = {
     CONTENT_TYPE_NGROK_DEBUGGER: 'application/vnd.microsoft.bfemulator.document.ngrokDebugger',
   },
   Channels: {
-    ReadmeUrl: 'https://raw.githubusercontent.com/Microsoft/BotFramework-Emulator/master/content/CHANNELS.md',
+    ReadmeUrl: 'https://raw.githubusercontent.com/Microsoft/BotFramework-Emulator/main/content/CHANNELS.md',
     HelpLabel: 'Get started with channels (Bot Inspector)',
   },
   DocumentIds: {
