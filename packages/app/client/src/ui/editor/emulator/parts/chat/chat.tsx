@@ -231,17 +231,15 @@ export class Chat extends PureComponent<ChatProps, ChatState> {
     // and re-rendering should only be done at the wrapper level for highlighting
     let activityChildren;
     const { valueType } = card.activity; // activities are nested
+    let messageActivity;
     if (valueType === ValueTypes.Activity) {
-      const messageActivity = card.activity.value;
-      const mutatedCard = { activity: messageActivity, timestampClassName: 'transcript-timestamp' };
-      mutatedSetupArgs[0] = mutatedCard;
-      activityChildren = next(...mutatedSetupArgs)(...renderArgs);
+      messageActivity = card.activity.value;
     } else if (valueType === ValueTypes.Command) {
-      const messageActivity = { ...card.activity, type: ActivityTypes.Message, text: card.activity.value } as Activity;
-      const mutatedCard = { activity: messageActivity, timestampClassName: 'transcript-timestamp' };
-      mutatedSetupArgs[0] = mutatedCard;
-      activityChildren = next(...mutatedSetupArgs)(...renderArgs);
+      messageActivity = { ...card.activity, type: ActivityTypes.Message, text: card.activity.value } as Activity;
     }
+    const mutatedCard = { activity: messageActivity, timestampClassName: 'transcript-timestamp' };
+    mutatedSetupArgs[0] = mutatedCard;
+    activityChildren = next(...mutatedSetupArgs)(...renderArgs);
 
     return (
       <TraceActivityContainer
