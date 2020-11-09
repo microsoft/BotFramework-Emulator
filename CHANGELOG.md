@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## v4.11.0 - 2020 - 11 - 05
 - [client] Moved from master to main as the default branch. [2194](https://github.com/microsoft/BotFramework-Emulator/pull/2194)
+[client] Updated support for new activity middleware contract provided by Web Chat. [2202](https://github.com/microsoft/BotFramework-Emulator/pull/2202)
 
 ## v4.10.0 - 2020 - 08 - 21
 ## Added
