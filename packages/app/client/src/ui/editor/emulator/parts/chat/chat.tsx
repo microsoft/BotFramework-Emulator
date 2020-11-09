@@ -137,12 +137,19 @@ export class Chat extends PureComponent<ChatProps, ChatState> {
     return <div className={styles.disconnected}>Not Connected</div>;
   }
 
-  private activityWrapper(next, card, children): ReactNode {
+  private activityWrapper(next, setupArgs, renderArgs): ReactNode {
     let childrenContents = null;
-    const middlewareResult = next(card);
-    if (middlewareResult) {
-      childrenContents = middlewareResult(children);
+    const card = setupArgs[0];
+
+    if (!card) {
+      return null;
     }
+
+    const middlewareResult = next(...setupArgs);
+    if (middlewareResult) {
+      childrenContents = middlewareResult(...renderArgs);
+    }
+
     return (
       <OuterActivityWrapperContainer
         card={card}
@@ -194,37 +201,45 @@ export class Chat extends PureComponent<ChatProps, ChatState> {
     }
   };
 
-  private createActivityMiddleware = () => next => card => children => {
+  private createActivityMiddleware = () => next => (...setupArgs) => (...renderArgs) => {
+    const card = setupArgs[0];
     const { valueType } = card.activity;
 
     this.activityMap[card.activity.id] = valueType === ValueTypes.Activity ? card.activity.value : card.activity;
 
     switch (card.activity.type) {
       case ActivityTypes.Trace:
-        return this.renderTraceActivity(next, card, children);
+        return this.renderTraceActivity(next, [...setupArgs], [...renderArgs]);
 
       case ActivityTypes.EndOfConversation:
         return null;
 
       default:
-        return this.activityWrapper(next, card, children);
+        return this.activityWrapper(next, [...setupArgs], [...renderArgs]);
     }
   };
 
-  private renderTraceActivity(next, card, children): ReactNode {
+  private renderTraceActivity(next, setupArgs, renderArgs): ReactNode {
     const { documentId, mode } = this.props;
+    const mutatedSetupArgs = [...setupArgs];
+    const card = mutatedSetupArgs[0];
+    if (!card) {
+      return null;
+    }
 
     // we should only render the underlying activity once using the middleware,
     // and re-rendering should only be done at the wrapper level for highlighting
-    let activityChildren;
+
     const { valueType } = card.activity; // activities are nested
+    let messageActivity;
     if (valueType === ValueTypes.Activity) {
-      const messageActivity = card.activity.value;
-      activityChildren = next({ activity: messageActivity, timestampClassName: 'transcript-timestamp' })(children);
+      messageActivity = card.activity.value;
     } else if (valueType === ValueTypes.Command) {
-      const messageActivity = { ...card.activity, type: ActivityTypes.Message, text: card.activity.value } as Activity;
-      activityChildren = next({ activity: messageActivity, timestampClassName: 'transcript-timestamp' })(children);
+      messageActivity = { ...card.activity, type: ActivityTypes.Message, text: card.activity.value } as Activity;
     }
+    const mutatedCard = { activity: messageActivity, timestampClassName: 'transcript-timestamp' };
+    mutatedSetupArgs[0] = mutatedCard;
+    const activityChildren = next(...mutatedSetupArgs)(...renderArgs);
 
     return (
       <TraceActivityContainer

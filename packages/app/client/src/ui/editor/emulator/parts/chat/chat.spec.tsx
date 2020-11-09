@@ -133,8 +133,8 @@ describe('<ChatContainer />', () => {
   });
 
   let props;
-
   beforeEach(() => {
+    URL.createObjectURL = jest.fn(() => '');
     props = {
       documentId: 'doc1',
       endpoint: {},
