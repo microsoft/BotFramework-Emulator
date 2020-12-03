@@ -754,9 +754,9 @@ describe('The ChatSagas,', () => {
         )
       );
 
-      // call sendInitialActivity
+      // call sendInitialActivities
       expect(gen.next({ ok: true }).value).toEqual(
-        call([ChatSagas, ChatSagas.sendInitialActivity], { conversationId, members: json.members, mode: chat.mode })
+        call([ChatSagas, ChatSagas.sendInitialActivities], { conversationId, members: json.members, mode: chat.mode })
       );
 
       // put updatePendingSpeechTokenRetrieval
@@ -889,9 +889,9 @@ describe('The ChatSagas,', () => {
         )
       );
 
-      // call sendInitialActivity
+      // call sendInitialActivities
       expect(gen.next({ ok: true }).value).toEqual(
-        call([ChatSagas, ChatSagas.sendInitialActivity], { conversationId, members: json.members, mode: chat.mode })
+        call([ChatSagas, ChatSagas.sendInitialActivities], { conversationId, members: json.members, mode: chat.mode })
       );
 
       // put updatePendingSpeechTokenRetrieval
@@ -1114,13 +1114,41 @@ describe('The ChatSagas,', () => {
     });
   });
 
+  it('should send a SetTestOptions event activity for non-debug mode conversations', () => {
+    const payload = {
+      conversationId: 'someConvoId',
+      members: [],
+      mode: 'livechat' as EmulatorMode,
+      randomSeed: 123,
+      randomValue: 456,
+    };
+    const gen = ChatSagas.sendInitialActivities(payload);
+
+    // select server url
+    expect(gen.next().value).toEqual(select(getServerUrl));
+
+    // call sendActivityToBot
+    const serverUrl = 'http://localhost:58267';
+    const activity = {
+      name: 'SetTestOptions',
+      type: 'event',
+      value: {
+        randomSeed: payload.randomSeed,
+        randomValue: payload.randomValue,
+      },
+    };
+    expect(gen.next(serverUrl).value).toEqual(
+      call([ConversationService, ConversationService.sendActivityToBot], serverUrl, payload.conversationId, activity)
+    );
+  });
+
   it('should send a conversation update for non-debug mode conversations', () => {
     const payload = {
       conversationId: 'someConvoId',
       members: [],
-      mode: 'livechat',
+      mode: 'livechat' as EmulatorMode,
     };
-    const gen = ChatSagas.sendInitialActivity(payload);
+    const gen = ChatSagas.sendInitialActivities(payload);
 
     // select server url
     expect(gen.next().value).toEqual(select(getServerUrl));
@@ -1141,9 +1169,9 @@ describe('The ChatSagas,', () => {
     const payload = {
       conversationId: 'someConvoId',
       members: [],
-      mode: 'debug',
+      mode: 'debug' as EmulatorMode,
     };
-    const gen = ChatSagas.sendInitialActivity(payload);
+    const gen = ChatSagas.sendInitialActivities(payload);
 
     // select server url
     expect(gen.next().value).toEqual(select(getServerUrl));

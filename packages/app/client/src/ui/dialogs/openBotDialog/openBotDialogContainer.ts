@@ -53,6 +53,8 @@ const mapDispatchToProps = (dispatch: (action: Action) => void): OpenBotDialogPr
         botUrl = '',
         mode = 'livechat-url',
         isAzureGov,
+        randomSeed,
+        randomValue,
         speechKey = '',
         speechRegion = '',
       } = componentState;
@@ -64,6 +66,8 @@ const mapDispatchToProps = (dispatch: (action: Action) => void): OpenBotDialogPr
             endpoint: botUrl,
             mode,
             channelService: isAzureGov ? 'azureusgovernment' : 'public',
+            randomSeed: Number(randomSeed) || undefined,
+            randomValue: Number(randomValue) || undefined,
             speechKey,
             speechRegion,
           })

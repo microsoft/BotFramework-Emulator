@@ -77,6 +77,8 @@ export interface ChatDocument<I = any> extends Document {
   inspectorObjects: I[];
   log: ChatLog;
   pendingSpeechTokenRetrieval: boolean;
+  randomSeed: number;
+  randomValue: number;
   speechKey: string;
   speechRegion: string;
   ui: DocumentUI;

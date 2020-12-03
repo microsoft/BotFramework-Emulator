@@ -184,9 +184,19 @@ interface BootstrapChatPayload {
   mode: EmulatorMode;
   msaAppId?: string;
   msaPassword?: string;
+  randomSeed?: number;
+  randomValue?: number;
   speechKey?: string;
   speechRegion?: string;
   user: User;
+}
+
+interface InitialActivitiesPayload {
+  conversationId: string;
+  members: any[];
+  mode: EmulatorMode;
+  randomSeed?: number;
+  randomValue?: number;
 }
 
 export class ChatSagas {
@@ -386,6 +396,8 @@ export class ChatSagas {
         msaAppId,
         msaPassword,
         user,
+        randomSeed,
+        randomValue,
         speechKey,
         speechRegion,
       } = payload;
@@ -417,6 +429,8 @@ export class ChatSagas {
           conversationId,
           directLine,
           userId: user.id,
+          randomSeed,
+          randomValue,
           speechKey,
           speechRegion,
         })
@@ -570,6 +584,8 @@ export class ChatSagas {
       newChat(documentId, chat.mode, {
         conversationId,
         directLine,
+        randomSeed: chat.randomSeed,
+        randomValue: chat.randomValue,
         speechKey: chat.speechKey,
         speechRegion: chat.speechRegion,
         userId,
@@ -590,7 +606,13 @@ export class ChatSagas {
 
     // send CU or /INSPECT open (DL Speech will do this automatically)
     if (!isDLSpeechBot) {
-      res = yield call([ChatSagas, ChatSagas.sendInitialActivity], { conversationId, members, mode: chat.mode });
+      res = yield call([ChatSagas, ChatSagas.sendInitialActivities], {
+        conversationId,
+        members,
+        mode: chat.mode,
+        randomSeed: chat.randomSeed,
+        randomValue: chat.randomValue,
+      });
       if (!res.ok) {
         yield* throwErrorFromResponse('Error occurred while sending the initial activity', res);
       }
@@ -644,8 +666,28 @@ export class ChatSagas {
     }
   }
 
-  public static *sendInitialActivity(payload: any): Iterator<any> {
-    const { conversationId, members, mode } = payload;
+  public static *sendInitialActivities(payload: InitialActivitiesPayload): Iterator<any> {
+    const { conversationId, members, mode, randomSeed, randomValue } = payload;
+    const serverUrl = yield select(getServerUrl);
+
+    // if we have a randomSeed and / or randomValue set via the UI, we need to send
+    // a custom event to the bot containing these values to support transcript testing
+    if (randomSeed !== undefined || randomValue !== undefined) {
+      const testOptionsActivity = {
+        type: 'event',
+        name: 'SetTestOptions',
+        value: {
+          randomSeed,
+          randomValue,
+        },
+      };
+      yield call(
+        [ConversationService, ConversationService.sendActivityToBot],
+        serverUrl,
+        conversationId,
+        testOptionsActivity
+      );
+    }
 
     let activity;
     if (mode === 'debug') {
@@ -660,7 +702,6 @@ export class ChatSagas {
         membersRemoved: [],
       };
     }
-    const serverUrl = yield select(getServerUrl);
     return yield call(
       [ConversationService, ConversationService.sendActivityToBot],
       serverUrl,

@@ -72,6 +72,8 @@ export interface OpenBotDialogState {
   appId?: string;
   appPassword?: string;
   isAzureGov?: boolean;
+  randomSeed?: number;
+  randomValue?: number;
   speechKey?: string;
   speechRegion?: string;
 }
@@ -125,7 +127,18 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
 
   public render(): ReactNode {
     const { savedBotUrls = [] } = this.props;
-    const { botUrl, appId, appPassword, mode, isDebug, isAzureGov, speechKey, speechRegion } = this.state;
+    const {
+      botUrl,
+      appId,
+      appPassword,
+      mode,
+      isDebug,
+      isAzureGov,
+      randomSeed,
+      randomValue,
+      speechKey,
+      speechRegion,
+    } = this.state;
     const validationResult = OpenBotDialog.validateEndpoint(botUrl);
     const errorMessage = OpenBotDialog.getErrorMessage(validationResult);
     const shouldBeDisabled =
@@ -186,6 +199,26 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
               />
             </Row>
           )}
+          <Row className={openBotStyles.multiInputRow}>
+            <TextField
+              inputContainerClassName={openBotStyles.inputContainerRow}
+              name="randomSeed"
+              label="Test Options - Random Seed"
+              onChange={this.onInputChange}
+              placeholder="Optional"
+              type="number"
+              value={randomSeed}
+            />
+            <TextField
+              inputContainerClassName={openBotStyles.inputContainerRow}
+              label="Test Options - Random Value"
+              name="randomValue"
+              onChange={this.onInputChange}
+              placeholder="Optional"
+              type="number"
+              value={randomValue}
+            />
+          </Row>
           <Row className={openBotStyles.rowOverride}>
             <Checkbox
               label="Open in debug mode"
