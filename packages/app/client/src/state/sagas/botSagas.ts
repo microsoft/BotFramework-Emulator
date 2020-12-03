@@ -130,6 +130,8 @@ export class BotSagas {
       mode: action.payload.mode,
       msaAppId: action.payload.appId,
       msaPassword: action.payload.appPassword,
+      randomSeed: action.payload.randomSeed,
+      randomValue: action.payload.randomValue,
       speechKey: action.payload.speechKey,
       speechRegion: action.payload.speechRegion,
       user,
@@ -153,7 +155,13 @@ export class BotSagas {
 
     // send CU or debug INSPECT message
     if (!(action.payload.speechKey && action.payload.speechRegion)) {
-      res = yield ChatSagas.sendInitialActivity({ conversationId, members, mode: action.payload.mode });
+      res = yield ChatSagas.sendInitialActivities({
+        conversationId,
+        members,
+        mode: action.payload.mode,
+        randomSeed: action.payload.randomSeed,
+        randomValue: action.payload.randomValue,
+      });
       if (!res.ok) {
         yield* throwErrorFromResponse('Error occurred while sending the initial activity', res);
       }

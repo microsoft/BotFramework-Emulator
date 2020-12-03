@@ -44,6 +44,8 @@ export interface StartConversationParams extends ConversationParameters {
   mode?: EmulatorMode;
   channelService?: ChannelService;
   conversationId?: string;
+  randomSeed?: number;
+  randomValue?: number;
   speechKey?: string;
   speechRegion?: string;
 }
