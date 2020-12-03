@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+- [client/main] Added UI to open bot dialog that allows the user to set transcript testing properties `randomSeed` and `randomValue` in PR [2209](https://github.com/microsoft/BotFramework-Emulator/pull/2209)
+
 ## v4.11.0 - 2020 - 11 - 05
 - [client] Moved from master to main as the default branch. [2194](https://github.com/microsoft/BotFramework-Emulator/pull/2194)
 - [client] Updated support for new activity middleware contract provided by Web Chat. [2202](https://github.com/microsoft/BotFramework-Emulator/pull/2202)
