@@ -200,7 +200,9 @@ export class NgrokInstance {
       };
 
       this.ngrokProcess.stdout.on('data', onNgrokData);
-      process.on('exit', this.kill);
+      process.on('exit', () => {
+        this.kill();
+      });
     });
     return { inspectUrl: this.inspectUrl };
   }
@@ -291,7 +293,11 @@ export class NgrokInstance {
         this.ws.write(data.toString() + '\n');
       });
 
-      ngrok.stderr.on('data', (data: Buffer) => this.ngrokEmitter.emit('error', this.ws.write(data.toString())));
+      ngrok.stderr.on('data', (data: Buffer) =>
+        this.ngrokEmitter.emit('error', () => {
+          this.ws.write(data.toString());
+        })
+      );
       return ngrok;
     } catch (e) {
       throw e;
