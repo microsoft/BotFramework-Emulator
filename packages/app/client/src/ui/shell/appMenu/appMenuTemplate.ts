@@ -53,7 +53,7 @@ const {
       SendDeleteUserData,
     },
     Ngrok: { OpenStatusViewer },
-    UI: { ShowBotCreationDialog, ShowMarkdownPage, ShowOpenBotDialog, ShowWelcomePage },
+    UI: { ShowBotCreationDialog, ShowCustomActivityEditor, ShowMarkdownPage, ShowOpenBotDialog, ShowWelcomePage },
   },
 } = SharedConstants;
 
@@ -200,6 +200,10 @@ export class AppMenuTemplate {
         label: 'Send System Activity',
         type: 'submenu',
         items: [
+          {
+            label: 'Custom activity (New)',
+            onClick: () => AppMenuTemplate.commandService.call(ShowCustomActivityEditor),
+          },
           {
             label: 'conversationUpdate ( user added )',
             onClick: () => AppMenuTemplate.commandService.remoteCall(SendConversationUpdateUserAdded),

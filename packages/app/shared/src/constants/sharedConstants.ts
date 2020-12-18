@@ -188,6 +188,7 @@ export const SharedConstants = {
       ShowProgressIndicator: 'progress-indicator:show',
       ShowOpenUrlDialog: 'chat:open-url',
       ShowDataCollectionDialog: 'data-collection:show',
+      ShowCustomActivityEditor: 'custom-activity-editor:show',
     },
   },
   ContentTypes: {

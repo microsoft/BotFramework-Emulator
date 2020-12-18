@@ -37,6 +37,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const TerserWebpackPlugin = require('terser-webpack-plugin');
 const webpack = require('webpack');
 const { DllPlugin, DllReferencePlugin, NamedModulesPlugin, DefinePlugin, WatchIgnorePlugin } = webpack;
+const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 
 const { npm_lifecycle_event = '' } = process.env;
 const manifestLocation = path.resolve('./generated');
@@ -103,6 +104,10 @@ const defaultConfig = {
           'sass-loader',
         ],
       },
+      {
+        test: /\.ttf$/,
+        use: ['file-loader'],
+      },
     ],
   },
 
@@ -144,6 +149,9 @@ const defaultConfig = {
       DEV: JSON.stringify(npm_lifecycle_event.includes('dev')),
     }),
     new WatchIgnorePlugin(['./src/**/*.d.ts']),
+    new MonacoWebpackPlugin({
+      languages: ['json'],
+    }),
   ],
 };
 
