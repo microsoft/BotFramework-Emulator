@@ -31,34 +31,34 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ConversationService } from '@bfemulator/sdk-shared';
 import { DefaultButton, Dialog, PrimaryButton } from '@bfemulator/ui-react';
 import React, { useCallback, useEffect, useState } from 'react';
 import * as monaco from 'monaco-editor';
 
 import customActivitySchema from './customActivitySchema.json';
 import styles from './customActivityEditor.scss';
-import { DialogService } from '../service';
 
-type CustomActivityEditorProps = {
+export type CustomActivityEditorProps = {
   conversationId: string;
+  onDismiss: () => void;
+  onSendActivity: (activity: object, conversationId: string, serverUrl: string) => void;
   serverUrl: string;
 };
 
-const editorDefault = {
+const editorDefaultContent = {
   text: 'Hello world!',
   type: 'message',
 };
 
 export const CustomActivityEditor: React.FC<CustomActivityEditorProps> = props => {
-  const [json, setJson] = useState(JSON.stringify(editorDefault));
+  const [json, setJson] = useState(JSON.stringify(editorDefaultContent));
   const [isValid, setIsValid] = useState(false);
-  const { conversationId, serverUrl } = props;
+  const { conversationId, onDismiss, onSendActivity, serverUrl } = props;
 
   useEffect(() => {
     // create a model that validates against our custom activity schema
-    // TODO: get custom schema validation errors to show as errors
-    const model = monaco.editor.createModel(JSON.stringify(editorDefault, null, 2), 'json');
+    // TODO: get custom schema validation errors to show as errors instead of warnings
+    const model = monaco.editor.createModel(JSON.stringify(editorDefaultContent, null, 2), 'json');
     monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
       validate: true,
       schemas: [
@@ -89,14 +89,10 @@ export const CustomActivityEditor: React.FC<CustomActivityEditorProps> = props =
     });
   }, []);
 
-  const onClick = useCallback(() => {
+  const onSend = useCallback(() => {
     const activity = JSON.parse(json);
-    ConversationService.sendActivityToBot(serverUrl, conversationId, activity);
+    onSendActivity(activity, conversationId, serverUrl);
   }, [conversationId, json, serverUrl]);
-
-  const onDismiss = useCallback(() => {
-    DialogService.hideDialog();
-  }, []);
 
   return (
     <Dialog cancel={onDismiss}>
@@ -104,23 +100,11 @@ export const CustomActivityEditor: React.FC<CustomActivityEditorProps> = props =
         <div id="monaco-container" className={styles.monacoContainer}></div>
         <div className={styles.buttonContainer}>
           <DefaultButton onClick={onDismiss}>Cancel</DefaultButton>
-          <PrimaryButton className={styles.sendButton} disabled={!isValid} onClick={onClick}>
+          <PrimaryButton className={styles.sendButton} disabled={!isValid} onClick={onSend}>
             Send activity
           </PrimaryButton>
         </div>
       </div>
     </Dialog>
   );
-
-  // return (
-  //   <div className={styles.container}>
-  //     <div id="monaco-container" className={styles.monacoContainer}></div>
-  //     <div className={styles.buttonContainer}>
-  //       <DefaultButton onClick={onDismiss}>Cancel</DefaultButton>
-  //       <PrimaryButton className={styles.sendButton} disabled={!isValid} onClick={onClick}>
-  //         Send activity
-  //       </PrimaryButton>
-  //     </div>
-  //   </div>
-  // );
 };

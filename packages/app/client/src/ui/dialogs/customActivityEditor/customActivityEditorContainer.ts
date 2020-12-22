@@ -32,9 +32,12 @@
 //
 
 import { connect } from 'react-redux';
-import { RootState } from '../../../state';
+import { ConversationService } from '@bfemulator/sdk-shared';
 
-import { CustomActivityEditor } from './customActivityEditor';
+import { RootState } from '../../../state';
+import { DialogService } from '../service';
+
+import { CustomActivityEditor, CustomActivityEditorProps } from './customActivityEditor';
 
 const mapStateToProps = (state: RootState) => {
   const activeDocumentId = state.editor.editors[state.editor.activeEditor].activeDocumentId;
@@ -44,4 +47,16 @@ const mapStateToProps = (state: RootState) => {
   };
 };
 
-export const CustomActivityEditorContainer = connect(mapStateToProps, null)(CustomActivityEditor);
+const mapDispatchToProps = (): Partial<CustomActivityEditorProps> => {
+  return {
+    onDismiss: () => {
+      DialogService.hideDialog();
+    },
+    onSendActivity: (activity: object, conversationId: string, serverUrl: string) => {
+      ConversationService.sendActivityToBot(serverUrl, conversationId, activity);
+      DialogService.hideDialog();
+    },
+  };
+};
+
+export const CustomActivityEditorContainer = connect(mapStateToProps, mapDispatchToProps)(CustomActivityEditor);
