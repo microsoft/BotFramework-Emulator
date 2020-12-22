@@ -303,6 +303,10 @@ html {
 
   /* Webchat style overrides */
   --bubble-text-color: #fff;
+
+  /* Custom Activity Editor */
+  --custom-activity-editor-bg: transparent;
+  --custom-activity-editor-border: var(--neutral-10);
 }
 
 .dialog {

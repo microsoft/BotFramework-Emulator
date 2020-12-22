@@ -300,6 +300,10 @@ html {
 
   /* Webchat style overrides */
   --bubble-text-color: #000000;
+
+  /* Custom Activity Editor */
+  --custom-activity-editor-bg: transparent;
+  --custom-activity-editor-border: var(--neutral-10);
 }
 
 .dialog .ms-Button-label {

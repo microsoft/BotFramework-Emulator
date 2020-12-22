@@ -32,11 +32,13 @@
 //
 
 import { ConversationService } from '@bfemulator/sdk-shared';
+import { DefaultButton, Dialog, PrimaryButton } from '@bfemulator/ui-react';
 import React, { useCallback, useEffect, useState } from 'react';
 import * as monaco from 'monaco-editor';
 
 import customActivitySchema from './customActivitySchema.json';
 import styles from './customActivityEditor.scss';
+import { DialogService } from '../service';
 
 type CustomActivityEditorProps = {
   conversationId: string;
@@ -44,11 +46,12 @@ type CustomActivityEditorProps = {
 };
 
 const editorDefault = {
-  startingValue: '',
+  text: 'Hello world!',
+  type: 'message',
 };
 
 export const CustomActivityEditor: React.FC<CustomActivityEditorProps> = props => {
-  const [json, setJson] = useState('');
+  const [json, setJson] = useState(JSON.stringify(editorDefault));
   const [isValid, setIsValid] = useState(false);
   const { conversationId, serverUrl } = props;
 
@@ -91,13 +94,33 @@ export const CustomActivityEditor: React.FC<CustomActivityEditorProps> = props =
     ConversationService.sendActivityToBot(serverUrl, conversationId, activity);
   }, [conversationId, json, serverUrl]);
 
+  const onDismiss = useCallback(() => {
+    DialogService.hideDialog();
+  }, []);
+
   return (
-    <div className={styles.container}>
-      <div id="monaco-container" className={styles.monacoContainer}></div>
-      <button onClick={() => null}>Cancel</button>
-      <button disabled={!isValid} onClick={onClick}>
-        Send activity
-      </button>
-    </div>
+    <Dialog cancel={onDismiss}>
+      <div className={styles.container}>
+        <div id="monaco-container" className={styles.monacoContainer}></div>
+        <div className={styles.buttonContainer}>
+          <DefaultButton onClick={onDismiss}>Cancel</DefaultButton>
+          <PrimaryButton className={styles.sendButton} disabled={!isValid} onClick={onClick}>
+            Send activity
+          </PrimaryButton>
+        </div>
+      </div>
+    </Dialog>
   );
+
+  // return (
+  //   <div className={styles.container}>
+  //     <div id="monaco-container" className={styles.monacoContainer}></div>
+  //     <div className={styles.buttonContainer}>
+  //       <DefaultButton onClick={onDismiss}>Cancel</DefaultButton>
+  //       <PrimaryButton className={styles.sendButton} disabled={!isValid} onClick={onClick}>
+  //         Send activity
+  //       </PrimaryButton>
+  //     </div>
+  //   </div>
+  // );
 };
