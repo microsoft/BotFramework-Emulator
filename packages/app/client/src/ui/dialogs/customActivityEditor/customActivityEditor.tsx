@@ -38,19 +38,19 @@ import * as monaco from 'monaco-editor';
 import customActivitySchema from './customActivitySchema.json';
 import styles from './customActivityEditor.scss';
 
-export type CustomActivityEditorProps = {
+export interface CustomActivityEditorProps {
   conversationId: string;
   onDismiss: () => void;
   onSendActivity: (activity: object, conversationId: string, serverUrl: string) => void;
   serverUrl: string;
-};
+}
 
 const editorDefaultContent = {
   text: 'Hello world!',
   type: 'message',
 };
 
-export const CustomActivityEditor: React.FC<CustomActivityEditorProps> = props => {
+export const CustomActivityEditor: React.FC<CustomActivityEditorProps> = (props: CustomActivityEditorProps) => {
   const [json, setJson] = useState(JSON.stringify(editorDefaultContent));
   const [isValid, setIsValid] = useState(false);
   const { conversationId, onDismiss, onSendActivity, serverUrl } = props;

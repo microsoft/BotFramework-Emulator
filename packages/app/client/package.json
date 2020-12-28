@@ -29,6 +29,7 @@
       "**/?(*.)(spec|test).(ts)?(x)"
     ],
     "moduleNameMapper": {
+      "monaco-editor": "<rootDir>/../../../../node_modules/monaco-editor/min/vs/editor/editor.main.js",
       ".\\.scss$": "<rootDir>/../../../../jestMocks/styleMock.js"
     },
     "moduleFileExtensions": [
