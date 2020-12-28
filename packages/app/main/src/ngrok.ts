@@ -176,18 +176,18 @@ export class NgrokInstance {
       return { inspectUrl: this.inspectUrl };
     }
     this.ngrokProcess = this.spawnNgrok(opts);
-    // If we do not receive a ready state from ngrok within 15 seconds, emit and reject
+    // If we do not receive a ready state from ngrok within 40 seconds, emit and reject
     this.inspectUrl = await new Promise<string>((resolve, reject) => {
       const timeout = setTimeout(() => {
-        const message = 'Failed to receive a ready state from ngrok within 15 seconds.';
+        const message = 'Failed to receive a ready state from ngrok within 40 seconds.';
         this.ngrokEmitter.emit('error', message);
         reject(message);
-      }, 15000);
+      }, 40000);
 
       /**
        * Look for an address in the many messages
        * sent by ngrok or fail if one does not arrive
-       * in 15 seconds.
+       * in 40 seconds.
        */
       const onNgrokData = (data: Buffer) => {
         const addr = data.toString().match(addrRegExp);
@@ -200,7 +200,9 @@ export class NgrokInstance {
       };
 
       this.ngrokProcess.stdout.on('data', onNgrokData);
-      process.on('exit', this.kill);
+      process.on('exit', () => {
+        this.kill();
+      });
     });
     return { inspectUrl: this.inspectUrl };
   }
@@ -291,7 +293,11 @@ export class NgrokInstance {
         this.ws.write(data.toString() + '\n');
       });
 
-      ngrok.stderr.on('data', (data: Buffer) => this.ngrokEmitter.emit('error', this.ws.write(data.toString())));
+      ngrok.stderr.on('data', (data: Buffer) =>
+        this.ngrokEmitter.emit('error', () => {
+          this.ws.write(data.toString());
+        })
+      );
       return ngrok;
     } catch (e) {
       throw e;
