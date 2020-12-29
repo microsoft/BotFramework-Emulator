@@ -33,6 +33,7 @@
 
 import { connect } from 'react-redux';
 import { ConversationService } from '@bfemulator/sdk-shared';
+import { Activity } from 'botframework-schema';
 
 import { RootState } from '../../../state';
 import { DialogService } from '../service';
@@ -52,7 +53,7 @@ const mapDispatchToProps = (): Partial<CustomActivityEditorProps> => {
     onDismiss: () => {
       DialogService.hideDialog();
     },
-    onSendActivity: (activity: object, conversationId: string, serverUrl: string) => {
+    onSendActivity: (activity: Activity, conversationId: string, serverUrl: string) => {
       ConversationService.sendActivityToBot(serverUrl, conversationId, activity);
       DialogService.hideDialog();
     },

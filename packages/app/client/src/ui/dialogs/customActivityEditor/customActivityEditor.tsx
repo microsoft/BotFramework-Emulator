@@ -34,6 +34,7 @@
 import { DefaultButton, Dialog, PrimaryButton } from '@bfemulator/ui-react';
 import React, { useCallback, useEffect, useState } from 'react';
 import * as monaco from 'monaco-editor';
+import { Activity } from 'botframework-schema';
 
 import customActivitySchema from './customActivitySchema.json';
 import styles from './customActivityEditor.scss';
@@ -41,7 +42,7 @@ import styles from './customActivityEditor.scss';
 export interface CustomActivityEditorProps {
   conversationId: string;
   onDismiss: () => void;
-  onSendActivity: (activity: object, conversationId: string, serverUrl: string) => void;
+  onSendActivity: (activity: Activity, conversationId: string, serverUrl: string) => void;
   serverUrl: string;
 }
 
@@ -50,25 +51,26 @@ const editorDefaultContent = {
   type: 'message',
 };
 
+// create a model that validates against our custom activity schema
+// TODO: get custom schema validation errors to show as errors instead of warnings
+const model = monaco.editor.createModel(JSON.stringify(editorDefaultContent, null, 2), 'json');
+monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
+  validate: true,
+  schemas: [
+    {
+      uri: 'bfemulator://schemas/customActivity.json',
+      fileMatch: ['*'],
+      schema: customActivitySchema,
+    },
+  ],
+});
+
 export const CustomActivityEditor: React.FC<CustomActivityEditorProps> = (props: CustomActivityEditorProps) => {
   const [json, setJson] = useState(JSON.stringify(editorDefaultContent));
   const [isValid, setIsValid] = useState(false);
   const { conversationId, onDismiss, onSendActivity, serverUrl } = props;
 
   useEffect(() => {
-    // create a model that validates against our custom activity schema
-    // TODO: get custom schema validation errors to show as errors instead of warnings
-    const model = monaco.editor.createModel(JSON.stringify(editorDefaultContent, null, 2), 'json');
-    monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
-      validate: true,
-      schemas: [
-        {
-          uri: 'bfemulator://schemas/customActivity.json',
-          fileMatch: ['*'],
-          schema: customActivitySchema,
-        },
-      ],
-    });
     const editor = monaco.editor.create(document.getElementById('monaco-container'), {
       model,
     });
@@ -81,15 +83,11 @@ export const CustomActivityEditor: React.FC<CustomActivityEditorProps> = (props:
     editor.onDidChangeModelDecorations(e => {
       const markers = monaco.editor.getModelMarkers({ owner: 'json' });
       // warnings are 4 and errors are 8
-      if (markers.some(m => m.severity >= monaco.MarkerSeverity.Warning)) {
-        setIsValid(false);
-      } else {
-        setIsValid(true);
-      }
+      setIsValid(!markers.some(m => m.severity >= monaco.MarkerSeverity.Warning));
     });
   }, []);
 
-  const onSend = useCallback(() => {
+  const onSendActivityClick = useCallback(() => {
     const activity = JSON.parse(json);
     onSendActivity(activity, conversationId, serverUrl);
   }, [conversationId, json, serverUrl]);
@@ -100,7 +98,7 @@ export const CustomActivityEditor: React.FC<CustomActivityEditorProps> = (props:
         <div id="monaco-container" className={styles.monacoContainer}></div>
         <div className={styles.buttonContainer}>
           <DefaultButton onClick={onDismiss}>Cancel</DefaultButton>
-          <PrimaryButton className={styles.sendButton} disabled={!isValid} onClick={onSend}>
+          <PrimaryButton className={styles.sendButton} disabled={!isValid} onClick={onSendActivityClick}>
             Send activity
           </PrimaryButton>
         </div>
