@@ -59,6 +59,7 @@
       "node"
     ],
     "moduleNameMapper": {
+      "monaco-editor": "<rootDir>/node_modules/monaco-editor/min/vs/editor/editor.main.js",
       ".\\.css$": "<rootDir>/jestMocks/styleMock.js",
       ".\\.scss$": "<rootDir>/jestMocks/styleMock.js",
       ".\\.svg$": "<rootDir>/jestMocks/svgMock.js"
