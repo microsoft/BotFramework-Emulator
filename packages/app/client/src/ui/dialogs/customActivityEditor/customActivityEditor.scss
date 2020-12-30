@@ -1,0 +1,29 @@
+.container {
+  background-color: var(--custom-activity-editor-bg);
+  box-sizing: border-box;
+  display: flex;
+  flex-flow: column nowrap;
+  height: 600px;
+  padding-top: 16px;
+  width: 648px;
+}
+
+.monaco-container {
+  border: 1px solid var(--custom-activity-editor-border);
+  border-radius: 2px;
+  box-sizing: border-box;
+  height: 100%;
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.button-container {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-end;
+  margin-top: auto;
+}
+
+.send-button {
+  margin-left: 8px;
+}

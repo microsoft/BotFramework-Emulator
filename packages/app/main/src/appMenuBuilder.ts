@@ -339,6 +339,12 @@ export class AppMenuBuilder {
           label: 'Send System Activity',
           submenu: [
             {
+              label: 'Custom activity (New)',
+              click: () => {
+                AppMenuBuilder.commandService.remoteCall(SharedConstants.Commands.UI.ShowCustomActivityEditor);
+              },
+            },
+            {
               label: 'conversationUpdate ( user added )',
               click: createClickHandler(ConversationService.addUser, () =>
                 TelemetryService.trackEvent('sendActivity_addUser')

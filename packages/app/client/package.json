@@ -29,6 +29,7 @@
       "**/?(*.)(spec|test).(ts)?(x)"
     ],
     "moduleNameMapper": {
+      "monaco-editor": "<rootDir>/../../../../jestMocks/monacoEditorMock.js",
       ".\\.scss$": "<rootDir>/../../../../jestMocks/styleMock.js"
     },
     "moduleFileExtensions": [
@@ -101,6 +102,7 @@
     "@bfemulator/sdk-client": "^1.0.0",
     "@bfemulator/sdk-shared": "^1.0.0",
     "@bfemulator/ui-react": "^1.0.0",
+    "@monaco-editor/react": "^3.7.1",
     "@uifabric/icons": "^5.6.0",
     "@uifabric/merge-styles": "^6.2.0",
     "@uifabric/styling": "^5.20.0",
@@ -112,6 +114,8 @@
     "core-js": "^3.6.5",
     "eslint-plugin-react": "^7.12.3",
     "markdown-it": "^8.4.2",
+    "monaco-editor": "^0.21.2",
+    "monaco-editor-webpack-plugin": "^2.0.0",
     "react": "16.8.6",
     "react-dom": "16.8.6",
     "react-redux": "^5.0.7",

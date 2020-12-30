@@ -1,0 +1,34 @@
+{
+  "$id": "bfemulator://schemas/customActivity.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "JSON Schema definition of a custom activity that can be sent to a bot via the Emulator's custom activity editor.",
+  "type": "object",
+  "properties": {
+    "attachments": {
+      "type": "array"
+    },
+    "channelData": {
+      "type": "object"
+    },
+    "channelId": false,
+    "conversation": false,
+    "from": false,
+    "id": false,
+    "locale": false,
+    "localTimestamp": false,
+    "name": {
+      "type": "string"
+    },
+    "recipient": false,
+    "text": {
+      "type": "string"
+    },
+    "timestamp": false,
+    "type": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "type"
+  ]
+}

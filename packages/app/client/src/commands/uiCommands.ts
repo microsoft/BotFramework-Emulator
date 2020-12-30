@@ -67,6 +67,7 @@ import {
   UpdateUnavailableDialogContainer,
   DataCollectionDialogContainer,
 } from '../ui/dialogs';
+import { CustomActivityEditorContainer } from '../ui/dialogs/customActivityEditor/customActivityEditorContainer';
 import { OpenBotDialogProps } from '../ui/dialogs/openBotDialog/openBotDialog';
 
 const { UI, Telemetry } = SharedConstants.Commands;
@@ -263,5 +264,10 @@ export class UiCommands {
   @Command(UI.ShowDataCollectionDialog)
   protected showDataCollectionDialog() {
     return DialogService.showDialog(DataCollectionDialogContainer);
+  }
+
+  @Command(UI.ShowCustomActivityEditor)
+  protected showCustomActivityEditor() {
+    return DialogService.showDialog(CustomActivityEditorContainer);
   }
 }

@@ -5,6 +5,7 @@
     "lib": ["dom", "es2015.proxy", "es5", "esnext", "es7"],
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
+    "resolveJsonModule": true,
     "target": "esnext"
   },
   "include": ["./src"]
