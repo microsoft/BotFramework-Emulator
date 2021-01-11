@@ -1,0 +1,39 @@
+
+# Run this job every night at midnight (PST) on the main branch
+schedules:
+- cron: "0 7 * * *"
+  displayName: Nightly static analysis build
+  branches:
+    include:
+    - main
+
+# Do not run PR validation
+pr: none
+
+# Do not run CI validation
+trigger: none
+
+# Semmle task only works on Windows
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  # Upload static analysis snapshot to LGTM
+  LGTM.UploadSnapshot: true
+
+jobs:
+- job: static
+  displayName: 'Static Analysis (CodeQL & LGTM)'
+  steps:
+  - task: Semmle@0
+    env:
+      SYSTEM_ACCESSTOKEN: $(LGTM_READ_TOKEN)
+    inputs:
+      toolVersion: 'LatestPreRelease'
+      sourceCodeDirectory: '$(Build.SourcesDirectory)'
+      language: 'tsandjs'
+      includeNodeModules: true
+      querySuite: 'Recommended'
+      timeout: '1800'
+      ram: '16384'
+      addProjectDirToScanningExclusionList: true
