@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { EventEmitter } from 'electron';
+import { EventEmitter } from 'events';
 
 import { uniqueId } from '../utils';
 

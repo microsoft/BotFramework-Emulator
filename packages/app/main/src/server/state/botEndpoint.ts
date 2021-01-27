@@ -163,7 +163,7 @@ export class BotEndpoint {
         client_secret: this.msaPassword,
         scope: `${this.msaAppId}/.default`,
         // flag to request a version 1.0 token
-        ...(this.use10Tokens ? { atver: 1 } : {}),
+        ...(this.use10Tokens ? { atver: '1' } : {}),
       } as { [key: string]: string }).toString(),
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',

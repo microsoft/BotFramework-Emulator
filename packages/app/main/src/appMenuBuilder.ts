@@ -401,7 +401,7 @@ export class AppMenuBuilder {
         { role: 'services', submenu: [] },
         { type: 'separator' },
         { role: 'hide' },
-        { role: 'hideothers' },
+        { role: 'hideOthers' },
         { role: 'unhide' },
         { type: 'separator' },
         { role: 'quit' },
@@ -439,12 +439,12 @@ export class AppMenuBuilder {
       label: 'View',
       id: 'view',
       submenu: [
-        { role: 'resetzoom', label: 'Reset Zoom' },
-        { role: 'zoomin' },
-        { role: 'zoomout' },
+        { role: 'resetZoom', label: 'Reset Zoom' },
+        { role: 'zoomIn' },
+        { role: 'zoomOut' },
         { type: 'separator' },
         { role: 'togglefullscreen' },
-        { role: 'toggledevtools' },
+        { role: 'toggleDevTools' },
       ],
     };
   }

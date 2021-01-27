@@ -45,6 +45,14 @@ export const forwardToMain: Middleware = _store => next => action => {
     return next(action);
   }
   // forward the action over ipc to the main process
-  ipcRenderer.sendSync('sync-store', action);
+  if (action.payload?.resolver) {
+    // Electron does not allow functions to be sent over ipc (https://www.electronjs.org/docs/api/ipc-renderer#ipcrenderersendchannel-args)
+    // (The main side doesn't need to know about the resolver anyways since the command sagas only exist on the client side)
+    const prunedAction = { type: action.type, payload: { ...action.payload } };
+    delete prunedAction.payload.resolver;
+    ipcRenderer.sendSync('sync-store', prunedAction);
+  } else {
+    ipcRenderer.sendSync('sync-store', action);
+  }
   return next(action);
 };

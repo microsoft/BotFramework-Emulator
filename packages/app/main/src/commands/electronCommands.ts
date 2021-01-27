@@ -182,9 +182,14 @@ export class ElectronCommands {
   // ---------------------------------------------------------------------------
   // Opens and item on the disk in Explorer (win) or Finder (mac)
   @Command(Commands.OpenFileLocation)
-  protected openFileLocation(filePath: string): boolean {
+  protected async openFileLocation(filePath: string): Promise<boolean> {
     const parts = path.parse(filePath);
-    return shell.openItem(path.resolve(parts.dir));
+    const err = await shell.openPath(path.resolve(parts.dir));
+    if (!err) {
+      // success
+      return true;
+    }
+    return false;
   }
 
   // ---------------------------------------------------------------------------

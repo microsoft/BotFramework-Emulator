@@ -142,7 +142,7 @@ export class AzureAuthWorkflowService {
       webPreferences: { contextIsolation: true, nativeWindowOpen: true },
     });
 
-    browserWindow.setMenu(null);
+    browserWindow.removeMenu();
 
     const state = uuidv4();
     const requestId = uuidv4();
