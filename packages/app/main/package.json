@@ -147,7 +147,7 @@
     "https-proxy-agent": "2.2.3",
     "jest-fetch-mock": "^1.6.2",
     "jsonwebtoken": "^8.3.0",
-    "keytar": "^4.7.0",
+    "keytar": "7.3.0",
     "mkdirp": "^0.5.1",
     "moment": "^2.22.1",
     "node-fetch": "^2.3.0",
@@ -170,7 +170,7 @@
     "productName": "Bot Framework Emulator",
     "copyright": "Copyright © 2018 Microsoft Corporation",
     "electronDownload": {
-      "version": "4.1.1"
+      "version": "11.0.0"
     },
     "protocols": [
       {
