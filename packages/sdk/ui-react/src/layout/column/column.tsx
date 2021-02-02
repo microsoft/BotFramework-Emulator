@@ -53,7 +53,7 @@ export interface ColumnProps {
   justify?: ColumnJustification;
 }
 
-export class Column extends React.Component<ColumnProps, {}> {
+export class Column extends React.Component<ColumnProps, Record<string, unknown>> {
   public render(): JSX.Element {
     const { className = '' } = this.props;
     return (

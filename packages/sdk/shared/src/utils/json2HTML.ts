@@ -30,7 +30,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-export function json2HTML(obj: { [key: string]: any }, isDiff: boolean = false): string {
+export function json2HTML(obj: { [key: string]: any }, isDiff = false): string {
   if (!obj) {
     return null;
   }

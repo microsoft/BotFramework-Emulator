@@ -48,7 +48,6 @@ export function createReconnectToConversationHandler(emulatorServer: EmulatorRes
       res.json(HttpStatus.OK, {
         conversationId: conversation.conversationId,
         token: conversation.conversationId,
-        // eslint-disable-next-line typescript/camelcase
         expires_in: Math.pow(2, 31) - 1,
         streamUrl: '',
       });

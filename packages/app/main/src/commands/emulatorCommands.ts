@@ -164,7 +164,7 @@ export class EmulatorCommands {
   }
 
   @Command(Commands.StartEmulator)
-  protected async startEmulator(forceRestart: boolean = false) {
+  protected async startEmulator(forceRestart = false) {
     const emulator = Emulator.getInstance();
     if (!forceRestart && !!emulator.server.serverPort) {
       return;

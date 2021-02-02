@@ -137,7 +137,7 @@ export class AzureManagementApiService {
     subs: Subscription[],
     provider: Provider,
     identifier: AccountIdentifier,
-    kind: string = ''
+    kind = ''
   ): Promise<AzureResource[]> {
     const url = `${baseUrl}{id}/providers/${provider}/${identifier}`;
     const req = AzureManagementApiService.getRequestInit(armToken);

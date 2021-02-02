@@ -54,7 +54,7 @@ const titleMap = {
   [ServiceTypes.CosmosDB]: 'Connect your bot to an Azure Cosmos DB account',
 };
 
-export class ConnectServicePromptDialog extends Component<ConnectServicePromptDialogProps, {}> {
+export class ConnectServicePromptDialog extends Component<ConnectServicePromptDialogProps, Record<string, unknown>> {
   public render() {
     return (
       <Dialog className={styles.dialogMedium} cancel={this.props.cancel} title={titleMap[this.props.serviceType]}>

@@ -39,7 +39,7 @@ export interface PrimaryButtonProps extends React.ButtonHTMLAttributes<HTMLButto
   text?: string;
 }
 
-export class PrimaryButton extends React.Component<PrimaryButtonProps, {}> {
+export class PrimaryButton extends React.Component<PrimaryButtonProps, Record<string, unknown>> {
   public render(): React.ReactNode {
     const { className: propsClassName = '', text, buttonRef, ...buttonProps } = this.props;
     const className = `${propsClassName} ${styles.button} ${styles.primaryButton}`;

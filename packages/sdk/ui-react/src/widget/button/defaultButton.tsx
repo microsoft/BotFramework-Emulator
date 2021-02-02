@@ -38,7 +38,7 @@ export interface DefaultButtonProps extends React.ButtonHTMLAttributes<HTMLButto
   text?: string;
 }
 
-export class DefaultButton extends React.Component<DefaultButtonProps, {}> {
+export class DefaultButton extends React.Component<DefaultButtonProps, Record<string, unknown>> {
   public render(): React.ReactNode {
     const { className: propsClassName = '', text, ...buttonProps } = this.props;
     const className = `${propsClassName} ${styles.button} ${styles.defaultButton}`;

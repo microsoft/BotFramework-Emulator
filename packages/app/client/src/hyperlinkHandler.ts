@@ -43,7 +43,7 @@ export class HyperlinkHandler {
   @CommandServiceInstance()
   private static commandService: CommandServiceImpl;
 
-  public static navigate(url: string = '') {
+  public static navigate(url = '') {
     const { TrackEvent } = SharedConstants.Commands.Telemetry;
     try {
       const parsed = URL.parse(url) || { protocol: '' };

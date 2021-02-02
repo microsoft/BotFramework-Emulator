@@ -210,7 +210,6 @@ describe('The azureAuthSaga', () => {
       commandService.remoteCall = args => {
         switch (args[0]) {
           case SharedConstants.Commands.Azure.RetrieveArmToken:
-            // eslint-disable-next-line typescript/camelcase
             return Promise.resolve({ access_token: 'a valid access_token' });
 
           case SharedConstants.Commands.Azure.PersistAzureLoginChanged:

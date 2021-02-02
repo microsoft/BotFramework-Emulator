@@ -40,7 +40,7 @@ const INSTRUMENTATION_KEY = 'cc91f74a-1abd-4be0-8a96-fddedbc08dd7';
 
 export class TelemetryService {
   private static _client: AppInsights.TelemetryClient;
-  private static _hasStarted: boolean = false;
+  private static _hasStarted = false;
 
   public static trackEvent(name: string, properties?: { [key: string]: any }): void {
     if (!this.enabled || !name || (global as any).__JEST_ENV__) {

@@ -38,8 +38,8 @@ import { sendErrorResponse } from './sendErrorResponse';
 import { createErrorResponse } from './createResponse/createErrorResponse';
 
 describe('sendErrorResponse', () => {
-  const mockSend = jest.fn(() => {});
-  const mockEnd = jest.fn(() => {});
+  const mockSend = jest.fn(() => undefined);
+  const mockEnd = jest.fn(() => undefined);
   const response: any = { end: mockEnd, send: mockSend };
 
   beforeEach(() => {

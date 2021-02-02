@@ -38,7 +38,7 @@ import { bot, resources, setShowing as setDialogShowing } from '@bfemulator/app-
 
 import { DialogService } from './dialogService';
 
-const mockComponent = class extends Component<{}, {}> {
+const mockComponent = class extends Component<Record<string, unknown>, Record<string, unknown>> {
   public render() {
     return <div />;
   }

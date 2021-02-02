@@ -62,8 +62,7 @@ export class ElectronCommands {
       title: app.getName(),
       ...options,
     };
-    const args = modal ? [emulatorApplication.mainWindow.browserWindow, options] : [options];
-    return dialog.showMessageBox.apply(dialog, args);
+    return dialog.showMessageBox(modal ? emulatorApplication.mainWindow.browserWindow : undefined, options);
   }
 
   // ---------------------------------------------------------------------------
@@ -250,7 +249,7 @@ export class ElectronCommands {
   // ---------------------------------------------------------------------------
   // Checks for app updates
   @Command(Commands.CheckForUpdates)
-  protected checkForUpdates(userInitiated: boolean = true): void {
+  protected checkForUpdates(userInitiated = true): void {
     AppUpdater.checkForUpdates(userInitiated);
   }
 }

@@ -40,7 +40,7 @@ import { DialogService } from '../service';
 
 import { BotSettingsEditor, BotSettingsEditorProps } from './botSettingsEditor';
 
-const mapStateToProps = (state: RootState, ownProps: {}): Partial<BotSettingsEditorProps> => {
+const mapStateToProps = (state: RootState, ownProps: Record<string, unknown>): Partial<BotSettingsEditorProps> => {
   return {
     window,
     bot: BotConfigWithPathImpl.fromJSON(state.bot.activeBot), // Copy only

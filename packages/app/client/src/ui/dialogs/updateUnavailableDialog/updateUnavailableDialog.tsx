@@ -38,7 +38,7 @@ export interface UpdateUnavailableDialogProps {
   onCloseClick?: () => any;
 }
 
-export class UpdateUnavailableDialog extends React.Component<UpdateUnavailableDialogProps, {}> {
+export class UpdateUnavailableDialog extends React.Component<UpdateUnavailableDialogProps, Record<string, unknown>> {
   constructor(props: UpdateUnavailableDialogProps) {
     super(props);
   }

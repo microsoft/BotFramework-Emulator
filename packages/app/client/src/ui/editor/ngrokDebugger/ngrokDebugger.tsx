@@ -56,7 +56,7 @@ export interface NgrokDebuggerProps {
   onReconnectToNgrokClick: () => void;
 }
 
-const getDialogOptions = (title: string, buttonLabel: string = 'Save'): Electron.SaveDialogOptions => ({
+const getDialogOptions = (title: string, buttonLabel = 'Save'): Electron.SaveDialogOptions => ({
   title,
   buttonLabel,
 });

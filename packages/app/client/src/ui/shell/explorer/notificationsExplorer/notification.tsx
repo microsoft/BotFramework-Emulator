@@ -43,7 +43,7 @@ export interface NotificationProps {
   removeNotification?: (id: string) => void;
 }
 
-class NotificationComp extends React.Component<NotificationProps, {}> {
+class NotificationComp extends React.Component<NotificationProps, Record<string, unknown>> {
   constructor(props: NotificationProps) {
     super(props);
   }

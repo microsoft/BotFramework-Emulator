@@ -48,7 +48,7 @@ describe('The saveSetting util', () => {
     const ensureStoragePathSpy = jest
       .spyOn((ensureStoragePathUtil as any).default, 'ensureStoragePath')
       .mockReturnValue('path');
-    saveSettings<{}>('settings.json', {});
+    saveSettings<Record<string, unknown>>('settings.json', {});
     expect(ensureStoragePathSpy).toHaveBeenCalled();
   });
 });

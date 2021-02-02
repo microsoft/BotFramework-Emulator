@@ -45,7 +45,7 @@ export interface RecentBotsListProps {
   showContextMenuForBot?: (bot: BotInfo) => void;
 }
 
-export class RecentBotsList extends Component<RecentBotsListProps, {}> {
+export class RecentBotsList extends Component<RecentBotsListProps, Record<string, unknown>> {
   public render(): ReactNode {
     return (
       <div className={styles.section}>

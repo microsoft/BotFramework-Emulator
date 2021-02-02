@@ -55,6 +55,7 @@ module.exports = {
       rules: {
         'typescript/class-name-casing': 'off',
         'typescript/no-explicit-any': 'off',
+        '@typescript-eslint/ban-ts-comment': 'off',
       },
     },
   ],

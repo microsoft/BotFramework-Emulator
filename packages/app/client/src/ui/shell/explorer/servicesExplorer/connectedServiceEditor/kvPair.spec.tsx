@@ -37,7 +37,7 @@ import * as React from 'react';
 import { KvPair } from './kvPair';
 
 describe('The KvPair component', () => {
-  let node: ReactWrapper<{}, {}, any>;
+  let node: ReactWrapper<Record<string, unknown>, Record<string, unknown>, any>;
   const mockOnChange = jest.fn(() => null);
 
   beforeEach(() => {

@@ -46,7 +46,7 @@ interface ControlBarProps {
   buttonSelected: ButtonSelected;
 }
 
-export class ControlBar extends Component<ControlBarProps, {}> {
+export class ControlBar extends Component<ControlBarProps, Record<string, unknown>> {
   public clickHandler: MouseEventHandler<HTMLAnchorElement> = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
     this.props.setButtonSelected(ButtonSelected[e.currentTarget.id]);

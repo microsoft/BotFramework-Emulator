@@ -45,7 +45,9 @@ export function isObject(item: any): boolean {
   return !!(item && typeof item === 'object' && !Array.isArray(item));
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 export function mergeDeep<T extends {}, R extends {}>(target: T, source: R): T & R {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore https://github.com/Microsoft/TypeScript/issues/26412
   const output: T & R = { ...{}, ...target };
   // if (isObject(target) && isObject(source)) {
@@ -119,11 +121,11 @@ export const newNotification = (message: string, type: NotificationType = Notifi
   return notification;
 };
 
-export function isChatFile(file: string = '') {
+export function isChatFile(file = '') {
   return file.endsWith('.chat');
 }
 
-export function isTranscriptFile(file: string = '') {
+export function isTranscriptFile(file = '') {
   return file.endsWith('.transcript');
 }
 

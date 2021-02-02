@@ -48,7 +48,7 @@ export interface LinkButtonProps extends React.ButtonHTMLAttributes<HTMLButtonEl
 // Instead of <a href="...">Link name</a>, please use:
 // <LinkButton linkRole={true} onClick={...}>Link name</LinkButton>
 
-export class LinkButton extends React.Component<LinkButtonProps, {}> {
+export class LinkButton extends React.Component<LinkButtonProps, Record<string, unknown>> {
   public render(): React.ReactNode {
     const { className: propsClassName = '', ariaLabel, buttonRef, linkRole = false, text, ...buttonProps } = this.props;
     const className = `${propsClassName} ${styles.linkButton}`;

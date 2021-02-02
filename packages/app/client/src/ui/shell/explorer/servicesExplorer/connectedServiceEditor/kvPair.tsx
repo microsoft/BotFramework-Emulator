@@ -100,7 +100,7 @@ export class KvPair extends Component<KvPairProps, KvPairState> {
     );
   }
 
-  private getTextFieldKey(key: string = '', index: number): ReactNode {
+  private getTextFieldKey(key = '', index: number): ReactNode {
     let ref;
     if (index === this.state.numRows - 1) {
       ref = ref => {
@@ -125,7 +125,7 @@ export class KvPair extends Component<KvPairProps, KvPairState> {
     );
   }
 
-  private getTextFieldValue(key: string = '', value: string = '', index: number): ReactNode {
+  private getTextFieldValue(key = '', value = '', index: number): ReactNode {
     return (
       <>
         <TextField

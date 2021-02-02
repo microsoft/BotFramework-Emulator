@@ -32,7 +32,6 @@
 //
 
 // Cheating here and pulling in a module from node. Can be easily replaced if we ever move the emulator to the web.
-// @ts-ignore
 import { clipboard } from 'electron';
 import {
   EmulatorChannel,
@@ -280,7 +279,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     );
   }
 
-  // eslint-disable-next-line typescript/no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private renderAccessoryButtons() {
     return (
       <PanelControls>

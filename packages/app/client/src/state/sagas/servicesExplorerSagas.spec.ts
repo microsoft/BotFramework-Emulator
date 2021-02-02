@@ -109,7 +109,6 @@ jest.mock('electron', () => ({
 jest.mock('./azureAuthSaga', () => ({
   AzureAuthSaga: {
     getArmToken: function*() {
-      // eslint-disable-next-line typescript/camelcase
       yield { access_token: mockArmToken };
     },
   },

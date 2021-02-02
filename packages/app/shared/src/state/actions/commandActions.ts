@@ -42,7 +42,7 @@ export interface CommandActionPayload {
   isRemote: boolean;
   commandName: string;
   args: any[];
-  resolver?: Function;
+  resolver?: (...args) => any;
 }
 
 /**
@@ -57,7 +57,7 @@ export interface CommandActionPayload {
 export function executeCommand(
   isRemote: boolean,
   commandName,
-  resolver: Function = null,
+  resolver: (...args) => any = null,
   ...args: any[]
 ): CommandAction<CommandActionPayload> {
   return {

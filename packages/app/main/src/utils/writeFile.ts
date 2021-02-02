@@ -37,7 +37,7 @@ import * as path from 'path';
 import * as mkdirp from 'mkdirp';
 
 /** Writes contents to a file at path */
-export const writeFile = (filePath: string, contents: object | string): void => {
+export const writeFile = (filePath: string, contents: unknown | string): void => {
   try {
     const contentsToWrite = typeof contents === 'object' ? JSON.stringify(contents, null, 2) : contents;
     // write parent director(y | ies) if non-existent

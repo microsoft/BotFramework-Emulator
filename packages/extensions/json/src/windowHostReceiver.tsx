@@ -70,7 +70,7 @@ type AccessoryId = keyof JsonViewerExtensionAccessory;
 
 export function windowHostReceiver(WrappedComponent: ComponentClass<any>): ComponentClass {
   @IpcHost(['createAriaAlert', 'setAccessoryState', 'setHighlightedObjects', 'setInspectorObjects'])
-  class WindowHostReceiver extends Component<{}, WindowHostReceiverState> {
+  class WindowHostReceiver extends Component<Record<string, unknown>, WindowHostReceiverState> {
     private createAriaAlert: (msg: string) => void;
     private setAccessoryState: (accessoryId: AccessoryId, state: string) => void;
     private setHighlightedObjects: (documentId: string, items: Activity | Activity[]) => void;

@@ -48,7 +48,7 @@ export class ConversationQueue {
   private receivedActivities: Activity[];
   private conversationId: string;
   private nextActivityToBePosted: Activity = undefined;
-  private isReplayComplete: boolean = false;
+  private isReplayComplete = false;
   private proactiveResponseValidationMap: Map<number, string>;
 
   constructor(

@@ -56,7 +56,7 @@ export interface AppMenuProps {
   quitAndInstall?: () => void;
 }
 
-export class AppMenu extends React.Component<AppMenuProps, {}> {
+export class AppMenu extends React.Component<AppMenuProps, Record<string, unknown>> {
   private _menuTemplate: { [key: string]: MenuItem[] };
 
   constructor(props: AppMenuProps) {

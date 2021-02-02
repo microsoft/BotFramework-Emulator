@@ -33,10 +33,10 @@
 
 import { ServiceBase } from 'qnamaker/lib/api/serviceBase';
 
-/* eslint-disable typescript/no-var-requires */
+/* eslint-disable @typescript-eslint/no-var-requires */
 const operations = require('qnamaker/lib/api/operations');
 const knowledgebase = require('qnamaker/lib/api/knowledgebase');
-/* eslint-enable typescript/no-var-requires */
+/* eslint-enable @typescript-eslint/no-var-requires */
 
 class QnAMakerClientError extends Error {
   private static getMessage(message: string, statusCode: number | undefined): string {

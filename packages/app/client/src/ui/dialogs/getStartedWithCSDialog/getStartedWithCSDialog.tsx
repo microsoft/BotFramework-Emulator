@@ -64,7 +64,7 @@ const buttonTextMap = {
   [ServiceTypes.CosmosDB]: 'Cosmos DB',
 };
 
-export class GetStartedWithCSDialog extends Component<GetStartedWithCSDialogProps, {}> {
+export class GetStartedWithCSDialog extends Component<GetStartedWithCSDialogProps, Record<string, unknown>> {
   public render() {
     return (
       <Dialog className={styles.dialogMedium} cancel={this.props.cancel} title={titleMap[this.props.serviceType]}>

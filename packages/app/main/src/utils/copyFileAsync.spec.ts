@@ -33,7 +33,7 @@
 import { copyFileAsync } from './copyFileAsync';
 
 jest.mock('fs', () => ({
-  copyFile: (sourcePath: string, destinationPath: string, cb: Function) => {
+  copyFile: (sourcePath: string, destinationPath: string, cb: (arg: any) => void) => {
     if (!destinationPath || !sourcePath) {
       cb('Incorrect folder permissions.');
     }

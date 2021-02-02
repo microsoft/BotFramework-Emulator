@@ -42,7 +42,7 @@ export interface DataCollectionDialogProps {
   onAnchorClick: (url: string) => void;
 }
 
-export class DataCollectionDialog extends Component<DataCollectionDialogProps, {}> {
+export class DataCollectionDialog extends Component<DataCollectionDialogProps, Record<string, unknown>> {
   private onPrivacyLinkClick = () => {
     this.props.onAnchorClick('https://privacy.microsoft.com/privacystatement');
   };

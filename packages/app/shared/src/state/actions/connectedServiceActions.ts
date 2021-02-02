@@ -82,7 +82,7 @@ export interface ConnectedServicePickerPayload extends ConnectedServicePayload {
 
 export interface OpenAddServiceContextMenuPayload extends ConnectedServicePickerPayload {
   menuCoords?: ContextMenuCoordinates;
-  resolver: Function;
+  resolver: (...args) => any;
 }
 
 export interface OpenSortContextMenuPayload extends ConnectedServicePayload {
@@ -119,7 +119,7 @@ export function openContextMenuForConnectedService<T>(
 
 export function openAddServiceContextMenu(
   payload: ConnectedServicePickerPayload,
-  resolver: Function,
+  resolver: (...args) => any,
   menuCoords?: ContextMenuCoordinates
 ): ConnectedServiceAction<OpenAddServiceContextMenuPayload> {
   return {

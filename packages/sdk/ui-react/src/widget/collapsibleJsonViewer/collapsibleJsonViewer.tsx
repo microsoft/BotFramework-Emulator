@@ -53,7 +53,7 @@ export interface CollapsibleJsonViewerProps<T = any> {
   [jsonTreePropName: string]: any;
 }
 
-export class CollapsibleJsonViewer extends Component<CollapsibleJsonViewerProps, {}> {
+export class CollapsibleJsonViewer extends Component<CollapsibleJsonViewerProps, Record<string, unknown>> {
   private readonly mutationObserver: MutationObserver;
   private jsonViewerElement: HTMLDivElement;
 

@@ -129,14 +129,14 @@ export function botHashGenerated(hash: string): BotAction<HashPayload> {
   };
 }
 
-export function browse(): BotAction<{}> {
+export function browse(): BotAction<Record<string, unknown>> {
   return {
     type: BotActionType.browse,
     payload: {},
   };
 }
 
-export function closeBot(): BotAction<{}> {
+export function closeBot(): BotAction<Record<string, unknown>> {
   return {
     type: BotActionType.close,
     payload: {},

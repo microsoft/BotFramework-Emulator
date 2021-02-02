@@ -44,8 +44,8 @@ interface PanelProps {
 export const PanelControls = props => props.children;
 export const PanelContent = props => props.children;
 
-export default class Panel extends React.Component<PanelProps, {}> {
-  public constructor(props: PanelProps, context: {}) {
+export default class Panel extends React.Component<PanelProps, Record<string, unknown>> {
+  public constructor(props: PanelProps, context: Record<string, unknown>) {
     super(props, context);
   }
 

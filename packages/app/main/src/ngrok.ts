@@ -45,7 +45,7 @@ import { ensureStoragePath, writeFile, writeStream, FileWriteStream } from './ut
 import { PostmanNgrokCollection } from './utils/postmanNgrokCollection';
 import { dispatch, store } from './state';
 
-/* eslint-enable typescript/no-var-requires */
+/* eslint-enable @typescript-eslint/no-var-requires */
 export interface NgrokOptions {
   addr: number;
   name: string;

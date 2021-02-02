@@ -246,7 +246,7 @@ class EmulatorUpdater extends EventEmitter {
     }
   };
 
-  private onError = async (err: Error, message: string = '') => {
+  private onError = async (err: Error, message = '') => {
     this._status = UpdateStatus.Idle;
     // TODO - localization
     AppMenuBuilder.refreshAppUpdateMenu();

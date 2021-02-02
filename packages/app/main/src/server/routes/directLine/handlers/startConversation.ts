@@ -100,7 +100,6 @@ export function createStartConversationHandler(emulatorServer: EmulatorRestServe
     res.json(created ? HttpStatus.CREATED : HttpStatus.OK, {
       conversationId: conversation.conversationId,
       token: botEndpoint && botEndpoint.id,
-      // eslint-disable-next-line typescript/camelcase
       expires_in: Math.pow(2, 31) - 1,
       streamUrl: '',
     });

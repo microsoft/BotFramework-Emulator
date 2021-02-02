@@ -39,7 +39,7 @@ interface GenericDocumentProps {
   className?: string; // overrides
 }
 
-export class GenericDocument extends React.Component<GenericDocumentProps, {}> {
+export class GenericDocument extends React.Component<GenericDocumentProps, Record<string, unknown>> {
   public render(): JSX.Element {
     const { className = '' } = this.props;
     return (

@@ -47,7 +47,7 @@ export interface ModalProps extends JSX.ElementChildrenAttribute {
   modalStyle?: string;
 }
 
-export class Dialog extends Component<ModalProps, {}> {
+export class Dialog extends Component<ModalProps, Record<string, unknown>> {
   public render() {
     const { className = '', titleClassName = '', title = '', children, modalStyle = '' } = this.props;
     return (

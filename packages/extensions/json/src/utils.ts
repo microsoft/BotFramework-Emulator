@@ -65,7 +65,7 @@ export function IpcHost(mixins: (keyof InspectorHost)[]) {
     const { elements } = elementDescriptor;
     const host = (window as any).host as InspectorHost;
     mixins.forEach(mixin => {
-      const value = typeof host[mixin] === 'function' ? (host[mixin] as Function).bind(host) : host[mixin];
+      const value = typeof host[mixin] === 'function' ? (host[mixin] as (...args) => any).bind(host) : host[mixin];
 
       const element = elements.find(element => element.key === mixin);
       const descriptor = {
@@ -121,7 +121,7 @@ export async function updateTheme(themeInfo: { themeName: string; themeComponent
 export function getBotState(
   entries: LogEntry<InspectableObjectLogItem>[],
   referenceBotState: Activity,
-  offset: number = -1
+  offset = -1
 ): Activity {
   if (!referenceBotState) {
     return null;

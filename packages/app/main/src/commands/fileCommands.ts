@@ -36,7 +36,7 @@ import { Command } from '@bfemulator/sdk-shared';
 
 import { readFileSync, writeFile } from '../utils';
 
-// eslint-disable-next-line typescript/no-var-requires
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const sanitize = require('sanitize-filename');
 const Commands = SharedConstants.Commands.File;
 
@@ -58,7 +58,7 @@ export class FileCommands {
   // ---------------------------------------------------------------------------
   // Write file
   @Command(Commands.Write)
-  protected writeFile(path: string, contents: object | string) {
+  protected writeFile(path: string, contents: Record<string, unknown> | string) {
     try {
       writeFile(path, contents);
     } catch (e) {

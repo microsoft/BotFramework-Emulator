@@ -48,7 +48,7 @@ let renameArgs;
 jest.mock('fs-extra', () => ({
   stat: async () => ({ isFile: () => true }),
   statSync: () => ({ isFile: () => false }),
-  pathExists: async (path: string = '') => !path.includes('error'),
+  pathExists: async (path = '') => !path.includes('error'),
   rename: async (...args: any[]) => (renameArgs = args),
 }));
 
@@ -104,7 +104,7 @@ jest.mock('../main', () => ({
     mainWindow: {
       browserWindow: {
         setFullScreen: () => void 0,
-        setTitle: (_name: string = '') => void 0,
+        setTitle: (_name = '') => void 0,
       },
     },
     mainBrowserWindow: {

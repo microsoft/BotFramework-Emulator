@@ -31,22 +31,24 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+type CommandHandler = (...args: any[]) => any;
+
 export interface CommandRegistry {
-  registerCommand(id: string, command: Function): void;
-  getCommand(id: string): Function;
+  registerCommand(id: string, command: CommandHandler): void;
+  getCommand(id: string): CommandHandler;
 }
 
 export class CommandRegistryImpl implements CommandRegistry {
-  private commands: { [id: string]: Function } = {};
+  private commands: { [id: string]: CommandHandler } = {};
 
-  public registerCommand(id: string, handler?: Function): void {
+  public registerCommand(id: string, handler?: CommandHandler): void {
     if (!id || (typeof id === 'string' && typeof handler !== 'function')) {
       throw new Error('invalid command');
     }
     this.commands[id] = handler;
   }
 
-  public getCommand(id: string): Function {
+  public getCommand(id: string): CommandHandler {
     return this.commands[id];
   }
 }

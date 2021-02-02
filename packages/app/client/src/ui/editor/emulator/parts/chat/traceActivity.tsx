@@ -54,7 +54,7 @@ export interface TraceActivityProps {
   onItemRendererKeyDown?: (event: React.KeyboardEvent<HTMLElement>) => void;
 }
 
-export class TraceActivity extends React.Component<TraceActivityProps, {}> {
+export class TraceActivity extends React.Component<TraceActivityProps, Record<string, unknown>> {
   public render(): React.ReactNode {
     const {
       card,

@@ -40,7 +40,7 @@ export interface FileWriteStream {
 export const writeStream = (pathToFile: string) => {
   const stream = createWriteStream(pathToFile);
 
-  const write = (content: string, newLine: boolean = true) => {
+  const write = (content: string, newLine = true) => {
     stream.write(content + (newLine ? '\n' : ''));
   };
 

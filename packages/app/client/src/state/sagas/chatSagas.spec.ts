@@ -1387,7 +1387,7 @@ describe('The ChatSagas,', () => {
         put(setRestartConversationStatus(RestartConversationStatus.Rejected, payload.documentId))
       );
       res = gen.next();
-      const errorMessage: string = `There was an error replaying the conversation. The Bot code seems to have changed causing an error while replaying.`;
+      const errorMessage = `There was an error replaying the conversation. The Bot code seems to have changed causing an error while replaying.`;
       expect(res.value).toEqual(
         fork(logService.logToDocument, 'some-id', logEntry(textItem(LogLevel.Error, errorMessage)))
       );

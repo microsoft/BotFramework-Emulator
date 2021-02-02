@@ -156,7 +156,7 @@ function buildServiceModel(
   return service;
 }
 
-function getAuthorizationTokenUsingMasterKey(masterKey: string = '', resourceId: string = ''): string {
+function getAuthorizationTokenUsingMasterKey(masterKey = '', resourceId = ''): string {
   const key = Buffer.from(masterKey, 'base64');
   const text = 'get\n' + 'dbs\n' + resourceId + '\n' + new Date().toUTCString().toLowerCase() + '\n' + '' + '\n';
 

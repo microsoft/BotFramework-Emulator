@@ -91,7 +91,7 @@ export interface EmulatorProps {
   onSetRestartConversationOptionClick: (documentId: string, option: RestartConversationOptions) => void;
 }
 
-export class Emulator extends React.Component<EmulatorProps, {}> {
+export class Emulator extends React.Component<EmulatorProps, Record<string, unknown>> {
   private restartButtonRef: HTMLButtonElement;
 
   private readonly onVerticalSizeChange = debounce((sizes: SplitterSize[]) => {

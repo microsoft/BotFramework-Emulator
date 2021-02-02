@@ -47,7 +47,7 @@ interface NotificationExplorerProps {
   clearNotifications?: () => void;
 }
 
-class NotificationsExplorerComp extends React.Component<NotificationExplorerProps, {}> {
+class NotificationsExplorerComp extends React.Component<NotificationExplorerProps, Record<string, unknown>> {
   constructor(props: NotificationExplorerProps) {
     super(props);
   }

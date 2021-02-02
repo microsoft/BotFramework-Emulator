@@ -71,11 +71,11 @@ export class LogEntry extends React.Component<LogEntryProps> {
   /** Sends obj to the inspector panel
    * @param obj Can be a conversation activity or network request
    */
-  inspect(obj: {} = {}) {
+  inspect(obj: Record<string, unknown> = {}) {
     this.props.setInspectorObjects(this.props.document.documentId, { ...obj, showInInspector: true });
   }
 
-  highlight(obj: {} = {}) {
+  highlight(obj: Record<string, unknown> = {}) {
     this.props.setHighlightedObjects(this.props.document.documentId, obj);
   }
 

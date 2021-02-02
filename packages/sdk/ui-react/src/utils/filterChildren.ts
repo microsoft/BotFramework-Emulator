@@ -39,7 +39,7 @@ export function filterChildren(children: any, predicate: any) {
 
 let uid = Date.now();
 
-export function hmrSafeNameComparison(child1: any, child2: any, invert: boolean = false) {
+export function hmrSafeNameComparison(child1: any, child2: any, invert = false) {
   const { name: name1 = uid++, displayName: displayName1 = uid++ } = child1;
   const { name: name2 = uid++, displayName: displayName2 = uid++ } = child2;
 

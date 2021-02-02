@@ -75,8 +75,8 @@ export interface TunnelStatusAndTimestamp {
 }
 
 export interface StatusCheckOnTunnel {
-  onTunnelPingSuccess: Function;
-  onTunnelPingError: Function;
+  onTunnelPingSuccess: (...args) => any;
+  onTunnelPingError: (...args) => any;
 }
 
 export interface NgrokTunnelAction<T> extends Action {

@@ -60,7 +60,7 @@ export interface OuterActivityWrapperProps {
   isDLSpeechBot: boolean;
 }
 
-export class OuterActivityWrapper extends React.Component<OuterActivityWrapperProps, {}> {
+export class OuterActivityWrapper extends React.Component<OuterActivityWrapperProps, Record<string, unknown>> {
   public render() {
     const {
       card,

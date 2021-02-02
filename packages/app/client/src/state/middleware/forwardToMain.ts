@@ -34,7 +34,7 @@
 import { Middleware } from 'redux';
 import { ipcRenderer } from 'electron';
 
-/* eslint-disable typescript/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export const forwardToMain: Middleware = _store => next => action => {
   // ensure that the action is FSA compliant (https://github.com/redux-utilities/flux-standard-action#actions)
   if (!action.type) {

@@ -34,7 +34,6 @@ import * as fs from 'fs';
 
 import { writeStream as writeStreamAsync, FileWriteStream } from './writeStream';
 
-// eslint-disable-next-line typescript/no-unused-vars
 let fileMock = '';
 
 jest.mock('fs', () => ({
