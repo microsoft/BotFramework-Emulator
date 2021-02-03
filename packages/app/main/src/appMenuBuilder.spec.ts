@@ -118,6 +118,9 @@ jest.mock('electron', () => ({
     isInvertedColorScheme: jest.fn(() => true),
     on: jest.fn(() => null),
   },
+  nativeTheme: {
+    on: jest.fn(() => null),
+  },
 }));
 
 const mockUpdateStatus = {

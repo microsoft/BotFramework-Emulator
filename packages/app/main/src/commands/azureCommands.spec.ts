@@ -88,7 +88,7 @@ jest.mock('electron', () => ({
   },
   session: {
     defaultSession: {
-      clearStorageData: (options, cb) => cb(true),
+      clearStorageData: _options => null,
     },
   },
   ipcMain: new Proxy(

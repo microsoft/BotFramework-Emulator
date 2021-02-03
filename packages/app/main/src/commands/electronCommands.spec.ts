@@ -67,7 +67,7 @@ jest.mock('electron', () => ({
     showMessageBox: (mainBrowserWindow: any, p: { buttons: string[]; type: string; title: string; message: string }) =>
       void 0,
     showOpenDialog: () => void 0,
-    showSaveDialog: () => void 0,
+    showSaveDialogSync: () => void 0,
   },
   shell: {
     get openExternal() {
@@ -197,7 +197,7 @@ describe('the electron commands', () => {
 
   it('should show the save dialog', async () => {
     const handler = registry.getCommand(SharedConstants.Commands.Electron.ShowSaveDialog);
-    const showSaveDialogSpy = jest.spyOn(Electron.dialog, 'showSaveDialog');
+    const showSaveDialogSpy = jest.spyOn(Electron.dialog, 'showSaveDialogSync');
 
     await handler({});
     expect(showSaveDialogSpy).toHaveBeenCalledWith(emulatorApplication.mainWindow.browserWindow, {});

@@ -81,6 +81,10 @@ jest.mock('electron', () => ({
       // no-op
     }
 
+    removeMenu() {
+      // no-op
+    }
+
     addListener(type: string, handler: () => void) {
       this.listeners.push({ type, handler });
       MockBrowserWindow.report('addListener', type, handler);
