@@ -52,5 +52,4 @@ export class ValueTypesMask {
   public static Diff = 0b1000;
   public static Error = 0b10000;
   public static Activity = 0b100000;
-  private constructor() {}
 }

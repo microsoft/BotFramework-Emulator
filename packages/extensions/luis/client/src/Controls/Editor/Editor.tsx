@@ -54,7 +54,7 @@ interface EditorProps {
   traceId: string;
 }
 
-export class Editor extends Component<EditorProps, {}> {
+export class Editor extends Component<EditorProps, Record<string, unknown>> {
   public getTopScoringIntent(): Intent {
     if (!this.props.recognizerResult || !this.props.recognizerResult.intents) {
       return { intent: NoneIntent, score: 0.0 };

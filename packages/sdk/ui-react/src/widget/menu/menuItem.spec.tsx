@@ -39,7 +39,7 @@ import { MenuItemComp, MenuItemProps } from './menuItem';
 const mockFocusHandler = jest.fn(_index => jest.fn());
 
 describe('<MenuItem />', () => {
-  let wrapper: ReactWrapper<MenuItemProps, {}, MenuItemComp>;
+  let wrapper: ReactWrapper<MenuItemProps, Record<string, unknown>, MenuItemComp>;
   let instance: MenuItemComp;
 
   beforeEach(() => {

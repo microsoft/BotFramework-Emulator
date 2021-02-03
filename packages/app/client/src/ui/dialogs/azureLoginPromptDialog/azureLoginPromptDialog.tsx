@@ -42,7 +42,7 @@ export interface AzureLoginPromptDialogProps {
   onAnchorClick: (url: string) => void;
 }
 
-export class AzureLoginPromptDialog extends Component<AzureLoginPromptDialogProps, {}> {
+export class AzureLoginPromptDialog extends Component<AzureLoginPromptDialogProps, Record<string, unknown>> {
   public render() {
     return (
       <Dialog cancel={this.props.cancel} title="Sign in with an Azure account" className={styles.dialogMedium}>

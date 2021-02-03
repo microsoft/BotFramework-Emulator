@@ -47,8 +47,8 @@ export interface EntityViewerProps {
   entity: any;
 }
 
-export class EntityViewer extends Component<EntityViewerProps, {}> {
-  public static renderEntityValueObject(entityValue: object): string {
+export class EntityViewer extends Component<EntityViewerProps, Record<string, unknown>> {
+  public static renderEntityValueObject(entityValue: Record<string, unknown>): string {
     if (InstanceKey in entityValue) {
       delete entityValue[InstanceKey];
     }
@@ -76,7 +76,7 @@ export class EntityViewer extends Component<EntityViewerProps, {}> {
   }
 
   public static flattenEntityValue(entityValueArr: any[]) {
-    return [].concat.apply([], entityValueArr);
+    return [].concat([], entityValueArr);
   }
 
   constructor(props: any, context: any) {

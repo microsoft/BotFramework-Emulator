@@ -60,7 +60,7 @@ class MockCommandService implements CommandService {
     return null;
   }
 
-  on(commandName: string, handler?: Function): any {
+  on(commandName: string, handler?: () => any): any {
     return null;
   }
 }

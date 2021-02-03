@@ -121,7 +121,7 @@ export class UiCommands {
   // ---------------------------------------------------------------------------
   // Shows a bot creation dialog
   @Command(UI.ShowOpenBotDialog)
-  protected async showOpenBotDialog(isDebug: boolean = false): Promise<void> {
+  protected async showOpenBotDialog(isDebug = false): Promise<void> {
     const mode = isDebug ? 'debug' : undefined;
     return await DialogService.showDialog<ComponentClass, void>(OpenBotDialogContainer, {
       isDebug,
@@ -231,7 +231,7 @@ export class UiCommands {
   // ---------------------------------------------------------------------------
   // Shows the dialog telling the user that an update is available
   @Command(UI.ShowUpdateAvailableDialog)
-  protected async showUpdateAvailableDialog(version: string = '') {
+  protected async showUpdateAvailableDialog(version = '') {
     try {
       return await DialogService.showDialog(UpdateAvailableDialogContainer, {
         version,

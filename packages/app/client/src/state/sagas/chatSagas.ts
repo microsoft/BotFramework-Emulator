@@ -129,7 +129,7 @@ export const getCurrentEmulatorMode = (state: RootState, documentId: string): Em
 
 export const create = (classToInstantiate, ...args) => call(() => new classToInstantiate(...args));
 
-const dispatchActivityToWebChat = (dispatch: Function, postActivity: Activity) => {
+const dispatchActivityToWebChat = (dispatch: (action: any) => void, postActivity: Activity) => {
   dispatch({
     type: WebChatEvents.postActivity,
     payload: {
@@ -401,7 +401,7 @@ export class ChatSagas {
         speechKey,
         speechRegion,
       } = payload;
-      const isDLSpeechBot: boolean = !!(speechKey && speechRegion);
+      const isDLSpeechBot = !!(speechKey && speechRegion);
       const serverUrl = yield select(getServerUrl);
 
       yield put(
@@ -490,7 +490,7 @@ export class ChatSagas {
     const replayToActivity: Activity = action.payload.activity || undefined;
     const chat: ChatDocument = yield select(getChatFromDocumentId, documentId);
     const serverUrl = yield select(getServerUrl);
-    const isDLSpeechBot: boolean = !!(chat.speechKey && chat.speechRegion);
+    const isDLSpeechBot = !!(chat.speechKey && chat.speechRegion);
     let conversationQueue: ConversationQueue;
 
     if (chat.directLine) {

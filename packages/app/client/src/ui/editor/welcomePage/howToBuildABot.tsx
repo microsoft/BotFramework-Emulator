@@ -40,7 +40,7 @@ export interface HowToBuildABotProps {
   onAnchorClick: (url: string) => void;
 }
 
-export class HowToBuildABot extends React.Component<HowToBuildABotProps, {}> {
+export class HowToBuildABot extends React.Component<HowToBuildABotProps, Record<string, unknown>> {
   constructor(props: HowToBuildABotProps) {
     super(props);
   }

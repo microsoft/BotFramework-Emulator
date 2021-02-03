@@ -37,7 +37,7 @@ import { RootState } from '../../../../state/index';
 
 import { NgrokTab, NgrokTabProps } from './ngrokTab';
 
-const mapStateToProps = (state: RootState, ownProps: {}): Partial<NgrokTabProps> => {
+const mapStateToProps = (state: RootState, ownProps: Record<string, unknown>): Partial<NgrokTabProps> => {
   const { tunnelStatus } = state.ngrokTunnel;
 
   return {

@@ -62,8 +62,7 @@ export class ElectronCommands {
       title: app.getName(),
       ...options,
     };
-    const args = modal ? [emulatorApplication.mainWindow.browserWindow, options] : [options];
-    return dialog.showMessageBox.apply(dialog, args);
+    return dialog.showMessageBox(modal ? emulatorApplication.mainWindow.browserWindow : undefined, options);
   }
 
   // ---------------------------------------------------------------------------
@@ -182,9 +181,14 @@ export class ElectronCommands {
   // ---------------------------------------------------------------------------
   // Opens and item on the disk in Explorer (win) or Finder (mac)
   @Command(Commands.OpenFileLocation)
-  protected openFileLocation(filePath: string): boolean {
+  protected async openFileLocation(filePath: string): Promise<boolean> {
     const parts = path.parse(filePath);
-    return shell.openItem(path.resolve(parts.dir));
+    const err = await shell.openPath(path.resolve(parts.dir));
+    if (!err) {
+      // success
+      return true;
+    }
+    return false;
   }
 
   // ---------------------------------------------------------------------------
@@ -245,7 +249,7 @@ export class ElectronCommands {
   // ---------------------------------------------------------------------------
   // Checks for app updates
   @Command(Commands.CheckForUpdates)
-  protected checkForUpdates(userInitiated: boolean = true): void {
+  protected checkForUpdates(userInitiated = true): void {
     AppUpdater.checkForUpdates(userInitiated);
   }
 }

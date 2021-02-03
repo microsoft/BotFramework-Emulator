@@ -53,7 +53,7 @@ export interface RowProps {
   justify?: RowJustification;
 }
 
-export class Row extends React.Component<RowProps, {}> {
+export class Row extends React.Component<RowProps, Record<string, unknown>> {
   public render(): JSX.Element {
     const { className = '' } = this.props;
     return (

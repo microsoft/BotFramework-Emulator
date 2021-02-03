@@ -45,7 +45,7 @@ export interface TextFieldProps extends InputHTMLAttributes<HTMLInputElement> {
   inputRef?: (ref: HTMLInputElement) => void;
 }
 
-export class TextField extends Component<TextFieldProps, {}> {
+export class TextField extends Component<TextFieldProps, Record<string, unknown>> {
   private readonly inputId: string;
 
   constructor(props: TextFieldProps) {

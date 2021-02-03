@@ -66,7 +66,7 @@ export class NgrokCommands {
   }
 
   @Command(Commands.OpenStatusViewer)
-  protected openStatusViewer(makeActiveByDefault: boolean = true) {
+  protected openStatusViewer(makeActiveByDefault = true) {
     store.dispatch(
       openInEditor({
         contentType: SharedConstants.ContentTypes.CONTENT_TYPE_NGROK_DEBUGGER,

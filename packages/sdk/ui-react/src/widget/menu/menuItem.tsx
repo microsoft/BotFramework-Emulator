@@ -53,7 +53,7 @@ export interface MenuItemProps extends MenuItem {
 }
 
 /** Basic menu item (Default / Separator) */
-export class MenuItemComp extends React.Component<MenuItemProps, {}> {
+export class MenuItemComp extends React.Component<MenuItemProps, Record<string, unknown>> {
   public render(): React.ReactNode {
     const { checked, disabled, focusHandler, index, label, subtext, type = 'default' } = this.props;
 

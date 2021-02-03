@@ -88,7 +88,7 @@ const {
 } = SharedConstants;
 
 describe('<AppMenu />', () => {
-  let wrapper: ReactWrapper<AppMenuProps, {}, AppMenu>;
+  let wrapper: ReactWrapper<AppMenuProps, Record<string, unknown>, AppMenu>;
   let instance: AppMenu;
   let containerWrapper;
 
@@ -98,7 +98,7 @@ describe('<AppMenu />', () => {
         <AppMenuContainer />
       </Provider>
     );
-    wrapper = containerWrapper.find(AppMenu) as ReactWrapper<AppMenuProps, {}, AppMenu>;
+    wrapper = containerWrapper.find(AppMenu) as ReactWrapper<AppMenuProps, Record<string, unknown>, AppMenu>;
     instance = wrapper.instance();
     dispatchSpy.mockClear();
   });

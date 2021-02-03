@@ -45,7 +45,7 @@ interface AnswersViewProps {
   addAnswer: (answer: string) => void;
 }
 
-export default class AnswersView extends Component<AnswersViewProps, {}> {
+export default class AnswersView extends Component<AnswersViewProps, Record<string, unknown>> {
   constructor(props: AnswersViewProps, context: any) {
     super(props, context);
   }

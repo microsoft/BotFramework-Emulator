@@ -32,7 +32,7 @@
 //
 // ------------------------------------------------------------------
 // Proxy support
-// eslint-disable-next-line typescript/no-var-requires
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const nodeFetch = require('node-fetch');
 
 declare function fetch(input: RequestInfo, init?: RequestInit): Promise<Response>;
@@ -43,7 +43,7 @@ declare function fetch(input: RequestInfo, init?: RequestInit): Promise<Response
   const allowLocalhost = 'https://localhost';
 
   if (!process.env.HTTPS_PROXY && urlOrRequest.includes(allowLocalhost)) {
-    // eslint-disable-next-line typescript/no-var-requires
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const https = require('https');
     const httpsAgent = new https.Agent({ rejectUnauthorized: false });
 
@@ -81,7 +81,7 @@ declare function fetch(input: RequestInfo, init?: RequestInit): Promise<Response
 
   // URL is first param attach the proxy
   // to the RequestInit
-  // eslint-disable-next-line typescript/no-var-requires
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   const HttpsProxyAgent = require('https-proxy-agent');
   const agent = new HttpsProxyAgent(process.env.HTTPS_PROXY);
   if (typeof urlOrRequest === 'string') {

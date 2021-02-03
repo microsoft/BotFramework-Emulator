@@ -55,7 +55,6 @@ describe('reconnectToConversation handler', () => {
     expect(res.json).toHaveBeenCalledWith(HttpStatus.OK, {
       conversationId: req.conversation.conversationId,
       token: req.conversation.conversationId,
-      // eslint-disable-next-line typescript/camelcase
       expires_in: jasmine.any(Number),
       streamUrl: '',
     });

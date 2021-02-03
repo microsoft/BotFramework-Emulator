@@ -56,7 +56,6 @@ describe('OpenIdMetadata', () => {
   });
 
   it('should refresh the cache', async () => {
-    /* eslint-disable typescript/camelcase */
     const mockFetch = jest
       .fn()
       // getting the openId config (resp1)
@@ -86,7 +85,6 @@ describe('OpenIdMetadata', () => {
   });
 
   it('should throw when failing to get the keys during a cache refresh', async () => {
-    /* eslint-disable typescript/camelcase */
     const mockFetch = jest
       .fn()
       // getting the openId config (resp1)

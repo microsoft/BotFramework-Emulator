@@ -35,7 +35,7 @@ import { BrowserWindow } from 'electron';
 import * as jwt from 'jsonwebtoken';
 import uuidv4 from 'uuid/v4';
 
-// eslint-disable-next-line typescript/no-var-requires
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const getPem = require('rsa-pem-from-mod-exp');
 
 const clientId = 'f3723d34-6ff5-4ceb-a148-d99dcd2511fc';
@@ -62,7 +62,7 @@ export class AzureAuthWorkflowService {
   private static config: Config;
   private static jwks: Jwks;
 
-  public static *retrieveAuthToken(renew: boolean = false): IterableIterator<any> {
+  public static *retrieveAuthToken(renew = false): IterableIterator<any> {
     const authWindow = yield this.launchAuthWindow(renew);
     if (!renew) {
       authWindow.show();
@@ -88,7 +88,6 @@ export class AzureAuthWorkflowService {
       let interval;
       const poller = () => {
         let uri: string;
-        // eslint-disable-next-line typescript/no-object-literal-type-assertion
         const result: AuthResponse = {} as AuthResponse;
         try {
           const { history = [] }: { history: string[] } = browserWindow.webContents as any;
@@ -111,10 +110,7 @@ export class AzureAuthWorkflowService {
         clearInterval(interval);
         resolve(result);
       };
-      browserWindow.addListener('close', () =>
-        // eslint-disable-next-line typescript/no-object-literal-type-assertion
-        resolve({ error: 'canceled' } as AuthResponse)
-      );
+      browserWindow.addListener('close', () => resolve({ error: 'canceled' } as AuthResponse));
       browserWindow.addListener('page-title-updated', poller);
       interval = setInterval(poller, 500); // Backup if everything else fails
     });
@@ -142,7 +138,7 @@ export class AzureAuthWorkflowService {
       webPreferences: { contextIsolation: true, nativeWindowOpen: true },
     });
 
-    browserWindow.setMenu(null);
+    browserWindow.removeMenu();
 
     const state = uuidv4();
     const requestId = uuidv4();
@@ -183,7 +179,6 @@ export class AzureAuthWorkflowService {
     if (this.jwks) {
       return this.jwks;
     }
-    // eslint-disable-next-line typescript/camelcase
     const { jwks_uri } = await this.getConfig();
     const jwksResponse = await fetch(jwks_uri);
     this.jwks = await jwksResponse.json();

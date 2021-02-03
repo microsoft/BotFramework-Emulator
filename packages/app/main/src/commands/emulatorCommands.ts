@@ -164,7 +164,7 @@ export class EmulatorCommands {
   }
 
   @Command(Commands.StartEmulator)
-  protected async startEmulator(forceRestart: boolean = false) {
+  protected async startEmulator(forceRestart = false) {
     const emulator = Emulator.getInstance();
     if (!forceRestart && !!emulator.server.serverPort) {
       return;
@@ -207,7 +207,7 @@ export class EmulatorCommands {
         message: 'You have successfully cleared state.',
         title: 'Success!',
       });
-      await new Promise(resolve => session.defaultSession.clearStorageData({}, resolve));
+      await session.defaultSession.clearStorageData({});
     }
 
     return true;

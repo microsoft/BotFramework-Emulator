@@ -40,7 +40,7 @@ export interface SplitterPaneProps {
   size?: number;
 }
 
-export class SplitterPane extends React.Component<SplitterPaneProps, {}> {
+export class SplitterPane extends React.Component<SplitterPaneProps, Record<string, unknown>> {
   public render() {
     const style: any = {
       overflow: 'hidden',

@@ -43,7 +43,7 @@ interface HeaderProps {
   slot: string;
 }
 
-export class Header extends Component<HeaderProps, {}> {
+export class Header extends Component<HeaderProps, Record<string, unknown>> {
   public render() {
     return (
       <div className={styles.header}>

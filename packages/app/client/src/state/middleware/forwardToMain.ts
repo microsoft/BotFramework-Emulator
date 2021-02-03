@@ -34,7 +34,7 @@
 import { Middleware } from 'redux';
 import { ipcRenderer } from 'electron';
 
-/* eslint-disable typescript/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export const forwardToMain: Middleware = _store => next => action => {
   // ensure that the action is FSA compliant (https://github.com/redux-utilities/flux-standard-action#actions)
   if (!action.type) {
@@ -44,7 +44,12 @@ export const forwardToMain: Middleware = _store => next => action => {
   if ((action as any).meta && (action as any).meta.doNotForward) {
     return next(action);
   }
+
+  // Electron 9 does not allow functions to be sent over ipc (https://www.electronjs.org/docs/api/ipc-renderer#ipcrenderersendchannel-args)
+  // JSON.stringify() removes function properties from objects -- these functions do not need to be maintained in the main process' copy of state
+  const processedAction = JSON.parse(JSON.stringify(action));
+
   // forward the action over ipc to the main process
-  ipcRenderer.sendSync('sync-store', action);
+  ipcRenderer.sendSync('sync-store', processedAction);
   return next(action);
 };

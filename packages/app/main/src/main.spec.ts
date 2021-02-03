@@ -35,10 +35,11 @@ import * as path from 'path';
 
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 import { SharedConstants } from '@bfemulator/app-shared';
-import { systemPreferences } from 'electron';
+import { nativeTheme } from 'electron';
 
 import { emulatorApplication } from './main';
 
+let mockShouldUseInvertedColorScheme = true;
 jest.mock('electron', () => ({
   app: {
     on: () => void 0,
@@ -72,6 +73,12 @@ jest.mock('electron', () => ({
     on: jest.fn(() => null),
     onInvertedColorSchemeChanged: jest.fn(() => true),
   },
+  nativeTheme: {
+    on: jest.fn(() => null),
+    get shouldUseInvertedColorScheme() {
+      return mockShouldUseInvertedColorScheme;
+    },
+  },
 }));
 
 jest.mock('./server/webSocketServer', () => ({
@@ -89,18 +96,19 @@ describe('main', () => {
     const decorator = CommandServiceInstance();
     const descriptor = decorator({ descriptor: {} }, 'none') as any;
     commandService = descriptor.descriptor.get();
+    mockShouldUseInvertedColorScheme = true;
   });
 
   afterEach(() => {
     emulatorAppSpy.mockClear();
   });
 
-  it('should call `onInvertedColorSchemeChanged` when `inverted-color-scheme-changed` event is triggered', () => {
-    const onSpy = jest.spyOn(systemPreferences, 'on');
+  it('should call `onInvertedColorSchemeChanged` when `updated` event is triggered', () => {
+    const onSpy = jest.spyOn(nativeTheme, 'on');
 
     (emulatorApplication as any).initializeSystemPreferencesListeners();
 
-    expect(onSpy).toHaveBeenCalledWith('inverted-color-scheme-changed', jasmine.any(Function));
+    expect(onSpy).toHaveBeenCalledWith('updated', jasmine.any(Function));
 
     onSpy.mockClear();
   });
@@ -123,7 +131,7 @@ describe('main', () => {
   it('should not change to high contrast when theme is not high contrast', () => {
     const commandServiceSpy = jest.spyOn(commandService, 'remoteCall');
 
-    (systemPreferences.isInvertedColorScheme as any).mockImplementationOnce(() => false);
+    mockShouldUseInvertedColorScheme = false;
 
     (emulatorApplication as any).onInvertedColorSchemeChanged();
 

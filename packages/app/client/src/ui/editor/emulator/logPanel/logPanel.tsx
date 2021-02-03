@@ -42,7 +42,7 @@ interface LogPanelProps {
   documentId: string;
 }
 
-export default class LogPanel extends React.Component<LogPanelProps, {}> {
+export default class LogPanel extends React.Component<LogPanelProps, Record<string, unknown>> {
   public render() {
     return (
       <div aria-label="log panel" className={styles.logPanel} role="region">

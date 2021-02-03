@@ -54,7 +54,7 @@ export interface AzureAuthWorkflow {
   promptDialogProps: { [propName: string]: any };
   loginSuccessDialog: ReactComponentClass<any>;
   loginFailedDialog: ReactComponentClass<any>;
-  resolver?: Function;
+  resolver?: (...args) => any;
 }
 
 export function beginAzureAuthWorkflow(
@@ -62,7 +62,7 @@ export function beginAzureAuthWorkflow(
   promptDialogProps: { [propName: string]: any },
   loginSuccessDialog: ReactComponentClass<any>,
   loginFailedDialog: ReactComponentClass<any>,
-  resolver?: Function
+  resolver?: (...args) => any
 ): AzureAuthAction<AzureAuthWorkflow> {
   return {
     type: AZURE_BEGIN_AUTH_WORKFLOW,
@@ -79,7 +79,6 @@ export function beginAzureAuthWorkflow(
 export function azureArmTokenDataChanged(armToken: string): AzureAuthAction<ArmTokenData> {
   return {
     type: AZURE_ARM_TOKEN_DATA_CHANGED,
-    // eslint-disable-next-line typescript/camelcase
     payload: { access_token: armToken },
   };
 }

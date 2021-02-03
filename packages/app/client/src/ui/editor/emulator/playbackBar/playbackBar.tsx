@@ -48,8 +48,8 @@ interface PlaybackBarState {
  *
  * Also needs icons
  */
-export default class PlaybackBar extends React.Component<{}, PlaybackBarState> {
-  constructor(props: {}, context: PlaybackBarState) {
+export default class PlaybackBar extends React.Component<Record<string, unknown>, PlaybackBarState> {
+  constructor(props: Record<string, unknown>, context: PlaybackBarState) {
     super(props, context);
 
     this.onClickStartOver = this.onClickStartOver.bind(this);

@@ -76,7 +76,7 @@ export class LuisClient {
   private _client: LuisAuthoring;
   private luisAppInfo: LuisAppInfo;
 
-  private static getNormalizedEntityType(entityType: string = ''): string {
+  private static getNormalizedEntityType(entityType = ''): string {
     const builtinPrefix = 'builtin.';
     const builtInPrefixLength = builtinPrefix.length;
     if (entityType.startsWith(builtinPrefix)) {

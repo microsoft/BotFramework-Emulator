@@ -201,7 +201,7 @@ describe('Conversation class', () => {
         currentUserId: 'someUserId',
         locale: 'en-us',
         users: {
-          usersById: jest.fn(() => {}),
+          usersById: jest.fn(() => undefined),
         },
       },
     };
@@ -355,5 +355,5 @@ describe('Conversation class', () => {
     expect((conversation as any).transcript[1].activity.type).toBe('ping');
   });
 
-  it('should send the delete user data activity', async () => {});
+  it('should send the delete user data activity', async () => undefined);
 });

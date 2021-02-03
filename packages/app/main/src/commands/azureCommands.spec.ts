@@ -46,7 +46,6 @@ const mockArmToken = 'bm90aGluZw==.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjd
 jest.mock('../services/azureAuthWorkflowService', () => ({
   AzureAuthWorkflowService: {
     retrieveAuthToken: function*() {
-      // eslint-disable-next-line typescript/camelcase
       yield { access_token: mockArmToken };
     },
 
@@ -89,7 +88,7 @@ jest.mock('electron', () => ({
   },
   session: {
     defaultSession: {
-      clearStorageData: (options, cb) => cb(true),
+      clearStorageData: _options => null,
     },
   },
   ipcMain: new Proxy(

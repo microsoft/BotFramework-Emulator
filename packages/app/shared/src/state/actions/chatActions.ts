@@ -187,7 +187,7 @@ export function addTranscript(filename: string): ChatAction<AddTranscriptPayload
   };
 }
 
-export function clearTranscripts(): ChatAction<{}> {
+export function clearTranscripts(): ChatAction<Record<string, unknown>> {
   return {
     type: ChatActions.clearTranscripts,
     payload: {},
@@ -363,8 +363,8 @@ export function showContextMenuForActivity(activity: Partial<Activity>): ChatAct
 
 export function restartConversation(
   documentId: string,
-  requireNewConversationId: boolean = false,
-  requireNewUserId: boolean = false,
+  requireNewConversationId = false,
+  requireNewUserId = false,
   activity: Activity = undefined
 ): ChatAction<RestartConversationPayload> {
   return {

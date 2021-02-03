@@ -46,7 +46,7 @@ export interface EndpointServiceAction<T> extends Action {
 
 export interface EndpointServicePayload {
   endpointService: IEndpointService;
-  resolver?: Function;
+  resolver?: (...args) => any;
 }
 
 export interface EndpointEditorPayload extends EndpointServicePayload {
@@ -56,7 +56,7 @@ export interface EndpointEditorPayload extends EndpointServicePayload {
 export function launchEndpointEditor(
   endpointEditorComponent: ReactComponentClass<any>,
   endpointService?: IEndpointService,
-  resolver?: Function
+  resolver?: (...args) => any
 ): EndpointServiceAction<EndpointEditorPayload> {
   return {
     type: LAUNCH_ENDPOINT_EDITOR,

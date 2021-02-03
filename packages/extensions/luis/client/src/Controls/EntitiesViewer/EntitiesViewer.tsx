@@ -44,7 +44,7 @@ interface EntitiesViewerProps {
   entities: any;
 }
 
-export class EntitiesViewer extends Component<EntitiesViewerProps, {}> {
+export class EntitiesViewer extends Component<EntitiesViewerProps, Record<string, unknown>> {
   public render() {
     let entities: any[];
     const filteredEntityKeys = Object.keys(this.props.entities || {}).filter(entityKey => {

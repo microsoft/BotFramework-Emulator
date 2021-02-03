@@ -37,7 +37,7 @@ import { Command, CommandServiceImpl, CommandServiceInstance } from '@bfemulator
 import { AzureAuthWorkflowService } from '../services/azureAuthWorkflowService';
 import { getSettings, store } from '../state/store';
 
-// eslint-disable-next-line typescript/no-var-requires
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { session } = require('electron');
 const { Azure } = SharedConstants.Commands;
 
@@ -49,7 +49,7 @@ export class AzureCommands {
   // ---------------------------------------------------------------------------
   // Retrieve the Azure ARM Token
   @Command(Azure.RetrieveArmToken)
-  protected async retrieveArmToken(renew: boolean = false) {
+  protected async retrieveArmToken(renew = false) {
     const workflow = AzureAuthWorkflowService.retrieveAuthToken(renew);
     let result = undefined;
     // eslint-disable-next-line no-constant-condition
@@ -79,8 +79,8 @@ export class AzureCommands {
   // ---------------------------------------------------------------------------
   // Sign the user out of Azure
   @Command(Azure.SignUserOutOfAzure)
-  protected async signUserOutOfAzure(prompt: boolean = true) {
-    await new Promise(resolve => session.defaultSession.clearStorageData({}, resolve));
+  protected async signUserOutOfAzure(prompt = true) {
+    await session.defaultSession.clearStorageData({});
 
     store.dispatch(azureLoggedInUserChanged(''));
     try {

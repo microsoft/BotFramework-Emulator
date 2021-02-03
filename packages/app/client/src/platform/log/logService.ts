@@ -41,7 +41,7 @@ class LogService {
   public logToChat(conversationId: string, entry: LogEntry): void {
     const documentId = chatHelpers.documentIdForConversation(conversationId);
     if (documentId) {
-      // eslint-disable-next-line typescript/no-use-before-define
+      // eslint-disable-next-line @typescript-eslint/no-use-before-define
       this.logToDocument(documentId, entry);
     }
   }

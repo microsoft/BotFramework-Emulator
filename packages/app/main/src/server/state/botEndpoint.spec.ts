@@ -106,7 +106,6 @@ describe('BotEndpoint', () => {
     jest.spyOn(endpoint as any, 'fetchWithAuth').mockResolvedValueOnce({
       json: () =>
         Promise.resolve({
-          // eslint-disable-next-line typescript/camelcase
           access_Token: 'someSpeechToken',
           region: 'westus2',
           expireAt: 1234,
@@ -256,7 +255,7 @@ describe('BotEndpoint', () => {
     const accessTokenExpires = Date.now() * 2 + tokenRefreshTime;
     endpoint.accessTokenExpires = accessTokenExpires;
     // using non-v1.0 token & standard endpoint
-    const mockOauthResponse = { access_token: 'I am an access token!', expires_in: 10 }; // eslint-disable-line typescript/camelcase
+    const mockOauthResponse = { access_token: 'I am an access token!', expires_in: 10 };
     const mockResponse = { json: jest.fn(() => Promise.resolve(mockOauthResponse)), status: 200 };
     const mockFetch = jest.fn(() => Promise.resolve(mockResponse));
     (endpoint as any)._options = { fetch: mockFetch };
@@ -269,9 +268,9 @@ describe('BotEndpoint', () => {
     expect(mockFetch).toHaveBeenCalledWith(authentication.tokenEndpoint, {
       method: 'POST',
       body: new URLSearchParams({
-        grant_type: 'client_credentials', // eslint-disable-line typescript/camelcase
-        client_id: msaAppId, // eslint-disable-line typescript/camelcase
-        client_secret: msaPw, // eslint-disable-line typescript/camelcase
+        grant_type: 'client_credentials',
+        client_id: msaAppId,
+        client_secret: msaPw,
         scope: `${msaAppId}/.default`,
       } as { [key: string]: string }).toString(),
       headers: {
@@ -291,9 +290,9 @@ describe('BotEndpoint', () => {
     expect(mockFetch).toHaveBeenCalledWith(usGovernmentAuthentication.tokenEndpoint, {
       method: 'POST',
       body: new URLSearchParams({
-        grant_type: 'client_credentials', // eslint-disable-line typescript/camelcase
-        client_id: msaAppId, // eslint-disable-line typescript/camelcase
-        client_secret: msaPw, // eslint-disable-line typescript/camelcase
+        grant_type: 'client_credentials',
+        client_id: msaAppId,
+        client_secret: msaPw,
         scope: `${msaAppId}/.default`,
         atver: '1',
       } as { [key: string]: string }).toString(),

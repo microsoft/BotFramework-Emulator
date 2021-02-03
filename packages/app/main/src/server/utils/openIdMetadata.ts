@@ -31,10 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-/* eslint-disable typescript/no-var-requires */
+/* eslint-disable @typescript-eslint/no-var-requires */
 const base64url = require('base64url');
 const getPem = require('rsa-pem-from-mod-exp');
-/* eslint-enable typescript/no-var-requires */
+/* eslint-enable @typescript-eslint/no-var-requires */
 
 export class OpenIdMetadata {
   private lastUpdated = 0;

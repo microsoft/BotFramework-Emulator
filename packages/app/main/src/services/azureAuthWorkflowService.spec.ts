@@ -81,6 +81,10 @@ jest.mock('electron', () => ({
       // no-op
     }
 
+    removeMenu() {
+      // no-op
+    }
+
     addListener(type: string, handler: () => void) {
       this.listeners.push({ type, handler });
       MockBrowserWindow.report('addListener', type, handler);
@@ -127,7 +131,6 @@ jest.mock('electron', () => ({
 
 describe('The azureAuthWorkflowService', () => {
   beforeEach(() => {
-    /* eslint-disable typescript/camelcase */
     mockResponses = [
       { access_token: mockArmToken },
       { jwks_uri: 'http://localhost', keys: { find: () => ({}) } },
@@ -137,7 +140,6 @@ describe('The azureAuthWorkflowService', () => {
         token_endpoint: 'http://localhost',
       },
     ];
-    /* eslint-enable typescript/camelcase */
     (BrowserWindow as any).reporters = [];
   });
 

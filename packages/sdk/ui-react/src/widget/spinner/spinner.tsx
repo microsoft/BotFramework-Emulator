@@ -39,7 +39,7 @@ export interface SpinnerProps extends React.SVGAttributes<SVGSVGElement> {
   height?: number;
 }
 
-export class Spinner extends React.Component<SpinnerProps, {}> {
+export class Spinner extends React.Component<SpinnerProps, Record<string, unknown>> {
   private animationFrame = 0;
 
   public render(): React.ReactNode {

@@ -66,7 +66,7 @@ export function CommandServiceInstance(channelId = 'command-service'): PropertyD
   };
 }
 
-export function Command(id: string, channelId: string = 'command-service'): MethodDecorator {
+export function Command(id: string, channelId = 'command-service'): MethodDecorator {
   return function(elementDescriptor: any) {
     const { key, descriptor } = elementDescriptor;
     const initializer = function() {

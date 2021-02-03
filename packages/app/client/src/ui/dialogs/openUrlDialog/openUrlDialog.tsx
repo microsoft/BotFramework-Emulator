@@ -43,7 +43,7 @@ export interface OpenUrlDialogProps {
   confirm: () => void;
 }
 
-export class OpenUrlDialog extends Component<OpenUrlDialogProps, {}> {
+export class OpenUrlDialog extends Component<OpenUrlDialogProps, Record<string, unknown>> {
   constructor(props: OpenUrlDialogProps) {
     super(props);
   }

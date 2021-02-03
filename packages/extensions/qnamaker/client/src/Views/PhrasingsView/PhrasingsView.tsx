@@ -42,7 +42,7 @@ interface PhrasingsViewProps {
   removePhrasing: (phrase: string) => void;
 }
 
-export default class PhrasingsView extends Component<PhrasingsViewProps, {}> {
+export default class PhrasingsView extends Component<PhrasingsViewProps, Record<string, unknown>> {
   constructor(props: PhrasingsViewProps, context: any) {
     super(props, context);
   }

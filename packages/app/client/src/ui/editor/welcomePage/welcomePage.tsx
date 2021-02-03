@@ -54,7 +54,7 @@ export interface WelcomePageProps {
   debugMode?: number;
 }
 
-export class WelcomePage extends React.Component<WelcomePageProps, {}> {
+export class WelcomePage extends React.Component<WelcomePageProps, Record<string, unknown>> {
   private newBotButtonRef: HTMLButtonElement;
   private openBotButtonRef: HTMLButtonElement;
   private signIntoAzureButtonRef: HTMLButtonElement;

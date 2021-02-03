@@ -47,7 +47,7 @@ interface BotExplorerBarProps {
   openBotSettings: () => void;
 }
 
-export default class BotExplorerBar extends React.Component<BotExplorerBarProps, {}> {
+export default class BotExplorerBar extends React.Component<BotExplorerBarProps, Record<string, unknown>> {
   private static get activeBotJsx(): JSX.Element {
     return (
       <>

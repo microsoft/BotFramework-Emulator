@@ -76,7 +76,7 @@ export interface ExternalLinkLogItem {
 
 export interface InspectableObjectLogItem {
   text: string;
-  obj: Activity | { [propName: string]: {} };
+  obj: Activity | { [propName: string]: Record<string, unknown> };
 }
 
 export interface NetworkRequestLogItem {

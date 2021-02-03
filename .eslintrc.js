@@ -1,6 +1,7 @@
 module.exports = {
-  extends: ['eslint:recommended', 'plugin:typescript/recommended', 'plugin:prettier/recommended'],
-  plugins: ['import', 'notice'],
+  extends: ['plugin:@typescript-eslint/recommended', 'plugin:prettier/recommended'],
+  parser: '@typescript-eslint/parser',
+  plugins: ['import', 'notice', '@typescript-eslint'],
   env: {
     browser: true,
     es6: true,
@@ -33,13 +34,13 @@ module.exports = {
     ],
 
     // plugin: typescript
-    'typescript/explicit-function-return-type': 'off',
-    'typescript/explicit-member-accessibility': 'off',
-    'typescript/indent': 'off',
-    'typescript/no-empty-interface': 'warn',
-    'typescript/no-object-literal-type-assertion': 'off',
-    'typescript/no-parameter-properties': 'off',
-    'typescript/no-use-before-define': ['error', { functions: false, classes: false }],
+    '@typescript-eslint/explicit-function-return-type': 'off',
+    '@typescript-eslint/explicit-member-accessibility': 'off',
+    '@typescript-eslint/indent': 'off',
+    '@typescript-eslint/no-empty-interface': 'warn',
+    '@typescript-eslint/no-object-literal-type-assertion': 'off',
+    '@typescript-eslint/no-parameter-properties': 'off',
+    '@typescript-eslint/no-use-before-define': ['error', { functions: false, classes: false }],
   },
   overrides: [
     {
@@ -54,6 +55,7 @@ module.exports = {
       rules: {
         'typescript/class-name-casing': 'off',
         'typescript/no-explicit-any': 'off',
+        '@typescript-eslint/ban-ts-comment': 'off',
       },
     },
   ],

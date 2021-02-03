@@ -73,7 +73,6 @@ describe('startConversation handler', () => {
     expect(res.json).toHaveBeenCalledWith(HttpStatus.CREATED, {
       conversationId: mockCreatedConversation.conversationId,
       token: req.botEndpoint.id,
-      // eslint-disable-next-line typescript/camelcase
       expires_in: jasmine.any(Number),
       streamUrl: '',
     });
@@ -116,7 +115,6 @@ describe('startConversation handler', () => {
     expect(res.json).toHaveBeenCalledWith(HttpStatus.OK, {
       conversationId: mockCreatedConversation.conversationId,
       token: req.botEndpoint.id,
-      // eslint-disable-next-line typescript/camelcase
       expires_in: jasmine.any(Number),
       streamUrl: '',
     });
@@ -163,7 +161,6 @@ describe('startConversation handler', () => {
     expect(res.json).toHaveBeenCalledWith(HttpStatus.OK, {
       conversationId: mockCreatedConversation.conversationId,
       token: req.botEndpoint.id,
-      // eslint-disable-next-line typescript/camelcase
       expires_in: jasmine.any(Number),
       streamUrl: '',
     });

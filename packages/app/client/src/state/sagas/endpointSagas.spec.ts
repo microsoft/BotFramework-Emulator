@@ -120,7 +120,7 @@ const endpointService: IEndpointService = {
   endpoint: 'http://localendpoint',
   channelService: 'channel service',
 };
-const resolver = jest.fn(() => {});
+const resolver = jest.fn(() => undefined);
 
 const endpointPayload: EndpointServicePayload = {
   endpointService,
@@ -152,7 +152,7 @@ describe('The endpointSagas', () => {
     sagaMiddleware = sagaMiddlewareFactory();
     mockStore = createStore(combineReducers({ bot }), {}, applyMiddleware(sagaMiddleware));
     sagaMiddleware.run(endpointSagas);
-    mockComponentClass = class extends Component<{}, {}> {};
+    mockComponentClass = class extends Component<Record<string, unknown>, Record<string, unknown>> {};
     jest.mock('../store', () => ({
       get store() {
         return mockStore;

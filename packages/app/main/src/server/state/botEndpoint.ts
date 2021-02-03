@@ -96,7 +96,7 @@ export class BotEndpoint {
     }
   }
 
-  public async getSpeechToken(refresh: boolean = false): Promise<string> {
+  public async getSpeechToken(refresh = false): Promise<string> {
     if (!this.msaAppId || !this.msaPassword) {
       throw new Error('Bot must have a valid Microsoft App ID and password');
     }
@@ -116,7 +116,7 @@ export class BotEndpoint {
     }
   }
 
-  public async fetchWithAuth(url: string, fetchOptions: any = {}, forceRefresh: boolean = false) {
+  public async fetchWithAuth(url: string, fetchOptions: any = {}, forceRefresh = false) {
     if (this.msaAppId) {
       try {
         fetchOptions.headers = {
@@ -144,7 +144,7 @@ export class BotEndpoint {
     return response;
   }
 
-  private async getAccessToken(forceRefresh: boolean = false): Promise<string> {
+  private async getAccessToken(forceRefresh = false): Promise<string> {
     if (!forceRefresh && this.accessToken && Date.now() < this.accessTokenExpires - TIME_TO_REFRESH) {
       return this.accessToken;
     }
@@ -154,7 +154,6 @@ export class BotEndpoint {
       this.channelService === usGovernmentAuthentication.channelService
         ? usGovernmentAuthentication.tokenEndpoint
         : authentication.tokenEndpoint;
-    /* eslint-disable typescript/camelcase */
     const resp = await this._options.fetch(tokenEndpoint, {
       method: 'POST',
       body: new URLSearchParams({
@@ -163,13 +162,12 @@ export class BotEndpoint {
         client_secret: this.msaPassword,
         scope: `${this.msaAppId}/.default`,
         // flag to request a version 1.0 token
-        ...(this.use10Tokens ? { atver: 1 } : {}),
+        ...(this.use10Tokens ? { atver: '1' } : {}),
       } as { [key: string]: string }).toString(),
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
     });
-    /* eslint-enable typescript/camelcase */
 
     if (statusCodeFamily(resp.status, 200)) {
       // Subtract 5 minutes from expires_in so they'll we'll get a

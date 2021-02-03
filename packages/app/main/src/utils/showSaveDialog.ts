@@ -35,5 +35,5 @@ import { BrowserWindow, dialog, SaveDialogOptions } from 'electron';
 
 /** Shows a native save dialog */
 export const showSaveDialog = (window: BrowserWindow, options: SaveDialogOptions): string => {
-  return dialog.showSaveDialog(window, options);
+  return dialog.showSaveDialogSync(window, options);
 };

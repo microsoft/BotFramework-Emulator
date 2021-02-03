@@ -162,7 +162,7 @@ class EmulatorExtensionManager {
       .shift();
     if (!result && defaultToJson) {
       // Default to the JSON inspector
-      // eslint-disable-next-line typescript/no-use-before-define
+      // eslint-disable-next-line @typescript-eslint/no-use-before-define
       const jsonExtension = this.findExtension('JSON');
       if (jsonExtension) {
         result = {
@@ -176,13 +176,13 @@ class EmulatorExtensionManager {
 
   @Command(Connect)
   protected connectExtension(config: ExtensionConfig) {
-    // eslint-disable-next-line typescript/no-use-before-define
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     this.addExtension(config, config.location);
   }
 
   @Command(Disconnect)
   protected disconnectExtension(location: string) {
-    // eslint-disable-next-line typescript/no-use-before-define
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     this.removeExtension(location);
   }
 }

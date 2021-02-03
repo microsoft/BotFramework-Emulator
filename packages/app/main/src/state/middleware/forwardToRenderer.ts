@@ -35,7 +35,6 @@ import { Middleware } from 'redux';
 
 import { emulatorApplication } from '../../main';
 
-/* eslint-disable typescript/no-explicit-any */
 export const forwardToRenderer: Middleware = _store => next => action => {
   // ensure that the action is FSA compliant (https://github.com/redux-utilities/flux-standard-action#actions)
   if (!action.type) {
@@ -45,7 +44,12 @@ export const forwardToRenderer: Middleware = _store => next => action => {
   if ((action as any).meta && (action as any).meta.doNotForward) {
     return next(action);
   }
+
+  // Electron 9 does not allow functions to be sent over ipc (https://www.electronjs.org/docs/api/web-contents#contentssendchannel-args)
+  // JSON.stringify() removes function properties from objects -- these functions do not need to be maintained in the client's copy of state
+  const processedAction = JSON.parse(JSON.stringify(action));
+
   // forward the action over ipc to the client
-  emulatorApplication.mainBrowserWindow.webContents.send('sync-store', action);
+  emulatorApplication.mainBrowserWindow.webContents.send('sync-store', processedAction);
   return next(action);
 };

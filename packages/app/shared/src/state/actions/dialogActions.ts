@@ -44,7 +44,7 @@ export interface SetShowingDialogAction {
 
 export type DialogAction = SetShowingDialogAction;
 
-export function setShowing(showing: boolean = false): SetShowingDialogAction {
+export function setShowing(showing = false): SetShowingDialogAction {
   return {
     type: DialogActions.setShowing,
     payload: {

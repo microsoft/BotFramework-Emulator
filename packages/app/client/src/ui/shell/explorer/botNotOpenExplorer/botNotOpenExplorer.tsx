@@ -42,7 +42,7 @@ export interface BotNotOpenExplorerProps {
   showCreateNewBotDialog?: () => void;
 }
 
-export class BotNotOpenExplorer extends React.Component<BotNotOpenExplorerProps, {}> {
+export class BotNotOpenExplorer extends React.Component<BotNotOpenExplorerProps, Record<string, unknown>> {
   private createNewBotButtonRef: HTMLButtonElement;
 
   public render() {

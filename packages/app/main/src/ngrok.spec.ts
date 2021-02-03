@@ -86,7 +86,7 @@ const connectToNgrokInstance = async (ngrok: NgrokInstance) => {
   }
 };
 const mockSpawn = {
-  on: () => {},
+  on: () => void 0,
   stdin: { on: () => void 0 },
   stdout: {
     pause: () => void 0,

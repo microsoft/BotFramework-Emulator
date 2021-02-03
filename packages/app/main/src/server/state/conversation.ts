@@ -68,7 +68,7 @@ import { EmulatorRestServer } from '../restServer';
 import { BotEndpoint } from './botEndpoint';
 
 // moment currently does not export callable function
-// eslint-disable-next-line typescript/no-var-requires
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const moment = require('moment');
 const maxDataUrlLength = Math.pow(2, 22);
 
@@ -506,7 +506,7 @@ export class Conversation extends EventEmitter {
    *
    * @param valueTypesToExtract a bitmask representing the value Types to extract from the activity
    */
-  public async getTranscript(valueTypesToExtract: number = 0): Promise<Activity[]> {
+  public async getTranscript(valueTypesToExtract = 0): Promise<Activity[]> {
     const activities = this.transcript
       .filter(record => record.type === 'activity add')
       .map(record => {
@@ -521,7 +521,7 @@ export class Conversation extends EventEmitter {
     return activities;
   }
 
-  public postage(recipientId: string, activity: Partial<Activity>, isHistoric: boolean = false): Activity {
+  public postage(recipientId: string, activity: Partial<Activity>, isHistoric = false): Activity {
     const date = moment();
     const timestamp = isHistoric ? activity.timestamp : date.toISOString();
     const recipient = isHistoric ? activity.recipient : ({ id: recipientId } as ChannelAccount);

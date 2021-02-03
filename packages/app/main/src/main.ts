@@ -52,7 +52,7 @@ import {
   TunnelInfo,
   TunnelStatus,
 } from '@bfemulator/app-shared';
-import { app, BrowserWindow, Rectangle, screen, systemPreferences } from 'electron';
+import { app, BrowserWindow, nativeTheme, Rectangle, screen } from 'electron';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { AppUpdater } from './appUpdater';
@@ -177,7 +177,7 @@ class EmulatorApplication {
   }
 
   private initializeSystemPreferencesListeners() {
-    systemPreferences.on('inverted-color-scheme-changed', this.onInvertedColorSchemeChanged);
+    nativeTheme.on('updated', this.onInvertedColorSchemeChanged);
   }
 
   private initializeAppListeners() {
@@ -293,7 +293,7 @@ class EmulatorApplication {
     const { theme, availableThemes } = getSettings().windowState;
     const themeInfo = availableThemes.find(availableTheme => availableTheme.name === theme);
 
-    const isHighContrast = systemPreferences.isInvertedColorScheme();
+    const isHighContrast = nativeTheme.shouldUseInvertedColorScheme;
 
     const themeName = isHighContrast ? 'high-contrast' : themeInfo.name;
     const themeComponents = isHighContrast ? path.join('.', 'themes', 'high-contrast.css') : themeInfo.href;
@@ -306,7 +306,13 @@ class EmulatorApplication {
     if (this.mainBrowserWindow) {
       return;
     }
-    this.mainBrowserWindow = new BrowserWindow({ show: false, backgroundColor: '#f7f7f7', width: 1400, height: 920 });
+    this.mainBrowserWindow = new BrowserWindow({
+      show: false,
+      backgroundColor: '#f7f7f7',
+      width: 1400,
+      height: 920,
+      webPreferences: { enableRemoteModule: true, nodeIntegration: true },
+    });
     this.initializeBrowserWindowListeners();
 
     this.mainWindow = new Window(this.mainBrowserWindow);

@@ -276,8 +276,8 @@ describe('#globalHandlers', () => {
     Object.defineProperty(process, 'platform', { value: 'darwin' });
 
     document.body.innerHTML = mockDOM;
-    var mockFirstElement = document.getElementById('navBtn');
-    var mockLastElement = document.getElementById('btn3');
+    const mockFirstElement = document.getElementById('navBtn');
+    const mockLastElement = document.getElementById('btn3');
     mockLastElement.focus();
     await globalHandlers(event);
 
@@ -289,8 +289,8 @@ describe('#globalHandlers', () => {
     Object.defineProperty(process, 'platform', { value: 'linux' });
 
     document.body.innerHTML = mockDOM;
-    var mockFirstElement = document.getElementById('file-btn');
-    var mockLastElement = document.getElementById('btn3');
+    const mockFirstElement = document.getElementById('file-btn');
+    const mockLastElement = document.getElementById('btn3');
     mockLastElement.focus();
     await globalHandlers(event);
 
@@ -302,8 +302,8 @@ describe('#globalHandlers', () => {
     Object.defineProperty(process, 'platform', { value: 'darwin' });
 
     document.body.innerHTML = mockDOM;
-    var mockFirstElement = document.getElementById('navBtn');
-    var mockLastElement = document.getElementById('btn3');
+    const mockFirstElement = document.getElementById('navBtn');
+    const mockLastElement = document.getElementById('btn3');
     mockFirstElement.focus();
     await globalHandlers(event);
 

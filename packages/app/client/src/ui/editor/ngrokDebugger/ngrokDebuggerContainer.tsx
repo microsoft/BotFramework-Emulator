@@ -47,7 +47,7 @@ const onFileSaveCb = (result: boolean) => {
   }
 };
 
-const mapStateToProps = (state: RootState, ownProps: {}): Partial<NgrokDebuggerProps> => {
+const mapStateToProps = (state: RootState, ownProps: Record<string, unknown>): Partial<NgrokDebuggerProps> => {
   const {
     inspectUrl,
     errors,

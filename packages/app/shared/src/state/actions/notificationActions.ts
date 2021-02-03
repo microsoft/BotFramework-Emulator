@@ -83,20 +83,20 @@ export interface FinishRemoveNotificationAction {
 
 export interface MarkAllAsReadNotificationAction {
   type: NotificationActions.markAllAsRead;
-  payload: {};
+  payload: Record<string, unknown>;
 }
 
 export interface BeginClearNotificationAction {
   type: NotificationActions.beginClear;
-  payload: {};
+  payload: Record<string, unknown>;
 }
 
 export interface FinishClearNotificationAction {
   type: NotificationActions.finishClear;
-  payload: {};
+  payload: Record<string, unknown>;
 }
 
-export function beginAdd(notification: Notification, read: boolean = false): BeginAddNotificationAction {
+export function beginAdd(notification: Notification, read = false): BeginAddNotificationAction {
   return {
     type: NotificationActions.beginAdd,
     payload: {

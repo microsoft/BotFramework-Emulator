@@ -30,7 +30,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-/* eslint-disable typescript/no-use-before-define */
+/* eslint-disable @typescript-eslint/no-use-before-define */
 
 import '../fetchProxy';
 import { normalize as mockNormalize } from 'path';

@@ -42,7 +42,7 @@ export interface DialogHostProps {
   showing?: boolean;
 }
 
-export class DialogHost extends React.Component<DialogHostProps, {}> {
+export class DialogHost extends React.Component<DialogHostProps, Record<string, unknown>> {
   private hostRef: React.RefObject<any>;
 
   constructor(props) {

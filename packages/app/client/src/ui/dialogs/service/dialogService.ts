@@ -55,7 +55,10 @@ class DialogServiceImpl implements DialogService {
    *
    * Ex. DialogService.showDialog(PasswordPromptDialog).then(pw => // do something with password from dialog)
    */
-  showDialog<T extends ComponentClass | StatelessComponent, R = any>(dialog: T, props: {} = {}): Promise<R> {
+  showDialog<T extends ComponentClass | StatelessComponent, R = any>(
+    dialog: T,
+    props: Record<string, unknown> = {}
+  ): Promise<R> {
     if (!this._hostElement) {
       return new Promise(resolve => resolve(null));
     }
