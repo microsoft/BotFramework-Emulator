@@ -62,6 +62,8 @@ jest.mock('./state', () => ({
 
 jest.mock('fs-extra', () => ({}));
 
+jest.mock('@microsoft/bf-chatdown', () => ({}));
+
 const headersMap: Map<string, string> = new Map();
 headersMap.set('Server', 'Emulator');
 const tunnelResponseGeneric = (status: number, errorBody: string, headers = headersMap) => {
