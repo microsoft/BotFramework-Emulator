@@ -60,6 +60,8 @@ jest.mock('./state', () => ({
   },
 }));
 
+jest.mock('fs-extra', () => ({}));
+
 const headersMap: Map<string, string> = new Map();
 headersMap.set('Server', 'Emulator');
 const tunnelResponseGeneric = (status: number, errorBody: string, headers = headersMap) => {
