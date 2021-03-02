@@ -33,7 +33,7 @@
       "outputCapture": "std",
       "internalConsoleOptions": "openOnSessionStart",
       "cwd": "${workspaceFolder}/packages/app/main",
-      "outFiles": [ "${workspaceRoot}/packages/app/main/app/**/*.js"]
+      "outFiles": [ "${workspaceRoot}/packages/app/main/app/**/*.js", "${workspaceRoot}/packages/app/shared/**/*.js"]
     },
     {
       "type": "node",
