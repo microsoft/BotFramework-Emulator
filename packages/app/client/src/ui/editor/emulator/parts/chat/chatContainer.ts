@@ -31,7 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import { connect } from 'react-redux';
-import { User } from '@bfemulator/sdk-shared';
 import { Activity } from 'botframework-schema';
 import {
   executeCommand,

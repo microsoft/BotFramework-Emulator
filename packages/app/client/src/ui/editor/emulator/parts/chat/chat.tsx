@@ -33,7 +33,7 @@
 
 import { ValueTypes, RestartConversationStatus } from '@bfemulator/app-shared';
 import { Activity, ActivityTypes } from 'botframework-schema';
-import ReactWebChat, { createStyleSet } from 'botframework-webchat';
+import { createStyleSet, Components } from 'botframework-webchat';
 import * as React from 'react';
 import { PureComponent, KeyboardEvent, MouseEvent, ReactNode } from 'react';
 import { EmulatorMode } from '@bfemulator/sdk-shared';
@@ -44,6 +44,9 @@ import * as styles from './chat.scss';
 import webChatStyleOptions from './webChatTheme';
 import { TraceActivityContainer } from './traceActivityContainer';
 import { ConnectionMessageContainer } from './connectionMessageContainer';
+import { TranscriptFocusListener } from './transcriptFocusListener';
+
+const { BasicWebChat, Composer } = Components;
 
 export interface ChatProps {
   botId?: string;
@@ -65,9 +68,11 @@ interface ChatState {
   highlightedActivities?: Activity[];
 }
 
+type ActivityMap = Record<string, Activity>;
+
 export class Chat extends PureComponent<ChatProps, ChatState> {
   public state = { waitForSpeechToken: false } as ChatState;
-  private activityMap: { [activityId: string]: Activity } = {};
+  private activityMap: ActivityMap = {};
 
   public render() {
     const {
@@ -113,9 +118,11 @@ export class Chat extends PureComponent<ChatProps, ChatState> {
         name: 'Bot',
       };
 
+      const boundUpdateSelectedActivity = this.updateSelectedActivity.bind(this);
+
       return (
         <div className={styles.chat}>
-          <ReactWebChat
+          <Composer
             store={webchatStore}
             activityMiddleware={this.createActivityMiddleware}
             cardActionMiddleware={this.cardActionMiddleware}
@@ -128,7 +135,10 @@ export class Chat extends PureComponent<ChatProps, ChatState> {
             userID={currentUser.id}
             username={currentUser.name || 'User'}
             webSpeechPonyfillFactory={webSpeechPonyfillFactory}
-          />
+          >
+            <BasicWebChat />
+            <TranscriptFocusListener updateSelectedActivity={boundUpdateSelectedActivity} />
+          </Composer>
           <ConnectionMessageContainer documentId={this.props.documentId} />
         </div>
       );
