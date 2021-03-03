@@ -567,8 +567,7 @@ describe('The ChatSagas,', () => {
     // call createCognitiveServicesSpeechServicesPonyfillFactory
     expect(gen.next({}).value).toEqual(
       call(createCognitiveServicesSpeechServicesPonyfillFactory, {
-        authorizationToken: jasmine.anything(), // any(Promise) doesn't match correctly
-        region: 'westus',
+        credentials: jasmine.any(Function),
       })
     );
 
@@ -769,8 +768,7 @@ describe('The ChatSagas,', () => {
       const existingFactory = {};
       expect(gen.next(existingFactory).value).toEqual(
         call(createCognitiveServicesSpeechServicesPonyfillFactory, {
-          authorizationToken: jasmine.anything(), // .any(Promise) doesn't match correctly
-          region: 'westus',
+          credentials: jasmine.any(Function),
         })
       );
 
@@ -904,8 +902,7 @@ describe('The ChatSagas,', () => {
       const existingFactory = {};
       expect(gen.next(existingFactory).value).toEqual(
         call(createCognitiveServicesSpeechServicesPonyfillFactory, {
-          authorizationToken: jasmine.anything(), // .any(Promise) doesn't match correctly
-          region: 'westus',
+          credentials: jasmine.any(Function),
         })
       );
 

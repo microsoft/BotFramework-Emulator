@@ -467,10 +467,12 @@ export class ChatSagas {
             endpointId,
             !!existingFactory
           );
-
-          const factory = yield call(createCognitiveServicesSpeechServicesPonyfillFactory, {
-            authorizationToken: speechAuthenticationToken,
+          const fetchSpeechCredentials = async () => ({
+            authorizationToken: await speechAuthenticationToken,
             region: 'westus', // Currently, the prod speech service is only deployed to westus
+          });
+          const factory = yield call(createCognitiveServicesSpeechServicesPonyfillFactory, {
+            credentials: fetchSpeechCredentials,
           });
 
           yield put(webSpeechFactoryUpdated(documentId, factory)); // Provide the new factory to the store
@@ -651,10 +653,12 @@ export class ChatSagas {
           botEndpoint.id,
           !!existingFactory
         );
-
-        const factory = yield call(createCognitiveServicesSpeechServicesPonyfillFactory, {
-          authorizationToken: speechAuthenticationToken,
+        const fetchSpeechCredentials = async () => ({
+          authorizationToken: await speechAuthenticationToken,
           region: 'westus', // Currently, the prod speech service is only deployed to westus
+        });
+        const factory = yield call(createCognitiveServicesSpeechServicesPonyfillFactory, {
+          credentials: fetchSpeechCredentials,
         });
 
         yield put(webSpeechFactoryUpdated(documentId, factory)); // Provide the new factory to the store

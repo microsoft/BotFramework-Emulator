@@ -38,7 +38,7 @@
   background-color: white;
   display: flex;
   position: relative;
-  height: 100%;
+  height: calc(100% - 36px); // 36px is the height of the <header> in chatPanel.tsx
   width: 100%;
   user-select: text;
 

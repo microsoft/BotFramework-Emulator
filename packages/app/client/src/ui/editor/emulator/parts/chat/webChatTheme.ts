@@ -64,4 +64,6 @@ export default {
   transcriptOverlayButtonColor: 'var(--webchat-transcript-overlay-text)',
   transcriptOverlayButtonColorOnFocus: 'var(--webchat-transcript-overlay-text-focus)',
   transcriptOverlayButtonColorOnHover: 'var(--webchat-transcript-overlay-text-focus)',
+
+  transcriptVisualKeyboardIndicatorColor: 'var(--webchat-transcript-visual-kb-indicator-color)',
 };

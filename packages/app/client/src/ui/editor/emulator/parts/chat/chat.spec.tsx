@@ -34,7 +34,7 @@
 import * as React from 'react';
 import { mount, ReactWrapper, shallow, ShallowWrapper } from 'enzyme';
 import { Provider } from 'react-redux';
-import ReactWebChat, { createDirectLine, createStyleSet } from 'botframework-webchat';
+import { createDirectLine, createStyleSet, Components } from 'botframework-webchat';
 import { ActivityTypes } from 'botframework-schema';
 import {
   bot,
@@ -55,6 +55,8 @@ import { BotCommands } from '../../../../../commands/botCommands';
 import webChatStyleOptions from './webChatTheme';
 import { ChatContainer } from './chatContainer';
 import { ChatProps, Chat } from './chat';
+
+const { Composer } = Components;
 
 jest.mock('./chat.scss', () => ({
   get bubbleContentColor() {
@@ -160,7 +162,7 @@ describe('<ChatContainer />', () => {
     wrapper.setProps({
       children: <ChatContainer {...updatedProps} />,
     });
-    expect(wrapper.find(ReactWebChat).props().disabled).toBeTruthy();
+    expect(wrapper.find(Composer).props().disabled).toBeTruthy();
 
     updatedProps = {
       ...props,
@@ -170,7 +172,7 @@ describe('<ChatContainer />', () => {
     wrapper.setProps({
       children: <ChatContainer {...updatedProps} />,
     });
-    expect(wrapper.find(ReactWebChat).props().disabled).toBeFalsy();
+    expect(wrapper.find(Composer).props().disabled).toBeFalsy();
 
     updatedProps = {
       ...props,
@@ -180,7 +182,7 @@ describe('<ChatContainer />', () => {
     wrapper.setProps({
       children: <ChatContainer {...updatedProps} />,
     });
-    expect(wrapper.find(ReactWebChat).props().disabled).toBeFalsy();
+    expect(wrapper.find(Composer).props().disabled).toBeFalsy();
 
     updatedProps = {
       ...props,
@@ -190,7 +192,7 @@ describe('<ChatContainer />', () => {
     wrapper.setProps({
       children: <ChatContainer {...updatedProps} />,
     });
-    expect(wrapper.find(ReactWebChat).props().disabled).toBeFalsy();
+    expect(wrapper.find(Composer).props().disabled).toBeFalsy();
 
     updatedProps = {
       ...props,
@@ -200,7 +202,7 @@ describe('<ChatContainer />', () => {
     wrapper.setProps({
       children: <ChatContainer {...updatedProps} />,
     });
-    expect(wrapper.find(ReactWebChat).props().disabled).toBeFalsy();
+    expect(wrapper.find(Composer).props().disabled).toBeFalsy();
 
     updatedProps = {
       ...props,
@@ -210,7 +212,7 @@ describe('<ChatContainer />', () => {
     wrapper.setProps({
       children: <ChatContainer {...updatedProps} />,
     });
-    expect(wrapper.find(ReactWebChat).props().disabled).toBeTruthy();
+    expect(wrapper.find(Composer).props().disabled).toBeTruthy();
   });
 
   describe('when there is no direct line client', () => {
@@ -223,7 +225,7 @@ describe('<ChatContainer />', () => {
 
   describe('when there is a direct line client', () => {
     it('renders the WebChat component', () => {
-      const webChat = wrapper.find(ReactWebChat);
+      const webChat = wrapper.find(Composer);
       const styleSet = createStyleSet({ ...webChatStyleOptions });
 
       styleSet.fileContent = {
