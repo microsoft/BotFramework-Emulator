@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-## v4.12.0 - 2021 - 3 - 03
+## v4.12.0 - 2021 - 3 - 04
 - [client/main] Added UI to open bot dialog that allows the user to set transcript testing properties `randomSeed` and `randomValue` in PR [2209](https://github.com/microsoft/BotFramework-Emulator/pull/2209)
 - [client] Added a dialog to the "Conversation -> Send System Activity" menu that allows the user to send custom activity payloads to their bot in PR [2213](https://github.com/microsoft/BotFramework-Emulator/pull/2213)
 - [main] Bumped `electron` from `4.1.1` to `11.0.1` in PR [2226](https://github.com/microsoft/BotFramework-Emulator/pull/2226)
