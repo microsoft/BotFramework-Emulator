@@ -31,10 +31,26 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { BrowserWindow, dialog, OpenDialogOptions } from 'electron';
+import { showOpenDialog } from './showOpenDialog';
 
-/** Shows a native open file / directory dialog */
-export const showOpenDialog = async (window: BrowserWindow, options: OpenDialogOptions): Promise<string> => {
-  const { filePaths = [] } = await dialog.showOpenDialog(window, options);
-  return filePaths[0] || '';
-};
+const mockShowOpenDialog = jest.fn().mockResolvedValue({ filePaths: [] });
+jest.mock('electron', () => ({
+  dialog: {
+    showOpenDialog: async (...args) => mockShowOpenDialog(...args),
+  },
+}));
+
+describe('showOpenDialog', () => {
+  it('should return an empty string if nothing was selected', async () => {
+    const filePath = await showOpenDialog(undefined, undefined);
+
+    expect(filePath).toBe('');
+  });
+
+  it('should return the selected file path', async () => {
+    mockShowOpenDialog.mockResolvedValueOnce({ filePaths: ['someFile'] });
+    const filePath = await showOpenDialog(undefined, undefined);
+
+    expect(filePath).toBe('someFile');
+  });
+});
