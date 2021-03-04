@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [client] Bumped `botframework-webchat` to v4.12.0 and fixed various Web Chat-related bugs in PR [2236](https://github.com/microsoft/BotFramework-Emulator/pull/2236)
 - [main] Fixed a bug where we were expecting the incorrect shape from Electron's updated `dialog.showOpenDialog()` API in PR [2237](https://github.com/microsoft/BotFramework-Emulator/pull/2237)
 - [main] Fixed a bug that was causing Electron's native context menu to silently fail when selecting an option in PR [2238](https://github.com/microsoft/BotFramework-Emulator/pull/2238)
+- [client] Fixed an aligment issue with the caret button of the `<SplitButton />` widget in PR [2239](https://github.com/microsoft/BotFramework-Emulator/pull/2239)
 
 ## v4.11.0 - 2020 - 11 - 05
 - [client] Moved from master to main as the default branch. [2194](https://github.com/microsoft/BotFramework-Emulator/pull/2194)
