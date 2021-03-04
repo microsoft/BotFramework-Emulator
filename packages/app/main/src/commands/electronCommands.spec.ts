@@ -66,7 +66,7 @@ jest.mock('electron', () => ({
   dialog: {
     showMessageBox: (mainBrowserWindow: any, p: { buttons: string[]; type: string; title: string; message: string }) =>
       void 0,
-    showOpenDialog: () => void 0,
+    showOpenDialog: () => ({ filePaths: [] }),
     showSaveDialogSync: () => void 0,
   },
   shell: {
