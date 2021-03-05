@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [main] Fixed a bug where we were expecting the incorrect shape from Electron's updated `dialog.showOpenDialog()` API in PR [2237](https://github.com/microsoft/BotFramework-Emulator/pull/2237)
 - [main] Fixed a bug that was causing Electron's native context menu to silently fail when selecting an option in PR [2238](https://github.com/microsoft/BotFramework-Emulator/pull/2238)
 - [client] Fixed an aligment issue with the caret button of the `<SplitButton />` widget in PR [2239](https://github.com/microsoft/BotFramework-Emulator/pull/2239)
+- [main] Fixed an outdated path to an `electron-builder` utility function used to generate the auto update yaml files in PR [2240](https://github.com/microsoft/BotFramework-Emulator/pull/2240)
 
 ## v4.11.0 - 2020 - 11 - 05
 - [client] Moved from master to main as the default branch. [2194](https://github.com/microsoft/BotFramework-Emulator/pull/2194)
