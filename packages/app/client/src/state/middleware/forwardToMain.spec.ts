@@ -79,4 +79,33 @@ describe('forwardToMain middleware', () => {
     expect(mockNext).toHaveBeenCalledWith(mockAction);
     expect(mockIpcRenderer.sendSync).toHaveBeenCalledWith('sync-store', mockAction);
   });
+
+  it('should skip forwarding the action to the main process if the payload has a circular structure', () => {
+    const innerObject = { outerObject: undefined };
+    const outerObject = { innerObject: undefined };
+    innerObject.outerObject = outerObject;
+    outerObject.innerObject = innerObject;
+    const mockNext = jest.fn();
+    const mockAction: any = {
+      type: 'actionType',
+      payload: { outerObject },
+    };
+    forwardToMain(null)(mockNext)(mockAction);
+
+    expect(mockNext).toHaveBeenCalledWith(mockAction);
+    expect(mockIpcRenderer.sendSync).not.toHaveBeenCalled();
+  });
+
+  it('should surface errors that are not circular JSON errors', () => {
+    const mockNext = jest.fn();
+    const mockAction: any = {
+      type: 'actionType',
+      payload: { someProp: 123 },
+    };
+    mockIpcRenderer.sendSync.mockImplementationOnce(() => {
+      throw new Error('some error >:(');
+    });
+
+    expect(() => forwardToMain(null)(mockNext)(mockAction)).toThrowError(new Error('some error >:('));
+  });
 });
