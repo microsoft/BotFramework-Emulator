@@ -45,11 +45,20 @@ export const forwardToMain: Middleware = _store => next => action => {
     return next(action);
   }
 
-  // Electron 9 does not allow functions to be sent over ipc (https://www.electronjs.org/docs/api/ipc-renderer#ipcrenderersendchannel-args)
-  // JSON.stringify() removes function properties from objects -- these functions do not need to be maintained in the main process' copy of state
-  const processedAction = JSON.parse(JSON.stringify(action));
+  try {
+    // Electron 9 does not allow functions to be sent over ipc (https://www.electronjs.org/docs/api/ipc-renderer#ipcrenderersendchannel-args)
+    // JSON.stringify() removes function properties from objects -- these functions do not need to be maintained in the main process' copy of state
+    const processedAction = JSON.parse(JSON.stringify(action));
 
-  // forward the action over ipc to the main process
-  ipcRenderer.sendSync('sync-store', processedAction);
-  return next(action);
+    // forward the action over ipc to the main process
+    ipcRenderer.sendSync('sync-store', processedAction);
+    return next(action);
+  } catch (e) {
+    if (e.message && e.message.includes('circular structure')) {
+      // the payload of the action contains a circular JSON structure and cannot be stringified;
+      // skip forwarding the action to the main process
+      return next(action);
+    }
+    throw e;
+  }
 };
