@@ -34,20 +34,24 @@
 import { Menu, MenuItem, MenuItemConstructorOptions, BrowserWindow } from 'electron';
 import { ContextMenuCoordinates } from '@bfemulator/app-shared';
 
+type ContextMenuResult = {
+  id: string;
+};
+
 export class ContextMenuService {
   private static currentMenu: Menu;
 
   public static showMenuAndWaitForInput(
     options: Partial<MenuItemConstructorOptions>[] = [],
     menuCoords?: ContextMenuCoordinates
-  ): Promise<MenuItem> {
+  ): Promise<ContextMenuResult> {
     if (ContextMenuService.currentMenu) {
       ContextMenuService.currentMenu.closePopup();
     }
-    return new Promise(resolve => {
-      const clickHandler = menuItem => {
+    return new Promise<ContextMenuResult>(resolve => {
+      const clickHandler = (menuItem: MenuItem) => {
         ContextMenuService.currentMenu = null;
-        resolve(menuItem);
+        resolve({ id: menuItem.id });
       };
 
       const template = options.map(option => {

@@ -33,10 +33,10 @@
 
 /** Hashes a file asynchronously */
 function hashFileAsync(filename, algo = 'sha512', encoding = 'base64') {
-  var builderUtil = require('builder-util');
+  var builderUtil = require('app-builder-lib/out/util/hash');
   return builderUtil.hashFile(filename, algo, encoding);
 }
 
 module.exports = {
-  hashFileAsync
+  hashFileAsync,
 };

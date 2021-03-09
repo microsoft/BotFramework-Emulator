@@ -5,13 +5,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## v4.12.0 - 2021 - 3 - 04
+## Added
 - [client/main] Added UI to open bot dialog that allows the user to set transcript testing properties `randomSeed` and `randomValue` in PR [2209](https://github.com/microsoft/BotFramework-Emulator/pull/2209)
 - [client] Added a dialog to the "Conversation -> Send System Activity" menu that allows the user to send custom activity payloads to their bot in PR [2213](https://github.com/microsoft/BotFramework-Emulator/pull/2213)
 - [main] Bumped `electron` from `4.1.1` to `11.0.1` in PR [2226](https://github.com/microsoft/BotFramework-Emulator/pull/2226)
 - [main] Bumped `electron-builder` to `22.9.1` and `electron-updater` to `4.3.5` to fix the Mac build in PR [2230](https://github.com/microsoft/BotFramework-Emulator/pull/2230)
-- [client] Re-enabled the `<webview>` tag in the client so that the inspectors show again in PR [2233](https://github.com/microsoft/BotFramework-Emulator/pull/2233)
 - [client] Bumped `botframework-webchat` to v4.12.0 and fixed various Web Chat-related bugs in PR [2236](https://github.com/microsoft/BotFramework-Emulator/pull/2236)
 - [client] Added circular JSON handling to `forwardToMain.ts` which fixed a bug preventing the Emulator from connecting to Direct Line Speech bots in PR [2242](https://github.com/microsoft/BotFramework-Emulator/pull/2242)
+
+## Fixed
+- [client] Re-enabled the `<webview>` tag in the client so that the inspectors show again in PR [2233](https://github.com/microsoft/BotFramework-Emulator/pull/2233)
+- [main] Fixed a bug where we were expecting the incorrect shape from Electron's updated `dialog.showOpenDialog()` API in PR [2237](https://github.com/microsoft/BotFramework-Emulator/pull/2237)
+- [main] Fixed a bug that was causing Electron's native context menu to silently fail when selecting an option in PR [2238](https://github.com/microsoft/BotFramework-Emulator/pull/2238)
+- [client] Fixed an aligment issue with the caret button of the `<SplitButton />` widget in PR [2239](https://github.com/microsoft/BotFramework-Emulator/pull/2239)
+- [main] Fixed an outdated path to an `electron-builder` utility function used to generate the auto update yaml files in PR [2240](https://github.com/microsoft/BotFramework-Emulator/pull/2240)
 
 ## v4.11.0 - 2020 - 11 - 05
 - [client] Moved from master to main as the default branch. [2194](https://github.com/microsoft/BotFramework-Emulator/pull/2194)
