@@ -68,7 +68,7 @@ export class ElectronCommands {
   // ---------------------------------------------------------------------------
   // Shows an open dialog and returns a path
   @Command(Commands.ShowOpenDialog)
-  protected showOpenDialog(dialogOptions: Electron.OpenDialogOptions = {}): false | string {
+  protected showOpenDialog(dialogOptions: Electron.OpenDialogOptions = {}): Promise<string> {
     return showOpenDialog(emulatorApplication.mainWindow.browserWindow, dialogOptions);
   }
 
