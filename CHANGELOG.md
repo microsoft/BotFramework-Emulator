@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ## Fixed
 - [client] Added circular JSON handling to `forwardToMain.ts` which fixed a bug preventing the Emulator from connecting to Direct Line Speech bots in PR [2242](https://github.com/microsoft/BotFramework-Emulator/pull/2242)
+- [client/main] Fixed an issue where the Emulator was failing to detect the final redirect URL when trying to login to Azure in PR [2248](https://github.com/microsoft/BotFramework-Emulator/pull/2248)
 
 ## v4.12.0 - 2021 - 3 - 05
 ## Added
