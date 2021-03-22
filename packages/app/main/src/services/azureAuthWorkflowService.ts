@@ -84,35 +84,28 @@ export class AzureAuthWorkflowService {
 
   private static async waitForAuthResult(browserWindow: BrowserWindow, redirectUri: string): Promise<AuthResponse> {
     const response = await new Promise<AuthResponse>(resolve => {
-      // eslint-disable-next-line prefer-const
-      let interval;
-      const poller = () => {
-        let uri: string;
-        const result: AuthResponse = {} as AuthResponse;
-        try {
-          const { history = [] }: { history: string[] } = browserWindow.webContents as any;
-          uri = history[history.length - 1] || '';
-        } catch (e) {
-          clearInterval(interval);
-          result.error = e.message;
-          resolve(result);
-        }
-        if (!(uri || '').toLowerCase().startsWith(redirectUri.toLowerCase())) {
-          return;
-        }
-        const idx = uri.indexOf('#');
-        const values = uri.substring(idx + 1).split('&');
-        const len = values.length;
-        for (let i = 0; i < len; i++) {
-          const [key, value] = values[i].split(/[=]/);
-          result[key] = value;
-        }
-        clearInterval(interval);
-        resolve(result);
-      };
       browserWindow.addListener('close', () => resolve({ error: 'canceled' } as AuthResponse));
-      browserWindow.addListener('page-title-updated', poller);
-      interval = setInterval(poller, 500); // Backup if everything else fails
+      browserWindow.webContents.on('will-redirect', (event, url) => {
+        if (url.toLowerCase().startsWith(redirectUri.toLowerCase())) {
+          const result: AuthResponse = {} as AuthResponse;
+          try {
+            // the next URL matches the desired redirect URL -- now parse the token from the URL
+            const idx = url.indexOf('#');
+            const values = url.substring(idx + 1).split('&');
+            const len = values.length;
+            for (let i = 0; i < len; i++) {
+              const [key, value] = values[i].split(/[=]/);
+              result[key] = value;
+            }
+            event.preventDefault();
+            resolve(result);
+          } catch (e) {
+            result.error = e.message;
+            event.preventDefault();
+            resolve(result);
+          }
+        }
+      });
     });
 
     if (response.error) {
@@ -146,7 +139,7 @@ export class AzureAuthWorkflowService {
     const bits = [
       `${authorizationEndpoint}?response_type=token`,
       `client_id=${clientId}`,
-      `redirect_uri=${replyUrl}}`,
+      `redirect_uri=${replyUrl}`,
       `state=${state}`,
       `client-request-id=${requestId}`,
       `nonce=${nonce}`,

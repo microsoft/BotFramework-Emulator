@@ -66,7 +66,22 @@ jest.mock('electron', () => ({
     public static reporters = [];
     public listeners = [] as any;
     public webContents = {
-      history: ['http://someotherUrl', `https://dev.botframework.com/cb/#t=13&access_token=${mockArmToken}`],
+      on: (type: string, handler: () => void) => {
+        this.listeners.push({ type, handler });
+        MockBrowserWindow.report('webContents.on', type, handler);
+        if (type === 'will-redirect') {
+          [
+            'http://someotherUrl',
+            'http://someotherUrl/auth/v2',
+            `https://dev.botframework.com/cb#t=13&access_token=${mockArmToken}`,
+          ].forEach((url, index) => {
+            const evt = new mockEvent('will-redirect');
+            setTimeout(() => {
+              this.listeners.forEach(l => l.type === evt.type && l.handler(evt, url));
+            }, 25 * index);
+          });
+        }
+      },
     };
 
     private static report(...args: any[]) {
@@ -88,17 +103,6 @@ jest.mock('electron', () => ({
     addListener(type: string, handler: () => void) {
       this.listeners.push({ type, handler });
       MockBrowserWindow.report('addListener', type, handler);
-      if (type === 'page-title-updated') {
-        [['http://someotherUrl'], [`http://localhost/#t=13&id_token=${mockArmToken}`]].forEach((url, index) => {
-          const evt = new mockEvent('page-title-updated');
-          (evt as any).sender = {
-            history: [`http://localhost/#t=13&access_token=${mockArmToken}`],
-          };
-          setTimeout(() => {
-            this.listeners.forEach(l => l.type === evt.type && l.handler(evt));
-          }, 25 * index);
-        });
-      }
     }
 
     once(type: string, handler: () => void) {
@@ -147,6 +151,7 @@ describe('The azureAuthWorkflowService', () => {
     const reportedValues = [];
     const reporter = v => reportedValues.push(v);
     (BrowserWindow as any).reporters.push(reporter);
+    jest.spyOn(AzureAuthWorkflowService as any, 'validateJWT').mockResolvedValueOnce(true);
     const it = AzureAuthWorkflowService.retrieveAuthToken(false);
     let value = undefined;
     let ct = 0;
