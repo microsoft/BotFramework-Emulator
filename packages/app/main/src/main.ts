@@ -184,7 +184,7 @@ class EmulatorApplication {
     app.on('activate', this.onAppActivate);
     app.on('ready', this.onAppReady);
     app.on('open-file', this.onAppOpenFile);
-    app.on('will-finish-launching', this.onAppWillFinishLaunching);
+    app.on('open-url', this.onAppOpenUrl);
     app.on('will-quit', this.onAppWillQuit);
   }
 
@@ -340,10 +340,6 @@ class EmulatorApplication {
 
   private onAppActivate = () => {
     this.onAppReady();
-  };
-
-  private onAppWillFinishLaunching = () => {
-    app.on('open-url', this.onAppOpenUrl);
   };
 
   private onAppWillQuit = () => {
