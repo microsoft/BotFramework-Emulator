@@ -85,6 +85,9 @@ export const CustomActivityEditor: React.FC<CustomActivityEditorProps> = (props:
       // warnings are 4 and errors are 8
       setIsValid(!markers.some(m => m.severity >= monaco.MarkerSeverity.Warning));
     });
+    // the editor's model may still have leftover content from the last time it was rendered;
+    // send it back through the onDidChangeModelContent handler so that it gets set in the React state
+    editor.setValue(editor.getValue());
   }, []);
 
   const onSendActivityClick = useCallback(() => {
