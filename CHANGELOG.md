@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## Added
+- [client] Bumped `botframework-webchat` to v4.13.0 in PR [2258](https://github.com/microsoft/BotFramework-Emulator/pull/2258)
+
 ## Fixed
 - [client] Added circular JSON handling to `forwardToMain.ts` which fixed a bug preventing the Emulator from connecting to Direct Line Speech bots in PR [2242](https://github.com/microsoft/BotFramework-Emulator/pull/2242)
 - [client/main] Fixed an issue where the Emulator was failing to detect the final redirect URL when trying to login to Azure in PR [2248](https://github.com/microsoft/BotFramework-Emulator/pull/2248)
