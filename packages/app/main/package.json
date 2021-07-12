@@ -135,7 +135,7 @@
     "applicationinsights": "^1.0.8",
     "base64url": "3.0.0",
     "botframework-config": "4.4.0",
-    "botframework-schema": "^4.3.4",
+    "botframework-schema": "4.14.0",
     "chokidar": "^2.0.2",
     "command-line-args": "^5.0.2",
     "electron-updater": "4.3.5",
