@@ -73,10 +73,8 @@ export function createUploadHandler(emulatorServer: EmulatorRestServer) {
       return;
     }
 
-    const form = new Formidable.IncomingForm();
+    const form = new Formidable.IncomingForm({ keepExtensions: true, multiples: true });
 
-    form.multiples = true;
-    form.keepExtensions = true;
     // TODO: Override form.onPart handler so it doesn't write temp files to disk.
     form.parse(req, async (err: any, fields: any, files: any) => {
       try {
