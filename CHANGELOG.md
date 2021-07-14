@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## v4.13.0 - 2021 - 4 - 14
 ## Added
 - [client] Bumped `botframework-webchat` to v4.14.0 in PR [2275](https://github.com/microsoft/BotFramework-Emulator/pull/2275)
 
