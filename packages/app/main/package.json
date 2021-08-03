@@ -161,7 +161,7 @@
     "semver": "^5.5.0",
     "tslib": "^1.9.0",
     "ws": "^5.0.0",
-    "xmldom": "^0.1.27"
+    "xmldom": "^0.6.0"
   },
   "build": {
     "asar": true,
