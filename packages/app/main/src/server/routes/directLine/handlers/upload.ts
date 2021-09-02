@@ -117,9 +117,9 @@ export function createUploadHandler(emulatorServer: EmulatorRestServer) {
               res.send(statusCode || HttpStatus.INTERNAL_SERVER_ERROR, await response.text());
               res.end();
             } else {
-              res.send( statusCode, { id: updatedActivity.id });
+              res.send(statusCode, { id: updatedActivity.id });
               res.end();
-              WebSocketServer.sendToSubscribers( conversation.conversationId, updatedActivity );
+              WebSocketServer.sendToSubscribers(conversation.conversationId, updatedActivity);
             }
           } catch (err) {
             sendErrorResponse(req, res, next, err);
