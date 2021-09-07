@@ -43,6 +43,7 @@ import { BotEndpoint } from '../../../state/botEndpoint';
 import { Conversation } from '../../../state/conversation';
 import { sendErrorResponse } from '../../../utils/sendErrorResponse';
 import { EmulatorRestServer } from '../../../restServer';
+import { WebSocketServer } from '../../../webSocketServer';
 
 export function createUploadHandler(emulatorServer: EmulatorRestServer) {
   const {
@@ -110,14 +111,15 @@ export function createUploadHandler(emulatorServer: EmulatorRestServer) {
           });
 
           try {
-            const { activityId, statusCode, response } = await conversation.postActivityToBot(activity, true);
+            const { updatedActivity, statusCode, response } = await conversation.postActivityToBot(activity, true);
 
             if (~~statusCode === 0 && ~~statusCode > 300) {
               res.send(statusCode || HttpStatus.INTERNAL_SERVER_ERROR, await response.text());
               res.end();
             } else {
-              res.send(statusCode, { id: activityId });
+              res.send(statusCode, { id: updatedActivity.id });
               res.end();
+              WebSocketServer.sendToSubscribers(conversation.conversationId, updatedActivity);
             }
           } catch (err) {
             sendErrorResponse(req, res, next, err);
