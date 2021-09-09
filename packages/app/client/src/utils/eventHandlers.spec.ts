@@ -189,14 +189,14 @@ describe('#globalHandlers', () => {
 
     // standard zoom from 1 to 1.1 zoom factor
     mockCurrentWebContents.setZoomFactor.mockClear();
-    mockCurrentWebContents.getZoomFactor.mockImplementation(callback => callback(1));
+    mockCurrentWebContents.getZoomFactor.mockImplementation(() => 1);
     await globalHandlers(event);
 
     expect(mockCurrentWebContents.setZoomFactor).toHaveBeenCalledWith(1.1);
 
     // trying to zoom past the max zoom factor (3) should not go above 3
     mockCurrentWebContents.setZoomFactor.mockClear();
-    mockCurrentWebContents.getZoomFactor.mockImplementation(callback => callback(3.1));
+    mockCurrentWebContents.getZoomFactor.mockImplementation(() => 3.1);
     await globalHandlers(event);
 
     expect(mockCurrentWebContents.setZoomFactor).toHaveBeenCalledWith(3);
@@ -207,14 +207,14 @@ describe('#globalHandlers', () => {
 
     // standard zoom from 1 to 1.1 zoom factor
     mockCurrentWebContents.setZoomFactor.mockClear();
-    mockCurrentWebContents.getZoomFactor.mockImplementation(callback => callback(1));
+    mockCurrentWebContents.getZoomFactor.mockImplementation(() => 1);
     await globalHandlers(event);
 
     expect(mockCurrentWebContents.setZoomFactor).toHaveBeenCalledWith(1.1);
 
     // trying to zoom past the max zoom factor (3) should not go above 3
     mockCurrentWebContents.setZoomFactor.mockClear();
-    mockCurrentWebContents.getZoomFactor.mockImplementation(callback => callback(3.1));
+    mockCurrentWebContents.getZoomFactor.mockImplementation(() => 3.1);
     await globalHandlers(event);
 
     expect(mockCurrentWebContents.setZoomFactor).toHaveBeenCalledWith(3);
@@ -225,14 +225,14 @@ describe('#globalHandlers', () => {
 
     // standard zoom from 1 to 0.9 zoom factor
     mockCurrentWebContents.setZoomFactor.mockClear();
-    mockCurrentWebContents.getZoomFactor.mockImplementation(callback => callback(1));
+    mockCurrentWebContents.getZoomFactor.mockImplementation(() => 1);
     await globalHandlers(event);
 
     expect(mockCurrentWebContents.setZoomFactor).toHaveBeenCalledWith(0.9);
 
     // trying to zoom past the minimum zoom factor (0.25) should not go below 0,25
     mockCurrentWebContents.setZoomFactor.mockClear();
-    mockCurrentWebContents.getZoomFactor.mockImplementation(callback => callback(0.1));
+    mockCurrentWebContents.getZoomFactor.mockImplementation(() => 0.1);
     await globalHandlers(event);
 
     expect(mockCurrentWebContents.setZoomFactor).toHaveBeenCalledWith(0.25);
@@ -243,14 +243,14 @@ describe('#globalHandlers', () => {
 
     // standard zoom from 1 to 0.9 zoom factor
     mockCurrentWebContents.setZoomFactor.mockClear();
-    mockCurrentWebContents.getZoomFactor.mockImplementation(callback => callback(1));
+    mockCurrentWebContents.getZoomFactor.mockImplementation(() => 1);
     await globalHandlers(event);
 
     expect(mockCurrentWebContents.setZoomFactor).toHaveBeenCalledWith(0.9);
 
     // trying to zoom past the minimum zoom factor (0.25) should not go below 0,25
     mockCurrentWebContents.setZoomFactor.mockClear();
-    mockCurrentWebContents.getZoomFactor.mockImplementation(callback => callback(0.1));
+    mockCurrentWebContents.getZoomFactor.mockImplementation(() => 0.1);
     await globalHandlers(event);
 
     expect(mockCurrentWebContents.setZoomFactor).toHaveBeenCalledWith(0.25);
