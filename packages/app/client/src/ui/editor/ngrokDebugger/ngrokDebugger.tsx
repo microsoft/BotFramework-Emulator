@@ -134,8 +134,8 @@ export const NgrokDebugger = (props: NgrokDebuggerProps) => {
         <Column>
           <section>
             <SmallHeader>Tunnel Health</SmallHeader>
-            <ul className={styles.tunnelDetailsList}>
-              <li>
+            <div className={styles.tunnelDetailsList}>
+              <div>
                 <span>
                   <NgrokStatusIndicator
                     tunnelStatus={props.tunnelStatus}
@@ -143,15 +143,15 @@ export const NgrokDebugger = (props: NgrokDebuggerProps) => {
                     header="Tunnel Status"
                   />
                 </span>
-              </li>
-              <li>
+              </div>
+              <div>
                 <LinkButton linkRole={true} onClick={props.onPingTunnelClick}>
                   Click here
                 </LinkButton>
                 &nbsp;to ping the tunnel now
-              </li>
+              </div>
               {errorDetailsContainer}
-            </ul>
+            </div>
           </section>
           {props.publicUrl ? tunnelConnections : null}
         </Column>
