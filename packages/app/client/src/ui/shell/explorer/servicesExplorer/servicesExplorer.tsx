@@ -120,6 +120,10 @@ export class ServicesExplorer extends ServicePane<ServicesExplorerProps> {
       }
       return 0;
     });
+
+    // Check if the sortCriteria has changed
+    state.sortCriteriaChanged = existingProps.sortCriteria != newProps.sortCriteria;
+
     return state;
   }
 
@@ -188,7 +192,6 @@ export class ServicesExplorer extends ServicePane<ServicesExplorerProps> {
           onKeyPress={this.onKeyPress}
           data-index={index}
           tabIndex={0}
-          title={service.name}
         >
           {iconMap[service.type]}
           {label}{' '}

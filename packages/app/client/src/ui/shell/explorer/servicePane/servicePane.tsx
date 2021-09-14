@@ -49,6 +49,7 @@ export interface ServicePaneProps extends ServicePaneState {
 
 export interface ServicePaneState {
   expanded?: boolean;
+  sortCriteriaChanged?: boolean;
 }
 
 /* eslint-disable react/display-name */
@@ -108,12 +109,17 @@ export abstract class ServicePane<
 
   protected get content(): JSX.Element {
     const { links, additionalContent } = this;
+    const { sortCriteriaChanged } = this.state;
+
     if (!links || !links.length) {
       return <ExpandCollapseContent>{this.emptyContent}</ExpandCollapseContent>;
     }
+    if (sortCriteriaChanged) {
+      this.listRef && this.listRef.focus();
+    }
     return (
       <ExpandCollapseContent>
-        <ul className={styles.servicePaneList} ref={ul => (this.listRef = ul)}>
+        <ul className={styles.servicePaneList} ref={ul => (this.listRef = ul)} tabIndex={0}>
           {links}
         </ul>
         {additionalContent}
