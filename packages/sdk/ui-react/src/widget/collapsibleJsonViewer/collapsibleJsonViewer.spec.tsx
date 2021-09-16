@@ -67,48 +67,51 @@ const mockData = {
 };
 
 const mockTreeHTMLText = `
-<ul id="rootGroup">
-  <li>
-    <div>
-      <div>▶</div>
-    </div>
-    <label><span>root:</span></label>
-    <span>
-      <span> 
-        <span>{}</span> 2 keys
-        </span></span>
-    <ul id="group1">
-      <li>
-        <div>
-          <div>▶</div>
-        </div>
-        <label><span>membersAdded:</span></label>
-        <span><span><span>[]</span> 1 item</span></span>
-        <ul id="group2">
-          <li>
-            <div role="button" id="actuator">
-              <div>▶</div>
-            </div>
-            <label><span>0:</span></label>
-            <span>
+<div>
+  <ul id="rootGroup">
+    <li>
+      <div>
+        <div>▶</div>
+      </div>
+      <label><span>root:</span></label>
+      <span>
+        <span>
+          <span>{}</span> 2 keys
+          </span></span>
+      <ul id="group1">
+        <li>
+          <div>
+            <div>▶</div>
+          </div>
+          <label><span>membersAdded:</span></label>
+          <span><span><span>[]</span> 1 item</span></span>
+          <ul id="group2">
+            <li>
+              <div role="button" id="actuator">
+                <div>▶</div>
+              </div>
+              <label><span>0:</span></label>
               <span>
-                <span>{}</span> 
-                2 keys
+                <span>
+                  <span>{}</span>
+                  2 keys
+                </span>
               </span>
-            </span>
-            <ul id="group3">
-              <li><label><span>id:</span></label><span>"1"</span></li>
-              <li><label><span>name:</span></label><span>"Bot"</span>
-              </li>
-            </ul>
-          </li>
-        </ul>
-      </li>
-      <li><label><span>type:</span></label><span>"conversationUpdate"</span>
-      </li>
-    </ul>
-  </li>
-</ul>`;
+              <ul id="group3">
+                <li><label><span>id:</span></label><span>"1"</span></li>
+                <li><label><span>name:</span></label><span>"Bot"</span>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li><label><span>type:</span></label><span>"conversationUpdate"</span>
+        </li>
+      </ul>
+    </li>
+  </ul>
+  <div id="ariaRegion" role="region" aria-live="polite" className={styles.ariaRegion}>text content</div>
+</div>`;
 
 let jsonViewerWrapper;
 let jsonViewer;
@@ -117,6 +120,7 @@ describe('The JsonViewer', () => {
   beforeAll(() => {
     jsonViewerWrapper = mount(<CollapsibleJsonViewer data={mockData} themeName={'high-contrast'} />);
     jsonViewer = jsonViewerWrapper.find(CollapsibleJsonViewer).instance();
+    document.body.innerHTML = mockTreeHTMLText;
   });
 
   it('should render with data and a theme', () => {
