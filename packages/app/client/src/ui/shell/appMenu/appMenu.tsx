@@ -36,6 +36,8 @@ import { BotInfo, SharedConstants, UpdateStatus } from '@bfemulator/app-shared';
 import { MenuButton, MenuItem } from '@bfemulator/ui-react';
 import { BotConfigWithPath } from '@bfemulator/sdk-shared';
 
+import { ariaAlertService } from '../../a11y';
+
 import * as styles from './appMenu.scss';
 import { AppMenuTemplate } from './appMenuTemplate';
 
@@ -113,6 +115,7 @@ export class AppMenu extends React.Component<AppMenuProps, Record<string, unknow
         label: theme.name,
         checked: theme.name === currentTheme,
         onClick: () => {
+          ariaAlertService.alert('Theme ' + theme.name + ' has been applied successfully.');
           this.props.switchTheme(theme.name);
         },
       };
