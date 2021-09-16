@@ -23,3 +23,9 @@
     width: calc(100% - 10px);
   }
 }
+
+.aria-region {
+  position: absolute;
+  top: -9999px;
+  overflow: hidden;
+}
