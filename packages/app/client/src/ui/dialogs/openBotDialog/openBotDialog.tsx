@@ -208,6 +208,8 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
               placeholder="Optional"
               type="number"
               value={randomSeed}
+              min="0"
+              max="9999"
             />
             <TextField
               inputContainerClassName={openBotStyles.inputContainerRow}
@@ -217,6 +219,8 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
               placeholder="Optional"
               type="number"
               value={randomValue}
+              min="0"
+              max="9999"
             />
           </Row>
           <Row className={openBotStyles.rowOverride}>
