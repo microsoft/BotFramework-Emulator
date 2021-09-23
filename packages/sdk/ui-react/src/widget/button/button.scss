@@ -45,6 +45,7 @@
 
   &:focus {
     background-color: var(--s-button-bg-focus);
+    outline-offset: 2px;
 
     &::after {
       border: var(--s-button-border-focus);
@@ -139,6 +140,7 @@
 
   &:focus {
     background-color: var(--p-button-bg-focus);
+    outline-offset: 2px;
 
     &::after {
       border: var(--p-button-border-focus);
