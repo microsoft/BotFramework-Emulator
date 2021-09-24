@@ -232,7 +232,7 @@ html {
   --inspector-link-color: var(--link-color);
 
   /* Split Button */
-  --split-button-color: var(--neutral-12);
+  --split-button-color: #605e5c;
   --split-button-pressed-color: var(--neutral-16);
   --split-button-disabled-color: var(--neutral-7);
   --split-button-icon-color: #3062D6;
