@@ -45,12 +45,19 @@ export interface MarkdownPageProps {
 
 export class MarkdownPage extends Component<MarkdownPageProps> {
   private static markdownRenderer = new MarkdownIt();
+  private botInspectorRef: HTMLInputElement;
 
   private static renderMarkdown(markdown: string) {
     try {
       return this.markdownRenderer.render(markdown);
     } catch (e) {
       return '# Error - Invalid markdown document';
+    }
+  }
+
+  public componentDidMount(): void {
+    if (this.botInspectorRef) {
+      this.botInspectorRef.focus();
     }
   }
 
@@ -78,9 +85,15 @@ export class MarkdownPage extends Component<MarkdownPageProps> {
     ) : (
       <div
         className={styles.markdownContainer}
+        ref={this.setBotInspectorRef}
+        tabIndex={0}
         dangerouslySetInnerHTML={{ __html: MarkdownPage.renderMarkdown(this.props.markdown) }}
       />
     );
     return <GenericDocument>{children}</GenericDocument>;
   }
+
+  private setBotInspectorRef = (ref: HTMLInputElement): void => {
+    this.botInspectorRef = ref;
+  };
 }
