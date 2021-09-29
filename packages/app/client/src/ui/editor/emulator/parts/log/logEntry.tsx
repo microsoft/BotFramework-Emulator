@@ -227,9 +227,9 @@ export class LogEntry extends React.Component<LogEntryProps> {
     return (
       <span key={key} onMouseOver={() => this.highlight(obj)} onMouseLeave={() => this.highlight({})}>
         <span className={`inspectable-item ${styles.spaced} ${styles.level0}`}>
-          <button className={styles.link} onClick={() => this.inspectAndHighlightInWebchat(obj)}>
+          <span role="button" className={styles.link} onClick={() => this.inspectAndHighlightInWebchat(obj)}>
             {title}
-          </button>
+          </span>
         </span>
         <span className={`${styles.spaced} ${styles.level0}`}>{summaryText}</span>
       </span>
@@ -250,9 +250,9 @@ export class LogEntry extends React.Component<LogEntryProps> {
     if (obj) {
       return (
         <span key={key} className={`network-req-item ${styles.spaced} ${styles.level0}`}>
-          <button className={styles.link} onClick={() => this.inspect(obj)}>
+          <span role="button" className={styles.link} onClick={() => this.inspect(obj)}>
             {method}
-          </button>
+          </span>
         </span>
       );
     } else {
@@ -292,9 +292,9 @@ export class LogEntry extends React.Component<LogEntryProps> {
     if (obj) {
       return (
         <span key={key} className={`network-res-item ${styles.spaced} ${styles.level0}`}>
-          <button className={styles.link} onClick={() => this.inspect(obj)}>
+          <span role="button" className={styles.link} onClick={() => this.inspect(obj)}>
             {statusCode}
-          </button>
+          </span>
         </span>
       );
     } else {
