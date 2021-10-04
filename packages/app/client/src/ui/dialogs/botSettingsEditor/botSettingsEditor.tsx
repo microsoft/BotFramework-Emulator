@@ -134,6 +134,7 @@ export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, B
             id="key-input"
             type={revealSecret ? 'text' : 'password'}
           />
+          &nbsp;
           <ul className={styles.actionsList}>
             <li>
               <LinkButton className={styles.dialogLink} disabled={!encryptKey} onClick={this.onRevealSecretClick}>

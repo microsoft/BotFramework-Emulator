@@ -195,6 +195,7 @@ export class BotCreationDialog extends React.Component<BotCreationDialogProps, B
               id="key-input"
               type={revealSecret ? 'text' : 'password'}
             />
+            &nbsp;
             <ul className={dialogStyles.actionsList}>
               <li>
                 <LinkButton
