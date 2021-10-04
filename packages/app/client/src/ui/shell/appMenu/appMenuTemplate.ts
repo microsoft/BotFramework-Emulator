@@ -151,14 +151,13 @@ export class AppMenuTemplate {
         label: 'Zoom In',
         onClick: () => {
           const webContents = remote.getCurrentWebContents();
-          webContents.getZoomFactor(zoomFactor => {
-            const newZoomFactor = zoomFactor + 0.1;
-            if (newZoomFactor >= maxZoomFactor) {
-              webContents.setZoomFactor(maxZoomFactor);
-            } else {
-              webContents.setZoomFactor(newZoomFactor);
-            }
-          });
+          const zoomFactor = webContents.getZoomFactor();
+          const newZoomFactor = zoomFactor + 0.1;
+          if (newZoomFactor >= maxZoomFactor) {
+            webContents.setZoomFactor(maxZoomFactor);
+          } else {
+            webContents.setZoomFactor(newZoomFactor);
+          }
         },
         subtext: `${CtrlOrCmd}+=`,
       },
@@ -166,14 +165,13 @@ export class AppMenuTemplate {
         label: 'Zoom Out',
         onClick: () => {
           const webContents = remote.getCurrentWebContents();
-          webContents.getZoomFactor(zoomFactor => {
-            const newZoomFactor = zoomFactor - 0.1;
-            if (newZoomFactor <= minZoomFactor) {
-              webContents.setZoomFactor(minZoomFactor);
-            } else {
-              webContents.setZoomFactor(newZoomFactor);
-            }
-          });
+          const zoomFactor = webContents.getZoomFactor();
+          const newZoomFactor = zoomFactor - 0.1;
+          if (newZoomFactor <= minZoomFactor) {
+            webContents.setZoomFactor(minZoomFactor);
+          } else {
+            webContents.setZoomFactor(newZoomFactor);
+          }
         },
         subtext: `${CtrlOrCmd}+-`,
       },

@@ -91,26 +91,24 @@ class EventHandlers {
     // Ctrl+= or Ctrl+Shift+=
     if (ctrlOrCmdPressed && (key === '=' || key === '+')) {
       const webContents = remote.getCurrentWebContents();
-      webContents.getZoomFactor(zoomFactor => {
-        const newZoomFactor = zoomFactor + 0.1;
-        if (newZoomFactor >= maxZoomFactor) {
-          webContents.setZoomFactor(maxZoomFactor);
-        } else {
-          webContents.setZoomFactor(newZoomFactor);
-        }
-      });
+      const zoomFactor = webContents.getZoomFactor();
+      const newZoomFactor = zoomFactor + 0.1;
+      if (newZoomFactor >= maxZoomFactor) {
+        webContents.setZoomFactor(maxZoomFactor);
+      } else {
+        webContents.setZoomFactor(newZoomFactor);
+      }
     }
     // Ctrl+- or Ctrl+Shift+-
     if (ctrlOrCmdPressed && (key === '-' || key === '_')) {
       const webContents = remote.getCurrentWebContents();
-      webContents.getZoomFactor(zoomFactor => {
-        const newZoomFactor = zoomFactor - 0.1;
-        if (newZoomFactor <= minZoomFactor) {
-          webContents.setZoomFactor(minZoomFactor);
-        } else {
-          webContents.setZoomFactor(newZoomFactor);
-        }
-      });
+      const zoomFactor = webContents.getZoomFactor();
+      const newZoomFactor = zoomFactor - 0.1;
+      if (newZoomFactor <= minZoomFactor) {
+        webContents.setZoomFactor(minZoomFactor);
+      } else {
+        webContents.setZoomFactor(newZoomFactor);
+      }
     }
     // F11
     if (key === 'f11') {
