@@ -43,6 +43,7 @@ import * as styles from './welcomePage.scss';
 
 export interface WelcomePageProps {
   accessToken?: string;
+
   onNewBotClick?: () => void;
   showOpenBotDialog: () => void;
   sendNotification?: (error: Error) => void;
@@ -68,8 +69,8 @@ export class WelcomePage extends React.Component<WelcomePageProps, Record<string
 
     return (
       <GenericDocument>
-        <Row>
-          <Column className={styles.spacing}>
+        <Row className={styles.flexRow}>
+          <Column className={[styles.flexColumn, styles.spacing].join(' ')}>
             {headerSection}
             {startSection}
             <React.Fragment>
@@ -77,7 +78,7 @@ export class WelcomePage extends React.Component<WelcomePageProps, Record<string
               {signInSection}
             </React.Fragment>
           </Column>
-          <Column className={styles.rightColumn}>
+          <Column className={[styles.flexColumn, styles.rightColumn].join(' ')}>
             <HowToBuildABotContainer />
           </Column>
         </Row>
