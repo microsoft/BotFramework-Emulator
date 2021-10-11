@@ -82,7 +82,6 @@ export class AutoComplete extends Component<AutoCompleteProps, AutoCompleteState
       <div
         className={`${styles.autoCompleteContainer} ${invalidClassName} ${className}`}
         id={this.textboxId}
-        role="combobox"
         aria-expanded={this.state.showResults}
         aria-haspopup="listbox"
         aria-owns={this.listboxId}
