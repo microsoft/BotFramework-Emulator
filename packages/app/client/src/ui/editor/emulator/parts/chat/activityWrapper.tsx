@@ -88,6 +88,7 @@ export class ActivityWrapper extends Component<ActivityWrapperProps> {
         onKeyDown={this.onKeyDown}
         role="checkbox"
         tabIndex={0}
+        title={'activity'}
       >
         {children}
         {restartConversationBubble}

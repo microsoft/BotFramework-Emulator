@@ -52,7 +52,8 @@
                 "title":"Previous"
               },
               "disabled": {
-                "aria-disabled": true
+                "aria-disabled": true,
+                "title":"Previous"
               }
             }
           },
@@ -71,7 +72,8 @@
                 "title":"Next"
               },
               "disabled": {
-                "aria-disabled": true
+                "aria-disabled": true,
+                "title":"Next"
               }
             }
           },
@@ -90,7 +92,8 @@
                 "aria-label": "Hide diff"
               },
               "disabled": {
-                "aria-disabled": true
+                "aria-disabled": true,
+                "title":"Disabled diff"
               }
             }
           },
