@@ -161,7 +161,6 @@ export class HowToBuildABot extends React.Component<HowToBuildABotProps, Record<
                 >
                   Continuous Deployment
                 </LinkButton>
-                &nbsp;
               </p>
             </div>
           </div>
@@ -180,7 +179,6 @@ export class HowToBuildABot extends React.Component<HowToBuildABotProps, Record<
                 >
                   channels
                 </LinkButton>
-                &nbsp;
               </p>
             </div>
           </div>
