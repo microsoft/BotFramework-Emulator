@@ -65,6 +65,7 @@
     &:focus ~ label {
       outline: 1px solid var(--dialog-link-focus-color);
       background-color: var(--p-button-bg-focus);
+      outline-offset: 2px;
     
       &::after {
         border: var(--p-button-border-focus);

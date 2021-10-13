@@ -279,7 +279,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
             </fieldset>
           </Column>
         </Row>
-        <Row className={styles.buttonRow} justify={RowJustification.Right}>
+        <Row className={[styles.buttonRow, styles.spacing].join(' ')} justify={RowJustification.Right}>
           <PrimaryButton text="Cancel" onClick={this.props.discardChanges} className={styles.cancelButton} />
           <PrimaryButton
             text="Save"
