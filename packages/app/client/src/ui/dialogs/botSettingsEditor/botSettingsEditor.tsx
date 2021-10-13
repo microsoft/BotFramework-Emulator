@@ -130,7 +130,7 @@ export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, B
             label="Secret "
             placeholder="Your keys are not encrypted"
             value={secret}
-            disabled={true}
+            readOnly={true}
             id="key-input"
             type={revealSecret ? 'text' : 'password'}
           />
