@@ -205,5 +205,5 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #ccc !important;
+  background: var(--scrollbar-color) !important;
 }
