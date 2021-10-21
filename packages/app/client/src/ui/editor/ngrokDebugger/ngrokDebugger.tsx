@@ -129,7 +129,6 @@ export const NgrokDebugger = (props: NgrokDebuggerProps) => {
 
   return (
     <GenericDocument className={styles.ngrokDebuggerContainer}>
-      &nbsp;
       <h1>
         <b>Ngrok Status Viewer</b>
       </h1>
