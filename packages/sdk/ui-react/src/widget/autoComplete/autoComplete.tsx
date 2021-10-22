@@ -206,7 +206,7 @@ export class AutoComplete extends Component<AutoCompleteProps, AutoCompleteState
 
   private onFocus = () => {
     if (!this.state.showResults) {
-      this.setState({ showResults: true });
+      this.setState({ showResults: true, selectedIndex: this.state.selectedIndex ?? 0 });
     }
   };
 
