@@ -63,7 +63,13 @@ export class EditorFactory extends React.Component<EditorFactoryProps> {
         );
 
       case Constants.CONTENT_TYPE_APP_SETTINGS:
-        return <AppSettingsEditorContainer documentId={document.documentId} dirty={this.props.document.dirty} />;
+        return (
+          <AppSettingsEditorContainer
+            documentId={document.documentId}
+            dirty={this.props.document.dirty}
+            refreshHash={Date.now().toString()}
+          />
+        );
 
       case Constants.CONTENT_TYPE_WELCOME_PAGE:
         return <WelcomePageContainer documentId={document.documentId} />;
