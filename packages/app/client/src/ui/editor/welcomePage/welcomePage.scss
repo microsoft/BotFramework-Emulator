@@ -1,5 +1,5 @@
 .right-column {
-  margin-left: 48px
+  padding-left: 48px
 }
 
 .version-number {
@@ -186,4 +186,24 @@
   > span {
     line-height: 3;
   }
+}
+
+.flex-row {
+  width: 100%;
+  display: flex;
+  flex-flow: row wrap;
+}
+
+.flex-column {
+  flex: 0 1 100%;
+}
+
+@media all and (min-width: 1280px) {
+  .flex-column {
+    flex: 0 1 50%;
+  }
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-color) !important;
 }
