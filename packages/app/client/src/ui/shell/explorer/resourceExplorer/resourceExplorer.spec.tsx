@@ -42,6 +42,9 @@ import {
   openResourcesSettings,
   renameResource,
   resources,
+  CommandAction,
+  CommandActionPayload,
+  OPEN_RESOURCE_SETTINGS,
 } from '@bfemulator/app-shared';
 
 import { ResourcesSettingsContainer } from '../../../dialogs';
@@ -50,11 +53,16 @@ import { ResourceExplorerContainer } from './resourceExplorerContainer';
 import { ResourceExplorer } from './resourceExplorer';
 
 const mockStore = createStore(combineReducers({ resources }), {});
+const mockClass = class {};
+const originalDispatch = mockStore.dispatch.bind(mockStore);
 
 jest.mock('../../../dialogs', () => ({
   DialogService: {
     showDialog: () => Promise.resolve(true),
     hideDialog: () => Promise.resolve(false),
+  },
+  get ResourcesSettingsContainer() {
+    return mockClass;
   },
 }));
 
@@ -80,14 +88,24 @@ describe('The ServicesExplorer component should', () => {
       name: 'testTranscript',
     } as any);
 
+    mockDispatch = jest
+      .spyOn(mockStore, 'dispatch')
+      .mockImplementation((action: CommandAction<CommandActionPayload>) => {
+        if (action.type === OPEN_RESOURCE_SETTINGS) {
+          action.payload.resolver();
+
+          return action;
+        }
+
+        return originalDispatch(action);
+      });
+
     parent = mount(
       <Provider store={mockStore}>
         <ResourceExplorerContainer files={[mockChat, mockTranscript]} fileToRename={mockTranscript} />
       </Provider>
     );
     node = parent.find(ResourceExplorer);
-
-    mockDispatch = jest.spyOn(mockStore, 'dispatch');
   });
 
   it('should render deeply', () => {
@@ -136,11 +154,13 @@ describe('The ServicesExplorer component should', () => {
     expect(mockDispatch).toHaveBeenCalledWith(openResource(mockChat));
   });
 
-  it('should open the resource settings dialog when the "Choose a different location" link is clicked', () => {
+  it('should open the resource settings dialog when the "Choose a different location" link is clicked', async () => {
     const instance = node.instance();
-    const spy = jest.spyOn(mockStore, 'dispatch');
-    instance.onChooseLocationClick();
-    expect(spy).toHaveBeenCalledWith(openResourcesSettings({ dialog: ResourcesSettingsContainer }));
+    await instance.onChooseLocationClick();
+
+    expect(mockDispatch).toHaveBeenCalledWith(
+      openResourcesSettings(ResourcesSettingsContainer, jasmine.any(Function) as any)
+    );
   });
 
   it('should return the file to rename', () => {

@@ -133,7 +133,8 @@ export class ResourcesSagas {
   }
 
   public static *launchResourcesSettingsModal(action: ResourcesAction<{ dialog: ComponentClass<any> }>) {
-    const result: Partial<BotInfo> = yield DialogService.showDialog(action.payload.dialog);
+    const { dialog, resolver } = action.payload;
+    const result: Partial<BotInfo> = yield DialogService.showDialog(dialog);
     if (result) {
       try {
         yield ResourcesSagas.commandService.remoteCall(SharedConstants.Commands.Bot.PatchBotList, result.path, result);
@@ -142,6 +143,7 @@ export class ResourcesSagas {
         yield put(beginAdd(notification));
       }
     }
+    resolver && resolver();
   }
 }
 

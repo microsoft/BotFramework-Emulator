@@ -60,10 +60,12 @@ export interface ResourceExplorerProps extends ServicePaneProps, ResourceExplore
   renameResource: (resource: IFileService) => void;
   openResource: (resource: IFileService) => void;
   resourcesPath?: string;
-  openResourcesSettings?: (dialog: ComponentClass<any>) => void;
+  openResourcesSettings?: (dialog: ComponentClass<any>) => Promise<void>;
 }
 
 export class ResourceExplorer extends ServicePane<ResourceExplorerProps, ResourceExplorerState> {
+  private chooseLocationButtonRef: HTMLButtonElement;
+
   constructor(props: ResourceExplorerProps, context: ResourceExplorerState) {
     super(props, context);
     this.state = {
@@ -154,6 +156,7 @@ export class ResourceExplorer extends ServicePane<ResourceExplorerProps, Resourc
           ariaLabel="Choose a different location."
           className={styles.explorerLink}
           onClick={this.onChooseLocationClick}
+          buttonRef={this.setChooseLocationButtonRef}
         >
           <strong>Choose a different location.</strong>
         </LinkButton>
@@ -161,8 +164,9 @@ export class ResourceExplorer extends ServicePane<ResourceExplorerProps, Resourc
     );
   }
 
-  private onChooseLocationClick = () => {
-    this.props.openResourcesSettings(ResourcesSettingsContainer);
+  private onChooseLocationClick = async (): Promise<void> => {
+    await this.props.openResourcesSettings(ResourcesSettingsContainer);
+    this.chooseLocationButtonRef && this.chooseLocationButtonRef.focus();
   };
 
   private onInputChange = (event: ChangeEvent<HTMLInputElement>): void => {
@@ -198,4 +202,8 @@ export class ResourceExplorer extends ServicePane<ResourceExplorerProps, Resourc
     }
     return fileToRename;
   }
+
+  private setChooseLocationButtonRef = (ref: HTMLButtonElement): void => {
+    this.chooseLocationButtonRef = ref;
+  };
 }

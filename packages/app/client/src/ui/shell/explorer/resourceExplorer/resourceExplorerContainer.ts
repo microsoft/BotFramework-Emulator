@@ -53,7 +53,10 @@ const mapDispatchToProps = (dispatch: (...args: any[]) => void): ResourceExplore
   openContextMenuForService: (resource: IFileService) => dispatch(openContextMenuForResource(resource)),
   renameResource: resource => dispatch(renameResource(resource)),
   openResource: resource => dispatch(openResource(resource)),
-  openResourcesSettings: (dialog: ComponentClass<any>) => dispatch(openResourcesSettings({ dialog })),
+  openResourcesSettings: (dialog: ComponentClass<any>) =>
+    new Promise(resolve => {
+      dispatch(openResourcesSettings(dialog, resolve));
+    }),
   window,
 });
 
