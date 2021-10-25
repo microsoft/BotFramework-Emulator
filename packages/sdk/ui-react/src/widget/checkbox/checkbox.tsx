@@ -100,6 +100,7 @@ export class Checkbox extends React.Component<CheckboxProps, CheckboxState> {
         />
         <label htmlFor={id || this.checkboxId}>{label}</label>
         {this.props.children}
+        {this.announceCheckboxState}
       </div>
     );
   }
@@ -129,4 +130,13 @@ export class Checkbox extends React.Component<CheckboxProps, CheckboxState> {
         return null;
     }
   };
+
+  protected get announceCheckboxState(): React.ReactNode {
+    const { checked } = this.props;
+    return (
+      <span id="checkboxstate" aria-live={'polite'} className={styles.ariaLiveRegion}>
+        {checked ? 'Checkbox checked' : 'Checkbox unchecked'}
+      </span>
+    );
+  }
 }

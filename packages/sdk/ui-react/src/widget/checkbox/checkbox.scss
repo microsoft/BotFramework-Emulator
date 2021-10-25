@@ -73,3 +73,9 @@
     border: 2px solid var(--global-focus-outline-color);
   }
 }
+
+.aria-live-region {
+  position: absolute;
+  top: -9999px;
+  overflow: hidden;
+}
