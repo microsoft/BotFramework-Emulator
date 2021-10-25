@@ -107,11 +107,15 @@ export function openResource(payload: IFileService): ResourcesAction<IFileServic
 
 declare interface ResourceSettingsPayload {
   dialog: ReactComponentClass<any>;
+  resolver?: (...args) => any;
 }
 
-export function openResourcesSettings(payload: ResourceSettingsPayload): ResourcesAction<ResourceSettingsPayload> {
+export function openResourcesSettings(
+  dialog: ReactComponentClass<any>,
+  resolver?: (...args) => any
+): ResourcesAction<ResourceSettingsPayload> {
   return {
     type: OPEN_RESOURCE_SETTINGS,
-    payload,
+    payload: { dialog, resolver },
   };
 }
