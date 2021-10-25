@@ -82,7 +82,6 @@ export class AutoComplete extends Component<AutoCompleteProps, AutoCompleteState
       <div
         className={`${styles.autoCompleteContainer} ${invalidClassName} ${className}`}
         id={this.textboxId}
-        role="combobox"
         aria-expanded={this.state.showResults}
         aria-haspopup="listbox"
         aria-owns={this.listboxId}
@@ -207,7 +206,7 @@ export class AutoComplete extends Component<AutoCompleteProps, AutoCompleteState
 
   private onFocus = () => {
     if (!this.state.showResults) {
-      this.setState({ showResults: true });
+      this.setState({ showResults: true, selectedIndex: this.state.selectedIndex ?? 0 });
     }
   };
 
