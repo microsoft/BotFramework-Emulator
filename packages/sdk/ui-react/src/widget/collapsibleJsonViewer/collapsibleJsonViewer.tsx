@@ -115,6 +115,7 @@ export class CollapsibleJsonViewer extends Component<CollapsibleJsonViewerProps,
     return (
       <div ref={this.jsonTreeContainerRef} className={styles.collapsibleJsonViewer}>
         <JSONTree data={data} theme={themeNameToViewerThemeName[themeName]} invertTheme={false} {...jsonTreeProps} />
+        <div id="ariaRegion" role="region" aria-live="polite" className={styles.ariaRegion} />
       </div>
     );
   }
@@ -186,6 +187,12 @@ export class CollapsibleJsonViewer extends Component<CollapsibleJsonViewerProps,
     const proposedAriaExpandedValue = !(ul.getAttribute('aria-expanded') === 'true');
     ul.setAttribute('aria-expanded', proposedAriaExpandedValue.toString());
     target.setAttribute('aria-expanded', proposedAriaExpandedValue.toString());
+    // Announce the expanded/collapsed state
+    const ariaRegion = document.getElementById('ariaRegion');
+    const newState = proposedAriaExpandedValue ? 'Node expanded' : 'Node collapsed';
+    // Concatenate the '.' in case it's not present in the textContent property
+    // to announce that the node was expanded or collapsed
+    ariaRegion.textContent = ariaRegion.textContent.indexOf('.') > -1 ? newState : newState.concat('.');
   };
 
   private focusNext(event: KeyboardEvent): void {
