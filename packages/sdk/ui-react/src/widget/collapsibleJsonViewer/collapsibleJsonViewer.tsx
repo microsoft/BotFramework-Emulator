@@ -190,6 +190,8 @@ export class CollapsibleJsonViewer extends Component<CollapsibleJsonViewerProps,
     // Announce the expanded/collapsed state
     const ariaRegion = document.getElementById('ariaRegion');
     const newState = proposedAriaExpandedValue ? 'Node expanded' : 'Node collapsed';
+    // Concatenate the '.' in case it's not present in the textContent property
+    // to announce that the node was expanded or collapsed
     ariaRegion.textContent = ariaRegion.textContent.indexOf('.') > -1 ? newState : newState.concat('.');
   };
 
