@@ -42,7 +42,7 @@ export class MDIComponent extends React.Component<MDIProps> {
   public render(): React.ReactNode {
     const { presentationModeEnabled, owningEditor = '' } = this.props;
     return (
-      <div aria-label={`${owningEditor} editor`} className={styles.mdi} role="region">
+      <div aria-label={`${owningEditor} editor`} className={styles.mdi}>
         {!presentationModeEnabled && <TabBarContainer owningEditor={owningEditor} />}
         <DocumentsContainer owningEditor={owningEditor} />
       </div>
