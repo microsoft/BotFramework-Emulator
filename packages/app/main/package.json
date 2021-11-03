@@ -151,6 +151,7 @@
     "moment": "^2.22.1",
     "node-fetch": "^2.3.0",
     "node-uuid": "^1.4.8",
+    "npmlog": "^5.0.1",
     "read-text-file": "^1.1.0",
     "redux": "^3.7.2",
     "redux-saga": "^0.16.0",
