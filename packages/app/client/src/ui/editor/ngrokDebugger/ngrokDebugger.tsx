@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Column, Row, LinkButton, SmallHeader } from '@bfemulator/ui-react';
 import { TunnelCheckTimeInterval, TunnelError, TunnelStatus } from '@bfemulator/app-shared';
 
@@ -127,6 +127,17 @@ export const NgrokDebugger = (props: NgrokDebuggerProps) => {
     </section>
   );
 
+  let pingTunnelInputRef: HTMLButtonElement;
+  const setPingTunnelInputRef = (ref: HTMLButtonElement): void => {
+    pingTunnelInputRef = ref;
+  };
+
+  useEffect(() => {
+    if (pingTunnelInputRef) {
+      pingTunnelInputRef.focus();
+    }
+  });
+
   return (
     <GenericDocument className={styles.ngrokDebuggerContainer}>
       <h1>
@@ -147,7 +158,7 @@ export const NgrokDebugger = (props: NgrokDebuggerProps) => {
                 </span>
               </div>
               <div>
-                <LinkButton linkRole={true} onClick={props.onPingTunnelClick}>
+                <LinkButton linkRole={true} onClick={props.onPingTunnelClick} buttonRef={setPingTunnelInputRef}>
                   Click here
                 </LinkButton>
                 &nbsp;to ping the tunnel now
