@@ -134,7 +134,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
       <GenericDocument className={styles.appSettingsEditor}>
         <Row>
           <Column className={styles.spacing}>
-            <fieldset>
+            <div>
               <legend>Service</legend>
               <p>
                 <LinkButton linkRole={true} onClick={this.onNgrokDocsClick}>
@@ -208,10 +208,10 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
                   Click here to go to the Ngrok Status viewer
                 </LinkButton>
               </div>
-            </fieldset>
+            </div>
           </Column>
           <Column className={[styles.rightColumn, styles.spacing].join(' ')}>
-            <fieldset>
+            <div>
               <legend>User settings</legend>
               <Checkbox
                 className={styles.checkboxOverrides}
@@ -253,9 +253,9 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
                   errorMessage={useCustomId && !userGUID ? 'Enter a User ID' : ''}
                 />
               </Row>
-            </fieldset>
+            </div>
 
-            <fieldset>
+            <div>
               <legend>Application Updates</legend>
               <Checkbox
                 className={styles.checkboxOverrides}
@@ -271,8 +271,8 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
                 label="Use pre-release versions"
                 name="usePrereleases"
               />
-            </fieldset>
-            <fieldset>
+            </div>
+            <div>
               <legend>Data Collection</legend>
               <Checkbox
                 className={styles.checkboxOverrides}
@@ -284,7 +284,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
               <LinkButton linkRole={true} onClick={this.onPrivacyStatementClick}>
                 Privacy statement
               </LinkButton>
-            </fieldset>
+            </div>
           </Column>
         </Row>
         <Row className={[styles.buttonRow, styles.spacing].join(' ')} justify={RowJustification.Right}>
