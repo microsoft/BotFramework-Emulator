@@ -61,6 +61,7 @@ export function createReplyToActivityHandler(emulatorServer: EmulatorRestServer)
         WebSocketServer.sendToSubscribers(conversation.conversationId, activity);
         res.send(HttpStatus.OK, { id: activity.id });
         res.end();
+        next();
       };
 
       const visitor = new OAuthLinkEncoder(
@@ -85,7 +86,5 @@ export function createReplyToActivityHandler(emulatorServer: EmulatorRestServer)
     } catch (err) {
       sendErrorResponse(req, res, next, err);
     }
-
-    next();
   };
 }
