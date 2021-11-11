@@ -23,3 +23,5 @@ export const stepContent: string;
 export const spacing: string;
 export const marginFix: string;
 export const botInspectorHeaderContainer: string;
+export const flexRow: string;
+export const flexColumn: string;

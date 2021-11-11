@@ -194,8 +194,8 @@ export class ElectronCommands {
   // ---------------------------------------------------------------------------
   // Moves an item to the trash
   @Command(Commands.UnlinkFile)
-  protected unlinkFile(filePath: string): boolean {
-    return shell.moveItemToTrash(path.resolve(filePath));
+  protected async unlinkFile(filePath: string): Promise<void> {
+    return shell.trashItem(path.resolve(filePath));
   }
 
   // ---------------------------------------------------------------------------

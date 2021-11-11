@@ -122,6 +122,6 @@ describe('resources actions', () => {
     const action = openResourcesSettings(payload);
 
     expect(action.type).toBe(OPEN_RESOURCE_SETTINGS);
-    expect(action.payload).toEqual(payload);
+    expect(action.payload).toEqual({ dialog: payload, resolver: undefined });
   });
 });

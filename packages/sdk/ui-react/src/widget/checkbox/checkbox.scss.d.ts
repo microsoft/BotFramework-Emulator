@@ -6,3 +6,4 @@ export const checkMark: string;
 export const checked: string;
 export const indeterminate: string;
 export const focused: string;
+export const ariaLiveRegion: string;

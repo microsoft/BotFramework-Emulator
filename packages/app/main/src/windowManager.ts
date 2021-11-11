@@ -91,13 +91,13 @@ export class WindowManager {
       height: 600,
       title: 'Sign In',
       webPreferences: {
+        contextIsolation: false,
         nodeIntegration: false,
       },
     });
     this.add(win);
     const webContents = win.webContents;
 
-    // webContents.openDevTools();
     webContents.setZoomLevel(getSettings().windowState.zoomLevel);
 
     win.on('closed', () => {
