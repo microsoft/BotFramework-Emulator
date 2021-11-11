@@ -85,7 +85,5 @@ export function createReplyToActivityHandler(emulatorServer: EmulatorRestServer)
     } catch (err) {
       sendErrorResponse(req, res, next, err);
     }
-
-    next();
   };
 }

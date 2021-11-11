@@ -105,7 +105,6 @@ describe('replyToActivity route middleware', () => {
     });
     expect(mockRes.send).toHaveBeenCalledWith(OK, { id: 'someActivityId' });
     expect(mockRes.end).toHaveBeenCalled();
-    expect(mockNext).toHaveBeenCalled();
   });
 
   it('should resolve any OAuth cards, post the activity (with a null id) to the user, and send an OK response', async () => {
@@ -123,7 +122,6 @@ describe('replyToActivity route middleware', () => {
     });
     expect(mockRes.send).toHaveBeenCalledWith(OK, { id: null });
     expect(mockRes.end).toHaveBeenCalled();
-    expect(mockNext).toHaveBeenCalled();
 
     mockReq.body.id = 'someActivityId';
   });
@@ -147,6 +145,5 @@ describe('replyToActivity route middleware', () => {
     });
     expect(mockRes.send).toHaveBeenCalledWith(OK, { id: 'someActivityId' });
     expect(mockRes.end).toHaveBeenCalled();
-    expect(mockNext).toHaveBeenCalled();
   });
 });
