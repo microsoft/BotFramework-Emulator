@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ## Added
 - [main] Bumped `electron` to v13.6.1 in PR [2318](https://github.com/microsoft/BotFramework-Emulator/pull/2318)
+- [client] Set `contextIsolation` to `false` in Inspector `<webview>` elements in PR [2321](https://github.com/microsoft/BotFramework-Emulator/pull/2321)
 
 ## v4.14.0 - 2021 - 7 - 15
 ## Added
