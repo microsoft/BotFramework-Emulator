@@ -11,10 +11,10 @@
     "rebuild:keytar:electron": "electron-rebuild",
     "build:electron": "babel ./src --out-dir app/server --extensions \".ts,.tsx\" --ignore \"**/*.spec.ts\" && npm run copy:extension:stubs",
     "copy:extension:stubs": "ncp src/extensions app/extensions",
-    "dist": "electron-builder",
+    "dist": "electron-builder --config scripts/config/getElectronBuilderConfig.js",
     "lint": "eslint --color --quiet --ext .js,.jsx,.ts,.tsx ./src",
     "lint:fix": "npm run lint -- --fix",
-    "pack": "electron-builder --dir",
+    "pack": "electron-builder --config scripts/config/getElectronBuilderConfig.js --dir",
     "start": "concurrently --kill-others --names \"electron,react-app\" --success first \"npm run start:electron:dev\" \"npm run start:react-app\"",
     "start:electron": "./node_modules/.bin/electron --inspect=7777 --remote-debugging-port=7778 .",
     "start:electron:dev": "cross-env ELECTRON_TARGET_URL=http://localhost:3000/ npm run start:electron",
@@ -165,130 +165,5 @@
     "tslib": "^1.9.0",
     "ws": "^5.0.0",
     "xmldom": "^0.1.27"
-  },
-  "build": {
-    "asar": true,
-    "appId": "F3C061A6-FE81-4548-82ED-C1171D9856BB",
-    "productName": "Bot Framework Emulator",
-    "copyright": "Copyright © 2018 Microsoft Corporation",
-    "electronDist": "customElectron",
-    "protocols": [
-      {
-        "name": "Bot Framework Emulator",
-        "role": "Viewer",
-        "schemes": [
-          "bfemulator"
-        ]
-      }
-    ],
-    "fileAssociations": [
-      {
-        "name": "Bot",
-        "ext": "bot"
-      },
-      {
-        "name": "Transcript",
-        "ext": "transcript"
-      }
-    ],
-    "asarUnpack": [
-      "app/extensions/**",
-      "node_modules/@bfemulator/extension-*/**"
-    ],
-    "directories": {
-      "buildResources": "./scripts/config/resources"
-    },
-    "files": [
-      "**/*",
-      "!**/node_modules/*/{README.md,README,readme.md,readme,test}",
-      "!**/node_modules/.bin",
-      "!**/*.{o,hprof,orig,pyc,pyo,rbc}",
-      "!**/._*",
-      "!**/{.DS_Store,.git,.hg,.svn,CVS,RCS,SCCS,__pycache__,thumbs.db,.gitignore,.gitattributes,.editorconfig,.idea,appveyor.yml,.travis.yml,circle.yml,.babelrc,.eslintignore,.eslintrc.js,.prettierrc,.eslintrc.react.js,.node-version}",
-      "!.vscode${/*}",
-      "!doc${/*}",
-      "!**/{tsconfig.json,README.md,getlicenses.cmd}",
-      "!**/node_modules/@types",
-      "!./scripts",
-      "!**/cache",
-      "!./installer"
-    ],
-    "win": {
-      "artifactName": "BotFramework-Emulator-${version}-windows-setup.${ext}",
-      "icon": "./scripts/config/resources/icon.ico",
-      "target": [
-        {
-          "target": "nsis",
-          "arch": [
-            "ia32"
-          ]
-        }
-      ]
-    },
-    "nsis": {
-      "include": "./scripts/config/resources/nsis/installer.nsh",
-      "perMachine": false,
-      "allowElevation": true,
-      "allowToChangeInstallationDirectory": true,
-      "packElevateHelper": true,
-      "unicode": true,
-      "runAfterFinish": true,
-      "installerHeader": "./scripts/config/resources/nsis/installerHeader.bmp",
-      "installerIcon": "./scripts/config/resources/icon.ico",
-      "installerSidebar": "./scripts/config/resources/nsis/installerSidebar.bmp",
-      "uninstallerIcon": "./scripts/config/resources/icon.ico",
-      "uninstallerSidebar": "./scripts/config/resources/nsis/installerSidebar.bmp",
-      "createDesktopShortcut": true,
-      "createStartMenuShortcut": true,
-      "shortcutName": "Bot Framework Emulator (V4)",
-      "oneClick": false
-    },
-    "mac": {
-      "artifactName": "BotFramework-Emulator-${version}-mac.${ext}",
-      "category": "public.app-category.developer-tools",
-      "target": [
-        {
-          "target": "dmg",
-          "arch": [
-            "x64"
-          ]
-        }
-      ],
-      "extendInfo": {
-        "NSMicrophoneUsageDescription": "This app requires microphone access to record audio."
-      },
-      "entitlements": "./scripts/config/resources/entitlements.plist"
-    },
-    "dmg": {
-      "background": "./scripts/config/resources/background.tiff",
-      "icon": "./scripts/config/resources/emulator_dmg.icns",
-      "title": "Bot Framework Emulator Installer",
-      "contents": [
-        {
-          "x": 140,
-          "y": 244
-        },
-        {
-          "x": 380,
-          "y": 244,
-          "type": "link",
-          "path": "/Applications"
-        }
-      ]
-    },
-    "linux": {
-      "artifactName": "BotFramework-Emulator-${version}-${platform}-${arch}.${ext}",
-      "category": "Development",
-      "target": [
-        {
-          "target": "AppImage",
-          "arch": [
-            "x64"
-          ]
-        }
-      ]
-    },
-    "publish": null,
-    "remoteBuild": false
   }
 }
