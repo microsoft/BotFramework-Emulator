@@ -9,8 +9,8 @@ async function downloadAndExtract() {
   // download the custom build of Electron
   const zipPath = await download(electronVersion, {
     mirrorOptions: {
-      mirror: process.env.MSFT_ELECTRON_DIR,
-      customDir: process.env.MSFT_ELECTRON_MIRROR,
+      mirror: process.env.MSFT_ELECTRON_MIRROR,
+      customDir: process.env.MSFT_ELECTRON_DIR,
     },
   });
   console.log(`Electron successfully downloaded to ${zipPath}`);
