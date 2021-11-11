@@ -358,6 +358,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     webView.setAttribute('partition', `persist:${state.botHash}`);
     webView.setAttribute('preload', state.inspector.preloadPath);
     webView.setAttribute('src', encodeURI(state.inspector.src));
+    webView.setAttribute('webPreferences', `contextIsolation=no`);
     return webView;
   }
 
