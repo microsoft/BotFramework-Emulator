@@ -169,9 +169,7 @@
     "appId": "F3C061A6-FE81-4548-82ED-C1171D9856BB",
     "productName": "Bot Framework Emulator",
     "copyright": "Copyright © 2018 Microsoft Corporation",
-    "electronDownload": {
-      "version": "13.6.1"
-    },
+    "electronDist": "customElectron",
     "protocols": [
       {
         "name": "Bot Framework Emulator",
