@@ -6,9 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-## v4.14.1 - 2021 - 11 - 11
+## v4.14.1 - 2021 - 11 - 12
 ## Added
-- [main] Bumped `electron` to v13.6.1 in PR [2318](https://github.com/microsoft/BotFramework-Emulator/pull/2318)
+- [main] Bumped `electron` to v13.6.1 in PR [2318](https://github.com/microsoft/BotFramework-Emulator/pull/2318) (fixes electron bug caused by [Let's Encrypt root certificate expiration](https://github.com/electron/electron/issues/31212))
 
 ## Fixed
 - [main] Fixed early restify route termination in `replyToActivity` handler in PR [2320](https://github.com/microsoft/BotFramework-Emulator/pull/2320)
