@@ -50,7 +50,7 @@ export class RecentBotsList extends Component<RecentBotsListProps, Record<string
     return (
       <div className={styles.section}>
         <SmallHeader className={styles.marginFix}>My Bots</SmallHeader>
-        <ul className={`${styles.recentBotsList} ${styles.well}`}>
+        <ul className={`${styles.recentBotsList} ${styles.well}`} role="region">
           {this.props.recentBots && this.props.recentBots.length ? (
             this.props.recentBots.slice(0, 10).map(
               (bot, index) =>
