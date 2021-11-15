@@ -72,7 +72,7 @@ export interface EmulatorProps {
   documentId?: string;
   enablePresentationMode?: (enabled: boolean) => void;
   endpointId?: string;
-  exportItems?: (types: ValueTypesMask, conversationId: string) => Promise<void>;
+  exportItems?: (types: ValueTypesMask, conversationId: string) => Promise<boolean>;
   framework?: FrameworkSettings;
   mode?: EmulatorMode;
   presentationModeEnabled?: boolean;
@@ -89,6 +89,7 @@ export interface EmulatorProps {
   onStopRestartConversationClick: (documentId: string) => void;
   currentRestartConversationOption: RestartConversationOptions;
   onSetRestartConversationOptionClick: (documentId: string, option: RestartConversationOptions) => void;
+  showMessage?: (title: string, message: string) => void;
 }
 
 export class Emulator extends React.Component<EmulatorProps, Record<string, unknown>> {
@@ -288,7 +289,10 @@ export class Emulator extends React.Component<EmulatorProps, Record<string, unkn
 
   private onExportTranscriptClick = async (): Promise<void> => {
     try {
-      await this.props.exportItems(ValueTypesMask.Activity, this.props.conversationId);
+      const result = await this.props.exportItems(ValueTypesMask.Activity, this.props.conversationId);
+      if (result) {
+        this.props.showMessage('Save conversation transcript', 'Transcript saved successfully.');
+      }
     } catch (e) {
       const notification = newNotification(e.message);
       this.props.createErrorNotification(notification);
