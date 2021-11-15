@@ -196,7 +196,7 @@ export class BotCreationDialog extends React.Component<BotCreationDialogProps, B
               type={revealSecret ? 'text' : 'password'}
             />
             &nbsp;
-            <ul className={dialogStyles.actionsList}>
+            <ul className={dialogStyles.actionsList} role="region">
               <li>
                 <LinkButton
                   ariaLabel={revealSecret ? 'Hide secret' : 'Show secret'}
