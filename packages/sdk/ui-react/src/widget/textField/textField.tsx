@@ -61,6 +61,7 @@ export class TextField extends Component<TextFieldProps, Record<string, unknown>
       errorMessage,
       children,
       inputRef,
+      required,
       ...inputProps
     } = this.props;
     let inputClassName = `${styles.input} ${className} `;
@@ -72,6 +73,7 @@ export class TextField extends Component<TextFieldProps, Record<string, unknown>
         {this.labelNode}
         <input
           aria-label={errorMessage ? this.props.label + ', ' + errorMessage : undefined}
+          aria-required={required}
           className={inputClassName}
           id={this.inputId}
           ref={this.setInputRef}
