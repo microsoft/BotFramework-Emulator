@@ -382,13 +382,6 @@ describe('<EmulatorContainer/>', () => {
     expect(mockDispatch).toHaveBeenCalledWith(restartConversation('doc1', true, false));
   });
 
-  it('should set a restart button ref', () => {
-    const mockButtonRef: any = {};
-    instance.setRestartButtonRef(mockButtonRef);
-
-    expect(instance.restartButtonRef).toBe(mockButtonRef);
-  });
-
   it('should show "Stop Replaying Conversation" when in Replay mode', () => {
     let emulatorProps = {
       documentId: 'doc1',
