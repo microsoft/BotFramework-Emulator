@@ -123,6 +123,30 @@
   box-sizing: border-box;
 }
 
+button[class^="webchat--css"] {
+  &:focus {
+    outline: 1px solid var(--dialog-link-focus-color) !important;
+    margin: 2px;
+    outline-offset: 1px !important;
+
+    &::after {
+      border: var(--p-button-border-focus) !important;
+    }
+  }
+}
+
+input[class^="webchat__send"] {
+  &:focus {
+    outline: 1px solid var(--dialog-link-focus-color) !important;
+    margin: 2px;
+    outline-offset: 1px !important;
+
+    &::after {
+      border: var(--p-button-border-focus) !important;
+    }
+  }
+}
+
 button.bot-state-object {
   cursor: pointer;
   margin: 5px 16px;
