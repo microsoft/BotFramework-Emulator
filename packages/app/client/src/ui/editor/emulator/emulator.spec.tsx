@@ -314,7 +314,13 @@ describe('<EmulatorContainer/>', () => {
     await instance.onExportTranscriptClick();
 
     expect(mockDispatch).toHaveBeenCalledWith(
-      executeCommand(true, SharedConstants.Commands.Emulator.SaveTranscriptToFile, null, 32, 'convo1')
+      executeCommand(
+        true,
+        SharedConstants.Commands.Emulator.SaveTranscriptToFile,
+        jasmine.any(Function) as any,
+        32,
+        'convo1'
+      )
     );
   });
 
