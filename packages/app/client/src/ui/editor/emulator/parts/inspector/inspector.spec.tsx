@@ -518,11 +518,11 @@ describe('The Inspector component', () => {
 
       it('"create-aria-alert"', () => {
         event.channel = 'create-aria-alert';
-        event.args = ['I am an alert!'];
+        event.args = ['Activity JSON copied to clipboard.'];
         const spy = jest.spyOn(ariaAlertService, 'alert').mockReturnValueOnce(undefined);
         instance.ipcMessageEventHandler(event);
 
-        expect(spy).toHaveBeenCalledWith('I am an alert!');
+        expect(spy).toHaveBeenCalledWith('Activity JSON copied to clipboard.');
       });
 
       it('"enable-accessory"', () => {
