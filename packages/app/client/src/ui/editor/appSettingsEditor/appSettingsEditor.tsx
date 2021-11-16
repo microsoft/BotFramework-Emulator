@@ -134,8 +134,8 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
       <GenericDocument className={styles.appSettingsEditor}>
         <Row>
           <Column className={styles.spacing}>
-            <fieldset>
-              <legend>Service</legend>
+            <div>
+              <span className={styles.legend}>Service</span>
               <p>
                 <LinkButton linkRole={true} onClick={this.onNgrokDocsClick}>
                   ngrok
@@ -208,11 +208,11 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
                   Click here to go to the Ngrok Status viewer
                 </LinkButton>
               </div>
-            </fieldset>
+            </div>
           </Column>
           <Column className={[styles.rightColumn, styles.spacing].join(' ')}>
-            <fieldset>
-              <legend>User settings</legend>
+            <div>
+              <span className={styles.legend}>User settings</span>
               <Checkbox
                 className={styles.checkboxOverrides}
                 checked={use10Tokens}
@@ -253,10 +253,10 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
                   errorMessage={useCustomId && !userGUID ? 'Enter a User ID' : ''}
                 />
               </Row>
-            </fieldset>
+            </div>
 
-            <fieldset>
-              <legend>Application Updates</legend>
+            <div>
+              <span className={styles.legend}>Application Updates</span>
               <Checkbox
                 className={styles.checkboxOverrides}
                 checked={autoUpdate}
@@ -271,9 +271,9 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
                 label="Use pre-release versions"
                 name="usePrereleases"
               />
-            </fieldset>
-            <fieldset>
-              <legend>Data Collection</legend>
+            </div>
+            <div>
+              <span className={styles.legend}>Data Collection</span>
               <Checkbox
                 className={styles.checkboxOverrides}
                 checked={collectUsageData}
@@ -284,7 +284,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
               <LinkButton linkRole={true} onClick={this.onPrivacyStatementClick}>
                 Privacy statement
               </LinkButton>
-            </fieldset>
+            </div>
           </Column>
         </Row>
         <Row className={[styles.buttonRow, styles.spacing].join(' ')} justify={RowJustification.Right}>

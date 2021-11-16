@@ -24,19 +24,13 @@
     }
   }
 
-  fieldset {
-    position: relative;
-    margin: 0;
-    padding: 0;
-    border: none;
-  }
-
-  legend {
+  .legend {
     font-family: var(--default-font-family);
     font-size: 19px;
     font-weight: 200;
     margin: 0 4px 16px 4px;
     padding: 0;
+    display: block;
   }
 }
 
