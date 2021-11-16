@@ -67,7 +67,7 @@ export class SplitButton extends React.Component<SplitButtonProps, SplitButtonSt
   }
 
   componentDidMount() {
-    this.onClickOption(0);
+    this.onClickOption(0, false);
   }
 
   public render(): JSX.Element {
@@ -158,18 +158,20 @@ export class SplitButton extends React.Component<SplitButtonProps, SplitButtonSt
     }
   };
 
-  private onClickOption = (index: number): void => {
+  private onClickOption = (index: number, focus = true): void => {
     const { onClick, options = [] } = this.props;
     if (onClick && options.length > 0) {
       const newValue = options[index] || null;
       this.setState({ selected: index });
       onClick(newValue);
     }
-    this.hidePanel();
+    this.hidePanel(focus);
   };
 
-  private hidePanel = (): void => {
-    this.caretRef.focus();
+  private hidePanel = (focus = true): void => {
+    if (focus) {
+      this.caretRef.focus();
+    }
     this.setState({ expanded: false });
   };
 

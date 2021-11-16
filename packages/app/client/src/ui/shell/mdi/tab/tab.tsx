@@ -57,6 +57,7 @@ export interface TabState {
 }
 
 export class Tab extends React.Component<TabProps, TabState> {
+  private tabRef: HTMLButtonElement;
   constructor(props: TabProps) {
     super(props);
 
@@ -64,6 +65,12 @@ export class Tab extends React.Component<TabProps, TabState> {
       draggedOver: false,
       owningEditor: getTabGroupForDocument(props.documentId),
     };
+  }
+
+  componentDidMount() {
+    if (this.tabRef) {
+      this.tabRef.focus();
+    }
   }
 
   public render() {
@@ -89,7 +96,14 @@ export class Tab extends React.Component<TabProps, TabState> {
         <TruncateText className={styles.truncatedTabText}>{label}</TruncateText>
         {this.props.dirty ? <span role="presentation">*</span> : null}
         <div className={styles.tabSeparator} role="presentation" />
-        <div className={styles.tabFocusTarget} role="tab" tabIndex={0} aria-label={`${label}`} aria-selected={active}>
+        <div
+          className={styles.tabFocusTarget}
+          role="tab"
+          tabIndex={0}
+          aria-label={`${label}`}
+          aria-selected={active}
+          ref={this.setTabRef}
+        >
           &nbsp;
         </div>
         <button
@@ -171,4 +185,8 @@ export class Tab extends React.Component<TabProps, TabState> {
         return styles.livechat;
     }
   }
+
+  private setTabRef = (ref: HTMLButtonElement): void => {
+    this.tabRef = ref;
+  };
 }

@@ -92,8 +92,6 @@ export interface EmulatorProps {
 }
 
 export class Emulator extends React.Component<EmulatorProps, Record<string, unknown>> {
-  private restartButtonRef: HTMLButtonElement;
-
   private readonly onVerticalSizeChange = debounce((sizes: SplitterSize[]) => {
     this.props.ui = {
       ...this.props.ui,
@@ -107,12 +105,6 @@ export class Emulator extends React.Component<EmulatorProps, Record<string, unkn
       horizontalSplitter: sizes,
     };
   }, 500);
-
-  componentDidMount() {
-    if (this.restartButtonRef) {
-      this.restartButtonRef.focus();
-    }
-  }
 
   componentWillMount() {
     window.addEventListener('keydown', this.keyboardEventListener);
@@ -159,7 +151,6 @@ export class Emulator extends React.Component<EmulatorProps, Record<string, unkn
             options={[NewUserId, SameUserId]}
             onClick={this.onRestartOptionSelected}
             onDefaultButtonClick={this.onStartOverClick}
-            buttonRef={this.setRestartButtonRef}
             submenuLabel={isMac() ? 'Restart conversation sub menu' : ''}
           />
           <button
@@ -307,10 +298,6 @@ export class Emulator extends React.Component<EmulatorProps, Record<string, unkn
   private onReconnectToDebugBotClick = () => {
     const { documentId } = this.props;
     this.props.restartConversation(documentId, true, false);
-  };
-
-  private setRestartButtonRef = (ref: HTMLButtonElement): void => {
-    this.restartButtonRef = ref;
   };
 
   private readonly keyboardEventListener: EventListener = (event: KeyboardEvent): void => {
