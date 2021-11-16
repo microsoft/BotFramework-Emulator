@@ -47,6 +47,14 @@ export interface ResourcesBarProps {
 }
 
 export class ResourcesBar extends Component<ResourcesBarProps, ResourcesBarProps> {
+  private chatFilesRef: HTMLElement;
+
+  public componentDidMount(): void {
+    if (this.chatFilesRef) {
+      this.chatFilesRef.focus();
+    }
+  }
+
   public render() {
     return (
       <div className={styles.resourcesBar}>
@@ -56,6 +64,7 @@ export class ResourcesBar extends Component<ResourcesBarProps, ResourcesBarProps
         <ul className={explorerStyles.explorerSet}>
           <li>
             <ResourceExplorerContainer
+              elementRef={this.setChatFilesRef}
               files={this.props.chatFiles}
               resourcesPath={this.props.chatsPath}
               title="chat files"
@@ -72,4 +81,7 @@ export class ResourcesBar extends Component<ResourcesBarProps, ResourcesBarProps
       </div>
     );
   }
+  private setChatFilesRef = (elementRef: HTMLElement) => {
+    this.chatFilesRef = elementRef;
+  };
 }

@@ -48,20 +48,31 @@ interface BotExplorerBarProps {
 }
 
 export default class BotExplorerBar extends React.Component<BotExplorerBarProps, Record<string, unknown>> {
-  private static get activeBotJsx(): JSX.Element {
+  private get activeBotJsx(): JSX.Element {
     return (
       <>
-        <EndpointExplorerContainer title="Endpoint" ariaLabel="Endpoints" />
+        <EndpointExplorerContainer title="Endpoint" ariaLabel="Endpoints" elementRef={this.setEndpointsPanelRef} />
         <ServicesExplorerContainer title="Services" ariaLabel="Services" />
       </>
     );
   }
 
   private openBotSettingsButtonRef: HTMLButtonElement;
+  private endpointsPanelRef: HTMLElement;
+
+  public componentDidMount(): void {
+    if (this.endpointsPanelRef) {
+      this.endpointsPanelRef.focus();
+    }
+  }
 
   public render() {
     const className = this.props.hidden ? styles.explorerOffScreen : '';
-    const explorerBody = this.props.activeBot ? BotExplorerBar.activeBotJsx : <BotNotOpenExplorerContainer />;
+    const explorerBody = this.props.activeBot ? (
+      this.activeBotJsx
+    ) : (
+      <BotNotOpenExplorerContainer elementRef={this.setEndpointsPanelRef} />
+    );
     return (
       <div className={`${styles.botExplorerBar} ${className}`}>
         <div className={explorerStyles.explorerBarHeader}>
@@ -90,5 +101,9 @@ export default class BotExplorerBar extends React.Component<BotExplorerBarProps,
 
   private setOpenBotSettingsRef = (ref: HTMLButtonElement): void => {
     this.openBotSettingsButtonRef = ref;
+  };
+
+  private setEndpointsPanelRef = (elementRef: HTMLElement) => {
+    this.endpointsPanelRef = elementRef;
   };
 }
