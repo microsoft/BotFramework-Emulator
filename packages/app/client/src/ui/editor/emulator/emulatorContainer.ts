@@ -86,8 +86,16 @@ const mapDispatchToProps = (dispatch): Partial<EmulatorProps> => ({
   enablePresentationMode: (enabled: boolean) =>
     enabled ? dispatch(enablePresentationMode()) : dispatch(disablePresentationMode()),
   exportItems: (valueTypes: ValueTypesMask, conversationId: string) =>
-    dispatch(
-      executeCommand(true, SharedConstants.Commands.Emulator.SaveTranscriptToFile, null, valueTypes, conversationId)
+    new Promise(resolve =>
+      dispatch(
+        executeCommand(
+          true,
+          SharedConstants.Commands.Emulator.SaveTranscriptToFile,
+          resolve,
+          valueTypes,
+          conversationId
+        )
+      )
     ),
   restartConversation: (documentId: string, requireNewConversationId: boolean, requireNewUserId: boolean) =>
     dispatch(restartConversation(documentId, requireNewConversationId, requireNewUserId)),
@@ -100,6 +108,13 @@ const mapDispatchToProps = (dispatch): Partial<EmulatorProps> => ({
     dispatch(setRestartConversationStatus(RestartConversationStatus.Rejected, documentId)),
   onSetRestartConversationOptionClick: (documentId: string, option: RestartConversationOptions) =>
     dispatch(setRestartConversationOption(documentId, option)),
+  showMessage: (title: string, message: string) =>
+    dispatch(
+      executeCommand(true, SharedConstants.Commands.Electron.ShowMessageBox, null, true, {
+        message: message,
+        title: title,
+      })
+    ),
 });
 
 export const EmulatorContainer = connect(mapStateToProps, mapDispatchToProps)(Emulator);

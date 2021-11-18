@@ -68,7 +68,7 @@ export class EmulatorCommands {
   // ---------------------------------------------------------------------------
   // Saves the conversation to a transcript file, with user interaction to set filename.
   @Command(Commands.SaveTranscriptToFile)
-  protected async saveTranscriptToFile(valueTypes: number, conversationId: string): Promise<void> {
+  protected async saveTranscriptToFile(valueTypes: number, conversationId: string): Promise<boolean> {
     const activeBot: BotConfigWithPath = BotHelpers.getActiveBot();
     const conversation = Emulator.getInstance().server.state.conversations.conversationById(conversationId);
     if (!conversation) {
@@ -95,10 +95,12 @@ export class EmulatorCommands {
       const transcripts = await conversation.getTranscript(valueTypes);
       writeFile(filename, transcripts);
       TelemetryService.trackEvent('transcript_save');
+    } else {
+      return false;
     }
 
     if (!activeBot) {
-      return;
+      return true;
     }
 
     // If there is no current bot directory, we should set the directory
@@ -117,6 +119,8 @@ export class EmulatorCommands {
       await botProjectFileWatcher.watch(botPath);
       store.dispatch(BotActions.setDirectory(botDirectory));
     }
+
+    return true;
   }
 
   @Command(Commands.ExtractActivitiesFromFile)
