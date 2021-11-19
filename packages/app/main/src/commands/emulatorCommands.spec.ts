@@ -560,7 +560,6 @@ describe('The emulatorCommands', () => {
     expect(callSpy).toHaveBeenCalledWith(SharedConstants.Commands.Electron.ShowMessageBox, true, {
       buttons: ['Cancel', 'OK'],
       cancelId: 0,
-      defaultId: 1,
       message: signedInMessage,
       type: 'question',
     });
@@ -584,7 +583,6 @@ describe('The emulatorCommands', () => {
     expect(callSpy).toHaveBeenCalledWith(SharedConstants.Commands.Electron.ShowMessageBox, true, {
       buttons: ['Cancel', 'OK'],
       cancelId: 0,
-      defaultId: 1,
       message: signedInMessage,
       type: 'question',
     });
