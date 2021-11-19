@@ -62,3 +62,9 @@
     height: 100%;
   }
 }
+
+.aria-live-region {
+  position: absolute;
+  top: -9999px;
+  overflow: hidden;
+}

@@ -4,3 +4,4 @@ export const expanded: string;
 export const header: string;
 export const accessories: string;
 export const body: string;
+export const ariaLiveRegion: string;
