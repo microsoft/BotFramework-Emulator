@@ -67,6 +67,13 @@ const mapDispatchToProps = dispatch => {
       dispatch(setHighlightedObjects(documentId, objects)),
     setInspectorObjects: (documentId: string, inspectorObjects: Activity[]) =>
       dispatch(setInspectorObjects(documentId, inspectorObjects)),
+    showMessage: (title: string, message: string) =>
+      dispatch(
+        executeCommand(true, SharedConstants.Commands.Electron.ShowMessageBox, null, true, {
+          message: message,
+          title: title,
+        })
+      ),
   };
 };
 
