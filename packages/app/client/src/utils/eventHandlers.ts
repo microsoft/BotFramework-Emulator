@@ -33,6 +33,7 @@
 import { isLinux, isMac, Notification, NotificationType, SharedConstants } from '@bfemulator/app-shared';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 import { remote } from 'electron';
+
 import { ariaAlertService } from '../ui/a11y';
 
 const maxZoomFactor = 3; // 300%
