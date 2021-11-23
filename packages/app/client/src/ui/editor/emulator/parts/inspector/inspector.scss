@@ -42,6 +42,10 @@
       background-repeat: no-repeat;
     }
   }
+
+  button[aria-disabled="true"] {
+    display: none;
+  }
 }
 
 .inspector-container {
