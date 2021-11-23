@@ -40,7 +40,7 @@ export interface BotNotOpenExplorerProps {
   hasChat?: boolean;
   openBotFile?: () => Promise<any>;
   showCreateNewBotDialog?: () => void;
-  elementRef?: (ref: HTMLElement) => void;
+  elementRefHandler?: (ref: HTMLElement) => void;
 }
 
 export class BotNotOpenExplorer extends React.Component<BotNotOpenExplorerProps, Record<string, unknown>> {
@@ -51,7 +51,12 @@ export class BotNotOpenExplorer extends React.Component<BotNotOpenExplorerProps,
     return (
       <ul className={styles.botNotOpenExplorer}>
         <li>
-          <ExpandCollapse expanded={true} ariaLabel={label} title={label} elementRef={this.props.elementRef}>
+          <ExpandCollapse
+            expanded={true}
+            ariaLabel={label}
+            title={label}
+            elementRefHandler={this.props.elementRefHandler}
+          >
             <ExpandCollapseContent>
               <div className={styles.explorerEmptyState}>
                 {`To connect the Emulator services, `}

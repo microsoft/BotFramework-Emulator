@@ -32,6 +32,7 @@
 //
 
 import { IBotConfiguration } from 'botframework-config/lib/schema';
+import { removeNotification } from 'packages/app/client/src/state/sagas/notificationSagas';
 import * as React from 'react';
 
 import { BotNotOpenExplorerContainer } from '../botNotOpenExplorer';
@@ -51,7 +52,11 @@ export default class BotExplorerBar extends React.Component<BotExplorerBarProps,
   private get activeBotJsx(): JSX.Element {
     return (
       <>
-        <EndpointExplorerContainer title="Endpoint" ariaLabel="Endpoints" elementRef={this.setEndpointsPanelRef} />
+        <EndpointExplorerContainer
+          title="Endpoint"
+          ariaLabel="Endpoints"
+          elementRefHandler={this.setEndpointsPanelRef}
+        />
         <ServicesExplorerContainer title="Services" ariaLabel="Services" />
       </>
     );
@@ -71,7 +76,7 @@ export default class BotExplorerBar extends React.Component<BotExplorerBarProps,
     const explorerBody = this.props.activeBot ? (
       this.activeBotJsx
     ) : (
-      <BotNotOpenExplorerContainer elementRef={this.setEndpointsPanelRef} />
+      <BotNotOpenExplorerContainer elementRefHandler={this.setEndpointsPanelRef} />
     );
     return (
       <div className={`${styles.botExplorerBar} ${className}`}>
@@ -103,7 +108,7 @@ export default class BotExplorerBar extends React.Component<BotExplorerBarProps,
     this.openBotSettingsButtonRef = ref;
   };
 
-  private setEndpointsPanelRef = (elementRef: HTMLElement) => {
-    this.endpointsPanelRef = elementRef;
+  private setEndpointsPanelRef = (ref: HTMLElement) => {
+    this.endpointsPanelRef = ref;
   };
 }
