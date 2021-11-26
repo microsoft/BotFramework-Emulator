@@ -147,14 +147,11 @@ export class AutoComplete extends Component<AutoCompleteProps, AutoCompleteState
 
   private get errorMessage(): ReactNode {
     const { errorMessage } = this.props;
-    if (errorMessage) {
-      return (
-        <sub id={this.errorMessageId} className={styles.errorMessage}>
-          {errorMessage}
-        </sub>
-      );
-    }
-    return undefined;
+    return (
+      <sub id={this.errorMessageId} className={styles.errorMessage} aria-live={'polite'}>
+        {errorMessage ? errorMessage : null}
+      </sub>
+    );
   }
 
   private get errorMessageId(): string {
