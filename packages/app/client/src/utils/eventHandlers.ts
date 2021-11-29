@@ -34,6 +34,8 @@ import { isLinux, isMac, Notification, NotificationType, SharedConstants } from 
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 import { remote } from 'electron';
 
+import { ariaAlertService } from '../ui/a11y';
+
 const maxZoomFactor = 3; // 300%
 const minZoomFactor = 0.25; // 25%;
 class EventHandlers {
@@ -114,6 +116,11 @@ class EventHandlers {
     if (key === 'f11') {
       const currentWindow = remote.getCurrentWindow();
       currentWindow.setFullScreen(!currentWindow.isFullScreen());
+      if (currentWindow.isFullScreen()) {
+        ariaAlertService.alert('Entering full screen');
+      } else {
+        ariaAlertService.alert('Exiting full screen');
+      }
     }
     // Ctrl+Shift+I
     if (ctrlOrCmdPressed && shiftPressed && key === 'i') {
