@@ -45,6 +45,7 @@ export interface ServicePaneProps extends ServicePaneState {
   title?: string;
   ariaLabel?: string;
   sortCriteria?: string;
+  elementRefHandler?: (ref: HTMLElement) => void;
 }
 
 export interface ServicePaneState {
@@ -181,6 +182,7 @@ export abstract class ServicePane<
         className={styles.servicePane}
         key={this.props.title}
         title={this.props.title}
+        elementRefHandler={this.props.elementRefHandler}
         ariaLabel={this.props.ariaLabel}
         expanded={this.state.expanded}
       >
