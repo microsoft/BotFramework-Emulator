@@ -6,7 +6,7 @@ html {
   --box-shadow-color: var(--neutral-6);
 
   /* Highlight colors */
-  --list-item-color: var(--neutral-9);
+  --list-item-color: #605E5C;
   --list-item-selected-color: var(--neutral-2);
   --list-item-hover-bg: var(--neutral-4);
   --list-item-hover-border: 1px dashed transparent;
