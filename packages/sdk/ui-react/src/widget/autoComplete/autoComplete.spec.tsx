@@ -70,7 +70,7 @@ describe('<AutoComplete />', () => {
   });
 
   it('should render an error message if one has been provided', () => {
-    expect(instance.errorMessage).toBe(undefined);
+    expect(instance.errorMessage).not.toBe(undefined);
 
     wrapper.setProps({ errorMessage: 'something broke :(' });
     expect(instance.errorMessage).toBeTruthy();
