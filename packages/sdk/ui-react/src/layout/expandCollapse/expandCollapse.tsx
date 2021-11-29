@@ -82,6 +82,7 @@ export class ExpandCollapse extends React.Component<ExpandCollapseProps, ExpandC
           <div className={styles.accessories}>
             {filterChildren(children, child => hmrSafeNameComparison(child.type, ExpandCollapseControls))}
           </div>
+          {this.announcePanelState}
         </div>
         <div className={styles.body}>
           {expanded && filterChildren(children, child => hmrSafeNameComparison(child.type, ExpandCollapseContent))}
@@ -128,4 +129,14 @@ export class ExpandCollapse extends React.Component<ExpandCollapseProps, ExpandC
       elementRefHandler(ref);
     }
   };
+
+  private get announcePanelState(): React.ReactNode {
+    const { expanded } = this.state;
+    const { title } = this.props;
+    return (
+      <span id="panelstate" aria-live={'polite'} className={styles.ariaLiveRegion}>
+        {expanded ? `${title} panel expanded` : `${title} panel collapsed`}
+      </span>
+    );
+  }
 }

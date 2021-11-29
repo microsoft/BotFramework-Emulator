@@ -90,7 +90,7 @@ export abstract class ServicePane<
           </svg>
         </button>
         <button
-          aria-label="Add"
+          aria-label={'Add ' + this.props.title}
           onKeyPress={this.onControlKeyPress}
           onClick={this.onAddIconClick}
           className={`${styles.addIconButton} ${styles.serviceIcon}`}

@@ -89,6 +89,7 @@ export interface InspectorProps {
   trackEvent?: (name: string, properties?: { [key: string]: any }) => void;
   setHighlightedObjects?: (documentId: string, objects: Activity[]) => void;
   setInspectorObjects?: (documentId: string, inspectorObjects: Activity[]) => void;
+  showMessage?: (title: string, message: string) => void;
 }
 
 interface InspectorState {
@@ -397,7 +398,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     const id = event.currentTarget.name;
 
     if (id == 'copyJson') {
-      this.props.createAriaAlert('Activity JSON copied to clipboard.');
+      this.props.showMessage('Copy', 'Activity JSON copied to clipboard.');
       return clipboard.writeText(JSON.stringify(this.state.inspectObj, null, 2));
     }
 
