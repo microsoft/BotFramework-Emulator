@@ -147,9 +147,9 @@
     > span {
       position: absolute;
       z-index: 1;
-      background-color: #fff;
-      color: #000;
-      border: 1px solid #000;
+      background-color: var(--nav-link-tooltip-bg);
+      color: var(--nav-link-tooltip-color);
+      border: var(--nav-link-tooltip-border);
       white-space: nowrap;
       font-size: 12px;
       text-align: center;
