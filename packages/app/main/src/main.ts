@@ -293,7 +293,7 @@ class EmulatorApplication {
     const { theme, availableThemes } = getSettings().windowState;
     const themeInfo = availableThemes.find(availableTheme => availableTheme.name === theme);
 
-    const isHighContrast = nativeTheme.shouldUseInvertedColorScheme;
+    const isHighContrast = nativeTheme.shouldUseInvertedColorScheme || nativeTheme.shouldUseHighContrastColors;
 
     const themeName = isHighContrast ? 'high-contrast' : themeInfo.name;
     const themeComponents = isHighContrast ? path.join('.', 'themes', 'high-contrast.css') : themeInfo.href;
