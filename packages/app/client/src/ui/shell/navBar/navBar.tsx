@@ -127,6 +127,7 @@ export class NavBarComponent extends React.Component<NavBarProps, NavBarState> {
         >
           <div />
           {this.renderNotificationBadge(title)}
+          {this.renderKeyboardTooltip(title)}
         </button>
       );
     });
@@ -144,5 +145,10 @@ export class NavBarComponent extends React.Component<NavBarProps, NavBarState> {
       return numUnreadNotifications ? <span className={styles.badge}>{numUnreadNotifications}</span> : null;
     }
     return null;
+  }
+
+  /** Renders a tooltip for keyboard navigation */
+  private renderKeyboardTooltip(title: string): JSX.Element {
+    return <span>{title}</span>;
   }
 }

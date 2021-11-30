@@ -91,6 +91,9 @@ html {
   --nav-link-hover-border: 1px solid transparent;
   --nav-link-badge-color: var(--neutral-1);
   --nav-link-badge-bg: #FF0000;
+  --nav-link-tooltip-bg: #FFF;
+  --nav-link-tooltip-color: #000;
+  --nav-link-tooltip-border: 1px solid #000;
 
   /* input[type="text"] */
   --input-color: var(--neutral-12);
