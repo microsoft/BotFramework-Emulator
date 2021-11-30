@@ -36,7 +36,7 @@ import { Activity, ActivityTypes } from 'botframework-schema';
 import { createStyleSet, Components } from 'botframework-webchat';
 import * as React from 'react';
 import { PureComponent, KeyboardEvent, MouseEvent, ReactNode } from 'react';
-import { EmulatorMode } from '@bfemulator/sdk-shared';
+import { EmulatorMode, uniqueId } from '@bfemulator/sdk-shared';
 import { DirectLine } from 'botframework-directlinejs';
 
 import { OuterActivityWrapperContainer } from './outerActivityWrapperContainer';
@@ -214,6 +214,12 @@ export class Chat extends PureComponent<ChatProps, ChatState> {
   private createActivityMiddleware = () => next => (...setupArgs) => (...renderArgs) => {
     const card = setupArgs[0];
     const { valueType } = card.activity;
+
+    // Set the activityId in case it doesn't have a valid one
+    // Otherwise, the focus indicator always fall in the last message
+    if (!card.activity.id) {
+      card.activity.id = `activityWrapper_${uniqueId()}`;
+    }
 
     this.activityMap[card.activity.id] = valueType === ValueTypes.Activity ? card.activity.value : card.activity;
 
