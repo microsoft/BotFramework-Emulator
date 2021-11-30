@@ -218,7 +218,7 @@ export class Chat extends PureComponent<ChatProps, ChatState> {
     // Set the activityId in case it doesn't have a valid one
     // Otherwise, the focus indicator always fall in the last message
     if (!card.activity.id) {
-      card.activity.id = uniqueId();
+      card.activity.id = `activityWrapper_${uniqueId()}`;
     }
 
     this.activityMap[card.activity.id] = valueType === ValueTypes.Activity ? card.activity.value : card.activity;
