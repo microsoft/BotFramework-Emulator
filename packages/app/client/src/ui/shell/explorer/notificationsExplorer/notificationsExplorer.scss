@@ -24,3 +24,9 @@
   margin: 0;
   margin-top: 15px;
 }
+
+.aria-live-region {
+  position: absolute;
+  top: -9999px;
+  overflow: hidden;
+}

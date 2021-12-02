@@ -2,3 +2,4 @@
 export const notificationsExplorer: string;
 export const clearAllNotificationsBtn: string;
 export const noNotificationsMsg: string;
+export const ariaLiveRegion: string;
