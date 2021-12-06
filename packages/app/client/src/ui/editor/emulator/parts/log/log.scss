@@ -10,6 +10,7 @@
     padding: 0 16px;
     font-family: var(--monospace-font-family);
     cursor: pointer;
+    word-wrap: break-word;
 
     &:hover {
       background-color: var(--log-panel-entry-hover-bg);
