@@ -34,7 +34,7 @@ import { isLinux, isMac, Notification, NotificationType, SharedConstants } from 
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 import { remote } from 'electron';
 
-import { ariaAlertService } from '../ui/a11y';
+const { Electron } = SharedConstants.Commands;
 
 const maxZoomFactor = 3; // 300%
 const minZoomFactor = 0.25; // 25%;
@@ -117,9 +117,15 @@ class EventHandlers {
       const currentWindow = remote.getCurrentWindow();
       currentWindow.setFullScreen(!currentWindow.isFullScreen());
       if (currentWindow.isFullScreen()) {
-        ariaAlertService.alert('Entering full screen');
+        await EventHandlers.commandService.remoteCall(Electron.ShowMessageBox, false, {
+          message: 'Entering full screen.',
+          title: 'Toggle Full Screen option',
+        });
       } else {
-        ariaAlertService.alert('Exiting full screen');
+        await EventHandlers.commandService.remoteCall(Electron.ShowMessageBox, false, {
+          message: 'Exiting full screen.',
+          title: 'Toggle Full Screen option',
+        });
       }
     }
     // Ctrl+Shift+I
