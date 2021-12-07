@@ -38,6 +38,7 @@ import * as styles from './botNotOpenExplorer.scss';
 
 export interface BotNotOpenExplorerProps {
   hasChat?: boolean;
+  role?: string;
   openBotFile?: () => Promise<any>;
   showCreateNewBotDialog?: () => void;
   elementRefHandler?: (ref: HTMLElement) => void;
@@ -56,6 +57,7 @@ export class BotNotOpenExplorer extends React.Component<BotNotOpenExplorerProps,
             ariaLabel={label}
             title={label}
             elementRefHandler={this.props.elementRefHandler}
+            role={this.props.role}
           >
             <ExpandCollapseContent>
               <div className={styles.explorerEmptyState}>

@@ -43,6 +43,7 @@ export interface ExpandCollapseProps {
   title?: string;
   className?: string;
   ariaLabel?: string;
+  role?: string;
   elementRefHandler?: (ref: HTMLElement) => void;
 }
 
@@ -61,7 +62,7 @@ export class ExpandCollapse extends React.Component<ExpandCollapseProps, ExpandC
 
   public render() {
     const { expanded } = this.state;
-    const { className = '', title, children, ariaLabel } = this.props;
+    const { className = '', title, children, ariaLabel, role } = this.props;
     const { toggleIcon, onHeaderKeyPress, onToggleExpandedButtonClick } = this;
 
     return (
@@ -70,7 +71,7 @@ export class ExpandCollapse extends React.Component<ExpandCollapseProps, ExpandC
           ref={this.setElementRefHandler}
           aria-expanded={expanded}
           aria-label={ariaLabel}
-          role="toolbar"
+          role={role}
           tabIndex={0}
           onKeyPress={onHeaderKeyPress}
           className={styles.header}
