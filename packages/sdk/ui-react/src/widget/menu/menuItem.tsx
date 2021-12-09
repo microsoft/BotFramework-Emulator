@@ -64,7 +64,9 @@ export class MenuItemComp extends React.Component<MenuItemProps, Record<string, 
       default:
         return (
           <li
-            aria-label={`${label}${disabled ? ' unavailable' : ''}${checked ? ' checked' : ''}`}
+            aria-label={`${label}${subtext ? subtext : ''}${disabled ? ' unavailable' : ''}${
+              checked ? ' checked' : ''
+            }`}
             className={`${styles.menuItem} ${disabled ? styles.disabled : ''}`}
             onClick={this.onClick}
             onKeyDown={this.onKeyDown}
