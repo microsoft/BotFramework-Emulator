@@ -58,7 +58,7 @@ export class ConnectServicePromptDialog extends Component<ConnectServicePromptDi
   public render() {
     return (
       <Dialog className={styles.dialogMedium} cancel={this.props.cancel} title={titleMap[this.props.serviceType]}>
-        {this.dialogContent}
+        <div tabIndex={0}>{this.dialogContent}</div>
         <DialogFooter>
           <DefaultButton text="Cancel" onClick={this.props.cancel} />
           <PrimaryButton text="Sign in with Azure" onClick={this.props.confirm} />
