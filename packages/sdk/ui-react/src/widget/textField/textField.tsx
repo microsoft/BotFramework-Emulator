@@ -40,6 +40,7 @@ let id = 0;
 export interface TextFieldProps extends InputHTMLAttributes<HTMLInputElement> {
   required?: boolean;
   label?: string;
+  ariaLabel?: string;
   errorMessage?: string;
   inputContainerClassName?: string;
   inputRef?: (ref: HTMLInputElement) => void;
@@ -72,7 +73,13 @@ export class TextField extends Component<TextFieldProps, Record<string, unknown>
       <div className={`${styles.inputContainer} ${inputContainerClassName}`}>
         {this.labelNode}
         <input
-          aria-label={errorMessage ? this.props.label + ', ' + errorMessage : undefined}
+          aria-label={
+            this.props.ariaLabel
+              ? this.props.ariaLabel
+              : errorMessage
+              ? this.props.label + ', ' + errorMessage
+              : undefined
+          }
           aria-required={required}
           className={inputClassName}
           id={this.inputId}
@@ -93,10 +100,14 @@ export class TextField extends Component<TextFieldProps, Record<string, unknown>
   };
 
   protected get labelNode(): ReactNode {
-    const { label, required, disabled } = this.props;
+    const { label, required, disabled, ariaLabel } = this.props;
     const className = required ? styles.requiredIndicator : '';
     return label ? (
-      <label aria-disabled={disabled} htmlFor={this.inputId} className={`${className} ${styles.label}`}>
+      <label
+        aria-disabled={disabled}
+        htmlFor={ariaLabel ? null : this.inputId}
+        className={`${className} ${styles.label}`}
+      >
         {label}
       </label>
     ) : null;

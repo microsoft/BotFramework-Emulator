@@ -45,6 +45,7 @@ import {
 import * as React from 'react';
 import { ChangeEvent, Component, MouseEvent, ReactNode } from 'react';
 import { EmulatorMode } from '@bfemulator/sdk-shared';
+import { isLinux } from '@bfemulator/app-shared';
 
 import * as dialogStyles from '../dialogStyles.scss';
 
@@ -171,6 +172,7 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
             <TextField
               inputContainerClassName={openBotStyles.inputContainerRow}
               label="Microsoft App password"
+              ariaLabel={isLinux() ? 'Microsoft App' : null}
               name="appPassword"
               onChange={this.onInputChange}
               placeholder="Optional"
