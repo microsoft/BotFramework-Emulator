@@ -54,7 +54,7 @@ describe('<MenuItem />', () => {
     expect(instance).toBeTruthy();
     expect(wrapper.html().includes('Fullscreen')).toBe(true);
     expect(wrapper.html().includes('F11')).toBe(true);
-    expect(outerLiElement.getAttribute('aria-label')).toBe('Fullscreen checked');
+    expect(outerLiElement.getAttribute('aria-label')).toBe('FullscreenF11 checked');
   });
 
   it('should render a disabled menu item without any errors', () => {
