@@ -84,7 +84,7 @@ export class ExpandCollapse extends React.Component<ExpandCollapseProps, ExpandC
           </div>
           {this.announcePanelState}
         </div>
-        <div className={styles.body}>
+        <div className={styles.body} aria-live={'polite'}>
           {expanded && filterChildren(children, child => hmrSafeNameComparison(child.type, ExpandCollapseContent))}
         </div>
       </div>
