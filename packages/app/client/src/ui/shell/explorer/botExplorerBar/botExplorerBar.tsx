@@ -56,8 +56,9 @@ export default class BotExplorerBar extends React.Component<BotExplorerBarProps,
           title="Endpoint"
           ariaLabel="Endpoints"
           elementRefHandler={this.setEndpointsPanelRef}
+          role={'toolbar'}
         />
-        <ServicesExplorerContainer title="Services" ariaLabel="Services" />
+        <ServicesExplorerContainer title="Services" ariaLabel="Services" role={'toolbar'} />
       </>
     );
   }
@@ -76,7 +77,7 @@ export default class BotExplorerBar extends React.Component<BotExplorerBarProps,
     const explorerBody = this.props.activeBot ? (
       this.activeBotJsx
     ) : (
-      <BotNotOpenExplorerContainer elementRefHandler={this.setEndpointsPanelRef} />
+      <BotNotOpenExplorerContainer elementRefHandler={this.setEndpointsPanelRef} role={'button'} />
     );
     return (
       <div className={`${styles.botExplorerBar} ${className}`}>

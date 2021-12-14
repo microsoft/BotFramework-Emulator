@@ -69,12 +69,14 @@ export class ResourcesBar extends Component<ResourcesBarProps, ResourcesBarProps
               resourcesPath={this.props.chatsPath}
               title="chat files"
               ariaLabel="chat files"
+              role={'button'}
             />
             <ResourceExplorerContainer
               files={this.props.transcripts}
               resourcesPath={this.props.transcriptsPath}
               title="transcripts"
               ariaLabel="transcripts"
+              role={'button'}
             />
           </li>
         </ul>
