@@ -33,14 +33,26 @@
 
 import { mount, ReactWrapper } from 'enzyme';
 import * as React from 'react';
+import { executeCommand, SharedConstants } from '@bfemulator/app-shared';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
-import { createStore } from 'redux';
 
 import { ActiveBotHelper } from '../../helpers/activeBotHelper';
 import { ariaAlertService } from '../../a11y';
 
 import { BotCreationDialog, BotCreationDialogState } from './botCreationDialog';
 import { BotCreationDialogContainer } from './botCreationDialogContainer';
+
+const mockState = {};
+const mockStore = {
+  dispatch: jest.fn(),
+  getState: () => mockState,
+};
+
+jest.mock('../../../state/store', () => ({
+  get store() {
+    return mockStore;
+  },
+}));
 
 const mockCopyToClipboard = jest.fn(args => true);
 jest.mock('../index', () => null);
@@ -90,6 +102,8 @@ jest.mock('../../helpers/activeBotHelper', () => ({
 
 describe('BotCreationDialog tests', () => {
   let commandService: CommandServiceImpl;
+  let mockDispatch;
+
   beforeAll(() => {
     const decorator = CommandServiceInstance();
     const descriptor = decorator({ descriptor: {} }, 'none') as any;
@@ -98,7 +112,9 @@ describe('BotCreationDialog tests', () => {
 
   let testWrapper: ReactWrapper<any, any, any>;
   beforeEach(() => {
-    const parent = mount(<BotCreationDialogContainer store={createStore((_state, _action) => ({}))} />);
+    mockDispatch = jest.spyOn(mockStore, 'dispatch');
+    mockStore.dispatch(jest.fn());
+    const parent = mount(<BotCreationDialogContainer store={mockStore} />);
     testWrapper = parent.find(BotCreationDialog);
   });
 
@@ -141,14 +157,22 @@ describe('BotCreationDialog tests', () => {
   // });
 
   it('should execute a window copy command when copy is clicked', () => {
-    testWrapper.instance().setState({ encryptKey: true });
-    const alertServiceSpy = jest.spyOn(ariaAlertService, 'alert').mockReturnValueOnce(undefined);
+    const instance = testWrapper.instance();
+    instance.setState({ encryptKey: true });
+    instance.props.showMessage('title', 'message');
+    expect(mockDispatch).toHaveBeenCalledWith(
+      executeCommand(true, SharedConstants.Commands.Electron.ShowMessageBox, null, true, {
+        message: 'message',
+        title: 'title',
+      })
+    );
 
-    (testWrapper.instance() as any).onCopyClick();
-    expect(alertServiceSpy).toHaveBeenCalledWith('Secret copied to clipboard.');
-    mockCopyToClipboard.mockReturnValueOnce(false);
-    (testWrapper.instance() as any).onCopyClick();
-    expect(alertServiceSpy).toHaveBeenCalledWith('Failed to copy secret to clipboard.');
+    instance.setState({
+      encryptKey: false,
+    });
+
+    expect(typeof instance.onCopyClick).toBe('function');
+    expect(instance.onCopyClick()).toBeNull();
   });
 
   it('should set state via input change handlers', () => {

@@ -50,7 +50,7 @@ import * as React from 'react';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { getBotInfoByPath } from '../../../state/helpers/botHelpers';
-import { generateBotSecret } from '../../../utils';
+import { generateBotSecret, copyTextToClipboard } from '../../../utils';
 import { ActiveBotHelper } from '../../helpers/activeBotHelper';
 import * as styles from '../dialogStyles.scss';
 
@@ -60,6 +60,7 @@ export interface BotSettingsEditorProps {
   sendNotification: (notification: Notification) => void;
   window: Window;
   onAnchorClick: (url: string) => void;
+  showMessage?: (title: string, message: string) => void;
 }
 
 export interface BotSettingsEditorState extends BotConfigWithPath {
@@ -74,6 +75,7 @@ export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, B
   private commandService: CommandServiceImpl;
 
   private _generatedSecret: string;
+  private secretInputRef: HTMLInputElement;
 
   constructor(props: BotSettingsEditorProps, context: BotSettingsEditorState) {
     super(props, context);
@@ -129,6 +131,7 @@ export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, B
             inputContainerClassName={styles.key}
             label="Secret "
             placeholder="Your keys are not encrypted"
+            inputRef={this.setSecretInputRef}
             value={secret}
             readOnly={true}
             id="key-input"
@@ -294,15 +297,14 @@ export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, B
     if (!this.state.encryptKey) {
       return null;
     }
-    const { window } = this.props;
-    const input: HTMLInputElement = window.document.getElementById('key-input') as HTMLInputElement;
-    input.removeAttribute('disabled');
-    const { type } = input;
-    input.type = 'text';
-    input.select();
-    window.document.execCommand('copy');
-    input.type = type;
-    input.setAttribute('disabled', '');
+    if (copyTextToClipboard(this.secretInputRef.value)) {
+      this.props.showMessage('Copy', 'Secret copied to clipboard.');
+    } else {
+      const err = 'Failed to copy secret to clipboard.';
+      this.props.showMessage('Copy', err);
+      // eslint-disable-next-line no-console
+      console.error(err);
+    }
   };
 
   // TODO: Re-enable ability to re-generate secret after 4.1
@@ -324,4 +326,8 @@ export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, B
     }
     return generateBotSecret();
   }
+
+  private setSecretInputRef = (ref: HTMLInputElement): void => {
+    this.secretInputRef = ref;
+  };
 }

@@ -54,6 +54,13 @@ const mapDispatchToProps = dispatch => ({
     dispatch(executeCommand(true, SharedConstants.Commands.Electron.OpenExternal, null, url));
   },
   sendNotification: notification => dispatch(beginAdd(notification)),
+  showMessage: (title: string, message: string) =>
+    dispatch(
+      executeCommand(true, SharedConstants.Commands.Electron.ShowMessageBox, null, true, {
+        message: message,
+        title: title,
+      })
+    ),
 });
 
 export const BotSettingsEditorContainer = connect(mapStateToProps, mapDispatchToProps)(BotSettingsEditor);

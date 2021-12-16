@@ -111,10 +111,12 @@ jest.mock('electron', () => ({
 
 const mockRemoteCommandsCalled = [];
 
+const mockCopyToClipboard = jest.fn(args => true);
 jest.mock('../../../utils', () => ({
   generateBotSecret: () => {
     return Math.random() + '';
   },
+  copyTextToClipboard: args => mockCopyToClipboard(args),
 }));
 
 describe('The BotSettingsEditor dialog should', () => {
@@ -174,26 +176,20 @@ describe('The BotSettingsEditor dialog should', () => {
 
   it('should copy the secret to the clipboard when "onCopyClick" is executed', () => {
     const instance = node.instance();
-    instance.setState({
-      encryptKey: true,
-      secret: 'MsKgJGZJw7Vqw51YwpZhw7LCk2MzwpZZwoLDkMKPIWfCq8K7wobDp8OvwqvCmsO+EAY=',
-    });
-    const elementSpies = {
-      select: jest.spyOn(mockElement, 'select'),
-      setAttribute: jest.spyOn(mockElement, 'setAttribute'),
-      removeAttribute: jest.spyOn(mockElement, 'removeAttribute'),
-    };
-    const documentSpies = {
-      execCommand: jest.spyOn(mockWindow.document, 'execCommand'),
-      getElementById: jest.spyOn(mockWindow.document, 'getElementById'),
-    };
-    instance.onCopyClick();
+    instance.props.showMessage('title', 'message');
+    expect(mockDispatch).toHaveBeenCalledWith(
+      executeCommand(true, SharedConstants.Commands.Electron.ShowMessageBox, null, true, {
+        message: 'message',
+        title: 'title',
+      })
+    );
 
-    expect(elementSpies.select).toHaveBeenCalled();
-    expect(elementSpies.removeAttribute).toHaveBeenCalledWith('disabled');
-    expect(elementSpies.setAttribute).toHaveBeenCalledWith('disabled', '');
-    expect(documentSpies.execCommand).toHaveBeenCalledWith('copy');
-    expect(documentSpies.getElementById).toHaveBeenCalledWith('key-input');
+    instance.setState({
+      encryptKey: false,
+    });
+
+    expect(typeof instance.onCopyClick).toBe('function');
+    expect(instance.onCopyClick()).toBeNull();
   });
 
   // TODO: Re-enable ability to re-generate secret after 4.1

@@ -62,6 +62,7 @@ import * as styles from './botCreationDialog.scss';
 
 export interface BotCreationDialogProps {
   createAriaAlert: (msg: string) => void;
+  showMessage?: (title: string, message: string) => void;
 }
 
 export interface BotCreationDialogState {
@@ -297,10 +298,10 @@ export class BotCreationDialog extends React.Component<BotCreationDialogProps, B
       return null;
     }
     if (copyTextToClipboard(this.secretInputRef.value)) {
-      ariaAlertService.alert('Secret copied to clipboard.');
+      this.props.showMessage('Copy', 'Secret copied to clipboard.');
     } else {
       const err = 'Failed to copy secret to clipboard.';
-      ariaAlertService.alert(err);
+      this.props.showMessage('Copy', err);
       // eslint-disable-next-line no-console
       console.error(err);
     }
