@@ -119,6 +119,7 @@
     "monaco-editor-webpack-plugin": "^2.0.0",
     "react": "16.8.6",
     "react-dom": "16.8.6",
+    "react-html-parser": "^2.0.2",
     "react-redux": "^5.0.7",
     "react-router-dom": "^4.2.2",
     "redux": "^3.7.2",

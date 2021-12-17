@@ -33,6 +33,7 @@
 import * as React from 'react';
 import { Component } from 'react';
 import MarkdownIt from 'markdown-it';
+import ReactHtmlParser from 'react-html-parser';
 
 import { GenericDocument } from '../../layout';
 
@@ -80,15 +81,24 @@ export class MarkdownPage extends Component<MarkdownPageProps> {
   }
 
   public render() {
+    const hrefConst = '#bot-state-inspection';
+    const transform = node => {
+      if (node.name == 'a' && node.attribs && node.attribs.href == hrefConst) {
+        return (
+          <a ref={this.setBotInspectorRef} href={hrefConst}>
+            jump to Bot State Inspection
+          </a>
+        );
+      } else {
+        return undefined;
+      }
+    };
     const children = !this.props.onLine ? (
       MarkdownPage.offlineElement
     ) : (
-      <div
-        className={styles.markdownContainer}
-        ref={this.setBotInspectorRef}
-        tabIndex={0}
-        dangerouslySetInnerHTML={{ __html: MarkdownPage.renderMarkdown(this.props.markdown) }}
-      />
+      <div className={styles.markdownContainer}>
+        {ReactHtmlParser(MarkdownPage.renderMarkdown(this.props.markdown), { transform })}
+      </div>
     );
     return <GenericDocument>{children}</GenericDocument>;
   }

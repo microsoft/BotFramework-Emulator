@@ -48,7 +48,7 @@ describe('The Markdown page', () => {
   it('should render markdown when the user is online', () => {
     render({ onLine: true, markdown: '# markdown!' });
     const divHtml = parent.html();
-    expect(divHtml).toBe('<div class="undefined "><div><div tabindex="0"><h1>markdown!</h1>\n</div></div></div>');
+    expect(divHtml).toBe('<div class="undefined "><div><div><h1>markdown!</h1></div></div></div>');
   });
 
   it('should render offline content when the user is offline', () => {
@@ -68,8 +68,6 @@ describe('The Markdown page', () => {
   it('should render the "invalid markdown" message when invalid markdown is provided', () => {
     render({ onLine: true, markdown: [] as any });
     const divHtml = parent.html();
-    expect(divHtml).toBe(
-      '<div class="undefined "><div><div tabindex="0"># Error - Invalid markdown document</div></div></div>'
-    );
+    expect(divHtml).toBe('<div class="undefined "><div><div># Error - Invalid markdown document</div></div></div>');
   });
 });
