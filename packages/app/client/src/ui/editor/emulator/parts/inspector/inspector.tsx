@@ -269,6 +269,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
         key={config.id}
         disabled={!enabled}
         name={config.id}
+        role={config.id == 'json' ? 'tab' : null}
         data-current-state={state}
         onClick={this.accessoryClick}
         aria-hidden={button.state === 'disabled' ? true : false}
