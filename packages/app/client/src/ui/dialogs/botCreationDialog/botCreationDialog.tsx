@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { beginAdd, executeCommand, newNotification, SharedConstants } from '@bfemulator/app-shared';
+import { beginAdd, executeCommand, isLinux, newNotification, SharedConstants } from '@bfemulator/app-shared';
 import { BotConfigWithPath, BotConfigWithPathImpl, uniqueId } from '@bfemulator/sdk-shared';
 import {
   Checkbox,
@@ -149,6 +149,7 @@ export class BotCreationDialog extends React.Component<BotCreationDialogProps, B
             <TextField
               inputContainerClassName={dialogStyles.inputContainer}
               label="Microsoft App password"
+              ariaLabel={isLinux() ? 'Microsoft App' : null}
               data-prop="appPassword"
               onChange={this.onInputChange}
               placeholder="Optional"
