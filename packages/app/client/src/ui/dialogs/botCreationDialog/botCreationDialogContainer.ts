@@ -32,6 +32,7 @@
 //
 
 import { connect } from 'react-redux';
+import { executeCommand, SharedConstants } from '@bfemulator/app-shared';
 
 import { ariaAlertService } from '../../a11y';
 
@@ -42,6 +43,13 @@ const mapDispatchToProps = (_dispatch): BotCreationDialogProps => {
     createAriaAlert: (msg: string) => {
       ariaAlertService.alert(msg);
     },
+    showMessage: (title: string, message: string) =>
+      _dispatch(
+        executeCommand(true, SharedConstants.Commands.Electron.ShowMessageBox, null, true, {
+          message: message,
+          title: title,
+        })
+      ),
   };
 };
 
