@@ -184,12 +184,12 @@ export class AppMenuTemplate {
           if (currentWindow.isFullScreen()) {
             AppMenuTemplate.commandService.remoteCall(ShowMessageBox, null, {
               message: 'Entering full screen.',
-              title: 'Toggle Full Screen option',
+              title: 'Full screen mode',
             });
           } else {
             AppMenuTemplate.commandService.remoteCall(ShowMessageBox, null, {
               message: 'Exiting full screen.',
-              title: 'Toggle Full Screen option',
+              title: 'Full screen mode',
             });
           }
         },

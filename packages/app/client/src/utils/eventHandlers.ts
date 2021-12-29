@@ -119,12 +119,12 @@ class EventHandlers {
       if (currentWindow.isFullScreen()) {
         await EventHandlers.commandService.remoteCall(Electron.ShowMessageBox, false, {
           message: 'Entering full screen.',
-          title: 'Toggle Full Screen option',
+          title: 'Full screen mode',
         });
       } else {
         await EventHandlers.commandService.remoteCall(Electron.ShowMessageBox, false, {
           message: 'Exiting full screen.',
-          title: 'Toggle Full Screen option',
+          title: 'Full screen mode',
         });
       }
     }
