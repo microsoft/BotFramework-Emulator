@@ -36,8 +36,6 @@ import { MenuItem } from '@bfemulator/ui-react';
 import { SharedConstants } from '@bfemulator/app-shared';
 import { remote } from 'electron';
 
-import { ariaAlertService } from '../../a11y';
-
 const {
   Channels: { HelpLabel, ReadmeUrl },
   Commands: {
@@ -184,9 +182,15 @@ export class AppMenuTemplate {
           const currentWindow = remote.getCurrentWindow();
           currentWindow.setFullScreen(!currentWindow.isFullScreen());
           if (currentWindow.isFullScreen()) {
-            ariaAlertService.alert('Entering full screen');
+            AppMenuTemplate.commandService.remoteCall(ShowMessageBox, null, {
+              message: 'Entering full screen.',
+              title: 'Full screen mode',
+            });
           } else {
-            ariaAlertService.alert('Exiting full screen');
+            AppMenuTemplate.commandService.remoteCall(ShowMessageBox, null, {
+              message: 'Exiting full screen.',
+              title: 'Full screen mode',
+            });
           }
         },
         subtext: 'F11',
