@@ -33,7 +33,7 @@
 import * as React from 'react';
 import { Component } from 'react';
 import MarkdownIt from 'markdown-it';
-import ReactHtmlParser from 'react-html-parser';
+import ReactHtmlParser, { convertNodeToElement } from 'react-html-parser';
 
 import { GenericDocument } from '../../layout';
 
@@ -42,11 +42,12 @@ import * as styles from './markdownPage.scss';
 export interface MarkdownPageProps {
   markdown: string;
   onLine: boolean;
+  focusableElementHref: string;
 }
 
 export class MarkdownPage extends Component<MarkdownPageProps> {
   private static markdownRenderer = new MarkdownIt();
-  private botInspectorRef: HTMLInputElement;
+  private firstFocusableElementRef: HTMLInputElement;
 
   private static renderMarkdown(markdown: string) {
     try {
@@ -57,8 +58,8 @@ export class MarkdownPage extends Component<MarkdownPageProps> {
   }
 
   public componentDidMount(): void {
-    if (this.botInspectorRef) {
-      this.botInspectorRef.focus();
+    if (this.firstFocusableElementRef) {
+      this.firstFocusableElementRef.focus();
     }
   }
 
@@ -81,14 +82,15 @@ export class MarkdownPage extends Component<MarkdownPageProps> {
   }
 
   public render() {
-    const hrefConst = '#bot-state-inspection';
-    const transform = node => {
-      if (node.name == 'a' && node.attribs && node.attribs.href == hrefConst) {
-        return (
-          <a ref={this.setBotInspectorRef} href={hrefConst}>
-            jump to Bot State Inspection
-          </a>
-        );
+    const setFirstFocusableElementRef = (ref: HTMLInputElement): void => {
+      this.firstFocusableElementRef = ref;
+    };
+
+    const transform = (node, index) => {
+      if (node.name == 'a' && node.attribs && node.attribs.href == this.props.focusableElementHref) {
+        const element = convertNodeToElement(node, index, transform);
+        element.ref = setFirstFocusableElementRef;
+        return element;
       } else {
         return undefined;
       }
@@ -102,8 +104,4 @@ export class MarkdownPage extends Component<MarkdownPageProps> {
     );
     return <GenericDocument>{children}</GenericDocument>;
   }
-
-  private setBotInspectorRef = (ref: HTMLInputElement): void => {
-    this.botInspectorRef = ref;
-  };
 }
