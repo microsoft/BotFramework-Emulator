@@ -75,7 +75,13 @@ export class EditorFactory extends React.Component<EditorFactoryProps> {
         return <WelcomePageContainer documentId={document.documentId} />;
 
       case Constants.CONTENT_TYPE_MARKDOWN:
-        return <MarkdownPage markdown={document.meta.markdown} onLine={document.meta.onLine} />;
+        return (
+          <MarkdownPage
+            markdown={document.meta.markdown}
+            onLine={document.meta.onLine}
+            focusableElementHref="#bot-state-inspection"
+          />
+        );
 
       case SharedConstants.ContentTypes.CONTENT_TYPE_NGROK_DEBUGGER:
         return <NgrokDebuggerContainer documentId={document.documentId} dirty={this.props.document.dirty} />;

@@ -33,6 +33,7 @@
 import * as React from 'react';
 import { Component } from 'react';
 import MarkdownIt from 'markdown-it';
+import ReactHtmlParser, { convertNodeToElement } from 'react-html-parser';
 
 import { GenericDocument } from '../../layout';
 
@@ -41,11 +42,12 @@ import * as styles from './markdownPage.scss';
 export interface MarkdownPageProps {
   markdown: string;
   onLine: boolean;
+  focusableElementHref: string;
 }
 
 export class MarkdownPage extends Component<MarkdownPageProps> {
   private static markdownRenderer = new MarkdownIt();
-  private botInspectorRef: HTMLInputElement;
+  private firstFocusableElementRef: HTMLInputElement;
 
   private static renderMarkdown(markdown: string) {
     try {
@@ -56,8 +58,8 @@ export class MarkdownPage extends Component<MarkdownPageProps> {
   }
 
   public componentDidMount(): void {
-    if (this.botInspectorRef) {
-      this.botInspectorRef.focus();
+    if (this.firstFocusableElementRef) {
+      this.firstFocusableElementRef.focus();
     }
   }
 
@@ -80,20 +82,26 @@ export class MarkdownPage extends Component<MarkdownPageProps> {
   }
 
   public render() {
+    const setFirstFocusableElementRef = (ref: HTMLInputElement): void => {
+      this.firstFocusableElementRef = ref;
+    };
+
+    const transform = (node, index) => {
+      if (node.name == 'a' && node.attribs && node.attribs.href == this.props.focusableElementHref) {
+        const element = convertNodeToElement(node, index, transform);
+        element.ref = setFirstFocusableElementRef;
+        return element;
+      } else {
+        return undefined;
+      }
+    };
     const children = !this.props.onLine ? (
       MarkdownPage.offlineElement
     ) : (
-      <div
-        className={styles.markdownContainer}
-        ref={this.setBotInspectorRef}
-        tabIndex={0}
-        dangerouslySetInnerHTML={{ __html: MarkdownPage.renderMarkdown(this.props.markdown) }}
-      />
+      <div className={styles.markdownContainer}>
+        {ReactHtmlParser(MarkdownPage.renderMarkdown(this.props.markdown), { transform })}
+      </div>
     );
     return <GenericDocument>{children}</GenericDocument>;
   }
-
-  private setBotInspectorRef = (ref: HTMLInputElement): void => {
-    this.botInspectorRef = ref;
-  };
 }
