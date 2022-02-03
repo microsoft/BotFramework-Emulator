@@ -19,8 +19,8 @@
   "devDependencies": {
     "@babel/cli": "^7.1.0",
     "@babel/core": "^7.1.0",
-    "@babel/plugin-proposal-decorators": "^7.4.0",
     "@babel/plugin-proposal-class-properties": "^7.1.0",
+    "@babel/plugin-proposal-decorators": "^7.4.0",
     "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
     "@babel/plugin-transform-react-jsx": "^7.0.0",
     "@babel/plugin-transform-runtime": "^7.4.4",
@@ -45,6 +45,7 @@
     "@babel/runtime": "^7.1.5",
     "botframework-config": "4.4.0",
     "botframework-schema": "4.14.0",
+    "eslint-plugin-security": "^1.4.0",
     "tslib": "^1.9.0",
     "uuid": "^3.3.2"
   },
