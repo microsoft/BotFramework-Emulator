@@ -114,6 +114,7 @@
     "botframework-webchat-core": "4.14.0",
     "core-js": "^3.6.5",
     "eslint-plugin-react": "^7.12.3",
+    "eslint-plugin-security": "^1.4.0",
     "markdown-it": "^8.4.2",
     "monaco-editor": "^0.21.2",
     "monaco-editor-webpack-plugin": "^2.0.0",

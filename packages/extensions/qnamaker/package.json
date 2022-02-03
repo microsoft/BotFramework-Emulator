@@ -16,6 +16,7 @@
     "webpack-cli": "^3.3.2"
   },
   "dependencies": {
-    "@babel/runtime": "^7.1.5"
+    "@babel/runtime": "^7.1.5",
+    "eslint-plugin-security": "^1.4.0"
   }
 }
