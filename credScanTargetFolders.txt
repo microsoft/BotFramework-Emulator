@@ -1,0 +1,1 @@
+$(Build.SourcesDirectory)/packages/app/client/public  $(Build.SourcesDirectory)/packages/app/main/app $(Build.SourcesDirectory)/packages/shared/built $(Build.SourcesDirectory)/packages/extensions/json/public  $(Build.SourcesDirectory)/packages/extensions/luis/client/public $(Build.SourcesDirectory)/packages/extensions/qnamaker/client/public
