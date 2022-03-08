@@ -245,9 +245,8 @@ describe('BotEndpoint', () => {
   it('should return the access token if it already exists and has not expired yet', async () => {
     const endpoint = new BotEndpoint();
     const msaAppId = 'someAppId';
-    const msaPw = 'MOCK_TEST_SECRET';
     endpoint.msaAppId = msaAppId;
-    endpoint.msaPassword = msaPw;
+    endpoint.msaPassword = 'MOCK_TEST_SECRET';
     endpoint.use10Tokens = false;
     endpoint.channelService = undefined;
     // ensure that the token won't be expired
@@ -270,7 +269,7 @@ describe('BotEndpoint', () => {
       body: new URLSearchParams({
         grant_type: 'client_credentials',
         client_id: msaAppId,
-        client_secret: msaPw,
+        client_secret: 'MOCK_TEST_SECRET',
         scope: `${msaAppId}/.default`,
       } as { [key: string]: string }).toString(),
       headers: {
@@ -292,7 +291,7 @@ describe('BotEndpoint', () => {
       body: new URLSearchParams({
         grant_type: 'client_credentials',
         client_id: msaAppId,
-        client_secret: msaPw,
+        client_secret: 'MOCK_TEST_SECRET',
         scope: `${msaAppId}/.default`,
         atver: '1',
       } as { [key: string]: string }).toString(),
