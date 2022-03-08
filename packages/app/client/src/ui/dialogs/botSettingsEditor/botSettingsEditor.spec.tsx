@@ -207,7 +207,7 @@ describe('The BotSettingsEditor dialog should', () => {
       const instance = node.instance();
       instance.setState({
         path: SharedConstants.TEMP_BOT_IN_MEMORY_PATH,
-        secret: 'MsKgJGZJw7Vqw51YwpZhw7LCk2MzwpZZwoLDkMKPIWfCq8K7wobDp8OvwqvCmsO+EAY=',
+        secret: 'MOCK_TEST_SECRET',
       });
       await instance.onSaveClick();
       expect(mockRemoteCommandsCalled.length).toBe(7);
@@ -239,7 +239,7 @@ describe('The BotSettingsEditor dialog should', () => {
             {
               displayName: '',
               path: '/test/path',
-              secret: 'MsKgJGZJw7Vqw51YwpZhw7LCk2MzwpZZwoLDkMKPIWfCq8K7wobDp8OvwqvCmsO+EAY=',
+              secret: 'MOCK_TEST_SECRET',
             },
           ],
           commandName: 'bot:list:patch',
@@ -287,7 +287,7 @@ describe('The BotSettingsEditor dialog should', () => {
       const instance = node.instance();
       instance.setState({
         path: 'a/test/path',
-        secret: 'MsKgJGZJw7Vqw51YwpZhw7LCk2MzwpZZwoLDkMKPIWfCq8K7wobDp8OvwqvCmsO+EAY=',
+        secret: 'MOCK_TEST_SECRET',
       });
       await instance.onSaveClick();
       expect(mockRemoteCommandsCalled.length).toBe(3);
@@ -297,7 +297,7 @@ describe('The BotSettingsEditor dialog should', () => {
           args: [
             'a/test/path',
             {
-              secret: 'MsKgJGZJw7Vqw51YwpZhw7LCk2MzwpZZwoLDkMKPIWfCq8K7wobDp8OvwqvCmsO+EAY=',
+              secret: 'MOCK_TEST_SECRET',
             },
           ],
         },

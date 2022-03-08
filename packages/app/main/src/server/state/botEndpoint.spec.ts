@@ -51,14 +51,14 @@ describe('BotEndpoint', () => {
   it('should return the speech token if it already exists', async () => {
     const endpoint = new BotEndpoint('', '', '', 'msaAppId', 'msaAppPw');
     endpoint.speechAuthenticationToken = {
-      accessToken: 'someToken',
+      accessToken: 'MOCK_TEST_SECRET',
       region: 'westus2',
       expireAt: Date.now() + 10 * 1000 * 60, // expires in 10 minutes
       tokenLife: 10 * 1000 * 60, // token life of 10 minutes
     };
     const refresh = false;
     const token = await endpoint.getSpeechToken(refresh);
-    expect(token).toBe('someToken');
+    expect(token).toBe('MOCK_TEST_SECRET');
   });
 
   it('should return a new speech token if the current token is expired', async () => {
@@ -106,7 +106,7 @@ describe('BotEndpoint', () => {
     jest.spyOn(endpoint as any, 'fetchWithAuth').mockResolvedValueOnce({
       json: () =>
         Promise.resolve({
-          access_Token: 'someSpeechToken',
+          access_Token: 'MOCK_TEST_SECRET',
           region: 'westus2',
           expireAt: 1234,
           tokenLife: 9999,
@@ -115,7 +115,7 @@ describe('BotEndpoint', () => {
     });
     const token = await (endpoint as any).fetchSpeechToken();
 
-    expect(token).toBe('someSpeechToken');
+    expect(token).toBe('MOCK_TEST_SECRET');
   });
 
   it('should throw when failing to read the token response', async () => {
@@ -245,7 +245,7 @@ describe('BotEndpoint', () => {
   it('should return the access token if it already exists and has not expired yet', async () => {
     const endpoint = new BotEndpoint();
     const msaAppId = 'someAppId';
-    const msaPw = 'someAppPw';
+    const msaPw = 'MOCK_TEST_SECRET';
     endpoint.msaAppId = msaAppId;
     endpoint.msaPassword = msaPw;
     endpoint.use10Tokens = false;
@@ -305,7 +305,7 @@ describe('BotEndpoint', () => {
   it('should throw when requesting an access returns a bad response', async () => {
     const endpoint = new BotEndpoint();
     const msaAppId = 'someAppId';
-    const msaPw = 'someAppPw';
+    const msaPw = 'MOCK_TEST_SECRET';
     endpoint.msaAppId = msaAppId;
     endpoint.msaPassword = msaPw;
     endpoint.use10Tokens = false;

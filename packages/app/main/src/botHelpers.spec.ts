@@ -89,7 +89,7 @@ jest.mock('./state/store', () => ({
           { path: 'path1', displayName: 'name1', secret: '' },
           { path: 'path2', displayName: 'name2', secret: '' },
           { path: 'path3', displayName: 'name3', secret: '' },
-          { path: 'path4', displayName: 'name4', secret: 'ffsafsdfdsa' },
+          { path: 'path4', displayName: 'name4', secret: 'MOCK_TEST_SECRET' },
         ],
       },
     }),
@@ -170,7 +170,7 @@ describe('The botHelpers', () => {
       path: 'somePath',
       overrides: null,
     });
-    const secret = 'lgCbJPXnfOlatjbBDKMbh0ie6bc8PD/cjqA/2tPgMS0=';
+    const secret = 'MOCK_TEST_SECRET';
     const savableBot = BotHelpers.toSavableBot(bot2, secret);
 
     const expectedBot = new BotConfiguration();
@@ -189,7 +189,7 @@ describe('The botHelpers', () => {
     commandService.remoteCall = jest
       .fn()
       .mockImplementationOnce(() => Promise.resolve(null))
-      .mockImplementation(() => Promise.resolve('secret'));
+      .mockImplementation(() => Promise.resolve('MOCK_TEST_SECRET'));
 
     // if prompt for secret is dismissed, this should return null
     expect(await BotHelpers.promptForSecretAndRetry('somePath')).toBe(null);
@@ -210,11 +210,11 @@ describe('The botHelpers', () => {
       jest
         .spyOn(BotHelpers, 'toSavableBot')
         .mockReturnValueOnce({ save: mockSave, validateSecret: mockValidateSecret });
-      const result = await BotHelpers.saveBot({ path: 'path' } as any, 'secret');
+      const result = await BotHelpers.saveBot({ path: 'path' } as any, 'MOCK_TEST_SECRET');
 
       expect(result).toBe(true);
-      expect(mockValidateSecret).toHaveBeenCalledWith('secret');
-      expect(mockSave).toHaveBeenCalledWith('secret');
+      expect(mockValidateSecret).toHaveBeenCalledWith('MOCK_TEST_SECRET');
+      expect(mockSave).toHaveBeenCalledWith('MOCK_TEST_SECRET');
     });
 
     it('should save a bot using the secret from the store', async () => {
@@ -223,12 +223,12 @@ describe('The botHelpers', () => {
       jest
         .spyOn(BotHelpers, 'toSavableBot')
         .mockReturnValueOnce({ save: mockSave, validateSecret: mockValidateSecret });
-      jest.spyOn(CredentialManager, 'getPassword').mockResolvedValueOnce('secret');
+      jest.spyOn(CredentialManager, 'getPassword').mockResolvedValueOnce('MOCK_TEST_SECRET');
       const result = await BotHelpers.saveBot({ path: 'path' } as any, undefined);
 
       expect(result).toBe(true);
-      expect(mockValidateSecret).toHaveBeenCalledWith('secret');
-      expect(mockSave).toHaveBeenCalledWith('secret');
+      expect(mockValidateSecret).toHaveBeenCalledWith('MOCK_TEST_SECRET');
+      expect(mockSave).toHaveBeenCalledWith('MOCK_TEST_SECRET');
     });
   });
 
@@ -237,13 +237,13 @@ describe('The botHelpers', () => {
       const botConfigLoadSpy = jest
         .spyOn(BotConfiguration, 'load')
         .mockResolvedValueOnce({ path: 'path', name: 'boticus' });
-      const getPasswordSpy = jest.spyOn(CredentialManager, 'getPassword').mockResolvedValueOnce('secret');
+      const getPasswordSpy = jest.spyOn(CredentialManager, 'getPassword').mockResolvedValueOnce('MOCK_TEST_SECRET');
       const setPasswordSpy = jest.spyOn(CredentialManager, 'setPassword');
       jest.spyOn(BotHelpers, 'pathExistsInRecentBots').mockReturnValueOnce(false);
       const patchBotsSpy = jest.spyOn(BotHelpers, 'patchBotsJson').mockResolvedValueOnce(true);
-      const result = await BotHelpers.loadBotWithRetry('path', 'secret');
+      const result = await BotHelpers.loadBotWithRetry('path', 'MOCK_TEST_SECRET');
 
-      expect(botConfigLoadSpy).toHaveBeenCalledWith('path', 'secret');
+      expect(botConfigLoadSpy).toHaveBeenCalledWith('path', 'MOCK_TEST_SECRET');
       expect(patchBotsSpy).toHaveBeenCalledWith('path', { path: 'path', displayName: 'boticus' });
       expect(getPasswordSpy).toHaveBeenCalledWith('path');
       expect(setPasswordSpy).not.toHaveBeenCalled();
@@ -264,9 +264,9 @@ describe('The botHelpers', () => {
       const setPasswordSpy = jest.spyOn(CredentialManager, 'setPassword');
       jest.spyOn(BotHelpers, 'pathExistsInRecentBots').mockReturnValueOnce(false);
       jest.spyOn(BotHelpers, 'patchBotsJson').mockResolvedValueOnce(true);
-      const result = await BotHelpers.loadBotWithRetry('path', 'secret');
+      const result = await BotHelpers.loadBotWithRetry('path', 'MOCK_TEST_SECRET');
 
-      expect(setPasswordSpy).toHaveBeenCalledWith('path', 'secret');
+      expect(setPasswordSpy).toHaveBeenCalledWith('path', 'MOCK_TEST_SECRET');
       expect(result).toEqual({
         description: '',
         name: 'boticus',
@@ -280,13 +280,13 @@ describe('The botHelpers', () => {
 
     it('should update the secret in the store if it does not match the supplied secret', async () => {
       jest.spyOn(BotConfiguration, 'load').mockResolvedValueOnce({ path: 'path', name: 'boticus' });
-      jest.spyOn(CredentialManager, 'getPassword').mockResolvedValueOnce('otherSecret');
+      jest.spyOn(CredentialManager, 'getPassword').mockResolvedValueOnce('MOCK_TEST_SECRET_1');
       const setPasswordSpy = jest.spyOn(CredentialManager, 'setPassword');
       jest.spyOn(BotHelpers, 'pathExistsInRecentBots').mockReturnValueOnce(false);
       jest.spyOn(BotHelpers, 'patchBotsJson').mockResolvedValueOnce(true);
-      const result = await BotHelpers.loadBotWithRetry('path', 'secret');
+      const result = await BotHelpers.loadBotWithRetry('path', 'MOCK_TEST_SECRET');
 
-      expect(setPasswordSpy).toHaveBeenCalledWith('path', 'secret');
+      expect(setPasswordSpy).toHaveBeenCalledWith('path', 'MOCK_TEST_SECRET');
       expect(result).toEqual({
         description: '',
         name: 'boticus',
@@ -307,8 +307,8 @@ describe('The botHelpers', () => {
         .mockResolvedValueOnce({ path: 'path' });
       const loadBotWithRetrySpy = jest.spyOn(BotHelpers, 'loadBotWithRetry');
       jest.spyOn(BotHelpers, 'pathExistsInRecentBots').mockReturnValue(true);
-      jest.spyOn(CredentialManager, 'getPassword').mockResolvedValue('secret');
-      const result = await BotHelpers.loadBotWithRetry('path', 'secret');
+      jest.spyOn(CredentialManager, 'getPassword').mockResolvedValue('MOCK_TEST_SECRET');
+      const result = await BotHelpers.loadBotWithRetry('path', 'MOCK_TEST_SECRET');
 
       expect(result).toEqual({
         description: '',

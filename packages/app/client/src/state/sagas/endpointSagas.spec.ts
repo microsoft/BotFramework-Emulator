@@ -66,7 +66,7 @@ const mockBot = JSON.parse(`{
   "services": [{
       "type": "endpoint",
       "appId": "51fc2648-1190-44aa-9559-87b11b1d0014",
-      "appPassword": "vcxzvcxzvvxczvcxzv",
+      "appPassword": "MOCK_TEST_SECRET",
       "endpoint": "https://testbot.botframework.com/api/messagesv3",
       "id": "https://testbot.botframework.com/api/messagesv3",
       "name": "https://testbot.botframework.com/api/messagesv3"
@@ -116,7 +116,7 @@ let mockRemoteCommandsCalled = [];
 const endpointService: IEndpointService = {
   appId: 'appId',
   name: 'service',
-  appPassword: 'password123',
+  appPassword: 'MOCK_TEST_SECRET',
   endpoint: 'http://localendpoint',
   channelService: 'channel service',
 };

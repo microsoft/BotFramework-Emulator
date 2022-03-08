@@ -1,0 +1,17 @@
+{
+  "tool": "Credential Scanner",
+  "suppressions": [
+    {
+      "placeholder": "MOCK_TEST_SECRET",
+      "_justification": "This is the secret place holder used by my team in tests."
+    },
+    {
+      "placeholder": "MOCK_TEST_SECRET_1",
+      "_justification": "This is the secret place holder used by my team in tests."
+    },
+    {
+      "file": "\\node_modules\\node-gyp\\test\\fixtures\\server.key",
+      "_justification": "This is a key stored in one of our external dependencies' distributed code. It is out of our control."
+    }
+  ]
+}

@@ -56,7 +56,7 @@ describe('Endpoints', () => {
       botId: 'someBotId',
       botUrl: 'someBotUrl',
       msaAppId: 'someMsaAppId',
-      msaPassword: 'someMsaPassword',
+      msaPassword: 'MOCK_TEST_SECRET',
       use10Tokens: false,
       channelService: undefined,
     };
@@ -169,21 +169,21 @@ describe('Endpoints', () => {
       botId: 'botId1',
       botUrl: 'botUrl1',
       msaAppId: 'msaAppId1',
-      msaPassword: 'msaPassword1',
+      msaPassword: 'MOCK_TEST_SECRET',
       use10Tokens: 'use10Tokens1',
     };
     const endpoint2 = {
       botId: 'botId2',
       botUrl: 'botUrl2',
       msaAppId: 'msaAppId2',
-      msaPassword: 'msaPassword2',
+      msaPassword: 'MOCK_TEST_SECRET',
       use10Tokens: 'use10Tokens2',
     };
     const endpoint3 = {
       botId: 'botId3',
       botUrl: 'botUrl3',
       msaAppId: 'msaAppId3',
-      msaPassword: 'msaPassword3',
+      msaPassword: 'MOCK_TEST_SECRET',
       use10Tokens: 'use10Tokens3',
     };
     (endpoints as any)._endpoints['id1'] = endpoint1;
