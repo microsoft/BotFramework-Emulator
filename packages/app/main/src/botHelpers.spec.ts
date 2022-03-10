@@ -170,7 +170,7 @@ describe('The botHelpers', () => {
       path: 'somePath',
       overrides: null,
     });
-    const secret = 'MOCK_TEST_SECRET';
+    const secret = 'lgCbJPXnfOlatjbBDKMbh0ie6bc8PD/cjqA/2tPgMS0=';
     const savableBot = BotHelpers.toSavableBot(bot2, secret);
 
     const expectedBot = new BotConfiguration();
