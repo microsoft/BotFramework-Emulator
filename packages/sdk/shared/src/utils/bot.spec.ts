@@ -110,7 +110,7 @@ describe('Bot utility function tests', () => {
       id: 'http://www.endpoint1.com/api/messages',
       endpoint: 'http://www.endpoint1.com/api/messages',
       appId: 'someAppId1',
-      appPassword: 'someAppPw1',
+      appPassword: 'MOCK_TEST_SECRET',
     };
 
     const endpoint2: Partial<IEndpointService> = {

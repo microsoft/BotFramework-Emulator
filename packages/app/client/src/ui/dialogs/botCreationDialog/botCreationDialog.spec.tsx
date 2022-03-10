@@ -149,7 +149,7 @@ describe('BotCreationDialog tests', () => {
 
   // it('should generate a new bot secret when reset is clicked', () => {
   //   const testWrapper = shallow(<BotCreationDialog/>);
-  //   const initialSecret = 'secret1';
+  //   const initialSecret = 'MOCK_TEST_SECRET';
   //   testWrapper.instance().setState({ secret: initialSecret, encryptKey: true });
   //   (testWrapper.instance() as any).onResetClick();
   //   const state = testWrapper.state() as Partial<BotCreationDialogState>;
@@ -186,7 +186,7 @@ describe('BotCreationDialog tests', () => {
     (testWrapper.instance() as any).onInputChange(mockEvent as any);
 
     mockEvent.target.dataset.prop = 'appPassword';
-    mockEvent.target.value = 'somePw';
+    mockEvent.target.value = 'MOCK_TEST_SECRET';
     (testWrapper.instance() as any).onInputChange(mockEvent as any);
 
     mockEvent.target.dataset.prop = 'name';
@@ -196,7 +196,7 @@ describe('BotCreationDialog tests', () => {
     const state = testWrapper.state() as Partial<BotCreationDialogState>;
     expect(state.endpoint.endpoint).toBe('someEndpoint');
     expect(state.endpoint.appId).toBe('someId');
-    expect(state.endpoint.appPassword).toBe('somePw');
+    expect(state.endpoint.appPassword).toBe('MOCK_TEST_SECRET');
     expect(state.bot.name).toBe('someName');
   });
 

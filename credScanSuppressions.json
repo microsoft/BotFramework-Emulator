@@ -1,0 +1,17 @@
+{
+  "tool": "Credential Scanner",
+  "suppressions": [
+    {
+      "placeholder": "MOCK_TEST_SECRET",
+      "_justification": "This is a secret place holder used by my team in tests."
+    },
+    {
+      "placeholder": "MOCK_TEST_SECRET_1",
+      "_justification": "This is a secret place holder used by my team in tests."
+    },
+    {
+      "placeholder": "lgCbJPXnfOlatjbBDKMbh0ie6bc8PD/cjqA/2tPgMS0=",
+      "_justification": "This is a secret place holder used by my team in the botHelpers.spec.ts test file."
+    }
+  ]
+}
