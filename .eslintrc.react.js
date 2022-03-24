@@ -14,6 +14,7 @@ module.exports = {
   },
   rules: {
     'react/no-deprecated': 'warn',
+    'react/prop-types': 'off',
   },
   overrides: [
     {
