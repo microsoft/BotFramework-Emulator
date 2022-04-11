@@ -31,6 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './filterChildren';
-export * from './os';
-export * from './menu';
+import { isLinux } from './';
+
+export const getMenuItemAria = ({ checked = false, disabled = false, text, subtext = '' } = { text: '' }) => ({
+  'aria-label': `${text}${subtext ? ' ' + subtext : ''}${disabled ? ' unavailable' : ''}${checked ? ' checked' : ''}`,
+  'aria-description': isLinux() ? 'menu item' : undefined,
+});

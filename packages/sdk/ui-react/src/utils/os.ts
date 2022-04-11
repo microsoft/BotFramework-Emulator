@@ -31,6 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './filterChildren';
-export * from './os';
-export * from './menu';
+// prevent build tools from messing with the require
+const os = eval('require("os")');
+
+export const isLinux = () => os.type() === 'Linux';
