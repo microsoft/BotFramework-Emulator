@@ -31,7 +31,4 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-// prevent build tools from messing with the require
-const os = eval('require("os")');
-
-export const isLinux = () => os.type() === 'Linux';
+export const isLinux = () => process.platform === 'linux';
