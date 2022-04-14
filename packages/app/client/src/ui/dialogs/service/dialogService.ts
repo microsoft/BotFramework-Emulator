@@ -45,10 +45,13 @@ export interface DialogService {
   hideDialog(): any;
 
   setHost(hostElement: HTMLElement): void;
+
+  dialogHidden(): Promise<void>;
 }
 
 class DialogServiceImpl implements DialogService {
   private _hostElement: HTMLElement;
+  private _promise: Promise<unknown>;
   private _resolve: (value?: any) => void;
 
   /** Returns a thenable that can return a value using hideDialog(value)
@@ -60,16 +63,18 @@ class DialogServiceImpl implements DialogService {
     props: Record<string, unknown> = {}
   ): Promise<R> {
     if (!this._hostElement) {
-      return new Promise(resolve => resolve(null));
+      return Promise.resolve(null);
     }
     const reactElement = React.createElement(Provider, { store }, React.createElement(dialog, props));
     ReactDOM.render(reactElement, this._hostElement, this.notifyHostOfRender);
     store.dispatch(setDialogShowing(true));
 
     // set up the dialog to return a value from the dialog
-    return new Promise(resolve => {
+    const promise = new Promise<R>(resolve => {
       this._resolve = resolve;
     });
+    this._promise = promise;
+    return promise;
   }
 
   hideDialog(dialogReturnValue?: any): void {
@@ -82,10 +87,15 @@ class DialogServiceImpl implements DialogService {
 
     this._resolve(dialogReturnValue);
     this._resolve = null;
+    this._promise = null;
   }
 
   setHost(hostElement: HTMLElement): void {
     this._hostElement = hostElement;
+  }
+
+  async dialogHidden(): Promise<void> {
+    await this._promise;
   }
 
   /** Notifies the dialog host that the shown dialog has finished rendering */

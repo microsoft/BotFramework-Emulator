@@ -233,6 +233,7 @@ export class UiCommands {
   @Command(UI.ShowUpdateAvailableDialog)
   protected async showUpdateAvailableDialog(version = '') {
     try {
+      await DialogService.dialogHidden();
       return await DialogService.showDialog(UpdateAvailableDialogContainer, {
         version,
       });
