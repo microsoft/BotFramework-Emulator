@@ -111,6 +111,7 @@ export abstract class ServicePane<
   protected get content(): JSX.Element {
     const { links, additionalContent } = this;
     const { sortCriteriaChanged } = this.state;
+    const { ariaLabel } = this.props;
 
     if (!links || !links.length) {
       return <ExpandCollapseContent>{this.emptyContent}</ExpandCollapseContent>;
@@ -120,7 +121,12 @@ export abstract class ServicePane<
     }
     return (
       <ExpandCollapseContent>
-        <ul className={styles.servicePaneList} ref={ul => (this.listRef = ul)} tabIndex={0}>
+        <ul
+          className={styles.servicePaneList}
+          ref={ul => (this.listRef = ul)}
+          tabIndex={0}
+          aria-label={`${ariaLabel} list`}
+        >
           {links}
         </ul>
         {additionalContent}
