@@ -72,4 +72,20 @@ describe('The DialogService', () => {
     expect(result).toBe(1);
     expect(dispatchSpy).toHaveBeenCalledWith(setDialogShowing(true));
   });
+
+  describe('dialogHidden', () => {
+    it('should resolve when no dialog opened', async () => {
+      expect(DialogService.dialogHidden()).resolves.toBe(undefined);
+    });
+
+    it('should wait until dialog is hidden', async () => {
+      const hostElement = document.createElement('div');
+      const dialogHideSpy = jest.spyOn(DialogService, 'hideDialog');
+      DialogService.setHost(hostElement);
+      const promise = DialogService.showDialog(mockComponent);
+      await DialogService.dialogHidden();
+      expect(dialogHideSpy).toBeCalledTimes(1);
+      expect(await promise).toBe(1);
+    });
+  });
 });
