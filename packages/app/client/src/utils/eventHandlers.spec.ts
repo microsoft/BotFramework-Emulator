@@ -40,7 +40,7 @@ const {
   Commands: {
     Electron: { ToggleDevTools },
     Notifications,
-    UI: { ShowBotCreationDialog, ShowOpenBotDialog },
+    UI: { ShowBotCreationDialog, ShowOpenBotDialog, ToggleFullScreen },
   },
 } = SharedConstants;
 
@@ -50,10 +50,6 @@ const mockCurrentWebContents = {
   setZoomLevel: jest.fn(),
   getZoomFactor: jest.fn(),
   setZoomFactor: jest.fn(),
-};
-const mockCurrentWindow = {
-  isFullScreen: () => false,
-  setFullScreen: jest.fn(),
 };
 jest.mock('electron', () => ({
   ipcMain: new Proxy(
@@ -80,7 +76,6 @@ jest.mock('electron', () => ({
   ),
   remote: {
     getCurrentWebContents: () => mockCurrentWebContents,
-    getCurrentWindow: () => mockCurrentWindow,
   },
 }));
 
@@ -260,7 +255,8 @@ describe('#globalHandlers', () => {
     const event = new KeyboardEvent('keydown', { key: 'f11' });
     await globalHandlers(event);
 
-    expect(mockCurrentWindow.setFullScreen).toHaveBeenCalledWith(!mockCurrentWindow.isFullScreen());
+    expect(mockLocalCommandsCalled).toHaveLength(1);
+    expect(mockLocalCommandsCalled[0].commandName).toBe(ToggleFullScreen);
   });
 
   it('should toggle dev tools when Ctrl+Shit+I is pressed', async () => {

@@ -48,10 +48,12 @@ import {
 import { Command, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 import { ServiceTypes } from 'botframework-config/lib/schema';
 import { ComponentClass } from 'react';
+import { remote } from 'electron';
 
 import * as Constants from '../constants';
 import { showMarkdownPage, showWelcomePage } from '../state/helpers/editorHelpers';
 import { store } from '../state/store';
+import { ariaAlertService } from '../ui/a11y';
 import {
   AzureLoginFailedDialogContainer,
   AzureLoginPromptDialogContainer,
@@ -161,7 +163,7 @@ export class UiCommands {
   // ---------------------------------------------------------------------------
   // Theme switching from main
   @Command(UI.SwitchTheme)
-  protected switchTheme(themeName: string, themeHref: string) {
+  protected switchTheme(themeName: string, themeHref: string, announce = true) {
     const linkTags = document.querySelectorAll<HTMLLinkElement>('[data-theme-component="true"]');
     const themeTag = document.getElementById('themeVars') as HTMLLinkElement;
     if (themeTag) {
@@ -174,6 +176,10 @@ export class UiCommands {
         themeName,
       })
       .catch();
+
+    if (announce) {
+      ariaAlertService.alert(`${themeName} theme has been applied successfully.`);
+    }
   }
 
   // ---------------------------------------------------------------------------
@@ -269,5 +275,21 @@ export class UiCommands {
   @Command(UI.ShowCustomActivityEditor)
   protected showCustomActivityEditor() {
     return DialogService.showDialog(CustomActivityEditorContainer);
+  }
+
+  @Command(UI.ToggleFullScreen)
+  protected async toggleFullScreen(newState?: boolean, announce = true) {
+    const currentWindow = remote.getCurrentWindow();
+    const currentState = currentWindow.isFullScreen();
+    newState = newState ?? !currentState;
+
+    if (currentState === newState) return;
+
+    currentWindow.setFullScreen(newState);
+
+    if (announce) {
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      ariaAlertService.alert(`Full screen mode: ${newState ? 'entering full screen' : 'exiting full screen'}.`);
+    }
   }
 }

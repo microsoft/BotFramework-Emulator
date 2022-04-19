@@ -122,7 +122,8 @@ describe('main', () => {
     expect(commandServiceSpy).toHaveBeenCalledWith(
       SharedConstants.Commands.UI.SwitchTheme,
       'high-contrast',
-      path.join('.', 'themes', 'high-contrast.css')
+      path.join('.', 'themes', 'high-contrast.css'),
+      false
     );
 
     commandServiceSpy.mockClear();
@@ -140,7 +141,8 @@ describe('main', () => {
     expect(commandServiceSpy).toHaveBeenCalledWith(
       SharedConstants.Commands.UI.SwitchTheme,
       'Light',
-      './themes/light.css'
+      './themes/light.css',
+      false
     );
 
     commandServiceSpy.mockClear();

@@ -85,7 +85,6 @@ export const SharedConstants = {
       ShowSaveDialog: 'shell:showExplorer-save-dialog',
       UpdateFileMenu: 'menu:update-file-menu',
       UpdateConversationMenu: 'menu:update-conversation-menu',
-      SetFullscreen: 'electron:set-fullscreen',
       SetTitleBar: 'electron:set-title-bar',
       DisplayContextMenu: 'electron:display-context-menu',
       OpenExternal: 'electron:open-external',
@@ -189,6 +188,7 @@ export const SharedConstants = {
       ShowOpenUrlDialog: 'chat:open-url',
       ShowDataCollectionDialog: 'data-collection:show',
       ShowCustomActivityEditor: 'custom-activity-editor:show',
+      ToggleFullScreen: 'shell:toggle-full-screen',
     },
   },
   ContentTypes: {

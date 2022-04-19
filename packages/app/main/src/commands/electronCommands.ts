@@ -34,7 +34,7 @@ import * as path from 'path';
 
 import * as fs from 'fs-extra';
 import * as Electron from 'electron';
-import { app, dialog, Menu, MessageBoxOptions } from 'electron';
+import { app, dialog, MessageBoxOptions } from 'electron';
 import { ContextMenuCoordinates, SharedConstants } from '@bfemulator/app-shared';
 import { Command } from '@bfemulator/sdk-shared';
 
@@ -110,18 +110,6 @@ export class ElectronCommands {
     sendActivityMenuItems.forEach(item => {
       item.enabled = enabled;
     });
-  }
-
-  // ---------------------------------------------------------------------------
-  // Toggles app fullscreen mode
-  @Command(Commands.SetFullscreen)
-  protected async setFullScreen(fullscreen: boolean): Promise<void> {
-    emulatorApplication.mainWindow.browserWindow.setFullScreen(fullscreen);
-    if (fullscreen) {
-      Menu.setApplicationMenu(null);
-    } else {
-      await AppMenuBuilder.initAppMenu();
-    }
   }
 
   // ---------------------------------------------------------------------------

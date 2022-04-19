@@ -53,7 +53,14 @@ const {
       SendDeleteUserData,
     },
     Ngrok: { OpenStatusViewer },
-    UI: { ShowBotCreationDialog, ShowCustomActivityEditor, ShowMarkdownPage, ShowOpenBotDialog, ShowWelcomePage },
+    UI: {
+      ShowBotCreationDialog,
+      ShowCustomActivityEditor,
+      ShowMarkdownPage,
+      ShowOpenBotDialog,
+      ShowWelcomePage,
+      ToggleFullScreen,
+    },
   },
 } = SharedConstants;
 
@@ -178,20 +185,8 @@ export class AppMenuTemplate {
       { type: 'separator' },
       {
         label: 'Toggle Full Screen',
-        onClick: () => {
-          const currentWindow = remote.getCurrentWindow();
-          currentWindow.setFullScreen(!currentWindow.isFullScreen());
-          if (currentWindow.isFullScreen()) {
-            AppMenuTemplate.commandService.remoteCall(ShowMessageBox, null, {
-              message: 'Entering full screen.',
-              title: 'Full screen mode',
-            });
-          } else {
-            AppMenuTemplate.commandService.remoteCall(ShowMessageBox, null, {
-              message: 'Exiting full screen.',
-              title: 'Full screen mode',
-            });
-          }
+        onClick: async () => {
+          await AppMenuTemplate.commandService.call(ToggleFullScreen);
         },
         subtext: 'F11',
       },

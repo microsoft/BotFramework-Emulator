@@ -41,6 +41,7 @@ import {
   SharedConstants,
 } from '@bfemulator/app-shared';
 import { CommandRegistry, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
+import { remote } from 'electron';
 
 import { CONTENT_TYPE_APP_SETTINGS, DOCUMENT_ID_APP_SETTINGS } from '../constants';
 import * as editorHelpers from '../state/helpers/editorHelpers';
@@ -61,6 +62,17 @@ jest.mock('electron', () => ({
     app: {
       isPackaged: false,
     },
+    getCurrentWindow: (() => {
+      const currentWindow = {
+        setFullScreen(value: boolean) {
+          this._fullScreen = value;
+        },
+        isFullScreen(value: boolean) {
+          return this._fullsScreen;
+        },
+      };
+      return () => currentWindow;
+    })(),
   },
   ipcMain: new Proxy(
     {},
@@ -232,5 +244,21 @@ describe('the uiCommands', () => {
         },
       });
     });
+  });
+
+  it('should set full screen mode', async () => {
+    const handler = registry.getCommand(SharedConstants.Commands.UI.ToggleFullScreen);
+    const fullScreenSpy = jest.spyOn(remote.getCurrentWindow(), 'setFullScreen');
+
+    await handler(true);
+    expect(fullScreenSpy).toHaveBeenCalledWith(true);
+  });
+
+  it('should leave full screen mode', async () => {
+    const handler = registry.getCommand(SharedConstants.Commands.UI.ToggleFullScreen);
+    const fullScreenSpy = jest.spyOn(remote.getCurrentWindow(), 'setFullScreen');
+
+    await handler(false);
+    expect(fullScreenSpy).toHaveBeenCalledWith(false);
   });
 });
