@@ -298,7 +298,7 @@ class EmulatorApplication {
     const themeName = isHighContrast ? 'high-contrast' : themeInfo.name;
     const themeComponents = isHighContrast ? path.join('.', 'themes', 'high-contrast.css') : themeInfo.href;
 
-    this.commandService.remoteCall(SharedConstants.Commands.UI.SwitchTheme, themeName, themeComponents, false);
+    this.commandService.remoteCall(SharedConstants.Commands.UI.SwitchTheme, themeName, themeComponents);
   };
 
   // App listeners

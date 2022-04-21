@@ -52,7 +52,6 @@ import { ComponentClass } from 'react';
 import * as Constants from '../constants';
 import { showMarkdownPage, showWelcomePage } from '../state/helpers/editorHelpers';
 import { store } from '../state/store';
-import { ariaAlertService } from '../ui/a11y';
 import {
   AzureLoginFailedDialogContainer,
   AzureLoginPromptDialogContainer,
@@ -162,7 +161,7 @@ export class UiCommands {
   // ---------------------------------------------------------------------------
   // Theme switching from main
   @Command(UI.SwitchTheme)
-  protected switchTheme(themeName: string, themeHref: string, announce = true) {
+  protected switchTheme(themeName: string, themeHref: string) {
     const linkTags = document.querySelectorAll<HTMLLinkElement>('[data-theme-component="true"]');
     const themeTag = document.getElementById('themeVars') as HTMLLinkElement;
     if (themeTag) {
@@ -175,10 +174,6 @@ export class UiCommands {
         themeName,
       })
       .catch();
-
-    if (announce) {
-      ariaAlertService.alert(`${themeName} theme has been applied successfully.`);
-    }
   }
 
   // ---------------------------------------------------------------------------
