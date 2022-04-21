@@ -50,7 +50,6 @@ import { TelemetryService } from './telemetry';
 import { store } from './state';
 import { getLocalhostServiceUrl } from './utils/getLocalhostServiceUrl';
 import { getCurrentConversationId } from './state/helpers/chatHelpers';
-import { emulatorApplication } from './main';
 
 declare type MenuOpts = MenuItemConstructorOptions;
 
@@ -435,8 +434,6 @@ export class AppMenuBuilder {
   }
 
   public static async initViewMenu(): Promise<MenuOpts> {
-    const { Commands } = SharedConstants;
-
     // TODO - localization
     return {
       label: 'View',
@@ -446,14 +443,7 @@ export class AppMenuBuilder {
         { role: 'zoomIn' },
         { role: 'zoomOut' },
         { type: 'separator' },
-        {
-          label: 'Toggle Full Screen',
-          accelerator: isMac() ? 'Ctrl+Cmd+F' : 'F11',
-          click: async () => {
-            const currentWindow = emulatorApplication.mainWindow.browserWindow;
-            await this.commandService.call(Commands.Electron.SetFullscreen, !currentWindow.isFullScreen());
-          },
-        },
+        { role: 'togglefullscreen' },
         { role: 'toggleDevTools' },
       ],
     };

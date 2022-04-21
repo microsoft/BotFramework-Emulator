@@ -115,24 +115,13 @@ export class ElectronCommands {
   // ---------------------------------------------------------------------------
   // Toggles app fullscreen mode
   @Command(Commands.SetFullscreen)
-  protected async setFullScreen(fullscreen: boolean, notify = true): Promise<void> {
+  protected async setFullScreen(fullscreen: boolean): Promise<void> {
     emulatorApplication.mainWindow.browserWindow.setFullScreen(fullscreen);
     if (fullscreen) {
       Menu.setApplicationMenu(null);
     } else {
       await AppMenuBuilder.initAppMenu();
     }
-    if (!notify) return;
-    // There is a funny bug on linux:
-    // dialog.showMessageBox causes app crash when called from a native menu click handler.
-    // The fix is to wait until the current micro-task is completed, so the menu has a chance to hide.
-    // Although we don't use native menus on linux, better to have the fix as it is tricky to debug.
-    setTimeout(() => {
-      dialog.showMessageBox(emulatorApplication.mainWindow.browserWindow, {
-        message: fullscreen ? 'Entering full screen.' : 'Exiting full screen.',
-        title: 'Full screen mode',
-      });
-    }, 0);
   }
 
   // ---------------------------------------------------------------------------

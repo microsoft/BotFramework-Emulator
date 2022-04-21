@@ -72,7 +72,7 @@ export class ClientInitCommands {
     // Reset the app title bar
     await this.commandService.call(Commands.Electron.SetTitleBar);
     // Un-fullscreen the screen
-    await this.commandService.call(Commands.Electron.SetFullscreen, false, false);
+    await this.commandService.call(Commands.Electron.SetFullscreen, false);
     // Send app settings to client
     const { framework, windowState } = store.getState().settings;
     dispatch(rememberTheme(windowState.theme));

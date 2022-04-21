@@ -40,7 +40,7 @@ const {
   Channels: { HelpLabel, ReadmeUrl },
   Commands: {
     Bot: { Close },
-    Electron: { OpenExternal, ShowMessageBox, SetFullscreen },
+    Electron: { OpenExternal, ShowMessageBox },
     Emulator: {
       ClearState,
       GetServiceUrl,
@@ -178,9 +178,20 @@ export class AppMenuTemplate {
       { type: 'separator' },
       {
         label: 'Toggle Full Screen',
-        onClick: async () => {
+        onClick: () => {
           const currentWindow = remote.getCurrentWindow();
-          await AppMenuTemplate.commandService.remoteCall(SetFullscreen, !currentWindow.isFullScreen());
+          currentWindow.setFullScreen(!currentWindow.isFullScreen());
+          if (currentWindow.isFullScreen()) {
+            AppMenuTemplate.commandService.remoteCall(ShowMessageBox, null, {
+              message: 'Entering full screen.',
+              title: 'Full screen mode',
+            });
+          } else {
+            AppMenuTemplate.commandService.remoteCall(ShowMessageBox, null, {
+              message: 'Exiting full screen.',
+              title: 'Full screen mode',
+            });
+          }
         },
         subtext: 'F11',
       },
