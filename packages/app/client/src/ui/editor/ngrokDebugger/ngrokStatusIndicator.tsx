@@ -45,19 +45,23 @@ export interface NgrokTimeIntervalIndicatorProps {
 export const NgrokStatusIndicator = (props: NgrokTimeIntervalIndicatorProps) => {
   const [statusDisplay, setStatusDisplay] = useState(styles.tunnelInactive);
   const [displayTimeInterval, setTimeIntervalDisplay] = useState('Last refreshed now');
+  const [statusAnnouncement, setStatusAnnouncement] = useState('');
 
   useEffect(() => {
     switch (props.tunnelStatus) {
       case TunnelStatus.Active:
         setStatusDisplay(styles.tunnelActive);
+        setStatusAnnouncement('active');
         break;
 
       case TunnelStatus.Error:
         setStatusDisplay(styles.tunnelError);
+        setStatusAnnouncement('error');
         break;
 
       default:
         setStatusDisplay(styles.tunnelInactive);
+        setStatusAnnouncement('inactive');
         break;
     }
   }, [props.tunnelStatus]);
@@ -84,6 +88,9 @@ export const NgrokStatusIndicator = (props: NgrokTimeIntervalIndicatorProps) => 
 
   return (
     <div className={styles.ngrokStatusIndicator}>
+      <span className={styles.announcement} role="status">
+        {props.header} {statusAnnouncement} {displayTimeInterval}
+      </span>
       <span className={styles.header}>{props.header}:</span>
       <span className={[styles.tunnelHealthIndicator, statusDisplay].join(' ')}>
         <span>{displayTimeInterval}</span>
