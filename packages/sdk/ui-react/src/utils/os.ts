@@ -31,6 +31,4 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './filterChildren';
-export * from './os';
-export * from './menu';
+export const isLinux = () => process.platform === 'linux';

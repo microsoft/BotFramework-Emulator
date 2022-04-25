@@ -33,6 +33,8 @@
 
 import * as React from 'react';
 
+import { getMenuItemAria } from '../../utils';
+
 import * as styles from './menu.scss';
 import { Menu } from './menu';
 import { MenuItem } from './menuItem';
@@ -77,9 +79,9 @@ export class SubMenu extends React.Component<SubMenuProps, SubMenuState> {
 
     return (
       <li
+        {...getMenuItemAria({ text: label, disabled })}
         aria-expanded={menuShowing}
         aria-haspopup={true}
-        aria-label={`${label}${disabled ? ' unavailable' : ''}`}
         className={`${styles.menuItem} ${disabled ? styles.disabled : ''}`}
         id={this.subMenuButtonId}
         onKeyDown={this.onKeyDown}

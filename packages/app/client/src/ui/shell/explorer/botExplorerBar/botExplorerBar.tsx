@@ -56,9 +56,8 @@ export default class BotExplorerBar extends React.Component<BotExplorerBarProps,
           title="Endpoint"
           ariaLabel="Endpoints"
           elementRefHandler={this.setEndpointsPanelRef}
-          role={'toolbar'}
         />
-        <ServicesExplorerContainer title="Services" ariaLabel="Services" role={'toolbar'} />
+        <ServicesExplorerContainer title="Services" ariaLabel="Services" />
       </>
     );
   }

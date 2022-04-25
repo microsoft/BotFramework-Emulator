@@ -136,7 +136,7 @@ export class Chat extends PureComponent<ChatProps, ChatState> {
             username={currentUser.name || 'User'}
             webSpeechPonyfillFactory={webSpeechPonyfillFactory}
           >
-            <BasicWebChat />
+            <BasicWebChat role="region" />
             <TranscriptFocusListener updateSelectedActivity={boundUpdateSelectedActivity} />
           </Composer>
           <ConnectionMessageContainer documentId={this.props.documentId} />
