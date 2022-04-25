@@ -33,6 +33,8 @@
 
 import * as React from 'react';
 
+import { getMenuItemAria } from '../../utils';
+
 import * as styles from './menu.scss';
 
 type MenuItemType = 'default' | 'submenu' | 'separator';
@@ -64,9 +66,7 @@ export class MenuItemComp extends React.Component<MenuItemProps, Record<string, 
       default:
         return (
           <li
-            aria-label={`${label}${subtext ? subtext : ''}${disabled ? ' unavailable' : ''}${
-              checked ? ' checked' : ''
-            }`}
+            {...getMenuItemAria({ text: label, subtext, disabled, checked })}
             className={`${styles.menuItem} ${disabled ? styles.disabled : ''}`}
             onClick={this.onClick}
             onKeyDown={this.onKeyDown}
