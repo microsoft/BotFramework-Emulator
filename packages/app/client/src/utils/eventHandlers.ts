@@ -73,7 +73,7 @@ class EventHandlers {
     const {
       Commands: {
         Electron: { ToggleDevTools },
-        UI: { ShowBotCreationDialog, ShowOpenBotDialog },
+        UI: { ShowBotCreationDialog, ShowOpenBotDialog, ToggleFullScreen },
         Notifications: { Add },
       },
     } = SharedConstants;
@@ -114,19 +114,7 @@ class EventHandlers {
     }
     // F11
     if (key === 'f11') {
-      const currentWindow = remote.getCurrentWindow();
-      currentWindow.setFullScreen(!currentWindow.isFullScreen());
-      if (currentWindow.isFullScreen()) {
-        await EventHandlers.commandService.remoteCall(Electron.ShowMessageBox, false, {
-          message: 'Entering full screen.',
-          title: 'Full screen mode',
-        });
-      } else {
-        await EventHandlers.commandService.remoteCall(Electron.ShowMessageBox, false, {
-          message: 'Exiting full screen.',
-          title: 'Full screen mode',
-        });
-      }
+      awaitable = EventHandlers.commandService.call(ToggleFullScreen);
     }
     // Ctrl+Shift+I
     if (ctrlOrCmdPressed && shiftPressed && key === 'i') {

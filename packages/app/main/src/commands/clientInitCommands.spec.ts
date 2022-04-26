@@ -181,13 +181,33 @@ describe('The clientInitCommands', () => {
   it('should retrieve the bots from disk when the client is done loading', async () => {
     const command = registry.getCommand(SharedConstants.Commands.ClientInit.Loaded);
 
-    const localCommandArgs = [];
+    const commands = [];
     (commandService as any).call = (...args) => {
-      localCommandArgs.push(args);
+      commands.push({ type: 'local', args });
+    };
+    (commandService as any).remoteCall = (...args) => {
+      commands.push({ type: 'remote', args });
     };
 
     await command();
-    expect(localCommandArgs).toEqual([['electron:set-title-bar'], ['electron:set-fullscreen', false]]);
+    expect(commands).toMatchInlineSnapshot(`
+      Array [
+        Object {
+          "args": Array [
+            "electron:set-title-bar",
+          ],
+          "type": "local",
+        },
+        Object {
+          "args": Array [
+            "shell:toggle-full-screen",
+            false,
+            false,
+          ],
+          "type": "remote",
+        },
+      ]
+    `);
   });
 
   it('should open a bot and/or transcript file from the command line when the welcome screen is rendered', async () => {

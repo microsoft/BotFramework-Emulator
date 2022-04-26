@@ -115,7 +115,6 @@ export class AppMenu extends React.Component<AppMenuProps, Record<string, unknow
         label: theme.name,
         checked: theme.name === currentTheme,
         onClick: () => {
-          ariaAlertService.alert('Theme ' + theme.name + ' has been applied successfully.');
           this.props.switchTheme(theme.name);
         },
       };
