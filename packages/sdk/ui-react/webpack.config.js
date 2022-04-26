@@ -1,6 +1,8 @@
 const { WatchIgnorePlugin } = require('webpack');
 const path = require('path');
 module.exports = {
+  target: 'electron-renderer',
+
   entry: {
     index: path.resolve('./src/index.ts'),
   },

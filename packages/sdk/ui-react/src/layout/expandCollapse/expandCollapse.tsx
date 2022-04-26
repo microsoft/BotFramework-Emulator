@@ -62,7 +62,7 @@ export class ExpandCollapse extends React.Component<ExpandCollapseProps, ExpandC
 
   public render() {
     const { expanded } = this.state;
-    const { className = '', title, children, ariaLabel, role } = this.props;
+    const { className = '', title, children, ariaLabel, role = 'button' } = this.props;
     const { toggleIcon, onHeaderKeyPress, onToggleExpandedButtonClick } = this;
 
     return (
@@ -80,7 +80,7 @@ export class ExpandCollapse extends React.Component<ExpandCollapseProps, ExpandC
           <h3 onClick={onToggleExpandedButtonClick} title={title}>
             {title}
           </h3>
-          <div className={styles.accessories}>
+          <div className={styles.accessories} role="toolbar" aria-label={`${ariaLabel} actions`}>
             {filterChildren(children, child => hmrSafeNameComparison(child.type, ExpandCollapseControls))}
           </div>
           {this.announcePanelState}
