@@ -443,7 +443,13 @@ export class AppMenuBuilder {
         { role: 'zoomIn' },
         { role: 'zoomOut' },
         { type: 'separator' },
-        { role: 'togglefullscreen' },
+        {
+          label: 'Toggle Full Screen',
+          accelerator: isMac() ? 'Cmd+F11' : 'F11',
+          click: async () => {
+            await this.commandService.remoteCall(SharedConstants.Commands.UI.ToggleFullScreen);
+          },
+        },
         { role: 'toggleDevTools' },
       ],
     };

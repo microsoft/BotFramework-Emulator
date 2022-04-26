@@ -41,8 +41,8 @@ export class PresentationSagas {
   public static *presentationModeChanged(action: PresentationAction): IterableIterator<any> {
     const enabled = action.type === PresentationActions.enable;
     yield call(
-      [PresentationSagas.commandService, PresentationSagas.commandService.remoteCall],
-      SharedConstants.Commands.Electron.SetFullscreen,
+      [PresentationSagas.commandService, PresentationSagas.commandService.call],
+      SharedConstants.Commands.UI.ToggleFullScreen,
       enabled
     );
   }

@@ -248,26 +248,6 @@ describe('the electron commands', () => {
     expect(mockSendActivityMenuItems.some(item => !item.enabled)).toBe(false);
   });
 
-  it('should set full screen mode and set the application menu to null', async () => {
-    const handler = registry.getCommand(SharedConstants.Commands.Electron.SetFullscreen);
-    const fullScreenSpy = jest.spyOn(emulatorApplication.mainWindow.browserWindow, 'setFullScreen');
-    const setApplicationMenuSpy = jest.spyOn(Electron.Menu, 'setApplicationMenu');
-
-    await handler(true);
-    expect(fullScreenSpy).toHaveBeenCalledWith(true);
-    expect(setApplicationMenuSpy).toHaveBeenCalledWith(null);
-  });
-
-  it('should remove full screen mode and set the application menu back to normal', async () => {
-    const handler = registry.getCommand(SharedConstants.Commands.Electron.SetFullscreen);
-    const fullScreenSpy = jest.spyOn(emulatorApplication.mainWindow.browserWindow, 'setFullScreen');
-    mockInitAppMenu = jest.fn(() => null);
-
-    await handler(false);
-    expect(fullScreenSpy).toHaveBeenCalledWith(false);
-    expect(mockInitAppMenu).toHaveBeenCalled();
-  });
-
   it('should set the title bar', async () => {
     const handler = registry.getCommand(SharedConstants.Commands.Electron.SetTitleBar);
     let setTitleSpy = jest.spyOn(emulatorApplication.mainWindow.browserWindow, 'setTitle');
