@@ -114,7 +114,11 @@ export abstract class ServicePane<
     const { ariaLabel } = this.props;
 
     if (!links || !links.length) {
-      return <ExpandCollapseContent>{this.emptyContent}</ExpandCollapseContent>;
+      return (
+        <ExpandCollapseContent>
+          <div aria-live="polite">{this.emptyContent}</div>
+        </ExpandCollapseContent>
+      );
     }
     if (sortCriteriaChanged) {
       this.listRef && this.listRef.focus();
