@@ -60,7 +60,7 @@ export class BotNotOpenExplorer extends React.Component<BotNotOpenExplorerProps,
             role={this.props.role}
           >
             <ExpandCollapseContent>
-              <div className={styles.explorerEmptyState}>
+              <div aria-live="polite" className={styles.explorerEmptyState}>
                 {`To connect the Emulator services, `}
                 <LinkButton className={styles.explorerLink} onClick={this.onOpenBotFileClick}>
                   open a .bot file

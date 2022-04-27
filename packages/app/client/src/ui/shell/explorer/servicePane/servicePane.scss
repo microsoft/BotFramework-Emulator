@@ -52,7 +52,7 @@
 }
 
 .empty-content {
-  color: var(--neutral-7);
+  color: var(--list-info-color);
   font-size: 13px;
   margin: 12px 25px;
 }
@@ -100,7 +100,7 @@
     }
 
     & span {
-      color: var(--neutral-7);
+      color: var(--list-item-secondary-color);
     }
   }
 }

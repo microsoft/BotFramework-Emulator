@@ -6,7 +6,8 @@ html {
   --box-shadow-color: var(--neutral-6);
 
   /* Highlight colors */
-  --list-item-color: #605E5C;
+  --list-item-color: var(--neutral-14);
+  --list-item-secondary-color: var(--neutral-10);
   --list-item-selected-color: var(--neutral-2);
   --list-item-hover-bg: var(--neutral-4);
   --list-item-hover-border: 1px dashed transparent;
@@ -15,6 +16,7 @@ html {
   --focused-outline: 1px solid #0E369C;
   --focused-selected-highlighted-list-item: #3062D6;
   --focused-selected-list-item-bg: #006AB1;
+  --list-info-color: var(--neutral-10);
 
   /* Alert colors */
   --info-bg: #D6ECF2;

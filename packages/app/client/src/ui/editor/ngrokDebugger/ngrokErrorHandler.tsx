@@ -46,7 +46,7 @@ export const NgrokErrorHandler = (props: NgrokErrorHandlerProps) => {
     case 429:
       return (
         <>
-          <legend>
+          <legend role="alert">
             Looks like you have hit your free tier limit on connections to your tunnel. Below you will find several
             possible solutions.
           </legend>
@@ -81,9 +81,11 @@ export const NgrokErrorHandler = (props: NgrokErrorHandlerProps) => {
 
     case 402:
       return (
-        <legend>
-          Looks like the ngrok tunnel has expired. Try reconnecting to Ngrok or examine the logs for a detailed
-          explanation of the error.
+        <>
+          <legend role="alert">
+            Looks like the ngrok tunnel has expired. Try reconnecting to Ngrok or examine the logs for a detailed
+            explanation of the error.
+          </legend>
           <LinkButton
             ariaLabel="Click here to reconnect to ngrok."
             linkRole={false}
@@ -91,14 +93,16 @@ export const NgrokErrorHandler = (props: NgrokErrorHandlerProps) => {
           >
             Click here to reconnect to ngrok
           </LinkButton>
-        </legend>
+        </>
       );
 
     default:
       return (
-        <legend>
-          Looks like the ngrok tunnel does not exist anymore. Try reconnecting to Ngrok or examine the logs for a
-          detailed explanation of the error.
+        <>
+          <legend role="alert">
+            Looks like the ngrok tunnel does not exist anymore. Try reconnecting to Ngrok or examine the logs for a
+            detailed explanation of the error.
+          </legend>
           <LinkButton
             ariaLabel="Click here to reconnect to ngrok."
             linkRole={false}
@@ -106,7 +110,7 @@ export const NgrokErrorHandler = (props: NgrokErrorHandlerProps) => {
           >
             Click here to reconnect to ngrok
           </LinkButton>
-        </legend>
+        </>
       );
   }
 };

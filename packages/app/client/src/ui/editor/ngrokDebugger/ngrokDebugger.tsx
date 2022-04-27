@@ -158,7 +158,12 @@ export const NgrokDebugger = (props: NgrokDebuggerProps) => {
                 </span>
               </div>
               <div>
-                <LinkButton linkRole={true} onClick={props.onPingTunnelClick} buttonRef={setPingTunnelInputRef}>
+                <LinkButton
+                  linkRole={true}
+                  ariaLabel={'Click here to ping the tunnel now'}
+                  onClick={props.onPingTunnelClick}
+                  buttonRef={setPingTunnelInputRef}
+                >
                   Click here
                 </LinkButton>
                 &nbsp;to ping the tunnel now

@@ -123,10 +123,12 @@ export class NgrokInstance {
             return;
           }
           const errorMessage = response.text;
-          this.ws.write('-- Tunnel Error Response --');
-          this.ws.write(`Status Code: ${response.status}`);
-          this.ws.write(errorMessage);
-          this.ws.write('-- End Response --');
+          if (this.ws) {
+            this.ws.write('-- Tunnel Error Response --');
+            this.ws.write(`Status Code: ${response.status}`);
+            this.ws.write(errorMessage);
+            this.ws.write('-- End Response --');
+          }
           this.ngrokEmitter.emit('onTunnelError', {
             statusCode: response.status,
             errorMessage,
