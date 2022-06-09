@@ -32,7 +32,7 @@
 //
 import * as React from 'react';
 import { Component } from 'react';
-import JSONTree from 'react-json-tree';
+import { JSONTree } from 'react-json-tree';
 
 import light from './themes/light';
 import dark from './themes/dark';
@@ -109,12 +109,23 @@ export class CollapsibleJsonViewer extends Component<CollapsibleJsonViewerProps,
 
   public render() {
     const props = this.props || ({ data: {} } as any);
-    const { data, themeName = 'light', nodeAdded: _, ...jsonTreeProps } = props;
+    const { data, themeName = 'light', nodeAdded: _, theme, ...jsonTreeProps } = props;
     // Props are a pass through and are
     // allowed to overwrite the ones set here
     return (
       <div ref={this.jsonTreeContainerRef} className={styles.collapsibleJsonViewer}>
-        <JSONTree data={data} theme={themeNameToViewerThemeName[themeName]} invertTheme={false} {...jsonTreeProps} />
+        <JSONTree
+          data={data}
+          theme={{
+            extend: theme ?? themeNameToViewerThemeName[themeName],
+            arrowContainer: ({ style }) => ({
+              style,
+              'aria-hidden': true,
+            }),
+          }}
+          invertTheme={false}
+          {...jsonTreeProps}
+        />
         <div id="ariaRegion" role="region" aria-live="polite" className={styles.ariaRegion} />
       </div>
     );
