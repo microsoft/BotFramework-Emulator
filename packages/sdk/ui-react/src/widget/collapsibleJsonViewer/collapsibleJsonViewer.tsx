@@ -32,7 +32,7 @@
 //
 import * as React from 'react';
 import { Component } from 'react';
-import JSONTree from 'react-json-tree';
+import { JSONTree } from 'react-json-tree';
 
 import light from './themes/light';
 import dark from './themes/dark';
