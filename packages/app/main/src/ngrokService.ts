@@ -52,7 +52,9 @@ import { getSettings } from './state/store';
 let ngrokServiceInstance: NgrokService;
 
 export class NgrokService {
-  private ngrok = new NgrokInstance();
+  // Pass ngrok path to create instance without adding path to
+  // Ngrok Options for compatibility with Ngrok 3
+  private ngrok = new NgrokInstance(getSettings().framework.ngrokPath);
   private ngrokPath: string;
   private serviceUrl: string;
   private inspectUrl: string;
@@ -96,14 +98,12 @@ export class NgrokService {
       return this.serviceUrl;
     }
     // otherwise, we need to spin up an auxillary ngrok instance that we can tear down when the token response comes back
-    this.oauthNgrokInstance = new NgrokInstance();
+    this.oauthNgrokInstance = new NgrokInstance(getSettings().framework.ngrokPath);
     const port = Emulator.getInstance().server.serverPort;
-    const ngrokPath = getSettings().framework.ngrokPath;
     const inspectUrl = new Promise<string>(async (resolve, reject) => {
       try {
         const { url } = await this.oauthNgrokInstance.connect({
           addr: port,
-          path: ngrokPath,
         });
         resolve(url);
       } catch (e) {
@@ -152,7 +152,6 @@ export class NgrokService {
           this.triedToSpawn = true;
           const { inspectUrl, url } = await this.ngrok.connect({
             addr: port,
-            path: this.ngrokPath,
           });
 
           this.serviceUrl = url;

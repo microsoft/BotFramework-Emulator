@@ -49,10 +49,8 @@ import { dispatch, store } from './state';
 export interface NgrokOptions {
   addr: number;
   name: string;
-  path: string;
   port: number;
   proto: 'http' | 'https' | 'tcp' | 'tls';
-  region: 'us' | 'eu' | 'au' | 'ap';
   inspect: boolean;
   host_header?: string;
   bind_tls?: boolean | 'both';
@@ -68,7 +66,6 @@ const defaultOptions: Partial<NgrokOptions> = {
   addr: 80,
   name: uniqueId(),
   proto: 'http',
-  region: 'us',
   inspect: true,
 };
 
@@ -86,14 +83,16 @@ export class NgrokInstance {
   public ngrokEmitter = new EventEmitter().on('error', this.kill);
   private pendingConnection: Promise<{ url; inspectUrl }>;
   private ngrokProcess: ChildProcess;
+  private ngrokFilePath = '';
   private tunnels = {};
   private inspectUrl = '';
   private intervalForHealthCheck: NodeJS.Timer = null;
   private ws: FileWriteStream = null;
   private boundCheckTunnelStatus = null;
 
-  constructor() {
+  constructor(newNgrokPath) {
     this.boundCheckTunnelStatus = this.checkTunnelStatus.bind(this);
+    this.ngrokFilePath = newNgrokPath;
   }
 
   public running(): boolean {
@@ -263,11 +262,12 @@ export class NgrokInstance {
   }
 
   private spawnNgrok(opts: NgrokOptions): ChildProcess {
-    const filename = `${opts.path ? path.basename(opts.path) : bin}`;
-    const folder = opts.path ? path.dirname(opts.path) : path.join(__dirname, 'bin');
+    const filename = `${this.ngrokFilePath ? path.basename(this.ngrokFilePath) : bin}`;
+    const folder = this.ngrokFilePath ? path.dirname(this.ngrokFilePath) : path.join(__dirname, 'bin');
+
     try {
       this.ws.write('Ngrok Logger starting');
-      const args = ['start', '--none', `--log=stdout`, `--region=${opts.region}`];
+      const args = ['start', '--none', `--log=stdout`];
       const ngrokPath = path.join(folder, filename);
       if (!existsSync(ngrokPath)) {
         throw new Error(
@@ -276,6 +276,7 @@ export class NgrokInstance {
             `Ngrok is required to receive a token from the Bot Framework token service.`
         );
       }
+
       const ngrok = spawn(ngrokPath, args, { cwd: folder });
       // Errors are emitted instead of throwing since ngrok is a long running process
       ngrok.on('error', e => this.ngrokEmitter.emit('error', e));
