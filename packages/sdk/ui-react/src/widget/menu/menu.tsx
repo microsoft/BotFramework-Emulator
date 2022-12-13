@@ -83,6 +83,7 @@ export class Menu extends React.Component<MenuProps, MenuState> {
           if (item.type === 'submenu') {
             return (
               <SubMenu
+                key={index}
                 disabled={item.disabled}
                 focusHandler={this.checkRefForFocus}
                 index={index}
@@ -91,7 +92,7 @@ export class Menu extends React.Component<MenuProps, MenuState> {
               />
             );
           } else {
-            return <MenuItemComp focusHandler={this.checkRefForFocus} index={index} {...item} />;
+            return <MenuItemComp key={index} focusHandler={this.checkRefForFocus} index={index} {...item} />;
           }
         })}
       </ul>
