@@ -108,7 +108,7 @@
     "electron-rebuild": "2.3.4",
     "eslint": "7.19.0",
     "eslint-config-prettier": "^3.5.0",
-    "eslint-plugin-import": "2.20.0",
+    "eslint-plugin-import": "2.26.0",
     "eslint-plugin-notice": "^0.7.7",
     "eslint-plugin-prettier": "^3.0.1",
     "extract-zip": "^2.0.1",
@@ -159,12 +159,12 @@
     "redux": "^3.7.2",
     "redux-saga": "^0.16.0",
     "restify": "^8.4.0",
-    "restify-cors-middleware": "^1.1.0",
+    "restify-cors-middleware2": "^2.2.0",
     "rsa-pem-from-mod-exp": "^0.8.4",
     "sanitize-filename": "^1.6.1",
     "semver": "^5.5.0",
     "tslib": "^1.9.0",
     "ws": "^5.0.0",
-    "xmldom": "^0.1.27"
+    "xmldom": "^0.5.0"
   }
 }
