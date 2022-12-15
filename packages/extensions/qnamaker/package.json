@@ -12,7 +12,7 @@
   "devDependencies": {
     "@types/jest": "24.0.13",
     "babel-jest": "24.8.0",
-    "jest": "24.8.0",
+    "jest": "^29.3.1",
     "webpack-cli": "^3.3.2"
   },
   "dependencies": {
