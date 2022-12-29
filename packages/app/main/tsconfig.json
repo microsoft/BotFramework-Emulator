@@ -4,6 +4,7 @@
     "emitDeclarationOnly": false,
     "noEmit": true,
     "outDir": "build/dist",
+    "types": []
   },
   "include": ["./src"]
 }

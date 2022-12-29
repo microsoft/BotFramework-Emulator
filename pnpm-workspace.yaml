@@ -1,0 +1,13 @@
+packages:
+  - packages/app/client
+  - packages/app/main
+  - packages/app/shared
+  - packages/sdk/client
+  - packages/sdk/shared
+  - packages/sdk/ui-react
+  - packages/extensions/qnamaker
+  - packages/extensions/qnamaker/client
+  - packages/extensions/luis
+  - packages/extensions/luis/client
+  - packages/extensions/json
+  - packages/tools

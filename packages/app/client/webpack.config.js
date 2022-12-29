@@ -36,7 +36,7 @@ const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const TerserWebpackPlugin = require('terser-webpack-plugin');
 const webpack = require('webpack');
-const { DllPlugin, DllReferencePlugin, NamedModulesPlugin, DefinePlugin, WatchIgnorePlugin } = webpack;
+const { DllPlugin, DllReferencePlugin, DefinePlugin, WatchIgnorePlugin } = webpack;
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 
 const { npm_lifecycle_event = '' } = process.env;
@@ -46,7 +46,7 @@ const use = [
     loader: 'babel-loader',
   },
 ];
-const defaultConfig = {
+const defaultConfig = () => ({
   entry: {
     index: require.resolve('./src/index.tsx'),
   },
@@ -71,7 +71,16 @@ const defaultConfig = {
       },
       {
         test: /\.css$/,
-        use: ['style-loader', 'resolve-url-loader', 'css-loader'],
+        use: [
+          'style-loader',
+          'resolve-url-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              sourceMap: true,
+            },
+          },
+        ],
       },
       {
         test: /\.(png|jpg|gif|svg|woff|woff2)$/,
@@ -101,7 +110,12 @@ const defaultConfig = {
             },
           },
           'resolve-url-loader',
-          'sass-loader',
+          {
+            loader: 'sass-loader',
+            options: {
+              sourceMap: true,
+            },
+          },
         ],
       },
       {
@@ -130,21 +144,26 @@ const defaultConfig = {
     publicPath: '/',
   },
 
+  optimization: {
+    moduleIds: 'named',
+  },
+
   plugins: [
-    new NamedModulesPlugin(),
-    new CopyWebpackPlugin([
-      { from: './src/splash.html', to: './splash.html' },
-      { from: './src/index.html', to: './index.html' },
-      { from: './src/ui/styles/themes/light.css', to: 'themes/light.css' },
-      { from: './src/ui/styles/themes/dark.css', to: 'themes/dark.css' },
-      {
-        from: './src/ui/styles/themes/high-contrast.css',
-        to: 'themes/high-contrast.css',
-      },
-      { from: './src/ui/styles/themes/neutral.css', to: 'css/neutral.css' },
-      { from: './src/ui/styles/themes/fonts.css', to: 'css/fonts.css' },
-      { from: './src/ui/styles/themes/redline.css', to: 'css/redline.css' },
-    ]),
+    new CopyWebpackPlugin({
+      patterns: [
+        { from: './src/splash.html', to: './splash.html' },
+        { from: './src/index.html', to: './index.html' },
+        { from: './src/ui/styles/themes/light.css', to: 'themes/light.css' },
+        { from: './src/ui/styles/themes/dark.css', to: 'themes/dark.css' },
+        {
+          from: './src/ui/styles/themes/high-contrast.css',
+          to: 'themes/high-contrast.css',
+        },
+        { from: './src/ui/styles/themes/neutral.css', to: 'css/neutral.css' },
+        { from: './src/ui/styles/themes/fonts.css', to: 'css/fonts.css' },
+        { from: './src/ui/styles/themes/redline.css', to: 'css/redline.css' },
+      ],
+    }),
     new DefinePlugin({
       DEV: JSON.stringify(npm_lifecycle_event.includes('dev')),
     }),
@@ -153,13 +172,13 @@ const defaultConfig = {
       languages: ['json'],
     }),
   ],
-};
+});
 
 const buildConfig = mode => {
   const config = {
-    ...defaultConfig,
+    ...defaultConfig(),
     plugins: [
-      ...defaultConfig.plugins,
+      ...defaultConfig().plugins,
       new DllReferencePlugin({
         manifest: require(path.join(manifestLocation, 'vendors-manifest.json')),
       }),
@@ -188,13 +207,13 @@ const buildConfig = mode => {
 };
 
 const sharedConfig = () => ({
-  ...defaultConfig,
+  ...defaultConfig(),
   entry: {
     shared: [path.resolve('./src/shared.ts')],
   },
 
   output: {
-    ...defaultConfig.output,
+    ...defaultConfig().output,
     library: '[name]_[hash]',
   },
 
@@ -203,7 +222,7 @@ const sharedConfig = () => ({
   },
 
   plugins: [
-    ...defaultConfig.plugins,
+    ...defaultConfig().plugins,
     new DllPlugin({
       path: path.join(manifestLocation, 'shared-manifest.json'),
       name: '[name]_[hash]',
@@ -216,18 +235,18 @@ const sharedConfig = () => ({
 });
 
 const vendorsConfig = () => ({
-  ...defaultConfig,
+  ...defaultConfig(),
   entry: {
     vendors: [path.resolve('./src/vendors.ts')],
   },
 
   output: {
-    ...defaultConfig.output,
+    ...defaultConfig().output,
     library: '[name]_[hash]',
   },
 
   plugins: [
-    ...defaultConfig.plugins,
+    ...defaultConfig().plugins,
     new DllPlugin({
       path: path.join(manifestLocation, 'vendors-manifest.json'),
       name: '[name]_[hash]',

@@ -2,7 +2,7 @@
   "scripts": {
     "bootstrap": "lerna bootstrap --hoist --ignore @bfemulator/tools",
     "bootstrap:dev": "lerna bootstrap --hoist",
-    "build": "npm rebuild node-sass && npm run rebuild:keytar:electron && lerna run build",
+    "build": "npm run rebuild:keytar:electron && lerna run build",
     "lint": "lerna run lint --no-bail",
     "lint:fix": "lerna run lint:fix --no-bail",
     "rebuild:keytar:electron": "rimraf node_modules/keytar/build && electron-rebuild",
@@ -95,11 +95,6 @@
     "parse-url@<8.1.0": ">=8.1.0",
     "follow-redirects@<1.14.7": ">=1.14.7",
     "minimatch@<3.0.5": ">=3.0.5",
-    "shell-quote@<=1.7.2": ">=1.7.3",
-    "loader-utils@<1.4.1": ">=1.4.1",
-    "loader-utils@>=2.0.0 <2.0.3": ">=2.0.3",
-    "loader-utils@>=2.0.0 <2.0.4": ">=2.0.4",
-    "got@<11.8.5": ">=11.8.5",
-    "ajv@<6.12.3": ">=6.12.3"
+    "shell-quote@<=1.7.2": ">=1.7.3"
   }
 }

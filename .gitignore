@@ -12,3 +12,4 @@ build/
 chrome-driver-log.txt
 .env
 /packages/**/package-lock.json
+/packages/**/package-lock.json
