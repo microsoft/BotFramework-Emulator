@@ -68,29 +68,27 @@ export class OpenIdMetadata {
   private refreshCache(cb: (err: Error) => void): void {
     const options = {
       method: 'GET',
-      url: this.url,
-      json: true,
+      json: {},
       strictSSL: false,
       useElectronNet: true,
-    };
+    } as const;
 
-    got(options)
+    got(this.url, options)
       .then(resp => {
         if (resp.statusCode >= 400 || !resp.body) {
           throw new Error('Failed to load openID config: ' + resp.statusCode);
         }
 
-        const openIdConfig = resp.body as OpenIdConfig;
+        const openIdConfig = (resp.body as unknown) as OpenIdConfig;
 
         const options1 = {
           method: 'GET',
-          url: openIdConfig.jwks_uri,
-          json: true,
+          json: {},
           strictSSL: false,
           useElectronNet: true,
-        };
+        } as const;
 
-        got(options1)
+        got(openIdConfig.jwks_uri, options1)
           .then((resp1: any) => {
             if (resp1.statusCode >= 400 || !resp1.body) {
               throw new Error('Failed to load Keys: ' + resp1.statusCode);

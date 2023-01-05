@@ -194,13 +194,12 @@ class ProtocolHandlerImpl implements ProtocolHandler {
   /** Downloads a transcript from a URL provided in the protocol string,
    *  parses out the list of activities, and has the client side open it
    */
-  public openTranscript(protocol: Protocol): void {
+  public openTranscript(protocol: Protocol): Promise<void> {
     const { url } = protocol.parsedArgs;
-    const options = { url };
 
-    return got(options)
+    return got(url)
       .then(res => {
-        if (/^2\d\d$/.test(res.statusCode)) {
+        if (res.statusCode === 200) {
           if (res.body) {
             try {
               // parse the activities from the downloaded transcript
@@ -219,7 +218,7 @@ class ProtocolHandlerImpl implements ProtocolHandler {
         } else {
           if (res.statusCode === 401) {
             // auth failed
-            const stat = res.body || res.statusText || '';
+            const stat = res.body || res.statusMessage || '';
             throw new Error(`Authorization error while trying to download transcript: ${stat}`);
           }
           if (res.statusCode === 404) {
