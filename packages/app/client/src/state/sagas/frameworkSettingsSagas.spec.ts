@@ -159,8 +159,8 @@ describe('The frameworkSettingsSagas', () => {
     gen.next();
     const errMsg = `Error while saving emulator settings: oh noes!`;
     const notification = newNotification(errMsg);
-    notification.timestamp = jasmine.any(Number) as any;
-    notification.id = jasmine.any(String) as any;
+    notification.timestamp = expect.any(Number) as any;
+    notification.id = expect.any(String) as any;
     expect(gen.throw('oh noes!').value).toEqual(put(beginAdd(notification)));
   });
 });

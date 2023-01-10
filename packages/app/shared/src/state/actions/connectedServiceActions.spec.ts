@@ -85,8 +85,8 @@ describe('connected service actions', () => {
   });
 
   it('should create an openAddServiceContextMenu action', () => {
-    const payload: any = { resolver: jasmine.any(Function) };
-    const action = openAddServiceContextMenu(payload, jasmine.any(Function) as any, { x: 150, y: 300 });
+    const payload: any = { resolver: expect.any(Function) };
+    const action = openAddServiceContextMenu(payload, expect.any(Function) as any, { x: 150, y: 300 });
 
     expect(action.type).toBe(OPEN_ADD_CONNECTED_SERVICE_CONTEXT_MENU);
     expect(action.payload).toEqual({ ...payload, menuCoords: { x: 150, y: 300 } });

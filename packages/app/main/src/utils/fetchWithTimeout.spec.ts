@@ -54,14 +54,13 @@ describe('fetch with timeout', () => {
   beforeEach(() => {
     jest.useRealTimers();
   });
-  it('should return a response with status 200', async done => {
+  it('should return a response with status 200', async () => {
     jest.useFakeTimers();
     const result = await fetchWithTimeout('http://test.com', {});
     expect(result.status).toBe(200);
-    done();
   });
 
-  it('should throw an error if promise not resolved within the timeout specified', async done => {
+  it('should throw an error if promise not resolved within the timeout specified', async () => {
     mockTunnelStatusResponse.mockImplementationOnce(() => {
       return new Promise(resolve => {
         setTimeout(() => {
@@ -70,15 +69,18 @@ describe('fetch with timeout', () => {
       });
     });
     jest.useFakeTimers();
-    fetchWithTimeout('http://test.com', {}, 40000)
-      .then(() => {
-        // Should not hit
-        expect(true).toBeFalsy();
-      })
-      .catch(er => {
-        expect(er).toBeDefined();
-        done();
-      });
+    const ret = new Promise<void>(resolve => {
+      fetchWithTimeout('http://test.com', {}, 40000)
+        .then(() => {
+          // Should not hit
+          expect(true).toBeFalsy();
+        })
+        .catch(er => {
+          expect(er).toBeDefined();
+          resolve();
+        });
+    });
     jest.advanceTimersByTime(40001);
+    return ret;
   });
 });

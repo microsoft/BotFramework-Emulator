@@ -127,17 +127,17 @@ describe('The LuisApiService class', () => {
 
     expect(mockArgsPassedToFetch[1]).toEqual({
       url: 'https://api.eu.luis.ai/api/v2.0/bots/programmatickey',
-      headers: jasmine.any(Object),
+      headers: expect.any(Object),
     });
 
     expect(mockArgsPassedToFetch[2]).toEqual({
       url: 'https://api.au.luis.ai/api/v2.0/bots/programmatickey',
-      headers: jasmine.any(Object),
+      headers: expect.any(Object),
     });
 
     expect(mockArgsPassedToFetch[3]).toEqual({
       url: 'https://westus.api.cognitive.microsoft.com/luis/api/v2.0/apps/',
-      headers: jasmine.any(Object),
+      headers: expect.any(Object),
     });
   });
 });

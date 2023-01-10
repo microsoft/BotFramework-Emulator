@@ -42,13 +42,11 @@ jest.mock('fs', () => ({
 }));
 
 describe('copy files from source to destination asynchronously', () => {
-  it('should resolve promise if operation was successful', async done => {
+  it('should resolve promise if operation was successful', async () => {
     await expect(copyFileAsync('1.txt', '2.txt')).resolves.toBeUndefined();
-    done();
   });
 
-  it('should reject promise if unsuccessful', async (done: any) => {
+  it('should reject promise if unsuccessful', async () => {
     await expect(copyFileAsync('1.txt', '')).rejects.toBe('Error copying file: Incorrect folder permissions.');
-    done();
   });
 });

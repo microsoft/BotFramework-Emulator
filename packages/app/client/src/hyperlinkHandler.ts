@@ -36,6 +36,7 @@ import * as URL from 'url';
 import { SharedConstants } from '@bfemulator/app-shared';
 import { CommandServiceImpl, CommandServiceInstance, uniqueId } from '@bfemulator/sdk-shared';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const Electron = (window as any).require('electron');
 const { shell } = Electron;
 

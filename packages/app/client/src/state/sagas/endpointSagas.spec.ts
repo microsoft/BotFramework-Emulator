@@ -196,7 +196,7 @@ describe('The endpointSagas', () => {
   describe(' openEndpointContextMenu', () => {
     const menuItems = [
       { label: 'Open in Emulator', id: 'open' },
-      { label: 'Open in portal', id: 'absLink', enabled: jasmine.any(Boolean) },
+      { label: 'Open in portal', id: 'absLink', enabled: expect.any(Boolean) },
       { label: 'Edit configuration', id: 'edit' },
       { label: 'Remove', id: 'forget' },
     ];

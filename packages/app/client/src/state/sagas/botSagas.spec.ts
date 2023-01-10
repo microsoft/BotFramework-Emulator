@@ -195,8 +195,8 @@ describe('The botSagas', () => {
     const errorNotification = beginAdd(
       newNotification('An Error occurred opening the bot at /some/path.bot: Error: oh noes!')
     );
-    (errorNotification as any).payload.notification.timestamp = jasmine.any(Number);
-    (errorNotification as any).payload.notification.id = jasmine.any(String);
+    (errorNotification as any).payload.notification.timestamp = expect.any(Number);
+    (errorNotification as any).payload.notification.id = expect.any(String);
     expect(putNotification.value).toEqual(put(errorNotification));
   });
 

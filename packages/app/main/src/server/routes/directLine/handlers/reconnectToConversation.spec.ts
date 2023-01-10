@@ -55,7 +55,7 @@ describe('reconnectToConversation handler', () => {
     expect(res.json).toHaveBeenCalledWith(HttpStatus.OK, {
       conversationId: req.conversation.conversationId,
       token: req.conversation.conversationId,
-      expires_in: jasmine.any(Number),
+      expires_in: expect.any(Number),
       streamUrl: '',
     });
     expect(res.end).toHaveBeenCalled();

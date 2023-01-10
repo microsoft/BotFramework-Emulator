@@ -159,7 +159,7 @@ describe('The ServicesExplorer component should', () => {
     await instance.onChooseLocationClick();
 
     expect(mockDispatch).toHaveBeenCalledWith(
-      openResourcesSettings(ResourcesSettingsContainer, jasmine.any(Function) as any)
+      openResourcesSettings(ResourcesSettingsContainer, expect.any(Function) as any)
     );
   });
 

@@ -186,7 +186,7 @@ describe('The AppSettingsEditorContainer', () => {
     const saveSettingsAction = saveFrameworkSettings(normalizedState);
     const savedSettings: any = {
       ...saveSettingsAction.payload,
-      hash: jasmine.any(String),
+      hash: expect.any(String),
     };
 
     expect(mockDispatch).toHaveBeenLastCalledWith(saveFrameworkSettings(savedSettings));

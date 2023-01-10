@@ -155,7 +155,7 @@ describe('The ResourcesSettings component should', () => {
       currentTarget: { getAttribute: () => 'attr' },
     } as any);
     expect(dispatchSpy).toHaveBeenCalledWith(
-      executeCommand(true, SharedConstants.Commands.Electron.ShowOpenDialog, jasmine.any(Function), {
+      executeCommand(true, SharedConstants.Commands.Electron.ShowOpenDialog, expect.any(Function), {
         properties: ['openDirectory'],
       })
     );

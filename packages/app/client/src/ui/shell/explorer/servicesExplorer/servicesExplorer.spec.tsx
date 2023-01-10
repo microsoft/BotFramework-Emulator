@@ -199,7 +199,7 @@ describe('The ServicesExplorer component', () => {
           pickerComponent: ConnectedServicePickerContainer,
           progressIndicatorComponent: ProgressIndicatorContainer,
         },
-        jasmine.any(Function) as any,
+        expect.any(Function) as any,
         { x: 150, y: 200 }
       )
     );

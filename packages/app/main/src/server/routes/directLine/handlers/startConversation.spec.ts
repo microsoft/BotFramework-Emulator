@@ -65,7 +65,7 @@ describe('startConversation handler', () => {
 
     expect(mockCreatedConversation.sendConversationUpdate).toHaveBeenCalledWith(
       [
-        { id: jasmine.any(String), name: 'User' },
+        { id: expect.any(String), name: 'User' },
         { id: req.botEndpoint.botId, name: 'Bot' },
       ],
       undefined
@@ -73,7 +73,7 @@ describe('startConversation handler', () => {
     expect(res.json).toHaveBeenCalledWith(HttpStatus.CREATED, {
       conversationId: mockCreatedConversation.conversationId,
       token: req.botEndpoint.id,
-      expires_in: jasmine.any(Number),
+      expires_in: expect.any(Number),
       streamUrl: '',
     });
     expect(res.end).toHaveBeenCalled();
@@ -115,7 +115,7 @@ describe('startConversation handler', () => {
     expect(res.json).toHaveBeenCalledWith(HttpStatus.OK, {
       conversationId: mockCreatedConversation.conversationId,
       token: req.botEndpoint.id,
-      expires_in: jasmine.any(Number),
+      expires_in: expect.any(Number),
       streamUrl: '',
     });
     expect(res.end).toHaveBeenCalled();
@@ -161,7 +161,7 @@ describe('startConversation handler', () => {
     expect(res.json).toHaveBeenCalledWith(HttpStatus.OK, {
       conversationId: mockCreatedConversation.conversationId,
       token: req.botEndpoint.id,
-      expires_in: jasmine.any(Number),
+      expires_in: expect.any(Number),
       streamUrl: '',
     });
     expect(res.end).toHaveBeenCalled();
