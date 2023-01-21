@@ -27,7 +27,6 @@
 //
 
 import { ChatReplayData, RestartConversationStatus } from '@bfemulator/app-shared';
-import cloneDeep from 'clone-deep';
 import { Activity } from 'botframework-schema';
 
 import { replayScenarios } from '../../mocks/conversationQueueMocks';
@@ -37,7 +36,7 @@ import { ConversationQueue, WebChatEvents } from './restartConversationQueue';
 describe('Restart Conversation Queue', () => {
   let scenarios;
   beforeEach(() => {
-    scenarios = cloneDeep(replayScenarios);
+    scenarios = JSON.parse(JSON.stringify(replayScenarios));
   });
 
   it('should validate if it is in Replay conversational flow', () => {

@@ -80,7 +80,7 @@ import {
   getCustomUserGUID,
   getWebSpeechFactoryForDocumentId,
 } from './chatSagas';
-import { createWebChatActivityChannel, ChannelPayload } from './webchatActivityChannel';
+import { createWebChatActivityChannel, ChannelPayload } from './webChatActivityChannel';
 
 const mockChatStore = jest.fn((args = undefined) => {
   return {};
@@ -567,7 +567,7 @@ describe('The ChatSagas,', () => {
     // call createCognitiveServicesSpeechServicesPonyfillFactory
     expect(gen.next({}).value).toEqual(
       call(createCognitiveServicesSpeechServicesPonyfillFactory, {
-        credentials: jasmine.any(Function),
+        credentials: expect.any(Function),
       })
     );
 
@@ -768,7 +768,7 @@ describe('The ChatSagas,', () => {
       const existingFactory = {};
       expect(gen.next(existingFactory).value).toEqual(
         call(createCognitiveServicesSpeechServicesPonyfillFactory, {
-          credentials: jasmine.any(Function),
+          credentials: expect.any(Function),
         })
       );
 
@@ -902,7 +902,7 @@ describe('The ChatSagas,', () => {
       const existingFactory = {};
       expect(gen.next(existingFactory).value).toEqual(
         call(createCognitiveServicesSpeechServicesPonyfillFactory, {
-          credentials: jasmine.any(Function),
+          credentials: expect.any(Function),
         })
       );
 

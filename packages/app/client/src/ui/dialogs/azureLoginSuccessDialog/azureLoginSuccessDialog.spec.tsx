@@ -88,7 +88,7 @@ describe('The AzureLoginSuccessDialogContainer component should', () => {
       writable: true,
       configurable: true,
     });
-    const spy = spyOn(instance.props, 'cancel');
+    const spy = jest.spyOn(instance.props, 'cancel');
     instance.onDialogCancel();
     expect(spy).toHaveBeenCalledWith(currentCheckedValue);
   });

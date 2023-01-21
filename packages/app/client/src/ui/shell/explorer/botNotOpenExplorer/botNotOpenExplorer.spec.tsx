@@ -128,7 +128,7 @@ describe('The EndpointExplorer component should', () => {
 
     await instance.onCreateNewBotClick();
     expect(mockDispatch).toHaveBeenCalledWith(
-      executeCommand(false, SharedConstants.Commands.UI.ShowBotCreationDialog, jasmine.any(Function))
+      executeCommand(false, SharedConstants.Commands.UI.ShowBotCreationDialog, expect.any(Function))
     );
     expect(mockCreateNewBotButton.focus).toHaveBeenCalledTimes(1);
   });
@@ -145,8 +145,8 @@ describe('The EndpointExplorer component should', () => {
     const message = `An Error occurred on the Bot Not Open Explorer: oh noes!`;
     const notification = newNotification(message);
     const action = beginAdd(notification);
-    notification.timestamp = jasmine.any(Number) as any;
-    notification.id = jasmine.any(String) as any;
+    notification.timestamp = expect.any(Number) as any;
+    notification.id = expect.any(String) as any;
     expect(mockDispatch).toHaveBeenLastCalledWith(action);
 
     expect(spy).toHaveBeenCalled();

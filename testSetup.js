@@ -69,12 +69,14 @@ window.TextDecoder = class {
   }
 };
 
-window.crypto = {
-  random: () => Math.random() * 1000,
-  subtle: {
-    digest: async () => Promise.resolve('Hi! I am in your digest'),
-  },
-};
+Object.defineProperty(window, 'crypto', {
+  get: () => ({
+    random: () => Math.random() * 1000,
+    subtle: {
+      digest: async () => Promise.resolve('Hi! I am in your digest'),
+    },
+  }),
+});
 
 window.MutationObserver = class {
   observe() {}

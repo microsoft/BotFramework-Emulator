@@ -317,7 +317,7 @@ describe('<EmulatorContainer/>', () => {
       executeCommand(
         true,
         SharedConstants.Commands.Emulator.SaveTranscriptToFile,
-        jasmine.any(Function) as any,
+        expect.any(Function) as any,
         32,
         'convo1'
       )

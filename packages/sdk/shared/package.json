@@ -17,25 +17,24 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@babel/cli": "^7.1.0",
-    "@babel/core": "^7.1.0",
-    "@babel/plugin-proposal-class-properties": "^7.1.0",
-    "@babel/plugin-proposal-decorators": "^7.4.0",
-    "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
-    "@babel/plugin-transform-react-jsx": "^7.0.0",
-    "@babel/plugin-transform-runtime": "^7.4.4",
-    "@babel/preset-env": "^7.11.0",
-    "@babel/preset-typescript": "^7.1.0",
+    "@babel/core": "^7.20.2",
+    "@babel/plugin-proposal-class-properties": "^7.18.6",
+    "@babel/plugin-proposal-decorators": "^7.20.7",
+    "@babel/plugin-proposal-object-rest-spread": "^7.20.7",
+    "@babel/plugin-transform-react-jsx": "^7.20.7",
+    "@babel/plugin-transform-runtime": "^7.19.6",
+    "@babel/preset-env": "^7.20.2",
+    "@babel/preset-typescript": "^7.18.6",
     "@types/jest": "24.0.13",
     "@typescript-eslint/eslint-plugin": "^4.14.2",
     "@typescript-eslint/parser": "^4.14.2",
-    "babel-jest": "24.8.0",
+    "babel-jest": "^29.3.1",
     "eslint": "7.19.0",
     "eslint-config-prettier": "^3.5.0",
-    "eslint-plugin-import": "2.20.0",
+    "eslint-plugin-import": "2.26.0",
     "eslint-plugin-notice": "^0.7.7",
     "eslint-plugin-prettier": "^3.0.1",
-    "jest": "24.8.0",
+    "jest": "^29.3.1",
     "prettier-eslint": "^8.8.2",
     "prettier-eslint-cli": "5.0.0",
     "rimraf": "^2.6.2",
@@ -44,14 +43,21 @@
   "dependencies": {
     "@babel/runtime": "^7.1.5",
     "botframework-config": "4.4.0",
-    "botframework-schema": "4.14.0",
+    "botframework-schema": "4.17.0",
     "eslint-plugin-security": "^1.4.0",
     "tslib": "^1.9.0",
     "uuid": "^3.3.2"
   },
   "jest": {
+    "setupFilesAfterEnv": ["../../../../testSetup.js"],
     "transform": {
-      "^.+\\.(tsx?|jsx?)$": "babel-jest"
+      "^.+\\.(tsx?|jsx?)$": "babel-jest",
+      "^.+\\.(ts?|js?)$": "babel-jest"
+    },
+    "testEnvironment": "jsdom",
+    "testEnvironmentOptions": {
+      "customExportConditions": ["node"],
+      "url": "http://localhost"
     },
     "rootDir": "./src",
     "testMatch": [

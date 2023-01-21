@@ -191,15 +191,15 @@ describe('The clientInitCommands', () => {
 
     await command();
     expect(commands).toMatchInlineSnapshot(`
-      Array [
-        Object {
-          "args": Array [
+      [
+        {
+          "args": [
             "electron:set-title-bar",
           ],
           "type": "local",
         },
-        Object {
-          "args": Array [
+        {
+          "args": [
             "shell:toggle-full-screen",
             false,
             false,

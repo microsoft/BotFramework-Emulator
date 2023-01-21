@@ -104,20 +104,22 @@ module.exports = {
   externals: {},
   plugins: [
     new WatchIgnorePlugin(['./build/**/*.*', './public/**/*.*', './src/**/*.d.ts']),
-    new CopyWebpackPlugin([
-      {
-        from: './src/styles/themes/light-luis.css',
-        to: './themes/light-luis.css',
-      },
-      {
-        from: './src/styles/themes/dark-luis.css',
-        to: './themes/dark-luis.css',
-      },
-      {
-        from: './src/styles/themes/high-contrast-luis.css',
-        to: './themes/high-contrast-luis.css',
-      },
-    ]),
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: './src/styles/themes/light-luis.css',
+          to: './themes/light-luis.css',
+        },
+        {
+          from: './src/styles/themes/dark-luis.css',
+          to: './themes/dark-luis.css',
+        },
+        {
+          from: './src/styles/themes/high-contrast-luis.css',
+          to: './themes/high-contrast-luis.css',
+        },
+      ],
+    }),
     new DefinePlugin({
       process: { env: {} },
     }),

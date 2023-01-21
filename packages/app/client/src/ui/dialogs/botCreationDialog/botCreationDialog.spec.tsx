@@ -254,7 +254,7 @@ describe('BotCreationDialog tests', () => {
             appPassword: '',
             channelService: undefined,
             endpoint: '',
-            id: jasmine.any(String),
+            id: expect.any(String),
             name: '',
             type: 'endpoint',
           },

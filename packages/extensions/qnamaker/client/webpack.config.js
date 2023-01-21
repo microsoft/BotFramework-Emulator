@@ -31,9 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+const path = require('path');
+
 const { WatchIgnorePlugin } = require('webpack');
 const TerserWebpackPlugin = require('terser-webpack-plugin');
-const path = require('path');
 
 const buildConfig = mode => {
   const config = {
@@ -72,7 +73,12 @@ const buildConfig = mode => {
               },
             },
             'resolve-url-loader',
-            'sass-loader',
+            {
+              loader: 'sass-loader',
+              options: {
+                sourceMap: true,
+              },
+            },
           ],
         },
         {

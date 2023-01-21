@@ -10,8 +10,36 @@
   "license": "ISC",
   "devDependencies": {
     "@types/jest": "24.0.13",
-    "babel-jest": "24.8.0",
-    "jest": "24.8.0"
+    "babel-jest": "^29.3.1",
+    "jest": "^29.3.1"
+  },
+  "jest": {
+    "setupFilesAfterEnv": ["../../../../testSetup.js"],
+    "transform": {
+      "^.+\\.(tsx?|jsx?)$": "babel-jest",
+      "^.+\\.(ts?|js?)$": "babel-jest"
+    },
+    "testEnvironment": "jsdom",
+    "testEnvironmentOptions": {
+      "customExportConditions": ["node"],
+      "url": "http://localhost"
+    },
+    "rootDir": "./client",
+    "testMatch": [
+      "**/?(*.)(spec|test).(ts)?(x)"
+    ],
+    "moduleNameMapper": {
+      "monaco-editor": "<rootDir>/../../../../jestMocks/monacoEditorMock.js",
+      ".\\.scss$": "<rootDir>/../../../../jestMocks/styleMock.js"
+    },
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ]
   },
   "dependencies": {
     "@babel/runtime": "^7.1.5",

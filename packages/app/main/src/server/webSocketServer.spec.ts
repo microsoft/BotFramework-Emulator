@@ -82,7 +82,7 @@ describe('WebSocketServer', () => {
     const port = await WebSocketServer.init();
 
     expect(port).toBe(56273);
-    expect(mockRestServer.get).toHaveBeenCalledWith('/ws/:conversationId', jasmine.any(Function));
+    expect(mockRestServer.get).toHaveBeenCalledWith('/ws/:conversationId', expect.any(Function));
     expect((WebSocketServer as any)._restServer).toEqual(mockRestServer);
   });
 

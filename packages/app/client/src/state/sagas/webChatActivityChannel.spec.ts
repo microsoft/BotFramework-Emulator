@@ -32,7 +32,7 @@
 //
 import { Activity } from 'botframework-schema';
 
-import { createWebChatActivityChannel, WebChatActivityChannel, ChannelPayload } from './webchatActivityChannel';
+import { createWebChatActivityChannel, WebChatActivityChannel, ChannelPayload } from './webChatActivityChannel';
 
 describe('Webchat activity channel', () => {
   let activityChannel: WebChatActivityChannel;
