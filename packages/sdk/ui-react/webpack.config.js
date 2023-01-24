@@ -50,15 +50,18 @@ module.exports = {
         use: [
           'style-loader',
           {
-            loader: 'typings-for-css-modules-loader',
+            loader: '@teamsupercell/typings-for-css-modules-loader',
             options: {
-              localIdentName: '[local]__[hash:base64:5]',
+              banner: '// This is a generated file. Changes are likely to result in being overwritten',
+            },
+          },
+          {
+            loader: 'css-loader',
+            options: {
               modules: true,
-              sass: false,
               namedExport: true,
               camelCase: true,
               sourcemaps: true,
-              banner: '// This is a generated file. Changes are likely to result in being overwritten',
             },
           },
           'resolve-url-loader',

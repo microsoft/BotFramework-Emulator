@@ -1,9 +1,27 @@
 // This is a generated file. Changes are likely to result in being overwritten
-export const browseButton: string;
-export const inputContainer: string;
-export const padded: string;
-export const inputContainerRow: string;
-export const multiInputRow: string;
-export const themeOverrides: string;
-export const autoCompleteBar: string;
-export const rowOverride: string;
+declare namespace OpenBotDialogScssNamespace {
+  export interface IOpenBotDialogScss {
+    'auto-complete-bar': string;
+    autoCompleteBar: string;
+    'browse-button': string;
+    browseButton: string;
+    'input-container': string;
+    'input-container-row': string;
+    inputContainer: string;
+    inputContainerRow: string;
+    'multi-input-row': string;
+    multiInputRow: string;
+    padded: string;
+    'row-override': string;
+    rowOverride: string;
+    'theme-overrides': string;
+    themeOverrides: string;
+  }
+}
+
+declare const OpenBotDialogScssModule: OpenBotDialogScssNamespace.IOpenBotDialogScss & {
+  /** WARNING: Only available when `css-loader` is used without `style-loader` or `mini-css-extract-plugin` */
+  locals: OpenBotDialogScssNamespace.IOpenBotDialogScss;
+};
+
+export = OpenBotDialogScssModule;

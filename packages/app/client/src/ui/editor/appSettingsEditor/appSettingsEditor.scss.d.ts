@@ -1,15 +1,38 @@
 // This is a generated file. Changes are likely to result in being overwritten
-export const appSettingsEditor: string;
-export const legend: string;
-export const tunnelStatus: string;
-export const marginBottomRow: string;
-export const rightColumn: string;
-export const buttonRow: string;
-export const browseButton: string;
-export const saveButton: string;
-export const cancelButton: string;
-export const sizeLimitSuffix: string;
-export const checkboxOverrides: string;
-export const inputContainer: string;
-export const appSettingsInput: string;
-export const spacing: string;
+declare namespace AppSettingsEditorScssNamespace {
+  export interface IAppSettingsEditorScss {
+    'app-settings-editor': string;
+    'app-settings-input': string;
+    appSettingsEditor: string;
+    appSettingsInput: string;
+    'browse-button': string;
+    browseButton: string;
+    'button-row': string;
+    buttonRow: string;
+    'cancel-button': string;
+    cancelButton: string;
+    'checkbox-overrides': string;
+    checkboxOverrides: string;
+    'input-container': string;
+    inputContainer: string;
+    legend: string;
+    'margin-bottom-row': string;
+    marginBottomRow: string;
+    'right-column': string;
+    rightColumn: string;
+    'save-button': string;
+    saveButton: string;
+    'size-limit-suffix': string;
+    sizeLimitSuffix: string;
+    spacing: string;
+    'tunnel-status': string;
+    tunnelStatus: string;
+  }
+}
+
+declare const AppSettingsEditorScssModule: AppSettingsEditorScssNamespace.IAppSettingsEditorScss & {
+  /** WARNING: Only available when `css-loader` is used without `style-loader` or `mini-css-extract-plugin` */
+  locals: AppSettingsEditorScssNamespace.IAppSettingsEditorScss;
+};
+
+export = AppSettingsEditorScssModule;
