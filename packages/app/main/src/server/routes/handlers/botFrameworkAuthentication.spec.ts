@@ -101,7 +101,16 @@ describe('botFrameworkAuthenticationMiddleware', () => {
 
     expect(result).toBeUndefined();
     expect(mockHeader).toHaveBeenCalled();
-    expect(mockDecode).toHaveBeenCalledWith('someToken', { complete: true });
+    expect(mockDecode.mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          "someToken",
+          {
+            "complete": true,
+          },
+        ],
+      ]
+    `);
     expect(mockStatus).toHaveBeenCalledWith(401);
     expect(mockEnd).toHaveBeenCalled();
   });
@@ -138,11 +147,20 @@ describe('botFrameworkAuthenticationMiddleware', () => {
     const result = await authMiddleware(req, res, mockNext);
 
     expect(result).toBeUndefined();
-    expect(mockVerify).toHaveBeenCalledWith('someToken', 'openIdMetadataKey', {
-      audience: usGovernmentAuthentication.botTokenAudience,
-      clockTolerance: 300,
-      issuer: usGovernmentAuthentication.tokenIssuerV1,
-    });
+    expect(mockVerify.mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          "someToken",
+          "openIdMetadataKey",
+          {
+            "allowInvalidAsymmetricKeyTypes": true,
+            "audience": "https://api.botframework.us",
+            "clockTolerance": 300,
+            "issuer": "https://sts.windows.net/cab8a31a-1906-4287-a0d8-4eef66b95f6e/",
+          },
+        ],
+      ]
+    `);
     expect(req.jwt).toBe('verifiedJwt');
     expect(mockNext).toHaveBeenCalled();
   });
@@ -161,11 +179,20 @@ describe('botFrameworkAuthenticationMiddleware', () => {
     const result = await authMiddleware(req, res, mockNext);
 
     expect(result).toBeUndefined();
-    expect(mockVerify).toHaveBeenCalledWith('someToken', 'openIdMetadataKey', {
-      audience: usGovernmentAuthentication.botTokenAudience,
-      clockTolerance: 300,
-      issuer: usGovernmentAuthentication.tokenIssuerV2,
-    });
+    expect(mockVerify.mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          "someToken",
+          "openIdMetadataKey",
+          {
+            "allowInvalidAsymmetricKeyTypes": true,
+            "audience": "https://api.botframework.us",
+            "clockTolerance": 300,
+            "issuer": "https://login.microsoftonline.us/cab8a31a-1906-4287-a0d8-4eef66b95f6e/v2.0",
+          },
+        ],
+      ]
+    `);
     expect(req.jwt).toBe('verifiedJwt');
     expect(mockNext).toHaveBeenCalled();
   });
@@ -187,11 +214,20 @@ describe('botFrameworkAuthenticationMiddleware', () => {
     const result = await authMiddleware(req, res, mockNext);
 
     expect(result).toBeUndefined();
-    expect(mockVerify).toHaveBeenCalledWith('someToken', 'openIdMetadataKey', {
-      audience: usGovernmentAuthentication.botTokenAudience,
-      clockTolerance: 300,
-      issuer: usGovernmentAuthentication.tokenIssuerV1,
-    });
+    expect(mockVerify.mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          "someToken",
+          "openIdMetadataKey",
+          {
+            "allowInvalidAsymmetricKeyTypes": true,
+            "audience": "https://api.botframework.us",
+            "clockTolerance": 300,
+            "issuer": "https://sts.windows.net/cab8a31a-1906-4287-a0d8-4eef66b95f6e/",
+          },
+        ],
+      ]
+    `);
     expect(req.jwt).toBeUndefined();
     expect(mockNext).not.toHaveBeenCalled();
     expect(mockStatus).toHaveBeenCalledWith(401);
@@ -251,11 +287,20 @@ describe('botFrameworkAuthenticationMiddleware', () => {
     const result = await authMiddleware(req, res, mockNext);
 
     expect(result).toBeUndefined();
-    expect(mockVerify).toHaveBeenCalledWith('someToken', 'openIdMetadataKey', {
-      audience: authentication.botTokenAudience,
-      clockTolerance: 300,
-      issuer: v32Authentication.tokenIssuerV1,
-    });
+    expect(mockVerify.mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          "someToken",
+          "openIdMetadataKey",
+          {
+            "allowInvalidAsymmetricKeyTypes": true,
+            "audience": "https://api.botframework.com",
+            "clockTolerance": 300,
+            "issuer": "https://sts.windows.net/f8cdef31-a31e-4b4a-93e4-5f571e91255a/",
+          },
+        ],
+      ]
+    `);
     expect(req.jwt).toBe('verifiedJwt');
     expect(mockNext).toHaveBeenCalled();
   });
@@ -274,11 +319,20 @@ describe('botFrameworkAuthenticationMiddleware', () => {
     const result = await authMiddleware(req, res, mockNext);
 
     expect(result).toBeUndefined();
-    expect(mockVerify).toHaveBeenCalledWith('someToken', 'openIdMetadataKey', {
-      audience: authentication.botTokenAudience,
-      clockTolerance: 300,
-      issuer: v32Authentication.tokenIssuerV2,
-    });
+    expect(mockVerify.mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          "someToken",
+          "openIdMetadataKey",
+          {
+            "allowInvalidAsymmetricKeyTypes": true,
+            "audience": "https://api.botframework.com",
+            "clockTolerance": 300,
+            "issuer": "https://login.microsoftonline.com/f8cdef31-a31e-4b4a-93e4-5f571e91255a/v2.0",
+          },
+        ],
+      ]
+    `);
     expect(req.jwt).toBe('verifiedJwt');
     expect(mockNext).toHaveBeenCalled();
   });
@@ -302,16 +356,30 @@ describe('botFrameworkAuthenticationMiddleware', () => {
 
     expect(result).toBeUndefined();
     expect(mockVerify).toHaveBeenCalledTimes(2);
-    expect(mockVerify).toHaveBeenCalledWith('someToken', 'openIdMetadataKey', {
-      audience: authentication.botTokenAudience,
-      clockTolerance: 300,
-      issuer: v32Authentication.tokenIssuerV1,
-    });
-    expect(mockVerify).toHaveBeenCalledWith('someToken', 'openIdMetadataKey', {
-      audience: authentication.botTokenAudience,
-      clockTolerance: 300,
-      issuer: v31Authentication.tokenIssuer,
-    });
+    expect(mockVerify.mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          "someToken",
+          "openIdMetadataKey",
+          {
+            "allowInvalidAsymmetricKeyTypes": true,
+            "audience": "https://api.botframework.com",
+            "clockTolerance": 300,
+            "issuer": "https://sts.windows.net/f8cdef31-a31e-4b4a-93e4-5f571e91255a/",
+          },
+        ],
+        [
+          "someToken",
+          "openIdMetadataKey",
+          {
+            "allowInvalidAsymmetricKeyTypes": true,
+            "audience": "https://api.botframework.com",
+            "clockTolerance": 300,
+            "issuer": "https://sts.windows.net/d6d49420-f39b-4df7-a1dc-d59a935871db/",
+          },
+        ],
+      ]
+    `);
     expect(req.jwt).toBe('verifiedJwt');
     expect(mockNext).toHaveBeenCalled();
   });
@@ -340,16 +408,30 @@ describe('botFrameworkAuthenticationMiddleware', () => {
 
     expect(result).toBeUndefined();
     expect(mockVerify).toHaveBeenCalledTimes(2);
-    expect(mockVerify).toHaveBeenCalledWith('someToken', 'openIdMetadataKey', {
-      audience: authentication.botTokenAudience,
-      clockTolerance: 300,
-      issuer: v32Authentication.tokenIssuerV1,
-    });
-    expect(mockVerify).toHaveBeenCalledWith('someToken', 'openIdMetadataKey', {
-      audience: authentication.botTokenAudience,
-      clockTolerance: 300,
-      issuer: v31Authentication.tokenIssuer,
-    });
+    expect(mockVerify.mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          "someToken",
+          "openIdMetadataKey",
+          {
+            "allowInvalidAsymmetricKeyTypes": true,
+            "audience": "https://api.botframework.com",
+            "clockTolerance": 300,
+            "issuer": "https://sts.windows.net/f8cdef31-a31e-4b4a-93e4-5f571e91255a/",
+          },
+        ],
+        [
+          "someToken",
+          "openIdMetadataKey",
+          {
+            "allowInvalidAsymmetricKeyTypes": true,
+            "audience": "https://api.botframework.com",
+            "clockTolerance": 300,
+            "issuer": "https://sts.windows.net/d6d49420-f39b-4df7-a1dc-d59a935871db/",
+          },
+        ],
+      ]
+    `);
     expect(mockStatus).toHaveBeenCalledWith(401);
     expect(mockEnd).toHaveBeenCalled();
     expect(req.jwt).toBeUndefined();
