@@ -187,16 +187,19 @@ describe('the ngrok ', () => {
       expect(mockOk).toBe(1);
     });
 
-    it('should disconnect', async done => {
+    it('should disconnect', async () => {
       let disconnected = false;
-      ngrok.ngrokEmitter.on('disconnect', () => {
-        disconnected = true;
-        expect(disconnected).toBe(true);
-        done();
+      const ret = new Promise<void>(resolve => {
+        ngrok.ngrokEmitter.on('disconnect', () => {
+          disconnected = true;
+          expect(disconnected).toBe(true);
+          resolve();
+        });
       });
 
       await connectToNgrokInstance(ngrok);
       await ngrok.disconnect();
+      return ret;
     });
 
     it('should throw when the number of reties to retrieve the ngrok url are exhausted.', async () => {
@@ -228,18 +231,17 @@ describe('the ngrok ', () => {
   });
 
   describe('ngrok tunnel heath status check operations', () => {
-    it('should check tunnel status every minute and report success if tunnel ping was a success.', async done => {
+    it('should check tunnel status every minute and report success if tunnel ping was a success.', async () => {
       jest.useFakeTimers();
       await connectToNgrokInstance(ngrok);
       ngrok.ngrokEmitter.on('onTunnelStatusPing', (msg: TunnelStatus) => {
         expect(msg).toEqual(TunnelStatus.Active);
-        done();
       });
       jest.advanceTimersByTime(intervalForEachPing + 1);
     });
 
     // First minute generates a Too many connections error. Second minute the tunnel resets back to an active state
-    it('Should not emit onTunnel error if ngrok tunnel error state has not changed to prevent notification flooding.', async done => {
+    it('Should not emit onTunnel error if ngrok tunnel error state has not changed to prevent notification flooding.', async () => {
       //Situation where ngrok saga does the ping and calls onTunnelPingError with status 400. Before the next ping happens dispatching an action to set the state to reflect the same. Hence, no notificaiton flooding.
       jest.useFakeTimers();
       const tunnelErrorMock = jest.fn();
@@ -260,11 +262,10 @@ describe('the ngrok ', () => {
       );
       jest.advanceTimersByTime(intervalForEachPing + 1);
       expect(tunnelErrorMock).toBeCalledTimes(1);
-      done();
     });
 
     // // First minute generates a Too many connections error for first minute. Second minute the tunnel resets back to an active state
-    it('Should dynamically check for status change every minute. ', async done => {
+    it('Should dynamically check for status change every minute. ', async () => {
       jest.useFakeTimers();
       mockDispatch.mockImplementationOnce((args: NgrokTunnelAction<StatusCheckOnTunnel>) => {
         args.payload.onTunnelPingError({
@@ -277,11 +278,14 @@ describe('the ngrok ', () => {
         expect(err.errorMessage).toBe('Tunnel has too many connections');
       });
       await connectToNgrokInstance(ngrok);
-      ngrok.ngrokEmitter.on('onTunnelStatusPing', (status: TunnelStatus) => {
-        expect(status).toBe(TunnelStatus.Active);
-        done();
+      const ret = new Promise<void>(resolve => {
+        ngrok.ngrokEmitter.on('onTunnelStatusPing', (status: TunnelStatus) => {
+          expect(status).toBe(TunnelStatus.Active);
+          resolve();
+        });
       });
       jest.advanceTimersByTime(60001);
+      return ret;
     });
   });
 });

@@ -67,7 +67,7 @@ describe('<MenuButton />', () => {
     (instance as any).onButtonClick();
 
     expect(dispatchEventSpy).toHaveBeenCalledWith(
-      new CustomEvent('MenuButtonExpanded', { detail: jasmine.any(String) })
+      new CustomEvent('MenuButtonExpanded', { detail: expect.any(String) })
     );
     expect(wrapper.state().menuShowing).toBe(true);
 

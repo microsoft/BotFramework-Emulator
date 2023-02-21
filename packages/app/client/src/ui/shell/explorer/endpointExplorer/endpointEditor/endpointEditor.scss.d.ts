@@ -1,7 +1,24 @@
 // This is a generated file. Changes are likely to result in being overwritten
-export const endpointWarning: string;
-export const absContentToggle: string;
-export const arrowExpanded: string;
-export const absContent: string;
-export const absTextFieldRow: string;
-export const endpointLink: string;
+declare namespace EndpointEditorScssNamespace {
+  export interface IEndpointEditorScss {
+    'abs-content': string;
+    'abs-content-toggle': string;
+    'abs-text-field-row': string;
+    absContent: string;
+    absContentToggle: string;
+    absTextFieldRow: string;
+    'arrow-expanded': string;
+    arrowExpanded: string;
+    'endpoint-link': string;
+    'endpoint-warning': string;
+    endpointLink: string;
+    endpointWarning: string;
+  }
+}
+
+declare const EndpointEditorScssModule: EndpointEditorScssNamespace.IEndpointEditorScss & {
+  /** WARNING: Only available when `css-loader` is used without `style-loader` or `mini-css-extract-plugin` */
+  locals: EndpointEditorScssNamespace.IEndpointEditorScss;
+};
+
+export = EndpointEditorScssModule;

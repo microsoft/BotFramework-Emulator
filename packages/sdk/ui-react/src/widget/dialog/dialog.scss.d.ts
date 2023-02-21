@@ -1,7 +1,21 @@
 // This is a generated file. Changes are likely to result in being overwritten
-export const modal: string;
-export const dialog: string;
-export const footer: string;
-export const cancelButton: string;
-export const cancelButtonOutline: string;
-export const dialogHeader: string;
+declare namespace DialogScssNamespace {
+  export interface IDialogScss {
+    'cancel-button': string;
+    'cancel-button-outline': string;
+    cancelButton: string;
+    cancelButtonOutline: string;
+    dialog: string;
+    'dialog-header': string;
+    dialogHeader: string;
+    footer: string;
+    modal: string;
+  }
+}
+
+declare const DialogScssModule: DialogScssNamespace.IDialogScss & {
+  /** WARNING: Only available when `css-loader` is used without `style-loader` or `mini-css-extract-plugin` */
+  locals: DialogScssNamespace.IDialogScss;
+};
+
+export = DialogScssModule;

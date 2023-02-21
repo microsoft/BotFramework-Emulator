@@ -138,7 +138,7 @@ describe('The emulator commands', () => {
 
     expect(mockStore.dispatch).toHaveBeenCalledWith({
       ...beginAdd(undefined),
-      payload: jasmine.any(Object),
+      payload: expect.any(Object),
     });
     remoteCallSpy.mockClear();
   });

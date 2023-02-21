@@ -42,7 +42,7 @@ import {
   networkResponseItem,
 } from '@bfemulator/sdk-shared';
 import { createServer, plugins, Server, Response, Route } from 'restify';
-import CORS from 'restify-cors-middleware';
+import CORS from 'restify-cors-middleware2';
 import { newNotification, SharedConstants } from '@bfemulator/app-shared';
 
 import { mountAllRoutes } from './routes/mountAllRoutes';

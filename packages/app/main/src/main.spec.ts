@@ -108,7 +108,7 @@ describe('main', () => {
 
     (emulatorApplication as any).initializeSystemPreferencesListeners();
 
-    expect(onSpy).toHaveBeenCalledWith('updated', jasmine.any(Function));
+    expect(onSpy).toHaveBeenCalledWith('updated', expect.any(Function));
 
     onSpy.mockClear();
   });

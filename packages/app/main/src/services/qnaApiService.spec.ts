@@ -183,7 +183,7 @@ describe('The QnaApiService happy path', () => {
     expect(mockArgsPassedToFetch[0]).toEqual({
       headers: {
         headers: {
-          'x-ms-date': jasmine.any(String),
+          'x-ms-date': expect.any(String),
           Accept: 'application/json, text/plain, */*',
           Authorization: 'Bearer bm90aGluZw.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds',
         },
@@ -194,7 +194,7 @@ describe('The QnaApiService happy path', () => {
     expect(mockArgsPassedToFetch[1]).toEqual({
       headers: {
         headers: {
-          'x-ms-date': jasmine.any(String),
+          'x-ms-date': expect.any(String),
           Accept: 'application/json, text/plain, */*',
           Authorization: 'Bearer bm90aGluZw.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds',
         },
@@ -207,7 +207,7 @@ describe('The QnaApiService happy path', () => {
     expect(mockArgsPassedToFetch[2]).toEqual({
       headers: {
         headers: {
-          'x-ms-date': jasmine.any(String),
+          'x-ms-date': expect.any(String),
           Accept: 'application/json, text/plain, */*',
           Authorization: 'Bearer bm90aGluZw.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds',
         },
@@ -221,7 +221,7 @@ describe('The QnaApiService happy path', () => {
       url: 'https://management.azure.com//subscriptions/1234/listKeys?api-version=2017-04-18',
       headers: {
         headers: {
-          'x-ms-date': jasmine.any(String),
+          'x-ms-date': expect.any(String),
           Authorization: 'Bearer bm90aGluZw.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds',
           Accept: 'application/json, text/plain, */*',
         },
@@ -233,7 +233,7 @@ describe('The QnaApiService happy path', () => {
       url: 'https://management.azure.com//subscriptions/12324/listKeys?api-version=2017-04-18',
       headers: {
         headers: {
-          'x-ms-date': jasmine.any(String),
+          'x-ms-date': expect.any(String),
           Authorization: 'Bearer bm90aGluZw.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds',
           Accept: 'application/json, text/plain, */*',
         },

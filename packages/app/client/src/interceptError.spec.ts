@@ -38,7 +38,7 @@ describe('interceptError', () => {
     const onSpy = jest.spyOn(process, 'on');
     interceptError();
 
-    expect(onSpy).toHaveBeenCalledWith('uncaughtException', jasmine.any(Function));
+    expect(onSpy).toHaveBeenCalledWith('uncaughtException', expect.any(Function));
     expect((window as any).onerror()).toBe(true);
 
     onSpy.mockClear();

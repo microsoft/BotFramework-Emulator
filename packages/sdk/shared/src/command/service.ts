@@ -34,7 +34,6 @@
 import { EventEmitter } from 'events';
 
 import { uniqueId } from '../utils';
-
 import { CommandRegistry, CommandRegistryImpl } from '..';
 
 interface Sender {

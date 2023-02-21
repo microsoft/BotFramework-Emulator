@@ -31,9 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+const path = require('path');
+
 const { WatchIgnorePlugin } = require('webpack');
 const TerserWebpackPlugin = require('terser-webpack-plugin');
-const path = require('path');
 
 const buildConfig = mode => {
   const config = {
@@ -60,19 +61,27 @@ const buildConfig = mode => {
           use: [
             'style-loader',
             {
-              loader: 'typings-for-css-modules-loader',
+              loader: '@teamsupercell/typings-for-css-modules-loader',
               options: {
-                localIdentName: '[local]__[hash:base64:5]',
-                modules: true,
-                sass: false,
-                namedExport: true,
-                camelCase: true,
-                sourcemaps: true,
                 banner: '// This is a generated file. Changes are likely to result in being overwritten',
               },
             },
+            {
+              loader: 'css-loader',
+              options: {
+                modules: true,
+                namedExport: true,
+                camelCase: true,
+                sourcemaps: true,
+              },
+            },
             'resolve-url-loader',
-            'sass-loader',
+            {
+              loader: 'sass-loader',
+              options: {
+                sourceMap: true,
+              },
+            },
           ],
         },
         {

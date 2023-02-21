@@ -160,7 +160,7 @@ describe('The WelcomePageContainer component should', () => {
 
     await instance.onOpenBotClick();
     expect(mockDispatch).toHaveBeenCalledWith(
-      executeCommand(false, SharedConstants.Commands.UI.ShowOpenBotDialog, jasmine.any(Function))
+      executeCommand(false, SharedConstants.Commands.UI.ShowOpenBotDialog, expect.any(Function))
     );
     expect(mockOnOpenBot.focus).toHaveBeenCalledTimes(1);
   });

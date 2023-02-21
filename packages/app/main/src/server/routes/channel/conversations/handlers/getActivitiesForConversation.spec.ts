@@ -37,7 +37,7 @@ import { OK } from 'http-status-codes';
 import { getActivitiesForConversation } from './getActivitiesForConversation';
 
 describe('getActivitiesForConversation handler', () => {
-  it('should get all the activities for a conversation', async done => {
+  it('should get all the activities for a conversation', async () => {
     const transcripts: Activity[] = [
       {
         id: '1',
@@ -65,6 +65,5 @@ describe('getActivitiesForConversation handler', () => {
     const activityHandler = getActivitiesForConversation(state);
     await activityHandler(req, res, jest.fn());
     expect(res.send).toHaveBeenCalledWith(OK, transcripts);
-    done();
   });
 });

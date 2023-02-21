@@ -36,7 +36,7 @@ import { mount } from 'enzyme';
 
 import { DefaultButton } from './defaultButton';
 import { LinkButton } from './linkButton';
-import { PrimaryButton } from './PrimaryButton';
+import { PrimaryButton } from './primaryButton';
 
 describe('The DefaultButton component', () => {
   let parent;

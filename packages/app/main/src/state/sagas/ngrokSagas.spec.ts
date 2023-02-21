@@ -100,7 +100,7 @@ describe('The Ngrok Sagas', () => {
     );
   });
 
-  it('should call onTunnelPingSuccess', async done => {
+  it('should call onTunnelPingSuccess', () => {
     const onSuccessMock = jest.fn();
     const onFailureMock = jest.fn();
     const action: NgrokTunnelAction<StatusCheckOnTunnel> = {
@@ -130,10 +130,9 @@ describe('The Ngrok Sagas', () => {
     expect(result.value).toEqual(put(setTimeIntervalSinceLastPing(TunnelCheckTimeInterval.SecondInterval)));
     expect(onSuccessMock).toHaveBeenCalled();
     expect(onFailureMock).not.toHaveBeenCalled();
-    done();
   });
 
-  it('should emit ngrok error - Too many connections.', async done => {
+  it('should emit ngrok error - Too many connections.', async () => {
     const tunnelError: TunnelError = {
       statusCode: 429,
       errorMessage: 'The tunnel session has violated the rate-limit policy of 20 connections per minute.',
@@ -141,18 +140,20 @@ describe('The Ngrok Sagas', () => {
     mockTunnelStatusResponse.mockReturnValueOnce(
       Promise.resolve(tunnelResponseGeneric(tunnelError.statusCode, tunnelError.errorMessage))
     );
-    mockStore.dispatch(
-      checkOnTunnel({
-        onTunnelPingSuccess: jest.fn(),
-        onTunnelPingError: err => {
-          expect(err.status).toBe(tunnelError.statusCode);
-          done();
-        },
-      })
-    );
+    return new Promise<void>(resolve => {
+      mockStore.dispatch(
+        checkOnTunnel({
+          onTunnelPingSuccess: jest.fn(),
+          onTunnelPingError: err => {
+            expect(err.status).toBe(tunnelError.statusCode);
+            resolve();
+          },
+        })
+      );
+    });
   });
 
-  it('should emit ngrok error - No server header present in the response headers.', async done => {
+  it('should emit ngrok error - No server header present in the response headers.', async () => {
     const tunnelError: TunnelError = {
       statusCode: 404,
       errorMessage: 'Tunnel not found.',
@@ -160,18 +161,20 @@ describe('The Ngrok Sagas', () => {
     mockTunnelStatusResponse.mockReturnValueOnce(
       Promise.resolve(tunnelResponseGeneric(tunnelError.statusCode, tunnelError.errorMessage, new Map()))
     );
-    mockStore.dispatch(
-      checkOnTunnel({
-        onTunnelPingSuccess: jest.fn(),
-        onTunnelPingError: err => {
-          expect(err.status).toBe(tunnelError.statusCode);
-          done();
-        },
-      })
-    );
+    return new Promise<void>(resolve => {
+      mockStore.dispatch(
+        checkOnTunnel({
+          onTunnelPingSuccess: jest.fn(),
+          onTunnelPingError: err => {
+            expect(err.status).toBe(tunnelError.statusCode);
+            resolve();
+          },
+        })
+      );
+    });
   });
 
-  it('should emit ngrok error - Tunnel Expired.', async done => {
+  it('should emit ngrok error - Tunnel Expired.', async () => {
     const tunnelError: TunnelError = {
       statusCode: 402,
       errorMessage: 'Other generic tunnel errors.',
@@ -179,18 +182,20 @@ describe('The Ngrok Sagas', () => {
     mockTunnelStatusResponse.mockReturnValueOnce(
       Promise.resolve(tunnelResponseGeneric(tunnelError.statusCode, tunnelError.errorMessage, new Map()))
     );
-    mockStore.dispatch(
-      checkOnTunnel({
-        onTunnelPingSuccess: jest.fn(),
-        onTunnelPingError: err => {
-          expect(err.status).toBe(tunnelError.statusCode);
-          done();
-        },
-      })
-    );
+    return new Promise<void>(resolve => {
+      mockStore.dispatch(
+        checkOnTunnel({
+          onTunnelPingSuccess: jest.fn(),
+          onTunnelPingError: err => {
+            expect(err.status).toBe(tunnelError.statusCode);
+            resolve();
+          },
+        })
+      );
+    });
   });
 
-  it('should emit ngrok generic error 500.', async done => {
+  it('should emit ngrok generic error 500.', async () => {
     const tunnelError: TunnelError = {
       statusCode: 500,
       errorMessage: 'Other generic tunnel errors.',
@@ -198,18 +203,20 @@ describe('The Ngrok Sagas', () => {
     mockTunnelStatusResponse.mockReturnValueOnce(
       Promise.resolve(tunnelResponseGeneric(tunnelError.statusCode, tunnelError.errorMessage))
     );
-    mockStore.dispatch(
-      checkOnTunnel({
-        onTunnelPingSuccess: jest.fn(),
-        onTunnelPingError: err => {
-          expect(err.status).toBe(tunnelError.statusCode);
-          done();
-        },
-      })
-    );
+    return new Promise<void>(resolve => {
+      mockStore.dispatch(
+        checkOnTunnel({
+          onTunnelPingSuccess: jest.fn(),
+          onTunnelPingError: err => {
+            expect(err.status).toBe(tunnelError.statusCode);
+            resolve();
+          },
+        })
+      );
+    });
   });
 
-  it('take the latest dispatched tunnel ping action always', async done => {
+  it('take the latest dispatched tunnel ping action always', async () => {
     const tunnelError: TunnelError = {
       statusCode: 500,
       errorMessage: 'Other generic tunnel errors.',
@@ -235,18 +242,20 @@ describe('The Ngrok Sagas', () => {
       })
     );
 
-    mockStore.dispatch(
-      checkOnTunnel({
-        onTunnelPingSuccess: () => {
-          expect(onErrorFake).not.toHaveBeenCalled();
-          done();
-        },
-        onTunnelPingError: jest.fn(),
-      })
-    );
+    return new Promise<void>(resolve => {
+      mockStore.dispatch(
+        checkOnTunnel({
+          onTunnelPingSuccess: () => {
+            expect(onErrorFake).not.toHaveBeenCalled();
+            resolve();
+          },
+          onTunnelPingError: jest.fn(),
+        })
+      );
+    });
   });
 
-  it('should throw onTunnelPing error if the request times out with a status 404', async done => {
+  it('should throw onTunnelPing error if the request times out with a status 404', async () => {
     jest.useFakeTimers();
     mockTunnelStatusResponse.mockImplementationOnce(
       () =>
@@ -258,15 +267,18 @@ describe('The Ngrok Sagas', () => {
         })
     );
 
-    mockStore.dispatch(
-      checkOnTunnel({
-        onTunnelPingSuccess: jest.fn(),
-        onTunnelPingError: (err: Response) => {
-          expect(err.status).toBe(404);
-          done();
-        },
-      })
-    );
+    const ret = new Promise<void>(resolve => {
+      mockStore.dispatch(
+        checkOnTunnel({
+          onTunnelPingSuccess: jest.fn(),
+          onTunnelPingError: (err: Response) => {
+            expect(err.status).toBe(404);
+            resolve();
+          },
+        })
+      );
+    });
     jest.advanceTimersByTime(tunnelPingTimeout);
+    return ret;
   });
 });

@@ -1,4 +1,17 @@
 // This is a generated file. Changes are likely to result in being overwritten
-export const answersColumn: string;
-export const answersBlock: string;
-export const selected: string;
+declare namespace AnswersViewScssNamespace {
+  export interface IAnswersViewScss {
+    'answers-block': string;
+    'answers-column': string;
+    answersBlock: string;
+    answersColumn: string;
+    selected: string;
+  }
+}
+
+declare const AnswersViewScssModule: AnswersViewScssNamespace.IAnswersViewScss & {
+  /** WARNING: Only available when `css-loader` is used without `style-loader` or `mini-css-extract-plugin` */
+  locals: AnswersViewScssNamespace.IAnswersViewScss;
+};
+
+export = AnswersViewScssModule;

@@ -263,7 +263,7 @@ describe('BotEndpoint', () => {
     expect(response).toBe('I am an access token!');
     expect(endpoint.accessToken).toBe('I am an access token!');
     expect(endpoint.accessTokenExpires).not.toEqual(accessTokenExpires);
-    expect(endpoint.accessTokenExpires).toEqual(jasmine.any(Number));
+    expect(endpoint.accessTokenExpires).toEqual(expect.any(Number));
     expect(mockFetch).toHaveBeenCalledWith(authentication.tokenEndpoint, {
       method: 'POST',
       body: new URLSearchParams({
@@ -285,7 +285,7 @@ describe('BotEndpoint', () => {
     expect(response).toBe('I am an access token!');
     expect(endpoint.accessToken).toBe('I am an access token!');
     expect(endpoint.accessTokenExpires).not.toEqual(accessTokenExpires);
-    expect(endpoint.accessTokenExpires).toEqual(jasmine.any(Number));
+    expect(endpoint.accessTokenExpires).toEqual(expect.any(Number));
     expect(mockFetch).toHaveBeenCalledWith(usGovernmentAuthentication.tokenEndpoint, {
       method: 'POST',
       body: new URLSearchParams({
