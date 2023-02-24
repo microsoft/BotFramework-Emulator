@@ -3,7 +3,7 @@
   "compilerOptions": {
     "declarationDir": "build",
     "experimentalDecorators": true,
-    "lib": ["dom", "es2015.proxy", "es5", "esnext", "es7"],
+    "lib": ["dom", "DOM.Iterable", "es2015.proxy", "es5", "esnext", "es7"],
     "outDir": "build",
     "target": "esnext",
     "skipLibCheck": true
