@@ -7,7 +7,7 @@
     "lint:fix": "lerna run lint:fix --no-bail",
     "rebuild:keytar:electron": "rimraf node_modules/keytar/build && electron-rebuild",
     "rebuild:keytar:node": "npm rebuild keytar",
-    "start": "cd packages\\app\\client && npm run start",
+    "start": "cd packages/app/client && npm run start",
     "start:test-bot": "lerna run --scope @bfemulator/tools start:test-bot --stream",
     "test": "npm run rebuild:keytar:node && jest --no-cache --runInBand --testPathIgnorePatterns=/packages/app/main/e2e/",
     "test:coveralls": "jest --runInBand --coverage --coverageReporters=text-lcov | coveralls",
