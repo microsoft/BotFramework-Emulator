@@ -102,7 +102,7 @@ const buildConfig = mode => {
     },
 
     devServer: {
-      inline: true,
+      static: path.resolve(__dirname, 'public'),
       port: 8080,
       historyApiFallback: false,
     },
