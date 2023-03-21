@@ -145,8 +145,8 @@ const defaultConfig = () => ({
   devtool: 'source-map',
 
   devServer: {
+    static: path.resolve(__dirname, 'public'),
     hot: true,
-    inline: true,
     port: 3000,
     historyApiFallback: false,
   },

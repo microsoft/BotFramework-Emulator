@@ -2,7 +2,7 @@
   "extends": "../../../tsconfig.json",
   "compilerOptions": {
     "outDir": "build/dist",
-    "lib": ["dom", "es2015.proxy", "es5", "esnext", "es7"],
+    "lib": ["dom", "DOM.Iterable", "es2015.proxy", "es5", "esnext", "es7"],
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "resolveJsonModule": true,
