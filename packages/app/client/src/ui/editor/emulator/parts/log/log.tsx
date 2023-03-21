@@ -96,6 +96,7 @@ export class Log extends React.Component<LogProps, LogState> {
             currentlyInspectedActivity={this.state.currentlyInspectedActivity}
             document={this.props.document}
             entry={entry}
+            entryIndex={key + 1}
             key={`entry-${key++}`}
           />
         ))}
