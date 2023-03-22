@@ -1,0 +1,6 @@
+{
+  "azurePath": "Emulator/Compliance",
+  "notificationAliases": "botframework-composer-eng@service.microsoft.com",
+  "codebaseName": "TSABotFrameworkEmulator",
+  "ignoreBranchName": true
+}

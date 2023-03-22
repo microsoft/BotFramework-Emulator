@@ -153,8 +153,8 @@ describe('The azureAuthWorkflowService', () => {
     (BrowserWindow as any).reporters.push(reporter);
     jest.spyOn(AzureAuthWorkflowService as any, 'validateJWT').mockResolvedValueOnce(true);
     const it = AzureAuthWorkflowService.retrieveAuthToken(false);
-    let value = undefined;
-    let ct = 0;
+    let value: any;
+    const yieldedValues: any[] = [];
     // eslint-disable-next-line no-constant-condition
     while (true) {
       const next = it.next(value);
@@ -162,42 +162,42 @@ describe('The azureAuthWorkflowService', () => {
         break;
       }
       value = await next.value;
-      if (!ct) {
-        expect(value instanceof BrowserWindow).toBe(true);
-        expect(reportedValues.length).toBe(3);
-        const [, uri] = reportedValues[1];
-        const idx = uri.indexOf('#');
-        const parts = uri.substring(idx).split('&');
-        [
-          'response_type',
-          'client_id',
-          'redirect_uri',
-          'state',
-          'client-request-id',
-          'nonce',
-          'response_mode',
-          'resource',
-        ].forEach((part, index) => {
-          expect(parts[index].includes(part));
-        });
-        reportedValues.length = 0;
-      }
-
-      if (ct === 1) {
-        expect(value.access_token).toBe(mockArmToken);
-        // Not sure if this is valuable or not.
-        expect(reportedValues.length).toBe(3);
-      }
-      // Token validation
-      if (ct === 2) {
-        expect(value).toBe(true);
-      }
-      // Token delivery
-      if (ct === 4) {
-        expect(value.arm_token).toBe(mockArmToken);
-      }
-      ct++;
+      yieldedValues.push(value);
     }
-    expect(ct).toBe(4);
+    expect(yieldedValues).toMatchInlineSnapshot(`
+      [
+        {
+          "authResponse": Promise {},
+          "authWindow": MockBrowserWindow {
+            "listeners": [
+              {
+                "handler": [Function],
+                "type": "close",
+              },
+              {
+                "handler": [Function],
+                "type": "will-redirect",
+              },
+              {
+                "handler": [Function],
+                "type": "ready-to-show",
+              },
+            ],
+            "webContents": {
+              "on": [Function],
+            },
+          },
+        },
+        {
+          "access_token": "eyJhbGciOiJSU0EyNTYiLCJraWQiOiJmZGtqc2FoamdmIiwieDV0IjoiZiJ9.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds",
+          "t": "13",
+        },
+        true,
+        {
+          "access_token": "eyJhbGciOiJSU0EyNTYiLCJraWQiOiJmZGtqc2FoamdmIiwieDV0IjoiZiJ9.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds",
+          "t": "13",
+        },
+      ]
+    `);
   });
 });
