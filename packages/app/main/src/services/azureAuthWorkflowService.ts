@@ -63,11 +63,11 @@ export class AzureAuthWorkflowService {
   private static jwks: Jwks;
 
   public static *retrieveAuthToken(renew = false): IterableIterator<any> {
-    const authWindow = yield this.launchAuthWindow(renew);
+    const { authWindow, authResponse } = yield this.launchAuthWindow(renew);
     if (!renew) {
       authWindow.show();
     }
-    const result = yield this.waitForAuthResult(authWindow, replyUrl);
+    const result = yield authResponse;
     authWindow.close();
     if (result.error) {
       return false;
@@ -90,13 +90,10 @@ export class AzureAuthWorkflowService {
           const result: AuthResponse = {} as AuthResponse;
           try {
             // the next URL matches the desired redirect URL -- now parse the token from the URL
-            const idx = url.indexOf('#');
-            const values = url.substring(idx + 1).split('&');
-            const len = values.length;
-            for (let i = 0; i < len; i++) {
-              const [key, value] = values[i].split(/[=]/);
-              result[key] = value;
-            }
+            const parsedURL = new URL(url);
+            // parse url hash to object removing # at the start
+            const qs = new URLSearchParams(parsedURL.hash.substring(1));
+            Object.assign(result, Object.fromEntries(qs.entries()));
             event.preventDefault();
             resolve(result);
           } catch (e) {
@@ -119,7 +116,9 @@ export class AzureAuthWorkflowService {
     return response;
   }
 
-  private static async launchAuthWindow(renew: boolean): Promise<BrowserWindow> {
+  private static async launchAuthWindow(
+    renew: boolean
+  ): Promise<{ authWindow: BrowserWindow; authResponse: Promise<AuthResponse> }> {
     const browserWindow = new BrowserWindow({
       modal: true,
       show: false,
@@ -153,9 +152,21 @@ export class AzureAuthWorkflowService {
 
     const url = bits.join('&');
     browserWindow.loadURL(url);
-    return new Promise<BrowserWindow>(resolve => {
-      browserWindow.once('ready-to-show', () => resolve(browserWindow));
-    });
+
+    const setupWindow = async () => {
+      // setup navigation events before the window is ready
+      const authResponse = this.waitForAuthResult(browserWindow, replyUrl);
+
+      // if redirect happened before ready-to-show event, window won't recieve the event
+      await Promise.race([authResponse, new Promise(resolve => browserWindow.once('ready-to-show', resolve))]);
+
+      return {
+        authWindow: browserWindow,
+        authResponse,
+      };
+    };
+
+    return setupWindow();
   }
 
   private static async getConfig(): Promise<Config> {
