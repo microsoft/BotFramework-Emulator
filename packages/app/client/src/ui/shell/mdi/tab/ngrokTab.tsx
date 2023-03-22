@@ -87,6 +87,7 @@ export const NgrokTab = (props: NgrokTabProps) => {
         active={props.active}
         dirty={props.dirty}
         documentId={props.documentId}
+        index={props.index}
         label={props.label}
         onCloseClick={props.onCloseClick}
         hideIcon={true}
