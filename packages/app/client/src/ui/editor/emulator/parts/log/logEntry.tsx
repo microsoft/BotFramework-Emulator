@@ -97,6 +97,7 @@ export class LogEntry extends React.Component<LogEntryProps> {
     // any rendered inspectable items will add themselves to this.inspectableObjects
     const innerJsx = (
       <>
+        <span className={styles.srOnly}>Log entry {this.props.entryIndex} </span>
         {this.renderTimestamp(this.props.entry.timestamp)}
         {this.props.entry.items.map((item, key) => this.renderItem(item, '' + key))}
       </>
