@@ -74,7 +74,12 @@ class TabbedDocumentContentWrapperComponent extends Component<TabbedDocumentCont
       Object.keys(this.props.primaryEditor.documents).length > 1;
 
     return (
-      <div className={styles.contentWrapper} hidden={this.props.hidden} onClickCapture={this.onClick}>
+      <div
+        className={styles.contentWrapper}
+        hidden={this.props.hidden}
+        aria-hidden={this.props.hidden}
+        onClickCapture={this.onClick}
+      >
         {this.props.children}
         <ContentOverlay documentId={this.props.documentId} />
         {splittingEnabled ? (

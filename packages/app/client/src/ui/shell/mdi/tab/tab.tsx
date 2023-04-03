@@ -42,6 +42,7 @@ import { DOCUMENT_ID_APP_SETTINGS, DOCUMENT_ID_MARKDOWN_PAGE, DOCUMENT_ID_WELCOM
 import * as styles from './tab.scss';
 
 export interface TabProps {
+  index: number;
   active?: boolean;
   dirty?: boolean;
   documentId?: string;
@@ -75,7 +76,7 @@ export class Tab extends React.Component<TabProps, TabState> {
   }
 
   public render() {
-    const { active, label } = this.props;
+    const { active, label, index } = this.props;
     const activeClassName = active ? styles.activeEditorTab : '';
     const draggedOverClassName = this.state.draggedOver ? styles.draggedOverEditorTab : '';
     const iconClass = this.iconClass;
@@ -101,7 +102,7 @@ export class Tab extends React.Component<TabProps, TabState> {
           className={styles.tabFocusTarget}
           role="tab"
           tabIndex={0}
-          aria-label={`${label}`}
+          aria-label={`${label}. Tab ${index}`}
           aria-selected={active}
           aria-description={isLinux() && active ? 'selected' : undefined}
           ref={this.setTabRef}
@@ -110,7 +111,7 @@ export class Tab extends React.Component<TabProps, TabState> {
         </div>
         <button
           type="button"
-          title={`Close ${label} tab`}
+          title={`Close ${label} tab. Tab ${index}`}
           className={styles.editorTabClose}
           onKeyPress={this.onCloseButtonKeyPress}
           onClick={this.onCloseClick}
