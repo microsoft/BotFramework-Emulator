@@ -37,6 +37,7 @@ import * as ReactDOM from 'react-dom';
 import * as styles from './splitButtonPanel.scss';
 
 export interface SplitButtonPanelProps {
+  id: string;
   caretRef?: HTMLButtonElement;
   expanded?: boolean;
   selected?: number;
@@ -71,7 +72,7 @@ export class SplitButtonPanel extends React.Component<SplitButtonPanelProps> {
   };
 
   private get panel(): JSX.Element {
-    const { caretRef, options = [], expanded = false, onKeyDown = () => null, selected = 0 } = this.props;
+    const { caretRef, options = [], expanded = false, onKeyDown = () => null, selected = 0, id } = this.props;
     if (expanded) {
       const caretClientRect = caretRef.getBoundingClientRect();
       const inlineStyle = {
@@ -81,6 +82,7 @@ export class SplitButtonPanel extends React.Component<SplitButtonPanelProps> {
 
       return (
         <ul
+          id={id}
           className={styles.panel}
           style={inlineStyle}
           ref={this.setPanelRef}
