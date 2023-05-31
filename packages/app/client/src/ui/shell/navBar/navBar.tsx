@@ -118,7 +118,7 @@ export class NavBarComponent extends React.Component<NavBarProps, NavBarState> {
     return ['Bot Explorer', 'Resources', 'Notifications', 'Settings'].map((title, index) => {
       return (
         <button
-          aria-selected={explorerIsVisible && selection === selectionMap[index]}
+          aria-selected={explorerIsVisible && selection === selectionMap[index] ? true : undefined}
           title={title}
           className={styles.navLink}
           key={index}
