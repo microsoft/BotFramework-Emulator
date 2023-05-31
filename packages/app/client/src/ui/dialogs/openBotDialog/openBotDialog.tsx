@@ -45,7 +45,6 @@ import {
 import * as React from 'react';
 import { ChangeEvent, Component, MouseEvent, ReactNode } from 'react';
 import { EmulatorMode } from '@bfemulator/sdk-shared';
-import { isLinux } from '@bfemulator/app-shared';
 
 import * as dialogStyles from '../dialogStyles.scss';
 
@@ -164,6 +163,7 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
             <TextField
               inputContainerClassName={openBotStyles.inputContainerRow}
               name="appId"
+              ariaLabel="Microsoft App ID, Optional"
               label="Microsoft App ID"
               onChange={this.onInputChange}
               placeholder="Optional"
@@ -171,8 +171,8 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
             />
             <TextField
               inputContainerClassName={openBotStyles.inputContainerRow}
+              ariaLabel="Microsoft App password, Optional"
               label="Microsoft App password"
-              ariaLabel={isLinux() ? 'Microsoft App' : null}
               name="appPassword"
               onChange={this.onInputChange}
               placeholder="Optional"
@@ -185,6 +185,7 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
               <TextField
                 inputContainerClassName={openBotStyles.inputContainerRow}
                 name="speechRegion"
+                ariaLabel="Direct Line Speech Region, Optional"
                 label="Direct Line Speech Region"
                 onChange={this.onInputChange}
                 placeholder="Optional"
@@ -192,6 +193,7 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
               />
               <TextField
                 inputContainerClassName={openBotStyles.inputContainerRow}
+                ariaLabel="Direct Line Speech Key, Optional"
                 label="Direct Line Speech Key"
                 name="speechKey"
                 onChange={this.onInputChange}
@@ -205,6 +207,7 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
             <TextField
               inputContainerClassName={openBotStyles.inputContainerRow}
               name="randomSeed"
+              arialabel="Test Options - Random Seed, Optional"
               label="Test Options - Random Seed"
               onChange={this.onInputChange}
               placeholder="Optional"
@@ -215,6 +218,7 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
             />
             <TextField
               inputContainerClassName={openBotStyles.inputContainerRow}
+              arialabel="Test Options - Random Value, Optional"
               label="Test Options - Random Value"
               name="randomValue"
               onChange={this.onInputChange}
