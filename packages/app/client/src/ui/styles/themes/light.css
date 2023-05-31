@@ -72,7 +72,7 @@ html {
 
   /* Log panel custom colors */
   --log-panel-timestamp: #327E36;
-  --log-panel-link: #007ACC;
+  --log-panel-link: #0063a6;
   --log-panel-entry-hover-bg: var(--neutral-4);
   --log-panel-entry-inspected-bg: var(--neutral-5);
   --log-panel-item-info: var(--neutral-16);
@@ -232,12 +232,12 @@ html {
   --status-bar-color: #FFFFFF;
 
   /* Links */
-  --link-color: #007ACC;
+  --link-color: #0063a6;
   --link-color-disabled: #C8C8C8;
   --inspector-link-color: var(--link-color);
 
   /* Split Button */
-  --split-button-color: #605e5c;
+  --split-button-color: var(--neutral-14);
   --split-button-pressed-color: var(--neutral-16);
   --split-button-disabled-color: var(--neutral-7);
   --split-button-icon-color: #3062D6;
