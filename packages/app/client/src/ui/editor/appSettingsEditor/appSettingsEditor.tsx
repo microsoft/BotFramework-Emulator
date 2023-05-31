@@ -101,7 +101,6 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
       this.pathToNgrokInputRef.focus();
     }
   }
-
   public render(): JSX.Element {
     const {
       ngrokPath = '',
