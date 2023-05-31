@@ -93,7 +93,7 @@ export class SplitButton extends React.Component<SplitButtonProps, SplitButtonSt
       setCaretRef,
     } = this;
     const expandedClass = expanded ? ` ${styles.expanded}` : '';
-    const paneId = `split-ane-${id}`;
+    const paneId = `split-pane-${id}`;
     return (
       <>
         <div className={styles.container}>
