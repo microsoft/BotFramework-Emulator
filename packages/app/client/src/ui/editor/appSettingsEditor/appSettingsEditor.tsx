@@ -156,6 +156,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
                 checked={bypassNgrokLocalhost}
                 onChange={this.onChangeCheckBox}
                 id="ngrok-bypass"
+                aria-label="Bypass ngrok for local addresses, Service"
                 label="Bypass ngrok for local addresses"
                 name="bypassNgrokLocalhost"
               />
@@ -164,6 +165,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
                 checked={runNgrokAtStartup}
                 onChange={this.onChangeCheckBox}
                 id="ngrok-startup"
+                aria-label="Run ngrok when the Emulator starts up, Service"
                 label="Run ngrok when the Emulator starts up"
                 name="runNgrokAtStartup"
               />
@@ -209,6 +211,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
                 checked={use10Tokens}
                 onChange={this.onChangeCheckBox}
                 id="auth-token-version"
+                aria-label="Use version 1.0 authentication tokens, User settings"
                 label="Use version 1.0 authentication tokens"
                 name="use10Tokens"
               />
@@ -217,6 +220,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
                 checked={useCodeValidation}
                 onChange={this.onChangeCheckBox}
                 id="use-validation-code"
+                aria-label="Use a sign-in verification code for OAuthCards, User settings"
                 label="Use a sign-in verification code for OAuthCards"
                 name="useCodeValidation"
               />
@@ -225,6 +229,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
                 checked={useCustomId}
                 onChange={this.onChangeCheckBox}
                 id="use-custom-id"
+                aria-label="Use your own user ID to communicate with the bot, User settings"
                 label="Use your own user ID to communicate with the bot"
                 name="useCustomId"
               />
@@ -252,6 +257,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
                 className={styles.checkboxOverrides}
                 checked={autoUpdate}
                 onChange={this.onChangeCheckBox}
+                aria-label="Automatically download and install updates, Application Updates"
                 label="Automatically download and install updates"
                 name="autoUpdate"
               />
@@ -259,6 +265,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
                 className={styles.checkboxOverrides}
                 checked={usePrereleases}
                 onChange={this.onChangeCheckBox}
+                aria-label="Use pre-release versions, Application Updates"
                 label="Use pre-release versions"
                 name="usePrereleases"
               />
@@ -269,6 +276,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
                 className={styles.checkboxOverrides}
                 checked={collectUsageData}
                 onChange={this.onChangeCheckBox}
+                aria-label="Help improve the Emulator by allowing us to collect usage data, Data Collection"
                 label="Help improve the Emulator by allowing us to collect usage data."
                 name="collectUsageData"
               />
