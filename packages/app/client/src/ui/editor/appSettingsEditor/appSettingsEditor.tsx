@@ -58,7 +58,6 @@ export interface AppSettingsEditorProps {
   framework?: FrameworkSettings;
   ngrokTunnelStatus?: TunnelStatus;
   ngrokLastPingInterval?: TunnelCheckTimeInterval;
-  refreshHash?: string;
 
   createAriaAlert?: (msg: string) => void;
   discardChanges?: () => void;
@@ -93,18 +92,11 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
     return {
       ...newProps.framework,
       dirty: newProps.dirty,
-      refreshHash: newProps.refreshHash,
       pendingUpdate: false,
     };
   }
 
   public componentDidMount(): void {
-    if (this.pathToNgrokInputRef) {
-      this.pathToNgrokInputRef.focus();
-    }
-  }
-
-  public componentDidUpdate() {
     if (this.pathToNgrokInputRef) {
       this.pathToNgrokInputRef.focus();
     }
