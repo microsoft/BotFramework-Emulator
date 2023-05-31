@@ -292,6 +292,13 @@ export class BotCreationDialog extends React.Component<BotCreationDialogProps, B
     const revealSecret = !this.state.revealSecret;
     ariaAlertService.alert(`Secret ${revealSecret ? 'showing' : 'hidden'}.`);
     this.setState({ revealSecret });
+
+    // Reset focus to update the button caption
+    const button = document.activeElement as HTMLButtonElement;
+    button?.blur();
+    setTimeout(() => {
+      button?.focus();
+    }, 100);
   };
 
   private onCopyClick = (): void => {
