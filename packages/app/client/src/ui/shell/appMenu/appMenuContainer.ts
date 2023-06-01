@@ -65,9 +65,10 @@ function mapStateToProps(state: RootState): AppMenuProps {
 
 function mapDispatchToProps(dispatch): AppMenuProps {
   return {
-    checkForUpdates: () => {
-      dispatch(executeCommand(true, CheckForUpdates, null));
-    },
+    checkForUpdates: () =>
+      new Promise(resolve => {
+        dispatch(executeCommand(true, CheckForUpdates, resolve));
+      }),
     invalidateAzureArmToken: () =>
       new Promise(resolve => {
         dispatch(executeCommand(false, InvalidateAzureArmToken, resolve));

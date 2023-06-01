@@ -237,7 +237,7 @@ export class ElectronCommands {
   // ---------------------------------------------------------------------------
   // Checks for app updates
   @Command(Commands.CheckForUpdates)
-  protected checkForUpdates(userInitiated = true): void {
-    AppUpdater.checkForUpdates(userInitiated);
+  protected checkForUpdates(userInitiated = true): Promise<void> {
+    return AppUpdater.checkForUpdates(userInitiated);
   }
 }
