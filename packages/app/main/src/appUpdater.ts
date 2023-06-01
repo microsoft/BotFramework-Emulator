@@ -121,11 +121,16 @@ class EmulatorUpdater extends EventEmitter {
     this.allowPrerelease = !!settings.usePrereleases;
     this.autoDownload = !!settings.autoUpdate;
     const updatePromise = new Promise<void>(resolve => {
-      const oneTimeResolver = () => {
+      if (userInitiated) {
+        const oneTimeResolver = () => {
+          resolve();
+          this._userInitiatedResolver = () => void 0;
+        };
+        this._userInitiatedResolver = oneTimeResolver;
+      } else {
+        this._userInitiatedResolver = undefined;
         resolve();
-        this._userInitiatedResolver = () => void 0;
-      };
-      this._userInitiatedResolver = userInitiated ? oneTimeResolver : undefined;
+      }
     });
 
     electronUpdater.setFeedURL({
