@@ -124,7 +124,7 @@ describe('<ActivityWrapper />', () => {
   it('has the right a11y attributes', () => {
     const component = render().find('.chat-activity');
 
-    expect(component.prop('role')).toEqual('checkbox');
+    expect(component.prop('role')).toEqual('region');
     expect(component.prop('tabIndex')).toEqual(0);
   });
 });

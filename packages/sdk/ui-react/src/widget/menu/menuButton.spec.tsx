@@ -51,11 +51,11 @@ describe('<MenuButton />', () => {
     wrapper = mount(<MenuButton items={[{ label: 'item1' }, { label: 'item2' }]} />);
 
     expect(instance).toBeTruthy();
-    expect(addEventListenerSpy).toHaveBeenCalledTimes(3);
+    expect(addEventListenerSpy).toHaveBeenCalledTimes(4);
 
     wrapper.unmount();
 
-    expect(removeEventListenerSpy).toHaveBeenCalledTimes(3);
+    expect(removeEventListenerSpy).toHaveBeenCalledTimes(4);
 
     addEventListenerSpy.mockClear();
     removeEventListenerSpy.mockClear();

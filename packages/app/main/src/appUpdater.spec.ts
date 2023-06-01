@@ -173,7 +173,7 @@ describe('AppUpdater', () => {
 
   it('should get userInitiated', () => {
     const tmp = (AppUpdater as any)._userInitiated;
-    (AppUpdater as any)._userInitiated = true;
+    (AppUpdater as any)._userInitiatedResolver = () => void 0;
 
     expect(AppUpdater.userInitiated).toBe(true);
     (AppUpdater as any)._userInitiated = tmp;
@@ -257,7 +257,9 @@ describe('AppUpdater', () => {
 
   it('should check for updates from the stable release repo', async () => {
     const mockSetFeedURL = jest.fn((_options: any) => null);
-    const mockCheckForUpdates = jest.fn(() => Promise.resolve());
+    const mockCheckForUpdates = jest.fn(async () => {
+      AppUpdater._userInitiatedResolver();
+    });
     mockAutoUpdater.setFeedURL = mockSetFeedURL;
     mockAutoUpdater.checkForUpdates = mockCheckForUpdates;
 
