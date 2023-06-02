@@ -100,7 +100,7 @@ export class SplitButtonPanel extends React.Component<SplitButtonPanelProps> {
                 key={option}
                 className={styles.option + selectedClass}
                 role={'menuitem'}
-                aria-selected={isSelected || undefined}
+                aria-selected={isSelected}
                 onClick={e => this.onSelectOption(e, index)}
               >
                 {option}
