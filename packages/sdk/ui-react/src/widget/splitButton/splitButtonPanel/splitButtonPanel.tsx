@@ -37,7 +37,6 @@ import * as ReactDOM from 'react-dom';
 import * as styles from './splitButtonPanel.scss';
 
 export interface SplitButtonPanelProps {
-  id: string;
   caretRef?: HTMLButtonElement;
   expanded?: boolean;
   selected?: number;
@@ -82,7 +81,6 @@ export class SplitButtonPanel extends React.Component<SplitButtonPanelProps> {
 
       return (
         <ul
-          id={id}
           className={styles.panel}
           style={inlineStyle}
           ref={this.setPanelRef}

@@ -55,8 +55,6 @@ export interface SplitButtonState {
   selected?: number;
 }
 
-const randomId = () => (Math.random() * Number.MAX_SAFE_INTEGER).toString(36);
-
 export class SplitButton extends React.Component<SplitButtonProps, SplitButtonState> {
   private caretRef: HTMLButtonElement;
 
@@ -77,7 +75,7 @@ export class SplitButton extends React.Component<SplitButtonProps, SplitButtonSt
       buttonClass = '',
       defaultLabel = '',
       disabled = false,
-      id = randomId(),
+      id = '',
       options = [],
       submenuLabel = '',
     } = this.props;
@@ -93,7 +91,6 @@ export class SplitButton extends React.Component<SplitButtonProps, SplitButtonSt
       setCaretRef,
     } = this;
     const expandedClass = expanded ? ` ${styles.expanded}` : '';
-    const paneId = `split-pane-${id}`;
     return (
       <>
         <div className={styles.container}>
@@ -109,20 +106,17 @@ export class SplitButton extends React.Component<SplitButtonProps, SplitButtonSt
           </button>
           <div className={styles.separator} aria-hidden={'true'} />
           <button
-            aria-label={submenuLabel || defaultLabel}
+            aria-label={`${submenuLabel || defaultLabel}, has ${options.length} items`}
             className={styles.caretButton + expandedClass}
             ref={setCaretRef}
             onClick={onClickCaret}
             aria-expanded={expanded}
             aria-haspopup={true}
-            aria-setsize={options.length}
-            aria-owns={paneId}
             disabled={disabled}
             role={'menuitem'}
           />
         </div>
         <SplitButtonPanel
-          id={paneId}
           expanded={expanded}
           caretRef={caretRef}
           selected={selected}
