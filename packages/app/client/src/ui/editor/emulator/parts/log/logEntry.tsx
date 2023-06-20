@@ -55,6 +55,7 @@ import * as styles from './log.scss';
 export interface LogEntryProps {
   document: any;
   entry: ILogEntry;
+  entryIndex: number;
   currentlyInspectedActivity?: any;
   launchLuisEditor?: () => void;
   setInspectorObjects?: (documentId: string, objs: any) => void;
@@ -96,6 +97,7 @@ export class LogEntry extends React.Component<LogEntryProps> {
     // any rendered inspectable items will add themselves to this.inspectableObjects
     const innerJsx = (
       <>
+        <span className={styles.srOnly}>Log entry {this.props.entryIndex} </span>
         {this.renderTimestamp(this.props.entry.timestamp)}
         {this.props.entry.items.map((item, key) => this.renderItem(item, '' + key))}
       </>
@@ -188,7 +190,11 @@ export class LogEntry extends React.Component<LogEntryProps> {
   renderExternalLinkItem(text: string, hyperlink: string, key: string) {
     return (
       <span key={key} className={styles.spaced}>
-        <button className={styles.link} onClick={() => window.open(hyperlink, '_blank')}>
+        <button
+          aria-label={`${text}. Log entry ${this.props.entryIndex}`}
+          className={styles.link}
+          onClick={() => window.open(hyperlink, '_blank')}
+        >
           {text}
         </button>
       </span>
@@ -198,7 +204,11 @@ export class LogEntry extends React.Component<LogEntryProps> {
   renderAppSettingsItem(text: string, key: string) {
     return (
       <span key={key} className={styles.spaced}>
-        <button className={styles.link} onClick={() => this.props.showAppSettings()}>
+        <button
+          aria-label={`${text}. Log entry ${this.props.entryIndex}`}
+          className={styles.link}
+          onClick={() => this.props.showAppSettings()}
+        >
           {text}
         </button>
       </span>
@@ -207,7 +217,7 @@ export class LogEntry extends React.Component<LogEntryProps> {
 
   renderExceptionItem(err: Error, key: string) {
     return (
-      <span key={key} className={`${styles.spaced} ${styles.level3}`}>
+      <span role="alert" key={key} className={`${styles.spaced} ${styles.level3}`}>
         {err && err.message ? err.message : ''}
       </span>
     );
@@ -227,7 +237,11 @@ export class LogEntry extends React.Component<LogEntryProps> {
     return (
       <span key={key} onMouseOver={() => this.highlight(obj)} onMouseLeave={() => this.highlight({})}>
         <span className={`inspectable-item ${styles.spaced} ${styles.level0}`}>
-          <button className={styles.link} onClick={() => this.inspectAndHighlightInWebchat(obj)}>
+          <button
+            aria-label={`${title}. Log entry ${this.props.entryIndex}`}
+            className={styles.link}
+            onClick={() => this.inspectAndHighlightInWebchat(obj)}
+          >
             {title}
           </button>
         </span>
@@ -250,7 +264,11 @@ export class LogEntry extends React.Component<LogEntryProps> {
     if (obj) {
       return (
         <span key={key} className={`network-req-item ${styles.spaced} ${styles.level0}`}>
-          <button className={styles.link} onClick={() => this.inspect(obj)}>
+          <button
+            aria-label={`${method} request. Log entry ${this.props.entryIndex}`}
+            className={styles.link}
+            onClick={() => this.inspect(obj)}
+          >
             {method}
           </button>
         </span>
@@ -292,7 +310,11 @@ export class LogEntry extends React.Component<LogEntryProps> {
     if (obj) {
       return (
         <span key={key} className={`network-res-item ${styles.spaced} ${styles.level0}`}>
-          <button className={styles.link} onClick={() => this.inspect(obj)}>
+          <button
+            aria-label={`${statusCode} response. Log entry ${this.props.entryIndex}`}
+            className={styles.link}
+            onClick={() => this.inspect(obj)}
+          >
             {statusCode}
           </button>
         </span>
@@ -310,7 +332,11 @@ export class LogEntry extends React.Component<LogEntryProps> {
     return (
       <span key={key} className={`${styles.spaced} ${styles.level3}`}>
         {text + ' '}
-        <button className={styles.link} onClick={() => this.props.reconnectNgrok()}>
+        <button
+          aria-label={`Please recoonect, Ngrok connection expired. Log entry ${this.props.entryIndex}`}
+          className={styles.link}
+          onClick={() => this.props.reconnectNgrok()}
+        >
           Please reconnect.
         </button>
       </span>
@@ -321,7 +347,11 @@ export class LogEntry extends React.Component<LogEntryProps> {
     return (
       <span key={key} className={`text-item ${styles.spaced} ${styles.level3}`}>
         {`${text} Please `}
-        <a className={styles.link} onClick={() => this.props.launchLuisEditor()}>
+        <a
+          aria-label={`Connect your bot to LUIS. Log entry ${this.props.entryIndex}`}
+          className={styles.link}
+          onClick={() => this.props.launchLuisEditor()}
+        >
           connect your bot to LUIS
         </a>
         {` using the services pane.`}

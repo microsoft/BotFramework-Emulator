@@ -11,6 +11,8 @@ declare namespace LogScssNamespace {
     log: string;
     source: string;
     spaced: string;
+    'sr-only': string;
+    srOnly: string;
     srcDst: string;
     timestamp: string;
   }

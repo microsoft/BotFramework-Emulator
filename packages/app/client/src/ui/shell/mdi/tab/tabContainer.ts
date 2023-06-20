@@ -36,7 +36,7 @@ import { swapTabs, toggleDraggingTab } from '@bfemulator/app-shared';
 
 import { Tab, TabProps } from './tab';
 
-const mapDispatchToProps = (dispatch, ownProps: TabProps): TabProps => ({
+const mapDispatchToProps = (dispatch, ownProps: TabProps): Partial<TabProps> => ({
   toggleDraggingTab: (toggle: boolean) => dispatch(toggleDraggingTab(toggle)),
   swapTabs: (editorKey: string, owningEditor: string, tabId: string) =>
     dispatch(swapTabs(editorKey, owningEditor, tabId, ownProps.documentId)),

@@ -181,6 +181,7 @@ export class TabBar extends React.Component<TabBarProps, TabBarState> {
         active: isActive,
         dirty: document.dirty,
         documentId: documentId,
+        index: index + 1,
         label: this.getTabLabel(document),
         onCloseClick: this.props.closeTab,
       };

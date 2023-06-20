@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as jwt from 'jsonwebtoken';
+import { verify, decode } from 'jsonwebtoken';
 import * as Restify from 'restify';
 
 import {
@@ -58,7 +58,7 @@ export function createBotFrameworkAuthenticationMiddleware(fetch: any) {
     const [authMethod, token] = authorization.trim().split(' ');
 
     // Verify token
-    const decoded: any = /^bearer$/i.test(authMethod) && token && jwt.decode(token, { complete: true });
+    const decoded: any = /^bearer$/i.test(authMethod) && token && decode(token, { complete: true });
 
     if (!decoded) {
       // Token not provided so
@@ -87,7 +87,7 @@ export function createBotFrameworkAuthenticationMiddleware(fetch: any) {
       }
 
       try {
-        (req as any).jwt = jwt.verify(token, key, {
+        (req as any).jwt = verify(token, key, {
           allowInvalidAsymmetricKeyTypes: true,
           audience: usGovernmentAuthentication.botTokenAudience,
           clockTolerance: 300,
@@ -135,7 +135,7 @@ export function createBotFrameworkAuthenticationMiddleware(fetch: any) {
       try {
         // TODO: Turn jwt.verify into async call for better performance
         // first try 3.2 token characteristics
-        (req as any).jwt = jwt.verify(token, key, {
+        (req as any).jwt = verify(token, key, {
           allowInvalidAsymmetricKeyTypes: true,
           audience: authentication.botTokenAudience,
           clockTolerance: 300,
@@ -151,7 +151,7 @@ export function createBotFrameworkAuthenticationMiddleware(fetch: any) {
       } catch (err) {
         try {
           // then try v3.1 token characteristics
-          (req as any).jwt = jwt.verify(token, key, {
+          (req as any).jwt = verify(token, key, {
             allowInvalidAsymmetricKeyTypes: true,
             audience: authentication.botTokenAudience,
             clockTolerance: 300,
