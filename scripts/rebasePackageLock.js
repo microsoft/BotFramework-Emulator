@@ -60,14 +60,17 @@ function rebaseV1Inline(name, dependency, baseURL) {
   const { resolved: actual, version } = dependency;
   const singleName = name.split('/').reverse()[0];
 
-  const { href: expected } = new URL(`${name}/-/${singleName}-${version}.tgz`, 'https://registry.npmjs.org/');
-  const { href: rebased } = new URL(`${name}/-/${singleName}-${version}.tgz`, baseURL);
+  // no actual means package version is replaced by npm audit fix
+  if (actual) {
+    const { href: expected } = new URL(`${name}/-/${singleName}-${version}.tgz`, 'https://registry.npmjs.org/');
+    const { href: rebased } = new URL(`${name}/-/${singleName}-${version}.tgz`, baseURL);
 
-  if (expected !== actual) {
-    throw new Error(`v1: Expecting "resolved" field to be "${expected}", actual is "${actual}".`);
+    if (expected !== actual) {
+      throw new Error(`v1: Expecting "resolved" field to be "${expected}", actual is "${actual}".`);
+    }
+
+    dependency.resolved = rebased;
   }
-
-  dependency.resolved = rebased;
 
   rebaseV1InlineAll(dependency, baseURL);
 }
