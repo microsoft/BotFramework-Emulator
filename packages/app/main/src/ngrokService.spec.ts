@@ -68,6 +68,8 @@ jest.mock('./emulator', () => ({
 }));
 
 let mockSettingsStore;
+// eslint-disable-next-line @typescript-eslint/no-use-before-define
+const getMockSettingsStore = () => mockSettingsStore || (mockSettingsStore = mockCreateStore());
 const mockCreateStore = () =>
   createStore(
     combineReducers({
@@ -80,10 +82,10 @@ const mockCreateStore = () =>
 const mockSettingsImpl = SettingsImpl;
 jest.mock('./state/store', () => ({
   get store() {
-    return mockSettingsStore || (mockSettingsStore = mockCreateStore());
+    return getMockSettingsStore();
   },
   getSettings: function() {
-    return new mockSettingsImpl(mockSettingsStore.getState());
+    return new mockSettingsImpl(getMockSettingsStore().getState());
   },
   get dispatch() {
     return mockSettingsStore.dispatch;
