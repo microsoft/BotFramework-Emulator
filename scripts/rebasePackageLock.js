@@ -60,14 +60,22 @@ function rebaseV1Inline(name, dependency, baseURL) {
   const { resolved: actual, version } = dependency;
   const singleName = name.split('/').reverse()[0];
 
-  const { href: expected } = new URL(`${name}/-/${singleName}-${version}.tgz`, 'https://registry.npmjs.org/');
-  const { href: rebased } = new URL(`${name}/-/${singleName}-${version}.tgz`, baseURL);
+  if (actual) {
+    const { href: expected } = new URL(`${name}/-/${singleName}-${version}.tgz`, 'https://registry.npmjs.org/');
+    const { href: rebased } = new URL(`${name}/-/${singleName}-${version}.tgz`, baseURL);
 
-  if (expected !== actual) {
-    throw new Error(`v1: Expecting "resolved" field to be "${expected}", actual is "${actual}".`);
+    if (expected !== actual) {
+      throw new Error(`v1: Expecting "resolved" field to be "${expected}", actual is "${actual}".`);
+    }
+
+    dependency.resolved = rebased;
+  } else {
+    /**
+     * no resolved/actual means package version is replaced by `npm audit fix`
+     * this means `version` field contains an URL to the package
+     */
+    dependency.version = new URL(new URL(version).pathname, baseURL).href;
   }
-
-  dependency.resolved = rebased;
 
   rebaseV1InlineAll(dependency, baseURL);
 }
@@ -119,6 +127,7 @@ async function main() {
   const json = JSON.stringify(packageLockJSON, null, 2);
 
   if (~json.indexOf('://registry.npmjs.org')) {
+    console.log(json);
     throw new Error('After rebase, "://registry.npmjs.org" should not be detected in the output.');
   }
 

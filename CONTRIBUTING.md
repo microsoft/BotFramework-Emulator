@@ -42,7 +42,7 @@ cd BotFramework-Emulator
 > **npm version 5.6.0** or greater is also required. (Node v10.14.x includes 6.4.1)
 
 ```
-npm i -g lerna@3.4.0
+npm i -g lerna@6.1.0
 ```
 
 > **NOTE:** If you are using Linux, building the Emulator might result in an error due to a missing package: **libXScrnSaver**. If you run into this error, install the package using your OS's package manager and retry: 
