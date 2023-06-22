@@ -166,7 +166,7 @@
     "restify-cors-middleware2": "^2.2.0",
     "rsa-pem-from-mod-exp": "^0.8.4",
     "sanitize-filename": "^1.6.1",
-    "semver": "^5.5.0",
+    "semver": "^7.5.2",
     "tslib": "^1.9.0",
     "ws": "^5.0.0"
   }
