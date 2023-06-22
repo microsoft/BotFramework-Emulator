@@ -1,5 +1,5 @@
 {
-  "lerna": "3.4.0",
+  "lerna": "6.1.0",
   "packages": [
     "packages/app/client",
     "packages/app/main",
