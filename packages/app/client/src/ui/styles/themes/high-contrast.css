@@ -235,7 +235,7 @@ html {
   --inspector-link-color: var(--link-color);
 
   /* Split Button */
-  --split-button-color: var(--neutral-5);
+  --split-button-color: var(--neutral-1);
   --split-button-pressed-color: var(--neutral-1);
   --split-button-disabled-color: var(--neutral-7);
   --split-button-icon-color: #00BCF2;
@@ -314,6 +314,6 @@ html {
   --custom-activity-editor-border: var(--neutral-10);
 }
 
-.dialog .ms-Button-label {
-  color: var(--neutral-15);
+*, *::after, *::before {
+  forced-color-adjust: none;
 }

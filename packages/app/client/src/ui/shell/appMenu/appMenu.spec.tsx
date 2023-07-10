@@ -224,7 +224,7 @@ describe('<AppMenu />', () => {
     expect(updateItem.disabled).toBe(false);
 
     updateItem.onClick();
-    expect(dispatchSpy).toHaveBeenCalledWith(executeCommand(true, CheckForUpdates, null));
+    expect(dispatchSpy).toHaveBeenCalledWith(executeCommand(true, CheckForUpdates, expect.any(Function)));
   });
 
   it('should get an app update menu item for when the updater is idle', () => {
@@ -235,7 +235,7 @@ describe('<AppMenu />', () => {
     expect(updateItem.disabled).toBe(false);
 
     updateItem.onClick();
-    expect(dispatchSpy).toHaveBeenCalledWith(executeCommand(true, CheckForUpdates, null));
+    expect(dispatchSpy).toHaveBeenCalledWith(executeCommand(true, CheckForUpdates, expect.any(Function)));
   });
 
   it('should get a sign in menu item for a signed out user', async () => {

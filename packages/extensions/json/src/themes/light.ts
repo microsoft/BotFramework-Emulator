@@ -32,8 +32,8 @@
 //
 
 // Colors we care about
-const booleanNumber = '#47B07F';
-const keys = '#007ACC';
+const booleanNumber = '#35835f';
+const keys = '#0063a6';
 const string = '#A1260D';
 const background = '#00000000';
 

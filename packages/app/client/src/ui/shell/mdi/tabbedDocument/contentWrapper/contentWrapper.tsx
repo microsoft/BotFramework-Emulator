@@ -56,6 +56,8 @@ interface TabbedDocumentContentState {
 }
 
 class TabbedDocumentContentWrapperComponent extends Component<TabbedDocumentContentProps, TabbedDocumentContentState> {
+  contentRef = React.createRef<HTMLDivElement>();
+
   constructor(props: TabbedDocumentContentProps) {
     super(props);
 
@@ -79,6 +81,7 @@ class TabbedDocumentContentWrapperComponent extends Component<TabbedDocumentCont
         hidden={this.props.hidden}
         aria-hidden={this.props.hidden}
         onClickCapture={this.onClick}
+        ref={this.contentRef}
       >
         {this.props.children}
         <ContentOverlay documentId={this.props.documentId} />
@@ -96,6 +99,14 @@ class TabbedDocumentContentWrapperComponent extends Component<TabbedDocumentCont
     const { documentId: newDocumentId } = newProps;
     if (this.props.documentId && this.props.documentId !== newDocumentId) {
       this.setState({ owningEditor: getTabGroupForDocument(newDocumentId) });
+    }
+  }
+
+  public componentDidUpdate(prevProps: Readonly<TabbedDocumentContentProps>): void {
+    if (!this.props.hidden && prevProps.hidden && this.contentRef.current) {
+      (this.contentRef.current.querySelector(
+        'input, button:not([role="link"]), textarea, [tab-index]'
+      ) as HTMLElement | null)?.focus();
     }
   }
 

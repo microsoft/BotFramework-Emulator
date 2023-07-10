@@ -53,9 +53,11 @@ export class MenuButton extends React.Component<MenuButtonProps, MenuButtonState
   private static _id: number;
   private buttonRef: HTMLButtonElement;
   private menuButtonId: string;
+  private restoreFocusAfterCompleted = false;
   private onBodyClickListener: () => void;
   private onMenuButtonExpandedListener: () => void;
   private onMenuItemSelectedListener: () => void;
+  private onMenuItemActionCompletedListener: () => void;
 
   constructor(props: MenuButtonProps) {
     super(props);
@@ -76,15 +78,18 @@ export class MenuButton extends React.Component<MenuButtonProps, MenuButtonState
     this.onBodyClickListener = this.onBodyClick.bind(this);
     this.onMenuItemSelectedListener = this.onMenuItemSelected.bind(this);
     this.onMenuButtonExpandedListener = this.onMenuButtonExpanded.bind(this);
+    this.onMenuItemActionCompletedListener = this.onMenuItemActionCompleted.bind(this);
     document.body.addEventListener('click', this.onBodyClickListener);
     document.body.addEventListener('MenuItemSelected', this.onMenuItemSelectedListener);
     document.body.addEventListener('MenuButtonExpanded', this.onMenuButtonExpandedListener);
+    document.body.addEventListener('MenuItemActionCompleted', this.onMenuItemActionCompletedListener);
   }
 
   public componentWillUnmount(): void {
     document.body.removeEventListener('click', this.onBodyClickListener);
     document.body.removeEventListener('MenuItemSelected', this.onMenuItemSelectedListener);
     document.body.removeEventListener('MenuButtonExpanded', this.onMenuButtonExpandedListener);
+    document.body.removeEventListener('MenuItemActionCompleted', this.onMenuItemActionCompletedListener);
   }
 
   public render(): React.ReactNode {
@@ -141,6 +146,7 @@ export class MenuButton extends React.Component<MenuButtonProps, MenuButtonState
     if (this.state.menuShowing) {
       this.setMenuShowing(false);
     }
+    this.restoreFocusAfterCompleted = document.activeElement === this.buttonRef;
   }
 
   private onMenuButtonExpanded(event: CustomEvent): void {
@@ -148,6 +154,13 @@ export class MenuButton extends React.Component<MenuButtonProps, MenuButtonState
       // this is not the menu that was opened, so close it if it's open
       this.state.menuShowing && this.setState({ menuShowing: false });
     }
+  }
+
+  private onMenuItemActionCompleted(event: CustomEvent) {
+    if (this.restoreFocusAfterCompleted && document.activeElement === document.body) {
+      this.buttonRef.focus();
+    }
+    this.restoreFocusAfterCompleted = false;
   }
 
   private onBodyClick(event: React.MouseEvent<HTMLBodyElement>): void {

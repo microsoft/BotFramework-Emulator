@@ -49,7 +49,7 @@ class EmulatorUpdater extends EventEmitter {
   @CommandServiceInstance()
   private commandService: CommandServiceImpl;
 
-  private _userInitiated: boolean;
+  private _userInitiatedResolver: () => void;
   private _autoDownload: boolean;
   private _updaterStatus: UpdateStatus = UpdateStatus.Idle;
   private _allowPrerelease: boolean;
@@ -58,7 +58,7 @@ class EmulatorUpdater extends EventEmitter {
   private _installAfterDownload: boolean;
 
   public get userInitiated(): boolean {
-    return this._userInitiated;
+    return !!this._userInitiatedResolver;
   }
 
   public get status(): UpdateStatus {
@@ -120,7 +120,18 @@ class EmulatorUpdater extends EventEmitter {
     const settings = getSettings().framework;
     this.allowPrerelease = !!settings.usePrereleases;
     this.autoDownload = !!settings.autoUpdate;
-    this._userInitiated = userInitiated;
+    const updatePromise = new Promise<void>(resolve => {
+      if (userInitiated) {
+        const oneTimeResolver = () => {
+          resolve();
+          this._userInitiatedResolver = () => void 0;
+        };
+        this._userInitiatedResolver = oneTimeResolver;
+      } else {
+        this._userInitiatedResolver = undefined;
+        resolve();
+      }
+    });
 
     electronUpdater.setFeedURL({
       repo: this.repo,
@@ -134,6 +145,7 @@ class EmulatorUpdater extends EventEmitter {
         auto: !userInitiated,
         prerelease: this.allowPrerelease,
       });
+      await updatePromise;
     } catch (e) {
       throw new Error(`There was an error while checking for the latest update: ${e}`);
     }
@@ -169,6 +181,10 @@ class EmulatorUpdater extends EventEmitter {
           UpdateProgressIndicator,
         } = SharedConstants.Commands.UI;
         const result = await this.commandService.remoteCall<number>(ShowUpdateAvailableDialog, updateInfo.version);
+
+        if (this.userInitiated) {
+          this._userInitiatedResolver();
+        }
 
         switch (result) {
           // manually download the update, and the user can choose to install afterwards
@@ -240,6 +256,9 @@ class EmulatorUpdater extends EventEmitter {
         const { ShowUpdateUnavailableDialog } = SharedConstants.Commands.UI;
         await this.commandService.remoteCall(ShowUpdateUnavailableDialog);
       }
+      if (userInitiated) {
+        this._userInitiatedResolver();
+      }
     } catch (e) {
       // eslint-disable-next-line no-console
       console.error(`An error occurred in the updater's "up-to-date" event handler: ${e}`);
@@ -260,6 +279,7 @@ class EmulatorUpdater extends EventEmitter {
         title: app.getName(),
         message: `An error occurred while using the updater: ${err}`,
       });
+      this._userInitiatedResolver();
     }
   };
 

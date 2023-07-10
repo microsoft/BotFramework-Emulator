@@ -1,1 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 16.34"><title>ChevronUp</title><polygon points="28.68 16.34 15 2.67 1.32 16.34 0 15.02 15 0 30 15.02 28.68 16.34"/></svg>
+<svg viewBox="0 0 30 16.5" xmlns="http://www.w3.org/2000/svg">
+  <defs></defs>
+  <title>ChevronUp</title>
+  <polygon stroke-width="0" points="27.5 16.5 15 3.5 2.0 16.5 0 14 15 0 30 14" alignment-baseline="baseline"></polygon>
+</svg>

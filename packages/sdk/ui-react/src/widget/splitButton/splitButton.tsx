@@ -91,7 +91,6 @@ export class SplitButton extends React.Component<SplitButtonProps, SplitButtonSt
       setCaretRef,
     } = this;
     const expandedClass = expanded ? ` ${styles.expanded}` : '';
-
     return (
       <>
         <div className={styles.container}>
@@ -107,7 +106,7 @@ export class SplitButton extends React.Component<SplitButtonProps, SplitButtonSt
           </button>
           <div className={styles.separator} aria-hidden={'true'} />
           <button
-            aria-label={submenuLabel || defaultLabel}
+            aria-label={`${submenuLabel || defaultLabel}, has ${options.length} items`}
             className={styles.caretButton + expandedClass}
             ref={setCaretRef}
             onClick={onClickCaret}

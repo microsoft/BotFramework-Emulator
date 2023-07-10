@@ -82,26 +82,28 @@ export class MenuItemComp extends React.Component<MenuItemProps, Record<string, 
     }
   }
 
-  private onClick = (_event: React.MouseEvent<HTMLLIElement>): void => {
+  private handleClick = async event => {
     const { disabled, onClick } = this.props;
     if (!disabled && onClick) {
-      onClick();
       document.body.dispatchEvent(new Event('MenuItemSelected'));
+      const result: unknown = onClick();
+      await result;
+      document.body.dispatchEvent(new CustomEvent('MenuItemActionCompleted'));
     }
   };
 
+  private onClick = (event: React.MouseEvent<HTMLLIElement>): void => {
+    this.handleClick(event);
+  };
+
   private onKeyDown = (event: React.KeyboardEvent<HTMLLIElement>): void => {
-    const { disabled, onClick } = this.props;
     let { key } = event;
     key = key.toLowerCase();
 
     if (key === 'enter') {
       event.preventDefault();
       event.stopPropagation();
-      if (!disabled) {
-        onClick && onClick();
-        document.body.dispatchEvent(new Event('MenuItemSelected'));
-      }
+      this.handleClick(event);
     }
   };
 }
