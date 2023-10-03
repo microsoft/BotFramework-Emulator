@@ -80,7 +80,7 @@
     ]
   },
   "dependencies": {
-    "keytar": "7.3.0"
+    "keytar": "7.9.0"
   },
   "overrides": {
     "minimist@<1.2.6": ">=1.2.6",
