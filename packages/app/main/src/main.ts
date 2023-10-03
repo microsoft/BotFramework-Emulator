@@ -311,7 +311,7 @@ class EmulatorApplication {
       backgroundColor: '#f7f7f7',
       width: 1400,
       height: 920,
-      webPreferences: { contextIsolation: false, enableRemoteModule: true, nodeIntegration: true, webviewTag: true },
+      webPreferences: { contextIsolation: false, nodeIntegration: true, webviewTag: true },
     });
     this.initializeBrowserWindowListeners();
 

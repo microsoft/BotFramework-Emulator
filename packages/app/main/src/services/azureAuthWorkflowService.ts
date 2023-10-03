@@ -127,7 +127,6 @@ export class AzureAuthWorkflowService {
       alwaysOnTop: true,
       width: 490,
       height: 366,
-      webPreferences: { nativeWindowOpen: true },
     });
 
     browserWindow.removeMenu();
