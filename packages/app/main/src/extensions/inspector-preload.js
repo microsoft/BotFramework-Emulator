@@ -32,7 +32,8 @@
 //
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { ipcRenderer, remote } = require('electron');
+const { ipcRenderer } = require('electron');
+const remote = require('@electron/remote');
 
 ipcRenderer.on('inspect', (sender, obj) => {
   window.host.dispatch('inspect', obj);

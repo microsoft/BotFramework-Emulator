@@ -32,7 +32,8 @@
 //
 
 import { applyMiddleware, createStore, combineReducers, compose, Store } from 'redux';
-import { ipcRenderer, remote } from 'electron';
+import { ipcRenderer } from 'electron';
+import remote from '@electron/remote';
 import sagaMiddlewareFactory from 'redux-saga';
 import { call, all, spawn } from 'redux-saga/effects';
 import {
