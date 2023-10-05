@@ -33,7 +33,6 @@
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { ipcRenderer } = require('electron');
-const remote = require('@electron/remote');
 
 ipcRenderer.on('inspect', (sender, obj) => {
   window.host.dispatch('inspect', obj);
@@ -50,10 +49,6 @@ ipcRenderer.on('chat-log-updated', (sender, conversationId, logEntries) => {
 
 ipcRenderer.on('highlighted-objects-updated', (sender, highlightedObjects) => {
   window.host.dispatch('highlighted-objects-updated', highlightedObjects);
-});
-
-ipcRenderer.on('toggle-dev-tools', () => {
-  remote.getCurrentWebContents().toggleDevTools();
 });
 
 ipcRenderer.on('accessory-click', (sender, id, currentState) => {
