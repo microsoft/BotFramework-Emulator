@@ -52,7 +52,7 @@ import {
   TunnelInfo,
   TunnelStatus,
 } from '@bfemulator/app-shared';
-import { app, BrowserWindow, nativeTheme, Rectangle, screen, protocol, net } from 'electron';
+import { app, BrowserWindow, nativeTheme, Rectangle, screen } from 'electron';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 import { enable } from '@electron/remote/main';
 
