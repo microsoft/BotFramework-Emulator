@@ -34,6 +34,7 @@
       "**/?(*.)(spec|test).(ts)?(x)"
     ],
     "moduleNameMapper": {
+      "@electron/remote": "<rootDir>/../../../../jestMocks/electronRemoteMock.js",
       "monaco-editor": "<rootDir>/../../../../jestMocks/monacoEditorMock.js",
       ".\\.scss$": "<rootDir>/../../../../jestMocks/styleMock.js"
     },

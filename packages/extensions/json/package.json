@@ -81,6 +81,7 @@
       "**/?(*.)(spec|test).(ts)?(x)"
     ],
     "moduleNameMapper": {
+      "@electron/remote": "<rootDir>/../../../../jestMocks/electronRemoteMock.js",
       ".\\.scss$": "<rootDir>/../../../../jestMocks/styleMock.js"
     },
     "moduleFileExtensions": [
