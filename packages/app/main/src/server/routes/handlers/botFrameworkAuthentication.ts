@@ -46,12 +46,10 @@ export function createBotFrameworkAuthenticationMiddleware(fetch: any) {
   const openIdMetadata = new OpenIdMetadata(fetch, authentication.openIdMetadata);
   const usGovOpenIdMetadata = new OpenIdMetadata(fetch, usGovernmentAuthentication.openIdMetadata);
 
-  return async (req: Restify.Request, res: Restify.Response, next: Restify.Next) => {
+  return async (req: Restify.Request, res: Restify.Response) => {
     const authorization = req.header('Authorization');
 
     if (!authorization) {
-      next();
-
       return;
     }
 
@@ -172,7 +170,5 @@ export function createBotFrameworkAuthenticationMiddleware(fetch: any) {
         }
       }
     }
-
-    next();
   };
 }

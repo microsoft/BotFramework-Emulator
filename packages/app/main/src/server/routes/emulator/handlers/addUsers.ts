@@ -33,13 +33,13 @@
 
 import { ChannelAccount } from 'botframework-schema';
 import * as HttpStatus from 'http-status-codes';
-import { Next, Response } from 'restify';
+import { Response } from 'restify';
 
 import { sendErrorResponse } from '../../../utils/sendErrorResponse';
 
 import { ConversationAwareRequest } from './getConversation';
 
-export async function addUsers(req: ConversationAwareRequest, res: Response, next: Next): Promise<any> {
+export async function addUsers(req: ConversationAwareRequest, res: Response): Promise<any> {
   try {
     const members: ChannelAccount[] = JSON.parse(req.body || '[]');
     const it = members[Symbol.iterator](); // Node does not support array.values() :(
@@ -50,8 +50,6 @@ export async function addUsers(req: ConversationAwareRequest, res: Response, nex
     res.send(HttpStatus.OK);
     res.end();
   } catch (err) {
-    sendErrorResponse(req, res, next, err);
+    sendErrorResponse(req, res, null, err);
   }
-
-  next();
 }

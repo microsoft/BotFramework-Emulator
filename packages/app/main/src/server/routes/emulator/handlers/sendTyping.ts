@@ -38,18 +38,12 @@ import { sendErrorResponse } from '../../../utils/sendErrorResponse';
 
 import { ConversationAwareRequest } from './getConversation';
 
-export async function sendTyping(
-  req: ConversationAwareRequest,
-  res: Restify.Response,
-  next: Restify.Next
-): Promise<any> {
+export async function sendTyping(req: ConversationAwareRequest, res: Restify.Response): Promise<any> {
   try {
     await req.conversation.sendTyping();
     res.send(HttpStatus.OK);
     res.end();
   } catch (err) {
-    sendErrorResponse(req, res, next, err);
+    sendErrorResponse(req, res, null, err);
   }
-
-  next();
 }

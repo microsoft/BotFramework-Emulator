@@ -160,6 +160,7 @@ export class EmulatorRestServer {
       mountAllRoutes(this);
       this._serverPort = actualPort;
       this._serverUrl = this.server.url;
+      console.log('Server listens on port', actualPort);
     } catch (e) {
       if (e.code === 'EADDRINUSE') {
         // eslint-disable-next-line

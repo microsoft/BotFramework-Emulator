@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import * as HttpStatus from 'http-status-codes';
-import { Next, Request, Response } from 'restify';
+import { Request, Response } from 'restify';
 import { Activity } from 'botframework-schema';
 
 import { sendErrorResponse } from '../../../../utils/sendErrorResponse';
@@ -39,7 +39,7 @@ import { ServerState } from '../../../../state/serverState';
 import { ConversationAPIPathParameters } from '../types/conversationAPIPathParameters';
 
 export function getActivitiesForConversation(state: ServerState) {
-  return async (req: Request, res: Response, next: Next): Promise<void> => {
+  return async (req: Request, res: Response): Promise<void> => {
     try {
       const conversationParameters: ConversationAPIPathParameters = req.params;
       const conversation = state.conversations.conversationById(conversationParameters.conversationId);
@@ -47,9 +47,7 @@ export function getActivitiesForConversation(state: ServerState) {
       res.send(HttpStatus.OK, activities);
       res.end();
     } catch (err) {
-      sendErrorResponse(req, res, next, err);
-    } finally {
-      next();
+      sendErrorResponse(req, res, null, err);
     }
   };
 }
