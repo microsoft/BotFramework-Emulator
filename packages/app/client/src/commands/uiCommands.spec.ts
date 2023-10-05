@@ -41,7 +41,7 @@ import {
   SharedConstants,
 } from '@bfemulator/app-shared';
 import { CommandRegistry, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
-import remote from '@electron/remote';
+import * as remote from '@electron/remote';
 
 import { CONTENT_TYPE_APP_SETTINGS, DOCUMENT_ID_APP_SETTINGS } from '../constants';
 import * as editorHelpers from '../state/helpers/editorHelpers';

@@ -34,7 +34,7 @@
 import { CommandServiceInstance, CommandServiceImpl } from '@bfemulator/sdk-shared';
 import { MenuItem } from '@bfemulator/ui-react';
 import { SharedConstants } from '@bfemulator/app-shared';
-import remote from '@electron/remote';
+import * as remote from '@electron/remote';
 
 const {
   Channels: { HelpLabel, ReadmeUrl },

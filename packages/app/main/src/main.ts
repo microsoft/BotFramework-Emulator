@@ -52,8 +52,9 @@ import {
   TunnelInfo,
   TunnelStatus,
 } from '@bfemulator/app-shared';
-import { app, BrowserWindow, nativeTheme, Rectangle, screen } from 'electron';
+import { app, BrowserWindow, nativeTheme, Rectangle, screen, protocol, net } from 'electron';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
+import { enable } from '@electron/remote/main';
 
 import { AppUpdater } from './appUpdater';
 import * as commandLine from './commandLine';
@@ -316,6 +317,7 @@ class EmulatorApplication {
     this.initializeBrowserWindowListeners();
 
     this.mainWindow = new Window(this.mainBrowserWindow);
+    enable(this.mainBrowserWindow.webContents);
     Emulator.getInstance().initServer({ fetch, logService: this.mainWindow.logService });
 
     if (process.env.NODE_ENV !== 'test') {

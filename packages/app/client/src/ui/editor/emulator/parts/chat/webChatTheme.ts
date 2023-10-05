@@ -52,7 +52,7 @@ export default {
 
   timestampColor: 'var(--webchat-timestamp-text)',
 
-  suggestedActionBackground: 'var(--webchat-sa-bg)',
+  suggestedActionBackgroundColor: 'var(--webchat-sa-bg)',
   suggestedActionBorderColor: 'var(--webchat-sa-border-color)',
   suggestedActionBorderStyle: 'var(--webchat-sa-border-style)',
   suggestedActionBorderWidth: 'var(--webchat-sa-border-width)',
