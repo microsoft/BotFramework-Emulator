@@ -42,11 +42,6 @@ import { store } from '../../state/store';
 import { ActiveBotHelper } from './activeBotHelper';
 
 jest.mock('electron', () => ({
-  remote: {
-    app: {
-      isPackaged: false,
-    },
-  },
   ipcMain: new Proxy(
     {},
     {
@@ -73,6 +68,7 @@ jest.mock('electron', () => ({
 
 describe('ActiveBotHelper tests', () => {
   let commandService: CommandServiceImpl;
+  jest.spyOn(editorHelpers, 'hasNonGlobalTabs').mockReturnValue(0);
 
   beforeAll(() => {
     const decorator = CommandServiceInstance();
@@ -122,32 +118,26 @@ describe('ActiveBotHelper tests', () => {
     commandService.remoteCall = mockRemoteCall2;
 
     await ActiveBotHelper.closeActiveBot();
-    expect(mockDispatch.mock.calls).toMatchInlineSnapshot(`
-      [
-        [
-          {
-            "payload": {},
-            "type": "BOT/CLOSE",
-          },
-        ],
-        [
-          {
-            "payload": {
-              "notification": NotificationImpl {
-                "buttons": [],
-                "id": "14669810-6460-11ee-a5e6-6fbeb67a3bd2",
-                "message": "Error while closing active bot: err",
-                "read": false,
-                "timestamp": 1696607431697,
-                "type": 0,
-              },
-              "read": false,
-            },
-            "type": "NOTIFICATION/BEGIN_ADD",
-          },
-        ],
-      ]
-    `);
+    expect(mockDispatch).toBeCalledTimes(2);
+
+    expect(mockDispatch).toBeCalledWith({
+      payload: {},
+      type: 'BOT/CLOSE',
+    });
+    expect(mockDispatch).toBeCalledWith({
+      payload: {
+        notification: {
+          buttons: [],
+          id: expect.any(String),
+          message: 'Error while closing active bot: err',
+          read: false,
+          timestamp: expect.any(Number),
+          type: 0,
+        },
+        read: false,
+      },
+      type: 'NOTIFICATION/BEGIN_ADD',
+    });
   });
 
   it('botAlreadyOpen() functionality', async () => {
