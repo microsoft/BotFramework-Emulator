@@ -110,9 +110,10 @@ describe('ActiveBotHelper tests', () => {
   });
 
   it('closeActiveBot() functionality', async () => {
+    const mockDispatch = jest.fn();
     const mockRemoteCall1 = jest.fn().mockResolvedValue(true);
     commandService.remoteCall = mockRemoteCall1;
-    (store as any).dispatch = () => null;
+    (store as any).dispatch = mockDispatch;
 
     await ActiveBotHelper.closeActiveBot();
     expect(mockRemoteCall1).toHaveBeenCalledTimes(2);
@@ -120,7 +121,33 @@ describe('ActiveBotHelper tests', () => {
     const mockRemoteCall2 = jest.fn().mockRejectedValue('err');
     commandService.remoteCall = mockRemoteCall2;
 
-    expect(ActiveBotHelper.closeActiveBot()).rejects.toEqual(new Error('Error while closing active bot: err'));
+    await ActiveBotHelper.closeActiveBot();
+    expect(mockDispatch.mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          {
+            "payload": {},
+            "type": "BOT/CLOSE",
+          },
+        ],
+        [
+          {
+            "payload": {
+              "notification": NotificationImpl {
+                "buttons": [],
+                "id": "14669810-6460-11ee-a5e6-6fbeb67a3bd2",
+                "message": "Error while closing active bot: err",
+                "read": false,
+                "timestamp": 1696607431697,
+                "type": 0,
+              },
+              "read": false,
+            },
+            "type": "NOTIFICATION/BEGIN_ADD",
+          },
+        ],
+      ]
+    `);
   });
 
   it('botAlreadyOpen() functionality', async () => {
