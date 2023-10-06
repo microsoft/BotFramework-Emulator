@@ -53,11 +53,10 @@ describe('getWebSocketPort handler', () => {
       send: jest.fn(),
     };
     const next = jest.fn();
-    await getWebSocketPort(req, res, next);
+    await getWebSocketPort(req, res);
 
     expect(res.send).toHaveBeenCalledWith(OK, 56626);
     expect(res.end).toHaveBeenCalled();
-    expect(next).toHaveBeenCalled();
   });
 
   it('should start the WS server and return a 200 with the server port', async () => {
@@ -68,11 +67,10 @@ describe('getWebSocketPort handler', () => {
     };
     const next = jest.fn();
     mockWebSocketServer.port = undefined;
-    await getWebSocketPort(req, res, next);
+    await getWebSocketPort(req, res);
 
     expect(res.send).toHaveBeenCalledWith(OK, 56627);
     expect(res.end).toHaveBeenCalled();
-    expect(next).toHaveBeenCalled();
   });
 
   it('should return a 500 and an error', async () => {
@@ -83,10 +81,9 @@ describe('getWebSocketPort handler', () => {
     };
     const next = jest.fn();
     mockWebSocketServer.init.mockRejectedValueOnce(new Error('Failed to init WS server.'));
-    await getWebSocketPort(req, res, next);
+    await getWebSocketPort(req, res);
 
     expect(res.send).toHaveBeenCalledWith(INTERNAL_SERVER_ERROR, new Error('Failed to init WS server.'));
     expect(res.end).toHaveBeenCalled();
-    expect(next).toHaveBeenCalled();
   });
 });

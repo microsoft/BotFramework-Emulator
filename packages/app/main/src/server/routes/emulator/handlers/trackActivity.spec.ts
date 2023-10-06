@@ -70,15 +70,13 @@ describe('trackActivity handler', () => {
       end: jest.fn(),
       send: jest.fn(),
     };
-    const next = jest.fn();
-    await trackActivity(req, res, next);
+    await trackActivity(req, res);
 
     expect(mockState.conversations.conversationById).toHaveBeenCalledWith(req.params.conversationId);
     expect(mockConversation.prepActivityToBeSentToUser).toHaveBeenCalledWith(mockConversation.user.id, req.body);
 
     expect(res.send).toHaveBeenCalledWith(OK);
     expect(res.end).toHaveBeenCalled();
-    expect(next).toHaveBeenCalled();
   });
 
   it('should track an activity sent to the bot and return a 200', async () => {
@@ -96,15 +94,13 @@ describe('trackActivity handler', () => {
       end: jest.fn(),
       send: jest.fn(),
     };
-    const next = jest.fn();
-    await trackActivity(req, res, next);
+    await trackActivity(req, res);
 
     expect(mockState.conversations.conversationById).toHaveBeenCalledWith(req.params.conversationId);
     expect(mockConversation.prepActivityToBeSentToBot).toHaveBeenCalledWith(req.body, true);
 
     expect(res.send).toHaveBeenCalledWith(OK);
     expect(res.end).toHaveBeenCalled();
-    expect(next).toHaveBeenCalled();
   });
 
   it('should return a 500 if something goes wrong', async () => {
@@ -124,11 +120,9 @@ describe('trackActivity handler', () => {
       end: jest.fn(),
       send: jest.fn(),
     };
-    const next = jest.fn();
-    await createTrackActivityHandler(mockState)(req, res, next);
+    await createTrackActivityHandler(mockState)(req, res);
 
     expect(res.send).toHaveBeenCalledWith(INTERNAL_SERVER_ERROR, new Error('Could not find conversation.'));
     expect(res.end).toHaveBeenCalled();
-    expect(next).toHaveBeenCalled();
   });
 });

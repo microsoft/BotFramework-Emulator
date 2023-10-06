@@ -45,7 +45,7 @@ if (typeof window === 'undefined') {
 export function getGlobal(attributeName: string, defaultValue?: any): any {
   if (global[attributeName]) {
     return global[attributeName];
-  } else if (remote && remote.getGlobal(attributeName)) {
+  } else if (remote && console.warn(remote) && remote.getGlobal(attributeName)) {
     return remote.getGlobal(attributeName);
   } else {
     return defaultValue;

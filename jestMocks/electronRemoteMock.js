@@ -32,6 +32,8 @@
 //
 
 module.exports = {
+  getGlobal: jest.fn(),
+  enable: jest.fn(),
   app: {
     isPackaged: true,
   },

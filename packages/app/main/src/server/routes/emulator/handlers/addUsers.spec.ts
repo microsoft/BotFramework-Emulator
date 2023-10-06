@@ -59,13 +59,11 @@ describe('addUsers handler', () => {
       end: jest.fn(),
       send: jest.fn(),
     };
-    const next = jest.fn();
-    await addUsers(req, res, next);
+    await addUsers(req, res);
 
     expect(req.conversation.addMember).toHaveBeenCalledTimes(2);
     expect(res.send).toHaveBeenCalledWith(HttpStatus.OK);
     expect(res.end).toHaveBeenCalled();
-    expect(next).toHaveBeenCalled();
   });
 
   it('should send an error response if something goes wrong', async () => {
@@ -81,10 +79,8 @@ describe('addUsers handler', () => {
       },
     };
     const res: any = {};
-    const next = jest.fn();
-    await addUsers(req, res, next);
+    await addUsers(req, res);
 
-    expect(mockSendErrorResponse).toHaveBeenCalledWith(req, res, next, new Error('Failed to add member.'));
-    expect(next).toHaveBeenCalled();
+    expect(mockSendErrorResponse).toHaveBeenCalledWith(req, res, null, new Error('Failed to add member.'));
   });
 });

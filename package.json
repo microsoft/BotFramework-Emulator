@@ -68,6 +68,7 @@
       "node"
     ],
     "moduleNameMapper": {
+      "@electron/remote/main": "<rootDir>/jestMocks/electronRemoteMock.js",
       "@electron/remote": "<rootDir>/jestMocks/electronRemoteMock.js",
       "monaco-editor": "<rootDir>/jestMocks/monacoEditorMock.js",
       ".\\.css$": "<rootDir>/jestMocks/styleMock.js",

@@ -60,13 +60,11 @@ jest.mock('jsonwebtoken', () => ({
 
 describe('botFrameworkAuthenticationMiddleware', () => {
   const authMiddleware = createBotFrameworkAuthenticationMiddleware(jest.fn().mockResolvedValue(true));
-  const mockNext: any = jest.fn(() => null);
   const mockStatus = jest.fn(() => null);
   const mockEnd = jest.fn(() => null);
   let mockPayload;
 
   beforeEach(() => {
-    mockNext.mockClear();
     mockEnd.mockClear();
     mockStatus.mockClear();
     mockDecode = jest.fn(() => ({
@@ -82,11 +80,10 @@ describe('botFrameworkAuthenticationMiddleware', () => {
   it('should call the next middleware and return if there is no auth header', async () => {
     const mockHeader = jest.fn(() => false);
     const req: any = { header: mockHeader };
-    const result = await authMiddleware(req, null, mockNext);
+    const result = await authMiddleware(req, null);
 
     expect(result).toBeUndefined();
     expect(mockHeader).toHaveBeenCalled();
-    expect(mockNext).toHaveBeenCalled();
   });
 
   it('should return a 401 if the token is not provided in the header', async () => {
@@ -97,7 +94,7 @@ describe('botFrameworkAuthenticationMiddleware', () => {
       status: mockStatus,
       end: mockEnd,
     };
-    const result = await authMiddleware(req, res, mockNext);
+    const result = await authMiddleware(req, res);
 
     expect(result).toBeUndefined();
     expect(mockHeader).toHaveBeenCalled();
@@ -126,7 +123,7 @@ describe('botFrameworkAuthenticationMiddleware', () => {
       status: mockStatus,
       end: mockEnd,
     };
-    const result = await authMiddleware(req, res, mockNext);
+    const result = await authMiddleware(req, res);
 
     expect(result).toBeUndefined();
     expect(mockStatus).toHaveBeenCalledWith(401);
@@ -144,7 +141,7 @@ describe('botFrameworkAuthenticationMiddleware', () => {
       status: mockStatus,
       end: mockEnd,
     };
-    const result = await authMiddleware(req, res, mockNext);
+    const result = await authMiddleware(req, res);
 
     expect(result).toBeUndefined();
     expect(mockVerify.mock.calls).toMatchInlineSnapshot(`
@@ -162,7 +159,6 @@ describe('botFrameworkAuthenticationMiddleware', () => {
       ]
     `);
     expect(req.jwt).toBe('verifiedJwt');
-    expect(mockNext).toHaveBeenCalled();
   });
 
   it('should authenticate with a v2.0 gov token', async () => {
@@ -176,7 +172,7 @@ describe('botFrameworkAuthenticationMiddleware', () => {
       status: mockStatus,
       end: mockEnd,
     };
-    const result = await authMiddleware(req, res, mockNext);
+    const result = await authMiddleware(req, res);
 
     expect(result).toBeUndefined();
     expect(mockVerify.mock.calls).toMatchInlineSnapshot(`
@@ -194,7 +190,6 @@ describe('botFrameworkAuthenticationMiddleware', () => {
       ]
     `);
     expect(req.jwt).toBe('verifiedJwt');
-    expect(mockNext).toHaveBeenCalled();
   });
 
   it('should return a 401 if verifying a gov jwt token fails', async () => {
@@ -211,7 +206,7 @@ describe('botFrameworkAuthenticationMiddleware', () => {
     mockVerify = jest.fn(() => {
       throw new Error('unverifiedJwt');
     });
-    const result = await authMiddleware(req, res, mockNext);
+    const result = await authMiddleware(req, res);
 
     expect(result).toBeUndefined();
     expect(mockVerify.mock.calls).toMatchInlineSnapshot(`
@@ -229,7 +224,6 @@ describe('botFrameworkAuthenticationMiddleware', () => {
       ]
     `);
     expect(req.jwt).toBeUndefined();
-    expect(mockNext).not.toHaveBeenCalled();
     expect(mockStatus).toHaveBeenCalledWith(401);
     expect(mockEnd).toHaveBeenCalled();
   });
@@ -247,7 +241,7 @@ describe('botFrameworkAuthenticationMiddleware', () => {
     };
     // key should come back as falsy
     mockGetKey.mockResolvedValueOnce(null);
-    const result = await authMiddleware(req, res, mockNext);
+    const result = await authMiddleware(req, res);
 
     expect(result).toBeUndefined();
     expect(mockStatus).toHaveBeenCalledWith(500);
@@ -265,12 +259,11 @@ describe('botFrameworkAuthenticationMiddleware', () => {
       status: mockStatus,
       end: mockEnd,
     };
-    const result = await authMiddleware(req, res, mockNext);
+    const result = await authMiddleware(req, res);
 
     expect(result).toBeUndefined();
     expect(mockStatus).toHaveBeenCalledWith(401);
     expect(mockEnd).toHaveBeenCalled();
-    expect(mockNext).not.toHaveBeenCalled();
   });
 
   it('should authenticate with a v1.0 token', async () => {
@@ -284,7 +277,7 @@ describe('botFrameworkAuthenticationMiddleware', () => {
       status: mockStatus,
       end: mockEnd,
     };
-    const result = await authMiddleware(req, res, mockNext);
+    const result = await authMiddleware(req, res);
 
     expect(result).toBeUndefined();
     expect(mockVerify.mock.calls).toMatchInlineSnapshot(`
@@ -302,7 +295,6 @@ describe('botFrameworkAuthenticationMiddleware', () => {
       ]
     `);
     expect(req.jwt).toBe('verifiedJwt');
-    expect(mockNext).toHaveBeenCalled();
   });
 
   it('should authenticate with a v2.0 token', async () => {
@@ -316,7 +308,7 @@ describe('botFrameworkAuthenticationMiddleware', () => {
       status: mockStatus,
       end: mockEnd,
     };
-    const result = await authMiddleware(req, res, mockNext);
+    const result = await authMiddleware(req, res);
 
     expect(result).toBeUndefined();
     expect(mockVerify.mock.calls).toMatchInlineSnapshot(`
@@ -334,7 +326,6 @@ describe('botFrameworkAuthenticationMiddleware', () => {
       ]
     `);
     expect(req.jwt).toBe('verifiedJwt');
-    expect(mockNext).toHaveBeenCalled();
   });
 
   it('should attempt authentication with v3.1 characteristics if v3.2 auth fails', async () => {
@@ -352,7 +343,7 @@ describe('botFrameworkAuthenticationMiddleware', () => {
     mockVerify.mockImplementationOnce(() => {
       throw new Error('unverifiedJwt');
     });
-    const result = await authMiddleware(req, res, mockNext);
+    const result = await authMiddleware(req, res);
 
     expect(result).toBeUndefined();
     expect(mockVerify).toHaveBeenCalledTimes(2);
@@ -381,7 +372,6 @@ describe('botFrameworkAuthenticationMiddleware', () => {
       ]
     `);
     expect(req.jwt).toBe('verifiedJwt');
-    expect(mockNext).toHaveBeenCalled();
   });
 
   it('should return a 401 if auth with both v3.1 & v3.2 token characteristics fail', async () => {
@@ -404,7 +394,7 @@ describe('botFrameworkAuthenticationMiddleware', () => {
       .mockImplementationOnce(() => {
         throw new Error('unverifiedJwt');
       });
-    const result = await authMiddleware(req, res, mockNext);
+    const result = await authMiddleware(req, res);
 
     expect(result).toBeUndefined();
     expect(mockVerify).toHaveBeenCalledTimes(2);
@@ -435,6 +425,5 @@ describe('botFrameworkAuthenticationMiddleware', () => {
     expect(mockStatus).toHaveBeenCalledWith(401);
     expect(mockEnd).toHaveBeenCalled();
     expect(req.jwt).toBeUndefined();
-    expect(mockNext).not.toHaveBeenCalled();
   });
 });

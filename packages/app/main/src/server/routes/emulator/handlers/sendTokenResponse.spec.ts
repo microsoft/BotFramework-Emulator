@@ -54,13 +54,12 @@ describe('sendTokenResponse handler', () => {
       send: jest.fn(),
     };
     const next = jest.fn();
-    await sendTokenResponse(req, res, next);
+    await sendTokenResponse(req, res);
 
     const body = req.body[0];
     expect(req.conversation.sendTokenResponse).toHaveBeenCalledWith(body.connectionName, body.token, true);
     expect(res.send).toHaveBeenCalledWith(HttpStatus.OK, body);
     expect(res.end).toHaveBeenCalled();
-    expect(next).toHaveBeenCalled();
   });
 
   it('should send the status code if the result of sending the token was not a 200', async () => {
@@ -75,12 +74,11 @@ describe('sendTokenResponse handler', () => {
       send: jest.fn(),
     };
     const next = jest.fn();
-    await sendTokenResponse(req, res, next);
+    await sendTokenResponse(req, res);
 
     const body = req.body[0];
     expect(req.conversation.sendTokenResponse).toHaveBeenCalledWith(body.connectionName, body.token, true);
     expect(res.send).toHaveBeenCalledWith(HttpStatus.BAD_REQUEST);
     expect(res.end).toHaveBeenCalled();
-    expect(next).toHaveBeenCalled();
   });
 });

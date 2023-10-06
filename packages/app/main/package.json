@@ -73,7 +73,10 @@
       "jsx",
       "json",
       "node"
-    ]
+    ],
+    "moduleNameMapper": {
+      "@electron/remote/main": "<rootDir>/../../../../jestMocks/electronRemoteMock.js"
+    }
   },
   "license": "MIT",
   "devDependencies": {

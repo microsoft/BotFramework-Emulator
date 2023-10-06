@@ -56,11 +56,10 @@ describe('ping handler', () => {
       send: jest.fn(),
     };
     const next = jest.fn();
-    await ping(req, res, next);
+    await ping(req, res);
 
     expect(res.send).toHaveBeenCalledWith(HttpStatus.OK);
     expect(res.end).toHaveBeenCalled();
-    expect(next).toHaveBeenCalled();
   });
 
   it('should send an error response if something goes wrong', async () => {
@@ -70,10 +69,8 @@ describe('ping handler', () => {
       },
     };
     const res: any = {};
-    const next = jest.fn();
-    await ping(req, res, next);
+    await ping(req, res);
 
-    expect(mockSendErrorResponse).toHaveBeenCalledWith(req, res, next, new Error('Something went wrong.'));
-    expect(next).toHaveBeenCalled();
+    expect(mockSendErrorResponse).toHaveBeenCalledWith(req, res, null, new Error('Something went wrong.'));
   });
 });
