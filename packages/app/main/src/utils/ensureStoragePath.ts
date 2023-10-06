@@ -38,12 +38,11 @@ import * as mkdirp from 'mkdirp';
 
 import * as globals from '../globals';
 const electronApp: Electron.App = electron.app;
-const electronRemote: Electron.Remote = electron.remote;
 
 /** Returns the app storage path, and creates the directory if it doesn't exist */
 export const ensureStoragePath = (): string => {
   const commandLineArgs = globals.getGlobal('commandlineargs', {});
-  const app = electronApp || electronRemote.app;
+  const app = electronApp || globals.remote.app;
   const storagePath = commandLineArgs.storagepath || path.join(app.getPath('userData'), 'botframework-emulator');
   mkdirp.sync(storagePath);
   return storagePath;

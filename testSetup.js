@@ -37,6 +37,7 @@ const Adapter = require('enzyme-adapter-react-16');
 Enzyme.configure({ adapter: new Adapter() });
 window.require = function() {
   return {
+    ...require('./jestMocks/electronRemoteMock'),
     ipcRenderer: {
       on() {
         return null;

@@ -54,6 +54,7 @@ import {
 } from '@bfemulator/app-shared';
 import { app, BrowserWindow, nativeTheme, Rectangle, screen } from 'electron';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
+import { enable } from '@electron/remote/main';
 
 import { AppUpdater } from './appUpdater';
 import * as commandLine from './commandLine';
@@ -311,11 +312,12 @@ class EmulatorApplication {
       backgroundColor: '#f7f7f7',
       width: 1400,
       height: 920,
-      webPreferences: { contextIsolation: false, enableRemoteModule: true, nodeIntegration: true, webviewTag: true },
+      webPreferences: { contextIsolation: false, nodeIntegration: true, webviewTag: true },
     });
     this.initializeBrowserWindowListeners();
 
     this.mainWindow = new Window(this.mainBrowserWindow);
+    enable(this.mainBrowserWindow.webContents);
     Emulator.getInstance().initServer({ fetch, logService: this.mainWindow.logService });
 
     if (process.env.NODE_ENV !== 'test') {

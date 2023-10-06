@@ -32,7 +32,7 @@
 //
 import { isLinux, isMac, Notification, NotificationType, SharedConstants } from '@bfemulator/app-shared';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
-import { remote } from 'electron';
+import * as remote from '@electron/remote';
 
 const { Electron } = SharedConstants.Commands;
 

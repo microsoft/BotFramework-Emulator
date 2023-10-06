@@ -31,17 +31,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Next, Request, Response } from 'restify';
+import { Request, Response } from 'restify';
 import { INTERNAL_SERVER_ERROR, OK } from 'http-status-codes';
 
 import { WebSocketServer } from '../../../webSocketServer';
 
-export async function getWebSocketPort(req: Request, res: Response, next: Next): Promise<any> {
+export async function getWebSocketPort(req: Request, res: Response): Promise<any> {
   try {
     res.send(OK, WebSocketServer.port || (await WebSocketServer.init()));
   } catch (e) {
     res.send(INTERNAL_SERVER_ERROR, e);
   }
   res.end();
-  next();
 }

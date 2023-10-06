@@ -68,6 +68,8 @@
       "node"
     ],
     "moduleNameMapper": {
+      "@electron/remote/main": "<rootDir>/jestMocks/electronRemoteMock.js",
+      "@electron/remote": "<rootDir>/jestMocks/electronRemoteMock.js",
       "monaco-editor": "<rootDir>/jestMocks/monacoEditorMock.js",
       ".\\.css$": "<rootDir>/jestMocks/styleMock.js",
       ".\\.scss$": "<rootDir>/jestMocks/styleMock.js",
@@ -80,7 +82,7 @@
     ]
   },
   "dependencies": {
-    "keytar": "7.3.0"
+    "keytar": "7.9.0"
   },
   "overrides": {
     "minimist@<1.2.6": ">=1.2.6",

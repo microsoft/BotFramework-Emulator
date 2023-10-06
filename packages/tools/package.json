@@ -12,7 +12,7 @@
     "botbuilder": "^4.5.1",
     "dotenv": "8.0.0",
     "eslint-plugin-security": "^1.4.0",
-    "restify": "^8.4.0"
+    "restify": "^11.1.0"
   },
   "devDependencies": {
     "eslint": "^7.19.0",

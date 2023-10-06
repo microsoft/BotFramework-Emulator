@@ -48,7 +48,7 @@ import {
 import { Command, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 import { ServiceTypes } from 'botframework-config/lib/schema';
 import { ComponentClass } from 'react';
-import { remote } from 'electron';
+import * as remote from '@electron/remote';
 
 import * as Constants from '../constants';
 import { showMarkdownPage, showWelcomePage } from '../state/helpers/editorHelpers';

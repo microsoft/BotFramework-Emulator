@@ -32,20 +32,18 @@
 //
 
 import * as HttpStatus from 'http-status-codes';
-import { Next, Response } from 'restify';
+import { Response } from 'restify';
 
 import { sendErrorResponse } from '../../../utils/sendErrorResponse';
 
 import { ConversationAwareRequest } from './getConversation';
 
-export async function deleteUserData(req: ConversationAwareRequest, res: Response, next: Next): Promise<any> {
+export async function deleteUserData(req: ConversationAwareRequest, res: Response): Promise<any> {
   try {
     await req.conversation.sendDeleteUserData();
     res.send(HttpStatus.OK);
     res.end();
   } catch (err) {
-    sendErrorResponse(req, res, next, err);
+    sendErrorResponse(req, res, null, err);
   }
-
-  next();
 }

@@ -38,7 +38,7 @@ import { EmulatorRestServer } from '../../../../restServer';
 import { sendErrorResponse } from '../../../../utils/sendErrorResponse';
 
 export function createTokenResponseHandler(emulatorServer: EmulatorRestServer) {
-  return async (req: Restify.Request, res: Restify.Response, next: Restify.Next): Promise<any> => {
+  return async (req: Restify.Request, res: Restify.Response): Promise<any> => {
     const body: {
       token: string;
       connectionName: string;
@@ -57,11 +57,10 @@ export function createTokenResponseHandler(emulatorServer: EmulatorRestServer) {
       }
       res.end();
     } catch (e) {
-      sendErrorResponse(req, res, next, e);
+      sendErrorResponse(req, res, null, e);
     } finally {
       // shut down the oauth ngrok instance
       emulatorServer.shutDownOAuthNgrokInstance();
     }
-    next();
   };
 }

@@ -73,7 +73,10 @@
       "jsx",
       "json",
       "node"
-    ]
+    ],
+    "moduleNameMapper": {
+      "@electron/remote/main": "<rootDir>/../../../../jestMocks/electronRemoteMock.js"
+    }
   },
   "license": "MIT",
   "devDependencies": {
@@ -95,7 +98,7 @@
     "@types/mkdirp": "^0.5.2",
     "@types/node": "8.9.3",
     "@types/request": "^2.47.0",
-    "@types/restify": "^8.4.1",
+    "@types/restify": "ts4.9",
     "@types/semver": "^5.5.0",
     "@types/ws": "^4.0.1",
     "@typescript-eslint/eslint-plugin": "^4.14.2",
@@ -107,9 +110,9 @@
     "concurrently": "^3.5.1",
     "cross-env": "^5.1.3",
     "del": "^3.0.0",
-    "electron": "13.6.9",
+    "electron": "26.2.4",
     "electron-builder": "23.6.0",
-    "@electron/rebuild": "^3.2.x",
+    "@electron/rebuild": "^3.3.0",
     "eslint": "^7.19.0",
     "eslint-config-prettier": "^3.5.0",
     "eslint-plugin-import": "2.26.0",
@@ -137,6 +140,7 @@
     "@bfemulator/extension-qnamaker": "^1.0.0",
     "@bfemulator/extension-qnamaker-client": "^0.1.0",
     "@bfemulator/sdk-shared": "^1.0.0",
+    "@electron/remote": "^2.0.11",
     "@microsoft/bf-chatdown": "4.7.0",
     "applicationinsights": "^1.0.8",
     "base64url": "3.0.0",
@@ -153,7 +157,7 @@
     "https-proxy-agent": "2.2.3",
     "jest-fetch-mock": "^1.6.2",
     "jsonwebtoken": "^9.0.0",
-    "keytar": "7.3.0",
+    "keytar": "7.9.0",
     "mkdirp": "^0.5.1",
     "moment": "^2.22.1",
     "node-fetch": "^2.3.0",
@@ -162,8 +166,8 @@
     "read-text-file": "^1.1.0",
     "redux": "^3.7.2",
     "redux-saga": "^0.16.0",
-    "restify": "^8.4.0",
-    "restify-cors-middleware2": "^2.2.0",
+    "restify": "^11.1.0",
+    "restify-cors-middleware2": "^2.2.1",
     "rsa-pem-from-mod-exp": "^0.8.4",
     "sanitize-filename": "^1.6.1",
     "semver": "^5.5.0",

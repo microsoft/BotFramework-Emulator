@@ -33,7 +33,7 @@
 
 import * as HttpStatus from 'http-status-codes';
 import onErrorResumeNext from 'on-error-resume-next';
-import { Next, Request, Response } from 'restify';
+import { Request, Response } from 'restify';
 import { uniqueIdv4 } from '@bfemulator/sdk-shared';
 
 import { BotEndpoint } from '../../../state/botEndpoint';
@@ -43,7 +43,7 @@ import { EmulatorRestServer } from '../../../restServer';
 // TODO: Remove?
 // Not called anymore because of WebSocket flow
 export function createStartConversationHandler(emulatorServer: EmulatorRestServer) {
-  return async (req: Request, res: Response, next: Next): Promise<any> => {
+  return async (req: Request, res: Response): Promise<any> => {
     const auth = req.header('Authorization');
 
     // TODO: We should not use token as conversation ID
@@ -105,7 +105,5 @@ export function createStartConversationHandler(emulatorServer: EmulatorRestServe
     });
 
     res.end();
-
-    next();
   };
 }

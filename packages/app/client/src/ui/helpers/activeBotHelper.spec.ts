@@ -42,11 +42,6 @@ import { store } from '../../state/store';
 import { ActiveBotHelper } from './activeBotHelper';
 
 jest.mock('electron', () => ({
-  remote: {
-    app: {
-      isPackaged: false,
-    },
-  },
   ipcMain: new Proxy(
     {},
     {
@@ -110,9 +105,10 @@ describe('ActiveBotHelper tests', () => {
   });
 
   it('closeActiveBot() functionality', async () => {
+    const mockDispatch = jest.fn();
     const mockRemoteCall1 = jest.fn().mockResolvedValue(true);
     commandService.remoteCall = mockRemoteCall1;
-    (store as any).dispatch = () => null;
+    (store as any).dispatch = mockDispatch;
 
     await ActiveBotHelper.closeActiveBot();
     expect(mockRemoteCall1).toHaveBeenCalledTimes(2);
@@ -120,7 +116,27 @@ describe('ActiveBotHelper tests', () => {
     const mockRemoteCall2 = jest.fn().mockRejectedValue('err');
     commandService.remoteCall = mockRemoteCall2;
 
-    expect(ActiveBotHelper.closeActiveBot()).rejects.toEqual(new Error('Error while closing active bot: err'));
+    await ActiveBotHelper.closeActiveBot();
+    expect(mockDispatch).toBeCalledTimes(2);
+
+    expect(mockDispatch).toBeCalledWith({
+      payload: {},
+      type: 'BOT/CLOSE',
+    });
+    expect(mockDispatch).toBeCalledWith({
+      payload: {
+        notification: {
+          buttons: [],
+          id: expect.any(String),
+          message: 'Error while closing active bot: err',
+          read: false,
+          timestamp: expect.any(Number),
+          type: 0,
+        },
+        read: false,
+      },
+      type: 'NOTIFICATION/BEGIN_ADD',
+    });
   });
 
   it('botAlreadyOpen() functionality', async () => {
@@ -162,7 +178,7 @@ describe('ActiveBotHelper tests', () => {
 
     // test catch on promise
     ActiveBotHelper.confirmCloseBot = jest.fn().mockRejectedValue('err');
-    expect(ActiveBotHelper.confirmAndCloseBot()).rejects.toEqual(new Error('Error while closing active bot: err'));
+    expect(ActiveBotHelper.confirmAndCloseBot()).rejects.toThrow(new Error('Error while closing active bot: err'));
 
     ActiveBotHelper.confirmCloseBot = backupConfirmCloseBot;
     ActiveBotHelper.closeActiveBot = backupCloseActiveBot;
@@ -191,7 +207,7 @@ describe('ActiveBotHelper tests', () => {
 
     mockRemoteCall = jest.fn().mockRejectedValueOnce('error');
     commandService.remoteCall = mockRemoteCall;
-    expect(ActiveBotHelper.setActiveBot(bot)).rejects.toEqual(new Error('Error while setting active bot: error'));
+    expect(ActiveBotHelper.setActiveBot(bot)).rejects.toThrow(new Error('Error while setting active bot: error'));
   });
 
   it('confirmAndCreateBot() functionality', async () => {
@@ -233,7 +249,7 @@ describe('ActiveBotHelper tests', () => {
     commandService.remoteCall = mockRemoteCall;
     commandService.call = mockCall;
 
-    expect(ActiveBotHelper.confirmAndCreateBot(bot, 'someSecret')).rejects.toEqual(
+    expect(ActiveBotHelper.confirmAndCreateBot(bot, 'someSecret')).rejects.toThrow(
       new Error('Error during bot create: err')
     );
 

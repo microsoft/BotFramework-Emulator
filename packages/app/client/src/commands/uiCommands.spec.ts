@@ -41,7 +41,7 @@ import {
   SharedConstants,
 } from '@bfemulator/app-shared';
 import { CommandRegistry, CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
-import { remote } from 'electron';
+import * as remote from '@electron/remote';
 
 import { CONTENT_TYPE_APP_SETTINGS, DOCUMENT_ID_APP_SETTINGS } from '../constants';
 import * as editorHelpers from '../state/helpers/editorHelpers';
@@ -58,22 +58,6 @@ import {
 import { UiCommands } from './uiCommands';
 
 jest.mock('electron', () => ({
-  remote: {
-    app: {
-      isPackaged: false,
-    },
-    getCurrentWindow: (() => {
-      const currentWindow = {
-        setFullScreen(value: boolean) {
-          this._fullScreen = value;
-        },
-        isFullScreen(value: boolean) {
-          return this._fullsScreen;
-        },
-      };
-      return () => currentWindow;
-    })(),
-  },
   ipcMain: new Proxy(
     {},
     {
@@ -103,6 +87,7 @@ const Commands = SharedConstants.Commands.UI;
 describe('the uiCommands', () => {
   let commandService: CommandServiceImpl;
   let registry: CommandRegistry;
+
   beforeAll(() => {
     new UiCommands();
     const decorator = CommandServiceInstance();

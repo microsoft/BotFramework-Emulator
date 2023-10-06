@@ -55,13 +55,11 @@ describe('contactRemoved handler', () => {
       end: jest.fn(),
       send: jest.fn(),
     };
-    const next = jest.fn();
-    await contactRemoved(req, res, next);
+    await contactRemoved(req, res);
 
     expect(req.conversation.sendContactRemoved).toHaveBeenCalled();
     expect(res.send).toHaveBeenCalledWith(HttpStatus.OK);
     expect(res.end).toHaveBeenCalled();
-    expect(next).toHaveBeenCalled();
   });
 
   it('should send an error response if something goes wrong', async () => {
@@ -71,10 +69,8 @@ describe('contactRemoved handler', () => {
       },
     };
     const res: any = {};
-    const next = jest.fn();
-    await contactRemoved(req, res, next);
+    await contactRemoved(req, res);
 
-    expect(mockSendErrorResponse).toHaveBeenCalledWith(req, res, next, new Error('Something went wrong.'));
-    expect(next).toHaveBeenCalled();
+    expect(mockSendErrorResponse).toHaveBeenCalledWith(req, res, null, new Error('Something went wrong.'));
   });
 });

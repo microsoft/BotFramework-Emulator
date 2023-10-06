@@ -32,13 +32,13 @@
 //
 
 import * as HttpStatus from 'http-status-codes';
-import { Next, Response } from 'restify';
+import { Response } from 'restify';
 
 import { TelemetryService } from '../../../../telemetry';
 
 import { ConversationAwareRequest } from './getConversation';
 
-export async function sendTokenResponse(req: ConversationAwareRequest, res: Response, next: Next): Promise<any> {
+export async function sendTokenResponse(req: ConversationAwareRequest, res: Response): Promise<any> {
   const body: {
     token: string;
     connectionName: string;
@@ -53,6 +53,4 @@ export async function sendTokenResponse(req: ConversationAwareRequest, res: Resp
     res.send(statusCode);
   }
   res.end();
-
-  next();
 }

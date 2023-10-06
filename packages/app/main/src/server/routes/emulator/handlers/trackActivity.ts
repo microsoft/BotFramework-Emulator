@@ -31,13 +31,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Next, Request, Response } from 'restify';
+import { Request, Response } from 'restify';
 import { INTERNAL_SERVER_ERROR, OK } from 'http-status-codes';
 
 import { ServerState } from '../../../state/serverState';
 
 export function createTrackActivityHandler(state: ServerState) {
-  return async (req: Request, res: Response, next: Next): Promise<any> => {
+  return async (req: Request, res: Response): Promise<any> => {
     try {
       const conversationId = req.params.conversationId;
       const conversation = state.conversations.conversationById(conversationId);
@@ -56,6 +56,5 @@ export function createTrackActivityHandler(state: ServerState) {
       res.send(INTERNAL_SERVER_ERROR, e);
     }
     res.end();
-    next();
   };
 }

@@ -31,15 +31,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-// We need to skip Webpack bundler on bundling 'electron':
-// 1. We are using react-scripts, thus, we are not able to configure Webpack
-// 2. To skip bundling, we can hack with window['require']
-// 3. We cannot make a helper function to simplify the spaghetti code on require(),
-// because TypeScript would complain it cannot statically extract it
-const remote: Electron.Remote = (typeof window === 'undefined'
-  ? require('electron')
-  : (window as any).require('electron')
-).remote;
+export let remote: {
+  getGlobal: (string) => unknown;
+  app: Electron.App;
+};
+if (typeof window === 'undefined') {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  require('@electron/remote/main').initialize();
+} else {
+  remote = (window as any).require('@electron/remote');
+}
 
 export function getGlobal(attributeName: string, defaultValue?: any): any {
   if (global[attributeName]) {

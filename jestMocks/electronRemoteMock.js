@@ -30,24 +30,19 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import * as HttpStatus from 'http-status-codes';
-import { Request, Response } from 'restify';
-import { Activity } from 'botframework-schema';
 
-import { sendErrorResponse } from '../../../../utils/sendErrorResponse';
-import { ServerState } from '../../../../state/serverState';
-import { ConversationAPIPathParameters } from '../types/conversationAPIPathParameters';
-
-export function getActivitiesForConversation(state: ServerState) {
-  return async (req: Request, res: Response): Promise<void> => {
-    try {
-      const conversationParameters: ConversationAPIPathParameters = req.params;
-      const conversation = state.conversations.conversationById(conversationParameters.conversationId);
-      const activities: Activity[] = await conversation.getTranscript();
-      res.send(HttpStatus.OK, activities);
-      res.end();
-    } catch (err) {
-      sendErrorResponse(req, res, null, err);
-    }
-  };
-}
+let isFullScreen = false;
+module.exports = {
+  getGlobal: jest.fn(),
+  enable: jest.fn(),
+  getCurrentWebContents: jest.fn(),
+  getCurrentWindow: jest.fn().mockReturnValue({
+    setFullScreen: jest.fn().mockImplementation(v => (isFullScreen = v)),
+    isFullScreen: jest.fn().mockImplementation(() => isFullScreen),
+  }),
+  app: {
+    getVersion: jest.fn().mockReturnValue('4.x.mock-version'),
+    getName: jest.fn().mockReturnValue('Emulator mock app name'),
+    isPackaged: true,
+  },
+};

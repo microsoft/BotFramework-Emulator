@@ -87,13 +87,11 @@ describe('postActivity handler', () => {
       end: jest.fn(),
       send: jest.fn(),
     };
-    const next = jest.fn();
     const postActivity = createPostActivityHandler(mockEmulatorServer);
-    await postActivity(req, res, next);
+    await postActivity(req, res);
 
     expect(res.send).toHaveBeenCalledWith(HttpStatus.OK, activity);
     expect(res.end).toHaveBeenCalled();
-    expect(next).toHaveBeenCalled();
     expect(mockSocket.send).toHaveBeenCalledWith(req.params.conversationId, activity);
   });
 
@@ -125,13 +123,11 @@ describe('postActivity handler', () => {
       end: jest.fn(),
       send: jest.fn(),
     };
-    const next = jest.fn();
     const postActivity = createPostActivityHandler(mockEmulatorServer);
-    await postActivity(req, res, next);
+    await postActivity(req, res);
 
     expect(res.send).toHaveBeenCalledWith(HttpStatus.OK, { id: 'activity1' });
     expect(res.end).toHaveBeenCalled();
-    expect(next).toHaveBeenCalled();
     expect(mockSocket.send).not.toHaveBeenCalled();
   });
 
@@ -162,14 +158,12 @@ describe('postActivity handler', () => {
       end: jest.fn(),
       send: jest.fn(),
     };
-    const next = jest.fn();
     const postActivity = createPostActivityHandler(mockEmulatorServer);
-    await postActivity(req, res, next);
+    await postActivity(req, res);
 
     expect(mockEmulatorServer.logger.logMessage).toHaveBeenCalled();
     expect(res.send).toHaveBeenCalledWith(HttpStatus.UNAUTHORIZED, 'Unauthorized');
     expect(res.end).toHaveBeenCalled();
-    expect(next).toHaveBeenCalled();
   });
 
   it('should return a 403 if the request is forbidden', async () => {
@@ -199,14 +193,12 @@ describe('postActivity handler', () => {
       end: jest.fn(),
       send: jest.fn(),
     };
-    const next = jest.fn();
     const postActivity = createPostActivityHandler(mockEmulatorServer);
-    await postActivity(req, res, next);
+    await postActivity(req, res);
 
     expect(mockEmulatorServer.logger.logMessage).toHaveBeenCalled();
     expect(res.send).toHaveBeenCalledWith(HttpStatus.FORBIDDEN, 'Forbidden');
     expect(res.end).toHaveBeenCalled();
-    expect(next).toHaveBeenCalled();
   });
 
   it('should return the status code of a failed request other than a 401 or 403', async () => {
@@ -236,13 +228,11 @@ describe('postActivity handler', () => {
       end: jest.fn(),
       send: jest.fn(),
     };
-    const next = jest.fn();
     const postActivity = createPostActivityHandler(mockEmulatorServer);
-    await postActivity(req, res, next);
+    await postActivity(req, res);
 
     expect(res.send).toHaveBeenCalledWith(HttpStatus.BAD_REQUEST, 'Bad request');
     expect(res.end).toHaveBeenCalled();
-    expect(next).toHaveBeenCalled();
   });
 
   it('should return a 500 if the request failed for some reason and there is no status code', async () => {
@@ -273,16 +263,14 @@ describe('postActivity handler', () => {
       end: jest.fn(),
       send: jest.fn(),
     };
-    const next = jest.fn();
     const postActivity = createPostActivityHandler(mockEmulatorServer);
-    await postActivity(req, res, next);
+    await postActivity(req, res);
 
     expect(res.send).toHaveBeenCalledWith(HttpStatus.INTERNAL_SERVER_ERROR, {
       message: 'Request failed',
       status: undefined,
     });
     expect(res.end).toHaveBeenCalled();
-    expect(next).toHaveBeenCalled();
   });
 
   it('should send a 404 if the conversation is not attached to the request', async () => {
@@ -301,13 +289,11 @@ describe('postActivity handler', () => {
       end: jest.fn(),
       send: jest.fn(),
     };
-    const next = jest.fn();
     const postActivity = createPostActivityHandler(mockEmulatorServer);
-    await postActivity(req, res, next);
+    await postActivity(req, res);
 
     expect(res.send).toHaveBeenCalledWith(HttpStatus.NOT_FOUND, 'conversation not found');
     expect(res.end).toHaveBeenCalled();
     expect(mockEmulatorServer.logger.logMessage).toHaveBeenCalled();
-    expect(next).toHaveBeenCalled();
   });
 });

@@ -34,7 +34,7 @@
 import { LogLevel, textItem } from '@bfemulator/sdk-shared';
 import { Activity } from 'botframework-schema';
 import * as HttpStatus from 'http-status-codes';
-import { Next, Request, Response } from 'restify';
+import { Request, Response } from 'restify';
 
 import { Conversation } from '../../../state/conversation';
 import { sendErrorResponse } from '../../../utils/sendErrorResponse';
@@ -45,7 +45,7 @@ import { WebSocketServer } from '../../../webSocketServer';
 export function createPostActivityHandler(emulatorServer: EmulatorRestServer) {
   const { logMessage } = emulatorServer.logger;
 
-  return async (req: Request, res: Response, next: Next) => {
+  return async (req: Request, res: Response) => {
     const conversation: Conversation = (req as any).conversation;
 
     if (!conversation) {
@@ -53,7 +53,6 @@ export function createPostActivityHandler(emulatorServer: EmulatorRestServer) {
       res.end();
 
       logMessage(req.params.conversationId, textItem(LogLevel.Error, 'Cannot post activity. Conversation not found.'));
-      next();
       return;
     }
 
@@ -83,15 +82,14 @@ export function createPostActivityHandler(emulatorServer: EmulatorRestServer) {
         // (filter out the /INSPECT open command because it doesn't originate from Web Chat)
         if (activity.type === 'message' && activity.text === '/INSPECT open') {
           res.end();
-          return next();
+          return;
         }
         WebSocketServer.sendToSubscribers(conversation.conversationId, activity);
       }
     } catch (err) {
-      sendErrorResponse(req, res, next, err);
+      sendErrorResponse(req, res, null, err);
     }
 
     res.end();
-    next();
   };
 }
