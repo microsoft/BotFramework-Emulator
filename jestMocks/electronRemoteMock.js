@@ -31,10 +31,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+let isFullScreen = false;
 module.exports = {
   getGlobal: jest.fn(),
   enable: jest.fn(),
+  getCurrentWebContents: jest.fn(),
+  getCurrentWindow: jest.fn().mockReturnValue({
+    setFullScreen: jest.fn().mockImplementation(v => (isFullScreen = v)),
+    isFullScreen: jest.fn().mockImplementation(() => isFullScreen),
+  }),
   app: {
+    getVersion: jest.fn().mockReturnValue('4.x.mock-version'),
+    getName: jest.fn().mockReturnValue('Emulator mock app name'),
     isPackaged: true,
   },
 };

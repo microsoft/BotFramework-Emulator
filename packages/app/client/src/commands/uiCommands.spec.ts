@@ -58,22 +58,6 @@ import {
 import { UiCommands } from './uiCommands';
 
 jest.mock('electron', () => ({
-  remote: {
-    app: {
-      isPackaged: false,
-    },
-    getCurrentWindow: (() => {
-      const currentWindow = {
-        setFullScreen(value: boolean) {
-          this._fullScreen = value;
-        },
-        isFullScreen(value: boolean) {
-          return this._fullsScreen;
-        },
-      };
-      return () => currentWindow;
-    })(),
-  },
   ipcMain: new Proxy(
     {},
     {
@@ -103,6 +87,7 @@ const Commands = SharedConstants.Commands.UI;
 describe('the uiCommands', () => {
   let commandService: CommandServiceImpl;
   let registry: CommandRegistry;
+
   beforeAll(() => {
     new UiCommands();
     const decorator = CommandServiceInstance();
