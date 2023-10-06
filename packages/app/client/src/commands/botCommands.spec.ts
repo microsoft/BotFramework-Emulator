@@ -39,6 +39,7 @@ import {
 } from '@bfemulator/sdk-shared';
 import { combineReducers, createStore } from 'redux';
 
+import * as editorHelpers from '../state/helpers/editorHelpers';
 import { ActiveBotHelper } from '../ui/helpers/activeBotHelper';
 
 import { BotCommands } from './botCommands';
@@ -104,6 +105,8 @@ jest.mock('../state/store', () => ({
 describe('The bot commands', () => {
   let commandService: CommandServiceImpl;
   let registry: CommandRegistry;
+  jest.spyOn(editorHelpers, 'hasNonGlobalTabs').mockReturnValue(0);
+
   beforeAll(() => {
     new BotCommands();
     const decorator = CommandServiceInstance();

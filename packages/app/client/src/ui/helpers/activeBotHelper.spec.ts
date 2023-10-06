@@ -68,7 +68,6 @@ jest.mock('electron', () => ({
 
 describe('ActiveBotHelper tests', () => {
   let commandService: CommandServiceImpl;
-  jest.spyOn(editorHelpers, 'hasNonGlobalTabs').mockReturnValue(0);
 
   beforeAll(() => {
     const decorator = CommandServiceInstance();
@@ -179,7 +178,7 @@ describe('ActiveBotHelper tests', () => {
 
     // test catch on promise
     ActiveBotHelper.confirmCloseBot = jest.fn().mockRejectedValue('err');
-    expect(ActiveBotHelper.confirmAndCloseBot()).rejects.toEqual(new Error('Error while closing active bot: err'));
+    expect(ActiveBotHelper.confirmAndCloseBot()).rejects.toThrow(new Error('Error while closing active bot: err'));
 
     ActiveBotHelper.confirmCloseBot = backupConfirmCloseBot;
     ActiveBotHelper.closeActiveBot = backupCloseActiveBot;
@@ -208,7 +207,7 @@ describe('ActiveBotHelper tests', () => {
 
     mockRemoteCall = jest.fn().mockRejectedValueOnce('error');
     commandService.remoteCall = mockRemoteCall;
-    expect(ActiveBotHelper.setActiveBot(bot)).rejects.toEqual(new Error('Error while setting active bot: error'));
+    expect(ActiveBotHelper.setActiveBot(bot)).rejects.toThrow(new Error('Error while setting active bot: error'));
   });
 
   it('confirmAndCreateBot() functionality', async () => {
@@ -250,7 +249,7 @@ describe('ActiveBotHelper tests', () => {
     commandService.remoteCall = mockRemoteCall;
     commandService.call = mockCall;
 
-    expect(ActiveBotHelper.confirmAndCreateBot(bot, 'someSecret')).rejects.toEqual(
+    expect(ActiveBotHelper.confirmAndCreateBot(bot, 'someSecret')).rejects.toThrow(
       new Error('Error during bot create: err')
     );
 
