@@ -119,7 +119,7 @@ describe('The bot commands', () => {
     const remoteCallArgs = [];
     commandService.remoteCall = async (...args: any[]) => {
       remoteCallArgs.push(args);
-      return true as any;
+      return { services: [] } as any;
     };
     const spy = jest.spyOn(ActiveBotHelper, 'confirmAndSwitchBots').mockResolvedValueOnce(true);
     const handler = registry.getCommand(SharedConstants.Commands.Bot.Switch);
@@ -152,9 +152,9 @@ describe('The bot commands', () => {
   it('should make the appropriate calls to load a bot when the bot exists', () => {
     const switchSpy = jest.spyOn(ActiveBotHelper, 'confirmAndSwitchBots');
     const handler = registry.getCommand(SharedConstants.Commands.Bot.Load);
-    handler({ path: 'some/path.bot' });
+    handler({ path: 'some/path.bot', services: [] });
 
-    expect(switchSpy).toHaveBeenCalledWith({ path: 'some/path.bot' });
+    expect(switchSpy).toHaveBeenCalledWith({ path: 'some/path.bot', services: [] });
   });
 
   it('should make the appropriate call when setting the active bot', async () => {
