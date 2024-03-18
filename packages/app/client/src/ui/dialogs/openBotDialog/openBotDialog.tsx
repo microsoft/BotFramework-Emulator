@@ -111,10 +111,19 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
 
   constructor(props: OpenBotDialogProps) {
     super(props);
-    const { appId = '', appPassword = '', botUrl = '', isAzureGov = false, isDebug = false, mode = 'livechat' } = props;
+    const {
+      appId = '',
+      appPassword = '',
+      botUrl = '',
+      isAzureGov = false,
+      isDebug = false,
+      mode = 'livechat',
+      tenantId,
+    } = props;
     this.state = {
       appId,
       appPassword,
+      tenantId,
       botUrl,
       isAzureGov,
       isDebug,
@@ -132,6 +141,7 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
       botUrl,
       appId,
       appPassword,
+      tenantId,
       mode,
       isDebug,
       isAzureGov,
@@ -180,6 +190,13 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
               value={appPassword}
             />
           </Row>
+          <TextField
+            name="tenantId"
+            label="Tenant ID"
+            onChange={this.onInputChange}
+            placeholder="Optional"
+            value={tenantId}
+          />
           {!isDebug && (
             <Row className={openBotStyles.multiInputRow}>
               <TextField

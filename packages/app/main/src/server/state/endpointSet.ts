@@ -57,7 +57,8 @@ export class EndpointSet {
       botEndpoint.channelService,
       {
         fetch: this._fetch,
-      }
+      },
+      botEndpoint.tenantId
     );
 
     this._endpoints[id] = botEndpointInstance;

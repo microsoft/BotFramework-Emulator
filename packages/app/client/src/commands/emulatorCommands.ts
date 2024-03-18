@@ -68,6 +68,7 @@ export class EmulatorCommands {
       openBotViaUrlAction({
         appId: endpoint.appId,
         appPassword: endpoint.appPassword,
+        tenantId: endpoint.tenantId,
         channelService: endpoint.channelService as ChannelService,
         endpoint: endpoint.endpoint,
         isFromBotFile: true,
