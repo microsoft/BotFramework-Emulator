@@ -258,7 +258,7 @@ describe('#globalHandlers', () => {
     expect(mockLocalCommandsCalled[0].commandName).toBe(ToggleFullScreen);
   });
 
-  it('should toggle dev tools when Ctrl+Shit+I is pressed', async () => {
+  it('should toggle dev tools when Ctrl+Shift+I is pressed', async () => {
     const event = new KeyboardEvent('keydown', { ctrlKey: true, shiftKey: true, key: 'i' });
     await globalHandlers(event);
 
