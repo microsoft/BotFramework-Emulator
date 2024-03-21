@@ -32,25 +32,26 @@
 //
 // ------------------------------------------------------------------
 // Proxy support
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const path = require('path');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const fs = require('fs');
+
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const nodeFetch = require('node-fetch');
 
+const ROOT_PATH = '';
+
+const caPath = process.env.HTTPS_PROXY_CA && path.resolve(ROOT_PATH, process.env.HTTPS_PROXY_CA);
+// eslint-disable-next-line security/detect-non-literal-fs-filename
+const ca = caPath && fs.readFileSync(caPath);
+
+// fetch is used globally by importing the module
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 declare function fetch(input: RequestInfo, init?: RequestInit): Promise<Response>;
 (global as any).fetch = function(...args: any[]) {
   const [urlOrRequest, requestInit = {}] = args;
-
-  // Https localhost
-  const allowLocalhost = 'https://localhost';
-
-  if (!process.env.HTTPS_PROXY && urlOrRequest.includes(allowLocalhost)) {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const https = require('https');
-    const httpsAgent = new https.Agent({ rejectUnauthorized: false });
-
-    requestInit.agent = httpsAgent;
-
-    return nodeFetch(urlOrRequest, requestInit);
-  }
 
   // No Proxy
 
@@ -83,7 +84,7 @@ declare function fetch(input: RequestInfo, init?: RequestInit): Promise<Response
   // to the RequestInit
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const HttpsProxyAgent = require('https-proxy-agent');
-  const agent = new HttpsProxyAgent(process.env.HTTPS_PROXY);
+  const agent = new HttpsProxyAgent(process.env.HTTPS_PROXY, { ca });
   if (typeof urlOrRequest === 'string') {
     requestInit.agent = agent;
   } else {
