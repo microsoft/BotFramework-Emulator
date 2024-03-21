@@ -80,10 +80,8 @@ declare function fetch(input: RequestInfo, init?: RequestInit): Promise<Response
     return nodeFetch(...args);
   }
 
-  // URL is first param attach the proxy
-  // to the RequestInit
   // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const HttpsProxyAgent = require('https-proxy-agent');
+  const { HttpsProxyAgent } = require('https-proxy-agent');
   const agent = new HttpsProxyAgent(process.env.HTTPS_PROXY, { ca });
   if (typeof urlOrRequest === 'string') {
     requestInit.agent = agent;
