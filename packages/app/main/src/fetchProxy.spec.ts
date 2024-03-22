@@ -81,11 +81,13 @@ describe('fetch proxy support', () => {
   });
 
   it('should add the https-agent to localhost requests', async () => {
+    process.env.HTTPS_PROXY = 'https://proxy';
     await fetch('https://localhost:3980');
     expect(mockFetchArgs.init.agent).not.toBeUndefined();
   });
 
   it('should not add https-agent to the https requests', async () => {
+    delete process.env.HTTPS_PROXY;
     await fetch('http://localhost:3980');
     expect(mockFetchArgs.init).toBeUndefined();
   });
