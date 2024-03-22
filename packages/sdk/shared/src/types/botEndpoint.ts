@@ -36,7 +36,7 @@ export interface BotEndpoint {
   botUrl: string;
   msaAppId: string;
   msaPassword: string;
-  tenantId: string;
+  msaTenantId?: string;
   use10Tokens?: boolean;
   channelService?: string;
 }

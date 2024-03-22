@@ -45,7 +45,7 @@ export function createGetBotEndpointHandler(state: ServerState) {
     if (request.jwt && request.jwt.appid) {
       request.botEndpoint = endpoints.getByAppId(request.jwt.appid);
     } else {
-      const { bot, botUrl, channelServiceType, msaAppId, msaPassword, tenantId } = req.body;
+      const { bot, botUrl, channelServiceType, msaAppId, msaPassword, msaTenantId } = req.body;
       let endpoint = endpoints.get(botUrl);
       if (!endpoint) {
         const channelService =
@@ -55,12 +55,12 @@ export function createGetBotEndpointHandler(state: ServerState) {
         // create endpoint
         endpoint = endpoints.set(
           bot.id,
-          new BotEndpoint(bot.id, bot.id, botUrl, msaAppId, msaPassword, false, channelService, null, tenantId)
+          new BotEndpoint(bot.id, bot.id, botUrl, msaAppId, msaPassword, false, channelService, null, msaTenantId)
         );
       } else {
         endpoint.msaAppId = msaAppId;
         endpoint.msaPassword = msaPassword;
-        endpoint.tenantId = tenantId;
+        endpoint.tenantId = msaTenantId;
       }
       request.botEndpoint = endpoint;
     }
