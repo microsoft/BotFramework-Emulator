@@ -33372,7 +33372,7 @@ For more information, please refer to <http://unlicense.org>
 truncate-utf8-bytes 1.0.2 - WTFPL
 https://github.com/parshap/truncate-utf8-bytes#readme
 
-DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+DO WHAT THE F**K YOU WANT TO PUBLIC LICENSE
 
 Version 2, December 2004
 
@@ -33380,11 +33380,11 @@ Copyright (C) 2004 Sam Hocevar <sam@hocevar.net>
 
 Everyone is permitted to copy and distribute verbatim or modified copies of this license document, and changing it is allowed as long as the name is changed.
 
-DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+DO WHAT THE F**K YOU WANT TO PUBLIC LICENSE
 
 TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
 
-   0. You just DO WHAT THE FUCK YOU WANT TO.
+   0. You just DO WHAT THE F**K YOU WANT TO.
 
 -------------------------------------------------------------------
 
@@ -33393,7 +33393,7 @@ TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
 utf8-byte-length 1.0.4 - WTFPL
 https://github.com/parshap/utf8-byte-length#readme
 
-DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+DO WHAT THE F**K YOU WANT TO PUBLIC LICENSE
 
 Version 2, December 2004
 
@@ -33401,11 +33401,11 @@ Copyright (C) 2004 Sam Hocevar <sam@hocevar.net>
 
 Everyone is permitted to copy and distribute verbatim or modified copies of this license document, and changing it is allowed as long as the name is changed.
 
-DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+DO WHAT THE F**K YOU WANT TO PUBLIC LICENSE
 
 TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
 
-   0. You just DO WHAT THE FUCK YOU WANT TO.
+   0. You just DO WHAT THE F**K YOU WANT TO.
 
 -------------------------------------------------------------------
 
@@ -33554,7 +33554,7 @@ This project is licensed under the [WTFPL][] and [ISC][] licenses.
 
 ## WTFPL
 
-DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+DO WHAT THE F**K YOU WANT TO PUBLIC LICENSE
 Version 2, December 2004
 
 Copyright (C) 2004 Sam Hocevar \<sam@hocevar.net>
@@ -33563,10 +33563,10 @@ Everyone is permitted to copy and distribute verbatim or modified copies
 of this license document, and changing it is allowed as long as the name
 is changed.
 
-DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE TERMS AND CONDITIONS FOR
+DO WHAT THE F**K YOU WANT TO PUBLIC LICENSE TERMS AND CONDITIONS FOR
 COPYING, DISTRIBUTION AND MODIFICATION
 
-0. You just DO WHAT THE FUCK YOU WANT TO.
+0. You just DO WHAT THE F**K YOU WANT TO.
 
 ## ISC
 

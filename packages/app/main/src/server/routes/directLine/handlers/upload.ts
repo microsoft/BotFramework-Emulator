@@ -78,8 +78,11 @@ export function createUploadHandler(emulatorServer: EmulatorRestServer) {
 
     // TODO: Override form.onPart handler so it doesn't write temp files to disk.
     form.parse(req, async (err: any, fields: any, files: any) => {
+      const ROOT_PATH = '';
+
       try {
-        const activity = JSON.parse(fs.readFileSync(files.activity.path, 'utf8'));
+        // eslint-disable-next-line security/detect-non-literal-fs-filename
+        const activity = JSON.parse(fs.readFileSync(path.resolve(ROOT_PATH, files.activity.path), 'utf8'));
         let uploads = files.file;
 
         if (!Array.isArray(uploads)) {
@@ -92,7 +95,8 @@ export function createUploadHandler(emulatorServer: EmulatorRestServer) {
             const name = (upload1 as any).name || 'file.dat';
             const type = upload1.type;
             const path = upload1.path;
-            const base64EncodedContent = fs.readFileSync(path, { encoding: 'base64' });
+            // eslint-disable-next-line security/detect-non-literal-fs-filename
+            const base64EncodedContent = fs.readFileSync(path.resolve(ROOT_PATH, path), { encoding: 'base64' });
             const base64Buf = Buffer.from(base64EncodedContent, 'base64');
             const attachmentData: AttachmentData = {
               type,
