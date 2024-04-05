@@ -227,6 +227,7 @@ describe('The OpenBotDialog', () => {
       mode: 'livechat',
       speechKey: 'i-am-a-speech-key',
       speechRegion: 'westus',
+      tenantId: '',
     });
   });
 
@@ -254,6 +255,7 @@ describe('The OpenBotDialog', () => {
       mode: 'livechat',
       speechKey: '',
       speechRegion: '',
+      tenantId: '',
     });
   });
 
