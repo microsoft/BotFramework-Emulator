@@ -120,10 +120,11 @@ const defaultConfig = () => ({
           {
             loader: 'css-loader',
             options: {
-              modules: true,
-              namedExport: true,
-              camelCase: true,
-              sourcemaps: true,
+              modules: {
+                namedExport: true,
+                exportLocalsConvention: 'camelCaseOnly',
+              },
+              sourceMap: true,
             },
           },
           'resolve-url-loader',
@@ -184,7 +185,9 @@ const defaultConfig = () => ({
     new DefinePlugin({
       DEV: JSON.stringify(npm_lifecycle_event.includes('dev')),
     }),
-    new WatchIgnorePlugin(['./src/**/*.d.ts']),
+    new WatchIgnorePlugin({
+      paths: ['./src/**/*.d.ts'],
+    }),
     new MonacoWebpackPlugin({
       languages: ['json'],
     }),
@@ -235,7 +238,8 @@ const sharedConfig = () => ({
   },
 
   node: {
-    fs: 'empty',
+    __dirname: false,
+    __filename: false,
   },
 
   plugins: [
