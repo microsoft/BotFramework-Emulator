@@ -211,16 +211,8 @@ const buildConfig = mode => {
     config.module.rules[0].use = use;
   } else {
     config.optimization = {
-      minimizer: [
-        new TerserWebpackPlugin({
-          cache: true,
-          cacheKeys: defaultCacheKeys => {
-            delete defaultCacheKeys['terser'];
-
-            return Object.assign({}, defaultCacheKeys, { terser: require('terser/package.json').version });
-          },
-        }),
-      ],
+      minimize: true,
+      minimizer: [new TerserWebpackPlugin()],
     };
   }
   return config;
