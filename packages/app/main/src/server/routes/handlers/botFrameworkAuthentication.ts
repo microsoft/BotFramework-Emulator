@@ -41,13 +41,21 @@ import {
   v32Authentication,
 } from '../../constants/authEndpoints';
 import { OpenIdMetadata } from '../../utils/openIdMetadata';
+import { ConversationAPIPathParameters } from '../channel/conversations/types/conversationAPIPathParameters';
+import { ServerState } from '../../state/serverState';
 
-export function createBotFrameworkAuthenticationMiddleware(fetch: any) {
+export function createBotFrameworkAuthenticationMiddleware(fetch: any, state?: ServerState) {
   const openIdMetadata = new OpenIdMetadata(fetch, authentication.openIdMetadata);
   const usGovOpenIdMetadata = new OpenIdMetadata(fetch, usGovernmentAuthentication.openIdMetadata);
 
   return async (req: Restify.Request, res: Restify.Response) => {
     const authorization = req.header('Authorization');
+
+    const conversationParameters: ConversationAPIPathParameters = req.params;
+    let conversation;
+    if (conversationParameters?.conversationId && state) {
+      conversation = state.conversations.conversationById(conversationParameters.conversationId);
+    }
 
     if (!authorization) {
       return;
@@ -118,7 +126,9 @@ export function createBotFrameworkAuthenticationMiddleware(fetch: any) {
 
       let issuer;
 
-      if (decoded.payload.ver === '1.0') {
+      if (conversation?.botEndpoint.tenantId) {
+        issuer = v32Authentication.tokenIssuerSingleTenant.replace('{tenant-id}', conversation?.botEndpoint.tenantId);
+      } else if (decoded.payload.ver === '1.0') {
         issuer = v32Authentication.tokenIssuerV1;
       } else if (decoded.payload.ver === '2.0') {
         issuer = v32Authentication.tokenIssuerV2;

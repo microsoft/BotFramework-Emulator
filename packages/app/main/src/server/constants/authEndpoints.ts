@@ -34,6 +34,7 @@
 export const authentication = {
   channelService: 'https://dev.botframework.com/',
   tokenEndpoint: 'https://login.microsoftonline.com/botframework.com/oauth2/v2.0/token',
+  tokenEndpointSingleTenant: 'https://login.microsoftonline.com/{tenant-id}/oauth2/v2.0/token',
   openIdMetadata: 'https://login.microsoftonline.com/botframework.com/v2.0/.well-known/openid-configuration',
   botTokenAudience: 'https://api.botframework.com',
 };
@@ -53,6 +54,7 @@ export const v31Authentication = {
 };
 
 export const v32Authentication = {
+  tokenIssuerSingleTenant: 'https://sts.windows.net/{tenant-id}/',
   tokenIssuerV1: 'https://sts.windows.net/f8cdef31-a31e-4b4a-93e4-5f571e91255a/',
   tokenIssuerV2: 'https://login.microsoftonline.com/f8cdef31-a31e-4b4a-93e4-5f571e91255a/v2.0',
 };

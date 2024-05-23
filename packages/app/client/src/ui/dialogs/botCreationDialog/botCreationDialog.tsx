@@ -98,6 +98,7 @@ export class BotCreationDialog extends React.Component<BotCreationDialogProps, B
         appId: '',
         appPassword: '',
         endpoint: '',
+        tenantId: '',
       }),
       isAzureGov: false,
       secret: '',
@@ -121,7 +122,7 @@ export class BotCreationDialog extends React.Component<BotCreationDialogProps, B
       <Dialog className={dialogStyles.main} title="New bot configuration" cancel={this.onCancel}>
         <div className={styles.botCreateForm}>
           <TextField
-            value={this.state.bot.name}
+            value={bot.name}
             data-prop="name"
             onChange={this.onInputChange}
             label={'Bot name'}
@@ -134,7 +135,7 @@ export class BotCreationDialog extends React.Component<BotCreationDialogProps, B
             placeholder={endpointPlaceholder}
             label={'Endpoint URL'}
             required={true}
-            value={this.state.endpoint.endpoint}
+            value={endpoint.endpoint}
             name={'create-bot-url'}
           />
           {endpointWarning && <span className={styles.endpointWarning}>{endpointWarning}</span>}
@@ -158,6 +159,13 @@ export class BotCreationDialog extends React.Component<BotCreationDialogProps, B
               value={endpoint.appPassword}
             />
           </Row>
+          <TextField
+            name="tenantId"
+            label="Tenant ID"
+            onChange={this.onInputChange}
+            placeholder="Optional"
+            value={endpoint.tenantId}
+          />
           <Row align={RowAlignment.Bottom}>
             <Checkbox label="Azure for US Government" checked={isAzureGov} onChange={this.onChannelServiceChange} />
             <LinkButton
@@ -350,6 +358,7 @@ export class BotCreationDialog extends React.Component<BotCreationDialogProps, B
       id: this.state.endpoint.id.trim(),
       appId: this.state.endpoint.appId.trim(),
       appPassword: this.state.endpoint.appPassword.trim(),
+      tenantId: this.state.endpoint.tenantId.trim(),
       endpoint: this.state.endpoint.endpoint.trim(),
     };
     (endpoint as any).channelService = (this.state.endpoint as any).channelService;
