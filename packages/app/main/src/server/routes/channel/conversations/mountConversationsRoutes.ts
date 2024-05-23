@@ -51,7 +51,7 @@ import { getActivitiesForConversation } from './handlers/getActivitiesForConvers
 
 export function mountConversationsRoutes(emulatorServer: EmulatorRestServer) {
   const { server, state } = emulatorServer;
-  const verifyBotFramework = createBotFrameworkAuthenticationMiddleware(emulatorServer.options.fetch);
+  const verifyBotFramework = createBotFrameworkAuthenticationMiddleware(emulatorServer.options.fetch, state);
   const jsonBodyParser = createJsonBodyParserMiddleware();
   const fetchConversation = createGetConversationHandler(state);
 
