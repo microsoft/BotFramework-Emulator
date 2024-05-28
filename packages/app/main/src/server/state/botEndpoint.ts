@@ -48,6 +48,7 @@ export class BotEndpoint {
   public appId?: string;
   public appPassword?: string;
   public speechAuthenticationToken?: SpeechAuthenticationToken;
+  public tenantId?: string;
 
   constructor(
     public id?: string,
@@ -57,10 +58,12 @@ export class BotEndpoint {
     public msaPassword?: string,
     public use10Tokens?: boolean,
     public channelService?: string,
-    private _options?: BotEndpointOptions
+    private _options?: BotEndpointOptions,
+    public msaTenantId?: string
   ) {
     this.appId = msaAppId;
     this.appPassword = msaPassword;
+    this.tenantId = msaTenantId;
   }
 
   private willTokenExpireWithin(millisecondsToExpire: number): boolean {
@@ -126,7 +129,8 @@ export class BotEndpoint {
       } catch (e) {
         return {
           status: e.status,
-          message: "The bot's Microsoft App ID or Microsoft App Password is incorrect.",
+          message:
+            "The bot's Microsoft App ID, Microsoft App Password, or Microsoft Tenant ID (Single Tenant apps) is incorrect.",
         };
       }
     }
@@ -149,11 +153,17 @@ export class BotEndpoint {
       return this.accessToken;
     }
 
+    let tokenEndpoint;
+
     // Refresh access token
-    const tokenEndpoint: string =
-      this.channelService === usGovernmentAuthentication.channelService
-        ? usGovernmentAuthentication.tokenEndpoint
-        : authentication.tokenEndpoint;
+    if (this.channelService === usGovernmentAuthentication.channelService) {
+      tokenEndpoint = usGovernmentAuthentication.tokenEndpoint;
+    } else if (this.tenantId) {
+      tokenEndpoint = authentication.tokenEndpointSingleTenant.replace('{tenant-id}', this.tenantId);
+    } else {
+      tokenEndpoint = authentication.tokenEndpoint;
+    }
+
     const resp = await this._options.fetch(tokenEndpoint, {
       method: 'POST',
       body: new URLSearchParams({

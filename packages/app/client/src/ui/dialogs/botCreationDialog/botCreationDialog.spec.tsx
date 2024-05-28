@@ -256,6 +256,7 @@ describe('BotCreationDialog tests', () => {
             endpoint: '',
             id: expect.any(String),
             name: '',
+            tenantId: '',
             type: 'endpoint',
           },
         ],

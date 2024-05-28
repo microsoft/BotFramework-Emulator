@@ -58,6 +58,7 @@ interface StartConversationPayload {
   mode: EmulatorMode;
   msaAppId?: string;
   msaPassword?: string;
+  msaTenantId?: string;
 }
 
 export class ConversationService {

@@ -50,6 +50,7 @@ const mapDispatchToProps = (dispatch: (action: Action) => void): OpenBotDialogPr
       const {
         appId = '',
         appPassword = '',
+        tenantId = '',
         botUrl = '',
         mode = 'livechat-url',
         isAzureGov,
@@ -63,6 +64,7 @@ const mapDispatchToProps = (dispatch: (action: Action) => void): OpenBotDialogPr
           openBotViaUrlAction({
             appId,
             appPassword,
+            tenantId,
             endpoint: botUrl,
             mode,
             channelService: isAzureGov ? 'azureusgovernment' : 'public',
