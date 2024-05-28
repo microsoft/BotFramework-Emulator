@@ -107,6 +107,7 @@ module.exports = {
     filename: '[name].js',
     libraryTarget: 'umd',
     library: '[name]',
+    publicPath: '',
   },
 
   plugins: [
