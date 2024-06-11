@@ -57,7 +57,6 @@
       "^.+\\.(tsx?|jsx?)$": "babel-jest",
       "^.+\\.(ts?|js?)$": "babel-jest"
     },
-    "transformIgnorePatterns": ["node_modules/(?!@bfemulator/main)/"],
     "testEnvironment": "jsdom",
     "testEnvironmentOptions": {
       "customExportConditions": ["node"],
