@@ -56,10 +56,11 @@ module.exports = {
           {
             loader: 'css-loader',
             options: {
-              modules: true,
-              namedExport: true,
-              camelCase: true,
-              sourcemaps: true,
+              modules: {
+                namedExport: true,
+                exportLocalsConvention: 'camelCaseOnly',
+              },
+              sourceMap: true,
             },
           },
           'resolve-url-loader',
@@ -106,7 +107,9 @@ module.exports = {
 
   externals: {},
   plugins: [
-    new WatchIgnorePlugin(['./build/**/*.*', './public/**/*.*', './src/**/*.d.ts']),
+    new WatchIgnorePlugin({
+      paths: ['./build/**/*.*', './public/**/*.*', './src/**/*.d.ts'],
+    }),
     new CopyWebpackPlugin({
       patterns: [
         {
