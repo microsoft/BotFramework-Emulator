@@ -268,6 +268,6 @@ export class EmulatorCommands {
   // Returns the current Emulator's service url
   @Command(Commands.GetServiceUrl)
   protected async getServiceUrl() {
-    return Emulator.getInstance().ngrok.getServiceUrl('');
+    return Emulator.getInstance().server.getServiceUrl('');
   }
 }

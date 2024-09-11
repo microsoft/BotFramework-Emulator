@@ -47,18 +47,6 @@ export const mockChatLogs = [
     items: [
       {
         payload: {
-          level: 0,
-          text: 'ngrok not configured (only needed when connecting to remotely hosted bots)',
-        },
-        type: 'text',
-      },
-    ],
-    timestamp: 1561995656213,
-  },
-  {
-    items: [
-      {
-        payload: {
           hyperlink: 'https://aka.ms/cnjvpo',
           text: 'Connecting to bots hosted remotely',
         },
@@ -66,17 +54,6 @@ export const mockChatLogs = [
       },
     ],
     timestamp: 1561995656213,
-  },
-  {
-    items: [
-      {
-        payload: {
-          text: 'Edit ngrok settings',
-        },
-        type: 'open-app-settings',
-      },
-    ],
-    timestamp: 1561995656214,
   },
   {
     items: [

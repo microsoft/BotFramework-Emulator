@@ -42,7 +42,6 @@ import {
   LuisEditorDeepLinkLogItem,
   NetworkRequestLogItem,
   NetworkResponseLogItem,
-  NgrokExpirationLogItem,
   OpenAppSettingsLogItem,
   TextLogItem,
 } from '@bfemulator/sdk-shared';
@@ -60,7 +59,6 @@ export interface LogEntryProps {
   launchLuisEditor?: () => void;
   setInspectorObjects?: (documentId: string, objs: any) => void;
   setHighlightedObjects?: (documentId: string, objs: any) => void;
-  reconnectNgrok?: () => void;
   showAppSettings?: () => void;
   trackEvent?: (name: string, properties?: { [key: string]: any }) => void;
 }
@@ -167,11 +165,6 @@ export class LogEntry extends React.Component<LogEntryProps> {
       case LogItemType.NetworkResponse: {
         const { body, headers, statusCode, statusMessage, srcUrl } = item.payload as NetworkResponseLogItem;
         return this.renderNetworkResponseItem(body, headers, statusCode, statusMessage, srcUrl, key);
-      }
-
-      case LogItemType.NgrokExpiration: {
-        const { text } = item.payload as NgrokExpirationLogItem;
-        return this.renderNgrokExpirationItem(text, key);
       }
 
       default:
@@ -326,21 +319,6 @@ export class LogEntry extends React.Component<LogEntryProps> {
         </span>
       );
     }
-  }
-
-  renderNgrokExpirationItem(text: string, key: string): JSX.Element {
-    return (
-      <span key={key} className={`${styles.spaced} ${styles.level3}`}>
-        {text + ' '}
-        <button
-          aria-label={`Please recoonect, Ngrok connection expired. Log entry ${this.props.entryIndex}`}
-          className={styles.link}
-          onClick={() => this.props.reconnectNgrok()}
-        >
-          Please reconnect.
-        </button>
-      </span>
-    );
   }
 
   renderLuisEditorDeepLinkItem(text: string, key: string): JSX.Element {

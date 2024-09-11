@@ -31,20 +31,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { NgrokService } from './ngrokService';
 import { defaultRestServerOptions, EmulatorRestServer, EmulatorRestServerOptions } from './server/restServer';
+import { getSettings } from './state/store';
 
 let emulator: Emulator;
 /**
  * Top-level state container for the Node process.
  */
 export class Emulator {
-  public ngrok: NgrokService;
   private _server: EmulatorRestServer;
-
-  private constructor() {
-    this.ngrok = new NgrokService();
-  }
 
   public static initialize(): void {
     if (!emulator) {
@@ -68,14 +63,18 @@ export class Emulator {
     return this._server;
   }
 
+  private async getServiceUrl(s: string) {
+    if (s) return s;
+    else return `http://localhost:${Emulator.getInstance().server.serverPort}`;
+  }
+
   /** Initializes the emulator rest server. No-op if already called. */
   public initServer(options: EmulatorRestServerOptions = defaultRestServerOptions): void {
     if (!this._server) {
       this._server = new EmulatorRestServer({
         ...options,
-        getServiceUrl: botUrl => this.ngrok.getServiceUrl(botUrl),
-        getServiceUrlForOAuth: () => this.ngrok.getServiceUrlForOAuth(),
-        shutDownOAuthNgrokInstance: () => this.ngrok.shutDownOAuthNgrokInstance(),
+        getServiceUrl: botUrl => this.getServiceUrl(getSettings().framework.tunnelUrl),
+        getServiceUrlForOAuth: () => this.getServiceUrl(getSettings().framework.tunnelUrl),
       });
     }
   }
@@ -91,6 +90,5 @@ export class Emulator {
 
   public async report(conversationId: string, botUrl: string): Promise<void> {
     this.server.report(conversationId);
-    await this.ngrok.report(conversationId, botUrl);
   }
 }

@@ -36,21 +36,12 @@ import * as path from 'path';
 import * as url from 'url';
 
 import {
-  addNotification,
   azureLoggedInUserChanged,
   isMac,
-  newNotification,
   rememberBounds,
   setOpenUrl,
-  updateNewTunnelInfo,
-  updateTunnelError,
-  updateTunnelStatus,
-  Notification,
   PersistentSettings,
   SharedConstants,
-  TunnelError,
-  TunnelInfo,
-  TunnelStatus,
 } from '@bfemulator/app-shared';
 import { app, BrowserWindow, nativeTheme, Rectangle, screen } from 'electron';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
@@ -66,13 +57,10 @@ import { dispatch, getSettings, store } from './state/store';
 import { TelemetryService } from './telemetry';
 import { botListsAreDifferent, ensureStoragePath, saveSettings, writeFile } from './utils';
 import { openFileFromCommandLine } from './utils/openFileFromCommandLine';
-import { sendNotificationToClient } from './utils/sendNotificationToClient';
 import { WindowManager } from './windowManager';
 import { ProtocolHandler } from './protocolHandler';
 import { WebSocketServer } from './server/webSocketServer';
 
-const genericTunnelError =
-  'Oops.. Your ngrok tunnel seems to have an error. Please check the Ngrok Status Viewer for more details';
 // start app startup timer
 const beginStartupTime = Date.now();
 
@@ -156,7 +144,6 @@ class EmulatorApplication {
 
   constructor() {
     Emulator.initialize();
-    this.initializeNgrokListeners();
     this.initializeAppListeners();
     this.initializeSystemPreferencesListeners();
     store.subscribe(this.storeSubscriptionHandler);
@@ -169,12 +156,6 @@ class EmulatorApplication {
     this.mainBrowserWindow.on('closed', this.onBrowserWindowClosed);
     this.mainBrowserWindow.on('move', this.rememberCurrentBounds);
     this.mainBrowserWindow.on('restore', this.rememberCurrentBounds);
-  }
-
-  private initializeNgrokListeners() {
-    Emulator.getInstance().ngrok.ngrokEmitter.on('onTunnelError', this.onTunnelError);
-    Emulator.getInstance().ngrok.ngrokEmitter.on('onNewTunnelConnected', this.onNewTunnelConnected);
-    Emulator.getInstance().ngrok.ngrokEmitter.on('onTunnelStatusPing', this.onTunnelStatusPing);
   }
 
   private initializeSystemPreferencesListeners() {
@@ -263,31 +244,6 @@ class EmulatorApplication {
     };
 
     dispatch(rememberBounds(bounds));
-  };
-
-  private onTunnelStatusPing = async (status: TunnelStatus) => {
-    dispatch(updateTunnelStatus({ tunnelStatus: status }));
-  };
-
-  private onNewTunnelConnected = async (tunnelInfo: TunnelInfo) => {
-    dispatch(updateNewTunnelInfo(tunnelInfo));
-  };
-
-  private onTunnelError = async (response: TunnelError) => {
-    const { Commands } = SharedConstants;
-    dispatch(updateTunnelError({ ...response }));
-
-    const ngrokNotification: Notification = newNotification(genericTunnelError);
-    dispatch(addNotification(ngrokNotification.id));
-
-    this.commandService.call(Commands.Ngrok.OpenStatusViewer, false);
-
-    ngrokNotification.addButton('Debug Console', () => {
-      this.commandService.remoteCall(Commands.Notifications.Remove, ngrokNotification.id);
-      this.commandService.call(Commands.Ngrok.OpenStatusViewer);
-    });
-    await sendNotificationToClient(ngrokNotification, this.commandService);
-    Emulator.getInstance().ngrok.broadcastNgrokError(genericTunnelError);
   };
 
   private onInvertedColorSchemeChanged = () => {

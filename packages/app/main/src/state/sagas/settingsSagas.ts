@@ -67,7 +67,6 @@ export class SettingsSagas {
 
   public static *setFramework(action: FrameworkAction<FrameworkSettings>): IterableIterator<any> {
     const emulator = Emulator.getInstance();
-    yield emulator.ngrok.updateNgrokFromSettings(action.payload);
     emulator.server.state.locale = action.payload.locale;
     yield* SettingsSagas.pushClientAwareSettings();
   }

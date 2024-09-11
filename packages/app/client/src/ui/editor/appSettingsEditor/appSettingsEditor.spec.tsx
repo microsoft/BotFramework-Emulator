@@ -35,7 +35,6 @@ import {
   close as closeEditorDocument,
   executeCommand,
   framework,
-  ngrokTunnel,
   saveFrameworkSettings,
   setFrameworkSettings,
   SharedConstants,
@@ -106,7 +105,7 @@ describe('The AppSettingsEditorContainer', () => {
   });
 
   beforeEach(() => {
-    mockStore = createStore(combineReducers({ framework, ngrokTunnel }));
+    mockStore = createStore(combineReducers({ framework }));
     mockStore.dispatch(
       setFrameworkSettings({
         autoUpdate: true,
@@ -121,6 +120,8 @@ describe('The AppSettingsEditorContainer', () => {
         use10Tokens: false,
         useCodeValidation: false,
         usePrereleases: false,
+        tunnelUrl: '',
+        localPort: 0,
       })
     );
     mockDispatch = jest.spyOn(mockStore, 'dispatch');

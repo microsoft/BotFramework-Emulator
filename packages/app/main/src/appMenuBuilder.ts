@@ -196,7 +196,7 @@ export class AppMenuBuilder {
 
   /** Returns the template to construct a file menu that reflects updated state */
   private static getUpdatedFileMenuContent(recentBotsMenu: Menu = new Menu()): MenuOpts[] {
-    const { Azure, UI, Bot, Emulator: EmulatorCommands, Ngrok } = SharedConstants.Commands;
+    const { Azure, UI, Bot, Emulator: EmulatorCommands } = SharedConstants.Commands;
 
     // TODO - localization
     const subMenu: MenuOpts[] = [
@@ -227,12 +227,6 @@ export class AppMenuBuilder {
         },
       },
       { type: 'separator' },
-      {
-        label: 'Open Ngrok Status Viewer...',
-        click: () => {
-          AppMenuBuilder.commandService.call(Ngrok.OpenStatusViewer);
-        },
-      },
     ];
 
     const activeBot = BotHelpers.getActiveBot();
@@ -290,10 +284,10 @@ export class AppMenuBuilder {
     ]);
     subMenu.push({ type: 'separator' });
     subMenu.push({
-      label: 'Copy Emulator service URL',
+      label: 'Copy Emulator Port',
       click: async () => {
-        const url = await Emulator.getInstance().ngrok.getServiceUrl('');
-        clipboard.writeText(url);
+        const port = await Emulator.getInstance().server.serverPort;
+        clipboard.writeText(port.toString());
       },
     });
     subMenu.push({ type: 'separator' });

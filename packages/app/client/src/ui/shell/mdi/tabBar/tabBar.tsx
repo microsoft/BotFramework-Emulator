@@ -44,10 +44,8 @@ import {
   CONTENT_TYPE_MARKDOWN,
   CONTENT_TYPE_TRANSCRIPT,
   CONTENT_TYPE_WELCOME_PAGE,
-  CONTENT_TYPE_NGROK_DEBUGGER,
 } from '../../../../constants';
 import { Tab } from '../tab/tab';
-import { NgrokTabContainer } from '../tab/ngrokTabContainer';
 
 import * as styles from './tabBar.scss';
 
@@ -195,11 +193,7 @@ export class TabBar extends React.Component<TabBarProps, TabBarState> {
           ref={this.setRef}
           role="presentation"
         >
-          {documentId === SharedConstants.DocumentIds.DOCUMENT_ID_NGROK_DEBUGGER ? (
-            <NgrokTabContainer {...commonProps} />
-          ) : (
-            <Tab {...commonProps} />
-          )}
+          <Tab {...commonProps} />
         </div>
       );
     });
@@ -292,9 +286,6 @@ export class TabBar extends React.Component<TabBarProps, TabBarState> {
 
       case CONTENT_TYPE_DEBUG:
         return 'Debug';
-
-      case CONTENT_TYPE_NGROK_DEBUGGER:
-        return 'Ngrok Status';
 
       default:
         return '';

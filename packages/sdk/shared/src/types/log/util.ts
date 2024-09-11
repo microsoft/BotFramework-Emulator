@@ -44,7 +44,6 @@ import {
   LuisEditorDeepLinkLogItem,
   NetworkRequestLogItem,
   NetworkResponseLogItem,
-  NgrokExpirationLogItem,
   OpenAppSettingsLogItem,
   SummaryTextLogItem,
   TextLogItem,
@@ -155,15 +154,6 @@ export function networkResponseItem(
       statusCode,
       statusMessage,
       srcUrl,
-    },
-  };
-}
-
-export function ngrokExpirationItem(text: string): LogItem<NgrokExpirationLogItem> {
-  return {
-    type: LogItemType.NgrokExpiration,
-    payload: {
-      text,
     },
   };
 }

@@ -58,9 +58,6 @@ export function createTokenResponseHandler(emulatorServer: EmulatorRestServer) {
       res.end();
     } catch (e) {
       sendErrorResponse(req, res, null, e);
-    } finally {
-      // shut down the oauth ngrok instance
-      emulatorServer.shutDownOAuthNgrokInstance();
     }
   };
 }

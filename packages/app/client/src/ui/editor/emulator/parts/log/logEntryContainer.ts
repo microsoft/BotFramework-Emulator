@@ -68,9 +68,6 @@ function mapDispatchToProps(dispatch: any): Partial<LogEntryProps> {
     },
     setInspectorObjects: (documentId: string, obj: any) => dispatch(setInspectorObjects(documentId, obj)),
     setHighlightedObjects: (documentId: string, obj: any) => dispatch(setHighlightedObjects(documentId, obj)),
-    reconnectNgrok: () => {
-      dispatch(executeCommand(true, SharedConstants.Commands.Ngrok.Reconnect));
-    },
     showAppSettings: () => {
       const { UI } = SharedConstants.Commands;
       return dispatch(executeCommand(false, UI.ShowAppSettings));

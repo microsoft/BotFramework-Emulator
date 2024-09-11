@@ -52,12 +52,13 @@ import { ConsoleLogService } from './state/consoleLogService';
 import { stripEmptyBearerTokenMiddleware } from './routes/handlers/stripEmptyBearerToken';
 import { Conversation } from './state/conversation';
 
+import { ipcMain } from 'electron';
+
 export interface EmulatorRestServerOptions {
   fetch?: (url: string, options?: any) => Promise<any>;
   getServiceUrl?: (botUrl: string) => Promise<string>;
   getServiceUrlForOAuth?: () => Promise<string>;
   logService?: LogService;
-  shutDownOAuthNgrokInstance?: () => void;
 }
 
 export const defaultRestServerOptions: EmulatorRestServerOptions = {
@@ -79,10 +80,6 @@ export const defaultRestServerOptions: EmulatorRestServerOptions = {
       )
     ),
   logService: new ConsoleLogService(),
-  shutDownOAuthNgrokInstance: () =>
-    new Error(
-      'shutdownOAuthNgrokInstance() has not been configured. Please configure this function by passing it into the EmulatorRestServer constructor via the "options" object.'
-    ),
 };
 
 interface ConversationAwareRequest extends Request {
@@ -116,7 +113,6 @@ export class EmulatorRestServer {
   public logger: Logger;
   public options: EmulatorRestServerOptions;
   public server: Server;
-  public shutDownOAuthNgrokInstance: () => void;
   public state: ServerState;
 
   public get serverPort(): number {
@@ -140,7 +136,6 @@ export class EmulatorRestServer {
     this.state = new ServerState(this.options.fetch);
     this.getServiceUrl = this.options.getServiceUrl;
     this.getServiceUrlForOAuth = this.options.getServiceUrlForOAuth;
-    this.shutDownOAuthNgrokInstance = this.options.shutDownOAuthNgrokInstance;
     return (server = this);
   }
 
@@ -161,6 +156,9 @@ export class EmulatorRestServer {
       this._serverPort = actualPort;
       this._serverUrl = this.server.url;
       console.log('Server listens on port', actualPort);
+      ipcMain.handle('local-server-port', () => {
+        return actualPort;
+      });
     } catch (e) {
       if (e.code === 'EADDRINUSE') {
         // eslint-disable-next-line

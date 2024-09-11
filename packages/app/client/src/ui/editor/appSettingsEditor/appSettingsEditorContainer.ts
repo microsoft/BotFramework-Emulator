@@ -53,8 +53,6 @@ import { AppSettingsEditor, AppSettingsEditorProps } from './appSettingsEditor';
 const mapStateToProps = (state: RootState, ownProps: AppSettingsEditorProps) => ({
   ...ownProps,
   framework: state.framework,
-  ngrokLastPingInterval: state.ngrokTunnel.timeIntervalSinceLastPing,
-  ngrokTunnelStatus: state.ngrokTunnel.tunnelStatus,
 });
 
 const mapDispatchToProps = (dispatch: (action: Action) => void, ownProps: AppSettingsEditorProps) => ({
@@ -66,18 +64,6 @@ const mapDispatchToProps = (dispatch: (action: Action) => void, ownProps: AppSet
   onAnchorClick: (url: string) => {
     dispatch(executeCommand(true, SharedConstants.Commands.Electron.OpenExternal, null, url));
   },
-  openBrowseForNgrok: async () => {
-    const dialogOptions = {
-      title: 'Browse for ngrok',
-      buttonLabel: 'Select ngrok',
-      properties: ['openFile'],
-    };
-    return new Promise(resolve => {
-      dispatch(executeCommand(true, SharedConstants.Commands.Electron.ShowOpenDialog, resolve, dialogOptions));
-    });
-  },
-  onOpenNgrokStatusViewerClick: () =>
-    dispatch(executeCommand(true, SharedConstants.Commands.Ngrok.OpenStatusViewer, null)),
   saveFrameworkSettings: (framework: FrameworkSettings) => dispatch(saveFrameworkSettings(framework)),
   setDirtyFlag: debounce((dirty: boolean) => dispatch(setDirtyFlag(ownProps.documentId, dirty)), 300),
 });

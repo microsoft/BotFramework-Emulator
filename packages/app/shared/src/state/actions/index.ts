@@ -45,7 +45,6 @@ export * from './explorerActions';
 export * from './fileActions';
 export * from './frameworkSettingsActions';
 export * from './navBarActions';
-export * from './ngrokTunnelActions';
 export * from './notificationActions';
 export * from './presentationActions';
 export * from './progressIndicatorActions';

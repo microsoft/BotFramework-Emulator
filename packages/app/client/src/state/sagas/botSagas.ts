@@ -149,7 +149,6 @@ export class BotSagas {
       })
     );
 
-    // call emulator to report proper status to chat panel (listening / ngrok)
     res = yield ConversationService.sendInitialLogReport(serverUrl, conversationId, action.payload.endpoint);
     if (!res.ok) {
       yield* throwErrorFromResponse('Error occurred while sending the initial log report', res);
