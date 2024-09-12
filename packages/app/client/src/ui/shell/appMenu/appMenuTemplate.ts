@@ -43,7 +43,6 @@ const {
     Electron: { OpenExternal, ShowMessageBox },
     Emulator: {
       ClearState,
-      GetServiceUrl,
       PromptToOpenTranscript,
       SendConversationUpdateUserAdded,
       SendBotContactAdded,
@@ -51,6 +50,7 @@ const {
       SendTyping,
       SendPing,
       SendDeleteUserData,
+      GetServerPort,
     },
     UI: {
       ShowBotCreationDialog,
@@ -113,10 +113,10 @@ export class AppMenuTemplate {
       },
       { type: 'separator' },
       {
-        label: 'Copy Emulator service URL',
+        label: 'Copy Emulator service Port',
         onClick: async () => {
-          const url: string = await AppMenuTemplate.commandService.remoteCall(GetServiceUrl);
-          remote.clipboard.writeText(url);
+          const port: number = await AppMenuTemplate.commandService.remoteCall(GetServerPort);
+          remote.clipboard.writeText(port.toString());
         },
       },
       { type: 'separator' },

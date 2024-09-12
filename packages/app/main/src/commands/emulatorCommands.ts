@@ -270,4 +270,9 @@ export class EmulatorCommands {
   protected async getServiceUrl() {
     return Emulator.getInstance().server.getServiceUrl('');
   }
+
+  @Command(Commands.GetServerPort)
+  protected async getServerPort() {
+    return Emulator.getInstance().server.serverPort;
+  }
 }

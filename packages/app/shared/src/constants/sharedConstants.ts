@@ -116,6 +116,7 @@ export const SharedConstants = {
       SendTyping: 'emulator:send-activity:typing',
       SendPing: 'emulator:send-activity:ping',
       SendDeleteUserData: 'emulator:send-activity:delete-user-data',
+      GetServerPort: 'shell:get-server-port',
     },
 
     Extension: {
