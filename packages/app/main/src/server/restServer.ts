@@ -41,6 +41,7 @@ import {
   networkRequestItem,
   networkResponseItem,
 } from '@bfemulator/sdk-shared';
+import { ipcMain } from 'electron';
 import { createServer, plugins, Server, Response, Route } from 'restify';
 import CORS from 'restify-cors-middleware2';
 import { newNotification, SharedConstants } from '@bfemulator/app-shared';
@@ -51,8 +52,6 @@ import { LoggerAdapter } from './state/loggerAdapter';
 import { ConsoleLogService } from './state/consoleLogService';
 import { stripEmptyBearerTokenMiddleware } from './routes/handlers/stripEmptyBearerToken';
 import { Conversation } from './state/conversation';
-
-import { ipcMain } from 'electron';
 
 export interface EmulatorRestServerOptions {
   fetch?: (url: string, options?: any) => Promise<any>;

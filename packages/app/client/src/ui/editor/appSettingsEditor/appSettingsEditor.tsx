@@ -44,13 +44,12 @@ import {
 } from '@bfemulator/ui-react';
 import * as React from 'react';
 import { ChangeEvent } from 'react';
+import { ipcRenderer } from 'electron';
 
 import { GenericDocument } from '../../layout';
 import { generateHash } from '../../../state/helpers/botHelpers';
 
 import * as styles from './appSettingsEditor.scss';
-
-import { ipcRenderer } from 'electron';
 
 export interface AppSettingsEditorProps {
   documentId?: string;
