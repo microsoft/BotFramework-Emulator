@@ -103,7 +103,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
       usePrereleases = false,
       collectUsageData = false,
       tunnelUrl = '',
-      localPort = 321,
+      localPort = 0,
     } = this.state;
 
     const inputProps = {

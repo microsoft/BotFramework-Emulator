@@ -144,8 +144,7 @@ export class Conversation extends EventEmitter {
         this.conversationId,
         textItem(
           LogLevel.Error,
-          'Error: The bot is remote, but the service URL is localhost.' +
-            ' Without tunneling software you will not receive replies.'
+          'Error: The bot is remote, but the service URL is localhost. Without tunneling software you will not receive replies.'
         )
       );
       this.emulatorServer.logger.logMessage(
