@@ -270,7 +270,6 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
 
   private getLocalPort = async () => {
     const lp = await ipcRenderer.invoke('local-server-port');
-    console.log('LOCAL PORT', lp);
     return lp;
   };
 }
