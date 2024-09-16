@@ -316,13 +316,6 @@ describe('logEntry component', () => {
     expect(networkResItem).not.toBeNull();
   });
 
-  it('should render an ngrok expiration item', () => {
-    wrapper = mount(<LogEntry {...props} />);
-    instance = wrapper.instance();
-    const ngrokitem = instance.renderItem({ type: 'ngrok-expiration', payload: { text: 'some text' } }, 'someKey');
-    expect(ngrokitem).not.toBeNull();
-  });
-
   it('should render a luis editor deep link item', () => {
     wrapper = mount(<LogEntry {...props} />);
     instance = wrapper.instance();

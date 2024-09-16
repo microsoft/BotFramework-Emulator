@@ -37,11 +37,7 @@ import { createInitialReportHandler } from './initialReport';
 
 jest.mock('../../../../emulator', () => ({
   Emulator: {
-    getInstance: () => ({
-      ngrok: {
-        report: jest.fn(),
-      },
-    }),
+    getInstance: () => ({}),
   },
 }));
 

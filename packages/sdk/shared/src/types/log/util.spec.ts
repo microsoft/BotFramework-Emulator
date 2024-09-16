@@ -127,12 +127,6 @@ describe('utils tests', () => {
     expect(entry.items[1]).toBe(item2);
   });
 
-  test('ngrokExpirationItem', () => {
-    const item = ngrokExpirationItem('someText');
-    expect(item.type).toBe('ngrok-expiration');
-    expect(item.payload).toEqual({ text: 'someText' });
-  });
-
   test('luisEditorDeepLink', () => {
     const item = luisEditorDeepLinkItem('someText');
     expect(item.type).toBe('luis-editor-deep-link');

@@ -71,32 +71,19 @@ jest.mock('./globals', () => ({
   setGlobal: () => null,
 }));
 
-let mockNgrokPath;
 const mockDispatch = jest.fn();
 jest.mock('./state/store', () => ({
   store: {
     dispatch: action => mockDispatch(action),
   },
   getSettings: () => ({
-    framework: {
-      ngrokPath: mockNgrokPath,
-    },
+    framework: {},
   }),
 }));
 
-let mockGetSpawnStatus: any = jest.fn(() => ({ triedToSpawn: true }));
-let mockRunningStatus;
 const mockRecycle = jest.fn(() => null);
 const mockEmulator = {
   framework: { serverUrl: 'http://[::]:8090' },
-  ngrok: {
-    getSpawnStatus: () => mockGetSpawnStatus(),
-    ngrokEmitter: {
-      once: (_eventName, cb) => cb(),
-    },
-    recycle: () => mockRecycle(),
-    running: () => mockRunningStatus,
-  },
 };
 jest.mock('./emulator', () => ({
   Emulator: {
@@ -178,15 +165,12 @@ describe('Protocol handler tests', () => {
         },
       ],
     };
-    mockRunningStatus = true;
-    mockNgrokPath = 'path/to/ngrok.exe';
     mockSendNotificationToClient = jest.fn(() => null);
     mockGotReturnValue = {
       statusCode: 200,
       body: '["activity1", "activity2", "activity3"]',
     };
     mockRecycle.mockClear();
-    mockGetSpawnStatus.mockClear();
     mockDispatch.mockClear();
   });
 
@@ -377,7 +361,7 @@ describe('Protocol handler tests', () => {
     });
   });
 
-  it('should open a bot when ngrok is running', async () => {
+  it('should open a bot', async () => {
     const protocol = {
       parsedArgs: {
         id: 'someIdOverride',
@@ -387,9 +371,6 @@ describe('Protocol handler tests', () => {
     };
     const overrides = { endpoint: parseEndpointOverrides(protocol.parsedArgs) };
     const overriddenBot = applyBotConfigOverrides(mockOpenedBot, overrides);
-
-    // ngrok should be kick-started if it hasn't tried to spawn yet
-    mockGetSpawnStatus = jest.fn(() => ({ triedToSpawn: false }));
 
     await ProtocolHandler.openBot(protocol);
 
@@ -407,96 +388,6 @@ describe('Protocol handler tests', () => {
       numOfServices: 1,
       source: 'path',
     });
-  });
-
-  it('should open a bot when ngrok is configured but not running', async () => {
-    mockRunningStatus = false;
-    const protocol = {
-      parsedArgs: {
-        id: 'someIdOverride',
-        path: 'path/to/bot.bot',
-        secret: 'someSecret',
-      },
-    };
-    const overrides = { endpoint: parseEndpointOverrides(protocol.parsedArgs) };
-    const overriddenBot = applyBotConfigOverrides(mockOpenedBot, overrides);
-
-    await ProtocolHandler.openBot(protocol);
-
-    expect(mockCallsMade).toHaveLength(2);
-    expect(mockCallsMade[0].commandName).toBe(SharedConstants.Commands.Bot.Open);
-    expect(mockCallsMade[0].args).toEqual(['path/to/bot.bot', 'someSecret']);
-    expect(mockCallsMade[1].commandName).toBe(SharedConstants.Commands.Bot.SetActive);
-    expect(mockCallsMade[1].args).toEqual([overriddenBot]);
-    expect(mockRemoteCallsMade).toHaveLength(1);
-    expect(mockRemoteCallsMade[0].commandName).toBe(SharedConstants.Commands.Bot.Load);
-    expect(mockRemoteCallsMade[0].args).toEqual([overriddenBot]);
-    expect(mockTrackEvent).toHaveBeenCalledWith('bot_open', {
-      method: 'protocol',
-      numOfServices: 1,
-      source: 'path',
-    });
-  });
-
-  it('should open a bot when ngrok is not configured', async () => {
-    mockNgrokPath = undefined;
-    const protocol = {
-      parsedArgs: {
-        id: 'someIdOverride',
-        path: 'path/to/bot.bot',
-        secret: 'someSecret',
-      },
-    };
-    const overrides = { endpoint: parseEndpointOverrides(protocol.parsedArgs) };
-    const overriddenBot = applyBotConfigOverrides(mockOpenedBot, overrides);
-
-    await ProtocolHandler.openBot(protocol);
-
-    expect(mockCallsMade).toHaveLength(2);
-    expect(mockCallsMade[0].commandName).toBe(SharedConstants.Commands.Bot.Open);
-    expect(mockCallsMade[0].args).toEqual(['path/to/bot.bot', 'someSecret']);
-    expect(mockCallsMade[1].commandName).toBe(SharedConstants.Commands.Bot.SetActive);
-    expect(mockCallsMade[1].args).toEqual([overriddenBot]);
-    expect(mockRemoteCallsMade).toHaveLength(1);
-    expect(mockRemoteCallsMade[0].commandName).toBe(SharedConstants.Commands.Bot.Load);
-    expect(mockRemoteCallsMade[0].args).toEqual([overriddenBot]);
-    expect(mockTrackEvent).toHaveBeenCalledWith('bot_open', {
-      method: 'protocol',
-      numOfServices: 1,
-      source: 'path',
-    });
-  });
-
-  it('should throw if ngrok failed to spawn while opening a bot', async () => {
-    try {
-      const protocol = {
-        parsedArgs: {
-          id: 'someIdOverride',
-          path: 'path/to/bot.bot',
-          secret: 'someSecret',
-        },
-      };
-      mockGetSpawnStatus = jest.fn(() => ({ triedToSpawn: true, err: 'Some ngrok error' }));
-      await ProtocolHandler.openBot(protocol);
-    } catch (e) {
-      expect(e).toEqual(new Error('Error while trying to spawn ngrok instance: Some ngrok error'));
-    }
-  });
-
-  it('should throw if ngrok failed to spawn while opening a livechat', async () => {
-    try {
-      const protocol = {
-        parsedArgs: {
-          botUrl: 'someUrl',
-          msaAppId: 'someAppId',
-          msaPassword: 'somePw',
-        },
-      };
-      mockGetSpawnStatus = jest.fn(() => ({ triedToSpawn: true, err: 'Some ngrok error' }));
-      await ProtocolHandler.openBot(protocol);
-    } catch (e) {
-      expect(e).toEqual(new Error('Error while trying to spawn ngrok instance: Some ngrok error'));
-    }
   });
 
   it('should open a transcript from a url', async () => {

@@ -68,14 +68,14 @@ const mockTranscript = [
         name: 'User',
       },
       locale: 'en-us',
-      serviceUrl: 'https://3a469f6b.ngrok.io',
+      serviceUrl: 'https://3a469f6b.mytunnel.io',
     },
   },
   {
     type: 'activity add',
     activity: {
       type: 'message',
-      serviceUrl: 'https://3a469f6b.ngrok.io',
+      serviceUrl: 'https://3a469f6b.mytunnel.io',
       channelId: 'emulator',
       from: {
         id: '1',
@@ -102,7 +102,7 @@ const mockTranscript = [
     type: 'activity add',
     activity: {
       type: 'message',
-      serviceUrl: 'https://3a469f6b.ngrok.io',
+      serviceUrl: 'https://3a469f6b.mytunnel.io',
       channelId: 'emulator',
       from: {
         id: '1',
@@ -148,7 +148,7 @@ jest.mock('moment', () => () => ({
 
 const mockUserActivity = {
   type: 'message',
-  serviceUrl: 'https://70d0a286.ngrok.io',
+  serviceUrl: 'https://70d0a286.mytunnel.io',
   channelId: 'emulator',
   from: {
     id: '1',
@@ -166,7 +166,7 @@ const mockUserActivity = {
   inputHint: 'acceptingInput',
   replyToId: '96547340-1f5c-11e9-9b39-f387f690c8a4',
   id: null,
-} as Activity;
+}; //  as Activity;
 
 describe('Conversation class', () => {
   let botEndpointBotId;
@@ -189,7 +189,7 @@ describe('Conversation class', () => {
 
   beforeEach(() => {
     botEndpointBotId = 'someBotEndpointBotId';
-    botEndpoint = new BotEndpoint('123', botEndpointBotId, 'http://ngrok', null, null, null, null, { fetch });
+    botEndpoint = new BotEndpoint('123', botEndpointBotId, 'http://mytunnel', null, null, null, null, { fetch });
     const mockEmulatorServer: any = {
       getServiceUrl: jest.fn().mockResolvedValue('http://localhost'),
       logger: {

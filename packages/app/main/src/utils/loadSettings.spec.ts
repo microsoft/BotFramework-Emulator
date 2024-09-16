@@ -35,8 +35,6 @@ import { loadSettings } from './loadSettings';
 
 const mockSettings = {
   framework: {
-    ngrokPath: '',
-    bypassNgrokLocalhost: true,
     stateSizeLimit: 64,
     use10Tokens: false,
     useCodeValidation: false,

@@ -168,9 +168,6 @@ const mockEmulator = {
     },
     getServiceUrl: () => 'http://localhost:6728',
   },
-  ngrok: {
-    getServiceUrl: () => 'http://localhost:5678',
-  },
 };
 jest.mock('../emulator', () => ({
   Emulator: {
@@ -256,7 +253,7 @@ const mockConversation = mockEmulator.server.state.conversations.newConversation
         id: '0a441b55-d1d6-4015-bbb4-2e7f44fa9f42',
         name: 'User',
       },
-      serviceUrl: 'https://a457e760.ngrok.io',
+      serviceUrl: 'https://a457e760.mytunnel.io',
     },
   },
   {
@@ -285,14 +282,14 @@ const mockConversation = mockEmulator.server.state.conversations.newConversation
         id: '0a441b55-d1d6-4015-bbb4-2e7f44fa9f42',
         name: 'User',
       },
-      serviceUrl: 'https://a457e760.ngrok.io',
+      serviceUrl: 'https://a457e760.mytunnel.io',
     },
   },
   {
     type: 'activity add',
     activity: {
       type: 'message',
-      serviceUrl: 'https://a457e760.ngrok.io',
+      serviceUrl: 'https://a457e760.mytunnel.io',
       channelId: 'emulator',
       from: {
         id: 'http://localhost:3978/api/messages',
@@ -318,7 +315,7 @@ const mockConversation = mockEmulator.server.state.conversations.newConversation
     type: 'activity add',
     activity: {
       type: 'message',
-      serviceUrl: 'https://a457e760.ngrok.io',
+      serviceUrl: 'https://a457e760.mytunnel.io',
       channelId: 'emulator',
       from: {
         id: 'http://localhost:3978/api/messages',
@@ -344,7 +341,7 @@ const mockConversation = mockEmulator.server.state.conversations.newConversation
     type: 'activity add',
     activity: {
       type: 'message',
-      serviceUrl: 'https://a457e760.ngrok.io',
+      serviceUrl: 'https://a457e760.mytunnel.io',
       channelId: 'emulator',
       from: {
         id: 'http://localhost:3978/api/messages',
@@ -636,9 +633,9 @@ describe('The emulatorCommands', () => {
     expect(mockTrackEvent).toHaveBeenCalledWith('sendActivity_deleteUserData');
   });
 
-  it('should get the current ngrok service url', async () => {
+  it('should get the current service url', async () => {
     const url = await registry.getCommand(SharedConstants.Commands.Emulator.GetServiceUrl)();
 
-    expect(url).toBe('http://localhost:5678');
+    expect(url).toBe('http://localhost:6728');
   });
 });

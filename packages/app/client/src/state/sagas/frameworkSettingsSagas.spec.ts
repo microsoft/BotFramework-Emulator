@@ -120,14 +120,12 @@ describe('The frameworkSettingsSagas', () => {
       useCustomId: false,
       usePrereleases: false,
       userGUID: '',
-      ngrokPath: 'some/path/to/ngrok',
     };
     const updatedSettings: Partial<FrameworkSettings> = {
       autoUpdate: true,
       useCustomId: true,
       usePrereleases: false,
       userGUID: 'some-user-id',
-      ngrokPath: 'some/different/path/to/ngrok',
     };
     const gen = FrameworkSettingsSagas.saveFrameworkSettings(saveFrameworkSettingsAction(updatedSettings));
     // selector to get the active document from the state
@@ -147,7 +145,6 @@ describe('The frameworkSettingsSagas', () => {
           autoUpdate: true,
           useCustomId: true,
           userGUID: 'some-user-id',
-          ngrokPath: 'some/different/path/to/ngrok',
         }
       )
     );

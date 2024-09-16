@@ -137,13 +137,7 @@ jest.mock('./utils/sendNotificationToClient', () => ({
 jest.mock('./emulator', () => ({
   Emulator: {
     initialize: jest.fn(),
-    getInstance: () => ({
-      ngrok: {
-        ngrokEmitter: {
-          on: () => null,
-        },
-      },
-    }),
+    getInstance: () => ({}),
   },
 }));
 
