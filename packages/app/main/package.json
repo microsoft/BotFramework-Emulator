@@ -1,7 +1,7 @@
 {
   "name": "@bfemulator/main",
   "packagename": "BotFramework-Emulator",
-  "version": "4.14.1",
+  "version": "4.15.1",
   "private": true,
   "description": "Development tool for the Microsoft Bot Framework. Allows developers to test and debug bots on localhost.",
   "main": "./app/server/main.js",
@@ -16,7 +16,7 @@
     "lint:fix": "npm run lint -- --fix",
     "pack": "electron-builder --config scripts/config/getElectronBuilderConfig.js --dir",
     "start": "concurrently --kill-others --names \"electron,react-app\" --success first \"npm run start:electron:dev\" \"npm run start:react-app\"",
-    "start:electron": "./node_modules/.bin/electron --inspect=7777 --remote-debugging-port=7778 .",
+    "start:electron": "electron --inspect=7777 --remote-debugging-port=7778 .",
     "start:electron:dev": "cross-env ELECTRON_TARGET_URL=http://localhost:3000/ npm run start:electron",
     "start:react-app": "cd ../client && npm start",
     "start:watch": "nodemon",
@@ -143,7 +143,7 @@
     "@electron/remote": "^2.0.11",
     "@microsoft/bf-chatdown": "4.7.0",
     "applicationinsights": "^1.0.8",
-    "base64url": "3.0.0",
+    "base64url": "3.0.1",
     "botframework-config": "^4.4.0",
     "botframework-schema": "^4.17.0",
     "chokidar": "^2.0.2",
@@ -170,8 +170,8 @@
     "restify-cors-middleware2": "^2.2.1",
     "rsa-pem-from-mod-exp": "^0.8.4",
     "sanitize-filename": "^1.6.1",
-    "semver": "^5.5.0",
+    "semver": "^7.6.3",
     "tslib": "^1.9.0",
-    "ws": "^5.0.0"
+    "ws": "^8.18.0"
   }
 }

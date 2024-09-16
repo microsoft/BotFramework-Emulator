@@ -42,7 +42,6 @@ import {
   networkRequestItem,
   networkResponseItem,
   logEntry,
-  ngrokExpirationItem,
   makeEnumerableObject,
   luisEditorDeepLinkItem,
 } from './util';
@@ -126,12 +125,6 @@ describe('utils tests', () => {
     expect(entry.items).toHaveLength(2);
     expect(entry.items[0]).toBe(item1);
     expect(entry.items[1]).toBe(item2);
-  });
-
-  test('ngrokExpirationItem', () => {
-    const item = ngrokExpirationItem('someText');
-    expect(item.type).toBe('ngrok-expiration');
-    expect(item.payload).toEqual({ text: 'someText' });
   });
 
   test('luisEditorDeepLink', () => {

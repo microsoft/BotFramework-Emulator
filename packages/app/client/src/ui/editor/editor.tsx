@@ -39,7 +39,7 @@ import { Document } from '../../state/reducers/editor';
 
 import { MarkdownPage } from './markdownPage/markdownPage';
 
-import { AppSettingsEditorContainer, EmulatorContainer, WelcomePageContainer, NgrokDebuggerContainer } from './index';
+import { AppSettingsEditorContainer, EmulatorContainer, WelcomePageContainer } from './index';
 
 interface EditorFactoryProps {
   document?: Document;
@@ -76,9 +76,6 @@ export class EditorFactory extends React.Component<EditorFactoryProps> {
             focusableElementHref="#bot-state-inspection"
           />
         );
-
-      case SharedConstants.ContentTypes.CONTENT_TYPE_NGROK_DEBUGGER:
-        return <NgrokDebuggerContainer documentId={document.documentId} dirty={this.props.document.dirty} />;
 
       default:
         return false;

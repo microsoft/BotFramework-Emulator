@@ -48,7 +48,7 @@ describe('App menu template', () => {
 
     expect(Object.keys(template)).toEqual(['file', 'debug', 'edit', 'view', 'conversation', 'help']);
 
-    expect(template['file']).toHaveLength(19);
+    expect(template['file']).toHaveLength(17);
     expect(template['debug']).toHaveLength(1);
     expect(template['edit']).toHaveLength(7);
     expect(template['view']).toHaveLength(6);

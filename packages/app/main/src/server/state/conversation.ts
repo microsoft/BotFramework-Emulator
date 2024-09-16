@@ -144,15 +144,14 @@ export class Conversation extends EventEmitter {
         this.conversationId,
         textItem(
           LogLevel.Error,
-          'Error: The bot is remote, but the service URL is localhost.' +
-            ' Without tunneling software you will not receive replies.'
+          'Error: The bot is remote, but the service URL is localhost. Without tunneling software you will not receive replies.'
         )
       );
       this.emulatorServer.logger.logMessage(
         this.conversationId,
         externalLinkItem('Connecting to bots hosted remotely', 'https://aka.ms/cnjvpo')
       );
-      this.emulatorServer.logger.logMessage(this.conversationId, appSettingsItem('Configure ngrok'));
+      this.emulatorServer.logger.logMessage(this.conversationId, appSettingsItem('Configure a tunnel'));
     }
 
     const options = {
@@ -651,6 +650,6 @@ class DataUrlEncoder {
   }
 
   protected shouldBeDataUrl(url: string): boolean {
-    return url && (isLocalHostUrl(url) || url.indexOf('ngrok') !== -1);
+    return url && isLocalHostUrl(url);
   }
 }

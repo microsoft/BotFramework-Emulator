@@ -35,16 +35,13 @@ import { Next, Request, Response } from 'restify';
 import { INTERNAL_SERVER_ERROR, OK } from 'http-status-codes';
 
 import { EmulatorRestServer } from '../../../restServer';
-import { Emulator } from '../../../../emulator';
 
-/* sends the initial conversation report to the log panel (ngrok and server url) */
+/* sends the initial conversation report to the log panel server url */
 export function createInitialReportHandler(emulatorServer: EmulatorRestServer) {
   return (req: Request, res: Response, next: Next): any => {
-    const botUrl = req.body;
     const { conversationId } = req.params;
     try {
       emulatorServer.report(conversationId);
-      Emulator.getInstance().ngrok.report(conversationId, botUrl);
     } catch (e) {
       res.send(INTERNAL_SERVER_ERROR, e);
       return next();

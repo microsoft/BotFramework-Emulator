@@ -50,4 +50,3 @@ export * from './savedBotUrls';
 export * from './theme';
 export * from './update';
 export * from './windowState';
-export * from './ngrokTunnel';

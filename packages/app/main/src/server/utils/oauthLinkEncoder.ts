@@ -128,7 +128,7 @@ export class OAuthLinkEncoder {
     };
     let errorMessage: string;
     try {
-      // we need to make sure that the postback url is accessible from the token server (ngrok)
+      // we need to make sure that the postback url is accessible from the token server
       const emulatorUrl = await this.emulatorServer.getServiceUrlForOAuth();
       const url =
         'https://api.botframework.com/api/botsignin/GetSignInUrl?state=' +

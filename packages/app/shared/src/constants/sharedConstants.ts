@@ -116,6 +116,7 @@ export const SharedConstants = {
       SendTyping: 'emulator:send-activity:typing',
       SendPing: 'emulator:send-activity:ping',
       SendDeleteUserData: 'emulator:send-activity:delete-user-data',
+      GetServerPort: 'shell:get-server-port',
     },
 
     Extension: {
@@ -139,13 +140,6 @@ export const SharedConstants = {
 
     Misc: {
       GetStoreState: 'store:get-state',
-    },
-
-    Ngrok: {
-      Reconnect: 'ngrok:reconnect',
-      KillProcess: 'ngrok:killProcess',
-      PingTunnel: 'ngrok:pingTunnel',
-      OpenStatusViewer: 'ngrok:openStatusViewer',
     },
 
     Notifications: {
@@ -198,7 +192,6 @@ export const SharedConstants = {
     CONTENT_TYPE_APP_SETTINGS: 'application/vnd.microsoft.bfemulator.document.appsettings',
     CONTENT_TYPE_WELCOME_PAGE: 'application/vnd.microsoft.bfemulator.document.welcome',
     CONTENT_TYPE_TRANSCRIPT: 'application/vnd.microsoft.bfemulator.document.transcript',
-    CONTENT_TYPE_NGROK_DEBUGGER: 'application/vnd.microsoft.bfemulator.document.ngrokDebugger',
   },
   Channels: {
     ReadmeUrl: 'https://raw.githubusercontent.com/Microsoft/BotFramework-Emulator/main/content/CHANNELS.md',
@@ -209,7 +202,6 @@ export const SharedConstants = {
     DOCUMENT_ID_BOT_SETTINGS: 'bot:settings',
     DOCUMENT_ID_WELCOME_PAGE: 'welcome-page',
     DOCUMENT_ID_MARKDOWN_PAGE: 'markdown-page',
-    DOCUMENT_ID_NGROK_DEBUGGER: 'app:ngrokDebugger',
   },
   EditorKeys: [EDITOR_KEY_PRIMARY, EDITOR_KEY_SECONDARY],
   NavBarItems: {

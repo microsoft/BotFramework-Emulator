@@ -33,13 +33,7 @@
 
 import * as Path from 'path';
 
-import {
-  openBotViaUrlAction,
-  openTranscript,
-  FrameworkSettings,
-  newNotification,
-  SharedConstants,
-} from '@bfemulator/app-shared';
+import { openBotViaUrlAction, openTranscript, newNotification, SharedConstants } from '@bfemulator/app-shared';
 import got from 'got';
 import { IEndpointService } from 'botframework-config/lib/schema';
 import {
@@ -51,8 +45,7 @@ import {
 } from '@bfemulator/sdk-shared';
 
 import { Protocol } from './constants';
-import { Emulator } from './emulator';
-import { getSettings, store } from './state/store';
+import { store } from './state/store';
 import { sendNotificationToClient } from './utils/sendNotificationToClient';
 import { TelemetryService } from './telemetry';
 
@@ -258,53 +251,13 @@ class ProtocolHandlerImpl implements ProtocolHandler {
       bot = applyBotConfigOverrides(bot, overrides);
     }
 
-    const appSettings: FrameworkSettings = getSettings().framework;
-    if (appSettings.ngrokPath) {
-      const ngrok = Emulator.getInstance().ngrok;
-      let ngrokSpawnStatus = ngrok.getSpawnStatus();
-      // if ngrok hasn't spawned yet, we need to start it up
-      if (!ngrokSpawnStatus.triedToSpawn) {
-        await ngrok.recycle();
-      }
-      ngrokSpawnStatus = ngrok.getSpawnStatus();
-      if (ngrokSpawnStatus.triedToSpawn && ngrokSpawnStatus.err) {
-        throw new Error(`Error while trying to spawn ngrok instance: ${ngrokSpawnStatus.err || ''}`);
-      }
-
-      if (ngrok.running) {
-        try {
-          await this.commandService.call(SharedConstants.Commands.Bot.SetActive, bot);
-          await this.commandService.remoteCall(SharedConstants.Commands.Bot.Load, bot);
-        } catch (e) {
-          throw new Error(`(ngrok running) Error occurred while trying to deep link to bot project at ${path}: ${e}`);
-        }
-      } else {
-        // if ngrok hasn't connected yet, wait for it to connect and load the bot
-        ngrok.ngrokEmitter.once(
-          'connect',
-          async (...args: any[]): Promise<void> => {
-            try {
-              await this.commandService.call(SharedConstants.Commands.Bot.SetActive, bot);
-              await this.commandService.remoteCall(SharedConstants.Commands.Bot.Load, bot);
-            } catch (e) {
-              throw new Error(
-                `(ngrok running but not connected) Error occurred while ` +
-                  `trying to deep link to bot project at ${path}: ${e}`
-              );
-            }
-          }
-        );
-      }
-    } else {
-      try {
-        await this.commandService.call(SharedConstants.Commands.Bot.SetActive, bot);
-        await this.commandService.remoteCall(SharedConstants.Commands.Bot.Load, bot);
-      } catch (e) {
-        throw new Error(
-          `(ngrok not configured) Error occurred while trying to deep link to bot project at ${path}: ${e}`
-        );
-      }
+    try {
+      await this.commandService.call(SharedConstants.Commands.Bot.SetActive, bot);
+      await this.commandService.remoteCall(SharedConstants.Commands.Bot.Load, bot);
+    } catch (e) {
+      throw new Error(`Error occurred while trying to deep link to bot project at ${path}: ${e}`);
     }
+
     const numOfServices = bot.services && bot.services.length;
     TelemetryService.trackEvent('bot_open', {
       method: 'protocol',

@@ -299,13 +299,6 @@ html {
   --menu-separator-color: #72C3DF;
   --menu-submenu-top-adjustment: -10px; /* 2 px lower than light & dark because of 2px menu border in HC mode */
   
-  /* Ngrok Colors */
-  --ngrok-inactive: #007ACC;
-  --ngrok-active: #47B07F;
-  --ngrok-error: #BE1100;
-  --ngrok-error-outline: #F5B1B1;
-  --ngrok-text-color: #000000;
-
   /* Webchat style overrides */
   --bubble-text-color: #000000;
 

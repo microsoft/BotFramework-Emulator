@@ -41,7 +41,6 @@ describe('getSettingsDelta', () => {
     };
     const updatedSettings: Partial<FrameworkSettings> = {
       autoUpdate: true,
-      runNgrokAtStartup: true,
       use10Tokens: false,
       usePrereleases: false,
       userGUID: 'some-other-id',
@@ -49,7 +48,6 @@ describe('getSettingsDelta', () => {
 
     expect(getSettingsDelta(currentSettings, updatedSettings)).toEqual({
       locale: undefined,
-      runNgrokAtStartup: true,
       use10Tokens: false,
       usePrereleases: false,
       userGUID: 'some-other-id',

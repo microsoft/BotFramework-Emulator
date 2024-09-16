@@ -43,7 +43,6 @@ const {
     Electron: { OpenExternal, ShowMessageBox },
     Emulator: {
       ClearState,
-      GetServiceUrl,
       PromptToOpenTranscript,
       SendConversationUpdateUserAdded,
       SendBotContactAdded,
@@ -51,8 +50,8 @@ const {
       SendTyping,
       SendPing,
       SendDeleteUserData,
+      GetServerPort,
     },
-    Ngrok: { OpenStatusViewer },
     UI: {
       ShowBotCreationDialog,
       ShowCustomActivityEditor,
@@ -102,13 +101,6 @@ export class AppMenuTemplate {
       { type: 'separator' },
       { label: 'Open Transcript...', onClick: () => AppMenuTemplate.commandService.call(PromptToOpenTranscript) },
       { type: 'separator' },
-      {
-        label: 'Open Ngrok Status Viewer...',
-        onClick: () => {
-          AppMenuTemplate.commandService.remoteCall(OpenStatusViewer);
-        },
-      },
-      { type: 'separator' },
       { label: 'Close tab', disabled: true, onClick: () => AppMenuTemplate.commandService.call(Close) },
       { type: 'separator' },
       { label: 'Sign in with Azure' }, // onClick defined later
@@ -121,10 +113,10 @@ export class AppMenuTemplate {
       },
       { type: 'separator' },
       {
-        label: 'Copy Emulator service URL',
+        label: 'Copy Emulator service Port',
         onClick: async () => {
-          const url: string = await AppMenuTemplate.commandService.remoteCall(GetServiceUrl);
-          remote.clipboard.writeText(url);
+          const port: number = await AppMenuTemplate.commandService.remoteCall(GetServerPort);
+          remote.clipboard.writeText(port.toString());
         },
       },
       { type: 'separator' },

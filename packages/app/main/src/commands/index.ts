@@ -38,7 +38,6 @@ import { ConnectedServiceCommands } from './connectedServiceCommands';
 import { ElectronCommands } from './electronCommands';
 import { EmulatorCommands } from './emulatorCommands';
 import { FileCommands } from './fileCommands';
-import { NgrokCommands } from './ngrokCommands';
 import { OauthCommands } from './oauthCommands';
 import { SettingsCommands } from './settingsCommands';
 import { TelemetryCommands } from './telemetryCommands';
@@ -51,7 +50,6 @@ export const commands = [
   new ElectronCommands(),
   new EmulatorCommands(),
   new FileCommands(),
-  new NgrokCommands(),
   new OauthCommands(),
   new SettingsCommands(),
   new TelemetryCommands(),

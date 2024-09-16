@@ -59,7 +59,6 @@ const selectionMap = [
   Constants.NAVBAR_RESOURCES,
   Constants.NAVBAR_NOTIFICATIONS,
   Constants.NAVBAR_SETTINGS,
-  Constants.NAVBAR_NGROK_DEBUGGER,
 ];
 
 export class NavBarComponent extends React.Component<NavBarProps, NavBarState> {

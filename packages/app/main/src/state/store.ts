@@ -73,13 +73,11 @@ import {
   SettingsImpl,
   ThemeState,
   UpdateState,
-  NgrokTunnelState,
-  ngrokTunnel,
 } from '@bfemulator/app-shared';
 
 import { loadSettings, getThemes } from '../utils';
 
-import { ngrokSagas, settingsSagas } from './sagas';
+import { settingsSagas } from './sagas';
 import { forwardToRenderer } from './middleware/forwardToRenderer';
 
 export interface RootState {
@@ -100,7 +98,6 @@ export interface RootState {
   settings?: Settings;
   theme?: ThemeState;
   update?: UpdateState;
-  ngrokTunnel?: NgrokTunnelState;
 }
 
 export const DEFAULT_STATE = {
@@ -139,13 +136,12 @@ function initStore(): Store<RootState> {
       settings: settingsReducer,
       theme,
       update,
-      ngrokTunnel,
     }),
     DEFAULT_STATE,
     applyMiddleware(forwardToRenderer, sagaMiddleware)
   );
 
-  const sagas = [settingsSagas, ngrokSagas];
+  const sagas = [settingsSagas];
   sagas.forEach(saga => sagaMiddleware.run(saga));
 
   // sync the main process store with any updates on the renderer process

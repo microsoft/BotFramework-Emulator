@@ -69,7 +69,6 @@ describe('The OauthLinkEncoder', () => {
     mockArgsSentToFetch.length = 0;
     const emulatorServer = {
       getServiceUrl: async () => 'http://localhost',
-      getServiceUrlForOAuth: async () => 'https://ngrok.io/emulator',
       state: {
         conversations: {
           conversationById: () => ({

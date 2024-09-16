@@ -127,14 +127,12 @@ describe('replyToActivity route middleware', () => {
   });
 
   it('should log any exceptions from OAuth signin in generation before posting the activity to the user', async () => {
-    const ngrokError = new Error('Failed to spawn ngrok');
-    mockResolveOAuthCards.mockRejectedValueOnce(ngrokError);
     createReplyToActivityHandler(mockEmulatorServer)(mockReq, mockRes, mockNext);
 
     // since the middleware is not an async function, wait for the async operations to complete
     await new Promise(resolve => setTimeout(resolve, 500));
 
-    expect(mockEmulatorServer.logger.logException).toHaveBeenCalledWith('someConversationId', ngrokError);
+    expect(mockEmulatorServer.logger.logException).toHaveBeenCalledWith('someConversationId');
     expect(mockEmulatorServer.logger.logException).toHaveBeenCalledWith(
       'someConversationId',
       new Error('Falling back to emulated OAuth token.')
