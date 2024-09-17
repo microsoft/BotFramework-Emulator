@@ -58,10 +58,11 @@ module.exports = {
           {
             loader: 'css-loader',
             options: {
-              modules: true,
-              namedExport: true,
-              camelCase: true,
-              sourcemaps: true,
+              modules: {
+                namedExport: true,
+                exportLocalsConvention: 'camelCaseOnly',
+              },
+              sourceMap: true,
             },
           },
           'resolve-url-loader',
@@ -93,8 +94,8 @@ module.exports = {
   },
 
   externals: {
-    react: 'umd react',
-    'react-dom': 'umd react-dom',
+    react: 'react',
+    'react-dom': 'react-dom',
   },
 
   resolve: {
@@ -106,7 +107,12 @@ module.exports = {
     filename: '[name].js',
     libraryTarget: 'umd',
     library: '[name]',
+    publicPath: '',
   },
 
-  plugins: [new WatchIgnorePlugin(['./src/**/*.d.ts'])],
+  plugins: [
+    new WatchIgnorePlugin({
+      paths: ['./src/**/*.d.ts'],
+    }),
+  ],
 };

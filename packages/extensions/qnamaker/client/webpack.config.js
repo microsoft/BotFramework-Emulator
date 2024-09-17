@@ -39,16 +39,8 @@ const TerserWebpackPlugin = require('terser-webpack-plugin');
 const buildConfig = mode => {
   const config = {
     optimization: {
-      minimizer: [
-        new TerserWebpackPlugin({
-          cache: true,
-          cacheKeys: defaultCacheKeys => {
-            delete defaultCacheKeys['terser'];
-
-            return Object.assign({}, defaultCacheKeys, { terser: require('terser/package.json').version });
-          },
-        }),
-      ],
+      minimize: true,
+      minimizer: [new TerserWebpackPlugin()],
     },
     entry: {
       qna: path.resolve('./src/index.tsx'),
@@ -69,10 +61,11 @@ const buildConfig = mode => {
             {
               loader: 'css-loader',
               options: {
-                modules: true,
-                namedExport: true,
-                camelCase: true,
-                sourcemaps: true,
+                modules: {
+                  namedExport: true,
+                  exportLocalsConvention: 'camelCaseOnly',
+                },
+                sourceMap: true,
               },
             },
             'resolve-url-loader',
@@ -109,6 +102,8 @@ const buildConfig = mode => {
 
     resolve: {
       extensions: ['.js', '.jsx', '.json', '.ts', '.tsx'],
+      //fallback: { "os": require.resolve("os-browserify/browser") },
+      fallback: { os: false },
     },
 
     output: {

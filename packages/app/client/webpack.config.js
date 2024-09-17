@@ -120,10 +120,11 @@ const defaultConfig = () => ({
           {
             loader: 'css-loader',
             options: {
-              modules: true,
-              namedExport: true,
-              camelCase: true,
-              sourcemaps: true,
+              modules: {
+                namedExport: true,
+                exportLocalsConvention: 'camelCaseOnly',
+              },
+              sourceMap: true,
             },
           },
           'resolve-url-loader',
@@ -184,7 +185,9 @@ const defaultConfig = () => ({
     new DefinePlugin({
       DEV: JSON.stringify(npm_lifecycle_event.includes('dev')),
     }),
-    new WatchIgnorePlugin(['./src/**/*.d.ts']),
+    new WatchIgnorePlugin({
+      paths: ['./src/**/*.d.ts'],
+    }),
     new MonacoWebpackPlugin({
       languages: ['json'],
     }),
@@ -208,16 +211,8 @@ const buildConfig = mode => {
     config.module.rules[0].use = use;
   } else {
     config.optimization = {
-      minimizer: [
-        new TerserWebpackPlugin({
-          cache: true,
-          cacheKeys: defaultCacheKeys => {
-            delete defaultCacheKeys['terser'];
-
-            return Object.assign({}, defaultCacheKeys, { terser: require('terser/package.json').version });
-          },
-        }),
-      ],
+      minimize: true,
+      minimizer: [new TerserWebpackPlugin()],
     };
   }
   return config;
@@ -235,7 +230,8 @@ const sharedConfig = () => ({
   },
 
   node: {
-    fs: 'empty',
+    __dirname: false,
+    __filename: false,
   },
 
   plugins: [
