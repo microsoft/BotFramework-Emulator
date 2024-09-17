@@ -14,8 +14,8 @@
     "botframework-schema": "^4.17.0",
     "deep-diff": "^1.0.2",
     "eslint-plugin-security": "^1.4.0",
-    "react": "16.8.6",
-    "react-dom": "16.8.6",
+    "react": "16.14.0",
+    "react-dom": "16.14.0",
     "react-json-tree": "^0.17.0"
   },
   "scripts": {
@@ -26,7 +26,7 @@
     "test": "jest"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.2",
+    "@babel/core": "^7.25.2",
     "@babel/plugin-proposal-class-properties": "^7.18.6",
     "@babel/plugin-proposal-decorators": "^7.20.7",
     "@babel/plugin-proposal-object-rest-spread": "^7.20.7",
@@ -49,7 +49,7 @@
     "copy-webpack-plugin": "^6.4.1",
     "css-loader": "^1.0.1",
     "enzyme": "^3.3.0",
-    "eslint": "^7.19.0",
+    "eslint": "^7.32.0",
     "eslint-config-prettier": "^3.5.0",
     "eslint-plugin-import": "2.26.0",
     "eslint-plugin-notice": "^0.7.7",
@@ -63,7 +63,7 @@
     "@teamsupercell/typings-for-css-modules-loader": "^2.5.2",
     "webpack": "^4.32.2",
     "webpack-cli": "^4.0.0",
-    "webpack-dev-server": "^4.11.1"
+    "webpack-dev-server": "^4.15.2"
   },
   "jest": {
     "setupFilesAfterEnv": ["../../../../testSetup.js"],

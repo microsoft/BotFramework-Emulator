@@ -17,7 +17,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@babel/core": "^7.20.2",
+    "@babel/core": "^7.25.2",
     "@babel/plugin-proposal-class-properties": "^7.18.6",
     "@babel/plugin-proposal-decorators": "^7.20.7",
     "@babel/plugin-proposal-object-rest-spread": "^7.20.7",
@@ -33,7 +33,7 @@
     "babel-jest": "^29.3.1",
     "babel-loader": "^8.0.6",
     "enzyme": "^3.3.0",
-    "eslint": "^7.19.0",
+    "eslint": "^7.32.0",
     "eslint-config-prettier": "^3.5.0",
     "eslint-plugin-import": "2.26.0",
     "eslint-plugin-notice": "^0.7.7",
@@ -58,8 +58,8 @@
     "@babel/runtime": "^7.1.5",
     "@bfemulator/app-shared": "^1.0.0",
     "eslint-plugin-security": "^1.4.0",
-    "react": "16.8.6",
-    "react-dom": "16.8.6"
+    "react": "16.14.0",
+    "react-dom": "16.14.0"
   },
   "jest": {
     "setupFilesAfterEnv": ["../../../../testSetup.js"],

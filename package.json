@@ -16,7 +16,7 @@
     "uploadcoverage": "cat ./coverage/lcov.info | coveralls"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.2",
+    "@babel/core": "^7.25.2",
     "@babel/plugin-proposal-class-properties": "^7.18.6",
     "@babel/plugin-proposal-decorators": "^7.20.7",
     "@babel/plugin-proposal-object-rest-spread": "^7.20.7",
@@ -85,21 +85,25 @@
     "keytar": "7.9.0"
   },
   "overrides": {
-    "minimist@<1.2.6": ">=1.2.6",
-    "follow-redirects@<1.14.8": ">=1.14.8",
+    "minimist": ">=1.2.8",
+    "follow-redirects": ">=1.15.9",
     "serialize-javascript@<6.0.2": ">=6.0.2",
-    "postcss@<7.0.36": ">=7.0.36",
+    "postcss@<7.0.36": ">=8.4.45",
     "trim-newlines@<3.0.1": ">=3.0.1",
-    "parse-path@<5.0.0": ">=5.0.0",
-    "glob-parent@<5.1.2": ">=5.1.2",
-    "browserslist@>=4.0.0 <4.16.5": ">=4.16.5",
-    "ejs@<3.1.7": ">=3.1.7",
-    "jsdom@<=16.4.0": ">=16.5.0",
-    "axios@<0.21.2": ">=0.21.2",
-    "parse-url@<8.1.0": ">=8.1.0",
-    "minimatch@<3.0.5": ">=3.0.5",
-    "shell-quote@<=1.7.2": ">=1.7.3",
-    "got@<11.8.5": ">=11.8.5",
-    "ajv@<6.12.3": ">=6.12.3"
+    "parse-path@<5.0.0": ">=7.0.0",
+    "glob-parent@<5.1.2": ">=6.0.2",
+    "browserslist@>=4.0.0 <4.16.5": ">=4.23.3",
+    "ejs@<3.1.7": ">=3.1.10",
+    "jsdom@<=16.4.0": ">=25.0.0",
+    "axios@<0.21.2": ">=1.7.7",
+    "parse-url@<8.1.0": ">=9.2.2",
+    "minimatch@<3.0.5": ">=10.0.1",
+    "shell-quote@<=1.7.2": ">=1.8.1",
+    "got@<11.8.5": ">=14.4.2",
+    "ajv@<6.12.3": ">=6.12.3",
+    "braces@<3.0.2" : ">=3.0.3",
+    "ip@<2.0.0" : ">=2.0.1",
+    "path-to-regexp@<1.0.0" : ">=1.9.0",
+    "body-parser@<1.20.1" : ">=1.20.3"
   }
 }
