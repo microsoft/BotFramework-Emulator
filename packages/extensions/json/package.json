@@ -63,7 +63,7 @@
     "@teamsupercell/typings-for-css-modules-loader": "^2.5.2",
     "webpack": "^4.32.2",
     "webpack-cli": "^4.0.0",
-    "webpack-dev-server": "^4.11.1"
+    "webpack-dev-server": "^4.15.2"
   },
   "jest": {
     "setupFilesAfterEnv": ["../../../../testSetup.js"],
