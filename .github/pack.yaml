@@ -1,0 +1,102 @@
+name: Pack Electron App
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Node.js 20.17.0
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.17.0'
+
+    - name: Install lerna 6.1.0
+      run: npm install -g lerna@6.1.0
+
+    - name: Bootstrap
+      run: npm run bootstrap
+
+    - name: Lint
+      run: npm run lint
+
+    - name: Build
+      run: npm run build
+      env:
+        NODE_OPTIONS: --openssl-legacy-provider
+
+    - name: Check for vulnerabilities
+      run: npm audit
+      continue-on-error: true
+    
+    - name: Get Electron
+      working-directory: packages/app/main
+      run: node scripts/downloadAndExtractElectron.js
+
+    - name: Pack Linux
+      if: matrix.os == 'ubuntu-latest'
+      working-directory: packages/app/main
+      run: npm run pack -- --linux --x64
+      env:
+        NODE_ENV: production
+
+    - name: Dist Linux
+      if: matrix.os == 'ubuntu-latest'
+      working-directory: packages/app/main
+      run: npm run dist -- --linux --prepackaged ./dist/linux-unpacked
+      env:
+        NODE_ENV: production
+    
+    - name: Upload Linux
+      if: matrix.os == 'ubuntu-latest'
+      uses: actions/upload-artifact@v4
+      with:
+        name: BF-Emulator-Linux.AppImage
+        path: packages/app/main/dist/*.AppImage
+
+    - name: Pack Windows
+      if: matrix.os == 'windows-latest'
+      working-directory: packages/app/main
+      run: npm run pack -- --win --x64
+      env:
+        NODE_ENV: production
+    
+    - name: Dist Windows
+      if: matrix.os == 'windows-latest'
+      working-directory: packages/app/main
+      run: npm run dist -- --win --prepackaged ./dist/win-unpacked
+
+    - name: Upload Windows
+      if: matrix.os == 'windows-latest'
+      uses: actions/upload-artifact@v4
+      with:
+        name: BF-Emulator-Windows.setup.exe
+        path: packages/app/main/dist/*.exe
+
+    - name: Pack Mac
+      if: matrix.os == 'macos-latest'
+      working-directory: packages/app/main
+      run: npm run pack -- --mac --x64
+      env:
+        NODE_ENV: production
+
+    - name: Dist Mac
+      if: matrix.os == 'macos-latest'
+      working-directory: packages/app/main
+      run: npm run dist -- --mac --prepackaged ./dist/mac
+
+    - name: Upload Mac
+      if: matrix.os == 'macos-latest'
+      uses: actions/upload-artifact@v4
+      with:
+        name: BF-Emulator-mac.dmg
+        path: packages/app/main/dist/*.dmg
