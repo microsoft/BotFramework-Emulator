@@ -58,8 +58,8 @@
     "@babel/runtime": "^7.1.5",
     "@bfemulator/app-shared": "^1.0.0",
     "eslint-plugin-security": "^1.4.0",
-    "react": "16.8.6",
-    "react-dom": "16.8.6"
+    "react": "16.14.0",
+    "react-dom": "16.14.0"
   },
   "jest": {
     "setupFilesAfterEnv": ["../../../../testSetup.js"],

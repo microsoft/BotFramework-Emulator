@@ -14,8 +14,8 @@
     "botframework-schema": "^4.17.0",
     "deep-diff": "^1.0.2",
     "eslint-plugin-security": "^1.4.0",
-    "react": "16.8.6",
-    "react-dom": "16.8.6",
+    "react": "16.14.0",
+    "react-dom": "16.14.0",
     "react-json-tree": "^0.17.0"
   },
   "scripts": {
