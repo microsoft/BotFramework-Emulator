@@ -7,6 +7,7 @@ jobs:
   build:
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
 
@@ -44,9 +45,14 @@ jobs:
     - name: Pack Linux
       if: matrix.os == 'ubuntu-latest'
       working-directory: packages/app/main
-      run: >
-        npm run pack -- --linux --x64
-        npm run dist -- --linux --prepackaged ./dist/linux-unpacked
+      run: npm run pack -- --linux --x64
+      env:
+        NODE_ENV: production
+
+    - name: Dist Linux
+      if: matrix.os == 'ubuntu-latest'
+      working-directory: packages/app/main
+      run: npm run dist -- --linux --prepackaged ./dist/linux-unpacked
       env:
         NODE_ENV: production
     
@@ -58,24 +64,35 @@ jobs:
         path: packages/app/main/dist/*.AppImage
 
     - name: Pack Windows
+      if: matrix.os == 'windows-latest'
       working-directory: packages/app/main
-      run: >
-        npm run pack -- --win --x64
-        npm run dist -- --win --prepackaged ./dist/win-unpacked
+      run: npm run pack -- --win --x64
+      env:
+        NODE_ENV: production
+    
+    - name: Dist Windows
+      if: matrix.os == 'windows-latest'
+      working-directory: packages/app/main
+      run: npm run dist -- --win --prepackaged ./dist/win-unpacked
 
     - name: Upload Windows
       if: matrix.os == 'windows-latest'
       uses: actions/upload-artifact@v4
       with:
-        name: BF-Emulator-Windows.msi
-        path: packages/app/main/dist/*.msi
+        name: BF-Emulator-Windows.setup.exe
+        path: packages/app/main/dist/*.exe
 
     - name: Pack Mac
       if: matrix.os == 'macos-latest'
       working-directory: packages/app/main
-      run: >
-        npm run pack -- --mac --x64
-        npm run dist -- --mac --prepackaged ./dist/mac
+      run: npm run pack -- --mac --x64
+      env:
+        NODE_ENV: production
+
+    - name: Dist Mac
+      if: matrix.os == 'macos-latest'
+      working-directory: packages/app/main
+      run: npm run dist -- --mac --prepackaged ./dist/mac
 
     - name: Upload Mac
       if: matrix.os == 'macos-latest'
