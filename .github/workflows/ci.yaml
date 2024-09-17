@@ -1,4 +1,4 @@
-name: Build Electron App
+name: electron-ci
 
 on:
   push:
