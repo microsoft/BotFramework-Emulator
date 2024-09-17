@@ -45,7 +45,7 @@
     "babel-loader": "^8.0.6",
     "copy-webpack-plugin": "^6.4.1",
     "css-loader": "^1.0.1",
-    "eslint": "^7.19.0",
+    "eslint": "^7.32.0",
     "eslint-config-prettier": "^3.5.0",
     "eslint-plugin-import": "2.26.0",
     "eslint-plugin-notice": "^0.7.7",
