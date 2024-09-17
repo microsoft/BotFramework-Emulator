@@ -105,7 +105,7 @@ module.exports = {
 
   externals: {},
   plugins: [
-    new WatchIgnorePlugin({ paths: ['./build/**/*.*', './public/**/*.*', './src/**/*.d.ts'] }),
+    new WatchIgnorePlugin(['./build/**/*.*', './public/**/*.*', './src/**/*.d.ts']),
     new CopyWebpackPlugin({ patterns: [{ from: './src/index.html', to: './index.html' }] }),
   ],
 };
