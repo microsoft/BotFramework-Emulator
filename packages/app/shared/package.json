@@ -43,7 +43,7 @@
     "@babel/runtime": "^7.1.5",
     "@bfemulator/sdk-shared": "^1.0.0",
     "botframework-config": "^4.4.0",
-    "botframework-schema": "^4.17.0",
+    "botframework-schema": "^4.23.0",
     "eslint-plugin-security": "^1.4.0",
     "tslib": "^1.9.0"
   },

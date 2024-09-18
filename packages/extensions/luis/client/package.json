@@ -11,7 +11,7 @@
     "@bfemulator/sdk-shared": "^1.0.0",
     "@bfemulator/ui-react": "^1.0.0",
     "botframework-config": "^4.4.0",
-    "botframework-schema": "^4.17.0",
+    "botframework-schema": "^4.23.0",
     "eslint-plugin-security": "^1.4.0",
     "lscache": "^1.3.2",
     "luis-apis": "2.6.2",

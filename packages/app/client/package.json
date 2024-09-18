@@ -109,7 +109,7 @@
     "@uifabric/styling": "^5.20.0",
     "base64url": "3.0.1",
     "botframework-config": "^4.4.0",
-    "botframework-schema": "^4.17.0",
+    "botframework-schema": "^4.23.0",
     "botframework-webchat": "^4.15.6",
     "botframework-webchat-core": "^4.15.6",
     "core-js": "^3.6.5",
