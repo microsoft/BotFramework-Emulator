@@ -5,7 +5,7 @@
   "homepage": "./",
   "main": "./public/index.html",
   "dependencies": {
-    "@azure/ms-rest-js": "1.7.0",
+    "@azure/ms-rest-js": "2.7.0",
     "@babel/runtime": "^7.1.5",
     "@bfemulator/sdk-client": "^1.0.0",
     "@bfemulator/sdk-shared": "^1.0.0",
