@@ -16,7 +16,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@babel/core": "^7.20.2",
+    "@babel/core": "^7.25.2",
     "@babel/plugin-proposal-class-properties": "^7.18.6",
     "@babel/plugin-proposal-decorators": "^7.20.7",
     "@babel/plugin-proposal-object-rest-spread": "^7.20.7",
@@ -28,7 +28,7 @@
     "@typescript-eslint/eslint-plugin": "^4.14.2",
     "@typescript-eslint/parser": "^4.14.2",
     "babel-jest": "^29.3.1",
-    "eslint": "^7.19.0",
+    "eslint": "^7.32.0",
     "eslint-config-prettier": "^3.5.0",
     "eslint-plugin-import": "2.26.0",
     "eslint-plugin-notice": "^0.7.7",
@@ -43,7 +43,7 @@
     "@babel/runtime": "^7.1.5",
     "@bfemulator/sdk-shared": "^1.0.0",
     "botframework-config": "^4.4.0",
-    "botframework-schema": "^4.17.0",
+    "botframework-schema": "^4.23.0",
     "eslint-plugin-security": "^1.4.0",
     "tslib": "^1.9.0"
   }
