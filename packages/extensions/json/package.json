@@ -6,7 +6,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@babel/runtime": "^7.1.5",
+    "@babel/runtime": "^7.25.6",
     "@bfemulator/app-shared": "^1.0.0",
     "@bfemulator/sdk-client": "^1.0.0",
     "@bfemulator/sdk-shared": "^1.0.0",

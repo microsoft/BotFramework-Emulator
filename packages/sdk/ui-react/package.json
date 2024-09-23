@@ -55,7 +55,7 @@
     "webpack-cli": "^4.0.0"
   },
   "dependencies": {
-    "@babel/runtime": "^7.1.5",
+    "@babel/runtime": "^7.25.6",
     "@bfemulator/app-shared": "^1.0.0",
     "eslint-plugin-security": "^1.4.0",
     "react": "16.14.0",

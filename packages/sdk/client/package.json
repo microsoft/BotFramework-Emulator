@@ -40,7 +40,7 @@
     "typescript": "^4.2.0"
   },
   "dependencies": {
-    "@babel/runtime": "^7.1.5",
+    "@babel/runtime": "^7.25.6",
     "@bfemulator/sdk-shared": "^1.0.0",
     "botframework-config": "^4.4.0",
     "botframework-schema": "^4.23.0",
