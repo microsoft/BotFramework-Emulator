@@ -1,2 +1,22 @@
 steps:
-- script: echo "hello from template"
+- task: NodeTool@0
+  displayName: 'Use Node $(NODE_VERSION)'
+  inputs:
+    versionSpec: $(NODE_VERSION)
+
+- script: npm install -g lerna@6.1.0  --verbose
+  displayName: 'Install Lerna'
+
+- script: npm run bootstrap 
+  displayName: 'Run Lerna Bootstrap'
+  workingDirectory: $(ProjectFolder)
+
+- script: npm run build 
+  displayName: 'Run npm build'
+  workingDirectory: $(ProjectFolder)
+  env:
+    NODE_OPTIONS: --openssl-legacy-provider
+
+- script: node scripts/downloadAndExtractElectron.js
+  displayName: 'download and extract internal build of Electron'
+  workingDirectory: $(ProjectSourceRoot)/packages/app/main
