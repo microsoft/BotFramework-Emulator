@@ -10256,7 +10256,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 -------------------------------------------------------------------
 
-@babel/runtime 7.4.5 - MIT
+@babel/runtime 7.25.6 - MIT
 Copyright (c) 2014-present Sebastian McKenzie and other contributors
 
 Copyright 2013 Mathias Buus
