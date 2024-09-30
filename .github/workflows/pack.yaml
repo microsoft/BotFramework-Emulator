@@ -20,8 +20,8 @@ jobs:
       with:
         node-version: '20.17.0'
 
-    - name: npm ci
-      run: npm ci
+    - name: npm install 
+      run: npm i
 
     - name: Build
       run: npm run build
