@@ -31,9 +31,9 @@
     "prettier": "^1.15.3"
   },
   "workspaces" :[
+    "packages/sdk/shared",
     "packages/app/shared",
     "packages/sdk/client",
-    "packages/sdk/shared",
     "packages/sdk/ui-react",
     "packages/extensions/qnamaker",
     "packages/extensions/qnamaker/client",
