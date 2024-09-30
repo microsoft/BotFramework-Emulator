@@ -33,7 +33,7 @@
 
 import { BrowserWindow } from 'electron';
 import * as jwt from 'jsonwebtoken';
-import uuidv4 from 'uuid/v4';
+import { v4 as uuidv4 } from 'uuid';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const getPem = require('rsa-pem-from-mod-exp');

@@ -31,8 +31,6 @@
     "prettier": "^1.15.3"
   },
   "workspaces" :[
-    "packages/app/client",
-    "packages/app/main",
     "packages/app/shared",
     "packages/sdk/client",
     "packages/sdk/shared",
@@ -42,6 +40,8 @@
     "packages/extensions/luis",
     "packages/extensions/luis/client",
     "packages/extensions/json",
+    "packages/app/client",
+    "packages/app/main",
     "packages/tools"
   ],
   "husky": {
