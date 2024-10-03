@@ -34,7 +34,7 @@
 import * as nodeUrl from 'url';
 
 import { v4 as uuidv4 } from 'uuid';
-import uuidv1 from 'uuid/v1';
+import { v1 as uuidv1 } from 'uuid';
 
 export function uniqueIdv4(): string {
   return uuidv4().toString();

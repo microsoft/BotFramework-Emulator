@@ -61,9 +61,9 @@
     "sass-loader": "^10.4.1",
     "typescript": "^4.2.0",
     "@teamsupercell/typings-for-css-modules-loader": "^2.5.2",
-    "webpack": "^4.32.2",
-    "webpack-cli": "^4.0.0",
-    "webpack-dev-server": "^4.15.2"
+    "webpack": "^5.95.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^5.1.0"
   },
   "jest": {
     "setupFilesAfterEnv": ["../../../../testSetup.js"],

@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build" : "echo 'no-op'",
     "start:test-bot": "node test-bot/index.js"
   },
   "author": "",

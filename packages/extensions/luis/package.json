@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build": "echo 'no-op'",
     "test": "jest"
   },
   "author": "",
