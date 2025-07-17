@@ -1,3 +1,20 @@
+# ARCHIVE NOTICE:
+**Bot Framework Emulator being retired in favor of Agents Playground**
+
+
+We are in the process of archiving the Bot Framework Emulator repository on GitHub. This means that this project will no longer be updated or maintained. Customers using this tool will not be disrupted. However, the tool will no longer be supported through service tickets in the Azure portal and will not receive product updates.
+
+*We plan to archive this project no later than end of December of 2025.*
+
+The Bot Framework Emulator is a desktop application that allows bot developers to test and debug bots built using the [Bot Framework SDK](https://github.com/microsoft/botbuilder). You can use the Bot Framework Emulator to test bots running either locally on your machine or connect to bots running remotely through a tunnel. 
+
+Bot Framework Emulator is being replaced with Agents Playground,  this tool is available standalone, or via the Agents Toolkit. 
+- [Standalone Agent Playground Information](https://learn.microsoft.com/en-us/microsoft-365/agents-sdk/test-with-toolkit-project)
+- [Agent Toolkit - Agent Playground Information](https://learn.microsoft.com/microsoftteams/platform/toolkit/debug-your-agents-playground)
+  
+Archived projects are still available for use by developers, however they will not be actively maintained or serviced by Microsoft.
+
+
 # ![Bot Framework Emulator](./docs/media/BotFrameworkEmulator_header.png)
 
 ### [Find out what's new with Bot Framework](https://github.com/Microsoft/botframework/blob/main/whats-new.md#whats-new)
