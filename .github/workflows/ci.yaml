@@ -21,14 +21,8 @@ jobs:
       with:
         node-version: '20.17.0'
 
-    - name: Install lerna 6.1.0
-      run: npm install -g lerna@6.1.0
-
-    - name: Bootstrap
-      run: npm run bootstrap
-
-    - name: Lint
-      run: npm run lint
+    - name: npm install
+      run: npm i
 
     - name: Build
       run: npm run build

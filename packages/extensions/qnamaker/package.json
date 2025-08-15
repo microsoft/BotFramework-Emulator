@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest --passWithNoTests",
+    "build": "echo 'no-op'",
     "build:client": "cd ./client && npm run build"
   },
   "author": "",

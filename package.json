@@ -2,7 +2,7 @@
   "scripts": {
     "bootstrap": "lerna bootstrap --hoist --ignore @bfemulator/tools -- --lockfile-version=1",
     "bootstrap:dev": "lerna bootstrap --hoist -- --lockfile-version=1",
-    "build": "npm rebuild node-sass && npm run rebuild:keytar:electron && lerna run build",
+    "build": "npm rebuild node-sass && npm run rebuild:keytar:electron && npm run build --workspaces",
     "lint": "lerna run lint --no-bail",
     "lint:fix": "lerna run lint:fix --no-bail",
     "rebuild:keytar:electron": "rimraf node_modules/keytar/build && electron-rebuild",
@@ -30,6 +30,20 @@
     "lint-staged": "^12.3.7",
     "prettier": "^1.15.3"
   },
+  "workspaces" :[
+    "packages/sdk/shared",
+    "packages/app/shared",
+    "packages/sdk/client",
+    "packages/sdk/ui-react",
+    "packages/extensions/qnamaker",
+    "packages/extensions/qnamaker/client",
+    "packages/extensions/luis",
+    "packages/extensions/luis/client",
+    "packages/extensions/json",
+    "packages/app/client",
+    "packages/app/main",
+    "packages/tools"
+  ],
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged"

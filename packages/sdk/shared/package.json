@@ -46,7 +46,7 @@
     "botframework-schema": "^4.23.0",
     "eslint-plugin-security": "^1.4.0",
     "tslib": "^1.9.0",
-    "uuid": "^3.3.2"
+    "uuid": "^10.0.0"
   },
   "jest": {
     "setupFilesAfterEnv": ["../../../../testSetup.js"],
